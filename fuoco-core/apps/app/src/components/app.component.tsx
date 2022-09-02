@@ -1,6 +1,6 @@
 import React from 'react';
 
-export class App extends React.Component {
+export class AppComponent extends React.Component {
   public override render(): React.ReactNode {
       return (
         <div style={{ textAlign: 'center' }}>
@@ -15,4 +15,4 @@ export class App extends React.Component {
   }
 }
 
-export default App;
+export default AppComponent;
