@@ -1,28 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { Message } from '@fuoco-core/api-interfaces';
+import React from 'react';
 
-export const App = () => {
-  const [m, setMessage] = useState<Message>({ message: '' });
-
-  useEffect(() => {
-    fetch('/api')
-      .then((r) => r.json())
-      .then(setMessage);
-  }, []);
-
-  return (
-    <>
-      <div style={{ textAlign: 'center' }}>
-        <h1>Welcome to app!</h1>
-        <img
-          width="450"
-          src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png"
-          alt="Nx - Smart, Fast and Extensible Build System"
-        />
-      </div>
-      <div>{m.message}</div>
-    </>
-  );
-};
+export class App extends React.Component {
+  public override render(): React.ReactNode {
+      return (
+        <div style={{ textAlign: 'center' }}>
+          <h1>Welcome to app!</h1>
+          <img
+            width="450"
+            src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png"
+            alt="Nx - Smart, Fast and Extensible Build System"
+          />
+        </div>
+      );
+  }
+}
 
 export default App;
