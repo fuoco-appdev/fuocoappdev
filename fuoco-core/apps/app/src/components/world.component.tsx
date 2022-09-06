@@ -3,22 +3,36 @@ import * as THREE from "three";
 import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils";
 import styles from './world.module.scss';
 import * as AtmosphereShader from '../shaders/atmosphere.shader';
-import { BufferAttribute } from 'three';
+import { throttle } from "lodash";
 
 export interface WorldProps {}
 
 export class WorldComponent extends React.Component {
-    private _ref: React.RefObject<HTMLDivElement>;
+    private readonly _ref: React.RefObject<HTMLDivElement>;
+    private readonly _globeRotation: {x: number, y: number};
+    private readonly _prevMousePosition: {x: number, y: number};
+    private _pressed: boolean;
 
     public constructor(props: WorldProps) {
         super(props);
 
         this._ref = React.createRef();
+        this._globeRotation = {x: 0, y: 0};
+        this._prevMousePosition = {x: 0, y: 0};
+        this._pressed = false;
+
+        this.onMouseMove = this.onMouseMove.bind(this);
+        this.onMouseDown = this.onMouseDown.bind(this);
+        this.onMouseUp = this.onMouseUp.bind(this);
+
+        document.addEventListener('mousemove', this.onMouseMove);
+        document.addEventListener('mousedown', this.onMouseDown);
+        document.addEventListener('mouseup', this.onMouseUp);
     }
 
     public override async componentDidMount(): Promise<void> {
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({alpha: true});
         renderer.setSize( window.innerWidth, window.innerHeight );
         // document.body.appendChild( renderer.domElement );
@@ -33,7 +47,7 @@ export class WorldComponent extends React.Component {
         light.shadow.mapSize.height = 1024 * 4;
         scene.add(light);
 
-        const directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
         directionalLight.position.x = -1;
         directionalLight.position.y = 1;
         scene.add(directionalLight);
@@ -127,7 +141,9 @@ export class WorldComponent extends React.Component {
         camera.position.z = 5;
 
         let aspect = 0;
-        const animate = function() {
+        
+
+        let animate = () => {
             requestAnimationFrame(animate);
 
             aspect = window.innerWidth/window.innerHeight;
@@ -138,16 +154,24 @@ export class WorldComponent extends React.Component {
             }
 
             
+            if (this._pressed) {
+                pivot.rotation.x = this._globeRotation.x;
+                pivot.rotation.y = this._globeRotation.y;
+            } else {
+                pivot.rotation.y += 0.001;
+            }
             
-            pivot.rotation.y += 0.0001;
-            renderer.render( scene, camera);
+            
+            renderer.render(scene, camera);
         };
+
+        animate = animate.bind(this);
 
         animate();
     }
 
     public override render(): React.ReactNode {
-        return (<div ref={this._ref}/>);
+        return (<div className={styles["root"]} ref={this._ref}/>);
     }
 
     private async loadImageAsync(
@@ -210,5 +234,38 @@ export class WorldComponent extends React.Component {
         const x = ((long + 180) * (mapWidth / 360));
         const y = ((mapHeight / 2) - ((mapWidth * mercN) / (2 * Math.PI)));
         return new THREE.Vector2(Math.floor(x), Math.floor(y));
+    }
+
+    private onMouseMove(event: MouseEvent): void {
+        event = event || window.event;
+
+        if (!this._pressed) {
+            this._prevMousePosition.x = event.clientX;
+            this._prevMousePosition.y = event.clientY;
+            return;
+        }
+      
+        //calculate difference between current and last mouse position
+        const moveX = (event.clientX - this._prevMousePosition.x);
+        const moveY = (event.clientY - this._prevMousePosition.y);
+        //rotate the globe based on distance of mouse moves (x and y) 
+        this._globeRotation.y += (moveX * .005);
+        this._globeRotation.x += (moveY * .005);
+      
+        //store new position in lastMove
+        this._prevMousePosition.x = event.clientX;
+        this._prevMousePosition.y = event.clientY;
+    }
+
+    private onMouseDown(): void {
+        if (!this._pressed) {
+            this._pressed = true;
+        }
+    }
+
+    private onMouseUp(): void {
+        if (this._pressed) {
+            this._pressed = false;
+        }
     }
 }
