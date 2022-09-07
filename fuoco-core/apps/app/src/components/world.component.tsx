@@ -3,7 +3,7 @@ import * as THREE from "three";
 import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils";
 import styles from './world.module.scss';
 import * as AtmosphereShader from '../shaders/atmosphere.shader';
-import { throttle } from "lodash";
+import * as TWEEN from '@tweenjs/tween.js';
 
 export interface WorldProps {}
 
@@ -11,6 +11,10 @@ export class WorldComponent extends React.Component {
     private readonly _ref: React.RefObject<HTMLDivElement>;
     private readonly _globeRotation: {x: number, y: number};
     private readonly _prevMousePosition: {x: number, y: number};
+    private readonly _delta: {x: number, y: number};
+    private readonly _minDotRadius: number;
+    private readonly _maxDotRadius: number;
+    private _tween: TWEEN.Tween<{x: number, y: number}> | undefined;
     private _pressed: boolean;
 
     public constructor(props: WorldProps) {
@@ -19,12 +23,15 @@ export class WorldComponent extends React.Component {
         this._ref = React.createRef();
         this._globeRotation = {x: 0, y: 0};
         this._prevMousePosition = {x: 0, y: 0};
+        this._minDotRadius = 1.8;
+        this._maxDotRadius = 3;
         this._pressed = false;
+        this._delta = {x: 0, y: 0};
 
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onMouseUp = this.onMouseUp.bind(this);
-
+        
         document.addEventListener('mousemove', this.onMouseMove);
         document.addEventListener('mousedown', this.onMouseDown);
         document.addEventListener('mouseup', this.onMouseUp);
@@ -60,7 +67,7 @@ export class WorldComponent extends React.Component {
         const spaceMesh = new THREE.Mesh(space, spaceMaterial);
         scene.add(spaceMesh);
 
-        const baseEarth = new THREE.SphereGeometry( 2, 50, 50 );
+        const baseEarth = new THREE.SphereGeometry(this._minDotRadius, 50, 50 );
         const baseEarthMaterial = new THREE.MeshStandardMaterial( { color: 0x373593, opacity: 0.9 } );
         baseEarthMaterial.transparent = true;
         const baseEarthMesh = new THREE.Mesh(baseEarth, baseEarthMaterial);
@@ -74,19 +81,18 @@ export class WorldComponent extends React.Component {
         const ctx = canvas.getContext("2d");
         const imageData = await this.loadImageAsync(ctx, 'assets/images/map_alpha.png', textureWidth, textureHeight);
 
-        const vector = new THREE.Vector3();
+        const dotVector = new THREE.Vector3();
         const dotGeometry = new THREE.CircleGeometry(.01, 5);
         const dots: Array<THREE.BufferGeometry> = [];
         const dotCount = 60000;
-        const dotRadius = 2;
         
         for (let i = 0; i < dotCount; i++) {
             const phi = Math.acos(-1 + (2 * i) / dotCount);
             const theta = Math.sqrt(dotCount * Math.PI) * phi;
         
-            vector.setFromSphericalCoords(dotRadius, phi, theta);
+            dotVector.setFromSphericalCoords(this._minDotRadius, phi, theta);
                 
-            const latLong = this.vector3ToLatLong(vector, 2);
+            const latLong = this.vector3ToLatLong(dotVector, 2);
             const pixelPoint = this.latLongToVector2(
                 latLong.long, 
                 latLong.lat, 
@@ -98,8 +104,8 @@ export class WorldComponent extends React.Component {
             const alpha = pixel[3];
             if (alpha > 0) {
                 const geometry = dotGeometry.clone();
-                geometry.lookAt(vector);
-                geometry.translate(vector.x, vector.y, vector.z);
+                geometry.lookAt(dotVector);
+                geometry.translate(dotVector.x, dotVector.y, dotVector.z);
             
                 dots.push(geometry);
             }
@@ -109,7 +115,7 @@ export class WorldComponent extends React.Component {
         const dotMaterial = new THREE.MeshStandardMaterial({color: 0x4AFFFF});
         const dotMesh = new THREE.Mesh(geometriesDots, dotMaterial);
 
-        const atmosphere = new THREE.SphereGeometry(2.1, 50, 50);
+        const atmosphere = new THREE.SphereGeometry(this._minDotRadius + .1, 50, 50);
         const atmosphereMaterial = new THREE.ShaderMaterial({
             uniforms: { 
                 coeficient: {
@@ -129,7 +135,6 @@ export class WorldComponent extends React.Component {
             depthWrite	: false,
         });
         const atmosphereMesh = new THREE.Mesh(atmosphere, atmosphereMaterial);
-
         const pivot = new THREE.Group();
         pivot.position.setX(2);
         scene.add(pivot);
@@ -137,12 +142,9 @@ export class WorldComponent extends React.Component {
         pivot.add(dotMesh);
         pivot.add(atmosphereMesh);
 
-
         camera.position.z = 5;
 
         let aspect = 0;
-        
-
         let animate = () => {
             requestAnimationFrame(animate);
 
@@ -153,14 +155,14 @@ export class WorldComponent extends React.Component {
                 renderer?.setSize(window.innerWidth, window.innerHeight);
             }
 
-            
-            if (this._pressed) {
-                pivot.rotation.x = this._globeRotation.x;
-                pivot.rotation.y = this._globeRotation.y;
-            } else {
-                pivot.rotation.y += 0.001;
+            if (!this._pressed) {
+                this._globeRotation.y += 0.001;
             }
-            
+
+            TWEEN.update();
+
+            pivot.rotation.x = this._globeRotation.x;
+            pivot.rotation.y = this._globeRotation.y;
             
             renderer.render(scene, camera);
         };
@@ -237,8 +239,6 @@ export class WorldComponent extends React.Component {
     }
 
     private onMouseMove(event: MouseEvent): void {
-        event = event || window.event;
-
         if (!this._pressed) {
             this._prevMousePosition.x = event.clientX;
             this._prevMousePosition.y = event.clientY;
@@ -246,12 +246,15 @@ export class WorldComponent extends React.Component {
         }
       
         //calculate difference between current and last mouse position
+        this._delta.x = event.movementX;
+        this._delta.y = event.movementY;
+
         const moveX = (event.clientX - this._prevMousePosition.x);
         const moveY = (event.clientY - this._prevMousePosition.y);
-        //rotate the globe based on distance of mouse moves (x and y) 
+
         this._globeRotation.y += (moveX * .005);
         this._globeRotation.x += (moveY * .005);
-      
+
         //store new position in lastMove
         this._prevMousePosition.x = event.clientX;
         this._prevMousePosition.y = event.clientY;
@@ -266,6 +269,15 @@ export class WorldComponent extends React.Component {
     private onMouseUp(): void {
         if (this._pressed) {
             this._pressed = false;
+
+            this._tween?.stop();
+            this._tween = new TWEEN.Tween(this._globeRotation)
+                .to({
+                    x: this._globeRotation.x + (this._delta.y * .005) * 10,
+                    y: this._globeRotation.y + (this._delta.x * .005) * 10,
+                }, 500)
+                .easing(TWEEN.Easing.Cubic.Out)
+                .start();
         }
     }
 }
