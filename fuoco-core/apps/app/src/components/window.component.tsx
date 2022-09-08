@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet } from "react-router-dom";
-import { WorldComponent } from './world.component';
+import WorldComponent from './world.component';
 import styles from './window.module.scss';
 
 export class WindowComponent extends React.Component {

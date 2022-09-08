@@ -1,13 +1,16 @@
 import React from 'react';
+import WorldController from '../controllers/world.controller';
 import * as THREE from "three";
 import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils";
 import styles from './world.module.scss';
 import * as AtmosphereShader from '../shaders/atmosphere.shader';
 import * as TWEEN from '@tweenjs/tween.js';
+import {WorldProps} from '../models';
+import { useObservable } from '@ngneat/use-observable';
 
-export interface WorldProps {}
+export type WorldState = WorldProps;
 
-export class WorldComponent extends React.Component {
+class WorldComponent extends React.Component<WorldProps, WorldState> {
     private readonly _ref: React.RefObject<HTMLDivElement>;
     private readonly _globeRotation: {x: number, y: number};
     private readonly _prevMousePosition: {x: number, y: number};
@@ -20,6 +23,8 @@ export class WorldComponent extends React.Component {
     public constructor(props: WorldProps) {
         super(props);
 
+        this.state = {isVisible: false};
+        
         this._ref = React.createRef();
         this._globeRotation = {x: 0, y: 0};
         this._prevMousePosition = {x: 0, y: 0};
@@ -36,6 +41,14 @@ export class WorldComponent extends React.Component {
         document.addEventListener('mousedown', this.onMouseDown);
         document.addEventListener('mouseup', this.onMouseUp);
     }
+
+    public static getDerivedStateFromProps(props: WorldProps, state: WorldState) {
+        if (props !== state) {
+          return props;
+        }
+
+        return null;
+      }
 
     public override async componentDidMount(): Promise<void> {
         const scene = new THREE.Scene();
@@ -162,12 +175,16 @@ export class WorldComponent extends React.Component {
             if (!this._pressed) {
                 this._globeRotation.y += 0.001;
                 TWEEN.update();
-            }
-
-            
+            } 
 
             pivot.rotation.x = this._globeRotation.x;
             pivot.rotation.y = this._globeRotation.y;
+
+            if (!this.state.isVisible) {
+                pivot.scale.setScalar(0);
+            }else {
+                pivot.scale.setScalar(1);
+            }
             
             renderer.render(scene, camera);
         };
@@ -178,7 +195,7 @@ export class WorldComponent extends React.Component {
     }
 
     public override render(): React.ReactNode {
-        return (<div className={styles["root"]} ref={this._ref}/>);
+        return <div className={styles["root"]} ref={this._ref}/>;
     }
 
     private async loadImageAsync(
@@ -286,3 +303,10 @@ export class WorldComponent extends React.Component {
         }
     }
 }
+
+function ReactiveWorldComponent() {
+    const [props] = useObservable(WorldController.model.store);
+    return <WorldComponent isVisible={props.isVisible}/>;
+}
+
+export default ReactiveWorldComponent;
