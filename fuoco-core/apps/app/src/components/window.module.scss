@@ -12,10 +12,33 @@
         display: grid;
         grid-template-rows: 56fr 968fr;
         width: 100vw;
+        z-index: 1;
+
+        & :hover {
+            cursor: grab;
+        }
+    
+        & :active {
+            cursor: grabbing;
+        }
 
         & .navbar {
+            display: grid;
             grid-row-start: 1;
             grid-row-end: 2;
+            grid-template-columns: 16fr 1408fr 16fr;
+
+            & .navbarContainer {
+                display: grid;
+                grid-column-start: 2;
+                grid-column-end: 3;
+                grid-template-rows: 12fr 36fr 12fr;
+
+                & .logo {
+                    grid-row-start: 2;
+                    grid-row-end: 3;
+                }
+            }
         }
 
         & .children {

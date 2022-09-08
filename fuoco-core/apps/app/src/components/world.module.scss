@@ -1,9 +1,3 @@
 .root {
-    & :hover {
-        cursor: grab;
-    }
-
-    & :active {
-        cursor: grabbing;
-    }
+    height: 100vh;
 }

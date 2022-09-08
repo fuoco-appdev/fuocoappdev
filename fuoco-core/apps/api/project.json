@@ -3,39 +3,54 @@
   "sourceRoot": "apps/api/src",
   "projectType": "application",
   "targets": {
+    "install": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "scoop bucket add supabase https://github.com/supabase/scoop-bucket.git",
+          "scoop install supabase"
+       ],
+       "parallel": false
+      }
+    },
+    "init": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "supabase init"
+       ],
+       "cwd": "apps/api/src",
+       "parallel": false
+    },
     "build": {
       "executor": "@nrwl/node:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/api",
-        "main": "apps/api/src/main.ts",
+        "main": "apps/api/src/index.ts",
         "tsConfig": "apps/api/tsconfig.app.json",
-        "assets": ["apps/api/src/assets"]
+        "assets": ["apps/api/src/assets"],
+        "webpackConfig": "apps/api/webpack.config.js"
       },
       "configurations": {
         "production": {
           "optimization": true,
           "extractLicenses": true,
           "inspect": false,
-          "fileReplacements": [
-            {
-              "replace": "apps/api/src/environments/environment.ts",
-              "with": "apps/api/src/environments/environment.prod.ts"
-            }
-          ]
+          "fileReplacements": []
         }
       }
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "buildTarget": "nest:build"
+        "commands": [
+          "supabase start"
+       ],
+       "cwd": "apps/api/src",
+       "parallel": false
       },
-      "configurations": {
-        "production": {
-          "buildTarget": "nest:build:production"
-        }
-      }
+      "configurations": {}
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
@@ -54,4 +69,5 @@
     }
   },
   "tags": []
+  }
 }

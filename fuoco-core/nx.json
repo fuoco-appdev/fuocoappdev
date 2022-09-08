@@ -16,6 +16,8 @@
       "runner": "@nrwl/nx-cloud",
       "options": {
         "cacheableOperations": [
+          "install",
+          "init",
           "build",
           "lint",
           "test",

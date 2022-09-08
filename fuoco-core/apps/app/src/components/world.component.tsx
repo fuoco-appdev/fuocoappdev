@@ -39,12 +39,16 @@ export class WorldComponent extends React.Component {
 
     public override async componentDidMount(): Promise<void> {
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+        const width = this._ref.current?.clientWidth ?? 0;
+        const height = this._ref.current?.clientHeight ?? 0;
+        const camera = new THREE.PerspectiveCamera(75, width/height, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({alpha: true});
         renderer.setSize( window.innerWidth, window.innerHeight );
         // document.body.appendChild( renderer.domElement );
         // use ref as a mount point of the Three.js scene instead of the document.body
-        this._ref.current?.appendChild(renderer.domElement);
+        if ((this._ref.current?.children.length ?? 0) <= 0) {
+            this._ref.current?.appendChild(renderer.domElement);
+        }
 
         const light = new THREE.PointLight(0xffffff, 1, 400);
         light.position.set(-40, 15, 0);
@@ -157,9 +161,10 @@ export class WorldComponent extends React.Component {
 
             if (!this._pressed) {
                 this._globeRotation.y += 0.001;
+                TWEEN.update();
             }
 
-            TWEEN.update();
+            
 
             pivot.rotation.x = this._globeRotation.x;
             pivot.rotation.y = this._globeRotation.y;

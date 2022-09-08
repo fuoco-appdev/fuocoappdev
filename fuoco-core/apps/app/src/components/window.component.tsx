@@ -12,7 +12,9 @@ export class WindowComponent extends React.Component {
           </div>
           <div className={styles["content"]}>
             <div className={styles["navbar"]}>
-
+              <div className={styles["navbarContainer"]}>
+                <img className={styles["logo"]} src="../assets/svg/logo.svg" alt="logo"/>
+              </div>
             </div>
             <div className={styles["children"]}>
               <Outlet/>
