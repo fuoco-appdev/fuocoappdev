@@ -21,6 +21,7 @@
        ],
        "cwd": "apps/api/src",
        "parallel": false
+      }
     },
     "build": {
       "executor": "@nrwl/node:webpack",
@@ -69,5 +70,4 @@
     }
   },
   "tags": []
-  }
 }
