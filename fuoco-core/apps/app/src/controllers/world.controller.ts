@@ -1,7 +1,8 @@
 import { select } from '@ngneat/elf';
-import { Subscription } from 'rxjs';
+import { Subscription, skipWhile } from 'rxjs';
 import {Controller} from '../controller';
 import {WorldModel} from '../models';
+import { RoutePaths } from '../route-paths';
 
 class WorldController extends Controller {
     private readonly _model: WorldModel;
@@ -14,7 +15,9 @@ class WorldController extends Controller {
 
         this.onLocationChanged = this.onLocationChanged.bind(this);
 
-        this._locationSubscription = this._model.store.pipe(select((model => model.location))).subscribe(this.onLocationChanged);
+        this._locationSubscription = this._model.store.pipe(select((model => model.location)))
+        .pipe(skipWhile((location: Location) => location === undefined))
+        .subscribe(this.onLocationChanged);
     }
 
     public get model(): WorldModel {
@@ -27,6 +30,16 @@ class WorldController extends Controller {
 
     private onLocationChanged(location: Location): void {
         console.log(location);
+        switch(location.pathname) {
+            case RoutePaths.Default:
+                this._model.isVisible = true;
+                break;
+            case RoutePaths.Landing:
+                this._model.isVisible = true;
+                break;
+            default:
+                break;
+        }
     }
 }
 
