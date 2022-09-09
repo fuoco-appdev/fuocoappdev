@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 import WorldComponent from './world.component';
 import styles from './window.module.scss';
 
-export class WindowComponent extends React.Component {
+class WindowComponent extends React.Component {
   public override render(): React.ReactNode {
       return (
         <div className={styles["root"]}>
@@ -24,3 +24,9 @@ export class WindowComponent extends React.Component {
       );
   }
 }
+
+function ReactiveWindowComponent(): JSX.Element {
+  return (<WindowComponent />);
+}
+
+export default ReactiveWindowComponent;
