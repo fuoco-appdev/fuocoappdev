@@ -7,6 +7,7 @@ import * as AtmosphereShader from '../shaders/atmosphere.shader';
 import * as TWEEN from '@tweenjs/tween.js';
 import {WorldProps} from '../models';
 import { useObservable } from '@ngneat/use-observable';
+import { useLocation } from "react-router-dom";
 
 export type WorldState = WorldProps;
 
@@ -23,7 +24,10 @@ class WorldComponent extends React.Component<WorldProps, WorldState> {
     public constructor(props: WorldProps) {
         super(props);
 
-        this.state = {isVisible: false};
+        this.state = {
+            isVisible: false, 
+            location: undefined
+        };
         
         this._ref = React.createRef();
         this._globeRotation = {x: 0, y: 0};
@@ -48,7 +52,7 @@ class WorldComponent extends React.Component<WorldProps, WorldState> {
         }
 
         return null;
-      }
+    }
 
     public override async componentDidMount(): Promise<void> {
         const scene = new THREE.Scene();
@@ -195,7 +199,8 @@ class WorldComponent extends React.Component<WorldProps, WorldState> {
     }
 
     public override render(): React.ReactNode {
-        return <div className={styles["root"]} ref={this._ref}/>;
+        const {isVisible} = this.state;
+        return <div className={isVisible ? styles["root"] : ''} ref={this._ref}/>;
     }
 
     private async loadImageAsync(
@@ -306,7 +311,9 @@ class WorldComponent extends React.Component<WorldProps, WorldState> {
 
 function ReactiveWorldComponent() {
     const [props] = useObservable(WorldController.model.store);
-    return <WorldComponent isVisible={props.isVisible}/>;
+    const location = useLocation();
+    WorldController.model.location = location;
+    return <WorldComponent {...props} location={location}/>;
 }
 
 export default ReactiveWorldComponent;
