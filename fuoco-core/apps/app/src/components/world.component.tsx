@@ -6,12 +6,10 @@ import styles from './world.module.scss';
 import * as AtmosphereShader from '../shaders/atmosphere.shader';
 import * as TWEEN from '@tweenjs/tween.js';
 import {WorldProps} from '../models';
-import { useObservable } from '@ngneat/use-observable';
+import { useObservable } from '@ngneat/react-rxjs';
 import { useLocation } from "react-router-dom";
 
-export type WorldState = WorldProps;
-
-class WorldComponent extends React.Component<WorldProps, WorldState> {
+class WorldComponent extends React.Component<WorldProps> {
     private readonly _ref: React.RefObject<HTMLDivElement>;
     private readonly _globeRotation: {x: number, y: number};
     private readonly _prevMousePosition: {x: number, y: number};
@@ -23,11 +21,6 @@ class WorldComponent extends React.Component<WorldProps, WorldState> {
 
     public constructor(props: WorldProps) {
         super(props);
-
-        this.state = {
-            isVisible: false, 
-            location: undefined
-        };
         
         this._ref = React.createRef();
         this._globeRotation = {x: 0, y: 0};
@@ -44,14 +37,6 @@ class WorldComponent extends React.Component<WorldProps, WorldState> {
         document.addEventListener('mousemove', this.onMouseMove);
         document.addEventListener('mousedown', this.onMouseDown);
         document.addEventListener('mouseup', this.onMouseUp);
-    }
-
-    public static getDerivedStateFromProps(props: WorldProps, state: WorldState) {
-        if (props !== state) {
-          return props;
-        }
-
-        return null;
     }
 
     public override async componentDidMount(): Promise<void> {
@@ -184,7 +169,7 @@ class WorldComponent extends React.Component<WorldProps, WorldState> {
             pivot.rotation.x = this._globeRotation.x;
             pivot.rotation.y = this._globeRotation.y;
 
-            if (!this.state.isVisible) {
+            if (!this.props.isVisible) {
                 pivot.scale.setScalar(0);
             }else {
                 pivot.scale.setScalar(1);
@@ -199,7 +184,7 @@ class WorldComponent extends React.Component<WorldProps, WorldState> {
     }
 
     public override render(): React.ReactNode {
-        const {isVisible} = this.state;
+        const {isVisible} = this.props;
         return <div className={isVisible ? styles["root"] : ''} ref={this._ref}/>;
     }
 
@@ -309,11 +294,10 @@ class WorldComponent extends React.Component<WorldProps, WorldState> {
     }
 }
 
-function ReactiveWorldComponent() {
-    const [props] = useObservable(WorldController.model.store);
+export default function ReactiveWorldComponent() {
     const location = useLocation();
     WorldController.model.location = location;
-    return <WorldComponent {...props} location={location}/>;
-}
 
-export default ReactiveWorldComponent;
+    const [props] = useObservable(WorldController.model.store);
+    return <WorldComponent {...props}/>;
+}

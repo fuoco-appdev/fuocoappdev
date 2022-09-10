@@ -11,8 +11,6 @@ class LandingComponent extends React.Component {
   }
 }
 
-function ReactiveLandingComponent(): JSX.Element {
+export default function ReactiveLandingComponent(): JSX.Element {
     return (<LandingComponent />);
 }
-
-export default ReactiveLandingComponent;

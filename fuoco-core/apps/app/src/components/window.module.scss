@@ -28,15 +28,43 @@
             grid-row-end: 2;
             grid-template-columns: 16fr 1408fr 16fr;
 
-            & .navbarContainer {
-                display: grid;
+            & :hover {
+                cursor: auto;
+            }
+        
+            & :active {
+                cursor: auto;
+            }
+
+            & .navbarContent {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
                 grid-column-start: 2;
                 grid-column-end: 3;
-                grid-template-rows: 12fr 36fr 12fr;
 
-                & .logo {
-                    grid-row-start: 2;
-                    grid-row-end: 3;
+                & .logoContainer {
+                    display: grid;
+                    grid-template-rows: 12fr 36fr 12fr;
+    
+                    & .logo {
+                        grid-row-start: 2;
+                        grid-row-end: 3;
+                    }
+                }
+    
+                & .navbarContentRight {
+                    display: flex;
+
+                    & .navbarContentRightGrid {
+                        display: grid;
+                        grid-template-rows: 8fr 44fr 8fr;
+
+                        & span, .navbarButton {
+                            grid-row-start: 2;
+                            grid-row-end: 3;
+                        }
+                    }
                 }
             }
         }

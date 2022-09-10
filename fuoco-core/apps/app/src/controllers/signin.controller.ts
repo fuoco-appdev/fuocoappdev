@@ -1,18 +1,18 @@
-import { select } from '@ngneat/elf';
-import { Subscription, skipWhile } from 'rxjs';
-import {Controller} from '../controller';
-import {WorldModel} from '../models';
-import { RoutePaths } from '../route-paths';
+import { select } from "@ngneat/elf";
+import { skipWhile, Subscription } from "rxjs";
+import { Controller } from "../controller";
+import { SigninModel } from "../models/signin.model";
+import { RoutePaths } from "../route-paths";
 
-class WorldController extends Controller {
-    private readonly _model: WorldModel;
+class SigninController extends Controller {
+    private readonly _model: SigninModel;
     private readonly _locationSubscription: Subscription;
 
     constructor() {
         super();
 
-        this._model = new WorldModel();
-
+        this._model = new SigninModel();
+        
         this.onLocationChanged = this.onLocationChanged.bind(this);
 
         this._locationSubscription = this._model.store.pipe(select((model => model.location)))
@@ -20,7 +20,7 @@ class WorldController extends Controller {
         .subscribe(this.onLocationChanged);
     }
 
-    public get model(): WorldModel {
+    public get model(): SigninModel {
         return this._model;
     }
 
@@ -31,10 +31,8 @@ class WorldController extends Controller {
     private onLocationChanged(location: Location): void {
         switch(location.pathname) {
             case RoutePaths.Default:
-                this._model.isVisible = true;
                 break;
             case RoutePaths.Landing:
-                this._model.isVisible = true;
                 break;
             default:
                 break;
@@ -42,4 +40,4 @@ class WorldController extends Controller {
     }
 }
 
-export default new WorldController();
+export default new SigninController();
