@@ -2,7 +2,7 @@ import { createStore, withProps } from "@ngneat/elf";
 import { Location } from "react-router-dom";
 import { Model } from "../model";
 
-export interface WindowProps {
+export interface WindowState {
     isSigninVisible: boolean;
     isSignupVisible: boolean;
     location: Location | undefined;
@@ -12,7 +12,7 @@ export class WindowModel extends Model {
     constructor() {
         super(createStore(
             {name: 'window'},
-            withProps<WindowProps>({
+            withProps<WindowState>({
                 isSigninVisible: false,
                 isSignupVisible: false,
                 location: undefined,

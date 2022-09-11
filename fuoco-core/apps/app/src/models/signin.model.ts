@@ -2,7 +2,7 @@ import { createStore, withProps } from "@ngneat/elf";
 import { Location } from "react-router-dom";
 import { Model } from "../model";
 
-export interface SigninProps {
+export interface SigninState {
     location?: Location;
 }
 
@@ -10,7 +10,7 @@ export class SigninModel extends Model {
     constructor() {
         super(createStore(
             {name: 'signin'},
-            withProps<SigninProps>({
+            withProps<SigninState>({
                 location: undefined,
             }),
         ));

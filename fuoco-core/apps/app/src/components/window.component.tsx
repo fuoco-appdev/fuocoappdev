@@ -4,19 +4,17 @@ import WindowController from '../controllers/window.controller';
 import WorldComponent from './world.component';
 import styles from './window.module.scss';
 import {Button} from '@fuoco.appdev/core-ui';
-import { WindowProps } from '../models/window.model';
+import { WindowState } from '../models/window.model';
 import { RoutePaths } from '../route-paths';
+import { Subscription } from 'rxjs';
 
 function SigninButtonComponent(): JSX.Element {
   const navigate = useNavigate();
-  const callback = React.useCallback(() => {
-    navigate(RoutePaths.Signin);
-  }, [navigate]);
   return (<Button 
     className={styles["navbarButton"]} 
     size="tiny" 
     type="text"
-    onClick={callback}
+    onClick={() => navigate(RoutePaths.Signin)}
     >Sign in</Button>);
 }
 
@@ -30,24 +28,25 @@ function SignupButtonComponent(): JSX.Element {
     >Sign up</Button>);
 }
 
-type WindowState = WindowProps;
+export interface WindowProps {}
 
 class WindowComponent extends React.Component<WindowProps, WindowState> {
+  private _stateSubscription: Subscription | undefined;
+
   public constructor(props: WindowProps) {
     super(props);
 
-    this.state = {...props};
-
-    this.onSigninClick = this.onSigninClick.bind(this);
-    this.onSignupClick = this.onSignupClick.bind(this);
+    this.state = WindowController.model.store.getValue();
   }
 
-  public static getDerivedStateFromProps(props: WindowProps, state: WindowState) {
-    if (props !== state) {
-      return props;
-    }
+  public override componentDidMount(): void {
+      this._stateSubscription = WindowController.model.store.asObservable().subscribe({
+        next: () => this.setState(WindowController.model.store.getValue())
+      });
+  }
 
-    return null;
+  public override componentWillUnmount(): void {
+      this._stateSubscription?.unsubscribe();
   }
 
   public override render(): React.ReactNode {
@@ -79,24 +78,11 @@ class WindowComponent extends React.Component<WindowProps, WindowState> {
         </div>
       );
   }
-
-  private onSigninClick(event: React.MouseEvent): void {
-    if (this.props.location) {
-      this.props.location.pathname = RoutePaths.Signup;
-    }
-  }
-
-  private onSignupClick(event: React.MouseEvent): void {
-    if (this.props.location) {
-      this.props.location.pathname = RoutePaths.Signin;
-    }
-  }
 }
 
 export default function ReactiveWindowComponent(): JSX.Element {
   const location = useLocation();
-  const props = WindowController.model.store.getValue();
   WindowController.model.location = location;
   
-  return (<WindowComponent {...props}/>);
+  return (<WindowComponent />);
 }

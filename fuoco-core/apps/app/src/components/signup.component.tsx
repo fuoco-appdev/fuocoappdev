@@ -1,17 +1,29 @@
 import React from 'react';
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import SignupController from '../controllers/signup.controller';
 import styles from './signup.module.scss';
-import { SignupProps } from '../models/signup.model';
-import { useObservable } from 'rxjs-hooks';
+import { SignupState } from '../models/signup.model';
+import { Subscription } from 'rxjs';
 
-type SignupState = SignupProps;
+export interface SignupProps {}
 
 class SignupComponent extends React.Component<SignupProps, SignupState> {
+  private _stateSubscription: Subscription | undefined;
+  
   public constructor(props: SignupProps) {
     super(props);
 
-    this.state = {...props};
+    this.state = SignupController.model.store.getValue();
+  }
+
+  public override componentDidMount(): void {
+    this._stateSubscription = SignupController.model.store.asObservable().subscribe({
+      next: () => this.setState(SignupController.model.store.getValue())
+    });
+  }
+
+  public override componentWillUnmount(): void {
+      this._stateSubscription?.unsubscribe();
   }
 
   public static getDerivedStateFromProps(props: SignupProps, state: SignupState) {

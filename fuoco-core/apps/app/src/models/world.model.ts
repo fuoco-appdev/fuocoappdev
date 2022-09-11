@@ -2,7 +2,7 @@ import { createStore, withProps } from '@ngneat/elf';
 import { Location } from 'react-router-dom';
 import {Model} from '../model';
 
-export interface WorldProps {
+export interface WorldState {
     location?: Location;
     isVisible?: boolean;
 }
@@ -11,7 +11,7 @@ export class WorldModel extends Model {
     constructor() {
         super(createStore(
             {name: 'world'},
-            withProps<WorldProps>({
+            withProps<WorldState>({
                 location: undefined,
                 isVisible: true,
             }),

@@ -5,11 +5,11 @@ import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUti
 import styles from './world.module.scss';
 import * as AtmosphereShader from '../shaders/atmosphere.shader';
 import * as TWEEN from '@tweenjs/tween.js';
-import {WorldProps} from '../models';
-import { useObservable } from 'rxjs-hooks';
+import {WorldState} from '../models';
 import { useLocation } from "react-router-dom";
+import { Subscription } from 'rxjs';
 
-type WorldState = WorldProps;
+export interface WorldProps {}
 
 class WorldComponent extends React.Component<WorldProps, WorldState> {
     private readonly _ref: React.RefObject<HTMLDivElement>;
@@ -18,13 +18,14 @@ class WorldComponent extends React.Component<WorldProps, WorldState> {
     private readonly _delta: {x: number, y: number};
     private readonly _minDotRadius: number;
     private readonly _maxDotRadius: number;
+    private _stateSubscription: Subscription | undefined;
     private _tween: TWEEN.Tween<{x: number, y: number}> | undefined;
     private _pressed: boolean;
 
     public constructor(props: WorldProps) {
         super(props);
 
-        this.state = {...props};
+        this.state = WorldController.model.store.getValue();
         
         this._ref = React.createRef();
         this._globeRotation = {x: 0, y: 0};
@@ -42,16 +43,16 @@ class WorldComponent extends React.Component<WorldProps, WorldState> {
         document.addEventListener('mousedown', this.onMouseDown);
         document.addEventListener('mouseup', this.onMouseUp);
     }
-
-    public static getDerivedStateFromProps(props: WorldProps, state: WorldState) {
-        if (props !== state) {
-          return props;
-        }
-    
-        return null;
+  
+    public override componentWillUnmount(): void {
+        this._stateSubscription?.unsubscribe();
     }
 
     public override async componentDidMount(): Promise<void> {
+        this._stateSubscription = WorldController.model.store.asObservable().subscribe({
+            next: () => this.setState(WorldController.model.store.getValue())
+        });
+
         const scene = new THREE.Scene();
         const width = this._ref.current?.clientWidth ?? 0;
         const height = this._ref.current?.clientHeight ?? 0;
@@ -196,7 +197,7 @@ class WorldComponent extends React.Component<WorldProps, WorldState> {
     }
 
     public override render(): React.ReactNode {
-        const {isVisible} = this.props;
+        const {isVisible} = this.state;
         return <div className={isVisible ? styles["root"] : ''} ref={this._ref}/>;
     }
 
