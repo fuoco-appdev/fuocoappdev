@@ -1,23 +1,57 @@
 import React from 'react';
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate} from "react-router-dom";
 import WindowController from '../controllers/window.controller';
 import WorldComponent from './world.component';
 import styles from './window.module.scss';
 import {Button} from '@fuoco.appdev/core-ui';
 import { WindowProps } from '../models/window.model';
-import { useObservable } from '@ngneat/react-rxjs';
 import { RoutePaths } from '../route-paths';
 
-class WindowComponent extends React.Component<WindowProps> {
+function SigninButtonComponent(): JSX.Element {
+  const navigate = useNavigate();
+  const callback = React.useCallback(() => {
+    navigate(RoutePaths.Signin);
+  }, [navigate]);
+  return (<Button 
+    className={styles["navbarButton"]} 
+    size="tiny" 
+    type="text"
+    onClick={callback}
+    >Sign in</Button>);
+}
+
+function SignupButtonComponent(): JSX.Element {
+  const navigate = useNavigate();
+  return (<Button 
+    className={styles["navbarButton"]} 
+    size="tiny" 
+    type="text"
+    onClick={() => navigate(RoutePaths.Signup)}
+    >Sign up</Button>);
+}
+
+type WindowState = WindowProps;
+
+class WindowComponent extends React.Component<WindowProps, WindowState> {
   public constructor(props: WindowProps) {
     super(props);
+
+    this.state = {...props};
 
     this.onSigninClick = this.onSigninClick.bind(this);
     this.onSignupClick = this.onSignupClick.bind(this);
   }
 
+  public static getDerivedStateFromProps(props: WindowProps, state: WindowState) {
+    if (props !== state) {
+      return props;
+    }
+
+    return null;
+  }
+
   public override render(): React.ReactNode {
-      const {isSigninVisible, isSignupVisible} = this.props;
+      const {isSigninVisible, isSignupVisible} = this.state;
 
       return (
         <div className={styles["root"]}>
@@ -32,16 +66,8 @@ class WindowComponent extends React.Component<WindowProps> {
                 </div>
                 <div className={styles["navbarContentRight"]}>
                   <div className={styles["navbarContentRightGrid"]}>
-                    {isSigninVisible ? <Button 
-                      className={styles["navbarButton"]} 
-                      size="tiny" 
-                      type="text"
-                      onClick={this.onSigninClick}>Sign in</Button> : null}
-                    {isSignupVisible ? <Button 
-                      className={styles["navbarButton"]} 
-                      size="tiny" 
-                      type="text"
-                      onClick={this.onSignupClick}>Sign up</Button> : null}
+                    {isSigninVisible ?  <SigninButtonComponent /> : null}
+                    {isSignupVisible ? <SignupButtonComponent /> : null}
                   </div>
                 </div>
               </div>
@@ -55,20 +81,22 @@ class WindowComponent extends React.Component<WindowProps> {
   }
 
   private onSigninClick(event: React.MouseEvent): void {
-    this.props.navigate?.(RoutePaths.Signup);
+    if (this.props.location) {
+      this.props.location.pathname = RoutePaths.Signup;
+    }
   }
 
   private onSignupClick(event: React.MouseEvent): void {
-    this.props.navigate?.(RoutePaths.Signin);
+    if (this.props.location) {
+      this.props.location.pathname = RoutePaths.Signin;
+    }
   }
 }
 
 export default function ReactiveWindowComponent(): JSX.Element {
   const location = useLocation();
-  const navigate = useNavigate();
+  const props = WindowController.model.store.getValue();
   WindowController.model.location = location;
-  WindowController.model.navigate = navigate;
-
-  const [props] = useObservable(WindowController.model.store);
-  return (<WindowComponent {...props} />);
+  
+  return (<WindowComponent {...props}/>);
 }

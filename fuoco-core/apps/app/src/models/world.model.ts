@@ -23,7 +23,9 @@ export class WorldModel extends Model {
     }
 
     public set location(location: Location) {
-        this.store.update((state) => ({...state, location: location}));
+        if (this.location !== location) {
+            this.store.update((state) => ({...state, location: location}));
+        }
     }
 
     public get isVisible(): boolean {
@@ -31,6 +33,8 @@ export class WorldModel extends Model {
     }
 
     public set isVisible(isVisible: boolean) {
-        this.store.update((state) => ({...state, isVisible: isVisible}));
+        if (this.isVisible !== isVisible) {
+            this.store.update((state) => ({...state, isVisible: isVisible}));
+        }
     }
 }

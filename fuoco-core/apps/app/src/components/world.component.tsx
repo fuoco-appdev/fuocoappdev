@@ -6,10 +6,12 @@ import styles from './world.module.scss';
 import * as AtmosphereShader from '../shaders/atmosphere.shader';
 import * as TWEEN from '@tweenjs/tween.js';
 import {WorldProps} from '../models';
-import { useObservable } from '@ngneat/react-rxjs';
+import { useObservable } from 'rxjs-hooks';
 import { useLocation } from "react-router-dom";
 
-class WorldComponent extends React.Component<WorldProps> {
+type WorldState = WorldProps;
+
+class WorldComponent extends React.Component<WorldProps, WorldState> {
     private readonly _ref: React.RefObject<HTMLDivElement>;
     private readonly _globeRotation: {x: number, y: number};
     private readonly _prevMousePosition: {x: number, y: number};
@@ -21,6 +23,8 @@ class WorldComponent extends React.Component<WorldProps> {
 
     public constructor(props: WorldProps) {
         super(props);
+
+        this.state = {...props};
         
         this._ref = React.createRef();
         this._globeRotation = {x: 0, y: 0};
@@ -37,6 +41,14 @@ class WorldComponent extends React.Component<WorldProps> {
         document.addEventListener('mousemove', this.onMouseMove);
         document.addEventListener('mousedown', this.onMouseDown);
         document.addEventListener('mouseup', this.onMouseUp);
+    }
+
+    public static getDerivedStateFromProps(props: WorldProps, state: WorldState) {
+        if (props !== state) {
+          return props;
+        }
+    
+        return null;
     }
 
     public override async componentDidMount(): Promise<void> {
@@ -169,7 +181,7 @@ class WorldComponent extends React.Component<WorldProps> {
             pivot.rotation.x = this._globeRotation.x;
             pivot.rotation.y = this._globeRotation.y;
 
-            if (!this.props.isVisible) {
+            if (!this.state.isVisible) {
                 pivot.scale.setScalar(0);
             }else {
                 pivot.scale.setScalar(1);
@@ -296,8 +308,7 @@ class WorldComponent extends React.Component<WorldProps> {
 
 export default function ReactiveWorldComponent() {
     const location = useLocation();
+    const props = WorldController.model.store.getValue();
     WorldController.model.location = location;
-
-    const [props] = useObservable(WorldController.model.store);
     return <WorldComponent {...props}/>;
 }

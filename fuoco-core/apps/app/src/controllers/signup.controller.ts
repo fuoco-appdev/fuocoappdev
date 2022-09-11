@@ -1,17 +1,17 @@
 import { select } from "@ngneat/elf";
 import { skipWhile, Subscription } from "rxjs";
 import { Controller } from "../controller";
-import { WindowModel } from "../models/window.model";
+import { SignupModel } from "../models/signup.model";
 import { RoutePaths } from "../route-paths";
 
-class WindowController extends Controller {
-    private readonly _model: WindowModel;
+class SignupController extends Controller {
+    private readonly _model: SignupModel;
     private readonly _locationSubscription: Subscription;
 
     constructor() {
         super();
 
-        this._model = new WindowModel();
+        this._model = new SignupModel();
         
         this.onLocationChanged = this.onLocationChanged.bind(this);
 
@@ -20,7 +20,7 @@ class WindowController extends Controller {
         .subscribe(this.onLocationChanged);
     }
 
-    public get model(): WindowModel {
+    public get model(): SignupModel {
         return this._model;
     }
 
@@ -31,20 +31,8 @@ class WindowController extends Controller {
     private onLocationChanged(location: Location): void {
         switch(location.pathname) {
             case RoutePaths.Default:
-                this._model.isSigninVisible = true;
-                this._model.isSignupVisible = false;
                 break;
             case RoutePaths.Landing:
-                this._model.isSigninVisible = true;
-                this._model.isSignupVisible = false;
-                break;
-            case RoutePaths.Signin:
-                this._model.isSigninVisible = false;
-                this._model.isSignupVisible = true;
-                break;
-            case RoutePaths.Signup:
-                this._model.isSigninVisible = true;
-                this._model.isSignupVisible = false;
                 break;
             default:
                 break;
@@ -52,4 +40,4 @@ class WindowController extends Controller {
     }
 }
 
-export default new WindowController();
+export default new SignupController();

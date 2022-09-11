@@ -1,9 +1,9 @@
 import React from 'react';
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import SigninController from '../controllers/signin.controller';
 import styles from './Signin.module.scss';
 import { SigninProps } from '../models/signin.model';
-import { useObservable } from '@ngneat/react-rxjs';
+import { useObservable } from 'rxjs-hooks';
 
 class SigninComponent extends React.Component<SigninProps> {
   public constructor(props: SigninProps) {
@@ -20,10 +20,9 @@ class SigninComponent extends React.Component<SigninProps> {
 }
 
 export default function ReactiveSigninComponent(): JSX.Element {
-const location = useLocation();
-  const navigate = useNavigate();
+  const location = useLocation();
+  const props = SigninController.model.store.getValue();
+  
   SigninController.model.location = location;
-  SigninController.model.navigate = navigate;
-  const [props] = useObservable(SigninController.model.store);
   return (<SigninComponent {...props} />);
 }

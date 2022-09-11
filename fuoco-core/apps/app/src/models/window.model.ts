@@ -1,12 +1,11 @@
 import { createStore, withProps } from "@ngneat/elf";
-import { Location, NavigateFunction } from "react-router-dom";
+import { Location } from "react-router-dom";
 import { Model } from "../model";
 
 export interface WindowProps {
     isSigninVisible: boolean;
     isSignupVisible: boolean;
-    location?: Location;
-    navigate?: NavigateFunction;
+    location: Location | undefined;
 }
 
 export class WindowModel extends Model {
@@ -17,40 +16,37 @@ export class WindowModel extends Model {
                 isSigninVisible: false,
                 isSignupVisible: false,
                 location: undefined,
-                navigate: undefined,
             }),
         ));
     }
 
-    public get isSigninVisibile(): boolean {
+    public get isSigninVisible(): boolean {
         return this.store.getValue().isSigninVisible;
     }
 
     public set isSigninVisible(isVisible: boolean) {
-        this.store.update((state) => ({...state, isSigninVisible: isVisible}));
+        if (this.isSigninVisible !== isVisible) {
+            this.store.update((state) => ({...state, isSigninVisible: isVisible}));
+        }
     }
 
     public get isSignupVisible(): boolean {
-        return this.store.getValue().isSigninVisible;
+        return this.store.getValue().isSignupVisible;
     }
 
     public set isSignupVisible(isVisible: boolean) {
-        this.store.update((state) => ({...state, isSignupVisible: isVisible}));
+        if (this.isSignupVisible !== isVisible) {
+            this.store.update((state) => ({...state, isSignupVisible: isVisible}));
+        }
     }
 
-    public get location(): Location {
+    public get location(): Location | undefined {
         return this.store.getValue().location;
     }
 
-    public set location(location: Location) {
-        this.store.update((state) => ({...state, location: location}));
-    }
-
-    public get navigate(): NavigateFunction {
-        return this.store.getValue().navigate;
-    }
-
-    public set navigate(navigate: NavigateFunction) {
-        this.store.update((state) => ({...state, navigate: navigate}));
+    public set location(location: Location | undefined) {
+        if (this.location !== location) {
+            this.store.update((state) => ({...state, location: location}));
+        }
     }
 }
