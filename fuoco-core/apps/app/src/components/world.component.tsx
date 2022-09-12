@@ -1,5 +1,6 @@
 import React from 'react';
 import WorldController from '../controllers/world.controller';
+import AppController from '../controllers/app.controller';
 import * as THREE from "three";
 import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils";
 import styles from './world.module.scss';
@@ -192,13 +193,11 @@ class WorldComponent extends React.Component<WorldProps, WorldState> {
         };
 
         animate = animate.bind(this);
-
         animate();
     }
 
     public override render(): React.ReactNode {
-        const {isVisible} = this.state;
-        return <div className={isVisible ? styles["root"] : ''} ref={this._ref}/>;
+        return <div className={styles["root"]} ref={this._ref}/>;
     }
 
     private async loadImageAsync(

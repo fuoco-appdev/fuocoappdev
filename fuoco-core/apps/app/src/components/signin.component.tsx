@@ -1,11 +1,42 @@
 import React from 'react';
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import {Auth} from '@fuoco.appdev/core-ui';
 import SigninController from '../controllers/signin.controller';
-import styles from './Signin.module.scss';
+import styles from './signin.module.scss';
 import { SigninState } from '../models/signin.model';
 import { Subscription } from 'rxjs';
+import AuthService from '../services/auth.service';
+import { RoutePaths } from '../route-paths';
 
 export interface SigninProps {}
+
+function AuthComponent(): JSX.Element {
+  const navigate = useNavigate();
+  return (
+    <Auth
+      providers={[
+        'apple',
+        'azure',
+        'bitbucket',
+        'discord',
+        'facebook',
+        'github',
+        'gitlab',
+        'google',
+        'twitch',
+        'twitter',
+      ]}
+      view={'sign_in'}
+      socialColors={true}
+      supabaseClient={AuthService.supabaseClient}
+      onForgotPassword={() => navigate(RoutePaths.ForgotPassword)}
+      onTermsOfService={() => navigate(RoutePaths.TermsOfService)}
+      onPrivacyPolicy={() => navigate(RoutePaths.PrivacyPolicy)}
+      onSignin={() => navigate(RoutePaths.Signin)}
+      onSignup={() => navigate(RoutePaths.Signup)}
+    />
+  );
+}
 
 class SigninComponent extends React.Component<SigninProps, SigninState> {
   private _stateSubscription: Subscription | undefined;
@@ -29,7 +60,9 @@ public override componentWillUnmount(): void {
   public override render(): React.ReactNode {
       return (
         <div className={styles["root"]}>
-          
+          <div className={styles["content"]}>
+            <AuthComponent />
+          </div>
         </div>
       );
   }

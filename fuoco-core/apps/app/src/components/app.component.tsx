@@ -8,15 +8,35 @@ import WindowComponent from './window.component';
 import LandingComponent from './landing.component';
 import SigninComponent from './signin.component';
 import SignupComponent from './signup.component';
+import AppController from '../controllers/app.controller';
 import { RoutePaths } from '../route-paths';
+import { AppState } from '../models';
+import { Subscription } from 'rxjs';
 
-export class AppComponent extends React.Component {
+export interface AppProps {}
+
+export class AppComponent extends React.Component<AppProps, AppState> {
+  private _stateSubscription: Subscription | undefined;
+  
+  constructor(props: AppProps) {
+    super(props);
+
+    this.state = AppController.model.store.getValue();
+  }
+
   public override componentWillUnmount(): void {
       SigninController.dispose();
       SignupController.dispose();
       WorldController.dispose();
       WindowController.dispose();
+      AppController.dispose();
+      this._stateSubscription?.unsubscribe();
+  }
 
+  public override componentDidMount(): void {
+    this._stateSubscription = AppController.model.store.asObservable().subscribe({
+      next: () => this.setState(AppController.model.store.getValue())
+    });
   }
 
   public override render(): React.ReactNode {

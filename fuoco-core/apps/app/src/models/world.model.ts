@@ -3,8 +3,8 @@ import { Location } from 'react-router-dom';
 import {Model} from '../model';
 
 export interface WorldState {
+    isVisible: boolean;
     location?: Location;
-    isVisible?: boolean;
 }
 
 export class WorldModel extends Model {
@@ -18,16 +18,6 @@ export class WorldModel extends Model {
         ));
     }
 
-    public get location(): Location {
-        return this.store.getValue().location;
-    }
-
-    public set location(location: Location) {
-        if (this.location !== location) {
-            this.store.update((state) => ({...state, location: location}));
-        }
-    }
-
     public get isVisible(): boolean {
         return this.store.getValue().isVisible;
     }
@@ -35,6 +25,16 @@ export class WorldModel extends Model {
     public set isVisible(isVisible: boolean) {
         if (this.isVisible !== isVisible) {
             this.store.update((state) => ({...state, isVisible: isVisible}));
+        }
+    }
+
+    public get location(): Location {
+        return this.store.getValue().location;
+    }
+
+    public set location(location: Location) {
+        if (this.location !== location) {
+            this.store.update((state) => ({...state, location: location}));
         }
     }
 }

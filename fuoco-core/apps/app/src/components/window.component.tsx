@@ -7,6 +7,7 @@ import {Button} from '@fuoco.appdev/core-ui';
 import { WindowState } from '../models/window.model';
 import { RoutePaths } from '../route-paths';
 import { Subscription } from 'rxjs';
+import {Strings} from '../localization';
 
 function SigninButtonComponent(): JSX.Element {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ function SigninButtonComponent(): JSX.Element {
     size="tiny" 
     type="text"
     onClick={() => navigate(RoutePaths.Signin)}
-    >Sign in</Button>);
+    >{Strings.signin}</Button>);
 }
 
 function SignupButtonComponent(): JSX.Element {
@@ -25,7 +26,7 @@ function SignupButtonComponent(): JSX.Element {
     size="tiny" 
     type="text"
     onClick={() => navigate(RoutePaths.Signup)}
-    >Sign up</Button>);
+    >{Strings.signup}</Button>);
 }
 
 export interface WindowProps {}

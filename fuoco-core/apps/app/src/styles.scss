@@ -27,4 +27,8 @@
 body {
     margin: 0;
     font-family: Poppins;
+    
+    & #root {
+        overflow: hidden;
+    }
 }

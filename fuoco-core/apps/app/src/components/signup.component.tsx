@@ -1,11 +1,42 @@
 import React from 'react';
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import {Auth} from '@fuoco.appdev/core-ui';
 import SignupController from '../controllers/signup.controller';
 import styles from './signup.module.scss';
 import { SignupState } from '../models/signup.model';
 import { Subscription } from 'rxjs';
+import AuthService from '../services/auth.service';
+import { RoutePaths } from '../route-paths';
 
 export interface SignupProps {}
+
+function AuthComponent(): JSX.Element {
+  const navigate = useNavigate();
+  return (
+    <Auth
+      providers={[
+        'apple',
+        'azure',
+        'bitbucket',
+        'discord',
+        'facebook',
+        'github',
+        'gitlab',
+        'google',
+        'twitch',
+        'twitter',
+      ]}
+      view={'sign_up'}
+      socialColors={true}
+      supabaseClient={AuthService.supabaseClient}
+      onForgotPassword={() => navigate(RoutePaths.ForgotPassword)}
+      onTermsOfService={() => navigate(RoutePaths.TermsOfService)}
+      onPrivacyPolicy={() => navigate(RoutePaths.PrivacyPolicy)}
+      onSignin={() => navigate(RoutePaths.Signin)}
+      onSignup={() => navigate(RoutePaths.Signup)}
+    />
+  );
+}
 
 class SignupComponent extends React.Component<SignupProps, SignupState> {
   private _stateSubscription: Subscription | undefined;
@@ -26,18 +57,12 @@ class SignupComponent extends React.Component<SignupProps, SignupState> {
       this._stateSubscription?.unsubscribe();
   }
 
-  public static getDerivedStateFromProps(props: SignupProps, state: SignupState) {
-    if (props !== state) {
-      return props;
-    }
-
-    return null;
-  }
-
   public override render(): React.ReactNode {
       return (
         <div className={styles["root"]}>
-          
+          <div className={styles["content"]}>
+            <AuthComponent />
+          </div>
         </div>
       );
   }
@@ -45,8 +70,7 @@ class SignupComponent extends React.Component<SignupProps, SignupState> {
 
 export default function ReactiveSignupComponent(): JSX.Element {
     const location = useLocation();
-    const props = SignupController.model.store.getValue();
-
     SignupController.model.location = location;
-    return (<SignupComponent {...props} />);
+
+    return (<SignupComponent />);
 }
