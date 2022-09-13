@@ -17,11 +17,10 @@ function AuthComponent(): JSX.Element {
       providers={[
         'apple',
         'azure',
-        'bitbucket',
+        'spotify',
         'discord',
         'facebook',
         'github',
-        'gitlab',
         'google',
         'twitch',
         'twitter',

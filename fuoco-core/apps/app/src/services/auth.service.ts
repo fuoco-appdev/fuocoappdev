@@ -1,12 +1,11 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js'
+import {createClient, SupabaseClient} from '@supabase/supabase-js';
+import ConfigService from './config.service';
 
 class AuthService {
-    private readonly _supabaseClient: SupabaseClient;
+    private _supabaseClient!: SupabaseClient;
 
     constructor() {
-        this._supabaseClient = createClient(
-            'https://vsejdtreyvcnevkkffiq.supabase.co',
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZzZWpkdHJleXZjbmV2a2tmZmlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjA0ODYzMDcsImV4cCI6MTk3NjA2MjMwN30.oqbLPY9hpnCYBh28DM-r8pHKmYyvSqNgbFfNlZcjgXU');
+        this._supabaseClient = createClient(ConfigService.supabase.url, ConfigService.supabase.key);
     }
 
     public get supabaseClient(): SupabaseClient {
