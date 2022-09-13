@@ -8,6 +8,7 @@ import WindowComponent from './window.component';
 import LandingComponent from './landing.component';
 import SigninComponent from './signin.component';
 import SignupComponent from './signup.component';
+import { TermsOfServiceComponent } from './terms-of-service.component';
 import AppController from '../controllers/app.controller';
 import { RoutePaths } from '../route-paths';
 import { AppState } from '../models';
@@ -48,6 +49,7 @@ export class AppComponent extends React.Component<AppProps, AppState> {
               <Route path={RoutePaths.Landing} element={<LandingComponent />}/>
               <Route path={RoutePaths.Signin} element={<SigninComponent />}/>
               <Route path={RoutePaths.Signup} element={<SignupComponent />}/>
+              <Route path={RoutePaths.TermsOfService} element={<TermsOfServiceComponent />}/>
             </Route>
           </Routes>
         </BrowserRouter>
