@@ -10,6 +10,7 @@ import LandingComponent from './landing.component';
 import SigninComponent from './signin.component';
 import SignupComponent from './signup.component';
 import TermsOfServiceComponent from './terms-of-service.component';
+import PrivacyPolicyComponent from './privacy-policy.component';
 import AppController from '../controllers/app.controller';
 import { RoutePaths } from '../route-paths';
 
@@ -34,6 +35,7 @@ export class AppComponent extends React.Component {
               <Route path={RoutePaths.Signin} element={<SigninComponent />}/>
               <Route path={RoutePaths.Signup} element={<SignupComponent />}/>
               <Route path={RoutePaths.TermsOfService} element={<TermsOfServiceComponent />}/>
+              <Route path={RoutePaths.PrivacyPolicy} element={<PrivacyPolicyComponent />}/>
             </Route>
           </Routes>
         </BrowserRouter>

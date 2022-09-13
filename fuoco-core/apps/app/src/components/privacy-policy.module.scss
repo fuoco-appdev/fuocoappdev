@@ -1,0 +1,44 @@
+.root {
+    display: grid;
+    grid-template-columns: 132fr 352fr 956fr;
+    height: 100%;
+
+    & .content {
+        display: flex;
+        grid-column-start: 2;
+        grid-column-end: 3;
+        margin-bottom: 30%;
+
+        & :hover {
+            cursor: auto;
+        }
+        
+        & :active {
+            cursor: auto;
+        }
+    }
+
+    & .backButtonContainer {
+        display: grid;
+        position: absolute;
+        grid-template-columns: 68fr 426fr 956fr;
+        width: 100%;
+
+        & :hover {
+            cursor: auto;
+        }
+        
+        & :active {
+            cursor: auto;
+        }
+
+        & .backButton {
+            position: relative;
+            display: flex;
+            align-items: center;
+            height: 38px;
+            grid-column-start: 2;
+            grid-column-end: 3;
+        }
+    }
+}
