@@ -1,27 +1,13 @@
 import { createStore, withProps } from '@ngneat/elf';
 import {Model} from '../model';
 
-export interface AppState {
-    isLoading: boolean;
-}
+export interface AppState {}
 
 export class AppModel extends Model {
     constructor() {
         super(createStore(
             {name: 'app'},
-            withProps<AppState>({
-                isLoading: false,
-            }),
+            withProps<AppState>({}),
         ));
-    }
-
-    public get isLoading(): boolean {
-        return this.store.getValue().isLoading;
-    }
-
-    public set isLoading(isLoading: boolean) {
-        if (this.isLoading !== isLoading) {
-            this.store.update((state) => ({...state, isLoading: isLoading}));
-        }
     }
 }

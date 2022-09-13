@@ -1,5 +1,5 @@
 import { select } from "@ngneat/elf";
-import { skipWhile, Subscription } from "rxjs";
+import { skipWhile, Subscription, tap } from "rxjs";
 import { Controller } from "../controller";
 import { WindowModel } from "../models/window.model";
 import { RoutePaths } from "../route-paths";
@@ -15,7 +15,8 @@ class WindowController extends Controller {
         
         this.onLocationChanged = this.onLocationChanged.bind(this);
 
-        this._locationSubscription = this._model.store.pipe(select((model => model.location)))
+        this._locationSubscription = this._model.store.asObservable()
+        .pipe(select((model => model.location)))
         .pipe(skipWhile((location: Location) => location === undefined))
         .subscribe(this.onLocationChanged);
     }

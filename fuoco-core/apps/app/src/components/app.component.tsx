@@ -4,40 +4,24 @@ import WorldController from '../controllers/world.controller';
 import WindowController from '../controllers/window.controller';
 import SigninController from '../controllers/signin.controller';
 import SignupController from '../controllers/signup.controller';
+import TermsOfServiceController from '../controllers/terms-of-service.controller';
 import WindowComponent from './window.component';
 import LandingComponent from './landing.component';
 import SigninComponent from './signin.component';
 import SignupComponent from './signup.component';
-import { TermsOfServiceComponent } from './terms-of-service.component';
+import TermsOfServiceComponent from './terms-of-service.component';
 import AppController from '../controllers/app.controller';
 import { RoutePaths } from '../route-paths';
-import { AppState } from '../models';
-import { Subscription } from 'rxjs';
 
-export interface AppProps {}
-
-export class AppComponent extends React.Component<AppProps, AppState> {
-  private _stateSubscription: Subscription | undefined;
-  
-  constructor(props: AppProps) {
-    super(props);
-
-    this.state = AppController.model.store.getValue();
-  }
-
+export class AppComponent extends React.Component {
   public override componentWillUnmount(): void {
+      console.log("unmount");
       SigninController.dispose();
       SignupController.dispose();
       WorldController.dispose();
       WindowController.dispose();
       AppController.dispose();
-      this._stateSubscription?.unsubscribe();
-  }
-
-  public override componentDidMount(): void {
-    this._stateSubscription = AppController.model.store.asObservable().subscribe({
-      next: () => this.setState(AppController.model.store.getValue())
-    });
+      TermsOfServiceController.dispose();
   }
 
   public override render(): React.ReactNode {

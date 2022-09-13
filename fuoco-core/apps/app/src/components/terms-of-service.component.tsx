@@ -23,7 +23,7 @@ function BackButton(): JSX.Element {
     );
 }
 
-export class TermsOfServiceComponent extends React.Component<TermsOfServiceProps, TermsOfServiceState> {
+class TermsOfServiceComponent extends React.Component<TermsOfServiceProps, TermsOfServiceState> {
     private _stateSubscription: Subscription | undefined;
 
     public constructor(props: TermsOfServiceProps) {
@@ -62,4 +62,8 @@ export class TermsOfServiceComponent extends React.Component<TermsOfServiceProps
             </div>
         );
   }
+}
+
+export default function ReactiveTermsOfServiceComponent(): JSX.Element {
+    return (<TermsOfServiceComponent />);
 }

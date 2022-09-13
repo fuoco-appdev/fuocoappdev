@@ -41,7 +41,7 @@ class WindowComponent extends React.Component<WindowProps, WindowState> {
   }
 
   public override componentDidMount(): void {
-      this._stateSubscription = WindowController.model.store.asObservable().subscribe({
+      this._stateSubscription = WindowController.model.store.subscribe({
         next: () => this.setState(WindowController.model.store.getValue())
       });
   }
