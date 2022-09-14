@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation, useNavigate } from "react-router-dom";
+import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
 import {Auth} from '@fuoco.appdev/core-ui';
 import SigninController from '../controllers/signin.controller';
 import styles from './signin.module.scss';
@@ -33,6 +33,7 @@ function AuthComponent(): JSX.Element {
       onSigninRedirect={() => navigate(RoutePaths.Signin)}
       onSignupRedirect={() => navigate(RoutePaths.Signup)}
       onAuthenticating={() => LoadingController.updateIsLoading(true)}
+      redirectTo={RoutePaths.Account}
     />
   );
 }
@@ -47,7 +48,7 @@ class SigninComponent extends React.Component<SigninProps, SigninState> {
   }
 
   public override componentDidMount(): void {
-    this._stateSubscription = SigninController.model.store.asObservable().subscribe({
+    this._stateSubscription = SigninController.model.store.subscribe({
       next: () => this.setState(SigninController.model.store.getValue())
     });
 }

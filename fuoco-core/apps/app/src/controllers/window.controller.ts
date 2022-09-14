@@ -20,7 +20,7 @@ class WindowController extends Controller {
 
         AuthService.supabaseClient.auth.onAuthStateChange(this.onAuthStateChanged)
 
-        this._locationSubscription = this._model.store.asObservable()
+        this._locationSubscription = this._model.store
         .pipe(select((model => model.location)))
         .pipe(skipWhile((location: Location) => location === undefined))
         .subscribe(this.onLocationChanged);
