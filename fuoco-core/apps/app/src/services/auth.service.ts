@@ -1,4 +1,4 @@
-import {createClient, SupabaseClient} from '@supabase/supabase-js';
+import {createClient, SupabaseClient, User} from '@supabase/supabase-js';
 import ConfigService from './config.service';
 
 class AuthService {
@@ -10,6 +10,16 @@ class AuthService {
 
     public get supabaseClient(): SupabaseClient {
         return this._supabaseClient;
+    }
+
+    public get user(): User | null {
+        return this.supabaseClient.auth.user();
+    }
+
+    public signout(): void {
+        if (this.user) {
+            this.supabaseClient.auth.signOut();
+        }
     }
 }
 

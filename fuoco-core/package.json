@@ -24,10 +24,11 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@fuoco.appdev/core-ui": "^0.4.11",
+    "@fuoco.appdev/core-ui": "^0.4.13",
     "@fuoco.appdev/core-api": "^0.1.0",
     "@ngneat/elf": "^2.1.0",
     "@ngneat/elf-entities": "^4.4.2",
+    "@ngneat/elf-persist-state": "^1.1.6",
     "@nrwl/cli": "14.6.3",
     "@nrwl/cypress": "14.6.3",
     "@nrwl/eslint-plugin-nx": "14.6.3",

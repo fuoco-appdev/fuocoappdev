@@ -7,6 +7,7 @@ import { SigninState } from '../models/signin.model';
 import { Subscription } from 'rxjs';
 import AuthService from '../services/auth.service';
 import { RoutePaths } from '../route-paths';
+import LoadingController from '../controllers/loading.controller';
 
 export interface SigninProps {}
 
@@ -15,8 +16,6 @@ function AuthComponent(): JSX.Element {
   return (
     <Auth
       providers={[
-        'apple',
-        'azure',
         'spotify',
         'discord',
         'facebook',
@@ -28,11 +27,12 @@ function AuthComponent(): JSX.Element {
       view={'sign_in'}
       socialColors={true}
       supabaseClient={AuthService.supabaseClient}
-      onForgotPassword={() => navigate(RoutePaths.ForgotPassword)}
-      onTermsOfService={() => navigate(RoutePaths.TermsOfService)}
-      onPrivacyPolicy={() => navigate(RoutePaths.PrivacyPolicy)}
-      onSignin={() => navigate(RoutePaths.Signin)}
-      onSignup={() => navigate(RoutePaths.Signup)}
+      onForgotPasswordRedirect={() => navigate(RoutePaths.ForgotPassword)}
+      onTermsOfServiceRedirect={() => navigate(RoutePaths.TermsOfService)}
+      onPrivacyPolicyRedirect={() => navigate(RoutePaths.PrivacyPolicy)}
+      onSigninRedirect={() => navigate(RoutePaths.Signin)}
+      onSignupRedirect={() => navigate(RoutePaths.Signup)}
+      onAuthenticating={() => LoadingController.updateIsLoading(true)}
     />
   );
 }

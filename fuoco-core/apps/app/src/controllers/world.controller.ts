@@ -28,6 +28,10 @@ class WorldController extends Controller {
         this._locationSubscription.unsubscribe();
     }
 
+    public updateIsVisible(isVisible: boolean): void {
+        this._model.isVisible = isVisible;
+    }
+
     private onLocationChanged(location: Location): void {
         switch(location.pathname) {
             case RoutePaths.Default:
