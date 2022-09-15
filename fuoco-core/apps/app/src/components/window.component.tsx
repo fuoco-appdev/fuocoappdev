@@ -65,7 +65,7 @@ class WindowComponent extends React.Component<WindowProps, WindowState> {
         .subscribe({
           next: (isAuthenticated: boolean) => {
             if (isAuthenticated === true) {
-              this.props.navigation(RoutePaths.Account);
+              this.props.navigation(RoutePaths.User);
             }
             else if (isAuthenticated === false) {
               this.props.navigation(RoutePaths.Signin);

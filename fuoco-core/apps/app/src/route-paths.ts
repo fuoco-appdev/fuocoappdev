@@ -6,5 +6,5 @@ export enum RoutePaths {
     ForgotPassword = '/forgot-password',
     TermsOfService = '/terms-of-service',
     PrivacyPolicy = '/privacy-policy',
-    Account = '/account'
+    User = '/user'
 };

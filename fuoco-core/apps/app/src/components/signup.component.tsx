@@ -33,7 +33,7 @@ function AuthComponent(): JSX.Element {
       onSigninRedirect={() => navigate(RoutePaths.Signin)}
       onSignupRedirect={() => navigate(RoutePaths.Signup)}
       onAuthenticating={() => LoadingController.updateIsLoading(true)}
-      redirectTo={RoutePaths.Account}
+      redirectTo={RoutePaths.User}
     />
   );
 }

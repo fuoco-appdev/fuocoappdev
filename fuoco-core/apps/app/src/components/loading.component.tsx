@@ -1,6 +1,7 @@
 import React from 'react';
-import { NavigateFunction, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { NavigateFunction, useLocation, useNavigate } from 'react-router-dom';
 import WorldController from '../controllers/world.controller';
+import WindowController from '../controllers/window.controller';
 import LoadingController from '../controllers/loading.controller';
 import { skipWhile, Subscription } from 'rxjs';
 import { select } from '@ngneat/elf';
@@ -21,6 +22,9 @@ class LoadingComponent extends React.Component<LoadingProps> {
 
     public override componentDidMount(): void {
         WorldController.updateIsVisible(false);
+        WindowController.updateIsSigninVisible(false);
+        WindowController.updateIsSignupVisible(false);
+        WindowController.updateIsSignoutVisible(false);
         
         this._locationSubscription = LoadingController.model.store
         .pipe(select((model => model.location)))
@@ -40,13 +44,9 @@ class LoadingComponent extends React.Component<LoadingProps> {
     }
 
     private onLocationChanged(location: Location | undefined): void {
-        if (location?.search.includes('?error=')) {
-            LoadingController.updateIsLoading(false);
-            setTimeout(() => this.props.navigate(RoutePaths.Signup), 100);
-        }
-
         if (!location?.search.includes('#access_token=')) {
             LoadingController.updateIsLoading(false);
+            setTimeout(() => this.props.navigate(RoutePaths.Signup), 100);
         }
     }
 }

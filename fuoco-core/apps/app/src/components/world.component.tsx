@@ -1,6 +1,5 @@
 import React from 'react';
 import WorldController from '../controllers/world.controller';
-import AppController from '../controllers/app.controller';
 import * as THREE from "three";
 import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils";
 import styles from './world.module.scss';

@@ -1,6 +1,6 @@
 import { select } from "@ngneat/elf";
 import { AuthChangeEvent, Session } from "@supabase/supabase-js";
-import { skipWhile, Subscription, tap } from "rxjs";
+import { skipWhile, Subscription } from "rxjs";
 import { Controller } from "../controller";
 import { WindowModel } from "../models/window.model";
 import { RoutePaths } from "../route-paths";
@@ -34,6 +34,18 @@ class WindowController extends Controller {
         this._locationSubscription.unsubscribe();
     }
 
+    public updateIsSigninVisible(isVisible: boolean): void {
+        this._model.isSigninVisible = isVisible;
+    }
+
+    public updateIsSignupVisible(isVisible: boolean): void {
+        this._model.isSignupVisible = isVisible;
+    }
+
+    public updateIsSignoutVisible(isVisible: boolean): void {
+        this._model.isSignoutVisible = isVisible;
+    }
+
     private onLocationChanged(location: Location): void {
         switch(location.pathname) {
             case RoutePaths.Default:
@@ -60,7 +72,7 @@ class WindowController extends Controller {
                 break;
         }
 
-        if (location.pathname.includes(RoutePaths.Account)) {
+        if (location.pathname.includes(RoutePaths.User)) {
             this._model.isSigninVisible = false;
             this._model.isSignupVisible = false;
             this._model.isSignoutVisible = true;
