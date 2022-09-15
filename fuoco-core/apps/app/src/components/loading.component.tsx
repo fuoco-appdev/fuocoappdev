@@ -44,6 +44,10 @@ class LoadingComponent extends React.Component<LoadingProps> {
             LoadingController.updateIsLoading(false);
             setTimeout(() => this.props.navigate(RoutePaths.Signup), 100);
         }
+
+        if (!location?.search.includes('#access_token=')) {
+            LoadingController.updateIsLoading(false);
+        }
     }
 }
 

@@ -2,7 +2,7 @@ import { select } from "@ngneat/elf";
 import { skipWhile, Subscription } from "rxjs";
 import { Controller } from "../controller";
 import { SignupModel } from "../models/signup.model";
-import { RoutePaths } from "../route-paths";
+import LoadingController from "./loading.controller";
 
 class SignupController extends Controller {
     private readonly _model: SignupModel;
@@ -29,13 +29,8 @@ class SignupController extends Controller {
     }
 
     private onLocationChanged(location: Location): void {
-        switch(location.pathname) {
-            case RoutePaths.Default:
-                break;
-            case RoutePaths.Landing:
-                break;
-            default:
-                break;
+        if (!location?.search.includes('#access_token=')) {
+            LoadingController.updateIsLoading(false);
         }
     }
 }
