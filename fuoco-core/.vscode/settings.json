@@ -1,3 +1,6 @@
 {
-    "deno.enablePaths": ["apps/api"],
+    "deno.enable": true,
+    "deno.enablePaths": [
+        "apps/api"
+    ]
 }
