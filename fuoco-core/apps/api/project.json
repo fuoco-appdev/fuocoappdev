@@ -23,25 +23,6 @@
        "parallel": false
       }
     },
-    "build": {
-      "executor": "@nrwl/node:webpack",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "dist/apps/api",
-        "main": "apps/api/src/index.ts",
-        "tsConfig": "apps/api/tsconfig.app.json",
-        "assets": ["apps/api/src/assets"],
-        "webpackConfig": "apps/api/webpack.config.js"
-      },
-      "configurations": {
-        "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false,
-          "fileReplacements": []
-        }
-      }
-    },
     "serve": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {

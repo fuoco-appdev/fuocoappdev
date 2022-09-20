@@ -25,7 +25,6 @@
   },
   "devDependencies": {
     "@fuoco.appdev/core-ui": "^0.4.13",
-    "@fuoco.appdev/core-api": "^0.2.4",
     "@ngneat/elf": "^2.1.0",
     "@ngneat/elf-entities": "^4.4.2",
     "@ngneat/elf-persist-state": "^1.1.6",

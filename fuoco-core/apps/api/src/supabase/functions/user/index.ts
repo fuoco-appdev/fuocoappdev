@@ -1,12 +1,15 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // Follow this setup guide to integrate the Deno language server with your editor:
 // https://deno.land/manual/getting_started/setup_your_environment
 // This enables autocomplete, go to definition, etc.
 
-import { serve } from "https://deno.land/std@0.131.0/http/server.ts";
-import { Core } from "https://fuoco-appdev-core-api-mwr1199vbg80.deno.dev/core/src/index.ts";
+import { Core } from "https://fuoco-appdev-core-api-rfpbrbxw9060.deno.dev/core/src/index.ts";
 import { UserController } from "../controllers/index.ts";
+import PostgresService from "../services/postgres.service.ts";
 
-serve(async () => await Core.registerHandler([UserController]));
+const app = Core.registerApp([UserController]);
+app.addEventListener('listen', async () => { await PostgresService.client.connect(); });
+app.listen({port: 8000});
 
 // To invoke:
 // curl -i --location --request POST 'http://localhost:54321/functions/v1/' \
