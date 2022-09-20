@@ -1,20 +1,23 @@
-import { Client } from "https://deno.land/x/postgres@v0.16.1/mod.ts";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// deno-lint-ignore-file no-explicit-any
+/* eslint-disable @typescript-eslint/no-inferrable-types */
+import {postgres} from "https://deno.land/x/postgresql@v2.0.0-beta.5/mod.js"
 import { config } from "https://deno.land/x/dotenv@v3.2.0/mod.ts";
 
 class PostgresService {
-    private readonly _client: Client;
+    private readonly _sql: any;
 
     constructor() {
-        const postgresUrl = config()["DATABASE_URL"];
-        console.log(config());
-        if (!postgresUrl) {
+        const env = config({path: '../../.env'});
+        const url: string = env.DATABASE_URL;
+        if (!url) {
             throw new Error("DATABASE_URL doesn't exist");
         }
-        this._client = new Client(postgresUrl);
+        this._sql = postgres();
     }
 
-    public get client(): Client {
-        return this._client;
+    public get sql(): any  {
+        return this._sql;
     }
 }
 

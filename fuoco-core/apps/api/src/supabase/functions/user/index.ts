@@ -5,10 +5,8 @@
 
 import { Core } from "https://fuoco-appdev-core-api-rfpbrbxw9060.deno.dev/core/src/index.ts";
 import { UserController } from "../controllers/index.ts";
-import PostgresService from "../services/postgres.service.ts";
 
 const app = Core.registerApp([UserController]);
-app.addEventListener('listen', async () => { await PostgresService.client.connect(); });
 app.listen({port: 8000});
 
 // To invoke:
