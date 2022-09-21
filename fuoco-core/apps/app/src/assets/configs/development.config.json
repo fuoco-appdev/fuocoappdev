@@ -1,6 +1,6 @@
 {
     "superbase": {
-        "url": "https://vsejdtreyvcnevkkffiq.supabase.co",
-        "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZzZWpkdHJleXZjbmV2a2tmZmlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjA0ODYzMDcsImV4cCI6MTk3NjA2MjMwN30.oqbLPY9hpnCYBh28DM-r8pHKmYyvSqNgbFfNlZcjgXU"
+        "url": "http://localhost:54323",
+        "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24ifQ.625_WdcF3KHqz5amU0x2X5WWHP-OEs_4qj0ssLNHzTs"
     }
 }

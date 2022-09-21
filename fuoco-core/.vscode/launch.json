@@ -3,24 +3,5 @@
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
-    "configurations": [
-        {
-            "request": "launch",
-            "name": "Serve User",
-            "type": "node",
-            "cwd": "${workspaceFolder}\\apps\\api\\src\\supabase\\functions\\user",
-            "runtimeExecutable": "deno",
-            "runtimeArgs": [
-                "run",
-                "--inspect-brk",
-                "--allow-all",
-                "--allow-net",
-                "--allow-env",
-                "--allow-read",
-                "index.ts"
-            ],
-            "attachSimplePort": 9229,
-            "outputCapture": "std"
-        }
-    ]
+    "configurations": []
 }
