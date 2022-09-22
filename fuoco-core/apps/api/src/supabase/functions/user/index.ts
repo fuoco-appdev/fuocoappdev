@@ -3,7 +3,7 @@
 // https://deno.land/manual/getting_started/setup_your_environment
 // This enables autocomplete, go to definition, etc.
 
-import { Core } from "https://fuoco-appdev-core-api-k76402ahqk3g.deno.dev/core/src/index.ts";
+import { Core } from "https://fuoco-appdev-core-api-2dwzegm3eshg.deno.dev/core/src/index.ts";
 import { UserController } from "../controllers/index.ts";
 
 const app = Core.registerApp([UserController]);
