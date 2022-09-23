@@ -11,12 +11,16 @@ export class AuthGuard extends GuardExecuter {
         Oak.RouteParams<string>,
         Record<string | number, string | undefined>
       >): boolean {
-        console.log(ctx);
         let isAuthenticated = false;
-        SupabaseService.client.auth.api.getUser("")
-        .then((value: { user: User | null; data: User | null; error: any | null; }) => {
-            isAuthenticated = value.user ? true : false;
-        });
+        if (ctx.request.headers.has("authorization")) {
+            const token = ctx.request.headers.get("authorization") ?? '';
+            SupabaseService.client.auth.api.getUser(token)
+            .then((value: { user: User | null; data: User | null; error: any | null; }) => {
+                console.log(value);
+                isAuthenticated = value.user ? true : false;
+            });
+        }
+
         return  isAuthenticated;
     }
 }

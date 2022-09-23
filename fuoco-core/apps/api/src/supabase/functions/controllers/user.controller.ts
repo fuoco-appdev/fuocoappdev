@@ -14,6 +14,7 @@ export class UserController {
     }
 
     @Post('/create/:id')
+    @Guard(AuthGuard)
     public createUser(context: Oak.RouterContext<string, Oak.RouteParams<string>, Record<string, any>>): void {
         context.response.body = JSON.stringify({});
     }
@@ -24,11 +25,13 @@ export class UserController {
     }
 
     @Post('/update/:id')
+    @Guard(AuthGuard)
     public updateUser(context: Oak.RouterContext<string, Oak.RouteParams<string>, Record<string, any>>): void {
         context.response.body = JSON.stringify({});
     }
 
     @Post('/delete/:id')
+    @Guard(AuthGuard)
     public deleteUser(context: Oak.RouterContext<string, Oak.RouteParams<string>, Record<string, any>>): void {
         context.response.body = JSON.stringify({});
     }
