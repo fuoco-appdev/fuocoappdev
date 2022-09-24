@@ -72,6 +72,7 @@
     "lodash.throttle": "^4.1.1",
     "ts-jest": "28.0.5",
     "ts-node": "10.9.1",
+    "ts-proto": "^1.126.1",
     "typescript": "~4.7.2"
   }
 }

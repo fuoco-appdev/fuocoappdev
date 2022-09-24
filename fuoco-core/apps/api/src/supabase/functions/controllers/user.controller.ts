@@ -1,6 +1,6 @@
 // deno-lint-ignore-file no-explicit-any ban-unused-ignore
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {Controller, Post, Guard} from 'https://fuoco-appdev-core-api-2dwzegm3eshg.deno.dev/core/src/index.ts';
+import {Controller, Post, Guard} from 'https://fuoco-appdev-core-api-efssx8bbg0r0.deno.dev/core/src/index.ts';
 import * as Oak from "https://deno.land/x/oak@v11.1.0/mod.ts";
 import UserService from '../services/user.service.ts';
 import { AuthGuard } from '../guards/auth.guard.ts';

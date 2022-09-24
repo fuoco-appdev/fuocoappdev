@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package core.user;
+
+import "core.app";
+
+enum UserRole {
+    ADMIN = 0;
+    USER = 1;
+}
+
+enum UserRequestStatus {
+    REQUESTED = 0;
+    ACCEPTED = 1;
+    UPDATE_REQUESTED = 2;
+    UPDATE_ACCEPTED = 3;
+}
+
+message Location {
+    float latitude = 1;
+    float longitude = 2;
+}
+
+message User {
+    string id = 1;
+    string created_at = 2;
+    string supabase_id = 3;
+    UserRole role = 4;
+    string company = 5;
+    string email = 6;
+    string phone_number = 7;
+    Location location = 8;
+    string language = 9;
+    UserRequestStatus request_status = 10;
+    repeated App apps = 11;
+}
+
+message Users {
+    repeated User users = 1;
+}

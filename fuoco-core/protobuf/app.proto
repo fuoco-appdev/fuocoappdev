@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package core.app;
+
+enum AppStatus {
+    USER_STORIES = 1;
+    DESIGN = 2;
+    DEVELOPMENT = 3;
+    RELEASE = 4;
+}
+
+enum ImageType {
+    PROFILE = 1;
+    COVER = 2;
+}
+
+message Product {
+    string id = 1;
+}
+
+message Link {
+    string name = 1;
+    string url = 2;
+}
+
+message Image {
+    ImageType type = 1;
+    string url = 2;
+}
+
+message App {
+    string id = 1;
+    string created_at = 2;
+    string updated_at = 3;
+    string name = 4;
+    AppStatus status = 5;
+    repeated Product products = 6;
+    repeated Link links = 7;
+    repeated Image images = 8;
+}
+
+message Apps {
+    repeated App apps = 1;
+}
