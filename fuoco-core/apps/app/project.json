@@ -3,6 +3,15 @@
   "sourceRoot": "apps/app/src",
   "projectType": "application",
   "targets": {
+    "proto-generate": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "protoc --plugin='protoc-gen-ts=./node_modules/.bin/protoc-gen-ts.cmd' --ts_out=./apps/app/src/_protobuf --proto_path=protobuf core.proto"
+       ],
+       "parallel": false
+      }
+    },
     "build": {
       "executor": "@nrwl/web:webpack",
       "outputs": ["{options.outputPath}"],
