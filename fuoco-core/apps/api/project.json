@@ -8,7 +8,8 @@
       "options": {
         "commands": [
           "scoop bucket add supabase https://github.com/supabase/scoop-bucket.git",
-          "scoop install supabase"
+          "scoop install supabase",
+          "deno install --allow-read --allow-write https://deno.land/x/protod/protod.ts"
        ],
        "parallel": false
       }
@@ -17,7 +18,7 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          "deno run --allow-net --allow-read --allow-write https://deno.land/x/protod@v0.3.9/protod.ts gen -o apps/api/src/supabase/functions/_protobuf protobuf/core.proto"
+          "protod gen protobuf/core.proto"
        ],
        "parallel": false
       }
