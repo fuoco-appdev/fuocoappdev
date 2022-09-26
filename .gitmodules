@@ -1,3 +1,4 @@
 [submodule "fuoco-core/submodules/protobuf-javascript"]
 	path = fuoco-core/submodules/protobuf-javascript
 	url = https://github.com/protocolbuffers/protobuf-javascript.git
+	ignore = dirty
