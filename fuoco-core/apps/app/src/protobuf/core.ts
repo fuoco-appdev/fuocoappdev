@@ -20,10 +20,11 @@ export namespace core {
         USER = 1
     }
     export enum UserRequestStatus {
-        REQUESTED = 0,
-        ACCEPTED = 1,
-        UPDATE_REQUESTED = 2,
-        UPDATE_ACCEPTED = 3
+        IDLE = 0,
+        REQUESTED = 1,
+        ACCEPTED = 2,
+        UPDATE_REQUESTED = 3,
+        UPDATE_ACCEPTED = 4
     }
     export class Product extends pb_1.Message {
         #one_of_decls: number[][] = [];
@@ -670,7 +671,7 @@ export namespace core {
             location?: Location;
             language?: string;
             request_status?: UserRequestStatus;
-            apps?: App[];
+            apps?: string[];
         }) {
             super();
             pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [11], this.#one_of_decls);
@@ -768,16 +769,16 @@ export namespace core {
             pb_1.Message.setField(this, 9, value);
         }
         get request_status() {
-            return pb_1.Message.getFieldWithDefault(this, 10, UserRequestStatus.REQUESTED) as UserRequestStatus;
+            return pb_1.Message.getFieldWithDefault(this, 10, UserRequestStatus.IDLE) as UserRequestStatus;
         }
         set request_status(value: UserRequestStatus) {
             pb_1.Message.setField(this, 10, value);
         }
         get apps() {
-            return pb_1.Message.getRepeatedWrapperField(this, App, 11) as App[];
+            return pb_1.Message.getFieldWithDefault(this, 11, []) as string[];
         }
-        set apps(value: App[]) {
-            pb_1.Message.setRepeatedWrapperField(this, 11, value);
+        set apps(value: string[]) {
+            pb_1.Message.setField(this, 11, value);
         }
         static fromObject(data: {
             id?: string;
@@ -790,7 +791,7 @@ export namespace core {
             location?: ReturnType<typeof Location.prototype.toObject>;
             language?: string;
             request_status?: UserRequestStatus;
-            apps?: ReturnType<typeof App.prototype.toObject>[];
+            apps?: string[];
         }): User {
             const message = new User({});
             if (data.id != null) {
@@ -824,7 +825,7 @@ export namespace core {
                 message.request_status = data.request_status;
             }
             if (data.apps != null) {
-                message.apps = data.apps.map(item => App.fromObject(item));
+                message.apps = data.apps;
             }
             return message;
         }
@@ -840,7 +841,7 @@ export namespace core {
                 location?: ReturnType<typeof Location.prototype.toObject>;
                 language?: string;
                 request_status?: UserRequestStatus;
-                apps?: ReturnType<typeof App.prototype.toObject>[];
+                apps?: string[];
             } = {};
             if (this.id != null) {
                 data.id = this.id;
@@ -873,7 +874,7 @@ export namespace core {
                 data.request_status = this.request_status;
             }
             if (this.apps != null) {
-                data.apps = this.apps.map((item: App) => item.toObject());
+                data.apps = this.apps;
             }
             return data;
         }
@@ -899,10 +900,10 @@ export namespace core {
                 writer.writeMessage(8, this.location, () => this.location.serialize(writer));
             if (this.language.length)
                 writer.writeString(9, this.language);
-            if (this.request_status != UserRequestStatus.REQUESTED)
+            if (this.request_status != UserRequestStatus.IDLE)
                 writer.writeEnum(10, this.request_status);
             if (this.apps.length)
-                writer.writeRepeatedMessage(11, this.apps, (item: App) => item.serialize(writer));
+                writer.writeRepeatedString(11, this.apps);
             if (!w)
                 return writer.getResultBuffer();
         }
@@ -943,7 +944,7 @@ export namespace core {
                         message.request_status = reader.readEnum();
                         break;
                     case 11:
-                        reader.readMessage(message.apps, () => pb_1.Message.addToRepeatedWrapperField(message, 11, App.deserialize(reader), App));
+                        pb_1.Message.addToRepeatedField(message, 11, reader.readString());
                         break;
                     default: reader.skipField();
                 }

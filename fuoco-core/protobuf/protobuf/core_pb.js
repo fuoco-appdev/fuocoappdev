@@ -1436,8 +1436,7 @@ proto.core.User.toObject = function(includeInstance, msg) {
     location: (f = msg.getLocation()) && proto.core.Location.toObject(includeInstance, f),
     language: jspb.Message.getFieldWithDefault(msg, 9, ""),
     requestStatus: jspb.Message.getFieldWithDefault(msg, 10, 0),
-    appsList: jspb.Message.toObjectList(msg.getAppsList(),
-    proto.core.App.toObject, includeInstance)
+    appsList: (f = jspb.Message.getRepeatedField(msg, 11)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -1516,8 +1515,7 @@ proto.core.User.deserializeBinaryFromReader = function(msg, reader) {
       msg.setRequestStatus(value);
       break;
     case 11:
-      var value = new proto.core.App;
-      reader.readMessage(value,proto.core.App.deserializeBinaryFromReader);
+      var value = /** @type {string} */ (reader.readString());
       msg.addApps(value);
       break;
     default:
@@ -1622,10 +1620,9 @@ proto.core.User.serializeBinaryToWriter = function(message, writer) {
   }
   f = message.getAppsList();
   if (f.length > 0) {
-    writer.writeRepeatedMessage(
+    writer.writeRepeatedString(
       11,
-      f,
-      proto.core.App.serializeBinaryToWriter
+      f
     );
   }
 };
@@ -1831,31 +1828,30 @@ proto.core.User.prototype.setRequestStatus = function(value) {
 
 
 /**
- * repeated App apps = 11;
- * @return {!Array<!proto.core.App>}
+ * repeated string apps = 11;
+ * @return {!Array<string>}
  */
 proto.core.User.prototype.getAppsList = function() {
-  return /** @type{!Array<!proto.core.App>} */ (
-    jspb.Message.getRepeatedWrapperField(this, proto.core.App, 11));
+  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 11));
 };
 
 
 /**
- * @param {!Array<!proto.core.App>} value
+ * @param {!Array<string>} value
  * @return {!proto.core.User} returns this
-*/
+ */
 proto.core.User.prototype.setAppsList = function(value) {
-  return jspb.Message.setRepeatedWrapperField(this, 11, value);
+  return jspb.Message.setField(this, 11, value || []);
 };
 
 
 /**
- * @param {!proto.core.App=} opt_value
+ * @param {string} value
  * @param {number=} opt_index
- * @return {!proto.core.App}
+ * @return {!proto.core.User} returns this
  */
-proto.core.User.prototype.addApps = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 11, opt_value, proto.core.App, opt_index);
+proto.core.User.prototype.addApps = function(value, opt_index) {
+  return jspb.Message.addToRepeatedField(this, 11, value, opt_index);
 };
 
 

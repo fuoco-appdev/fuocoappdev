@@ -72,7 +72,7 @@ message User {
     Location location = 8;
     string language = 9;
     UserRequestStatus request_status = 10;
-    repeated App apps = 11;
+    repeated string apps = 11;
 }
 
 message Users {
