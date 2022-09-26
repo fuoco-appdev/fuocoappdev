@@ -49,10 +49,11 @@ enum UserRole {
 }
 
 enum UserRequestStatus {
-    REQUESTED = 0;
-    ACCEPTED = 1;
-    UPDATE_REQUESTED = 2;
-    UPDATE_ACCEPTED = 3;
+    IDLE = 0;
+    REQUESTED = 1;
+    ACCEPTED = 2;
+    UPDATE_REQUESTED = 3;
+    UPDATE_ACCEPTED = 4;
 }
 
 message Location {
