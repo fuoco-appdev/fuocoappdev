@@ -2,8 +2,22 @@
 import SupabaseService from "./supabase.service.ts";
 import { User, Location, UserRequestStatus, Users } from '../protobuf/core_pb.js';
 
+export interface UserProps {
+    id?: string;
+    created_at?: string; 
+    supabase_id?: string; 
+    role?: number; 
+    company?: string; 
+    email?: string; 
+    phone_number?: string; 
+    language?: string; 
+    location?: {longitude: number, latitude: number}; 
+    request_status?: number; 
+    apps?: {apps: string[]};
+}
+
 export class UserService {
-    public async findAsync(supabaseId: string): Promise<any | null> {
+    public async findAsync(supabaseId: string): Promise<UserProps | null> {
         const {data, error} = await SupabaseService.client
             .from('users')
             .select()
@@ -18,7 +32,7 @@ export class UserService {
         return data;
     }
 
-    public async createAsync(supabaseId: string, user: InstanceType<typeof User>): Promise<any | null> {
+    public async createAsync(supabaseId: string, user: InstanceType<typeof User>): Promise<UserProps | null> {
         const role = user.getRole();
         const company = user.getCompany();
         const email = user.getEmail();
@@ -51,7 +65,7 @@ export class UserService {
         return data;
     }
 
-    public async updateAsync(supabaseId: string, user: InstanceType<typeof User>): Promise<any | null> {
+    public async updateAsync(supabaseId: string, user: InstanceType<typeof User>): Promise<UserProps | null> {
         const company = user.getCompany();
         const email = user.getEmail();
         const phoneNumber = user.getPhoneNumber();
@@ -71,8 +85,9 @@ export class UserService {
         });
         const {data, error} = await SupabaseService.client
             .from('users')
-            .update([userData])
-            .match({supabase_id: supabaseId});
+            .update(userData)
+            .match({supabase_id: supabaseId})
+            .single();
 
         if (error) {
             console.error(error);
@@ -82,7 +97,7 @@ export class UserService {
         return data;
     }
 
-    public async findAllAsync(): Promise<any[] | null> {
+    public async findAllAsync(): Promise<UserProps[] | null> {
         const {data, error} = await SupabaseService.client
         .from('users')
         .select();
@@ -95,7 +110,7 @@ export class UserService {
         return data;
     }
 
-    public async deleteAsync(supabaseId: string): Promise<any | null> {
+    public async deleteAsync(supabaseId: string): Promise<UserProps | null> {
         const {data, error} = await SupabaseService.client
         .from('users')
         .delete()
@@ -110,19 +125,7 @@ export class UserService {
         return data;
     }
 
-    public assignAndGetUsersProtocol(props: {
-        id?: string, 
-        created_at?: string, 
-        supabase_id?: string, 
-        role?: number, 
-        company?: string, 
-        email?: string, 
-        phone_number?: string, 
-        language?: string, 
-        location?: {longitude: number, latitude: number}, 
-        request_status?: number, 
-        apps?: {apps: string[]}
-    }[]): InstanceType<typeof Users> {
+    public assignAndGetUsersProtocol(props: UserProps[]): InstanceType<typeof Users> {
         const users = new Users();
         for (const userData of props) {
             const user = this.assignAndGetUserProtocol(userData);
@@ -132,19 +135,7 @@ export class UserService {
         return users;
     }
 
-    public assignAndGetUserProtocol(props: {
-        id?: string, 
-        created_at?: string, 
-        supabase_id?: string, 
-        role?: number, 
-        company?: string, 
-        email?: string, 
-        phone_number?: string, 
-        language?: string, 
-        location?: {longitude: number, latitude: number}, 
-        request_status?: number, 
-        apps?: {apps: string[]}
-    }): InstanceType<typeof User> {
+    public assignAndGetUserProtocol(props: UserProps): InstanceType<typeof User> {
         const user = new User();
         const location = new Location();
         if (props.location) {
@@ -192,8 +183,8 @@ export class UserService {
                 longitude: props.location?.getLongitude()
             }}),
             ...(props.requestStatus && {request_status: props.requestStatus}),
-            ...(props.apps && {apps: {apps: []}})
-        }
+            ...(props.apps && {apps: {apps: props.apps}})
+        };
     }
 }
 

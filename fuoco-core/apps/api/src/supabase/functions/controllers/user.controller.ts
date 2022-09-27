@@ -3,9 +3,9 @@
 import {Controller, Post, Guard, ContentType} from 'https://fuoco-appdev-core-api-z6pn2hqtb120.deno.dev/core/src/index.ts';
 import { User as SupabaseUser,  } from "https://deno.land/x/supabase@1.3.1/mod.ts";
 import * as Oak from "https://deno.land/x/oak@v11.1.0/mod.ts";
-import UserService from '../services/user.service.ts';
+import UserService, { UserProps } from '../services/user.service.ts';
 import { AuthGuard } from '../guards/index.ts';
-import { User} from '../protobuf/core_pb.js';
+import { User } from '../protobuf/core_pb.js';
 import * as HttpError from "https://deno.land/x/http_errors@3.0.0/mod.ts";
 import SupabaseService from '../services/supabase.service.ts';
 import { ApiError } from "https://deno.land/x/gotrue@3.0.0/src/GoTrueApi.ts";
@@ -17,8 +17,8 @@ export class UserController {
     @ContentType('application/x-protobuf')
     public getUser(context: Oak.RouterContext<string, Oak.RouteParams<string>, Record<string, any>>): void {
         const paramsId = context.params['id'];
-        let data = null;
-        UserService.findAsync(paramsId).then((value: any | null) => {
+        let data: UserProps | null = null;
+        UserService.findAsync(paramsId).then((value: UserProps | null) => {
             data = value;
         });
         if (!data) {
@@ -49,9 +49,9 @@ export class UserController {
 
         const body = context.request.body();
         const user = User.deserializeBinary(body.value);
-        let data = null;
+        let data: UserProps | null = null;
         UserService.createAsync((supabaseUser as SupabaseUser).id, user)
-            .then((value: any | null) => {data = value;});
+            .then((value: UserProps | null) => {data = value;});
         
         if (!data) {
             throw HttpError.createError(409, `Cannot create user`);
@@ -65,10 +65,11 @@ export class UserController {
     @Post('/all')
     @ContentType('application/x-protobuf')
     public getAllUsers(context: Oak.RouterContext<string, Oak.RouteParams<string>, Record<string, any>>): void {
-        let data = null;
-        UserService.findAllAsync().then((value: any[] | null) => {
+        let data: UserProps[] | null = null;
+        UserService.findAllAsync().then((value: UserProps[] | null) => {
             data = value;
         });
+
         if (!data) {
             throw HttpError.createError(404, `No users were found`);
         }
@@ -85,10 +86,11 @@ export class UserController {
         const paramsId = context.params['id'];
         const body = context.request.body();
         const user = User.deserializeBinary(body.value);
-        let data = null;
-        UserService.updateAsync(paramsId, user).then((value: any | null) => {
+        let data: UserProps | null = null;
+        UserService.updateAsync(paramsId, user).then((value: UserProps | null) => {
             data = value;
         });
+
         if (!data) {
             throw HttpError.createError(404, `User data not found`);
         }
@@ -103,10 +105,11 @@ export class UserController {
     @ContentType('application/x-protobuf')
     public deleteUser(context: Oak.RouterContext<string, Oak.RouteParams<string>, Record<string, any>>): void {
         const paramsId = context.params['id'];
-        let data = null;
-        UserService.deleteAsync(paramsId).then((value: any | null) => {
+        let data: UserProps | null = null;
+        UserService.deleteAsync(paramsId).then((value: UserProps | null) => {
             data = value;
         });
+
         if (!data) {
             throw HttpError.createError(404, `User data not found`);
         }
