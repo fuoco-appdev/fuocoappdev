@@ -89,7 +89,7 @@ export namespace core {
         serializeBinary(): Uint8Array {
             return this.serialize();
         }
-        static deserializeBinary(bytes: Uint8Array): Product {
+        static override deserializeBinary(bytes: Uint8Array): Product {
             return Product.deserialize(bytes);
         }
     }
@@ -179,7 +179,7 @@ export namespace core {
         serializeBinary(): Uint8Array {
             return this.serialize();
         }
-        static deserializeBinary(bytes: Uint8Array): Link {
+        static override deserializeBinary(bytes: Uint8Array): Link {
             return Link.deserialize(bytes);
         }
     }
@@ -269,7 +269,7 @@ export namespace core {
         serializeBinary(): Uint8Array {
             return this.serialize();
         }
-        static deserializeBinary(bytes: Uint8Array): Image {
+        static override deserializeBinary(bytes: Uint8Array): Image {
             return Image.deserialize(bytes);
         }
     }
@@ -497,7 +497,7 @@ export namespace core {
         serializeBinary(): Uint8Array {
             return this.serialize();
         }
-        static deserializeBinary(bytes: Uint8Array): App {
+        static override deserializeBinary(bytes: Uint8Array): App {
             return App.deserialize(bytes);
         }
     }
@@ -564,7 +564,7 @@ export namespace core {
         serializeBinary(): Uint8Array {
             return this.serialize();
         }
-        static deserializeBinary(bytes: Uint8Array): Apps {
+        static override deserializeBinary(bytes: Uint8Array): Apps {
             return Apps.deserialize(bytes);
         }
     }
@@ -654,7 +654,7 @@ export namespace core {
         serializeBinary(): Uint8Array {
             return this.serialize();
         }
-        static deserializeBinary(bytes: Uint8Array): Location {
+        static override deserializeBinary(bytes: Uint8Array): Location {
             return Location.deserialize(bytes);
         }
     }
@@ -954,7 +954,7 @@ export namespace core {
         serializeBinary(): Uint8Array {
             return this.serialize();
         }
-        static deserializeBinary(bytes: Uint8Array): User {
+        static override deserializeBinary(bytes: Uint8Array): User {
             return User.deserialize(bytes);
         }
     }
@@ -1021,7 +1021,7 @@ export namespace core {
         serializeBinary(): Uint8Array {
             return this.serialize();
         }
-        static deserializeBinary(bytes: Uint8Array): Users {
+        static override deserializeBinary(bytes: Uint8Array): Users {
             return Users.deserialize(bytes);
         }
     }

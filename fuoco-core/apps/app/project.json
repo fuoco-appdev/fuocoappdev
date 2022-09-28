@@ -7,7 +7,7 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          "protoc --plugin='protoc-gen-ts=./node_modules/.bin/protoc-gen-ts.cmd' --ts_out=./apps/app/src/protobuf --proto_path=protobuf core.proto"
+          "protoc --plugin='protoc-gen-ts=./node_modules/.bin/protoc-gen-ts.cmd' --ts_out=./apps/app/src/protobuf --ts_opt=explicit_override --proto_path=protobuf core.proto"
        ],
        "parallel": false
       }

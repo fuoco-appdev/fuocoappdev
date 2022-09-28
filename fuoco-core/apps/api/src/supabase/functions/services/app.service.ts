@@ -18,7 +18,7 @@ export class AppService {
     public async findAsync(appId: string): Promise<AppProps | null> {
         const {data, error} = await SupabaseService.client
             .from('apps')
-            .select()
+            .select('*')
             .eq('id', appId)
             .single();
 
@@ -33,7 +33,7 @@ export class AppService {
     public async createAsync(supabaseId: string, app: InstanceType<typeof App>): Promise<AppProps | null> {
         const userProps = await SupabaseService.client
             .from('users')
-            .select()
+            .select('*')
             .match({supabase_id: supabaseId})
             .single();
 
@@ -121,7 +121,7 @@ export class AppService {
     public async findAllAsync(): Promise<AppProps[] | null> {
         const {data, error} = await SupabaseService.client
         .from('apps')
-        .select();
+        .select('*');
 
         if (error) {
             console.error(error);

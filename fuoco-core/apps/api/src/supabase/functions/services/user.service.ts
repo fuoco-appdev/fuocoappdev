@@ -20,7 +20,7 @@ export class UserService {
     public async findAsync(supabaseId: string): Promise<UserProps | null> {
         const {data, error} = await SupabaseService.client
             .from('users')
-            .select()
+            .select('*')
             .eq('supabase_id', supabaseId)
             .single();
 
@@ -100,7 +100,7 @@ export class UserService {
     public async findAllAsync(): Promise<UserProps[] | null> {
         const {data, error} = await SupabaseService.client
         .from('users')
-        .select();
+        .select('*');
 
         if (error) {
             console.error(error);
