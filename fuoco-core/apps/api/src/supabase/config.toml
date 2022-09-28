@@ -1,6 +1,6 @@
 # A string used to distinguish different Supabase projects on the same host. Defaults to the working
 # directory name when running `supabase init`.
-project_id = "src"
+project_id = "core"
 
 [api]
 # Port to use for the API URL.
@@ -52,11 +52,37 @@ enable_signup = true
 # addresses. If disabled, only the new email is required to confirm.
 double_confirm_changes = true
 # If enabled, users need to confirm their email address before signing in.
-enable_confirmations = false
+enable_confirmations = true
 
 # Use an external OAuth provider. The full list of providers are: `apple`, `azure`, `bitbucket`,
 # `discord`, `facebook`, `github`, `gitlab`, `google`, `twitch`, `twitter`, `slack`, `spotify`.
-[auth.external.apple]
-enabled = false
-client_id = ""
-secret = ""
+
+[auth.external.discord]
+enabled = true
+client_id = "1019580903757979730"
+secret = "uJ-mt3cO_2p-w0fpNmfL0MHufAR0DzbF"
+
+[auth.external.facebook]
+enabled = true
+client_id = "645439540231405"
+secret = "23711cc7e4c487af1ba004d7eb32cf81"
+
+[auth.external.google]
+enabled = true
+client_id = "274664341359-9ind8vbuoleccnaj70i0pp1dhb7sdtc3.apps.googleusercontent.com"
+secret = "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"
+
+[auth.external.twitch]
+enabled = true
+client_id = "ik09g3p1inbbt30gbiz9yse3j6knws"
+secret = "usqlja55wcx9a1dwphscxb11uao8fy"
+
+[auth.external.twitter]
+enabled = true
+client_id = "ljTTs8MK8g1jcrJHutkmj1DLT"
+secret = "U1aJs5ukdlQR8wX9WGLCp9HCyoLZBkX8o8J6Dhf5NZ4ss838Yh"
+
+[auth.external.spotify]
+enabled = true
+client_id = "0c5cbc0d220b4469b33418b1dc372962"
+secret = "5d45038817ec4295bee14b8ed36d5ad0"
