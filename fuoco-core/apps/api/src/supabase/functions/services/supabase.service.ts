@@ -11,7 +11,7 @@ class SupabaseService {
             throw new Error("SUPABASE_URL doesn't exist");
         }
         if (!key) {
-            throw new Error("SUPABASE_ANON_KEY doesn't exist");
+            throw new Error("SUPABASE_SERVICE_ROLE_KEY doesn't exist");
         }
 
         this._client = createClient(url, key, {
