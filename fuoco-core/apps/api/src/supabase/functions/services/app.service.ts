@@ -8,10 +8,10 @@ export interface AppProps {
     created_at?: string;
     updated_at?: string;
     name?: string;
-    products?: {product_ids: string[]};
-    links?: {links: {name: string, url: string}[]};
+    products?: string[];
+    links?: {name: string, url: string}[];
     status?: number;
-    images?: {images: {type: number, url: string}[]};
+    images?: {type: number, url: string}[];
 }
 
 export class AppService {
@@ -162,14 +162,14 @@ export class AppService {
         const links: InstanceType<typeof Link>[] = [];
         const images: InstanceType<typeof Image>[] = [];
         if (props.products) {
-            for (const id of props.products.product_ids) {
+            for (const id of props.products) {
                 const product = new Product();
                 product.setId(id);
                 products.push(product);
             }
         }
         if (props.links) {
-            for (const linkData of props.links.links) {
+            for (const linkData of props.links) {
                 const link = new Link();
                 link.setName(linkData.name);
                 link.setUrl(linkData.url);
@@ -177,7 +177,7 @@ export class AppService {
             }
         }
         if (props.images) {
-            for (const imageData of props.images.images) {
+            for (const imageData of props.images) {
                 const image = new Image();
                 image.setType(imageData.type);
                 image.setUrl(imageData.url);
@@ -205,22 +205,22 @@ export class AppService {
         status?: number;
         images?: InstanceType<typeof Image>[];
     }) {
-        const productsData: {product_ids: string[]} = {product_ids: []};
-        const linksData: {links: {name: string, url: string}[]} = {links: []};
-        const imagesData: {images: {type: number, url: string}[]} = {images: []};
+        const productsData: string[] = [];
+        const linksData: {name: string, url: string}[] = [];
+        const imagesData: {type: number, url: string}[] = [];
         if (props.products) {
             for (const product of props.products) {
-                productsData.product_ids.push(product.getId());
+                productsData.push(product.getId());
             }
         }
         if (props.links) {
             for (const link of props.links) {
-                linksData.links.push({name: link.getName(), url: link.getUrl()});
+                linksData.push({name: link.getName(), url: link.getUrl()});
             }
         }
         if (props.images) {
             for (const image of props.images) {
-                imagesData.images.push({type: image.getType(), url: image.getUrl()});
+                imagesData.push({type: image.getType(), url: image.getUrl()});
             }
         }
 

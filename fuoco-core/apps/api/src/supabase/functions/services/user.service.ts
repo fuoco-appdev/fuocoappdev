@@ -13,7 +13,7 @@ export interface UserProps {
     language?: string; 
     location?: {longitude: number, latitude: number}; 
     request_status?: number; 
-    apps?: {apps: string[]};
+    apps?: string[];
 }
 
 export class UserService {
@@ -153,7 +153,7 @@ export class UserService {
         (props.language && user.setLanguage(props.language));
         (props.location && user.setLocation(location));
         (props.request_status && user.setRequestStatus(props.request_status));
-        (props.apps && user.setAppsList(props.apps.apps));
+        (props.apps && user.setAppsList(props.apps));
 
         return user;
     }
@@ -183,7 +183,7 @@ export class UserService {
                 longitude: props.location?.getLongitude()
             }}),
             ...(props.requestStatus && {request_status: props.requestStatus}),
-            ...(props.apps && {apps: {apps: props.apps}})
+            ...(props.apps && {apps: props.apps})
         };
     }
 }
