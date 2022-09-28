@@ -12,8 +12,8 @@ export class AuthGuard extends GuardExecuter {
         Record<string | number, string | undefined>
       >): boolean {
         let isAuthenticated = false;
-        if (ctx.request.headers.has("authorization")) {
-            const token = ctx.request.headers.get("authorization") ?? '';
+        if (ctx.request.headers.has("session-token")) {
+            const token = ctx.request.headers.get("session-token") ?? '';
             SupabaseService.client.auth.api.getUser(token)
             .then((value: { user: User | null; data: User | null; error: any | null; }) => {
                 isAuthenticated = value.user ? true : false;
