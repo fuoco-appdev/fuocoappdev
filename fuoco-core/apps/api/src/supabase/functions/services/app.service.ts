@@ -71,7 +71,7 @@ export class AppService {
         const userApps = (userProps.data as UserProps).apps;
         const appId = (appProps.data as AppProps).id;
         if (userApps && appId) {
-            userApps.apps.push(appId);
+            userApps.push(appId);
 
             const updatedUserProps = await SupabaseService.client
             .from('users')
