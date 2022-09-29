@@ -1,5 +1,5 @@
 import { createStore, withProps } from "@ngneat/elf";
-import { Location } from "react-router-dom";
+import { NavigateFunction } from "react-router-dom";
 import { Model } from "../model";
 
 export interface WindowState {
@@ -7,7 +7,7 @@ export interface WindowState {
     isSignupVisible: boolean;
     isSignoutVisible: boolean;
     isAuthenticated: boolean | undefined;
-    location: Location | undefined;
+    navigate: NavigateFunction | undefined;
 }
 
 export class WindowModel extends Model {
@@ -19,7 +19,7 @@ export class WindowModel extends Model {
                 isSignupVisible: false,
                 isSignoutVisible: false,
                 isAuthenticated: undefined,
-                location: undefined,
+                navigate: undefined
             }),
         ));
     }
@@ -64,13 +64,13 @@ export class WindowModel extends Model {
         }
     }
 
-    public get location(): Location | undefined {
-        return this.store.getValue().location;
+    public get navigate(): NavigateFunction | undefined {
+        return this.store.getValue().navigate;
     }
 
-    public set location(location: Location | undefined) {
-        if (this.location !== location) {
-            this.store.update((state) => ({...state, location: location}));
+    public set navigate(navigate: NavigateFunction | undefined) {
+        if (this.navigate !== navigate) {
+            this.store.update((state) => ({...state, navigate: navigate}));
         }
     }
 }

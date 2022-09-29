@@ -1,4 +1,5 @@
 import DevelopmentConfig from '../assets/configs/development.config.json';
+import ProductionConfig from '../assets/configs/production.config.json';
 
 export interface SupabaseConfig {
     url: string;
@@ -13,7 +14,9 @@ class ConfigService {
             this._supabase = DevelopmentConfig.superbase;
         }
         // eslint-disable-next-line no-empty
-        else if (process.env['NODE_ENV'] === "production") {}
+        else if (process.env['NODE_ENV'] === "production") {
+            this._supabase = ProductionConfig.superbase;
+        }
     }
 
     public get supabase(): SupabaseConfig {

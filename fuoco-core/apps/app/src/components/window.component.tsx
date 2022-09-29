@@ -1,15 +1,14 @@
-import React from 'react';
-import { Outlet, useLocation, useNavigate, NavigateFunction} from "react-router-dom";
+import { useEffect } from 'react';
+import { Outlet, useLocation, useNavigate} from "react-router-dom";
 import WindowController from '../controllers/window.controller';
 import WorldComponent from './world.component';
 import styles from './window.module.scss';
 import {Button, IconLogOut} from '@fuoco.appdev/core-ui';
-import { WindowState } from '../models/window.model';
 import { RoutePaths } from '../route-paths';
-import { Subscription } from 'rxjs';
 import {Strings} from '../localization';
 import AuthService from '../services/auth.service';
-import { select } from '@ngneat/elf';
+import {useObservable} from '@ngneat/use-observable';
+import { Location, NavigateFunction } from "react-router-dom";
 
 function SigninButtonComponent(): JSX.Element {
   const navigate = useNavigate();
@@ -41,49 +40,51 @@ function SignoutButtonComponent(): JSX.Element {
     />);
 }
 
-export interface WindowProps {
-  navigation: NavigateFunction;
+function UpdateOnLocationChanged(location: Location): void {
+  switch(location.pathname) {
+    case RoutePaths.Default:
+      WindowController.model.isSigninVisible = true;
+      WindowController.model.isSignupVisible = false;
+      WindowController.model.isSignoutVisible = false;
+      break;
+    case RoutePaths.Landing:
+      WindowController.model.isSigninVisible = true;
+      WindowController.model.isSignupVisible = false;
+      WindowController.model.isSignoutVisible = false;
+      break;
+    case RoutePaths.Signin:
+      WindowController.model.isSigninVisible = false;
+      WindowController.model.isSignupVisible = true;
+      WindowController.model.isSignoutVisible = false;
+      break;
+    case RoutePaths.Signup:
+      WindowController.model.isSigninVisible = true;
+      WindowController.model.isSignupVisible = false;
+      WindowController.model.isSignoutVisible = false;
+      break;
+    default:
+      break;
+  }
+
+  if (location.pathname.includes(RoutePaths.User)) {
+    WindowController.model.isSigninVisible = false;
+    WindowController.model.isSignupVisible = false;
+    WindowController.model.isSignoutVisible = true;
+  }
 }
 
-class WindowComponent extends React.Component<WindowProps, WindowState> {
-  private _stateSubscription: Subscription | undefined;
-  private _isAuthenticatedSubscription: Subscription | undefined;
+export default function WindowComponent(): JSX.Element {
+  const location = useLocation();
+  const navigate = useNavigate();
+  WindowController.model.navigate = navigate;
 
-  public constructor(props: WindowProps) {
-    super(props);
-
-    this.state = WindowController.model.store.getValue();
-  }
-
-  public override componentDidMount(): void {
-      this._stateSubscription = WindowController.model.store.subscribe({
-        next: () => this.setState(WindowController.model.store.getValue())
-      });
-
-      this._isAuthenticatedSubscription = WindowController.model.store
-        .pipe(select(store => store.isAuthenticated))
-        .subscribe({
-          next: (isAuthenticated: boolean) => {
-            if (isAuthenticated === true) {
-              this.props.navigation(RoutePaths.User);
-            }
-            else if (isAuthenticated === false) {
-              this.props.navigation(RoutePaths.Signin);
-            }
-          }
-      });
-  }
-
-  public override componentWillUnmount(): void {
-      this._stateSubscription?.unsubscribe();
-      this._isAuthenticatedSubscription?.unsubscribe();
-  }
-
-  public override render(): React.ReactNode {
-      const {isSigninVisible, isSignupVisible, isSignoutVisible} = this.state;
-
-      return (
-        <div className={styles["root"]}>
+  useEffect(() => {
+    UpdateOnLocationChanged(location);
+  }, [location]);
+  
+  const [props] = useObservable(WindowController.model.store);
+  return (
+    <div className={styles["root"]}>
           <div className={styles["background"]}>
             <WorldComponent />
           </div>
@@ -95,9 +96,9 @@ class WindowComponent extends React.Component<WindowProps, WindowState> {
                 </div>
                 <div className={styles["navbarContentRight"]}>
                   <div className={styles["navbarContentRightGrid"]}>
-                    {isSigninVisible ?  <SigninButtonComponent /> : null}
-                    {isSignupVisible ? <SignupButtonComponent /> : null}
-                    {isSignoutVisible ? <SignoutButtonComponent /> : null}
+                    {props.isSigninVisible ?  <SigninButtonComponent /> : null}
+                    {props.isSignupVisible ? <SignupButtonComponent /> : null}
+                    {props.isSignoutVisible ? <SignoutButtonComponent /> : null}
                   </div>
                 </div>
               </div>
@@ -106,15 +107,6 @@ class WindowComponent extends React.Component<WindowProps, WindowState> {
               <Outlet/>
             </div>
           </div>
-        </div>
-      );
-  }
-}
-
-export default function ReactiveWindowComponent(): JSX.Element {
-  const location = useLocation();
-  const navigation = useNavigate();
-  WindowController.model.location = location;
-  
-  return (<WindowComponent navigation={navigation}/>);
+    </div>
+  );
 }

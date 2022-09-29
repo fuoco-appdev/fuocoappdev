@@ -15,20 +15,14 @@ function SignupButtonComponent(): JSX.Element {
     >{Strings.signup}</Button>);
 }
 
-class LandingComponent extends React.Component {
-  public override render(): React.ReactNode {
-      return (
-        <div className={styles["root"]}>
+export default function LandingComponent(): JSX.Element {
+    return (
+      <div className={styles["root"]}>
           <div className={styles["content"]}>
             <Typography.Title className={styles["title"]}>{Strings.callToAction}</Typography.Title>
             <h3 className={styles["subTitle"]}>{Strings.subCallToAction}</h3>
             <SignupButtonComponent />
           </div>
-        </div>
-      );
-  }
-}
-
-export default function ReactiveLandingComponent(): JSX.Element {
-    return (<LandingComponent />);
+      </div>
+    );
 }
