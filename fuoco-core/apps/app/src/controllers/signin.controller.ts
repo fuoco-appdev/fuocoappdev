@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { Controller } from "../controller";
 import { SigninModel } from "../models/signin.model";
 
@@ -13,6 +14,10 @@ class SigninController extends Controller {
     public get model(): SigninModel {
         return this._model;
     }
+
+    public initialize(): void {}
+
+    public dispose(): void {}
 }
 
 export default new SigninController();

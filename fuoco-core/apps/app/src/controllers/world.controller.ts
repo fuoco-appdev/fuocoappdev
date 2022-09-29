@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import React from 'react';
 import {Controller} from '../controller';
 import {WorldModel} from '../models';
@@ -59,6 +60,10 @@ class WorldController extends Controller {
     public get maxDotRadius(): number {
         return this._maxDotRadius;
     }
+
+    public initialize(): void {}
+
+    public dispose(): void {}
 
     public updateIsVisible(isVisible: boolean): void {
         this._model.isVisible = isVisible;

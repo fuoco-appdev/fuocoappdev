@@ -1,3 +1,5 @@
+/* eslint-disable no-empty */
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { Controller } from "../controller";
 import { UserModel } from "../models/user.model";
@@ -20,7 +22,9 @@ class UserController extends Controller {
         return this._model;
     }
 
-    public override dispose(): void {}
+    public initialize(): void {}
+
+    public dispose(): void {}
 
     private onAuthStateChanged(event: AuthChangeEvent, session: Session | null): void {
         if (event === 'SIGNED_IN') {}

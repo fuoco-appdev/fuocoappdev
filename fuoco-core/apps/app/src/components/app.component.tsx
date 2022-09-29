@@ -32,6 +32,14 @@ function AuthenticatedComponent({element}: RouteElementProps): React.ReactElemen
 
 export default function AppComponent(): JSX.Element {
   useEffect(() => {
+    SigninController.initialize();
+    SignupController.initialize();
+    WorldController.initialize();
+    WindowController.initialize();
+    TermsOfServiceController.initialize();
+    PrivacyPolicyController.initialize();
+    LoadingController.initialize();
+
     return () => {
       SigninController.dispose();
       SignupController.dispose();

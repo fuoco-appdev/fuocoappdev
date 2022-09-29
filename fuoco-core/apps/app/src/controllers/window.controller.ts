@@ -8,7 +8,7 @@ import AuthService from '../services/auth.service';
 
 class WindowController extends Controller {
     private readonly _model: WindowModel;
-    private readonly _isAuthenticatedSubscription: Subscription;
+    private _isAuthenticatedSubscription: Subscription | undefined;
 
     constructor() {
         super();
@@ -18,7 +18,13 @@ class WindowController extends Controller {
         this.onAuthStateChanged = this.onAuthStateChanged.bind(this);
 
         AuthService.supabaseClient.auth.onAuthStateChange(this.onAuthStateChanged)
+    }
 
+    public get model(): WindowModel {
+        return this._model;
+    }
+
+    public initialize(): void {
         this._isAuthenticatedSubscription = this._model.store
             .pipe(select(store => store.isAuthenticated))
             .subscribe({
@@ -26,6 +32,7 @@ class WindowController extends Controller {
                     if (!this._model.navigate) {
                         return;
                     }
+                    console.log("unauthenticate");
 
                     if (isAuthenticated === true) {
                         this._model.navigate(RoutePaths.User);
@@ -37,12 +44,8 @@ class WindowController extends Controller {
         });
     }
 
-    public get model(): WindowModel {
-        return this._model;
-    }
-
-    public override dispose(): void {
-        this._isAuthenticatedSubscription.unsubscribe();
+    public dispose(): void {
+        this._isAuthenticatedSubscription?.unsubscribe();
     }
 
     public updateIsSigninVisible(isVisible: boolean): void {

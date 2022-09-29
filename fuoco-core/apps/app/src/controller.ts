@@ -1,5 +1,6 @@
 import {Disposable} from './disposable';
 
 export abstract class Controller implements Disposable {
-    public dispose(): void {};
+    public abstract initialize(): void;
+    public abstract dispose(): void;
 }
