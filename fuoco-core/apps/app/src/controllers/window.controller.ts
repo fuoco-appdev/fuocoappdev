@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { select } from "@ngneat/elf";
 import { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { Subscription } from "rxjs";
@@ -7,6 +8,7 @@ import { RoutePaths } from "../route-paths";
 import AuthService from '../services/auth.service';
 import { Location } from "react-router-dom";
 import UserService from "../services/user.service";
+import { AxiosError } from "axios";
 
 class WindowController extends Controller {
     private readonly _model: WindowModel;
@@ -102,7 +104,17 @@ class WindowController extends Controller {
                 await UserService.requestActiveUserAsync();
             }
             catch(error: any) {
-                console.error(error);
+                if (error.status !== 404) {
+                    console.error(error);
+                    return;
+                }
+
+                try {
+                    await UserService.requestCreateUserAsync();
+                }
+                catch (error: any) {
+                    console.error(error);
+                }
             }
         }
         else if(event === 'SIGNED_OUT') {

@@ -9,28 +9,14 @@ import * as HttpError from "https://deno.land/x/http_errors@3.0.0/mod.ts";
 
 @Controller('/app')
 export class AppController {
-    @Post('/:id')
-    @Guard(AuthGuard)
-    @ContentType('application/x-protobuf')
-    public async getAppAsync(context: Oak.RouterContext<string, Oak.RouteParams<string>, Record<string, any>>): Promise<void> {
-        const paramsId = context.params['id'];
-        const data = await AppService.findAsync(paramsId);
-        if (!data) {
-            throw HttpError.createError(404, `App with id ${paramsId} not found`);
-        }
-
-        const app = AppService.assignAndGetAppProtocol(data);
-        context.response.type = "application/x-protobuf";
-        context.response.body = app.serializeBinary();
-    }
-
     @Post('/create/:id')
     @Guard(AuthGuard)
     @ContentType('application/x-protobuf')
     public async createAppAsync(context: Oak.RouterContext<string, Oak.RouteParams<string>, Record<string, any>>): Promise<void> {
         const paramsId = context.params['id'];
-        const body = context.request.body();
-        const app = App.deserializeBinary(body.value);
+        const body = await context.request.body();
+        const requestValue = await body.value;
+        const app = App.deserializeBinary(requestValue);
         const data = await AppService.createAsync(paramsId, app);
         if (!data) {
             throw HttpError.createError(409, `Cannot create app with id ${paramsId}`);
@@ -59,8 +45,9 @@ export class AppController {
     @ContentType('application/x-protobuf')
     public async updateAppAsync(context: Oak.RouterContext<string, Oak.RouteParams<string>, Record<string, any>>): Promise<void> {
         const paramsId = context.params['id'];
-        const body = context.request.body();
-        const app = App.deserializeBinary(body.value);
+        const body = await context.request.body();
+        const requestValue = await body.value;
+        const app = App.deserializeBinary(requestValue);
         const data = await AppService.updateAsync(paramsId, app);
         if (!data) {
             throw HttpError.createError(404, `App data not found`);
@@ -84,5 +71,20 @@ export class AppController {
         const responseApp = AppService.assignAndGetAppProtocol(data);
         context.response.type = "application/x-protobuf";
         context.response.body = responseApp.serializeBinary();
+    }
+
+    @Post('/:id')
+    @Guard(AuthGuard)
+    @ContentType('application/x-protobuf')
+    public async getAppAsync(context: Oak.RouterContext<string, Oak.RouteParams<string>, Record<string, any>>): Promise<void> {
+        const paramsId = context.params['id'];
+        const data = await AppService.findAsync(paramsId);
+        if (!data) {
+            throw HttpError.createError(404, `App with id ${paramsId} not found`);
+        }
+
+        const app = AppService.assignAndGetAppProtocol(data);
+        context.response.type = "application/x-protobuf";
+        context.response.body = app.serializeBinary();
     }
 }

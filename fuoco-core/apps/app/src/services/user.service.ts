@@ -1,8 +1,9 @@
+/* eslint-disable no-throw-literal */
 import { Service } from "../service";
 import {core} from '../protobuf/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import AuthService from "./auth.service";
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 class UserService extends Service {
     private readonly _activeUserBehaviorSubject: BehaviorSubject<core.User | null>;
@@ -33,14 +34,15 @@ class UserService extends Service {
             url: `${this.endpointUrl}/user/${supabaseId}`,
             withCredentials: false,
             headers: this.headers,
-            data: ""
+            data: "",
+            responseType: 'arraybuffer',
         });
 
-        if (response.data.status !== 200) {
-            throw response.data;
+        if (response.data.status >= 400) {
+            throw response.data as AxiosError;
         }
 
-        const userResponse = core.User.deserializeBinary(response.data);
+        const userResponse = core.User.deserialize(response.data);
         return userResponse;
     }
 
@@ -50,11 +52,12 @@ class UserService extends Service {
             url: `${this.endpointUrl}/user/all`,
             withCredentials: false,
             headers: this.headers,
-            data: ""
+            data: "",
+            responseType: 'arraybuffer',
         });
 
-        if (response.data.status !== 200) {
-            throw response.data;
+        if (response.data.status >= 400) {
+            throw response.data as AxiosError;
         }
 
         const usersResponse = core.Users.deserializeBinary(response.data);
@@ -79,11 +82,12 @@ class UserService extends Service {
             url: `${this.endpointUrl}/user/create`,
             withCredentials: false,
             headers: this.headers,
-            data: user.serialize()
+            data: user.serialize(),
+            responseType: 'arraybuffer',
         });
         
-        if (response.data.status !== 200) {
-            throw response.data;
+        if (response.data.status >= 400) {
+            throw response.data as AxiosError;
         }
 
         const userResponse = core.User.deserializeBinary(response.data);
@@ -126,10 +130,11 @@ class UserService extends Service {
             withCredentials: false,
             headers: this.headers,
             data: user.serialize(),
+            responseType: 'arraybuffer',
         });
 
-        if (response.data.status !== 200) {
-            throw response.data;
+        if (response.data.status >= 400) {
+            throw response.data as AxiosError;
         }
 
         const userResponse = core.User.deserializeBinary(response.data);
@@ -142,11 +147,12 @@ class UserService extends Service {
             url: `${this.endpointUrl}/user/delete/${supabaseId}`,
             withCredentials: false,
             headers: this.headers,
-            data: ""
+            data: "",
+            responseType: 'arraybuffer',
         });
         
-        if (response.data.status !== 200) {
-            throw response.data;
+        if (response.data.status >= 400) {
+            throw response.data as AxiosError;
         }
 
         const userResponse = core.User.deserializeBinary(response.data);

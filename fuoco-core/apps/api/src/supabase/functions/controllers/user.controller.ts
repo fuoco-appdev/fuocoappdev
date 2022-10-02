@@ -11,22 +11,6 @@ import SupabaseService from '../services/supabase.service.ts';
 
 @Controller('/user')
 export class UserController {
-    @Post('/:id')
-    @Guard(AuthGuard)
-    @ContentType('application/x-protobuf')
-    public async getUserAsync(context: Oak.RouterContext<string, Oak.RouteParams<string>, Record<string, any>>): Promise<void> {
-        const paramsId = context.params['id'];
-        console.log(context);
-        const data = await UserService.findAsync(paramsId);
-        if (!data) {
-            throw HttpError.createError(404, `User with superbase id ${paramsId} not found`);
-        }
-
-        const user = UserService.assignAndGetUserProtocol(data);
-        context.response.type = "application/x-protobuf";
-        context.response.body = user.serializeBinary();
-    }
-
     @Post('/create')
     @Guard(AuthGuard)
     @ContentType('application/x-protobuf')
@@ -37,8 +21,9 @@ export class UserController {
             throw HttpError.createError(404, `Supabase user not found`); 
         }
 
-        const body = context.request.body();
-        const user = User.deserializeBinary(body.value);
+        const body = await context.request.body();
+        const requestValue = await body.value;
+        const user = User.deserializeBinary(requestValue);
         const data = await UserService.createAsync((supabaseUser.user as SupabaseUser).id, user);
         
         if (!data) {
@@ -69,8 +54,9 @@ export class UserController {
     @ContentType('application/x-protobuf')
     public async updateUserAsync(context: Oak.RouterContext<string, Oak.RouteParams<string>, Record<string, any>>): Promise<void> {
         const paramsId = context.params['id'];
-        const body = context.request.body();
-        const user = User.deserializeBinary(body.value);
+        const body = await context.request.body();
+        const requestValue = await body.value;
+        const user = User.deserializeBinary(requestValue);
         const data = await UserService.updateAsync(paramsId, user);
         if (!data) {
             throw HttpError.createError(404, `User data not found`);
@@ -94,5 +80,20 @@ export class UserController {
         const responseUser = UserService.assignAndGetUserProtocol(data);
         context.response.type = "application/x-protobuf";
         context.response.body = responseUser.serializeBinary();
+    }
+
+    @Post('/:id')
+    @Guard(AuthGuard)
+    @ContentType('application/x-protobuf')
+    public async getUserAsync(context: Oak.RouterContext<string, Oak.RouteParams<string>, Record<string, any>>): Promise<void> {
+        const paramsId = context.params['id'];
+        const data = await UserService.findAsync(paramsId);
+        if (!data) {
+            throw HttpError.createError(404, `User with superbase id ${paramsId} not found`);
+        }
+
+        const user = UserService.assignAndGetUserProtocol(data);
+        context.response.type = "application/x-protobuf";
+        context.response.body = user.serializeBinary();
     }
 }
