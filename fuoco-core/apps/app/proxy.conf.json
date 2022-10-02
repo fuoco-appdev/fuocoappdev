@@ -1,6 +1,6 @@
 {
-  "/api": {
-    "target": "http://localhost:3333",
+  "/functions/v1": {
+    "target": "http://localhost:54321",
     "secure": false
   }
 }

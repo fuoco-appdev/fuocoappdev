@@ -39,12 +39,11 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          "supabase start"
+          "supabase functions serve development"
        ],
        "cwd": "apps/api/src",
-       "parallel": false
-      },
-      "configurations": {}
+       "parallel": true
+      }
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",

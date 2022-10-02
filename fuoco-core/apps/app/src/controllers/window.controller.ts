@@ -5,6 +5,8 @@ import { Controller } from "../controller";
 import { WindowModel } from "../models/window.model";
 import { RoutePaths } from "../route-paths";
 import AuthService from '../services/auth.service';
+import { Location } from "react-router-dom";
+import UserService from "../services/user.service";
 
 class WindowController extends Controller {
     private readonly _model: WindowModel;
@@ -32,7 +34,6 @@ class WindowController extends Controller {
                     if (!this._model.navigate) {
                         return;
                     }
-                    console.log("unauthenticate");
 
                     if (isAuthenticated === true) {
                         this._model.navigate(RoutePaths.User);
@@ -60,9 +61,49 @@ class WindowController extends Controller {
         this._model.isSignoutVisible = isVisible;
     }
 
-    private onAuthStateChanged(event: AuthChangeEvent, session: Session | null): void {
+    public updateOnLocationChanged(location: Location): void {
+        switch(location.pathname) {
+          case RoutePaths.Default:
+            this._model.isSigninVisible = true;
+            this._model.isSignupVisible = false;
+            this._model.isSignoutVisible = false;
+            break;
+          case RoutePaths.Landing:
+            this._model.isSigninVisible = true;
+            this._model.isSignupVisible = false;
+            this._model.isSignoutVisible = false;
+            break;
+          case RoutePaths.Signin:
+            this._model.isSigninVisible = false;
+            this._model.isSignupVisible = true;
+            this._model.isSignoutVisible = false;
+            break;
+          case RoutePaths.Signup:
+            this._model.isSigninVisible = true;
+            this._model.isSignupVisible = false;
+            this._model.isSignoutVisible = false;
+            break;
+          default:
+            break;
+        }
+      
+        if (location.pathname.includes(RoutePaths.User)) {
+            this._model.isSigninVisible = false;
+            this._model.isSignupVisible = false;
+            this._model.isSignoutVisible = true;
+        }
+      }
+
+    private async onAuthStateChanged(event: AuthChangeEvent, session: Session | null): Promise<void> {
         if (event === 'SIGNED_IN') {
             this._model.isAuthenticated = true;
+
+            try {
+                await UserService.requestActiveUserAsync();
+            }
+            catch(error: any) {
+                console.error(error);
+            }
         }
         else if(event === 'SIGNED_OUT') {
             this._model.isAuthenticated = false;

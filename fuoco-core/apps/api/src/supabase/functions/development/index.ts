@@ -1,7 +1,10 @@
-import { Core } from "https://fuoco-appdev-core-api-z6pn2hqtb120.deno.dev/core/src/index.ts";
-import { AppController } from "../controllers/index.ts";
+import { Core } from "https://fuoco-appdev-core-api-t6j2pb2w5vcg.deno.dev/core/src/index.ts";
+import { AppController, UserController} from "../controllers/index.ts";
 
-const app = Core.registerApp([AppController]);
+const app = Core.registerApp([
+    new UserController(), 
+    new AppController()
+]);
 app.listen({port: 8000});
 
 // To invoke:

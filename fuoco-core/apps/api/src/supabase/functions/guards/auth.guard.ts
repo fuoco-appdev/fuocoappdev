@@ -1,25 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // deno-lint-ignore-file no-explicit-any
-import { GuardExecuter } from 'https://fuoco-appdev-core-api-z6pn2hqtb120.deno.dev/core/src/index.ts';
-import { User } from "https://deno.land/x/supabase@1.3.1/mod.ts";
+import { GuardExecuter } from 'https://fuoco-appdev-core-api-t6j2pb2w5vcg.deno.dev/core/src/index.ts';
 import SupabaseService from '../services/supabase.service.ts';
 import * as Oak from "https://deno.land/x/oak@v11.1.0/mod.ts";
 
 export class AuthGuard extends GuardExecuter {
-    public override canExecute(ctx: Oak.RouterContext<
+    public override async canExecuteAsync(ctx: Oak.RouterContext<
         string,
         Oak.RouteParams<string>,
         Record<string | number, string | undefined>
-      >): boolean {
-        let isAuthenticated = false;
+      >): Promise<boolean> {
         if (ctx.request.headers.has("session-token")) {
             const token = ctx.request.headers.get("session-token") ?? '';
-            SupabaseService.client.auth.api.getUser(token)
-            .then((value: { user: User | null; data: User | null; error: any | null; }) => {
-                isAuthenticated = value.user ? true : false;
-            });
+            const {user, error} = await SupabaseService.client.auth.api.getUser(token);
+            if (error) {
+                console.error(error);
+            }
+
+            return user ? true : false;
         }
 
-        return isAuthenticated;
+        return false;
     }
 }

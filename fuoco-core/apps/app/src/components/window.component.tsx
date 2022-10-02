@@ -8,7 +8,6 @@ import { RoutePaths } from '../route-paths';
 import {Strings} from '../localization';
 import AuthService from '../services/auth.service';
 import {useObservable} from '@ngneat/use-observable';
-import { Location, NavigateFunction } from "react-router-dom";
 
 function SigninButtonComponent(): JSX.Element {
   const navigate = useNavigate();
@@ -40,46 +39,13 @@ function SignoutButtonComponent(): JSX.Element {
     />);
 }
 
-function UpdateOnLocationChanged(location: Location): void {
-  switch(location.pathname) {
-    case RoutePaths.Default:
-      WindowController.model.isSigninVisible = true;
-      WindowController.model.isSignupVisible = false;
-      WindowController.model.isSignoutVisible = false;
-      break;
-    case RoutePaths.Landing:
-      WindowController.model.isSigninVisible = true;
-      WindowController.model.isSignupVisible = false;
-      WindowController.model.isSignoutVisible = false;
-      break;
-    case RoutePaths.Signin:
-      WindowController.model.isSigninVisible = false;
-      WindowController.model.isSignupVisible = true;
-      WindowController.model.isSignoutVisible = false;
-      break;
-    case RoutePaths.Signup:
-      WindowController.model.isSigninVisible = true;
-      WindowController.model.isSignupVisible = false;
-      WindowController.model.isSignoutVisible = false;
-      break;
-    default:
-      break;
-  }
-
-  if (location.pathname.includes(RoutePaths.User)) {
-    WindowController.model.isSigninVisible = false;
-    WindowController.model.isSignupVisible = false;
-    WindowController.model.isSignoutVisible = true;
-  }
-}
-
 export default function WindowComponent(): JSX.Element {
   const location = useLocation();
   const navigate = useNavigate();
   WindowController.model.navigate = navigate;
 
   useEffect(() => {
-    UpdateOnLocationChanged(location);
+    WindowController.updateOnLocationChanged(location);
   }, [location]);
   
   const [props] = useObservable(WindowController.model.store);
