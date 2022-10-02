@@ -10,7 +10,7 @@ export class Service {
         this._headers = {
             'Authorization': `Bearer ${ConfigService.supabase.key}`,
             'Content-Type': 'application/x-protobuf',
-            'Session-Token': `${AuthService.supabaseClient.auth.session()?.access_token}`
+            'Session-Token': `${AuthService.supabaseClient.auth.session()?.access_token}`,
         };
         this._endpointUrl = `${ConfigService.supabase.url}/functions/v1`;
     }

@@ -16,6 +16,7 @@ export class UserController {
     @ContentType('application/x-protobuf')
     public async getUserAsync(context: Oak.RouterContext<string, Oak.RouteParams<string>, Record<string, any>>): Promise<void> {
         const paramsId = context.params['id'];
+        console.log(context);
         const data = await UserService.findAsync(paramsId);
         if (!data) {
             throw HttpError.createError(404, `User with superbase id ${paramsId} not found`);

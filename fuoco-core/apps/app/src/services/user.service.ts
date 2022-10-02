@@ -2,6 +2,7 @@ import { Service } from "../service";
 import {core} from '../protobuf/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import AuthService from "./auth.service";
+import axios from 'axios';
 
 class UserService extends Service {
     private readonly _activeUserBehaviorSubject: BehaviorSubject<core.User | null>;
@@ -27,43 +28,36 @@ class UserService extends Service {
     }
 
     public async requestUserAsync(supabaseId: string): Promise<core.User> {
-        const requestOptions = {
-            method: 'POST',
-            headers: this.headers
-        };
-        const response = await fetch(`${this.endpointUrl}/user/${supabaseId}`, requestOptions);
-        console.log(response);
-        if (!response.body) {
-            throw new Error('No response body');
+        const response = await axios({
+            method: 'post',
+            url: `${this.endpointUrl}/user/${supabaseId}`,
+            withCredentials: false,
+            headers: this.headers,
+            data: ""
+        });
+
+        if (response.data.status !== 200) {
+            throw response.data;
         }
 
-        const reader = response.body?.getReader();
-        const result = await reader.read();
-        if (!result.value) {
-            throw new Error('No value from response');
-        }
-
-        const userResponse = core.User.deserializeBinary(result.value);
+        const userResponse = core.User.deserializeBinary(response.data);
         return userResponse;
     }
 
     public async requestAllUsersAsync(): Promise<core.Users> {
-        const requestOptions = {
-            method: 'POST',
-            headers: this.headers
-        };
-        const response = await fetch(`${this.endpointUrl}/user/all`, requestOptions);
-        if (!response.body) {
-            throw new Error('Cannot get all users');
+        const response = await axios({
+            method: 'post',
+            url: `${this.endpointUrl}/user/all`,
+            withCredentials: false,
+            headers: this.headers,
+            data: ""
+        });
+
+        if (response.data.status !== 200) {
+            throw response.data;
         }
 
-        const reader = response.body?.getReader();
-        const result = await reader.read();
-        if (!result.value) {
-            throw new Error('No value from response');
-        }
-
-        const usersResponse = core.Users.deserializeBinary(result.value);
+        const usersResponse = core.Users.deserializeBinary(response.data);
         return usersResponse;
     }
 
@@ -80,23 +74,19 @@ class UserService extends Service {
             apps: []
         });
 
-        const requestOptions = {
-            method: 'POST',
+        const response = await axios({
+            method: 'post',
+            url: `${this.endpointUrl}/user/create`,
+            withCredentials: false,
             headers: this.headers,
-            body: user.serialize()
-        };
-        const response = await fetch(`${this.endpointUrl}/user/create`, requestOptions);
-        if (!response.body) {
-            throw new Error('Cannot create user');
+            data: user.serialize()
+        });
+        
+        if (response.data.status !== 200) {
+            throw response.data;
         }
 
-        const reader = response.body?.getReader();
-        const result = await reader.read();
-        if (!result.value) {
-            throw new Error('No value from response');
-        }
-
-        const userResponse = core.User.deserializeBinary(result.value);
+        const userResponse = core.User.deserializeBinary(response.data);
         this._activeUserBehaviorSubject.next(userResponse);
 
         return userResponse;
@@ -130,43 +120,36 @@ class UserService extends Service {
             request_status?: core.UserRequestStatus;
         }): Promise<core.User> {
         const user = new core.User(props);
-        const requestOptions = {
-            method: 'POST',
+        const response = await axios({
+            method: 'post',
+            url: `${this.endpointUrl}/user/update/${supabaseId}`,
+            withCredentials: false,
             headers: this.headers,
-            body: user.serialize()
-        };
-        const response = await fetch(`${this.endpointUrl}/user/update/${supabaseId}`, requestOptions);
-        if (!response.body) {
-            throw new Error('Cannot update user');
+            data: user.serialize(),
+        });
+
+        if (response.data.status !== 200) {
+            throw response.data;
         }
 
-        const reader = response.body?.getReader();
-        const result = await reader.read();
-        if (!result.value) {
-            throw new Error('No value from response');
-        }
-
-        const userResponse = core.User.deserializeBinary(result.value);
+        const userResponse = core.User.deserializeBinary(response.data);
         return userResponse;
     }
 
     public async requestDeleteUserAsync(supabaseId: string): Promise<core.User> {
-        const requestOptions = {
-            method: 'POST',
-            headers: this.headers
-        };
-        const response = await fetch(`${this.endpointUrl}/user/delete/${supabaseId}`, requestOptions);
-        if (!response.body) {
-            throw new Error('Cannot delete user');
+        const response = await axios({
+            method: 'post',
+            url: `${this.endpointUrl}/user/delete/${supabaseId}`,
+            withCredentials: false,
+            headers: this.headers,
+            data: ""
+        });
+        
+        if (response.data.status !== 200) {
+            throw response.data;
         }
 
-        const reader = response.body?.getReader();
-        const result = await reader.read();
-        if (!result.value) {
-            throw new Error('No value from response');
-        }
-
-        const userResponse = core.User.deserializeBinary(result.value);
+        const userResponse = core.User.deserializeBinary(response.data);
         return userResponse;
     }
 }
