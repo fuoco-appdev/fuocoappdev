@@ -64,7 +64,7 @@ export default function WindowComponent(): JSX.Element {
                   <div className={styles["navbarContentRightGrid"]}>
                     {props.isSigninVisible ?  <SigninButtonComponent /> : null}
                     {props.isSignupVisible ? <SignupButtonComponent /> : null}
-                    {props.isSignoutVisible ? <SignoutButtonComponent /> : null}
+                    {props.isAuthenticated ? <SignoutButtonComponent /> : null}
                   </div>
                 </div>
               </div>

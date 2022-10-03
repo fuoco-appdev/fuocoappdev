@@ -15,19 +15,22 @@ import SignupComponent from './signup.component';
 import TermsOfServiceComponent from './terms-of-service.component';
 import PrivacyPolicyComponent from './privacy-policy.component';
 import { RoutePaths } from '../route-paths';
-import AuthService from '../services/auth.service';
+import UserService from '../services/user.service';
 import UserComponent from './user.component';
+import { useObservable } from '@ngneat/use-observable';
 
 interface RouteElementProps {
   element: JSX.Element;
 }
 
 function GuestComponent({element}: RouteElementProps): React.ReactElement {
-  return ((AuthService.user === null) ? element : <Navigate to={RoutePaths.User}/>);
+  const [user] = useObservable(UserService.activeUserObservable);
+  return ((user === null) ? element : <Navigate to={RoutePaths.User}/>);
 }
 
 function AuthenticatedComponent({element}: RouteElementProps): React.ReactElement {
-  return (AuthService.user ? element : <Navigate to={RoutePaths.Signin}/>);
+  const [user] = useObservable(UserService.activeUserObservable);
+  return (user ? element : <Navigate to={RoutePaths.Signin}/>);
 }
 
 export default function AppComponent(): JSX.Element {

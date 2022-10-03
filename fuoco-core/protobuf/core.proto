@@ -34,13 +34,13 @@ message App {
     string updated_at = 3;
     string name = 4;
     AppStatus status = 5;
-    repeated Product products = 6;
-    repeated Link links = 7;
-    repeated Image images = 8;
+    repeated Product products = 6 [packed=false];
+    repeated Link links = 7 [packed=false];
+    repeated Image images = 8 [packed=false];
 }
 
 message Apps {
-    repeated App apps = 1;
+    repeated App apps = 1 [packed=false];
 }
 
 enum UserRole {
@@ -71,10 +71,10 @@ message User {
     string phone_number = 7;
     Location location = 8;
     string language = 9;
-    UserRequestStatus request_status = 10;
-    repeated string apps = 11;
+    UserRequestStatus request_status = 10 [packed=false];
+    repeated string apps = 11 [packed=false];
 }
 
 message Users {
-    repeated User users = 1;
+    repeated User users = 1 [packed=false];
 }

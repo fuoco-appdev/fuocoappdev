@@ -11,7 +11,6 @@ export default function LoadingComponent(): JSX.Element {
     WorldController.updateIsVisible(false);
     WindowController.updateIsSigninVisible(false);
     WindowController.updateIsSignupVisible(false);
-    WindowController.updateIsSignoutVisible(false);
 
     useEffect(() => {
         WorldController.updateIsVisible(true);

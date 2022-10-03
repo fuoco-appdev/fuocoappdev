@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable no-throw-literal */
 import { Service } from "../service";
 import {core} from '../protobuf/core';
@@ -7,15 +8,21 @@ import axios, { AxiosError } from 'axios';
 
 class UserService extends Service {
     private readonly _activeUserBehaviorSubject: BehaviorSubject<core.User | null>;
+    private readonly _encoder: TextEncoder;
 
     constructor() {
         super();
 
         this._activeUserBehaviorSubject = new BehaviorSubject<core.User | null>(null);
+        this._encoder = new TextEncoder();
     }
 
     public get activeUserObservable(): Observable<core.User | null> {
         return this._activeUserBehaviorSubject.asObservable();
+    }
+
+    public clearActiveUser(): void {
+        this._activeUserBehaviorSubject.next(null);
     }
 
     public async requestActiveUserAsync(): Promise<core.User> {
@@ -32,17 +39,18 @@ class UserService extends Service {
         const response = await axios({
             method: 'post',
             url: `${this.endpointUrl}/user/${supabaseId}`,
-            withCredentials: false,
-            headers: this.headers,
+            headers: {
+                ...this.headers,
+                'Session-Token': `${AuthService.supabaseClient.auth.session()?.access_token}`,
+            },
             data: "",
-            responseType: 'arraybuffer',
         });
 
         if (response.data.status >= 400) {
             throw response.data as AxiosError;
         }
 
-        const userResponse = core.User.deserialize(response.data);
+        const userResponse = core.User.deserializeBinary(this._encoder.encode(response.data));
         return userResponse;
     }
 
@@ -50,17 +58,18 @@ class UserService extends Service {
         const response = await axios({
             method: 'post',
             url: `${this.endpointUrl}/user/all`,
-            withCredentials: false,
-            headers: this.headers,
+            headers: {
+                ...this.headers,
+                'Session-Token': `${AuthService.supabaseClient.auth.session()?.access_token}`,
+            },
             data: "",
-            responseType: 'arraybuffer',
         });
 
         if (response.data.status >= 400) {
             throw response.data as AxiosError;
         }
 
-        const usersResponse = core.Users.deserializeBinary(response.data);
+        const usersResponse = core.Users.deserializeBinary(this._encoder.encode(response.data));
         return usersResponse;
     }
 
@@ -80,17 +89,18 @@ class UserService extends Service {
         const response = await axios({
             method: 'post',
             url: `${this.endpointUrl}/user/create`,
-            withCredentials: false,
-            headers: this.headers,
+            headers: {
+                ...this.headers,
+                'Session-Token': `${AuthService.supabaseClient.auth.session()?.access_token}`,
+            },
             data: user.serialize(),
-            responseType: 'arraybuffer',
         });
         
         if (response.data.status >= 400) {
             throw response.data as AxiosError;
         }
 
-        const userResponse = core.User.deserializeBinary(response.data);
+        const userResponse = core.User.deserializeBinary(this._encoder.encode(response.data));
         this._activeUserBehaviorSubject.next(userResponse);
 
         return userResponse;
@@ -127,17 +137,18 @@ class UserService extends Service {
         const response = await axios({
             method: 'post',
             url: `${this.endpointUrl}/user/update/${supabaseId}`,
-            withCredentials: false,
-            headers: this.headers,
+            headers: {
+                ...this.headers,
+                'Session-Token': `${AuthService.supabaseClient.auth.session()?.access_token}`,
+            },
             data: user.serialize(),
-            responseType: 'arraybuffer',
         });
 
         if (response.data.status >= 400) {
             throw response.data as AxiosError;
         }
 
-        const userResponse = core.User.deserializeBinary(response.data);
+        const userResponse = core.User.deserializeBinary(this._encoder.encode(response.data));
         return userResponse;
     }
 
@@ -145,17 +156,18 @@ class UserService extends Service {
         const response = await axios({
             method: 'post',
             url: `${this.endpointUrl}/user/delete/${supabaseId}`,
-            withCredentials: false,
-            headers: this.headers,
+            headers: {
+                ...this.headers,
+                'Session-Token': `${AuthService.supabaseClient.auth.session()?.access_token}`,
+            },
             data: "",
-            responseType: 'arraybuffer',
         });
         
         if (response.data.status >= 400) {
             throw response.data as AxiosError;
         }
 
-        const userResponse = core.User.deserializeBinary(response.data);
+        const userResponse = core.User.deserializeBinary(this._encoder.encode(response.data));
         return userResponse;
     }
 }

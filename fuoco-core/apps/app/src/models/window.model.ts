@@ -5,7 +5,6 @@ import { Model } from "../model";
 export interface WindowState {
     isSigninVisible: boolean;
     isSignupVisible: boolean;
-    isSignoutVisible: boolean;
     isAuthenticated: boolean | undefined;
     navigate: NavigateFunction | undefined;
 }
@@ -17,7 +16,6 @@ export class WindowModel extends Model {
             withProps<WindowState>({
                 isSigninVisible: false,
                 isSignupVisible: false,
-                isSignoutVisible: false,
                 isAuthenticated: undefined,
                 navigate: undefined
             }),
@@ -41,16 +39,6 @@ export class WindowModel extends Model {
     public set isSignupVisible(isVisible: boolean) {
         if (this.isSignupVisible !== isVisible) {
             this.store.update((state) => ({...state, isSignupVisible: isVisible}));
-        }
-    }
-
-    public get isSignoutVisible(): boolean {
-        return this.store.getValue().isSignoutVisible;
-    }
-
-    public set isSignoutVisible(isVisible: boolean) {
-        if (this.isSignoutVisible !== isVisible) {
-            this.store.update((state) => ({...state, isSignoutVisible: isVisible}));
         }
     }
 

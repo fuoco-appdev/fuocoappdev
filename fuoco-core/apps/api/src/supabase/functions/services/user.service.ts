@@ -51,8 +51,6 @@ export class UserService {
             requestStatus: UserRequestStatus.IDLE,
             apps: []
         });
-
-        console.log(userData);
         
         const {data, error} = await SupabaseService.client
             .from('users')
