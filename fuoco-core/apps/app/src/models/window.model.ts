@@ -6,6 +6,7 @@ export interface WindowState {
     isSigninVisible: boolean;
     isSignupVisible: boolean;
     isAuthenticated: boolean | undefined;
+    isLoading: boolean;
     navigate: NavigateFunction | undefined;
 }
 
@@ -17,6 +18,7 @@ export class WindowModel extends Model {
                 isSigninVisible: false,
                 isSignupVisible: false,
                 isAuthenticated: undefined,
+                isLoading: false,
                 navigate: undefined
             }),
         ));
@@ -49,6 +51,16 @@ export class WindowModel extends Model {
     public set isAuthenticated(isAuthenticated: boolean | undefined) {
         if (this.isAuthenticated !== isAuthenticated) {
             this.store.update((state) => ({...state, isAuthenticated: isAuthenticated}));
+        }
+    }
+
+    public get isLoading(): boolean {
+        return this.store.getValue().isLoading;
+    }
+
+    public set isLoading(isLoading: boolean) {
+        if (this.isLoading !== isLoading) {
+            this.store.update((state) => ({...state, isLoading: isLoading}));
         }
     }
 

@@ -76,6 +76,7 @@
     "sass": "^1.54.8",
     "three": "^0.144.0",
     "lodash.throttle": "^4.1.1",
+    "lottie-web": "^5.9.6",
     "ts-jest": "28.0.5",
     "ts-node": "10.9.1",
     "ts-proto": "^1.126.1",

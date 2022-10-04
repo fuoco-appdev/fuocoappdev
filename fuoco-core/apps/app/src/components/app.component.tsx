@@ -25,7 +25,7 @@ interface RouteElementProps {
 
 function GuestComponent({element}: RouteElementProps): React.ReactElement {
   const [user] = useObservable(UserService.activeUserObservable);
-  return ((user === null) ? element : <Navigate to={RoutePaths.User}/>);
+  return (!user ? element : <Navigate to={RoutePaths.User}/>);
 }
 
 function AuthenticatedComponent({element}: RouteElementProps): React.ReactElement {

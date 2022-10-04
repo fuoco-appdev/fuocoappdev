@@ -8,6 +8,7 @@ import { RoutePaths } from '../route-paths';
 import {Strings} from '../localization';
 import AuthService from '../services/auth.service';
 import {useObservable} from '@ngneat/use-observable';
+import LoadingComponent from './loading.component';
 
 function SigninButtonComponent(): JSX.Element {
   const navigate = useNavigate();
@@ -54,25 +55,29 @@ export default function WindowComponent(): JSX.Element {
           <div className={styles["background"]}>
             <WorldComponent />
           </div>
-          <div className={styles["content"]}>
-            <div className={styles["navbar"]}>
-              <div className={styles["navbarContent"]}>
-                <div className={styles["logoContainer"]}>
-                  <img className={styles["logo"]} src="../assets/svg/logo.svg" alt="logo"/>
-                </div>
-                <div className={styles["navbarContentRight"]}>
-                  <div className={styles["navbarContentRightGrid"]}>
-                    {props.isSigninVisible ?  <SigninButtonComponent /> : null}
-                    {props.isSignupVisible ? <SignupButtonComponent /> : null}
-                    {props.isAuthenticated ? <SignoutButtonComponent /> : null}
+          {props.isLoading ? <LoadingComponent /> :
+            (
+            <div className={styles["content"]}>
+              <div className={styles["navbar"]}>
+                <div className={styles["navbarContent"]}>
+                  <div className={styles["logoContainer"]}>
+                    <img className={styles["logo"]} src="../assets/svg/logo.svg" alt="logo"/>
+                  </div>
+                  <div className={styles["navbarContentRight"]}>
+                    <div className={styles["navbarContentRightGrid"]}>
+                      {props.isSigninVisible ?  <SigninButtonComponent /> : null}
+                      {props.isSignupVisible ? <SignupButtonComponent /> : null}
+                      {props.isAuthenticated ? <SignoutButtonComponent /> : null}
+                    </div>
                   </div>
                 </div>
               </div>
+              <div className={styles["children"]}>
+                <Outlet/>
+              </div>
             </div>
-            <div className={styles["children"]}>
-              <Outlet/>
-            </div>
-          </div>
+            )
+          }
     </div>
   );
 }

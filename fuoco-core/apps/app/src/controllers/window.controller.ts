@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { select } from "@ngneat/elf";
 import { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { Subscription } from "rxjs";
 import { Controller } from "../controller";
@@ -14,7 +13,6 @@ import {core} from "../protobuf/core";
 class WindowController extends Controller {
     private readonly _model: WindowModel;
     private _userSubscription: Subscription | undefined;
-    private _isAuthenticatedSubscription: Subscription | undefined;
 
     constructor() {
         super();
@@ -37,27 +35,9 @@ class WindowController extends Controller {
                     this._model.isAuthenticated = user ? true : false;
                 }
             })
-
-        this._isAuthenticatedSubscription = this._model.store
-            .pipe(select(store => store.isAuthenticated))
-            .subscribe({
-                next: (isAuthenticated: boolean) => {
-                    if (!this._model.navigate) {
-                        return;
-                    }
-
-                    if (isAuthenticated === true) {
-                        this._model.navigate(RoutePaths.User);
-                    }
-                    else if (isAuthenticated === false) {
-                        this._model.navigate(RoutePaths.Signin);
-                    }
-                }
-        });
     }
 
     public dispose(): void {
-        this._isAuthenticatedSubscription?.unsubscribe();
         this._userSubscription?.unsubscribe();
     }
 
@@ -96,6 +76,12 @@ class WindowController extends Controller {
 
     private async onAuthStateChanged(event: AuthChangeEvent, session: Session | null): Promise<void> {
         if (event === 'SIGNED_IN') {
+            if (UserService.activeUser) {
+                return;
+            }
+
+            this._model.isLoading = true;
+
             try {
                 await UserService.requestActiveUserAsync();
             }
@@ -112,6 +98,8 @@ class WindowController extends Controller {
                     console.error(error);
                 }
             }
+            
+            this._model.isLoading = false;
         }
         else if(event === 'SIGNED_OUT') {
             UserService.clearActiveUser();

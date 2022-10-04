@@ -21,6 +21,10 @@ class UserService extends Service {
         return this._activeUserBehaviorSubject.asObservable();
     }
 
+    public get activeUser(): core.User | null {
+        return this._activeUserBehaviorSubject.getValue();
+    }
+
     public clearActiveUser(): void {
         this._activeUserBehaviorSubject.next(null);
     }
