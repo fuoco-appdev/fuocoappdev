@@ -1,5 +1,7 @@
+import styles from './loading.module.scss';
+
 export default function LoadingComponent(): JSX.Element {
     return (
-        <div></div>
+        <div className={styles["root"]}></div>
     );
 }

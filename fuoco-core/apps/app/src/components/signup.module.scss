@@ -3,6 +3,12 @@
     grid-template-columns: 132fr 352fr 956fr;
     height: 100%;
 
+    & .alert {
+        position: absolute;
+        z-index: 12;
+        width: 80%;
+    }
+
     & .content {
         display: flex;
         grid-column-start: 2;

@@ -18,6 +18,10 @@ class SignupController extends Controller {
     public initialize(): void {}
 
     public dispose(): void {}
+
+    public updateEmailConfirmationSent(emailConfirmationSent: boolean): void {
+        this._model.emailConfirmationSent = emailConfirmationSent;
+    }
 }
 
 export default new SignupController();
