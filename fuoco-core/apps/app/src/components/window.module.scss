@@ -8,6 +8,13 @@
         width: 100vw;
     }
 
+    & .alert {
+        position: absolute;
+        left: 10%;
+        z-index: 12;
+        width: 80%;
+    }
+
     & .content {
         display: grid;
         grid-template-rows: 56fr 968fr;

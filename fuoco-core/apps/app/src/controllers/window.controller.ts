@@ -49,6 +49,10 @@ class WindowController extends Controller {
         this._model.isSignupVisible = isVisible;
     }
 
+    public updateShowConfirmEmailAlert(show: boolean): void {
+        this._model.showConfirmEmailAlert = show;
+    }
+
     public updateOnLocationChanged(location: Location): void {
         switch(location.pathname) {
           case RoutePaths.Default:

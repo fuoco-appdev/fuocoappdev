@@ -8,6 +8,7 @@ export interface WindowState {
     isAuthenticated: boolean | undefined;
     isLoading: boolean;
     navigate: NavigateFunction | undefined;
+    showConfirmEmailAlert: boolean;
 }
 
 export class WindowModel extends Model {
@@ -19,7 +20,8 @@ export class WindowModel extends Model {
                 isSignupVisible: false,
                 isAuthenticated: undefined,
                 isLoading: false,
-                navigate: undefined
+                navigate: undefined,
+                showConfirmEmailAlert: false
             }),
         ));
     }
@@ -71,6 +73,16 @@ export class WindowModel extends Model {
     public set navigate(navigate: NavigateFunction | undefined) {
         if (this.navigate !== navigate) {
             this.store.update((state) => ({...state, navigate: navigate}));
+        }
+    }
+
+    public get showConfirmEmailAlert(): boolean {
+        return this.store.getValue().showConfirmEmailAlert;
+    }
+
+    public set showConfirmEmailAlert(show: boolean) {
+        if (this.showConfirmEmailAlert !== show) {
+            this.store.update((state) => ({...state, showConfirmEmailAlert: show}));
         }
     }
 }

@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
-import {Auth, Alert} from '@fuoco.appdev/core-ui';
+import {Auth} from '@fuoco.appdev/core-ui';
 import SignupController from '../controllers/signup.controller';
+import WindowController from '../controllers/window.controller';
 import styles from './signup.module.scss';
 import AuthService from '../services/auth.service';
 import { RoutePaths } from '../route-paths';
@@ -15,6 +16,12 @@ export interface SignupProps {}
 function AuthComponent(): JSX.Element {
   const navigate = useNavigate();
   const [error, setError] = useState<ApiError | null>(null)
+  const [emailConfirmationSent, setEmailConfirmationSent] = useState<boolean>(false)
+
+  useEffect(() => {
+    WindowController.updateShowConfirmEmailAlert(emailConfirmationSent);
+  }, [emailConfirmationSent])
+
   return (
     <Auth
       providers={[
@@ -48,7 +55,7 @@ function AuthComponent(): JSX.Element {
       onSigninRedirect={() => navigate(RoutePaths.Signin)}
       onSignupRedirect={() => navigate(RoutePaths.Signup)}
       onSignupError={(error: ApiError) => setError(error)}
-      onEmailConfirmationSent={() => {}}
+      onEmailConfirmationSent={() => { setEmailConfirmationSent(true) }}
       redirectTo={RoutePaths.User}
     />
   );
@@ -61,12 +68,6 @@ export default function SignupComponent(): JSX.Element {
 
     return (
       <div className={styles["root"]}>
-          <Alert
-            className={styles['alert']}
-            title={Strings.emailConfirmation}
-            variant={'info'}
-            withIcon={true}
-            closable={true}>{Strings.emailConfirmationDescription}</Alert>
           <div className={styles["content"]}>
             <AuthComponent />
           </div>

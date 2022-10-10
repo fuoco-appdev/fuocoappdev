@@ -3,7 +3,7 @@ import { Outlet, useLocation, useNavigate} from "react-router-dom";
 import WindowController from '../controllers/window.controller';
 import WorldComponent from './world.component';
 import styles from './window.module.scss';
-import {Button, IconLogOut} from '@fuoco.appdev/core-ui';
+import {Button, IconLogOut, Alert} from '@fuoco.appdev/core-ui';
 import { RoutePaths } from '../route-paths';
 import {Strings} from '../localization';
 import AuthService from '../services/auth.service';
@@ -55,6 +55,7 @@ export default function WindowComponent(): JSX.Element {
           <div className={styles["background"]}>
             <WorldComponent />
           </div>
+
           {props.isLoading ? <LoadingComponent /> :
             (
             <div className={styles["content"]}>
@@ -78,6 +79,17 @@ export default function WindowComponent(): JSX.Element {
             </div>
             )
           }
+
+          <Alert
+            className={styles['alert']}
+            title={Strings.emailConfirmation}
+            isVisible={props.showConfirmEmailAlert}
+            variant={'info'}
+            withIcon={true}
+            closable={true}
+            onCloseClick={() => WindowController.updateShowConfirmEmailAlert(false)}>
+              {Strings.emailConfirmationDescription}
+            </Alert>
     </div>
   );
 }
