@@ -21,6 +21,12 @@ function AuthComponent(): JSX.Element {
     WindowController.updateShowConfirmEmailAlert(emailConfirmationSent);
   }, [emailConfirmationSent])
 
+  useEffect(() => {
+    if (error?.status === 400) {
+      setEmailConfirmationSent(true);
+    }
+  }, [error])
+
   return (
     <Auth
       providers={[
@@ -44,8 +50,8 @@ function AuthComponent(): JSX.Element {
         signIn: Strings.signIn,
         doYouHaveAnAccount: Strings.doYouHaveAnAccount
       }}
-      emailErrorMessage={error ? Strings.emailErrorMessage : undefined}
-      passwordErrorMessage={error ? Strings.passwordErrorMessage : undefined}
+      emailErrorMessage={(error && !emailConfirmationSent) ? Strings.emailErrorMessage : undefined}
+      passwordErrorMessage={(error && !emailConfirmationSent) ? Strings.passwordErrorMessage : undefined}
       supabaseClient={AuthService.supabaseClient}
       onForgotPasswordRedirect={() => navigate(RoutePaths.ForgotPassword)}
       onTermsOfServiceRedirect={() => navigate(RoutePaths.TermsOfService)}

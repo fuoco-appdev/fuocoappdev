@@ -9,6 +9,7 @@ import {Strings} from '../localization';
 import AuthService from '../services/auth.service';
 import {useObservable} from '@ngneat/use-observable';
 import LoadingComponent from './loading.component';
+import {useSpring } from 'react-spring';
 
 function SigninButtonComponent(): JSX.Element {
   const navigate = useNavigate();
@@ -48,8 +49,18 @@ export default function WindowComponent(): JSX.Element {
   useEffect(() => {
     WindowController.updateOnLocationChanged(location);
   }, [location]);
-  
+
   const [props] = useObservable(WindowController.model.store);
+  const confirmEmailTransitionStyle = useSpring({
+    from: { y: -200 },
+    to: props.showConfirmEmailAlert ? { y: 50 } : { y: -200 },
+    config: {
+      friction: 30,
+      tension: 600,
+      bounce: 1
+    },
+  })
+  
   return (
     <div className={styles["root"]}>
           <div className={styles["background"]}>
@@ -80,15 +91,15 @@ export default function WindowComponent(): JSX.Element {
             )
           }
 
-          <Alert
-            className={styles['alert']}
-            title={Strings.emailConfirmation}
-            isVisible={props.showConfirmEmailAlert}
-            variant={'info'}
-            withIcon={true}
-            closable={true}
-            onCloseClick={() => WindowController.updateShowConfirmEmailAlert(false)}>
-              {Strings.emailConfirmationDescription}
+            <Alert
+              className={styles['alert']}
+              style={confirmEmailTransitionStyle}
+              title={Strings.emailConfirmation}
+              variant={'info'}
+              withIcon={true}
+              closable={true}
+              onCloseClick={() => WindowController.updateShowConfirmEmailAlert(false)}>
+                {Strings.emailConfirmationDescription}
             </Alert>
     </div>
   );
