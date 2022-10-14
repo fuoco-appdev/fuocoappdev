@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import React, {useEffect} from 'react';
-import { BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation} from "react-router-dom";
 import WorldController from '../controllers/world.controller';
 import WindowController from '../controllers/window.controller';
 import SigninController from '../controllers/signin.controller';
@@ -12,6 +13,8 @@ import WindowComponent from './window.component';
 import LandingComponent from './landing.component';
 import SigninComponent from './signin.component';
 import SignupComponent from './signup.component';
+import ForgotPasswordComponent from './forgot-password.component';
+import ResetPasswordComponent from './reset-password.component';
 import TermsOfServiceComponent from './terms-of-service.component';
 import PrivacyPolicyComponent from './privacy-policy.component';
 import { RoutePaths } from '../route-paths';
@@ -61,8 +64,10 @@ export default function AppComponent(): JSX.Element {
           <Route path={RoutePaths.Landing} element={<GuestComponent element={<LandingComponent />}/>}/>
           <Route path={RoutePaths.Signin} element={<GuestComponent element={<SigninComponent />} />}/>
           <Route path={RoutePaths.Signup} element={<GuestComponent element={<SignupComponent />}/> }/>
+          <Route path={RoutePaths.ForgotPassword} element={<GuestComponent element={<ForgotPasswordComponent />}/>} />
           <Route path={RoutePaths.TermsOfService} element={<GuestComponent element={<TermsOfServiceComponent />}/> }/>
           <Route path={RoutePaths.PrivacyPolicy} element={<GuestComponent element={<PrivacyPolicyComponent />}/> }/>
+          <Route path={RoutePaths.ResetPassword} element={<ResetPasswordComponent />} />
           <Route path={RoutePaths.User} element={<AuthenticatedComponent element={<UserComponent/>}/>}>
 
           </Route>

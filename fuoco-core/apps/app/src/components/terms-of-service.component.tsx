@@ -1,6 +1,5 @@
 import {Auth, Typography, Button, IconChevronLeft} from '@fuoco.appdev/core-ui';
 import { useObservable } from '@ngneat/use-observable';
-import AuthService from '../services/auth.service';
 import styles from './terms-of-service.module.scss';
 import ReactMarkdown from 'react-markdown';
 import gfm from 'remark-gfm';
@@ -24,9 +23,7 @@ export default function ReactiveTermsOfServiceComponent(): JSX.Element {
     return (
         <div className={styles["root"]}>
             <div className={styles["content"]}>
-                <Auth
-                    supabaseClient={AuthService.supabaseClient}
-                    view={'terms_of_service'}
+                <Auth.TermsOfService
                     termsOfService={
                         <Typography tag="article">
                             <ReactMarkdown remarkPlugins={[gfm]} children={props.markdown} />

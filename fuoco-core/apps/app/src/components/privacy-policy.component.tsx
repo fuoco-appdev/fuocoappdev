@@ -1,6 +1,5 @@
 import {Auth, Typography, Button, IconChevronLeft} from '@fuoco.appdev/core-ui';
 import {useObservable} from '@ngneat/use-observable';
-import AuthService from '../services/auth.service';
 import styles from './privacy-policy.module.scss';
 import ReactMarkdown from 'react-markdown';
 import gfm from 'remark-gfm';
@@ -19,14 +18,12 @@ function BackButton(): JSX.Element {
     );
 }
 
-export default function ReactivePrivacyPolicyComponent(): JSX.Element {
+export default function PrivacyPolicyComponent(): JSX.Element {
     const [props] = useObservable(PrivacyPolicyController.model.store);
     return (
         <div className={styles["root"]}>
             <div className={styles["content"]}>
-                <Auth
-                    supabaseClient={AuthService.supabaseClient}
-                    view={'privacy_policy'}
+                <Auth.PrivacyPolicy
                     privacyPolicy={
                         <Typography tag="article">
                             <ReactMarkdown remarkPlugins={[gfm]} children={props.markdown} />

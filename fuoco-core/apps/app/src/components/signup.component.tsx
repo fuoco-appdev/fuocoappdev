@@ -10,17 +10,13 @@ import { RoutePaths } from '../route-paths';
 import { useObservable } from '@ngneat/use-observable';
 import { Strings } from '../localization';
 import { ApiError } from '@supabase/supabase-js';
+import { animated, config, useTransition } from 'react-spring';
 
 export interface SignupProps {}
 
 function AuthComponent(): JSX.Element {
   const navigate = useNavigate();
-  const [error, setError] = useState<ApiError | null>(null)
-  const [emailConfirmationSent, setEmailConfirmationSent] = useState<boolean>(false)
-
-  useEffect(() => {
-    WindowController.updateShowConfirmEmailAlert(emailConfirmationSent);
-  }, [emailConfirmationSent])
+  const [error, setError] = useState<ApiError | null>(null);
 
   return (
     <Auth
@@ -55,7 +51,9 @@ function AuthComponent(): JSX.Element {
       onSigninRedirect={() => navigate(RoutePaths.Signin)}
       onSignupRedirect={() => navigate(RoutePaths.Signup)}
       onSignupError={(error: ApiError) => setError(error)}
-      onEmailConfirmationSent={() => { setEmailConfirmationSent(true) }}
+      onEmailConfirmationSent={() => { 
+        WindowController.updateShowConfirmEmailAlert(true);
+       }}
       redirectTo={RoutePaths.User}
     />
   );
@@ -64,12 +62,32 @@ function AuthComponent(): JSX.Element {
 export default function SignupComponent(): JSX.Element {
     const location = useLocation();
     const [props] = useObservable(SignupController.model.store);
+    const [show, setShow] = useState(false);
     SignupController.model.location = location;
+
+    useEffect(() => {
+      setShow(true);
+  
+      return () => {
+        setShow(false);
+      }
+    }, []);
+
+    const transitions = useTransition(show, {
+      from: { opacity: 0, y: 5 },
+      enter: { opacity: 1, y: 0 },
+      leave: { opacity: 0, y: 5 },
+      config: config.gentle,
+    });
 
     return (
       <div className={styles["root"]}>
           <div className={styles["content"]}>
-            <AuthComponent />
+            {transitions((style, item) => item && (
+              <animated.div style={style}>
+                <AuthComponent />
+              </animated.div>
+            ))}
           </div>
       </div>
     );

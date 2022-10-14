@@ -9,23 +9,24 @@ import { RoutePaths } from '../route-paths';
 import { ApiError } from "@supabase/supabase-js";
 import { Strings } from "../localization";
 import { useState, useEffect } from "react";
+import { animated, config, useTransition } from "react-spring";
 
 export interface SigninProps {}
 
 function AuthComponent(): JSX.Element {
   const navigate = useNavigate();
-  const [error, setError] = useState<ApiError | null>(null)
-  const [emailConfirmationSent, setEmailConfirmationSent] = useState<boolean>(false)
+  const [error, setError] = useState<ApiError | null>(null);
+  const [emailConfirmationSent, setEmailConfirmationSent] = useState<boolean>(false);
 
   useEffect(() => {
     WindowController.updateShowConfirmEmailAlert(emailConfirmationSent);
-  }, [emailConfirmationSent])
+  }, [emailConfirmationSent]);
 
   useEffect(() => {
     if (error?.status === 400) {
       setEmailConfirmationSent(true);
     }
-  }, [error])
+  }, [error]);
 
   return (
     <Auth
@@ -67,12 +68,32 @@ function AuthComponent(): JSX.Element {
 
 export default function SigninComponent(): JSX.Element {
   const location = useLocation();
+  const [show, setShow] = useState(false);
   SigninController.model.location = location;
+
+  useEffect(() => {
+    setShow(true);
+
+    return () => {
+      setShow(false);
+    }
+  }, []);
+
+  const transitions = useTransition(show, {
+    from: { opacity: 0, y: 5 },
+    enter: { opacity: 1, y: 0 },
+    leave: { opacity: 0, y: 5 },
+    config: config.gentle,
+  });
   
   return (
     <div className={styles["root"]}>
       <div className={styles["content"]}>
-          <AuthComponent />
+        {transitions((style, item) => item && (
+          <animated.div style={style}>
+            <AuthComponent />
+          </animated.div>
+        ))}
       </div>
     </div>
   );

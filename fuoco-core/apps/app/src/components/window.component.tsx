@@ -32,12 +32,16 @@ function SignupButtonComponent(): JSX.Element {
 }
 
 function SignoutButtonComponent(): JSX.Element {
+  const navigate = useNavigate();
   return (<Button 
     className={styles["navbarButton"]}
     icon={<IconLogOut />}
     size="tiny" 
     type="text"
-    onClick={() => AuthService.signout()}
+    onClick={async () => {
+      await AuthService.signoutAsync();
+      navigate(RoutePaths.Signin);
+    }}
     />);
 }
 
@@ -59,7 +63,16 @@ export default function WindowComponent(): JSX.Element {
       tension: 600,
       bounce: 1
     },
-  })
+  });
+  const passwordResetTransitionStyle = useSpring({
+    from: { y: -200 },
+    to: props.showPasswordResetAlert ? { y: 50 } : { y: -200 },
+    config: {
+      friction: 30,
+      tension: 600,
+      bounce: 1
+    },
+  });
   
   return (
     <div className={styles["root"]}>
@@ -91,16 +104,26 @@ export default function WindowComponent(): JSX.Element {
             )
           }
 
-            <Alert
-              className={styles['alert']}
-              style={confirmEmailTransitionStyle}
-              title={Strings.emailConfirmation}
-              variant={'info'}
-              withIcon={true}
-              closable={true}
-              onCloseClick={() => WindowController.updateShowConfirmEmailAlert(false)}>
-                {Strings.emailConfirmationDescription}
-            </Alert>
+          <Alert
+            className={styles['alert']}
+            style={confirmEmailTransitionStyle}
+            title={Strings.emailConfirmation}
+            variant={'info'}
+            withIcon={true}
+            closable={true}
+            onCloseClick={() => WindowController.updateShowConfirmEmailAlert(false)}>
+              {Strings.emailConfirmationDescription}
+          </Alert>
+          <Alert
+            className={styles['alert']}
+            style={passwordResetTransitionStyle}
+            title={Strings.passwordReset}
+            variant={'info'}
+            withIcon={true}
+            closable={true}
+            onCloseClick={() => WindowController.updateShowPasswordResetAlert(false)}>
+              {Strings.passwordResetDescription}
+          </Alert>
     </div>
   );
 }

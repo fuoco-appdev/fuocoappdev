@@ -25,6 +25,7 @@
             -webkit-user-select: none; /* Safari */
             -ms-user-select: none; /* IE 10 and IE 11 */
             user-select: none; /* Standard syntax */
+            padding-bottom: 28px;
         }
 
         & .subTitle {
@@ -33,6 +34,7 @@
             line-break: normal;
             white-space: pre-line;
             color: rgba(255, 255, 255, 204);
+            padding-bottom: 16px;
         }
     }
 }

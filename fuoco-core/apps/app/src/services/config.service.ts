@@ -11,11 +11,11 @@ class ConfigService {
 
     constructor() {
         if (process.env['NODE_ENV'] === "development") {
-            this._supabase = DevelopmentConfig.superbase;
+            this._supabase = DevelopmentConfig.supabase;
         }
         // eslint-disable-next-line no-empty
         else if (process.env['NODE_ENV'] === "production") {
-            this._supabase = ProductionConfig.superbase;
+            this._supabase = ProductionConfig.supabase;
         }
     }
 

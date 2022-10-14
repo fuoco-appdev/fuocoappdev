@@ -9,6 +9,7 @@ export interface WindowState {
     isLoading: boolean;
     navigate: NavigateFunction | undefined;
     showConfirmEmailAlert: boolean;
+    showPasswordResetAlert: boolean;
 }
 
 export class WindowModel extends Model {
@@ -21,7 +22,8 @@ export class WindowModel extends Model {
                 isAuthenticated: undefined,
                 isLoading: false,
                 navigate: undefined,
-                showConfirmEmailAlert: false
+                showConfirmEmailAlert: false,
+                showPasswordResetAlert: false
             }),
         ));
     }
@@ -83,6 +85,16 @@ export class WindowModel extends Model {
     public set showConfirmEmailAlert(show: boolean) {
         if (this.showConfirmEmailAlert !== show) {
             this.store.update((state) => ({...state, showConfirmEmailAlert: show}));
+        }
+    }
+
+    public get showPasswordResetAlert(): boolean {
+        return this.store.getValue().showPasswordResetAlert;
+    }
+
+    public set showPasswordResetAlert(show: boolean) {
+        if (this.showPasswordResetAlert !== show) {
+            this.store.update((state) => ({...state, showPasswordResetAlert: show}));
         }
     }
 }

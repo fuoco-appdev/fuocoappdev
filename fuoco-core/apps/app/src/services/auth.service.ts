@@ -16,9 +16,9 @@ class AuthService {
         return this.supabaseClient.auth.user();
     }
 
-    public signout(): void {
+    public async signoutAsync(): Promise<void> {
         if (this.user) {
-            this.supabaseClient.auth.signOut();
+            await this.supabaseClient.auth.signOut();
         }
     }
 }
