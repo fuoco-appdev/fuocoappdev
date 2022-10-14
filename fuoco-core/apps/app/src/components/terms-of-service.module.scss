@@ -1,7 +1,8 @@
 .root {
     display: grid;
     grid-template-columns: 132fr 352fr 956fr;
-    height: 100%;
+    margin-top: 5%;
+    height: 95%;
 
     & .content {
         display: flex;

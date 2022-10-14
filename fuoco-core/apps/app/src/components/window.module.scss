@@ -24,8 +24,6 @@
     }
 
     & .content {
-        display: grid;
-        grid-template-rows: 56fr 968fr;
         width: 100vw;
         z-index: 1;
 
@@ -38,10 +36,10 @@
         }
 
         & .navbar {
+            position: absolute;
             display: grid;
-            grid-row-start: 1;
-            grid-row-end: 2;
             grid-template-columns: 16fr 1408fr 16fr;
+            width: 100%;
 
             & :hover {
                 cursor: auto;
@@ -86,8 +84,7 @@
 
         & .children {
             overflow-y: auto;
-            grid-row-start: 2;
-            grid-row-end: 3;
+            height: 100%;
         }
     }
 }
