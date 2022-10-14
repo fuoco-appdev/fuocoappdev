@@ -59,6 +59,8 @@ export default function ResetPasswordComponent(): JSX.Element {
                 }}
                 onPasswordUpdated={() => {
                     WindowController.updateShowPasswordResetAlert(false);
+                    WindowController.updateShowPasswordUpdatedAlert(true);
+                    ResetPasswordController.updateAccessToken(undefined);
                     setError(null);
                     navigate(RoutePaths.User);
                 }}

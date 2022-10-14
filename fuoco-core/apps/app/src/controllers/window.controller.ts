@@ -57,6 +57,10 @@ class WindowController extends Controller {
         this._model.showPasswordResetAlert = show;
     }
 
+    public updateShowPasswordUpdatedAlert(show: boolean): void {
+        this._model.showPasswordUpdatedAlert = show;
+    }
+
     public updateOnLocationChanged(location: Location): void {
         switch(location.pathname) {
           case RoutePaths.Default:

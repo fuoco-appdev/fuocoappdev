@@ -28,6 +28,8 @@ export const Strings = new LocalizedStrings({
       termsOfService: "Terms of Service",
       passwordReset: "Password reset",
       passwordResetDescription: "Please check your email inbox to reset your account",
+      passwordUpdated: "Password updated",
+      passwordUpdatedDescription: "Your password has been successfully updated",
       privacyPolicy: "Privacy Policy",
       yourEmailAddress: "Your email address",
       sendResetPasswordInstructions: "Send password reset",

@@ -50,10 +50,6 @@ export default function WindowComponent(): JSX.Element {
   const navigate = useNavigate();
   WindowController.model.navigate = navigate;
 
-  useEffect(() => {
-    WindowController.updateOnLocationChanged(location);
-  }, [location]);
-
   const [props] = useObservable(WindowController.model.store);
   const confirmEmailTransitionStyle = useSpring({
     from: { y: -200 },
@@ -73,6 +69,25 @@ export default function WindowComponent(): JSX.Element {
       bounce: 1
     },
   });
+  const passwordUpdatedTransitionStyle = useSpring({
+    from: { y: -200 },
+    to: props.showPasswordUpdatedAlert ? { y: 50 } : { y: -200 },
+    config: {
+      friction: 30,
+      tension: 600,
+      bounce: 1
+    },
+  });
+
+  useEffect(() => {
+    if (props.showPasswordUpdatedAlert) {
+      setTimeout(() => WindowController.updateShowPasswordUpdatedAlert(false), 4000);
+    }
+  }, [props.showPasswordUpdatedAlert]);
+
+  useEffect(() => {
+    WindowController.updateOnLocationChanged(location);
+  }, [location]);
   
   return (
     <div className={styles["root"]}>
@@ -123,6 +138,15 @@ export default function WindowComponent(): JSX.Element {
             closable={true}
             onCloseClick={() => WindowController.updateShowPasswordResetAlert(false)}>
               {Strings.passwordResetDescription}
+          </Alert>
+          <Alert
+            className={styles['alert']}
+            style={passwordUpdatedTransitionStyle}
+            title={Strings.passwordUpdated}
+            variant={'success'}
+            withIcon={true}
+            closable={false}>
+              {Strings.passwordUpdatedDescription}
           </Alert>
     </div>
   );
