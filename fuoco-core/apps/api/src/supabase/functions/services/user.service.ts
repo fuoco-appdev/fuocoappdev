@@ -20,19 +20,23 @@ export class UserService {
     public async findAsync(supabaseId: string): Promise<UserProps | null> {
         const {data, error} = await SupabaseService.client
             .from('users')
-            .select('*')
-            .eq('supabase_id', supabaseId)
-            .single();
+            .select()
+            .eq('supabase_id', supabaseId);
 
         if (error) {
             console.error(error);
             return null;
         }
 
-        return data;
+        return data.length > 0 ? data[0] : null;
     }
 
     public async createAsync(supabaseId: string, user: InstanceType<typeof User>): Promise<UserProps | null> {
+        const existingUser = await this.findAsync(supabaseId);
+        if (existingUser) {
+            return null;
+        }
+        
         const role = user.getRole();
         const company = user.getCompany();
         const email = user.getEmail();
@@ -100,7 +104,7 @@ export class UserService {
     public async findAllAsync(): Promise<UserProps[] | null> {
         const {data, error} = await SupabaseService.client
         .from('users')
-        .select('*');
+        .select();
 
         if (error) {
             console.error(error);
@@ -173,7 +177,7 @@ export class UserService {
     }) {
         return {
             ...(props.supabaseId && {supabase_id: props.supabaseId}),
-            ...(props.role && {role: props.role}),
+            ...(props.role !== undefined && {role: props.role}),
             ...(props.company && {company: props.company}),
             ...(props.email && {email: props.email}),
             ...(props.phoneNumber && {phone_number: props.phoneNumber}),
@@ -182,7 +186,7 @@ export class UserService {
                 latitude: props.location?.getLatitude(),
                 longitude: props.location?.getLongitude()
             }}),
-            ...(props.requestStatus && {request_status: props.requestStatus}),
+            ...(props.requestStatus !== undefined && {request_status: props.requestStatus}),
             ...(props.apps && {apps: props.apps})
         };
     }

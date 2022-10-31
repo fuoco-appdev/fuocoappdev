@@ -110,6 +110,32 @@ class UserService extends Service {
         return userResponse;
     }
 
+    public async requestGettingStartedAsync(props: {
+        company: string,
+        phone_number: string,
+        comment: string,
+    }): Promise<core.User> {
+        const gettingStartedRequest = new core.GettingStartedRequest(props);
+        const response = await axios({
+            method: 'post',
+            url: `${this.endpointUrl}/user/getting-started`,
+            headers: {
+                ...this.headers,
+                'Session-Token': `${AuthService.supabaseClient.auth.session()?.access_token}`,
+            },
+            data: gettingStartedRequest.serialize(),
+        });
+
+        if (response.data.status >= 400) {
+            throw response.data as AxiosError;
+        }
+
+        const userResponse = core.User.deserializeBinary(this._encoder.encode(response.data));
+        this._activeUserBehaviorSubject.next(userResponse);
+
+        return userResponse;
+    }
+
     public async requestUpdateActiveUserAsync(props: {
         company?: string;
         email?: string;

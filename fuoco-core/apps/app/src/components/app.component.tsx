@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import React, {useEffect} from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation} from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
 import WorldController from '../controllers/world.controller';
 import WindowController from '../controllers/window.controller';
 import SigninController from '../controllers/signin.controller';
@@ -9,6 +9,8 @@ import SignupController from '../controllers/signup.controller';
 import TermsOfServiceController from '../controllers/terms-of-service.controller';
 import PrivacyPolicyController from '../controllers/privacy-policy.controller';
 import LoadingController from '../controllers/loading.controller';
+import ResetPasswordController from '../controllers/reset-password.controller';
+import GetStartedController from '../controllers/get-started.controller';
 import WindowComponent from './window.component';
 import LandingComponent from './landing.component';
 import SigninComponent from './signin.component';
@@ -17,6 +19,7 @@ import ForgotPasswordComponent from './forgot-password.component';
 import ResetPasswordComponent from './reset-password.component';
 import TermsOfServiceComponent from './terms-of-service.component';
 import PrivacyPolicyComponent from './privacy-policy.component';
+import GetStartedComponent from './get-started.component';
 import { RoutePaths } from '../route-paths';
 import UserService from '../services/user.service';
 import UserComponent from './user.component';
@@ -45,6 +48,8 @@ export default function AppComponent(): JSX.Element {
     TermsOfServiceController.initialize();
     PrivacyPolicyController.initialize();
     LoadingController.initialize();
+    ResetPasswordController.initialize();
+    GetStartedController.initialize();
 
     return () => {
       SigninController.dispose();
@@ -54,6 +59,8 @@ export default function AppComponent(): JSX.Element {
       TermsOfServiceController.dispose();
       PrivacyPolicyController.dispose();
       LoadingController.dispose();
+      ResetPasswordController.dispose();
+      GetStartedController.dispose();
     } 
   }, []);
   return (
@@ -69,7 +76,8 @@ export default function AppComponent(): JSX.Element {
           <Route path={RoutePaths.PrivacyPolicy} element={<GuestComponent element={<PrivacyPolicyComponent />}/> }/>
           <Route path={RoutePaths.ResetPassword} element={<ResetPasswordComponent />} />
           <Route path={RoutePaths.User} element={<AuthenticatedComponent element={<UserComponent/>}/>}>
-
+            <Route index element={<AuthenticatedComponent element={<GetStartedComponent />} />} />
+            <Route path={RoutePaths.GetStarted} element={<AuthenticatedComponent element={<GetStartedComponent />} />} />
           </Route>
         </Route>
       </Routes>

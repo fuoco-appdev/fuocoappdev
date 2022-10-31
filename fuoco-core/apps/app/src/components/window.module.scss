@@ -55,6 +55,7 @@
                 justify-content: space-between;
                 grid-column-start: 2;
                 grid-column-end: 3;
+                max-height: 56px;
 
                 & .logoContainer {
                     display: grid;
@@ -70,13 +71,10 @@
                     display: flex;
 
                     & .navbarContentRightGrid {
-                        display: grid;
-                        grid-template-rows: 8fr 44fr 8fr;
-
-                        & span, .navbarButton {
-                            grid-row-start: 2;
-                            grid-row-end: 3;
-                        }
+                        padding-top: 8px;
+                        padding-bottom: 8px;
+                        display: flex;
+                        justify-content: center;
                     }
                 }
             }

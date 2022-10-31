@@ -4,7 +4,7 @@ export const Strings = new LocalizedStrings({
     en: {
       signin: "Sign in",
       signup: "Sign up",
-      callToAction: "Are you looking to build an app for your business?",
+      callToAction: "Are you looking to build an app?",
       subCallToAction: "Experience business to the leading-edge. Sign up to start your analysis.",
       status: "Status",
       development: "Development",
@@ -38,5 +38,16 @@ export const Strings = new LocalizedStrings({
       signInWithPassword: "Sign in with password",
       emailErrorMessage: "You must provide a valid email address",
       passwordErrorMessage: "You must provide a valid password",
+      getStarted: "Get started",
+      getStartedSubtitle: "Please send us a request with your business info",
+      fieldEmptyError: "This field cannot be empty",
+      company: "Company",
+      companyPlaceholder: "Company name",
+      phoneNumber: "Phone number",
+      phoneNumberPlaceholder: "+1 (123) 456 7890",
+      comment: "Comment",
+      commentPlaceholder: "Describe who you are, your company and the idea",
+      commentEmptyError: "",
+      send: "Send"
     }
 });

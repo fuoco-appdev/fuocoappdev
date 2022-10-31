@@ -1025,4 +1025,117 @@ export namespace core {
             return Users.deserialize(bytes);
         }
     }
+    export class GettingStartedRequest extends pb_1.Message {
+        #one_of_decls: number[][] = [];
+        constructor(data?: any[] | {
+            company?: string;
+            phone_number?: string;
+            comment?: string;
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("company" in data && data.company != undefined) {
+                    this.company = data.company;
+                }
+                if ("phone_number" in data && data.phone_number != undefined) {
+                    this.phone_number = data.phone_number;
+                }
+                if ("comment" in data && data.comment != undefined) {
+                    this.comment = data.comment;
+                }
+            }
+        }
+        get company() {
+            return pb_1.Message.getFieldWithDefault(this, 1, "") as string;
+        }
+        set company(value: string) {
+            pb_1.Message.setField(this, 1, value);
+        }
+        get phone_number() {
+            return pb_1.Message.getFieldWithDefault(this, 2, "") as string;
+        }
+        set phone_number(value: string) {
+            pb_1.Message.setField(this, 2, value);
+        }
+        get comment() {
+            return pb_1.Message.getFieldWithDefault(this, 3, "") as string;
+        }
+        set comment(value: string) {
+            pb_1.Message.setField(this, 3, value);
+        }
+        static fromObject(data: {
+            company?: string;
+            phone_number?: string;
+            comment?: string;
+        }): GettingStartedRequest {
+            const message = new GettingStartedRequest({});
+            if (data.company != null) {
+                message.company = data.company;
+            }
+            if (data.phone_number != null) {
+                message.phone_number = data.phone_number;
+            }
+            if (data.comment != null) {
+                message.comment = data.comment;
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                company?: string;
+                phone_number?: string;
+                comment?: string;
+            } = {};
+            if (this.company != null) {
+                data.company = this.company;
+            }
+            if (this.phone_number != null) {
+                data.phone_number = this.phone_number;
+            }
+            if (this.comment != null) {
+                data.comment = this.comment;
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.company.length)
+                writer.writeString(1, this.company);
+            if (this.phone_number.length)
+                writer.writeString(2, this.phone_number);
+            if (this.comment.length)
+                writer.writeString(3, this.comment);
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): GettingStartedRequest {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new GettingStartedRequest();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        message.company = reader.readString();
+                        break;
+                    case 2:
+                        message.phone_number = reader.readString();
+                        break;
+                    case 3:
+                        message.comment = reader.readString();
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static override deserializeBinary(bytes: Uint8Array): GettingStartedRequest {
+            return GettingStartedRequest.deserialize(bytes);
+        }
+    }
 }

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import {Auth} from '@fuoco.appdev/core-ui';
-import styles from './forgot-password.module.scss';
+import styles from './reset-password.module.scss';
 import WindowController from '../controllers/window.controller';
 import AuthService from '../services/auth.service';
 import { ApiError } from "@supabase/supabase-js";

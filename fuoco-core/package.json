@@ -25,7 +25,7 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@fuoco.appdev/core-ui": "^0.4.36",
+    "@fuoco.appdev/core-ui": "^0.4.54",
     "@ngneat/elf": "^2.1.0",
     "@ngneat/elf-entities": "^4.4.2",
     "@ngneat/elf-persist-state": "^1.1.6",
@@ -74,6 +74,7 @@
     "prettier": "^2.6.2",
     "protoc-gen-ts": "^0.8.5",
     "react-localization": "^1.0.19",
+    "react-phone-input-2": "^2.15.1",
     "react-test-renderer": "18.2.0",
     "react-ripples": "^2.2.1",
     "react-spring": "^9.5.5",
