@@ -1,7 +1,34 @@
 import styles from './user.module.scss';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import UserService from '../services/user.service';
+import {RoutePaths} from '../route-paths';
+import {core} from '../protobuf/core';
 
 export default function ReactiveUserComponent(): JSX.Element {
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (location.pathname === RoutePaths.User) {
+            if (UserService.activeUser?.request_status !== core.UserRequestStatus.IDLE) {
+                navigate(RoutePaths.Account);
+            } else {
+                navigate(RoutePaths.GetStarted);
+            }
+        }
+        else if (location.pathname === RoutePaths.GetStarted) {
+            if (UserService.activeUser?.request_status !== core.UserRequestStatus.IDLE) {
+                navigate(RoutePaths.Account);
+            }
+        }
+        else if (location.pathname !== RoutePaths.GetStarted) {
+            if (UserService.activeUser?.request_status === core.UserRequestStatus.IDLE) {
+                navigate(RoutePaths.GetStarted);
+            }
+        }
+    }, [location]);
+
     return (
         <div className={styles['root']}>
             <Outlet/>

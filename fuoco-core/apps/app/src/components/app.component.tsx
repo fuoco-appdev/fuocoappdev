@@ -11,6 +11,7 @@ import PrivacyPolicyController from '../controllers/privacy-policy.controller';
 import LoadingController from '../controllers/loading.controller';
 import ResetPasswordController from '../controllers/reset-password.controller';
 import GetStartedController from '../controllers/get-started.controller';
+import UserController from '../controllers/user.controller';
 import WindowComponent from './window.component';
 import LandingComponent from './landing.component';
 import SigninComponent from './signin.component';
@@ -49,6 +50,7 @@ export default function AppComponent(): JSX.Element {
     PrivacyPolicyController.initialize();
     LoadingController.initialize();
     ResetPasswordController.initialize();
+    UserController.initialize();
     GetStartedController.initialize();
 
     return () => {
@@ -60,6 +62,7 @@ export default function AppComponent(): JSX.Element {
       PrivacyPolicyController.dispose();
       LoadingController.dispose();
       ResetPasswordController.dispose();
+      UserController.dispose();
       GetStartedController.dispose();
     } 
   }, []);
@@ -76,7 +79,6 @@ export default function AppComponent(): JSX.Element {
           <Route path={RoutePaths.PrivacyPolicy} element={<GuestComponent element={<PrivacyPolicyComponent />}/> }/>
           <Route path={RoutePaths.ResetPassword} element={<ResetPasswordComponent />} />
           <Route path={RoutePaths.User} element={<AuthenticatedComponent element={<UserComponent/>}/>}>
-            <Route index element={<AuthenticatedComponent element={<GetStartedComponent />} />} />
             <Route path={RoutePaths.GetStarted} element={<AuthenticatedComponent element={<GetStartedComponent />} />} />
           </Route>
         </Route>
