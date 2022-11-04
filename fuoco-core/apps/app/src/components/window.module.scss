@@ -49,13 +49,13 @@
                 cursor: auto;
             }
 
-            & .navbarContent {
+            & .topNavbarContent {
                 display: flex;
                 flex-direction: row;
                 justify-content: space-between;
                 grid-column-start: 2;
                 grid-column-end: 3;
-                max-height: 56px;
+                height: 56px;
 
                 & .logoContainer {
                     display: grid;
@@ -77,6 +77,16 @@
                         justify-content: center;
                     }
                 }
+            }
+
+            & .bottomNavbarContent {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                grid-column-start: 2;
+                grid-column-end: 3;
+                height: 56px;
+                margin: 0 2.5%;
             }
         }
 

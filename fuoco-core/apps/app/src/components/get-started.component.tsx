@@ -5,9 +5,12 @@ import { Strings } from '../localization';
 import {animated, useTransition, config} from 'react-spring';
 import { useObservable } from '@ngneat/use-observable';
 import GetStartedController from '../controllers/get-started.controller';
+import { useNavigate } from 'react-router-dom';
+import { RoutePaths } from '../route-paths';
 
 export default function GetStartedComponent(): JSX.Element {
-  const [show, setShow] = useState(false);
+  const navigate = useNavigate();
+  const [showForm,  setShowForm] = useState(false);
   const [companyErrorMessage, setCompanyErrorMessage] = useState<string | undefined>(undefined);
   const [phoneNumberErrorMessage, setPhoneNumberErrorMessage] = useState<string | undefined>(undefined);
   const [commentErrorMessage, setCommentErrorMessage] = useState<string | undefined>(undefined);
@@ -15,14 +18,27 @@ export default function GetStartedComponent(): JSX.Element {
   const [phoneNumber] = useState<string>(GetStartedController.model.phoneNumber);
 
   useEffect(() => {
-    setShow(true);
+    setShowForm(true);
 
     return () => {
-      setShow(false);
+      setShowForm(false);
     }
-  }, [])
+  }, []);
 
-  const transitions = useTransition(show, {
+  useEffect(() => {
+    if (props.requestSent) {
+      setShowForm(false);
+    }
+  }, [props.requestSent]);
+
+  const formTransitions = useTransition(showForm, {
+    from: { opacity: 0, y: 5 },
+    enter: { opacity: 1, y: 0 },
+    leave: { opacity: 0, y: 5 },
+    config: config.gentle,
+  });
+
+  const requestSentTransitions = useTransition(props.requestSent, {
     from: { opacity: 0, y: 5 },
     enter: { opacity: 1, y: 0 },
     leave: { opacity: 0, y: 5 },
@@ -59,10 +75,10 @@ export default function GetStartedComponent(): JSX.Element {
   return (
     <div className={styles["root"]}>
         <div className={styles["content"]}>
-          {transitions((style, item) => item && (
+          {formTransitions((style, item) => item && (
             <animated.div style={style}>
-              <Typography.Title className={styles["title"]}>{Strings.getStarted}</Typography.Title>
-              <h3 className={styles["subTitle"]}>{Strings.getStartedSubtitle}</h3>
+              <Typography.Title className={styles["form-title"]}>{Strings.getStarted}</Typography.Title>
+              <h3 className={styles["form-subtitle"]}>{Strings.getStartedSubtitle}</h3>
               <form className={styles["form"]} onSubmit={onSendRequest}>
                 <Space size={3} direction={'vertical'}>
                   <Input
@@ -103,6 +119,20 @@ export default function GetStartedComponent(): JSX.Element {
                   </Button>
                 </Space>
               </form>
+            </animated.div>
+          ))}
+          {requestSentTransitions((style, item) => item && (
+            <animated.div style={style}>
+              <Typography.Title className={styles["request-title"]}>{Strings.thankyouForContacting}</Typography.Title>
+              <h3 className={styles["request-subtitle"]}>{Strings.thankyouForContactingSubtitle}</h3>
+              <Button
+                block 
+                size="large"
+                htmlType="submit"
+                rippleProps={rippleProps}
+                onClick={() => navigate(RoutePaths.Account)}>
+                {Strings.next}
+              </Button>
             </animated.div>
           ))}
         </div>

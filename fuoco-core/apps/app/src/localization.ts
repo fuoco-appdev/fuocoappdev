@@ -47,7 +47,12 @@ export const Strings = new LocalizedStrings({
       phoneNumberPlaceholder: "+1 (123) 456 7890",
       comment: "Comment",
       commentPlaceholder: "Describe who you are, your company and the idea",
-      commentEmptyError: "",
-      send: "Send"
+      send: "Send",
+      thankyouForContacting: "Thankyou for contacting!",
+      thankyouForContactingSubtitle: "We will get back to you as soon as possible.",
+      next: "Next",
+      account: "Account",
+      apps: "Apps",
+      billing: "Billing",
     }
 });

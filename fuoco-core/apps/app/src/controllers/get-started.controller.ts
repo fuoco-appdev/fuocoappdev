@@ -48,6 +48,8 @@ class GetStartedController extends Controller {
                 phone_number: this._model.phoneNumber,
                 comment: this._model.comment
             });
+            
+            this._model.requestSent = true;
         }
     }
 }

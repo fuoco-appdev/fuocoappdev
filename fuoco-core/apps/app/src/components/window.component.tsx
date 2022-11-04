@@ -3,13 +3,15 @@ import { Outlet, useLocation, useNavigate} from "react-router-dom";
 import WindowController from '../controllers/window.controller';
 import WorldComponent from './world.component';
 import styles from './window.module.scss';
-import {Button, IconLogOut, Alert} from '@fuoco.appdev/core-ui';
+import {Button, IconLogOut, Alert, Tabs} from '@fuoco.appdev/core-ui';
 import { RoutePaths } from '../route-paths';
 import {Strings} from '../localization';
 import AuthService from '../services/auth.service';
 import {useObservable} from '@ngneat/use-observable';
 import LoadingComponent from './loading.component';
 import {useSpring } from 'react-spring';
+import UserService from '../services/user.service';
+import { core } from '../protobuf/core';
 
 function SigninButtonComponent(): JSX.Element {
   const navigate = useNavigate();
@@ -50,10 +52,11 @@ export default function WindowComponent(): JSX.Element {
   const navigate = useNavigate();
   WindowController.model.navigate = navigate;
 
-  const [props] = useObservable(WindowController.model.store);
+  const [user] = useObservable(UserService.activeUserObservable);
+  const [windowProps] = useObservable(WindowController.model.store);
   const confirmEmailTransitionStyle = useSpring({
     from: { y: -200 },
-    to: props.showConfirmEmailAlert ? { y: 50 } : { y: -200 },
+    to: windowProps.showConfirmEmailAlert ? { y: 50 } : { y: -200 },
     config: {
       friction: 30,
       tension: 600,
@@ -62,7 +65,7 @@ export default function WindowComponent(): JSX.Element {
   });
   const passwordResetTransitionStyle = useSpring({
     from: { y: -200 },
-    to: props.showPasswordResetAlert ? { y: 50 } : { y: -200 },
+    to: windowProps.showPasswordResetAlert ? { y: 50 } : { y: -200 },
     config: {
       friction: 30,
       tension: 600,
@@ -71,7 +74,7 @@ export default function WindowComponent(): JSX.Element {
   });
   const passwordUpdatedTransitionStyle = useSpring({
     from: { y: -200 },
-    to: props.showPasswordUpdatedAlert ? { y: 50 } : { y: -200 },
+    to: windowProps.showPasswordUpdatedAlert ? { y: 50 } : { y: -200 },
     config: {
       friction: 30,
       tension: 600,
@@ -80,10 +83,10 @@ export default function WindowComponent(): JSX.Element {
   });
 
   useEffect(() => {
-    if (props.showPasswordUpdatedAlert) {
+    if (windowProps.showPasswordUpdatedAlert) {
       setTimeout(() => WindowController.updateShowPasswordUpdatedAlert(false), 4000);
     }
-  }, [props.showPasswordUpdatedAlert]);
+  }, [windowProps.showPasswordUpdatedAlert]);
 
   useEffect(() => {
     WindowController.updateOnLocationChanged(location);
@@ -95,21 +98,30 @@ export default function WindowComponent(): JSX.Element {
             <WorldComponent />
           </div>
 
-          {props.isLoading ? <LoadingComponent /> :
+          {windowProps.isLoading ? <LoadingComponent /> :
             (
             <div className={styles["content"]}>
               <div className={styles["navbar"]}>
-                <div className={styles["navbarContent"]}>
+                <div className={styles["topNavbarContent"]}>
                   <div className={styles["logoContainer"]}>
                     <img className={styles["logo"]} src="../assets/svg/logo.svg" alt="logo"/>
                   </div>
                   <div className={styles["navbarContentRight"]}>
                     <div className={styles["navbarContentRightGrid"]}>
-                      {props.isSigninVisible ?  <SigninButtonComponent /> : null}
-                      {props.isSignupVisible ? <SignupButtonComponent /> : null}
-                      {props.isAuthenticated ? <SignoutButtonComponent /> : null}
+                      {windowProps.isSigninVisible ?  <SigninButtonComponent /> : null}
+                      {windowProps.isSignupVisible ? <SignupButtonComponent /> : null}
+                      {(windowProps.isAuthenticated && windowProps.isSignoutVisible) ? <SignoutButtonComponent /> : null}
                     </div>
                   </div>
+                </div>
+                <div className={styles["bottomNavbarContent"]}>
+                  {(windowProps.isAuthenticated && windowProps.isTabBarVisible && user?.role === core.UserRole.USER) && (
+                    <Tabs defaultActiveId={RoutePaths.Account} activeId={windowProps.activeRoute} onChange={(id: string) => navigate(id)}>
+                      <Tabs.Panel id={RoutePaths.Account} label={Strings.account} />
+                      <Tabs.Panel id={RoutePaths.Apps} label={Strings.apps}/>
+                      <Tabs.Panel id={RoutePaths.Billing} label={Strings.billing} />
+                    </Tabs>
+                  )}
                 </div>
               </div>
               <div className={styles["children"]}>

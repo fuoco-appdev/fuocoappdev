@@ -5,6 +5,7 @@ export interface GetStartedState {
     companyName: string;
     phoneNumber: string;
     comment: string;
+    requestSent: boolean;
 }
 
 export class GetStartedModel extends Model {
@@ -14,7 +15,8 @@ export class GetStartedModel extends Model {
             withProps<GetStartedState>({
                 companyName: '',
                 phoneNumber: '',
-                comment: ''
+                comment: '',
+                requestSent: false,
             }),
         ));
     }
@@ -23,9 +25,9 @@ export class GetStartedModel extends Model {
         return this.store.getValue().companyName;
     }
 
-    public set companyName(companyName: string) {
-        if (this.companyName !== companyName) {
-            this.store.update((state) => ({...state, companyName: companyName}));
+    public set companyName(value: string) {
+        if (this.companyName !== value) {
+            this.store.update((state) => ({...state, companyName: value}));
         }
     }
 
@@ -33,9 +35,9 @@ export class GetStartedModel extends Model {
         return this.store.getValue().phoneNumber;
     }
 
-    public set phoneNumber(phoneNumber: string) {
-        if (this.phoneNumber !== phoneNumber) {
-            this.store.update((state) => ({...state, phoneNumber: phoneNumber}));
+    public set phoneNumber(value: string) {
+        if (this.phoneNumber !== value) {
+            this.store.update((state) => ({...state, phoneNumber: value}));
         }
     }
 
@@ -43,9 +45,19 @@ export class GetStartedModel extends Model {
         return this.store.getValue().comment;
     }
 
-    public set comment(comment: string) {
-        if (this.comment !== comment) {
-            this.store.update((state) => ({...state, comment: comment}));
+    public set comment(value: string) {
+        if (this.comment !== value) {
+            this.store.update((state) => ({...state, comment: value}));
+        }
+    }
+
+    public get requestSent(): boolean {
+        return this.store.getValue().requestSent;
+    }
+
+    public set requestSent(value: boolean) {
+        if (this.requestSent !== value) {
+            this.store.update((state) => ({...state, requestSent: value}));
         }
     }
 }

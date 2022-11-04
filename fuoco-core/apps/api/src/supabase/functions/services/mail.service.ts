@@ -1,4 +1,4 @@
-import {MailService as CoreMailService} from 'https://fuoco-appdev-core-api-pkmaxa4qwqt0.deno.dev/mail/src/index.ts';
+import {MailService as CoreMailService} from 'https://fuoco-appdev-core-api-tbm0aj6nffc0.deno.dev/mail/src/index.ts';
 
 class MailService extends CoreMailService {
     constructor() {

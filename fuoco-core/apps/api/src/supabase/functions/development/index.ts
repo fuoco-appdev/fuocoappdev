@@ -1,4 +1,4 @@
-import { Core } from "https://fuoco-appdev-core-api-pkmaxa4qwqt0.deno.dev/core/src/index.ts";
+import { Core } from "https://fuoco-appdev-core-api-tbm0aj6nffc0.deno.dev/core/src/index.ts";
 import { AppController, UserController} from "../controllers/index.ts";
 
 const app = Core.registerApp([

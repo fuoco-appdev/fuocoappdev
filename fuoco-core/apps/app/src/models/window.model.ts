@@ -1,11 +1,15 @@
 import { createStore, withProps } from "@ngneat/elf";
 import { NavigateFunction } from "react-router-dom";
 import { Model } from "../model";
+import { RoutePaths } from "../route-paths";
 
 export interface WindowState {
     isSigninVisible: boolean;
     isSignupVisible: boolean;
+    isSignoutVisible: boolean;
+    isTabBarVisible: boolean;
     isAuthenticated: boolean | undefined;
+    activeRoute: RoutePaths | undefined;
     isLoading: boolean;
     navigate: NavigateFunction | undefined;
     showConfirmEmailAlert: boolean;
@@ -20,7 +24,10 @@ export class WindowModel extends Model {
             withProps<WindowState>({
                 isSigninVisible: false,
                 isSignupVisible: false,
+                isSignoutVisible: false,
+                isTabBarVisible: false,
                 isAuthenticated: undefined,
+                activeRoute: undefined,
                 isLoading: false,
                 navigate: undefined,
                 showConfirmEmailAlert: false,
@@ -34,9 +41,9 @@ export class WindowModel extends Model {
         return this.store.getValue().isSigninVisible;
     }
 
-    public set isSigninVisible(isVisible: boolean) {
-        if (this.isSigninVisible !== isVisible) {
-            this.store.update((state) => ({...state, isSigninVisible: isVisible}));
+    public set isSigninVisible(value: boolean) {
+        if (this.isSigninVisible !== value) {
+            this.store.update((state) => ({...state, isSigninVisible: value}));
         }
     }
 
@@ -44,9 +51,29 @@ export class WindowModel extends Model {
         return this.store.getValue().isSignupVisible;
     }
 
-    public set isSignupVisible(isVisible: boolean) {
-        if (this.isSignupVisible !== isVisible) {
-            this.store.update((state) => ({...state, isSignupVisible: isVisible}));
+    public set isSignupVisible(value: boolean) {
+        if (this.isSignupVisible !== value) {
+            this.store.update((state) => ({...state, isSignupVisible: value}));
+        }
+    }
+
+    public get isSignoutVisible(): boolean {
+        return this.store.getValue().isSignoutVisible;
+    }
+
+    public set isSignoutVisible(value: boolean) {
+        if (this.isSignoutVisible !== value) {
+            this.store.update((state) => ({...state, isSignoutVisible: value}));
+        }
+    }
+
+    public get isTabBarVisible(): boolean {
+        return this.store.getValue().isTabBarVisible;
+    }
+
+    public set isTabBarVisible(value: boolean) {
+        if (this.isTabBarVisible !== value) {
+            this.store.update((state) => ({...state, isTabBarVisible: value}));
         }
     }
 
@@ -57,6 +84,16 @@ export class WindowModel extends Model {
     public set isAuthenticated(isAuthenticated: boolean | undefined) {
         if (this.isAuthenticated !== isAuthenticated) {
             this.store.update((state) => ({...state, isAuthenticated: isAuthenticated}));
+        }
+    }
+
+    public get activeRoute(): RoutePaths | undefined {
+        return this.store.getValue().activeRoute;
+    }
+
+    public set activeRoute(value: RoutePaths | undefined) {
+        if (this.activeRoute !== value) {
+            this.store.update((state) => ({...state, activeRoute: value}));
         }
     }
 

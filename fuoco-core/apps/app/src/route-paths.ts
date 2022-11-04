@@ -12,5 +12,8 @@ export enum RoutePaths {
     Account = '/user/account',
     Apps = '/user/apps',
     Billing = '/user/billing',
-    Users = '/user/users'
+    Admin = '/admin',
+    AdminAccount = '/admin/account',
+    AdminUsers = '/admin/users',
+    AdminApps = '/admin/apps'
 };

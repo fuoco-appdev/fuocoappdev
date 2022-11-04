@@ -6,6 +6,7 @@ import * as AtmosphereShader from '../shaders/atmosphere.shader';
 import * as TWEEN from '@tweenjs/tween.js';
 import { useLocation } from "react-router-dom";
 import { useEffect } from 'react';
+import { useObservable } from '@ngneat/use-observable';
 
 async function LoadWorldAsync(): Promise<void> {
     const scene = new THREE.Scene();

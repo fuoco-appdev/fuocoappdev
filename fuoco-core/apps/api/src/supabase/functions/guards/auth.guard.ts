@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // deno-lint-ignore-file no-explicit-any
-import { GuardExecuter } from 'https://fuoco-appdev-core-api-pkmaxa4qwqt0.deno.dev/core/src/index.ts';
+import { GuardExecuter } from 'https://fuoco-appdev-core-api-tbm0aj6nffc0.deno.dev/core/src/index.ts';
 import SupabaseService from '../services/supabase.service.ts';
 import * as Oak from "https://deno.land/x/oak@v11.1.0/mod.ts";
 

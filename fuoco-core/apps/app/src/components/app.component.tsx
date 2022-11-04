@@ -21,10 +21,14 @@ import ResetPasswordComponent from './reset-password.component';
 import TermsOfServiceComponent from './terms-of-service.component';
 import PrivacyPolicyComponent from './privacy-policy.component';
 import GetStartedComponent from './get-started.component';
+import AccountComponent from './account.component';
 import { RoutePaths } from '../route-paths';
 import UserService from '../services/user.service';
 import UserComponent from './user.component';
 import { useObservable } from '@ngneat/use-observable';
+import { core } from '../protobuf/core';
+import AppsComponent from './apps.component';
+import BillingComponent from './billing.component';
 
 interface RouteElementProps {
   element: JSX.Element;
@@ -38,6 +42,16 @@ function GuestComponent({element}: RouteElementProps): React.ReactElement {
 function AuthenticatedComponent({element}: RouteElementProps): React.ReactElement {
   const [user] = useObservable(UserService.activeUserObservable);
   return (user ? element : <Navigate to={RoutePaths.Signin}/>);
+}
+
+function UserRoleComponent({element}: RouteElementProps): React.ReactElement {
+  const [user] = useObservable(UserService.activeUserObservable);
+  return (user?.role === core.UserRole.USER ? <AuthenticatedComponent element={element} /> : <Navigate to={RoutePaths.Admin}/>);
+}
+
+function AdminRoleComponent({element}: RouteElementProps): React.ReactElement {
+  const [user] = useObservable(UserService.activeUserObservable);
+  return (user?.role === core.UserRole.ADMIN ? <AuthenticatedComponent element={element} /> : <Navigate to={RoutePaths.User}/>);
 }
 
 export default function AppComponent(): JSX.Element {
@@ -79,7 +93,10 @@ export default function AppComponent(): JSX.Element {
           <Route path={RoutePaths.PrivacyPolicy} element={<GuestComponent element={<PrivacyPolicyComponent />}/> }/>
           <Route path={RoutePaths.ResetPassword} element={<ResetPasswordComponent />} />
           <Route path={RoutePaths.User} element={<AuthenticatedComponent element={<UserComponent/>}/>}>
-            <Route path={RoutePaths.GetStarted} element={<AuthenticatedComponent element={<GetStartedComponent />} />} />
+            <Route path={RoutePaths.GetStarted} element={<UserRoleComponent element={<GetStartedComponent />} />} />
+            <Route path={RoutePaths.Account} element={<UserRoleComponent element={<AccountComponent />} />} />
+            <Route path={RoutePaths.Apps} element={<UserRoleComponent element={<AppsComponent />} />} />
+            <Route path={RoutePaths.Billing} element={<UserRoleComponent element={<BillingComponent />} />} />
           </Route>
         </Route>
       </Routes>
