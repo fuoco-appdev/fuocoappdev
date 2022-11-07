@@ -54,5 +54,6 @@ export const Strings = new LocalizedStrings({
       account: "Account",
       apps: "Apps",
       billing: "Billing",
+      users: "Users",
     }
 });

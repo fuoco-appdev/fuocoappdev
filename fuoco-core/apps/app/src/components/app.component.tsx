@@ -29,6 +29,10 @@ import { useObservable } from '@ngneat/use-observable';
 import { core } from '../protobuf/core';
 import AppsComponent from './apps.component';
 import BillingComponent from './billing.component';
+import AdminComponent from './admin.component';
+import AdminAccountComponent from './admin-account.component';
+import AdminUsersComponent from './admin-users.component';
+import AdminAppsComponent from './admin-apps.component';
 
 interface RouteElementProps {
   element: JSX.Element;
@@ -97,6 +101,11 @@ export default function AppComponent(): JSX.Element {
             <Route path={RoutePaths.Account} element={<UserRoleComponent element={<AccountComponent />} />} />
             <Route path={RoutePaths.Apps} element={<UserRoleComponent element={<AppsComponent />} />} />
             <Route path={RoutePaths.Billing} element={<UserRoleComponent element={<BillingComponent />} />} />
+          </Route>
+          <Route path={RoutePaths.Admin} element={<AuthenticatedComponent element={<AdminComponent/>}/>}>
+            <Route path={RoutePaths.AdminAccount} element={<AdminRoleComponent element={<AdminAccountComponent />} />} />
+            <Route path={RoutePaths.AdminUsers} element={<AdminRoleComponent element={<AdminUsersComponent />} />} />
+            <Route path={RoutePaths.AdminApps} element={<AdminRoleComponent element={<AdminAppsComponent />} />} />
           </Route>
         </Route>
       </Routes>

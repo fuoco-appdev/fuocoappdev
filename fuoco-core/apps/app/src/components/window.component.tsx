@@ -122,6 +122,13 @@ export default function WindowComponent(): JSX.Element {
                       <Tabs.Panel id={RoutePaths.Billing} label={Strings.billing} />
                     </Tabs>
                   )}
+                  {(windowProps.isAuthenticated && windowProps.isTabBarVisible && user?.role === core.UserRole.ADMIN) && (
+                    <Tabs defaultActiveId={RoutePaths.AdminAccount} activeId={windowProps.activeRoute} onChange={(id: string) => navigate(id)}>
+                      <Tabs.Panel id={RoutePaths.AdminAccount} label={Strings.account} />
+                      <Tabs.Panel id={RoutePaths.AdminUsers} label={Strings.users}/>
+                      <Tabs.Panel id={RoutePaths.AdminApps} label={Strings.apps} />
+                    </Tabs>
+                  )}
                 </div>
               </div>
               <div className={styles["children"]}>

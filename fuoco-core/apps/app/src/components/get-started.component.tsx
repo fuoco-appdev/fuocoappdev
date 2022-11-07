@@ -75,7 +75,7 @@ export default function GetStartedComponent(): JSX.Element {
   return (
     <div className={styles["root"]}>
         <div className={styles["content"]}>
-          {formTransitions((style, item) => item && (
+          {formTransitions((style, item) => (item && showForm) && (
             <animated.div style={style}>
               <Typography.Title className={styles["form-title"]}>{Strings.getStarted}</Typography.Title>
               <h3 className={styles["form-subtitle"]}>{Strings.getStartedSubtitle}</h3>
@@ -121,7 +121,7 @@ export default function GetStartedComponent(): JSX.Element {
               </form>
             </animated.div>
           ))}
-          {requestSentTransitions((style, item) => item && (
+          {requestSentTransitions((style, item) => (item && !showForm) && (
             <animated.div style={style}>
               <Typography.Title className={styles["request-title"]}>{Strings.thankyouForContacting}</Typography.Title>
               <h3 className={styles["request-subtitle"]}>{Strings.thankyouForContactingSubtitle}</h3>

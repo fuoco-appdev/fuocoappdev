@@ -5,7 +5,7 @@ import UserService from '../services/user.service';
 import {RoutePaths} from '../route-paths';
 import {core} from '../protobuf/core';
 
-export default function ReactiveUserComponent(): JSX.Element {
+export default function UserComponent(): JSX.Element {
     const location = useLocation();
     const navigate = useNavigate();
 
