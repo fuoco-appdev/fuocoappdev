@@ -55,5 +55,13 @@ export const Strings = new LocalizedStrings({
       apps: "Apps",
       billing: "Billing",
       users: "Users",
+      deleteAccount: "Delete Account",
+      save: "Save",
+      profile: "Profile",
+      personalInformation: "Personal Information",
+      thisInfoWillBePublic: "This information will be public",
+      thisInfoWillBePrivate: "This information will be private",
+      location: "Location",
+      language: "Language",
     }
 });

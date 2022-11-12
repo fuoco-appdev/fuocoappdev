@@ -25,7 +25,7 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@fuoco.appdev/core-ui": "^0.4.54",
+    "@fuoco.appdev/core-ui": "^0.5.1",
     "@ngneat/elf": "^2.1.0",
     "@ngneat/elf-entities": "^4.4.2",
     "@ngneat/elf-persist-state": "^1.1.6",

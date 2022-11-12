@@ -52,7 +52,7 @@ export default function WindowComponent(): JSX.Element {
   const navigate = useNavigate();
   WindowController.model.navigate = navigate;
 
-  const [user] = useObservable(UserService.activeUserObservable);
+  const user = UserService.activeUser;
   const [windowProps] = useObservable(WindowController.model.store);
   const confirmEmailTransitionStyle = useSpring({
     from: { y: -200 },

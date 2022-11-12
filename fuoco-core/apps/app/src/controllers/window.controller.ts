@@ -124,7 +124,7 @@ class WindowController extends Controller {
             this._model.isSignoutVisible = true;
             this._model.isSigninVisible = false;
             this._model.isSignupVisible = false;
-            this._model.isTabBarVisible = false;
+            this._model.isTabBarVisible = true;
             this._model.activeRoute = RoutePaths.User;
             WorldController.updateIsVisible(false);
             break;
@@ -193,7 +193,7 @@ class WindowController extends Controller {
             WorldController.updateIsVisible(false);
             break;
           default:
-            this._model.isSigninVisible = true;
+            this._model.isSigninVisible = false;
             this._model.isSignupVisible = false;
             this._model.isSignoutVisible = false;
             this._model.isTabBarVisible = false;
@@ -204,7 +204,7 @@ class WindowController extends Controller {
       }
 
     private async onAuthStateChanged(event: AuthChangeEvent, session: Session | null): Promise<void> {
-        if (event === 'SIGNED_IN') {
+      if (event === 'SIGNED_IN') {
             if (UserService.activeUser) {
                 return;
             }
@@ -212,7 +212,7 @@ class WindowController extends Controller {
             this._model.isLoading = true;
 
             try {
-                await UserService.requestActiveUserAsync();
+              await UserService.requestActiveUserAsync();
             }
             catch(error: any) {
                 if (error.status !== 404) {

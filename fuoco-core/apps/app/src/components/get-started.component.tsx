@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {Typography, Button, Input, Space, InputPhoneNumber} from '@fuoco.appdev/core-ui';
 import styles from './get-started.module.scss';
 import { Strings } from '../localization';
@@ -16,6 +16,7 @@ export default function GetStartedComponent(): JSX.Element {
   const [commentErrorMessage, setCommentErrorMessage] = useState<string | undefined>(undefined);
   const [props] = useObservable(GetStartedController.model.store);
   const [phoneNumber] = useState<string>(GetStartedController.model.phoneNumber);
+  const containerRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     setShowForm(true);
@@ -73,7 +74,7 @@ export default function GetStartedComponent(): JSX.Element {
   };
 
   return (
-    <div className={styles["root"]}>
+    <div className={styles["root"]} ref={containerRef}>
         <div className={styles["content"]}>
           {formTransitions((style, item) => (item && showForm) && (
             <animated.div style={style}>
@@ -91,6 +92,7 @@ export default function GetStartedComponent(): JSX.Element {
                     }}
                   />
                   <InputPhoneNumber
+                    parentRef={containerRef}
                     defaultValue={phoneNumber}
                     label={Strings.phoneNumber}
                     error={phoneNumberErrorMessage}
@@ -121,20 +123,22 @@ export default function GetStartedComponent(): JSX.Element {
               </form>
             </animated.div>
           ))}
-          {requestSentTransitions((style, item) => (item && !showForm) && (
-            <animated.div style={style}>
-              <Typography.Title className={styles["request-title"]}>{Strings.thankyouForContacting}</Typography.Title>
-              <h3 className={styles["request-subtitle"]}>{Strings.thankyouForContactingSubtitle}</h3>
-              <Button
-                block 
-                size="large"
-                htmlType="submit"
-                rippleProps={rippleProps}
-                onClick={() => navigate(RoutePaths.Account)}>
-                {Strings.next}
-              </Button>
-            </animated.div>
-          ))}
+          <div className={styles['continue-container']}>
+            {requestSentTransitions((style, item) => (item && !showForm) && (
+              <animated.div style={style}>
+                <Typography.Title className={styles["request-title"]}>{Strings.thankyouForContacting}</Typography.Title>
+                <h3 className={styles["request-subtitle"]}>{Strings.thankyouForContactingSubtitle}</h3>
+                <Button
+                  block 
+                  size="large"
+                  htmlType="submit"
+                  rippleProps={rippleProps}
+                  onClick={() => navigate(RoutePaths.Account)}>
+                  {Strings.next}
+                </Button>
+              </animated.div>
+            ))}
+          </div>
         </div>
     </div>
   );
