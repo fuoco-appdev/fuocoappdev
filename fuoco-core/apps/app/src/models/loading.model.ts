@@ -5,7 +5,7 @@ export interface LoadingState {
     isLoading: boolean;
 }
 
-export class LandingModel extends Model {
+export class LoadingModel extends Model {
     constructor() {
         super(createStore(
             {name: 'loading'},

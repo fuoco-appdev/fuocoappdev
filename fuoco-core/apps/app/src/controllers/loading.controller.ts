@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Controller } from "../controller";
-import { LandingModel } from "../models/loading.model";
+import { LoadingModel } from "../models/loading.model";
 
 class LoadingController extends Controller {
-    private readonly _model: LandingModel;
+    private readonly _model: LoadingModel;
 
     constructor() {
         super();
 
-        this._model = new LandingModel();
+        this._model = new LoadingModel();
     }
 
-    public get model(): LandingModel {
+    public get model(): LoadingModel {
         return this._model;
     }
 

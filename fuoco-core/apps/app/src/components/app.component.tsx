@@ -11,6 +11,7 @@ import PrivacyPolicyController from '../controllers/privacy-policy.controller';
 import LoadingController from '../controllers/loading.controller';
 import ResetPasswordController from '../controllers/reset-password.controller';
 import GetStartedController from '../controllers/get-started.controller';
+import AccountController from '../controllers/account.controller';
 import UserController from '../controllers/user.controller';
 import WindowComponent from './window.component';
 import LandingComponent from './landing.component';
@@ -59,6 +60,16 @@ function AdminRoleComponent({element}: RouteElementProps): React.ReactElement {
 }
 
 export default function AppComponent(): JSX.Element {
+  const unloadCallback = (event: BeforeUnloadEvent) => {
+    if (!AccountController.model.isSaveDisabled) {
+      event.preventDefault();
+      event.returnValue = "";
+      return "";
+    }
+
+    return null;
+  };
+  
   useEffect(() => {
     SigninController.initialize();
     SignupController.initialize();
@@ -70,6 +81,8 @@ export default function AppComponent(): JSX.Element {
     ResetPasswordController.initialize();
     UserController.initialize();
     GetStartedController.initialize();
+    AccountController.initialize();
+    window.addEventListener("beforeunload", unloadCallback);
 
     return () => {
       SigninController.dispose();
@@ -82,6 +95,8 @@ export default function AppComponent(): JSX.Element {
       ResetPasswordController.dispose();
       UserController.dispose();
       GetStartedController.dispose();
+      AccountController.dispose();
+      window.removeEventListener("beforeunload", unloadCallback);
     } 
   }, []);
   return (

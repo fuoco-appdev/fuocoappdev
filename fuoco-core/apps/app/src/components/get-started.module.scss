@@ -42,8 +42,12 @@
             flex-direction: column;
             width: 60%;
 
-            & .send-button-content {
+            & .send-button {
                 width: 100%;
+
+                & .send-button-content {
+                    width: 100%;
+                }
             }
         }
 

@@ -571,55 +571,55 @@ export namespace core {
     export class Location extends pb_1.Message {
         #one_of_decls: number[][] = [];
         constructor(data?: any[] | {
-            latitude?: number;
-            longitude?: number;
+            longitude?: string;
+            latitude?: string;
         }) {
             super();
             pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
             if (!Array.isArray(data) && typeof data == "object") {
-                if ("latitude" in data && data.latitude != undefined) {
-                    this.latitude = data.latitude;
-                }
                 if ("longitude" in data && data.longitude != undefined) {
                     this.longitude = data.longitude;
                 }
+                if ("latitude" in data && data.latitude != undefined) {
+                    this.latitude = data.latitude;
+                }
             }
         }
-        get latitude() {
-            return pb_1.Message.getFieldWithDefault(this, 1, 0) as number;
+        get longitude() {
+            return pb_1.Message.getFieldWithDefault(this, 1, "") as string;
         }
-        set latitude(value: number) {
+        set longitude(value: string) {
             pb_1.Message.setField(this, 1, value);
         }
-        get longitude() {
-            return pb_1.Message.getFieldWithDefault(this, 2, 0) as number;
+        get latitude() {
+            return pb_1.Message.getFieldWithDefault(this, 2, "") as string;
         }
-        set longitude(value: number) {
+        set latitude(value: string) {
             pb_1.Message.setField(this, 2, value);
         }
         static fromObject(data: {
-            latitude?: number;
-            longitude?: number;
+            longitude?: string;
+            latitude?: string;
         }): Location {
             const message = new Location({});
-            if (data.latitude != null) {
-                message.latitude = data.latitude;
-            }
             if (data.longitude != null) {
                 message.longitude = data.longitude;
+            }
+            if (data.latitude != null) {
+                message.latitude = data.latitude;
             }
             return message;
         }
         toObject() {
             const data: {
-                latitude?: number;
-                longitude?: number;
+                longitude?: string;
+                latitude?: string;
             } = {};
-            if (this.latitude != null) {
-                data.latitude = this.latitude;
-            }
             if (this.longitude != null) {
                 data.longitude = this.longitude;
+            }
+            if (this.latitude != null) {
+                data.latitude = this.latitude;
             }
             return data;
         }
@@ -627,10 +627,10 @@ export namespace core {
         serialize(w: pb_1.BinaryWriter): void;
         serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
             const writer = w || new pb_1.BinaryWriter();
-            if (this.latitude != 0)
-                writer.writeFloat(1, this.latitude);
-            if (this.longitude != 0)
-                writer.writeFloat(2, this.longitude);
+            if (this.longitude.length)
+                writer.writeString(1, this.longitude);
+            if (this.latitude.length)
+                writer.writeString(2, this.latitude);
             if (!w)
                 return writer.getResultBuffer();
         }
@@ -641,10 +641,10 @@ export namespace core {
                     break;
                 switch (reader.getFieldNumber()) {
                     case 1:
-                        message.latitude = reader.readFloat();
+                        message.longitude = reader.readString();
                         break;
                     case 2:
-                        message.longitude = reader.readFloat();
+                        message.latitude = reader.readString();
                         break;
                     default: reader.skipField();
                 }

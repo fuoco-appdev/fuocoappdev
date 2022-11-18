@@ -5,6 +5,7 @@ import {core} from '../protobuf/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import AuthService from "./auth.service";
 import axios, { AxiosError } from 'axios';
+import { Strings } from "../localization";
 
 class UserService extends Service {
     private readonly _activeUserBehaviorSubject: BehaviorSubject<core.User | null>;
@@ -87,6 +88,7 @@ class UserService extends Service {
             role: core.UserRole.USER,
             email: supabaseUser.email,
             request_status: core.UserRequestStatus.IDLE,
+            language: Strings.getLanguage(),
             apps: []
         });
 
@@ -140,7 +142,7 @@ class UserService extends Service {
         company?: string;
         email?: string;
         phone_number?: string;
-        location?: core.Location;
+        location?: [number, number];
         language?: string;
         request_status?: core.UserRequestStatus;
     }): Promise<core.User> {
@@ -159,11 +161,22 @@ class UserService extends Service {
             company?: string;
             email?: string;
             phone_number?: string;
-            location?: core.Location;
+            location?: [number, number];
             language?: string;
             request_status?: core.UserRequestStatus;
         }): Promise<core.User> {
-        const user = new core.User(props);
+        
+        const user = core.User.fromObject({
+            company: props.company ? props.company : this.activeUser?.company,
+            email: props.email ? props.email : this.activeUser?.email,
+            phone_number: props.phone_number ? props.phone_number : this.activeUser?.phone_number,
+            location: props.location ? core.Location.fromObject({
+                longitude: String(props.location[0]),
+                latitude: String(props.location[1])
+            }) : this.activeUser?.location,
+            language: props.language ? props.language : this.activeUser?.language,
+            request_status: props.request_status ? props.request_status : this.activeUser?.request_status,
+        });
         const response = await axios({
             method: 'post',
             url: `${this.endpointUrl}/user/update/${supabaseId}`,

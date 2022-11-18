@@ -57,8 +57,8 @@ enum UserRequestStatus {
 }
 
 message Location {
-    float latitude = 1;
-    float longitude = 2;
+    string longitude = 1;
+    string latitude = 2;
 }
 
 message User {

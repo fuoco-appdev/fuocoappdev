@@ -2,6 +2,7 @@ import LocalizedStrings from 'react-localization';
 
 export const Strings = new LocalizedStrings({
     en: {
+      locale: "English",
       signin: "Sign in",
       signup: "Sign up",
       callToAction: "Are you looking to build an app?",

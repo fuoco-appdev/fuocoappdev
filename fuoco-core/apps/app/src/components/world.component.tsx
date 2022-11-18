@@ -6,15 +6,38 @@ import * as AtmosphereShader from '../shaders/atmosphere.shader';
 import * as TWEEN from '@tweenjs/tween.js';
 import { useLocation } from "react-router-dom";
 import { useEffect } from 'react';
-import { useObservable } from '@ngneat/use-observable';
+import { MathUtils } from 'three';
 
 async function LoadWorldAsync(): Promise<void> {
     const scene = new THREE.Scene();
     const width = WorldController.ref.current?.clientWidth ?? 0;
     const height = WorldController.ref.current?.clientHeight ?? 0;
-    const camera = new THREE.PerspectiveCamera(75, width/height, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({alpha: true});
+    const defaultFOV = 75;
+    const camera = new THREE.PerspectiveCamera(defaultFOV, width/height, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({alpha: true, antialias:true});
+    const planeAspectRatio = 16 / 9;
     renderer.setSize( window.innerWidth, window.innerHeight );
+
+    function onWindowResize() {
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.aspect = window.innerWidth / window.innerHeight;
+        
+        if (camera.aspect > planeAspectRatio) {
+            // window too large
+            camera.fov = defaultFOV;
+        } else {
+            // window too narrow
+            const cameraHeight = Math.tan(MathUtils.degToRad(defaultFOV / 2));
+            const ratio = camera.aspect / planeAspectRatio;
+            const newCameraHeight = cameraHeight / ratio;
+            camera.fov = MathUtils.radToDeg(Math.atan(newCameraHeight)) * 2;
+        }
+
+        camera.updateProjectionMatrix();
+    }
+
+    window.addEventListener('resize', onWindowResize, false);
+
     // document.body.appendChild( renderer.domElement );
     // use ref as a mount point of the Three.js scene instead of the document.body
     if ((WorldController.ref.current?.children.length ?? 0) <= 0) {
@@ -37,7 +60,7 @@ async function LoadWorldAsync(): Promise<void> {
     const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
     scene.add(ambientLight);
 
-    const space = new THREE.BoxGeometry(100, 100, 50);
+    const space = new THREE.BoxGeometry(200, 100, 50);
     const spaceMaterial = new THREE.MeshStandardMaterial( { color: 0x151d65, side: THREE.BackSide } );
     const spaceMesh = new THREE.Mesh(space, spaceMaterial);
     scene.add(spaceMesh);
@@ -119,16 +142,8 @@ async function LoadWorldAsync(): Promise<void> {
 
     camera.position.z = 5;
 
-    let aspect = 0;
     const animate = () => {
         requestAnimationFrame(animate);
-
-        aspect = window.innerWidth/window.innerHeight;
-        if (camera.aspect !== aspect) {
-            camera.aspect = aspect;
-            camera?.updateProjectionMatrix();
-            renderer?.setSize(window.innerWidth, window.innerHeight);
-        }
 
         if (!WorldController.pressed) {
             WorldController.globeRotation.y += 0.001;
@@ -147,7 +162,7 @@ async function LoadWorldAsync(): Promise<void> {
         renderer.render(scene, camera);
     };
 
-    animate();
+    animate(); 
 }
 
 export default function WorldComponent(): JSX.Element {

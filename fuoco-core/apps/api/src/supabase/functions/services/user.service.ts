@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import SupabaseService from "./supabase.service.ts";
-import { User, Location, UserRequestStatus, Users } from '../protobuf/core_pb.js';
+import { Location, User, UserRequestStatus, Users } from '../protobuf/core_pb.js';
 
 export interface UserProps {
     id?: string;
@@ -11,7 +11,7 @@ export interface UserProps {
     email?: string; 
     phone_number?: string; 
     language?: string; 
-    location?: {longitude: number, latitude: number}; 
+    location?: {longitude: string, latitude: string}; 
     request_status?: number; 
     apps?: string[];
 }
@@ -140,13 +140,13 @@ export class UserService {
     }
 
     public assignAndGetUserProtocol(props: UserProps): InstanceType<typeof User> {
-        const user = new User();
+        const user = new User(); 
         const location = new Location();
         if (props.location) {
-            (props.location.latitude && location.setLatitude(props.location.latitude));
-            (props.location.longitude && location.setLongitude(props.location.longitude));
+            location.setLongitude(props.location.longitude);
+            location.setLatitude(props.location.latitude);
         }
-        
+
         (props.id && user.setId(props.id));
         (props.created_at && user.setCreatedAt(props.created_at));
         (props.supabase_id && user.setSupabaseId(props.supabase_id));
@@ -183,8 +183,8 @@ export class UserService {
             ...(props.phoneNumber && {phone_number: props.phoneNumber}),
             ...(props.language && {language: props.language}),
             ...(props.location && {location: {
-                latitude: props.location?.getLatitude(),
-                longitude: props.location?.getLongitude()
+                longitude: props.location.getLongitude(),
+                latitude: props.location.getLatitude()
             }}),
             ...(props.requestStatus !== undefined && {request_status: props.requestStatus}),
             ...(props.apps && {apps: props.apps})

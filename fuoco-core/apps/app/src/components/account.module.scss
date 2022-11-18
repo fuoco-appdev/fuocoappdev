@@ -54,12 +54,16 @@
                     flex-wrap: wrap;
                     margin-top: 24px;
                     margin-bottom: 24px;
-                    max-width: 50%;
+                    max-width: 800px;
 
                     & .info-input {
                         width: 304px;
                         margin-right: 24px;
                         margin-bottom: 24px;
+                    }
+
+                    & .dropdown-label {
+                        font-size: 0.875rem;
                     }
                 }
             }

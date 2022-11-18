@@ -35,7 +35,7 @@ class WindowController extends Controller {
                 next: (user: core.User | null) => {
                     this._model.isAuthenticated = user ? true : false;
                 }
-            })
+            });
     }
 
     public dispose(): void {

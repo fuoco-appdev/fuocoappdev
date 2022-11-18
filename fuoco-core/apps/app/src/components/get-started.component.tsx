@@ -74,53 +74,56 @@ export default function GetStartedComponent(): JSX.Element {
   };
 
   return (
-    <div className={styles["root"]} ref={containerRef}>
+    <div className={styles["root"]}>
         <div className={styles["content"]}>
           {formTransitions((style, item) => (item && showForm) && (
             <animated.div style={style}>
-              <Typography.Title className={styles["form-title"]}>{Strings.getStarted}</Typography.Title>
-              <h3 className={styles["form-subtitle"]}>{Strings.getStartedSubtitle}</h3>
-              <form className={styles["form"]} onSubmit={onSendRequest}>
-                <Space size={3} direction={'vertical'}>
-                  <Input
-                    value={props.companyName}
-                    label={Strings.company}
-                    placeholder={Strings.companyPlaceholder}
-                    error={companyErrorMessage}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      GetStartedController.updateCompanyName(e.currentTarget.value);
-                    }}
-                  />
-                  <InputPhoneNumber
-                    parentRef={containerRef}
-                    defaultValue={phoneNumber}
-                    label={Strings.phoneNumber}
-                    error={phoneNumberErrorMessage}
-                    country={'ca'}
-                    onChange={(value: string) => {
-                      GetStartedController.updatePhoneNumber(value);
-                    }}
-                  />
-                  <Input.TextArea
-                    value={props.comment}
-                    label={Strings.comment}
-                    placeholder={Strings.commentPlaceholder}
-                    error={commentErrorMessage}
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-                      GetStartedController.updateComment(e.currentTarget.value);
-                    }}
-                  />
-                  <Button
-                      block
-                      size="large"
-                      htmlType="submit"
-                      rippleProps={rippleProps}>
-                        <div className={styles['send-button-content']}>
-                          {Strings.send}
-                        </div>
-                  </Button>
-                </Space>
-              </form>
+              <div ref={containerRef}>
+                <Typography.Title className={styles["form-title"]}>{Strings.getStarted}</Typography.Title>
+                <h3 className={styles["form-subtitle"]}>{Strings.getStartedSubtitle}</h3>
+                <form className={styles["form"]} onSubmit={onSendRequest}>
+                  <Space size={3} direction={'vertical'}>
+                    <Input
+                      value={props.companyName}
+                      label={Strings.company}
+                      placeholder={Strings.companyPlaceholder}
+                      error={companyErrorMessage}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        GetStartedController.updateCompanyName(e.currentTarget.value);
+                      }}
+                    />
+                    <InputPhoneNumber
+                      parentRef={containerRef}
+                      defaultValue={phoneNumber}
+                      label={Strings.phoneNumber}
+                      error={phoneNumberErrorMessage}
+                      country={'ca'}
+                      onChange={(value: string) => {
+                        GetStartedController.updatePhoneNumber(value);
+                      }}
+                    />
+                    <Input.TextArea
+                      value={props.comment}
+                      label={Strings.comment}
+                      placeholder={Strings.commentPlaceholder}
+                      error={commentErrorMessage}
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                        GetStartedController.updateComment(e.currentTarget.value);
+                      }}
+                    />
+                    <Button
+                        block
+                        size="large"
+                        htmlType="submit"
+                        className={styles['send-button']}
+                        rippleProps={rippleProps}>
+                          <div className={styles['send-button-content']}>
+                            {Strings.send}
+                          </div>
+                    </Button>
+                  </Space>
+                </form>
+              </div>
             </animated.div>
           ))}
           <div className={styles['continue-container']}>
