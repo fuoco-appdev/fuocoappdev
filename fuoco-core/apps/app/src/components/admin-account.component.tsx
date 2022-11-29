@@ -55,7 +55,7 @@ export default function AdminAccountComponent(): JSX.Element {
           <animated.div style={style} className={styles["animated-content"]}>
             <div className={styles['content']}>
               <div className={styles["header-bar"]}>
-                <Typography.Title className={styles["account-title"]} level={2}>{Strings.account}</Typography.Title>
+                <Typography.Title className={styles["account-title"]} level={2}>{Strings.adminAccount}</Typography.Title>
                 <div className={styles["header-button-container"]}>
                   <Button 
                     className={styles['header-button']} 

@@ -104,7 +104,8 @@ export class UserService {
     public async findAllAsync(): Promise<UserProps[] | null> {
         const {data, error} = await SupabaseService.client
         .from('users')
-        .select();
+        .select()
+        .filter('role', 'gt', 0);
 
         if (error) {
             console.error(error);
@@ -131,11 +132,14 @@ export class UserService {
 
     public assignAndGetUsersProtocol(props: UserProps[]): InstanceType<typeof Users> {
         const users = new Users();
-        for (const userData of props) {
-            const user = this.assignAndGetUserProtocol(userData);
-            users.addUsers(user);
+        const userList = [];
+        for (let i = 0; i < props.length; i++) {
+            const user = this.assignAndGetUserProtocol(props[i]);
+            userList.push(user);
         }
 
+        console.log(userList);
+        
         return users;
     }
 
@@ -171,7 +175,7 @@ export class UserService {
         email?: string, 
         phoneNumber?: string, 
         language?: string, 
-        location?: InstanceType<typeof Location> | null, 
+        location?: InstanceType<typeof Location> | null | undefined, 
         requestStatus?: number, 
         apps?: string[]
     }) {

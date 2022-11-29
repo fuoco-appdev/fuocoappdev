@@ -29,9 +29,9 @@ class AccountController extends Controller {
                     this._model.emailAddress = user?.email ?? '';
                     this._model.phoneNumber = user?.phone_number ?? '';
                     this._model.location = [
-                        Number(user?.location.longitude),
-                        Number(user?.location.latitude)
-                    ] ?? [0, 0];
+                        Number(user?.location?.longitude) ?? 0,
+                        Number(user?.location?.latitude) ?? 0
+                    ];
                     this._model.language = user?.language ?? '';
                     this._model.isEmailAddressDisabled = AuthService.user?.app_metadata !== undefined;
                     this._model.isUpdatePasswordDisabled = AuthService.user?.app_metadata !== undefined;

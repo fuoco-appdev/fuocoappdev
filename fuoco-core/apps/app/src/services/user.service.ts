@@ -75,6 +75,7 @@ class UserService extends Service {
         }
 
         const usersResponse = core.Users.deserializeBinary(this._encoder.encode(response.data));
+        console.log(usersResponse);
         return usersResponse;
     }
 
