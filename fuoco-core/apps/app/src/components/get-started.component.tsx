@@ -1,5 +1,5 @@
-import {useEffect, useRef, useState} from 'react';
-import {Typography, Button, Input, Space, InputPhoneNumber} from '@fuoco.appdev/core-ui';
+import React, {useEffect, useState} from 'react';
+import {Typography, Button, Input, InputPhoneNumber} from '@fuoco.appdev/core-ui';
 import styles from './get-started.module.scss';
 import { Strings } from '../localization';
 import {animated, useTransition, config} from 'react-spring';
@@ -16,7 +16,7 @@ export default function GetStartedComponent(): JSX.Element {
   const [commentErrorMessage, setCommentErrorMessage] = useState<string | undefined>(undefined);
   const [props] = useObservable(GetStartedController.model.store);
   const [phoneNumber] = useState<string>(GetStartedController.model.phoneNumber);
-  const containerRef = useRef<HTMLDivElement | null>(null)
+  const containerRef = React.createRef<HTMLDivElement>()
 
   useEffect(() => {
     setShowForm(true);
@@ -82,7 +82,7 @@ export default function GetStartedComponent(): JSX.Element {
                 <Typography.Title className={styles["form-title"]}>{Strings.getStarted}</Typography.Title>
                 <h3 className={styles["form-subtitle"]}>{Strings.getStartedSubtitle}</h3>
                 <form className={styles["form"]} onSubmit={onSendRequest}>
-                  <Space size={3} direction={'vertical'}>
+                  <div className={styles["form-content"]}>
                     <Input
                       value={props.companyName}
                       label={Strings.company}
@@ -121,7 +121,7 @@ export default function GetStartedComponent(): JSX.Element {
                             {Strings.send}
                           </div>
                     </Button>
-                  </Space>
+                  </div>
                 </form>
               </div>
             </animated.div>

@@ -12,6 +12,7 @@ import LoadingController from '../controllers/loading.controller';
 import ResetPasswordController from '../controllers/reset-password.controller';
 import GetStartedController from '../controllers/get-started.controller';
 import AccountController from '../controllers/account.controller';
+import AdminAccountController from '../controllers/admin-account.controller';
 import UserController from '../controllers/user.controller';
 import WindowComponent from './window.component';
 import LandingComponent from './landing.component';
@@ -82,6 +83,7 @@ export default function AppComponent(): JSX.Element {
     UserController.initialize();
     GetStartedController.initialize();
     AccountController.initialize();
+    AdminAccountController.initialize();
     window.addEventListener("beforeunload", unloadCallback);
 
     return () => {
@@ -96,6 +98,7 @@ export default function AppComponent(): JSX.Element {
       UserController.dispose();
       GetStartedController.dispose();
       AccountController.dispose();
+      AdminAccountController.dispose();
       window.removeEventListener("beforeunload", unloadCallback);
     } 
   }, []);

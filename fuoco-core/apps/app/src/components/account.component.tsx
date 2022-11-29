@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Typography,
   Button,
@@ -15,22 +15,26 @@ import {
   IconGlobe,
   OptionProps,
   IconMapPin,
+  Modal,
 } from '@fuoco.appdev/core-ui';
 import styles from './account.module.scss';
 import { Strings } from '../localization';
 import AccountController from '../controllers/account.controller';
 import {animated, useTransition, config} from 'react-spring';
 import { useObservable } from '@ngneat/use-observable';
+import { useNavigate } from 'react-router-dom';
+import { RoutePaths } from '../route-paths';
 
 export default function AccountComponent(): JSX.Element {
-    const listboxRef = useRef<any | null>(null);
+    const navigate = useNavigate();
+    const listboxRef = React.createRef<HTMLUListElement>();
     const [show, setShow] = useState<boolean>(false);
     const [companyIconLit, setCompanyIconLit] = useState<boolean>(false);
     const [emailAddressIconLit, setEmailAddressIconLit] = useState<boolean>(false);
     const [locationIconLit, setLocationIconLit] = useState<boolean>(false);
     const [languageIconLit, setLanguageIconLit] = useState<boolean>(false);
     const [props] = useObservable(AccountController.model.store);
-    const containerRef = useRef<HTMLDivElement | null>(null);
+    const containerRef = React.createRef<HTMLDivElement>();
     const [defaultLanguageIndex, setDefaultLanguageIndex] = useState<number>(0);
     const languageOptions: OptionProps[] = [];
     const languages: Record<string, string> = {};
@@ -79,23 +83,27 @@ export default function AccountComponent(): JSX.Element {
                     className={styles['header-button']} 
                     danger={true} 
                     type={'primary'} 
-                    size={'tiny'} 
+                    size={'tiny'}
+                    onClick={() => AccountController.updateShowDeleteModal(true)}
                     icon={<IconDelete />} 
                   >
                     <span className={styles['button-text']}>
                       {Strings.deleteAccount}
                     </span>
                   </Button>
-                  <Button 
-                    className={styles['header-button']}
-                    type={'primary'} 
-                    size={'tiny'} 
-                    icon={<IconEdit3 />} 
-                  >
-                    <span className={styles['button-text']}>
-                      {Strings.updatePassword}
-                    </span>
-                  </Button>
+                  {!props.isUpdatePasswordDisabled && (
+                    <Button 
+                      className={styles['header-button']}
+                      type={'primary'} 
+                      size={'tiny'} 
+                      icon={<IconEdit3 />}
+                      onClick={() => navigate(RoutePaths.ResetPassword)}
+                    >
+                      <span className={styles['button-text']}>
+                        {Strings.updatePassword}
+                      </span>
+                    </Button>
+                  )}
                   <Button 
                     className={styles['header-button']} 
                     type={'primary'} 
@@ -112,7 +120,7 @@ export default function AccountComponent(): JSX.Element {
               </div>
               <Accordion className={styles['accordion']} defaultActiveId={[Strings.profile, Strings.personalInformation]}>
                 <Accordion.Item id={Strings.profile} label={Strings.profile}>
-                  <Typography.Text>{Strings.thisInfoWillBePublic}</Typography.Text>
+                  <Typography.Text className={styles['accordion-description']}>{Strings.thisInfoWillBePublic}</Typography.Text>
                   <div className={styles['info-container']}>
                     <Input
                       className={styles['info-input']} 
@@ -132,7 +140,7 @@ export default function AccountComponent(): JSX.Element {
                   </div>
                 </Accordion.Item>
                 <Accordion.Item id={Strings.personalInformation} label={Strings.personalInformation}>
-                  <Typography.Text>{Strings.thisInfoWillBePrivate}</Typography.Text>
+                  <Typography.Text className={styles['accordion-description']}>{Strings.thisInfoWillBePrivate}</Typography.Text>
                   <div className={styles['info-container']}>
                     <Input 
                       className={styles['info-input']} 
@@ -196,6 +204,18 @@ export default function AccountComponent(): JSX.Element {
             </div>
           </animated.div>
         ))}
+        <Modal
+          title={Strings.deleteYourAccount}
+          description={Strings.deleteYourAccountDescription}
+          confirmText={Strings.delete}
+          cancelText={Strings.cancel}
+          variant={'danger'}
+          size={'small'}
+          className={styles["delete-modal"]}
+          visible={props.showDeleteModal}
+          onCancel={() => AccountController.updateShowDeleteModal(false)}
+          onConfirm={() => console.log('delete')}
+        ></Modal>
       </div>
     );
   }

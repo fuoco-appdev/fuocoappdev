@@ -98,8 +98,8 @@ class WindowController extends Controller {
             break;
           case RoutePaths.ResetPassword:
             this._model.isSigninVisible = false;
-            this._model.isSignupVisible = true;
-            this._model.isSignoutVisible = false;
+            this._model.isSignupVisible = UserService.activeUser === null;
+            this._model.isSignoutVisible = UserService.activeUser !== null;
             this._model.isTabBarVisible = false;
             this._model.activeRoute = RoutePaths.ResetPassword;
             WorldController.updateIsVisible(true);
@@ -193,12 +193,12 @@ class WindowController extends Controller {
             WorldController.updateIsVisible(false);
             break;
           default:
-            this._model.isSigninVisible = false;
+            this._model.isSigninVisible = UserService.activeUser === null;
             this._model.isSignupVisible = false;
-            this._model.isSignoutVisible = false;
+            this._model.isSignoutVisible = UserService.activeUser !== null;
             this._model.isTabBarVisible = false;
             this._model.activeRoute = RoutePaths.Default;
-            WorldController.updateIsVisible(false);
+            WorldController.updateIsVisible(true);
             break;
         }
       }

@@ -2,22 +2,22 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Subscription } from "rxjs";
 import { Controller } from "../controller";
-import { AccountModel } from "../models/account.model";
+import { AdminAccountModel } from "../models/admin-account.model";
 import UserService from "../services/user.service";
 import {core} from "../protobuf/core";
 import AuthService from "../services/auth.service";
 
-class AccountController extends Controller {
-    private readonly _model: AccountModel;
+class AdminAccountController extends Controller {
+    private readonly _model: AdminAccountModel;
     private _userSubscription: Subscription | undefined;
 
     constructor() {
         super();
 
-        this._model = new AccountModel();
+        this._model = new AdminAccountModel();
     }
 
-    public get model(): AccountModel {
+    public get model(): AdminAccountModel {
         return this._model;
     }
 
@@ -25,20 +25,14 @@ class AccountController extends Controller {
         this._userSubscription = UserService.activeUserObservable
             .subscribe({
                 next: (user: core.User | null) => {
-                    this._model.company = user?.company ?? '';
+                    if (user?.role !== core.UserRole.ADMIN) {
+                        return;
+                    }
+                    
                     this._model.emailAddress = user?.email ?? '';
-                    this._model.phoneNumber = user?.phone_number ?? '';
-                    this._model.location = [
-                        Number(user?.location.longitude),
-                        Number(user?.location.latitude)
-                    ] ?? [0, 0];
                     this._model.language = user?.language ?? '';
                     this._model.isEmailAddressDisabled = AuthService.user?.app_metadata !== undefined;
-                    this._model.isUpdatePasswordDisabled = AuthService.user?.app_metadata !== undefined;
-                    this._model.updatedCompany = this._model.company;
                     this._model.updatedEmailAddress = this._model.emailAddress;
-                    this._model.updatedPhoneNumber = this._model.phoneNumber;
-                    this._model.updatedLocation = this._model.location;
                     this._model.updatedLanguage = this._model.language;
                 }
             });
@@ -48,23 +42,8 @@ class AccountController extends Controller {
         this._userSubscription?.unsubscribe();
     }
 
-    public updateCompany(value: string): void {
-        this._model.updatedCompany = value;
-        this.updateSave();
-    }
-
     public updateEmailAddress(value: string): void {
         this._model.updatedEmailAddress = value;
-        this.updateSave();
-    }
-
-    public updatePhoneNumber(value: string): void {
-        this._model.updatedPhoneNumber = value;
-        this.updateSave();
-    }
-
-    public updateLocation(value: string, data: any): void {
-        this._model.updatedLocation = data.center;
         this.updateSave();
     }
 
@@ -77,15 +56,9 @@ class AccountController extends Controller {
         this._model.isSaveDisabled = value;
     }
 
-    public updateShowDeleteModal(value: boolean): void {
-        this._model.showDeleteModal = value;
-    }
-
     public async saveAsync(): Promise<void> {
         await UserService.requestUpdateActiveUserAsync({
-            company: this._model.updatedCompany,
-            phone_number: this._model.updatedPhoneNumber,
-            location: this._model.updatedLocation,
+            email: this._model.updatedEmailAddress,
             language: this._model.updatedLanguage
         });
 
@@ -94,11 +67,7 @@ class AccountController extends Controller {
 
     private updateSave(): void {
         if (
-            this._model.company !== this._model.updatedCompany ||
             this._model.emailAddress !== this._model.updatedEmailAddress ||
-            this._model.phoneNumber !== this._model.updatedPhoneNumber ||
-            this._model.location[0] !== this._model.updatedLocation[0] ||
-            this._model.location[1] !== this._model.updatedLocation[1] ||
             this._model.language !== this._model.updatedLanguage) 
         {
             this._model.isSaveDisabled = false;
@@ -109,4 +78,4 @@ class AccountController extends Controller {
     }
 }
 
-export default new AccountController();
+export default new AdminAccountController();

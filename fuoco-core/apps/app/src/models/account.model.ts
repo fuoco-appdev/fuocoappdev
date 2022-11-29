@@ -13,7 +13,9 @@ export interface AccountState {
     language: string;
     updatedLanguage: string;
     isEmailAddressDisabled: boolean;
+    isUpdatePasswordDisabled: boolean;
     isSaveDisabled: boolean;
+    showDeleteModal: boolean;
 }
 
 export class AccountModel extends Model {
@@ -32,7 +34,9 @@ export class AccountModel extends Model {
                 language: '',
                 updatedLanguage: '',
                 isEmailAddressDisabled: true,
+                isUpdatePasswordDisabled: true,
                 isSaveDisabled: true,
+                showDeleteModal: false,
             }),
         ));
     }
@@ -147,6 +151,16 @@ export class AccountModel extends Model {
         }
     }
 
+    public get isUpdatePasswordDisabled(): boolean {
+        return this.store.getValue().isUpdatePasswordDisabled;
+    }
+
+    public set isUpdatePasswordDisabled(value: boolean) {
+        if (this.isUpdatePasswordDisabled !== value) {
+            this.store.update((state) => ({...state, isUpdatePasswordDisabled: value}));
+        }
+    }
+
     public get isSaveDisabled(): boolean {
         return this.store.getValue().isSaveDisabled;
     }
@@ -154,6 +168,16 @@ export class AccountModel extends Model {
     public set isSaveDisabled(value: boolean) {
         if (this.isSaveDisabled !== value) {
             this.store.update((state) => ({...state, isSaveDisabled: value}));
+        }
+    }
+
+    public get showDeleteModal(): boolean {
+        return this.store.getValue().showDeleteModal;
+    }
+
+    public set showDeleteModal(value: boolean) {
+        if (this.showDeleteModal !== value) {
+            this.store.update((state) => ({...state, showDeleteModal: value}));
         }
     }
 }

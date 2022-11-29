@@ -15,27 +15,11 @@
         left: 10%;
         z-index: 12;
         width: 80%;
-
-        & :hover {
-            cursor: auto;
-        }
-    
-        & :active {
-            cursor: auto;
-        }
     }
 
     & .content {
         width: 100vw;
         z-index: 1;
-
-        & :hover {
-            cursor: grab;
-        }
-    
-        & :active {
-            cursor: grabbing;
-        }
 
         & .navbar {
             position: absolute;
@@ -66,6 +50,7 @@
                     & .logo {
                         grid-row-start: 2;
                         grid-row-end: 3;
+                        height: 32px;
                     }
                 }
     

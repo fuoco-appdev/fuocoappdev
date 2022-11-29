@@ -116,18 +116,44 @@ export default function WindowComponent(): JSX.Element {
                 </div>
                 <div className={styles["bottomNavbarContent"]}>
                   {(windowProps.isAuthenticated && windowProps.isTabBarVisible && user?.role === core.UserRole.USER) && (
-                    <Tabs defaultActiveId={RoutePaths.Account} activeId={windowProps.activeRoute} onChange={(id: string) => navigate(id)}>
-                      <Tabs.Panel id={RoutePaths.Account} label={Strings.account} />
-                      <Tabs.Panel id={RoutePaths.Apps} label={Strings.apps}/>
-                      <Tabs.Panel id={RoutePaths.Billing} label={Strings.billing} />
-                    </Tabs>
+                    <Tabs
+                      activeId={windowProps.activeRoute} 
+                      onChange={(id: string) => navigate(id)}
+                      tabs={[
+                        {
+                          id: RoutePaths.Account,
+                          label: Strings.account,
+                        },
+                        {
+                          id: RoutePaths.Apps,
+                          label: Strings.apps,
+                        },
+                        {
+                          id: RoutePaths.Billing,
+                          label: Strings.billing,
+                        },
+                      ]}
+                    />
                   )}
                   {(windowProps.isAuthenticated && windowProps.isTabBarVisible && user?.role === core.UserRole.ADMIN) && (
-                    <Tabs defaultActiveId={RoutePaths.AdminAccount} activeId={windowProps.activeRoute} onChange={(id: string) => navigate(id)}>
-                      <Tabs.Panel id={RoutePaths.AdminAccount} label={Strings.account} />
-                      <Tabs.Panel id={RoutePaths.AdminUsers} label={Strings.users}/>
-                      <Tabs.Panel id={RoutePaths.AdminApps} label={Strings.apps} />
-                    </Tabs>
+                    <Tabs 
+                      activeId={windowProps.activeRoute} 
+                      onChange={(id: string) => navigate(id)}
+                      tabs={[
+                        {
+                          id: RoutePaths.AdminAccount,
+                          label: Strings.account,
+                        },
+                        {
+                          id: RoutePaths.AdminUsers,
+                          label: Strings.users,
+                        },
+                        {
+                          id: RoutePaths.AdminApps,
+                          label: Strings.apps,
+                        },
+                      ]}
+                    />
                   )}
                 </div>
               </div>

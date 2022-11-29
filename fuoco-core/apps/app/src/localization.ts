@@ -64,5 +64,9 @@ export const Strings = new LocalizedStrings({
       thisInfoWillBePrivate: "This information will be private",
       location: "Location",
       language: "Language",
+      delete: "Delete",
+      cancel: "Cancel",
+      deleteYourAccount: "Delete your account?",
+      deleteYourAccountDescription: "All the data associated to your user will be deleted."
     }
 });
