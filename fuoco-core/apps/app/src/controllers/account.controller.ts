@@ -4,7 +4,7 @@ import { Subscription } from "rxjs";
 import { Controller } from "../controller";
 import { AccountModel } from "../models/account.model";
 import UserService from "../services/user.service";
-import {core} from "../protobuf/core";
+import * as core from "../protobuf/core_pb";
 import AuthService from "../services/auth.service";
 
 class AccountController extends Controller {
@@ -27,7 +27,7 @@ class AccountController extends Controller {
                 next: (user: core.User | null) => {
                     this._model.company = user?.company ?? '';
                     this._model.emailAddress = user?.email ?? '';
-                    this._model.phoneNumber = user?.phone_number ?? '';
+                    this._model.phoneNumber = user?.phoneNumber ?? '';
                     this._model.location = [
                         Number(user?.location?.longitude) ?? 0,
                         Number(user?.location?.latitude) ?? 0

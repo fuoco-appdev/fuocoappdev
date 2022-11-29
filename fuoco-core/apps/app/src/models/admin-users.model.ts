@@ -1,6 +1,6 @@
 import { createStore, withProps } from '@ngneat/elf';
 import {Model} from '../model';
-import {core} from "../protobuf/core";
+import * as core from "../protobuf/core_pb";
 
 export interface AdminUsersState {
     requestedUsers: core.User[];

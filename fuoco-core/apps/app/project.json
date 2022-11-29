@@ -7,7 +7,7 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          "protoc --plugin=protoc-gen-js=submodules/protobuf-javascript/bazel-bin/generator/protoc-gen-js.exe --ts_opt=explicit_override --ts_out=apps/app/src protobuf/core.proto"
+          "protoc -I . --plugin ./node_modules/.bin/protoc-gen-es.cmd --es_out apps/app/src --es_opt target=ts protobuf/core.proto"
        ],
        "parallel": false
       }

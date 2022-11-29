@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable no-throw-literal */
 import { Service } from "../service";
-import {core} from '../protobuf/core';
+import * as core from "../protobuf/core_pb";
 import {BehaviorSubject, Observable} from 'rxjs';
 import AuthService from "./auth.service";
 import axios, { AxiosError } from 'axios';
@@ -9,13 +9,11 @@ import { Strings } from "../localization";
 
 class UserService extends Service {
     private readonly _activeUserBehaviorSubject: BehaviorSubject<core.User | null>;
-    private readonly _encoder: TextEncoder;
 
     constructor() {
         super();
 
         this._activeUserBehaviorSubject = new BehaviorSubject<core.User | null>(null);
-        this._encoder = new TextEncoder();
     }
 
     public get activeUserObservable(): Observable<core.User | null> {
@@ -49,13 +47,14 @@ class UserService extends Service {
                 'Session-Token': `${AuthService.supabaseClient.auth.session()?.access_token}`,
             },
             data: "",
+            responseType: 'arraybuffer'
         });
 
         if (response.data.status >= 400) {
             throw response.data as AxiosError;
         }
 
-        const userResponse = core.User.deserializeBinary(this._encoder.encode(response.data));
+        const userResponse = core.User.fromBinary(new Uint8Array(response.data));
         return userResponse;
     }
 
@@ -68,14 +67,14 @@ class UserService extends Service {
                 'Session-Token': `${AuthService.supabaseClient.auth.session()?.access_token}`,
             },
             data: "",
+            responseType: 'arraybuffer'
         });
 
         if (response.data.status >= 400) {
             throw response.data as AxiosError;
         }
 
-        const usersResponse = core.Users.deserializeBinary(this._encoder.encode(response.data));
-        console.log(usersResponse);
+        const usersResponse = core.Users.fromBinary(new Uint8Array(response.data));
         return usersResponse;
     }
 
@@ -88,7 +87,7 @@ class UserService extends Service {
         const user = new core.User({
             role: core.UserRole.USER,
             email: supabaseUser.email,
-            request_status: core.UserRequestStatus.IDLE,
+            requestStatus: core.UserRequestStatus.IDLE,
             language: Strings.getLanguage(),
             apps: []
         });
@@ -100,14 +99,15 @@ class UserService extends Service {
                 ...this.headers,
                 'Session-Token': `${AuthService.supabaseClient.auth.session()?.access_token}`,
             },
-            data: user.serialize(),
+            data: user.toBinary(),
+            responseType: 'arraybuffer'
         });
         
         if (response.data.status >= 400) {
             throw response.data as AxiosError;
         }
 
-        const userResponse = core.User.deserializeBinary(this._encoder.encode(response.data));
+        const userResponse = core.User.fromBinary(new Uint8Array(response.data));
         this._activeUserBehaviorSubject.next(userResponse);
 
         return userResponse;
@@ -126,14 +126,15 @@ class UserService extends Service {
                 ...this.headers,
                 'Session-Token': `${AuthService.supabaseClient.auth.session()?.access_token}`,
             },
-            data: gettingStartedRequest.serialize(),
+            data: gettingStartedRequest.toBinary(),
+            responseType: 'arraybuffer'
         });
 
         if (response.data.status >= 400) {
             throw response.data as AxiosError;
         }
 
-        const userResponse = core.User.deserializeBinary(this._encoder.encode(response.data));
+        const userResponse = core.User.fromBinary(new Uint8Array(response.data));
         this._activeUserBehaviorSubject.next(userResponse);
 
         return userResponse;
@@ -167,16 +168,16 @@ class UserService extends Service {
             request_status?: core.UserRequestStatus;
         }): Promise<core.User> {
         
-        const user = core.User.fromObject({
+        const user = new core.User({
             company: props.company ? props.company : this.activeUser?.company,
             email: props.email ? props.email : this.activeUser?.email,
-            phone_number: props.phone_number ? props.phone_number : this.activeUser?.phone_number,
-            location: props.location ? core.Location.fromObject({
+            phoneNumber: props.phone_number ? props.phone_number : this.activeUser?.phoneNumber,
+            location: props.location ? new core.Location({
                 longitude: String(props.location[0]),
                 latitude: String(props.location[1])
             }) : this.activeUser?.location,
             language: props.language ? props.language : this.activeUser?.language,
-            request_status: props.request_status ? props.request_status : this.activeUser?.request_status,
+            requestStatus: props.request_status ? props.request_status : this.activeUser?.requestStatus,
         });
         const response = await axios({
             method: 'post',
@@ -185,14 +186,15 @@ class UserService extends Service {
                 ...this.headers,
                 'Session-Token': `${AuthService.supabaseClient.auth.session()?.access_token}`,
             },
-            data: user.serialize(),
+            data: user.toBinary(),
+            responseType: 'arraybuffer'
         });
 
         if (response.data.status >= 400) {
             throw response.data as AxiosError;
         }
 
-        const userResponse = core.User.deserializeBinary(this._encoder.encode(response.data));
+        const userResponse = core.User.fromBinary(new Uint8Array(response.data));
         return userResponse;
     }
 
@@ -205,13 +207,14 @@ class UserService extends Service {
                 'Session-Token': `${AuthService.supabaseClient.auth.session()?.access_token}`,
             },
             data: "",
+            responseType: 'arraybuffer'
         });
         
         if (response.data.status >= 400) {
             throw response.data as AxiosError;
         }
 
-        const userResponse = core.User.deserializeBinary(this._encoder.encode(response.data));
+        const userResponse = core.User.fromBinary(new Uint8Array(response.data));
         return userResponse;
     }
 }

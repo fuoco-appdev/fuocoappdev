@@ -4,7 +4,7 @@ import { Subscription } from "rxjs";
 import { Controller } from "../controller";
 import { AdminUsersModel } from "../models/admin-users.model";
 import UserService from "../services/user.service";
-import {core} from "../protobuf/core";
+import * as core from "../protobuf/core_pb";
 
 class AdminUsersController extends Controller {
     private readonly _model: AdminUsersModel;

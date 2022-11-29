@@ -11,7 +11,7 @@ import {useObservable} from '@ngneat/use-observable';
 import LoadingComponent from './loading.component';
 import {useSpring } from 'react-spring';
 import UserService from '../services/user.service';
-import { core } from '../protobuf/core';
+import * as core from '../protobuf/core_pb';
 
 function SigninButtonComponent(): JSX.Element {
   const navigate = useNavigate();

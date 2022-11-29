@@ -9,7 +9,7 @@ import AuthService from '../services/auth.service';
 import WorldController from './world.controller';
 import { Location } from "react-router-dom";
 import UserService from "../services/user.service";
-import {core} from "../protobuf/core";
+import * as core from "../protobuf/core_pb";
 
 class WindowController extends Controller {
     private readonly _model: WindowModel;

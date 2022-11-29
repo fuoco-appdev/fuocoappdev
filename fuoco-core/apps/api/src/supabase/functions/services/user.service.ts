@@ -132,13 +132,10 @@ export class UserService {
 
     public assignAndGetUsersProtocol(props: UserProps[]): InstanceType<typeof Users> {
         const users = new Users();
-        const userList = [];
-        for (let i = 0; i < props.length; i++) {
-            const user = this.assignAndGetUserProtocol(props[i]);
-            userList.push(user);
+        for (const userData of props) {
+            const user = this.assignAndGetUserProtocol(userData);
+            users.getUsersList().push(user);
         }
-
-        console.log(userList);
         
         return users;
     }

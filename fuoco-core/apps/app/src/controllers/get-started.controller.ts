@@ -2,7 +2,7 @@
 import { Controller } from "../controller";
 import { GetStartedModel } from "../models/get-started.model";
 import UserService from "../services/user.service";
-import {core} from '../protobuf/core';
+import * as core from "../protobuf/core_pb";
 
 class GetStartedController extends Controller {
     private readonly _model: GetStartedModel;
@@ -42,7 +42,7 @@ class GetStartedController extends Controller {
             return;
         }
         
-        if (UserService.activeUser?.request_status === core.UserRequestStatus.IDLE) {
+        if (UserService.activeUser?.requestStatus === core.UserRequestStatus.IDLE) {
             await UserService.requestGettingStartedAsync({
                 company: this._model.companyName,
                 phone_number: this._model.phoneNumber,

@@ -4,7 +4,7 @@ import { Subscription } from "rxjs";
 import { Controller } from "../controller";
 import { AdminAccountModel } from "../models/admin-account.model";
 import UserService from "../services/user.service";
-import {core} from "../protobuf/core";
+import * as core from "../protobuf/core_pb";
 import AuthService from "../services/auth.service";
 
 class AdminAccountController extends Controller {

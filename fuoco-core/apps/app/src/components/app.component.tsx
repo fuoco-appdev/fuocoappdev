@@ -29,7 +29,7 @@ import { RoutePaths } from '../route-paths';
 import UserService from '../services/user.service';
 import UserComponent from './user.component';
 import { useObservable } from '@ngneat/use-observable';
-import { core } from '../protobuf/core';
+import * as core from '../protobuf/core_pb';
 import AppsComponent from './apps.component';
 import BillingComponent from './billing.component';
 import AdminComponent from './admin.component';
