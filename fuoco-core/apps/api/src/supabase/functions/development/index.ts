@@ -1,11 +1,21 @@
-import { Core } from "https://fuoco-appdev-core-api-tbm0aj6nffc0.deno.dev/core/src/index.ts";
-import { AppController, UserController} from "../controllers/index.ts";
+import { Core } from '../index.ts';
+import { AppController, UserController } from '../controllers/index.ts';
+import SupabaseService from '../services/supabase.service.ts';
 
-const app = Core.registerApp([
-    new UserController(), 
-    new AppController()
-]);
-app.listen({port: 8000});
+const avatarsBucket = await SupabaseService.client.storage.getBucket('avatars');
+if (avatarsBucket.error) {
+  const { error } = await SupabaseService.client.storage.createBucket(
+    'avatars',
+    { public: true }
+  );
+
+  if (error) {
+    console.error(error);
+  }
+}
+
+const app = Core.registerApp([new UserController(), new AppController()]);
+app.listen({ port: 8000 });
 
 // To invoke:
 // curl -i --location --request POST 'http://localhost:54321/functions/v1/' \

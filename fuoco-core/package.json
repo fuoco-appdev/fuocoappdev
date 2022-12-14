@@ -5,7 +5,8 @@
   "scripts": {
     "preinstall": "nx run api:install",
     "init": "nx run api:init",
-    "start": "nx serve",
+    "start-app": "nx serve",
+    "start-api": "cd ./apps/api/src && supabase functions serve development --env-file=supabase/.env",
     "protobuf": "nx run-many --target=proto-generate --projects=api,app --parallel",
     "build": "nx build",
     "test": "nx test"
@@ -31,7 +32,7 @@
   "devDependencies": {
     "@bufbuild/protobuf": "^0.3.0",
     "@bufbuild/protoc-gen-es": "^0.3.0",
-    "@fuoco.appdev/core-ui": "^0.5.32",
+    "@fuoco.appdev/core-ui": "^0.9.1",
     "@ngneat/elf": "^2.1.0",
     "@ngneat/elf-entities": "^4.4.2",
     "@ngneat/elf-persist-state": "^1.1.6",
@@ -53,9 +54,11 @@
     "@types/google-protobuf": "^3.15.6",
     "@types/jest": "28.1.1",
     "@types/lodash.throttle": "^4.1.7",
+    "@types/mime": "^3.0.1",
     "@types/node": "16.11.7",
     "@types/three": "^0.144.0",
     "@types/tweenjs": "^1.0.4",
+    "@types/uuid": "^9.0.0",
     "@types/react": "18.0.18",
     "@types/react-dom": "18.0.6",
     "@typescript-eslint/eslint-plugin": "~5.33.1",
@@ -75,6 +78,7 @@
     "google-protobuf": "^3.21.0",
     "jest": "28.1.1",
     "jest-environment-jsdom": "28.1.1",
+    "mime": "^3.0.0",
     "nx": "14.6.3",
     "prettier": "^2.6.2",
     "protoc-gen-ts": "^0.8.5",
@@ -91,6 +95,7 @@
     "ts-jest": "28.0.5",
     "ts-node": "10.9.1",
     "ts-proto": "^1.126.1",
-    "typescript": "~4.7.2"
+    "typescript": "~4.7.2",
+    "uuid": "^9.0.0"
   }
 }

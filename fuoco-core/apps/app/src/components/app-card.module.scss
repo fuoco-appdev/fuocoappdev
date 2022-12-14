@@ -1,0 +1,107 @@
+@import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
+
+.root {
+  min-width: 383px;
+
+  & .display-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    & .display-content {
+      & .cover-image-container {
+        position: relative;
+        border-top-left-radius: $rounded-md;
+        border-top-right-radius: $rounded-md;
+        background-color: $gray-300;
+        min-height: calc((383px / 3) * 2);
+        pointer-events: none;
+        user-select: none;
+
+        & .cover-content-container {
+          position: absolute;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          width: 100%;
+          height: 100%;
+          padding: $mp-2;
+
+          & .request-update-container {
+            display: flex;
+            justify-content: end;
+            flex-direction: row;
+          }
+
+          & .edit-cover-container {
+            display: flex;
+            justify-content: end;
+            flex-direction: row;
+          }
+        }
+      }
+
+      & .app-content {
+        padding: $mp-4;
+
+        & .app-info {
+          display: flex;
+          flex-direction: row;
+
+          & .app-name-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin-left: $mp-4;
+
+            & .app-name {
+              color: $gray-900;
+              font-weight: $font-weight-bold;
+            }
+
+            & .company-name {
+              color: $gray-500;
+              font-weight: $font-weight-bold;
+              font-size: $font-size-xs;
+            }
+          }
+        }
+
+        & .status-container {
+          width: 100%;
+          text-align: end;
+
+          & .status {
+            color: $gray-500;
+            font-weight: $font-weight-bold;
+            font-size: $font-size-xs;
+          }
+        }
+      }
+    }
+
+    & .progress-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      gap: $mp-2;
+      padding: $mp-2;
+
+      & .progress-pill {
+        height: 10px;
+        width: 100%;
+        border-radius: $rounded-full;
+        background-color: $gray-300;
+      }
+
+      & .progress-pill-active {
+        background-color: $brand-400;
+      }
+    }
+  }
+}
+
+.button-text {
+  font-weight: $font-weight-bold;
+  font-size: $font-size-xs;
+}

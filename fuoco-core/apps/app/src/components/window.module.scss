@@ -1,85 +1,77 @@
 .root {
-    display: flex;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+
+  & .background {
+    position: absolute;
     height: 100vh;
+    width: 100vw;
     overflow: hidden;
-    
-    & .background {
-        position: absolute;
-        height: 100vh;
-        width: 100vw;
-        overflow: hidden;
-    }
+  }
 
-    & .alert {
-        position: absolute;
-        left: 10%;
-        z-index: 12;
-        width: 80%;
-    }
+  & .alert {
+    position: absolute;
+    left: 10%;
+    z-index: 12;
+    width: 80%;
+  }
 
-    & .content {
-        width: 100vw;
-        z-index: 1;
+  & .content {
+    width: 100vw;
+    z-index: 1;
 
-        & .navbar {
-            position: absolute;
-            display: grid;
-            grid-template-columns: 16fr 1408fr 16fr;
-            width: 100%;
+    & .navbar {
+      position: absolute;
+      display: grid;
+      grid-template-columns: 16fr 1408fr 16fr;
+      width: 100%;
 
-            & :hover {
-                cursor: auto;
-            }
-        
-            & :active {
-                cursor: auto;
-            }
+      & .topNavbarContent {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        grid-column-start: 2;
+        grid-column-end: 3;
+        height: 56px;
 
-            & .topNavbarContent {
-                display: flex;
-                flex-direction: row;
-                justify-content: space-between;
-                grid-column-start: 2;
-                grid-column-end: 3;
-                height: 56px;
+        & .logoContainer {
+          display: grid;
+          grid-template-rows: 12fr 36fr 12fr;
 
-                & .logoContainer {
-                    display: grid;
-                    grid-template-rows: 12fr 36fr 12fr;
-    
-                    & .logo {
-                        grid-row-start: 2;
-                        grid-row-end: 3;
-                        height: 32px;
-                    }
-                }
-    
-                & .navbarContentRight {
-                    display: flex;
-
-                    & .navbarContentRightGrid {
-                        padding-top: 8px;
-                        padding-bottom: 8px;
-                        display: flex;
-                        justify-content: center;
-                    }
-                }
-            }
-
-            & .bottomNavbarContent {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                grid-column-start: 2;
-                grid-column-end: 3;
-                height: 56px;
-                margin: 0 2.5%;
-            }
+          & .logo {
+            grid-row-start: 2;
+            grid-row-end: 3;
+            height: 32px;
+          }
         }
 
-        & .children {
-            overflow-y: auto;
-            height: 100%;
+        & .navbarContentRight {
+          display: flex;
+
+          & .navbarContentRightGrid {
+            padding-top: 8px;
+            padding-bottom: 8px;
+            display: flex;
+            justify-content: center;
+          }
         }
+      }
+
+      & .bottomNavbarContent {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        grid-column-start: 2;
+        grid-column-end: 3;
+        height: 56px;
+        margin: 0 2.5%;
+      }
     }
+
+    & .children {
+      overflow-y: auto;
+      height: 100%;
+    }
+  }
 }

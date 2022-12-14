@@ -15,7 +15,6 @@ CREATE TABLE IF NOT EXISTS public.users
     language text COLLATE pg_catalog."default",
     request_status bigint,
     role bigint,
-    apps json[],
     CONSTRAINT user_pkey PRIMARY KEY (id)
 )
 
@@ -43,8 +42,10 @@ CREATE TABLE IF NOT EXISTS public.apps
     status bigint,
     updated_at timestamp with time zone,
     products text[] COLLATE pg_catalog."default",
-    images json[],
     links json[],
+    user_id uuid,
+    avatar_image text COLLATE pg_catalog."default",
+    cover_images text[] COLLATE pg_catalog."default",
     CONSTRAINT apps_pkey PRIMARY KEY (id)
 )
 

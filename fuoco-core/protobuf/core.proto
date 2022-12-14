@@ -9,34 +9,25 @@ enum AppStatus {
     RELEASE = 3;
 }
 
-enum ImageType {
-    PROFILE = 0;
-    COVER = 1;
-}
-
-message Product {
-    string id = 1;
-}
-
 message Link {
     string name = 1;
     string url = 2;
 }
 
 message Image {
-    ImageType type = 1;
-    string url = 2;
+    string url = 1;
 }
 
 message App {
     string id = 1;
     string created_at = 2;
     string updated_at = 3;
-    string name = 4;
-    AppStatus status = 5;
-    repeated Product products = 6;
+    string user_id = 4;
+    string name = 5;
+    AppStatus status = 6;
     repeated Link links = 7;
-    repeated Image images = 8;
+    string avatar_image = 8;
+    repeated string cover_images = 9;
 }
 
 message Apps {
@@ -72,7 +63,6 @@ message User {
     Location location = 8;
     string language = 9;
     UserRequestStatus request_status = 10;
-    repeated string apps = 11;
 }
 
 message Users {

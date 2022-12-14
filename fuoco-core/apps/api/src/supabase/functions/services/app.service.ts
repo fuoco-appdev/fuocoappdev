@@ -1,237 +1,195 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import SupabaseService from "./supabase.service.ts";
-import { App, Apps, Product, Link, Image } from '../protobuf/core_pb.js';
-import { UserProps } from "./user.service.ts";
+import SupabaseService from './supabase.service.ts';
+import { App, Apps, Link, Image, AppStatus } from '../protobuf/core_pb.js';
+import { v1 } from 'https://deno.land/std@0.167.0/uuid/mod.ts';
+import { mime, mimelite } from 'https://deno.land/x/mimetypes@v1.0.0/mod.ts';
+import XMLHttpRequest from 'https://deno.land/x/xmlhttprequest_deno@v0.0.2/mod.js';
+import { resolve } from 'https://deno.land/std@0.110.0/path/win32.ts';
 
 export interface AppProps {
-    id?: string;
-    created_at?: string;
-    updated_at?: string;
-    name?: string;
-    products?: string[];
-    links?: {name: string, url: string}[];
-    status?: number;
-    images?: {type: number, url: string}[];
+  id?: string;
+  created_at?: string;
+  updated_at?: string;
+  user_id?: string;
+  name?: string;
+  links?: { name: string; url: string }[];
+  status?: number;
+  avatar_image?: string;
+  cover_images?: string[];
 }
 
 export class AppService {
-    public async findAsync(appId: string): Promise<AppProps | null> {
-        const {data, error} = await SupabaseService.client
-            .from('apps')
-            .select()
-            .eq('id', appId);
+  public async findAsync(appId: string): Promise<AppProps | null> {
+    const { data, error } = await SupabaseService.client
+      .from('apps')
+      .select()
+      .eq('id', appId);
 
-        if (error) {
-            console.error(error);
-            return null;
-        }
-
-        return data.length > 0 ? data[0] : null;
+    if (error) {
+      console.error(error);
+      return null;
     }
 
-    public async createAsync(supabaseId: string, app: InstanceType<typeof App>): Promise<AppProps | null> {
-        const userProps = await SupabaseService.client
-            .from('users')
-            .select()
-            .match({supabase_id: supabaseId})
-            .single();
+    return data.length > 0 ? data[0] : null;
+  }
 
-        if (userProps.error) {
-            console.error(userProps.error);
-            return null;
-        }
-        
-        const updatedAt = app.getUpdatedAt();
-        const name = app.getName();
-        const products = app.getProductsList();
-        const links = app.getLinksList();
-        const status = app.getStatus();
-        const images = app.getImagesList();
+  public async createAsync(
+    app: InstanceType<typeof App>
+  ): Promise<AppProps | null> {
+    const updatedAt = app.getUpdatedAt();
+    const name = app.getName();
+    const userId = app.getUserId();
+    const links = app.getLinksList();
+    const avatarImage = app.getAvatarImage();
+    const coverImages = app.getCoverImagesList();
 
-        const appData = this.assignAndGetAppData({
-            updatedAt,
-            name,
-            products,
-            links,
-            status,
-            images
-        });
-        
-        const appProps = await SupabaseService.client
-            .from('apps')
-            .insert([appData])
-            .single();
+    const appData = this.assignAndGetAppData({
+      updatedAt,
+      name,
+      userId,
+      links,
+      status: AppStatus.USER_STORIES,
+      avatarImage,
+      coverImages,
+    });
 
-        if (appProps.error) {
-            console.error(appProps.error);
-            return null;
-        }
+    const { data, error } = await SupabaseService.client
+      .from('apps')
+      .insert([appData])
+      .single();
 
-        const userApps = (userProps.data as UserProps).apps;
-        const appId = (appProps.data as AppProps).id;
-        if (userApps && appId) {
-            userApps.push(appId);
-
-            const updatedUserProps = await SupabaseService.client
-            .from('users')
-            .update(userApps)
-            .match({supabase_id: supabaseId})
-            .single();
-
-            if (updatedUserProps.error) {
-                console.error(updatedUserProps.error);
-                return null;
-            }
-        }
-
-        return appProps.data;
+    if (error) {
+      console.error(error);
+      return null;
     }
 
-    public async updateAsync(appId: string, app: InstanceType<typeof App>): Promise<AppProps | null> {
-        const updatedAt = app.getUpdatedAt();
-        const name = app.getName();
-        const products = app.getProductsList();
-        const links = app.getLinksList();
-        const status = app.getStatus();
-        const images = app.getImagesList();
+    return data;
+  }
 
-        const appData = this.assignAndGetAppData({
-            updatedAt,
-            name,
-            products,
-            links,
-            status,
-            images
-        });
-        const {data, error} = await SupabaseService.client
-            .from('apps')
-            .update(appData)
-            .match({id: appId})
-            .single();
+  public async updateAsync(
+    appId: string,
+    app: InstanceType<typeof App>
+  ): Promise<AppProps | null> {
+    const updatedAt = app.getUpdatedAt();
+    const userId = app.getUserId();
+    const name = app.getName();
+    const links = app.getLinksList();
+    const status = app.getStatus();
+    const avatarImage = app.getAvatarImage();
+    const coverImages = app.getCoverImagesList();
 
-        if (error) {
-            console.error(error);
-            return null;
-        }
+    const appData = this.assignAndGetAppData({
+      updatedAt,
+      userId,
+      name,
+      links,
+      status,
+      avatarImage,
+      coverImages,
+    });
+    const { data, error } = await SupabaseService.client
+      .from('apps')
+      .update(appData)
+      .match({ id: appId })
+      .single();
 
-        return data;
+    if (error) {
+      console.error(error);
+      return null;
     }
 
-    public async findAllAsync(): Promise<AppProps[] | null> {
-        const {data, error} = await SupabaseService.client
-        .from('apps')
-        .select();
+    return data;
+  }
 
-        if (error) {
-            console.error(error);
-            return null;
-        }
+  public async findAllAsync(): Promise<AppProps[] | null> {
+    const { data, error } = await SupabaseService.client.from('apps').select();
 
-        return data;
+    if (error) {
+      console.error(error);
+      return null;
     }
 
-    public async deleteAsync(supabaseId: string): Promise<AppProps | null> {
-        const {data, error} = await SupabaseService.client
-        .from('apps')
-        .delete()
-        .match({supabase_id: supabaseId})
-        .single();
+    return data;
+  }
 
-        if (error) {
-            console.error(error);
-            return null;
-        }
+  public async deleteAsync(supabaseId: string): Promise<AppProps | null> {
+    const { data, error } = await SupabaseService.client
+      .from('apps')
+      .delete()
+      .match({ supabase_id: supabaseId })
+      .single();
 
-        return data;
+    if (error) {
+      console.error(error);
+      return null;
     }
 
-    public assignAndGetAppsProtocol(props: AppProps[]): InstanceType<typeof Apps> {
-        const apps = new Apps();
-        for (const appData of props) {
-            const app = this.assignAndGetAppProtocol(appData);
-            apps.addApps(app);
-        }
+    return data;
+  }
 
-        return apps;
+  public assignAndGetAppsProtocol(
+    props: AppProps[]
+  ): InstanceType<typeof Apps> {
+    const apps = new Apps();
+    for (const appData of props) {
+      const app = this.assignAndGetAppProtocol(appData);
+      apps.addApps(app);
     }
 
-    public assignAndGetAppProtocol(props: AppProps): InstanceType<typeof App> {
-        const app = new App();
-        const products: InstanceType<typeof Product>[] = [];
-        const links: InstanceType<typeof Link>[] = [];
-        const images: InstanceType<typeof Image>[] = [];
-        if (props.products) {
-            for (const id of props.products) {
-                const product = new Product();
-                product.setId(id);
-                products.push(product);
-            }
-        }
-        if (props.links) {
-            for (const linkData of props.links) {
-                const link = new Link();
-                link.setName(linkData.name);
-                link.setUrl(linkData.url);
-                links.push(link);
-            }
-        }
-        if (props.images) {
-            for (const imageData of props.images) {
-                const image = new Image();
-                image.setType(imageData.type);
-                image.setUrl(imageData.url);
-                images.push(image);
-            }
-        }
+    return apps;
+  }
 
-        (props.id && app.setId(props.id));
-        (props.created_at && app.setCreatedAt(props.created_at));
-        (props.updated_at && app.setUpdatedAt(props.updated_at));
-        (props.name && app.setName(props.name));
-        (props.status && app.setStatus(props.status));
-        (props.products && app.setProductsList(products));
-        (props.links && app.setLinksList(links));
-        (props.images && app.setImagesList(images));
-
-        return app;
+  public assignAndGetAppProtocol(props: AppProps): InstanceType<typeof App> {
+    const app = new App();
+    const links: InstanceType<typeof Link>[] = [];
+    if (props.links) {
+      for (const linkData of props.links) {
+        const link = new Link();
+        link.setName(linkData.name);
+        link.setUrl(linkData.url);
+        links.push(link);
+      }
     }
 
-    public assignAndGetAppData(props: {
-        updatedAt?: string;
-        name?: string;
-        products?: InstanceType<typeof Product>[];
-        links?: InstanceType<typeof Link>[];
-        status?: number;
-        images?: InstanceType<typeof Image>[];
-    }) {
-        const productsData: string[] = [];
-        const linksData: {name: string, url: string}[] = [];
-        const imagesData: {type: number, url: string}[] = [];
-        if (props.products) {
-            for (const product of props.products) {
-                productsData.push(product.getId());
-            }
-        }
-        if (props.links) {
-            for (const link of props.links) {
-                linksData.push({name: link.getName(), url: link.getUrl()});
-            }
-        }
-        if (props.images) {
-            for (const image of props.images) {
-                imagesData.push({type: image.getType(), url: image.getUrl()});
-            }
-        }
+    props.id && app.setId(props.id);
+    props.created_at && app.setCreatedAt(props.created_at);
+    props.updated_at && app.setUpdatedAt(props.updated_at);
+    props.user_id && app.setUserId(props.user_id);
+    props.name && app.setName(props.name);
+    props.status && app.setStatus(props.status);
+    props.links && app.setLinksList(links);
+    props.avatar_image && app.setAvatarImage(props.avatar_image);
+    props.cover_images && app.setCoverImagesList(props.cover_images);
 
-        return {
-            ...(props.updatedAt && {updated_at: props.updatedAt}),
-            ...(props.name && {name: props.name}),
-            ...(props.products && {products: productsData}),
-            ...(props.links && {links: linksData}),
-            ...(props.status && {status: props.status}),
-            ...(props.images && {images: imagesData})
-        };
+    return app;
+  }
+
+  public assignAndGetAppData(props: {
+    updatedAt?: string;
+    userId?: string;
+    name?: string;
+    links?: InstanceType<typeof Link>[];
+    status?: number;
+    avatarImage?: string;
+    coverImages?: string[];
+  }) {
+    const linksData: { name: string; url: string }[] = [];
+    if (props.links) {
+      for (const link of props.links) {
+        linksData.push({ name: link.getName(), url: link.getUrl() });
+      }
     }
+
+    return {
+      ...(props.updatedAt && { updated_at: props.updatedAt }),
+      ...(props.userId && { user_id: props.userId }),
+      ...(props.name && { name: props.name }),
+      ...(props.links && { links: linksData }),
+      ...(props.status && { status: props.status }),
+      ...(props.avatarImage && { avatar_image: props.avatarImage }),
+      ...(props.coverImages && { cover_images: props.coverImages }),
+    };
+  }
 }
 
 export default new AppService();

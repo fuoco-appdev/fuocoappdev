@@ -39,26 +39,6 @@ proto3.util.setEnumType(AppStatus, "core.AppStatus", [
 ]);
 
 /**
- * @generated from enum core.ImageType
- */
-export enum ImageType {
-  /**
-   * @generated from enum value: PROFILE = 0;
-   */
-  PROFILE = 0,
-
-  /**
-   * @generated from enum value: COVER = 1;
-   */
-  COVER = 1,
-}
-// Retrieve enum metadata with: proto3.getEnumType(ImageType)
-proto3.util.setEnumType(ImageType, "core.ImageType", [
-  { no: 0, name: "PROFILE" },
-  { no: 1, name: "COVER" },
-]);
-
-/**
  * @generated from enum core.UserRole
  */
 export enum UserRole {
@@ -117,43 +97,6 @@ proto3.util.setEnumType(UserRequestStatus, "core.UserRequestStatus", [
 ]);
 
 /**
- * @generated from message core.Product
- */
-export class Product extends Message<Product> {
-  /**
-   * @generated from field: string id = 1;
-   */
-  id = "";
-
-  constructor(data?: PartialMessage<Product>) {
-    super();
-    proto3.util.initPartial(data, this);
-  }
-
-  static readonly runtime = proto3;
-  static readonly typeName = "core.Product";
-  static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-  ]);
-
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Product {
-    return new Product().fromBinary(bytes, options);
-  }
-
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Product {
-    return new Product().fromJson(jsonValue, options);
-  }
-
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Product {
-    return new Product().fromJsonString(jsonString, options);
-  }
-
-  static equals(a: Product | PlainMessage<Product> | undefined, b: Product | PlainMessage<Product> | undefined): boolean {
-    return proto3.util.equals(Product, a, b);
-  }
-}
-
-/**
  * @generated from message core.Link
  */
 export class Link extends Message<Link> {
@@ -201,12 +144,7 @@ export class Link extends Message<Link> {
  */
 export class Image extends Message<Image> {
   /**
-   * @generated from field: core.ImageType type = 1;
-   */
-  type = ImageType.PROFILE;
-
-  /**
-   * @generated from field: string url = 2;
+   * @generated from field: string url = 1;
    */
   url = "";
 
@@ -218,8 +156,7 @@ export class Image extends Message<Image> {
   static readonly runtime = proto3;
   static readonly typeName = "core.Image";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "type", kind: "enum", T: proto3.getEnumType(ImageType) },
-    { no: 2, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Image {
@@ -259,19 +196,19 @@ export class App extends Message<App> {
   updatedAt = "";
 
   /**
-   * @generated from field: string name = 4;
+   * @generated from field: string user_id = 4;
+   */
+  userId = "";
+
+  /**
+   * @generated from field: string name = 5;
    */
   name = "";
 
   /**
-   * @generated from field: core.AppStatus status = 5;
+   * @generated from field: core.AppStatus status = 6;
    */
   status = AppStatus.USER_STORIES;
-
-  /**
-   * @generated from field: repeated core.Product products = 6;
-   */
-  products: Product[] = [];
 
   /**
    * @generated from field: repeated core.Link links = 7;
@@ -279,9 +216,14 @@ export class App extends Message<App> {
   links: Link[] = [];
 
   /**
-   * @generated from field: repeated core.Image images = 8;
+   * @generated from field: string avatar_image = 8;
    */
-  images: Image[] = [];
+  avatarImage = "";
+
+  /**
+   * @generated from field: repeated string cover_images = 9;
+   */
+  coverImages: string[] = [];
 
   constructor(data?: PartialMessage<App>) {
     super();
@@ -294,11 +236,12 @@ export class App extends Message<App> {
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "created_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "updated_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 5, name: "status", kind: "enum", T: proto3.getEnumType(AppStatus) },
-    { no: 6, name: "products", kind: "message", T: Product, repeated: true },
+    { no: 4, name: "user_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "status", kind: "enum", T: proto3.getEnumType(AppStatus) },
     { no: 7, name: "links", kind: "message", T: Link, repeated: true },
-    { no: 8, name: "images", kind: "message", T: Image, repeated: true },
+    { no: 8, name: "avatar_image", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 9, name: "cover_images", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): App {
@@ -452,11 +395,6 @@ export class User extends Message<User> {
    */
   requestStatus = UserRequestStatus.IDLE;
 
-  /**
-   * @generated from field: repeated string apps = 11;
-   */
-  apps: string[] = [];
-
   constructor(data?: PartialMessage<User>) {
     super();
     proto3.util.initPartial(data, this);
@@ -475,7 +413,6 @@ export class User extends Message<User> {
     { no: 8, name: "location", kind: "message", T: Location },
     { no: 9, name: "language", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 10, name: "request_status", kind: "enum", T: proto3.getEnumType(UserRequestStatus) },
-    { no: 11, name: "apps", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): User {
