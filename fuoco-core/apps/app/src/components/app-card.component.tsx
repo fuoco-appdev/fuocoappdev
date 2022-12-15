@@ -75,12 +75,12 @@ export default function AppCardComponent({
   };
 
   const onCoverChanged = (index: number, blob: Blob) => {
+    let images: Blob[] = coverImageBlobs;
     if (index <= 0) {
-      setCoverImageBlobs([blob]);
-      return;
+      images = [];
     }
 
-    const images = coverImageBlobs.concat([blob]);
+    images = images.concat([blob]);
     setCoverImageBlobs(images);
 
     if (selectedCoverImages && index >= selectedCoverImages?.length - 1) {
