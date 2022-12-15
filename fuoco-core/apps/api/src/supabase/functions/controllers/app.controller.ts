@@ -19,7 +19,6 @@ export class AppController {
       Record<string, any>
     >
   ): Promise<void> {
-    console.log(context);
     const body = await context.request.body();
     const requestValue = await body.value;
     const app = App.deserializeBinary(requestValue);

@@ -130,6 +130,7 @@ class AppsService extends Service {
     const deserializedResponse = core.App.fromBinary(arrayBuffer);
     const index = apps.findIndex((value) => value.id === appId);
     if (index !== -1) {
+      console.log(deserializedResponse);
       apps[index] = deserializedResponse;
       this._appsBehaviorSubject.next(apps);
     }

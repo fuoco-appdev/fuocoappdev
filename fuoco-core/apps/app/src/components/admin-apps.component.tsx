@@ -36,7 +36,6 @@ export default function AdminAppsComponent(): JSX.Element {
           BucketService.getPublicUrl(core.BucketType.COVER_IMAGES, url) ?? ''
         );
       }
-      console.log(coverImages);
       appCards.push(
         <AppCardComponent
           key={index}

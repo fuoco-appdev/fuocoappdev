@@ -1,10 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import SupabaseService from './supabase.service.ts';
 import { App, Apps, Link, Image, AppStatus } from '../protobuf/core_pb.js';
-import { v1 } from 'https://deno.land/std@0.167.0/uuid/mod.ts';
-import { mime, mimelite } from 'https://deno.land/x/mimetypes@v1.0.0/mod.ts';
-import XMLHttpRequest from 'https://deno.land/x/xmlhttprequest_deno@v0.0.2/mod.js';
-import { resolve } from 'https://deno.land/std@0.110.0/path/win32.ts';
 
 export interface AppProps {
   id?: string;
@@ -184,10 +180,11 @@ export class AppService {
       ...(props.updatedAt && { updated_at: props.updatedAt }),
       ...(props.userId && { user_id: props.userId }),
       ...(props.name && { name: props.name }),
-      ...(props.links && { links: linksData }),
+      ...(props.links && props.links.length > 0 && { links: linksData }),
       ...(props.status && { status: props.status }),
       ...(props.avatarImage && { avatar_image: props.avatarImage }),
-      ...(props.coverImages && { cover_images: props.coverImages }),
+      ...(props.coverImages &&
+        props.coverImages.length > 0 && { cover_images: props.coverImages }),
     };
   }
 }
