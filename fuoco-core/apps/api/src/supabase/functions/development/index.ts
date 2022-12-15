@@ -1,19 +1,8 @@
 import { Core } from '../index.ts';
 import { AppController, UserController } from '../controllers/index.ts';
-import SupabaseService from '../services/supabase.service.ts';
+import BucketService from '../services/bucket.service.ts';
 
-const avatarsBucket = await SupabaseService.client.storage.getBucket('avatars');
-if (avatarsBucket.error) {
-  const { error } = await SupabaseService.client.storage.createBucket(
-    'avatars',
-    { public: true }
-  );
-
-  if (error) {
-    console.error(error);
-  }
-}
-
+await BucketService.initializeDevelopmentAsync();
 const app = Core.registerApp([new UserController(), new AppController()]);
 app.listen({ port: 8000 });
 

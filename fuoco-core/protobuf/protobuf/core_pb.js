@@ -24,6 +24,7 @@ var global =
 goog.exportSymbol('proto.core.App', null, global);
 goog.exportSymbol('proto.core.AppStatus', null, global);
 goog.exportSymbol('proto.core.Apps', null, global);
+goog.exportSymbol('proto.core.BucketType', null, global);
 goog.exportSymbol('proto.core.GettingStartedRequest', null, global);
 goog.exportSymbol('proto.core.Image', null, global);
 goog.exportSymbol('proto.core.Link', null, global);
@@ -1999,6 +2000,14 @@ proto.core.GettingStartedRequest.prototype.setComment = function(value) {
   return jspb.Message.setProto3StringField(this, 3, value);
 };
 
+
+/**
+ * @enum {number}
+ */
+proto.core.BucketType = {
+  AVATARS: 0,
+  COVER_IMAGES: 1
+};
 
 /**
  * @enum {number}

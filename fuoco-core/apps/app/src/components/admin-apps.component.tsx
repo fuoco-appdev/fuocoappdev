@@ -4,7 +4,7 @@ import styles from './admin-apps.module.scss';
 import { Strings } from '../localization';
 import { animated, useTransition, config } from 'react-spring';
 import AdminAppsController from '../controllers/admin-apps.controller';
-import BucketService, { BucketType } from '../services/bucket.service';
+import BucketService from '../services/bucket.service';
 import { useObservable } from '@ngneat/use-observable';
 import AppCardComponent from './app-card.component';
 import * as core from '../protobuf/core_pb';
@@ -23,18 +23,30 @@ export default function AdminAppsComponent(): JSX.Element {
   }, []);
 
   useEffect(() => {
-    console.log(props.apps);
     const appCards: React.ReactElement[] = [];
     props.apps.map((value: core.App, index: number) => {
-      const profilePicture =
-        BucketService.getPublicUrl(BucketType.Avatars, value.avatarImage) ??
-        undefined;
+      const avatarUrl =
+        BucketService.getPublicUrl(
+          core.BucketType.AVATARS,
+          value.avatarImage
+        ) ?? undefined;
+      const coverImages: string[] = [];
+      for (const url of value.coverImages) {
+        coverImages.push(
+          BucketService.getPublicUrl(core.BucketType.COVER_IMAGES, url) ?? ''
+        );
+      }
+      console.log(coverImages);
       appCards.push(
         <AppCardComponent
           key={index}
-          profilePicture={profilePicture}
-          onProfilePictureChanged={(blob: Blob) => {
+          profilePicture={avatarUrl}
+          coverImages={coverImages}
+          onProfilePictureChanged={(index: number, blob: Blob) => {
             AdminAppsController.uploadAvatarAsync(value.id, blob);
+          }}
+          onCoverImagesChanged={(blobs: Blob[]) => {
+            AdminAppsController.uploadCoverImagesAsync(value.id, blobs);
           }}
         />
       );

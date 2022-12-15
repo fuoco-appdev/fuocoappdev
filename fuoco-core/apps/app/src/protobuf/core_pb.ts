@@ -7,6 +7,26 @@ import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialM
 import { Message, proto3 } from "@bufbuild/protobuf";
 
 /**
+ * @generated from enum core.BucketType
+ */
+export enum BucketType {
+  /**
+   * @generated from enum value: AVATARS = 0;
+   */
+  AVATARS = 0,
+
+  /**
+   * @generated from enum value: COVER_IMAGES = 1;
+   */
+  COVER_IMAGES = 1,
+}
+// Retrieve enum metadata with: proto3.getEnumType(BucketType)
+proto3.util.setEnumType(BucketType, "core.BucketType", [
+  { no: 0, name: "AVATARS" },
+  { no: 1, name: "COVER_IMAGES" },
+]);
+
+/**
  * @generated from enum core.AppStatus
  */
 export enum AppStatus {

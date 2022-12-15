@@ -44,7 +44,14 @@ class AdminAppsController extends Controller {
   }
 
   public async uploadAvatarAsync(appId: string, blob: Blob): Promise<void> {
-    await AppService.requestUploadAvatarAsync(appId, blob);
+    await AppService.uploadAvatarAsync(appId, blob);
+  }
+
+  public async uploadCoverImagesAsync(
+    appId: string,
+    blobs: Blob[]
+  ): Promise<void> {
+    await AppService.uploadCoverImagesAsync(appId, blobs);
   }
 
   private async onActiveUserChangedAsync(

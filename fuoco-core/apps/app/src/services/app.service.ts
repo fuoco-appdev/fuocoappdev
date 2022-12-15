@@ -4,8 +4,8 @@ import { Service } from '../service';
 import * as core from '../protobuf/core_pb';
 import { BehaviorSubject, Observable } from 'rxjs';
 import AuthService from './auth.service';
-import BucketService, { BucketType } from './bucket.service';
-import axios, { AxiosError } from 'axios';
+import BucketService from './bucket.service';
+import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import mime from 'mime';
 
@@ -130,7 +130,7 @@ class AppsService extends Service {
     const deserializedResponse = core.App.fromBinary(arrayBuffer);
     const index = apps.findIndex((value) => value.id === appId);
     if (index !== -1) {
-      apps[index] = app;
+      apps[index] = deserializedResponse;
       this._appsBehaviorSubject.next(apps);
     }
 
@@ -165,22 +165,53 @@ class AppsService extends Service {
     return deserializedResponse;
   }
 
-  public async requestUploadAvatarAsync(
-    appId: string,
-    blob: Blob
-  ): Promise<void> {
+  public async uploadAvatarAsync(appId: string, blob: Blob): Promise<void> {
     const apps = this._appsBehaviorSubject.getValue();
     const index = apps.findIndex((value) => value.id === appId);
     if (index !== -1) {
       const oldFile = apps[index].avatarImage;
-      await BucketService.removeAsync(BucketType.Avatars, [oldFile]);
+      await BucketService.removeAsync(core.BucketType.AVATARS, [oldFile]);
     }
 
     const extension = mime.getExtension(blob.type);
-    const newFile = `${uuidv4()}.${extension}`;
-    await BucketService.uploadAsync(BucketType.Avatars, newFile, blob);
+    const newFile = `public/${uuidv4()}.${extension}`;
+    await BucketService.uploadAsync(core.BucketType.AVATARS, newFile, blob);
     await this.requestUpdateAsync(appId, {
       avatar_image: newFile,
+    });
+  }
+
+  public async uploadCoverImagesAsync(
+    appId: string,
+    blobs: Blob[]
+  ): Promise<void> {
+    if (blobs.length <= 0) {
+      return;
+    }
+
+    const apps = this._appsBehaviorSubject.getValue();
+    const index = apps.findIndex((value) => value.id === appId);
+    if (index !== -1) {
+      const oldFiles = apps[index].coverImages;
+      if (oldFiles.length > 0) {
+        await BucketService.removeAsync(core.BucketType.COVER_IMAGES, oldFiles);
+      }
+    }
+
+    const newFiles: string[] = [];
+    for (const blob of blobs) {
+      const extension = mime.getExtension(blob.type);
+      const newFile = `public/${uuidv4()}.${extension}`;
+      await BucketService.uploadAsync(
+        core.BucketType.COVER_IMAGES,
+        newFile,
+        blob
+      );
+      newFiles.push(newFile);
+    }
+
+    await this.requestUpdateAsync(appId, {
+      cover_images: newFiles,
     });
   }
 }

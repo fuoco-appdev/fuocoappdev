@@ -1,13 +1,11 @@
 import AuthService from './auth.service';
-
-export enum BucketType {
-  Avatars = 'avatars',
-}
+import * as core from '../protobuf/core_pb';
 
 class BucketService {
-  public getPublicUrl(type: BucketType, path: string): string | null {
+  public getPublicUrl(type: core.BucketType, path: string): string | null {
+    const bucketName = this.getBucketName(type);
     const { data, error } = AuthService.supabaseClient.storage
-      .from(type)
+      .from(bucketName)
       .getPublicUrl(path);
 
     if (error) {
@@ -18,12 +16,13 @@ class BucketService {
   }
 
   public async uploadAsync(
-    bucketType: BucketType,
+    type: core.BucketType,
     file: string,
     blob: Blob
   ): Promise<string | null> {
+    const bucketName = this.getBucketName(type);
     const bucket = await AuthService.supabaseClient.storage
-      .from(bucketType)
+      .from(bucketName)
       .upload(file, blob);
 
     if (bucket.error) {
@@ -34,16 +33,22 @@ class BucketService {
   }
 
   public async removeAsync(
-    bucketType: BucketType,
+    type: core.BucketType,
     files: string[]
   ): Promise<void> {
+    const bucketName = this.getBucketName(type);
     const bucket = await AuthService.supabaseClient.storage
-      .from(bucketType)
+      .from(bucketName)
       .remove(files);
 
     if (bucket.error) {
       throw bucket.error;
     }
+  }
+
+  public getBucketName(type: core.BucketType): string {
+    const name = core.BucketType[type];
+    return name.toLowerCase().replace('_', '-');
   }
 }
 

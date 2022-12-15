@@ -24,6 +24,7 @@ var global =
 goog.exportSymbol('proto.core.App', null, global);
 goog.exportSymbol('proto.core.AppStatus', null, global);
 goog.exportSymbol('proto.core.Apps', null, global);
+goog.exportSymbol('proto.core.BucketType', null, global);
 goog.exportSymbol('proto.core.GettingStartedRequest', null, global);
 goog.exportSymbol('proto.core.Image', null, global);
 goog.exportSymbol('proto.core.Link', null, global);
@@ -2003,6 +2004,14 @@ proto.core.GettingStartedRequest.prototype.setComment = function(value) {
 /**
  * @enum {number}
  */
+proto.core.BucketType = {
+  AVATARS: 0,
+  COVER_IMAGES: 1
+};
+
+/**
+ * @enum {number}
+ */
 proto.core.AppStatus = {
   USER_STORIES: 0,
   DESIGN: 1,
@@ -2032,6 +2041,7 @@ proto.core.UserRequestStatus = {
 export const App = proto.core.App;
 export const AppStatus = proto.core.AppStatus;
 export const Apps = proto.core.Apps;
+export const BucketType = proto.core.BucketType;
 export const GettingStartedRequest = proto.core.GettingStartedRequest;
 export const Image = proto.core.Image;
 export const Link = proto.core.Link;

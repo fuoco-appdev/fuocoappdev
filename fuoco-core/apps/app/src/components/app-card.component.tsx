@@ -10,7 +10,7 @@ import {
   IconCamera,
   CropImage,
 } from '@fuoco.appdev/core-ui';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Strings } from '../localization';
 import styles from './app-card.module.scss';
 
@@ -20,10 +20,11 @@ interface AppCardProps {
   company?: string;
   status?: string;
   profilePicture?: string;
+  coverImages?: string[];
   progressIndex?: number;
   progressLength?: number;
-  onProfilePictureChanged?: (blob: Blob) => void;
-  onCoverChanged?: (blob: Blob) => void;
+  onProfilePictureChanged?: (index: number, blob: Blob) => void;
+  onCoverImagesChanged?: (blobs: Blob[]) => void;
 }
 
 export default function AppCardComponent({
@@ -32,38 +33,78 @@ export default function AppCardComponent({
   company = 'Company',
   status = 'No status',
   profilePicture,
+  coverImages,
   progressIndex = -1,
   progressLength = 5,
   onProfilePictureChanged,
-  onCoverChanged,
+  onCoverImagesChanged,
 }: AppCardProps): JSX.Element {
-  const [selectedCoverImage, setSelectedCoverImage] = useState<File | null>(
-    null
-  );
+  const [selectedCoverImages, setSelectedCoverImages] =
+    useState<FileList | null>(null);
   const coverImageFileRef = useRef<HTMLInputElement | null>(null);
   const [isCropModalVisible, setIsCropModalVisible] = useState<boolean>(false);
+  const [coverImageBlobs, setCoverImageBlobs] = useState<Blob[]>([]);
+  const [coverImageElements, setCoverImageElements] = useState<
+    React.ReactElement[]
+  >([]);
 
   const onCoverImageFileChanged = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const file = event.target.files && event.target.files[0];
-    if (!file) {
+    const files = event.target.files && event.target.files;
+    if (!files) {
       return;
     }
 
-    setSelectedCoverImage(file);
+    setSelectedCoverImages(files);
     setIsCropModalVisible(true);
   };
 
-  const onCropConfirmed = () => {
-    setIsCropModalVisible(false);
-    setSelectedCoverImage(null);
+  const onCropConfirmed = (index: number) => {
+    if (selectedCoverImages && index >= selectedCoverImages?.length - 1) {
+      setIsCropModalVisible(false);
+      setSelectedCoverImages(null);
+      setCoverImageBlobs([]);
+    }
   };
 
   const onCropCanceled = () => {
     setIsCropModalVisible(false);
-    setSelectedCoverImage(null);
+    setSelectedCoverImages(null);
+    setCoverImageBlobs([]);
   };
+
+  const onCoverChanged = (index: number, blob: Blob) => {
+    if (index <= 0) {
+      setCoverImageBlobs([blob]);
+      return;
+    }
+
+    const images = coverImageBlobs.concat([blob]);
+    setCoverImageBlobs(images);
+
+    if (selectedCoverImages && index >= selectedCoverImages?.length - 1) {
+      onCoverImagesChanged?.(images);
+    }
+  };
+
+  useEffect(() => {
+    const elements: React.ReactElement[] = [];
+    coverImages?.map((url) => {
+      elements.push(
+        <img
+          style={{
+            height: 'inherit',
+            width: 'inherit',
+            objectFit: 'contain',
+            borderRadius: '6px',
+          }}
+          src={url}
+        />
+      );
+    });
+    setCoverImageElements(elements);
+  }, [coverImages]);
 
   return (
     <Card key={key}>
@@ -71,7 +112,7 @@ export default function AppCardComponent({
         <div className={styles['display-container']}>
           <div className={styles['display-content']}>
             <div className={styles['cover-image-container']}>
-              <CardSwipe items={[]} />
+              <CardSwipe items={coverImageElements} />
               <div className={styles['cover-content-container']}>
                 <div className={styles['request-update-container']}>
                   <Button
@@ -90,6 +131,7 @@ export default function AppCardComponent({
                     type="file"
                     accept=".png, .jpg, .jpeg, .svg"
                     style={{ display: 'none' }}
+                    multiple={true}
                     onChange={onCoverImageFileChanged}
                   />
                   <Button
@@ -143,9 +185,9 @@ export default function AppCardComponent({
           </div>
         </div>
       </div>
-      {selectedCoverImage && (
+      {selectedCoverImages && (
         <CropImage
-          src={selectedCoverImage}
+          src={selectedCoverImages}
           isVisible={isCropModalVisible}
           onChange={onCoverChanged}
           onConfirmed={onCropConfirmed}

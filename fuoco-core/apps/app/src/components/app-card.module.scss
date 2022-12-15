@@ -15,8 +15,8 @@
         border-top-right-radius: $rounded-md;
         background-color: $gray-300;
         min-height: calc((383px / 3) * 2);
-        pointer-events: none;
         user-select: none;
+        overflow: hidden;
 
         & .cover-content-container {
           position: absolute;
@@ -26,6 +26,7 @@
           width: 100%;
           height: 100%;
           padding: $mp-2;
+          pointer-events: none;
 
           & .request-update-container {
             display: flex;
