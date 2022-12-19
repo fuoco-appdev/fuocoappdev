@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, IconPlus } from '@fuoco.appdev/core-ui';
+import { Typography, Button, IconPlus, Modal } from '@fuoco.appdev/core-ui';
 import styles from './admin-apps.module.scss';
 import { Strings } from '../localization';
 import { animated, useTransition, config } from 'react-spring';
@@ -24,12 +24,15 @@ export default function AdminAppsComponent(): JSX.Element {
 
   useEffect(() => {
     const appCards: React.ReactElement[] = [];
-    props.apps.map((value: core.App, index: number) => {
-      const avatarUrl =
-        BucketService.getPublicUrl(
-          core.BucketType.AVATARS,
-          value.avatarImage
-        ) ?? undefined;
+    props.apps.map((value: core.App) => {
+      let avatarUrl: string | undefined;
+      if (value.avatarImage) {
+        avatarUrl =
+          BucketService.getPublicUrl(
+            core.BucketType.AVATARS,
+            value.avatarImage
+          ) ?? undefined;
+      }
       const coverImages: string[] = [];
       for (const url of value.coverImages) {
         coverImages.push(
@@ -38,7 +41,7 @@ export default function AdminAppsComponent(): JSX.Element {
       }
       appCards.push(
         <AppCardComponent
-          key={index}
+          id={value.id}
           profilePicture={avatarUrl}
           coverImages={coverImages}
           onProfilePictureChanged={(index: number, blob: Blob) => {
@@ -47,6 +50,9 @@ export default function AdminAppsComponent(): JSX.Element {
           onCoverImagesChanged={(blobs: Blob[]) => {
             AdminAppsController.uploadCoverImagesAsync(value.id, blobs);
           }}
+          onDeleteClicked={(id: string) =>
+            AdminAppsController.showDeleteModal(id)
+          }
         />
       );
     });
@@ -90,6 +96,17 @@ export default function AdminAppsComponent(): JSX.Element {
             </animated.div>
           )
       )}
+      <Modal
+        title={Strings.deleteApp}
+        description={Strings.deleteAppDescription}
+        confirmText={Strings.delete}
+        cancelText={Strings.cancel}
+        variant={'danger'}
+        size={'small'}
+        visible={props.showDeleteModal}
+        onCancel={() => AdminAppsController.hideDeleteModal()}
+        onConfirm={() => AdminAppsController.deleteSelectedAppAsync()}
+      ></Modal>
     </div>
   );
 }

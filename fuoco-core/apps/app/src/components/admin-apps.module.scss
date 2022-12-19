@@ -1,3 +1,5 @@
+@import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
+
 .root {
   overflow: visible;
 
@@ -42,6 +44,7 @@
       & .apps-container {
         display: flex;
         flex-wrap: wrap;
+        gap: $mp-4;
       }
     }
   }

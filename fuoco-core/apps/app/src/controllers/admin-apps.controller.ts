@@ -54,6 +54,26 @@ class AdminAppsController extends Controller {
     await AppService.uploadCoverImagesAsync(appId, blobs);
   }
 
+  public showDeleteModal(appId: string): void {
+    this._model.selectedAppId = appId;
+    this._model.showDeleteModal = true;
+  }
+
+  public async deleteSelectedAppAsync(): Promise<void> {
+    console.log(this._model.selectedAppId);
+    if (!this._model.selectedAppId) {
+      return;
+    }
+
+    await AppService.requestDeleteAsync(this._model.selectedAppId);
+    this.hideDeleteModal();
+  }
+
+  public hideDeleteModal(): void {
+    this._model.selectedAppId = undefined;
+    this._model.showDeleteModal = false;
+  }
+
   private async onActiveUserChangedAsync(
     user: core.User | null
   ): Promise<void> {

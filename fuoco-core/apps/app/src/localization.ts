@@ -87,5 +87,13 @@ export const Strings = new LocalizedStrings({
     createApp: 'Create App',
     requestUpdate: 'Request Update',
     editCoverPhoto: 'Edit Cover Photo',
+    edit: 'Edit',
+    appName: 'App name',
+    addLink: 'Add Link',
+    name: 'Name',
+    link: 'Link',
+    statusTypes: 'User Stories,Design,Development,Release',
+    deleteApp: 'Delete this app?',
+    deleteAppDescription: 'All data will be destroyed.',
   },
 });

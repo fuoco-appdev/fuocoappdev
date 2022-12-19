@@ -108,11 +108,11 @@ export class AppService {
     return data;
   }
 
-  public async deleteAsync(supabaseId: string): Promise<AppProps | null> {
+  public async deleteAsync(appId: string): Promise<AppProps | null> {
     const { data, error } = await SupabaseService.client
       .from('apps')
       .delete()
-      .match({ supabase_id: supabaseId })
+      .match({ id: appId })
       .single();
 
     if (error) {

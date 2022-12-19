@@ -233,8 +233,9 @@ proto.core.Link.prototype.toObject = function(opt_includeInstance) {
  */
 proto.core.Link.toObject = function(includeInstance, msg) {
   var f, obj = {
-    name: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    url: jspb.Message.getFieldWithDefault(msg, 2, "")
+    id: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    name: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    url: jspb.Message.getFieldWithDefault(msg, 3, "")
   };
 
   if (includeInstance) {
@@ -273,9 +274,13 @@ proto.core.Link.deserializeBinaryFromReader = function(msg, reader) {
     switch (field) {
     case 1:
       var value = /** @type {string} */ (reader.readString());
-      msg.setName(value);
+      msg.setId(value);
       break;
     case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setName(value);
+      break;
+    case 3:
       var value = /** @type {string} */ (reader.readString());
       msg.setUrl(value);
       break;
@@ -308,17 +313,24 @@ proto.core.Link.prototype.serializeBinary = function() {
  */
 proto.core.Link.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getName();
+  f = message.getId();
   if (f.length > 0) {
     writer.writeString(
       1,
       f
     );
   }
-  f = message.getUrl();
+  f = message.getName();
   if (f.length > 0) {
     writer.writeString(
       2,
+      f
+    );
+  }
+  f = message.getUrl();
+  if (f.length > 0) {
+    writer.writeString(
+      3,
       f
     );
   }
@@ -326,10 +338,10 @@ proto.core.Link.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * optional string name = 1;
+ * optional string id = 1;
  * @return {string}
  */
-proto.core.Link.prototype.getName = function() {
+proto.core.Link.prototype.getId = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
@@ -338,16 +350,16 @@ proto.core.Link.prototype.getName = function() {
  * @param {string} value
  * @return {!proto.core.Link} returns this
  */
-proto.core.Link.prototype.setName = function(value) {
+proto.core.Link.prototype.setId = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
 /**
- * optional string url = 2;
+ * optional string name = 2;
  * @return {string}
  */
-proto.core.Link.prototype.getUrl = function() {
+proto.core.Link.prototype.getName = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
@@ -356,8 +368,26 @@ proto.core.Link.prototype.getUrl = function() {
  * @param {string} value
  * @return {!proto.core.Link} returns this
  */
-proto.core.Link.prototype.setUrl = function(value) {
+proto.core.Link.prototype.setName = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional string url = 3;
+ * @return {string}
+ */
+proto.core.Link.prototype.getUrl = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.core.Link} returns this
+ */
+proto.core.Link.prototype.setUrl = function(value) {
+  return jspb.Message.setProto3StringField(this, 3, value);
 };
 
 

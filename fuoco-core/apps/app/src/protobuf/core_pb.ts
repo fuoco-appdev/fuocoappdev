@@ -121,12 +121,17 @@ proto3.util.setEnumType(UserRequestStatus, "core.UserRequestStatus", [
  */
 export class Link extends Message<Link> {
   /**
-   * @generated from field: string name = 1;
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: string name = 2;
    */
   name = "";
 
   /**
-   * @generated from field: string url = 2;
+   * @generated from field: string url = 3;
    */
   url = "";
 
@@ -138,8 +143,9 @@ export class Link extends Message<Link> {
   static readonly runtime = proto3;
   static readonly typeName = "core.Link";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Link {

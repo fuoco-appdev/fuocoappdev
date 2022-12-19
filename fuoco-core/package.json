@@ -32,7 +32,7 @@
   "devDependencies": {
     "@bufbuild/protobuf": "^0.3.0",
     "@bufbuild/protoc-gen-es": "^0.3.0",
-    "@fuoco.appdev/core-ui": "^0.9.4",
+    "@fuoco.appdev/core-ui": "^0.10.6",
     "@ngneat/elf": "^2.1.0",
     "@ngneat/elf-entities": "^4.4.2",
     "@ngneat/elf-persist-state": "^1.1.6",

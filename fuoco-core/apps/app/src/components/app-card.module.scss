@@ -1,108 +1,248 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
 .root {
-  min-width: 383px;
+  height: 'fit-content';
+  transition-timing-function: $transition-standard-easing;
+  transition: all $duration-expand-lg;
 
-  & .display-container {
+  & .card-content {
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    flex-direction: row;
+    min-width: 383px;
 
-    & .display-content {
-      & .cover-image-container {
-        position: relative;
-        border-top-left-radius: $rounded-md;
-        border-top-right-radius: $rounded-md;
-        background-color: $gray-300;
-        min-height: calc((383px / 3) * 2);
-        user-select: none;
-        overflow: hidden;
+    & .display-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 383px;
 
-        & .cover-content-container {
-          position: absolute;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          width: 100%;
-          height: 100%;
-          padding: $mp-2;
-          pointer-events: none;
+      & .display-content {
+        & .cover-image-container {
+          position: relative;
+          border-top-left-radius: $rounded-md;
+          border-top-right-radius: $rounded-md;
+          background-color: $gray-300;
+          min-height: calc((383px / 3) * 2);
+          user-select: none;
+          overflow: hidden;
 
-          & .request-update-container {
-            display: flex;
-            justify-content: end;
-            flex-direction: row;
-          }
-
-          & .edit-cover-container {
-            display: flex;
-            justify-content: end;
-            flex-direction: row;
-          }
-        }
-      }
-
-      & .app-content {
-        padding: $mp-4;
-
-        & .app-info {
-          display: flex;
-          flex-direction: row;
-
-          & .app-name-container {
+          & .cover-content-container {
+            position: absolute;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            margin-left: $mp-4;
+            justify-content: space-between;
+            width: 100%;
+            height: 100%;
+            padding: $mp-2;
+            pointer-events: none;
 
-            & .app-name {
-              color: $gray-900;
-              font-weight: $font-weight-bold;
+            & .request-update-container {
+              display: flex;
+              justify-content: space-between;
+              flex-direction: row;
+
+              & .expand-edit-icon {
+                transition: all $duration-expand-sm;
+                transition-timing-function: $transition-standard-easing;
+              }
+
+              & .expand-edit-icon-active {
+                transform: rotateY(180deg);
+              }
             }
 
-            & .company-name {
+            & .edit-cover-container {
+              display: flex;
+              justify-content: end;
+              flex-direction: row;
+            }
+          }
+        }
+
+        & .app-content {
+          padding: $mp-4;
+
+          & .app-info {
+            display: flex;
+            flex-direction: row;
+
+            & .app-name-container {
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              margin-left: $mp-4;
+
+              & .app-name {
+                color: $gray-900;
+                font-weight: $font-weight-bold;
+              }
+
+              & .company-name {
+                color: $gray-500;
+                font-weight: $font-weight-bold;
+                font-size: $font-size-xs;
+              }
+            }
+          }
+
+          & .status-container {
+            width: 100%;
+            text-align: end;
+
+            & .status {
               color: $gray-500;
               font-weight: $font-weight-bold;
               font-size: $font-size-xs;
             }
           }
         }
+      }
 
-        & .status-container {
+      & .progress-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        gap: $mp-2;
+        padding: $mp-2;
+
+        & .progress-pill {
+          height: 10px;
           width: 100%;
-          text-align: end;
+          border-radius: $rounded-full;
+          background-color: $gray-300;
+        }
 
-          & .status {
-            color: $gray-500;
-            font-weight: $font-weight-bold;
-            font-size: $font-size-xs;
-          }
+        & .progress-pill-active {
+          background-color: $brand-400;
         }
       }
     }
 
-    & .progress-container {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      gap: $mp-2;
-      padding: $mp-2;
+    & .expand-edit {
+      overflow: hidden;
+      width: 0px;
+      transition: all $duration-expand-lg;
+      transition-timing-function: $transition-standard-easing;
+    }
 
-      & .progress-pill {
-        height: 10px;
-        width: 100%;
-        border-radius: $rounded-full;
-        background-color: $gray-300;
+    & .expand-edit-active {
+      width: auto;
+      padding: $mp-4;
+
+      & .edit-public-top-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        height: 56px;
+
+        & .edit-public-top-bar-title-container {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+
+          & .edit-public-top-bar-title {
+            margin-left: $mp-2;
+            font-size: $font-size-base;
+            line-height: 56px;
+          }
+        }
+
+        & .edit-public-top-bar-button-container {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          gap: $mp-2;
+        }
       }
 
-      & .progress-pill-active {
-        background-color: $brand-400;
+      & .edit-public-content {
+        display: flex;
+        flex-wrap: wrap;
+        max-width: 650px;
+        gap: $mp-4;
+      }
+
+      & .edit-private-top-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        height: 56px;
+
+        & .edit-private-top-bar-button-container {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+
+      & .edit-private-content {
       }
     }
+  }
+}
+
+.edit-link-root {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: $mp-4;
+
+  & .edit-link-icon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 
 .button-text {
   font-weight: $font-weight-bold;
   font-size: $font-size-xs;
+}
+
+.dropdown-label {
+  font-size: $font-size-sm;
+  text-transform: capitalize;
+}
+
+.edit-input-root {
+  min-width: 300px;
+}
+
+.edit-formlayout-label {
+  color: $gray-600 !important;
+}
+
+.edit-listbox-label {
+  color: $gray-600 !important;
+}
+
+.edit-input-container {
+  border-color: $gray-400 !important;
+}
+
+.edit-input-container:hover {
+  border-color: $gray-400 !important;
+}
+
+.edit-input {
+  color: $gray-600 !important;
+}
+
+.edit-icon {
+  color: $gray-600 !important;
+}
+
+.edit-listbox-formlayout-root {
+  min-width: 300px;
+}
+
+.edit-listbox {
+  border-color: $gray-400 !important;
+}
+
+.edit-listbox:hover {
+  border-color: $gray-400 !important;
 }

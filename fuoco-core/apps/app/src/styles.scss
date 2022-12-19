@@ -1,4 +1,5 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
+@import 'https://fonts.googleapis.com/css?family=Noto Sans';
 
 body {
   --brand-100: #c5ffff;
@@ -18,7 +19,7 @@ body {
   --rounded-xl: 0.625rem /* */;
   --rounded-full: 9999px;
 
-  --font-family: Poppins;
+  --font-family: 'Noto Sans';
 
   --font-weight-normal: 400;
   --font-weight-medium: 500;
