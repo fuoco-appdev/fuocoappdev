@@ -1,76 +1,79 @@
+@import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
+
 .root {
-    display: grid;
-    grid-template-columns: 132fr 561fr 747fr;
-    height: 100%;
+  display: grid;
+  grid-template-columns: 132fr 561fr 747fr;
+  height: 100%;
 
-    & .content {
-        display: flex;
-        grid-column-start: 2;
-        grid-column-end: 3;
-        flex-direction: column;
-        margin-top: 20vh;
-        margin-bottom: 20vh;
+  & .content {
+    display: flex;
+    grid-column-start: 2;
+    grid-column-end: 3;
+    flex-direction: column;
+    margin-top: 20vh;
+    margin-bottom: 20vh;
 
-        & .form-title {
-            height: fit-content;
-            width: 80%;
-            -webkit-user-select: none; /* Safari */
-            -ms-user-select: none; /* IE 10 and IE 11 */
-            user-select: none; /* Standard syntax */
-            padding-bottom: 28px;
-        }
-
-        & .form-subtitle {
-            height: fit-content;
-            width: 55%;
-            line-break: normal;
-            white-space: pre-line;
-            color: rgba(255, 255, 255, 204);
-            padding-bottom: 16px;
-        }
-
-        & .form {
-            display: flex;
-            flex-direction: column;
-            width: 60%;
-
-            & .form-content {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-            }
-
-            & .send-button {
-                width: 100%;
-
-                & .send-button-content {
-                    width: 100%;
-                }
-            }
-        }
-
-        & .continue-container {
-            display: flex;
-            justify-content: center;
-            flex-direction: column;
-            height: 100%;
-
-            & .request-title {
-                height: fit-content;
-                -webkit-user-select: none; /* Safari */
-                -ms-user-select: none; /* IE 10 and IE 11 */
-                user-select: none; /* Standard syntax */
-                padding-bottom: 8px;
-            }
-    
-            & .request-subtitle {
-                height: fit-content;
-                width: 55%;
-                line-break: normal;
-                white-space: pre-line;
-                color: rgba(255, 255, 255, 204);
-                padding-bottom: 28px;
-            }
-        }
+    & .form-title {
+      height: fit-content;
+      width: 80%;
+      -webkit-user-select: none; /* Safari */
+      -ms-user-select: none; /* IE 10 and IE 11 */
+      user-select: none; /* Standard syntax */
+      padding-bottom: 28px;
     }
+
+    & .form-subtitle {
+      height: fit-content;
+      width: 55%;
+      line-break: normal;
+      white-space: pre-line;
+      font-size: $font-size-lg;
+      color: rgba(255, 255, 255, 204);
+    }
+
+    & .form {
+      display: flex;
+      flex-direction: column;
+      width: 60%;
+      margin-top: $mp-8;
+
+      & .form-content {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      & .send-button {
+        width: 100%;
+
+        & .send-button-content {
+          width: 100%;
+        }
+      }
+    }
+
+    & .continue-container {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      height: 100%;
+
+      & .request-title {
+        height: fit-content;
+        -webkit-user-select: none; /* Safari */
+        -ms-user-select: none; /* IE 10 and IE 11 */
+        user-select: none; /* Standard syntax */
+        padding-bottom: 8px;
+      }
+
+      & .request-subtitle {
+        height: fit-content;
+        width: 55%;
+        line-break: normal;
+        white-space: pre-line;
+        color: rgba(255, 255, 255, 204);
+        padding-bottom: 28px;
+      }
+    }
+  }
 }

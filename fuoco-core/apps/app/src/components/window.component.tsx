@@ -3,7 +3,16 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import WindowController from '../controllers/window.controller';
 import WorldComponent from './world.component';
 import styles from './window.module.scss';
-import { Button, IconLogOut, Alert, Tabs } from '@fuoco.appdev/core-ui';
+import {
+  Button,
+  IconLogOut,
+  Alert,
+  Tabs,
+  IconUser,
+  IconSmartphone,
+  IconDollarSign,
+  IconUsers,
+} from '@fuoco.appdev/core-ui';
 import { RoutePaths } from '../route-paths';
 import { Strings } from '../localization';
 import AuthService from '../services/auth.service';
@@ -108,24 +117,27 @@ export default function WindowComponent(): JSX.Element {
   return (
     <div className={styles['root']}>
       <div className={styles['background']}>
-        <WorldComponent />
+        <WorldComponent isVisible={!windowProps.isTabBarVisible} />
       </div>
 
       {windowProps.isLoading ? (
         <LoadingComponent />
       ) : (
         <div className={styles['content']}>
-          <div className={styles['navbar']}>
-            <div className={styles['topNavbarContent']}>
-              <div className={styles['logoContainer']}>
-                <img
-                  className={styles['logo']}
-                  src="../assets/svg/logo.svg"
-                  alt="logo"
-                />
+          <div className={styles['top-bar']}>
+            <div className={styles['top-bar-content']}>
+              <div className={styles['logo-container']}>
+                {!windowProps.isAuthenticated &&
+                  !windowProps.isTabBarVisible && (
+                    <img
+                      className={styles['logo']}
+                      src="../assets/svg/logo.svg"
+                      alt="logo"
+                    />
+                  )}
               </div>
-              <div className={styles['navbarContentRight']}>
-                <div className={styles['navbarContentRightGrid']}>
+              <div className={styles['navbar-content-right']}>
+                <div className={styles['navbar-content-right-grid']}>
                   {windowProps.isSigninVisible ? (
                     <SigninButtonComponent />
                   ) : null}
@@ -139,55 +151,64 @@ export default function WindowComponent(): JSX.Element {
                 </div>
               </div>
             </div>
-            <div className={styles['bottomNavbarContent']}>
-              {windowProps.isAuthenticated &&
-                windowProps.isTabBarVisible &&
-                user?.role === core.UserRole.USER && (
+          </div>
+          <div className={styles['container']}>
+            {windowProps.isAuthenticated && windowProps.isTabBarVisible && (
+              <div className={styles['navbar-content']}>
+                <img
+                  className={styles['logo']}
+                  src="../assets/svg/logo.svg"
+                  alt="logo"
+                />
+                {user?.role === core.UserRole.USER && (
                   <Tabs
+                    direction={'vertical'}
+                    type={'underlined'}
                     activeId={windowProps.activeRoute}
                     onChange={(id: string) => navigate(id)}
                     tabs={[
                       {
                         id: RoutePaths.Account,
-                        label: Strings.account,
+                        icon: <IconUser strokeWidth={2} />,
                       },
                       {
                         id: RoutePaths.Apps,
-                        label: Strings.apps,
+                        icon: <IconSmartphone strokeWidth={2} />,
                       },
                       {
                         id: RoutePaths.Billing,
-                        label: Strings.billing,
+                        icon: <IconDollarSign strokeWidth={2} />,
                       },
                     ]}
                   />
                 )}
-              {windowProps.isAuthenticated &&
-                windowProps.isTabBarVisible &&
-                user?.role === core.UserRole.ADMIN && (
+                {user?.role === core.UserRole.ADMIN && (
                   <Tabs
+                    direction={'vertical'}
+                    type={'underlined'}
                     activeId={windowProps.activeRoute}
                     onChange={(id: string) => navigate(id)}
                     tabs={[
                       {
                         id: RoutePaths.AdminAccount,
-                        label: Strings.account,
+                        icon: <IconUser strokeWidth={2} />,
                       },
                       {
                         id: RoutePaths.AdminUsers,
-                        label: Strings.users,
+                        icon: <IconUsers strokeWidth={2} />,
                       },
                       {
                         id: RoutePaths.AdminApps,
-                        label: Strings.apps,
+                        icon: <IconSmartphone strokeWidth={2} />,
                       },
                     ]}
                   />
                 )}
+              </div>
+            )}
+            <div className={styles['children']}>
+              <Outlet />
             </div>
-          </div>
-          <div className={styles['children']}>
-            <Outlet />
           </div>
         </div>
       )}

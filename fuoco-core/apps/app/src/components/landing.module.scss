@@ -1,40 +1,40 @@
+@import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
+
 .root {
-    display: grid;
-    grid-template-columns: 132fr 561fr 747fr;
-    height: 100%;
+  display: grid;
+  grid-template-columns: 132fr 561fr 747fr;
+  height: 100%;
 
-    & .content {
-        display: flex;
-        grid-column-start: 2;
-        grid-column-end: 3;
-        justify-content: center;
-        flex-direction: column;
-        margin-bottom: 30%;
+  & .content {
+    display: flex;
+    grid-column-start: 2;
+    grid-column-end: 3;
+    justify-content: center;
+    flex-direction: column;
+    margin-bottom: 30%;
 
-        & :hover {
-            cursor: auto;
-        }
-    
-        & :active {
-            cursor: auto;
-        }
+    & .text-container {
+      display: flex;
+      flex-direction: column;
 
-        & .title {
-            height: fit-content;
-            width: 80%;
-            -webkit-user-select: none; /* Safari */
-            -ms-user-select: none; /* IE 10 and IE 11 */
-            user-select: none; /* Standard syntax */
-            padding-bottom: 28px;
-        }
+      & .title {
+        height: fit-content;
+        width: 80%;
+        -webkit-user-select: none; /* Safari */
+        -ms-user-select: none; /* IE 10 and IE 11 */
+        user-select: none; /* Standard syntax */
+        padding-bottom: 28px;
+      }
 
-        & .subTitle {
-            height: fit-content;
-            width: 55%;
-            line-break: normal;
-            white-space: pre-line;
-            color: rgba(255, 255, 255, 204);
-            padding-bottom: 16px;
-        }
+      & .sub-title {
+        height: fit-content;
+        width: 55%;
+        line-break: normal;
+        white-space: pre-line;
+        color: rgba(255, 255, 255, 204);
+        padding-bottom: 16px;
+        font-size: $font-size-lg;
+      }
     }
+  }
 }

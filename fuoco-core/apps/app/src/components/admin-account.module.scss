@@ -1,72 +1,71 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
 .root {
-    overflow: hidden;
+  overflow: hidden;
 
-    & .animated-content {
-        display: grid;
-        padding-top: 15vh;
-        margin-left: 2.5%;
-        margin-right: 2.5%;
-        grid-template-columns: 16fr 1408fr 16fr;
+  & .animated-content {
+    display: grid;
+    padding-top: 8vh;
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+    grid-template-columns: 16fr 1408fr 16fr;
 
-        & .content {
-            display: flex;
-            flex-direction: column;
-            grid-column-start: 2;
-            grid-column-end: 3;
+    & .content {
+      display: flex;
+      flex-direction: column;
+      grid-column-start: 2;
+      grid-column-end: 3;
 
-            & .header-bar {
-                display: flex;
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 24px;
-    
-                & .account-title {
-    
-                }
-    
-                & .header-button-container {
-                    display: flex;
-                    height: fit-content;
-                    flex-direction: row;
-    
-                    & .header-button {
-                        margin-right: 16px;
-    
-                        & .button-text {
-                            text-transform: capitalize;
-                        }
-                    }
-                }
-            }
+      & .header-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
 
-            & .accordion {
-                width: inherit;
-
-                & .accordion-description {
-                    color: $gray-100;
-                }
-
-                & .info-container {
-                    display: flex;
-                    flex-wrap: wrap;
-                    margin-top: 24px;
-                    margin-bottom: 24px;
-                    max-width: 800px;
-
-                    & .info-input {
-                        width: 304px;
-                        margin-right: 24px;
-                        margin-bottom: 24px;
-                    }
-
-                    & .dropdown-label {
-                        font-size: 0.875rem;
-                    }
-                }
-            }
+        & .account-title {
         }
+
+        & .header-button-container {
+          display: flex;
+          height: fit-content;
+          flex-direction: row;
+
+          & .header-button {
+            margin-right: 16px;
+
+            & .button-text {
+              text-transform: capitalize;
+            }
+          }
+        }
+      }
+
+      & .accordion {
+        width: inherit;
+
+        & .accordion-description {
+          color: $gray-100;
+        }
+
+        & .info-container {
+          display: flex;
+          flex-wrap: wrap;
+          margin-top: 24px;
+          margin-bottom: 24px;
+          max-width: 800px;
+
+          & .info-input {
+            width: 304px;
+            margin-right: 24px;
+            margin-bottom: 24px;
+          }
+
+          & .dropdown-label {
+            font-size: 0.875rem;
+          }
+        }
+      }
     }
+  }
 }

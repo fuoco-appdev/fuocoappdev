@@ -207,6 +207,8 @@ class WindowController extends Controller {
     session: Session | null
   ): Promise<void> {
     if (event === 'SIGNED_IN') {
+      WorldController.updateIsError(false);
+
       if (UserService.activeUser) {
         return;
       }

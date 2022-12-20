@@ -1,11 +1,4 @@
 .root {
-    & .content {
-        & :hover {
-            cursor: auto;
-        }
-    
-        & :active {
-            cursor: auto;
-        }
-    }
+  & .content {
+  }
 }

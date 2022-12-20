@@ -94,7 +94,7 @@ export class UserController {
     const requestValue = await body.value;
     const gettingStartedRequest =
       GettingStartedRequest.deserializeBinary(requestValue);
-    MailService.sendFromContentAsync(
+    await MailService.sendFromContentAsync(
       user?.email ?? '',
       'fuoco.appdev@gmail.com',
       `Get started with ${gettingStartedRequest.getCompany()}`,

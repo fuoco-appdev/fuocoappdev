@@ -1,6 +1,15 @@
+@import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
+
 .root {
   display: flex;
   height: 100vh;
+  background: linear-gradient(
+      to left top,
+      #070b2e 0% /*bottom-right color*/,
+      #263297 100% /*top-left color*/
+    ),
+    linear-gradient(rgba(0, 0, 0, 1), rgba(0, 0, 0, 1))
+      /*"faked" black background make sure to add last or it will appear before the transparent/colored layer*/;
   overflow: hidden;
 
   & .background {
@@ -21,13 +30,13 @@
     width: 100vw;
     z-index: 1;
 
-    & .navbar {
+    & .top-bar {
       position: absolute;
       display: grid;
       grid-template-columns: 16fr 1408fr 16fr;
       width: 100%;
 
-      & .topNavbarContent {
+      & .top-bar-content {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
@@ -35,7 +44,7 @@
         grid-column-end: 3;
         height: 56px;
 
-        & .logoContainer {
+        & .logo-container {
           display: grid;
           grid-template-rows: 12fr 36fr 12fr;
 
@@ -46,10 +55,10 @@
           }
         }
 
-        & .navbarContentRight {
+        & .navbar-content-right {
           display: flex;
 
-          & .navbarContentRightGrid {
+          & .navbar-content-right-grid {
             padding-top: 8px;
             padding-bottom: 8px;
             display: flex;
@@ -57,21 +66,36 @@
           }
         }
       }
-
-      & .bottomNavbarContent {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        grid-column-start: 2;
-        grid-column-end: 3;
-        height: 56px;
-        margin: 0 2.5%;
-      }
     }
 
-    & .children {
-      overflow-y: auto;
+    & .container {
+      display: flex;
+      flex-direction: row;
       height: 100%;
+
+      & .navbar-content {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        background-color: $brand-900;
+        box-shadow: $shadow-1;
+        padding-left: $mp-2;
+        padding-top: $mp-4;
+        padding-bottom: $mp-4;
+        padding-right: $mp-1;
+
+        & .logo {
+          height: 32px;
+          margin-right: $mp-1;
+          margin-bottom: $mp-4;
+        }
+      }
+
+      & .children {
+        overflow-y: auto;
+        height: 100%;
+        width: 100%;
+      }
     }
   }
 }

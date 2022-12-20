@@ -1,89 +1,87 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
 .root {
-    overflow: hidden;
+  overflow: hidden;
 
-    & .animated-content {
-        display: grid;
-        padding-top: 15vh;
-        margin-left: 2.5%;
-        margin-right: 2.5%;
-        grid-template-columns: 16fr 1408fr 16fr;
+  & .animated-content {
+    display: grid;
+    padding-top: 8vh;
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+    grid-template-columns: 16fr 1408fr 16fr;
 
-        & .content {
+    & .content {
+      display: flex;
+      flex-direction: column;
+      grid-column-start: 2;
+      grid-column-end: 3;
+
+      & .header-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: $mp-10;
+
+        & .account-title {
+        }
+      }
+
+      & .user-requests-container {
+        display: flex;
+        flex-wrap: wrap;
+        width: inherit;
+        gap: $mp-8;
+
+        & .user-requests-type {
+          display: flex;
+          flex: 1;
+          flex-direction: column;
+          min-width: 400px;
+
+          & .user-request-title {
+            color: $gray-100;
+            padding-bottom: $mp-2;
+          }
+
+          & .users-container {
             display: flex;
             flex-direction: column;
-            grid-column-start: 2;
-            grid-column-end: 3;
+            padding-top: $mp-2;
 
-            & .header-bar {
+            & .user-item {
+              display: flex;
+              justify-content: space-between;
+              padding: $mp-3;
+              border-radius: $rounded-md;
+              transition-timing-function: $transition-standard-easing;
+              transition: all $duration-expand-sm;
+
+              & .user-item-company-container {
                 display: flex;
-                flex-direction: row;
-                justify-content: space-between;
                 align-items: center;
-                margin-bottom: $mp-10;
-    
-                & .account-title {
-    
+
+                & .user-item-icon {
+                  color: $gray-100;
+                  margin-right: $mp-3;
                 }
+
+                & .user-item-company {
+                  color: $gray-100;
+                  align-self: center;
+                }
+              }
+
+              & .user-item-button-container {
+              }
             }
 
-            & .user-requests-container {
-                display: flex;
-                flex-wrap: wrap;
-                width: inherit;
-                gap: $mp-8;
-
-                & .user-requests-type {
-                    display: flex;
-                    flex: 1;
-                    flex-direction: column;
-                    min-width: 400px;
-
-                    & .user-request-title {
-                        color: $gray-100;
-                        padding-bottom: $mp-2;
-                    }
-
-                    & .users-container {
-                        display: flex;
-                        flex-direction: column;
-                        padding-top: $mp-2;
-
-                        & .user-item {
-                            display: flex;
-                            justify-content: space-between;
-                            padding: $mp-3;
-                            border-radius: $rounded-md;
-                            transition-timing-function: $transition-standard-easing;
-                            transition: all $duration-expand-sm;
-
-                            & .user-item-company-container {
-                                display: flex;
-                                align-items: center;
-
-                                & .user-item-icon {
-                                    color: $gray-100;
-                                    margin-right: $mp-3;
-                                }                     
-    
-                                & .user-item-company {
-                                    color: $gray-100;
-                                    align-self: center;
-                                }
-                            }
-
-                            & .user-item-button-container {
-
-                            }
-                        }
-
-                        & .user-item:hover {
-                            background-color: rgba($gray-100, $opacity-1);
-                        }
-                    }
-                }
+            & .user-item:hover {
+              background-color: rgba($gray-100, $opacity-1);
             }
+          }
         }
+      }
     }
+  }
 }

@@ -205,6 +205,7 @@
 .dropdown-label {
   font-size: $font-size-sm;
   text-transform: capitalize;
+  font-weight: $font-weight-medium;
 }
 
 .edit-input-root {
@@ -213,14 +214,17 @@
 
 .edit-formlayout-label {
   color: $gray-600 !important;
+  font-weight: $font-weight-medium;
 }
 
 .edit-listbox-label {
   color: $gray-600 !important;
+  font-weight: $font-weight-medium;
 }
 
 .edit-input-container {
   border-color: $gray-400 !important;
+  font-weight: $font-weight-medium;
 }
 
 .edit-input-container:hover {
@@ -229,6 +233,7 @@
 
 .edit-input {
   color: $gray-600 !important;
+  font-weight: $font-weight-medium;
 }
 
 .edit-icon {
