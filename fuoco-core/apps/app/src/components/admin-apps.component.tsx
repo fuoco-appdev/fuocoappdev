@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, IconPlus, Modal } from '@fuoco.appdev/core-ui';
+import {
+  Typography,
+  Button,
+  IconPlus,
+  Modal,
+  OptionProps,
+} from '@fuoco.appdev/core-ui';
 import styles from './admin-apps.module.scss';
 import { Strings } from '../localization';
 import { animated, useTransition, config } from 'react-spring';
 import AdminAppsController from '../controllers/admin-apps.controller';
 import BucketService from '../services/bucket.service';
 import { useObservable } from '@ngneat/use-observable';
-import AppCardComponent from './app-card.component';
+import AppCardComponent, { AppCardData } from './app-card.component';
 import * as core from '../protobuf/core_pb';
 
 export default function AdminAppsComponent(): JSX.Element {
@@ -24,6 +30,25 @@ export default function AdminAppsComponent(): JSX.Element {
 
   useEffect(() => {
     const appCards: React.ReactElement[] = [];
+    const companyOptions: OptionProps[] = [];
+    for (const user of props.users) {
+      const status = (user as core.User).requestStatus;
+      if (
+        status !== core.UserRequestStatus.ACCEPTED &&
+        status !== core.UserRequestStatus.UPDATE_REQUESTED
+      ) {
+        continue;
+      }
+
+      companyOptions.push({
+        id: user.id,
+        value: user.company,
+        children: () => (
+          <span className={styles['dropdown-label']}>{user.company}</span>
+        ),
+      });
+    }
+
     props.apps.map((value: core.App) => {
       let avatarUrl: string | undefined;
       if (value.avatarImage) {
@@ -43,6 +68,12 @@ export default function AdminAppsComponent(): JSX.Element {
         <AppCardComponent
           id={value.id}
           profilePicture={avatarUrl}
+          companyIndex={companyOptions.findIndex(
+            (option) => option.id === value.userId
+          )}
+          name={value.name}
+          progressType={value.status}
+          companyOptions={companyOptions}
           coverImages={coverImages}
           onProfilePictureChanged={(index: number, blob: Blob) => {
             AdminAppsController.uploadAvatarAsync(value.id, blob);
@@ -50,6 +81,14 @@ export default function AdminAppsComponent(): JSX.Element {
           onCoverImagesChanged={(blobs: Blob[]) => {
             AdminAppsController.uploadCoverImagesAsync(value.id, blobs);
           }}
+          onSaveClicked={(id: string, data: AppCardData) =>
+            AdminAppsController.updateAppAsync(id, {
+              user_id: data.userId,
+              name: data.name,
+              status: data.status,
+              links: data.links,
+            })
+          }
           onDeleteClicked={(id: string) =>
             AdminAppsController.showDeleteModal(id)
           }

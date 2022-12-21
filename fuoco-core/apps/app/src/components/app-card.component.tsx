@@ -30,17 +30,18 @@ import { AppStatus, Link } from '../protobuf/core_pb';
 
 export interface AppCardData {
   name: string;
-  company: string;
+  userId: string;
   status: AppStatus;
-  links: Link[];
+  links: { id: string; name: string; url: string }[];
 }
 
 interface AppCardProps {
   id: string;
   name?: string;
-  company?: string;
+  companyIndex?: number;
   status?: string;
-  links?: Link[];
+  links?: { id: string; name: string; url: string }[];
+  companyOptions?: OptionProps[];
   profilePicture?: string;
   coverImages?: string[];
   progressType?: AppStatus;
@@ -86,8 +87,9 @@ function AppCardEditLink() {
 export default function AppCardComponent({
   id,
   name = '',
-  company = '',
+  companyIndex = 0,
   links = [],
+  companyOptions = [],
   profilePicture,
   coverImages,
   progressType = AppStatus.USER_STORIES,
@@ -106,10 +108,15 @@ export default function AppCardComponent({
     React.ReactElement[]
   >([]);
   const [editLinkItems, setEditLinkItems] = useState<DraggableListItem[]>([]);
-  const [draftLinks, setDraftLinks] = useState<Link[]>(links);
+  const [draftLinks, setDraftLinks] =
+    useState<{ id: string; name: string; url: string }[]>(links);
   const [editExpand, setEditExpand] = useState<boolean>(false);
   const [draftName, setDraftName] = useState<string>(name);
-  const [draftCompany, setDraftCompany] = useState<string>(company);
+  const [draftCompanyIndex, setDraftCompanyIndex] =
+    useState<number>(companyIndex);
+  const [draftCompany, setDraftCompany] = useState<string>(
+    companyOptions[companyIndex]?.value ?? ''
+  );
   const [draftProgressType, setDraftProgressType] =
     useState<AppStatus>(progressType);
 
@@ -154,7 +161,7 @@ export default function AppCardComponent({
   };
 
   const onEditLinksChanged = (items: string[]) => {
-    const links: Link[] = [];
+    const links: { id: string; name: string; url: string }[] = [];
     for (const item of items) {
       const link = draftLinks.find((link) => link.id === item);
       if (link) {
@@ -166,7 +173,7 @@ export default function AppCardComponent({
 
   const onAddEditLink = () => {
     const id = uuidv4();
-    draftLinks.push(new Link({ name: '', url: '' }));
+    draftLinks.push(new Link({ id: id, name: '', url: '' }));
     const items: DraggableListItem[] = editLinkItems.concat([
       {
         id: id,
@@ -337,7 +344,7 @@ export default function AppCardComponent({
                   onClick={() =>
                     onSaveClicked?.(id, {
                       name: draftName,
-                      company: draftCompany,
+                      userId: companyOptions[draftCompanyIndex]?.id ?? '',
                       status: draftProgressType,
                       links: draftLinks,
                     })
@@ -359,6 +366,7 @@ export default function AppCardComponent({
                   },
                 }}
                 label={Strings.appName}
+                value={draftName}
                 onChange={(event) => setDraftName(event.currentTarget.value)}
               />
               <Listbox
@@ -388,8 +396,13 @@ export default function AppCardComponent({
                   chevron: styles['edit-icon'],
                   label: styles['edit-listbox-label'],
                 }}
+                defaultIndex={companyIndex}
                 label={Strings.company}
-                options={[]}
+                options={companyOptions}
+                onChange={(index: number, id: string, value: string) => {
+                  setDraftCompany(value);
+                  setDraftCompanyIndex(index);
+                }}
               />
             </div>
             <Divider />

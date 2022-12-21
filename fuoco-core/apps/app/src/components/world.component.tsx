@@ -222,9 +222,9 @@ export default function WorldComponent({
   }, [isVisible]);
 
   return (
-    <div
-      className={isVisible ? styles['root'] : styles['root-none']}
-      ref={WorldController.ref}
-    />
+    <div className={isVisible ? styles['root'] : styles['root-none']}>
+      <div ref={WorldController.ref} />
+      <div className={styles['card-container']} />
+    </div>
   );
 }

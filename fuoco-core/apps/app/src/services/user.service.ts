@@ -9,6 +9,7 @@ import { Strings } from '../localization';
 
 class UserService extends Service {
   private readonly _activeUserBehaviorSubject: BehaviorSubject<core.User | null>;
+  private readonly _usersBehaviorSubject: BehaviorSubject<core.User[]>;
 
   constructor() {
     super();
@@ -16,10 +17,15 @@ class UserService extends Service {
     this._activeUserBehaviorSubject = new BehaviorSubject<core.User | null>(
       null
     );
+    this._usersBehaviorSubject = new BehaviorSubject<core.User[]>([]);
   }
 
   public get activeUserObservable(): Observable<core.User | null> {
     return this._activeUserBehaviorSubject.asObservable();
+  }
+
+  public get usersObservable(): Observable<core.User[]> {
+    return this._usersBehaviorSubject.asObservable();
   }
 
   public get activeUser(): core.User | null {
@@ -79,6 +85,7 @@ class UserService extends Service {
     this.assertResponse(arrayBuffer);
 
     const usersResponse = core.Users.fromBinary(arrayBuffer);
+    this._usersBehaviorSubject.next(usersResponse.users);
     return usersResponse;
   }
 

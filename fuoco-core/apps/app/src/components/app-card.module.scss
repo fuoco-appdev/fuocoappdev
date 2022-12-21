@@ -75,12 +75,18 @@
               & .app-name {
                 color: $gray-900;
                 font-weight: $font-weight-bold;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
               }
 
               & .company-name {
                 color: $gray-500;
                 font-weight: $font-weight-bold;
                 font-size: $font-size-xs;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
               }
             }
           }

@@ -4,6 +4,7 @@ import * as core from '../protobuf/core_pb';
 
 export interface AdminAppsState {
   apps: core.App[];
+  users: core.User[];
   showDeleteModal: boolean;
   selectedAppId?: string;
 }
@@ -15,6 +16,7 @@ export class AdminAppsModel extends Model {
         { name: 'admin-apps' },
         withProps<AdminAppsState>({
           apps: [],
+          users: [],
           showDeleteModal: false,
           selectedAppId: undefined,
         })
@@ -29,6 +31,16 @@ export class AdminAppsModel extends Model {
   public set apps(value: core.App[]) {
     if (this.apps.every((app, index) => app.equals(value[index]))) {
       this.store.update((state) => ({ ...state, apps: value }));
+    }
+  }
+
+  public get users(): core.User[] {
+    return this.store.getValue().users;
+  }
+
+  public set users(value: core.User[]) {
+    if (this.users.every((user, index) => user.equals(value[index]))) {
+      this.store.update((state) => ({ ...state, users: value }));
     }
   }
 

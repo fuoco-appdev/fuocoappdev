@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from "react-router-dom";
-import {Auth} from '@fuoco.appdev/core-ui';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Auth } from '@fuoco.appdev/core-ui';
 import SignupController from '../controllers/signup.controller';
 import WindowController from '../controllers/window.controller';
+import WorldController from '../controllers/world.controller';
 import styles from './signup.module.scss';
 import AuthService from '../services/auth.service';
 import { RoutePaths } from '../route-paths';
@@ -17,6 +18,10 @@ export interface SignupProps {}
 function AuthComponent(): JSX.Element {
   const navigate = useNavigate();
   const [error, setError] = useState<ApiError | null>(null);
+
+  useEffect(() => {
+    WorldController.updateIsError(error !== null);
+  }, [error]);
 
   return (
     <Auth
@@ -40,7 +45,7 @@ function AuthComponent(): JSX.Element {
         termsOfService: Strings.termsOfService,
         privacyPolicy: Strings.privacyPolicy,
         signUp: Strings.signUp,
-        dontHaveAnAccount: Strings.dontHaveAnAccount
+        dontHaveAnAccount: Strings.dontHaveAnAccount,
       }}
       emailErrorMessage={error ? Strings.emailErrorMessage : undefined}
       passwordErrorMessage={error ? Strings.passwordErrorMessage : undefined}
@@ -51,44 +56,46 @@ function AuthComponent(): JSX.Element {
       onSigninRedirect={() => navigate(RoutePaths.Signin)}
       onSignupRedirect={() => navigate(RoutePaths.Signup)}
       onSignupError={(error: ApiError) => setError(error)}
-      onEmailConfirmationSent={() => { 
+      onEmailConfirmationSent={() => {
         WindowController.updateShowConfirmEmailAlert(true);
-       }}
+      }}
       redirectTo={RoutePaths.User}
     />
   );
 }
 
 export default function SignupComponent(): JSX.Element {
-    const location = useLocation();
-    const [props] = useObservable(SignupController.model.store);
-    const [show, setShow] = useState(false);
-    SignupController.model.location = location;
+  const location = useLocation();
+  const [show, setShow] = useState(false);
+  SignupController.model.location = location;
 
-    useEffect(() => {
-      setShow(true);
-  
-      return () => {
-        setShow(false);
-      }
-    }, []);
+  useEffect(() => {
+    setShow(true);
 
-    const transitions = useTransition(show, {
-      from: { opacity: 0, y: 5 },
-      enter: { opacity: 1, y: 0 },
-      leave: { opacity: 0, y: 5 },
-      config: config.gentle,
-    });
+    return () => {
+      setShow(false);
+    };
+  }, []);
 
-    return (
-      <div className={styles["root"]}>
-          <div className={styles["content"]}>
-            {transitions((style, item) => item && (
+  const transitions = useTransition(show, {
+    from: { opacity: 0, y: 5 },
+    enter: { opacity: 1, y: 0 },
+    leave: { opacity: 0, y: 5 },
+    config: config.gentle,
+  });
+
+  return (
+    <div className={styles['root']}>
+      <div className={styles['content']}>
+        {transitions(
+          (style, item) =>
+            item && (
               <animated.div style={style}>
                 <AuthComponent />
               </animated.div>
-            ))}
-          </div>
+            )
+        )}
       </div>
-    );
+    </div>
+  );
 }

@@ -181,7 +181,7 @@ export class AppService {
       ...(props.userId && { user_id: props.userId }),
       ...(props.name && { name: props.name }),
       ...(props.links && props.links.length > 0 && { links: linksData }),
-      ...(props.status && { status: props.status }),
+      ...(props.status !== -1 && { status: props.status }),
       ...(props.avatarImage && { avatar_image: props.avatarImage }),
       ...(props.coverImages &&
         props.coverImages.length > 0 && { cover_images: props.coverImages }),

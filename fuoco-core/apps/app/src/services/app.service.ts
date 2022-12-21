@@ -88,11 +88,12 @@ class AppsService extends Service {
       user_id?: string;
       name?: string;
       status?: core.AppStatus;
-      links?: { name: string; url: string }[];
+      links?: { id: string; name: string; url: string }[];
       avatar_image?: string;
       cover_images?: string[];
     }
   ): Promise<core.App> {
+    console.log(props);
     const date = new Date(Date.now());
     const links: core.Link[] = [];
 

@@ -6,10 +6,12 @@ import { AdminAppsModel } from '../models/admin-apps.model';
 import UserService from '../services/user.service';
 import AppService from '../services/app.service';
 import * as core from '../protobuf/core_pb';
+import { OptionProps } from '@fuoco.appdev/core-ui';
 
 class AdminAppsController extends Controller {
   private readonly _model: AdminAppsModel;
   private _userSubscription: Subscription | undefined;
+  private _usersSubscription: Subscription | undefined;
   private _appsSubscription: Subscription | undefined;
 
   constructor() {
@@ -18,6 +20,7 @@ class AdminAppsController extends Controller {
     this._model = new AdminAppsModel();
 
     this.onActiveUserChangedAsync = this.onActiveUserChangedAsync.bind(this);
+    this.onUsersChanged = this.onUsersChanged.bind(this);
     this.onAppsChanged = this.onAppsChanged.bind(this);
   }
 
@@ -29,6 +32,9 @@ class AdminAppsController extends Controller {
     this._userSubscription = UserService.activeUserObservable.subscribe({
       next: this.onActiveUserChangedAsync,
     });
+    this._usersSubscription = UserService.usersObservable.subscribe({
+      next: this.onUsersChanged,
+    });
     this._appsSubscription = AppService.appsObservable.subscribe({
       next: this.onAppsChanged,
     });
@@ -36,11 +42,24 @@ class AdminAppsController extends Controller {
 
   public dispose(): void {
     this._userSubscription?.unsubscribe();
+    this._usersSubscription?.unsubscribe();
     this._appsSubscription?.unsubscribe();
   }
 
   public async createAppAsync(): Promise<void> {
     await AppService.requestCreateAsync();
+  }
+
+  public async updateAppAsync(
+    id: string,
+    props: {
+      user_id?: string;
+      name?: string;
+      status?: core.AppStatus;
+      links?: { id: string; name: string; url: string }[];
+    }
+  ): Promise<void> {
+    await AppService.requestUpdateAsync(id, props);
   }
 
   public async uploadAvatarAsync(appId: string, blob: Blob): Promise<void> {
@@ -60,7 +79,6 @@ class AdminAppsController extends Controller {
   }
 
   public async deleteSelectedAppAsync(): Promise<void> {
-    console.log(this._model.selectedAppId);
     if (!this._model.selectedAppId) {
       return;
     }
@@ -82,6 +100,10 @@ class AdminAppsController extends Controller {
     }
 
     await AppService.requestAllAsync();
+  }
+
+  private onUsersChanged(users: core.User[]): void {
+    this._model.users = users;
   }
 
   private onAppsChanged(apps: core.App[]): void {
