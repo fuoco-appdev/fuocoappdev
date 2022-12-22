@@ -8,7 +8,8 @@ export interface AppProps {
   updated_at?: string;
   user_id?: string;
   name?: string;
-  links?: { name: string; url: string }[];
+  company?: string;
+  links?: { id: string; name: string; url: string }[];
   status?: number;
   avatar_image?: string;
   cover_images?: string[];
@@ -34,6 +35,7 @@ export class AppService {
   ): Promise<AppProps | null> {
     const updatedAt = app.getUpdatedAt();
     const name = app.getName();
+    const company = app.getCompany();
     const userId = app.getUserId();
     const links = app.getLinksList();
     const avatarImage = app.getAvatarImage();
@@ -42,6 +44,7 @@ export class AppService {
     const appData = this.assignAndGetAppData({
       updatedAt,
       name,
+      company,
       userId,
       links,
       status: AppStatus.USER_STORIES,
@@ -69,6 +72,7 @@ export class AppService {
     const updatedAt = app.getUpdatedAt();
     const userId = app.getUserId();
     const name = app.getName();
+    const company = app.getCompany();
     const links = app.getLinksList();
     const status = app.getStatus();
     const avatarImage = app.getAvatarImage();
@@ -78,6 +82,7 @@ export class AppService {
       updatedAt,
       userId,
       name,
+      company,
       links,
       status,
       avatarImage,
@@ -99,6 +104,19 @@ export class AppService {
 
   public async findAllAsync(): Promise<AppProps[] | null> {
     const { data, error } = await SupabaseService.client.from('apps').select();
+
+    if (error) {
+      console.error(error);
+      return null;
+    }
+
+    return data;
+  }
+
+  public async findAllPublicAsync(): Promise<AppProps[] | null> {
+    const { data, error } = await SupabaseService.client
+      .from('apps')
+      .select('id, name, status, avatar_image, cover_images, company, user_id');
 
     if (error) {
       console.error(error);
@@ -141,6 +159,7 @@ export class AppService {
     if (props.links) {
       for (const linkData of props.links) {
         const link = new Link();
+        link.setId(linkData.id);
         link.setName(linkData.name);
         link.setUrl(linkData.url);
         links.push(link);
@@ -152,6 +171,7 @@ export class AppService {
     props.updated_at && app.setUpdatedAt(props.updated_at);
     props.user_id && app.setUserId(props.user_id);
     props.name && app.setName(props.name);
+    props.company && app.setCompany(props.company);
     props.status && app.setStatus(props.status);
     props.links && app.setLinksList(links);
     props.avatar_image && app.setAvatarImage(props.avatar_image);
@@ -164,15 +184,20 @@ export class AppService {
     updatedAt?: string;
     userId?: string;
     name?: string;
+    company?: string;
     links?: InstanceType<typeof Link>[];
     status?: number;
     avatarImage?: string;
     coverImages?: string[];
   }) {
-    const linksData: { name: string; url: string }[] = [];
+    const linksData: { id: string; name: string; url: string }[] = [];
     if (props.links) {
       for (const link of props.links) {
-        linksData.push({ name: link.getName(), url: link.getUrl() });
+        linksData.push({
+          id: link.getId(),
+          name: link.getName(),
+          url: link.getUrl(),
+        });
       }
     }
 
@@ -180,6 +205,7 @@ export class AppService {
       ...(props.updatedAt && { updated_at: props.updatedAt }),
       ...(props.userId && { user_id: props.userId }),
       ...(props.name && { name: props.name }),
+      ...(props.company && { company: props.company }),
       ...(props.links && props.links.length > 0 && { links: linksData }),
       ...(props.status !== -1 && { status: props.status }),
       ...(props.avatarImage && { avatar_image: props.avatarImage }),

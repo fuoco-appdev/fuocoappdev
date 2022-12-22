@@ -1,21 +1,66 @@
-import WorldController from '../controllers/world.controller';
+import WorldController, {
+  WorldCardData,
+} from '../controllers/world.controller';
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils';
 import styles from './world.module.scss';
 import * as AtmosphereShader from '../shaders/atmosphere.shader';
 import * as TWEEN from '@tweenjs/tween.js';
 import { useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { MathUtils } from 'three';
+import {
+  Avatar,
+  Card,
+  CardSwipe,
+  IconBriefcase,
+  Typography,
+} from '@fuoco.appdev/core-ui';
+import React from 'react';
+import * as core from '../protobuf/core_pb';
+import { Strings } from '../localization';
+import { useObservable } from '@ngneat/use-observable';
+import BucketService from '../services/bucket.service';
+
+function updateCards(
+  mesh: THREE.Mesh,
+  camera: THREE.Camera,
+  tempVector: THREE.Vector3
+) {
+  for (const key in WorldController.worldCards) {
+    const { ref, coordinates } = WorldController.worldCards[key];
+    if (!ref) {
+      return;
+    }
+
+    const phi = (coordinates.latitude * Math.PI) / 180;
+    const theta = ((coordinates.longitude - 180) * Math.PI) / 180;
+    tempVector.setFromSphericalCoords(
+      WorldController.minDotRadius + 0.1,
+      phi,
+      theta
+    );
+    tempVector.applyMatrix4(mesh.matrixWorld);
+    tempVector.project(camera);
+
+    // convert the normalized position to CSS coordinates
+    const x = (tempVector.x * 0.5 + 0.5) * window.innerWidth;
+    const y = (tempVector.y * -0.5 + 0.5) * window.innerHeight;
+
+    // move the elem to that position
+    ref!.style.transform = `translate(-50%, -100%) translate(${x}px,${y}px)`;
+
+    // set the zIndex for sorting
+    ref!.style.zIndex = `${((-tempVector.z * 0.5 + 0.5) * 100000) | 0}`;
+  }
+}
 
 async function LoadWorldAsync(): Promise<void> {
   const scene = new THREE.Scene();
-  const width = WorldController.ref.current?.clientWidth ?? 0;
-  const height = WorldController.ref.current?.clientHeight ?? 0;
   const defaultFOV = 75;
   const camera = new THREE.PerspectiveCamera(
     defaultFOV,
-    width / height,
+    window.innerWidth / window.innerHeight,
     0.1,
     1000
   );
@@ -168,6 +213,7 @@ async function LoadWorldAsync(): Promise<void> {
 
   camera.position.z = 5;
 
+  const tempVector = new THREE.Vector3();
   const animate = () => {
     requestAnimationFrame(animate);
 
@@ -197,11 +243,109 @@ async function LoadWorldAsync(): Promise<void> {
     pivot.rotation.x = WorldController.globeRotation.x;
     pivot.rotation.y = WorldController.globeRotation.y;
 
+    pivot.updateMatrix();
+    updateCards(baseEarthMesh, camera, tempVector);
+
     renderer.render(scene, camera);
   };
 
   animate();
 }
+
+export interface WorldCardProps {
+  ref?: (element: HTMLDivElement | null) => void;
+  coverImages?: string[];
+  progressType?: core.AppStatus;
+  progressLength?: number;
+  profilePicture?: string;
+  name?: string;
+  company?: string;
+}
+
+const WorldCardComponent = React.forwardRef(
+  (
+    {
+      coverImages,
+      progressType = core.AppStatus.USER_STORIES,
+      progressLength = 4,
+      profilePicture,
+      name = '',
+      company = '',
+    }: WorldCardProps,
+    ref: React.ForwardedRef<any>
+  ) => {
+    const [coverImageElements, setCoverImageElements] = useState<
+      React.ReactElement[]
+    >([]);
+
+    useEffect(() => {
+      const elements: React.ReactElement[] = [];
+      coverImages?.map((url) => {
+        elements.push(
+          <img
+            style={{
+              height: 'inherit',
+              width: 'inherit',
+              objectFit: 'contain',
+              borderRadius: '6px',
+            }}
+            src={url}
+          />
+        );
+      });
+      setCoverImageElements(elements);
+    }, [coverImages]);
+
+    const statusTypes = Strings.statusTypes.split(',');
+    return (
+      <div className={styles['card-root']} ref={ref}>
+        <Card className={styles['card']}>
+          <div className={styles['card-container']}>
+            <div className={styles['card-content']}>
+              <div className={styles['cover-image-container']}>
+                <CardSwipe items={coverImageElements} />
+              </div>
+              <div className={styles['app-content']}>
+                <div className={styles['app-info']}>
+                  <Avatar
+                    className={styles['avatar']}
+                    src={profilePicture}
+                    AvatarIcon={IconBriefcase}
+                  />
+                  <div className={styles['app-name-container']}>
+                    <Typography.Text className={styles['app-name']}>
+                      {name.length > 0 ? name : Strings.name}
+                    </Typography.Text>
+                    <Typography.Text className={styles['company-name']}>
+                      {company.length > 0 ? company : Strings.company}
+                    </Typography.Text>
+                  </div>
+                  <div className={styles['status-container']}>
+                    <Typography.Text className={styles['status']}>
+                      {`${Strings.status}: ${statusTypes[progressType]}`}
+                    </Typography.Text>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className={styles['progress-container']}>
+              {Array(progressLength)
+                .fill(0)
+                .map((value, index) => {
+                  const classes = [styles['progress-pill']];
+                  if (index <= progressType) {
+                    classes.push(styles['progress-pill-active']);
+                  }
+                  return <div className={classes.join(' ')} />;
+                })}
+            </div>
+          </div>
+        </Card>
+        <div className={styles['card-pin']} />
+      </div>
+    );
+  }
+);
 
 export interface WorldComponentProps {
   isVisible?: boolean;
@@ -209,8 +353,10 @@ export interface WorldComponentProps {
 
 export default function WorldComponent({
   isVisible = true,
-}: WorldComponentProps): JSX.Element {
+}: WorldComponentProps): React.ReactElement {
   const location = useLocation();
+  const [props] = useObservable(WorldController.model.store);
+  const [cards, setCards] = useState<React.ReactElement[]>([]);
   WorldController.model.location = location;
 
   useEffect(() => {
@@ -221,10 +367,46 @@ export default function WorldComponent({
     WorldController.updateIsVisible(isVisible);
   }, [isVisible]);
 
+  useEffect(() => {
+    const elements: React.ReactElement[] = [];
+    props.apps.map((value: core.App) => {
+      // add an element for each country
+      let avatarUrl: string | undefined;
+      if (value.avatarImage) {
+        avatarUrl =
+          BucketService.getPublicUrl(
+            core.BucketType.AVATARS,
+            value.avatarImage
+          ) ?? undefined;
+      }
+      const coverImages: string[] = [];
+      for (const url of value.coverImages) {
+        coverImages.push(
+          BucketService.getPublicUrl(core.BucketType.COVER_IMAGES, url) ?? ''
+        );
+      }
+
+      elements.push(
+        <WorldCardComponent
+          ref={(element) =>
+            (WorldController.worldCards[value.id].ref = element)
+          }
+          profilePicture={avatarUrl}
+          company={value.company}
+          name={value.name}
+          progressType={value.status}
+          coverImages={coverImages}
+        />
+      );
+    });
+
+    setCards(elements);
+  }, [props]);
+
   return (
     <div className={isVisible ? styles['root'] : styles['root-none']}>
       <div ref={WorldController.ref} />
-      <div className={styles['card-container']} />
+      <div className={styles['card-container']}>{cards}</div>
     </div>
   );
 }

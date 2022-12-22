@@ -527,7 +527,7 @@ proto.core.Image.prototype.setUrl = function(value) {
  * @private {!Array<number>}
  * @const
  */
-proto.core.App.repeatedFields_ = [7,9];
+proto.core.App.repeatedFields_ = [8,10];
 
 
 
@@ -565,11 +565,12 @@ proto.core.App.toObject = function(includeInstance, msg) {
     updatedAt: jspb.Message.getFieldWithDefault(msg, 3, ""),
     userId: jspb.Message.getFieldWithDefault(msg, 4, ""),
     name: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    status: jspb.Message.getFieldWithDefault(msg, 6, 0),
+    company: jspb.Message.getFieldWithDefault(msg, 6, ""),
+    status: jspb.Message.getFieldWithDefault(msg, 7, 0),
     linksList: jspb.Message.toObjectList(msg.getLinksList(),
     proto.core.Link.toObject, includeInstance),
-    avatarImage: jspb.Message.getFieldWithDefault(msg, 8, ""),
-    coverImagesList: (f = jspb.Message.getRepeatedField(msg, 9)) == null ? undefined : f
+    avatarImage: jspb.Message.getFieldWithDefault(msg, 9, ""),
+    coverImagesList: (f = jspb.Message.getRepeatedField(msg, 10)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -627,19 +628,23 @@ proto.core.App.deserializeBinaryFromReader = function(msg, reader) {
       msg.setName(value);
       break;
     case 6:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setCompany(value);
+      break;
+    case 7:
       var value = /** @type {!proto.core.AppStatus} */ (reader.readEnum());
       msg.setStatus(value);
       break;
-    case 7:
+    case 8:
       var value = new proto.core.Link;
       reader.readMessage(value,proto.core.Link.deserializeBinaryFromReader);
       msg.addLinks(value);
       break;
-    case 8:
+    case 9:
       var value = /** @type {string} */ (reader.readString());
       msg.setAvatarImage(value);
       break;
-    case 9:
+    case 10:
       var value = /** @type {string} */ (reader.readString());
       msg.addCoverImages(value);
       break;
@@ -707,17 +712,24 @@ proto.core.App.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
+  f = message.getCompany();
+  if (f.length > 0) {
+    writer.writeString(
+      6,
+      f
+    );
+  }
   f = message.getStatus();
   if (f !== 0.0) {
     writer.writeEnum(
-      6,
+      7,
       f
     );
   }
   f = message.getLinksList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
-      7,
+      8,
       f,
       proto.core.Link.serializeBinaryToWriter
     );
@@ -725,14 +737,14 @@ proto.core.App.serializeBinaryToWriter = function(message, writer) {
   f = message.getAvatarImage();
   if (f.length > 0) {
     writer.writeString(
-      8,
+      9,
       f
     );
   }
   f = message.getCoverImagesList();
   if (f.length > 0) {
     writer.writeRepeatedString(
-      9,
+      10,
       f
     );
   }
@@ -830,11 +842,29 @@ proto.core.App.prototype.setName = function(value) {
 
 
 /**
- * optional AppStatus status = 6;
+ * optional string company = 6;
+ * @return {string}
+ */
+proto.core.App.prototype.getCompany = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.core.App} returns this
+ */
+proto.core.App.prototype.setCompany = function(value) {
+  return jspb.Message.setProto3StringField(this, 6, value);
+};
+
+
+/**
+ * optional AppStatus status = 7;
  * @return {!proto.core.AppStatus}
  */
 proto.core.App.prototype.getStatus = function() {
-  return /** @type {!proto.core.AppStatus} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
+  return /** @type {!proto.core.AppStatus} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
 };
 
 
@@ -843,17 +873,17 @@ proto.core.App.prototype.getStatus = function() {
  * @return {!proto.core.App} returns this
  */
 proto.core.App.prototype.setStatus = function(value) {
-  return jspb.Message.setProto3EnumField(this, 6, value);
+  return jspb.Message.setProto3EnumField(this, 7, value);
 };
 
 
 /**
- * repeated Link links = 7;
+ * repeated Link links = 8;
  * @return {!Array<!proto.core.Link>}
  */
 proto.core.App.prototype.getLinksList = function() {
   return /** @type{!Array<!proto.core.Link>} */ (
-    jspb.Message.getRepeatedWrapperField(this, proto.core.Link, 7));
+    jspb.Message.getRepeatedWrapperField(this, proto.core.Link, 8));
 };
 
 
@@ -862,7 +892,7 @@ proto.core.App.prototype.getLinksList = function() {
  * @return {!proto.core.App} returns this
 */
 proto.core.App.prototype.setLinksList = function(value) {
-  return jspb.Message.setRepeatedWrapperField(this, 7, value);
+  return jspb.Message.setRepeatedWrapperField(this, 8, value);
 };
 
 
@@ -872,7 +902,7 @@ proto.core.App.prototype.setLinksList = function(value) {
  * @return {!proto.core.Link}
  */
 proto.core.App.prototype.addLinks = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 7, opt_value, proto.core.Link, opt_index);
+  return jspb.Message.addToRepeatedWrapperField(this, 8, opt_value, proto.core.Link, opt_index);
 };
 
 
@@ -886,11 +916,11 @@ proto.core.App.prototype.clearLinksList = function() {
 
 
 /**
- * optional string avatar_image = 8;
+ * optional string avatar_image = 9;
  * @return {string}
  */
 proto.core.App.prototype.getAvatarImage = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
 };
 
 
@@ -899,16 +929,16 @@ proto.core.App.prototype.getAvatarImage = function() {
  * @return {!proto.core.App} returns this
  */
 proto.core.App.prototype.setAvatarImage = function(value) {
-  return jspb.Message.setProto3StringField(this, 8, value);
+  return jspb.Message.setProto3StringField(this, 9, value);
 };
 
 
 /**
- * repeated string cover_images = 9;
+ * repeated string cover_images = 10;
  * @return {!Array<string>}
  */
 proto.core.App.prototype.getCoverImagesList = function() {
-  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 9));
+  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 10));
 };
 
 
@@ -917,7 +947,7 @@ proto.core.App.prototype.getCoverImagesList = function() {
  * @return {!proto.core.App} returns this
  */
 proto.core.App.prototype.setCoverImagesList = function(value) {
-  return jspb.Message.setField(this, 9, value || []);
+  return jspb.Message.setField(this, 10, value || []);
 };
 
 
@@ -927,7 +957,7 @@ proto.core.App.prototype.setCoverImagesList = function(value) {
  * @return {!proto.core.App} returns this
  */
 proto.core.App.prototype.addCoverImages = function(value, opt_index) {
-  return jspb.Message.addToRepeatedField(this, 9, value, opt_index);
+  return jspb.Message.addToRepeatedField(this, 10, value, opt_index);
 };
 
 

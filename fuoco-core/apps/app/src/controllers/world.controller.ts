@@ -4,6 +4,15 @@ import { Controller } from '../controller';
 import { WorldModel } from '../models';
 import * as TWEEN from '@tweenjs/tween.js';
 import * as THREE from 'three';
+import { Subscription } from 'rxjs';
+import AppService from '../services/app.service';
+import * as core from '../protobuf/core_pb';
+
+export interface WorldCardData {
+  coordinates: { latitude: number; longitude: number };
+  position: THREE.Vector3;
+  ref: HTMLDivElement | null;
+}
 
 class WorldController extends Controller {
   private readonly _model: WorldModel;
@@ -13,8 +22,10 @@ class WorldController extends Controller {
   private readonly _delta: { x: number; y: number };
   private readonly _minDotRadius: number;
   private readonly _maxDotRadius: number;
+  private readonly _worldCards: Record<string, WorldCardData>;
   private _tween: TWEEN.Tween<{ x: number; y: number }> | undefined;
   private _pressed: boolean;
+  private _publicAppsSubscription: Subscription | undefined;
 
   constructor() {
     super();
@@ -27,10 +38,12 @@ class WorldController extends Controller {
     this._maxDotRadius = 3;
     this._pressed = false;
     this._delta = { x: 0, y: 0 };
+    this._worldCards = {};
 
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
+    this.onPublicAppsChanged = this.onPublicAppsChanged.bind(this);
 
     document.addEventListener('mousemove', this.onMouseMove);
     document.addEventListener('mousedown', this.onMouseDown);
@@ -43,6 +56,10 @@ class WorldController extends Controller {
 
   public get ref(): React.RefObject<HTMLDivElement> {
     return this._ref;
+  }
+
+  public get worldCards(): Record<string, WorldCardData> {
+    return this._worldCards;
   }
 
   public get pressed(): boolean {
@@ -61,9 +78,17 @@ class WorldController extends Controller {
     return this._maxDotRadius;
   }
 
-  public initialize(): void {}
+  public initialize(): void {
+    AppService.requestAllPublicAsync();
 
-  public dispose(): void {}
+    this._publicAppsSubscription = AppService.publicAppsObservable.subscribe({
+      next: this.onPublicAppsChanged,
+    });
+  }
+
+  public dispose(): void {
+    this._publicAppsSubscription?.unsubscribe();
+  }
 
   public updateIsVisible(isVisible: boolean): void {
     this._model.isVisible = isVisible;
@@ -190,6 +215,18 @@ class WorldController extends Controller {
         .easing(TWEEN.Easing.Cubic.Out)
         .start();
     }
+  }
+
+  private onPublicAppsChanged(apps: core.App[]): void {
+    for (const app of apps) {
+      this._worldCards[app.id] = {
+        coordinates: { latitude: 0, longitude: 0 },
+        position: new THREE.Vector3(),
+        ref: null,
+      };
+    }
+
+    this._model.apps = apps;
   }
 }
 

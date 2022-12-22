@@ -1,10 +1,12 @@
 import { createStore, withProps } from '@ngneat/elf';
 import { Location } from 'react-router-dom';
 import { Model } from '../model';
+import { App } from '../protobuf/core_pb';
 
 export interface WorldState {
   isVisible: boolean;
   isError: boolean;
+  apps: App[];
   location?: Location;
 }
 
@@ -16,6 +18,7 @@ export class WorldModel extends Model {
         withProps<WorldState>({
           location: undefined,
           isVisible: true,
+          apps: [],
           isError: false,
         })
       )
@@ -29,6 +32,16 @@ export class WorldModel extends Model {
   public set isVisible(isVisible: boolean) {
     if (this.isVisible !== isVisible) {
       this.store.update((state) => ({ ...state, isVisible: isVisible }));
+    }
+  }
+
+  public get apps(): App[] {
+    return this.store.getValue().apps;
+  }
+
+  public set apps(value: App[]) {
+    if (this.apps.every((app, index) => !app.equals(value[index]))) {
+      this.store.update((state) => ({ ...state, apps: value }));
     }
   }
 

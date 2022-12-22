@@ -30,10 +30,11 @@ message App {
     string updated_at = 3;
     string user_id = 4;
     string name = 5;
-    AppStatus status = 6;
-    repeated Link links = 7;
-    string avatar_image = 8;
-    repeated string cover_images = 9;
+    string company = 6;
+    AppStatus status = 7;
+    repeated Link links = 8;
+    string avatar_image = 9;
+    repeated string cover_images = 10;
 }
 
 message Apps {

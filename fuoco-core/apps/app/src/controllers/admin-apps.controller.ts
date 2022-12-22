@@ -6,7 +6,6 @@ import { AdminAppsModel } from '../models/admin-apps.model';
 import UserService from '../services/user.service';
 import AppService from '../services/app.service';
 import * as core from '../protobuf/core_pb';
-import { OptionProps } from '@fuoco.appdev/core-ui';
 
 class AdminAppsController extends Controller {
   private readonly _model: AdminAppsModel;
@@ -55,6 +54,7 @@ class AdminAppsController extends Controller {
     props: {
       user_id?: string;
       name?: string;
+      company?: string;
       status?: core.AppStatus;
       links?: { id: string; name: string; url: string }[];
     }

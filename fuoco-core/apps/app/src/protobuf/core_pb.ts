@@ -232,22 +232,27 @@ export class App extends Message<App> {
   name = "";
 
   /**
-   * @generated from field: core.AppStatus status = 6;
+   * @generated from field: string company = 6;
+   */
+  company = "";
+
+  /**
+   * @generated from field: core.AppStatus status = 7;
    */
   status = AppStatus.USER_STORIES;
 
   /**
-   * @generated from field: repeated core.Link links = 7;
+   * @generated from field: repeated core.Link links = 8;
    */
   links: Link[] = [];
 
   /**
-   * @generated from field: string avatar_image = 8;
+   * @generated from field: string avatar_image = 9;
    */
   avatarImage = "";
 
   /**
-   * @generated from field: repeated string cover_images = 9;
+   * @generated from field: repeated string cover_images = 10;
    */
   coverImages: string[] = [];
 
@@ -264,10 +269,11 @@ export class App extends Message<App> {
     { no: 3, name: "updated_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "user_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 6, name: "status", kind: "enum", T: proto3.getEnumType(AppStatus) },
-    { no: 7, name: "links", kind: "message", T: Link, repeated: true },
-    { no: 8, name: "avatar_image", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 9, name: "cover_images", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 6, name: "company", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 7, name: "status", kind: "enum", T: proto3.getEnumType(AppStatus) },
+    { no: 8, name: "links", kind: "message", T: Link, repeated: true },
+    { no: 9, name: "avatar_image", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 10, name: "cover_images", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): App {

@@ -84,6 +84,7 @@ export default function AdminAppsComponent(): JSX.Element {
           onSaveClicked={(id: string, data: AppCardData) =>
             AdminAppsController.updateAppAsync(id, {
               user_id: data.userId,
+              company: data.company,
               name: data.name,
               status: data.status,
               links: data.links,

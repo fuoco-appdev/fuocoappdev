@@ -30,6 +30,7 @@ import { AppStatus, Link } from '../protobuf/core_pb';
 
 export interface AppCardData {
   name: string;
+  company: string;
   userId: string;
   status: AppStatus;
   links: { id: string; name: string; url: string }[];
@@ -344,6 +345,7 @@ export default function AppCardComponent({
                   onClick={() =>
                     onSaveClicked?.(id, {
                       name: draftName,
+                      company: draftCompany,
                       userId: companyOptions[draftCompanyIndex]?.id ?? '',
                       status: draftProgressType,
                       links: draftLinks,

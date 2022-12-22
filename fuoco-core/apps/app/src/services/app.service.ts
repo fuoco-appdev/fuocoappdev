@@ -12,12 +12,14 @@ import mime from 'mime';
 class AppsService extends Service {
   private readonly _userAppsBehaviorSubject: BehaviorSubject<core.App[]>;
   private readonly _appsBehaviorSubject: BehaviorSubject<core.App[]>;
+  private readonly _publicAppsBehaviorSubject: BehaviorSubject<core.App[]>;
 
   constructor() {
     super();
 
     this._userAppsBehaviorSubject = new BehaviorSubject<core.App[]>([]);
     this._appsBehaviorSubject = new BehaviorSubject<core.App[]>([]);
+    this._publicAppsBehaviorSubject = new BehaviorSubject<core.App[]>([]);
   }
 
   public get userAppsObservable(): Observable<core.App[]> {
@@ -26,6 +28,10 @@ class AppsService extends Service {
 
   public get appsObservable(): Observable<core.App[]> {
     return this._appsBehaviorSubject.asObservable();
+  }
+
+  public get publicAppsObservable(): Observable<core.App[]> {
+    return this._publicAppsBehaviorSubject.asObservable();
   }
 
   public async requestAllAsync(): Promise<core.App[]> {
@@ -47,6 +53,26 @@ class AppsService extends Service {
 
     const deserializedResponse = core.Apps.fromBinary(arrayBuffer);
     this._appsBehaviorSubject.next(deserializedResponse.apps);
+
+    return deserializedResponse.apps;
+  }
+
+  public async requestAllPublicAsync(): Promise<core.App[]> {
+    const response = await axios({
+      method: 'post',
+      url: `${this.endpointUrl}/app/public/all`,
+      headers: {
+        ...this.headers,
+      },
+      data: '',
+      responseType: 'arraybuffer',
+    });
+
+    const arrayBuffer = new Uint8Array(response.data);
+    this.assertResponse(arrayBuffer);
+
+    const deserializedResponse = core.Apps.fromBinary(arrayBuffer);
+    this._publicAppsBehaviorSubject.next(deserializedResponse.apps);
 
     return deserializedResponse.apps;
   }
@@ -87,13 +113,13 @@ class AppsService extends Service {
     props: {
       user_id?: string;
       name?: string;
+      company?: string;
       status?: core.AppStatus;
       links?: { id: string; name: string; url: string }[];
       avatar_image?: string;
       cover_images?: string[];
     }
   ): Promise<core.App> {
-    console.log(props);
     const date = new Date(Date.now());
     const links: core.Link[] = [];
 
@@ -105,6 +131,7 @@ class AppsService extends Service {
       updatedAt: date.toUTCString(),
       userId: props.user_id,
       name: props.name,
+      company: props.company,
       status: props.status,
       links: links,
       avatarImage: props.avatar_image,

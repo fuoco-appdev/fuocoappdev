@@ -29,7 +29,7 @@ export class AdminAppsModel extends Model {
   }
 
   public set apps(value: core.App[]) {
-    if (this.apps.every((app, index) => app.equals(value[index]))) {
+    if (this.apps.every((app, index) => !app.equals(value[index]))) {
       this.store.update((state) => ({ ...state, apps: value }));
     }
   }
@@ -39,7 +39,7 @@ export class AdminAppsModel extends Model {
   }
 
   public set users(value: core.User[]) {
-    if (this.users.every((user, index) => user.equals(value[index]))) {
+    if (this.users.every((user, index) => !user.equals(value[index]))) {
       this.store.update((state) => ({ ...state, users: value }));
     }
   }

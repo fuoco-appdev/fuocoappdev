@@ -1,3 +1,5 @@
+@import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
+
 .root {
   height: 100vh;
   width: 100vw;
@@ -5,6 +7,125 @@
 
   & .card-container {
     position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+  }
+}
+
+.card-root {
+  position: absolute;
+  z-index: 24;
+  width: 250px;
+  height: 227px;
+
+  & .card {
+    display: flex;
+    flex-direction: column;
+    height: inherit;
+    width: inherit;
+
+    & .card-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background-color: white;
+      border-radius: $rounded-md;
+      width: 250px;
+      height: fit-content;
+
+      & .card-content {
+        & .cover-image-container {
+          position: relative;
+          border-top-left-radius: $rounded-md;
+          border-top-right-radius: $rounded-md;
+          background-color: $gray-300;
+          min-height: calc((250px / 3) * 2);
+          user-select: none;
+          overflow: hidden;
+        }
+
+        & .app-content {
+          padding: $mp-1;
+
+          & .app-info {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: $mp-1;
+
+            & .avatar {
+              width: 24px;
+              height: 24px;
+            }
+
+            & .app-name-container {
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              margin-left: $mp-2;
+
+              & .app-name {
+                color: $gray-900;
+                font-size: $font-size-xs;
+                font-weight: $font-weight-bold;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              }
+
+              & .company-name {
+                color: $gray-500;
+                font-weight: $font-weight-bold;
+                font-size: 10px;
+                line-height: 11px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              }
+            }
+          }
+
+          & .status-container {
+            width: 100%;
+            text-align: end;
+
+            & .status {
+              color: $gray-500;
+              font-weight: $font-weight-bold;
+              font-size: 11px;
+            }
+          }
+        }
+      }
+
+      & .progress-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        gap: $mp-2;
+        padding: $mp-1;
+
+        & .progress-pill {
+          height: 10px;
+          width: 100%;
+          border-radius: $rounded-full;
+          background-color: $gray-300;
+        }
+
+        & .progress-pill-active {
+          background-color: $brand-400;
+        }
+      }
+    }
+  }
+
+  & .card-pin {
+    translate: calc(125px - 14px);
+    width: 0;
+    height: 0;
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-top: 28px solid white;
   }
 }
 

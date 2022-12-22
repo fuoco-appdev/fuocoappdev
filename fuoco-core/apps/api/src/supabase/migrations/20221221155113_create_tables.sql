@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS public.apps
     user_id uuid,
     avatar_image text COLLATE pg_catalog."default",
     cover_images text[] COLLATE pg_catalog."default",
+    company text COLLATE pg_catalog."default",
     CONSTRAINT apps_pkey PRIMARY KEY (id)
 )
 
