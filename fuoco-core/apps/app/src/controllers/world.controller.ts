@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import { Subscription } from 'rxjs';
 import AppService from '../services/app.service';
 import * as core from '../protobuf/core_pb';
+import UserService from '../services/user.service';
 
 export interface WorldCardData {
   coordinates: { latitude: number; longitude: number };
@@ -43,7 +44,7 @@ class WorldController extends Controller {
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
-    this.onPublicAppsChanged = this.onPublicAppsChanged.bind(this);
+    this.onPublicAppsChangedAsync = this.onPublicAppsChangedAsync.bind(this);
 
     document.addEventListener('mousemove', this.onMouseMove);
     document.addEventListener('mousedown', this.onMouseDown);
@@ -82,7 +83,7 @@ class WorldController extends Controller {
     AppService.requestAllPublicAsync();
 
     this._publicAppsSubscription = AppService.publicAppsObservable.subscribe({
-      next: this.onPublicAppsChanged,
+      next: this.onPublicAppsChangedAsync,
     });
   }
 
@@ -217,10 +218,14 @@ class WorldController extends Controller {
     }
   }
 
-  private onPublicAppsChanged(apps: core.App[]): void {
+  private async onPublicAppsChangedAsync(apps: core.App[]): Promise<void> {
+    const users = await UserService.requestAllPublicAsync();
     for (const app of apps) {
+      const user = users.users.find((value) => value.id === app.userId);
+      const latitude = Number(user?.location?.latitude) ?? 0;
+      const longitude = Number(user?.location?.longitude) ?? 0;
       this._worldCards[app.id] = {
-        coordinates: { latitude: 0, longitude: 0 },
+        coordinates: { latitude: latitude, longitude: longitude },
         position: new THREE.Vector3(),
         ref: null,
       };

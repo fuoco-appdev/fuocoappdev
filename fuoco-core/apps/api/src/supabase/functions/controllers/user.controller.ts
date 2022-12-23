@@ -69,6 +69,25 @@ export class UserController {
     context.response.body = users.serializeBinary();
   }
 
+  @Post('/public/all')
+  @ContentType('application/x-protobuf')
+  public async getAllPublicUsersAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >
+  ): Promise<void> {
+    const data = await UserService.findAllPublicAsync();
+    if (!data) {
+      throw HttpError.createError(404, `No public users were found`);
+    }
+
+    const users = UserService.assignAndGetUsersProtocol(data);
+    context.response.type = 'application/x-protobuf';
+    context.response.body = users.serializeBinary();
+  }
+
   @Post('/getting-started')
   @Guard(AuthGuard)
   @ContentType('application/x-protobuf')

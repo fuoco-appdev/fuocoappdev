@@ -122,6 +122,20 @@ export class UserService {
     return data;
   }
 
+  public async findAllPublicAsync(): Promise<UserProps[] | null> {
+    const { data, error } = await SupabaseService.client
+      .from('users')
+      .select('id, location')
+      .filter('role', 'gt', 0);
+
+    if (error) {
+      console.error(error);
+      return null;
+    }
+
+    return data;
+  }
+
   public async deleteAsync(supabaseId: string): Promise<UserProps | null> {
     const { data, error } = await SupabaseService.client
       .from('users')

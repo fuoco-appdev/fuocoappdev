@@ -1,12 +1,13 @@
 import { createStore, withProps } from '@ngneat/elf';
 import { Location } from 'react-router-dom';
 import { Model } from '../model';
-import { App } from '../protobuf/core_pb';
+import { App, User } from '../protobuf/core_pb';
 
 export interface WorldState {
   isVisible: boolean;
   isError: boolean;
   apps: App[];
+  users: User[];
   location?: Location;
 }
 
@@ -19,6 +20,7 @@ export class WorldModel extends Model {
           location: undefined,
           isVisible: true,
           apps: [],
+          users: [],
           isError: false,
         })
       )
@@ -42,6 +44,16 @@ export class WorldModel extends Model {
   public set apps(value: App[]) {
     if (this.apps.every((app, index) => !app.equals(value[index]))) {
       this.store.update((state) => ({ ...state, apps: value }));
+    }
+  }
+
+  public get users(): User[] {
+    return this.store.getValue().users;
+  }
+
+  public set users(value: User[]) {
+    if (this.users.every((user, index) => !user.equals(value[index]))) {
+      this.store.update((state) => ({ ...state, users: value }));
     }
   }
 

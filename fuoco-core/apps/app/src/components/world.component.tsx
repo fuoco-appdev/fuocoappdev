@@ -7,7 +7,7 @@ import styles from './world.module.scss';
 import * as AtmosphereShader from '../shaders/atmosphere.shader';
 import * as TWEEN from '@tweenjs/tween.js';
 import { useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useImperativeHandle, useState } from 'react';
 import { MathUtils } from 'three';
 import {
   Avatar,
@@ -25,7 +25,9 @@ import BucketService from '../services/bucket.service';
 function updateCards(
   mesh: THREE.Mesh,
   camera: THREE.Camera,
-  tempVector: THREE.Vector3
+  position: THREE.Vector3,
+  normalizedPosition: THREE.Vector3,
+  normalizedCamera: THREE.Vector3
 ) {
   for (const key in WorldController.worldCards) {
     const { ref, coordinates } = WorldController.worldCards[key];
@@ -34,24 +36,43 @@ function updateCards(
     }
 
     const phi = (coordinates.latitude * Math.PI) / 180;
-    const theta = ((coordinates.longitude - 180) * Math.PI) / 180;
-    tempVector.setFromSphericalCoords(
-      WorldController.minDotRadius + 0.1,
-      phi,
-      theta
-    );
-    tempVector.applyMatrix4(mesh.matrixWorld);
-    tempVector.project(camera);
+    const theta = ((coordinates.longitude - 90) * Math.PI) / 180;
+    position.setFromSphericalCoords(WorldController.minDotRadius, phi, theta);
+    position.applyMatrix4(mesh.matrixWorld);
+
+    normalizedPosition.copy(position);
+    normalizedPosition.normalize();
+    // compute the direction to this position from the camera
+    normalizedCamera.copy(position);
+    normalizedCamera.applyMatrix4(camera.matrixWorldInverse).normalize();
+    // get the dot product of camera relative direction to this position
+    // on the globe with the direction from the camera to that point.
+    // -1 = facing directly towards the camera
+    // 0 = exactly on tangent of the sphere from the camera
+    // > 0 = facing away
+    const dot = normalizedPosition.dot(normalizedCamera);
+    position.project(camera);
 
     // convert the normalized position to CSS coordinates
-    const x = (tempVector.x * 0.5 + 0.5) * window.innerWidth;
-    const y = (tempVector.y * -0.5 + 0.5) * window.innerHeight;
+    const x = (position.x * 0.5 + 0.5) * window.innerWidth;
+    const y = (position.y * -0.5 + 0.5) * window.innerHeight;
 
     // move the elem to that position
-    ref!.style.transform = `translate(-50%, -100%) translate(${x}px,${y}px)`;
+    ref.style.transform = `translate(-50%, -100%) translate(${x}px,${y}px)`;
+    ref.style.transformOrigin = `${x}px ${y}px`;
 
     // set the zIndex for sorting
-    ref!.style.zIndex = `${((-tempVector.z * 0.5 + 0.5) * 100000) | 0}`;
+    ref.style.zIndex = `${((-position.z * 0.5 + 0.5) * 100000) | 0}`;
+
+    // if the orientation is not facing us hide it.
+    if (dot > 0.3) {
+      ref.style.scale = '0';
+      continue;
+    }
+
+    if (dot < 0.5) {
+      ref.style.scale = '1';
+    }
   }
 }
 
@@ -213,7 +234,9 @@ async function LoadWorldAsync(): Promise<void> {
 
   camera.position.z = 5;
 
-  const tempVector = new THREE.Vector3();
+  const position = new THREE.Vector3();
+  const normalizedPosition = new THREE.Vector3();
+  const normalizedCamera = new THREE.Vector3();
   const animate = () => {
     requestAnimationFrame(animate);
 
@@ -243,8 +266,13 @@ async function LoadWorldAsync(): Promise<void> {
     pivot.rotation.x = WorldController.globeRotation.x;
     pivot.rotation.y = WorldController.globeRotation.y;
 
-    pivot.updateMatrix();
-    updateCards(baseEarthMesh, camera, tempVector);
+    updateCards(
+      baseEarthMesh,
+      camera,
+      position,
+      normalizedPosition,
+      normalizedCamera
+    );
 
     renderer.render(scene, camera);
   };
@@ -277,6 +305,7 @@ const WorldCardComponent = React.forwardRef(
     const [coverImageElements, setCoverImageElements] = useState<
       React.ReactElement[]
     >([]);
+    const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
     useEffect(() => {
       const elements: React.ReactElement[] = [];

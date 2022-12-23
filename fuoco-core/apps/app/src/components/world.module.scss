@@ -17,19 +17,24 @@
   position: absolute;
   z-index: 24;
   width: 250px;
-  height: 227px;
+  height: 238px;
+  transform: translate(-50%, -100%) translate(-100px, -100px);
+  scale: 0;
+  transition: scale $duration-expand-sm;
+  transition-timing-function: $transition-standard-easing;
 
   & .card {
     display: flex;
     flex-direction: column;
     height: inherit;
     width: inherit;
+    background-color: rgba(#e0e0e0, 0.3);
+    backdrop-filter: blur(6px);
 
     & .card-container {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      background-color: white;
       border-radius: $rounded-md;
       width: 250px;
       height: fit-content;
@@ -39,14 +44,15 @@
           position: relative;
           border-top-left-radius: $rounded-md;
           border-top-right-radius: $rounded-md;
-          background-color: $gray-300;
+          background-color: rgba($gray-100, 0.8);
+          backdrop-filter: blur(6px);
           min-height: calc((250px / 3) * 2);
           user-select: none;
           overflow: hidden;
         }
 
         & .app-content {
-          padding: $mp-1;
+          padding: $mp-2;
 
           & .app-info {
             display: flex;
@@ -65,17 +71,17 @@
               margin-left: $mp-2;
 
               & .app-name {
-                color: $gray-900;
+                color: white;
                 font-size: $font-size-xs;
-                font-weight: $font-weight-bold;
+                font-weight: 500;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
               }
 
               & .company-name {
-                color: $gray-500;
-                font-weight: $font-weight-bold;
+                color: white;
+                font-weight: 500;
                 font-size: 10px;
                 line-height: 11px;
                 white-space: nowrap;
@@ -90,8 +96,8 @@
             text-align: end;
 
             & .status {
-              color: $gray-500;
-              font-weight: $font-weight-bold;
+              color: white;
+              font-weight: 500;
               font-size: 11px;
             }
           }
@@ -106,26 +112,30 @@
         padding: $mp-1;
 
         & .progress-pill {
-          height: 10px;
+          height: 8px;
           width: 100%;
           border-radius: $rounded-full;
-          background-color: $gray-300;
+          border: 1px solid $gray-200;
+          opacity: 0.8;
         }
 
         & .progress-pill-active {
-          background-color: $brand-400;
+          background-color: $brand-200;
+          opacity: 1;
+          border: none;
         }
       }
     }
   }
 
   & .card-pin {
-    translate: calc(125px - 14px);
-    width: 0;
-    height: 0;
-    border-left: 14px solid transparent;
-    border-right: 14px solid transparent;
-    border-top: 28px solid white;
+    translate: calc(125px - 5px) -1px;
+    width: 10px;
+    height: 10px;
+    rotate: 180deg;
+    background-color: rgba(#e0e0e0, 0.3);
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    backdrop-filter: blur(6px);
   }
 }
 

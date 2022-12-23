@@ -89,6 +89,24 @@ class UserService extends Service {
     return usersResponse;
   }
 
+  public async requestAllPublicAsync(): Promise<core.Users> {
+    const response = await axios({
+      method: 'post',
+      url: `${this.endpointUrl}/user/public/all`,
+      headers: {
+        ...this.headers,
+      },
+      data: '',
+      responseType: 'arraybuffer',
+    });
+
+    const arrayBuffer = new Uint8Array(response.data);
+    this.assertResponse(arrayBuffer);
+
+    const usersResponse = core.Users.fromBinary(arrayBuffer);
+    return usersResponse;
+  }
+
   public async requestCreateAsync(): Promise<core.User> {
     const supabaseUser = AuthService.supabaseClient.auth.user();
     if (!supabaseUser) {
