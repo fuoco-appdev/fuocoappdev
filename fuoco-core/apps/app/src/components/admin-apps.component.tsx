@@ -7,7 +7,7 @@ import {
   OptionProps,
 } from '@fuoco.appdev/core-ui';
 import styles from './admin-apps.module.scss';
-import { Strings } from '../localization';
+import { Strings } from '../strings';
 import { animated, useTransition, config } from 'react-spring';
 import AdminAppsController from '../controllers/admin-apps.controller';
 import BucketService from '../services/bucket.service';

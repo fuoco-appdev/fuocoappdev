@@ -85,12 +85,16 @@ class AccountController extends Controller {
   public async saveAsync(): Promise<void> {
     await UserService.requestUpdateActiveAsync({
       company: this._model.updatedCompany,
-      phone_number: this._model.updatedPhoneNumber,
+      phoneNumber: this._model.updatedPhoneNumber,
       location: this._model.updatedLocation,
       language: this._model.updatedLanguage,
     });
 
     this._model.isSaveDisabled = true;
+  }
+
+  public async deleteAsync(): Promise<void> {
+    await UserService.requestActiveDeleteAsync();
   }
 
   private updateSave(): void {

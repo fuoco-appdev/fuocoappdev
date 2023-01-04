@@ -14,7 +14,7 @@ import {
   IconUsers,
 } from '@fuoco.appdev/core-ui';
 import { RoutePaths } from '../route-paths';
-import { Strings } from '../localization';
+import { Strings } from '../strings';
 import AuthService from '../services/auth.service';
 import { useObservable } from '@ngneat/use-observable';
 import LoadingComponent from './loading.component';
@@ -69,7 +69,6 @@ function SignoutButtonComponent(): JSX.Element {
 export default function WindowComponent(): JSX.Element {
   const location = useLocation();
   const navigate = useNavigate();
-  WindowController.model.navigate = navigate;
 
   const user = UserService.activeUser;
   const [windowProps] = useObservable(WindowController.model.store);
@@ -129,11 +128,18 @@ export default function WindowComponent(): JSX.Element {
               <div className={styles['logo-container']}>
                 {!windowProps.isAuthenticated &&
                   !windowProps.isTabBarVisible && (
-                    <img
-                      className={styles['logo']}
-                      src="../assets/svg/logo.svg"
-                      alt="logo"
-                    />
+                    <Button
+                      className={styles['logo-button']}
+                      type={'text'}
+                      onClick={() => navigate(RoutePaths.Landing)}
+                      icon={
+                        <img
+                          className={styles['logo']}
+                          src="../assets/svg/logo.svg"
+                          alt="logo"
+                        />
+                      }
+                    ></Button>
                   )}
               </div>
               <div className={styles['navbar-content-right']}>

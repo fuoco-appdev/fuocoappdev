@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import {Auth} from '@fuoco.appdev/core-ui';
+import { Auth } from '@fuoco.appdev/core-ui';
 import styles from './reset-password.module.scss';
 import WindowController from '../controllers/window.controller';
 import AuthService from '../services/auth.service';
-import { ApiError } from "@supabase/supabase-js";
-import { Strings } from "../localization";
-import { useState, useEffect } from "react";
-import { animated, config, useTransition } from "react-spring";
+import { ApiError } from '@supabase/supabase-js';
+import { Strings } from '../strings';
+import { useState, useEffect } from 'react';
+import { animated, config, useTransition } from 'react-spring';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { RoutePaths } from '../route-paths';
 import ResetPasswordController from '../controllers/reset-password.controller';
@@ -19,12 +19,12 @@ export default function ResetPasswordComponent(): JSX.Element {
   const [error, setError] = useState<ApiError | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   useEffect(() => {
     const query = new URLSearchParams(location.hash);
     const accessToken = query.get('#access_token');
     if (accessToken !== null) {
-        ResetPasswordController.updateAccessToken(accessToken);
+      ResetPasswordController.updateAccessToken(accessToken);
     }
   }, [location]);
 
@@ -33,7 +33,7 @@ export default function ResetPasswordComponent(): JSX.Element {
 
     return () => {
       setShow(false);
-    }
+    };
   }, []);
 
   const transitions = useTransition(show, {
@@ -45,32 +45,38 @@ export default function ResetPasswordComponent(): JSX.Element {
 
   const [props] = useObservable(ResetPasswordController.model.store);
   return props.accessToken ? (
-    <div className={styles["root"]}>
-      <div className={styles["content"]}>
-        {transitions((style, item) => item && (
-          <animated.div style={style}>
-            <Auth.ResetPassword
-                passwordErrorMessage={error ? error.message : undefined}
-                strings={{
+    <div className={styles['root']}>
+      <div className={styles['content']}>
+        {transitions(
+          (style, item) =>
+            item && (
+              <animated.div style={style}>
+                <Auth.ResetPassword
+                  passwordErrorMessage={error ? error.message : undefined}
+                  strings={{
                     emailAddress: Strings.emailAddress,
                     yourEmailAddress: Strings.yourEmailAddress,
-                    sendResetPasswordInstructions: Strings.sendResetPasswordInstructions,
-                    goBackToSignIn: Strings.goBackToSignIn
-                }}
-                onPasswordUpdated={() => {
+                    sendResetPasswordInstructions:
+                      Strings.sendResetPasswordInstructions,
+                    goBackToSignIn: Strings.goBackToSignIn,
+                  }}
+                  onPasswordUpdated={() => {
                     WindowController.updateShowPasswordResetAlert(false);
                     WindowController.updateShowPasswordUpdatedAlert(true);
                     ResetPasswordController.updateAccessToken(undefined);
                     setError(null);
                     navigate(RoutePaths.User);
-                }}
-                onResetPasswordError={(error: ApiError) => setError(error)}
-                supabaseClient={AuthService.supabaseClient}
-                accessToken={props.accessToken}
-            />
-          </animated.div>
-        ))}
+                  }}
+                  onResetPasswordError={(error: ApiError) => setError(error)}
+                  supabaseClient={AuthService.supabaseClient}
+                  accessToken={props.accessToken}
+                />
+              </animated.div>
+            )
+        )}
       </div>
     </div>
-  ) : (<div/>);
+  ) : (
+    <div />
+  );
 }

@@ -3,13 +3,7 @@
 .root {
   display: flex;
   height: 100vh;
-  background: linear-gradient(
-      to left top,
-      #070b2e 0% /*bottom-right color*/,
-      #263297 100% /*top-left color*/
-    ),
-    linear-gradient(rgba(0, 0, 0, 1), rgba(0, 0, 0, 1))
-      /*"faked" black background make sure to add last or it will appear before the transparent/colored layer*/;
+  background: #151d5f;
   overflow: hidden;
 
   & .background {
@@ -48,10 +42,14 @@
           display: grid;
           grid-template-rows: 12fr 36fr 12fr;
 
-          & .logo {
+          & .logo-button {
             grid-row-start: 2;
             grid-row-end: 3;
-            height: 32px;
+
+            & .logo {
+              height: 32px;
+              width: 32px;
+            }
           }
         }
 

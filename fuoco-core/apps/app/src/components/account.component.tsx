@@ -18,7 +18,7 @@ import {
   Modal,
 } from '@fuoco.appdev/core-ui';
 import styles from './account.module.scss';
-import { Strings } from '../localization';
+import { Strings } from '../strings';
 import AccountController from '../controllers/account.controller';
 import { animated, useTransition, config } from 'react-spring';
 import { useObservable } from '@ngneat/use-observable';
@@ -283,7 +283,10 @@ export default function AccountComponent(): JSX.Element {
         className={styles['delete-modal']}
         visible={props.showDeleteModal}
         onCancel={() => AccountController.updateShowDeleteModal(false)}
-        onConfirm={() => console.log('delete')}
+        onConfirm={() => {
+          AccountController.deleteAsync();
+          navigate(RoutePaths.Signin);
+        }}
       ></Modal>
     </div>
   );

@@ -18,11 +18,11 @@ import {
 } from '@fuoco.appdev/core-ui';
 import React from 'react';
 import * as core from '../protobuf/core_pb';
-import { Strings } from '../localization';
+import { Strings } from '../strings';
 import { useObservable } from '@ngneat/use-observable';
 import BucketService from '../services/bucket.service';
 
-function updateCards(
+function UpdateCards(
   mesh: THREE.Mesh,
   camera: THREE.Camera,
   position: THREE.Vector3,
@@ -34,6 +34,13 @@ function updateCards(
     if (!ref) {
       return;
     }
+
+    if (!WorldController.model.isVisible) {
+      ref!.style.display = 'none';
+      return;
+    }
+
+    ref!.style.display = '';
 
     const phi = (coordinates.latitude * Math.PI) / 180;
     const theta = ((coordinates.longitude - 90) * Math.PI) / 180;
@@ -54,8 +61,7 @@ function updateCards(
     position.project(camera);
 
     // convert the normalized position to CSS coordinates
-    const x = (position.x * 0.5 + 0.5) * window.innerWidth;
-    const y = (position.y * -0.5 + 0.5) * window.innerHeight;
+    const { x, y } = WorldController.positionToCSSCoordinates(position);
 
     // move the elem to that position
     ref.style.transform = `translate(-50%, -100%) translate(${x}px,${y}px)`;
@@ -73,6 +79,35 @@ function updateCards(
     if (dot < 0.5) {
       ref.style.scale = '1';
     }
+  }
+}
+
+function UpdateGlow(
+  mesh: THREE.Mesh,
+  camera: THREE.Camera,
+  position: THREE.Vector3
+): void {
+  if (!WorldController.glowRef) {
+    return;
+  }
+
+  if (!WorldController.model.isVisible) {
+    WorldController.glowRef.current!.style.display = 'none';
+    return;
+  }
+
+  WorldController.glowRef.current!.style.display = '';
+  position.copy(mesh.position);
+  position.applyMatrix4(mesh.matrixWorld);
+  position.project(camera);
+
+  const { x, y } = WorldController.positionToCSSCoordinates(position);
+  WorldController.glowRef.current!.style.transform = `translate(-50%, -50%) translate(${x}px,${y}px)`;
+
+  if (WorldController.model.isError) {
+    WorldController.glowRef.current!.style.color = '#ff3333';
+  } else {
+    WorldController.glowRef.current!.style.color = '#4affff';
   }
 }
 
@@ -132,22 +167,13 @@ async function LoadWorldAsync(): Promise<void> {
   ambientLight.intensity = 1;
   scene.add(ambientLight);
 
-  const space = new THREE.BoxGeometry(200, 100, 50);
-  const spaceMaterial = new THREE.MeshStandardMaterial({
-    color: 0x151d65,
-    side: THREE.BackSide,
-  });
-  const spaceMesh = new THREE.Mesh(space, spaceMaterial);
-  scene.add(spaceMesh);
-
   const baseEarth = new THREE.SphereGeometry(
     WorldController.minDotRadius,
     50,
     50
   );
   const baseEarthMaterial = new THREE.MeshStandardMaterial({
-    color: 0x373593,
-    opacity: 0.9,
+    color: 0x070b2e,
   });
   baseEarthMaterial.transparent = true;
   const baseEarthMesh = new THREE.Mesh(baseEarth, baseEarthMaterial);
@@ -198,7 +224,7 @@ async function LoadWorldAsync(): Promise<void> {
   }
 
   const geometriesDots = BufferGeometryUtils.mergeBufferGeometries(dots);
-  const dotMaterial = new THREE.MeshStandardMaterial({ color: 0x4affff });
+  const dotMaterial = new THREE.MeshStandardMaterial({ color: 0x2480b4 });
   const dotMesh = new THREE.Mesh(geometriesDots, dotMaterial);
 
   const atmosphere = new THREE.SphereGeometry(
@@ -226,11 +252,13 @@ async function LoadWorldAsync(): Promise<void> {
   });
   const atmosphereMesh = new THREE.Mesh(atmosphere, atmosphereMaterial);
   const pivot = new THREE.Group();
-  pivot.position.setX(2);
   scene.add(pivot);
   pivot.add(baseEarthMesh);
   pivot.add(dotMesh);
   pivot.add(atmosphereMesh);
+  pivot.position.setX(2);
+  pivot.position.setY(0);
+  pivot.position.setZ(-0.5);
 
   camera.position.z = 5;
 
@@ -240,9 +268,7 @@ async function LoadWorldAsync(): Promise<void> {
   const animate = () => {
     requestAnimationFrame(animate);
 
-    if (!WorldController.model.isVisible) {
-      return;
-    }
+    renderer.setClearColor(0x000000, 0);
 
     if (!WorldController.pressed) {
       WorldController.globeRotation.y += 0.0005;
@@ -251,22 +277,24 @@ async function LoadWorldAsync(): Promise<void> {
 
     if (WorldController.model.isError) {
       dotMaterial.color.setHex(0xff3333);
-      baseEarthMaterial.color.setHex(0x151d65);
+      baseEarthMaterial.color.setHex(0x151d5f);
       atmosphereMaterial.uniforms['glowColor'].value = new THREE.Color(
         0xff3333
       );
     } else {
-      dotMaterial.color.setHex(0x4affff);
-      baseEarthMaterial.color.setHex(0x373593);
+      dotMaterial.color.setHex(0x2480b4);
+      baseEarthMaterial.color.setHex(0x151d5f);
       atmosphereMaterial.uniforms['glowColor'].value = new THREE.Color(
         0x4affff
       );
     }
 
+    pivot.visible = WorldController.model.isVisible;
     pivot.rotation.x = WorldController.globeRotation.x;
     pivot.rotation.y = WorldController.globeRotation.y;
 
-    updateCards(
+    UpdateGlow(baseEarthMesh, camera, position);
+    UpdateCards(
       baseEarthMesh,
       camera,
       position,
@@ -376,13 +404,13 @@ const WorldCardComponent = React.forwardRef(
   }
 );
 
-export interface WorldComponentProps {
-  isVisible?: boolean;
+export interface WorldProps {
+  isVisible: boolean;
 }
 
 export default function WorldComponent({
-  isVisible = true,
-}: WorldComponentProps): React.ReactElement {
+  isVisible,
+}: WorldProps): React.ReactElement {
   const location = useLocation();
   const [props] = useObservable(WorldController.model.store);
   const [cards, setCards] = useState<React.ReactElement[]>([]);
@@ -393,11 +421,7 @@ export default function WorldComponent({
   }, []);
 
   useEffect(() => {
-    WorldController.updateIsVisible(isVisible);
-  }, [isVisible]);
-
-  useEffect(() => {
-    const elements: React.ReactElement[] = [];
+    const cardElements: React.ReactElement[] = [];
     props.apps.map((value: core.App) => {
       // add an element for each country
       let avatarUrl: string | undefined;
@@ -415,7 +439,7 @@ export default function WorldComponent({
         );
       }
 
-      elements.push(
+      cardElements.push(
         <WorldCardComponent
           ref={(element) =>
             (WorldController.worldCards[value.id].ref = element)
@@ -429,12 +453,36 @@ export default function WorldComponent({
       );
     });
 
-    setCards(elements);
+    setCards(cardElements);
   }, [props]);
 
   return (
     <div className={isVisible ? styles['root'] : styles['root-none']}>
-      <div ref={WorldController.ref} />
+      <div className={styles['floating-orbs']}>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div className={styles['world-glow']} ref={WorldController.glowRef} />
+      <div className={styles['blur-container']} />
+      <div className={styles['world-container']} ref={WorldController.ref} />
       <div className={styles['card-container']}>{cards}</div>
     </div>
   );

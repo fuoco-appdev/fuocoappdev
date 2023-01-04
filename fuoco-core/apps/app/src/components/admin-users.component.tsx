@@ -12,7 +12,7 @@ import {
   IconArrowRight,
 } from '@fuoco.appdev/core-ui';
 import styles from './admin-users.module.scss';
-import { Strings } from '../localization';
+import { Strings } from '../strings';
 import { animated, useTransition, config } from 'react-spring';
 import { useObservable } from '@ngneat/use-observable';
 import AdminUsersController from '../controllers/admin-users.controller';

@@ -179,6 +179,17 @@ export class UserController {
       throw HttpError.createError(404, `User data not found`);
     }
 
+    const supabaseUser = await SupabaseService.client.auth.api.deleteUser(
+      paramsId,
+      SupabaseService.serviceRoleKey
+    );
+    if (supabaseUser.error) {
+      throw HttpError.createError(
+        supabaseUser.error.status,
+        supabaseUser.error.message
+      );
+    }
+
     const responseUser = UserService.assignAndGetUserProtocol(data);
     context.response.type = 'application/x-protobuf';
     context.response.body = responseUser.serializeBinary();

@@ -11,7 +11,7 @@ import {
   IconGlobe,
 } from '@fuoco.appdev/core-ui';
 import styles from './admin-account.module.scss';
-import { Strings } from '../localization';
+import { Strings } from '../strings';
 import { animated, useTransition, config } from 'react-spring';
 import { useObservable } from '@ngneat/use-observable';
 import AdminAccountController from '../controllers/admin-account.controller';

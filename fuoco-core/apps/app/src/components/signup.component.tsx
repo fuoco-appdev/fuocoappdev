@@ -9,7 +9,7 @@ import styles from './signup.module.scss';
 import AuthService from '../services/auth.service';
 import { RoutePaths } from '../route-paths';
 import { useObservable } from '@ngneat/use-observable';
-import { Strings } from '../localization';
+import { Strings } from '../strings';
 import { ApiError } from '@supabase/supabase-js';
 import { animated, config, useTransition } from 'react-spring';
 
@@ -58,6 +58,7 @@ function AuthComponent(): JSX.Element {
       onSignupError={(error: ApiError) => setError(error)}
       onEmailConfirmationSent={() => {
         WindowController.updateShowConfirmEmailAlert(true);
+        WorldController.updateIsError(false);
       }}
       redirectTo={RoutePaths.User}
     />

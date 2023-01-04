@@ -6,7 +6,7 @@ import {
   InputPhoneNumber,
 } from '@fuoco.appdev/core-ui';
 import styles from './get-started.module.scss';
-import { Strings } from '../localization';
+import { Strings } from '../strings';
 import { animated, useTransition, config } from 'react-spring';
 import { useObservable } from '@ngneat/use-observable';
 import GetStartedController from '../controllers/get-started.controller';
@@ -159,18 +159,24 @@ export default function GetStartedComponent(): JSX.Element {
             (style, item) =>
               item &&
               !showForm && (
-                <animated.div style={style}>
+                <animated.div
+                  style={style}
+                  className={styles['continue-content']}
+                >
                   <Typography.Title className={styles['request-title']}>
                     {Strings.thankyouForContacting}
                   </Typography.Title>
-                  <h3 className={styles['request-subtitle']}>
+                  <Typography.Text
+                    className={styles['request-subtitle']}
+                    align={'center'}
+                  >
                     {Strings.thankyouForContactingSubtitle}
-                  </h3>
+                  </Typography.Text>
                   <div>
                     <Button
-                      block
-                      size="large"
-                      htmlType="submit"
+                      className={styles['next-button']}
+                      size={'xlarge'}
+                      type="primary"
                       rippleProps={rippleProps}
                       onClick={() => navigate(RoutePaths.Account)}
                     >

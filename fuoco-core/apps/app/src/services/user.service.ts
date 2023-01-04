@@ -5,7 +5,7 @@ import * as core from '../protobuf/core_pb';
 import { BehaviorSubject, Observable } from 'rxjs';
 import AuthService from './auth.service';
 import axios, { AxiosError } from 'axios';
-import { Strings } from '../localization';
+import { Strings } from '../strings';
 
 class UserService extends Service {
   private readonly _activeUserBehaviorSubject: BehaviorSubject<core.User | null>;
@@ -144,7 +144,7 @@ class UserService extends Service {
 
   public async requestGettingStartedAsync(props: {
     company: string;
-    phone_number: string;
+    phoneNumber: string;
     comment: string;
   }): Promise<core.User> {
     const gettingStartedRequest = new core.GettingStartedRequest(props);
@@ -173,7 +173,7 @@ class UserService extends Service {
   public async requestUpdateActiveAsync(props: {
     company?: string;
     email?: string;
-    phone_number?: string;
+    phoneNumber?: string;
     location?: [number, number];
     language?: string;
     request_status?: core.UserRequestStatus;
@@ -192,7 +192,7 @@ class UserService extends Service {
     props: {
       company?: string;
       email?: string;
-      phone_number?: string;
+      phoneNumber?: string;
       location?: [number, number];
       language?: string;
       request_status?: core.UserRequestStatus;
@@ -201,8 +201,8 @@ class UserService extends Service {
     const user = new core.User({
       company: props.company ? props.company : this.activeUser?.company,
       email: props.email ? props.email : this.activeUser?.email,
-      phoneNumber: props.phone_number
-        ? props.phone_number
+      phoneNumber: props.phoneNumber
+        ? props.phoneNumber
         : this.activeUser?.phoneNumber,
       location: props.location
         ? new core.Location({
@@ -233,6 +233,16 @@ class UserService extends Service {
 
     const userResponse = core.User.fromBinary(arrayBuffer);
     return userResponse;
+  }
+
+  public async requestActiveDeleteAsync(): Promise<void> {
+    const supabaseUser = AuthService.supabaseClient.auth.user();
+    if (!supabaseUser) {
+      throw new Error('No authenticated user');
+    }
+
+    await this.requestDeleteAsync(supabaseUser.id);
+    this.clearActiveUser();
   }
 
   public async requestDeleteAsync(supabaseId: string): Promise<core.User> {

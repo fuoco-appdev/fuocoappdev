@@ -18,6 +18,7 @@ export interface WorldCardData {
 class WorldController extends Controller {
   private readonly _model: WorldModel;
   private readonly _ref: React.RefObject<HTMLDivElement>;
+  private readonly _glowRef: React.RefObject<HTMLDivElement>;
   private readonly _globeRotation: { x: number; y: number };
   private readonly _prevMousePosition: { x: number; y: number };
   private readonly _delta: { x: number; y: number };
@@ -33,6 +34,7 @@ class WorldController extends Controller {
 
     this._model = new WorldModel();
     this._ref = React.createRef();
+    this._glowRef = React.createRef();
     this._globeRotation = { x: 0, y: 0 };
     this._prevMousePosition = { x: 0, y: 0 };
     this._minDotRadius = 1.8;
@@ -57,6 +59,10 @@ class WorldController extends Controller {
 
   public get ref(): React.RefObject<HTMLDivElement> {
     return this._ref;
+  }
+
+  public get glowRef(): React.RefObject<HTMLDivElement> {
+    return this._glowRef;
   }
 
   public get worldCards(): Record<string, WorldCardData> {
@@ -170,6 +176,19 @@ class WorldController extends Controller {
     const x = (long + 180) * (mapWidth / 360);
     const y = mapHeight / 2 - (mapWidth * mercN) / (2 * Math.PI);
     return new THREE.Vector2(Math.floor(x), Math.floor(y));
+  }
+
+  public positionToCSSCoordinates(position: THREE.Vector3): {
+    x: number;
+    y: number;
+  } {
+    const x = (position.x * 0.5 + 0.5) * window.innerWidth;
+    const y = (position.y * -0.5 + 0.5) * window.innerHeight;
+    return { x, y };
+  }
+
+  public getRandom(min: number, max: number) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
   private onMouseMove(event: MouseEvent): void {

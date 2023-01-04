@@ -1,39 +1,119 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
 .root {
-  display: grid;
-  grid-template-columns: 132fr 561fr 747fr;
   height: 100%;
 
   & .content {
     display: flex;
-    grid-column-start: 2;
-    grid-column-end: 3;
     justify-content: center;
     flex-direction: column;
-    margin-bottom: 30%;
 
     & .text-container {
       display: flex;
       flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-top: 15vh;
 
-      & .title {
-        height: fit-content;
-        width: 80%;
-        -webkit-user-select: none; /* Safari */
-        -ms-user-select: none; /* IE 10 and IE 11 */
-        user-select: none; /* Standard syntax */
-        padding-bottom: 28px;
+      & .landing-title-container {
+        display: flex;
+        width: 100%;
+
+        & .title {
+          height: fit-content;
+          -webkit-user-select: none; /* Safari */
+          -ms-user-select: none; /* IE 10 and IE 11 */
+          user-select: none; /* Standard syntax */
+          padding-bottom: $mp-8;
+          font-size: 3.5vw;
+          font-weight: $font-weight-bold;
+          white-space: nowrap;
+          padding-left: 20vw;
+          max-width: 50%;
+          line-height: 4.5vw;
+
+          & .title-spacing {
+            margin-left: 6vw;
+          }
+        }
+
+        & .landing-sub-title-container {
+          display: flex;
+          justify-content: flex-end;
+          align-items: flex-end;
+          text-align: left;
+          width: 100%;
+
+          & .sub-title {
+            height: fit-content;
+            line-break: normal;
+            white-space: pre-line;
+            color: rgba(255, 255, 255, 0.7);
+            padding-bottom: $mp-8;
+            font-size: 0.7vw;
+            font-weight: $font-weight-bold;
+            line-height: 1.1vw;
+            padding-right: 20vw;
+            align-self: baseline;
+          }
+        }
       }
 
-      & .sub-title {
-        height: fit-content;
-        width: 55%;
-        line-break: normal;
-        white-space: pre-line;
-        color: rgba(255, 255, 255, 204);
-        padding-bottom: 16px;
-        font-size: $font-size-lg;
+      & .button-container {
+        margin: $mp-8 0;
+
+        & .button {
+          border-radius: $rounded-full;
+        }
+      }
+
+      & .service-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+        width: 100%;
+        padding: 0 20vw;
+        margin-top: $mp-8;
+
+        & .status-container {
+          background-color: rgba(7, 11, 46, 0.6);
+          padding: $mp-8;
+          border-radius: 28px;
+          max-width: 316px;
+          min-height: 354px;
+
+          & .status-top-content {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin-bottom: $mp-4;
+
+            & .status-title {
+              font-size: $font-size-lg;
+              font-weight: $font-weight-bold;
+              color: white;
+              line-height: 56px;
+            }
+
+            & .status-icon-container {
+              display: flex;
+              justify-content: center;
+              flex-direction: column;
+              align-items: center;
+              height: 56px;
+              width: 56px;
+              background-color: rgba(36, 128, 180, 0.5);
+              border-radius: $rounded-md;
+            }
+          }
+
+          & .status-description {
+            color: white;
+            line-break: normal;
+            white-space: pre-line;
+            text-align: left;
+          }
+        }
       }
     }
   }

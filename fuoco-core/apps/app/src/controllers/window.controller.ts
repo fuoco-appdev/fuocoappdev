@@ -69,7 +69,7 @@ class WindowController extends Controller {
         this._model.isSignoutVisible = false;
         this._model.isTabBarVisible = false;
         this._model.activeRoute = RoutePaths.Landing;
-        WorldController.updateIsVisible(true);
+        WorldController.updateIsVisible(false);
         break;
       case RoutePaths.Signin:
         this._model.isSigninVisible = false;
@@ -197,7 +197,7 @@ class WindowController extends Controller {
         this._model.isSignoutVisible = UserService.activeUser !== null;
         this._model.isTabBarVisible = false;
         this._model.activeRoute = RoutePaths.Default;
-        WorldController.updateIsVisible(true);
+        WorldController.updateIsVisible(false);
         break;
     }
   }

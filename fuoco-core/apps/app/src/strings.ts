@@ -5,9 +5,12 @@ export const Strings = new LocalizedStrings({
     locale: 'English',
     signin: 'Sign in',
     signup: 'Sign up',
-    callToAction: 'Are you looking to build an app?',
-    subCallToAction:
-      'Experience business to the leading-edge. Sign up to start your analysis.',
+    landingTitle1: 'TRANSFORM IDEAS',
+    landingTitle2: 'INTO',
+    landingTitle3: 'POWERFUL APPLICATIONS',
+    landingDescription: `We create intuitive user experiences and superior 
+      application solutions that empower clients to reach new levels 
+      of success.`,
     status: 'Status',
     development: 'Development',
     emailConfirmation: 'Email confirmation',
@@ -95,5 +98,17 @@ export const Strings = new LocalizedStrings({
     statusTypes: 'User Stories,Design,Development,Release',
     deleteApp: 'Delete this app?',
     deleteAppDescription: 'All data will be destroyed.',
+    webDesign: 'Web Design',
+    webDesignDescription: `We create intuitive user experiences and superior 
+    application solutions that empower clients to reach new levels 
+    of success.`,
+    appDevelopment: 'App Development',
+    appDevelopmentDescription: `We create intuitive user experiences and superior 
+    application solutions that empower clients to reach new levels 
+    of success.`,
+    logoAndBranding: 'Logo & Branding',
+    logoAndBrandingDescription: `We create intuitive user experiences and superior 
+    application solutions that empower clients to reach new levels 
+    of success.`,
   },
 });

@@ -24,7 +24,7 @@ import {
 } from '@fuoco.appdev/core-ui';
 import { useEffect, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { Strings } from '../localization';
+import { Strings } from '../strings';
 import styles from './app-card.module.scss';
 import { AppStatus, Link } from '../protobuf/core_pb';
 
