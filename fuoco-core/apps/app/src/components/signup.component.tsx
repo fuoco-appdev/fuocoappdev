@@ -12,10 +12,73 @@ import { useObservable } from '@ngneat/use-observable';
 import { Strings } from '../strings';
 import { ApiError } from '@supabase/supabase-js';
 import { animated, config, useTransition } from 'react-spring';
+import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+
+function SignupDesktopComponent({ children }: any): JSX.Element {
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    setShow(true);
+
+    return () => {
+      setShow(false);
+    };
+  }, []);
+
+  const transitions = useTransition(show, {
+    from: { opacity: 0, y: 5 },
+    enter: { opacity: 1, y: 0 },
+    leave: { opacity: 0, y: 5 },
+    config: config.gentle,
+  });
+
+  return (
+    <div className={[styles['root'], styles['root-desktop']].join(' ')}>
+      <div className={[styles['content'], styles['content-desktop']].join(' ')}>
+        {transitions(
+          (style, item) =>
+            item && <animated.div style={style}>{children}</animated.div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function SignupMobileComponent({ children }: any): JSX.Element {
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    setShow(true);
+
+    return () => {
+      setShow(false);
+    };
+  }, []);
+
+  const transitions = useTransition(show, {
+    from: { opacity: 0, y: 5 },
+    enter: { opacity: 1, y: 0 },
+    leave: { opacity: 0, y: 5 },
+    config: config.gentle,
+  });
+
+  return (
+    <div className={[styles['root'], styles['root-mobile']].join(' ')}>
+      <div className={[styles['content'], styles['content-mobile']].join(' ')}>
+        {transitions(
+          (style, item) =>
+            item && <animated.div style={style}>{children}</animated.div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export interface SignupProps {}
 
-function AuthComponent(): JSX.Element {
+export default function SignupComponent(): JSX.Element {
+  const location = useLocation();
+  SignupController.model.location = location;
   const navigate = useNavigate();
   const [error, setError] = useState<ApiError | null>(null);
 
@@ -23,7 +86,7 @@ function AuthComponent(): JSX.Element {
     WorldController.updateIsError(error !== null);
   }, [error]);
 
-  return (
+  const auth = (
     <Auth
       providers={[
         'spotify',
@@ -63,40 +126,15 @@ function AuthComponent(): JSX.Element {
       redirectTo={RoutePaths.User}
     />
   );
-}
-
-export default function SignupComponent(): JSX.Element {
-  const location = useLocation();
-  const [show, setShow] = useState(false);
-  SignupController.model.location = location;
-
-  useEffect(() => {
-    setShow(true);
-
-    return () => {
-      setShow(false);
-    };
-  }, []);
-
-  const transitions = useTransition(show, {
-    from: { opacity: 0, y: 5 },
-    enter: { opacity: 1, y: 0 },
-    leave: { opacity: 0, y: 5 },
-    config: config.gentle,
-  });
 
   return (
-    <div className={styles['root']}>
-      <div className={styles['content']}>
-        {transitions(
-          (style, item) =>
-            item && (
-              <animated.div style={style}>
-                <AuthComponent />
-              </animated.div>
-            )
-        )}
-      </div>
-    </div>
+    <>
+      <ResponsiveDesktop>
+        <SignupDesktopComponent>{auth}</SignupDesktopComponent>
+      </ResponsiveDesktop>
+      <ResponsiveMobile>
+        <SignupMobileComponent>{auth}</SignupMobileComponent>
+      </ResponsiveMobile>
+    </>
   );
 }

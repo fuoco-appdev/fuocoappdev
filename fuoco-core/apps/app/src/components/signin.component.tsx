@@ -2,7 +2,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Auth } from '@fuoco.appdev/core-ui';
 import SigninController from '../controllers/signin.controller';
-import WindowController from '../controllers/window.controller';
 import styles from './signin.module.scss';
 import AuthService from '../services/auth.service';
 import { RoutePaths } from '../route-paths';
@@ -11,10 +10,73 @@ import { Strings } from '../strings';
 import { useState, useEffect } from 'react';
 import { animated, config, useTransition } from 'react-spring';
 import WorldController from '../controllers/world.controller';
+import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+
+function SigninDesktopComponent({ children }: any): JSX.Element {
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    setShow(true);
+
+    return () => {
+      setShow(false);
+    };
+  }, []);
+
+  const transitions = useTransition(show, {
+    from: { opacity: 0, y: 5 },
+    enter: { opacity: 1, y: 0 },
+    leave: { opacity: 0, y: 5 },
+    config: config.gentle,
+  });
+
+  return (
+    <div className={[styles['root'], styles['root-desktop']].join(' ')}>
+      <div className={[styles['content'], styles['content-desktop']].join(' ')}>
+        {transitions(
+          (style, item) =>
+            item && <animated.div style={style}>{children}</animated.div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function SigninMobileComponent({ children }: any): JSX.Element {
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    setShow(true);
+
+    return () => {
+      setShow(false);
+    };
+  }, []);
+
+  const transitions = useTransition(show, {
+    from: { opacity: 0, y: 5 },
+    enter: { opacity: 1, y: 0 },
+    leave: { opacity: 0, y: 5 },
+    config: config.gentle,
+  });
+
+  return (
+    <div className={[styles['root'], styles['root-mobile']].join(' ')}>
+      <div className={[styles['content'], styles['content-mobile']].join(' ')}>
+        {transitions(
+          (style, item) =>
+            item && <animated.div style={style}>{children}</animated.div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export interface SigninProps {}
 
-function AuthComponent(): JSX.Element {
+export default function SigninComponent(): JSX.Element {
+  const location = useLocation();
+  SigninController.model.location = location;
   const navigate = useNavigate();
   const [error, setError] = useState<ApiError | null>(null);
 
@@ -22,7 +84,7 @@ function AuthComponent(): JSX.Element {
     WorldController.updateIsError(error !== null);
   }, [error]);
 
-  return (
+  const auth = (
     <Auth
       providers={[
         'spotify',
@@ -57,40 +119,14 @@ function AuthComponent(): JSX.Element {
       redirectTo={RoutePaths.User}
     />
   );
-}
-
-export default function SigninComponent(): JSX.Element {
-  const location = useLocation();
-  const [show, setShow] = useState(false);
-  SigninController.model.location = location;
-
-  useEffect(() => {
-    setShow(true);
-
-    return () => {
-      setShow(false);
-    };
-  }, []);
-
-  const transitions = useTransition(show, {
-    from: { opacity: 0, y: 5 },
-    enter: { opacity: 1, y: 0 },
-    leave: { opacity: 0, y: 5 },
-    config: config.gentle,
-  });
-
   return (
-    <div className={styles['root']}>
-      <div className={styles['content']}>
-        {transitions(
-          (style, item) =>
-            item && (
-              <animated.div style={style}>
-                <AuthComponent />
-              </animated.div>
-            )
-        )}
-      </div>
-    </div>
+    <>
+      <ResponsiveDesktop>
+        <SigninDesktopComponent>{auth}</SigninDesktopComponent>
+      </ResponsiveDesktop>
+      <ResponsiveMobile>
+        <SigninMobileComponent>{auth}</SigninMobileComponent>
+      </ResponsiveMobile>
+    </>
   );
 }
