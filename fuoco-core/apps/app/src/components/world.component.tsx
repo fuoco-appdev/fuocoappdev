@@ -1,6 +1,4 @@
-import WorldController, {
-  WorldCardData,
-} from '../controllers/world.controller';
+import WorldController from '../controllers/world.controller';
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils';
 import styles from './world.module.scss';
@@ -125,6 +123,10 @@ async function LoadWorldAsync(): Promise<void> {
   renderer.setSize(window.innerWidth, window.innerHeight);
 
   function onWindowResize() {
+    if (!WorldController.worldResizable) {
+      return;
+    }
+
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
 
@@ -256,9 +258,6 @@ async function LoadWorldAsync(): Promise<void> {
   pivot.add(baseEarthMesh);
   pivot.add(dotMesh);
   pivot.add(atmosphereMesh);
-  pivot.position.setX(2);
-  pivot.position.setY(0);
-  pivot.position.setZ(-0.5);
 
   camera.position.z = 5;
 
@@ -288,6 +287,10 @@ async function LoadWorldAsync(): Promise<void> {
         0x4affff
       );
     }
+
+    pivot.position.setX(WorldController.worldPosition.x);
+    pivot.position.setY(WorldController.worldPosition.y);
+    pivot.position.setZ(WorldController.worldPosition.z);
 
     pivot.visible = WorldController.model.isVisible;
     pivot.rotation.x = WorldController.globeRotation.x;
@@ -333,7 +336,6 @@ const WorldCardComponent = React.forwardRef(
     const [coverImageElements, setCoverImageElements] = useState<
       React.ReactElement[]
     >([]);
-    const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
     useEffect(() => {
       const elements: React.ReactElement[] = [];
@@ -406,10 +408,18 @@ const WorldCardComponent = React.forwardRef(
 
 export interface WorldProps {
   isVisible: boolean;
+  minWorldPosition: { x: number; y: number; z: number };
+  maxWorldPosition: { x: number; y: number; z: number };
+  worldPosition: { x: number; y: number; z: number };
+  worldResizable?: boolean;
 }
 
 export default function WorldComponent({
   isVisible,
+  minWorldPosition,
+  maxWorldPosition,
+  worldPosition,
+  worldResizable = true,
 }: WorldProps): React.ReactElement {
   const location = useLocation();
   const [props] = useObservable(WorldController.model.store);
@@ -418,7 +428,18 @@ export default function WorldComponent({
 
   useEffect(() => {
     LoadWorldAsync();
+    WorldController.minWorldPosition = minWorldPosition;
+    WorldController.maxWorldPosition = maxWorldPosition;
+    WorldController.worldPosition = worldPosition;
   }, []);
+
+  useEffect(() => {
+    WorldController.worldPosition = worldPosition;
+  }, [worldPosition]);
+
+  useEffect(() => {
+    WorldController.worldResizable = worldResizable;
+  }, [worldResizable]);
 
   useEffect(() => {
     const cardElements: React.ReactElement[] = [];
@@ -457,7 +478,7 @@ export default function WorldComponent({
   }, [props]);
 
   return (
-    <div className={isVisible ? styles['root'] : styles['root-none']}>
+    <div className={styles['root']}>
       <div className={styles['floating-orbs']}>
         <span></span>
         <span></span>
@@ -480,10 +501,24 @@ export default function WorldComponent({
         <span></span>
         <span></span>
       </div>
-      <div className={styles['world-glow']} ref={WorldController.glowRef} />
+      <div
+        className={isVisible ? styles['world-glow'] : styles['world-glow-none']}
+        ref={WorldController.glowRef}
+      />
       <div className={styles['blur-container']} />
-      <div className={styles['world-container']} ref={WorldController.ref} />
-      <div className={styles['card-container']}>{cards}</div>
+      <div
+        className={
+          isVisible ? styles['world-container'] : styles['world-container-none']
+        }
+        ref={WorldController.ref}
+      />
+      <div
+        className={
+          isVisible ? styles['card-container'] : styles['card-container-none']
+        }
+      >
+        {cards}
+      </div>
     </div>
   );
 }

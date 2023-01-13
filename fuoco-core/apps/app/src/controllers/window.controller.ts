@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import React from 'react';
 import { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import { Subscription } from 'rxjs';
 import { Controller } from '../controller';
@@ -13,12 +14,14 @@ import * as core from '../protobuf/core_pb';
 
 class WindowController extends Controller {
   private readonly _model: WindowModel;
+  private _scrollRef: HTMLDivElement | null;
   private _userSubscription: Subscription | undefined;
 
   constructor() {
     super();
 
     this._model = new WindowModel();
+    this._scrollRef = null;
 
     this.onAuthStateChanged = this.onAuthStateChanged.bind(this);
 
@@ -27,6 +30,16 @@ class WindowController extends Controller {
 
   public get model(): WindowModel {
     return this._model;
+  }
+
+  public get scrollRef(): HTMLDivElement | null {
+    return this._scrollRef;
+  }
+
+  public set scrollRef(value: HTMLDivElement | null) {
+    if (this._scrollRef !== value) {
+      this._scrollRef = value;
+    }
   }
 
   public initialize(): void {
@@ -69,7 +82,6 @@ class WindowController extends Controller {
         this._model.isSignoutVisible = false;
         this._model.isTabBarVisible = false;
         this._model.activeRoute = RoutePaths.Landing;
-        WorldController.updateIsVisible(false);
         break;
       case RoutePaths.Signin:
         this._model.isSigninVisible = false;
@@ -77,7 +89,6 @@ class WindowController extends Controller {
         this._model.isSignoutVisible = false;
         this._model.isTabBarVisible = false;
         this._model.activeRoute = RoutePaths.Signin;
-        WorldController.updateIsVisible(true);
         break;
       case RoutePaths.Signup:
         this._model.isSigninVisible = true;
@@ -85,7 +96,6 @@ class WindowController extends Controller {
         this._model.isSignoutVisible = false;
         this._model.isTabBarVisible = false;
         this._model.activeRoute = RoutePaths.Signup;
-        WorldController.updateIsVisible(true);
         break;
       case RoutePaths.ForgotPassword:
         this._model.isSigninVisible = false;
@@ -93,7 +103,6 @@ class WindowController extends Controller {
         this._model.isSignoutVisible = false;
         this._model.isTabBarVisible = false;
         this._model.activeRoute = RoutePaths.ForgotPassword;
-        WorldController.updateIsVisible(true);
         break;
       case RoutePaths.ResetPassword:
         this._model.isSigninVisible = false;
@@ -101,7 +110,6 @@ class WindowController extends Controller {
         this._model.isSignoutVisible = UserService.activeUser !== null;
         this._model.isTabBarVisible = false;
         this._model.activeRoute = RoutePaths.ResetPassword;
-        WorldController.updateIsVisible(true);
         break;
       case RoutePaths.TermsOfService:
         this._model.isSigninVisible = false;
@@ -109,7 +117,6 @@ class WindowController extends Controller {
         this._model.isSignoutVisible = false;
         this._model.isTabBarVisible = false;
         this._model.activeRoute = RoutePaths.TermsOfService;
-        WorldController.updateIsVisible(true);
         break;
       case RoutePaths.PrivacyPolicy:
         this._model.isSigninVisible = false;
@@ -117,7 +124,6 @@ class WindowController extends Controller {
         this._model.isSignoutVisible = false;
         this._model.isTabBarVisible = false;
         this._model.activeRoute = RoutePaths.PrivacyPolicy;
-        WorldController.updateIsVisible(true);
         break;
       case RoutePaths.User:
         this._model.isSignoutVisible = true;
@@ -125,7 +131,6 @@ class WindowController extends Controller {
         this._model.isSignupVisible = false;
         this._model.isTabBarVisible = true;
         this._model.activeRoute = RoutePaths.User;
-        WorldController.updateIsVisible(false);
         break;
       case RoutePaths.GetStarted:
         this._model.isSignoutVisible = true;
@@ -133,7 +138,6 @@ class WindowController extends Controller {
         this._model.isSignupVisible = false;
         this._model.isTabBarVisible = false;
         this._model.activeRoute = RoutePaths.GetStarted;
-        WorldController.updateIsVisible(true);
         break;
       case RoutePaths.Account:
         this._model.isSignoutVisible = true;
@@ -141,7 +145,6 @@ class WindowController extends Controller {
         this._model.isSignupVisible = false;
         this._model.isTabBarVisible = true;
         this._model.activeRoute = RoutePaths.Account;
-        WorldController.updateIsVisible(false);
         break;
       case RoutePaths.Apps:
         this._model.isSignoutVisible = true;
@@ -149,7 +152,6 @@ class WindowController extends Controller {
         this._model.isSignupVisible = false;
         this._model.isTabBarVisible = true;
         this._model.activeRoute = RoutePaths.Apps;
-        WorldController.updateIsVisible(false);
         break;
       case RoutePaths.Billing:
         this._model.isSignoutVisible = true;
@@ -157,7 +159,6 @@ class WindowController extends Controller {
         this._model.isSignupVisible = false;
         this._model.isTabBarVisible = true;
         this._model.activeRoute = RoutePaths.Billing;
-        WorldController.updateIsVisible(false);
         break;
       case RoutePaths.Admin:
         this._model.isSignoutVisible = true;
@@ -165,7 +166,6 @@ class WindowController extends Controller {
         this._model.isSignupVisible = false;
         this._model.isTabBarVisible = true;
         this._model.activeRoute = RoutePaths.Admin;
-        WorldController.updateIsVisible(false);
         break;
       case RoutePaths.AdminAccount:
         this._model.isSignoutVisible = true;
@@ -173,7 +173,6 @@ class WindowController extends Controller {
         this._model.isSignupVisible = false;
         this._model.isTabBarVisible = true;
         this._model.activeRoute = RoutePaths.AdminAccount;
-        WorldController.updateIsVisible(false);
         break;
       case RoutePaths.AdminUsers:
         this._model.isSignoutVisible = true;
@@ -181,7 +180,6 @@ class WindowController extends Controller {
         this._model.isSignupVisible = false;
         this._model.isTabBarVisible = true;
         this._model.activeRoute = RoutePaths.AdminUsers;
-        WorldController.updateIsVisible(false);
         break;
       case RoutePaths.AdminApps:
         this._model.isSignoutVisible = true;
@@ -189,7 +187,6 @@ class WindowController extends Controller {
         this._model.isSignupVisible = false;
         this._model.isTabBarVisible = true;
         this._model.activeRoute = RoutePaths.AdminApps;
-        WorldController.updateIsVisible(false);
         break;
       default:
         this._model.isSigninVisible = UserService.activeUser === null;
@@ -197,7 +194,6 @@ class WindowController extends Controller {
         this._model.isSignoutVisible = UserService.activeUser !== null;
         this._model.isTabBarVisible = false;
         this._model.activeRoute = RoutePaths.Default;
-        WorldController.updateIsVisible(false);
         break;
     }
   }

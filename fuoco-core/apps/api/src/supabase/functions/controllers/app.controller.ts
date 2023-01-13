@@ -71,6 +71,27 @@ export class AppController {
     context.response.body = apps.serializeBinary();
   }
 
+  @Post('/all/:id')
+  @Guard(AuthGuard)
+  @ContentType('application/x-protobuf')
+  public async getAllUserAppsAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >
+  ): Promise<void> {
+    const paramsId = context.params['id'];
+    const data = await AppService.findAllFromUserAsync(paramsId);
+    if (!data) {
+      throw HttpError.createError(404, `No apps were found`);
+    }
+
+    const apps = AppService.assignAndGetAppsProtocol(data);
+    context.response.type = 'application/x-protobuf';
+    context.response.body = apps.serializeBinary();
+  }
+
   @Post('/update/:id')
   @Guard(AuthGuard)
   @ContentType('application/x-protobuf')

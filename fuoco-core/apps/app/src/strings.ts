@@ -99,16 +99,15 @@ export const Strings = new LocalizedStrings({
     deleteApp: 'Delete this app?',
     deleteAppDescription: 'All data will be destroyed.',
     webDesign: 'Web Design',
-    webDesignDescription: `We create intuitive user experiences and superior 
-    application solutions that empower clients to reach new levels 
-    of success.`,
+    webDesignDescription: `Our web design service specializes in creating beautiful, user-friendly web apps that help businesses reach their goals. We will work with you to create a unique design that reflects your brand and engages your target audience. With our responsive design approach, your web app will look great on any device.`,
     appDevelopment: 'App Development',
-    appDevelopmentDescription: `We create intuitive user experiences and superior 
-    application solutions that empower clients to reach new levels 
-    of success.`,
+    appDevelopmentDescription: `Whether you need a web application, a mobile app, or a hybrid app, we can help you create a custom solution that will provide the best user experience. Our services also include ongoing maintenance and support to ensure that applications are performing optimally. We pride ourselves on being able to turn complex application ideas into reality.`,
     logoAndBranding: 'Logo & Branding',
-    logoAndBrandingDescription: `We create intuitive user experiences and superior 
-    application solutions that empower clients to reach new levels 
-    of success.`,
+    logoAndBrandingDescription: `We provide professional logo and branding services to help your business stand out. We will work with you to create a unique and memorable logo and branding identity that will be used in your marketing materials and app. With our help, your brand will stand out in the marketplace and build relationships with your customers.`,
+    myApps: 'My Apps',
+    requestApp: 'Request App',
+    emptyInMyApps: 'Empty in my apps',
+    emptyInMyAppsDescription: `After we discuss your goals, your app will show up
+    here.`,
   },
 });

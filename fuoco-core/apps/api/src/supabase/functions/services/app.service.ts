@@ -113,6 +113,22 @@ export class AppService {
     return data;
   }
 
+  public async findAllFromUserAsync(
+    userId: string
+  ): Promise<AppProps[] | null> {
+    const { data, error } = await SupabaseService.client
+      .from('apps')
+      .select()
+      .match({ user_id: userId });
+
+    if (error) {
+      console.error(error);
+      return null;
+    }
+
+    return data;
+  }
+
   public async findAllPublicAsync(): Promise<AppProps[] | null> {
     const { data, error } = await SupabaseService.client
       .from('apps')

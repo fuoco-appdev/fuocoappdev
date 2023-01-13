@@ -39,9 +39,10 @@ export interface AppCardData {
 interface AppCardProps {
   id: string;
   name?: string;
-  companyIndex?: number;
+  company?: string;
   status?: string;
   links?: { id: string; name: string; url: string }[];
+  editMode?: boolean;
   companyOptions?: OptionProps[];
   profilePicture?: string;
   coverImages?: string[];
@@ -88,8 +89,9 @@ function AppCardEditLink() {
 export default function AppCardComponent({
   id,
   name = '',
-  companyIndex = 0,
+  company = '',
   links = [],
+  editMode = false,
   companyOptions = [],
   profilePicture,
   coverImages,
@@ -113,11 +115,8 @@ export default function AppCardComponent({
     useState<{ id: string; name: string; url: string }[]>(links);
   const [editExpand, setEditExpand] = useState<boolean>(false);
   const [draftName, setDraftName] = useState<string>(name);
-  const [draftCompanyIndex, setDraftCompanyIndex] =
-    useState<number>(companyIndex);
-  const [draftCompany, setDraftCompany] = useState<string>(
-    companyOptions[companyIndex]?.value ?? ''
-  );
+  const [draftCompany, setDraftCompany] = useState<string>(company);
+
   const [draftProgressType, setDraftProgressType] =
     useState<AppStatus>(progressType);
 
@@ -244,19 +243,21 @@ export default function AppCardComponent({
                         {Strings.requestUpdate}
                       </span>
                     </Button>
-                    <Button
-                      type={'text'}
-                      size={'tiny'}
-                      onClick={() => {
-                        setEditExpand(!editExpand);
-                      }}
-                      icon={
-                        <IconChevronRight
-                          strokeWidth={2}
-                          className={editExpandIconClasses.join(' ')}
-                        />
-                      }
-                    />
+                    {editMode && (
+                      <Button
+                        type={'text'}
+                        size={'tiny'}
+                        onClick={() => {
+                          setEditExpand(!editExpand);
+                        }}
+                        icon={
+                          <IconChevronRight
+                            strokeWidth={2}
+                            className={editExpandIconClasses.join(' ')}
+                          />
+                        }
+                      />
+                    )}
                   </div>
                   <div className={styles['edit-cover-container']}>
                     <input
@@ -317,118 +318,128 @@ export default function AppCardComponent({
                 })}
             </div>
           </div>
-          <div className={editExpandClasses.join(' ')}>
-            <div className={styles['edit-public-top-bar']}>
-              <div className={styles['edit-public-top-bar-title-container']}>
-                <IconEdit2 strokeWidth={2} stroke={'#000'} />
-                <Typography.Text
-                  strong={true}
-                  className={styles['edit-public-top-bar-title']}
-                >
-                  {Strings.edit}
-                </Typography.Text>
+          {editMode && (
+            <div className={editExpandClasses.join(' ')}>
+              <div className={styles['edit-public-top-bar']}>
+                <div className={styles['edit-public-top-bar-title-container']}>
+                  <IconEdit2 strokeWidth={2} stroke={'#000'} />
+                  <Typography.Text
+                    strong={true}
+                    className={styles['edit-public-top-bar-title']}
+                  >
+                    {Strings.edit}
+                  </Typography.Text>
+                </div>
+                <div className={styles['edit-public-top-bar-button-container']}>
+                  <Button
+                    danger={true}
+                    size={'tiny'}
+                    onClick={() => onDeleteClicked?.(id)}
+                    icon={<IconTrash2 strokeWidth={2} />}
+                  >
+                    <span className={styles['button-text']}>
+                      {Strings.delete}
+                    </span>
+                  </Button>
+                  <Button
+                    type={'default'}
+                    size={'tiny'}
+                    onClick={() => {
+                      const companyIndex = companyOptions.findIndex(
+                        (value) => value.value === draftCompany
+                      );
+                      onSaveClicked?.(id, {
+                        name: draftName,
+                        company: draftCompany,
+                        userId: companyOptions[companyIndex]?.id ?? '',
+                        status: draftProgressType,
+                        links: draftLinks,
+                      });
+                    }}
+                    icon={<IconSave strokeWidth={2} stroke={'#000'} />}
+                  >
+                    <span className={styles['button-text']}>
+                      {Strings.save}
+                    </span>
+                  </Button>
+                </div>
               </div>
-              <div className={styles['edit-public-top-bar-button-container']}>
-                <Button
-                  danger={true}
-                  size={'tiny'}
-                  onClick={() => onDeleteClicked?.(id)}
-                  icon={<IconTrash2 strokeWidth={2} />}
+              <div className={styles['edit-public-content']}>
+                <Input
+                  classNames={{
+                    root: styles['edit-input-root'],
+                    container: styles['edit-input-container'],
+                    input: styles['edit-input'],
+                    formLayout: {
+                      label: styles['edit-formlayout-label'],
+                    },
+                  }}
+                  label={Strings.appName}
+                  value={draftName}
+                  onChange={(event) => setDraftName(event.currentTarget.value)}
+                />
+                <Listbox
+                  classNames={{
+                    listbox: styles['edit-listbox'],
+                    formLayout: {
+                      root: styles['edit-listbox-formlayout-root'],
+                      label: styles['edit-formlayout-label'],
+                    },
+                    chevron: styles['edit-icon'],
+                    label: styles['edit-listbox-label'],
+                  }}
+                  label={Strings.status}
+                  defaultIndex={progressType}
+                  options={statusOptionProps}
+                  onChange={(index: number, id: string, value: string) => {
+                    setDraftProgressType(index);
+                  }}
+                />
+                <Listbox
+                  classNames={{
+                    listbox: styles['edit-listbox'],
+                    formLayout: {
+                      root: styles['edit-listbox-formlayout-root'],
+                      label: styles['edit-formlayout-label'],
+                    },
+                    chevron: styles['edit-icon'],
+                    label: styles['edit-listbox-label'],
+                  }}
+                  defaultIndex={companyOptions.findIndex(
+                    (value) => value.value === draftCompany
+                  )}
+                  label={Strings.company}
+                  options={companyOptions}
+                  onChange={(index: number, id: string, value: string) => {
+                    setDraftCompany(value);
+                  }}
+                />
+              </div>
+              <Divider />
+              <div className={styles['edit-private-top-bar']}>
+                <div
+                  className={styles['edit-private-top-bar-button-container']}
                 >
-                  <span className={styles['button-text']}>
-                    {Strings.delete}
-                  </span>
-                </Button>
-                <Button
-                  type={'default'}
-                  size={'tiny'}
-                  onClick={() =>
-                    onSaveClicked?.(id, {
-                      name: draftName,
-                      company: draftCompany,
-                      userId: companyOptions[draftCompanyIndex]?.id ?? '',
-                      status: draftProgressType,
-                      links: draftLinks,
-                    })
-                  }
-                  icon={<IconSave strokeWidth={2} stroke={'#000'} />}
-                >
-                  <span className={styles['button-text']}>{Strings.save}</span>
-                </Button>
+                  <Button
+                    type={'default'}
+                    size={'tiny'}
+                    onClick={onAddEditLink}
+                    icon={<IconPlus strokeWidth={2} stroke={'#000'} />}
+                  >
+                    <span className={styles['button-text']}>
+                      {Strings.addLink}
+                    </span>
+                  </Button>
+                </div>
+              </div>
+              <div className={styles['edit-private-content']}>
+                <DraggableList
+                  items={editLinkItems}
+                  onChanged={onEditLinksChanged}
+                />
               </div>
             </div>
-            <div className={styles['edit-public-content']}>
-              <Input
-                classNames={{
-                  root: styles['edit-input-root'],
-                  container: styles['edit-input-container'],
-                  input: styles['edit-input'],
-                  formLayout: {
-                    label: styles['edit-formlayout-label'],
-                  },
-                }}
-                label={Strings.appName}
-                value={draftName}
-                onChange={(event) => setDraftName(event.currentTarget.value)}
-              />
-              <Listbox
-                classNames={{
-                  listbox: styles['edit-listbox'],
-                  formLayout: {
-                    root: styles['edit-listbox-formlayout-root'],
-                    label: styles['edit-formlayout-label'],
-                  },
-                  chevron: styles['edit-icon'],
-                  label: styles['edit-listbox-label'],
-                }}
-                label={Strings.status}
-                defaultIndex={progressType}
-                options={statusOptionProps}
-                onChange={(index: number, id: string, value: string) => {
-                  setDraftProgressType(index);
-                }}
-              />
-              <Listbox
-                classNames={{
-                  listbox: styles['edit-listbox'],
-                  formLayout: {
-                    root: styles['edit-listbox-formlayout-root'],
-                    label: styles['edit-formlayout-label'],
-                  },
-                  chevron: styles['edit-icon'],
-                  label: styles['edit-listbox-label'],
-                }}
-                defaultIndex={companyIndex}
-                label={Strings.company}
-                options={companyOptions}
-                onChange={(index: number, id: string, value: string) => {
-                  setDraftCompany(value);
-                  setDraftCompanyIndex(index);
-                }}
-              />
-            </div>
-            <Divider />
-            <div className={styles['edit-private-top-bar']}>
-              <div className={styles['edit-private-top-bar-button-container']}>
-                <Button
-                  type={'default'}
-                  size={'tiny'}
-                  onClick={onAddEditLink}
-                  icon={<IconPlus strokeWidth={2} stroke={'#000'} />}
-                >
-                  <span className={styles['button-text']}>
-                    {Strings.addLink}
-                  </span>
-                </Button>
-              </div>
-            </div>
-            <div className={styles['edit-private-content']}>
-              <DraggableList
-                items={editLinkItems}
-                onChanged={onEditLinksChanged}
-              />
-            </div>
-          </div>
+          )}
         </div>
         {selectedCoverImages && (
           <CropImage

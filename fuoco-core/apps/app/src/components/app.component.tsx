@@ -15,6 +15,7 @@ import AccountController from '../controllers/account.controller';
 import AdminAccountController from '../controllers/admin-account.controller';
 import AdminUsersController from '../controllers/admin-users.controller';
 import AdminAppsController from '../controllers/admin-apps.controller';
+import AppsController from '../controllers/apps.controller';
 import UserController from '../controllers/user.controller';
 import WindowComponent from './window.component';
 import LandingComponent from './landing.component';
@@ -99,6 +100,7 @@ export default function AppComponent(): JSX.Element {
     AdminAccountController.initialize();
     AdminUsersController.initialize();
     AdminAppsController.initialize();
+    AppsController.initialize();
     window.addEventListener('beforeunload', unloadCallback);
 
     return () => {
@@ -115,6 +117,7 @@ export default function AppComponent(): JSX.Element {
       AdminAccountController.dispose();
       AdminUsersController.dispose();
       AdminAppsController.dispose();
+      AppsController.dispose();
       LoadingController.dispose();
       window.removeEventListener('beforeunload', unloadCallback);
     };

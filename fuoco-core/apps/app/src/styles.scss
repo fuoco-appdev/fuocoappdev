@@ -1,6 +1,10 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 @import 'https://fonts.googleapis.com/css?family=Noto Sans';
 
+:root {
+  scroll-behavior: smooth;
+}
+
 body {
   --brand-100: #c5ffff;
   --brand-200: #abffff;

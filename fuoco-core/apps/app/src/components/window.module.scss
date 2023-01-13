@@ -29,6 +29,8 @@
       display: grid;
       grid-template-columns: 16fr 1408fr 16fr;
       width: 100%;
+      background-color: transparent;
+      z-index: 24;
 
       & .top-bar-content {
         display: flex;
@@ -66,6 +68,10 @@
       }
     }
 
+    & .top-bar-mobile {
+      background-color: $brand-900 !important;
+    }
+
     & .container {
       display: flex;
       flex-direction: row;
@@ -93,6 +99,7 @@
 
       & .children {
         overflow-y: auto;
+        overflow-x: hidden;
         height: 100%;
         width: 100%;
       }

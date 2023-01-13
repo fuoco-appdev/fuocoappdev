@@ -77,6 +77,29 @@ class AppsService extends Service {
     return deserializedResponse.apps;
   }
 
+  public async requestAllFromUserAsync(userId: string): Promise<core.App[]> {
+    const response = await axios({
+      method: 'post',
+      url: `${this.endpointUrl}/app/all/${userId}`,
+      headers: {
+        ...this.headers,
+        'Session-Token': `${
+          AuthService.supabaseClient.auth.session()?.access_token
+        }`,
+      },
+      data: '',
+      responseType: 'arraybuffer',
+    });
+
+    const arrayBuffer = new Uint8Array(response.data);
+    this.assertResponse(arrayBuffer);
+
+    const deserializedResponse = core.Apps.fromBinary(arrayBuffer);
+    this._userAppsBehaviorSubject.next(deserializedResponse.apps);
+
+    return deserializedResponse.apps;
+  }
+
   public async requestCreateAsync(): Promise<core.App> {
     const supabaseUser = AuthService.supabaseClient.auth.user();
     if (!supabaseUser) {

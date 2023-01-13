@@ -67,10 +67,9 @@ export default function AdminAppsComponent(): JSX.Element {
       appCards.push(
         <AppCardComponent
           id={value.id}
+          editMode={true}
           profilePicture={avatarUrl}
-          companyIndex={companyOptions.findIndex(
-            (option) => option.id === value.userId
-          )}
+          company={value.company}
           name={value.name}
           progressType={value.status}
           companyOptions={companyOptions}

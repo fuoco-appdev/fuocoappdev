@@ -27,6 +27,10 @@ class WorldController extends Controller {
   private readonly _worldCards: Record<string, WorldCardData>;
   private _tween: TWEEN.Tween<{ x: number; y: number }> | undefined;
   private _pressed: boolean;
+  private _worldResizable: boolean;
+  private _minWorldPosition: { x: number; y: number; z: number };
+  private _maxWorldPosition: { x: number; y: number; z: number };
+  private _worldPosition: { x: number; y: number; z: number };
   private _publicAppsSubscription: Subscription | undefined;
 
   constructor() {
@@ -40,6 +44,10 @@ class WorldController extends Controller {
     this._minDotRadius = 1.8;
     this._maxDotRadius = 3;
     this._pressed = false;
+    this._worldResizable = true;
+    this._minWorldPosition = { x: 2, y: 0, z: -0.5 };
+    this._maxWorldPosition = { x: 2, y: 0, z: -0.5 };
+    this._worldPosition = { x: 2, y: 0, z: -0.5 };
     this._delta = { x: 0, y: 0 };
     this._worldCards = {};
 
@@ -85,6 +93,46 @@ class WorldController extends Controller {
     return this._maxDotRadius;
   }
 
+  public get minWorldPosition(): { x: number; y: number; z: number } {
+    return this._minWorldPosition;
+  }
+
+  public set minWorldPosition(value: { x: number; y: number; z: number }) {
+    if (this._minWorldPosition !== value) {
+      this._minWorldPosition = value;
+    }
+  }
+
+  public get maxWorldPosition(): { x: number; y: number; z: number } {
+    return this._maxWorldPosition;
+  }
+
+  public set maxWorldPosition(value: { x: number; y: number; z: number }) {
+    if (this._maxWorldPosition !== value) {
+      this._maxWorldPosition = value;
+    }
+  }
+
+  public get worldPosition(): { x: number; y: number; z: number } {
+    return this._worldPosition;
+  }
+
+  public set worldPosition(value: { x: number; y: number; z: number }) {
+    if (this._worldPosition !== value) {
+      this._worldPosition = value;
+    }
+  }
+
+  public get worldResizable(): boolean {
+    return this._worldResizable;
+  }
+
+  public set worldResizable(value: boolean) {
+    if (this._worldResizable !== value) {
+      this._worldResizable = value;
+    }
+  }
+
   public initialize(): void {
     AppService.requestAllPublicAsync();
 
@@ -103,6 +151,19 @@ class WorldController extends Controller {
 
   public updateIsError(isError: boolean): void {
     this._model.isError = isError;
+  }
+
+  public animateLeave(increment: number, progress: number): void {
+    this._worldPosition.y = Math.max(
+      Math.min(this._worldPosition.y + increment, this._minWorldPosition.y),
+      this._maxWorldPosition.y
+    );
+
+    if (parseFloat(progress.toFixed(2)) === 0.0) {
+      this._worldPosition.y = this._maxWorldPosition.y;
+    } else if (parseFloat(progress.toFixed(2)) === 1.0) {
+      this._worldPosition.y = this._minWorldPosition.y;
+    }
   }
 
   public async loadImageAsync(
