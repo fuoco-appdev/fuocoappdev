@@ -97,6 +97,21 @@
         }
       }
 
+      & .bottom-bar-content-mobile {
+        position: absolute;
+        display: flex;
+        flex-direction: row;
+        background-color: $brand-900;
+        z-index: 24;
+        width: 100%;
+        height: 56px;
+        bottom: 0;
+
+        & .bottom-bar-button-mobile {
+          padding: $mp-4;
+        }
+      }
+
       & .children {
         overflow-y: auto;
         overflow-x: hidden;

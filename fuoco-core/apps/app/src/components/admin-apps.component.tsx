@@ -118,7 +118,9 @@ export default function AdminAppsComponent(): JSX.Element {
                   </Typography.Title>
                   <div className={styles['header-button-container']}>
                     <Button
-                      className={styles['header-button']}
+                      classNames={{
+                        container: styles['header-button'],
+                      }}
                       type={'primary'}
                       size={'tiny'}
                       icon={<IconPlus strokeWidth={2} />}

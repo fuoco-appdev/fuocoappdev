@@ -1,20 +1,66 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
-.root {
-  overflow: visible;
-
-  & .animated-content {
+.root-desktop {
+  & .animated-content-desktop {
     display: grid;
     padding-top: 8vh;
     margin-left: 2.5%;
     margin-right: 2.5%;
     grid-template-columns: 16fr 1408fr 16fr;
 
+    & .content-desktop {
+      grid-column-start: 2;
+      grid-column-end: 3;
+
+      & .header-bar-desktop {
+        & .apps-title-desktop {
+        }
+
+        & .header-button-container-desktop {
+        }
+      }
+
+      & .apps-container-desktop {
+        & .empty-list-container-desktop {
+          height: 60vh;
+        }
+      }
+    }
+  }
+}
+
+.root-mobile {
+  & .animated-content-mobile {
+    & .content-mobile {
+      padding: 0 $mp-4;
+      padding-top: calc(56px + 16px);
+      padding-bottom: calc(56px + 16px);
+
+      & .header-bar-mobile {
+        & .apps-title-mobile {
+          font-size: 20pt;
+        }
+
+        & .header-button-container-mobile {
+        }
+      }
+
+      & .apps-container-mobile {
+        & .empty-list-container-mobile {
+          height: 60vh;
+        }
+      }
+    }
+  }
+}
+
+.root {
+  overflow: visible;
+
+  & .animated-content {
     & .content {
       display: flex;
       flex-direction: column;
-      grid-column-start: 2;
-      grid-column-end: 3;
 
       & .header-bar {
         display: flex;
@@ -53,7 +99,6 @@
           align-items: center;
           text-align: center;
           width: 100%;
-          height: 60vh;
 
           & .empty-list {
             display: flex;

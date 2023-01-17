@@ -22,20 +22,6 @@ import UserService from '../services/user.service';
 import * as core from '../protobuf/core_pb';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 
-function SigninButtonComponent(): JSX.Element {
-  const navigate = useNavigate();
-  return (
-    <Button
-      className={styles['navbarButton']}
-      size="tiny"
-      type="text"
-      onClick={() => navigate(RoutePaths.Signin)}
-    >
-      {Strings.signin}
-    </Button>
-  );
-}
-
 function SignupButtonComponent(): JSX.Element {
   const navigate = useNavigate();
   return (
@@ -89,11 +75,14 @@ function WindowDesktopComponent(): JSX.Element {
         <div className={styles['top-bar']}>
           <div className={styles['top-bar-content']}>
             <div className={styles['logo-container']}>
-              {!windowProps.isAuthenticated && !windowProps.isTabBarVisible && (
+              {!windowProps.isTabBarVisible && (
                 <Button
-                  className={styles['logo-button']}
+                  classNames={{
+                    container: styles['logo-button'],
+                  }}
                   type={'text'}
                   onClick={() => navigate(RoutePaths.Landing)}
+                  disabled={windowProps.isAuthenticated}
                   icon={
                     <img
                       className={styles['logo']}
@@ -101,12 +90,21 @@ function WindowDesktopComponent(): JSX.Element {
                       alt="logo"
                     />
                   }
-                ></Button>
+                />
               )}
             </div>
             <div className={styles['navbar-content-right']}>
               <div className={styles['navbar-content-right-grid']}>
-                {windowProps.isSigninVisible ? <SigninButtonComponent /> : null}
+                {windowProps.isSigninVisible ? (
+                  <Button
+                    className={styles['navbarButton']}
+                    size="tiny"
+                    type="text"
+                    onClick={() => navigate(RoutePaths.Signin)}
+                  >
+                    {Strings.signin}
+                  </Button>
+                ) : null}
                 {windowProps.isSignupVisible ? <SignupButtonComponent /> : null}
                 {windowProps.isAuthenticated && windowProps.isSignoutVisible ? (
                   <SignoutButtonComponent />
@@ -201,24 +199,36 @@ function WindowMobileComponent(): JSX.Element {
         >
           <div className={styles['top-bar-content']}>
             <div className={styles['logo-container']}>
-              {!windowProps.isAuthenticated && !windowProps.isTabBarVisible && (
-                <Button
-                  className={styles['logo-button']}
-                  type={'text'}
-                  onClick={() => navigate(RoutePaths.Landing)}
-                  icon={
-                    <img
-                      className={styles['logo']}
-                      src="../assets/svg/logo.svg"
-                      alt="logo"
-                    />
-                  }
-                ></Button>
-              )}
+              <Button
+                classNames={{
+                  container: styles['logo-button'],
+                }}
+                touchScreen={true}
+                disabled={windowProps.isAuthenticated}
+                type={'text'}
+                onClick={() => navigate(RoutePaths.Landing)}
+                icon={
+                  <img
+                    className={styles['logo']}
+                    src="../assets/svg/logo.svg"
+                    alt="logo"
+                  />
+                }
+              ></Button>
             </div>
             <div className={styles['navbar-content-right']}>
               <div className={styles['navbar-content-right-grid']}>
-                {windowProps.isSigninVisible ? <SigninButtonComponent /> : null}
+                {windowProps.isSigninVisible ? (
+                  <Button
+                    touchScreen={true}
+                    className={styles['navbarButton']}
+                    size="tiny"
+                    type="text"
+                    onClick={() => navigate(RoutePaths.Signin)}
+                  >
+                    {Strings.signin}
+                  </Button>
+                ) : null}
                 {windowProps.isSignupVisible ? <SignupButtonComponent /> : null}
                 {windowProps.isAuthenticated && windowProps.isSignoutVisible ? (
                   <SignoutButtonComponent />
@@ -229,31 +239,58 @@ function WindowMobileComponent(): JSX.Element {
         </div>
         <div className={styles['container']}>
           {windowProps.isAuthenticated && windowProps.isTabBarVisible && (
-            <div className={styles['navbar-content']}>
-              <img
-                className={styles['logo']}
-                src="../assets/svg/logo.svg"
-                alt="logo"
-              />
+            <div className={styles['bottom-bar-content-mobile']}>
               {user?.role === core.UserRole.USER && (
-                <Tabs
-                  direction={'vertical'}
-                  type={'underlined'}
-                  activeId={windowProps.activeRoute}
-                  onChange={(id: string) => navigate(id)}
-                  tabs={[
-                    {
-                      id: RoutePaths.Account,
-                      icon: <IconUser strokeWidth={2} />,
-                    },
-                    {
-                      id: RoutePaths.Apps,
-                      icon: <IconSmartphone strokeWidth={2} />,
-                    },
-                  ]}
-                />
+                <>
+                  <Button
+                    classNames={{
+                      button: styles['bottom-bar-button-mobile'],
+                    }}
+                    block={true}
+                    touchScreen={true}
+                    size={'full'}
+                    icon={
+                      <IconUser
+                        strokeWidth={2}
+                        stroke={
+                          windowProps.activeRoute === RoutePaths.Account
+                            ? '#65ffff'
+                            : '#fff'
+                        }
+                      />
+                    }
+                    onClick={() => navigate(RoutePaths.User)}
+                    type={'text'}
+                    rippleProps={{
+                      color: '#65ffff',
+                    }}
+                  />
+                  <Button
+                    classNames={{
+                      button: styles['bottom-bar-button-mobile'],
+                    }}
+                    block={true}
+                    touchScreen={true}
+                    size={'full'}
+                    icon={
+                      <IconSmartphone
+                        strokeWidth={2}
+                        stroke={
+                          windowProps.activeRoute === RoutePaths.Apps
+                            ? '#65ffff'
+                            : '#fff'
+                        }
+                      />
+                    }
+                    onClick={() => navigate(RoutePaths.Apps)}
+                    type={'text'}
+                    rippleProps={{
+                      color: '#65ffff',
+                    }}
+                  />
+                </>
               )}
-              {user?.role === core.UserRole.ADMIN && (
+              {/* {user?.role === core.UserRole.ADMIN && (
                 <Tabs
                   direction={'vertical'}
                   type={'underlined'}
@@ -274,7 +311,7 @@ function WindowMobileComponent(): JSX.Element {
                     },
                   ]}
                 />
-              )}
+              )} */}
             </div>
           )}
           <div ref={scrollRef} className={styles['children']}>

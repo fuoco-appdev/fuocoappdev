@@ -81,7 +81,9 @@ function LandingDesktopComponent(): JSX.Element {
         ].join(' ')}
       >
         <Button
-          className={styles['button']}
+          classNames={{
+            container: styles['button'],
+          }}
           size={'xlarge'}
           type="primary"
           onClick={() => navigate(RoutePaths.Signup)}
@@ -166,7 +168,9 @@ function LandingMobileComponent(): JSX.Element {
             ].join(' ')}
           >
             <Button
-              className={styles['button']}
+              classNames={{
+                container: styles['button'],
+              }}
               size={'xlarge'}
               type="primary"
               onClick={() => navigate(RoutePaths.Signup)}
