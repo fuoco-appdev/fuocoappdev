@@ -1,5 +1,95 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
+.root-desktop {
+  & .card-content-desktop {
+    min-width: 383px;
+
+    & .display-container-desktop {
+      width: 383px;
+
+      & .display-content-desktop {
+        & .cover-image-container-desktop {
+          min-height: calc((383px / 3) * 2);
+
+          & .cover-content-container-desktop {
+            & .request-update-container-desktop {
+            }
+
+            & .edit-cover-container-desktop {
+            }
+          }
+
+          & .app-content-desktop {
+            & .app-info-desktop {
+              & .app-name-container-desktop {
+                & .app-name-desktop {
+                }
+
+                & .company-name-desktop {
+                }
+              }
+
+              & .status-container-desktop {
+                & .status-desktop {
+                }
+              }
+            }
+          }
+        }
+      }
+
+      & .progress-container-desktop {
+      }
+    }
+  }
+}
+
+.root-mobile {
+  width: 100% !important;
+
+  & .card-content-mobile {
+    min-width: 100%;
+
+    & .display-container-mobile {
+      width: 100%;
+
+      & .display-content-mobile {
+        & .cover-image-container-mobile {
+          min-height: calc(((100vw - ($mp-4 * 2)) / 3) * 2);
+
+          & .cover-content-container-mobile {
+            & .request-update-container-mobile {
+            }
+
+            & .edit-cover-container-mobile {
+            }
+          }
+
+          & .app-content-mobile {
+            & .app-info-mobile {
+              & .app-name-container-mobile {
+                & .app-name-mobile {
+                }
+
+                & .company-name-mobile {
+                }
+              }
+
+              & .status-container-mobile {
+                & .status-mobile {
+                }
+              }
+            }
+          }
+        }
+      }
+
+      & .progress-container-mobile {
+      }
+    }
+  }
+}
+
 .root {
   height: 'fit-content';
   transition-timing-function: $transition-standard-easing;
@@ -8,13 +98,11 @@
   & .card-content {
     display: flex;
     flex-direction: row;
-    min-width: 383px;
 
     & .display-container {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      width: 383px;
 
       & .display-content {
         & .cover-image-container {
@@ -22,7 +110,6 @@
           border-top-left-radius: $rounded-md;
           border-top-right-radius: $rounded-md;
           background-color: $gray-300;
-          min-height: calc((383px / 3) * 2);
           user-select: none;
           overflow: hidden;
 

@@ -147,7 +147,10 @@ function AccountDesktopComponent({
                 >
                   <Input
                     classNames={{
-                      root: styles['info-input'],
+                      root: [
+                        styles['info-input'],
+                        styles['info-input-desktop'],
+                      ].join(' '),
                     }}
                     label={Strings.company}
                     icon={
