@@ -9,6 +9,7 @@ export interface WorldState {
   apps: App[];
   users: User[];
   location?: Location;
+  opacity?: number;
 }
 
 export class WorldModel extends Model {
@@ -22,6 +23,7 @@ export class WorldModel extends Model {
           apps: [],
           users: [],
           isError: false,
+          opacity: 1,
         })
       )
     );
@@ -74,6 +76,16 @@ export class WorldModel extends Model {
   public set location(location: Location) {
     if (this.location !== location) {
       this.store.update((state) => ({ ...state, location: location }));
+    }
+  }
+
+  public get opacity(): number {
+    return this.store.getValue().opacity;
+  }
+
+  public set opacity(value: number) {
+    if (this.opacity !== value) {
+      this.store.update((state) => ({ ...state, opacity: value }));
     }
   }
 }

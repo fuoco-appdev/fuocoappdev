@@ -22,36 +22,6 @@ import UserService from '../services/user.service';
 import * as core from '../protobuf/core_pb';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 
-function SignupButtonComponent(): JSX.Element {
-  const navigate = useNavigate();
-  return (
-    <Button
-      className={styles['navbarButton']}
-      size="tiny"
-      type="text"
-      onClick={() => navigate(RoutePaths.Signup)}
-    >
-      {Strings.signup}
-    </Button>
-  );
-}
-
-function SignoutButtonComponent(): JSX.Element {
-  const navigate = useNavigate();
-  return (
-    <Button
-      className={styles['navbarButton']}
-      icon={<IconLogOut strokeWidth={2} />}
-      size="tiny"
-      type="text"
-      onClick={async () => {
-        await AuthService.signoutAsync();
-        navigate(RoutePaths.Signin);
-      }}
-    />
-  );
-}
-
 function WindowDesktopComponent(): JSX.Element {
   const user = UserService.activeUser;
   const navigate = useNavigate();
@@ -66,8 +36,6 @@ function WindowDesktopComponent(): JSX.Element {
             windowProps.activeRoute !== RoutePaths.Landing &&
             windowProps.activeRoute !== RoutePaths.Default
           }
-          minWorldPosition={{ x: 2, y: 0, z: -0.5 }}
-          maxWorldPosition={{ x: 2, y: 0, z: -0.5 }}
           worldPosition={{ x: 2, y: 0, z: -0.5 }}
         />
       </div>
@@ -95,7 +63,7 @@ function WindowDesktopComponent(): JSX.Element {
             </div>
             <div className={styles['navbar-content-right']}>
               <div className={styles['navbar-content-right-grid']}>
-                {windowProps.isSigninVisible ? (
+                {windowProps.isSigninVisible && (
                   <Button
                     className={styles['navbarButton']}
                     size="tiny"
@@ -104,11 +72,29 @@ function WindowDesktopComponent(): JSX.Element {
                   >
                     {Strings.signin}
                   </Button>
-                ) : null}
-                {windowProps.isSignupVisible ? <SignupButtonComponent /> : null}
-                {windowProps.isAuthenticated && windowProps.isSignoutVisible ? (
-                  <SignoutButtonComponent />
-                ) : null}
+                )}
+                {windowProps.isSignupVisible && (
+                  <Button
+                    className={styles['navbarButton']}
+                    size="tiny"
+                    type="text"
+                    onClick={() => navigate(RoutePaths.Signup)}
+                  >
+                    {Strings.signup}
+                  </Button>
+                )}
+                {windowProps.isAuthenticated && windowProps.isSignoutVisible && (
+                  <Button
+                    className={styles['navbarButton']}
+                    icon={<IconLogOut strokeWidth={2} />}
+                    size="tiny"
+                    type="text"
+                    onClick={async () => {
+                      await AuthService.signoutAsync();
+                      navigate(RoutePaths.Signin);
+                    }}
+                  />
+                )}
               </div>
             </div>
           </div>
@@ -163,7 +149,11 @@ function WindowDesktopComponent(): JSX.Element {
               )}
             </div>
           )}
-          <div className={styles['children']}>
+          <div
+            className={[styles['children'], styles['children-desktop']].join(
+              ' '
+            )}
+          >
             <Outlet />
           </div>
         </div>
@@ -188,8 +178,6 @@ function WindowMobileComponent(): JSX.Element {
         <WorldComponent
           isVisible={windowProps.activeRoute === RoutePaths.Landing}
           worldResizable={false}
-          minWorldPosition={{ x: 0, y: 6, z: 0 }}
-          maxWorldPosition={{ x: 0, y: -3.5, z: 0 }}
           worldPosition={{ x: 0, y: -3.5, z: 0 }}
         />
       </div>
@@ -218,21 +206,54 @@ function WindowMobileComponent(): JSX.Element {
             </div>
             <div className={styles['navbar-content-right']}>
               <div className={styles['navbar-content-right-grid']}>
-                {windowProps.isSigninVisible ? (
+                {windowProps.isSigninVisible && (
                   <Button
                     touchScreen={true}
                     className={styles['navbarButton']}
                     size="tiny"
                     type="text"
-                    onClick={() => navigate(RoutePaths.Signin)}
+                    rippleProps={{
+                      color: 'rgba(255, 255, 255, 0.35)',
+                    }}
+                    onClick={() =>
+                      setTimeout(() => navigate(RoutePaths.Signin), 100)
+                    }
                   >
                     {Strings.signin}
                   </Button>
-                ) : null}
-                {windowProps.isSignupVisible ? <SignupButtonComponent /> : null}
-                {windowProps.isAuthenticated && windowProps.isSignoutVisible ? (
-                  <SignoutButtonComponent />
-                ) : null}
+                )}
+                {windowProps.isSignupVisible && (
+                  <Button
+                    touchScreen={true}
+                    className={styles['navbarButton']}
+                    size="tiny"
+                    type="text"
+                    rippleProps={{
+                      color: 'rgba(255, 255, 255, 0.35)',
+                    }}
+                    onClick={() =>
+                      setTimeout(() => navigate(RoutePaths.Signup), 100)
+                    }
+                  >
+                    {Strings.signup}
+                  </Button>
+                )}
+                {windowProps.isAuthenticated && windowProps.isSignoutVisible && (
+                  <Button
+                    touchScreen={true}
+                    className={styles['navbarButton']}
+                    icon={<IconLogOut strokeWidth={2} />}
+                    size="tiny"
+                    type="text"
+                    rippleProps={{
+                      color: 'rgba(255, 255, 255, 0.35)',
+                    }}
+                    onClick={async () => {
+                      await AuthService.signoutAsync();
+                      navigate(RoutePaths.Signin);
+                    }}
+                  />
+                )}
               </div>
             </div>
           </div>
@@ -314,7 +335,12 @@ function WindowMobileComponent(): JSX.Element {
               )} */}
             </div>
           )}
-          <div ref={scrollRef} className={styles['children']}>
+          <div
+            ref={scrollRef}
+            className={[styles['children'], styles['children-mobile']].join(
+              ' '
+            )}
+          >
             <Outlet />
           </div>
         </div>

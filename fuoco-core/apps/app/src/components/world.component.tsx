@@ -85,7 +85,7 @@ function UpdateGlow(
   camera: THREE.Camera,
   position: THREE.Vector3
 ): void {
-  if (!WorldController.glowRef) {
+  if (!WorldController.glowRef.current) {
     return;
   }
 
@@ -408,16 +408,12 @@ const WorldCardComponent = React.forwardRef(
 
 export interface WorldProps {
   isVisible: boolean;
-  minWorldPosition: { x: number; y: number; z: number };
-  maxWorldPosition: { x: number; y: number; z: number };
   worldPosition: { x: number; y: number; z: number };
   worldResizable?: boolean;
 }
 
 export default function WorldComponent({
   isVisible,
-  minWorldPosition,
-  maxWorldPosition,
   worldPosition,
   worldResizable = true,
 }: WorldProps): React.ReactElement {
@@ -427,10 +423,9 @@ export default function WorldComponent({
   WorldController.model.location = location;
 
   useEffect(() => {
-    LoadWorldAsync();
-    WorldController.minWorldPosition = minWorldPosition;
-    WorldController.maxWorldPosition = maxWorldPosition;
     WorldController.worldPosition = worldPosition;
+
+    LoadWorldAsync();
   }, []);
 
   useEffect(() => {
@@ -504,18 +499,21 @@ export default function WorldComponent({
       <div
         className={isVisible ? styles['world-glow'] : styles['world-glow-none']}
         ref={WorldController.glowRef}
+        style={{ opacity: props.opacity }}
       />
-      <div className={styles['blur-container']} />
+      {/* <div className={styles['blur-container']} /> */}
       <div
         className={
           isVisible ? styles['world-container'] : styles['world-container-none']
         }
         ref={WorldController.ref}
+        style={{ opacity: props.opacity }}
       />
       <div
         className={
           isVisible ? styles['card-container'] : styles['card-container-none']
         }
+        style={{ opacity: props.opacity }}
       >
         {cards}
       </div>

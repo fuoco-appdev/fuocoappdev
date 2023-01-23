@@ -28,8 +28,6 @@ class WorldController extends Controller {
   private _tween: TWEEN.Tween<{ x: number; y: number }> | undefined;
   private _pressed: boolean;
   private _worldResizable: boolean;
-  private _minWorldPosition: { x: number; y: number; z: number };
-  private _maxWorldPosition: { x: number; y: number; z: number };
   private _worldPosition: { x: number; y: number; z: number };
   private _publicAppsSubscription: Subscription | undefined;
 
@@ -45,8 +43,6 @@ class WorldController extends Controller {
     this._maxDotRadius = 3;
     this._pressed = false;
     this._worldResizable = true;
-    this._minWorldPosition = { x: 2, y: 0, z: -0.5 };
-    this._maxWorldPosition = { x: 2, y: 0, z: -0.5 };
     this._worldPosition = { x: 2, y: 0, z: -0.5 };
     this._delta = { x: 0, y: 0 };
     this._worldCards = {};
@@ -93,26 +89,6 @@ class WorldController extends Controller {
     return this._maxDotRadius;
   }
 
-  public get minWorldPosition(): { x: number; y: number; z: number } {
-    return this._minWorldPosition;
-  }
-
-  public set minWorldPosition(value: { x: number; y: number; z: number }) {
-    if (this._minWorldPosition !== value) {
-      this._minWorldPosition = value;
-    }
-  }
-
-  public get maxWorldPosition(): { x: number; y: number; z: number } {
-    return this._maxWorldPosition;
-  }
-
-  public set maxWorldPosition(value: { x: number; y: number; z: number }) {
-    if (this._maxWorldPosition !== value) {
-      this._maxWorldPosition = value;
-    }
-  }
-
   public get worldPosition(): { x: number; y: number; z: number } {
     return this._worldPosition;
   }
@@ -153,16 +129,13 @@ class WorldController extends Controller {
     this._model.isError = isError;
   }
 
-  public animateLeave(increment: number, progress: number): void {
-    this._worldPosition.y = Math.max(
-      Math.min(this._worldPosition.y + increment, this._minWorldPosition.y),
-      this._maxWorldPosition.y
-    );
+  public fade(progress: number): void {
+    this._model.opacity = 1.0 - progress;
 
     if (parseFloat(progress.toFixed(2)) === 0.0) {
-      this._worldPosition.y = this._maxWorldPosition.y;
+      this._model.opacity = 1.0;
     } else if (parseFloat(progress.toFixed(2)) === 1.0) {
-      this._worldPosition.y = this._minWorldPosition.y;
+      this._model.opacity = 0.0;
     }
   }
 

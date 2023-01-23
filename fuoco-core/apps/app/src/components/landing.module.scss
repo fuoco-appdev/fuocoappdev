@@ -1,27 +1,138 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
-.root {
+.root-desktop {
   height: 100%;
 
-  & .content {
+  & .content-desktop {
     display: flex;
     justify-content: center;
     flex-direction: column;
 
-    & .animation-container {
+    & .animation-container-desktop {
       display: flex;
+      justify-content: center;
       flex-direction: column;
       align-items: center;
-      text-align: center;
 
+      & .landing-title-container-desktop {
+        margin-top: 15vh;
+
+        & .title-desktop {
+          font-size: 3.5vw;
+          white-space: nowrap;
+          padding-left: 20vw;
+          max-width: 50%;
+          line-height: 4.5vw;
+          text-align: center;
+
+          & .title-spacing-desktop {
+            margin-left: 6vw;
+          }
+        }
+
+        & .landing-sub-title-container-desktop {
+          & .sub-title-desktop {
+            font-size: 0.7vw;
+            line-height: 1.1vw;
+            padding-right: 20vw;
+          }
+        }
+      }
+    }
+
+    & .button-container-desktop {
+      margin: $mp-8 0;
+    }
+
+    & .service-list-desktop {
+      padding: 0 20vw;
+    }
+  }
+}
+
+.service-container-desktop {
+  max-width: 316px;
+  min-height: 354px;
+
+  & .service-top-content-desktop {
+    & .service-title-desktop {
+    }
+
+    & .service-icon-container-desktop {
+    }
+
+    & .service-description-desktop {
+    }
+  }
+}
+
+.root-mobile {
+  & .content-mobile {
+    & .animation-container-mobile {
+      & .landing-title-container-mobile {
+        display: flex;
+        margin-top: 10vh;
+        padding: $mp-4;
+        flex-direction: column;
+
+        & .title-mobile {
+          overflow-wrap: break-word;
+          font-size: 18pt;
+          line-height: 40pt;
+
+          & .title-spacing-mobile {
+          }
+        }
+
+        & .sub-title-mobile {
+          overflow-wrap: break-word;
+          font-size: 12pt;
+          line-height: 20pt;
+          color: rgba(255, 255, 255, 0.7);
+          font-weight: 500;
+          padding-bottom: $mp-8;
+        }
+      }
+    }
+
+    & .button-container-mobile {
+      margin: $mp-4 0;
+    }
+
+    & .service-list-mobile {
+      margin-bottom: $mp-8;
+    }
+  }
+}
+
+.service-container-mobile {
+  margin: 0 $mp-2;
+  min-height: 354px;
+
+  & .service-top-content-mobile {
+    & .service-title-mobile {
+    }
+
+    & .service-icon-container-mobile {
+    }
+
+    & .service-description-mobile {
+    }
+  }
+}
+
+.root {
+  & .content {
+    & .animation-container {
       & .text-container {
-        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
       }
 
       & .landing-title-container {
-        position: relative;
         display: flex;
-        width: 100%;
 
         & .title {
           height: fit-content;
@@ -32,22 +143,7 @@
           font-weight: $font-weight-bold;
 
           & .title-spacing {
-            margin-left: 6vw;
           }
-        }
-
-        & .title-desktop {
-          font-size: 3.5vw;
-          white-space: nowrap;
-          padding-left: 20vw;
-          max-width: 50%;
-          line-height: 4.5vw;
-        }
-
-        & .title-mobile {
-          overflow-wrap: break-word;
-          font-size: 18pt;
-          line-height: 40pt;
         }
 
         & .landing-sub-title-container {
@@ -66,32 +162,7 @@
             font-weight: 500;
             align-self: baseline;
           }
-
-          & .sub-title-desktop {
-            font-size: 0.7vw;
-            line-height: 1.1vw;
-            padding-right: 20vw;
-          }
         }
-
-        & .sub-title-mobile {
-          overflow-wrap: break-word;
-          font-size: 12pt;
-          line-height: 20pt;
-          color: rgba(255, 255, 255, 0.7);
-          font-weight: 500;
-          padding-bottom: $mp-8;
-        }
-      }
-
-      & .landing-title-container-desktop {
-        margin-top: 15vh;
-      }
-
-      & .landing-title-container-mobile {
-        margin-top: 10vh;
-        padding: $mp-4;
-        flex-direction: column;
       }
 
       & .button-container {
@@ -100,26 +171,10 @@
         }
       }
 
-      & .button-container-desktop {
-        margin: $mp-8 0;
-      }
-
-      & .button-container-mobile {
-        margin: $mp-4 0;
-      }
-
       & .world-container {
         overflow: hidden;
         height: 50vh;
         width: 100vw;
-      }
-
-      & .service-list-desktop {
-        padding: 0 20vw;
-      }
-
-      & .service-list-mobile {
-        margin-bottom: $mp-8;
       }
 
       & .service-list {
@@ -134,8 +189,6 @@
           background-color: rgba(7, 11, 46, 0.6);
           padding: $mp-8;
           border-radius: 28px;
-          max-width: 316px;
-          min-height: 354px;
 
           & .service-top-content {
             display: flex;

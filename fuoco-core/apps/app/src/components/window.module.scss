@@ -25,12 +25,12 @@
     z-index: 1;
 
     & .top-bar {
-      position: absolute;
+      position: fixed;
       display: grid;
       grid-template-columns: 16fr 1408fr 16fr;
       width: 100%;
       background-color: transparent;
-      z-index: 24;
+      z-index: 12;
 
       & .top-bar-content {
         display: flex;
@@ -98,11 +98,11 @@
       }
 
       & .bottom-bar-content-mobile {
-        position: absolute;
+        position: fixed;
         display: flex;
         flex-direction: row;
         background-color: $brand-900;
-        z-index: 24;
+        z-index: 12;
         width: 100%;
         height: 56px;
         bottom: 0;
@@ -115,8 +115,15 @@
       & .children {
         overflow-y: auto;
         overflow-x: hidden;
-        height: 100%;
         width: 100%;
+      }
+
+      & .children-desktop {
+        height: 100%;
+      }
+
+      & .children-mobile {
+        height: calc(100vh - 56px);
       }
     }
   }

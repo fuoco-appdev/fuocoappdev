@@ -86,9 +86,7 @@ function AccountDesktopComponent({
                   onClick={() => AccountController.updateShowDeleteModal(true)}
                   icon={<IconDelete />}
                 >
-                  <span className={styles['button-text']}>
-                    {Strings.deleteAccount}
-                  </span>
+                  {Strings.deleteAccount}
                 </Button>
                 {!props.isUpdatePasswordDisabled && (
                   <Button
@@ -100,9 +98,7 @@ function AccountDesktopComponent({
                     icon={<IconEdit3 />}
                     onClick={() => navigate(RoutePaths.ResetPassword)}
                   >
-                    <span className={styles['button-text']}>
-                      {Strings.updatePassword}
-                    </span>
+                    {Strings.updatePassword}
                   </Button>
                 )}
                 <Button
@@ -115,7 +111,7 @@ function AccountDesktopComponent({
                   disabled={props.isSaveDisabled}
                   onClick={() => AccountController.saveAsync()}
                 >
-                  <span className={styles['button-text']}>{Strings.save}</span>
+                  {Strings.save}
                 </Button>
               </div>
             </div>
@@ -458,6 +454,7 @@ function AccountMobileComponent({
                     }
                   />
                   <InputPhoneNumber
+                    touchScreen={true}
                     className={[
                       styles['info-input'],
                       styles['info-input-mobile'],
@@ -471,6 +468,7 @@ function AccountMobileComponent({
                     }
                   />
                   <InputGeocoding
+                    touchScreen={true}
                     className={[
                       styles['info-input'],
                       styles['info-input-mobile'],
@@ -499,6 +497,7 @@ function AccountMobileComponent({
                     }
                   />
                   <Listbox
+                    touchScreen={true}
                     classNames={{
                       formLayout: {
                         root: [
@@ -626,7 +625,9 @@ export default function AccountComponent(): JSX.Element {
         cancelText={Strings.cancel}
         variant={'danger'}
         size={'small'}
-        className={styles['delete-modal']}
+        classNames={{
+          modal: styles['delete-modal'],
+        }}
         visible={props.showDeleteModal}
         onCancel={() => AccountController.updateShowDeleteModal(false)}
         onConfirm={() => {

@@ -36,8 +36,8 @@ $amount: 10;
 }
 
 .root {
-  height: inherit;
-  width: inherit;
+  height: 100vh;
+  width: 100vw;
   background: linear-gradient(135deg, #263297, #070b2e);
   z-index: 0;
 

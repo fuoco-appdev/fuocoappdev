@@ -32,180 +32,93 @@ function ServiceComponent({
   description,
 }: ServiceProps): JSX.Element {
   return (
-    <div className={styles['service-container']}>
-      <div className={styles['service-top-content']}>
-        <span className={styles['service-title']}>{title}</span>
-        <div className={styles['service-icon-container']}>{icon}</div>
-      </div>
-      <div className={styles['service-description']}>{description}</div>
-    </div>
+    <>
+      <ResponsiveDesktop>
+        <div
+          className={[
+            styles['service-container'],
+            styles['service-container-desktop'],
+          ].join(' ')}
+        >
+          <div
+            className={[
+              styles['service-top-content'],
+              styles['service-top-content-desktop'],
+            ].join(' ')}
+          >
+            <span
+              className={[
+                styles['service-title'],
+                styles['service-title-desktop'],
+              ].join(' ')}
+            >
+              {title}
+            </span>
+            <div
+              className={[
+                styles['service-icon-container'],
+                styles['service-icon-container-desktop'],
+              ].join(' ')}
+            >
+              {icon}
+            </div>
+          </div>
+          <div
+            className={[
+              styles['service-description'],
+              styles['service-description-desktop'],
+            ].join(' ')}
+          >
+            {description}
+          </div>
+        </div>
+      </ResponsiveDesktop>
+      <ResponsiveMobile>
+        <div
+          className={[
+            styles['service-container'],
+            styles['service-container-mobile'],
+          ].join(' ')}
+        >
+          <div
+            className={[
+              styles['service-top-content'],
+              styles['service-top-content-mobile'],
+            ].join(' ')}
+          >
+            <span
+              className={[
+                styles['service-title'],
+                styles['service-title-mobile'],
+              ].join(' ')}
+            >
+              {title}
+            </span>
+            <div
+              className={[
+                styles['service-icon-container'],
+                styles['service-icon-container-mobile'],
+              ].join(' ')}
+            >
+              {icon}
+            </div>
+          </div>
+          <div
+            className={[
+              styles['service-description'],
+              styles['service-description-mobile'],
+            ].join(' ')}
+          >
+            {description}
+          </div>
+        </div>
+      </ResponsiveMobile>
+    </>
   );
 }
 
 function LandingDesktopComponent(): JSX.Element {
   const navigate = useNavigate();
-  return (
-    <>
-      <div
-        className={[
-          styles['landing-title-container'],
-          styles['landing-title-container-desktop'],
-        ].join(' ')}
-      >
-        <Typography.Title
-          className={[styles['title'], styles['title-desktop']].join(' ')}
-        >
-          {Strings.landingTitle1}
-          <br />
-          {Strings.landingTitle2}
-          <br />
-          <span className={styles['title-spacing']}>
-            {Strings.landingTitle3}
-          </span>
-        </Typography.Title>
-        <div className={styles['landing-sub-title-container']}>
-          <Typography.Text
-            className={[styles['sub-title'], styles['sub-title-desktop']].join(
-              ' '
-            )}
-            align={'center'}
-          >
-            {Strings.landingDescription}
-          </Typography.Text>
-        </div>
-      </div>
-      <div
-        className={[
-          styles['button-container'],
-          styles['button-container-desktop'],
-        ].join(' ')}
-      >
-        <Button
-          classNames={{
-            container: styles['button'],
-          }}
-          size={'xlarge'}
-          type="primary"
-          onClick={() => navigate(RoutePaths.Signup)}
-        >
-          {Strings.signup}
-        </Button>
-      </div>
-      <div
-        className={[
-          styles['service-list'],
-          styles['service-list-desktop'],
-        ].join(' ')}
-      >
-        <ServiceComponent
-          title={Strings.webDesign}
-          icon={<IconLayout strokeWidth={2} stroke={'#fff'} />}
-          description={Strings.webDesignDescription}
-        />
-        <ServiceComponent
-          title={Strings.appDevelopment}
-          icon={<IconSmartphone strokeWidth={2} stroke={'#fff'} />}
-          description={Strings.appDevelopmentDescription}
-        />
-        <ServiceComponent
-          title={Strings.logoAndBranding}
-          icon={<IconPenTool strokeWidth={2} stroke={'#fff'} />}
-          description={Strings.logoAndBrandingDescription}
-        />
-      </div>
-    </>
-  );
-}
-
-function LandingMobileComponent(): JSX.Element {
-  const navigate = useNavigate();
-  const containerRef = useRef<HTMLDivElement | null>(null);
-
-  useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      ScrollTrigger.create({
-        scroller: WindowController.scrollRef,
-        trigger: containerRef.current,
-        start: 'top top',
-        end: '+=500',
-        markers: false,
-        pin: true,
-        pinSpacing: true,
-        onUpdate: (self: ScrollTrigger) => {
-          WorldController.animateLeave(self.direction * 0.2, self.progress);
-        },
-      });
-    }, containerRef);
-    return () => ctx.revert();
-  }, []);
-
-  return (
-    <>
-      <div className={styles['text-container']} ref={containerRef}>
-        <div
-          className={[
-            styles['landing-title-container'],
-            styles['landing-title-container-mobile'],
-          ].join(' ')}
-        >
-          <Typography.Title
-            className={[styles['title'], styles['title-mobile']].join(' ')}
-          >
-            {`${Strings.landingTitle1} ${Strings.landingTitle2} ${Strings.landingTitle3}`}
-          </Typography.Title>
-          <Typography.Text
-            className={[styles['sub-title'], styles['sub-title-mobile']].join(
-              ' '
-            )}
-            align={'center'}
-          >
-            {Strings.landingDescription}
-          </Typography.Text>
-          <div
-            className={[
-              styles['button-container'],
-              styles['button-container-mobile'],
-            ].join(' ')}
-          >
-            <Button
-              classNames={{
-                container: styles['button'],
-              }}
-              size={'xlarge'}
-              type="primary"
-              onClick={() => navigate(RoutePaths.Signup)}
-            >
-              {Strings.signup}
-            </Button>
-          </div>
-        </div>
-      </div>
-      <div
-        className={[styles['service-list'], styles['service-list-mobile']].join(
-          ' '
-        )}
-      >
-        <ServiceComponent
-          title={Strings.webDesign}
-          icon={<IconLayout strokeWidth={2} stroke={'#fff'} />}
-          description={Strings.webDesignDescription}
-        />
-        <ServiceComponent
-          title={Strings.appDevelopment}
-          icon={<IconSmartphone strokeWidth={2} stroke={'#fff'} />}
-          description={Strings.appDevelopmentDescription}
-        />
-        <ServiceComponent
-          title={Strings.logoAndBranding}
-          icon={<IconPenTool strokeWidth={2} stroke={'#fff'} />}
-          description={Strings.logoAndBrandingDescription}
-        />
-      </div>
-    </>
-  );
-}
-
-export default function LandingComponent(): JSX.Element {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -224,25 +137,250 @@ export default function LandingComponent(): JSX.Element {
   });
 
   return (
-    <div className={styles['root']}>
-      <div className={styles['content']}>
+    <div className={[styles['root'], styles['root-desktop']].join(' ')}>
+      <div className={[styles['content'], styles['content-desktop']].join(' ')}>
         {transitions(
           (style, item) =>
             item && (
               <animated.div
-                className={styles['animation-container']}
+                className={[
+                  styles['animation-container'],
+                  styles['animation-container-desktop'],
+                ].join(' ')}
                 style={style}
               >
-                <ResponsiveDesktop>
-                  <LandingDesktopComponent />
-                </ResponsiveDesktop>
-                <ResponsiveMobile>
-                  <LandingMobileComponent />
-                </ResponsiveMobile>
+                <div
+                  className={[
+                    styles['landing-title-container'],
+                    styles['landing-title-container-desktop'],
+                  ].join(' ')}
+                >
+                  <Typography.Title
+                    className={[styles['title'], styles['title-desktop']].join(
+                      ' '
+                    )}
+                  >
+                    {Strings.landingTitle1}
+                    <br />
+                    {Strings.landingTitle2}
+                    <br />
+                    <span
+                      className={[
+                        styles['title-spacing'],
+                        styles['title-spacing-desktop'],
+                      ].join(' ')}
+                    >
+                      {Strings.landingTitle3}
+                    </span>
+                  </Typography.Title>
+                  <div
+                    className={[
+                      styles['landing-sub-title-container'],
+                      styles['landing-sub-title-container-desktop'],
+                    ].join(' ')}
+                  >
+                    <Typography.Text
+                      className={[
+                        styles['sub-title'],
+                        styles['sub-title-desktop'],
+                      ].join(' ')}
+                      align={'center'}
+                    >
+                      {Strings.landingDescription}
+                    </Typography.Text>
+                  </div>
+                </div>
+                <div
+                  className={[
+                    styles['button-container'],
+                    styles['button-container-desktop'],
+                  ].join(' ')}
+                >
+                  <Button
+                    classNames={{
+                      container: styles['button'],
+                    }}
+                    size={'xlarge'}
+                    type="primary"
+                    onClick={() => navigate(RoutePaths.Signup)}
+                  >
+                    {Strings.signup}
+                  </Button>
+                </div>
+                <div
+                  className={[
+                    styles['service-list'],
+                    styles['service-list-desktop'],
+                  ].join(' ')}
+                >
+                  <ServiceComponent
+                    title={Strings.webDesign}
+                    icon={<IconLayout strokeWidth={2} stroke={'#fff'} />}
+                    description={Strings.webDesignDescription}
+                  />
+                  <ServiceComponent
+                    title={Strings.appDevelopment}
+                    icon={<IconSmartphone strokeWidth={2} stroke={'#fff'} />}
+                    description={Strings.appDevelopmentDescription}
+                  />
+                  <ServiceComponent
+                    title={Strings.logoAndBranding}
+                    icon={<IconPenTool strokeWidth={2} stroke={'#fff'} />}
+                    description={Strings.logoAndBrandingDescription}
+                  />
+                </div>
               </animated.div>
             )
         )}
       </div>
     </div>
+  );
+}
+
+function LandingMobileComponent(): JSX.Element {
+  const navigate = useNavigate();
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    setShow(true);
+
+    return () => {
+      setShow(false);
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    if (containerRef.current) {
+      const ctx = gsap.context(() => {
+        ScrollTrigger.create({
+          scroller: WindowController.scrollRef,
+          trigger: containerRef.current,
+          start: 'top top',
+          end: '+=500',
+          markers: false,
+          pin: true,
+          pinSpacing: true,
+          pinType: 'fixed',
+          onUpdate: (self: ScrollTrigger) => {
+            WorldController.fade(self.progress);
+          },
+        });
+      }, containerRef);
+
+      return () => ctx.revert();
+    }
+
+    return;
+  }, [containerRef, show]);
+
+  const transitions = useTransition(show, {
+    from: { opacity: 0, y: 5 },
+    enter: { opacity: 1, y: 0 },
+    leave: { opacity: 0, y: 5 },
+    config: config.gentle,
+  });
+
+  return (
+    <div className={[styles['root'], styles['root-mobile']].join(' ')}>
+      <div className={[styles['content'], styles['content-mobile']].join(' ')}>
+        {transitions(
+          (style, item) =>
+            item && (
+              <animated.div
+                className={[
+                  styles['animation-container'],
+                  styles['animation-container-mobile'],
+                ].join(' ')}
+                style={style}
+              >
+                <div
+                  className={[
+                    styles['text-container'],
+                    styles['text-container-mobile'],
+                  ].join(' ')}
+                  ref={containerRef}
+                >
+                  <div
+                    className={[
+                      styles['landing-title-container'],
+                      styles['landing-title-container-mobile'],
+                    ].join(' ')}
+                  >
+                    <Typography.Title
+                      className={[styles['title'], styles['title-mobile']].join(
+                        ' '
+                      )}
+                    >
+                      {`${Strings.landingTitle1} ${Strings.landingTitle2} ${Strings.landingTitle3}`}
+                    </Typography.Title>
+                    <Typography.Text
+                      className={[
+                        styles['sub-title'],
+                        styles['sub-title-mobile'],
+                      ].join(' ')}
+                      align={'center'}
+                    >
+                      {Strings.landingDescription}
+                    </Typography.Text>
+                    <div
+                      className={[
+                        styles['button-container'],
+                        styles['button-container-mobile'],
+                      ].join(' ')}
+                    >
+                      <Button
+                        classNames={{
+                          container: styles['button'],
+                        }}
+                        size={'xlarge'}
+                        type="primary"
+                        onClick={() => navigate(RoutePaths.Signup)}
+                      >
+                        {Strings.signup}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  className={[
+                    styles['service-list'],
+                    styles['service-list-mobile'],
+                  ].join(' ')}
+                >
+                  <ServiceComponent
+                    title={Strings.webDesign}
+                    icon={<IconLayout strokeWidth={2} stroke={'#fff'} />}
+                    description={Strings.webDesignDescription}
+                  />
+                  <ServiceComponent
+                    title={Strings.appDevelopment}
+                    icon={<IconSmartphone strokeWidth={2} stroke={'#fff'} />}
+                    description={Strings.appDevelopmentDescription}
+                  />
+                  <ServiceComponent
+                    title={Strings.logoAndBranding}
+                    icon={<IconPenTool strokeWidth={2} stroke={'#fff'} />}
+                    description={Strings.logoAndBrandingDescription}
+                  />
+                </div>
+              </animated.div>
+            )
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default function LandingComponent(): JSX.Element {
+  return (
+    <>
+      <ResponsiveDesktop>
+        <LandingDesktopComponent />
+      </ResponsiveDesktop>
+      <ResponsiveMobile>
+        <LandingMobileComponent />
+      </ResponsiveMobile>
+    </>
   );
 }

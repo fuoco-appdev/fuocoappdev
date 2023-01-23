@@ -6,6 +6,9 @@
 }
 
 body {
+  position: fixed;
+  overflow: hidden;
+
   --brand-100: #c5ffff;
   --brand-200: #abffff;
   --brand-300: #8cffff;
