@@ -3,7 +3,7 @@ import { Auth } from '@fuoco.appdev/core-ui';
 import styles from './reset-password.module.scss';
 import WindowController from '../controllers/window.controller';
 import AuthService from '../services/auth.service';
-import { ApiError } from '@supabase/supabase-js';
+import { AuthError } from '@supabase/supabase-js';
 import { Strings } from '../strings';
 import { useState, useEffect } from 'react';
 import { animated, config, useTransition } from 'react-spring';
@@ -76,18 +76,8 @@ function ResetPasswordMobileComponent({ children }: any): JSX.Element {
 export interface ResetPasswordProps {}
 
 export default function ResetPasswordComponent(): JSX.Element {
-  const [error, setError] = useState<ApiError | null>(null);
+  const [error, setError] = useState<AuthError | null>(null);
   const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    const query = new URLSearchParams(location.hash);
-    const accessToken = query.get('#access_token');
-    if (accessToken !== null) {
-      ResetPasswordController.updateAccessToken(accessToken);
-    }
-  }, [location]);
-
   const [props] = useObservable(ResetPasswordController.model.store);
   const resetPassword = (
     <Auth.ResetPassword
@@ -101,13 +91,11 @@ export default function ResetPasswordComponent(): JSX.Element {
       onPasswordUpdated={() => {
         WindowController.updateShowPasswordResetAlert(false);
         WindowController.updateShowPasswordUpdatedAlert(true);
-        ResetPasswordController.updateAccessToken(undefined);
         setError(null);
         navigate(RoutePaths.User);
       }}
-      onResetPasswordError={(error: ApiError) => setError(error)}
+      onResetPasswordError={(error: AuthError) => setError(error)}
       supabaseClient={AuthService.supabaseClient}
-      accessToken={props.accessToken}
     />
   );
   return props.accessToken ? (

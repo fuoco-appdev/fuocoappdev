@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Auth } from '@fuoco.appdev/core-ui';
+import { Auth, AuthErrorType } from '@fuoco.appdev/core-ui';
 import SignupController from '../controllers/signup.controller';
 import WindowController from '../controllers/window.controller';
 import WorldController from '../controllers/world.controller';
@@ -10,7 +10,7 @@ import AuthService from '../services/auth.service';
 import { RoutePaths } from '../route-paths';
 import { useObservable } from '@ngneat/use-observable';
 import { Strings } from '../strings';
-import { ApiError } from '@supabase/supabase-js';
+import { AuthError } from '@supabase/supabase-js';
 import { animated, config, useTransition } from 'react-spring';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 
@@ -80,11 +80,11 @@ export default function SignupComponent(): JSX.Element {
   const location = useLocation();
   SignupController.model.location = location;
   const navigate = useNavigate();
-  const [error, setError] = useState<ApiError | null>(null);
+  const [errorType, setErrorType] = useState<AuthErrorType | null>(null);
 
   useEffect(() => {
-    WorldController.updateIsError(error !== null);
-  }, [error]);
+    WorldController.updateIsError(errorType !== null);
+  }, [errorType]);
 
   const auth = (
     <Auth
@@ -110,20 +110,34 @@ export default function SignupComponent(): JSX.Element {
         signUp: Strings.signUp,
         dontHaveAnAccount: Strings.dontHaveAnAccount,
       }}
-      emailErrorMessage={error ? Strings.emailErrorMessage : undefined}
-      passwordErrorMessage={error ? Strings.passwordErrorMessage : undefined}
+      emailErrorMessage={
+        errorType === AuthErrorType.BadAuthentication
+          ? Strings.emailErrorMessage
+          : undefined
+      }
+      passwordErrorMessage={
+        errorType === AuthErrorType.BadAuthentication
+          ? Strings.passwordErrorMessage
+          : undefined
+      }
+      confirmPasswordErrorMessage={
+        errorType === AuthErrorType.ConfirmPasswordNoMatch
+          ? Strings.confirmPasswordErrorMessage
+          : undefined
+      }
       supabaseClient={AuthService.supabaseClient}
       onForgotPasswordRedirect={() => navigate(RoutePaths.ForgotPassword)}
       onTermsOfServiceRedirect={() => navigate(RoutePaths.TermsOfService)}
       onPrivacyPolicyRedirect={() => navigate(RoutePaths.PrivacyPolicy)}
       onSigninRedirect={() => navigate(RoutePaths.Signin)}
       onSignupRedirect={() => navigate(RoutePaths.Signup)}
-      onSignupError={(error: ApiError) => setError(error)}
+      onSignupError={(error: AuthError, type: AuthErrorType) =>
+        setErrorType(type)
+      }
       onEmailConfirmationSent={() => {
         WindowController.updateShowConfirmEmailAlert(true);
         WorldController.updateIsError(false);
       }}
-      redirectTo={RoutePaths.User}
     />
   );
 

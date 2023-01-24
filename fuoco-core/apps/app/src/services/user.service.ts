@@ -37,9 +37,9 @@ class UserService extends Service {
   }
 
   public async requestActiveAsync(): Promise<core.User> {
-    const supabaseUser = AuthService.supabaseClient.auth.user();
+    const supabaseUser = await AuthService.requestUser();
     if (!supabaseUser) {
-      throw new Error('No authenticated user');
+      throw new Error('No active user');
     }
     const user = await this.requestAsync(supabaseUser.id);
     this._activeUserBehaviorSubject.next(user);
@@ -47,14 +47,13 @@ class UserService extends Service {
   }
 
   public async requestAsync(supabaseId: string): Promise<core.User> {
+    const session = await AuthService.requestSession();
     const response = await axios({
       method: 'post',
       url: `${this.endpointUrl}/user/${supabaseId}`,
       headers: {
         ...this.headers,
-        'Session-Token': `${
-          AuthService.supabaseClient.auth.session()?.access_token
-        }`,
+        'Session-Token': `${session?.access_token}`,
       },
       data: '',
       responseType: 'arraybuffer',
@@ -68,14 +67,13 @@ class UserService extends Service {
   }
 
   public async requestAllAsync(): Promise<core.Users> {
+    const session = await AuthService.requestSession();
     const response = await axios({
       method: 'post',
       url: `${this.endpointUrl}/user/all`,
       headers: {
         ...this.headers,
-        'Session-Token': `${
-          AuthService.supabaseClient.auth.session()?.access_token
-        }`,
+        'Session-Token': `${session?.access_token}`,
       },
       data: '',
       responseType: 'arraybuffer',
@@ -108,11 +106,11 @@ class UserService extends Service {
   }
 
   public async requestCreateAsync(): Promise<core.User> {
-    const supabaseUser = AuthService.supabaseClient.auth.user();
+    const supabaseUser = await AuthService.requestUser();
     if (!supabaseUser) {
-      throw new Error('No authenticated user');
+      throw new Error('No user');
     }
-
+    const session = await AuthService.requestSession();
     const user = new core.User({
       role: core.UserRole.USER,
       email: supabaseUser.email,
@@ -125,9 +123,7 @@ class UserService extends Service {
       url: `${this.endpointUrl}/user/create`,
       headers: {
         ...this.headers,
-        'Session-Token': `${
-          AuthService.supabaseClient.auth.session()?.access_token
-        }`,
+        'Session-Token': `${session?.access_token}`,
       },
       data: user.toBinary(),
       responseType: 'arraybuffer',
@@ -147,15 +143,14 @@ class UserService extends Service {
     phoneNumber: string;
     comment: string;
   }): Promise<core.User> {
+    const session = await AuthService.requestSession();
     const gettingStartedRequest = new core.GettingStartedRequest(props);
     const response = await axios({
       method: 'post',
       url: `${this.endpointUrl}/user/getting-started`,
       headers: {
         ...this.headers,
-        'Session-Token': `${
-          AuthService.supabaseClient.auth.session()?.access_token
-        }`,
+        'Session-Token': `${session?.access_token}`,
       },
       data: gettingStartedRequest.toBinary(),
       responseType: 'arraybuffer',
@@ -178,10 +173,11 @@ class UserService extends Service {
     language?: string;
     request_status?: core.UserRequestStatus;
   }): Promise<core.User> {
-    const supabaseUser = AuthService.supabaseClient.auth.user();
+    const supabaseUser = await AuthService.requestUser();
     if (!supabaseUser) {
-      throw new Error('No authenticated user');
+      throw new Error('No user');
     }
+
     const user = await this.requestUpdateAsync(supabaseUser.id, props);
     this._activeUserBehaviorSubject.next(user);
     return user;
@@ -198,6 +194,7 @@ class UserService extends Service {
       request_status?: core.UserRequestStatus;
     }
   ): Promise<core.User> {
+    const session = await AuthService.requestSession();
     const user = new core.User({
       company: props.company ? props.company : this.activeUser?.company,
       email: props.email ? props.email : this.activeUser?.email,
@@ -220,9 +217,7 @@ class UserService extends Service {
       url: `${this.endpointUrl}/user/update/${supabaseId}`,
       headers: {
         ...this.headers,
-        'Session-Token': `${
-          AuthService.supabaseClient.auth.session()?.access_token
-        }`,
+        'Session-Token': `${session?.access_token}`,
       },
       data: user.toBinary(),
       responseType: 'arraybuffer',
@@ -236,24 +231,24 @@ class UserService extends Service {
   }
 
   public async requestActiveDeleteAsync(): Promise<void> {
-    const supabaseUser = AuthService.supabaseClient.auth.user();
+    const supabaseUser = await AuthService.requestUser();
     if (!supabaseUser) {
-      throw new Error('No authenticated user');
+      throw new Error('No user');
     }
 
     await this.requestDeleteAsync(supabaseUser.id);
+    await AuthService.signoutAsync();
     this.clearActiveUser();
   }
 
   public async requestDeleteAsync(supabaseId: string): Promise<core.User> {
+    const session = await AuthService.requestSession();
     const response = await axios({
       method: 'post',
       url: `${this.endpointUrl}/user/delete/${supabaseId}`,
       headers: {
         ...this.headers,
-        'Session-Token': `${
-          AuthService.supabaseClient.auth.session()?.access_token
-        }`,
+        'Session-Token': `${session?.access_token}`,
       },
       data: '',
       responseType: 'arraybuffer',

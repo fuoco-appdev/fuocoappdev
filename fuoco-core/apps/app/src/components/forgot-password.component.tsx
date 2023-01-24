@@ -5,7 +5,7 @@ import styles from './forgot-password.module.scss';
 import WindowController from '../controllers/window.controller';
 import AuthService from '../services/auth.service';
 import { RoutePaths } from '../route-paths';
-import { ApiError } from '@supabase/supabase-js';
+import { AuthError } from '@supabase/supabase-js';
 import { Strings } from '../strings';
 import { useState, useEffect } from 'react';
 import { animated, config, useTransition } from 'react-spring';
@@ -75,7 +75,7 @@ export interface ForgotPasswordProps {}
 
 export default function ForgotPasswordComponent(): JSX.Element {
   const navigate = useNavigate();
-  const [error, setError] = useState<ApiError | null>(null);
+  const [error, setError] = useState<AuthError | null>(null);
 
   const { origin } = window.location;
   const forgotPassword = (
@@ -92,7 +92,7 @@ export default function ForgotPasswordComponent(): JSX.Element {
       }}
       onSigninRedirect={() => navigate(RoutePaths.Signin)}
       emailErrorMessage={error ? Strings.emailErrorMessage : undefined}
-      onResetPasswordError={(error: ApiError) => setError(error)}
+      onResetPasswordError={(error: AuthError) => setError(error)}
       supabaseClient={AuthService.supabaseClient}
       redirectTo={`${origin}${RoutePaths.ResetPassword}`}
     />

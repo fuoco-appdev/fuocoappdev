@@ -35,14 +35,13 @@ class AppsService extends Service {
   }
 
   public async requestAllAsync(): Promise<core.App[]> {
+    const session = await AuthService.requestSession();
     const response = await axios({
       method: 'post',
       url: `${this.endpointUrl}/app/all`,
       headers: {
         ...this.headers,
-        'Session-Token': `${
-          AuthService.supabaseClient.auth.session()?.access_token
-        }`,
+        'Session-Token': `${session?.access_token}`,
       },
       data: '',
       responseType: 'arraybuffer',
@@ -78,14 +77,13 @@ class AppsService extends Service {
   }
 
   public async requestAllFromUserAsync(userId: string): Promise<core.App[]> {
+    const session = await AuthService.requestSession();
     const response = await axios({
       method: 'post',
       url: `${this.endpointUrl}/app/all/${userId}`,
       headers: {
         ...this.headers,
-        'Session-Token': `${
-          AuthService.supabaseClient.auth.session()?.access_token
-        }`,
+        'Session-Token': `${session?.access_token}`,
       },
       data: '',
       responseType: 'arraybuffer',
@@ -101,20 +99,15 @@ class AppsService extends Service {
   }
 
   public async requestCreateAsync(): Promise<core.App> {
-    const supabaseUser = AuthService.supabaseClient.auth.user();
-    if (!supabaseUser) {
-      throw new Error('No authenticated user');
-    }
-
+    await AuthService.requestUser();
+    const session = await AuthService.requestSession();
     const app = new core.App();
     const response = await axios({
       method: 'post',
       url: `${this.endpointUrl}/app/create`,
       headers: {
         ...this.headers,
-        'Session-Token': `${
-          AuthService.supabaseClient.auth.session()?.access_token
-        }`,
+        'Session-Token': `${session?.access_token}`,
       },
       data: app.toBinary(),
       responseType: 'arraybuffer',
@@ -143,6 +136,7 @@ class AppsService extends Service {
       cover_images?: string[];
     }
   ): Promise<core.App> {
+    const session = await AuthService.requestSession();
     const date = new Date(Date.now());
     const links: core.Link[] = [];
 
@@ -166,9 +160,7 @@ class AppsService extends Service {
       url: `${this.endpointUrl}/app/update/${appId}`,
       headers: {
         ...this.headers,
-        'Session-Token': `${
-          AuthService.supabaseClient.auth.session()?.access_token
-        }`,
+        'Session-Token': `${session?.access_token}`,
       },
       data: app.toBinary(),
       responseType: 'arraybuffer',
@@ -189,14 +181,13 @@ class AppsService extends Service {
   }
 
   public async requestDeleteAsync(appId: string): Promise<core.App> {
+    const session = await AuthService.requestSession();
     const response = await axios({
       method: 'post',
       url: `${this.endpointUrl}/app/delete/${appId}`,
       headers: {
         ...this.headers,
-        'Session-Token': `${
-          AuthService.supabaseClient.auth.session()?.access_token
-        }`,
+        'Session-Token': `${session?.access_token}`,
       },
       data: '',
       responseType: 'arraybuffer',

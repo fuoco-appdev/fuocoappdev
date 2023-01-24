@@ -45,6 +45,7 @@ export const Strings = new LocalizedStrings({
     signInWithPassword: 'Sign in with password',
     emailErrorMessage: 'You must provide a valid email address',
     passwordErrorMessage: 'You must provide a valid password',
+    confirmPasswordErrorMessage: 'Confirm password does not match',
     getStarted: 'Get started',
     getStartedSubtitle: 'Please send us a request with your business info',
     fieldEmptyError: 'This field cannot be empty',

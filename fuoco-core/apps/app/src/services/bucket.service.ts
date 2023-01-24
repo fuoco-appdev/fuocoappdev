@@ -4,15 +4,11 @@ import * as core from '../protobuf/core_pb';
 class BucketService {
   public getPublicUrl(type: core.BucketType, path: string): string | null {
     const bucketName = this.getBucketName(type);
-    const { data, error } = AuthService.supabaseClient.storage
+    const { data } = AuthService.supabaseClient.storage
       .from(bucketName)
       .getPublicUrl(path);
 
-    if (error) {
-      throw error;
-    }
-
-    return data?.publicURL ?? null;
+    return data?.publicUrl ?? null;
   }
 
   public async uploadAsync(
@@ -29,7 +25,7 @@ class BucketService {
       throw bucket.error;
     }
 
-    return bucket?.data?.Key ?? null;
+    return bucket?.data?.path ?? null;
   }
 
   public async removeAsync(

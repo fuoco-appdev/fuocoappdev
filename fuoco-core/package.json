@@ -32,7 +32,7 @@
   "devDependencies": {
     "@bufbuild/protobuf": "^0.3.0",
     "@bufbuild/protoc-gen-es": "^0.3.0",
-    "@fuoco.appdev/core-ui": "^0.11.4",
+    "@fuoco.appdev/core-ui": "^0.11.7",
     "@ngneat/elf": "^2.1.0",
     "@ngneat/elf-entities": "^4.4.2",
     "@ngneat/elf-persist-state": "^1.1.6",
@@ -48,7 +48,7 @@
     "@nrwl/react": "14.6.3",
     "@nrwl/web": "14.6.3",
     "@nrwl/workspace": "14.6.3",
-    "@supabase/supabase-js": "^1.35.6",
+    "@supabase/supabase-js": "^2.4.1",
     "@testing-library/react": "13.3.0",
     "@types/express": "4.17.13",
     "@types/google-protobuf": "^3.15.6",

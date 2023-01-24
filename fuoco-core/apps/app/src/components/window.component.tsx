@@ -16,14 +16,13 @@ import { RoutePaths } from '../route-paths';
 import { Strings } from '../strings';
 import AuthService from '../services/auth.service';
 import { useObservable } from '@ngneat/use-observable';
-import LoadingComponent from './loading.component';
 import { useSpring } from 'react-spring';
 import UserService from '../services/user.service';
 import * as core from '../protobuf/core_pb';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import LoadingComponent from './loading.component';
 
 function WindowDesktopComponent(): JSX.Element {
-  const user = UserService.activeUser;
   const navigate = useNavigate();
   const [windowProps] = useObservable(WindowController.model.store);
 
@@ -91,7 +90,6 @@ function WindowDesktopComponent(): JSX.Element {
                     type="text"
                     onClick={async () => {
                       await AuthService.signoutAsync();
-                      navigate(RoutePaths.Signin);
                     }}
                   />
                 )}
@@ -107,7 +105,7 @@ function WindowDesktopComponent(): JSX.Element {
                 src="../assets/svg/logo.svg"
                 alt="logo"
               />
-              {user?.role === core.UserRole.USER && (
+              {windowProps.user?.role === core.UserRole.USER && (
                 <Tabs
                   direction={'vertical'}
                   type={'underlined'}
@@ -125,7 +123,7 @@ function WindowDesktopComponent(): JSX.Element {
                   ]}
                 />
               )}
-              {user?.role === core.UserRole.ADMIN && (
+              {windowProps.user?.role === core.UserRole.ADMIN && (
                 <Tabs
                   direction={'vertical'}
                   type={'underlined'}
@@ -163,7 +161,6 @@ function WindowDesktopComponent(): JSX.Element {
 }
 
 function WindowMobileComponent(): JSX.Element {
-  const user = UserService.activeUser;
   const navigate = useNavigate();
   const [windowProps] = useObservable(WindowController.model.store);
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -248,9 +245,10 @@ function WindowMobileComponent(): JSX.Element {
                     rippleProps={{
                       color: 'rgba(255, 255, 255, 0.35)',
                     }}
-                    onClick={async () => {
-                      await AuthService.signoutAsync();
-                      navigate(RoutePaths.Signin);
+                    onClick={() => {
+                      setTimeout(async () => {
+                        await AuthService.signoutAsync();
+                      }, 100);
                     }}
                   />
                 )}
@@ -261,7 +259,7 @@ function WindowMobileComponent(): JSX.Element {
         <div className={styles['container']}>
           {windowProps.isAuthenticated && windowProps.isTabBarVisible && (
             <div className={styles['bottom-bar-content-mobile']}>
-              {user?.role === core.UserRole.USER && (
+              {windowProps.user?.role === core.UserRole.USER && (
                 <>
                   <Button
                     classNames={{
@@ -351,6 +349,7 @@ function WindowMobileComponent(): JSX.Element {
 
 export default function WindowComponent(): JSX.Element {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const [windowProps] = useObservable(WindowController.model.store);
   const confirmEmailTransitionStyle = useSpring({
@@ -382,6 +381,10 @@ export default function WindowComponent(): JSX.Element {
   });
 
   useEffect(() => {
+    WindowController.checkUserIsAuthenticatedAsync();
+  }, []);
+
+  useEffect(() => {
     if (windowProps.showPasswordUpdatedAlert) {
       setTimeout(
         () => WindowController.updateShowPasswordUpdatedAlert(false),
@@ -393,6 +396,16 @@ export default function WindowComponent(): JSX.Element {
   useEffect(() => {
     WindowController.updateOnLocationChanged(location);
   }, [location]);
+
+  useEffect(() => {
+    if (windowProps.authState === 'SIGNED_IN') {
+      navigate(RoutePaths.User);
+    } else if (windowProps.authState === 'SIGNED_OUT') {
+      navigate(RoutePaths.Signin);
+    } else if (windowProps.authState === 'USER_DELETED') {
+      navigate(RoutePaths.Signup);
+    }
+  }, [windowProps.authState]);
 
   return (
     <div className={styles['root']}>
@@ -408,7 +421,6 @@ export default function WindowComponent(): JSX.Element {
           </ResponsiveMobile>
         </>
       )}
-
       <Alert
         className={styles['alert']}
         style={confirmEmailTransitionStyle}

@@ -25,7 +25,7 @@ export class UserService {
     const { data, error } = await SupabaseService.client
       .from('users')
       .select()
-      .eq('supabase_id', supabaseId);
+      .match({ supabase_id: supabaseId });
 
     if (error) {
       console.error(error);

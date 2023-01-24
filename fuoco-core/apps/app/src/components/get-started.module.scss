@@ -40,17 +40,11 @@
 }
 
 .root-mobile {
-  height: 100%;
-
   & .content-mobile {
-    position: relative;
     margin: 0 $mp-4;
     padding-top: 56px;
-    height: 100%;
 
     & .form-container-mobile {
-      height: 100%;
-
       & .form-title-mobile {
         padding-top: 10vh;
         font-size: 24pt;
@@ -64,17 +58,15 @@
         padding-top: $mp-8;
 
         & .form-content-mobile {
-          display: flex;
-          justify-content: space-between;
-
           & .input-container-mobile {
             height: 100%;
           }
 
           & .send-button-mobile {
-            position: absolute !important;
+            position: fixed !important;
             bottom: $mp-4;
             left: 0;
+            padding: 0 $mp-4;
           }
         }
       }
@@ -98,6 +90,7 @@
   & .content {
     display: flex;
     flex-direction: column;
+    justify-content: center;
 
     & .animated-content {
       & .form-title {

@@ -501,7 +501,6 @@ export default function WorldComponent({
         ref={WorldController.glowRef}
         style={{ opacity: props.opacity }}
       />
-      {/* <div className={styles['blur-container']} /> */}
       <div
         className={
           isVisible ? styles['world-container'] : styles['world-container-none']

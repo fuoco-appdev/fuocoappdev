@@ -5,7 +5,7 @@ import SigninController from '../controllers/signin.controller';
 import styles from './signin.module.scss';
 import AuthService from '../services/auth.service';
 import { RoutePaths } from '../route-paths';
-import { ApiError } from '@supabase/supabase-js';
+import { AuthError } from '@supabase/supabase-js';
 import { Strings } from '../strings';
 import { useState, useEffect } from 'react';
 import { animated, config, useTransition } from 'react-spring';
@@ -78,7 +78,7 @@ export default function SigninComponent(): JSX.Element {
   const location = useLocation();
   SigninController.model.location = location;
   const navigate = useNavigate();
-  const [error, setError] = useState<ApiError | null>(null);
+  const [error, setError] = useState<AuthError | null>(null);
 
   useEffect(() => {
     WorldController.updateIsError(error !== null);
@@ -115,8 +115,7 @@ export default function SigninComponent(): JSX.Element {
       onPrivacyPolicyRedirect={() => navigate(RoutePaths.PrivacyPolicy)}
       onSigninRedirect={() => navigate(RoutePaths.Signin)}
       onSignupRedirect={() => navigate(RoutePaths.Signup)}
-      onSigninError={(error: ApiError) => setError(error)}
-      redirectTo={RoutePaths.User}
+      onSigninError={(error: AuthError) => setError(error)}
     />
   );
   return (

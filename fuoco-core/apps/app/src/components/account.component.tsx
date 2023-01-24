@@ -579,7 +579,6 @@ function AccountMobileComponent({
 }
 
 export default function AccountComponent(): JSX.Element {
-  const navigate = useNavigate();
   const [props] = useObservable(AccountController.model.store);
   const [defaultLanguageIndex, setDefaultLanguageIndex] = useState<number>(0);
   const languageOptions: OptionProps[] = [];
@@ -632,7 +631,7 @@ export default function AccountComponent(): JSX.Element {
         onCancel={() => AccountController.updateShowDeleteModal(false)}
         onConfirm={() => {
           AccountController.deleteAsync();
-          navigate(RoutePaths.Signin);
+          AccountController.updateShowDeleteModal(false);
         }}
       ></Modal>
     </div>

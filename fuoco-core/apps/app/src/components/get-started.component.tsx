@@ -295,6 +295,7 @@ function GetStartedMobileComponent({
                           }}
                         />
                         <InputPhoneNumber
+                          touchScreen={true}
                           parentRef={containerRef}
                           defaultValue={phoneNumber}
                           label={Strings.phoneNumber}

@@ -1,18 +1,22 @@
 import { createStore, withProps } from '@ngneat/elf';
+import { AuthChangeEvent } from '@supabase/supabase-js';
 import { Model } from '../model';
 import { RoutePaths } from '../route-paths';
+import * as core from '../protobuf/core_pb';
 
 export interface WindowState {
+  user: core.User | null;
   isSigninVisible: boolean;
   isSignupVisible: boolean;
   isSignoutVisible: boolean;
   isTabBarVisible: boolean;
   isAuthenticated: boolean | undefined;
   activeRoute: RoutePaths | undefined;
-  isLoading: boolean;
   showConfirmEmailAlert: boolean;
   showPasswordResetAlert: boolean;
   showPasswordUpdatedAlert: boolean;
+  authState: AuthChangeEvent | undefined;
+  isLoading: boolean;
 }
 
 export class WindowModel extends Model {
@@ -21,19 +25,31 @@ export class WindowModel extends Model {
       createStore(
         { name: 'window' },
         withProps<WindowState>({
+          user: null,
           isSigninVisible: false,
           isSignupVisible: false,
           isSignoutVisible: false,
           isTabBarVisible: false,
           isAuthenticated: undefined,
           activeRoute: undefined,
-          isLoading: false,
           showConfirmEmailAlert: false,
           showPasswordResetAlert: false,
           showPasswordUpdatedAlert: false,
+          authState: undefined,
+          isLoading: false,
         })
       )
     );
+  }
+
+  public get user(): core.User | null {
+    return this.store.getValue().user;
+  }
+
+  public set user(value: core.User | null) {
+    if (this.user?.equals(value)) {
+      this.store.update((state) => ({ ...state, user: value }));
+    }
   }
 
   public get isSigninVisible(): boolean {
@@ -99,16 +115,6 @@ export class WindowModel extends Model {
     }
   }
 
-  public get isLoading(): boolean {
-    return this.store.getValue().isLoading;
-  }
-
-  public set isLoading(isLoading: boolean) {
-    if (this.isLoading !== isLoading) {
-      this.store.update((state) => ({ ...state, isLoading: isLoading }));
-    }
-  }
-
   public get showConfirmEmailAlert(): boolean {
     return this.store.getValue().showConfirmEmailAlert;
   }
@@ -141,6 +147,32 @@ export class WindowModel extends Model {
       this.store.update((state) => ({
         ...state,
         showPasswordUpdatedAlert: show,
+      }));
+    }
+  }
+
+  public get authState(): AuthChangeEvent | undefined {
+    return this.store.getValue().authState;
+  }
+
+  public set authState(value: AuthChangeEvent | undefined) {
+    if (this.authState !== value) {
+      this.store.update((state) => ({
+        ...state,
+        authState: value,
+      }));
+    }
+  }
+
+  public get isLoading(): boolean {
+    return this.store.getValue().isLoading;
+  }
+
+  public set isLoading(value: boolean) {
+    if (this.isLoading !== value) {
+      this.store.update((state) => ({
+        ...state,
+        isLoading: value,
       }));
     }
   }

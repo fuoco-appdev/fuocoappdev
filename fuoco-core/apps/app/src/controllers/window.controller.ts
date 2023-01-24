@@ -46,12 +46,25 @@ class WindowController extends Controller {
     this._userSubscription = UserService.activeUserObservable.subscribe({
       next: (user: core.User | null) => {
         this._model.isAuthenticated = user ? true : false;
+        this._model.user = user;
       },
     });
   }
 
+  public async checkUserIsAuthenticatedAsync(): Promise<void> {
+    this._model.isLoading = true;
+    const user = await AuthService.requestUser();
+    if (!user) {
+      this._model.isLoading = false;
+    }
+  }
+
   public dispose(): void {
     this._userSubscription?.unsubscribe();
+  }
+
+  public updateIsLoading(value: boolean): void {
+    this._model.isLoading = value;
   }
 
   public updateIsSigninVisible(isVisible: boolean): void {
@@ -129,7 +142,7 @@ class WindowController extends Controller {
         this._model.isSignoutVisible = true;
         this._model.isSigninVisible = false;
         this._model.isSignupVisible = false;
-        this._model.isTabBarVisible = true;
+        this._model.isTabBarVisible = false;
         this._model.activeRoute = RoutePaths.User;
         break;
       case RoutePaths.GetStarted:
@@ -204,13 +217,6 @@ class WindowController extends Controller {
   ): Promise<void> {
     if (event === 'SIGNED_IN') {
       WorldController.updateIsError(false);
-
-      if (UserService.activeUser) {
-        return;
-      }
-
-      this._model.isLoading = true;
-
       try {
         await UserService.requestActiveAsync();
       } catch (error: any) {
@@ -225,13 +231,14 @@ class WindowController extends Controller {
           console.error(error);
         }
       }
-
-      this._model.isLoading = false;
     } else if (event === 'SIGNED_OUT') {
       UserService.clearActiveUser();
     } else if (event === 'USER_DELETED') {
       UserService.clearActiveUser();
     }
+
+    this._model.authState = event;
+    this._model.isLoading = false;
   }
 }
 

@@ -1,27 +1,23 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Controller } from "../controller";
-import { ResetPasswordModel } from "../models/reset-password.model";
+import { Controller } from '../controller';
+import { ResetPasswordModel } from '../models/reset-password.model';
 
 class ResetPasswordController extends Controller {
-    private readonly _model: ResetPasswordModel;
+  private readonly _model: ResetPasswordModel;
 
-    constructor() {
-        super();
+  constructor() {
+    super();
 
-        this._model = new ResetPasswordModel();
-    }
+    this._model = new ResetPasswordModel();
+  }
 
-    public get model(): ResetPasswordModel {
-        return this._model;
-    }
+  public get model(): ResetPasswordModel {
+    return this._model;
+  }
 
-    public initialize(): void {}
+  public initialize(): void {}
 
-    public dispose(): void {}
-
-    public updateAccessToken(accessToken: string | undefined): void {
-        this._model.accessToken = accessToken;
-    }
+  public dispose(): void {}
 }
 
 export default new ResetPasswordController();
