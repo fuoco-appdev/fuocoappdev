@@ -33,7 +33,12 @@ class AuthService {
     return this._supabaseClient;
   }
 
-  public async requestUser(): Promise<User | null> {
+  public clear(): void {
+    this._session = null;
+    this._user = null;
+  }
+
+  public async requestUserAsync(): Promise<User | null> {
     const { data, error } = await this.supabaseClient.auth.getUser();
     if (error) {
       return null;
@@ -46,7 +51,7 @@ class AuthService {
     return data.user;
   }
 
-  public async requestSession(): Promise<Session | null> {
+  public async requestSessionAsync(): Promise<Session | null> {
     const { data, error } = await this.supabaseClient.auth.getSession();
     if (error) {
       throw error;
@@ -65,8 +70,7 @@ class AuthService {
       throw error;
     }
 
-    this._session = null;
-    this._user = null;
+    this.clear();
   }
 }
 

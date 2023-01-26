@@ -11,6 +11,7 @@ import WorldController from './world.controller';
 import { Location } from 'react-router-dom';
 import UserService from '../services/user.service';
 import * as core from '../protobuf/core_pb';
+import SecretsService from '../services/secrets.service';
 
 class WindowController extends Controller {
   private readonly _model: WindowModel;
@@ -53,7 +54,7 @@ class WindowController extends Controller {
 
   public async checkUserIsAuthenticatedAsync(): Promise<void> {
     this._model.isLoading = true;
-    const user = await AuthService.requestUser();
+    const user = await AuthService.requestUserAsync();
     if (!user) {
       this._model.isLoading = false;
     }
@@ -65,6 +66,10 @@ class WindowController extends Controller {
 
   public updateIsLoading(value: boolean): void {
     this._model.isLoading = value;
+  }
+
+  public updateAuthState(value: AuthChangeEvent): void {
+    this._model.authState = value;
   }
 
   public updateIsSigninVisible(isVisible: boolean): void {
@@ -215,6 +220,10 @@ class WindowController extends Controller {
     event: AuthChangeEvent,
     session: Session | null
   ): Promise<void> {
+    if (session) {
+      await SecretsService.requestAllAsync();
+    }
+
     if (event === 'SIGNED_IN') {
       WorldController.updateIsError(false);
       try {
@@ -233,8 +242,10 @@ class WindowController extends Controller {
       }
     } else if (event === 'SIGNED_OUT') {
       UserService.clearActiveUser();
+      SecretsService.clearSecrets();
     } else if (event === 'USER_DELETED') {
       UserService.clearActiveUser();
+      SecretsService.clearSecrets();
     }
 
     this._model.authState = event;

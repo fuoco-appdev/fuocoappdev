@@ -142,57 +142,50 @@ function GetStartedDesktopComponent({
               </animated.div>
             )
         )}
-        <div
-          className={[
-            styles['continue-container'],
-            styles['continue-container-desktop'],
-          ].join(' ')}
-        >
-          {requestSentTransitions(
-            (style, item) =>
-              item &&
-              !showForm && (
-                <animated.div
-                  style={style}
+        {requestSentTransitions(
+          (style, item) =>
+            item &&
+            !showForm && (
+              <animated.div
+                style={style}
+                className={[
+                  styles['continue-content'],
+                  styles['continue-content-desktop'],
+                ].join(' ')}
+              >
+                <Typography.Title
                   className={[
-                    styles['continue-content'],
-                    styles['continue-content-desktop'],
+                    styles['request-title'],
+                    styles['request-title-desktop'],
                   ].join(' ')}
                 >
-                  <Typography.Title
-                    className={[
-                      styles['request-title'],
-                      styles['request-title-desktop'],
-                    ].join(' ')}
+                  {Strings.thankyouForContacting}
+                </Typography.Title>
+                <Typography.Text
+                  className={[
+                    styles['request-subtitle'],
+                    styles['request-subtitle-desktop'],
+                  ].join(' ')}
+                  align={'center'}
+                >
+                  {Strings.thankyouForContactingSubtitle}
+                </Typography.Text>
+                <div>
+                  <Button
+                    classNames={{
+                      container: styles['next-button'],
+                    }}
+                    size={'xlarge'}
+                    type="primary"
+                    rippleProps={rippleProps}
+                    onClick={() => navigate(RoutePaths.Account)}
                   >
-                    {Strings.thankyouForContacting}
-                  </Typography.Title>
-                  <Typography.Text
-                    className={[
-                      styles['request-subtitle'],
-                      styles['request-subtitle-desktop'],
-                    ].join(' ')}
-                    align={'center'}
-                  >
-                    {Strings.thankyouForContactingSubtitle}
-                  </Typography.Text>
-                  <div>
-                    <Button
-                      classNames={{
-                        container: styles['next-button'],
-                      }}
-                      size={'xlarge'}
-                      type="primary"
-                      rippleProps={rippleProps}
-                      onClick={() => navigate(RoutePaths.Account)}
-                    >
-                      {Strings.next}
-                    </Button>
-                  </div>
-                </animated.div>
-              )
-          )}
-        </div>
+                    {Strings.next}
+                  </Button>
+                </div>
+              </animated.div>
+            )
+        )}
       </div>
     </div>
   );
@@ -350,13 +343,13 @@ function GetStartedMobileComponent({
                 style={style}
                 className={[
                   styles['continue-content'],
-                  styles['continue-content-desktop'],
+                  styles['continue-content-mobile'],
                 ].join(' ')}
               >
                 <Typography.Title
                   className={[
                     styles['request-title'],
-                    styles['request-title-desktop'],
+                    styles['request-title-mobile'],
                   ].join(' ')}
                 >
                   {Strings.thankyouForContacting}
@@ -364,7 +357,7 @@ function GetStartedMobileComponent({
                 <Typography.Text
                   className={[
                     styles['request-subtitle'],
-                    styles['request-subtitle-desktop'],
+                    styles['request-subtitle-mobile'],
                   ].join(' ')}
                   align={'center'}
                 >

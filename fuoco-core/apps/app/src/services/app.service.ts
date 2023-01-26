@@ -35,7 +35,7 @@ class AppsService extends Service {
   }
 
   public async requestAllAsync(): Promise<core.App[]> {
-    const session = await AuthService.requestSession();
+    const session = await AuthService.requestSessionAsync();
     const response = await axios({
       method: 'post',
       url: `${this.endpointUrl}/app/all`,
@@ -77,7 +77,7 @@ class AppsService extends Service {
   }
 
   public async requestAllFromUserAsync(userId: string): Promise<core.App[]> {
-    const session = await AuthService.requestSession();
+    const session = await AuthService.requestSessionAsync();
     const response = await axios({
       method: 'post',
       url: `${this.endpointUrl}/app/all/${userId}`,
@@ -99,8 +99,8 @@ class AppsService extends Service {
   }
 
   public async requestCreateAsync(): Promise<core.App> {
-    await AuthService.requestUser();
-    const session = await AuthService.requestSession();
+    await AuthService.requestUserAsync();
+    const session = await AuthService.requestSessionAsync();
     const app = new core.App();
     const response = await axios({
       method: 'post',
@@ -136,7 +136,7 @@ class AppsService extends Service {
       cover_images?: string[];
     }
   ): Promise<core.App> {
-    const session = await AuthService.requestSession();
+    const session = await AuthService.requestSessionAsync();
     const date = new Date(Date.now());
     const links: core.Link[] = [];
 
@@ -181,7 +181,7 @@ class AppsService extends Service {
   }
 
   public async requestDeleteAsync(appId: string): Promise<core.App> {
-    const session = await AuthService.requestSession();
+    const session = await AuthService.requestSessionAsync();
     const response = await axios({
       method: 'post',
       url: `${this.endpointUrl}/app/delete/${appId}`,

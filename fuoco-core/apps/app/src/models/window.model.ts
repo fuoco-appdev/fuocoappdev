@@ -47,7 +47,7 @@ export class WindowModel extends Model {
   }
 
   public set user(value: core.User | null) {
-    if (this.user?.equals(value)) {
+    if (!this.user?.equals(value)) {
       this.store.update((state) => ({ ...state, user: value }));
     }
   }

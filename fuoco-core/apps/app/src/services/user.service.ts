@@ -37,7 +37,7 @@ class UserService extends Service {
   }
 
   public async requestActiveAsync(): Promise<core.User> {
-    const supabaseUser = await AuthService.requestUser();
+    const supabaseUser = await AuthService.requestUserAsync();
     if (!supabaseUser) {
       throw new Error('No active user');
     }
@@ -47,7 +47,7 @@ class UserService extends Service {
   }
 
   public async requestAsync(supabaseId: string): Promise<core.User> {
-    const session = await AuthService.requestSession();
+    const session = await AuthService.requestSessionAsync();
     const response = await axios({
       method: 'post',
       url: `${this.endpointUrl}/user/${supabaseId}`,
@@ -67,7 +67,7 @@ class UserService extends Service {
   }
 
   public async requestAllAsync(): Promise<core.Users> {
-    const session = await AuthService.requestSession();
+    const session = await AuthService.requestSessionAsync();
     const response = await axios({
       method: 'post',
       url: `${this.endpointUrl}/user/all`,
@@ -106,11 +106,11 @@ class UserService extends Service {
   }
 
   public async requestCreateAsync(): Promise<core.User> {
-    const supabaseUser = await AuthService.requestUser();
+    const supabaseUser = await AuthService.requestUserAsync();
     if (!supabaseUser) {
       throw new Error('No user');
     }
-    const session = await AuthService.requestSession();
+    const session = await AuthService.requestSessionAsync();
     const user = new core.User({
       role: core.UserRole.USER,
       email: supabaseUser.email,
@@ -143,7 +143,7 @@ class UserService extends Service {
     phoneNumber: string;
     comment: string;
   }): Promise<core.User> {
-    const session = await AuthService.requestSession();
+    const session = await AuthService.requestSessionAsync();
     const gettingStartedRequest = new core.GettingStartedRequest(props);
     const response = await axios({
       method: 'post',
@@ -173,7 +173,7 @@ class UserService extends Service {
     language?: string;
     request_status?: core.UserRequestStatus;
   }): Promise<core.User> {
-    const supabaseUser = await AuthService.requestUser();
+    const supabaseUser = await AuthService.requestUserAsync();
     if (!supabaseUser) {
       throw new Error('No user');
     }
@@ -194,7 +194,7 @@ class UserService extends Service {
       request_status?: core.UserRequestStatus;
     }
   ): Promise<core.User> {
-    const session = await AuthService.requestSession();
+    const session = await AuthService.requestSessionAsync();
     const user = new core.User({
       company: props.company ? props.company : this.activeUser?.company,
       email: props.email ? props.email : this.activeUser?.email,
@@ -231,18 +231,16 @@ class UserService extends Service {
   }
 
   public async requestActiveDeleteAsync(): Promise<void> {
-    const supabaseUser = await AuthService.requestUser();
+    const supabaseUser = await AuthService.requestUserAsync();
     if (!supabaseUser) {
       throw new Error('No user');
     }
 
     await this.requestDeleteAsync(supabaseUser.id);
-    await AuthService.signoutAsync();
-    this.clearActiveUser();
   }
 
   public async requestDeleteAsync(supabaseId: string): Promise<core.User> {
-    const session = await AuthService.requestSession();
+    const session = await AuthService.requestSessionAsync();
     const response = await axios({
       method: 'post',
       url: `${this.endpointUrl}/user/delete/${supabaseId}`,

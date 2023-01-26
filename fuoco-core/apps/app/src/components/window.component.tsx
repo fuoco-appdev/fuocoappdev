@@ -257,7 +257,7 @@ function WindowMobileComponent(): JSX.Element {
           </div>
         </div>
         <div className={styles['container']}>
-          {windowProps.isAuthenticated && windowProps.isTabBarVisible && (
+          {windowProps.user && windowProps.isTabBarVisible && (
             <div className={styles['bottom-bar-content-mobile']}>
               {windowProps.user?.role === core.UserRole.USER && (
                 <>

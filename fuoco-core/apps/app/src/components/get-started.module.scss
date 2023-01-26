@@ -24,24 +24,24 @@
       margin-top: $mp-8;
     }
 
-    & .continue-container-desktop {
-      & .continue-content-desktop {
-        margin-bottom: 10vh;
+    & .continue-content-desktop {
+      margin-bottom: 10vh;
 
-        & .request-title-desktop {
-        }
+      & .request-title-desktop {
+      }
 
-        & .request-subtitle-desktop {
-          width: 55%;
-        }
+      & .request-subtitle-desktop {
+        width: 55%;
       }
     }
   }
 }
 
 .root-mobile {
+  margin: 0 $mp-4;
+
   & .content-mobile {
-    margin: 0 $mp-4;
+    height: 100%;
     padding-top: 56px;
 
     & .form-container-mobile {
@@ -59,26 +59,24 @@
 
         & .form-content-mobile {
           & .input-container-mobile {
-            height: 100%;
           }
 
           & .send-button-mobile {
             position: fixed !important;
-            bottom: $mp-4;
+            bottom: 0;
             left: 0;
-            padding: 0 $mp-4;
+            padding: $mp-4;
           }
         }
       }
     }
 
-    & .continue-container-mobile {
-      & .continue-content-mobile {
-        & .request-title-mobile {
-        }
+    & .continue-content-mobile {
+      & .request-title-mobile {
+        font-size: 24pt;
+      }
 
-        & .request-subtitle-mobile {
-        }
+      & .request-subtitle-mobile {
       }
     }
   }
@@ -88,11 +86,9 @@
   height: 100%;
 
   & .content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-
     & .animated-content {
+      height: 100%;
+
       & .form-title {
         height: fit-content;
         -webkit-user-select: none; /* Safari */
@@ -141,7 +137,6 @@
         -ms-user-select: none; /* IE 10 and IE 11 */
         user-select: none; /* Standard syntax */
         padding-bottom: $mp-6;
-        font-size: 20pt;
       }
 
       & .request-subtitle {

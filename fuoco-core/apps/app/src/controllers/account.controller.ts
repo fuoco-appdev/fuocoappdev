@@ -6,10 +6,13 @@ import { AccountModel } from '../models/account.model';
 import UserService from '../services/user.service';
 import * as core from '../protobuf/core_pb';
 import AuthService from '../services/auth.service';
+import WindowController from './window.controller';
+import SecretsService from '../services/secrets.service';
 
 class AccountController extends Controller {
   private readonly _model: AccountModel;
   private _userSubscription: Subscription | undefined;
+  private _secretsSubscription: Subscription | undefined;
 
   constructor() {
     super();
@@ -22,6 +25,12 @@ class AccountController extends Controller {
   }
 
   public initialize(): void {
+    this._secretsSubscription = SecretsService.secretsObservable.subscribe({
+      next: (secrets: core.Secrets | null) => {
+        this._model.mapboxAccessToken = secrets?.mapboxAccessToken ?? '';
+      },
+    });
+
     this._userSubscription = UserService.activeUserObservable.subscribe({
       next: (user: core.User | null) => {
         this._model.company = user?.company ?? '';
@@ -95,6 +104,9 @@ class AccountController extends Controller {
 
   public async deleteAsync(): Promise<void> {
     await UserService.requestActiveDeleteAsync();
+    UserService.clearActiveUser();
+    AuthService.clear();
+    WindowController.updateAuthState('USER_DELETED');
   }
 
   private updateSave(): void {

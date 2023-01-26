@@ -550,3 +550,40 @@ export class GettingStartedRequest extends Message<GettingStartedRequest> {
   }
 }
 
+/**
+ * @generated from message core.Secrets
+ */
+export class Secrets extends Message<Secrets> {
+  /**
+   * @generated from field: string mapbox_access_token = 1;
+   */
+  mapboxAccessToken = "";
+
+  constructor(data?: PartialMessage<Secrets>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.Secrets";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "mapbox_access_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Secrets {
+    return new Secrets().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Secrets {
+    return new Secrets().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Secrets {
+    return new Secrets().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Secrets | PlainMessage<Secrets> | undefined, b: Secrets | PlainMessage<Secrets> | undefined): boolean {
+    return proto3.util.equals(Secrets, a, b);
+  }
+}
+

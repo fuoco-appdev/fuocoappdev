@@ -81,3 +81,7 @@ message GettingStartedRequest {
     string phone_number = 2;
     string comment = 3;
 }
+
+message Secrets {
+    string mapbox_access_token = 1;
+}

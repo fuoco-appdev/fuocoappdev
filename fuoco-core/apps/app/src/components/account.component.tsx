@@ -254,9 +254,7 @@ function AccountDesktopComponent({
                     onLocationChanged={(value, data) =>
                       AccountController.updateLocation(value, data)
                     }
-                    mapboxAccessToken={
-                      'pk.eyJ1IjoibHVjYXNmdW9jbyIsImEiOiJjbGFjeWl5YWMwM2MyM3ZueW5xNnRnbWFiIn0.SKWlyHhXNfAwdTLqfIdLYQ'
-                    }
+                    mapboxAccessToken={props.mapboxAccessToken}
                   />
                   <Listbox
                     classNames={{
@@ -492,9 +490,7 @@ function AccountMobileComponent({
                     onLocationChanged={(value, data) =>
                       AccountController.updateLocation(value, data)
                     }
-                    mapboxAccessToken={
-                      'pk.eyJ1IjoibHVjYXNmdW9jbyIsImEiOiJjbGFjeWl5YWMwM2MyM3ZueW5xNnRnbWFiIn0.SKWlyHhXNfAwdTLqfIdLYQ'
-                    }
+                    mapboxAccessToken={props.mapboxAccessToken}
                   />
                   <Listbox
                     touchScreen={true}
