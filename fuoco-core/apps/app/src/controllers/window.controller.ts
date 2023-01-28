@@ -12,6 +12,8 @@ import { Location } from 'react-router-dom';
 import UserService from '../services/user.service';
 import * as core from '../protobuf/core_pb';
 import SecretsService from '../services/secrets.service';
+import { Strings } from '../strings';
+import { ToastProps } from '@fuoco.appdev/core-ui';
 
 class WindowController extends Controller {
   private readonly _model: WindowModel;
@@ -88,8 +90,8 @@ class WindowController extends Controller {
     this._model.showPasswordResetAlert = show;
   }
 
-  public updateShowPasswordUpdatedAlert(show: boolean): void {
-    this._model.showPasswordUpdatedAlert = show;
+  public updateToasts(toasts: ToastProps[]) {
+    this._model.toasts = toasts;
   }
 
   public updateOnLocationChanged(location: Location): void {

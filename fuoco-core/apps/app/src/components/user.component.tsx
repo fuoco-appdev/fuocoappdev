@@ -1,6 +1,6 @@
 import styles from './user.module.scss';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useEffect, useLayoutEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import UserService from '../services/user.service';
 import { RoutePaths } from '../route-paths';
 import * as core from '../protobuf/core_pb';

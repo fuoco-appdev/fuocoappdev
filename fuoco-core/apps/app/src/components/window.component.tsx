@@ -11,13 +11,13 @@ import {
   IconUser,
   IconSmartphone,
   IconUsers,
+  Toast,
 } from '@fuoco.appdev/core-ui';
 import { RoutePaths } from '../route-paths';
 import { Strings } from '../strings';
 import AuthService from '../services/auth.service';
 import { useObservable } from '@ngneat/use-observable';
 import { useSpring } from 'react-spring';
-import UserService from '../services/user.service';
 import * as core from '../protobuf/core_pb';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import LoadingComponent from './loading.component';
@@ -156,6 +156,7 @@ function WindowDesktopComponent(): JSX.Element {
           </div>
         </div>
       </div>
+      <Toast.ToastOverlay toasts={windowProps.toasts} align={'right'} />
     </>
   );
 }
@@ -343,6 +344,11 @@ function WindowMobileComponent(): JSX.Element {
           </div>
         </div>
       </div>
+      <Toast.ToastOverlay
+        toasts={windowProps.toasts}
+        touchScreen={true}
+        align={'center'}
+      />
     </>
   );
 }
@@ -350,7 +356,6 @@ function WindowMobileComponent(): JSX.Element {
 export default function WindowComponent(): JSX.Element {
   const location = useLocation();
   const navigate = useNavigate();
-
   const [windowProps] = useObservable(WindowController.model.store);
   const confirmEmailTransitionStyle = useSpring({
     from: { y: -200 },
@@ -370,40 +375,28 @@ export default function WindowComponent(): JSX.Element {
       bounce: 1,
     },
   });
-  const passwordUpdatedTransitionStyle = useSpring({
-    from: { y: -200 },
-    to: windowProps.showPasswordUpdatedAlert ? { y: 50 } : { y: -200 },
-    config: {
-      friction: 30,
-      tension: 600,
-      bounce: 1,
-    },
-  });
 
   useEffect(() => {
     WindowController.checkUserIsAuthenticatedAsync();
   }, []);
 
   useEffect(() => {
-    if (windowProps.showPasswordUpdatedAlert) {
-      setTimeout(
-        () => WindowController.updateShowPasswordUpdatedAlert(false),
-        4000
-      );
-    }
-  }, [windowProps.showPasswordUpdatedAlert]);
-
-  useEffect(() => {
     WindowController.updateOnLocationChanged(location);
-  }, [location]);
+  }, [location, windowProps.authState]);
 
   useEffect(() => {
     if (windowProps.authState === 'SIGNED_IN') {
+      if (windowProps.activeRoute === RoutePaths.ResetPassword) {
+        return;
+      }
+
       navigate(RoutePaths.User);
     } else if (windowProps.authState === 'SIGNED_OUT') {
       navigate(RoutePaths.Signin);
     } else if (windowProps.authState === 'USER_DELETED') {
       navigate(RoutePaths.Signup);
+    } else if (windowProps.authState === 'PASSWORD_RECOVERY') {
+      navigate(RoutePaths.ResetPassword);
     }
   }, [windowProps.authState]);
 
@@ -444,16 +437,6 @@ export default function WindowComponent(): JSX.Element {
         }
       >
         {Strings.passwordResetDescription}
-      </Alert>
-      <Alert
-        className={styles['alert']}
-        style={passwordUpdatedTransitionStyle}
-        title={Strings.passwordUpdated}
-        variant={'success'}
-        withIcon={true}
-        closable={false}
-      >
-        {Strings.passwordUpdatedDescription}
       </Alert>
     </div>
   );

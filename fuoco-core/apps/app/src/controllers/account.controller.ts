@@ -8,6 +8,7 @@ import * as core from '../protobuf/core_pb';
 import AuthService from '../services/auth.service';
 import WindowController from './window.controller';
 import SecretsService from '../services/secrets.service';
+import { Strings } from '../strings';
 
 class AccountController extends Controller {
   private readonly _model: AccountModel;
@@ -98,6 +99,16 @@ class AccountController extends Controller {
       location: this._model.updatedLocation,
       language: this._model.updatedLanguage,
     });
+
+    WindowController.updateToasts([
+      {
+        key: `${Math.random()}`,
+        message: Strings.settingsSaved,
+        description: Strings.savedDescription,
+        type: 'success',
+        closable: true,
+      },
+    ]);
 
     this._model.isSaveDisabled = true;
   }

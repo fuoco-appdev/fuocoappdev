@@ -3,6 +3,7 @@ import { AuthChangeEvent } from '@supabase/supabase-js';
 import { Model } from '../model';
 import { RoutePaths } from '../route-paths';
 import * as core from '../protobuf/core_pb';
+import { ToastProps } from '@fuoco.appdev/core-ui';
 
 export interface WindowState {
   user: core.User | null;
@@ -14,9 +15,9 @@ export interface WindowState {
   activeRoute: RoutePaths | undefined;
   showConfirmEmailAlert: boolean;
   showPasswordResetAlert: boolean;
-  showPasswordUpdatedAlert: boolean;
   authState: AuthChangeEvent | undefined;
   isLoading: boolean;
+  toasts: ToastProps[];
 }
 
 export class WindowModel extends Model {
@@ -34,9 +35,9 @@ export class WindowModel extends Model {
           activeRoute: undefined,
           showConfirmEmailAlert: false,
           showPasswordResetAlert: false,
-          showPasswordUpdatedAlert: false,
           authState: undefined,
           isLoading: false,
+          toasts: [],
         })
       )
     );
@@ -138,19 +139,6 @@ export class WindowModel extends Model {
     }
   }
 
-  public get showPasswordUpdatedAlert(): boolean {
-    return this.store.getValue().showPasswordUpdatedAlert;
-  }
-
-  public set showPasswordUpdatedAlert(show: boolean) {
-    if (this.showPasswordUpdatedAlert !== show) {
-      this.store.update((state) => ({
-        ...state,
-        showPasswordUpdatedAlert: show,
-      }));
-    }
-  }
-
   public get authState(): AuthChangeEvent | undefined {
     return this.store.getValue().authState;
   }
@@ -173,6 +161,19 @@ export class WindowModel extends Model {
       this.store.update((state) => ({
         ...state,
         isLoading: value,
+      }));
+    }
+  }
+
+  public get toasts(): ToastProps[] {
+    return this.store.getValue().toasts;
+  }
+
+  public set toasts(value: ToastProps[]) {
+    if (this.toasts !== value) {
+      this.store.update((state) => ({
+        ...state,
+        toasts: value,
       }));
     }
   }

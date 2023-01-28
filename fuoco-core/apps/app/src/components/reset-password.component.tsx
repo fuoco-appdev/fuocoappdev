@@ -78,7 +78,6 @@ export interface ResetPasswordProps {}
 export default function ResetPasswordComponent(): JSX.Element {
   const [error, setError] = useState<AuthError | null>(null);
   const navigate = useNavigate();
-  const [props] = useObservable(ResetPasswordController.model.store);
   const resetPassword = (
     <Auth.ResetPassword
       passwordErrorMessage={error ? error.message : undefined}
@@ -90,7 +89,7 @@ export default function ResetPasswordComponent(): JSX.Element {
       }}
       onPasswordUpdated={() => {
         WindowController.updateShowPasswordResetAlert(false);
-        WindowController.updateShowPasswordUpdatedAlert(true);
+        ResetPasswordController.updatePasswordUpdatedToast();
         setError(null);
         navigate(RoutePaths.User);
       }}
@@ -98,7 +97,7 @@ export default function ResetPasswordComponent(): JSX.Element {
       supabaseClient={AuthService.supabaseClient}
     />
   );
-  return props.accessToken ? (
+  return (
     <>
       <ResponsiveDesktop>
         <ResetPasswordDesktopComponent>
@@ -111,7 +110,5 @@ export default function ResetPasswordComponent(): JSX.Element {
         </ResetPasswordMobileComponent>
       </ResponsiveMobile>
     </>
-  ) : (
-    <div />
   );
 }

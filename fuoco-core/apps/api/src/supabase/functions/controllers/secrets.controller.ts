@@ -17,9 +17,7 @@ export class SecretsController {
       Record<string, any>
     >
   ): Promise<void> {
-    console.log(context);
     const secrets = SecretsService.getSecrets();
-    console.log(secrets);
     context.response.type = 'application/x-protobuf';
     context.response.body = secrets.serializeBinary();
   }

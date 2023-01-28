@@ -110,5 +110,7 @@ export const Strings = new LocalizedStrings({
     emptyInMyApps: 'Empty in my apps',
     emptyInMyAppsDescription: `After we discuss your goals, your app will show up
     here.`,
+    settingsSaved: 'Settings saved',
+    savedDescription: 'Your changes have been successfully saved',
   },
 });
