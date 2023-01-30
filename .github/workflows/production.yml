@@ -41,6 +41,9 @@ jobs:
       - name: Setup Deno
         uses: denoland/setup-deno@v1.1.1
         
+      - name: Setup Bazel
+        uses: abhinavsingh/setup-bazel@v3
+        
       - name: Authenticate with private NPM package
         run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
           
