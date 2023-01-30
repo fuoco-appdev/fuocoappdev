@@ -20,6 +20,9 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: 1.0.0
+      - name: "Migrate"
+        run: supabase db push
+        working-directory: ./apps/api/src
       - name: "User function"
         run: supabase functions deploy user --project-ref $PROJECT_ID
         working-directory: ./apps/api/src
