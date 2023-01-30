@@ -92,7 +92,7 @@
     "react-test-renderer": "18.2.0",
     "react-responsive": "^9.0.2",
     "react-ripples": "^2.2.1",
-    "react-spring": "^9.5.5",
+    "react-spring": "^9.6.1",
     "sass": "^1.54.8",
     "three": "^0.144.0",
     "lodash.throttle": "^4.1.1",
