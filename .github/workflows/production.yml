@@ -28,6 +28,31 @@ jobs:
         with:
           version: 1.0.0
           
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+          
+      - name: Set up Protoc
+        uses: arduino/setup-protoc@v1
+        with:
+          version: '3.x'
+        
+      - name: Authenticate with private NPM package
+        run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+          
+      - name: Install dependencies
+        run: npm install
+        
+      - name: Run protobuf
+        run: npm run protobuf
+        
+      - name: Build app
+        run: npm run build
+      
+      - name: Deploy app
+        run: npm run deploy
+          
       - name: Link
         run: supabase link --project-ref $PROJECT_ID
         working-directory: ./apps/api/src
@@ -47,20 +72,3 @@ jobs:
       - name: Secrets function
         run: supabase functions deploy secrets --project-ref $PROJECT_ID
         working-directory: ./apps/api/src
-        
-      - name: Set up Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-        
-      - name: Authenticate with private NPM package
-        run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
-          
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build app
-        run: npm run build
-      
-      - name: Deploy app
-        run: npm run deploy
