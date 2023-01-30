@@ -13,14 +13,17 @@
     },
     "install": {
       "executor": "@nrwl/workspace:run-commands",
-      "options": {
-        "commands": [
-          "scoop bucket add supabase https://github.com/supabase/scoop-bucket.git",
-          "scoop install supabase",
-          "scoop install bazel",
-          "npx nx run api:build-protoc-gen-js"
-        ],
-        "parallel": false
+      "defaultConfiguration": "development",
+      "configurations": {
+        "development": {
+          "commands": [
+            "scoop bucket add supabase https://github.com/supabase/scoop-bucket.git",
+            "scoop install supabase",
+            "scoop install bazel",
+            "npx nx run api:build-protoc-gen-js"
+          ],
+          "parallel": false
+        }
       }
     },
     "proto-generate": {
