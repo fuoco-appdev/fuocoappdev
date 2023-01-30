@@ -9,7 +9,7 @@
     "start-api": "cd ./apps/api/src && supabase functions serve development --env-file=supabase/.env.development.local",
     "protobuf": "nx run-many --target=proto-generate --projects=api,app --parallel",
     "deploy": "npx gh-pages -d build",
-    "build": "nx build",
+    "build": "nx build --configuration=production",
     "test": "nx test"
   },
   "private": true,
