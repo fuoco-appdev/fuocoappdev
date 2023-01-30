@@ -6,8 +6,9 @@
     "preinstall": "nx run api:install",
     "init": "nx run api:init",
     "start-app": "nx serve",
-    "start-api": "cd ./apps/api/src && supabase functions serve development --env-file=supabase/.env",
+    "start-api": "cd ./apps/api/src && supabase functions serve development --env-file=supabase/.env.development.local",
     "protobuf": "nx run-many --target=proto-generate --projects=api,app --parallel",
+    "deploy": "npx gh-pages -d build",
     "build": "nx build",
     "test": "nx test"
   },
@@ -16,6 +17,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
+  "homepage": "http://fuoco-appdev.github.io/fuoco-core-app-api",
   "dependencies": {
     "core-js": "^3.6.5",
     "express": "^4.18.1",
@@ -76,6 +78,7 @@
     "eslint-plugin-jsx-a11y": "6.6.1",
     "eslint-plugin-react": "7.31.1",
     "eslint-plugin-react-hooks": "4.6.0",
+    "gh-pages": "^5.0.0",
     "google-protobuf": "^3.21.0",
     "gsap": "^3.11.4",
     "jest": "28.1.1",
