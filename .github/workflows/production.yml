@@ -62,7 +62,7 @@ jobs:
           folder: dist/apps/app
           
       - name: Link
-        run: supabase link --project-ref $PROJECT_ID
+        run: supabase link --project-ref $PROJECT_ID --password $DB_PASSWORD
         working-directory: ./apps/api/src
           
       - name: Migrate
