@@ -27,7 +27,7 @@ jobs:
           version: 1.0.0
           
       - name: Migrate
-        run: supabase db push
+        run: supabase db push --password ${{ secrets.DB_PASSWORD }}
         working-directory: ./apps/api/src
         
       - name: User function
