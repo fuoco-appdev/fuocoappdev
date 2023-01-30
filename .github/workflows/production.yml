@@ -16,6 +16,7 @@ jobs:
 
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       PROJECT_ID: vsejdtreyvcnevkkffiq
 
     steps:
@@ -27,7 +28,7 @@ jobs:
           version: 1.0.0
           
       - name: Migrate
-        run: supabase db push --password ${{ secrets.DB_PASSWORD }}
+        run: supabase db push --password $DB_PASSWORD
         working-directory: ./apps/api/src
         
       - name: User function
