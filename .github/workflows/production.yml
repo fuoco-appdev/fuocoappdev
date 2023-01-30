@@ -34,7 +34,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           
       - name: Set up Scoop
-        uses: frostming/scoop-action@v1
+        uses: MinoruSekine/setup-scoop@v1
           
       - name: Set up Protoc
         uses: arduino/setup-protoc@v1
