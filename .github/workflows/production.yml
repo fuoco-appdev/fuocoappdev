@@ -37,6 +37,9 @@ jobs:
         uses: arduino/setup-protoc@v1
         with:
           version: '3.x'
+      
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1.1.1
         
       - name: Authenticate with private NPM package
         run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
