@@ -95,7 +95,7 @@ class AdminAppsController extends Controller {
   private async onActiveUserChangedAsync(
     user: core.User | null
   ): Promise<void> {
-    if (!user || user?.role !== core.UserRole.ADMIN) {
+    if (user?.role !== core.UserRole.ADMIN) {
       return;
     }
 
