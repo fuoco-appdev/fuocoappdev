@@ -22,9 +22,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      
-      - name: Update submodules
-        run: git submodule update --init --recursive
 
       - name: Set up Supabase
         uses: supabase/setup-cli@v1.1.5
@@ -33,26 +30,15 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-          
-      - name: Set up Protoc
-        uses: arduino/setup-protoc@v1
-        with:
-          version: '3.x'
       
       - name: Setup Deno
         uses: denoland/setup-deno@v1.1.1
-        
-      - name: Setup Bazel
-        uses: abhinavsingh/setup-bazel@v3
         
       - name: Authenticate with private NPM package
         run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
           
       - name: Install dependencies
         run: npm install
-        
-      - name: Run protobuf
-        run: npm run protobuf
         
       - name: Build app
         run: npm run build
