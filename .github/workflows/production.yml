@@ -44,7 +44,9 @@ jobs:
         run: npm run build
       
       - name: Deploy 🚀
-        run: npm run deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist/apps/app
           
       - name: Link
         run: supabase link --password $DB_PASSWORD --project-ref $PROJECT_ID
