@@ -62,7 +62,7 @@ class AdminUsersController extends Controller {
   }
 
   private async onActiveUserAsync(user: core.User | null): Promise<void> {
-    if (user?.role !== core.UserRole.ADMIN) {
+    if (!user || user?.role !== core.UserRole.ADMIN) {
       return;
     }
 
