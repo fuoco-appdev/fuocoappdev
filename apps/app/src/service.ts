@@ -9,15 +9,9 @@ export class Service {
     this._headers = {
       Authorization: `Bearer ${ConfigService.supabase.key}`,
       'Content-Type': 'application/x-protobuf',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
     };
 
-    if (process.env['NODE_ENV'] === 'development') {
-      this._endpointUrl = `${ConfigService.supabase.url}/functions/v1`;
-    } else {
-      this._endpointUrl = ConfigService.supabase.url;
-    }
+    this._endpointUrl = ConfigService.supabase.functions_url;
   }
 
   public get headers(): { [key: string]: string } {
