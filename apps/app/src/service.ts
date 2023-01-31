@@ -10,7 +10,12 @@ export class Service {
       Authorization: `Bearer ${ConfigService.supabase.key}`,
       'Content-Type': 'application/x-protobuf',
     };
-    this._endpointUrl = `${ConfigService.supabase.url}/functions/v1`;
+
+    if (process.env['NODE_ENV'] === 'development') {
+      this._endpointUrl = `${ConfigService.supabase.url}/functions/v1`;
+    } else {
+      this._endpointUrl = ConfigService.supabase.url;
+    }
   }
 
   public get headers(): { [key: string]: string } {
