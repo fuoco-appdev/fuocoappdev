@@ -20,8 +20,8 @@ export class SecretsController {
     const secrets = SecretsService.getSecrets();
     context.response.type = 'application/x-protobuf';
     context.response.body = secrets.serializeBinary();
-    context.response.headers.append('Access-Control-Allow-Origin', '*');
-    context.response.headers.append(
+    context.response.headers.set('Access-Control-Allow-Origin', '*');
+    context.response.headers.set(
       'Access-Control-Allow-Headers',
       'authorization, x-client-info, apikey, content-type'
     );

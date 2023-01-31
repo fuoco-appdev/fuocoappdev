@@ -30,8 +30,8 @@ export class AppController {
     const responseApp = AppService.assignAndGetAppProtocol(data);
     context.response.type = 'application/x-protobuf';
     context.response.body = responseApp.serializeBinary();
-    context.response.headers.append('Access-Control-Allow-Origin', '*');
-    context.response.headers.append(
+    context.response.headers.set('Access-Control-Allow-Origin', '*');
+    context.response.headers.set(
       'Access-Control-Allow-Headers',
       'authorization, x-client-info, apikey, content-type'
     );
@@ -55,8 +55,8 @@ export class AppController {
     const apps = AppService.assignAndGetAppsProtocol(data);
     context.response.type = 'application/x-protobuf';
     context.response.body = apps.serializeBinary();
-    context.response.headers.append('Access-Control-Allow-Origin', '*');
-    context.response.headers.append(
+    context.response.headers.set('Access-Control-Allow-Origin', '*');
+    context.response.headers.set(
       'Access-Control-Allow-Headers',
       'authorization, x-client-info, apikey, content-type'
     );
@@ -79,8 +79,8 @@ export class AppController {
     const apps = AppService.assignAndGetAppsProtocol(data);
     context.response.type = 'application/x-protobuf';
     context.response.body = apps.serializeBinary();
-    context.response.headers.append('Access-Control-Allow-Origin', '*');
-    context.response.headers.append(
+    context.response.headers.set('Access-Control-Allow-Origin', '*');
+    context.response.headers.set(
       'Access-Control-Allow-Headers',
       'authorization, x-client-info, apikey, content-type'
     );
@@ -105,8 +105,8 @@ export class AppController {
     const apps = AppService.assignAndGetAppsProtocol(data);
     context.response.type = 'application/x-protobuf';
     context.response.body = apps.serializeBinary();
-    context.response.headers.append('Access-Control-Allow-Origin', '*');
-    context.response.headers.append(
+    context.response.headers.set('Access-Control-Allow-Origin', '*');
+    context.response.headers.set(
       'Access-Control-Allow-Headers',
       'authorization, x-client-info, apikey, content-type'
     );
@@ -134,8 +134,8 @@ export class AppController {
     const responseApp = AppService.assignAndGetAppProtocol(data);
     context.response.type = 'application/x-protobuf';
     context.response.body = responseApp.serializeBinary();
-    context.response.headers.append('Access-Control-Allow-Origin', '*');
-    context.response.headers.append(
+    context.response.headers.set('Access-Control-Allow-Origin', '*');
+    context.response.headers.set(
       'Access-Control-Allow-Headers',
       'authorization, x-client-info, apikey, content-type'
     );
@@ -160,8 +160,8 @@ export class AppController {
     const responseApp = AppService.assignAndGetAppProtocol(data);
     context.response.type = 'application/x-protobuf';
     context.response.body = responseApp.serializeBinary();
-    context.response.headers.append('Access-Control-Allow-Origin', '*');
-    context.response.headers.append(
+    context.response.headers.set('Access-Control-Allow-Origin', '*');
+    context.response.headers.set(
       'Access-Control-Allow-Headers',
       'authorization, x-client-info, apikey, content-type'
     );
@@ -186,8 +186,8 @@ export class AppController {
     const app = AppService.assignAndGetAppProtocol(data);
     context.response.type = 'application/x-protobuf';
     context.response.body = app.serializeBinary();
-    context.response.headers.append('Access-Control-Allow-Origin', '*');
-    context.response.headers.append(
+    context.response.headers.set('Access-Control-Allow-Origin', '*');
+    context.response.headers.set(
       'Access-Control-Allow-Headers',
       'authorization, x-client-info, apikey, content-type'
     );
