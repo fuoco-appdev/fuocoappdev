@@ -30,6 +30,11 @@ export class AppController {
     const responseApp = AppService.assignAndGetAppProtocol(data);
     context.response.type = 'application/x-protobuf';
     context.response.body = responseApp.serializeBinary();
+    context.response.headers.append('Access-Control-Allow-Origin', '*');
+    context.response.headers.append(
+      'Access-Control-Allow-Headers',
+      'authorization, x-client-info, apikey, content-type'
+    );
   }
 
   @Post('/all')
@@ -50,6 +55,11 @@ export class AppController {
     const apps = AppService.assignAndGetAppsProtocol(data);
     context.response.type = 'application/x-protobuf';
     context.response.body = apps.serializeBinary();
+    context.response.headers.append('Access-Control-Allow-Origin', '*');
+    context.response.headers.append(
+      'Access-Control-Allow-Headers',
+      'authorization, x-client-info, apikey, content-type'
+    );
   }
 
   @Post('/public/all')
@@ -69,6 +79,11 @@ export class AppController {
     const apps = AppService.assignAndGetAppsProtocol(data);
     context.response.type = 'application/x-protobuf';
     context.response.body = apps.serializeBinary();
+    context.response.headers.append('Access-Control-Allow-Origin', '*');
+    context.response.headers.append(
+      'Access-Control-Allow-Headers',
+      'authorization, x-client-info, apikey, content-type'
+    );
   }
 
   @Post('/all/:id')
@@ -90,6 +105,11 @@ export class AppController {
     const apps = AppService.assignAndGetAppsProtocol(data);
     context.response.type = 'application/x-protobuf';
     context.response.body = apps.serializeBinary();
+    context.response.headers.append('Access-Control-Allow-Origin', '*');
+    context.response.headers.append(
+      'Access-Control-Allow-Headers',
+      'authorization, x-client-info, apikey, content-type'
+    );
   }
 
   @Post('/update/:id')
@@ -114,6 +134,11 @@ export class AppController {
     const responseApp = AppService.assignAndGetAppProtocol(data);
     context.response.type = 'application/x-protobuf';
     context.response.body = responseApp.serializeBinary();
+    context.response.headers.append('Access-Control-Allow-Origin', '*');
+    context.response.headers.append(
+      'Access-Control-Allow-Headers',
+      'authorization, x-client-info, apikey, content-type'
+    );
   }
 
   @Post('/delete/:id')
@@ -135,6 +160,11 @@ export class AppController {
     const responseApp = AppService.assignAndGetAppProtocol(data);
     context.response.type = 'application/x-protobuf';
     context.response.body = responseApp.serializeBinary();
+    context.response.headers.append('Access-Control-Allow-Origin', '*');
+    context.response.headers.append(
+      'Access-Control-Allow-Headers',
+      'authorization, x-client-info, apikey, content-type'
+    );
   }
 
   @Post('/:id')
@@ -156,5 +186,10 @@ export class AppController {
     const app = AppService.assignAndGetAppProtocol(data);
     context.response.type = 'application/x-protobuf';
     context.response.body = app.serializeBinary();
+    context.response.headers.append('Access-Control-Allow-Origin', '*');
+    context.response.headers.append(
+      'Access-Control-Allow-Headers',
+      'authorization, x-client-info, apikey, content-type'
+    );
   }
 }
