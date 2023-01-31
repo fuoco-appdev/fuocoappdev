@@ -25,7 +25,7 @@
           "parallel": false
         },
         "production": {
-          "commands": ["npx nx run api:build-protoc-gen-js"],
+          "commands": [],
           "parallel": false
         }
       }
