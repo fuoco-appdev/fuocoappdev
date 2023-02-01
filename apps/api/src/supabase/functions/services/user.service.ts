@@ -67,6 +67,7 @@ export class UserService {
       .insert([userData])
       .select();
 
+    console.log(data);
     if (error) {
       console.error(error);
       return null;

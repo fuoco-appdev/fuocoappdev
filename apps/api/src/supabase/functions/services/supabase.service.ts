@@ -16,8 +16,6 @@ class SupabaseService {
       throw new Error("SUPABASE_SERVICE_ROLE_KEY doesn't exist");
     }
 
-    console.log(url);
-    console.log(key);
     this._client = createClient(url, key);
   }
 
