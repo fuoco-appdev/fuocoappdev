@@ -44,8 +44,6 @@ export class UserService {
       return null;
     }
 
-    console.log(existingUser);
-
     const role = user.getRole();
     const company = user.getCompany();
     const email = user.getEmail();
@@ -63,7 +61,6 @@ export class UserService {
       location,
       requestStatus: UserRequestStatus.IDLE,
     });
-    console.log(userData);
 
     const { data, error } = await SupabaseService.client
       .from('users')

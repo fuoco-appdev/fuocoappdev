@@ -19,7 +19,7 @@ export class AppController {
       Record<string, any>
     >
   ): Promise<void> {
-    const body = await context.request.body();
+    const body = context.request.body();
     const requestValue = await body.value;
     const app = App.deserializeBinary(requestValue);
     const data = await AppService.createAsync(app);
@@ -103,7 +103,7 @@ export class AppController {
     >
   ): Promise<void> {
     const paramsId = context.params['id'];
-    const body = await context.request.body();
+    const body = context.request.body();
     const requestValue = await body.value;
     const app = App.deserializeBinary(requestValue);
     const data = await AppService.updateAsync(paramsId, app);

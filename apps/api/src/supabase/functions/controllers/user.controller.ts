@@ -32,15 +32,12 @@ export class UserController {
       throw HttpError.createError(404, `Supabase user not found`);
     }
 
-    const body = await context.request.body();
+    const body = context.request.body();
     const requestValue = await body.value;
     console.log(requestValue);
     const user = User.deserializeBinary(requestValue);
     console.log(user);
-    const data = await UserService.createAsync(
-      (supabaseUser.data.user as SupabaseUser).id,
-      user
-    );
+    const data = await UserService.createAsync(supabaseUser.data.user.id, user);
 
     if (!data) {
       throw HttpError.createError(409, `Cannot create user`);
@@ -111,7 +108,7 @@ export class UserController {
       throw HttpError.createError(403, `Supabase user has already requested`);
     }
 
-    const body = await context.request.body();
+    const body = context.request.body();
     const requestValue = await body.value;
     const gettingStartedRequest =
       GettingStartedRequest.deserializeBinary(requestValue);
@@ -152,7 +149,7 @@ export class UserController {
     >
   ): Promise<void> {
     const paramsId = context.params['id'];
-    const body = await context.request.body();
+    const body = context.request.body();
     const requestValue = await body.value;
     const user = User.deserializeBinary(requestValue);
     const data = await UserService.updateAsync(paramsId, user);
