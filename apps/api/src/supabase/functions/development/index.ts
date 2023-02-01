@@ -5,11 +5,11 @@ import {
   SecretsController,
 } from '../controllers/index.ts';
 import BucketService from '../services/bucket.service.ts';
-import { corsOptionsDelegate } from '../cors-options.ts';
+import { corsHeaders } from '../index.ts';
 
 await BucketService.initializeDevelopmentAsync();
 const app = Core.registerApp(
   [new UserController(), new AppController(), new SecretsController()],
-  corsOptionsDelegate
+  corsHeaders
 );
 app.listen({ port: 8000 });

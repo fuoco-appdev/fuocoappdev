@@ -1,4 +1,4 @@
-export { MailService as CoreMailService } from 'https://fuoco-appdev-core-api-hfmwsb5tbxb0.deno.dev/mail/src/index.ts';
+export { MailService as CoreMailService } from 'https://fuoco-appdev-core-api-v7ebmdez4p1g.deno.dev/mail/src/index.ts';
 export {
   Core,
   Controller,
@@ -6,5 +6,5 @@ export {
   Guard,
   ContentType,
   GuardExecuter,
-} from 'https://fuoco-appdev-core-api-hfmwsb5tbxb0.deno.dev/core/src/index.ts';
-export * from './cors-options.ts';
+} from 'https://fuoco-appdev-core-api-v7ebmdez4p1g.deno.dev/core/src/index.ts';
+export * from './cors-headers.ts';
