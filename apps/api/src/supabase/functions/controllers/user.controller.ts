@@ -1,7 +1,7 @@
 // deno-lint-ignore-file no-explicit-any ban-unused-ignore
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Controller, Post, Guard, ContentType } from '../index.ts';
-import { User as SupabaseUser } from 'https://deno.land/x/supabase@1.3.1/mod.ts';
+import { User as SupabaseUser } from 'https://esm.sh/@supabase/supabase-js@2.7.0';
 import * as Oak from 'https://deno.land/x/oak@v11.1.0/mod.ts';
 import UserService from '../services/user.service.ts';
 import { AuthGuard } from '../guards/index.ts';
@@ -27,8 +27,8 @@ export class UserController {
     >
   ): Promise<void> {
     const token = context.request.headers.get('session-token') ?? '';
-    const supabaseUser = await SupabaseService.client.auth.api.getUser(token);
-    if (!supabaseUser.user) {
+    const supabaseUser = await SupabaseService.client.auth.getUser(token);
+    if (!supabaseUser.data.user) {
       throw HttpError.createError(404, `Supabase user not found`);
     }
 
@@ -36,7 +36,7 @@ export class UserController {
     const requestValue = await body.value;
     const user = User.deserializeBinary(requestValue);
     const data = await UserService.createAsync(
-      (supabaseUser.user as SupabaseUser).id,
+      (supabaseUser.data.user as SupabaseUser).id,
       user
     );
 
@@ -99,12 +99,12 @@ export class UserController {
     >
   ): Promise<void> {
     const token = context.request.headers.get('session-token') ?? '';
-    const supabaseUser = await SupabaseService.client.auth.api.getUser(token);
-    if (!supabaseUser.user) {
+    const supabaseUser = await SupabaseService.client.auth.getUser(token);
+    if (!supabaseUser.data.user) {
       throw HttpError.createError(404, `Supabase user not found`);
     }
 
-    const user = await UserService.findAsync(supabaseUser.user.id);
+    const user = await UserService.findAsync(supabaseUser.data.user.id);
     if (user?.request_status !== UserRequestStatus.IDLE) {
       throw HttpError.createError(403, `Supabase user has already requested`);
     }
@@ -125,7 +125,7 @@ export class UserController {
     partialUser.setPhoneNumber(gettingStartedRequest.getPhoneNumber());
     partialUser.setRequestStatus(UserRequestStatus.REQUESTED);
     const updatedUserData = await UserService.updateAsync(
-      supabaseUser.user.id,
+      supabaseUser.data.user.id,
       partialUser
     );
     if (!updatedUserData) {
@@ -174,25 +174,19 @@ export class UserController {
     >
   ): Promise<void> {
     const paramsId = context.params['id'];
-    const data = await UserService.deleteAsync(paramsId);
-    if (!data) {
-      throw HttpError.createError(404, `User data not found`);
-    }
+    await UserService.deleteAsync(paramsId);
 
-    const supabaseUser = await SupabaseService.client.auth.api.deleteUser(
-      paramsId,
-      SupabaseService.serviceRoleKey
+    const supabaseUser = await SupabaseService.client.auth.admin.deleteUser(
+      paramsId
     );
     if (supabaseUser.error) {
       throw HttpError.createError(
-        supabaseUser.error.status,
+        supabaseUser.error.status ?? 0,
         supabaseUser.error.message
       );
     }
 
-    const responseUser = UserService.assignAndGetUserProtocol(data);
-    context.response.type = 'application/x-protobuf';
-    context.response.body = responseUser.serializeBinary();
+    context.response.status = Oak.Status.OK;
   }
 
   @Post('/:id')

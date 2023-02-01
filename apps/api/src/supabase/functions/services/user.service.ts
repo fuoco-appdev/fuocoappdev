@@ -65,14 +65,14 @@ export class UserService {
     const { data, error } = await SupabaseService.client
       .from('users')
       .insert([userData])
-      .single();
+      .select();
 
     if (error) {
       console.error(error);
       return null;
     }
 
-    return data;
+    return data.length > 0 ? data[0] : null;
   }
 
   public async updateAsync(
@@ -98,14 +98,14 @@ export class UserService {
       .from('users')
       .update(userData)
       .match({ supabase_id: supabaseId })
-      .single();
+      .select();
 
     if (error) {
       console.error(error);
       return null;
     }
 
-    return data;
+    return data.length > 0 ? data[0] : null;
   }
 
   public async findAllAsync(): Promise<UserProps[] | null> {
@@ -136,19 +136,15 @@ export class UserService {
     return data;
   }
 
-  public async deleteAsync(supabaseId: string): Promise<UserProps | null> {
-    const { data, error } = await SupabaseService.client
+  public async deleteAsync(supabaseId: string): Promise<void> {
+    const { error } = await SupabaseService.client
       .from('users')
       .delete()
-      .match({ supabase_id: supabaseId })
-      .single();
+      .match({ supabase_id: supabaseId });
 
     if (error) {
       console.error(error);
-      return null;
     }
-
-    return data;
   }
 
   public assignAndGetUsersProtocol(

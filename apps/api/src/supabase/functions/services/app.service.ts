@@ -55,14 +55,14 @@ export class AppService {
     const { data, error } = await SupabaseService.client
       .from('apps')
       .insert([appData])
-      .single();
+      .select();
 
     if (error) {
       console.error(error);
       return null;
     }
 
-    return data;
+    return data.length > 0 ? data[0] : null;
   }
 
   public async updateAsync(
@@ -92,14 +92,14 @@ export class AppService {
       .from('apps')
       .update(appData)
       .match({ id: appId })
-      .single();
+      .select();
 
     if (error) {
       console.error(error);
       return null;
     }
 
-    return data;
+    return data.length > 0 ? data[0] : null;
   }
 
   public async findAllAsync(): Promise<AppProps[] | null> {
@@ -142,19 +142,15 @@ export class AppService {
     return data;
   }
 
-  public async deleteAsync(appId: string): Promise<AppProps | null> {
-    const { data, error } = await SupabaseService.client
+  public async deleteAsync(appId: string): Promise<void> {
+    const { error } = await SupabaseService.client
       .from('apps')
       .delete()
-      .match({ id: appId })
-      .single();
+      .match({ id: appId });
 
     if (error) {
       console.error(error);
-      return null;
     }
-
-    return data;
   }
 
   public assignAndGetAppsProtocol(

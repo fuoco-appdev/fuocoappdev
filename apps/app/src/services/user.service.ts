@@ -239,7 +239,7 @@ class UserService extends Service {
     await this.requestDeleteAsync(supabaseUser.id);
   }
 
-  public async requestDeleteAsync(supabaseId: string): Promise<core.User> {
+  public async requestDeleteAsync(supabaseId: string): Promise<void> {
     const session = await AuthService.requestSessionAsync();
     const response = await axios({
       method: 'post',
@@ -249,14 +249,11 @@ class UserService extends Service {
         'Session-Token': `${session?.access_token}`,
       },
       data: '',
-      responseType: 'arraybuffer',
     });
 
-    const arrayBuffer = new Uint8Array(response.data);
-    this.assertResponse(arrayBuffer);
-
-    const userResponse = core.User.fromBinary(arrayBuffer);
-    return userResponse;
+    if (response.status > 400) {
+      throw new response.data();
+    }
   }
 }
 

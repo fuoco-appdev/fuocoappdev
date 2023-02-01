@@ -180,7 +180,7 @@ class AppsService extends Service {
     return deserializedResponse;
   }
 
-  public async requestDeleteAsync(appId: string): Promise<core.App> {
+  public async requestDeleteAsync(appId: string): Promise<void> {
     const session = await AuthService.requestSessionAsync();
     const response = await axios({
       method: 'post',
@@ -190,21 +190,18 @@ class AppsService extends Service {
         'Session-Token': `${session?.access_token}`,
       },
       data: '',
-      responseType: 'arraybuffer',
     });
 
-    const arrayBuffer = new Uint8Array(response.data);
-    this.assertResponse(arrayBuffer);
+    if (response.status > 400) {
+      throw response.data();
+    }
 
     const apps = this._appsBehaviorSubject.getValue();
-    const deserializedResponse = core.App.fromBinary(arrayBuffer);
     const index = apps.findIndex((value) => value.id === appId);
     if (index !== -1) {
       apps.splice(index, 1);
       this._appsBehaviorSubject.next(apps);
     }
-
-    return deserializedResponse;
   }
 
   public async uploadAvatarAsync(appId: string, blob: Blob): Promise<void> {

@@ -1,7 +1,7 @@
 import {
   createClient,
   SupabaseClient,
-} from 'https://deno.land/x/supabase@1.3.1/mod.ts';
+} from 'https://esm.sh/@supabase/supabase-js@2.7.0';
 
 class SupabaseService {
   private readonly _client: SupabaseClient;
@@ -17,9 +17,7 @@ class SupabaseService {
       throw new Error("SUPABASE_SERVICE_ROLE_KEY doesn't exist");
     }
 
-    this._client = createClient(url, key, {
-      detectSessionInUrl: false,
-    });
+    this._client = createClient(url, key);
     this._serviceRoleKey = key;
   }
 

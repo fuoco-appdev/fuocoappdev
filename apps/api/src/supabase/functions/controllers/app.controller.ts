@@ -147,14 +147,9 @@ export class AppController {
     >
   ): Promise<void> {
     const paramsId = context.params['id'];
-    const data = await AppService.deleteAsync(paramsId);
-    if (!data) {
-      throw HttpError.createError(404, `App data not found`);
-    }
+    await AppService.deleteAsync(paramsId);
 
-    const responseApp = AppService.assignAndGetAppProtocol(data);
-    context.response.type = 'application/x-protobuf';
-    context.response.body = responseApp.serializeBinary();
+    context.response.status = Oak.Status.OK;
   }
 
   @Post('/:id')

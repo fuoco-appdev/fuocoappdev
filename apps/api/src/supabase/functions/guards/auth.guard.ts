@@ -14,14 +14,12 @@ export class AuthGuard extends GuardExecuter {
   ): Promise<boolean> {
     if (ctx.request.headers.has('session-token')) {
       const token = ctx.request.headers.get('session-token') ?? '';
-      const { user, error } = await SupabaseService.client.auth.api.getUser(
-        token
-      );
+      const { data, error } = await SupabaseService.client.auth.getUser(token);
       if (error) {
         console.error(error);
       }
 
-      return user ? true : false;
+      return data.user ? true : false;
     }
 
     return false;
