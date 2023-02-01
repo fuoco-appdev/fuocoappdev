@@ -1,5 +1,5 @@
-import { Core, corsHeaders } from '../index.ts';
+import { Core } from '../index.ts';
 import { SecretsController } from '../controllers/index.ts';
 
-const app = Core.registerApp([new SecretsController()], corsHeaders);
+const app = Core.registerApp([new SecretsController()]);
 app.listen({ port: 8000 });
