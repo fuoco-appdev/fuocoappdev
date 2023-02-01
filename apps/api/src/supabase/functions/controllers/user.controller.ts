@@ -27,6 +27,7 @@ export class UserController {
     >
   ): Promise<void> {
     const token = context.request.headers.get('session-token') ?? '';
+    console.log(token);
     const supabaseUser = await SupabaseService.client.auth.getUser(token);
     if (!supabaseUser.data.user) {
       throw HttpError.createError(404, `Supabase user not found`);

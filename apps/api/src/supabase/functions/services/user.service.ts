@@ -61,13 +61,13 @@ export class UserService {
       location,
       requestStatus: UserRequestStatus.IDLE,
     });
+    console.log(userData);
 
     const { data, error } = await SupabaseService.client
       .from('users')
       .insert([userData])
       .select();
 
-    console.log(data);
     if (error) {
       console.error(error);
       return null;
