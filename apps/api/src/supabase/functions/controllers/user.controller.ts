@@ -27,7 +27,6 @@ export class UserController {
     >
   ): Promise<void> {
     const token = context.request.headers.get('session-token') ?? '';
-    console.log(token);
     const supabaseUser = await SupabaseService.client.auth.getUser(token);
     if (!supabaseUser.data.user) {
       throw HttpError.createError(404, `Supabase user not found`);
@@ -35,7 +34,9 @@ export class UserController {
 
     const body = await context.request.body();
     const requestValue = await body.value;
+    console.log(requestValue);
     const user = User.deserializeBinary(requestValue);
+    console.log(user);
     const data = await UserService.createAsync(
       (supabaseUser.data.user as SupabaseUser).id,
       user
