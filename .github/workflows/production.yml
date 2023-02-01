@@ -54,7 +54,7 @@ jobs:
         working-directory: ./apps/api/src
         
       - name: Set secrets
-        run: supabase secrets set MAPBOX_ACCESS_TOKEN=$MAPBOX_ACCESS_TOKEN --project-ref $PROJECT_ID
+        run: supabase secrets set MAPBOX_ACCESS_TOKEN=$MAPBOX_ACCESS_TOKEN
         working-directory: ./apps/api/src
           
       - name: Migrate
