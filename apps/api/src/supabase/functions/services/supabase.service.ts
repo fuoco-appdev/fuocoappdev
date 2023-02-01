@@ -2,7 +2,6 @@ import {
   createClient,
   SupabaseClient,
 } from 'https://deno.land/x/supabase@1.3.1/mod.ts';
-import 'https://deno.land/x/dotenv@v3.2.0/load.ts';
 
 class SupabaseService {
   private readonly _client: SupabaseClient;
