@@ -19,6 +19,10 @@ jobs:
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       MAPBOX_ACCESS_TOKEN: ${{ secrets.MAPBOX_ACCESS_TOKEN }}
+      SMTP_HOST: ${{ secrets.SMTP_HOST }}
+      SMTP_PORT: ${{ secrets.SMTP_PORT }}
+      SMTP_USER: ${{ secrets.SMTP_USER }}
+      SMTP_PASS: ${{ secrets.SMTP_PASS }}
       PROJECT_ID: vsejdtreyvcnevkkffiq
 
     steps:
@@ -54,7 +58,12 @@ jobs:
         working-directory: ./apps/api/src
         
       - name: Set secrets
-        run: supabase secrets set MAPBOX_ACCESS_TOKEN=$MAPBOX_ACCESS_TOKEN
+        run: |
+          supabase secrets set MAPBOX_ACCESS_TOKEN=$MAPBOX_ACCESS_TOKEN
+          supabase secrets set SMTP_HOST=$SMTP_HOST
+          supabase secrets set SMTP_PORT=$SMTP_PORT
+          supabase secrets set SMTP_USER=$SMTP_USER
+          supabase secrets set SMTP_PASS=$SMTP_PASS
         working-directory: ./apps/api/src
           
       - name: Migrate
