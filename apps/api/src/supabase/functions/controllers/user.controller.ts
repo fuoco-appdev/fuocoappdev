@@ -31,7 +31,7 @@ export class UserController {
     if (!supabaseUser.data.user) {
       throw HttpError.createError(404, `Supabase user not found`);
     }
-
+    console.log(context);
     const body = context.request.body();
     const requestValue = await body.value;
     console.log(requestValue);
