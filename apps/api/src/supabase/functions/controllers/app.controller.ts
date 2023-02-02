@@ -6,6 +6,7 @@ import AppService from '../services/app.service.ts';
 import { AuthGuard } from '../guards/index.ts';
 import { App } from '../protobuf/core_pb.js';
 import * as HttpError from 'https://deno.land/x/http_errors@3.0.0/mod.ts';
+import { readAll } from 'https://deno.land/std@0.105.0/io/util.ts';
 
 @Controller('/app')
 export class AppController {
@@ -19,8 +20,8 @@ export class AppController {
       Record<string, any>
     >
   ): Promise<void> {
-    const body = context.request.body();
-    const requestValue = await body.value;
+    const body = await context.request.body({ type: 'reader' });
+    const requestValue = await readAll(body.value);
     const app = App.deserializeBinary(requestValue);
     const data = await AppService.createAsync(app);
     if (!data) {
@@ -103,8 +104,8 @@ export class AppController {
     >
   ): Promise<void> {
     const paramsId = context.params['id'];
-    const body = context.request.body();
-    const requestValue = await body.value;
+    const body = await context.request.body({ type: 'reader' });
+    const requestValue = await readAll(body.value);
     const app = App.deserializeBinary(requestValue);
     const data = await AppService.updateAsync(paramsId, app);
     if (!data) {

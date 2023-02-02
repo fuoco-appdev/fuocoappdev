@@ -35,11 +35,8 @@ export class UserController {
 
     const body = await context.request.body({ type: 'reader' });
     const requestValue = await readAll(body.value);
-    console.log(requestValue);
     const user = User.deserializeBinary(requestValue);
-    console.log(user.getEmail());
     const data = await UserService.createAsync(supabaseUser.data.user.id, user);
-
     if (!data) {
       throw HttpError.createError(409, `Cannot create user`);
     }
@@ -109,8 +106,8 @@ export class UserController {
       throw HttpError.createError(403, `Supabase user has already requested`);
     }
 
-    const body = context.request.body();
-    const requestValue = await body.value;
+    const body = await context.request.body({ type: 'reader' });
+    const requestValue = await readAll(body.value);
     const gettingStartedRequest =
       GettingStartedRequest.deserializeBinary(requestValue);
     await MailService.sendFromContentAsync(
@@ -150,8 +147,8 @@ export class UserController {
     >
   ): Promise<void> {
     const paramsId = context.params['id'];
-    const body = context.request.body();
-    const requestValue = await body.value;
+    const body = await context.request.body({ type: 'reader' });
+    const requestValue = await readAll(body.value);
     const user = User.deserializeBinary(requestValue);
     const data = await UserService.updateAsync(paramsId, user);
     if (!data) {
