@@ -13,6 +13,7 @@ import {
 import * as HttpError from 'https://deno.land/x/http_errors@3.0.0/mod.ts';
 import SupabaseService from '../services/supabase.service.ts';
 import MailService from '../services/mail.service.ts';
+import { readAll } from 'https://deno.land/std@0.175.0/io/mod.ts';
 
 @Controller('/user')
 export class UserController {
@@ -32,9 +33,9 @@ export class UserController {
       throw HttpError.createError(404, `Supabase user not found`);
     }
 
-    const body = context.request.body();
-    console.log(body.type);
-    const requestValue = await body.value;
+    const body = context.request.body({ type: 'reader' });
+    const requestValue = new Uint8Array();
+    await body.value.read(requestValue);
     console.log(requestValue);
     const user = User.deserializeBinary(requestValue);
     console.log(user);
