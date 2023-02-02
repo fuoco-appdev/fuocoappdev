@@ -33,9 +33,8 @@ export class UserController {
       throw HttpError.createError(404, `Supabase user not found`);
     }
 
-    const body = context.request.body({ type: 'reader' });
-    const requestValue = new Uint8Array();
-    await body.value.read(requestValue);
+    const body = context.request.body({ type: 'text' });
+    const requestValue = await body.value;
     console.log(requestValue);
     const user = User.deserializeBinary(requestValue);
     console.log(user);
