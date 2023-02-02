@@ -166,8 +166,10 @@ function WindowMobileComponent(): JSX.Element {
   const [windowProps] = useObservable(WindowController.model.store);
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
-  useLayoutEffect(() => {
-    WindowController.scrollRef = scrollRef.current;
+  useEffect(() => {
+    if (scrollRef.current) {
+      WindowController.scrollRef = scrollRef.current;
+    }
   }, [scrollRef]);
 
   return (

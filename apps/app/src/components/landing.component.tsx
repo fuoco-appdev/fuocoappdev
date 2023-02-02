@@ -241,7 +241,7 @@ function LandingMobileComponent(): JSX.Element {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (containerRef.current) {
       const ctx = gsap.context(() => {
         ScrollTrigger.create({
