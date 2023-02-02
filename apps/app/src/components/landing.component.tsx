@@ -241,7 +241,7 @@ function LandingMobileComponent(): JSX.Element {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (containerRef.current) {
       const ctx = gsap.context(() => {
         ScrollTrigger.create({
@@ -257,7 +257,7 @@ function LandingMobileComponent(): JSX.Element {
             WorldController.fade(self.progress);
           },
         });
-      }, containerRef);
+      }, containerRef.current);
 
       return () => ctx.revert();
     }
