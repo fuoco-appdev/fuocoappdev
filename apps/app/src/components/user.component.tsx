@@ -1,6 +1,6 @@
 import styles from './user.module.scss';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useLayoutEffect } from 'react';
+import { useEffect } from 'react';
 import UserService from '../services/user.service';
 import { RoutePaths } from '../route-paths';
 import * as core from '../protobuf/core_pb';
@@ -9,7 +9,7 @@ export default function UserComponent(): JSX.Element {
   const location = useLocation();
   const navigate = useNavigate();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (location.pathname === RoutePaths.User) {
       if (
         UserService.activeUser?.requestStatus !== core.UserRequestStatus.IDLE
