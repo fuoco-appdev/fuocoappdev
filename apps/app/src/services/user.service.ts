@@ -59,7 +59,6 @@ class UserService extends Service {
       responseType: 'arraybuffer',
     });
 
-    console.log(response.data);
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 

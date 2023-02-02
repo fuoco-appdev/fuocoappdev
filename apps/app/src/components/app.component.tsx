@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import WorldController from '../controllers/world.controller';
 import WindowController from '../controllers/window.controller';
 import SigninController from '../controllers/signin.controller';
@@ -123,7 +123,7 @@ export default function AppComponent(): JSX.Element {
     };
   }, []);
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path={RoutePaths.Default} element={<WindowComponent />}>
           <Route
@@ -200,6 +200,6 @@ export default function AppComponent(): JSX.Element {
           </Route>
         </Route>
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
