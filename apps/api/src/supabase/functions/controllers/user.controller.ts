@@ -32,24 +32,27 @@ export class UserController {
       throw HttpError.createError(404, `Supabase user not found`);
     }
 
-    const body = context.request.body({
-      contentTypes: {
-        bytes: ['text'],
-      },
-    });
-    const requestValue = await body.value;
-    console.log(requestValue);
-    const user = User.deserializeBinary(requestValue);
-    console.log(user);
-    const data = await UserService.createAsync(supabaseUser.data.user.id, user);
+    const body = context.request.body();
+    try {
+      const requestValue = await body.value;
+      console.log(requestValue);
+      const user = User.deserializeBinary(requestValue);
+      console.log(user);
+      const data = await UserService.createAsync(
+        supabaseUser.data.user.id,
+        user
+      );
 
-    if (!data) {
-      throw HttpError.createError(409, `Cannot create user`);
+      if (!data) {
+        throw HttpError.createError(409, `Cannot create user`);
+      }
+
+      const responseUser = UserService.assignAndGetUserProtocol(data);
+      context.response.type = 'application/x-protobuf';
+      context.response.body = responseUser.serializeBinary();
+    } catch (error: any) {
+      console.log(error);
     }
-
-    const responseUser = UserService.assignAndGetUserProtocol(data);
-    context.response.type = 'application/x-protobuf';
-    context.response.body = responseUser.serializeBinary();
   }
 
   @Post('/all')
