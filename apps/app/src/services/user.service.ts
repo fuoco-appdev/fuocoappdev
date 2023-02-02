@@ -124,6 +124,7 @@ class UserService extends Service {
       headers: {
         ...this.headers,
         'Session-Token': `${session?.access_token}`,
+        'Content-Length': `${user.toBinary().byteLength}`,
       },
       data: user.toBinary(),
       responseType: 'arraybuffer',
