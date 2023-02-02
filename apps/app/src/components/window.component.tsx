@@ -168,7 +168,7 @@ function WindowMobileComponent(): JSX.Element {
 
   useLayoutEffect(() => {
     WindowController.scrollRef = scrollRef.current;
-  }, []);
+  }, [scrollRef]);
 
   return (
     <>

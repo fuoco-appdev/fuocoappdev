@@ -69,28 +69,32 @@
 .root-mobile {
   & .content-mobile {
     & .animation-container-mobile {
-      & .landing-title-container-mobile {
-        display: flex;
-        margin-top: 10vh;
-        padding: $mp-4;
-        flex-direction: column;
+      & .text-container-mobile {
+        pointer-events: none;
 
-        & .title-mobile {
-          overflow-wrap: break-word;
-          font-size: 18pt;
-          line-height: 40pt;
+        & .landing-title-container-mobile {
+          display: flex;
+          margin-top: 10vh;
+          padding: $mp-4;
+          flex-direction: column;
 
-          & .title-spacing-mobile {
+          & .title-mobile {
+            overflow-wrap: break-word;
+            font-size: 18pt;
+            line-height: 40pt;
+
+            & .title-spacing-mobile {
+            }
           }
-        }
 
-        & .sub-title-mobile {
-          overflow-wrap: break-word;
-          font-size: 12pt;
-          line-height: 20pt;
-          color: rgba(255, 255, 255, 0.7);
-          font-weight: 500;
-          padding-bottom: $mp-8;
+          & .sub-title-mobile {
+            overflow-wrap: break-word;
+            font-size: 12pt;
+            line-height: 20pt;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+            padding-bottom: $mp-8;
+          }
         }
       }
     }
