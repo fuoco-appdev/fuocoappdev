@@ -174,7 +174,10 @@ function WindowMobileComponent(): JSX.Element {
     <>
       <div className={styles['background']}>
         <WorldComponent
-          isVisible={windowProps.activeRoute === RoutePaths.Landing}
+          isVisible={
+            windowProps.activeRoute === RoutePaths.Landing ||
+            windowProps.activeRoute === RoutePaths.Default
+          }
           worldResizable={false}
           worldPosition={{ x: 0, y: -3.5, z: 0 }}
         />
