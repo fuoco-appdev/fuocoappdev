@@ -16,9 +16,6 @@ import { gsap, CSSPlugin } from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
 import WindowController from '../controllers/window.controller';
 import WorldController from '../controllers/world.controller';
-gsap.registerPlugin(ScrollTrigger);
-gsap.registerPlugin(CSSPlugin);
-gsap.defaults({ ease: 'none', duration: 2 });
 
 interface ServiceProps {
   title: string;
@@ -242,8 +239,10 @@ function LandingMobileComponent(): JSX.Element {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      ScrollTrigger.create({
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.registerPlugin(CSSPlugin);
+    const timeline = gsap.timeline({
+      scrollTrigger: {
         scroller: WindowController.scrollRef,
         trigger: containerRef.current,
         start: 'top top',
@@ -255,15 +254,13 @@ function LandingMobileComponent(): JSX.Element {
         onUpdate: (self: ScrollTrigger) => {
           WorldController.fade(self.progress);
         },
-      });
-    }, containerRef);
+      },
+    });
 
-    return () => ctx.revert();
+    return () => timeline.scrollTrigger?.kill();
   }, []);
 
   useEffect(() => {
-    console.log(WindowController.scrollRef);
-    console.log(containerRef.current);
     ScrollTrigger.refresh();
   }, [containerRef]);
 
