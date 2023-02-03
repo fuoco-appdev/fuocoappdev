@@ -21,6 +21,7 @@ import { useSpring } from 'react-spring';
 import * as core from '../protobuf/core_pb';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import LoadingComponent from './loading.component';
+import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
 
 function WindowDesktopComponent(): JSX.Element {
   const navigate = useNavigate();
@@ -170,6 +171,8 @@ function WindowMobileComponent(): JSX.Element {
     if (scrollRef.current) {
       WindowController.scrollRef = scrollRef.current;
     }
+
+    ScrollTrigger.refresh();
   }, [scrollRef]);
 
   return (
