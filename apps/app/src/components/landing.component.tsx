@@ -7,17 +7,17 @@ import {
   IconPenTool,
 } from '@fuoco.appdev/core-ui';
 import styles from './landing.module.scss';
-import windowStyles from './window.module.scss';
 import { Strings } from '../strings';
 import { useNavigate } from 'react-router-dom';
 import { RoutePaths } from '../route-paths';
 import { animated, useTransition, config } from 'react-spring';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
-import { gsap } from 'gsap';
+import { gsap, CSSPlugin } from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
 import WindowController from '../controllers/window.controller';
 import WorldController from '../controllers/world.controller';
 gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(CSSPlugin);
 gsap.defaults({ ease: 'none', duration: 2 });
 
 interface ServiceProps {
@@ -257,13 +257,13 @@ function LandingMobileComponent(): JSX.Element {
             WorldController.fade(self.progress);
           },
         });
-      }, containerRef.current);
+      }, containerRef);
 
       return () => ctx.revert();
     }
 
     return;
-  }, [containerRef]);
+  }, []);
 
   return (
     <div className={[styles['root'], styles['root-mobile']].join(' ')}>
