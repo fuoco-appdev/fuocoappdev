@@ -259,11 +259,17 @@ function LandingMobileComponent(): JSX.Element {
         });
       }, containerRef);
 
+      ScrollTrigger.refresh();
+
       return () => ctx.revert();
     }
 
     return;
   }, []);
+
+  useLayoutEffect(() => {
+    ScrollTrigger.refresh();
+  }, [containerRef]);
 
   return (
     <div className={[styles['root'], styles['root-mobile']].join(' ')}>
