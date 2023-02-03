@@ -242,34 +242,32 @@ function LandingMobileComponent(): JSX.Element {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useLayoutEffect(() => {
-    if (containerRef.current) {
-      const ctx = gsap.context(() => {
-        ScrollTrigger.create({
-          scroller: WindowController.scrollRef,
-          trigger: containerRef.current,
-          start: 'top top',
-          end: '+=500',
-          markers: false,
-          pin: true,
-          pinSpacing: true,
-          pinType: 'fixed',
-          onUpdate: (self: ScrollTrigger) => {
-            WorldController.fade(self.progress);
-          },
-        });
-      }, containerRef);
+    const ctx = gsap.context(() => {
+      ScrollTrigger.create({
+        scroller: WindowController.scrollRef,
+        trigger: containerRef.current,
+        start: 'top top',
+        end: '+=500',
+        markers: false,
+        pin: true,
+        pinSpacing: true,
+        pinType: 'fixed',
+        onUpdate: (self: ScrollTrigger) => {
+          WorldController.fade(self.progress);
+        },
+      });
+    }, containerRef);
 
-      containerRef.current.addEventListener('load', () =>
-        ScrollTrigger.refresh()
-      );
-      WindowController.scrollRef?.addEventListener('load', () =>
-        ScrollTrigger.refresh()
-      );
+    containerRef.current?.addEventListener('load', () => {
+      console.log('load container');
+      ScrollTrigger.refresh();
+    });
+    WindowController.scrollRef?.addEventListener('load', () => {
+      console.log('load scroll');
+      ScrollTrigger.refresh();
+    });
 
-      return () => ctx.revert();
-    }
-
-    return;
+    return () => ctx.revert();
   }, []);
 
   return (
