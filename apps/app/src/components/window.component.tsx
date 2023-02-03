@@ -362,6 +362,7 @@ export default function WindowComponent(): JSX.Element {
   const location = useLocation();
   const navigate = useNavigate();
   const [windowProps] = useObservable(WindowController.model.store);
+  const isMounted = useRef<boolean>(false);
   const confirmEmailTransitionStyle = useSpring({
     from: { y: -200 },
     to: windowProps.showConfirmEmailAlert ? { y: 50 } : { y: -200 },
@@ -382,7 +383,10 @@ export default function WindowComponent(): JSX.Element {
   });
 
   useEffect(() => {
-    WindowController.checkUserIsAuthenticatedAsync();
+    if (!isMounted.current) {
+      WindowController.checkUserIsAuthenticatedAsync();
+      isMounted.current = true;
+    }
   }, []);
 
   useEffect(() => {

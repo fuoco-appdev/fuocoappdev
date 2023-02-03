@@ -5,7 +5,7 @@ import styles from './world.module.scss';
 import * as AtmosphereShader from '../shaders/atmosphere.shader';
 import * as TWEEN from '@tweenjs/tween.js';
 import { useLocation } from 'react-router-dom';
-import { useEffect, useImperativeHandle, useState } from 'react';
+import { useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { MathUtils } from 'three';
 import {
   Avatar,
@@ -420,12 +420,16 @@ export default function WorldComponent({
   const location = useLocation();
   const [props] = useObservable(WorldController.model.store);
   const [cards, setCards] = useState<React.ReactElement[]>([]);
+  const isMounted = useRef<boolean>(false);
   WorldController.model.location = location;
 
   useEffect(() => {
-    WorldController.worldPosition = worldPosition;
+    if (!isMounted.current) {
+      WorldController.worldPosition = worldPosition;
+      LoadWorldAsync();
 
-    LoadWorldAsync();
+      isMounted.current = true;
+    }
   }, []);
 
   useEffect(() => {

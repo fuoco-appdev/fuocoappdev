@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import {
   Typography,
   Button,
@@ -43,7 +43,7 @@ function AccountDesktopComponent({
   const [locationIconLit, setLocationIconLit] = useState<boolean>(false);
   const [languageIconLit, setLanguageIconLit] = useState<boolean>(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setShow(true);
     return () => {
       setShow(false);

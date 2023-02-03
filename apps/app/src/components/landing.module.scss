@@ -69,6 +69,8 @@
 .root-mobile {
   & .content-mobile {
     & .animation-container-mobile {
+      align-items: flex-start;
+
       & .text-container-mobile {
         pointer-events: none;
 
