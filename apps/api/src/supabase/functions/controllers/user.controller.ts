@@ -110,12 +110,16 @@ export class UserController {
     const requestValue = await readAll(body.value);
     const gettingStartedRequest =
       GettingStartedRequest.deserializeBinary(requestValue);
-    await MailService.sendFromContentAsync(
-      user?.email ?? '',
-      'fuoco.appdev@gmail.com',
-      `Get started with ${gettingStartedRequest.getCompany()}`,
-      `${gettingStartedRequest.getCompany()}, ${gettingStartedRequest.getPhoneNumber()}, ${gettingStartedRequest.getComment()}`
-    );
+    try {
+      await MailService.sendFromContentAsync(
+        user?.email ?? '',
+        'fuoco.appdev@gmail.com',
+        `Get started with ${gettingStartedRequest.getCompany()}`,
+        `${gettingStartedRequest.getCompany()}, ${gettingStartedRequest.getPhoneNumber()}, ${gettingStartedRequest.getComment()}`
+      );
+    } catch (error: any) {
+      console.error(error);
+    }
 
     const partialUser = new User();
     partialUser.setCompany(gettingStartedRequest.getCompany());
