@@ -14,20 +14,15 @@ class MailService extends CoreMailService {
       throw new Error("SMTP_PORT doesn't exist");
     }
 
-    super({
-      debug: {
-        allowUnsecure: true,
-      },
-      connection: {
+    super(
+      {
         hostname: host,
         port: port,
-        tls: secure,
-        auth: {
-          username: user ?? '',
-          password: password ?? '',
-        },
+        username: user ?? '',
+        password: password ?? '',
       },
-    });
+      secure
+    );
   }
 }
 

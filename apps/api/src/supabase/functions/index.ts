@@ -1,4 +1,4 @@
-export { MailService as CoreMailService } from 'https://fuoco-appdev-core-api-j34b1zmn6g40.deno.dev/mail/src/index.ts';
+export { MailService as CoreMailService } from 'https://fuoco-appdev-core-api-a2yfs7sxgjp0.deno.dev/mail/src/index.ts';
 export {
   Core,
   Controller,
@@ -6,4 +6,4 @@ export {
   Guard,
   ContentType,
   GuardExecuter,
-} from 'https://fuoco-appdev-core-api-j34b1zmn6g40.deno.dev/core/src/index.ts';
+} from 'https://fuoco-appdev-core-api-a2yfs7sxgjp0.deno.dev/core/src/index.ts';
