@@ -251,6 +251,7 @@ function LandingMobileComponent(): JSX.Element {
         pinSpacing: true,
         pinType: 'fixed',
         immediateRender: false,
+        invalidateOnRefresh: true,
         onUpdate: (self: ScrollTrigger) => {
           WorldController.fade(self.progress);
         },
