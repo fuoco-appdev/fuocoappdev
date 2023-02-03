@@ -6,7 +6,7 @@ class MailService extends CoreMailService {
     const port = Number(Deno.env.get('SMTP_PORT'));
     const user = Deno.env.get('SMTP_USER');
     const password = Deno.env.get('SMTP_PASS');
-    const secure = Boolean(Deno.env.get('SMTP_SECURE'));
+    const secure = Deno.env.get('SMTP_SECURE') === 'true';
     if (!host) {
       throw new Error("SMTP_HOST doesn't exist");
     }
@@ -16,7 +16,7 @@ class MailService extends CoreMailService {
 
     super({
       debug: {
-        allowUnsecure: !secure,
+        allowUnsecure: true,
       },
       connection: {
         hostname: host,
