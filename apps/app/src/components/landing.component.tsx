@@ -257,6 +257,22 @@ function LandingMobileComponent(): JSX.Element {
       },
     });
 
+    timeline.fromTo(
+      containerRef.current,
+      {
+        scrollTrigger: {
+          start: 'top top',
+          end: '+=500',
+        },
+      },
+      {
+        scrollTrigger: {
+          start: 'top top',
+          end: '+=500',
+        },
+      }
+    );
+
     return () => timeline.scrollTrigger?.kill();
   }, []);
 
