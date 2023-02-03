@@ -240,7 +240,7 @@ function LandingMobileComponent(): JSX.Element {
 
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
-    const timeline = gsap.timeline({
+    const timeline = gsap.to(containerRef.current, {
       scrollTrigger: {
         scroller: WindowController.scrollRef,
         trigger: containerRef.current,
