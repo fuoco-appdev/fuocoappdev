@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { RoutePaths } from '../route-paths';
 import { animated, useTransition, config } from 'react-spring';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
-import { gsap, CSSPlugin } from 'gsap';
+import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
 import WindowController from '../controllers/window.controller';
 import WorldController from '../controllers/world.controller';
@@ -237,11 +237,9 @@ function LandingDesktopComponent(): JSX.Element {
 function LandingMobileComponent(): JSX.Element {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [loaded, setLoaded] = useState<boolean>(false);
 
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
-    gsap.registerPlugin(CSSPlugin);
     const timeline = gsap.timeline({
       scrollTrigger: {
         scroller: WindowController.scrollRef,
@@ -258,14 +256,12 @@ function LandingMobileComponent(): JSX.Element {
       },
     });
 
-    setLoaded(true);
+    setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 500);
 
     return () => timeline.scrollTrigger?.kill();
   }, []);
-
-  useEffect(() => {
-    ScrollTrigger.update();
-  }, [loaded]);
 
   return (
     <div className={[styles['root'], styles['root-mobile']].join(' ')}>
