@@ -258,15 +258,12 @@ function LandingMobileComponent(): JSX.Element {
       });
     }, containerRef);
 
-    WindowController.scrollRef?.addEventListener('load', () => {
-      console.log('load scroll');
-      ScrollTrigger.refresh();
-    });
-
     return () => ctx.revert();
   }, []);
 
   useEffect(() => {
+    console.log(WindowController.scrollRef);
+    console.log(containerRef.current);
     ScrollTrigger.refresh();
   }, [containerRef]);
 
