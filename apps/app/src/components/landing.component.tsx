@@ -237,6 +237,7 @@ function LandingDesktopComponent(): JSX.Element {
 function LandingMobileComponent(): JSX.Element {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const [loaded, setLoaded] = useState<boolean>(false);
 
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -257,28 +258,14 @@ function LandingMobileComponent(): JSX.Element {
       },
     });
 
-    timeline.fromTo(
-      containerRef.current,
-      {
-        scrollTrigger: {
-          start: 'top top',
-          end: '+=500',
-        },
-      },
-      {
-        scrollTrigger: {
-          start: 'top top',
-          end: '+=500',
-        },
-      }
-    );
+    setLoaded(true);
 
     return () => timeline.scrollTrigger?.kill();
   }, []);
 
   useEffect(() => {
-    ScrollTrigger.refresh();
-  }, [containerRef]);
+    ScrollTrigger.update();
+  }, [loaded]);
 
   return (
     <div className={[styles['root'], styles['root-mobile']].join(' ')}>
