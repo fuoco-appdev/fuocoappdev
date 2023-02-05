@@ -411,18 +411,12 @@ export default function WindowComponent(): JSX.Element {
 
   return (
     <div className={styles['root']}>
-      {windowProps.isLoading ? (
-        <LoadingComponent />
-      ) : (
-        <>
-          <ResponsiveDesktop>
-            <WindowDesktopComponent />
-          </ResponsiveDesktop>
-          <ResponsiveMobile>
-            <WindowMobileComponent />
-          </ResponsiveMobile>
-        </>
-      )}
+      <ResponsiveDesktop>
+        <WindowDesktopComponent />
+      </ResponsiveDesktop>
+      <ResponsiveMobile>
+        <WindowMobileComponent />
+      </ResponsiveMobile>
       <Alert
         className={styles['alert']}
         style={confirmEmailTransitionStyle}
@@ -447,6 +441,7 @@ export default function WindowComponent(): JSX.Element {
       >
         {Strings.passwordResetDescription}
       </Alert>
+      <LoadingComponent isVisible={windowProps.isLoading} />
     </div>
   );
 }
