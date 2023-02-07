@@ -423,6 +423,15 @@ export default function WorldComponent({
   const isMounted = useRef<boolean>(false);
   WorldController.model.location = location;
 
+  const onMouseMove = (event: MouseEvent) => {
+    const windowWidth = window.innerWidth / 2;
+    const windowHeight = window.innerHeight / 2;
+    const mouseX = event.clientX / windowWidth;
+    const mouseY = event.clientY / windowHeight;
+
+    WorldController.ref.current!.style.transform = `translate3d(${mouseX}%, ${mouseY}%, 0)`;
+  };
+
   useEffect(() => {
     if (!isMounted.current) {
       WorldController.worldPosition = worldPosition;
@@ -430,6 +439,12 @@ export default function WorldComponent({
 
       isMounted.current = true;
     }
+
+    window.addEventListener('mousemove', onMouseMove, false);
+
+    return () => {
+      window.removeEventListener('mousemove', onMouseMove);
+    };
   }, []);
 
   useEffect(() => {
