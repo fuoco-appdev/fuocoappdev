@@ -96,6 +96,9 @@
             color: rgba(255, 255, 255, 0.7);
             font-weight: 500;
             padding-bottom: $mp-8;
+            opacity: 0;
+            animation: fade-text 4s forwards;
+            animation-timing-function: $transition-standard-easing;
           }
         }
       }
@@ -141,12 +144,18 @@
         display: flex;
 
         & .title {
+          font-family: 'Alata', sans-serif;
           height: fit-content;
           -webkit-user-select: none; /* Safari */
           -ms-user-select: none; /* IE 10 and IE 11 */
           user-select: none; /* Standard syntax */
           padding-bottom: $mp-8;
-          font-weight: $font-weight-bold;
+
+          & .title-char {
+            position: relative;
+            opacity: 0;
+            animation: move-text 0.15s forwards;
+          }
 
           & .title-spacing {
           }
@@ -167,6 +176,9 @@
             padding-bottom: $mp-8;
             font-weight: 500;
             align-self: baseline;
+            opacity: 0;
+            animation: fade-text 6s forwards;
+            animation-timing-function: $transition-standard-easing;
           }
         }
       }
@@ -232,5 +244,28 @@
         }
       }
     }
+  }
+}
+
+@keyframes move-text {
+  0% {
+    bottom: -0.2em;
+    opacity: 0.5;
+  }
+  50% {
+    bottom: 0.2em;
+  }
+  100% {
+    bottom: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes fade-text {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }

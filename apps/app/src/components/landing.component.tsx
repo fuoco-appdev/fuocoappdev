@@ -133,6 +133,13 @@ function LandingDesktopComponent(): JSX.Element {
     config: config.gentle,
   });
 
+  let textIndex = 0;
+  const textStyle: (index: number, delay: number) => React.CSSProperties = (
+    index,
+    delay
+  ) => ({
+    animationDelay: delay + index / 50 + 's',
+  });
   return (
     <div className={[styles['root'], styles['root-desktop']].join(' ')}>
       <div className={[styles['content'], styles['content-desktop']].join(' ')}>
@@ -157,9 +164,33 @@ function LandingDesktopComponent(): JSX.Element {
                       ' '
                     )}
                   >
-                    {Strings.landingTitle1}
+                    {Strings.landingTitle1.split('').map((char, index) => {
+                      textIndex += 1;
+                      return (
+                        <span
+                          className={styles['title-char']}
+                          aria-hidden="true"
+                          key={index}
+                          style={textStyle(textIndex, 0)}
+                        >
+                          {char}
+                        </span>
+                      );
+                    })}
                     <br />
-                    {Strings.landingTitle2}
+                    {Strings.landingTitle2.split('').map((char, index) => {
+                      textIndex += 1;
+                      return (
+                        <span
+                          className={styles['title-char']}
+                          aria-hidden="true"
+                          key={index}
+                          style={textStyle(textIndex, 0.4)}
+                        >
+                          {char}
+                        </span>
+                      );
+                    })}
                     <br />
                     <span
                       className={[
@@ -167,7 +198,19 @@ function LandingDesktopComponent(): JSX.Element {
                         styles['title-spacing-desktop'],
                       ].join(' ')}
                     >
-                      {Strings.landingTitle3}
+                      {Strings.landingTitle3.split('').map((char, index) => {
+                        textIndex += 1;
+                        return (
+                          <span
+                            className={styles['title-char']}
+                            aria-hidden="true"
+                            key={index}
+                            style={textStyle(textIndex, 0.8)}
+                          >
+                            {char}
+                          </span>
+                        );
+                      })}
                     </span>
                   </Typography.Title>
                   <div
@@ -268,6 +311,9 @@ function LandingMobileComponent(): JSX.Element {
     return;
   }, []);
 
+  const textStyle: (index: number) => React.CSSProperties = (index) => ({
+    animationDelay: index / 50 + 's',
+  });
   return (
     <div className={[styles['root'], styles['root-mobile']].join(' ')}>
       <div className={[styles['content'], styles['content-mobile']].join(' ')}>
@@ -294,7 +340,20 @@ function LandingMobileComponent(): JSX.Element {
               <Typography.Title
                 className={[styles['title'], styles['title-mobile']].join(' ')}
               >
-                {`${Strings.landingTitle1} ${Strings.landingTitle2} ${Strings.landingTitle3}`}
+                {`${Strings.landingTitle1} ${Strings.landingTitle2} ${Strings.landingTitle3}`
+                  .split('')
+                  .map((char, index) => {
+                    return (
+                      <span
+                        className={styles['title-char']}
+                        aria-hidden="true"
+                        key={index}
+                        style={textStyle(index)}
+                      >
+                        {char}
+                      </span>
+                    );
+                  })}
               </Typography.Title>
               <Typography.Text
                 className={[
