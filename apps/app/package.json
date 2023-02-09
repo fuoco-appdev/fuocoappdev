@@ -1,5 +1,7 @@
 {
-  "name": "@fuoco.appdev/core-app-api",
+  "name": "fuoco.appdev",
   "version": "1.0.0",
+  "main": "electron/electron.js",
+  "author": "Lucas Fuoco",
   "license": "MIT"
 }

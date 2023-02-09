@@ -52,7 +52,7 @@
         }
       }
     },
-    "serve": {
+    "serve-web": {
       "executor": "@nrwl/web:dev-server",
       "defaultConfiguration": "development",
       "options": {
@@ -68,6 +68,14 @@
           "buildTarget": "app:build:production",
           "hmr": false
         }
+      }
+    },
+    "serve-electron": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["npx electron ."],
+        "parallel": false,
+        "cwd": "apps/app"
       }
     },
     "lint": {
