@@ -1,5 +1,6 @@
 import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
+import './i18n';
 
 import AppComponent from './components/app.component';
 

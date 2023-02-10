@@ -6,11 +6,11 @@ import styles from './signin.module.scss';
 import AuthService from '../services/auth.service';
 import { RoutePaths } from '../route-paths';
 import { AuthError } from '@supabase/supabase-js';
-import { Strings } from '../strings';
 import { useState, useEffect } from 'react';
 import { animated, config, useTransition } from 'react-spring';
 import WorldController from '../controllers/world.controller';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import { useTranslation } from 'react-i18next';
 
 function SigninDesktopComponent({ children }: any): JSX.Element {
   const [show, setShow] = useState(false);
@@ -79,6 +79,7 @@ export default function SigninComponent(): JSX.Element {
   SigninController.model.location = location;
   const navigate = useNavigate();
   const [error, setError] = useState<AuthError | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     WorldController.updateIsError(error !== null);
@@ -98,17 +99,17 @@ export default function SigninComponent(): JSX.Element {
       view={'sign_in'}
       socialColors={true}
       strings={{
-        signInWith: Strings.signInWith,
-        orContinueWith: Strings.orContinueWith,
-        emailAddress: Strings.emailAddress,
-        password: Strings.password,
-        rememberMe: Strings.rememberMe,
-        forgotYourPassword: Strings.forgotYourPassword,
-        signIn: Strings.signIn,
-        doYouHaveAnAccount: Strings.doYouHaveAnAccount,
+        signInWith: t('signInWith') ?? '',
+        orContinueWith: t('orContinueWith') ?? '',
+        emailAddress: t('emailAddress') ?? '',
+        password: t('password') ?? '',
+        rememberMe: t('rememberMe') ?? '',
+        forgotYourPassword: t('forgotYourPassword') ?? '',
+        signIn: t('signIn') ?? '',
+        dontHaveAnAccount: t('dontHaveAnAccount') ?? '',
       }}
-      emailErrorMessage={error ? Strings.emailErrorMessage : undefined}
-      passwordErrorMessage={error ? Strings.passwordErrorMessage : undefined}
+      emailErrorMessage={error ? t('emailErrorMessage') ?? '' : undefined}
+      passwordErrorMessage={error ? t('passwordErrorMessage') ?? '' : undefined}
       supabaseClient={AuthService.supabaseClient}
       onForgotPasswordRedirect={() => navigate(RoutePaths.ForgotPassword)}
       onTermsOfServiceRedirect={() => navigate(RoutePaths.TermsOfService)}

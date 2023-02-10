@@ -6,10 +6,10 @@ import WindowController from '../controllers/window.controller';
 import AuthService from '../services/auth.service';
 import { RoutePaths } from '../route-paths';
 import { AuthError } from '@supabase/supabase-js';
-import { Strings } from '../strings';
 import { useState, useEffect } from 'react';
 import { animated, config, useTransition } from 'react-spring';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import { useTranslation } from 'react-i18next';
 
 function ForgotPasswordDesktopComponent({ children }: any): JSX.Element {
   const [show, setShow] = useState(false);
@@ -76,22 +76,23 @@ export interface ForgotPasswordProps {}
 export default function ForgotPasswordComponent(): JSX.Element {
   const navigate = useNavigate();
   const [error, setError] = useState<AuthError | null>(null);
+  const { t, i18n } = useTranslation();
 
   const { origin } = window.location;
   const forgotPassword = (
     <Auth.ForgottenPassword
       strings={{
-        emailAddress: Strings.emailAddress,
-        yourEmailAddress: Strings.yourEmailAddress,
-        sendResetPasswordInstructions: Strings.sendResetPasswordInstructions,
-        goBackToSignIn: Strings.goBackToSignIn,
+        emailAddress: t('emailAddress') ?? '',
+        yourEmailAddress: t('yourEmailAddress') ?? '',
+        sendResetPasswordInstructions: t('sendResetPasswordInstructions') ?? '',
+        goBackToSignIn: t('goBackToSignIn') ?? '',
       }}
       onResetPasswordSent={() => {
         WindowController.updateShowPasswordResetAlert(true);
         setError(null);
       }}
       onSigninRedirect={() => navigate(RoutePaths.Signin)}
-      emailErrorMessage={error ? Strings.emailErrorMessage : undefined}
+      emailErrorMessage={error ? t('emailErrorMessage') ?? '' : undefined}
       onResetPasswordError={(error: AuthError) => setError(error)}
       supabaseClient={AuthService.supabaseClient}
       redirectTo={`${origin}${RoutePaths.ResetPassword}`}

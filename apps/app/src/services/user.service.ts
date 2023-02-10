@@ -5,7 +5,7 @@ import * as core from '../protobuf/core_pb';
 import { BehaviorSubject, Observable } from 'rxjs';
 import AuthService from './auth.service';
 import axios, { AxiosError } from 'axios';
-import { Strings } from '../strings';
+import WindowController from '../controllers/window.controller';
 
 class UserService extends Service {
   private readonly _activeUserBehaviorSubject: BehaviorSubject<core.User | null>;
@@ -115,7 +115,7 @@ class UserService extends Service {
       role: core.UserRole.USER,
       email: supabaseUser.email,
       requestStatus: core.UserRequestStatus.IDLE,
-      language: Strings.getLanguage(),
+      language: WindowController.model.language,
     });
 
     const response = await axios({

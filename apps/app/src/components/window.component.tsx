@@ -12,44 +12,56 @@ import {
   IconSmartphone,
   IconUsers,
   Toast,
+  LanguageSwitch,
+  LanguageCode,
+  DropdownAlignment,
 } from '@fuoco.appdev/core-ui';
 import { RoutePaths } from '../route-paths';
-import { Strings } from '../strings';
+import { useTranslation } from 'react-i18next';
 import AuthService from '../services/auth.service';
 import { useObservable } from '@ngneat/use-observable';
 import { useSpring } from 'react-spring';
 import * as core from '../protobuf/core_pb';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import LoadingComponent from './loading.component';
+import { Store } from '@ngneat/elf';
 
 function WindowDesktopComponent(): JSX.Element {
   const navigate = useNavigate();
-  const [windowProps] = useObservable(WindowController.model.store);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [props] = useObservable(WindowController.model.store);
+  const [localProps] = useObservable(
+    WindowController.model.localStore ?? Store.prototype
+  );
+  const { t, i18n } = useTranslation();
+  useEffect(() => {
+    i18n.changeLanguage(localProps.language);
+  }, [localProps.language]);
 
   return (
     <>
       <div className={styles['background']}>
         <WorldComponent
           isVisible={
-            !windowProps.isTabBarVisible &&
-            windowProps.activeRoute !== RoutePaths.Landing &&
-            windowProps.activeRoute !== RoutePaths.Default
+            !props.isTabBarVisible &&
+            props.activeRoute !== RoutePaths.Landing &&
+            props.activeRoute !== RoutePaths.Default
           }
           worldPosition={{ x: 2, y: 0, z: -0.5 }}
         />
       </div>
-      <div className={styles['content']}>
+      <div className={styles['content']} ref={containerRef}>
         <div className={styles['top-bar']}>
           <div className={styles['top-bar-content']}>
             <div className={styles['logo-container']}>
-              {!windowProps.isTabBarVisible && (
+              {!props.isTabBarVisible && (
                 <Button
                   classNames={{
                     container: styles['logo-button'],
                   }}
                   type={'text'}
                   onClick={() => navigate(RoutePaths.Landing)}
-                  disabled={windowProps.isAuthenticated}
+                  disabled={props.isAuthenticated}
                   icon={
                     <img
                       className={styles['logo']}
@@ -62,27 +74,36 @@ function WindowDesktopComponent(): JSX.Element {
             </div>
             <div className={styles['navbar-content-right']}>
               <div className={styles['navbar-content-right-grid']}>
-                {windowProps.isSigninVisible && (
+                <LanguageSwitch
+                  language={i18n.language as LanguageCode}
+                  supportedLanguages={[LanguageCode.EN, LanguageCode.FR]}
+                  parentRef={containerRef}
+                  dropdownProps={{
+                    align: DropdownAlignment.Right,
+                  }}
+                  onChange={(code) => WindowController.updateLanguage(code)}
+                />
+                {props.isSigninVisible && (
                   <Button
                     className={styles['navbarButton']}
                     size="tiny"
                     type="text"
                     onClick={() => navigate(RoutePaths.Signin)}
                   >
-                    {Strings.signin}
+                    {t('signin')}
                   </Button>
                 )}
-                {windowProps.isSignupVisible && (
+                {props.isSignupVisible && (
                   <Button
                     className={styles['navbarButton']}
                     size="tiny"
                     type="text"
                     onClick={() => navigate(RoutePaths.Signup)}
                   >
-                    {Strings.signup}
+                    {t('signup')}
                   </Button>
                 )}
-                {windowProps.isAuthenticated && windowProps.isSignoutVisible && (
+                {props.isAuthenticated && props.isSignoutVisible && (
                   <Button
                     className={styles['navbarButton']}
                     icon={<IconLogOut strokeWidth={2} />}
@@ -98,18 +119,18 @@ function WindowDesktopComponent(): JSX.Element {
           </div>
         </div>
         <div className={styles['container']}>
-          {windowProps.isAuthenticated && windowProps.isTabBarVisible && (
+          {props.isAuthenticated && props.isTabBarVisible && (
             <div className={styles['navbar-content']}>
               <img
                 className={styles['logo']}
                 src="../assets/svg/logo.svg"
                 alt="logo"
               />
-              {windowProps.user?.role === core.UserRole.USER && (
+              {props.user?.role === core.UserRole.USER && (
                 <Tabs
                   direction={'vertical'}
                   type={'underlined'}
-                  activeId={windowProps.activeRoute}
+                  activeId={props.activeRoute}
                   onChange={(id: string) => navigate(id)}
                   tabs={[
                     {
@@ -123,11 +144,11 @@ function WindowDesktopComponent(): JSX.Element {
                   ]}
                 />
               )}
-              {windowProps.user?.role === core.UserRole.ADMIN && (
+              {props.user?.role === core.UserRole.ADMIN && (
                 <Tabs
                   direction={'vertical'}
                   type={'underlined'}
-                  activeId={windowProps.activeRoute}
+                  activeId={props.activeRoute}
                   onChange={(id: string) => navigate(id)}
                   tabs={[
                     {
@@ -156,15 +177,23 @@ function WindowDesktopComponent(): JSX.Element {
           </div>
         </div>
       </div>
-      <Toast.ToastOverlay toasts={windowProps.toasts} align={'right'} />
+      <Toast.ToastOverlay toasts={props.toasts} align={'right'} />
     </>
   );
 }
 
 function WindowMobileComponent(): JSX.Element {
   const navigate = useNavigate();
-  const [windowProps] = useObservable(WindowController.model.store);
+  const [props] = useObservable(WindowController.model.store);
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const { t, i18n } = useTranslation();
+  const [localProps] = useObservable(
+    WindowController.model.localStore ?? Store.prototype
+  );
+
+  useEffect(() => {
+    i18n.changeLanguage(localProps.language);
+  }, [localProps.language]);
 
   useLayoutEffect(() => {
     if (scrollRef.current) {
@@ -177,8 +206,8 @@ function WindowMobileComponent(): JSX.Element {
       <div className={styles['background']}>
         <WorldComponent
           isVisible={
-            windowProps.activeRoute === RoutePaths.Landing ||
-            windowProps.activeRoute === RoutePaths.Default
+            props.activeRoute === RoutePaths.Landing ||
+            props.activeRoute === RoutePaths.Default
           }
           worldResizable={false}
           worldPosition={{ x: 0, y: -3.5, z: 0 }}
@@ -195,7 +224,7 @@ function WindowMobileComponent(): JSX.Element {
                   container: styles['logo-button'],
                 }}
                 touchScreen={true}
-                disabled={windowProps.isAuthenticated}
+                disabled={props.isAuthenticated}
                 type={'text'}
                 onClick={() => navigate(RoutePaths.Landing)}
                 icon={
@@ -209,7 +238,17 @@ function WindowMobileComponent(): JSX.Element {
             </div>
             <div className={styles['navbar-content-right']}>
               <div className={styles['navbar-content-right-grid']}>
-                {windowProps.isSigninVisible && (
+                <LanguageSwitch
+                  language={i18n.language as LanguageCode}
+                  supportedLanguages={[LanguageCode.EN, LanguageCode.FR]}
+                  touchScreen={true}
+                  hideText={true}
+                  dropdownProps={{
+                    align: DropdownAlignment.Right,
+                  }}
+                  onChange={(code) => WindowController.updateLanguage(code)}
+                />
+                {props.isSigninVisible && (
                   <Button
                     touchScreen={true}
                     className={styles['navbarButton']}
@@ -222,10 +261,10 @@ function WindowMobileComponent(): JSX.Element {
                       setTimeout(() => navigate(RoutePaths.Signin), 100)
                     }
                   >
-                    {Strings.signin}
+                    {t('signin')}
                   </Button>
                 )}
-                {windowProps.isSignupVisible && (
+                {props.isSignupVisible && (
                   <Button
                     touchScreen={true}
                     className={styles['navbarButton']}
@@ -238,10 +277,10 @@ function WindowMobileComponent(): JSX.Element {
                       setTimeout(() => navigate(RoutePaths.Signup), 100)
                     }
                   >
-                    {Strings.signup}
+                    {t('signup')}
                   </Button>
                 )}
-                {windowProps.isAuthenticated && windowProps.isSignoutVisible && (
+                {props.isAuthenticated && props.isSignoutVisible && (
                   <Button
                     touchScreen={true}
                     className={styles['navbarButton']}
@@ -263,9 +302,9 @@ function WindowMobileComponent(): JSX.Element {
           </div>
         </div>
         <div className={styles['container']}>
-          {windowProps.user && windowProps.isTabBarVisible && (
+          {props.user && props.isTabBarVisible && (
             <div className={styles['bottom-bar-content-mobile']}>
-              {windowProps.user?.role === core.UserRole.USER && (
+              {props.user?.role === core.UserRole.USER && (
                 <>
                   <Button
                     classNames={{
@@ -278,7 +317,7 @@ function WindowMobileComponent(): JSX.Element {
                       <IconUser
                         strokeWidth={2}
                         stroke={
-                          windowProps.activeRoute === RoutePaths.Account
+                          props.activeRoute === RoutePaths.Account
                             ? '#65ffff'
                             : '#fff'
                         }
@@ -301,7 +340,7 @@ function WindowMobileComponent(): JSX.Element {
                       <IconSmartphone
                         strokeWidth={2}
                         stroke={
-                          windowProps.activeRoute === RoutePaths.Apps
+                          props.activeRoute === RoutePaths.Apps
                             ? '#65ffff'
                             : '#fff'
                         }
@@ -319,7 +358,7 @@ function WindowMobileComponent(): JSX.Element {
                 <Tabs
                   direction={'vertical'}
                   type={'underlined'}
-                  activeId={windowProps.activeRoute}
+                  activeId={props.activeRoute}
                   onChange={(id: string) => navigate(id)}
                   tabs={[
                     {
@@ -350,7 +389,7 @@ function WindowMobileComponent(): JSX.Element {
         </div>
       </div>
       <Toast.ToastOverlay
-        toasts={windowProps.toasts}
+        toasts={props.toasts}
         touchScreen={true}
         align={'center'}
       />
@@ -361,11 +400,12 @@ function WindowMobileComponent(): JSX.Element {
 export default function WindowComponent(): JSX.Element {
   const location = useLocation();
   const navigate = useNavigate();
-  const [windowProps] = useObservable(WindowController.model.store);
+  const [props] = useObservable(WindowController.model.store);
   const isMounted = useRef<boolean>(false);
+  const { t } = useTranslation();
   const confirmEmailTransitionStyle = useSpring({
     from: { y: -200 },
-    to: windowProps.showConfirmEmailAlert ? { y: 50 } : { y: -200 },
+    to: props.showConfirmEmailAlert ? { y: 50 } : { y: -200 },
     config: {
       friction: 30,
       tension: 600,
@@ -374,7 +414,7 @@ export default function WindowComponent(): JSX.Element {
   });
   const passwordResetTransitionStyle = useSpring({
     from: { y: -200 },
-    to: windowProps.showPasswordResetAlert ? { y: 50 } : { y: -200 },
+    to: props.showPasswordResetAlert ? { y: 50 } : { y: -200 },
     config: {
       friction: 30,
       tension: 600,
@@ -391,23 +431,23 @@ export default function WindowComponent(): JSX.Element {
 
   useEffect(() => {
     WindowController.updateOnLocationChanged(location);
-  }, [location, windowProps.authState]);
+  }, [location, props.authState]);
 
   useEffect(() => {
-    if (windowProps.authState === 'SIGNED_IN') {
-      if (windowProps.activeRoute === RoutePaths.ResetPassword) {
+    if (props.authState === 'SIGNED_IN') {
+      if (props.activeRoute === RoutePaths.ResetPassword) {
         return;
       }
 
       navigate(RoutePaths.User);
-    } else if (windowProps.authState === 'SIGNED_OUT') {
+    } else if (props.authState === 'SIGNED_OUT') {
       navigate(RoutePaths.Signin);
-    } else if (windowProps.authState === 'USER_DELETED') {
+    } else if (props.authState === 'USER_DELETED') {
       navigate(RoutePaths.Signup);
-    } else if (windowProps.authState === 'PASSWORD_RECOVERY') {
+    } else if (props.authState === 'PASSWORD_RECOVERY') {
       navigate(RoutePaths.ResetPassword);
     }
-  }, [windowProps.authState]);
+  }, [props.authState]);
 
   return (
     <div className={styles['root']}>
@@ -420,18 +460,18 @@ export default function WindowComponent(): JSX.Element {
       <Alert
         className={styles['alert']}
         style={confirmEmailTransitionStyle}
-        title={Strings.emailConfirmation}
+        title={t('emailConfirmation')}
         variant={'info'}
         withIcon={true}
         closable={true}
         onCloseClick={() => WindowController.updateShowConfirmEmailAlert(false)}
       >
-        {Strings.emailConfirmationDescription}
+        {t('emailConfirmationDescription')}
       </Alert>
       <Alert
         className={styles['alert']}
         style={passwordResetTransitionStyle}
-        title={Strings.passwordReset}
+        title={t('passwordReset')}
         variant={'info'}
         withIcon={true}
         closable={true}
@@ -439,9 +479,9 @@ export default function WindowComponent(): JSX.Element {
           WindowController.updateShowPasswordResetAlert(false)
         }
       >
-        {Strings.passwordResetDescription}
+        {t('passwordResetDescription')}
       </Alert>
-      <LoadingComponent isVisible={windowProps.isLoading} />
+      <LoadingComponent isVisible={props.isLoading} />
     </div>
   );
 }

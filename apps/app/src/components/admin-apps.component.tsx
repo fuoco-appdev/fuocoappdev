@@ -7,18 +7,19 @@ import {
   OptionProps,
 } from '@fuoco.appdev/core-ui';
 import styles from './admin-apps.module.scss';
-import { Strings } from '../strings';
 import { animated, useTransition, config } from 'react-spring';
 import AdminAppsController from '../controllers/admin-apps.controller';
 import BucketService from '../services/bucket.service';
 import { useObservable } from '@ngneat/use-observable';
 import AppCardComponent, { AppCardData } from './app-card.component';
 import * as core from '../protobuf/core_pb';
+import { useTranslation } from 'react-i18next';
 
 export default function AdminAppsComponent(): JSX.Element {
   const [show, setShow] = useState(false);
   const [props] = useObservable(AdminAppsController.model.store);
   const [cards, setCards] = useState<React.ReactElement[]>([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     setShow(true);
@@ -114,7 +115,7 @@ export default function AdminAppsComponent(): JSX.Element {
               <div className={styles['content']}>
                 <div className={styles['header-bar']}>
                   <Typography.Title className={styles['apps-title']} level={2}>
-                    {Strings.adminApps}
+                    {t('adminApps')}
                   </Typography.Title>
                   <div className={styles['header-button-container']}>
                     <Button
@@ -127,7 +128,7 @@ export default function AdminAppsComponent(): JSX.Element {
                       onClick={() => AdminAppsController.createAppAsync()}
                     >
                       <span className={styles['button-text']}>
-                        {Strings.createApp}
+                        {t('createApp')}
                       </span>
                     </Button>
                   </div>
@@ -138,10 +139,10 @@ export default function AdminAppsComponent(): JSX.Element {
           )
       )}
       <Modal
-        title={Strings.deleteApp}
-        description={Strings.deleteAppDescription}
-        confirmText={Strings.delete}
-        cancelText={Strings.cancel}
+        title={t('deleteApp') ?? ''}
+        description={t('deleteAppDescription') ?? ''}
+        confirmText={t('delete') ?? ''}
+        cancelText={t('cancel') ?? ''}
         variant={'danger'}
         size={'small'}
         visible={props.showDeleteModal}

@@ -7,7 +7,6 @@ import {
   IconPenTool,
 } from '@fuoco.appdev/core-ui';
 import styles from './landing.module.scss';
-import { Strings } from '../strings';
 import { useNavigate } from 'react-router-dom';
 import { RoutePaths } from '../route-paths';
 import { animated, useTransition, config } from 'react-spring';
@@ -16,6 +15,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
 import WindowController from '../controllers/window.controller';
 import WorldController from '../controllers/world.controller';
+import { useTranslation } from 'react-i18next';
 
 interface ServiceProps {
   title: string;
@@ -117,6 +117,7 @@ function ServiceComponent({
 function LandingDesktopComponent(): JSX.Element {
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     setShow(true);
@@ -164,33 +165,37 @@ function LandingDesktopComponent(): JSX.Element {
                       ' '
                     )}
                   >
-                    {Strings.landingTitle1.split('').map((char, index) => {
-                      textIndex += 1;
-                      return (
-                        <span
-                          className={styles['title-char']}
-                          aria-hidden="true"
-                          key={index}
-                          style={textStyle(textIndex, 0)}
-                        >
-                          {char}
-                        </span>
-                      );
-                    })}
+                    {t('landingTitle1')
+                      .split('')
+                      .map((char, index) => {
+                        textIndex += 1;
+                        return (
+                          <span
+                            className={styles['title-char']}
+                            aria-hidden="true"
+                            key={index}
+                            style={textStyle(textIndex, 0)}
+                          >
+                            {char}
+                          </span>
+                        );
+                      })}
                     <br />
-                    {Strings.landingTitle2.split('').map((char, index) => {
-                      textIndex += 1;
-                      return (
-                        <span
-                          className={styles['title-char']}
-                          aria-hidden="true"
-                          key={index}
-                          style={textStyle(textIndex, 0.4)}
-                        >
-                          {char}
-                        </span>
-                      );
-                    })}
+                    {t('landingTitle2')
+                      .split('')
+                      .map((char, index) => {
+                        textIndex += 1;
+                        return (
+                          <span
+                            className={styles['title-char']}
+                            aria-hidden="true"
+                            key={index}
+                            style={textStyle(textIndex, 0.4)}
+                          >
+                            {char}
+                          </span>
+                        );
+                      })}
                     <br />
                     <span
                       className={[
@@ -198,19 +203,21 @@ function LandingDesktopComponent(): JSX.Element {
                         styles['title-spacing-desktop'],
                       ].join(' ')}
                     >
-                      {Strings.landingTitle3.split('').map((char, index) => {
-                        textIndex += 1;
-                        return (
-                          <span
-                            className={styles['title-char']}
-                            aria-hidden="true"
-                            key={index}
-                            style={textStyle(textIndex, 0.8)}
-                          >
-                            {char}
-                          </span>
-                        );
-                      })}
+                      {t('landingTitle3')
+                        .split('')
+                        .map((char, index) => {
+                          textIndex += 1;
+                          return (
+                            <span
+                              className={styles['title-char']}
+                              aria-hidden="true"
+                              key={index}
+                              style={textStyle(textIndex, 0.8)}
+                            >
+                              {char}
+                            </span>
+                          );
+                        })}
                     </span>
                   </Typography.Title>
                   <div
@@ -226,7 +233,7 @@ function LandingDesktopComponent(): JSX.Element {
                       ].join(' ')}
                       align={'center'}
                     >
-                      {Strings.landingDescription}
+                      {t('landingDescription')}
                     </Typography.Text>
                   </div>
                 </div>
@@ -244,7 +251,7 @@ function LandingDesktopComponent(): JSX.Element {
                     type="primary"
                     onClick={() => navigate(RoutePaths.Signup)}
                   >
-                    {Strings.signup}
+                    {t('signup')}
                   </Button>
                 </div>
                 <div
@@ -254,19 +261,19 @@ function LandingDesktopComponent(): JSX.Element {
                   ].join(' ')}
                 >
                   <ServiceComponent
-                    title={Strings.webDesign}
+                    title={t('webDesign')}
                     icon={<IconLayout strokeWidth={2} stroke={'#fff'} />}
-                    description={Strings.webDesignDescription}
+                    description={t('webDesignDescription')}
                   />
                   <ServiceComponent
-                    title={Strings.appDevelopment}
+                    title={t('appDevelopment')}
                     icon={<IconSmartphone strokeWidth={2} stroke={'#fff'} />}
-                    description={Strings.appDevelopmentDescription}
+                    description={t('appDevelopmentDescription')}
                   />
                   <ServiceComponent
-                    title={Strings.logoAndBranding}
+                    title={t('logoAndBranding')}
                     icon={<IconPenTool strokeWidth={2} stroke={'#fff'} />}
-                    description={Strings.logoAndBrandingDescription}
+                    description={t('logoAndBrandingDescription')}
                   />
                 </div>
               </animated.div>
@@ -282,6 +289,7 @@ function LandingMobileComponent(): JSX.Element {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const titleContainerRef = useRef<HTMLDivElement | null>(null);
   const isMounted = useRef<boolean>(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!isMounted.current) {
@@ -340,7 +348,9 @@ function LandingMobileComponent(): JSX.Element {
               <Typography.Title
                 className={[styles['title'], styles['title-mobile']].join(' ')}
               >
-                {`${Strings.landingTitle1} ${Strings.landingTitle2} ${Strings.landingTitle3}`
+                {`${t('landingTitle1')} ${t('landingTitle2')} ${t(
+                  'landingTitle3'
+                )}`
                   .split('')
                   .map((char, index) => {
                     return (
@@ -362,7 +372,7 @@ function LandingMobileComponent(): JSX.Element {
                 ].join(' ')}
                 align={'center'}
               >
-                {Strings.landingDescription}
+                {t('landingDescription')}
               </Typography.Text>
               <div
                 className={[
@@ -378,7 +388,7 @@ function LandingMobileComponent(): JSX.Element {
                   type="primary"
                   onClick={() => navigate(RoutePaths.Signup)}
                 >
-                  {Strings.signup}
+                  {t('signup')}
                 </Button>
               </div>
             </div>
@@ -390,19 +400,19 @@ function LandingMobileComponent(): JSX.Element {
             ].join(' ')}
           >
             <ServiceComponent
-              title={Strings.webDesign}
+              title={t('webDesign')}
               icon={<IconLayout strokeWidth={2} stroke={'#fff'} />}
-              description={Strings.webDesignDescription}
+              description={t('webDesignDescription')}
             />
             <ServiceComponent
-              title={Strings.appDevelopment}
+              title={t('appDevelopment')}
               icon={<IconSmartphone strokeWidth={2} stroke={'#fff'} />}
-              description={Strings.appDevelopmentDescription}
+              description={t('appDevelopmentDescription')}
             />
             <ServiceComponent
-              title={Strings.logoAndBranding}
+              title={t('logoAndBranding')}
               icon={<IconPenTool strokeWidth={2} stroke={'#fff'} />}
-              description={Strings.logoAndBrandingDescription}
+              description={t('logoAndBrandingDescription')}
             />
           </div>
         </div>

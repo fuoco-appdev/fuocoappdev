@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, IconClipboard } from '@fuoco.appdev/core-ui';
 import styles from './apps.module.scss';
-import { Strings } from '../strings';
 import AppsController from '../controllers/apps.controller';
 import { animated, useTransition, config } from 'react-spring';
 import { useObservable } from '@ngneat/use-observable';
@@ -9,6 +8,7 @@ import * as core from '../protobuf/core_pb';
 import BucketService from '../services/bucket.service';
 import AppCardComponent from './app-card.component';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import { useTranslation } from 'react-i18next';
 
 function AppsDesktopComponent({
   cards,
@@ -16,6 +16,7 @@ function AppsDesktopComponent({
   cards: React.ReactElement[];
 }): JSX.Element {
   const [show, setShow] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     setShow(true);
@@ -62,7 +63,7 @@ function AppsDesktopComponent({
                     ].join(' ')}
                     level={2}
                   >
-                    {Strings.myApps}
+                    {t('myApps')}
                   </Typography.Title>
                   <div
                     className={[
@@ -78,7 +79,7 @@ function AppsDesktopComponent({
                   onClick={() => console.log('request')}
                 >
                   <span className={styles['button-text']}>
-                    {Strings.requestApp}
+                    {t('requestApp}
                   </span>
                 </Button> */}
                   </div>
@@ -109,10 +110,10 @@ function AppsDesktopComponent({
                           align={'center'}
                           strong={true}
                         >
-                          {Strings.emptyInMyApps}
+                          {t('emptyInMyApps')}
                         </Typography.Text>
                         <Typography.Text align={'center'}>
-                          {Strings.emptyInMyAppsDescription}
+                          {t('emptyInMyAppsDescription')}
                         </Typography.Text>
                       </div>
                     </div>
@@ -132,6 +133,7 @@ function AppsMobileComponent({
   cards: React.ReactElement[];
 }): JSX.Element {
   const [show, setShow] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     setShow(true);
@@ -178,7 +180,7 @@ function AppsMobileComponent({
                     ].join(' ')}
                     level={2}
                   >
-                    {Strings.myApps}
+                    {t('myApps')}
                   </Typography.Title>
                   <div
                     className={[
@@ -194,7 +196,7 @@ function AppsMobileComponent({
                   onClick={() => console.log('request')}
                 >
                   <span className={styles['button-text']}>
-                    {Strings.requestApp}
+                    {t('requestApp}
                   </span>
                 </Button> */}
                   </div>
@@ -225,10 +227,10 @@ function AppsMobileComponent({
                           align={'center'}
                           strong={true}
                         >
-                          {Strings.emptyInMyApps}
+                          {t('emptyInMyApps')}
                         </Typography.Text>
                         <Typography.Text align={'center'}>
-                          {Strings.emptyInMyAppsDescription}
+                          {t('emptyInMyAppsDescription')}
                         </Typography.Text>
                       </div>
                     </div>

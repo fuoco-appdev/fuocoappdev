@@ -18,21 +18,16 @@ import {
   Modal,
 } from '@fuoco.appdev/core-ui';
 import styles from './account.module.scss';
-import { Strings } from '../strings';
 import AccountController from '../controllers/account.controller';
+import WindowController from '../controllers/window.controller';
 import { animated, useTransition, config } from 'react-spring';
 import { useObservable } from '@ngneat/use-observable';
 import { useNavigate } from 'react-router-dom';
 import { RoutePaths } from '../route-paths';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import { useTranslation } from 'react-i18next';
 
-function AccountDesktopComponent({
-  languageOptions,
-  defaultLanguageIndex,
-}: {
-  languageOptions: OptionProps[];
-  defaultLanguageIndex: number;
-}): JSX.Element {
+function AccountDesktopComponent(): JSX.Element {
   const [props] = useObservable(AccountController.model.store);
   const navigate = useNavigate();
   const [show, setShow] = useState<boolean>(false);
@@ -41,7 +36,7 @@ function AccountDesktopComponent({
   const [emailAddressIconLit, setEmailAddressIconLit] =
     useState<boolean>(false);
   const [locationIconLit, setLocationIconLit] = useState<boolean>(false);
-  const [languageIconLit, setLanguageIconLit] = useState<boolean>(false);
+  const { t } = useTranslation();
 
   useLayoutEffect(() => {
     setShow(true);
@@ -73,7 +68,7 @@ function AccountDesktopComponent({
           >
             <div className={styles['header-bar']}>
               <Typography.Title className={styles['account-title']} level={2}>
-                {Strings.account}
+                {t('account')}
               </Typography.Title>
               <div className={styles['header-button-container']}>
                 <Button
@@ -86,7 +81,7 @@ function AccountDesktopComponent({
                   onClick={() => AccountController.updateShowDeleteModal(true)}
                   icon={<IconDelete />}
                 >
-                  {Strings.deleteAccount}
+                  {t('deleteAccount')}
                 </Button>
                 {!props.isUpdatePasswordDisabled && (
                   <Button
@@ -98,7 +93,7 @@ function AccountDesktopComponent({
                     icon={<IconEdit3 />}
                     onClick={() => navigate(RoutePaths.ResetPassword)}
                   >
-                    {Strings.updatePassword}
+                    {t('updatePassword')}
                   </Button>
                 )}
                 <Button
@@ -109,9 +104,20 @@ function AccountDesktopComponent({
                   size={'tiny'}
                   icon={<IconSave />}
                   disabled={props.isSaveDisabled}
-                  onClick={() => AccountController.saveAsync()}
+                  onClick={async () => {
+                    await AccountController.saveAsync();
+                    WindowController.updateToasts([
+                      {
+                        key: `${Math.random()}`,
+                        message: t('settingsSaved') ?? '',
+                        description: t('savedDescription') ?? '',
+                        type: 'success',
+                        closable: true,
+                      },
+                    ]);
+                  }}
                 >
-                  {Strings.save}
+                  {t('save')}
                 </Button>
               </div>
             </div>
@@ -120,7 +126,10 @@ function AccountDesktopComponent({
                 styles['accordion'],
                 styles['accordion-desktop'],
               ].join(' ')}
-              defaultActiveId={[Strings.profile, Strings.personalInformation]}
+              defaultActiveId={[
+                t('profile') ?? '',
+                t('personalInformation') ?? '',
+              ]}
             >
               <Accordion.Item
                 classNames={{
@@ -129,11 +138,11 @@ function AccountDesktopComponent({
                     styles['accordion-item-desktop'],
                   ].join(' '),
                 }}
-                id={Strings.profile}
-                label={Strings.profile}
+                id={t('profile') ?? ''}
+                label={t('profile') ?? ''}
               >
                 <Typography.Text className={styles['accordion-description']}>
-                  {Strings.thisInfoWillBePublic}
+                  {t('thisInfoWillBePublic')}
                 </Typography.Text>
                 <div
                   className={[
@@ -148,7 +157,7 @@ function AccountDesktopComponent({
                         styles['info-input-desktop'],
                       ].join(' '),
                     }}
-                    label={Strings.company}
+                    label={t('company') ?? ''}
                     icon={
                       <IconBriefcase
                         stroke={companyIconLit ? '#4AFFFF' : '#d1d5db'}
@@ -176,11 +185,11 @@ function AccountDesktopComponent({
                     styles['accordion-item-desktop'],
                   ].join(' '),
                 }}
-                id={Strings.personalInformation}
-                label={Strings.personalInformation}
+                id={t('personalInformation') ?? ''}
+                label={t('personalInformation') ?? ''}
               >
                 <Typography.Text className={styles['accordion-description']}>
-                  {Strings.thisInfoWillBePrivate}
+                  {t('thisInfoWillBePrivate')}
                 </Typography.Text>
                 <div
                   className={[
@@ -195,7 +204,7 @@ function AccountDesktopComponent({
                         styles['info-input-desktop'],
                       ].join(' '),
                     }}
-                    label={Strings.emailAddress}
+                    label={t('emailAddress') ?? ''}
                     disabled={props.isEmailAddressDisabled}
                     icon={
                       <IconMail
@@ -222,7 +231,7 @@ function AccountDesktopComponent({
                       styles['info-input'],
                       styles['info-input-desktop'],
                     ].join(' ')}
-                    label={Strings.phoneNumber}
+                    label={t('phoneNumber') ?? ''}
                     country={'ca'}
                     parentRef={containerRef}
                     defaultValue={props.updatedPhoneNumber}
@@ -235,7 +244,7 @@ function AccountDesktopComponent({
                       styles['info-input'],
                       styles['info-input-desktop'],
                     ].join(' ')}
-                    label={Strings.location}
+                    label={t('location') ?? ''}
                     parentRef={containerRef}
                     icon={
                       <IconMapPin
@@ -256,35 +265,6 @@ function AccountDesktopComponent({
                     }
                     mapboxAccessToken={props.mapboxAccessToken}
                   />
-                  <Listbox
-                    classNames={{
-                      formLayout: {
-                        root: [
-                          styles['info-input'],
-                          styles['info-input-desktop'],
-                        ].join(' '),
-                      },
-                    }}
-                    icon={
-                      <IconGlobe
-                        stroke={languageIconLit ? '#4AFFFF' : '#d1d5db'}
-                      />
-                    }
-                    label={Strings.language}
-                    options={languageOptions}
-                    onChange={(index, id, value) =>
-                      AccountController.updateLanguage(value)
-                    }
-                    onMouseEnter={() => setLanguageIconLit(true)}
-                    onMouseLeave={(e) => {
-                      if (document.activeElement !== e.currentTarget) {
-                        setLanguageIconLit(false);
-                      }
-                    }}
-                    onFocus={() => setLanguageIconLit(true)}
-                    onBlur={() => setLanguageIconLit(false)}
-                    defaultIndex={defaultLanguageIndex}
-                  />
                 </div>
               </Accordion.Item>
             </Accordion>
@@ -294,13 +274,7 @@ function AccountDesktopComponent({
   );
 }
 
-function AccountMobileComponent({
-  languageOptions,
-  defaultLanguageIndex,
-}: {
-  languageOptions: OptionProps[];
-  defaultLanguageIndex: number;
-}): JSX.Element {
+function AccountMobileComponent(): JSX.Element {
   const [props] = useObservable(AccountController.model.store);
   const navigate = useNavigate();
   const [show, setShow] = useState<boolean>(false);
@@ -309,7 +283,7 @@ function AccountMobileComponent({
   const [emailAddressIconLit, setEmailAddressIconLit] =
     useState<boolean>(false);
   const [locationIconLit, setLocationIconLit] = useState<boolean>(false);
-  const [languageIconLit, setLanguageIconLit] = useState<boolean>(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     setShow(true);
@@ -352,18 +326,21 @@ function AccountMobileComponent({
                 ].join(' ')}
                 level={2}
               >
-                {Strings.account}
+                {t('account')}
               </Typography.Title>
             </div>
             <Accordion
               className={[styles['accordion'], styles['accordion-mobile']].join(
                 ' '
               )}
-              defaultActiveId={[Strings.profile, Strings.personalInformation]}
+              defaultActiveId={[
+                t('profile') ?? '',
+                t('personalInformation') ?? '',
+              ]}
             >
               <Accordion.Item
-                id={Strings.profile}
-                label={Strings.profile}
+                id={t('profile') ?? ''}
+                label={t('profile') ?? ''}
                 classNames={{
                   panel: [
                     styles['accordion-item'],
@@ -372,7 +349,7 @@ function AccountMobileComponent({
                 }}
               >
                 <Typography.Text className={styles['accordion-description']}>
-                  {Strings.thisInfoWillBePublic}
+                  {t('thisInfoWillBePublic')}
                 </Typography.Text>
                 <div
                   className={[
@@ -387,7 +364,7 @@ function AccountMobileComponent({
                         styles['info-input-mobile'],
                       ].join(' '),
                     }}
-                    label={Strings.company}
+                    label={t('company') ?? ''}
                     icon={
                       <IconBriefcase
                         stroke={companyIconLit ? '#4AFFFF' : '#d1d5db'}
@@ -409,8 +386,8 @@ function AccountMobileComponent({
                 </div>
               </Accordion.Item>
               <Accordion.Item
-                id={Strings.personalInformation}
-                label={Strings.personalInformation}
+                id={t('personalInformation') ?? ''}
+                label={t('personalInformation') ?? ''}
                 classNames={{
                   panel: [
                     styles['accordion-item'],
@@ -419,7 +396,7 @@ function AccountMobileComponent({
                 }}
               >
                 <Typography.Text className={styles['accordion-description']}>
-                  {Strings.thisInfoWillBePrivate}
+                  {t('thisInfoWillBePrivate')}
                 </Typography.Text>
                 <div className={styles['info-container']}>
                   <Input
@@ -429,7 +406,7 @@ function AccountMobileComponent({
                         styles['info-input-mobile'],
                       ].join(' '),
                     }}
-                    label={Strings.emailAddress}
+                    label={t('emailAddress') ?? ''}
                     disabled={props.isEmailAddressDisabled}
                     icon={
                       <IconMail
@@ -457,7 +434,7 @@ function AccountMobileComponent({
                       styles['info-input'],
                       styles['info-input-mobile'],
                     ].join(' ')}
-                    label={Strings.phoneNumber}
+                    label={t('phoneNumber') ?? ''}
                     country={'ca'}
                     parentRef={containerRef}
                     defaultValue={props.updatedPhoneNumber}
@@ -471,7 +448,7 @@ function AccountMobileComponent({
                       styles['info-input'],
                       styles['info-input-mobile'],
                     ].join(' ')}
-                    label={Strings.location}
+                    label={t('location') ?? ''}
                     parentRef={containerRef}
                     icon={
                       <IconMapPin
@@ -492,36 +469,6 @@ function AccountMobileComponent({
                     }
                     mapboxAccessToken={props.mapboxAccessToken}
                   />
-                  <Listbox
-                    touchScreen={true}
-                    classNames={{
-                      formLayout: {
-                        root: [
-                          styles['info-input'],
-                          styles['info-input-mobile'],
-                        ].join(' '),
-                      },
-                    }}
-                    icon={
-                      <IconGlobe
-                        stroke={languageIconLit ? '#4AFFFF' : '#d1d5db'}
-                      />
-                    }
-                    label={Strings.language}
-                    options={languageOptions}
-                    onChange={(index, id, value) =>
-                      AccountController.updateLanguage(value)
-                    }
-                    onMouseEnter={() => setLanguageIconLit(true)}
-                    onMouseLeave={(e) => {
-                      if (document.activeElement !== e.currentTarget) {
-                        setLanguageIconLit(false);
-                      }
-                    }}
-                    onFocus={() => setLanguageIconLit(true)}
-                    onBlur={() => setLanguageIconLit(false)}
-                    defaultIndex={defaultLanguageIndex}
-                  />
                 </div>
               </Accordion.Item>
             </Accordion>
@@ -537,7 +484,7 @@ function AccountMobileComponent({
                 onClick={() => AccountController.updateShowDeleteModal(true)}
               >
                 <span className={styles['button-text']}>
-                  {Strings.deleteAccount}
+                  {t('deleteAccount')}
                 </span>
               </Button>
               {!props.isUpdatePasswordDisabled && (
@@ -551,7 +498,7 @@ function AccountMobileComponent({
                   onClick={() => navigate(RoutePaths.ResetPassword)}
                 >
                   <span className={styles['button-text']}>
-                    {Strings.updatePassword}
+                    {t('updatePassword')}
                   </span>
                 </Button>
               )}
@@ -565,7 +512,7 @@ function AccountMobileComponent({
                 disabled={props.isSaveDisabled}
                 onClick={() => AccountController.saveAsync()}
               >
-                <span className={styles['button-text']}>{Strings.save}</span>
+                <span className={styles['button-text']}>{t('save')}</span>
               </Button>
             </div>
           </div>
@@ -576,48 +523,21 @@ function AccountMobileComponent({
 
 export default function AccountComponent(): JSX.Element {
   const [props] = useObservable(AccountController.model.store);
-  const [defaultLanguageIndex, setDefaultLanguageIndex] = useState<number>(0);
-  const languageOptions: OptionProps[] = [];
-  const languages: Record<string, string> = {};
-  for (const language of Strings.getAvailableLanguages()) {
-    Strings.setLanguage(language);
-    languageOptions.push({
-      value: Strings.locale,
-      children: () => (
-        <span className={styles['dropdown-label']}>{Strings.locale}</span>
-      ),
-    });
-    languages[Strings.locale] = language;
-  }
-
-  useEffect(() => {
-    languageOptions.forEach((option: OptionProps, index: number) => {
-      if (option.value === props.updatedLanguage) {
-        Strings.setLanguage(languages[option.value]);
-        setDefaultLanguageIndex(index);
-      }
-    });
-  }, [props.updatedLanguage]);
+  const { t, i18n } = useTranslation();
 
   return (
     <div className={styles['root']}>
       <ResponsiveDesktop>
-        <AccountDesktopComponent
-          languageOptions={languageOptions}
-          defaultLanguageIndex={defaultLanguageIndex}
-        />
+        <AccountDesktopComponent />
       </ResponsiveDesktop>
       <ResponsiveMobile>
-        <AccountMobileComponent
-          languageOptions={languageOptions}
-          defaultLanguageIndex={defaultLanguageIndex}
-        />
+        <AccountMobileComponent />
       </ResponsiveMobile>
       <Modal
-        title={Strings.deleteYourAccount}
-        description={Strings.deleteYourAccountDescription}
-        confirmText={Strings.delete}
-        cancelText={Strings.cancel}
+        title={t('deleteYourAccount') ?? ''}
+        description={t('deleteYourAccountDescription') ?? ''}
+        confirmText={t('delete') ?? ''}
+        cancelText={t('cancel') ?? ''}
         variant={'danger'}
         size={'small'}
         classNames={{

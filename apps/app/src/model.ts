@@ -1,46 +1,47 @@
-import {Store} from '@ngneat/elf';
-import { localStorageStrategy, persistState, sessionStorageStrategy } from '@ngneat/elf-persist-state';
-import {Disposable} from './disposable';
+import { Store } from '@ngneat/elf';
+import {
+  localStorageStrategy,
+  persistState,
+  sessionStorageStrategy,
+} from '@ngneat/elf-persist-state';
+import { Disposable } from './disposable';
 
 export abstract class Model implements Disposable {
-    private readonly _store: Store;
-    private readonly _sessionStore: Store | undefined;
-    private readonly _localStore: Store | undefined;
+  private readonly _store: Store;
+  private readonly _sessionStore: Store | undefined;
+  private readonly _localStore: Store | undefined;
 
-    constructor(
-        store: Store, 
-        sessionStore?: Store, 
-        localStore?: Store) {
-        this._store = store;
-        this._sessionStore = sessionStore;
-        this._localStore = localStore;
-        
-        if (sessionStore) {
-            persistState(sessionStore, {
-                key: sessionStore.name,
-                storage: sessionStorageStrategy,
-            });
-        }
+  constructor(store: Store, sessionStore?: Store, localStore?: Store) {
+    this._store = store;
+    this._sessionStore = sessionStore;
+    this._localStore = localStore;
 
-        if (localStore) {
-            persistState(localStore, {
-                key: localStore.name,
-                storage: localStorageStrategy,
-            });
-        }
+    if (sessionStore) {
+      persistState(sessionStore, {
+        key: sessionStore.name,
+        storage: sessionStorageStrategy,
+      });
     }
 
-    public get store(): Store {
-        return this._store;
+    if (localStore) {
+      persistState(localStore, {
+        key: localStore.name,
+        storage: localStorageStrategy,
+      });
     }
+  }
 
-    public get sessionStore(): Store | undefined {
-        return this._sessionStore;
-    }
+  public get store(): Store {
+    return this._store;
+  }
 
-    public get localStore(): Store | undefined {
-        return this._localStore;
-    }
+  public get sessionStore(): Store | undefined {
+    return this._sessionStore;
+  }
 
-    public dispose(): void {}
+  public get localStore(): Store | undefined {
+    return this._localStore;
+  }
+
+  public dispose(): void {}
 }

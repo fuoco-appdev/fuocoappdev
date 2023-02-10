@@ -6,7 +6,6 @@ import {
   InputPhoneNumber,
 } from '@fuoco.appdev/core-ui';
 import styles from './get-started.module.scss';
-import { Strings } from '../strings';
 import { animated, useTransition, config } from 'react-spring';
 import { useObservable } from '@ngneat/use-observable';
 import GetStartedController from '../controllers/get-started.controller';
@@ -14,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { RoutePaths } from '../route-paths';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import { RipplesProps } from 'react-ripples';
+import { useTranslation } from 'react-i18next';
 
 function GetStartedDesktopComponent({
   showForm,
@@ -36,6 +36,7 @@ function GetStartedDesktopComponent({
     GetStartedController.model.phoneNumber
   );
   const containerRef = React.createRef<HTMLDivElement>();
+  const { t } = useTranslation();
 
   const formTransitions = useTransition(showForm, {
     from: { opacity: 0, y: 5 },
@@ -72,7 +73,7 @@ function GetStartedDesktopComponent({
                       styles['form-title-desktop'],
                     ].join(' ')}
                   >
-                    {Strings.getStarted}
+                    {t('getStarted')}
                   </Typography.Title>
                   <Typography.Text
                     className={[
@@ -80,7 +81,7 @@ function GetStartedDesktopComponent({
                       styles['form-subtitle-desktop'],
                     ].join(' ')}
                   >
-                    {Strings.getStartedSubtitle}
+                    {t('getStartedSubtitle')}
                   </Typography.Text>
                   <form
                     className={[styles['form'], styles['form-desktop']].join(
@@ -91,8 +92,8 @@ function GetStartedDesktopComponent({
                     <div className={styles['form-content']}>
                       <Input
                         value={props.companyName}
-                        label={Strings.company}
-                        placeholder={Strings.companyPlaceholder}
+                        label={t('company') ?? ''}
+                        placeholder={t('companyPlaceholder') ?? ''}
                         error={companyErrorMessage}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           GetStartedController.updateCompanyName(
@@ -103,7 +104,7 @@ function GetStartedDesktopComponent({
                       <InputPhoneNumber
                         parentRef={containerRef}
                         defaultValue={phoneNumber}
-                        label={Strings.phoneNumber}
+                        label={t('phoneNumber') ?? ''}
                         error={phoneNumberErrorMessage}
                         country={'ca'}
                         onChange={(value: string) => {
@@ -112,8 +113,8 @@ function GetStartedDesktopComponent({
                       />
                       <Input.TextArea
                         value={props.comment}
-                        label={Strings.comment}
-                        placeholder={Strings.commentPlaceholder}
+                        label={t('comment') ?? ''}
+                        placeholder={t('commentPlaceholder') ?? ''}
                         error={commentErrorMessage}
                         onChange={(
                           e: React.ChangeEvent<HTMLTextAreaElement>
@@ -133,7 +134,7 @@ function GetStartedDesktopComponent({
                         rippleProps={rippleProps}
                       >
                         <div className={styles['send-button-content']}>
-                          {Strings.send}
+                          {t('send')}
                         </div>
                       </Button>
                     </div>
@@ -159,7 +160,7 @@ function GetStartedDesktopComponent({
                     styles['request-title-desktop'],
                   ].join(' ')}
                 >
-                  {Strings.thankyouForContacting}
+                  {t('thankyouForContacting')}
                 </Typography.Title>
                 <Typography.Text
                   className={[
@@ -168,7 +169,7 @@ function GetStartedDesktopComponent({
                   ].join(' ')}
                   align={'center'}
                 >
-                  {Strings.thankyouForContactingSubtitle}
+                  {t('thankyouForContactingSubtitle')}
                 </Typography.Text>
                 <div>
                   <Button
@@ -180,7 +181,7 @@ function GetStartedDesktopComponent({
                     rippleProps={rippleProps}
                     onClick={() => navigate(RoutePaths.Account)}
                   >
-                    {Strings.next}
+                    {t('next')}
                   </Button>
                 </div>
               </animated.div>
@@ -212,6 +213,7 @@ function GetStartedMobileComponent({
     GetStartedController.model.phoneNumber
   );
   const containerRef = React.createRef<HTMLDivElement>();
+  const { t } = useTranslation();
 
   const formTransitions = useTransition(showForm, {
     from: { opacity: 0, y: 5 },
@@ -251,7 +253,7 @@ function GetStartedMobileComponent({
                       styles['form-title-mobile'],
                     ].join(' ')}
                   >
-                    {Strings.getStarted}
+                    {t('getStarted')}
                   </Typography.Title>
                   <Typography.Text
                     className={[
@@ -259,7 +261,7 @@ function GetStartedMobileComponent({
                       styles['form-subtitle-mobile'],
                     ].join(' ')}
                   >
-                    {Strings.getStartedSubtitle}
+                    {t('getStartedSubtitle')}
                   </Typography.Text>
                   <form
                     className={[styles['form'], styles['form-mobile']].join(
@@ -276,8 +278,8 @@ function GetStartedMobileComponent({
                       <div className={styles['input-container-mobile']}>
                         <Input
                           value={props.companyName}
-                          label={Strings.company}
-                          placeholder={Strings.companyPlaceholder}
+                          label={t('company') ?? ''}
+                          placeholder={t('companyPlaceholder') ?? ''}
                           error={companyErrorMessage}
                           onChange={(
                             e: React.ChangeEvent<HTMLInputElement>
@@ -291,7 +293,7 @@ function GetStartedMobileComponent({
                           touchScreen={true}
                           parentRef={containerRef}
                           defaultValue={phoneNumber}
-                          label={Strings.phoneNumber}
+                          label={t('phoneNumber') ?? ''}
                           error={phoneNumberErrorMessage}
                           country={'ca'}
                           onChange={(value: string) => {
@@ -300,8 +302,8 @@ function GetStartedMobileComponent({
                         />
                         <Input.TextArea
                           value={props.comment}
-                          label={Strings.comment}
-                          placeholder={Strings.commentPlaceholder}
+                          label={t('comment') ?? ''}
+                          placeholder={t('commentPlaceholder') ?? ''}
                           error={commentErrorMessage}
                           onChange={(
                             e: React.ChangeEvent<HTMLTextAreaElement>
@@ -326,7 +328,7 @@ function GetStartedMobileComponent({
                         rippleProps={rippleProps}
                       >
                         <div className={styles['send-button-content']}>
-                          {Strings.send}
+                          {t('send')}
                         </div>
                       </Button>
                     </div>
@@ -352,7 +354,7 @@ function GetStartedMobileComponent({
                     styles['request-title-mobile'],
                   ].join(' ')}
                 >
-                  {Strings.thankyouForContacting}
+                  {t('thankyouForContacting')}
                 </Typography.Title>
                 <Typography.Text
                   className={[
@@ -361,7 +363,7 @@ function GetStartedMobileComponent({
                   ].join(' ')}
                   align={'center'}
                 >
-                  {Strings.thankyouForContactingSubtitle}
+                  {t('thankyouForContactingSubtitle')}
                 </Typography.Text>
                 <div>
                   <Button
@@ -373,7 +375,7 @@ function GetStartedMobileComponent({
                     rippleProps={rippleProps}
                     onClick={() => navigate(RoutePaths.Account)}
                   >
-                    {Strings.next}
+                    {t('next')}
                   </Button>
                 </div>
               </animated.div>
@@ -396,6 +398,7 @@ export default function GetStartedComponent(): JSX.Element {
     string | undefined
   >(undefined);
   const [props] = useObservable(GetStartedController.model.store);
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     setShowForm(true);
@@ -424,15 +427,15 @@ export default function GetStartedComponent(): JSX.Element {
       setCommentErrorMessage(undefined);
 
       if (props.companyName.length <= 0) {
-        setCompanyErrorMessage(Strings.fieldEmptyError);
+        setCompanyErrorMessage(t('fieldEmptyError') ?? '');
       }
 
       if (props.phoneNumber.length <= 0) {
-        setPhoneNumberErrorMessage(Strings.fieldEmptyError);
+        setPhoneNumberErrorMessage(t('fieldEmptyError') ?? '');
       }
 
       if (props.comment.length <= 0) {
-        setCommentErrorMessage(Strings.fieldEmptyError);
+        setCommentErrorMessage(t('fieldEmptyError') ?? '');
       }
 
       GetStartedController.sendRequestAsync();

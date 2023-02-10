@@ -11,10 +11,10 @@ import {
   IconGlobe,
 } from '@fuoco.appdev/core-ui';
 import styles from './admin-account.module.scss';
-import { Strings } from '../strings';
 import { animated, useTransition, config } from 'react-spring';
 import { useObservable } from '@ngneat/use-observable';
 import AdminAccountController from '../controllers/admin-account.controller';
+import { useTranslation } from 'react-i18next';
 
 export default function AdminAccountComponent(): JSX.Element {
   const [show, setShow] = useState(false);
@@ -23,17 +23,17 @@ export default function AdminAccountComponent(): JSX.Element {
   const [languageIconLit, setLanguageIconLit] = useState<boolean>(false);
   const [defaultLanguageIndex, setDefaultLanguageIndex] = useState<number>(0);
   const [props] = useObservable(AdminAccountController.model.store);
+  const { t, i18n } = useTranslation();
   const languageOptions: OptionProps[] = [];
   const languages: Record<string, string> = {};
-  for (const language of Strings.getAvailableLanguages()) {
-    Strings.setLanguage(language);
+  for (const language of i18n.languages) {
     languageOptions.push({
-      value: Strings.locale,
+      value: t('locale'),
       children: () => (
-        <span className={styles['dropdown-label']}>{Strings.locale}</span>
+        <span className={styles['dropdown-label']}>{t('locale')}</span>
       ),
     });
-    languages[Strings.locale] = language;
+    languages[t('locale')] = language;
   }
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export default function AdminAccountComponent(): JSX.Element {
   useEffect(() => {
     languageOptions.forEach((option: OptionProps, index: number) => {
       if (option.value === props.updatedLanguage) {
-        Strings.setLanguage(languages[option.value]);
+        i18n.changeLanguage(languages[option.value]);
         setDefaultLanguageIndex(index);
       }
     });
@@ -72,7 +72,7 @@ export default function AdminAccountComponent(): JSX.Element {
                     className={styles['account-title']}
                     level={2}
                   >
-                    {Strings.adminAccount}
+                    {t('adminAccount')}
                   </Typography.Title>
                   <div className={styles['header-button-container']}>
                     <Button
@@ -85,34 +85,32 @@ export default function AdminAccountComponent(): JSX.Element {
                       disabled={props.isSaveDisabled}
                       onClick={() => AdminAccountController.saveAsync()}
                     >
-                      <span className={styles['button-text']}>
-                        {Strings.save}
-                      </span>
+                      <span className={styles['button-text']}>{t('save')}</span>
                     </Button>
                   </div>
                 </div>
                 <Accordion
                   className={styles['accordion']}
                   defaultActiveId={[
-                    Strings.profile,
-                    Strings.personalInformation,
+                    t('profile') ?? '',
+                    t('personalInformation') ?? '',
                   ]}
                 >
                   <Accordion.Item
-                    id={Strings.personalInformation}
-                    label={Strings.personalInformation}
+                    id={t('personalInformation') ?? ''}
+                    label={t('personalInformation')}
                   >
                     <Typography.Text
                       className={styles['accordion-description']}
                     >
-                      {Strings.thisInfoWillBePrivate}
+                      {t('thisInfoWillBePrivate')}
                     </Typography.Text>
                     <div className={styles['info-container']}>
                       <Input
                         classNames={{
                           root: styles['info-input'],
                         }}
-                        label={Strings.emailAddress}
+                        label={t('emailAddress') ?? ''}
                         disabled={props.isEmailAddressDisabled}
                         icon={
                           <IconMail
@@ -145,7 +143,7 @@ export default function AdminAccountComponent(): JSX.Element {
                             stroke={languageIconLit ? '#4AFFFF' : '#d1d5db'}
                           />
                         }
-                        label={Strings.language}
+                        label={t('language') ?? ''}
                         options={languageOptions}
                         onChange={(index, id, value) =>
                           AdminAccountController.updateLanguage(value)

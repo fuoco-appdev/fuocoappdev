@@ -24,19 +24,21 @@ import {
 } from '@fuoco.appdev/core-ui';
 import { useEffect, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { Strings } from '../strings';
 import styles from './app-card.module.scss';
 import { AppStatus, Link } from '../protobuf/core_pb';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import { useTranslation } from 'react-i18next';
 
 function AppCardEditLink() {
+  const { t } = useTranslation();
+
   return (
     <div className={styles['edit-link-root']}>
       <div className={styles['edit-link-icon-container']}>
         <IconMenu strokeWidth={2} />
       </div>
       <Input
-        label={Strings.name}
+        label={t('name') ?? ''}
         classNames={{
           root: styles['edit-input-root'],
           container: styles['edit-input-container'],
@@ -47,7 +49,7 @@ function AppCardEditLink() {
         }}
       />
       <Input
-        label={Strings.link}
+        label={t('link') ?? ''}
         classNames={{
           root: styles['edit-input-root'],
           container: styles['edit-input-container'],
@@ -102,12 +104,13 @@ function AppCardDesktopComponent({
   const [editExpand, setEditExpand] = useState<boolean>(false);
   const [draftName, setDraftName] = useState<string>(name ?? '');
   const [draftCompany, setDraftCompany] = useState<string>(company ?? '');
+  const { t } = useTranslation();
 
   const [draftProgressType, setDraftProgressType] =
     useState<AppStatus>(progressType);
 
   const statusOptionProps: OptionProps[] = [];
-  const statusTypes = Strings.statusTypes.split(',');
+  const statusTypes = t('statusTypes').split(',');
   statusTypes.map((value: string, index: number) => {
     statusOptionProps.push({
       id: AppStatus[index],
@@ -186,7 +189,7 @@ function AppCardDesktopComponent({
                         styles['button-text-desktop'],
                       ].join(' ')}
                     >
-                      {Strings.requestUpdate}
+                      {t('requestUpdate')}
                     </span>
                   </Button>
                   {editMode && (
@@ -231,7 +234,7 @@ function AppCardDesktopComponent({
                         styles['button-text-desktop'],
                       ].join(' ')}
                     >
-                      {Strings.editCoverPhoto}
+                      {t('editCoverPhoto')}
                     </span>
                   </Button>
                 </div>
@@ -267,7 +270,7 @@ function AppCardDesktopComponent({
                       styles['app-name-desktop'],
                     ].join(' ')}
                   >
-                    {draftName.length > 0 ? draftName : Strings.name}
+                    {draftName.length > 0 ? draftName : t('name')}
                   </Typography.Text>
                   <Typography.Text
                     className={[
@@ -275,7 +278,7 @@ function AppCardDesktopComponent({
                       styles['company-name-desktop'],
                     ].join(' ')}
                   >
-                    {draftCompany.length > 0 ? draftCompany : Strings.company}
+                    {draftCompany.length > 0 ? draftCompany : t('company')}
                   </Typography.Text>
                 </div>
                 <div
@@ -290,7 +293,7 @@ function AppCardDesktopComponent({
                       styles['status-desktop'],
                     ].join(' ')}
                   >
-                    {`${Strings.status}: ${statusTypes[draftProgressType]}`}
+                    {`${t('status')}: ${statusTypes[draftProgressType]}`}
                   </Typography.Text>
                 </div>
               </div>
@@ -323,7 +326,7 @@ function AppCardDesktopComponent({
                   strong={true}
                   className={styles['edit-public-top-bar-title']}
                 >
-                  {Strings.edit}
+                  {t('edit')}
                 </Typography.Text>
               </div>
               <div className={styles['edit-public-top-bar-button-container']}>
@@ -333,9 +336,7 @@ function AppCardDesktopComponent({
                   onClick={() => onDeleteClicked?.(id ?? '')}
                   icon={<IconTrash2 strokeWidth={2} />}
                 >
-                  <span className={styles['button-text']}>
-                    {Strings.delete}
-                  </span>
+                  <span className={styles['button-text']}>{t('delete')}</span>
                 </Button>
                 <Button
                   type={'default'}
@@ -354,7 +355,7 @@ function AppCardDesktopComponent({
                   }}
                   icon={<IconSave strokeWidth={2} stroke={'#000'} />}
                 >
-                  <span className={styles['button-text']}>{Strings.save}</span>
+                  <span className={styles['button-text']}>{t('save')}</span>
                 </Button>
               </div>
             </div>
@@ -368,7 +369,7 @@ function AppCardDesktopComponent({
                     label: styles['edit-formlayout-label'],
                   },
                 }}
-                label={Strings.appName}
+                label={t('appName') ?? ''}
                 value={draftName}
                 onChange={(event) => setDraftName(event.currentTarget.value)}
               />
@@ -382,7 +383,7 @@ function AppCardDesktopComponent({
                   chevron: styles['edit-icon'],
                   label: styles['edit-listbox-label'],
                 }}
-                label={Strings.status}
+                label={t('status') ?? ''}
                 defaultIndex={progressType}
                 options={statusOptionProps}
                 onChange={(index: number, id: string, value: string) => {
@@ -402,7 +403,7 @@ function AppCardDesktopComponent({
                 defaultIndex={companyOptions?.findIndex(
                   (value) => value.value === draftCompany
                 )}
-                label={Strings.company}
+                label={t('company') ?? ''}
                 options={companyOptions ?? []}
                 onChange={(index: number, id: string, value: string) => {
                   setDraftCompany(value);
@@ -418,9 +419,7 @@ function AppCardDesktopComponent({
                   onClick={onAddEditLink}
                   icon={<IconPlus strokeWidth={2} stroke={'#000'} />}
                 >
-                  <span className={styles['button-text']}>
-                    {Strings.addLink}
-                  </span>
+                  <span className={styles['button-text']}>{t('addLink')}</span>
                 </Button>
               </div>
             </div>
@@ -495,12 +494,13 @@ function AppCardMobileComponent({
   const [editExpand, setEditExpand] = useState<boolean>(false);
   const [draftName, setDraftName] = useState<string>(name ?? '');
   const [draftCompany, setDraftCompany] = useState<string>(company ?? '');
+  const { t, i18n } = useTranslation();
 
   const [draftProgressType, setDraftProgressType] =
     useState<AppStatus>(progressType);
 
   const statusOptionProps: OptionProps[] = [];
-  const statusTypes = Strings.statusTypes.split(',');
+  const statusTypes = t('statusTypes').split(',');
   statusTypes.map((value: string, index: number) => {
     statusOptionProps.push({
       id: AppStatus[index],
@@ -578,7 +578,7 @@ function AppCardMobileComponent({
                         styles['button-text-mobile'],
                       ].join(' ')}
                     >
-                      {Strings.requestUpdate}
+                      {t('requestUpdate')}
                     </span>
                   </Button>
                   {editMode && (
@@ -623,7 +623,7 @@ function AppCardMobileComponent({
                         styles['button-text-mobile'],
                       ].join(' ')}
                     >
-                      {Strings.editCoverPhoto}
+                      {t('editCoverPhoto')}
                     </span>
                   </Button>
                 </div>
@@ -658,7 +658,7 @@ function AppCardMobileComponent({
                       styles['app-name-mobile'],
                     ].join(' ')}
                   >
-                    {draftName.length > 0 ? draftName : Strings.name}
+                    {draftName.length > 0 ? draftName : t('name')}
                   </Typography.Text>
                   <Typography.Text
                     className={[
@@ -666,7 +666,7 @@ function AppCardMobileComponent({
                       styles['company-name-mobile'],
                     ].join(' ')}
                   >
-                    {draftCompany.length > 0 ? draftCompany : Strings.company}
+                    {draftCompany.length > 0 ? draftCompany : t('company')}
                   </Typography.Text>
                 </div>
                 <div
@@ -676,7 +676,7 @@ function AppCardMobileComponent({
                   ].join(' ')}
                 >
                   <Typography.Text className={styles['status']}>
-                    {`${Strings.status}: ${statusTypes[draftProgressType]}`}
+                    {`${t('status')}: ${statusTypes[draftProgressType]}`}
                   </Typography.Text>
                 </div>
               </div>
@@ -709,7 +709,7 @@ function AppCardMobileComponent({
                   strong={true}
                   className={styles['edit-public-top-bar-title']}
                 >
-                  {Strings.edit}
+                  {t('edit')}
                 </Typography.Text>
               </div>
               <div className={styles['edit-public-top-bar-button-container']}>
@@ -719,9 +719,7 @@ function AppCardMobileComponent({
                   onClick={() => onDeleteClicked?.(id ?? '')}
                   icon={<IconTrash2 strokeWidth={2} />}
                 >
-                  <span className={styles['button-text']}>
-                    {Strings.delete}
-                  </span>
+                  <span className={styles['button-text']}>{t('delete')}</span>
                 </Button>
                 <Button
                   type={'default'}
@@ -740,7 +738,7 @@ function AppCardMobileComponent({
                   }}
                   icon={<IconSave strokeWidth={2} stroke={'#000'} />}
                 >
-                  <span className={styles['button-text']}>{Strings.save}</span>
+                  <span className={styles['button-text']}>{t('save')}</span>
                 </Button>
               </div>
             </div>
@@ -754,7 +752,7 @@ function AppCardMobileComponent({
                     label: styles['edit-formlayout-label'],
                   },
                 }}
-                label={Strings.appName}
+                label={t('appName') ?? ''}
                 value={draftName}
                 onChange={(event) => setDraftName(event.currentTarget.value)}
               />
@@ -768,7 +766,7 @@ function AppCardMobileComponent({
                   chevron: styles['edit-icon'],
                   label: styles['edit-listbox-label'],
                 }}
-                label={Strings.status}
+                label={t('status') ?? ''}
                 defaultIndex={progressType}
                 options={statusOptionProps}
                 onChange={(index: number, id: string, value: string) => {
@@ -788,7 +786,7 @@ function AppCardMobileComponent({
                 defaultIndex={companyOptions?.findIndex(
                   (value) => value.value === draftCompany
                 )}
-                label={Strings.company}
+                label={t('company') ?? ''}
                 options={companyOptions ?? []}
                 onChange={(index: number, id: string, value: string) => {
                   setDraftCompany(value);
@@ -805,7 +803,7 @@ function AppCardMobileComponent({
                   icon={<IconPlus strokeWidth={2} stroke={'#000'} />}
                 >
                   <span className={styles['button-text']}>
-                    {Strings.addLink}
+                    {t('addLink') ?? ''}
                   </span>
                 </Button>
               </div>

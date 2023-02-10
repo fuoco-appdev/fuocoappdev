@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react';
 import { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import { Subscription } from 'rxjs';
 import { Controller } from '../controller';
@@ -12,8 +11,7 @@ import { Location } from 'react-router-dom';
 import UserService from '../services/user.service';
 import * as core from '../protobuf/core_pb';
 import SecretsService from '../services/secrets.service';
-import { Strings } from '../strings';
-import { ToastProps } from '@fuoco.appdev/core-ui';
+import { LanguageCode, ToastProps } from '@fuoco.appdev/core-ui';
 
 class WindowController extends Controller {
   private readonly _model: WindowModel;
@@ -90,8 +88,12 @@ class WindowController extends Controller {
     this._model.showPasswordResetAlert = show;
   }
 
-  public updateToasts(toasts: ToastProps[]) {
+  public updateToasts(toasts: ToastProps[]): void {
     this._model.toasts = toasts;
+  }
+
+  public updateLanguage(language: LanguageCode): void {
+    this._model.language = language;
   }
 
   public updateOnLocationChanged(location: Location): void {

@@ -59,10 +59,11 @@
           display: flex;
 
           & .navbar-content-right-grid {
-            padding-top: 8px;
-            padding-bottom: 8px;
+            padding-top: $mp-2;
+            padding-bottom: $mp-2;
             display: flex;
             justify-content: center;
+            gap: $mp-4;
           }
         }
       }

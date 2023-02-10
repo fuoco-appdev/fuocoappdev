@@ -9,7 +9,7 @@ import styles from './signup.module.scss';
 import AuthService from '../services/auth.service';
 import { RoutePaths } from '../route-paths';
 import { useObservable } from '@ngneat/use-observable';
-import { Strings } from '../strings';
+import { useTranslation } from 'react-i18next';
 import { AuthError } from '@supabase/supabase-js';
 import { animated, config, useTransition } from 'react-spring';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
@@ -81,6 +81,7 @@ export default function SignupComponent(): JSX.Element {
   SignupController.model.location = location;
   const navigate = useNavigate();
   const [errorType, setErrorType] = useState<AuthErrorType | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     WorldController.updateIsError(errorType !== null);
@@ -100,29 +101,30 @@ export default function SignupComponent(): JSX.Element {
       view={'sign_up'}
       socialColors={true}
       strings={{
-        signUpWith: Strings.signUpWith,
-        orContinueWith: Strings.orContinueWith,
-        emailAddress: Strings.emailAddress,
-        password: Strings.password,
-        agreeToThe: Strings.agreeToThe,
-        termsOfService: Strings.termsOfService,
-        privacyPolicy: Strings.privacyPolicy,
-        signUp: Strings.signUp,
-        dontHaveAnAccount: Strings.dontHaveAnAccount,
+        signUpWith: t('signUpWith') ?? '',
+        orContinueWith: t('orContinueWith') ?? '',
+        emailAddress: t('emailAddress') ?? '',
+        password: t('password') ?? '',
+        confirmPassword: t('confirmPassword') ?? '',
+        agreeToThe: t('agreeToThe') ?? '',
+        termsOfService: t('termsOfService') ?? '',
+        privacyPolicy: t('privacyPolicy') ?? '',
+        signUp: t('signUp') ?? '',
+        doYouHaveAnAccount: t('doYouHaveAnAccount') ?? '',
       }}
       emailErrorMessage={
         errorType === AuthErrorType.BadAuthentication
-          ? Strings.emailErrorMessage
+          ? t('emailErrorMessage') ?? ''
           : undefined
       }
       passwordErrorMessage={
         errorType === AuthErrorType.BadAuthentication
-          ? Strings.passwordErrorMessage
+          ? t('passwordErrorMessage') ?? ''
           : undefined
       }
       confirmPasswordErrorMessage={
         errorType === AuthErrorType.ConfirmPasswordNoMatch
-          ? Strings.confirmPasswordErrorMessage
+          ? t('confirmPasswordErrorMessage') ?? ''
           : undefined
       }
       supabaseClient={AuthService.supabaseClient}

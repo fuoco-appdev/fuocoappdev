@@ -3,7 +3,7 @@ import { AuthChangeEvent } from '@supabase/supabase-js';
 import { Model } from '../model';
 import { RoutePaths } from '../route-paths';
 import * as core from '../protobuf/core_pb';
-import { ToastProps } from '@fuoco.appdev/core-ui';
+import { LanguageCode, ToastProps } from '@fuoco.appdev/core-ui';
 
 export interface WindowState {
   user: core.User | null;
@@ -18,6 +18,10 @@ export interface WindowState {
   authState: AuthChangeEvent | undefined;
   isLoading: boolean;
   toasts: ToastProps[];
+}
+
+export interface WindowLocalState {
+  language: LanguageCode;
 }
 
 export class WindowModel extends Model {
@@ -38,6 +42,13 @@ export class WindowModel extends Model {
           authState: undefined,
           isLoading: false,
           toasts: [],
+        })
+      ),
+      undefined,
+      createStore(
+        { name: 'window-local' },
+        withProps<WindowLocalState>({
+          language: LanguageCode.EN,
         })
       )
     );
@@ -174,6 +185,19 @@ export class WindowModel extends Model {
       this.store.update((state) => ({
         ...state,
         toasts: value,
+      }));
+    }
+  }
+
+  public get language(): LanguageCode {
+    return this.localStore?.getValue().language;
+  }
+
+  public set language(value: LanguageCode) {
+    if (this.language !== value) {
+      this.localStore?.update((state) => ({
+        ...state,
+        language: value,
       }));
     }
   }

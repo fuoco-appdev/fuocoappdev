@@ -12,15 +12,16 @@ import {
   IconArrowRight,
 } from '@fuoco.appdev/core-ui';
 import styles from './admin-users.module.scss';
-import { Strings } from '../strings';
 import { animated, useTransition, config } from 'react-spring';
 import { useObservable } from '@ngneat/use-observable';
 import AdminUsersController from '../controllers/admin-users.controller';
 import * as core from '../protobuf/core_pb';
+import { useTranslation } from 'react-i18next';
 
 export default function AdminUsersComponent(): JSX.Element {
   const [show, setShow] = useState(false);
   const [props] = useObservable(AdminUsersController.model.store);
+  const { t } = useTranslation();
 
   useEffect(() => {
     setShow(true);
@@ -148,13 +149,13 @@ export default function AdminUsersComponent(): JSX.Element {
                       className={styles['users-title']}
                       level={2}
                     >
-                      {Strings.adminUsers}
+                      {t('adminUsers')}
                     </Typography.Title>
                   </div>
                   <div className={styles['user-requests-container']}>
                     <div className={styles['user-requests-type']}>
                       <Typography.Text className={styles['user-request-title']}>
-                        {Strings.requests}
+                        {t('requests')}
                       </Typography.Text>
                       <Divider />
                       <div className={styles['users-container']}>
@@ -163,7 +164,7 @@ export default function AdminUsersComponent(): JSX.Element {
                     </div>
                     <div className={styles['user-requests-type']}>
                       <Typography.Text className={styles['user-request-title']}>
-                        {Strings.accepted}
+                        {t('accepted')}
                       </Typography.Text>
                       <Divider />
                       <div className={styles['users-container']}>
@@ -172,7 +173,7 @@ export default function AdminUsersComponent(): JSX.Element {
                     </div>
                     <div className={styles['user-requests-type']}>
                       <Typography.Text className={styles['user-request-title']}>
-                        {Strings.updateRequests}
+                        {t('updateRequests')}
                       </Typography.Text>
                       <Divider />
                       <div className={styles['users-container']}>
@@ -181,7 +182,7 @@ export default function AdminUsersComponent(): JSX.Element {
                     </div>
                     <div className={styles['user-requests-type']}>
                       <Typography.Text className={styles['user-request-title']}>
-                        {Strings.updateAccepted}
+                        {t('updateAccepted')}
                       </Typography.Text>
                       <Divider />
                       <div className={styles['users-container']}>
@@ -195,10 +196,10 @@ export default function AdminUsersComponent(): JSX.Element {
         )}
       </div>
       <Modal
-        title={`${Strings.requestedUserTitle} ${props.selectedUser?.company} ?`}
-        description={Strings.requestedUserDescription}
-        confirmText={Strings.accept}
-        cancelText={Strings.cancel}
+        title={`${t('requestedUserTitle')} ${props.selectedUser?.company} ?`}
+        description={t('requestedUserDescription') ?? ''}
+        confirmText={t('accept') ?? ''}
+        cancelText={t('cancel') ?? ''}
         variant={'success'}
         size={'small'}
         visible={props.showRequestedModal}

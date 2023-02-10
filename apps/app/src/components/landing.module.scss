@@ -34,7 +34,8 @@
           & .sub-title-desktop {
             font-size: 0.7vw;
             line-height: 1.1vw;
-            padding-right: 20vw;
+            padding-right: 25vw;
+            padding-left: 8vw;
           }
         }
       }
@@ -51,7 +52,7 @@
 }
 
 .service-container-desktop {
-  max-width: 316px;
+  max-width: 400px;
   min-height: 354px;
 
   & .service-top-content-desktop {

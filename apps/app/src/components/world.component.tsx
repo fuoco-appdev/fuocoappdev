@@ -16,7 +16,7 @@ import {
 } from '@fuoco.appdev/core-ui';
 import React from 'react';
 import * as core from '../protobuf/core_pb';
-import { Strings } from '../strings';
+import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
 import BucketService from '../services/bucket.service';
 
@@ -336,6 +336,7 @@ const WorldCardComponent = React.forwardRef(
     const [coverImageElements, setCoverImageElements] = useState<
       React.ReactElement[]
     >([]);
+    const { t } = useTranslation();
 
     useEffect(() => {
       const elements: React.ReactElement[] = [];
@@ -355,7 +356,7 @@ const WorldCardComponent = React.forwardRef(
       setCoverImageElements(elements);
     }, [coverImages]);
 
-    const statusTypes = Strings.statusTypes.split(',');
+    const statusTypes = t('statusTypes').split(',');
     return (
       <div className={styles['card-root']} ref={ref}>
         <Card className={styles['card']}>
@@ -373,15 +374,15 @@ const WorldCardComponent = React.forwardRef(
                   />
                   <div className={styles['app-name-container']}>
                     <Typography.Text className={styles['app-name']}>
-                      {name.length > 0 ? name : Strings.name}
+                      {name.length > 0 ? name : t('name')}
                     </Typography.Text>
                     <Typography.Text className={styles['company-name']}>
-                      {company.length > 0 ? company : Strings.company}
+                      {company.length > 0 ? company : t('company')}
                     </Typography.Text>
                   </div>
                   <div className={styles['status-container']}>
                     <Typography.Text className={styles['status']}>
-                      {`${Strings.status}: ${statusTypes[progressType]}`}
+                      {`${t('status')}: ${statusTypes[progressType]}`}
                     </Typography.Text>
                   </div>
                 </div>
