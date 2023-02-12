@@ -1,3 +1,4 @@
+import { LanguageCode } from '@fuoco.appdev/core-ui';
 import { createStore, withProps } from '@ngneat/elf';
 import { Model } from '../model';
 
@@ -10,7 +11,7 @@ export interface AccountState {
   updatedPhoneNumber: string;
   location: [number, number];
   updatedLocation: [number, number];
-  language: string;
+  language: LanguageCode;
   updatedLanguage: string;
   isEmailAddressDisabled: boolean;
   isUpdatePasswordDisabled: boolean;
@@ -33,7 +34,7 @@ export class AccountModel extends Model {
           updatedPhoneNumber: '',
           location: [0, 0],
           updatedLocation: [0, 0],
-          language: '',
+          language: LanguageCode.EN,
           updatedLanguage: '',
           isEmailAddressDisabled: true,
           isUpdatePasswordDisabled: true,
@@ -125,21 +126,21 @@ export class AccountModel extends Model {
     }
   }
 
-  public get language(): string {
+  public get language(): LanguageCode {
     return this.store.getValue().language;
   }
 
-  public set language(value: string) {
+  public set language(value: LanguageCode) {
     if (this.language !== value) {
       this.store.update((state) => ({ ...state, language: value }));
     }
   }
 
-  public get updatedLanguage(): string {
+  public get updatedLanguage(): LanguageCode {
     return this.store.getValue().updatedLanguage;
   }
 
-  public set updatedLanguage(value: string) {
+  public set updatedLanguage(value: LanguageCode) {
     if (this.updatedLanguage !== value) {
       this.store.update((state) => ({ ...state, updatedLanguage: value }));
     }

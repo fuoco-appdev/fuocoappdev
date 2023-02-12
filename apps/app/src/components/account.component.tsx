@@ -278,10 +278,12 @@ function AccountDesktopComponent(): JSX.Element {
                     supportedLanguages={[LanguageCode.EN, LanguageCode.FR]}
                     parentRef={containerRef}
                     classNames={{
-                      container: [
-                        styles['info-input'],
-                        styles['info-input-desktop'],
-                      ].join(' '),
+                      formLayout: {
+                        root: [
+                          styles['info-input'],
+                          styles['info-input-desktop'],
+                        ].join(' '),
+                      },
                     }}
                     onChange={(code) => AccountController.updateLanguage(code)}
                   />
@@ -303,7 +305,11 @@ function AccountMobileComponent(): JSX.Element {
   const [emailAddressIconLit, setEmailAddressIconLit] =
     useState<boolean>(false);
   const [locationIconLit, setLocationIconLit] = useState<boolean>(false);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  useEffect(() => {
+    i18n.changeLanguage(props.updatedLanguage);
+  }, [props.updatedLanguage]);
 
   useEffect(() => {
     setShow(true);
@@ -489,6 +495,23 @@ function AccountMobileComponent(): JSX.Element {
                     }
                     mapboxAccessToken={props.mapboxAccessToken}
                   />
+                  <LanguageSwitch
+                    language={i18n.language as LanguageCode}
+                    label={t('language') ?? ''}
+                    type={'listbox'}
+                    touchScreen={true}
+                    supportedLanguages={[LanguageCode.EN, LanguageCode.FR]}
+                    parentRef={containerRef}
+                    classNames={{
+                      formLayout: {
+                        root: [
+                          styles['info-input'],
+                          styles['info-input-mobile'],
+                        ].join(' '),
+                      },
+                    }}
+                    onChange={(code) => AccountController.updateLanguage(code)}
+                  />
                 </div>
               </Accordion.Item>
             </Accordion>
@@ -543,7 +566,7 @@ function AccountMobileComponent(): JSX.Element {
 
 export default function AccountComponent(): JSX.Element {
   const [props] = useObservable(AccountController.model.store);
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <div className={styles['root']}>

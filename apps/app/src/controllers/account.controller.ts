@@ -41,7 +41,7 @@ class AccountController extends Controller {
           Number(user?.location?.longitude) ?? 0,
           Number(user?.location?.latitude) ?? 0,
         ];
-        this._model.language = user?.language ?? '';
+        this._model.language = user?.language as LanguageCode;
         this._model.isEmailAddressDisabled =
           AuthService.user?.app_metadata !== undefined;
         this._model.isUpdatePasswordDisabled =
