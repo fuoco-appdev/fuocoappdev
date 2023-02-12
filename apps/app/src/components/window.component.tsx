@@ -74,15 +74,17 @@ function WindowDesktopComponent(): JSX.Element {
             </div>
             <div className={styles['navbar-content-right']}>
               <div className={styles['navbar-content-right-grid']}>
-                <LanguageSwitch
-                  language={i18n.language as LanguageCode}
-                  supportedLanguages={[LanguageCode.EN, LanguageCode.FR]}
-                  parentRef={containerRef}
-                  dropdownProps={{
-                    align: DropdownAlignment.Right,
-                  }}
-                  onChange={(code) => WindowController.updateLanguage(code)}
-                />
+                {!props.user && !props.isTabBarVisible && (
+                  <LanguageSwitch
+                    language={i18n.language as LanguageCode}
+                    supportedLanguages={[LanguageCode.EN, LanguageCode.FR]}
+                    parentRef={containerRef}
+                    dropdownProps={{
+                      align: DropdownAlignment.Right,
+                    }}
+                    onChange={(code) => WindowController.updateLanguage(code)}
+                  />
+                )}
                 {props.isSigninVisible && (
                   <Button
                     className={styles['navbarButton']}
@@ -238,16 +240,18 @@ function WindowMobileComponent(): JSX.Element {
             </div>
             <div className={styles['navbar-content-right']}>
               <div className={styles['navbar-content-right-grid']}>
-                <LanguageSwitch
-                  language={i18n.language as LanguageCode}
-                  supportedLanguages={[LanguageCode.EN, LanguageCode.FR]}
-                  touchScreen={true}
-                  hideText={true}
-                  dropdownProps={{
-                    align: DropdownAlignment.Right,
-                  }}
-                  onChange={(code) => WindowController.updateLanguage(code)}
-                />
+                {!props.user && !props.isTabBarVisible && (
+                  <LanguageSwitch
+                    language={i18n.language as LanguageCode}
+                    supportedLanguages={[LanguageCode.EN, LanguageCode.FR]}
+                    touchScreen={true}
+                    hideText={true}
+                    dropdownProps={{
+                      align: DropdownAlignment.Right,
+                    }}
+                    onChange={(code) => WindowController.updateLanguage(code)}
+                  />
+                )}
                 {props.isSigninVisible && (
                   <Button
                     touchScreen={true}

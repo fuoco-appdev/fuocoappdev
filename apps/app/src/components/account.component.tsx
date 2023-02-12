@@ -16,6 +16,8 @@ import {
   OptionProps,
   IconMapPin,
   Modal,
+  LanguageSwitch,
+  LanguageCode,
 } from '@fuoco.appdev/core-ui';
 import styles from './account.module.scss';
 import AccountController from '../controllers/account.controller';
@@ -36,7 +38,11 @@ function AccountDesktopComponent(): JSX.Element {
   const [emailAddressIconLit, setEmailAddressIconLit] =
     useState<boolean>(false);
   const [locationIconLit, setLocationIconLit] = useState<boolean>(false);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  useEffect(() => {
+    i18n.changeLanguage(props.updatedLanguage);
+  }, [props.updatedLanguage]);
 
   useLayoutEffect(() => {
     setShow(true);
@@ -264,6 +270,20 @@ function AccountDesktopComponent(): JSX.Element {
                       AccountController.updateLocation(value, data)
                     }
                     mapboxAccessToken={props.mapboxAccessToken}
+                  />
+                  <LanguageSwitch
+                    language={i18n.language as LanguageCode}
+                    label={t('language') ?? ''}
+                    type={'listbox'}
+                    supportedLanguages={[LanguageCode.EN, LanguageCode.FR]}
+                    parentRef={containerRef}
+                    classNames={{
+                      container: [
+                        styles['info-input'],
+                        styles['info-input-desktop'],
+                      ].join(' '),
+                    }}
+                    onChange={(code) => AccountController.updateLanguage(code)}
                   />
                 </div>
               </Accordion.Item>

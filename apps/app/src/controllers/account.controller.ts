@@ -8,6 +8,7 @@ import * as core from '../protobuf/core_pb';
 import AuthService from '../services/auth.service';
 import WindowController from './window.controller';
 import SecretsService from '../services/secrets.service';
+import { LanguageCode } from '@fuoco.appdev/core-ui';
 
 class AccountController extends Controller {
   private readonly _model: AccountModel;
@@ -78,7 +79,7 @@ class AccountController extends Controller {
     this.updateSave();
   }
 
-  public updateLanguage(value: string): void {
+  public updateLanguage(value: LanguageCode): void {
     this._model.updatedLanguage = value;
     this.updateSave();
   }
