@@ -45,8 +45,7 @@
       margin: $mp-8 0;
     }
 
-    & .service-list-desktop {
-      padding: 0 20vw;
+    & .service-list-container-desktop {
     }
   }
 }
@@ -109,7 +108,7 @@
       margin: $mp-4 0;
     }
 
-    & .service-list-mobile {
+    & .service-list-container-mobile {
       margin-bottom: $mp-8;
     }
   }
@@ -196,51 +195,57 @@
         width: 100vw;
       }
 
-      & .service-list {
+      & .service-list-container {
         display: flex;
         flex-wrap: wrap;
-        justify-content: space-evenly;
+        justify-content: center;
         width: 100%;
         margin-top: $mp-8;
-        gap: $mp-8;
+        margin-bottom: $mp-10;
 
-        & .service-container {
-          background-color: rgba(7, 11, 46, 0.6);
-          padding: $mp-8;
-          border-radius: 28px;
+        & .service-list {
+          display: flex;
+          flex-wrap: wrap;
+          gap: $mp-8;
 
-          & .service-top-content {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            margin-bottom: $mp-4;
-
-            & .service-title {
-              font-size: $font-size-lg;
-              font-weight: $font-weight-bold;
-              color: white;
-              line-height: 56px;
-            }
-
-            & .service-icon-container {
+          & .service-container {
+            background-color: rgba(7, 11, 46, 0.6);
+            padding: $mp-8;
+            border-radius: 28px;
+  
+            & .service-top-content {
               display: flex;
-              justify-content: center;
-              flex-direction: column;
-              align-items: center;
-              height: 56px;
-              width: 56px;
-              background-color: rgba(36, 128, 180, 0.5);
-              border-radius: $rounded-md;
+              flex-direction: row;
+              justify-content: space-between;
+              margin-bottom: $mp-4;
+  
+              & .service-title {
+                font-size: $font-size-lg;
+                font-weight: $font-weight-bold;
+                color: white;
+                line-height: 56px;
+              }
+  
+              & .service-icon-container {
+                display: flex;
+                justify-content: center;
+                flex-direction: column;
+                align-items: center;
+                height: 56px;
+                width: 56px;
+                background-color: rgba(36, 128, 180, 0.5);
+                border-radius: $rounded-md;
+              }
             }
-          }
-
-          & .service-description {
-            color: rgba(255, 255, 255, 0.8);
-            line-break: normal;
-            white-space: pre-line;
-            text-align: left;
-            font-size: $font-size-sm;
-            line-height: $font-line-height-sm;
+  
+            & .service-description {
+              color: rgba(255, 255, 255, 0.8);
+              line-break: normal;
+              white-space: pre-line;
+              text-align: left;
+              font-size: $font-size-sm;
+              line-height: $font-line-height-sm;
+            }
           }
         }
       }

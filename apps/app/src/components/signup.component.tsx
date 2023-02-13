@@ -146,7 +146,9 @@ export default function SignupComponent(): JSX.Element {
   return (
     <>
       <ResponsiveDesktop>
-        <SignupDesktopComponent>{auth}</SignupDesktopComponent>
+        <SignupDesktopComponent>
+          <div className={styles['signup-container']}>{auth}</div>
+        </SignupDesktopComponent>
       </ResponsiveDesktop>
       <ResponsiveMobile>
         <SignupMobileComponent>{auth}</SignupMobileComponent>

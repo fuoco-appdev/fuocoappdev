@@ -256,25 +256,32 @@ function LandingDesktopComponent(): JSX.Element {
                 </div>
                 <div
                   className={[
-                    styles['service-list'],
-                    styles['service-list-desktop'],
+                    styles['service-list-container'],
+                    styles['service-list-container-desktop'],
                   ].join(' ')}
                 >
-                  <ServiceComponent
-                    title={t('webDesign')}
-                    icon={<IconLayout strokeWidth={2} stroke={'#fff'} />}
-                    description={t('webDesignDescription')}
-                  />
-                  <ServiceComponent
-                    title={t('appDevelopment')}
-                    icon={<IconSmartphone strokeWidth={2} stroke={'#fff'} />}
-                    description={t('appDevelopmentDescription')}
-                  />
-                  <ServiceComponent
-                    title={t('logoAndBranding')}
-                    icon={<IconPenTool strokeWidth={2} stroke={'#fff'} />}
-                    description={t('logoAndBrandingDescription')}
-                  />
+                  <div
+                    className={[
+                      styles['service-list'],
+                      styles['service-list-desktop'],
+                    ].join(' ')}
+                  >
+                    <ServiceComponent
+                      title={t('webDesign')}
+                      icon={<IconLayout strokeWidth={2} stroke={'#fff'} />}
+                      description={t('webDesignDescription')}
+                    />
+                    <ServiceComponent
+                      title={t('appDevelopment')}
+                      icon={<IconSmartphone strokeWidth={2} stroke={'#fff'} />}
+                      description={t('appDevelopmentDescription')}
+                    />
+                    <ServiceComponent
+                      title={t('logoAndBranding')}
+                      icon={<IconPenTool strokeWidth={2} stroke={'#fff'} />}
+                      description={t('logoAndBrandingDescription')}
+                    />
+                  </div>
                 </div>
               </animated.div>
             )
@@ -395,25 +402,32 @@ function LandingMobileComponent(): JSX.Element {
           </div>
           <div
             className={[
-              styles['service-list'],
-              styles['service-list-mobile'],
+              styles['service-list-container'],
+              styles['service-list-container-mobile'],
             ].join(' ')}
           >
-            <ServiceComponent
-              title={t('webDesign')}
-              icon={<IconLayout strokeWidth={2} stroke={'#fff'} />}
-              description={t('webDesignDescription')}
-            />
-            <ServiceComponent
-              title={t('appDevelopment')}
-              icon={<IconSmartphone strokeWidth={2} stroke={'#fff'} />}
-              description={t('appDevelopmentDescription')}
-            />
-            <ServiceComponent
-              title={t('logoAndBranding')}
-              icon={<IconPenTool strokeWidth={2} stroke={'#fff'} />}
-              description={t('logoAndBrandingDescription')}
-            />
+            <div
+              className={[
+                styles['service-list'],
+                styles['service-list-mobile'],
+              ].join(' ')}
+            >
+              <ServiceComponent
+                title={t('webDesign')}
+                icon={<IconLayout strokeWidth={2} stroke={'#fff'} />}
+                description={t('webDesignDescription')}
+              />
+              <ServiceComponent
+                title={t('appDevelopment')}
+                icon={<IconSmartphone strokeWidth={2} stroke={'#fff'} />}
+                description={t('appDevelopmentDescription')}
+              />
+              <ServiceComponent
+                title={t('logoAndBranding')}
+                icon={<IconPenTool strokeWidth={2} stroke={'#fff'} />}
+                description={t('logoAndBrandingDescription')}
+              />
+            </div>
           </div>
         </div>
       </div>

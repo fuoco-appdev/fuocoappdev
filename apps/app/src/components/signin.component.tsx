@@ -122,7 +122,9 @@ export default function SigninComponent(): JSX.Element {
   return (
     <>
       <ResponsiveDesktop>
-        <SigninDesktopComponent>{auth}</SigninDesktopComponent>
+        <SigninDesktopComponent>
+          <div className={styles['signin-container']}>{auth}</div>
+        </SigninDesktopComponent>
       </ResponsiveDesktop>
       <ResponsiveMobile>
         <SigninMobileComponent>{auth}</SigninMobileComponent>
