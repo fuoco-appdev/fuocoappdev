@@ -43,7 +43,15 @@
     "create-migration": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "commands": ["npx pg-diff -c development {args.patch}"],
+        "commands": ["npx pg-migrate new {args.name}"],
+        "parallel": false,
+        "cwd": "apps/api"
+      }
+    },
+    "migrate": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["npx pg-migrate migrate"],
         "parallel": false,
         "cwd": "apps/api"
       }
