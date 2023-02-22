@@ -1,4 +1,5 @@
 import { CoreMailService } from '../index.ts';
+import 'https://deno.land/x/dotenv@v3.2.0/load.ts';
 
 class MailService extends CoreMailService {
   constructor() {

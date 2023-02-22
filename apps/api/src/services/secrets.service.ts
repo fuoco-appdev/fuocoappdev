@@ -1,4 +1,5 @@
 import { Secrets } from '../protobuf/core_pb.js';
+import 'https://deno.land/x/dotenv@v3.2.0/load.ts';
 
 class SecretsService {
   private _mapboxAccessToken: string | undefined;

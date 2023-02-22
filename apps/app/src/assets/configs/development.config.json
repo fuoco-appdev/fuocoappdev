@@ -1,7 +1,7 @@
 {
   "supabase": {
-    "url": "http://192.168.2.52:54321",
-    "functions_url": "http://192.168.2.52:54321/functions/v1",
-    "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24ifQ.625_WdcF3KHqz5amU0x2X5WWHP-OEs_4qj0ssLNHzTs"
+    "url": "http://localhost:8000",
+    "functions_url": "http://localhost:8000",
+    "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICAgInJvbGUiOiAiYW5vbiIsCiAgICAiaXNzIjogInN1cGFiYXNlIiwKICAgICJpYXQiOiAxNjc2NjEwMDAwLAogICAgImV4cCI6IDE4MzQzNzY0MDAKfQ.fQwBHdkmGnCxgEwrBxUUoH_3LHvym8bUBktaunVDXFA"
   }
 }

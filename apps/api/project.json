@@ -35,9 +35,17 @@
       "options": {
         "commands": [
           "protoc --plugin=protoc-gen-js=submodules/protobuf-javascript/bazel-bin/generator/protoc-gen-js.exe --js_out=import_style=commonjs,binary:protobuf protobuf/core.proto",
-          "deno run --allow-read --allow-write https://deno.land/x/deno_google_protobuf/tools/build.ts protobuf apps/api/src/supabase/functions"
+          "deno run --allow-read --allow-write https://deno.land/x/deno_google_protobuf/tools/build.ts protobuf apps/api/src"
         ],
         "parallel": false
+      }
+    },
+    "create-migration": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["npx pg-diff -c development {args.patch}"],
+        "parallel": false,
+        "cwd": "apps/api"
       }
     },
     "serve": {
