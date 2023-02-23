@@ -1,16 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import SupabaseService from './supabase.service.ts';
-import {
-  Location,
-  User,
-  RequestStatus,
-  Users,
-} from '../protobuf/core_pb.js';
+import { User, Users } from '../protobuf/core_pb.js';
 
 export interface UserProps {
   id?: string;
   created_at?: string;
-  role?: number;
+  role?: string;
   email?: string;
   first_name?: string;
   last_name?: string;
@@ -58,9 +53,7 @@ export class UserService {
   }
 
   public async findAllAsync(): Promise<UserProps[] | null> {
-    const { data, error } = await SupabaseService.client
-      .from('user')
-      .select();
+    const { data, error } = await SupabaseService.client.from('user').select();
 
     if (error) {
       console.error(error);

@@ -2,13 +2,13 @@ import { Core } from '../../index.ts';
 import {
   AppController,
   UserController,
+  AccountController,
   SecretsController,
 } from '../../controllers/index.ts';
-import BucketService from '../../services/bucket.service.ts';
 
-//await BucketService.initializeDevelopmentAsync();
 const app = Core.registerApp([
   new UserController(),
+  new AccountController(),
   new AppController(),
   new SecretsController(),
 ]);

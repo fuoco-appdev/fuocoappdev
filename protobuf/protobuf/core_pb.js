@@ -1834,7 +1834,7 @@ proto.core.Account.toObject = function(includeInstance, msg) {
     phoneNumber: jspb.Message.getFieldWithDefault(msg, 5, ""),
     location: (f = msg.getLocation()) && proto.core.Location.toObject(includeInstance, f),
     language: jspb.Message.getFieldWithDefault(msg, 7, ""),
-    requestState: jspb.Message.getFieldWithDefault(msg, 8, 0)
+    requestStatus: jspb.Message.getFieldWithDefault(msg, 8, 0)
   };
 
   if (includeInstance) {
@@ -1902,7 +1902,7 @@ proto.core.Account.deserializeBinaryFromReader = function(msg, reader) {
       break;
     case 8:
       var value = /** @type {!proto.core.RequestStatus} */ (reader.readEnum());
-      msg.setRequestState(value);
+      msg.setRequestStatus(value);
       break;
     default:
       reader.skipField();
@@ -1983,7 +1983,7 @@ proto.core.Account.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getRequestState();
+  f = message.getRequestStatus();
   if (f !== 0.0) {
     writer.writeEnum(
       8,
@@ -2139,10 +2139,10 @@ proto.core.Account.prototype.setLanguage = function(value) {
 
 
 /**
- * optional RequestStatus request_state = 8;
+ * optional RequestStatus request_status = 8;
  * @return {!proto.core.RequestStatus}
  */
-proto.core.Account.prototype.getRequestState = function() {
+proto.core.Account.prototype.getRequestStatus = function() {
   return /** @type {!proto.core.RequestStatus} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
 };
 
@@ -2151,7 +2151,7 @@ proto.core.Account.prototype.getRequestState = function() {
  * @param {!proto.core.RequestStatus} value
  * @return {!proto.core.Account} returns this
  */
-proto.core.Account.prototype.setRequestState = function(value) {
+proto.core.Account.prototype.setRequestStatus = function(value) {
   return jspb.Message.setProto3EnumField(this, 8, value);
 };
 

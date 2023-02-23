@@ -497,9 +497,9 @@ export class Account extends Message<Account> {
   language = "";
 
   /**
-   * @generated from field: core.RequestStatus request_state = 8;
+   * @generated from field: core.RequestStatus request_status = 8;
    */
-  requestState = RequestStatus.IDLE;
+  requestStatus = RequestStatus.IDLE;
 
   constructor(data?: PartialMessage<Account>) {
     super();
@@ -516,7 +516,7 @@ export class Account extends Message<Account> {
     { no: 5, name: "phone_number", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 6, name: "location", kind: "message", T: Location },
     { no: 7, name: "language", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 8, name: "request_state", kind: "enum", T: proto3.getEnumType(RequestStatus) },
+    { no: 8, name: "request_status", kind: "enum", T: proto3.getEnumType(RequestStatus) },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Account {

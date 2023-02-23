@@ -75,7 +75,7 @@ message Account {
     string phone_number = 5;
     Location location = 6;
     string language = 7;
-    RequestStatus request_state = 8;
+    RequestStatus request_status = 8;
 }
 
 message Accounts {

@@ -1,4 +1,5 @@
 import SupabaseService from './supabase.service.ts';
+import UserService from './user.service.ts';
 import {
   Location,
   Account,
@@ -41,17 +42,19 @@ export class AccountService {
       return null;
     }
 
-    const { data, error } = await SupabaseService.client.auth.admin.getUserById(
+    const supabaseUser = await SupabaseService.client.auth.admin.getUserById(
       supabaseId
     );
-    if (error) {
-      console.error(error);
+    if (supabaseUser.error) {
+      console.error(supabaseUser.error);
       return null;
     }
 
-    const existingUser = await UserService.findAsync(data.user.email);
+    const existingUser = await UserService.findAsync(
+      supabaseUser.data.user.email ?? ''
+    );
     if (!existingUser) {
-        return null;
+      return null;
     }
 
     const company = account.getCompany();
@@ -61,7 +64,7 @@ export class AccountService {
 
     const accountData = this.assignAndGetAccountData({
       supabaseId,
-      existingUser.id,
+      userId: existingUser.id,
       company,
       phoneNumber,
       language,
@@ -179,8 +182,10 @@ export class AccountService {
     props.phone_number && account.setPhoneNumber(props.phone_number);
     props.language && account.setLanguage(props.language);
     props.location && account.setLocation(location);
-    props.request_status &&
-      account.setRequestStatus(RequestStatus[props.request_status] ?? -1);
+    const requestIndex = Object.keys(RequestStatus).indexOf(
+      props.request_status ?? ''
+    );
+    props.request_status && account.setRequestStatus(requestIndex);
 
     return account;
   }
@@ -208,7 +213,7 @@ export class AccountService {
         },
       }),
       ...(props.requestStatus !== undefined && {
-        request_status: RequestStatus[props.requestStatus] ?? '',
+        request_status: Object.keys(RequestStatus)[props.requestStatus],
       }),
     };
   }
