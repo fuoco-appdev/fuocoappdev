@@ -32,7 +32,6 @@ GRANT ALL ON TABLE public.account TO postgres;
 
 GRANT ALL ON TABLE public.account TO service_role;
 
-GRANT ALL ON TABLE public.account TO postgres;
 CREATE TABLE IF NOT EXISTS public.app
 (
     id uuid NOT NULL DEFAULT uuid_generate_v4(),
@@ -63,5 +62,3 @@ GRANT ALL ON TABLE public.app TO authenticated;
 GRANT ALL ON TABLE public.app TO postgres;
 
 GRANT ALL ON TABLE public.app TO service_role;
-
-GRANT ALL ON TABLE public.app TO postgres;
