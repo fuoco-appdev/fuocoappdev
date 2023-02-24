@@ -6,7 +6,7 @@ import SignupController from '../controllers/signup.controller';
 import WindowController from '../controllers/window.controller';
 import WorldController from '../controllers/world.controller';
 import styles from './signup.module.scss';
-import AuthService from '../services/auth.service';
+import SupabaseService from '../services/supabase.service';
 import { RoutePaths } from '../route-paths';
 import { useObservable } from '@ngneat/use-observable';
 import { useTranslation } from 'react-i18next';
@@ -127,7 +127,7 @@ export default function SignupComponent(): JSX.Element {
           ? t('confirmPasswordErrorMessage') ?? ''
           : undefined
       }
-      supabaseClient={AuthService.supabaseClient}
+      supabaseClient={SupabaseService.supabaseClient}
       onForgotPasswordRedirect={() => navigate(RoutePaths.ForgotPassword)}
       onTermsOfServiceRedirect={() => navigate(RoutePaths.TermsOfService)}
       onPrivacyPolicyRedirect={() => navigate(RoutePaths.PrivacyPolicy)}

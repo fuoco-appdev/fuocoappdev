@@ -2,38 +2,38 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Controller, Post, Guard, ContentType } from '../index.ts';
 import * as Oak from 'https://deno.land/x/oak@v11.1.0/mod.ts';
-import UserService from '../services/user.service.ts';
+import CustomerService from '../services/customer.service.ts';
 import { AuthGuard } from '../guards/index.ts';
-import { User } from '../protobuf/core_pb.js';
+import { Customer } from '../protobuf/core_pb.js';
 import * as HttpError from 'https://deno.land/x/http_errors@3.0.0/mod.ts';
 import { readAll } from 'https://deno.land/std@0.105.0/io/util.ts';
 
-@Controller('/user')
-export class UserController {
+@Controller('/customer')
+export class CustomerController {
   @Post('/all')
   @Guard(AuthGuard)
   @ContentType('application/x-protobuf')
-  public async getAllUsersAsync(
+  public async getAllCustomersAsync(
     context: Oak.RouterContext<
       string,
       Oak.RouteParams<string>,
       Record<string, any>
     >
   ): Promise<void> {
-    const data = await UserService.findAllAsync();
+    const data = await CustomerService.findAllAsync();
     if (!data) {
-      throw HttpError.createError(404, `No users were found`);
+      throw HttpError.createError(404, `No customers were found`);
     }
 
-    const users = UserService.assignAndGetUsersProtocol(data);
+    const customers = CustomerService.assignAndGetCustomersProtocol(data);
     context.response.type = 'application/x-protobuf';
-    context.response.body = users.serializeBinary();
+    context.response.body = customers.serializeBinary();
   }
 
   @Post('/update/:id')
   @Guard(AuthGuard)
   @ContentType('application/x-protobuf')
-  public async updateUserAsync(
+  public async updateCustomerAsync(
     context: Oak.RouterContext<
       string,
       Oak.RouteParams<string>,
@@ -43,21 +43,21 @@ export class UserController {
     const paramsId = context.params['id'];
     const body = await context.request.body({ type: 'reader' });
     const requestValue = await readAll(body.value);
-    const user = User.deserializeBinary(requestValue);
-    const data = await UserService.updateAsync(paramsId, user);
+    const customer = Customer.deserializeBinary(requestValue);
+    const data = await CustomerService.updateAsync(paramsId, customer);
     if (!data) {
-      throw HttpError.createError(404, `User data not found`);
+      throw HttpError.createError(404, `Customer data not found`);
     }
 
-    const responseUser = UserService.assignAndGetUserProtocol(data);
+    const responseCustomer = CustomerService.assignAndGetCustomerProtocol(data);
     context.response.type = 'application/x-protobuf';
-    context.response.body = responseUser.serializeBinary();
+    context.response.body = responseCustomer.serializeBinary();
   }
 
   @Post('/:email')
   @Guard(AuthGuard)
   @ContentType('application/x-protobuf')
-  public async getUserAsync(
+  public async getCustomerAsync(
     context: Oak.RouterContext<
       string,
       Oak.RouteParams<string>,
@@ -65,16 +65,16 @@ export class UserController {
     >
   ): Promise<void> {
     const paramsEmail = context.params['email'];
-    const data = await UserService.findAsync(paramsEmail);
+    const data = await CustomerService.findAsync(paramsEmail);
     if (!data) {
       throw HttpError.createError(
         404,
-        `User with email ${paramsEmail} not found`
+        `Customer with email ${paramsEmail} not found`
       );
     }
 
-    const user = UserService.assignAndGetUserProtocol(data);
+    const customer = CustomerService.assignAndGetCustomerProtocol(data);
     context.response.type = 'application/x-protobuf';
-    context.response.body = user.serializeBinary();
+    context.response.body = customer.serializeBinary();
   }
 }

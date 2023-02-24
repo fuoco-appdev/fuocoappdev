@@ -41,7 +41,7 @@ export class UserService {
     const { data, error } = await SupabaseService.client
       .from('user')
       .update(userData)
-      .match({ user_id: userId })
+      .match({ id: userId })
       .select();
 
     if (error) {

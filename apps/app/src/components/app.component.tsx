@@ -38,20 +38,20 @@ import AdminComponent from './admin.component';
 import AdminAccountComponent from './admin-account.component';
 import AdminUsersComponent from './admin-users.component';
 import AdminAppsComponent from './admin-apps.component';
-import AuthService from '../services/auth.service';
+import SupabaseService from '../services/supabase.service';
 
 interface RouteElementProps {
   element: JSX.Element;
 }
 
 function GuestComponent({ element }: RouteElementProps): React.ReactElement {
-  return !AuthService.user ? element : <Navigate to={RoutePaths.User} />;
+  return !SupabaseService.user ? element : <Navigate to={RoutePaths.User} />;
 }
 
 function AuthenticatedComponent({
   element,
 }: RouteElementProps): React.ReactElement {
-  return AuthService.user ? element : <Navigate to={RoutePaths.Signin} />;
+  return SupabaseService.user ? element : <Navigate to={RoutePaths.Signin} />;
 }
 
 function UserRoleComponent({ element }: RouteElementProps): React.ReactElement {

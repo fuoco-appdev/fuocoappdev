@@ -17,7 +17,7 @@ export class AccountController {
   @Post('/create')
   @Guard(AuthGuard)
   @ContentType('application/x-protobuf')
-  public async createAsync(
+  public async createAccountAsync(
     context: Oak.RouterContext<
       string,
       Oak.RouteParams<string>,
@@ -100,5 +100,89 @@ export class AccountController {
     );
     context.response.type = 'application/x-protobuf';
     context.response.body = response.serializeBinary();
+  }
+
+  @Post('/all')
+  @Guard(AuthGuard)
+  @ContentType('application/x-protobuf')
+  public async getAllAccountsAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >
+  ): Promise<void> {
+    const data = await AccountService.findAllAsync();
+    if (!data) {
+      throw HttpError.createError(404, `No accounts were found`);
+    }
+
+    const accounts = AccountService.assignAndGetAccountsProtocol(data);
+    context.response.type = 'application/x-protobuf';
+    context.response.body = accounts.serializeBinary();
+  }
+
+  @Post('/update/:id')
+  @Guard(AuthGuard)
+  @ContentType('application/x-protobuf')
+  public async updateAccountAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >
+  ): Promise<void> {
+    const paramsId = context.params['id'];
+    const body = await context.request.body({ type: 'reader' });
+    const requestValue = await readAll(body.value);
+    const account = Account.deserializeBinary(requestValue);
+    const data = await AccountService.updateAsync(paramsId, account);
+    if (!data) {
+      throw HttpError.createError(404, `Account data not found`);
+    }
+
+    const responseAccount = AccountService.assignAndGetAccountProtocol(data);
+    context.response.type = 'application/x-protobuf';
+    context.response.body = responseAccount.serializeBinary();
+  }
+
+  @Post('/delete/:id')
+  @Guard(AuthGuard)
+  @ContentType('application/x-protobuf')
+  public async deleteAccountAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >
+  ): Promise<void> {
+    const paramsId = context.params['id'];
+    await AccountService.deleteAsync(paramsId);
+
+    context.response.status = Oak.Status.OK;
+  }
+
+  @Post('/:id')
+  @Guard(AuthGuard)
+  @ContentType('application/x-protobuf')
+  public async getAccountAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >
+  ): Promise<void> {
+    const paramsId = context.params['id'];
+    const data = await AccountService.findAsync(paramsId);
+    if (!data) {
+      throw HttpError.createError(
+        404,
+        `Account with supabase id ${paramsId} not found`
+      );
+    }
+
+    const account = AccountService.assignAndGetAccountProtocol(data);
+    context.response.type = 'application/x-protobuf';
+    context.response.body = account.serializeBinary();
   }
 }

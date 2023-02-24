@@ -2,7 +2,7 @@
 import { Auth } from '@fuoco.appdev/core-ui';
 import styles from './reset-password.module.scss';
 import WindowController from '../controllers/window.controller';
-import AuthService from '../services/auth.service';
+import SupabaseService from '../services/supabase.service';
 import { AuthError } from '@supabase/supabase-js';
 import { useState, useEffect } from 'react';
 import { animated, config, useTransition } from 'react-spring';
@@ -104,7 +104,7 @@ export default function ResetPasswordComponent(): JSX.Element {
         navigate(RoutePaths.User);
       }}
       onResetPasswordError={(error: AuthError) => setError(error)}
-      supabaseClient={AuthService.supabaseClient}
+      supabaseClient={SupabaseService.supabaseClient}
     />
   );
   return (

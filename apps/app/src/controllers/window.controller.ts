@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { Controller } from '../controller';
 import { WindowModel } from '../models/window.model';
 import { RoutePaths } from '../route-paths';
-import AuthService from '../services/auth.service';
+import SupabaseService from '../services/supabase.service';
 import WorldController from './world.controller';
 import { Location } from 'react-router-dom';
 import UserService from '../services/user.service';
@@ -26,7 +26,9 @@ class WindowController extends Controller {
 
     this.onAuthStateChanged = this.onAuthStateChanged.bind(this);
 
-    AuthService.supabaseClient.auth.onAuthStateChange(this.onAuthStateChanged);
+    SupabaseService.supabaseClient.auth.onAuthStateChange(
+      this.onAuthStateChanged
+    );
   }
 
   public get model(): WindowModel {
@@ -54,7 +56,7 @@ class WindowController extends Controller {
 
   public async checkUserIsAuthenticatedAsync(): Promise<void> {
     this._model.isLoading = true;
-    const user = await AuthService.requestUserAsync();
+    const user = await SupabaseService.requestUserAsync();
     if (!user) {
       this._model.isLoading = false;
     }

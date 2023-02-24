@@ -3,5 +3,9 @@
     "url": "http://localhost:8000",
     "functions_url": "http://localhost:8000",
     "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICAgInJvbGUiOiAiYW5vbiIsCiAgICAiaXNzIjogInN1cGFiYXNlIiwKICAgICJpYXQiOiAxNjc2NjEwMDAwLAogICAgImV4cCI6IDE4MzQzNzY0MDAKfQ.fQwBHdkmGnCxgEwrBxUUoH_3LHvym8bUBktaunVDXFA"
+  },
+  "medusa": {
+    "url": "http://localhost:9000",
+    "key": "pk_01GT0ERNN9826ZNHBP0PEJGE0N"
   }
 }

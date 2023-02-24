@@ -6,8 +6,8 @@ import {
 } from '@supabase/supabase-js';
 import ConfigService from './config.service';
 
-class AuthService {
-  private _supabaseClient!: SupabaseClient;
+class SupabaseService {
+  private readonly _supabaseClient!: SupabaseClient;
   private _user: User | null;
   private _session: Session | null;
 
@@ -74,4 +74,4 @@ class AuthService {
   }
 }
 
-export default new AuthService();
+export default new SupabaseService();

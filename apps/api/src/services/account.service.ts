@@ -213,7 +213,7 @@ export class AccountService {
         },
       }),
       ...(props.requestStatus !== undefined && {
-        request_status: Object.keys(RequestStatus)[props.requestStatus],
+        request_status: Object.keys(RequestStatus)[props.requestStatus] ?? '',
       }),
     };
   }

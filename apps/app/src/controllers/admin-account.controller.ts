@@ -4,12 +4,14 @@ import { Subscription } from 'rxjs';
 import { Controller } from '../controller';
 import { AdminAccountModel } from '../models/admin-account.model';
 import UserService from '../services/user.service';
+import AccountService from '../services/account.service';
 import * as core from '../protobuf/core_pb';
-import AuthService from '../services/auth.service';
+import SupabaseService from '../services/supabase.service';
 
 class AdminAccountController extends Controller {
   private readonly _model: AdminAccountModel;
   private _userSubscription: Subscription | undefined;
+  private _accountSubscription: Subscription | undefined;
 
   constructor() {
     super();
@@ -24,21 +26,24 @@ class AdminAccountController extends Controller {
   public initialize(): void {
     this._userSubscription = UserService.activeUserObservable.subscribe({
       next: (user: core.User | null) => {
-        if (user?.role !== core.UserRole.ADMIN) {
-          return;
-        }
-
         this._model.emailAddress = user?.email ?? '';
-        this._model.language = user?.language ?? '';
         this._model.isEmailAddressDisabled =
-          AuthService.user?.app_metadata !== undefined;
-        this._model.updatedEmailAddress = this._model.emailAddress;
-        this._model.updatedLanguage = this._model.language;
+          SupabaseService.user?.app_metadata !== undefined;
       },
     });
+
+    this._accountSubscription =
+      AccountService.activeAccountObservable.subscribe({
+        next: (account: core.Account | null) => {
+          this._model.language = account?.language ?? '';
+          this._model.updatedEmailAddress = this._model.emailAddress;
+          this._model.updatedLanguage = this._model.language;
+        },
+      });
   }
 
   public dispose(): void {
+    this._accountSubscription?.unsubscribe();
     this._userSubscription?.unsubscribe();
   }
 
@@ -57,8 +62,7 @@ class AdminAccountController extends Controller {
   }
 
   public async saveAsync(): Promise<void> {
-    await UserService.requestUpdateActiveAsync({
-      email: this._model.updatedEmailAddress,
+    await AccountService.requestUpdateActiveAsync({
       language: this._model.updatedLanguage,
     });
 

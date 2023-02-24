@@ -3,7 +3,7 @@
 import { Service } from '../service';
 import * as core from '../protobuf/core_pb';
 import { BehaviorSubject, Observable } from 'rxjs';
-import AuthService from './auth.service';
+import SupabaseService from './supabase.service';
 import BucketService from './bucket.service';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
@@ -35,7 +35,7 @@ class AppsService extends Service {
   }
 
   public async requestAllAsync(): Promise<core.App[]> {
-    const session = await AuthService.requestSessionAsync();
+    const session = await SupabaseService.requestSessionAsync();
     const response = await axios({
       method: 'post',
       url: `${this.endpointUrl}/app/all`,
@@ -77,7 +77,7 @@ class AppsService extends Service {
   }
 
   public async requestAllFromUserAsync(userId: string): Promise<core.App[]> {
-    const session = await AuthService.requestSessionAsync();
+    const session = await SupabaseService.requestSessionAsync();
     const response = await axios({
       method: 'post',
       url: `${this.endpointUrl}/app/all/${userId}`,
@@ -99,8 +99,8 @@ class AppsService extends Service {
   }
 
   public async requestCreateAsync(): Promise<core.App> {
-    await AuthService.requestUserAsync();
-    const session = await AuthService.requestSessionAsync();
+    await SupabaseService.requestUserAsync();
+    const session = await SupabaseService.requestSessionAsync();
     const app = new core.App();
     const response = await axios({
       method: 'post',
@@ -136,7 +136,7 @@ class AppsService extends Service {
       cover_images?: string[];
     }
   ): Promise<core.App> {
-    const session = await AuthService.requestSessionAsync();
+    const session = await SupabaseService.requestSessionAsync();
     const date = new Date(Date.now());
     const links: core.Link[] = [];
 
@@ -181,7 +181,7 @@ class AppsService extends Service {
   }
 
   public async requestDeleteAsync(appId: string): Promise<void> {
-    const session = await AuthService.requestSessionAsync();
+    const session = await SupabaseService.requestSessionAsync();
     const response = await axios({
       method: 'post',
       url: `${this.endpointUrl}/app/delete/${appId}`,

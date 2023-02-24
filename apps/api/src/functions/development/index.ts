@@ -4,10 +4,12 @@ import {
   UserController,
   AccountController,
   SecretsController,
+  CustomerController,
 } from '../../controllers/index.ts';
 
 const app = Core.registerApp([
   new UserController(),
+  new CustomerController(),
   new AccountController(),
   new AppController(),
   new SecretsController(),

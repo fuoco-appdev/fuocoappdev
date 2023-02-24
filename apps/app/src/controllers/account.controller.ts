@@ -3,16 +3,18 @@
 import { Subscription } from 'rxjs';
 import { Controller } from '../controller';
 import { AccountModel } from '../models/account.model';
-import UserService from '../services/user.service';
+import CustomerService from '../services/customer.service';
+import AccountService from '../services/account.service';
 import * as core from '../protobuf/core_pb';
-import AuthService from '../services/auth.service';
+import SupabaseService from '../services/supabase.service';
 import WindowController from './window.controller';
 import SecretsService from '../services/secrets.service';
 import { LanguageCode } from '@fuoco.appdev/core-ui';
 
 class AccountController extends Controller {
   private readonly _model: AccountModel;
-  private _userSubscription: Subscription | undefined;
+  private _customerSubscription: Subscription | undefined;
+  private _accountSubscription: Subscription | undefined;
   private _secretsSubscription: Subscription | undefined;
 
   constructor() {
@@ -32,31 +34,40 @@ class AccountController extends Controller {
       },
     });
 
-    this._userSubscription = UserService.activeUserObservable.subscribe({
-      next: (user: core.User | null) => {
-        this._model.company = user?.company ?? '';
-        this._model.emailAddress = user?.email ?? '';
-        this._model.phoneNumber = user?.phoneNumber ?? '';
-        this._model.location = [
-          Number(user?.location?.longitude) ?? 0,
-          Number(user?.location?.latitude) ?? 0,
-        ];
-        this._model.language = user?.language as LanguageCode;
-        this._model.isEmailAddressDisabled =
-          AuthService.user?.app_metadata !== undefined;
-        this._model.isUpdatePasswordDisabled =
-          AuthService.user?.app_metadata !== undefined;
-        this._model.updatedCompany = this._model.company;
-        this._model.updatedEmailAddress = this._model.emailAddress;
-        this._model.updatedPhoneNumber = this._model.phoneNumber;
-        this._model.updatedLocation = this._model.location;
-        this._model.updatedLanguage = this._model.language;
-      },
-    });
+    this._customerSubscription =
+      CustomerService.activeCustomerObservable.subscribe({
+        next: (customer: core.Customer | null) => {
+          this._model.emailAddress = customer?.email ?? '';
+          this._model.updatedEmailAddress = this._model.emailAddress;
+        },
+      });
+
+    this._accountSubscription =
+      AccountService.activeAccountObservable.subscribe({
+        next: (account: core.Account | null) => {
+          this._model.company = account?.company ?? '';
+          this._model.phoneNumber = account?.phoneNumber ?? '';
+          this._model.location = [
+            Number(account?.location?.longitude) ?? 0,
+            Number(account?.location?.latitude) ?? 0,
+          ];
+          this._model.language = account?.language as LanguageCode;
+          this._model.isEmailAddressDisabled =
+            SupabaseService.user?.app_metadata !== undefined;
+          this._model.isUpdatePasswordDisabled =
+            SupabaseService.user?.app_metadata !== undefined;
+          this._model.updatedCompany = this._model.company;
+          this._model.updatedPhoneNumber = this._model.phoneNumber;
+          this._model.updatedLocation = this._model.location;
+          this._model.updatedLanguage = this._model.language;
+        },
+      });
   }
 
   public dispose(): void {
-    this._userSubscription?.unsubscribe();
+    this._customerSubscription?.unsubscribe();
+    this._accountSubscription?.unsubscribe();
+    this._secretsSubscription?.unsubscribe();
   }
 
   public updateCompany(value: string): void {
@@ -93,7 +104,7 @@ class AccountController extends Controller {
   }
 
   public async saveAsync(): Promise<void> {
-    await UserService.requestUpdateActiveAsync({
+    await AccountService.requestUpdateActiveAsync({
       company: this._model.updatedCompany,
       phoneNumber: this._model.updatedPhoneNumber,
       location: this._model.updatedLocation,
@@ -104,9 +115,10 @@ class AccountController extends Controller {
   }
 
   public async deleteAsync(): Promise<void> {
-    await UserService.requestActiveDeleteAsync();
-    UserService.clearActiveUser();
-    AuthService.clear();
+    await AccountService.requestActiveDeleteAsync();
+    AccountService.clearActiveAccount();
+    CustomerService.clearActiveCustomer();
+    SupabaseService.clear();
     WindowController.updateAuthState('USER_DELETED');
   }
 

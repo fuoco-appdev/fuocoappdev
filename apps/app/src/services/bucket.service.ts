@@ -1,10 +1,10 @@
-import AuthService from './auth.service';
+import SupabaseService from './supabase.service';
 import * as core from '../protobuf/core_pb';
 
 class BucketService {
   public getPublicUrl(type: core.BucketType, path: string): string | null {
     const bucketName = this.getBucketName(type);
-    const { data } = AuthService.supabaseClient.storage
+    const { data } = SupabaseService.supabaseClient.storage
       .from(bucketName)
       .getPublicUrl(path);
 
@@ -17,7 +17,7 @@ class BucketService {
     blob: Blob
   ): Promise<string | null> {
     const bucketName = this.getBucketName(type);
-    const bucket = await AuthService.supabaseClient.storage
+    const bucket = await SupabaseService.supabaseClient.storage
       .from(bucketName)
       .upload(file, blob);
 
@@ -33,7 +33,7 @@ class BucketService {
     files: string[]
   ): Promise<void> {
     const bucketName = this.getBucketName(type);
-    const bucket = await AuthService.supabaseClient.storage
+    const bucket = await SupabaseService.supabaseClient.storage
       .from(bucketName)
       .remove(files);
 

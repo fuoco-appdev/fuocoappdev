@@ -18,7 +18,7 @@ import {
 } from '@fuoco.appdev/core-ui';
 import { RoutePaths } from '../route-paths';
 import { useTranslation } from 'react-i18next';
-import AuthService from '../services/auth.service';
+import SupabaseService from '../services/supabase.service';
 import { useObservable } from '@ngneat/use-observable';
 import { useSpring } from 'react-spring';
 import * as core from '../protobuf/core_pb';
@@ -112,7 +112,7 @@ function WindowDesktopComponent(): JSX.Element {
                     size="tiny"
                     type="text"
                     onClick={async () => {
-                      await AuthService.signoutAsync();
+                      await SupabaseService.signoutAsync();
                     }}
                   />
                 )}
@@ -296,7 +296,7 @@ function WindowMobileComponent(): JSX.Element {
                     }}
                     onClick={() => {
                       setTimeout(async () => {
-                        await AuthService.signoutAsync();
+                        await SupabaseService.signoutAsync();
                       }, 100);
                     }}
                   />

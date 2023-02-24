@@ -458,6 +458,104 @@ export class Users extends Message<Users> {
 }
 
 /**
+ * @generated from message core.Customer
+ */
+export class Customer extends Message<Customer> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: string created_at = 2;
+   */
+  createdAt = "";
+
+  /**
+   * @generated from field: string email = 3;
+   */
+  email = "";
+
+  /**
+   * @generated from field: string first_name = 4;
+   */
+  firstName = "";
+
+  /**
+   * @generated from field: string last_name = 5;
+   */
+  lastName = "";
+
+  constructor(data?: PartialMessage<Customer>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.Customer";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "created_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "email", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "first_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "last_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Customer {
+    return new Customer().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Customer {
+    return new Customer().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Customer {
+    return new Customer().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Customer | PlainMessage<Customer> | undefined, b: Customer | PlainMessage<Customer> | undefined): boolean {
+    return proto3.util.equals(Customer, a, b);
+  }
+}
+
+/**
+ * @generated from message core.Customers
+ */
+export class Customers extends Message<Customers> {
+  /**
+   * @generated from field: repeated core.Customer customers = 1;
+   */
+  customers: Customer[] = [];
+
+  constructor(data?: PartialMessage<Customers>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.Customers";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "customers", kind: "message", T: Customer, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Customers {
+    return new Customers().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Customers {
+    return new Customers().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Customers {
+    return new Customers().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Customers | PlainMessage<Customers> | undefined, b: Customers | PlainMessage<Customers> | undefined): boolean {
+    return proto3.util.equals(Customers, a, b);
+  }
+}
+
+/**
  * @generated from message core.Account
  */
 export class Account extends Message<Account> {
@@ -482,24 +580,24 @@ export class Account extends Message<Account> {
   company = "";
 
   /**
-   * @generated from field: string phone_number = 5;
-   */
-  phoneNumber = "";
-
-  /**
-   * @generated from field: core.Location location = 6;
+   * @generated from field: core.Location location = 5;
    */
   location?: Location;
 
   /**
-   * @generated from field: string language = 7;
+   * @generated from field: string language = 6;
    */
   language = "";
 
   /**
-   * @generated from field: core.RequestStatus request_status = 8;
+   * @generated from field: core.RequestStatus request_status = 7;
    */
   requestStatus = RequestStatus.IDLE;
+
+  /**
+   * @generated from field: string phone_number = 8;
+   */
+  phoneNumber = "";
 
   constructor(data?: PartialMessage<Account>) {
     super();
@@ -513,10 +611,10 @@ export class Account extends Message<Account> {
     { no: 2, name: "user_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "supabase_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "company", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 5, name: "phone_number", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 6, name: "location", kind: "message", T: Location },
-    { no: 7, name: "language", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 8, name: "request_status", kind: "enum", T: proto3.getEnumType(RequestStatus) },
+    { no: 5, name: "location", kind: "message", T: Location },
+    { no: 6, name: "language", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 7, name: "request_status", kind: "enum", T: proto3.getEnumType(RequestStatus) },
+    { no: 8, name: "phone_number", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Account {
