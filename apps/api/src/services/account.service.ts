@@ -1,5 +1,4 @@
 import SupabaseService from './supabase.service.ts';
-import UserService from './user.service.ts';
 import {
   Location,
   Account,
@@ -50,13 +49,7 @@ export class AccountService {
       return null;
     }
 
-    const existingUser = await UserService.findAsync(
-      supabaseUser.data.user.email ?? ''
-    );
-    if (!existingUser) {
-      return null;
-    }
-
+    const userId = account.getUserId();
     const company = account.getCompany();
     const phoneNumber = account.getPhoneNumber();
     const language = account.getLanguage();
@@ -64,7 +57,7 @@ export class AccountService {
 
     const accountData = this.assignAndGetAccountData({
       supabaseId,
-      userId: existingUser.id,
+      userId,
       company,
       phoneNumber,
       language,

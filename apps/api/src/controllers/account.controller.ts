@@ -179,6 +179,16 @@ export class AccountController {
     const paramsId = context.params['id'];
     await AccountService.deleteAsync(paramsId);
 
+    const supabaseUser = await SupabaseService.client.auth.admin.deleteUser(
+      paramsId
+    );
+    if (supabaseUser.error) {
+      throw HttpError.createError(
+        supabaseUser.error.status ?? 0,
+        supabaseUser.error.message
+      );
+    }
+
     context.response.status = Oak.Status.OK;
   }
 

@@ -14,4 +14,4 @@ const app = Core.registerApp([
   new AppController(),
   new SecretsController(),
 ]);
-app.listen({ port: 8000 });
+app.listen({ port: 8001 });
