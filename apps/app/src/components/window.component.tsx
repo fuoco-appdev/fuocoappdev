@@ -128,7 +128,7 @@ function WindowDesktopComponent(): JSX.Element {
                 src="../assets/svg/logo.svg"
                 alt="logo"
               />
-              {props.user?.role === core.UserRole.USER && (
+              {props.customer && (
                 <Tabs
                   direction={'vertical'}
                   type={'underlined'}
@@ -146,7 +146,7 @@ function WindowDesktopComponent(): JSX.Element {
                   ]}
                 />
               )}
-              {props.user?.role === core.UserRole.ADMIN && (
+              {props.user && (
                 <Tabs
                   direction={'vertical'}
                   type={'underlined'}
@@ -158,7 +158,7 @@ function WindowDesktopComponent(): JSX.Element {
                       icon: <IconUser strokeWidth={2} />,
                     },
                     {
-                      id: RoutePaths.AdminUsers,
+                      id: RoutePaths.AdminAccounts,
                       icon: <IconUsers strokeWidth={2} />,
                     },
                     {
@@ -308,7 +308,7 @@ function WindowMobileComponent(): JSX.Element {
         <div className={styles['container']}>
           {props.user && props.isTabBarVisible && (
             <div className={styles['bottom-bar-content-mobile']}>
-              {props.user?.role === core.UserRole.USER && (
+              {props.customer && (
                 <>
                   <Button
                     classNames={{

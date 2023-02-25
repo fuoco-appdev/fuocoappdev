@@ -32,20 +32,20 @@ export default function AdminAppsComponent(): JSX.Element {
   useEffect(() => {
     const appCards: React.ReactElement[] = [];
     const companyOptions: OptionProps[] = [];
-    for (const user of props.users) {
-      const status = (user as core.User).requestStatus;
+    for (const account of props.accounts) {
+      const status = (account as core.Account).requestStatus;
       if (
-        status !== core.UserRequestStatus.ACCEPTED &&
-        status !== core.UserRequestStatus.UPDATE_REQUESTED
+        status !== core.RequestStatus.ACCEPTED &&
+        status !== core.RequestStatus.UPDATE_REQUESTED
       ) {
         continue;
       }
 
       companyOptions.push({
-        id: user.id,
-        value: user.company,
+        id: account.userId,
+        value: account.company,
         children: () => (
-          <span className={styles['dropdown-label']}>{user.company}</span>
+          <span className={styles['dropdown-label']}>{account.company}</span>
         ),
       });
     }

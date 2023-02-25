@@ -4,14 +4,14 @@ import { Subscription } from 'rxjs';
 import { Controller } from '../controller';
 import { AdminAppsModel } from '../models/admin-apps.model';
 import UserService from '../services/user.service';
-import CustomerService from '../services/customer.service';
+import AccountService from '../services/account.service';
 import AppService from '../services/app.service';
 import * as core from '../protobuf/core_pb';
 
 class AdminAppsController extends Controller {
   private readonly _model: AdminAppsModel;
   private _userSubscription: Subscription | undefined;
-  private _customersSubscription: Subscription | undefined;
+  private _accountsSubscription: Subscription | undefined;
   private _appsSubscription: Subscription | undefined;
 
   constructor() {
@@ -20,7 +20,7 @@ class AdminAppsController extends Controller {
     this._model = new AdminAppsModel();
 
     this.onActiveUserChangedAsync = this.onActiveUserChangedAsync.bind(this);
-    this.onCustomersChanged = this.onCustomersChanged.bind(this);
+    this.onAccountsChanged = this.onAccountsChanged.bind(this);
     this.onAppsChanged = this.onAppsChanged.bind(this);
   }
 
@@ -32,11 +32,9 @@ class AdminAppsController extends Controller {
     this._userSubscription = UserService.activeUserObservable.subscribe({
       next: this.onActiveUserChangedAsync,
     });
-    this._customersSubscription = CustomerService.customersObservable.subscribe(
-      {
-        next: this.onCustomersChanged,
-      }
-    );
+    this._accountsSubscription = AccountService.accountsObservable.subscribe({
+      next: this.onAccountsChanged,
+    });
     this._appsSubscription = AppService.appsObservable.subscribe({
       next: this.onAppsChanged,
     });
@@ -44,7 +42,7 @@ class AdminAppsController extends Controller {
 
   public dispose(): void {
     this._userSubscription?.unsubscribe();
-    this._customersSubscription?.unsubscribe();
+    this._accountsSubscription?.unsubscribe();
     this._appsSubscription?.unsubscribe();
   }
 
@@ -105,8 +103,8 @@ class AdminAppsController extends Controller {
     await AppService.requestAllAsync();
   }
 
-  private onCustomersChanged(customers: core.Customer[]): void {
-    this._model.customers = customers;
+  private onAccountsChanged(accounts: core.Account[]): void {
+    this._model.accounts = accounts;
   }
 
   private onAppsChanged(apps: core.App[]): void {

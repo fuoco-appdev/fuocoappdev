@@ -11,16 +11,16 @@ import {
   IconUserCheck,
   IconArrowRight,
 } from '@fuoco.appdev/core-ui';
-import styles from './admin-users.module.scss';
+import styles from './admin-accounts.module.scss';
 import { animated, useTransition, config } from 'react-spring';
 import { useObservable } from '@ngneat/use-observable';
-import AdminUsersController from '../controllers/admin-users.controller';
+import AdminAccountsController from '../controllers/admin-accounts.controller';
 import * as core from '../protobuf/core_pb';
 import { useTranslation } from 'react-i18next';
 
 export default function AdminUsersComponent(): JSX.Element {
   const [show, setShow] = useState(false);
-  const [props] = useObservable(AdminUsersController.model.store);
+  const [props] = useObservable(AdminAccountsController.model.store);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -58,7 +58,7 @@ export default function AdminUsersComponent(): JSX.Element {
     element: () => React.ReactElement;
     height: number;
   }> = [];
-  props.requestedUsers.map((value: core.User) =>
+  props.requestedAccounts.map((value: core.Account) =>
     requestedUserItems.push({
       key: value.id,
       height: 52,
@@ -92,7 +92,7 @@ export default function AdminUsersComponent(): JSX.Element {
                 />
               }
               onClick={() =>
-                AdminUsersController.showRequestedModal(true, value)
+                AdminAccountsController.showRequestedModal(true, value)
               }
             />
           </div>
@@ -101,7 +101,7 @@ export default function AdminUsersComponent(): JSX.Element {
     })
   );
 
-  props.acceptedUsers.map((value: core.User) =>
+  props.acceptedAccounts.map((value: core.Account) =>
     acceptedUserItems.push({
       key: value.id,
       height: 52,
@@ -203,8 +203,8 @@ export default function AdminUsersComponent(): JSX.Element {
         variant={'success'}
         size={'small'}
         visible={props.showRequestedModal}
-        onCancel={() => AdminUsersController.showRequestedModal(false, null)}
-        onConfirm={() => AdminUsersController.acceptRequestedUserAsync()}
+        onCancel={() => AdminAccountsController.showRequestedModal(false, null)}
+        onConfirm={() => AdminAccountsController.acceptRequestedUserAsync()}
       ></Modal>
     </div>
   );

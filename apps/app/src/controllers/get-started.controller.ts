@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Controller } from '../controller';
 import { GetStartedModel } from '../models/get-started.model';
-import UserService from '../services/user.service';
+import AccountService from '../services/account.service';
 import * as core from '../protobuf/core_pb';
 
 class GetStartedController extends Controller {
@@ -42,10 +42,10 @@ class GetStartedController extends Controller {
       return;
     }
 
-    console.log(this._model.phoneNumber);
-
-    if (UserService.activeUser?.requestStatus === core.UserRequestStatus.IDLE) {
-      await UserService.requestGettingStartedAsync({
+    if (
+      AccountService.activeAccount?.requestStatus === core.RequestStatus.IDLE
+    ) {
+      await AccountService.requestGettingStartedAsync({
         company: this._model.companyName,
         phoneNumber: this._model.phoneNumber,
         comment: this._model.comment,

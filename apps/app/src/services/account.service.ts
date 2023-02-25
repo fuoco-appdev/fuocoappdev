@@ -84,13 +84,35 @@ class AccountService extends Service {
     return accountsResponse;
   }
 
-  public async requestCreateAsync(): Promise<core.Account> {
+  public async requestAllPublicAsync(): Promise<core.Accounts> {
+    const session = await SupabaseService.requestSessionAsync();
+    const response = await axios({
+      method: 'post',
+      url: `${this.endpointUrl}/account/public/all`,
+      headers: {
+        ...this.headers,
+        'Session-Token': `${session?.access_token}`,
+      },
+      data: '',
+      responseType: 'arraybuffer',
+    });
+
+    const arrayBuffer = new Uint8Array(response.data);
+    this.assertResponse(arrayBuffer);
+
+    const accountsResponse = core.Accounts.fromBinary(arrayBuffer);
+    this._accountsBehaviorSubject.next(accountsResponse.accounts);
+    return accountsResponse;
+  }
+
+  public async requestCreateAsync(userId: string): Promise<core.Account> {
     const supabaseUser = await SupabaseService.requestUserAsync();
     if (!supabaseUser) {
       throw new Error('No user');
     }
     const session = await SupabaseService.requestSessionAsync();
     const user = new core.Account({
+      userId: userId,
       requestStatus: core.RequestStatus.IDLE,
       language: WindowController.model.language,
     });

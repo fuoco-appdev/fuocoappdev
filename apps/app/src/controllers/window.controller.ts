@@ -9,14 +9,17 @@ import SupabaseService from '../services/supabase.service';
 import WorldController from './world.controller';
 import { Location } from 'react-router-dom';
 import UserService from '../services/user.service';
+import CustomerService from '../services/customer.service';
 import * as core from '../protobuf/core_pb';
 import SecretsService from '../services/secrets.service';
 import { LanguageCode, ToastProps } from '@fuoco.appdev/core-ui';
+import AccountService from '../services/account.service';
 
 class WindowController extends Controller {
   private readonly _model: WindowModel;
   private _scrollRef: HTMLDivElement | null;
   private _userSubscription: Subscription | undefined;
+  private _customerSubscription: Subscription | undefined;
 
   constructor() {
     super();
@@ -52,18 +55,27 @@ class WindowController extends Controller {
         this._model.user = user;
       },
     });
+
+    this._customerSubscription =
+      CustomerService.activeCustomerObservable.subscribe({
+        next: (customer: core.Customer | null) => {
+          this._model.isAuthenticated = customer ? true : false;
+          this._model.customer = customer;
+        },
+      });
   }
 
   public async checkUserIsAuthenticatedAsync(): Promise<void> {
     this._model.isLoading = true;
-    const user = await SupabaseService.requestUserAsync();
-    if (!user) {
+    const supabaseUser = await SupabaseService.requestUserAsync();
+    if (!supabaseUser) {
       this._model.isLoading = false;
     }
   }
 
   public dispose(): void {
     this._userSubscription?.unsubscribe();
+    this._customerSubscription?.unsubscribe();
   }
 
   public updateIsLoading(value: boolean): void {
@@ -198,12 +210,12 @@ class WindowController extends Controller {
         this._model.isTabBarVisible = true;
         this._model.activeRoute = RoutePaths.AdminAccount;
         break;
-      case RoutePaths.AdminUsers:
+      case RoutePaths.AdminAccounts:
         this._model.isSignoutVisible = true;
         this._model.isSigninVisible = false;
         this._model.isSignupVisible = false;
         this._model.isTabBarVisible = true;
-        this._model.activeRoute = RoutePaths.AdminUsers;
+        this._model.activeRoute = RoutePaths.AdminAccounts;
         break;
       case RoutePaths.AdminApps:
         this._model.isSignoutVisible = true;
@@ -232,30 +244,82 @@ class WindowController extends Controller {
 
     if (event === 'SIGNED_IN') {
       WorldController.updateIsError(false);
-      try {
-        await UserService.requestActiveAsync();
-      } catch (error: any) {
-        if (error.status !== 404) {
-          console.error(error);
-          return;
-        }
 
-        try {
-          await UserService.requestCreateAsync();
-        } catch (error: any) {
-          console.error(error);
+      // Request admin, member or developer
+      const user = await this.requestActiveUserAsync();
+      if (!user) {
+        // Request customer
+        const customer = await this.requestActiveCustomerAsync();
+        if (customer) {
+          await this.requestActiveAccountAsync(customer.id);
         }
+      } else {
+        await this.requestActiveAccountAsync(user.id);
       }
     } else if (event === 'SIGNED_OUT') {
       UserService.clearActiveUser();
+      CustomerService.clearActiveCustomer();
+      AccountService.clearActiveAccount();
       SecretsService.clearSecrets();
     } else if (event === 'USER_DELETED') {
       UserService.clearActiveUser();
+      CustomerService.clearActiveCustomer();
+      AccountService.clearActiveAccount();
       SecretsService.clearSecrets();
     }
 
     this._model.authState = event;
     this._model.isLoading = false;
+  }
+
+  private async requestActiveUserAsync(): Promise<core.User | null> {
+    try {
+      return await UserService.requestActiveAsync();
+    } catch (error: any) {
+      if (error.status !== 404) {
+        console.error(error);
+      }
+
+      return null;
+    }
+  }
+
+  private async requestActiveCustomerAsync(): Promise<core.Customer | null> {
+    try {
+      return await CustomerService.requestActiveAsync();
+    } catch (error: any) {
+      if (error.status !== 404) {
+        console.error(error);
+        return null;
+      }
+
+      try {
+        return await CustomerService.requestCreateAsync();
+      } catch (error: any) {
+        console.error(error);
+        return null;
+      }
+    }
+  }
+
+  private async requestActiveAccountAsync(
+    userId: string
+  ): Promise<core.Account | null> {
+    try {
+      return await AccountService.requestActiveAsync();
+    } catch (error: any) {
+      if (error.status !== 404) {
+        console.error(error);
+        return null;
+      }
+
+      try {
+        return await AccountService.requestCreateAsync(userId);
+      } catch (error: any) {
+        console.error(error);
+        return null;
+      }
+    }
   }
 }
 

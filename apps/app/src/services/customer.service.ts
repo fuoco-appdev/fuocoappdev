@@ -4,6 +4,7 @@ import { Service } from '../service';
 import * as core from '../protobuf/core_pb';
 import { BehaviorSubject, Observable } from 'rxjs';
 import SupabaseService from './supabase.service';
+import MedusaService from './medusa.service';
 import axios, { AxiosError } from 'axios';
 
 class CustomerService extends Service {
@@ -62,6 +63,26 @@ class CustomerService extends Service {
 
     const customerResponse = core.Customer.fromBinary(arrayBuffer);
     return customerResponse;
+  }
+
+  public async requestCreateAsync(): Promise<core.Customer> {
+    const supabaseUser = await SupabaseService.requestUserAsync();
+    if (!supabaseUser) {
+      throw new Error('No active user');
+    }
+
+    const customer = await MedusaService.medusa.customers.create({
+      email: supabaseUser.email ?? '',
+      password: '',
+      first_name: '',
+      last_name: '',
+    });
+
+    if (!customer) {
+      throw new Error('No customer created');
+    }
+
+    return await this.requestAsync(customer.customer.email);
   }
 
   public async requestUpdateActiveAsync(props: {

@@ -122,6 +122,26 @@ export class AccountController {
     context.response.body = accounts.serializeBinary();
   }
 
+  @Post('/public/all')
+  @Guard(AuthGuard)
+  @ContentType('application/x-protobuf')
+  public async getAllPublicAccountsAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >
+  ): Promise<void> {
+    const data = await AccountService.findAllPublicAsync();
+    if (!data) {
+      throw HttpError.createError(404, `No accounts were found`);
+    }
+
+    const accounts = AccountService.assignAndGetAccountsProtocol(data);
+    context.response.type = 'application/x-protobuf';
+    context.response.body = accounts.serializeBinary();
+  }
+
   @Post('/update/:id')
   @Guard(AuthGuard)
   @ContentType('application/x-protobuf')

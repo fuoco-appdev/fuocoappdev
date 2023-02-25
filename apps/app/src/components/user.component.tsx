@@ -1,7 +1,7 @@
 import styles from './user.module.scss';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import UserService from '../services/user.service';
+import AccountService from '../services/account.service';
 import { RoutePaths } from '../route-paths';
 import * as core from '../protobuf/core_pb';
 
@@ -12,7 +12,7 @@ export default function UserComponent(): JSX.Element {
   useEffect(() => {
     if (location.pathname === RoutePaths.User) {
       if (
-        UserService.activeUser?.requestStatus !== core.UserRequestStatus.IDLE
+        AccountService.activeAccount?.requestStatus !== core.RequestStatus.IDLE
       ) {
         navigate(RoutePaths.Account);
       } else {
@@ -20,13 +20,13 @@ export default function UserComponent(): JSX.Element {
       }
     } else if (location.pathname === RoutePaths.GetStarted) {
       if (
-        UserService.activeUser?.requestStatus !== core.UserRequestStatus.IDLE
+        AccountService.activeAccount?.requestStatus !== core.RequestStatus.IDLE
       ) {
         navigate(RoutePaths.Account);
       }
     } else if (location.pathname !== RoutePaths.GetStarted) {
       if (
-        UserService.activeUser?.requestStatus === core.UserRequestStatus.IDLE
+        AccountService.activeAccount?.requestStatus === core.RequestStatus.IDLE
       ) {
         navigate(RoutePaths.GetStarted);
       }

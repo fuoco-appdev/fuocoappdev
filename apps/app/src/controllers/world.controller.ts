@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { Subscription } from 'rxjs';
 import AppService from '../services/app.service';
 import * as core from '../protobuf/core_pb';
-import UserService from '../services/user.service';
+import AccountService from '../services/account.service';
 
 export interface WorldCardData {
   coordinates: { latitude: number; longitude: number };
@@ -272,11 +272,13 @@ class WorldController extends Controller {
   }
 
   private async onPublicAppsChangedAsync(apps: core.App[]): Promise<void> {
-    const users = await UserService.requestAllPublicAsync();
+    const accounts = await AccountService.requestAllPublicAsync();
     for (const app of apps) {
-      const user = users.users.find((value) => value.id === app.userId);
-      const latitude = Number(user?.location?.latitude) ?? 0;
-      const longitude = Number(user?.location?.longitude) ?? 0;
+      const account = accounts.accounts.find(
+        (value) => value.id === app.userId
+      );
+      const latitude = Number(account?.location?.latitude) ?? 0;
+      const longitude = Number(account?.location?.longitude) ?? 0;
       this._worldCards[app.id] = {
         coordinates: { latitude: latitude, longitude: longitude },
         position: new THREE.Vector3(),

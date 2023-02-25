@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import SupabaseService from './supabase.service.ts';
-import { App, Apps, Link, Image, AppStatus } from '../protobuf/core_pb.js';
+import { App, Apps, Link, AppStatus } from '../protobuf/core_pb.js';
 
 export interface AppProps {
   id?: string;
@@ -18,7 +18,7 @@ export interface AppProps {
 export class AppService {
   public async findAsync(appId: string): Promise<AppProps | null> {
     const { data, error } = await SupabaseService.client
-      .from('apps')
+      .from('app')
       .select()
       .eq('id', appId);
 
@@ -53,7 +53,7 @@ export class AppService {
     });
 
     const { data, error } = await SupabaseService.client
-      .from('apps')
+      .from('app')
       .insert([appData])
       .select();
 
@@ -89,7 +89,7 @@ export class AppService {
       coverImages,
     });
     const { data, error } = await SupabaseService.client
-      .from('apps')
+      .from('app')
       .update(appData)
       .match({ id: appId })
       .select();
@@ -103,7 +103,7 @@ export class AppService {
   }
 
   public async findAllAsync(): Promise<AppProps[] | null> {
-    const { data, error } = await SupabaseService.client.from('apps').select();
+    const { data, error } = await SupabaseService.client.from('app').select();
 
     if (error) {
       console.error(error);
@@ -117,7 +117,7 @@ export class AppService {
     userId: string
   ): Promise<AppProps[] | null> {
     const { data, error } = await SupabaseService.client
-      .from('apps')
+      .from('app')
       .select()
       .match({ user_id: userId });
 
@@ -131,7 +131,7 @@ export class AppService {
 
   public async findAllPublicAsync(): Promise<AppProps[] | null> {
     const { data, error } = await SupabaseService.client
-      .from('apps')
+      .from('app')
       .select('id, name, status, avatar_image, cover_images, company, user_id');
 
     if (error) {
@@ -144,7 +144,7 @@ export class AppService {
 
   public async deleteAsync(appId: string): Promise<void> {
     const { error } = await SupabaseService.client
-      .from('apps')
+      .from('app')
       .delete()
       .match({ id: appId });
 

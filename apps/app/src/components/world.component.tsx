@@ -5,7 +5,7 @@ import styles from './world.module.scss';
 import * as AtmosphereShader from '../shaders/atmosphere.shader';
 import * as TWEEN from '@tweenjs/tween.js';
 import { useLocation } from 'react-router-dom';
-import { useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MathUtils } from 'three';
 import {
   Avatar,
