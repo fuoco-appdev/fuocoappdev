@@ -7,6 +7,7 @@ import { LanguageCode, ToastProps } from '@fuoco.appdev/core-ui';
 
 export interface WindowState {
   user: core.User | null;
+  customer: core.Customer | null;
   isSigninVisible: boolean;
   isSignupVisible: boolean;
   isSignoutVisible: boolean;
@@ -31,6 +32,7 @@ export class WindowModel extends Model {
         { name: 'window' },
         withProps<WindowState>({
           user: null,
+          customer: null,
           isSigninVisible: false,
           isSignupVisible: false,
           isSignoutVisible: false,
@@ -61,6 +63,16 @@ export class WindowModel extends Model {
   public set user(value: core.User | null) {
     if (!this.user?.equals(value)) {
       this.store.update((state) => ({ ...state, user: value }));
+    }
+  }
+
+  public get customer(): core.Customer | null {
+    return this.store.getValue().customer;
+  }
+
+  public set customer(value: core.Customer | null) {
+    if (!this.customer?.equals(value)) {
+      this.store.update((state) => ({ ...state, customer: value }));
     }
   }
 

@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Auth } from '@fuoco.appdev/core-ui';
 import SigninController from '../controllers/signin.controller';
 import styles from './signin.module.scss';
-import AuthService from '../services/auth.service';
+import SupabaseService from '../services/supabase.service';
 import { RoutePaths } from '../route-paths';
 import { AuthError } from '@supabase/supabase-js';
 import { useState, useEffect } from 'react';
@@ -110,7 +110,7 @@ export default function SigninComponent(): JSX.Element {
       }}
       emailErrorMessage={error ? t('emailErrorMessage') ?? '' : undefined}
       passwordErrorMessage={error ? t('passwordErrorMessage') ?? '' : undefined}
-      supabaseClient={AuthService.supabaseClient}
+      supabaseClient={SupabaseService.supabaseClient}
       onForgotPasswordRedirect={() => navigate(RoutePaths.ForgotPassword)}
       onTermsOfServiceRedirect={() => navigate(RoutePaths.TermsOfService)}
       onPrivacyPolicyRedirect={() => navigate(RoutePaths.PrivacyPolicy)}

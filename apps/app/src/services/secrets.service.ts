@@ -1,7 +1,7 @@
 import { Service } from '../service';
 import * as core from '../protobuf/core_pb';
 import { BehaviorSubject, Observable } from 'rxjs';
-import AuthService from './auth.service';
+import SupabaseService from './supabase.service';
 import axios from 'axios';
 
 class SecretsService extends Service {
@@ -24,7 +24,7 @@ class SecretsService extends Service {
   }
 
   public async requestAllAsync(): Promise<core.Secrets> {
-    const session = await AuthService.requestSessionAsync();
+    const session = await SupabaseService.requestSessionAsync();
     const response = await axios({
       method: 'post',
       url: `${this.endpointUrl}/secrets/all`,

@@ -18,7 +18,7 @@ import {
 } from '@fuoco.appdev/core-ui';
 import { RoutePaths } from '../route-paths';
 import { useTranslation } from 'react-i18next';
-import AuthService from '../services/auth.service';
+import SupabaseService from '../services/supabase.service';
 import { useObservable } from '@ngneat/use-observable';
 import { useSpring } from 'react-spring';
 import * as core from '../protobuf/core_pb';
@@ -112,7 +112,7 @@ function WindowDesktopComponent(): JSX.Element {
                     size="tiny"
                     type="text"
                     onClick={async () => {
-                      await AuthService.signoutAsync();
+                      await SupabaseService.signoutAsync();
                     }}
                   />
                 )}
@@ -128,7 +128,7 @@ function WindowDesktopComponent(): JSX.Element {
                 src="../assets/svg/logo.svg"
                 alt="logo"
               />
-              {props.user?.role === core.UserRole.USER && (
+              {props.customer && (
                 <Tabs
                   direction={'vertical'}
                   type={'underlined'}
@@ -146,7 +146,7 @@ function WindowDesktopComponent(): JSX.Element {
                   ]}
                 />
               )}
-              {props.user?.role === core.UserRole.ADMIN && (
+              {props.user && (
                 <Tabs
                   direction={'vertical'}
                   type={'underlined'}
@@ -158,7 +158,7 @@ function WindowDesktopComponent(): JSX.Element {
                       icon: <IconUser strokeWidth={2} />,
                     },
                     {
-                      id: RoutePaths.AdminUsers,
+                      id: RoutePaths.AdminAccounts,
                       icon: <IconUsers strokeWidth={2} />,
                     },
                     {
@@ -296,7 +296,7 @@ function WindowMobileComponent(): JSX.Element {
                     }}
                     onClick={() => {
                       setTimeout(async () => {
-                        await AuthService.signoutAsync();
+                        await SupabaseService.signoutAsync();
                       }, 100);
                     }}
                   />
@@ -308,7 +308,7 @@ function WindowMobileComponent(): JSX.Element {
         <div className={styles['container']}>
           {props.user && props.isTabBarVisible && (
             <div className={styles['bottom-bar-content-mobile']}>
-              {props.user?.role === core.UserRole.USER && (
+              {props.customer && (
                 <>
                   <Button
                     classNames={{

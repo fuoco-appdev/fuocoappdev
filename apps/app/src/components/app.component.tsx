@@ -13,7 +13,7 @@ import ResetPasswordController from '../controllers/reset-password.controller';
 import GetStartedController from '../controllers/get-started.controller';
 import AccountController from '../controllers/account.controller';
 import AdminAccountController from '../controllers/admin-account.controller';
-import AdminUsersController from '../controllers/admin-users.controller';
+import AdminAccountsController from '../controllers/admin-accounts.controller';
 import AdminAppsController from '../controllers/admin-apps.controller';
 import AppsController from '../controllers/apps.controller';
 import UserController from '../controllers/user.controller';
@@ -29,34 +29,34 @@ import GetStartedComponent from './get-started.component';
 import AccountComponent from './account.component';
 import { RoutePaths } from '../route-paths';
 import UserService from '../services/user.service';
+import CustomerService from '../services/customer.service';
 import UserComponent from './user.component';
 import { useObservable } from '@ngneat/use-observable';
-import * as core from '../protobuf/core_pb';
 import AppsComponent from './apps.component';
 import BillingComponent from './billing.component';
 import AdminComponent from './admin.component';
 import AdminAccountComponent from './admin-account.component';
-import AdminUsersComponent from './admin-users.component';
+import AdminAccountsComponent from './admin-accounts.component';
 import AdminAppsComponent from './admin-apps.component';
-import AuthService from '../services/auth.service';
+import SupabaseService from '../services/supabase.service';
 
 interface RouteElementProps {
   element: JSX.Element;
 }
 
 function GuestComponent({ element }: RouteElementProps): React.ReactElement {
-  return !AuthService.user ? element : <Navigate to={RoutePaths.User} />;
+  return !SupabaseService.user ? element : <Navigate to={RoutePaths.User} />;
 }
 
 function AuthenticatedComponent({
   element,
 }: RouteElementProps): React.ReactElement {
-  return AuthService.user ? element : <Navigate to={RoutePaths.Signin} />;
+  return SupabaseService.user ? element : <Navigate to={RoutePaths.Signin} />;
 }
 
 function UserRoleComponent({ element }: RouteElementProps): React.ReactElement {
-  const [user] = useObservable(UserService.activeUserObservable);
-  return user?.role === core.UserRole.USER ? (
+  const [customer] = useObservable(CustomerService.activeCustomerObservable);
+  return customer !== undefined ? (
     <AuthenticatedComponent element={element} />
   ) : (
     <Navigate to={RoutePaths.Admin} />
@@ -67,7 +67,7 @@ function AdminRoleComponent({
   element,
 }: RouteElementProps): React.ReactElement {
   const [user] = useObservable(UserService.activeUserObservable);
-  return user?.role === core.UserRole.ADMIN ? (
+  return user ? (
     <AuthenticatedComponent element={element} />
   ) : (
     <Navigate to={RoutePaths.User} />
@@ -98,7 +98,7 @@ export default function AppComponent(): JSX.Element {
     GetStartedController.initialize();
     AccountController.initialize();
     AdminAccountController.initialize();
-    AdminUsersController.initialize();
+    AdminAccountsController.initialize();
     AdminAppsController.initialize();
     AppsController.initialize();
     window.addEventListener('beforeunload', unloadCallback);
@@ -115,7 +115,7 @@ export default function AppComponent(): JSX.Element {
       GetStartedController.dispose();
       AccountController.dispose();
       AdminAccountController.dispose();
-      AdminUsersController.dispose();
+      AdminAccountsController.dispose();
       AdminAppsController.dispose();
       AppsController.dispose();
       LoadingController.dispose();
@@ -190,8 +190,10 @@ export default function AppComponent(): JSX.Element {
               }
             />
             <Route
-              path={RoutePaths.AdminUsers}
-              element={<AdminRoleComponent element={<AdminUsersComponent />} />}
+              path={RoutePaths.AdminAccounts}
+              element={
+                <AdminRoleComponent element={<AdminAccountsComponent />} />
+              }
             />
             <Route
               path={RoutePaths.AdminApps}

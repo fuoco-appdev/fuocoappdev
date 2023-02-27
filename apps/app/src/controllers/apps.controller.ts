@@ -3,7 +3,7 @@
 import { Subscription } from 'rxjs';
 import { Controller } from '../controller';
 import { AppsModel } from '../models/apps.model';
-import UserService from '../services/user.service';
+import CustomerService from '../services/customer.service';
 import AppService from '../services/app.service';
 import * as core from '../protobuf/core_pb';
 
@@ -17,7 +17,8 @@ class AppsController extends Controller {
 
     this._model = new AppsModel();
 
-    this.onActiveUserChangedAsync = this.onActiveUserChangedAsync.bind(this);
+    this.onActiveCustomerChangedAsync =
+      this.onActiveCustomerChangedAsync.bind(this);
     this.onUserAppsChanged = this.onUserAppsChanged.bind(this);
   }
 
@@ -26,9 +27,11 @@ class AppsController extends Controller {
   }
 
   public initialize(): void {
-    this._userSubscription = UserService.activeUserObservable.subscribe({
-      next: this.onActiveUserChangedAsync,
-    });
+    this._userSubscription = CustomerService.activeCustomerObservable.subscribe(
+      {
+        next: this.onActiveCustomerChangedAsync,
+      }
+    );
     this._userAppsSubscription = AppService.userAppsObservable.subscribe({
       next: this.onUserAppsChanged,
     });
@@ -50,14 +53,14 @@ class AppsController extends Controller {
     await AppService.uploadCoverImagesAsync(appId, blobs);
   }
 
-  private async onActiveUserChangedAsync(
-    user: core.User | null
+  private async onActiveCustomerChangedAsync(
+    customer: core.Customer | null
   ): Promise<void> {
-    if (user?.role !== core.UserRole.USER) {
+    if (!customer) {
       return;
     }
 
-    await AppService.requestAllFromUserAsync(user.id);
+    await AppService.requestAllFromUserAsync(customer.id);
   }
 
   private onUserAppsChanged(apps: core.App[]): void {

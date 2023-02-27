@@ -3,9 +3,8 @@
 import { Service } from '../service';
 import * as core from '../protobuf/core_pb';
 import { BehaviorSubject, Observable } from 'rxjs';
-import AuthService from './auth.service';
+import SupabaseService from './supabase.service';
 import axios, { AxiosError } from 'axios';
-import WindowController from '../controllers/window.controller';
 
 class UserService extends Service {
   private readonly _activeUserBehaviorSubject: BehaviorSubject<core.User | null>;
@@ -37,20 +36,20 @@ class UserService extends Service {
   }
 
   public async requestActiveAsync(): Promise<core.User> {
-    const supabaseUser = await AuthService.requestUserAsync();
+    const supabaseUser = await SupabaseService.requestUserAsync();
     if (!supabaseUser) {
       throw new Error('No active user');
     }
-    const user = await this.requestAsync(supabaseUser.id);
+    const user = await this.requestAsync(supabaseUser.email ?? '');
     this._activeUserBehaviorSubject.next(user);
     return user;
   }
 
-  public async requestAsync(supabaseId: string): Promise<core.User> {
-    const session = await AuthService.requestSessionAsync();
+  public async requestAsync(email: string): Promise<core.User> {
+    const session = await SupabaseService.requestSessionAsync();
     const response = await axios({
       method: 'post',
-      url: `${this.endpointUrl}/user/${supabaseId}`,
+      url: `${this.endpointUrl}/user/${email}`,
       headers: {
         ...this.headers,
         'Session-Token': `${session?.access_token}`,
@@ -63,158 +62,40 @@ class UserService extends Service {
     this.assertResponse(arrayBuffer);
 
     const userResponse = core.User.fromBinary(arrayBuffer);
-    return userResponse;
-  }
-
-  public async requestAllAsync(): Promise<core.Users> {
-    const session = await AuthService.requestSessionAsync();
-    const response = await axios({
-      method: 'post',
-      url: `${this.endpointUrl}/user/all`,
-      headers: {
-        ...this.headers,
-        'Session-Token': `${session?.access_token}`,
-      },
-      data: '',
-      responseType: 'arraybuffer',
-    });
-
-    const arrayBuffer = new Uint8Array(response.data);
-    this.assertResponse(arrayBuffer);
-
-    const usersResponse = core.Users.fromBinary(arrayBuffer);
-    this._usersBehaviorSubject.next(usersResponse.users);
-    return usersResponse;
-  }
-
-  public async requestAllPublicAsync(): Promise<core.Users> {
-    const response = await axios({
-      method: 'post',
-      url: `${this.endpointUrl}/user/public/all`,
-      headers: {
-        ...this.headers,
-      },
-      data: '',
-      responseType: 'arraybuffer',
-    });
-
-    const arrayBuffer = new Uint8Array(response.data);
-    this.assertResponse(arrayBuffer);
-
-    const usersResponse = core.Users.fromBinary(arrayBuffer);
-    return usersResponse;
-  }
-
-  public async requestCreateAsync(): Promise<core.User> {
-    const supabaseUser = await AuthService.requestUserAsync();
-    if (!supabaseUser) {
-      throw new Error('No user');
-    }
-    const session = await AuthService.requestSessionAsync();
-    const user = new core.User({
-      role: core.UserRole.USER,
-      email: supabaseUser.email,
-      requestStatus: core.UserRequestStatus.IDLE,
-      language: WindowController.model.language,
-    });
-
-    const response = await axios({
-      method: 'post',
-      url: `${this.endpointUrl}/user/create`,
-      headers: {
-        ...this.headers,
-        'Session-Token': `${session?.access_token}`,
-      },
-      data: user.toBinary(),
-      responseType: 'arraybuffer',
-    });
-
-    const arrayBuffer = new Uint8Array(response.data);
-    this.assertResponse(arrayBuffer);
-
-    const userResponse = core.User.fromBinary(arrayBuffer);
-    this._activeUserBehaviorSubject.next(userResponse);
-
-    return userResponse;
-  }
-
-  public async requestGettingStartedAsync(props: {
-    company: string;
-    phoneNumber: string;
-    comment: string;
-  }): Promise<core.User> {
-    const session = await AuthService.requestSessionAsync();
-    const gettingStartedRequest = new core.GettingStartedRequest(props);
-    const response = await axios({
-      method: 'post',
-      url: `${this.endpointUrl}/user/getting-started`,
-      headers: {
-        ...this.headers,
-        'Session-Token': `${session?.access_token}`,
-      },
-      data: gettingStartedRequest.toBinary(),
-      responseType: 'arraybuffer',
-    });
-
-    const arrayBuffer = new Uint8Array(response.data);
-    this.assertResponse(arrayBuffer);
-
-    const userResponse = core.User.fromBinary(arrayBuffer);
-    this._activeUserBehaviorSubject.next(userResponse);
-
     return userResponse;
   }
 
   public async requestUpdateActiveAsync(props: {
-    company?: string;
     email?: string;
-    phoneNumber?: string;
-    location?: [number, number];
-    language?: string;
-    request_status?: core.UserRequestStatus;
+    firstName?: string;
+    lastName?: string;
   }): Promise<core.User> {
-    const supabaseUser = await AuthService.requestUserAsync();
-    if (!supabaseUser) {
+    if (!this.activeUser) {
       throw new Error('No user');
     }
 
-    const user = await this.requestUpdateAsync(supabaseUser.id, props);
+    const user = await this.requestUpdateAsync(this.activeUser.id, props);
     this._activeUserBehaviorSubject.next(user);
     return user;
   }
 
   public async requestUpdateAsync(
-    supabaseId: string,
+    userId: string,
     props: {
-      company?: string;
       email?: string;
-      phoneNumber?: string;
-      location?: [number, number];
-      language?: string;
-      request_status?: core.UserRequestStatus;
+      firstName?: string;
+      lastName?: string;
     }
   ): Promise<core.User> {
-    const session = await AuthService.requestSessionAsync();
+    const session = await SupabaseService.requestSessionAsync();
     const user = new core.User({
-      company: props.company ? props.company : this.activeUser?.company,
       email: props.email ? props.email : this.activeUser?.email,
-      phoneNumber: props.phoneNumber
-        ? props.phoneNumber
-        : this.activeUser?.phoneNumber,
-      location: props.location
-        ? new core.Location({
-            longitude: String(props.location[0]),
-            latitude: String(props.location[1]),
-          })
-        : this.activeUser?.location,
-      language: props.language ? props.language : this.activeUser?.language,
-      requestStatus: props.request_status
-        ? props.request_status
-        : this.activeUser?.requestStatus,
+      firstName: props.firstName ? props.firstName : this.activeUser?.firstName,
+      lastName: props.lastName ? props.lastName : this.activeUser?.lastName,
     });
     const response = await axios({
       method: 'post',
-      url: `${this.endpointUrl}/user/update/${supabaseId}`,
+      url: `${this.endpointUrl}/user/update/${userId}`,
       headers: {
         ...this.headers,
         'Session-Token': `${session?.access_token}`,
@@ -228,32 +109,6 @@ class UserService extends Service {
 
     const userResponse = core.User.fromBinary(arrayBuffer);
     return userResponse;
-  }
-
-  public async requestActiveDeleteAsync(): Promise<void> {
-    const supabaseUser = await AuthService.requestUserAsync();
-    if (!supabaseUser) {
-      throw new Error('No user');
-    }
-
-    await this.requestDeleteAsync(supabaseUser.id);
-  }
-
-  public async requestDeleteAsync(supabaseId: string): Promise<void> {
-    const session = await AuthService.requestSessionAsync();
-    const response = await axios({
-      method: 'post',
-      url: `${this.endpointUrl}/user/delete/${supabaseId}`,
-      headers: {
-        ...this.headers,
-        'Session-Token': `${session?.access_token}`,
-      },
-      data: '',
-    });
-
-    if (response.status > 400) {
-      throw new response.data();
-    }
   }
 }
 

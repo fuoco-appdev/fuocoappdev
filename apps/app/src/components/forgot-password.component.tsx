@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Auth } from '@fuoco.appdev/core-ui';
 import styles from './forgot-password.module.scss';
 import WindowController from '../controllers/window.controller';
-import AuthService from '../services/auth.service';
+import SupabaseService from '../services/supabase.service';
 import { RoutePaths } from '../route-paths';
 import { AuthError } from '@supabase/supabase-js';
 import { useState, useEffect } from 'react';
@@ -94,7 +94,7 @@ export default function ForgotPasswordComponent(): JSX.Element {
       onSigninRedirect={() => navigate(RoutePaths.Signin)}
       emailErrorMessage={error ? t('emailErrorMessage') ?? '' : undefined}
       onResetPasswordError={(error: AuthError) => setError(error)}
-      supabaseClient={AuthService.supabaseClient}
+      supabaseClient={SupabaseService.supabaseClient}
       redirectTo={`${origin}${RoutePaths.ResetPassword}`}
     />
   );

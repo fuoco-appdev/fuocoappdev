@@ -41,12 +41,7 @@ message Apps {
     repeated App apps = 1;
 }
 
-enum UserRole {
-    ADMIN = 0;
-    USER = 1;
-}
-
-enum UserRequestStatus {
+enum RequestStatus {
     IDLE = 0;
     REQUESTED = 1;
     ACCEPTED = 2;
@@ -62,18 +57,41 @@ message Location {
 message User {
     string id = 1;
     string created_at = 2;
-    string supabase_id = 3;
-    UserRole role = 4;
-    string company = 5;
-    string email = 6;
-    string phone_number = 7;
-    Location location = 8;
-    string language = 9;
-    UserRequestStatus request_status = 10;
+    string email = 3;
+    string first_name = 4;
+    string last_name = 5; 
+    string role = 6;
 }
 
 message Users {
     repeated core.User users = 1;
+}
+
+message Customer {
+    string id = 1;
+    string created_at = 2;
+    string email = 3;
+    string first_name = 4;
+    string last_name = 5;
+}
+
+message Customers {
+    repeated core.Customer customers = 1;
+}
+
+message Account {
+    string id = 1;
+    string user_id = 2;
+    string supabase_id = 3;
+    string company = 4;
+    Location location = 5;
+    string language = 6;
+    RequestStatus request_status = 7;
+    string phone_number = 8;
+}
+
+message Accounts {
+    repeated core.Account accounts = 1;
 }
 
 message GettingStartedRequest {
