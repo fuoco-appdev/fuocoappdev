@@ -2,7 +2,7 @@
   "supabase": {
     "url": "https://vsejdtreyvcnevkkffiq.supabase.co",
     "functions_url": "https://vsejdtreyvcnevkkffiq.functions.supabase.co",
-    "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZzZWpkdHJleXZjbmV2a2tmZmlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjA0ODYzMDcsImV4cCI6MTk3NjA2MjMwN30.oqbLPY9hpnCYBh28DM-r8pHKmYyvSqNgbFfNlZcjgXU"
+    "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICAgInJvbGUiOiAiYW5vbiIsCiAgICAiaXNzIjogInN1cGFiYXNlIiwKICAgICJpYXQiOiAxNjc3NDc0MDAwLAogICAgImV4cCI6IDE4MzUyNDA0MDAKfQ.KQkdZ12qlDWYy1shm4qWeuO5aR4Dd6nGsH_v2RlrN1Y"
   },
   "medusa": {
     "url": "https://medusa.fuocoappdev.com",
