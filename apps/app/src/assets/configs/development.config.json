@@ -2,7 +2,7 @@
   "supabase": {
     "url": "http://localhost:8000",
     "functions_url": "http://localhost:8001",
-    "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICAgInJvbGUiOiAiYW5vbiIsCiAgICAiaXNzIjogInN1cGFiYXNlIiwKICAgICJpYXQiOiAxNjc2NjEwMDAwLAogICAgImV4cCI6IDE4MzQzNzY0MDAKfQ.fQwBHdkmGnCxgEwrBxUUoH_3LHvym8bUBktaunVDXFA"
+    "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICAgInJvbGUiOiAiYW5vbiIsCiAgICAiaXNzIjogInN1cGFiYXNlIiwKICAgICJpYXQiOiAxNjc3MDQyMDAwLAogICAgImV4cCI6IDE4MzQ4MDg0MDAKfQ.elF8quqYuD91-BkXrzR2qSsLmSQaXjAcXdpdFozeqfo"
   },
   "medusa": {
     "url": "http://localhost:9000",
