@@ -52,7 +52,7 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          "npx pg-migrate migrate --migrations-table=app_migrations"
+          "npx pg-migrate migrate --migrations-table=app_migrations --connection={args.connection}"
         ],
         "parallel": false,
         "cwd": "apps/api"
