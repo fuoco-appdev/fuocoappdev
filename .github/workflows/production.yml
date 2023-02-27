@@ -9,27 +9,19 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write # Needed for auth with Deno Deploy
+      contents: read # Needed to clone the repository
     
     strategy:
       matrix:
         node-version: [16.x]
 
     env:
-      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      MAPBOX_ACCESS_TOKEN: ${{ secrets.MAPBOX_ACCESS_TOKEN }}
-      SMTP_HOST: ${{ secrets.SMTP_HOST }}
-      SMTP_PORT: ${{ secrets.SMTP_PORT }}
-      SMTP_USER: ${{ secrets.SMTP_USER }}
-      SMTP_PASS: ${{ secrets.SMTP_PASS }}
-      PROJECT_ID: vsejdtreyvcnevkkffiq
 
     steps:
       - uses: actions/checkout@v3
-
-      - name: Set up Supabase
-        uses: supabase/setup-cli@v1.1.5
           
       - name: Set up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
@@ -53,32 +45,12 @@ jobs:
         with:
           folder: dist/apps/app
           
-      - name: Link
-        run: supabase link --password $DB_PASSWORD --project-ref $PROJECT_ID
-        working-directory: ./apps/api/src
-        
-      - name: Set secrets
-        run: |
-          supabase secrets set MAPBOX_ACCESS_TOKEN=$MAPBOX_ACCESS_TOKEN
-          supabase secrets set SMTP_HOST=$SMTP_HOST
-          supabase secrets set SMTP_PORT=$SMTP_PORT
-          supabase secrets set SMTP_USER=$SMTP_USER
-          supabase secrets set SMTP_PASS=$SMTP_PASS
-          supabase secrets set SMTP_SECURE=true
-        working-directory: ./apps/api/src
-          
       - name: Migrate
-        run: supabase db push --password $DB_PASSWORD
-        working-directory: ./apps/api/src
+        run: npx nx run api:migrate
         
-      - name: User function
-        run: supabase functions deploy user --project-ref $PROJECT_ID
-        working-directory: ./apps/api/src
-        
-      - name: App function
-        run: supabase functions deploy app --project-ref $PROJECT_ID
-        working-directory: ./apps/api/src
-        
-      - name: Secrets function
-        run: supabase functions deploy secrets --project-ref $PROJECT_ID
-        working-directory: ./apps/api/src
+      - name: Upload api to Deno Deploy
+        uses: denoland/deployctl@v1
+        with:
+          project: "fuoco-appdev-api"
+          entrypoint: https://deno.land/std/http/file_server.ts
+          root: apps/api/src
