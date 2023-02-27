@@ -16,6 +16,7 @@ jobs:
 
     env:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
     steps:
       - uses: actions/checkout@v3
@@ -43,7 +44,7 @@ jobs:
           folder: dist/apps/app
           
       - name: Migrate
-        run: npx nx run api:migrate
+        run: npx nx run api:migrate --connection=$DATABASE_URL
         
       - name: Upload api to Deno Deploy
         uses: denoland/deployctl@v1
