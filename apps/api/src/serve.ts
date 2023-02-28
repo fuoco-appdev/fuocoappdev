@@ -1,11 +1,11 @@
-import { Core } from '../../index.ts';
+import { Core } from './index.ts';
 import {
   AppController,
   UserController,
   AccountController,
   SecretsController,
   CustomerController,
-} from '../../controllers/index.ts';
+} from './controllers/index.ts';
 
 const app = Core.registerApp([
   new UserController(),
