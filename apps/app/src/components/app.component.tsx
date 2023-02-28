@@ -56,7 +56,7 @@ function AuthenticatedComponent({
 
 function UserRoleComponent({ element }: RouteElementProps): React.ReactElement {
   const [customer] = useObservable(CustomerService.activeCustomerObservable);
-  return customer !== undefined ? (
+  return customer ? (
     <AuthenticatedComponent element={element} />
   ) : (
     <Navigate to={RoutePaths.Admin} />
