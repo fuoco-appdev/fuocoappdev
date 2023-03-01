@@ -73,12 +73,14 @@ export class AccountController {
     const gettingStartedRequest =
       GettingStartedRequest.deserializeBinary(requestValue);
     try {
-      await MailService.sendFromContentAsync(
-        'support@fuocoappdev.com',
-        'fuoco.appdev@gmail.com',
-        `Get started with ${gettingStartedRequest.getCompany()}`,
-        `${gettingStartedRequest.getCompany()}, ${gettingStartedRequest.getPhoneNumber()}, ${gettingStartedRequest.getComment()}`
-      );
+      await MailService.sendAsync({
+        from: 'support@fuocoappdev.com',
+        fromName: 'support',
+        to: 'fuoco.appdev@gmail.com',
+        toName: 'fuoco.appdev',
+        subject: `Get started with ${gettingStartedRequest.getCompany()}`,
+        content:`${gettingStartedRequest.getCompany()}, ${gettingStartedRequest.getPhoneNumber()}, ${gettingStartedRequest.getComment()}`
+      });
     } catch (error: any) {
       console.error(error);
     }
