@@ -3,9 +3,9 @@ import axiod from "https://deno.land/x/axiod@0.26.2/mod.ts";
 import { IAxiodResponse } from 'https://deno.land/x/axiod@0.26.2/interfaces.ts';
 
 export interface MailConfig {
-  from: string;
+  fromEmail: string;
   fromName: string;
-  to: string;
+  toEmail: string;
   toName: string;
   subject: string;
   content: string;
@@ -22,9 +22,9 @@ class MailService {
   }
 
   public async sendAsync({
-    from,
+    fromEmail,
     fromName,
-    to,
+    toEmail,
     toName,
     subject,
     content,
@@ -42,7 +42,7 @@ class MailService {
           {
             to: [
               { 
-                email: to,
+                email: toEmail,
                 name: fromName
               }
             ], 
@@ -56,11 +56,11 @@ class MailService {
           }
         ],
         from: {
-          email: from,
+          email: fromEmail,
           name: fromName
         },
         reply_to: {
-          email: to,
+          email: toEmail,
           name: toName
         }
       },
