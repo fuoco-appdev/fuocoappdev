@@ -39,6 +39,8 @@ class AccountController extends Controller {
         next: (customer: core.Customer | null) => {
           this._model.emailAddress = customer?.email ?? '';
           this._model.updatedEmailAddress = this._model.emailAddress;
+          this._model.isEmailAddressDisabled =
+          SupabaseService.user?.app_metadata !== undefined;
         },
       });
 
@@ -51,9 +53,7 @@ class AccountController extends Controller {
             Number(account?.location?.longitude) ?? 0,
             Number(account?.location?.latitude) ?? 0,
           ];
-          this._model.language = account?.language as LanguageCode;
-          this._model.isEmailAddressDisabled =
-            SupabaseService.user?.app_metadata !== undefined;
+          this._model.language = account?.language ? LanguageCode[account.language as keyof typeof LanguageCode] : LanguageCode.EN;
           this._model.isUpdatePasswordDisabled =
             SupabaseService.user?.app_metadata !== undefined;
           this._model.updatedCompany = this._model.company;

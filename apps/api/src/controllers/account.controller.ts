@@ -74,7 +74,7 @@ export class AccountController {
       GettingStartedRequest.deserializeBinary(requestValue);
     try {
       await MailService.sendFromContentAsync(
-        supabaseUser.data.user.email ?? '',
+        'support@fuocoappdev.com',
         'fuoco.appdev@gmail.com',
         `Get started with ${gettingStartedRequest.getCompany()}`,
         `${gettingStartedRequest.getCompany()}, ${gettingStartedRequest.getPhoneNumber()}, ${gettingStartedRequest.getComment()}`

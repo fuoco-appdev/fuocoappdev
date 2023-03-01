@@ -27,6 +27,7 @@ class AdminAccountController extends Controller {
     this._userSubscription = UserService.activeUserObservable.subscribe({
       next: (user: core.User | null) => {
         this._model.emailAddress = user?.email ?? '';
+        this._model.updatedEmailAddress = this._model.emailAddress;
         this._model.isEmailAddressDisabled =
           SupabaseService.user?.app_metadata !== undefined;
       },
@@ -36,7 +37,6 @@ class AdminAccountController extends Controller {
       AccountService.activeAccountObservable.subscribe({
         next: (account: core.Account | null) => {
           this._model.language = account?.language ?? '';
-          this._model.updatedEmailAddress = this._model.emailAddress;
           this._model.updatedLanguage = this._model.language;
         },
       });
