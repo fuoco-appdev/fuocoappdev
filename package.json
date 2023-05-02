@@ -1,6 +1,6 @@
 {
-  "name": "@fuoco.appdev/core-app-api",
-  "version": "0.9.0",
+  "name": "@fuoco.appdev/cruthology-app-api",
+  "version": "0.0.0",
   "license": "MIT",
   "scripts": {
     "preinstall": "nx run api:install",
@@ -17,7 +17,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
-  "homepage": "http://fuoco-appdev.github.io/fuoco-core-app-api",
+  "homepage": "http://cruthology.github.io/cruthology-app-api",
   "dependencies": {
     "core-js": "^3.6.5",
     "express": "^4.18.1",
