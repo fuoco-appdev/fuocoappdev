@@ -4,7 +4,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Auth, AuthErrorType } from '@fuoco.appdev/core-ui';
 import SignupController from '../controllers/signup.controller';
 import WindowController from '../controllers/window.controller';
-import WorldController from '../controllers/world.controller';
 import styles from './signup.module.scss';
 import SupabaseService from '../services/supabase.service';
 import { RoutePaths } from '../route-paths';
@@ -83,10 +82,6 @@ export default function SignupComponent(): JSX.Element {
   const [errorType, setErrorType] = useState<AuthErrorType | null>(null);
   const { t } = useTranslation();
 
-  useEffect(() => {
-    WorldController.updateIsError(errorType !== null);
-  }, [errorType]);
-
   const auth = (
     <Auth
       providers={[
@@ -138,7 +133,6 @@ export default function SignupComponent(): JSX.Element {
       }
       onEmailConfirmationSent={() => {
         WindowController.updateShowConfirmEmailAlert(true);
-        WorldController.updateIsError(false);
       }}
     />
   );

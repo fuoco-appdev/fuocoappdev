@@ -101,7 +101,7 @@ export default function ResetPasswordComponent(): JSX.Element {
           },
         ]);
         setError(null);
-        navigate(RoutePaths.User);
+        navigate(RoutePaths.Account);
       }}
       onResetPasswordError={(error: AuthError) => setError(error)}
       supabaseClient={SupabaseService.supabaseClient}

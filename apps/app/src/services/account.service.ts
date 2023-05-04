@@ -113,7 +113,6 @@ class AccountService extends Service {
     const session = await SupabaseService.requestSessionAsync();
     const user = new core.Account({
       userId: userId,
-      requestStatus: core.RequestStatus.IDLE,
       language: WindowController.model.language,
     });
 
@@ -137,39 +136,11 @@ class AccountService extends Service {
     return accountResponse;
   }
 
-  public async requestGettingStartedAsync(props: {
-    company: string;
-    phoneNumber: string;
-    comment: string;
-  }): Promise<core.Account> {
-    const session = await SupabaseService.requestSessionAsync();
-    const gettingStartedRequest = new core.GettingStartedRequest(props);
-    const response = await axios({
-      method: 'post',
-      url: `${this.endpointUrl}/account/getting-started`,
-      headers: {
-        ...this.headers,
-        'Session-Token': `${session?.access_token}`,
-      },
-      data: gettingStartedRequest.toBinary(),
-      responseType: 'arraybuffer',
-    });
-
-    const arrayBuffer = new Uint8Array(response.data);
-    this.assertResponse(arrayBuffer);
-
-    const accountResponse = core.Account.fromBinary(arrayBuffer);
-    this._activeAccountBehaviorSubject.next(accountResponse);
-
-    return accountResponse;
-  }
-
   public async requestUpdateActiveAsync(props: {
     company?: string;
     phoneNumber?: string;
     location?: [number, number];
     language?: string;
-    request_status?: core.RequestStatus;
   }): Promise<core.Account> {
     const supabaseUser = await SupabaseService.requestUserAsync();
     if (!supabaseUser) {
@@ -188,25 +159,11 @@ class AccountService extends Service {
       phoneNumber?: string;
       location?: [number, number];
       language?: string;
-      request_status?: core.RequestStatus;
     }
   ): Promise<core.Account> {
     const session = await SupabaseService.requestSessionAsync();
     const user = new core.Account({
-      company: props.company ? props.company : this.activeAccount?.company,
-      phoneNumber: props.phoneNumber
-        ? props.phoneNumber
-        : this.activeAccount?.phoneNumber,
-      location: props.location
-        ? new core.Location({
-            longitude: String(props.location[0]),
-            latitude: String(props.location[1]),
-          })
-        : this.activeAccount?.location,
       language: props.language ? props.language : this.activeAccount?.language,
-      requestStatus: props.request_status
-        ? props.request_status
-        : this.activeAccount?.requestStatus,
     });
     const response = await axios({
       method: 'post',

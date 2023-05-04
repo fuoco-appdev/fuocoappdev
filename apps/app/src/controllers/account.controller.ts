@@ -3,12 +3,9 @@
 import { Subscription } from 'rxjs';
 import { Controller } from '../controller';
 import { AccountModel } from '../models/account.model';
-import CustomerService from '../services/customer.service';
 import AccountService from '../services/account.service';
 import * as core from '../protobuf/core_pb';
 import SupabaseService from '../services/supabase.service';
-import WindowController from './window.controller';
-import SecretsService from '../services/secrets.service';
 import { LanguageCode } from '@fuoco.appdev/core-ui';
 
 class AccountController extends Controller {
@@ -28,32 +25,12 @@ class AccountController extends Controller {
   }
 
   public initialize(): void {
-    this._secretsSubscription = SecretsService.secretsObservable.subscribe({
-      next: (secrets: core.Secrets | null) => {
-        this._model.mapboxAccessToken = secrets?.mapboxAccessToken ?? '';
-      },
-    });
-
-    this._customerSubscription =
-      CustomerService.activeCustomerObservable.subscribe({
-        next: (customer: core.Customer | null) => {
-          this._model.emailAddress = customer?.email ?? '';
-          this._model.updatedEmailAddress = this._model.emailAddress;
-          this._model.isEmailAddressDisabled =
-          SupabaseService.user?.app_metadata !== undefined;
-        },
-      });
-
     this._accountSubscription =
       AccountService.activeAccountObservable.subscribe({
         next: (account: core.Account | null) => {
-          this._model.company = account?.company ?? '';
-          this._model.phoneNumber = account?.phoneNumber ?? '';
-          this._model.location = [
-            Number(account?.location?.longitude) ?? 0,
-            Number(account?.location?.latitude) ?? 0,
-          ];
-          this._model.language = account?.language ? LanguageCode[account.language as keyof typeof LanguageCode] : LanguageCode.EN;
+          this._model.language = account?.language
+            ? LanguageCode[account.language as keyof typeof LanguageCode]
+            : LanguageCode.EN;
           this._model.isUpdatePasswordDisabled =
             SupabaseService.user?.app_metadata !== undefined;
           this._model.updatedCompany = this._model.company;
@@ -117,9 +94,7 @@ class AccountController extends Controller {
   public async deleteAsync(): Promise<void> {
     await AccountService.requestActiveDeleteAsync();
     AccountService.clearActiveAccount();
-    CustomerService.clearActiveCustomer();
     SupabaseService.clear();
-    WindowController.updateAuthState('USER_DELETED');
   }
 
   private updateSave(): void {

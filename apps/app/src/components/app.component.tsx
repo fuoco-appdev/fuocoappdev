@@ -2,50 +2,46 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import React, { useEffect } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
-import WorldController from '../controllers/world.controller';
 import WindowController from '../controllers/window.controller';
 import SigninController from '../controllers/signin.controller';
 import SignupController from '../controllers/signup.controller';
+import HomeController from '../controllers/home.controller';
+import StoreController from '../controllers/store.controller';
+import EventsController from '../controllers/events.controller';
+import CartController from '../controllers/cart.controller';
+import NotificationsController from '../controllers/notifications.controller';
 import TermsOfServiceController from '../controllers/terms-of-service.controller';
 import PrivacyPolicyController from '../controllers/privacy-policy.controller';
 import LoadingController from '../controllers/loading.controller';
 import ResetPasswordController from '../controllers/reset-password.controller';
-import GetStartedController from '../controllers/get-started.controller';
 import AccountController from '../controllers/account.controller';
-import AdminAccountController from '../controllers/admin-account.controller';
-import AdminAccountsController from '../controllers/admin-accounts.controller';
-import AdminAppsController from '../controllers/admin-apps.controller';
-import AppsController from '../controllers/apps.controller';
-import UserController from '../controllers/user.controller';
 import WindowComponent from './window.component';
-import LandingComponent from './landing.component';
 import SigninComponent from './signin.component';
 import SignupComponent from './signup.component';
 import ForgotPasswordComponent from './forgot-password.component';
 import ResetPasswordComponent from './reset-password.component';
 import TermsOfServiceComponent from './terms-of-service.component';
 import PrivacyPolicyComponent from './privacy-policy.component';
-import GetStartedComponent from './get-started.component';
 import AccountComponent from './account.component';
 import { RoutePaths } from '../route-paths';
-import UserService from '../services/user.service';
-import CustomerService from '../services/customer.service';
-import UserComponent from './user.component';
 import { useObservable } from '@ngneat/use-observable';
-import AppsComponent from './apps.component';
-import BillingComponent from './billing.component';
-import AdminComponent from './admin.component';
-import AdminAccountComponent from './admin-account.component';
-import AdminAccountsComponent from './admin-accounts.component';
-import AdminAppsComponent from './admin-apps.component';
 import SupabaseService from '../services/supabase.service';
+import HomeComponent from './home.component';
+import StoreComponent from './store.component';
+import EventsComponent from './events.component';
+import CartComponent from './cart.component';
+import NotificationsComponent from './notifications.component';
+import AccountEventsComponent from './account-events.component';
+import AccountOrderHistoryComponent from './account-order-history.component';
+import AccountAddressesComponent from './account-addresses.component';
+import AccountSettingsComponent from './account-settings.component';
 
 interface RouteElementProps {
   element: JSX.Element;
 }
 
 function GuestComponent({ element }: RouteElementProps): React.ReactElement {
-  return !SupabaseService.user ? element : <Navigate to={RoutePaths.User} />;
+  return !SupabaseService.user ? element : <Navigate to={RoutePaths.Account} />;
 }
 
 function AuthenticatedComponent({
@@ -54,86 +50,44 @@ function AuthenticatedComponent({
   return SupabaseService.user ? element : <Navigate to={RoutePaths.Signin} />;
 }
 
-function UserRoleComponent({ element }: RouteElementProps): React.ReactElement {
-  const [customer] = useObservable(CustomerService.activeCustomerObservable);
-  return customer ? (
-    <AuthenticatedComponent element={element} />
-  ) : (
-    <Navigate to={RoutePaths.Admin} />
-  );
-}
-
-function AdminRoleComponent({
-  element,
-}: RouteElementProps): React.ReactElement {
-  const [user] = useObservable(UserService.activeUserObservable);
-  return user ? (
-    <AuthenticatedComponent element={element} />
-  ) : (
-    <Navigate to={RoutePaths.User} />
-  );
-}
-
 export default function AppComponent(): JSX.Element {
-  const unloadCallback = (event: BeforeUnloadEvent) => {
-    if (!AccountController.model.isSaveDisabled) {
-      event.preventDefault();
-      event.returnValue = '';
-      return '';
-    }
-
-    return null;
-  };
-
   useEffect(() => {
     LoadingController.initialize();
     SigninController.initialize();
     SignupController.initialize();
-    WorldController.initialize();
     WindowController.initialize();
     TermsOfServiceController.initialize();
     PrivacyPolicyController.initialize();
     ResetPasswordController.initialize();
-    UserController.initialize();
-    GetStartedController.initialize();
     AccountController.initialize();
-    AdminAccountController.initialize();
-    AdminAccountsController.initialize();
-    AdminAppsController.initialize();
-    AppsController.initialize();
-    window.addEventListener('beforeunload', unloadCallback);
+    HomeController.initialize();
+    StoreController.initialize();
+    EventsController.initialize();
+    CartController.initialize();
+    NotificationsController.initialize();
 
     return () => {
       SigninController.dispose();
       SignupController.dispose();
-      WorldController.dispose();
       WindowController.dispose();
       TermsOfServiceController.dispose();
       PrivacyPolicyController.dispose();
       ResetPasswordController.dispose();
-      UserController.dispose();
-      GetStartedController.dispose();
       AccountController.dispose();
-      AdminAccountController.dispose();
-      AdminAccountsController.dispose();
-      AdminAppsController.dispose();
-      AppsController.dispose();
       LoadingController.dispose();
-      window.removeEventListener('beforeunload', unloadCallback);
+      HomeController.dispose();
+      StoreController.dispose();
+      EventsController.dispose();
+      CartController.dispose();
+      NotificationsController.dispose();
     };
   }, []);
   return (
     <HashRouter>
       <Routes>
         <Route path={RoutePaths.Default} element={<WindowComponent />}>
-          <Route
-            index
-            element={<GuestComponent element={<LandingComponent />} />}
-          />
-          <Route
-            path={RoutePaths.Landing}
-            element={<GuestComponent element={<LandingComponent />} />}
-          />
+          <Route index element={<HomeComponent />} />
+          <Route path={RoutePaths.Home} element={<HomeComponent />} />
           <Route
             path={RoutePaths.Signin}
             element={<GuestComponent element={<SigninComponent />} />}
@@ -148,56 +102,58 @@ export default function AppComponent(): JSX.Element {
           />
           <Route
             path={RoutePaths.TermsOfService}
-            element={<GuestComponent element={<TermsOfServiceComponent />} />}
+            element={<TermsOfServiceComponent />}
           />
           <Route
             path={RoutePaths.PrivacyPolicy}
-            element={<GuestComponent element={<PrivacyPolicyComponent />} />}
+            element={<PrivacyPolicyComponent />}
           />
           <Route
             path={RoutePaths.ResetPassword}
             element={<ResetPasswordComponent />}
           />
+          <Route path={RoutePaths.Store} element={<StoreComponent />} />
+          <Route path={RoutePaths.Events} element={<EventsComponent />} />
+          <Route path={RoutePaths.Cart} element={<CartComponent />} />
           <Route
-            path={RoutePaths.User}
-            element={<AuthenticatedComponent element={<UserComponent />} />}
+            path={RoutePaths.Notifications}
+            element={
+              <AuthenticatedComponent element={<NotificationsComponent />} />
+            }
+          />
+          <Route
+            path={RoutePaths.Account}
+            element={<AuthenticatedComponent element={<AccountComponent />} />}
           >
             <Route
-              path={RoutePaths.GetStarted}
-              element={<UserRoleComponent element={<GetStartedComponent />} />}
-            />
-            <Route
-              path={RoutePaths.Account}
-              element={<UserRoleComponent element={<AccountComponent />} />}
-            />
-            <Route
-              path={RoutePaths.Apps}
-              element={<UserRoleComponent element={<AppsComponent />} />}
-            />
-            <Route
-              path={RoutePaths.Billing}
-              element={<UserRoleComponent element={<BillingComponent />} />}
-            />
-          </Route>
-          <Route
-            path={RoutePaths.Admin}
-            element={<AuthenticatedComponent element={<AdminComponent />} />}
-          >
-            <Route
-              path={RoutePaths.AdminAccount}
+              path={RoutePaths.AccountEvents}
               element={
-                <AdminRoleComponent element={<AdminAccountComponent />} />
+                <AuthenticatedComponent element={<AccountEventsComponent />} />
               }
             />
             <Route
-              path={RoutePaths.AdminAccounts}
+              path={RoutePaths.AccountOrderHistory}
               element={
-                <AdminRoleComponent element={<AdminAccountsComponent />} />
+                <AuthenticatedComponent
+                  element={<AccountOrderHistoryComponent />}
+                />
               }
             />
             <Route
-              path={RoutePaths.AdminApps}
-              element={<AdminRoleComponent element={<AdminAppsComponent />} />}
+              path={RoutePaths.AccountAddresses}
+              element={
+                <AuthenticatedComponent
+                  element={<AccountAddressesComponent />}
+                />
+              }
+            />
+            <Route
+              path={RoutePaths.AccountSettings}
+              element={
+                <AuthenticatedComponent
+                  element={<AccountSettingsComponent />}
+                />
+              }
             />
           </Route>
         </Route>

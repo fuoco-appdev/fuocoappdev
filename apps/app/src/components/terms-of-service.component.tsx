@@ -1,9 +1,5 @@
-import {
-  Auth,
-  Typography,
-  Button,
-  IconChevronLeft,
-} from '@fuoco.appdev/core-ui';
+import { Auth, Typography, Button } from '@fuoco.appdev/core-ui';
+import { Line } from '@fuoco.appdev/core-ui';
 import { useObservable } from '@ngneat/use-observable';
 import styles from './terms-of-service.module.scss';
 import ReactMarkdown from 'react-markdown';
@@ -17,7 +13,7 @@ function BackButton(): JSX.Element {
   return (
     <div className={styles['backButton']}>
       <Button
-        icon={<IconChevronLeft />}
+        icon={<Line.ChevronLeft />}
         type={'text'}
         onClick={() => navigate(-1)}
       />

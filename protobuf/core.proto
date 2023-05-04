@@ -3,103 +3,16 @@ syntax = "proto3";
 package core;
 
 enum BucketType {
-    AVATARS = 0;
-    COVER_IMAGES = 1;
-}
-
-enum AppStatus {
-    USER_STORIES = 0;
-    DESIGN = 1;
-    DEVELOPMENT = 2;
-    RELEASE = 3;
-}
-
-message Link {
-    string id = 1;
-    string name = 2;
-    string url = 3;
-}
-
-message Image {
-    string url = 1;
-}
-
-message App {
-    string id = 1;
-    string created_at = 2;
-    string updated_at = 3;
-    string user_id = 4;
-    string name = 5;
-    string company = 6;
-    AppStatus status = 7;
-    repeated Link links = 8;
-    string avatar_image = 9;
-    repeated string cover_images = 10;
-}
-
-message Apps {
-    repeated App apps = 1;
-}
-
-enum RequestStatus {
-    IDLE = 0;
-    REQUESTED = 1;
-    ACCEPTED = 2;
-    UPDATE_REQUESTED = 3;
-    UPDATE_ACCEPTED = 4;
-}
-
-message Location {
-    string longitude = 1;
-    string latitude = 2;
-}
-
-message User {
-    string id = 1;
-    string created_at = 2;
-    string email = 3;
-    string first_name = 4;
-    string last_name = 5; 
-    string role = 6;
-}
-
-message Users {
-    repeated core.User users = 1;
-}
-
-message Customer {
-    string id = 1;
-    string created_at = 2;
-    string email = 3;
-    string first_name = 4;
-    string last_name = 5;
-}
-
-message Customers {
-    repeated core.Customer customers = 1;
+    Avatars = 0;
 }
 
 message Account {
     string id = 1;
     string user_id = 2;
     string supabase_id = 3;
-    string company = 4;
-    Location location = 5;
-    string language = 6;
-    RequestStatus request_status = 7;
-    string phone_number = 8;
+    string language = 4;
 }
 
 message Accounts {
     repeated core.Account accounts = 1;
-}
-
-message GettingStartedRequest {
-    string company = 1;
-    string phone_number = 2;
-    string comment = 3;
-}
-
-message Secrets {
-    string mapbox_access_token = 1;
 }

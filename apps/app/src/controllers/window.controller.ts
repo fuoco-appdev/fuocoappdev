@@ -6,12 +6,8 @@ import { Controller } from '../controller';
 import { WindowModel } from '../models/window.model';
 import { RoutePaths } from '../route-paths';
 import SupabaseService from '../services/supabase.service';
-import WorldController from './world.controller';
 import { Location } from 'react-router-dom';
-import UserService from '../services/user.service';
-import CustomerService from '../services/customer.service';
 import * as core from '../protobuf/core_pb';
-import SecretsService from '../services/secrets.service';
 import { LanguageCode, ToastProps } from '@fuoco.appdev/core-ui';
 import AccountService from '../services/account.service';
 
@@ -48,22 +44,7 @@ class WindowController extends Controller {
     }
   }
 
-  public initialize(): void {
-    this._userSubscription = UserService.activeUserObservable.subscribe({
-      next: (user: core.User | null) => {
-        this._model.isAuthenticated = user ? true : false;
-        this._model.user = user;
-      },
-    });
-
-    this._customerSubscription =
-      CustomerService.activeCustomerObservable.subscribe({
-        next: (customer: core.Customer | null) => {
-          this._model.isAuthenticated = customer ? true : false;
-          this._model.customer = customer;
-        },
-      });
-  }
+  public initialize(): void {}
 
   public async checkUserIsAuthenticatedAsync(): Promise<void> {
     this._model.isLoading = true;
@@ -112,12 +93,12 @@ class WindowController extends Controller {
 
   public updateOnLocationChanged(location: Location): void {
     switch (location.pathname) {
-      case RoutePaths.Landing:
+      case RoutePaths.Home:
         this._model.isSigninVisible = true;
         this._model.isSignupVisible = false;
         this._model.isSignoutVisible = false;
         this._model.isTabBarVisible = false;
-        this._model.activeRoute = RoutePaths.Landing;
+        this._model.activeRoute = RoutePaths.Home;
         break;
       case RoutePaths.Signin:
         this._model.isSigninVisible = false;
@@ -142,8 +123,8 @@ class WindowController extends Controller {
         break;
       case RoutePaths.ResetPassword:
         this._model.isSigninVisible = false;
-        this._model.isSignupVisible = UserService.activeUser === null;
-        this._model.isSignoutVisible = UserService.activeUser !== null;
+        this._model.isSignupVisible = AccountService.activeAccount === null;
+        this._model.isSignoutVisible = AccountService.activeAccount !== null;
         this._model.isTabBarVisible = false;
         this._model.activeRoute = RoutePaths.ResetPassword;
         break;
@@ -161,20 +142,6 @@ class WindowController extends Controller {
         this._model.isTabBarVisible = false;
         this._model.activeRoute = RoutePaths.PrivacyPolicy;
         break;
-      case RoutePaths.User:
-        this._model.isSignoutVisible = true;
-        this._model.isSigninVisible = false;
-        this._model.isSignupVisible = false;
-        this._model.isTabBarVisible = false;
-        this._model.activeRoute = RoutePaths.User;
-        break;
-      case RoutePaths.GetStarted:
-        this._model.isSignoutVisible = true;
-        this._model.isSigninVisible = false;
-        this._model.isSignupVisible = false;
-        this._model.isTabBarVisible = false;
-        this._model.activeRoute = RoutePaths.GetStarted;
-        break;
       case RoutePaths.Account:
         this._model.isSignoutVisible = true;
         this._model.isSigninVisible = false;
@@ -182,52 +149,10 @@ class WindowController extends Controller {
         this._model.isTabBarVisible = true;
         this._model.activeRoute = RoutePaths.Account;
         break;
-      case RoutePaths.Apps:
-        this._model.isSignoutVisible = true;
-        this._model.isSigninVisible = false;
-        this._model.isSignupVisible = false;
-        this._model.isTabBarVisible = true;
-        this._model.activeRoute = RoutePaths.Apps;
-        break;
-      case RoutePaths.Billing:
-        this._model.isSignoutVisible = true;
-        this._model.isSigninVisible = false;
-        this._model.isSignupVisible = false;
-        this._model.isTabBarVisible = true;
-        this._model.activeRoute = RoutePaths.Billing;
-        break;
-      case RoutePaths.Admin:
-        this._model.isSignoutVisible = true;
-        this._model.isSigninVisible = false;
-        this._model.isSignupVisible = false;
-        this._model.isTabBarVisible = true;
-        this._model.activeRoute = RoutePaths.Admin;
-        break;
-      case RoutePaths.AdminAccount:
-        this._model.isSignoutVisible = true;
-        this._model.isSigninVisible = false;
-        this._model.isSignupVisible = false;
-        this._model.isTabBarVisible = true;
-        this._model.activeRoute = RoutePaths.AdminAccount;
-        break;
-      case RoutePaths.AdminAccounts:
-        this._model.isSignoutVisible = true;
-        this._model.isSigninVisible = false;
-        this._model.isSignupVisible = false;
-        this._model.isTabBarVisible = true;
-        this._model.activeRoute = RoutePaths.AdminAccounts;
-        break;
-      case RoutePaths.AdminApps:
-        this._model.isSignoutVisible = true;
-        this._model.isSigninVisible = false;
-        this._model.isSignupVisible = false;
-        this._model.isTabBarVisible = true;
-        this._model.activeRoute = RoutePaths.AdminApps;
-        break;
       default:
-        this._model.isSigninVisible = UserService.activeUser === null;
+        this._model.isSigninVisible = AccountService.activeAccount === null;
         this._model.isSignupVisible = false;
-        this._model.isSignoutVisible = UserService.activeUser !== null;
+        this._model.isSignoutVisible = AccountService.activeAccount !== null;
         this._model.isTabBarVisible = false;
         this._model.activeRoute = RoutePaths.Default;
         break;
@@ -238,68 +163,26 @@ class WindowController extends Controller {
     event: AuthChangeEvent,
     session: Session | null
   ): Promise<void> {
-    if (session) {
-      await SecretsService.requestAllAsync();
-    }
-
     if (event === 'SIGNED_IN') {
-      WorldController.updateIsError(false);
-
       // Request admin, member or developer
-      const user = await this.requestActiveUserAsync();
-      if (!user) {
-        // Request customer
-        const customer = await this.requestActiveCustomerAsync();
-        if (customer) {
-          await this.requestActiveAccountAsync(customer.id);
-        }
-      } else {
-        await this.requestActiveAccountAsync(user.id);
-      }
+      // const user = await this.requestActiveUserAsync();
+      // if (!user) {
+      //   // Request customer
+      //   const customer = await this.requestActiveCustomerAsync();
+      //   if (customer) {
+      //     await this.requestActiveAccountAsync(customer.id);
+      //   }
+      // } else {
+      //   await this.requestActiveAccountAsync(user.id);
+      // }
     } else if (event === 'SIGNED_OUT') {
-      UserService.clearActiveUser();
-      CustomerService.clearActiveCustomer();
       AccountService.clearActiveAccount();
-      SecretsService.clearSecrets();
-    } else if (event === 'USER_DELETED') {
-      UserService.clearActiveUser();
-      CustomerService.clearActiveCustomer();
+    } else {
       AccountService.clearActiveAccount();
-      SecretsService.clearSecrets();
     }
 
     this._model.authState = event;
     this._model.isLoading = false;
-  }
-
-  private async requestActiveUserAsync(): Promise<core.User | null> {
-    try {
-      return await UserService.requestActiveAsync();
-    } catch (error: any) {
-      if (error.status !== 404) {
-        console.error(error);
-      }
-
-      return null;
-    }
-  }
-
-  private async requestActiveCustomerAsync(): Promise<core.Customer | null> {
-    try {
-      return await CustomerService.requestActiveAsync();
-    } catch (error: any) {
-      if (error.status !== 404) {
-        console.error(error);
-        return null;
-      }
-
-      try {
-        return await CustomerService.requestCreateAsync();
-      } catch (error: any) {
-        console.error(error);
-        return null;
-      }
-    }
   }
 
   private async requestActiveAccountAsync(

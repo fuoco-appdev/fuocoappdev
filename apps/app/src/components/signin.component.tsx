@@ -8,7 +8,6 @@ import { RoutePaths } from '../route-paths';
 import { AuthError } from '@supabase/supabase-js';
 import { useState, useEffect } from 'react';
 import { animated, config, useTransition } from 'react-spring';
-import WorldController from '../controllers/world.controller';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import { useTranslation } from 'react-i18next';
 
@@ -80,10 +79,6 @@ export default function SigninComponent(): JSX.Element {
   const navigate = useNavigate();
   const [error, setError] = useState<AuthError | null>(null);
   const { t } = useTranslation();
-
-  useEffect(() => {
-    WorldController.updateIsError(error !== null);
-  }, [error]);
 
   const auth = (
     <Auth

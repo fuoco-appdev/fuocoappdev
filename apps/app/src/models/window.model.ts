@@ -6,8 +6,8 @@ import * as core from '../protobuf/core_pb';
 import { LanguageCode, ToastProps } from '@fuoco.appdev/core-ui';
 
 export interface WindowState {
-  user: core.User | null;
-  customer: core.Customer | null;
+  user: object | null;
+  customer: object | null;
   isSigninVisible: boolean;
   isSignupVisible: boolean;
   isSignoutVisible: boolean;
@@ -56,22 +56,22 @@ export class WindowModel extends Model {
     );
   }
 
-  public get user(): core.User | null {
+  public get user(): object | null {
     return this.store.getValue().user;
   }
 
-  public set user(value: core.User | null) {
-    if (!this.user?.equals(value)) {
+  public set user(value: object | null) {
+    if (JSON.stringify(this.user) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, user: value }));
     }
   }
 
-  public get customer(): core.Customer | null {
+  public get customer(): object | null {
     return this.store.getValue().customer;
   }
 
-  public set customer(value: core.Customer | null) {
-    if (!this.customer?.equals(value)) {
+  public set customer(value: object | null) {
+    if (JSON.stringify(this.customer) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, customer: value }));
     }
   }
