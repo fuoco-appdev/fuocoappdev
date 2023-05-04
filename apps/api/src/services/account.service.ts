@@ -1,10 +1,5 @@
 import SupabaseService from './supabase.service.ts';
-import {
-  Location,
-  Account,
-  RequestStatus,
-  Accounts,
-} from '../protobuf/core_pb.js';
+import { Account, Accounts } from '../protobuf/core_pb.js';
 
 export interface AccountProps {
   id?: string;
@@ -50,19 +45,13 @@ export class AccountService {
     }
 
     const userId = account.getUserId();
-    const company = account.getCompany();
-    const phoneNumber = account.getPhoneNumber();
     const language = account.getLanguage();
-    const location = account.getLocation();
 
     const accountData = this.assignAndGetAccountData({
       supabaseId,
       userId,
-      company,
-      phoneNumber,
       language,
       location,
-      requestStatus: RequestStatus.IDLE,
     });
 
     const { data, error } = await SupabaseService.client
@@ -82,18 +71,11 @@ export class AccountService {
     supabaseId: string,
     account: InstanceType<typeof Account>
   ): Promise<AccountProps | null> {
-    const company = account.getCompany();
-    const phoneNumber = account.getPhoneNumber();
     const language = account.getLanguage();
-    const location = account.getLocation();
-    const requestStatus = account.getRequestStatus();
 
     const accountData = this.assignAndGetAccountData({
-      company,
-      phoneNumber,
       language,
       location,
-      requestStatus,
     });
     const { data, error } = await SupabaseService.client
       .from('account')
@@ -162,23 +144,11 @@ export class AccountService {
     props: AccountProps
   ): InstanceType<typeof Account> {
     const account = new Account();
-    const location = new Location();
-    if (props.location) {
-      location.setLongitude(props.location.longitude);
-      location.setLatitude(props.location.latitude);
-    }
 
     props.id && account.setId(props.id);
     props.user_id && account.setUserId(props.user_id);
     props.supabase_id && account.setSupabaseId(props.supabase_id);
-    props.company && account.setCompany(props.company);
-    props.phone_number && account.setPhoneNumber(props.phone_number);
     props.language && account.setLanguage(props.language);
-    props.location && account.setLocation(location);
-    const requestIndex = Object.keys(RequestStatus).indexOf(
-      props.request_status ?? ''
-    );
-    props.request_status && account.setRequestStatus(requestIndex);
 
     return account;
   }
@@ -199,15 +169,6 @@ export class AccountService {
       ...(props.company && { company: props.company }),
       ...(props.phoneNumber && { phone_number: props.phoneNumber }),
       ...(props.language && { language: props.language }),
-      ...(props.location && {
-        location: {
-          longitude: props.location.getLongitude(),
-          latitude: props.location.getLatitude(),
-        },
-      }),
-      ...(props.requestStatus !== undefined && {
-        request_status: Object.keys(RequestStatus)[props.requestStatus] ?? '',
-      }),
     };
   }
 }

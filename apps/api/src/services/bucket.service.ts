@@ -16,20 +16,6 @@ class BucketService {
         console.error(error);
       }
     }
-
-    const coverImagesBucket = await SupabaseService.client.storage.getBucket(
-      this.getBucketName(BucketType.COVER_IMAGES)
-    );
-    if (coverImagesBucket.error) {
-      const { error } = await SupabaseService.client.storage.createBucket(
-        this.getBucketName(BucketType.COVER_IMAGES),
-        { public: true }
-      );
-
-      if (error) {
-        console.error(error);
-      }
-    }
   }
 
   private getBucketName(type: number): string {
