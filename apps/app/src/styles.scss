@@ -37,16 +37,18 @@
   }
 }
 
+html, body { height: 100% } 
+
 body {
-  --brand-100: #c5ffff;
-  --brand-200: #abffff;
-  --brand-300: #8cffff;
-  --brand-400: #65ffff;
-  --brand-500: #2480b4;
-  --brand-600: #206092;
-  --brand-700: #19426f;
-  --brand-800: #10274e;
-  --brand-900: #070b2e;
+  --brand-100: #FFFFE4;
+  --brand-200: #E6E1B2;
+  --brand-300: #CCC280;
+  --brand-400: #B3A44D;
+  --brand-500: #99851B;
+  --brand-600: #826414;
+  --brand-700: #6C430E;
+  --brand-800: #552107;
+  --brand-900: #3E0000;
 
   --rounded-sm: 0.125rem /* 2px */;
   --rounded-base: 0.25rem /* 4px */;

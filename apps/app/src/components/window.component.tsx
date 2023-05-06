@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useRef } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import WindowController from '../controllers/window.controller';
 import styles from './window.module.scss';
-import { Alert } from '@fuoco.appdev/core-ui';
+import { Alert, Button, Line, Solid } from '@fuoco.appdev/core-ui';
 import { RoutePaths } from '../route-paths';
 import { useTranslation } from 'react-i18next';
 import SupabaseService from '../services/supabase.service';
@@ -31,7 +31,6 @@ function WindowDesktopComponent(): JSX.Element {
 function WindowMobileComponent(): JSX.Element {
   const navigate = useNavigate();
   const [props] = useObservable(WindowController.model.store);
-  const scrollRef = useRef<HTMLDivElement | null>(null);
   const { t, i18n } = useTranslation();
   const [localProps] = useObservable(
     WindowController.model.localStore ?? Store.prototype
@@ -41,7 +40,118 @@ function WindowMobileComponent(): JSX.Element {
     i18n.changeLanguage(localProps.language);
   }, [localProps.language]);
 
-  return <></>;
+  return (
+    <div className={styles['root']}>
+      <div className={styles['content']}></div>
+      <div className={styles['bottom-bar']}>
+        <div className={styles['shopping-cart-container']}>
+          <div className={styles['shopping-cart-container-details']}>
+            <Button
+              classNames={{
+                container: styles['shopping-cart-button-container'],
+                button: styles['shopping-cart-button'],
+              }}
+              rippleProps={{
+                color: 'rgba(62, 0, 0, .35)',
+              }}
+              type={'primary'}
+              rounded={true}
+              size={'small'}
+              touchScreen={true}
+              icon={<Line.ShoppingCart size={22} color={'#3E0000'} />}
+            />
+            <div className={styles['cart-number-container']}>
+              <span className={styles['cart-number']}>1</span>
+            </div>
+          </div>
+        </div>
+        <div className={styles['tab-container']}>
+          <div className={styles['left-tab-container']}>
+            <div className={styles['tab-button-container']}>
+              <Button
+                rippleProps={{
+                  color: 'rgba(62, 0, 0, .35)',
+                }}
+                type={'text'}
+                rounded={true}
+                size={'tiny'}
+                touchScreen={true}
+                icon={<Line.Home size={24} color={'#3E0000'} />}
+              />
+            </div>
+            <div className={styles['tab-button-container']}>
+              <Button
+                rippleProps={{
+                  color: 'rgba(62, 0, 0, .35)',
+                }}
+                type={'text'}
+                rounded={true}
+                size={'tiny'}
+                touchScreen={true}
+                icon={<Line.Storefront size={24} color={'#3E0000'} />}
+              />
+            </div>
+            <div className={styles['tab-button-container']}>
+              <Button
+                rippleProps={{
+                  color: 'rgba(62, 0, 0, .35)',
+                }}
+                type={'text'}
+                rounded={true}
+                size={'tiny'}
+                touchScreen={true}
+                icon={<Line.Event size={24} color={'#3E0000'} />}
+              />
+            </div>
+          </div>
+          <div className={styles['right-tab-container']}>
+            {!props.isAuthenticated && (
+              <div className={styles['tab-button-container']}>
+                <Button
+                  rippleProps={{
+                    color: 'rgba(62, 0, 0, .35)',
+                  }}
+                  type={'text'}
+                  rounded={true}
+                  size={'tiny'}
+                  touchScreen={true}
+                  icon={<Line.MoreVert size={24} color={'#3E0000'} />}
+                />
+              </div>
+            )}
+            {props.isAuthenticated && (
+              <>
+                <div className={styles['tab-button-container']}>
+                  <Button
+                    rippleProps={{
+                      color: 'rgba(62, 0, 0, .35)',
+                    }}
+                    type={'text'}
+                    rounded={true}
+                    size={'tiny'}
+                    touchScreen={true}
+                    icon={<Line.Notifications size={24} color={'#3E0000'} />}
+                  />
+                </div>
+                <div className={styles['tab-button-container']}>
+                  <Button
+                    rippleProps={{
+                      color: 'rgba(62, 0, 0, .35)',
+                    }}
+                    type={'text'}
+                    rounded={true}
+                    size={'tiny'}
+                    touchScreen={true}
+                    icon={<Line.AccountCircle size={24} color={'#3E0000'} />}
+                  />
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function WindowComponent(): JSX.Element {

@@ -2,14 +2,100 @@
 
 .root {
   display: flex;
-  height: 100vh;
-  background: #fff;
+  height: 100%;
+  width: 100vw;
+  background: #EEEEEE;
   overflow: hidden;
+  flex-direction: column;
 
   & .alert {
     position: absolute;
     left: 10%;
     z-index: 12;
     width: 80%;
+  }
+
+  & .content {
+    display: flex;
+    height: 100%;
+    width: 100%;
+  }
+
+  & .bottom-bar {
+    position: relative;
+    display: flex;
+    height: 56px;
+    width: 100%;
+    background-color: #fff;
+    box-shadow: $shadow-6;
+
+    & .shopping-cart-container {
+      position: absolute;
+      border-radius: $rounded-full;
+      top: -50%;
+      left: calc(50% - (56px / 2));
+
+      & .shopping-cart-container-details {
+        position: relative;
+
+        & .cart-number-container {
+          position: absolute;
+          border-radius: $rounded-full;
+          background-color: $brand-900;
+          height: 24px;
+          width: 24px;
+          top: -4px;
+          right: -4px;
+          text-align: center;
+          display: flex;
+          justify-content: center;
+
+          .cart-number {
+            font-size: 10px;
+            font-weight: $font-weight-bold;
+            line-height: 24px;
+            color: #fff;
+          }
+        }
+
+        & .shopping-cart-button-container {
+          box-shadow: $shadow-1;
+        }
+  
+        & .shopping-cart-button {
+          background-color: $brand-100;
+        }
+      }
+    }
+
+    & .tab-container {
+      display: grid;
+      grid-template-columns: 1fr 56px 1fr;
+      width: 100%;
+      align-items: center;
+
+      & .tab-button-container {
+        width: fit-content;
+        padding-right: $mp-1;
+      }
+
+      & .left-tab-container {
+        grid-column-start: 1;
+        grid-column-end: 2;
+        padding: 0 $mp-2;
+        display: flex;
+        justify-content: flex-start;
+        flex-direction: row;
+      }
+
+      & .right-tab-container {
+        grid-column-start: 3;
+        grid-column-end: 4;
+        padding: 0 $mp-2;
+        display: flex;
+        justify-content: flex-end;
+        flex-direction: row;
+      }
+    }
   }
 }
