@@ -8,12 +8,9 @@ import { LanguageCode, ToastProps } from '@fuoco.appdev/core-ui';
 export interface WindowState {
   user: object | null;
   customer: object | null;
-  isSigninVisible: boolean;
-  isSignupVisible: boolean;
-  isSignoutVisible: boolean;
-  isTabBarVisible: boolean;
   isAuthenticated: boolean | undefined;
   activeRoute: RoutePaths | undefined;
+  cartCount: number;
   showConfirmEmailAlert: boolean;
   showPasswordResetAlert: boolean;
   authState: AuthChangeEvent | undefined;
@@ -33,12 +30,9 @@ export class WindowModel extends Model {
         withProps<WindowState>({
           user: null,
           customer: null,
-          isSigninVisible: false,
-          isSignupVisible: false,
-          isSignoutVisible: false,
-          isTabBarVisible: false,
           isAuthenticated: undefined,
           activeRoute: undefined,
+          cartCount: 0,
           showConfirmEmailAlert: false,
           showPasswordResetAlert: false,
           authState: undefined,
@@ -76,46 +70,6 @@ export class WindowModel extends Model {
     }
   }
 
-  public get isSigninVisible(): boolean {
-    return this.store.getValue().isSigninVisible;
-  }
-
-  public set isSigninVisible(value: boolean) {
-    if (this.isSigninVisible !== value) {
-      this.store.update((state) => ({ ...state, isSigninVisible: value }));
-    }
-  }
-
-  public get isSignupVisible(): boolean {
-    return this.store.getValue().isSignupVisible;
-  }
-
-  public set isSignupVisible(value: boolean) {
-    if (this.isSignupVisible !== value) {
-      this.store.update((state) => ({ ...state, isSignupVisible: value }));
-    }
-  }
-
-  public get isSignoutVisible(): boolean {
-    return this.store.getValue().isSignoutVisible;
-  }
-
-  public set isSignoutVisible(value: boolean) {
-    if (this.isSignoutVisible !== value) {
-      this.store.update((state) => ({ ...state, isSignoutVisible: value }));
-    }
-  }
-
-  public get isTabBarVisible(): boolean {
-    return this.store.getValue().isTabBarVisible;
-  }
-
-  public set isTabBarVisible(value: boolean) {
-    if (this.isTabBarVisible !== value) {
-      this.store.update((state) => ({ ...state, isTabBarVisible: value }));
-    }
-  }
-
   public get isAuthenticated(): boolean | undefined {
     return this.store.getValue().isAuthenticated;
   }
@@ -136,6 +90,19 @@ export class WindowModel extends Model {
   public set activeRoute(value: RoutePaths | undefined) {
     if (this.activeRoute !== value) {
       this.store.update((state) => ({ ...state, activeRoute: value }));
+    }
+  }
+
+  public get cartCount(): number {
+    return this.store.getValue().cartCount;
+  }
+
+  public set cartCount(value: number) {
+    if (this.cartCount !== value) {
+      this.store.update((state) => ({
+        ...state,
+        cartCount: value,
+      }));
     }
   }
 

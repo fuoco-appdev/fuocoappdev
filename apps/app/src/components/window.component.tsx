@@ -1,8 +1,8 @@
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import WindowController from '../controllers/window.controller';
 import styles from './window.module.scss';
-import { Alert, Button, Line, Solid } from '@fuoco.appdev/core-ui';
+import { Alert, Button, Dropdown, Line, Solid } from '@fuoco.appdev/core-ui';
 import { RoutePaths } from '../route-paths';
 import { useTranslation } from 'react-i18next';
 import SupabaseService from '../services/supabase.service';
@@ -30,6 +30,7 @@ function WindowDesktopComponent(): JSX.Element {
 
 function WindowMobileComponent(): JSX.Element {
   const navigate = useNavigate();
+  const [openMore, setOpenMore] = useState<boolean>(false);
   const [props] = useObservable(WindowController.model.store);
   const { t, i18n } = useTranslation();
   const [localProps] = useObservable(
@@ -52,17 +53,32 @@ function WindowMobileComponent(): JSX.Element {
                 button: styles['shopping-cart-button'],
               }}
               rippleProps={{
-                color: 'rgba(62, 0, 0, .35)',
+                color: 'rgba(88, 40, 109, .35)',
+              }}
+              onClick={() => {
+                if (props.activeRoute === RoutePaths.Cart) {
+                  navigate(-1);
+                } else {
+                  navigate(RoutePaths.Cart);
+                }
               }}
               type={'primary'}
               rounded={true}
               size={'small'}
               touchScreen={true}
-              icon={<Line.ShoppingCart size={22} color={'#3E0000'} />}
+              icon={
+                props.activeRoute !== RoutePaths.Cart ? (
+                  <Line.ShoppingCart size={22} color={'#2A2A5F'} />
+                ) : (
+                  <Line.Close size={22} color={'#2A2A5F'} />
+                )
+              }
             />
-            <div className={styles['cart-number-container']}>
-              <span className={styles['cart-number']}>1</span>
-            </div>
+            {props.activeRoute !== RoutePaths.Cart && props.cartCount > 0 && (
+              <div className={styles['cart-number-container']}>
+                <span className={styles['cart-number']}>{props.cartCount}</span>
+              </div>
+            )}
           </div>
         </div>
         <div className={styles['tab-container']}>
@@ -70,37 +86,71 @@ function WindowMobileComponent(): JSX.Element {
             <div className={styles['tab-button-container']}>
               <Button
                 rippleProps={{
-                  color: 'rgba(62, 0, 0, .35)',
+                  color: 'rgba(252, 245, 227, .35)',
                 }}
+                onClick={() => navigate(RoutePaths.Home)}
+                disabled={props.activeRoute?.startsWith(RoutePaths.Cart)}
                 type={'text'}
                 rounded={true}
                 size={'tiny'}
                 touchScreen={true}
-                icon={<Line.Home size={24} color={'#3E0000'} />}
+                icon={
+                  <Line.Home
+                    size={24}
+                    color={
+                      props.activeRoute?.startsWith(RoutePaths.Home) ||
+                      props.activeRoute === RoutePaths.Default
+                        ? 'rgba(252, 245, 227, 1)'
+                        : 'rgba(252, 245, 227, .6)'
+                    }
+                  />
+                }
               />
             </div>
             <div className={styles['tab-button-container']}>
               <Button
                 rippleProps={{
-                  color: 'rgba(62, 0, 0, .35)',
+                  color: 'rgba(252, 245, 227, .35)',
                 }}
+                onClick={() => navigate(RoutePaths.Store)}
+                disabled={props.activeRoute?.startsWith(RoutePaths.Cart)}
                 type={'text'}
                 rounded={true}
                 size={'tiny'}
                 touchScreen={true}
-                icon={<Line.Storefront size={24} color={'#3E0000'} />}
+                icon={
+                  <Line.Storefront
+                    size={24}
+                    color={
+                      props.activeRoute?.startsWith(RoutePaths.Store)
+                        ? 'rgba(252, 245, 227, 1)'
+                        : 'rgba(252, 245, 227, .6)'
+                    }
+                  />
+                }
               />
             </div>
             <div className={styles['tab-button-container']}>
               <Button
                 rippleProps={{
-                  color: 'rgba(62, 0, 0, .35)',
+                  color: 'rgba(252, 245, 227, .35)',
                 }}
+                onClick={() => navigate(RoutePaths.Events)}
+                disabled={props.activeRoute?.startsWith(RoutePaths.Cart)}
                 type={'text'}
                 rounded={true}
                 size={'tiny'}
                 touchScreen={true}
-                icon={<Line.Event size={24} color={'#3E0000'} />}
+                icon={
+                  <Line.Event
+                    size={24}
+                    color={
+                      props.activeRoute?.startsWith(RoutePaths.Events)
+                        ? 'rgba(252, 245, 227, 1)'
+                        : 'rgba(252, 245, 227, .6)'
+                    }
+                  />
+                }
               />
             </div>
           </div>
@@ -109,13 +159,24 @@ function WindowMobileComponent(): JSX.Element {
               <div className={styles['tab-button-container']}>
                 <Button
                   rippleProps={{
-                    color: 'rgba(62, 0, 0, .35)',
+                    color: 'rgba(252, 245, 227, .35)',
                   }}
+                  disabled={props.activeRoute?.startsWith(RoutePaths.Cart)}
+                  onClick={() => setOpenMore(true)}
                   type={'text'}
                   rounded={true}
                   size={'tiny'}
                   touchScreen={true}
-                  icon={<Line.MoreVert size={24} color={'#3E0000'} />}
+                  icon={
+                    <Line.MoreVert
+                      size={24}
+                      color={
+                        props.activeRoute?.startsWith(RoutePaths.Cart)
+                          ? 'rgba(252, 245, 227, .6)'
+                          : 'rgba(252, 245, 227, 1)'
+                      }
+                    />
+                  }
                 />
               </div>
             )}
@@ -124,25 +185,49 @@ function WindowMobileComponent(): JSX.Element {
                 <div className={styles['tab-button-container']}>
                   <Button
                     rippleProps={{
-                      color: 'rgba(62, 0, 0, .35)',
+                      color: 'rgba(252, 245, 227, .35)',
                     }}
+                    onClick={() => navigate(RoutePaths.Notifications)}
+                    disabled={props.activeRoute?.startsWith(RoutePaths.Cart)}
                     type={'text'}
                     rounded={true}
                     size={'tiny'}
                     touchScreen={true}
-                    icon={<Line.Notifications size={24} color={'#3E0000'} />}
+                    icon={
+                      <Line.Notifications
+                        size={24}
+                        color={
+                          props.activeRoute?.startsWith(
+                            RoutePaths.Notifications
+                          )
+                            ? 'rgba(252, 245, 227, 1)'
+                            : 'rgba(252, 245, 227, .6)'
+                        }
+                      />
+                    }
                   />
                 </div>
                 <div className={styles['tab-button-container']}>
                   <Button
                     rippleProps={{
-                      color: 'rgba(62, 0, 0, .35)',
+                      color: 'rgba(252, 245, 227, .35)',
                     }}
+                    onClick={() => navigate(RoutePaths.Account)}
+                    disabled={props.activeRoute?.startsWith(RoutePaths.Cart)}
                     type={'text'}
                     rounded={true}
                     size={'tiny'}
                     touchScreen={true}
-                    icon={<Line.AccountCircle size={24} color={'#3E0000'} />}
+                    icon={
+                      <Line.AccountCircle
+                        size={24}
+                        color={
+                          props.activeRoute?.startsWith(RoutePaths.Account)
+                            ? 'rgba(252, 245, 227, 1)'
+                            : 'rgba(252, 245, 227, .6)'
+                        }
+                      />
+                    }
                   />
                 </div>
               </>
@@ -150,6 +235,11 @@ function WindowMobileComponent(): JSX.Element {
           </div>
         </div>
       </div>
+      <Dropdown
+        open={openMore}
+        touchScreen={true}
+        onClose={() => setOpenMore(false)}
+      />
     </div>
   );
 }

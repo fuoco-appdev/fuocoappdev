@@ -67,14 +67,6 @@ class WindowController extends Controller {
     this._model.authState = value;
   }
 
-  public updateIsSigninVisible(isVisible: boolean): void {
-    this._model.isSigninVisible = isVisible;
-  }
-
-  public updateIsSignupVisible(isVisible: boolean): void {
-    this._model.isSignupVisible = isVisible;
-  }
-
   public updateShowConfirmEmailAlert(show: boolean): void {
     this._model.showConfirmEmailAlert = show;
   }
@@ -94,66 +86,39 @@ class WindowController extends Controller {
   public updateOnLocationChanged(location: Location): void {
     switch (location.pathname) {
       case RoutePaths.Home:
-        this._model.isSigninVisible = true;
-        this._model.isSignupVisible = false;
-        this._model.isSignoutVisible = false;
-        this._model.isTabBarVisible = false;
         this._model.activeRoute = RoutePaths.Home;
         break;
+      case RoutePaths.Store:
+        this._model.activeRoute = RoutePaths.Store;
+        break;
+      case RoutePaths.Events:
+        this._model.activeRoute = RoutePaths.Events;
+        break;
+      case RoutePaths.Cart:
+        this._model.activeRoute = RoutePaths.Cart;
+        break;
       case RoutePaths.Signin:
-        this._model.isSigninVisible = false;
-        this._model.isSignupVisible = true;
-        this._model.isSignoutVisible = false;
-        this._model.isTabBarVisible = false;
         this._model.activeRoute = RoutePaths.Signin;
         break;
       case RoutePaths.Signup:
-        this._model.isSigninVisible = true;
-        this._model.isSignupVisible = false;
-        this._model.isSignoutVisible = false;
-        this._model.isTabBarVisible = false;
         this._model.activeRoute = RoutePaths.Signup;
         break;
       case RoutePaths.ForgotPassword:
-        this._model.isSigninVisible = false;
-        this._model.isSignupVisible = true;
-        this._model.isSignoutVisible = false;
-        this._model.isTabBarVisible = false;
         this._model.activeRoute = RoutePaths.ForgotPassword;
         break;
       case RoutePaths.ResetPassword:
-        this._model.isSigninVisible = false;
-        this._model.isSignupVisible = AccountService.activeAccount === null;
-        this._model.isSignoutVisible = AccountService.activeAccount !== null;
-        this._model.isTabBarVisible = false;
         this._model.activeRoute = RoutePaths.ResetPassword;
         break;
       case RoutePaths.TermsOfService:
-        this._model.isSigninVisible = false;
-        this._model.isSignupVisible = true;
-        this._model.isSignoutVisible = false;
-        this._model.isTabBarVisible = false;
         this._model.activeRoute = RoutePaths.TermsOfService;
         break;
       case RoutePaths.PrivacyPolicy:
-        this._model.isSigninVisible = false;
-        this._model.isSignupVisible = true;
-        this._model.isSignoutVisible = false;
-        this._model.isTabBarVisible = false;
         this._model.activeRoute = RoutePaths.PrivacyPolicy;
         break;
       case RoutePaths.Account:
-        this._model.isSignoutVisible = true;
-        this._model.isSigninVisible = false;
-        this._model.isSignupVisible = false;
-        this._model.isTabBarVisible = true;
         this._model.activeRoute = RoutePaths.Account;
         break;
       default:
-        this._model.isSigninVisible = AccountService.activeAccount === null;
-        this._model.isSignupVisible = false;
-        this._model.isSignoutVisible = AccountService.activeAccount !== null;
-        this._model.isTabBarVisible = false;
         this._model.activeRoute = RoutePaths.Default;
         break;
     }
