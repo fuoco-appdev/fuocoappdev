@@ -82,15 +82,7 @@ export default function SigninComponent(): JSX.Element {
 
   const auth = (
     <Auth
-      providers={[
-        'spotify',
-        'discord',
-        'facebook',
-        'github',
-        'google',
-        'twitch',
-        'twitter',
-      ]}
+      providers={['facebook', 'google', 'twitter']}
       view={'sign_in'}
       socialColors={true}
       strings={{

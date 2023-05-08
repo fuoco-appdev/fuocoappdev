@@ -2,7 +2,15 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import WindowController from '../controllers/window.controller';
 import styles from './window.module.scss';
-import { Alert, Button, Dropdown, Line, Solid } from '@fuoco.appdev/core-ui';
+import {
+  Alert,
+  Button,
+  Dropdown,
+  LanguageCode,
+  LanguageSwitch,
+  Line,
+  Solid,
+} from '@fuoco.appdev/core-ui';
 import { RoutePaths } from '../route-paths';
 import { useTranslation } from 'react-i18next';
 import SupabaseService from '../services/supabase.service';
@@ -43,7 +51,9 @@ function WindowMobileComponent(): JSX.Element {
 
   return (
     <div className={styles['root']}>
-      <div className={styles['content']}></div>
+      <div className={styles['content']}>
+        <Outlet />
+      </div>
       <div className={styles['bottom-bar']}>
         <div className={styles['shopping-cart-container']}>
           <div className={styles['shopping-cart-container-details']}>
@@ -156,29 +166,40 @@ function WindowMobileComponent(): JSX.Element {
           </div>
           <div className={styles['right-tab-container']}>
             {!props.isAuthenticated && (
-              <div className={styles['tab-button-container']}>
-                <Button
-                  rippleProps={{
-                    color: 'rgba(252, 245, 227, .35)',
-                  }}
-                  disabled={props.activeRoute?.startsWith(RoutePaths.Cart)}
-                  onClick={() => setOpenMore(true)}
-                  type={'text'}
-                  rounded={true}
-                  size={'tiny'}
-                  touchScreen={true}
-                  icon={
-                    <Line.MoreVert
-                      size={24}
-                      color={
-                        props.activeRoute?.startsWith(RoutePaths.Cart)
-                          ? 'rgba(252, 245, 227, .6)'
-                          : 'rgba(252, 245, 227, 1)'
-                      }
-                    />
-                  }
-                />
-              </div>
+              <>
+                <div className={styles['tab-button-container']}>
+                  <LanguageSwitch
+                    touchScreen={true}
+                    supportedLanguages={[LanguageCode.EN, LanguageCode.FR]}
+                    hideText={true}
+                    language={localProps.language}
+                    onChange={(value) => WindowController.updateLanguage(value)}
+                  />
+                </div>
+                <div className={styles['tab-button-container']}>
+                  <Button
+                    rippleProps={{
+                      color: 'rgba(252, 245, 227, .35)',
+                    }}
+                    disabled={props.activeRoute?.startsWith(RoutePaths.Cart)}
+                    onClick={() => setOpenMore(true)}
+                    type={'text'}
+                    rounded={true}
+                    size={'tiny'}
+                    touchScreen={true}
+                    icon={
+                      <Line.MoreVert
+                        size={24}
+                        color={
+                          props.activeRoute?.startsWith(RoutePaths.Cart)
+                            ? 'rgba(252, 245, 227, .6)'
+                            : 'rgba(252, 245, 227, 1)'
+                        }
+                      />
+                    }
+                  />
+                </div>
+              </>
             )}
             {props.isAuthenticated && (
               <>
@@ -239,7 +260,30 @@ function WindowMobileComponent(): JSX.Element {
         open={openMore}
         touchScreen={true}
         onClose={() => setOpenMore(false)}
-      />
+      >
+        <Dropdown.Item
+          onClick={() => {
+            navigate(RoutePaths.Signin);
+            setOpenMore(false);
+          }}
+        >
+          <Dropdown.Icon>
+            <Line.Login size={24} color={'#2A2A5F'} />
+          </Dropdown.Icon>
+          <span className={styles['dropdown-text']}>{t('signin')}</span>
+        </Dropdown.Item>
+        <Dropdown.Item
+          onClick={() => {
+            navigate(RoutePaths.Signup);
+            setOpenMore(false);
+          }}
+        >
+          <Dropdown.Icon>
+            <Line.PersonAdd size={24} color={'#2A2A5F'} />
+          </Dropdown.Icon>
+          <span className={styles['dropdown-text']}>{t('signup')}</span>
+        </Dropdown.Item>
+      </Dropdown>
     </div>
   );
 }

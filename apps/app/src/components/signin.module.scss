@@ -13,8 +13,13 @@
 }
 
 .root-mobile {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+
   & .content-mobile {
-    margin-top: calc(56px + 16px);
+    margin-top: $mp-8;
     margin-bottom: $mp-8;
     padding: 0 $mp-4;
   }

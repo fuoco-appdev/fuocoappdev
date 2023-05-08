@@ -13,6 +13,11 @@
 }
 
 .root-mobile {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+
   & .content-mobile {
     margin-top: calc(56px + 16px);
     margin-bottom: $mp-8;

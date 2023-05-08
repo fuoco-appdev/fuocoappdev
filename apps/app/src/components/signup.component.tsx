@@ -84,15 +84,7 @@ export default function SignupComponent(): JSX.Element {
 
   const auth = (
     <Auth
-      providers={[
-        'spotify',
-        'discord',
-        'facebook',
-        'github',
-        'google',
-        'twitch',
-        'twitter',
-      ]}
+      providers={['facebook', 'google', 'twitter']}
       view={'sign_up'}
       socialColors={true}
       strings={{
