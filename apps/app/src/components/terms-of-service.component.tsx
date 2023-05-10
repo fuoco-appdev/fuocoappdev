@@ -50,7 +50,7 @@ export default function TermsOfServiceComponent(): JSX.Element {
   const termsOfService = (
     <Auth.TermsOfService
       termsOfService={
-        <Typography tag="article">
+        <Typography tag="article" className={styles['typography']}>
           <ReactMarkdown remarkPlugins={[gfm]} children={props.markdown} />
         </Typography>
       }

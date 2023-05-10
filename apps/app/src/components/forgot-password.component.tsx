@@ -81,6 +81,23 @@ export default function ForgotPasswordComponent(): JSX.Element {
   const { origin } = window.location;
   const forgotPassword = (
     <Auth.ForgottenPassword
+      classNames={{
+        input: {
+          formLayout: {
+            label: styles['auth-input-form-layout-label'],
+          },
+          input: styles['auth-input'],
+          container: styles['auth-input-container'],
+        },
+        button: {
+          button: styles['auth-button'],
+        },
+      }}
+      rippleProps={{
+        color: 'rgba(233, 33, 66, .35)',
+      }}
+      defaultIconColor={'#2A2A5F'}
+      litIconColor={'#2A2A5F'}
       strings={{
         emailAddress: t('emailAddress') ?? '',
         yourEmailAddress: t('yourEmailAddress') ?? '',

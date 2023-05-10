@@ -8,7 +8,7 @@
   & .content-desktop {
     grid-column-start: 2;
     grid-column-end: 3;
-    margin-bottom: 10%;
+    margin-bottom: 10%; 
   }
 }
 
@@ -36,4 +36,50 @@
       margin-bottom: calc(56px + $mp-8);
     }
   }
+}
+
+.social-button {
+  background-color: transparent !important;
+  border-color: $brand-900 !important;
+  color: $brand-900 !important;
+}
+
+.social-divider:before {
+  border-color: $brand-900 !important;
+}
+
+.social-divider:after {
+  border-color: $brand-900 !important;
+}
+
+.social-divider-content {
+  color: $brand-900 !important;
+}
+
+.auth-input-form-layout-label {
+  color: $brand-900 !important;
+}
+
+.auth-input {
+  color: $brand-900 !important;
+}
+
+.auth-input-container {
+  border-color: $brand-900 !important;
+}
+
+.auth-checkbox {
+  border-color: $brand-900 !important;
+}
+
+.auth-checkbox:checked {
+  background-color: $brand-900 !important;
+}
+
+.auth-checkbox-label-container-label {
+  color: $brand-900 !important;
+}
+
+.auth-email-button {
+  background-color: $brand-700 !important;
 }

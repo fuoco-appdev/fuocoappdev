@@ -82,9 +82,48 @@ export default function SigninComponent(): JSX.Element {
 
   const auth = (
     <Auth
+      classNames={{
+        socialAuth: {
+          socialButton: {
+            button: {
+              button: styles['social-button'],
+            },
+          },
+          divider: {
+            divider: styles['social-divider'],
+            content: styles['social-divider-content'],
+          },
+        },
+        emailAuth: {
+          input: {
+            formLayout: {
+              label: styles['auth-input-form-layout-label'],
+            },
+            input: styles['auth-input'],
+            container: styles['auth-input-container'],
+          },
+          checkbox: {
+            checkbox: styles['auth-checkbox'],
+            labelContainerLabel: styles['auth-checkbox-label-container-label'],
+          },
+          emailButton: {
+            button: styles['auth-email-button'],
+          },
+        },
+      }}
+      rippleProps={{
+        socialButton: {
+          color: 'rgba(133, 38, 122, .35)',
+        },
+        submitButton: {
+          color: 'rgba(233, 33, 66, .35)',
+        },
+      }}
+      defaultIconColor={'#2A2A5F'}
+      litIconColor={'#2A2A5F'}
       providers={['facebook', 'google', 'twitter']}
       view={'sign_in'}
-      socialColors={true}
+      socialColors={false}
       strings={{
         signInWith: t('signInWith') ?? '',
         orContinueWith: t('orContinueWith') ?? '',

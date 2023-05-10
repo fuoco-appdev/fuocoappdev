@@ -49,7 +49,7 @@ export default function PrivacyPolicyComponent(): JSX.Element {
   const privacyPolicy = (
     <Auth.PrivacyPolicy
       privacyPolicy={
-        <Typography tag="article">
+        <Typography tag="article" className={styles['typography']}>
           <ReactMarkdown remarkPlugins={[gfm]} children={props.markdown} />
         </Typography>
       }
