@@ -61,7 +61,6 @@ export function ProductPreviewMobileComponent({
         .replace(/[^\d.]/g, '');
     }
     const parentRect = parentRef?.current?.getBoundingClientRect();
-    console.log(parentRect);
     const rect = ref?.current?.getBoundingClientRect();
     api.start({
       top: expanded

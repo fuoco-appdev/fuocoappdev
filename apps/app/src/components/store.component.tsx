@@ -42,6 +42,7 @@ function StoreMobileComponent(): JSX.Element {
         <div className={styles['search-container-mobile']}>
           <div className={styles['search-input-root']}>
             <Input
+              value={props.input}
               classNames={{
                 container: styles['search-input-container-mobile'],
                 input: styles['search-input-mobile'],
@@ -49,7 +50,7 @@ function StoreMobileComponent(): JSX.Element {
               placeholder={t('search') ?? ''}
               icon={<Line.Search size={24} color={'#2A2A5F'} />}
               onChange={(event) =>
-                StoreController.searchAsync(event.target.value)
+                StoreController.updateInput(event.target.value)
               }
             />
           </div>

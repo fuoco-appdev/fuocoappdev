@@ -25,11 +25,15 @@ class StoreController extends Controller {
 
   public dispose(): void {}
 
+  public updateInput(value: string) {
+    this._model.input = value;
+    this.searchAsync(value);
+  }
+
   public async searchAsync(query: string): Promise<void> {
     const result = await this._productsIndex.search(query, {
       filter: ['type_value = Wine'],
     });
-    console.log(result);
     this._model.previews = result.hits as WinePreview[];
   }
 }

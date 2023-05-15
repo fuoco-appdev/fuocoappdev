@@ -84,7 +84,7 @@
         width: 100%;
         padding-top: $mp-4;
         padding-left: $mp-4;
-        padding-bottom: calc(56px + 56px + 40px);
+        padding-bottom: calc(56px * 3);
         overflow-y: auto;
         height: 100%;
     }
