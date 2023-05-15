@@ -10,6 +10,7 @@ import styles from './product-preview.module.scss';
 import { WinePreview } from '../models/store.model';
 import { Button, Card, Line } from '@fuoco.appdev/core-ui';
 import { animated, useSpring } from 'react-spring';
+import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 
 export interface ProductPreviewProps {
   parentRef: MutableRefObject<HTMLDivElement | null>;
@@ -17,13 +18,13 @@ export interface ProductPreviewProps {
   onExpanded?: () => void;
 }
 
-export function ProductPreviewDesktopComponent({}: ProductPreviewProps): JSX.Element {
+function ProductPreviewDesktopComponent({}: ProductPreviewProps): JSX.Element {
   return (
     <div className={[styles['root'], styles['root-desktop']].join(' ')}></div>
   );
 }
 
-export function ProductPreviewMobileComponent({
+function ProductPreviewMobileComponent({
   parentRef,
   preview,
   onExpanded,
@@ -134,5 +135,20 @@ export function ProductPreviewMobileComponent({
         )}
       </animated.div>
     </Card>
+  );
+}
+
+export default function ProductPreviewComponent(
+  props: ProductPreviewProps
+): JSX.Element {
+  return (
+    <>
+      <ResponsiveDesktop>
+        <ProductPreviewMobileComponent {...props} />
+      </ResponsiveDesktop>
+      <ResponsiveMobile>
+        <ProductPreviewMobileComponent {...props} />
+      </ResponsiveMobile>
+    </>
   );
 }

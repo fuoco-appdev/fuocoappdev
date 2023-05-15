@@ -20,7 +20,7 @@ import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import LoadingComponent from './loading.component';
 import { Store } from '@ngneat/elf';
 import { WinePreview } from '../models/store.model';
-import { ProductPreviewMobileComponent } from './product-preview.component';
+import ProductPreviewComponent from './product-preview.component';
 
 function StoreDesktopComponent(): JSX.Element {
   const navigate = useNavigate();
@@ -110,7 +110,7 @@ function StoreMobileComponent(): JSX.Element {
       </div>
       <div className={styles['wine-previews-container-mobile']}>
         {props.previews.map((preview: WinePreview, index: number) => (
-          <ProductPreviewMobileComponent
+          <ProductPreviewComponent
             parentRef={rootRef}
             key={index}
             preview={preview}
