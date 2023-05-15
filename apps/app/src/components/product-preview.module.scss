@@ -1,0 +1,100 @@
+@import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
+
+.root-desktop {
+  
+}
+
+.animated-root {
+  width: 100% !important;
+  height: 100%;
+  box-shadow: $shadow-4;
+  background-color: #fff;
+}
+
+.root-mobile {
+  width: calc(50% - $mp-4) !important;
+  height: 200px;
+  background-color: $gray-100;
+  margin-right: $mp-4;
+  margin-bottom: $mp-4;
+
+    & .thumbnail-container-mobile {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      background-color: $gray-100;
+      border-top-left-radius: $mp-2;
+      border-top-right-radius: $mp-2;
+      padding: 0 $mp-2;
+      max-height: 382px;
+
+      & .thumbnail-image-mobile {
+        position: absolute;
+        padding: $mp-1 0;
+        max-height: 100%;
+        width: auto;
+        color: $brand-900;
+      }
+
+      & .thumbnail-content-container {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+        padding: $mp-2 0;
+        width: 100%;
+
+        & .thumbnail-top-content {
+
+        }
+  
+        & .thumbnail-bottom-content {
+          display: flex;
+          justify-content: flex-end;
+          flex-direction: row;
+          z-index: 1;
+
+          & .thumbnail-button {
+            background-color: $brand-900;
+          }
+        }
+      }
+    }
+
+    & .bottom-bar-mobile {
+      display: flex;
+      justify-content: space-between;
+      height: 38px;
+      width: 100%;
+      border-bottom-left-radius: $mp-2;
+      border-bottom-right-radius: $mp-2;
+      padding: $mp-1 $mp-2;
+      background-color: #fff;
+
+      & .product-title-mobile {
+        color: $brand-900;
+        font-size: $font-size-xs;
+        line-height: 32px;
+        font-weight: $font-weight-bold;
+        margin-right: $mp-2;
+      }
+
+      & .product-price-mobile {
+        color: $brand-900;
+        font-size: $font-size-xs;
+        line-height: 32px;
+        font-weight: $font-weight-bold;
+      }
+    }
+}
+
+.card-mobile {
+  display: flex;
+  flex-direction: column;
+  width: 100% !important;
+}
+
+.root {
+  border-radius: $mp-2;
+  background-color: #fff;
+  box-shadow: $shadow-2;
+}

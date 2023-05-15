@@ -101,5 +101,6 @@
   "emptyInMyApps": "Vide dans mes applications",
   "emptyInMyAppsDescription": "Après avoir discuté de vos objectifs, votre application apparaîtra ici.",
   "settingsSaved": "Paramètres enregistrés",
-  "savedDescription": "Vos modifications ont été enregistrées avec succès"
+  "savedDescription": "Vos modifications ont été enregistrées avec succès",
+  "search": "Rechercher"
 }

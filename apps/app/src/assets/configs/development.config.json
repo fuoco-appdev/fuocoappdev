@@ -2,10 +2,14 @@
   "supabase": {
     "url": "http://localhost:8000",
     "functions_url": "http://localhost:8001",
-    "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICAgInJvbGUiOiAiYW5vbiIsCiAgICAiaXNzIjogInN1cGFiYXNlIiwKICAgICJpYXQiOiAxNjc3MDQyMDAwLAogICAgImV4cCI6IDE4MzQ4MDg0MDAKfQ.elF8quqYuD91-BkXrzR2qSsLmSQaXjAcXdpdFozeqfo"
+    "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICAgInJvbGUiOiAiYW5vbiIsCiAgICAiaXNzIjogInN1cGFiYXNlIiwKICAgICJpYXQiOiAxNjgzNzc3NjAwLAogICAgImV4cCI6IDE4NDE2MzA0MDAKfQ.uKHtXlVXjFGozrOEbtTayv2Vrr5LS7eavQBiOdZekZ4"
   },
   "medusa": {
     "url": "http://localhost:9000",
-    "key": "pk_01GT0ERNN9826ZNHBP0PEJGE0N"
+    "key": "pk_01H05KWEWJ6BM4Z3HNPHFJS42E"
+  },
+  "meilisearch": {
+    "url": "http://192.168.1.12:7700",
+    "key": "CE4CF1AE6E2553818DC854BB74E22"
   }
 }

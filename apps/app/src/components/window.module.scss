@@ -19,7 +19,7 @@
     display: flex;
     height: 100%;
     width: 100%;
-    overflow-y: auto;
+    overflow-y: hidden;
   }
 
   & .bottom-bar {
@@ -29,6 +29,7 @@
     width: 100%;
     background-color: $brand-900;
     box-shadow: $shadow-6;
+    z-index: 24;
 
     & .shopping-cart-container {
       position: absolute;

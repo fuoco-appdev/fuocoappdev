@@ -51,35 +51,42 @@ function AuthenticatedComponent({
 }
 
 export default function AppComponent(): JSX.Element {
+  const rendered = useRef<boolean>(false);
   useEffect(() => {
-    LoadingController.initialize();
-    SigninController.initialize();
-    SignupController.initialize();
-    WindowController.initialize();
-    TermsOfServiceController.initialize();
-    PrivacyPolicyController.initialize();
-    ResetPasswordController.initialize();
-    AccountController.initialize();
-    HomeController.initialize();
-    StoreController.initialize();
-    EventsController.initialize();
-    CartController.initialize();
-    NotificationsController.initialize();
+    if (!rendered.current) {
+      LoadingController.initialize();
+      SigninController.initialize();
+      SignupController.initialize();
+      WindowController.initialize();
+      TermsOfServiceController.initialize();
+      PrivacyPolicyController.initialize();
+      ResetPasswordController.initialize();
+      AccountController.initialize();
+      HomeController.initialize();
+      StoreController.initialize();
+      EventsController.initialize();
+      CartController.initialize();
+      NotificationsController.initialize();
+    }
 
     return () => {
-      SigninController.dispose();
-      SignupController.dispose();
-      WindowController.dispose();
-      TermsOfServiceController.dispose();
-      PrivacyPolicyController.dispose();
-      ResetPasswordController.dispose();
-      AccountController.dispose();
-      LoadingController.dispose();
-      HomeController.dispose();
-      StoreController.dispose();
-      EventsController.dispose();
-      CartController.dispose();
-      NotificationsController.dispose();
+      if (!rendered.current) {
+        SigninController.dispose();
+        SignupController.dispose();
+        WindowController.dispose();
+        TermsOfServiceController.dispose();
+        PrivacyPolicyController.dispose();
+        ResetPasswordController.dispose();
+        AccountController.dispose();
+        LoadingController.dispose();
+        HomeController.dispose();
+        StoreController.dispose();
+        EventsController.dispose();
+        CartController.dispose();
+        NotificationsController.dispose();
+      }
+
+      rendered.current = true;
     };
   }, []);
   return (

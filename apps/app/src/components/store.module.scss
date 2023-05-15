@@ -1,0 +1,91 @@
+@import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
+
+.root-mobile {
+    width: 100%;
+
+    & .top-bar-container-mobile {
+        display: flex;
+        flex-direction: column;
+        border-bottom: .5px solid $brand-900;
+        box-shadow: $shadow-1;
+        
+        & .search-container-mobile {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            height: fit-content;
+            padding-left: $mp-4;
+            padding-right: $mp-4;
+            padding-top: $mp-4;
+        
+            & .search-input-root {
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+                padding-right: $mp-4;
+                
+                & .search-input-container-mobile {
+                    background-color: transparent;
+                    border-color: $brand-900;
+                    border-radius: $rounded-full;
+                }
+        
+                & .search-input-mobile {
+                    color: $brand-900;
+                }
+
+                & .search-input-mobile::placeholder {
+                    color: $brand-900;
+                }
+
+                & .search-input-mobile:-ms-input-placeholder {
+                    color: $brand-900;
+                }
+
+                & .search-input-mobile::-ms-input-placeholder {
+                    color: $brand-900;
+                }
+            }
+        
+            & .filter-button {
+                background-color: $brand-700;
+            }
+        }
+    
+        & .tab-container-mobile {
+            margin: 0 $mp-4;
+            overflow-x: auto;
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+    
+            & .tab-button {
+                color: $brand-900;
+                font-size: $font-size-sm;
+                font-weight: $font-weight-bold;
+            }
+    
+            & .selected-tab-button {
+                color: #fff;
+            }
+    
+            & .tab-slider-pill {
+                background-color: $brand-900;
+            }
+        }
+    
+        & .tab-container-mobile::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    & .wine-previews-container-mobile {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        padding-top: $mp-4;
+        padding-left: $mp-4;
+        padding-bottom: calc(56px + 56px + 40px);
+        overflow-y: auto;
+        height: 100%;
+    }
+}

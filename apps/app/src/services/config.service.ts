@@ -12,19 +12,27 @@ export interface MedusaConfig {
   key: string;
 }
 
+export interface MeiliSearchConfig {
+  url: string;
+  key: string;
+}
+
 class ConfigService {
   private readonly _supabase!: SupabaseConfig;
   private readonly _medusa!: MedusaConfig;
+  private readonly _meiliSearch!: MeiliSearchConfig;
 
   constructor() {
     if (process.env['NODE_ENV'] === 'development') {
       this._supabase = DevelopmentConfig.supabase;
       this._medusa = DevelopmentConfig.medusa;
+      this._meiliSearch = DevelopmentConfig.meilisearch;
     }
     // eslint-disable-next-line no-empty
     else if (process.env['NODE_ENV'] === 'production') {
       this._supabase = ProductionConfig.supabase;
       this._medusa = ProductionConfig.medusa;
+      this._meiliSearch = ProductionConfig.meilisearch;
     }
   }
 
@@ -34,6 +42,10 @@ class ConfigService {
 
   public get medusa(): MedusaConfig {
     return this._medusa;
+  }
+
+  public get meilisearch(): MeiliSearchConfig {
+    return this._meiliSearch;
   }
 }
 
