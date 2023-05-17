@@ -8,6 +8,7 @@ export enum RoutePaths {
   PrivacyPolicy = '/privacy-policy',
   ResetPassword = '/reset-password',
   Store = '/store',
+  StoreWithId = '/store/:id',
   Events = '/events',
   Notifications = '/notifications',
   Cart = '/cart',

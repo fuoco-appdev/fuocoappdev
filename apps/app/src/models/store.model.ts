@@ -31,6 +31,7 @@ export interface WinePreview {
 export interface StoreState {
   previews: WinePreview[];
   input: string;
+  selectedPreview: WinePreview | null;
 }
 
 export class StoreModel extends Model {
@@ -41,6 +42,7 @@ export class StoreModel extends Model {
         withProps<StoreState>({
           previews: [],
           input: '',
+          selectedPreview: null,
         })
       )
     );
@@ -63,6 +65,16 @@ export class StoreModel extends Model {
   public set input(value: string) {
     if (this.input !== value) {
       this.store.update((state) => ({ ...state, input: value }));
+    }
+  }
+
+  public get selectedPreview(): WinePreview {
+    return this.store.getValue().selectedPreview;
+  }
+
+  public set selectedPreview(value: WinePreview) {
+    if (JSON.stringify(this.selectedPreview) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, selectedPreview: value }));
     }
   }
 }

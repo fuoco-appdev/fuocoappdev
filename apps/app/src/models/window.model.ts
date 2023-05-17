@@ -16,6 +16,7 @@ export interface WindowState {
   authState: AuthChangeEvent | undefined;
   isLoading: boolean;
   toasts: ToastProps[];
+  showNavigateBack: boolean;
 }
 
 export interface WindowLocalState {
@@ -38,6 +39,7 @@ export class WindowModel extends Model {
           authState: undefined,
           isLoading: false,
           toasts: [],
+          showNavigateBack: false,
         })
       ),
       undefined,
@@ -164,6 +166,19 @@ export class WindowModel extends Model {
       this.store.update((state) => ({
         ...state,
         toasts: value,
+      }));
+    }
+  }
+
+  public get showNavigateBack(): boolean {
+    return this.store.getValue().showNavigateBack;
+  }
+
+  public set showNavigateBack(value: boolean) {
+    if (this.showNavigateBack !== value) {
+      this.store.update((state) => ({
+        ...state,
+        showNavigateBack: value,
       }));
     }
   }

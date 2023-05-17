@@ -84,43 +84,42 @@ class WindowController extends Controller {
   }
 
   public updateOnLocationChanged(location: Location): void {
-    switch (location.pathname) {
-      case RoutePaths.Home:
-        this._model.activeRoute = RoutePaths.Home;
-        break;
-      case RoutePaths.Store:
-        this._model.activeRoute = RoutePaths.Store;
-        break;
-      case RoutePaths.Events:
-        this._model.activeRoute = RoutePaths.Events;
-        break;
-      case RoutePaths.Cart:
-        this._model.activeRoute = RoutePaths.Cart;
-        break;
-      case RoutePaths.Signin:
-        this._model.activeRoute = RoutePaths.Signin;
-        break;
-      case RoutePaths.Signup:
-        this._model.activeRoute = RoutePaths.Signup;
-        break;
-      case RoutePaths.ForgotPassword:
-        this._model.activeRoute = RoutePaths.ForgotPassword;
-        break;
-      case RoutePaths.ResetPassword:
-        this._model.activeRoute = RoutePaths.ResetPassword;
-        break;
-      case RoutePaths.TermsOfService:
-        this._model.activeRoute = RoutePaths.TermsOfService;
-        break;
-      case RoutePaths.PrivacyPolicy:
-        this._model.activeRoute = RoutePaths.PrivacyPolicy;
-        break;
-      case RoutePaths.Account:
-        this._model.activeRoute = RoutePaths.Account;
-        break;
-      default:
-        this._model.activeRoute = RoutePaths.Default;
-        break;
+    if (location.pathname === RoutePaths.Home) {
+      this._model.activeRoute = RoutePaths.Home;
+      this._model.showNavigateBack = false;
+    } else if (location.pathname === RoutePaths.Store) {
+      this._model.activeRoute = RoutePaths.Store;
+      this._model.showNavigateBack = false;
+    } else if (location.pathname.startsWith(`${RoutePaths.Store}/`)) {
+      this._model.activeRoute = RoutePaths.StoreWithId;
+      this._model.showNavigateBack = true;
+    } else if (location.pathname === RoutePaths.Events) {
+      this._model.activeRoute = RoutePaths.Events;
+      this._model.showNavigateBack = false;
+    } else if (location.pathname === RoutePaths.Cart) {
+      this._model.activeRoute = RoutePaths.Cart;
+      this._model.showNavigateBack = false;
+    } else if (location.pathname === RoutePaths.Signin) {
+      this._model.activeRoute = RoutePaths.Signin;
+      this._model.showNavigateBack = false;
+    } else if (location.pathname === RoutePaths.Signup) {
+      this._model.activeRoute = RoutePaths.Signup;
+      this._model.showNavigateBack = false;
+    } else if (location.pathname === RoutePaths.ForgotPassword) {
+      this._model.activeRoute = RoutePaths.ForgotPassword;
+      this._model.showNavigateBack = false;
+    } else if (location.pathname === RoutePaths.ResetPassword) {
+      this._model.activeRoute = RoutePaths.ResetPassword;
+      this._model.showNavigateBack = false;
+    } else if (location.pathname === RoutePaths.TermsOfService) {
+      this._model.activeRoute = RoutePaths.TermsOfService;
+      this._model.showNavigateBack = false;
+    } else if (location.pathname === RoutePaths.PrivacyPolicy) {
+      this._model.activeRoute = RoutePaths.PrivacyPolicy;
+      this._model.showNavigateBack = false;
+    } else if (location.pathname === RoutePaths.Account) {
+      this._model.activeRoute = RoutePaths.Account;
+      this._model.showNavigateBack = false;
     }
   }
 

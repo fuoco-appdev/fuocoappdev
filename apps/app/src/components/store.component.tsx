@@ -114,6 +114,12 @@ function StoreMobileComponent(): JSX.Element {
             parentRef={rootRef}
             key={index}
             preview={preview}
+            onClick={() => {
+              StoreController.updateSelectedPreview(preview);
+            }}
+            onRest={() => {
+              navigate(`${RoutePaths.Store}/${preview.id}`);
+            }}
           />
         ))}
       </div>

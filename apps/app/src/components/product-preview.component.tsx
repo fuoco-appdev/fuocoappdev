@@ -15,7 +15,8 @@ import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 export interface ProductPreviewProps {
   parentRef: MutableRefObject<HTMLDivElement | null>;
   preview: WinePreview;
-  onExpanded?: () => void;
+  onClick?: () => void;
+  onRest?: () => void;
 }
 
 function ProductPreviewDesktopComponent({}: ProductPreviewProps): JSX.Element {
@@ -27,7 +28,8 @@ function ProductPreviewDesktopComponent({}: ProductPreviewProps): JSX.Element {
 function ProductPreviewMobileComponent({
   parentRef,
   preview,
-  onExpanded,
+  onClick,
+  onRest,
 }: ProductPreviewProps): JSX.Element {
   const ref = useRef<HTMLDivElement | null>(null);
   const [expanded, setExpanded] = useState<boolean>(false);
@@ -47,8 +49,8 @@ function ProductPreviewMobileComponent({
       borderRadius: 0,
     },
     config: {
-      tension: 800,
-      friction: 70,
+      tension: 1000,
+      friction: 55,
       bounce: 0,
     },
   }));
@@ -73,7 +75,11 @@ function ProductPreviewMobileComponent({
       height: expanded ? parentRect?.height : rect?.height ?? 0,
       width: expanded ? parentRect?.left : rect?.width ?? 0,
       borderRadius: expanded ? 0 : Number(borderRadius ?? 0),
-      onRest: onExpanded,
+      onRest: () => {
+        if (expanded) {
+          onRest?.();
+        }
+      },
     });
   }, [expanded]);
 
@@ -88,7 +94,10 @@ function ProductPreviewMobileComponent({
         color: 'rgba(133, 38, 122, .35)',
       }}
       clickable={true}
-      onClick={() => setTimeout(() => setExpanded(true), 150)}
+      onClick={() => {
+        onClick?.();
+        setTimeout(() => setExpanded(true), 150);
+      }}
     >
       <animated.div
         className={[

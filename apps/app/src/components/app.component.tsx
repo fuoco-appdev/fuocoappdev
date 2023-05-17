@@ -15,6 +15,7 @@ import PrivacyPolicyController from '../controllers/privacy-policy.controller';
 import LoadingController from '../controllers/loading.controller';
 import ResetPasswordController from '../controllers/reset-password.controller';
 import AccountController from '../controllers/account.controller';
+import ProductController from '../controllers/product.controller';
 import WindowComponent from './window.component';
 import SigninComponent from './signin.component';
 import SignupComponent from './signup.component';
@@ -24,7 +25,6 @@ import TermsOfServiceComponent from './terms-of-service.component';
 import PrivacyPolicyComponent from './privacy-policy.component';
 import AccountComponent from './account.component';
 import { RoutePaths } from '../route-paths';
-import { useObservable } from '@ngneat/use-observable';
 import SupabaseService from '../services/supabase.service';
 import HomeComponent from './home.component';
 import StoreComponent from './store.component';
@@ -35,6 +35,7 @@ import AccountEventsComponent from './account-events.component';
 import AccountOrderHistoryComponent from './account-order-history.component';
 import AccountAddressesComponent from './account-addresses.component';
 import AccountSettingsComponent from './account-settings.component';
+import ProductComponent from './product.component';
 
 interface RouteElementProps {
   element: JSX.Element;
@@ -51,42 +52,37 @@ function AuthenticatedComponent({
 }
 
 export default function AppComponent(): JSX.Element {
-  const rendered = useRef<boolean>(false);
   useEffect(() => {
-    if (!rendered.current) {
-      LoadingController.initialize();
-      SigninController.initialize();
-      SignupController.initialize();
-      WindowController.initialize();
-      TermsOfServiceController.initialize();
-      PrivacyPolicyController.initialize();
-      ResetPasswordController.initialize();
-      AccountController.initialize();
-      HomeController.initialize();
-      StoreController.initialize();
-      EventsController.initialize();
-      CartController.initialize();
-      NotificationsController.initialize();
-    }
+    LoadingController.initialize();
+    SigninController.initialize();
+    SignupController.initialize();
+    WindowController.initialize();
+    TermsOfServiceController.initialize();
+    PrivacyPolicyController.initialize();
+    ResetPasswordController.initialize();
+    AccountController.initialize();
+    HomeController.initialize();
+    StoreController.initialize();
+    EventsController.initialize();
+    CartController.initialize();
+    NotificationsController.initialize();
+    ProductController.initialize();
 
     return () => {
-      if (!rendered.current) {
-        SigninController.dispose();
-        SignupController.dispose();
-        WindowController.dispose();
-        TermsOfServiceController.dispose();
-        PrivacyPolicyController.dispose();
-        ResetPasswordController.dispose();
-        AccountController.dispose();
-        LoadingController.dispose();
-        HomeController.dispose();
-        StoreController.dispose();
-        EventsController.dispose();
-        CartController.dispose();
-        NotificationsController.dispose();
-      }
-
-      rendered.current = true;
+      SigninController.dispose();
+      SignupController.dispose();
+      WindowController.dispose();
+      TermsOfServiceController.dispose();
+      PrivacyPolicyController.dispose();
+      ResetPasswordController.dispose();
+      AccountController.dispose();
+      LoadingController.dispose();
+      HomeController.dispose();
+      StoreController.dispose();
+      EventsController.dispose();
+      CartController.dispose();
+      NotificationsController.dispose();
+      ProductController.dispose();
     };
   }, []);
   return (
@@ -120,6 +116,10 @@ export default function AppComponent(): JSX.Element {
             element={<ResetPasswordComponent />}
           />
           <Route path={RoutePaths.Store} element={<StoreComponent />} />
+          <Route
+            path={`${RoutePaths.Store}/:id`}
+            element={<ProductComponent />}
+          />
           <Route path={RoutePaths.Events} element={<EventsComponent />} />
           <Route path={RoutePaths.Cart} element={<CartComponent />} />
           <Route

@@ -25,9 +25,13 @@ class StoreController extends Controller {
 
   public dispose(): void {}
 
-  public updateInput(value: string) {
+  public updateInput(value: string): void {
     this._model.input = value;
     this.searchAsync(value);
+  }
+
+  public updateSelectedPreview(value: WinePreview): void {
+    this._model.selectedPreview = value;
   }
 
   public async searchAsync(query: string): Promise<void> {
