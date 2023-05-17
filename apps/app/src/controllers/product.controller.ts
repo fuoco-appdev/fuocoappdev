@@ -43,6 +43,11 @@ class ProductController extends Controller {
     this._model.thumbnail = product.thumbnail ?? '';
     this._model.title = product.title ?? '';
     this._model.subtitle = product.subtitle ?? '';
+    this._model.description = product.description ?? '';
+  }
+
+  public updateIsLiked(value: boolean): void {
+    this._model.isLiked = value;
   }
 }
 

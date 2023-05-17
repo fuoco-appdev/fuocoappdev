@@ -5,6 +5,7 @@
 }
 
 .root-mobile {
+    overflow-y: auto;
     width: 100%;
 
     & .thumbnail-container-mobile {
@@ -25,7 +26,10 @@
   }
 
   & .content-mobile {
-    padding: $mp-4;
+    padding-top: $mp-2;
+    padding-left: $mp-4;
+    padding-right: $mp-4;
+    padding-bottom: $mp-4;
 
     & .header-container-mobile {
       display: flex;
@@ -33,17 +37,48 @@
       justify-content: space-between;
 
       & .title-container-mobile {
+        margin-top: $mp-3;
+        margin-bottom: $mp-3;
+
         & .title {
           color: $brand-900;
-          font-size: 15pt;
+          font-size: 14pt;
           font-weight: $font-weight-bold;
           margin-bottom: $mp-2;
         }
 
         & .subtitle {
           color: $brand-900;
-          font-size: 13pt;
+          font-size: 12pt;
           font-weight: $font-weight-bold;
+        }
+      }
+
+      & .like-container-mobile {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: fit-content;
+
+        & .like-count-mobile {
+          font-size: $font-size-sm;
+          font-weight: $font-weight-bold;
+          margin-right: $mp-1;
+        }
+      }
+    }
+
+    & .description-container-mobile {
+      font-size: $font-size-sm;
+      color: $brand-900;
+
+      & .show-more-container-mobile {
+        width: 100%;
+        text-align: end;
+
+        & .show-more-link {
+          font-weight: $font-weight-bold;
+          -webkit-tap-highlight-color: transparent;
         }
       }
     }

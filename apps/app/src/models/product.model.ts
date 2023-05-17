@@ -5,6 +5,9 @@ export interface ProductState {
   thumbnail: string;
   title: string;
   subtitle: string;
+  isLiked: boolean;
+  likeCount: number;
+  description: string;
 }
 
 export class ProductModel extends Model {
@@ -16,6 +19,9 @@ export class ProductModel extends Model {
           thumbnail: '',
           title: '',
           subtitle: '',
+          isLiked: false,
+          likeCount: 0,
+          description: '',
         })
       )
     );
@@ -48,6 +54,36 @@ export class ProductModel extends Model {
   public set subtitle(value: string) {
     if (this.subtitle !== value) {
       this.store.update((state) => ({ ...state, subtitle: value }));
+    }
+  }
+
+  public get isLiked(): boolean {
+    return this.store.getValue().isLiked;
+  }
+
+  public set isLiked(value: boolean) {
+    if (this.isLiked !== value) {
+      this.store.update((state) => ({ ...state, isLiked: value }));
+    }
+  }
+
+  public get likeCount(): number {
+    return this.store.getValue().likeCount;
+  }
+
+  public set likeCount(value: number) {
+    if (this.likeCount !== value) {
+      this.store.update((state) => ({ ...state, likeCount: value }));
+    }
+  }
+
+  public get description(): string {
+    return this.store.getValue().description;
+  }
+
+  public set description(value: string) {
+    if (this.description !== value) {
+      this.store.update((state) => ({ ...state, description: value }));
     }
   }
 }
