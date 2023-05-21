@@ -81,7 +81,7 @@ function StoreMobileComponent(): JSX.Element {
             type={'pills'}
             tabs={[
               {
-                id: 'best-of',
+                id: 'best',
                 label: 'Best of',
               },
               {
@@ -97,12 +97,12 @@ function StoreMobileComponent(): JSX.Element {
                 label: 'Red',
               },
               {
-                id: 'dessert',
-                label: 'Dessert',
+                id: 'rose',
+                label: 'Rosé',
               },
               {
-                id: 'chocolate',
-                label: 'Chocolate',
+                id: 'spirits',
+                label: 'Spirits',
               },
             ]}
           />

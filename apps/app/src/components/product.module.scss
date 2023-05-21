@@ -38,7 +38,6 @@
 
       & .title-container-mobile {
         margin-top: $mp-3;
-        margin-bottom: $mp-3;
 
         & .title {
           color: $brand-900;
@@ -82,9 +81,46 @@
         }
       }
     }
+
+    & .price-mobile {
+      font-size: 14pt;
+      color: $brand-900;
+      font-weight: $font-weight-bold;
+      margin-bottom: $mp-2;
+      text-transform: uppercase;
+    }
+
+    & .tags-container-mobile {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: $mp-2;
+
+      & .tag-mobile {
+        border-radius: $rounded-full;
+        padding: $mp-2 $mp-4;
+        background-color: $brand-900;
+        font-size: $font-size-sm;
+        margin-right: $mp-1;
+        margin-bottom: $mp-1;
+        color: #fff;
+      }
+    }
+
+    & .tab-container-mobile {
+
+    }
   }
 }
 
 .root {
 
+}
+
+.tab-button {
+  color: $brand-900 !important;
+  font-weight: $font-weight-bold;
+}
+
+.tab-outline {
+  background-color: $brand-900 !important;
 }

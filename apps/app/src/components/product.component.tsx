@@ -1,4 +1,4 @@
-import { Auth, Typography, Button } from '@fuoco.appdev/core-ui';
+import { Auth, Typography, Button, Tabs } from '@fuoco.appdev/core-ui';
 import { Line } from '@fuoco.appdev/core-ui';
 import { useObservable } from '@ngneat/use-observable';
 import styles from './product.module.scss';
@@ -10,6 +10,8 @@ import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { ProductOption, ProductTag } from '../models/product.model';
+import { TabProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/tabs/tabs';
 
 export interface ProductProps {}
 
@@ -24,12 +26,32 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
   const [showMore, setShowMore] = useState<boolean>(false);
   const [disableShowMore, setDisableShowMore] = useState<boolean>(false);
   const [description, setDescription] = useState<string>('');
+  const [tabs, setTabs] = useState<TabProps[]>([]);
+  const [activeVariant, setActiveVariant] = useState<string | undefined>();
   const { id } = useParams();
   const { t } = useTranslation();
 
   useEffect(() => {
     ProductController.requestProductAsync(id ?? '');
   }, []);
+
+  useEffect(() => {
+    let tabProps: TabProps[] = [];
+    const vintageOption = props.options.find(
+      (value: ProductOption) => value.title === 'Vintage'
+    );
+    if (vintageOption) {
+      for (const variant of vintageOption.values) {
+        tabProps.push({ id: variant.variant_id, label: variant.value });
+      }
+      tabProps = tabProps.sort();
+      setTabs(tabProps);
+
+      const selectedVariant = tabProps.length > 0 ? tabProps[0].id : undefined;
+      setActiveVariant(selectedVariant);
+      ProductController.updateSelectedVariant(selectedVariant ?? '');
+    }
+  }, [props.options]);
 
   useEffect(() => {
     if (props.description.length < 356) {
@@ -101,6 +123,26 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
               </Typography.Link>
             </div>
           )}
+        </div>
+        <div className={styles['price-mobile']}>{props.price}</div>
+        <div className={styles['tags-container-mobile']}>
+          {props.tags.map((value: ProductTag) => (
+            <div className={styles['tag-mobile']}>{value.value}</div>
+          ))}
+        </div>
+        <div className={styles['tab-container-mobile']}>
+          <Tabs
+            flex={true}
+            classNames={{
+              tabButton: styles['tab-button'],
+              tabOutline: styles['tab-outline'],
+            }}
+            type={'underlined'}
+            tabs={tabs}
+            touchScreen={true}
+            activeId={activeVariant}
+            onChange={ProductController.updateSelectedVariant}
+          />
         </div>
       </div>
     </div>

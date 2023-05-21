@@ -5,11 +5,11 @@
     "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICAgInJvbGUiOiAiYW5vbiIsCiAgICAiaXNzIjogInN1cGFiYXNlIiwKICAgICJpYXQiOiAxNjgzNzc3NjAwLAogICAgImV4cCI6IDE4NDE2MzA0MDAKfQ.uKHtXlVXjFGozrOEbtTayv2Vrr5LS7eavQBiOdZekZ4"
   },
   "medusa": {
-    "url": "http://192.168.2.52:9000",
+    "url": "http://192.168.100.15:9000",
     "key": "pk_01H05KWEWJ6BM4Z3HNPHFJS42E"
   },
   "meilisearch": {
-    "url": "http://192.168.2.52:7700",
+    "url": "http://192.168.100.15:7700",
     "key": "CE4CF1AE6E2553818DC854BB74E22"
   }
 }

@@ -1,6 +1,33 @@
 import { createStore, withProps } from '@ngneat/elf';
 import { Model } from '../model';
 
+export interface ProductTag {
+  value: string;
+  metadata: Record<string, unknown>;
+}
+
+export interface ProductPrice {
+  amount?: number;
+  currency_code?: string;
+  region_id?: string;
+  variant_id?: string;
+}
+
+export interface PricedVariant {
+  id?: string;
+  title?: string;
+  options?: ProductOption[];
+  prices?: ProductPrice[];
+  inventory_quantity?: number;
+}
+
+export interface ProductOption {
+  id?: string;
+  product_id?: string;
+  title?: string;
+  value?: string;
+}
+
 export interface ProductState {
   thumbnail: string;
   title: string;
@@ -8,6 +35,11 @@ export interface ProductState {
   isLiked: boolean;
   likeCount: number;
   description: string;
+  price: string;
+  tags: ProductTag[];
+  options: ProductOption[];
+  variants: PricedVariant[];
+  selectedVariant: PricedVariant | undefined;
 }
 
 export class ProductModel extends Model {
@@ -22,6 +54,11 @@ export class ProductModel extends Model {
           isLiked: false,
           likeCount: 0,
           description: '',
+          price: '',
+          tags: [],
+          options: [],
+          variants: [],
+          selectedVariant: undefined,
         })
       )
     );
@@ -84,6 +121,56 @@ export class ProductModel extends Model {
   public set description(value: string) {
     if (this.description !== value) {
       this.store.update((state) => ({ ...state, description: value }));
+    }
+  }
+
+  public get price(): string {
+    return this.store.getValue().price;
+  }
+
+  public set price(value: string) {
+    if (this.price !== value) {
+      this.store.update((state) => ({ ...state, price: value }));
+    }
+  }
+
+  public get tags(): ProductTag[] {
+    return this.store.getValue().tags;
+  }
+
+  public set tags(value: ProductTag[]) {
+    if (JSON.stringify(this.tags) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, tags: value }));
+    }
+  }
+
+  public get options(): ProductOption[] {
+    return this.store.getValue().options;
+  }
+
+  public set options(value: ProductOption[]) {
+    if (JSON.stringify(this.options) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, options: value }));
+    }
+  }
+
+  public get variants(): PricedVariant[] {
+    return this.store.getValue().variants;
+  }
+
+  public set variants(value: PricedVariant[]) {
+    if (JSON.stringify(this.variants) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, variants: value }));
+    }
+  }
+
+  public get selectedVariant(): PricedVariant | undefined {
+    return this.store.getValue().selectedVariant;
+  }
+
+  public set selectedVariant(value: PricedVariant | undefined) {
+    if (JSON.stringify(this.selectedVariant) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, selectedVariant: value }));
     }
   }
 }
