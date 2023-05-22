@@ -104,5 +104,17 @@
   "savedDescription": "Your changes have been successfully saved",
   "search": "Search",
   "showMore": "Show more",
-  "showLess": "Show less"
+  "showLess": "Show less",
+  "format": "Format",
+  "code": "Code",
+  "residualSugar": "Residual sugar",
+  "vintage": "Vintage",
+  "type": "Type",
+  "brand": "Brand",
+  "uvc": "UVC",
+  "alcohol": "Alcohol",
+  "region": "Region",
+  "addToCart": "Add to cart",
+  "outOfStock": "Out of stock",
+  "inStock": "in stock"
 }

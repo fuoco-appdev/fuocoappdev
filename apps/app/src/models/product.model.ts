@@ -1,6 +1,18 @@
 import { createStore, withProps } from '@ngneat/elf';
 import { Model } from '../model';
 
+export enum ProductOptions {
+  Alcohol = 'Alcohol',
+  Brand = 'Brand',
+  Code = 'Code',
+  Format = 'Format',
+  Region = 'Region',
+  ResidualSugar = 'Residual Sugar',
+  Type = 'Type',
+  UVC = 'UVC',
+  Vintage = 'Vintage',
+}
+
 export interface ProductTag {
   value: string;
   metadata: Record<string, unknown>;
@@ -26,6 +38,13 @@ export interface ProductOption {
   product_id?: string;
   title?: string;
   value?: string;
+  variant_id?: string;
+  option_id?: string;
+}
+
+export interface ProductMetadata {
+  brand?: string;
+  region?: string;
 }
 
 export interface ProductState {
@@ -39,6 +58,7 @@ export interface ProductState {
   tags: ProductTag[];
   options: ProductOption[];
   variants: PricedVariant[];
+  metadata: ProductMetadata;
   selectedVariant: PricedVariant | undefined;
 }
 
@@ -53,11 +73,12 @@ export class ProductModel extends Model {
           subtitle: '',
           isLiked: false,
           likeCount: 0,
-          description: '',
+          description: new Array(355).join(' '),
           price: '',
           tags: [],
           options: [],
           variants: [],
+          metadata: {},
           selectedVariant: undefined,
         })
       )
@@ -161,6 +182,16 @@ export class ProductModel extends Model {
   public set variants(value: PricedVariant[]) {
     if (JSON.stringify(this.variants) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, variants: value }));
+    }
+  }
+
+  public get metadata(): ProductMetadata {
+    return this.store.getValue().metadata;
+  }
+
+  public set metadata(value: ProductMetadata) {
+    if (JSON.stringify(this.metadata) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, metadata: value }));
     }
   }
 

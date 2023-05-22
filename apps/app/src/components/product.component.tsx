@@ -1,4 +1,4 @@
-import { Auth, Typography, Button, Tabs } from '@fuoco.appdev/core-ui';
+import { Auth, Typography, Button, Tabs, Solid } from '@fuoco.appdev/core-ui';
 import { Line } from '@fuoco.appdev/core-ui';
 import { useObservable } from '@ngneat/use-observable';
 import styles from './product.module.scss';
@@ -10,7 +10,11 @@ import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ProductOption, ProductTag } from '../models/product.model';
+import {
+  ProductOption,
+  ProductOptions,
+  ProductTag,
+} from '../models/product.model';
 import { TabProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/tabs/tabs';
 
 export interface ProductProps {}
@@ -28,6 +32,15 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
   const [description, setDescription] = useState<string>('');
   const [tabs, setTabs] = useState<TabProps[]>([]);
   const [activeVariant, setActiveVariant] = useState<string | undefined>();
+  const [alcohol, setAlcohol] = useState<string | undefined>('');
+  const [brand, setBrand] = useState<string | undefined>('');
+  const [code, setCode] = useState<string | undefined>('');
+  const [format, setFormat] = useState<string | undefined>('');
+  const [region, setRegion] = useState<string | undefined>('');
+  const [residualSugar, setResidualSugar] = useState<string | undefined>('');
+  const [type, setType] = useState<string | undefined>('');
+  const [uvc, setUVC] = useState<string | undefined>('');
+  const [vintage, setVintage] = useState<string | undefined>('');
   const { id } = useParams();
   const { t } = useTranslation();
 
@@ -38,7 +51,7 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
   useEffect(() => {
     let tabProps: TabProps[] = [];
     const vintageOption = props.options.find(
-      (value: ProductOption) => value.title === 'Vintage'
+      (value: ProductOption) => value.title === ProductOptions.Vintage
     );
     if (vintageOption) {
       for (const variant of vintageOption.values) {
@@ -52,6 +65,64 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
       ProductController.updateSelectedVariant(selectedVariant ?? '');
     }
   }, [props.options]);
+
+  useEffect(() => {
+    const alcoholOption = ProductController.model.options.find(
+      (value) => value.title === ProductOptions.Alcohol
+    );
+    const codeOption = ProductController.model.options.find(
+      (value) => value.title === ProductOptions.Code
+    );
+    const formatOption = ProductController.model.options.find(
+      (value) => value.title === ProductOptions.Format
+    );
+    const residualSugarOption = ProductController.model.options.find(
+      (value) => value.title === ProductOptions.ResidualSugar
+    );
+    const typeOption = ProductController.model.options.find(
+      (value) => value.title === ProductOptions.Type
+    );
+    const uvcOption = ProductController.model.options.find(
+      (value) => value.title === ProductOptions.UVC
+    );
+    const vintageOption = ProductController.model.options.find(
+      (value) => value.title === ProductOptions.Vintage
+    );
+
+    if (props.selectedVariant?.options) {
+      const alcoholValue = props.selectedVariant.options.find(
+        (value: ProductOption) => value.option_id === alcoholOption?.id
+      );
+      const codeValue = props.selectedVariant.options.find(
+        (value: ProductOption) => value.option_id === codeOption?.id
+      );
+      const formatValue = props.selectedVariant.options.find(
+        (value: ProductOption) => value.option_id === formatOption?.id
+      );
+      const residualSugarValue = props.selectedVariant.options.find(
+        (value: ProductOption) => value.option_id === residualSugarOption?.id
+      );
+      const typeValue = props.selectedVariant.options.find(
+        (value: ProductOption) => value.option_id === typeOption?.id
+      );
+      const uvcValue = props.selectedVariant.options.find(
+        (value: ProductOption) => value.option_id === uvcOption?.id
+      );
+      const vintageValue = props.selectedVariant.options.find(
+        (value: ProductOption) => value.option_id === vintageOption?.id
+      );
+
+      setAlcohol(alcoholValue?.value);
+      setBrand(props.metadata?.brand);
+      setCode(codeValue?.value);
+      setFormat(formatValue?.value);
+      setRegion(props.metadata?.region);
+      setResidualSugar(residualSugarValue?.value);
+      setType(typeValue?.value);
+      setUVC(uvcValue?.value);
+      setVintage(vintageValue?.value);
+    }
+  }, [props.selectedVariant, props.metadata]);
 
   useEffect(() => {
     if (props.description.length < 356) {
@@ -124,7 +195,12 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
             </div>
           )}
         </div>
-        <div className={styles['price-mobile']}>{props.price}</div>
+        <div className={styles['price-mobile']}>
+          {props.price} &nbsp;
+          <span className={styles['inventory-quantity-mobile']}>
+            ({props.selectedVariant?.inventory_quantity}&nbsp;{t('inStock')})
+          </span>
+        </div>
         <div className={styles['tags-container-mobile']}>
           {props.tags.map((value: ProductTag) => (
             <div className={styles['tag-mobile']}>{value.value}</div>
@@ -143,7 +219,68 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
             activeId={activeVariant}
             onChange={ProductController.updateSelectedVariant}
           />
+          <div className={styles['options-container-mobile']}>
+            <div className={styles['option-content-mobile']}>
+              <div className={styles['option-title-mobile']}>
+                {t('alcohol')}
+              </div>
+              <div className={styles['option-value-mobile']}>{alcohol}</div>
+            </div>
+            <div className={styles['option-content-mobile']}>
+              <div className={styles['option-title-mobile']}>{t('brand')}</div>
+              <div className={styles['option-value-mobile']}>{brand}</div>
+            </div>
+            <div className={styles['option-content-mobile']}>
+              <div className={styles['option-title-mobile']}>{t('code')}</div>
+              <div className={styles['option-value-mobile']}>{code}</div>
+            </div>
+            <div className={styles['option-content-mobile']}>
+              <div className={styles['option-title-mobile']}>{t('format')}</div>
+              <div className={styles['option-value-mobile']}>{format}</div>
+            </div>
+            <div className={styles['option-content-mobile']}>
+              <div className={styles['option-title-mobile']}>{t('region')}</div>
+              <div className={styles['option-value-mobile']}>{region}</div>
+            </div>
+            <div className={styles['option-content-mobile']}>
+              <div className={styles['option-title-mobile']}>
+                {t('residualSugar')}
+              </div>
+              <div className={styles['option-value-mobile']}>
+                {residualSugar}
+              </div>
+            </div>
+            <div className={styles['option-content-mobile']}>
+              <div className={styles['option-title-mobile']}>{t('type')}</div>
+              <div className={styles['option-value-mobile']}>{type}</div>
+            </div>
+            <div className={styles['option-content-mobile']}>
+              <div className={styles['option-title-mobile']}>{t('uvc')}</div>
+              <div className={styles['option-value-mobile']}>{uvc}</div>
+            </div>
+            <div className={styles['option-content-mobile']}>
+              <div className={styles['option-title-mobile']}>
+                {t('vintage')}
+              </div>
+              <div className={styles['option-value-mobile']}>{vintage}</div>
+            </div>
+          </div>
         </div>
+        <Button
+          classNames={{ button: styles['add-to-cart-button-mobile'] }}
+          block={true}
+          size={'full'}
+          rippleProps={{
+            color: 'rgba(233, 33, 66, .35)',
+          }}
+          icon={<Line.AddShoppingCart size={24} />}
+          disabled={props.selectedVariant?.inventory_quantity < 0}
+          onClick={() => ProductController.addToCartAsync()}
+        >
+          {props.selectedVariant?.inventory_quantity > 0
+            ? t('addToCart')
+            : t('outOfStock')}
+        </Button>
       </div>
     </div>
   );

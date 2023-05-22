@@ -3,6 +3,7 @@ import { Subscription } from 'rxjs';
 import { Controller } from '../controller';
 import {
   PricedVariant,
+  ProductMetadata,
   ProductModel,
   ProductPrice,
 } from '../models/product.model';
@@ -10,6 +11,7 @@ import { select } from '@ngneat/elf';
 import { StoreModel, StoreState, WinePreview } from '../models/store.model';
 import StoreController from './store.controller';
 import MedusaService from '../services/medusa.service';
+import i18n from '../i18n';
 
 class ProductController extends Controller {
   private readonly _model: ProductModel;
@@ -53,6 +55,10 @@ class ProductController extends Controller {
     this._model.tags = product.tags ?? [];
     this._model.options = product.options ?? [];
     this._model.variants = product.variants ?? [];
+    if (product.metadata?.['specs']) {
+      this._model.metadata =
+        (product.metadata['specs'] as ProductMetadata) ?? {};
+    }
   }
 
   public updateIsLiked(value: boolean): void {
@@ -62,12 +68,15 @@ class ProductController extends Controller {
   public updateSelectedVariant(id: string): void {
     const variant = this._model.variants.find((value) => value.id === id);
     this._model.selectedVariant = variant;
+    console.log(variant);
 
     // Change based on selected region
     if (variant?.prices) {
       this._model.price = this.formatPrice(variant?.prices[0]);
     }
   }
+
+  public async addToCartAsync(): Promise<void> {}
 
   private formatPrice(price: ProductPrice): string {
     if (!price.amount) {
@@ -76,9 +85,13 @@ class ProductController extends Controller {
 
     let value = price.amount.toString();
     let charList = value.split('');
-    charList.splice(-2, 0, ',');
+    charList.splice(-2, 0, '.');
     value = charList.join('');
-    return `${value} ${price.currency_code}`;
+
+    return new Intl.NumberFormat(i18n.language, {
+      style: 'currency',
+      currency: price.currency_code,
+    }).format(Number(value));
   }
 }
 

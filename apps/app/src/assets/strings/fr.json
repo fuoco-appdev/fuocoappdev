@@ -104,5 +104,17 @@
   "savedDescription": "Vos modifications ont été enregistrées avec succès",
   "search": "Rechercher",
   "showMore": "Voir plus",
-  "showLess": "Voir moins"
+  "showLess": "Voir moins",
+  "format": "Format",
+  "code": "Code",
+  "residualSugar": "Sucre résiduel",
+  "vintage": "Mille",
+  "type": "Sorte",
+  "brand": "Marque",
+  "uvc": "UVC",
+  "alcohol": "Alcool",
+  "region": "Région",
+  "addToCart": "Ajouter au panier",
+  "outOfStock": "Out of stock",
+  "inStock": "en stock"
 }
