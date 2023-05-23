@@ -60,6 +60,11 @@ export interface ProductState {
   variants: PricedVariant[];
   metadata: ProductMetadata;
   selectedVariant: PricedVariant | undefined;
+  material: string;
+  weight: string;
+  countryOrigin: string;
+  dimensions: string;
+  type: string;
 }
 
 export class ProductModel extends Model {
@@ -80,6 +85,11 @@ export class ProductModel extends Model {
           variants: [],
           metadata: {},
           selectedVariant: undefined,
+          material: '-',
+          weight: '-',
+          countryOrigin: '-',
+          dimensions: '-',
+          type: '-',
         })
       )
     );
@@ -202,6 +212,56 @@ export class ProductModel extends Model {
   public set selectedVariant(value: PricedVariant | undefined) {
     if (JSON.stringify(this.selectedVariant) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, selectedVariant: value }));
+    }
+  }
+
+  public get material(): string {
+    return this.store.getValue().material;
+  }
+
+  public set material(value: string) {
+    if (this.material !== value) {
+      this.store.update((state) => ({ ...state, material: value }));
+    }
+  }
+
+  public get weight(): string {
+    return this.store.getValue().weight;
+  }
+
+  public set weight(value: string) {
+    if (this.weight !== value) {
+      this.store.update((state) => ({ ...state, weight: value }));
+    }
+  }
+
+  public get countryOrigin(): string {
+    return this.store.getValue().countryOrigin;
+  }
+
+  public set countryOrigin(value: string) {
+    if (this.countryOrigin !== value) {
+      this.store.update((state) => ({ ...state, countryOrigin: value }));
+    }
+  }
+
+  public get dimensions(): string {
+    return this.store.getValue().dimensions;
+  }
+
+  public set dimensions(value: string) {
+    if (this.dimensions !== value) {
+      this.store.update((state) => ({ ...state, dimensions: value }));
+    }
+  }
+
+  public get type(): string {
+    return this.store.getValue().type;
+  }
+
+  public set type(value: string) {
+    if (this.type !== value) {
+      this.store.update((state) => ({ ...state, type: value }));
     }
   }
 }

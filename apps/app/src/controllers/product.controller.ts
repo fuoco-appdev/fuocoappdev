@@ -55,6 +55,15 @@ class ProductController extends Controller {
     this._model.tags = product.tags ?? [];
     this._model.options = product.options ?? [];
     this._model.variants = product.variants ?? [];
+    this._model.material = product.material ?? '-';
+    this._model.weight =
+      product.weight && product.weight > 0 ? `${product.weight} g` : '-';
+    this._model.countryOrigin = product.origin_country ?? '-';
+    this._model.dimensions =
+      product.length && product.width && product.height
+        ? `${product.length}L x ${product.width}W x ${product.height}H`
+        : '-';
+    this._model.type = product.type ? product.type.value : '-';
     if (product.metadata?.['specs']) {
       this._model.metadata =
         (product.metadata['specs'] as ProductMetadata) ?? {};
@@ -68,7 +77,6 @@ class ProductController extends Controller {
   public updateSelectedVariant(id: string): void {
     const variant = this._model.variants.find((value) => value.id === id);
     this._model.selectedVariant = variant;
-    console.log(variant);
 
     // Change based on selected region
     if (variant?.prices) {

@@ -32,6 +32,9 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
   const [description, setDescription] = useState<string>('');
   const [tabs, setTabs] = useState<TabProps[]>([]);
   const [activeVariant, setActiveVariant] = useState<string | undefined>();
+  const [activeDetails, setActiveDetails] = useState<string | undefined>(
+    'information'
+  );
   const [alcohol, setAlcohol] = useState<string | undefined>('');
   const [brand, setBrand] = useState<string | undefined>('');
   const [code, setCode] = useState<string | undefined>('');
@@ -267,7 +270,10 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
           </div>
         </div>
         <Button
-          classNames={{ button: styles['add-to-cart-button-mobile'] }}
+          classNames={{
+            container: styles['add-to-cart-button-container-mobile'],
+            button: styles['add-to-cart-button-mobile'],
+          }}
           block={true}
           size={'full'}
           rippleProps={{
@@ -281,6 +287,103 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
             ? t('addToCart')
             : t('outOfStock')}
         </Button>
+        <div className={styles['tab-container-mobile']}>
+          <Tabs
+            flex={true}
+            classNames={{
+              tabButton: styles['tab-button'],
+              tabOutline: styles['tab-outline'],
+            }}
+            type={'underlined'}
+            tabs={[
+              {
+                id: 'information',
+                label: t('information').toString(),
+              },
+              {
+                id: 'shipping-and-returns',
+                label: t('shippingAndReturns').toString(),
+              },
+            ]}
+            touchScreen={true}
+            activeId={activeDetails}
+            onChange={(id) => setActiveDetails(id)}
+          />
+          {activeDetails === 'information' && (
+            <div className={styles['details-container-mobile']}>
+              <div className={styles['details-item-content-mobile']}>
+                <div className={styles['details-item-title-mobile']}>
+                  {t('material')}
+                </div>
+                <div className={styles['details-item-value-mobile']}>
+                  {props.material}
+                </div>
+              </div>
+              <div className={styles['details-item-content-mobile']}>
+                <div className={styles['details-item-title-mobile']}>
+                  {t('weight')}
+                </div>
+                <div className={styles['details-item-value-mobile']}>
+                  {props.weight}
+                </div>
+              </div>
+              <div className={styles['details-item-content-mobile']}>
+                <div className={styles['details-item-title-mobile']}>
+                  {t('countryOfOrigin')}
+                </div>
+                <div className={styles['details-item-value-mobile']}>
+                  {props.countryOrigin}
+                </div>
+              </div>
+              <div className={styles['details-item-content-mobile']}>
+                <div className={styles['details-item-title-mobile']}>
+                  {t('dimensions')}
+                </div>
+                <div className={styles['details-item-value-mobile']}>
+                  {props.dimensions}
+                </div>
+              </div>
+              <div className={styles['details-item-content-mobile']}>
+                <div className={styles['details-item-title-mobile']}>
+                  {t('type')}
+                </div>
+                <div className={styles['details-item-value-mobile']}>
+                  {props.type}
+                </div>
+              </div>
+            </div>
+          )}
+          {activeDetails === 'shipping-and-returns' && (
+            <div className={styles['shipping-returns-container-mobile']}>
+              <div className={styles['shipping-returns-content-mobile']}>
+                <div
+                  className={styles['shipping-returns-title-container-mobile']}
+                >
+                  <Line.LocalShipping size={16} color={'#2A2A5F'} />
+                  <div className={styles['shipping-returns-title-mobile']}>
+                    {t('fastDelivery')}
+                  </div>
+                </div>
+                <div className={styles['shipping-returns-description-mobile']}>
+                  {t('fastDeliveryDescription')}
+                </div>
+              </div>
+              <div className={styles['shipping-returns-content-mobile']}>
+                <div
+                  className={styles['shipping-returns-title-container-mobile']}
+                >
+                  <Line.Replay size={16} color={'#2A2A5F'} />
+                  <div className={styles['shipping-returns-title-mobile']}>
+                    {t('easyReturns')}
+                  </div>
+                </div>
+                <div className={styles['shipping-returns-description-mobile']}>
+                  {t('easyReturnsDescription')}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

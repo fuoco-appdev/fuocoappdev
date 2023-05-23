@@ -189,7 +189,7 @@ function WindowMobileComponent(): JSX.Element {
             )}
           </div>
           <div className={styles['right-tab-container']}>
-            {!props.isAuthenticated && (
+            {!props.isAuthenticated && !props.showNavigateBack && (
               <>
                 <div className={styles['tab-button-container']}>
                   <LanguageSwitch

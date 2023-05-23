@@ -118,7 +118,7 @@
         display: flex;
         flex-wrap: wrap;
         margin-bottom: $mp-2;
-        justify-content: space-evenly;
+        justify-content: space-around;
 
         & .option-content-mobile {
           display: flex;
@@ -141,6 +141,66 @@
           }
         }
       }
+
+      & .details-container-mobile {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: $mp-2;
+        justify-content: space-around;
+
+        & .details-item-content-mobile {
+          display: flex;
+          flex-direction: column;
+          padding: $mp-4;
+          margin-bottom: $mp-2;
+          text-align: center;
+
+          & .details-item-title-mobile {
+            color: $brand-900;
+            font-weight: $font-weight-bold;
+            font-size: $font-size-xs;
+            margin-bottom: $mp-1;
+          }
+
+          & .details-item-value-mobile {
+            color: $brand-900;
+            font-weight: $font-weight-medium;
+            font-size: $font-size-xs;
+          }
+        }
+      }
+
+      & .shipping-returns-container-mobile {
+        display: flex;
+        flex-direction: column;
+
+        & .shipping-returns-content-mobile {
+          margin-bottom: $mp-4;
+          
+          & .shipping-returns-title-container-mobile {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: $mp-1;
+
+            & .shipping-returns-title-mobile {
+              color: $brand-900;
+              font-size: $font-size-xs;
+              font-weight: $font-weight-bold;
+              margin-left: $mp-2;
+            }
+          }
+
+          & .shipping-returns-description-mobile {
+            font-size: $font-size-xs;
+            margin-left: $mp-6;
+            color: $brand-900;
+          }
+        }
+      }
+    }
+
+    & .add-to-cart-button-container-mobile {
+      margin-bottom: $mp-4;
     }
 
     & .add-to-cart-button-mobile {
@@ -156,6 +216,8 @@
 .tab-button {
   color: $brand-900 !important;
   font-weight: $font-weight-bold;
+  text-transform: uppercase;
+  font-size: $font-size-sm !important;
 }
 
 .tab-outline {

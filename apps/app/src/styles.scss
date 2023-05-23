@@ -37,7 +37,13 @@
   }
 }
 
-html, body { height: 100% } 
+html, body { 
+  position: fixed;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+   height: 100%; 
+}
+
 
 body {
   --brand-100: #FCF5E3;
