@@ -116,7 +116,7 @@ function ProductPreviewMobileComponent({
         >
           <img
             className={styles['thumbnail-image-mobile']}
-            src={preview.thumbnail || '../assets/svg/wine-bottle.svg'}
+            src={preview.thumbnail ?? '../assets/svg/wine-bottle.svg'}
           />
           <div className={styles['thumbnail-content-container']}>
             <div className={styles['thumbnail-top-content']}></div>
