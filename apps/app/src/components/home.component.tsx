@@ -1,4 +1,10 @@
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import HomeController from '../controllers/home.controller';
 import styles from './window.module.scss';
@@ -12,6 +18,9 @@ import * as core from '../protobuf/core_pb';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import LoadingComponent from './loading.component';
 import { Store } from '@ngneat/elf';
+import Map, { MapRef } from 'react-map-gl';
+import ConfigService from '../services/config.service';
+import MapboxLanguage from '@mapbox/mapbox-gl-language';
 
 function HomeDesktopComponent(): JSX.Element {
   const navigate = useNavigate();
@@ -23,9 +32,43 @@ function HomeDesktopComponent(): JSX.Element {
 function HomeMobileComponent(): JSX.Element {
   const navigate = useNavigate();
   const [props] = useObservable(HomeController.model.store);
+  const mapRef = useRef<MapRef | null>(null);
   const { t, i18n } = useTranslation();
+  const [mapStyleLoaded, setMapStyleLoaded] = useState<boolean>(false);
 
-  return <></>;
+  useLayoutEffect(() => {
+    console.log(i18n.language);
+    const labels = [
+      'country-label',
+      'city-label',
+      'state-label',
+      'settlement-major-label',
+      'settlement-subdivision-label',
+    ];
+
+    labels.map((label) => {
+      mapRef?.current
+        ?.getMap()
+        .setLayoutProperty(label, 'text-field', [
+          'get',
+          `name_${i18n.language}`,
+        ]);
+    });
+  }, [mapStyleLoaded, i18n.language]);
+
+  return (
+    <Map
+      mapboxAccessToken={ConfigService.mapbox.access_token}
+      ref={mapRef}
+      initialViewState={{
+        longitude: props.initialLongitude,
+        latitude: props.initialLatitude,
+        zoom: 14,
+      }}
+      mapStyle={ConfigService.mapbox.style_url}
+      onStyleData={(e) => setMapStyleLoaded(e.target ? true : false)}
+    />
+  );
 }
 
 export default function HomeComponent(): JSX.Element {

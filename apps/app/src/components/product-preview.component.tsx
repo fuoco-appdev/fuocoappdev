@@ -2,15 +2,18 @@ import {
   Key,
   LegacyRef,
   MutableRefObject,
+  useEffect,
   useLayoutEffect,
   useRef,
   useState,
 } from 'react';
 import styles from './product-preview.module.scss';
-import { WinePreview } from '../models/store.model';
+import { WinePreview, WinePricePreview } from '../models/store.model';
 import { Button, Card, Line } from '@fuoco.appdev/core-ui';
 import { animated, useSpring } from 'react-spring';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import i18n from '../i18n';
+import ProductController from '../controllers/product.controller';
 
 export interface ProductPreviewProps {
   parentRef: MutableRefObject<HTMLDivElement | null>;
@@ -33,6 +36,10 @@ function ProductPreviewMobileComponent({
 }: ProductPreviewProps): JSX.Element {
   const ref = useRef<HTMLDivElement | null>(null);
   const [expanded, setExpanded] = useState<boolean>(false);
+  const [price, setPrice] = useState<string>('');
+  const [selectedVariantId, setSelectedVariantId] = useState<
+    string | undefined
+  >();
   const [style, api] = useSpring(() => ({
     from: {
       top: ref?.current?.getBoundingClientRect().top,
@@ -54,6 +61,22 @@ function ProductPreviewMobileComponent({
       bounce: 0,
     },
   }));
+
+  const formatPrice = (price: WinePricePreview): string => {
+    if (!price.amount) {
+      return 'null';
+    }
+
+    let value = price.amount.toString();
+    let charList = value.split('');
+    charList.splice(-2, 0, '.');
+    value = charList.join('');
+
+    return new Intl.NumberFormat(i18n.language, {
+      style: 'currency',
+      currency: price.currency_code,
+    }).format(Number(value));
+  };
 
   useLayoutEffect(() => {
     let borderRadius: string | null = null;
@@ -82,6 +105,26 @@ function ProductPreviewMobileComponent({
       },
     });
   }, [expanded]);
+
+  useEffect(() => {
+    const variantPrices: WinePricePreview[] = [];
+    for (const variant of preview.variants) {
+      // Change to selected currency
+      const selectedCurrencyPrices = variant.prices.filter(
+        (value) => value.currency_code === 'cad'
+      );
+      const cheapestPrice = selectedCurrencyPrices.reduce((prev, next) => {
+        return prev.amount < next.amount ? prev : next;
+      });
+      variantPrices.push(cheapestPrice);
+    }
+
+    const cheapestVariant = variantPrices.reduce((prev, next) => {
+      return prev.amount < next.amount ? prev : next;
+    });
+    setSelectedVariantId(cheapestVariant.variant_id);
+    setPrice(formatPrice(cheapestVariant));
+  }, [preview]);
 
   return (
     <Card
@@ -128,6 +171,9 @@ function ProductPreviewMobileComponent({
                     color: 'rgba(133, 38, 122, .35)',
                   }}
                   rounded={true}
+                  onClick={() =>
+                    ProductController.addToCartAsync(selectedVariantId ?? '')
+                  }
                   icon={<Line.AddShoppingCart size={24} />}
                 />
               </div>
@@ -139,7 +185,7 @@ function ProductPreviewMobileComponent({
             <span className={styles['product-title-mobile']}>
               {preview.title}
             </span>
-            <span className={styles['product-price-mobile']}>$0,00</span>
+            <span className={styles['product-price-mobile']}>{price}</span>
           </div>
         )}
       </animated.div>

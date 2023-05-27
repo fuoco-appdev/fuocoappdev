@@ -11,5 +11,9 @@
   "meilisearch": {
     "url": "http://192.168.100.15:7700",
     "key": "CE4CF1AE6E2553818DC854BB74E22"
+  },
+  "mapbox": {
+    "style_url": "mapbox://styles/lucasfuoco/cli44l6r902mw01qyaoqoa46t",
+    "access_token": "pk.eyJ1IjoibHVjYXNmdW9jbyIsImEiOiJjbGFjeWl5YWMwM2MyM3ZueW5xNnRnbWFiIn0.SKWlyHhXNfAwdTLqfIdLYQ"
   }
 }

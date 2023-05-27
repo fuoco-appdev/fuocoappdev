@@ -84,7 +84,7 @@ class ProductController extends Controller {
     }
   }
 
-  public async addToCartAsync(): Promise<void> {}
+  public async addToCartAsync(variantId: string): Promise<void> {}
 
   private formatPrice(price: ProductPrice): string {
     if (!price.amount) {

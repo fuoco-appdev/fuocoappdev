@@ -164,7 +164,7 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
             <div className={styles['title']}>{props.title}</div>
             <div className={styles['subtitle']}>{props.subtitle}</div>
           </div>
-          <div className={styles['like-container-mobile']}>
+          {/* <div className={styles['like-container-mobile']}>
             <div className={styles['like-count-mobile']}>{props.likeCount}</div>
             <Button
               rippleProps={{
@@ -183,7 +183,7 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
                 )
               }
             />
-          </div>
+          </div> */}
         </div>
         <div className={styles['description-container-mobile']}>
           <ReactMarkdown remarkPlugins={[gfm]} children={description} />
@@ -281,7 +281,9 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
           }}
           icon={<Line.AddShoppingCart size={24} />}
           disabled={props.selectedVariant?.inventory_quantity < 0}
-          onClick={() => ProductController.addToCartAsync()}
+          onClick={() =>
+            ProductController.addToCartAsync(props.selectedVariant?.id)
+          }
         >
           {props.selectedVariant?.inventory_quantity > 0
             ? t('addToCart')

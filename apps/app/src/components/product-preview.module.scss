@@ -76,6 +76,10 @@
         line-height: 32px;
         font-weight: $font-weight-bold;
         margin-right: $mp-2;
+        word-break: break-all;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
       }
 
       & .product-price-mobile {

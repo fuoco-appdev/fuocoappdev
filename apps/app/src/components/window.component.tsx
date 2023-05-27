@@ -46,6 +46,15 @@ function WindowMobileComponent(): JSX.Element {
   );
 
   useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        console.log(position);
+      },
+      (error) => console.error(error)
+    );
+  }, []);
+
+  useEffect(() => {
     i18n.changeLanguage(localProps.language);
   }, [localProps.language]);
 
