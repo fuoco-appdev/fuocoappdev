@@ -20,7 +20,6 @@ import LoadingComponent from './loading.component';
 import { Store } from '@ngneat/elf';
 import Map, { MapRef } from 'react-map-gl';
 import ConfigService from '../services/config.service';
-import MapboxLanguage from '@mapbox/mapbox-gl-language';
 
 function HomeDesktopComponent(): JSX.Element {
   const navigate = useNavigate();
@@ -61,11 +60,12 @@ function HomeMobileComponent(): JSX.Element {
       mapboxAccessToken={ConfigService.mapbox.access_token}
       ref={mapRef}
       initialViewState={{
-        longitude: props.initialLongitude,
-        latitude: props.initialLatitude,
-        zoom: 14,
+        longitude: props.longitude,
+        latitude: props.latitude,
+        zoom: props.zoom,
       }}
       mapStyle={ConfigService.mapbox.style_url}
+      onMove={(e) => HomeController.onMapMove(e.viewState)}
       onStyleData={(e) => setMapStyleLoaded(e.target ? true : false)}
     />
   );

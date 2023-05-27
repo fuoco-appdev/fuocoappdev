@@ -2,8 +2,9 @@ import { createStore, withProps } from '@ngneat/elf';
 import { Model } from '../model';
 
 export interface HomeState {
-  initialLongitude: number;
-  initialLatitude: number;
+  longitude: number;
+  latitude: number;
+  zoom: number;
 }
 
 export class HomeModel extends Model {
@@ -12,30 +13,41 @@ export class HomeModel extends Model {
       createStore(
         { name: 'home' },
         withProps<HomeState>({
-          initialLatitude: 46.1185,
-          initialLongitude: -74.5962,
+          latitude: 46.1185,
+          longitude: -74.5962,
+          zoom: 14,
         })
       )
     );
   }
 
-  public get initialLatitude(): number {
-    return this.store.getValue().initialLatitude;
+  public get latitude(): number {
+    return this.store.getValue().latitude;
   }
 
-  public set initialLatitude(value: number) {
-    if (this.initialLatitude !== value) {
-      this.store.update((state) => ({ ...state, initialLatitude: value }));
+  public set latitude(value: number) {
+    if (this.latitude !== value) {
+      this.store.update((state) => ({ ...state, latitude: value }));
     }
   }
 
-  public get initialLongitude(): number {
-    return this.store.getValue().initialLongitude;
+  public get longitude(): number {
+    return this.store.getValue().longitude;
   }
 
-  public set initialLongitude(value: number) {
-    if (this.initialLongitude !== value) {
-      this.store.update((state) => ({ ...state, initialLongitude: value }));
+  public set longitude(value: number) {
+    if (this.longitude !== value) {
+      this.store.update((state) => ({ ...state, longitude: value }));
+    }
+  }
+
+  public get zoom(): number {
+    return this.store.getValue().zoom;
+  }
+
+  public set zoom(value: number) {
+    if (this.zoom !== value) {
+      this.store.update((state) => ({ ...state, zoom: value }));
     }
   }
 }

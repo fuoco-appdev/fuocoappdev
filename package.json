@@ -39,7 +39,6 @@
     "@capacitor/cli": "^4.6.3",
     "@capacitor/core": "^4.6.3",
     "@fuoco.appdev/core-ui": "^0.14.2",
-    "@mapbox/mapbox-gl-language": "^1.0.1",
     "@medusajs/medusa-js": "^4.0.1",
     "@ngneat/elf": "^2.1.0",
     "@ngneat/elf-entities": "^4.4.2",
