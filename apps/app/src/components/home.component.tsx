@@ -7,7 +7,7 @@ import {
 } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import HomeController from '../controllers/home.controller';
-import styles from './window.module.scss';
+import styles from './home.module.scss';
 import { Alert } from '@fuoco.appdev/core-ui';
 import { RoutePaths } from '../route-paths';
 import { useTranslation } from 'react-i18next';
@@ -18,8 +18,10 @@ import * as core from '../protobuf/core_pb';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import LoadingComponent from './loading.component';
 import { Store } from '@ngneat/elf';
-import Map, { MapRef } from 'react-map-gl';
+import Map, { MapRef, Marker } from 'react-map-gl';
 import ConfigService from '../services/config.service';
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 function HomeDesktopComponent(): JSX.Element {
   const navigate = useNavigate();
@@ -36,23 +38,23 @@ function HomeMobileComponent(): JSX.Element {
   const [mapStyleLoaded, setMapStyleLoaded] = useState<boolean>(false);
 
   useLayoutEffect(() => {
-    console.log(i18n.language);
     const labels = [
       'country-label',
-      'city-label',
       'state-label',
       'settlement-major-label',
       'settlement-subdivision-label',
     ];
 
-    labels.map((label) => {
-      mapRef?.current
-        ?.getMap()
-        .setLayoutProperty(label, 'text-field', [
-          'get',
-          `name_${i18n.language}`,
-        ]);
-    });
+    if (mapStyleLoaded) {
+      labels.map((label) => {
+        mapRef?.current
+          ?.getMap()
+          .setLayoutProperty(label, 'text-field', [
+            'get',
+            `name_${i18n.language}`,
+          ]);
+      });
+    }
   }, [mapStyleLoaded, i18n.language]);
 
   return (
@@ -67,7 +69,21 @@ function HomeMobileComponent(): JSX.Element {
       mapStyle={ConfigService.mapbox.style_url}
       onMove={(e) => HomeController.onMapMove(e.viewState)}
       onStyleData={(e) => setMapStyleLoaded(e.target ? true : false)}
-    />
+    >
+      {props.salesChannelPoints.map((point: mapboxgl.LngLat, index: number) => (
+        <Marker
+          key={`marker-${index}`}
+          latitude={point.lat}
+          longitude={point.lng}
+          anchor={'bottom'}
+        >
+          <img
+            src={'../assets/svg/cruthology-pin.svg'}
+            className={styles['marker']}
+          />
+        </Marker>
+      ))}
+    </Map>
   );
 }
 
