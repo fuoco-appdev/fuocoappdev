@@ -6,6 +6,11 @@ import {
   SalesChannel,
 } from '../protobuf/core_pb.js';
 import 'https://deno.land/x/dotenv@v3.2.0/load.ts';
+import MapboxService, {
+  Geocoding,
+  GeocodingFeature,
+} from './mapbox.service.ts';
+import SupabaseService from './supabase.service.ts';
 
 class MedusaService {
   private _url: string | undefined;
@@ -62,8 +67,54 @@ class MedusaService {
         address.setProvince(addressData['province']);
         address.setPostalCode(addressData['postal_code']);
       }
-
       stockLocation.setAddress(address);
+
+      let metadata = location['metadata'];
+      if (!metadata) {
+        metadata = {};
+      }
+
+      if (
+        addressData &&
+        (!metadata['coordinates'] ||
+          !metadata['place_name'] ||
+          metadata['updated_at'] !== addressData['updated_at'])
+      ) {
+        let searchText = '';
+        if (addressData['company']) {
+          searchText += `${addressData['company']}, `;
+        }
+        if (addressData['address_1']) {
+          searchText += `${addressData['address_1']}, `;
+        }
+        if (addressData['address_2']) {
+          searchText += `${addressData['address_2']}, `;
+        }
+        if (addressData['city']) {
+          searchText += `${addressData['city']}`;
+        }
+        const feature = await this.getFeatureAsync(
+          searchText,
+          addressData['country_code']
+        );
+        metadata['coordinates'] = {
+          longitude: feature?.center[0],
+          latitude: feature?.center[1],
+        };
+        metadata['place_name'] = feature?.place_name;
+        metadata['updated_at'] = addressData['updated_at'];
+        const { error } = await SupabaseService.client
+          .from('stock_location')
+          .update({ metadata: metadata })
+          .match({ address_id: addressData['id'] })
+          .select();
+
+        if (error) {
+          console.error(error);
+        }
+      }
+
+      metadata && stockLocation.setMetadata(JSON.stringify(metadata));
 
       for (const channel of location['sales_channels']) {
         const salesChannel = new SalesChannel();
@@ -88,6 +139,21 @@ class MedusaService {
     }
 
     return stockLocations;
+  }
+
+  private async getFeatureAsync(
+    searchText: string,
+    country: string
+  ): Promise<GeocodingFeature | null> {
+    const geocoding = await MapboxService.requestGeocodingPlacesAsync(
+      searchText,
+      country
+    );
+    if (geocoding.features.length > 0) {
+      return geocoding.features[0];
+    }
+
+    return null;
   }
 }
 

@@ -930,7 +930,7 @@ proto.core.SalesChannel.prototype.setDeletedAt = function(value) {
  * @private {!Array<number>}
  * @const
  */
-proto.core.StockLocation.repeatedFields_ = [8];
+proto.core.StockLocation.repeatedFields_ = [10];
 
 
 
@@ -970,6 +970,8 @@ proto.core.StockLocation.toObject = function(includeInstance, msg) {
     name: jspb.Message.getFieldWithDefault(msg, 5, ""),
     addressId: jspb.Message.getFieldWithDefault(msg, 6, ""),
     address: (f = msg.getAddress()) && proto.core.Address.toObject(includeInstance, f),
+    metadata: jspb.Message.getFieldWithDefault(msg, 8, ""),
+    placeName: jspb.Message.getFieldWithDefault(msg, 9, ""),
     salesChannelsList: jspb.Message.toObjectList(msg.getSalesChannelsList(),
     proto.core.SalesChannel.toObject, includeInstance)
   };
@@ -1038,6 +1040,14 @@ proto.core.StockLocation.deserializeBinaryFromReader = function(msg, reader) {
       msg.setAddress(value);
       break;
     case 8:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setMetadata(value);
+      break;
+    case 9:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setPlaceName(value);
+      break;
+    case 10:
       var value = new proto.core.SalesChannel;
       reader.readMessage(value,proto.core.SalesChannel.deserializeBinaryFromReader);
       msg.addSalesChannels(value);
@@ -1121,10 +1131,24 @@ proto.core.StockLocation.serializeBinaryToWriter = function(message, writer) {
       proto.core.Address.serializeBinaryToWriter
     );
   }
+  f = message.getMetadata();
+  if (f.length > 0) {
+    writer.writeString(
+      8,
+      f
+    );
+  }
+  f = message.getPlaceName();
+  if (f.length > 0) {
+    writer.writeString(
+      9,
+      f
+    );
+  }
   f = message.getSalesChannelsList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
-      8,
+      10,
       f,
       proto.core.SalesChannel.serializeBinaryToWriter
     );
@@ -1278,12 +1302,48 @@ proto.core.StockLocation.prototype.hasAddress = function() {
 
 
 /**
- * repeated SalesChannel sales_channels = 8;
+ * optional string metadata = 8;
+ * @return {string}
+ */
+proto.core.StockLocation.prototype.getMetadata = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.core.StockLocation} returns this
+ */
+proto.core.StockLocation.prototype.setMetadata = function(value) {
+  return jspb.Message.setProto3StringField(this, 8, value);
+};
+
+
+/**
+ * optional string place_name = 9;
+ * @return {string}
+ */
+proto.core.StockLocation.prototype.getPlaceName = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.core.StockLocation} returns this
+ */
+proto.core.StockLocation.prototype.setPlaceName = function(value) {
+  return jspb.Message.setProto3StringField(this, 9, value);
+};
+
+
+/**
+ * repeated SalesChannel sales_channels = 10;
  * @return {!Array<!proto.core.SalesChannel>}
  */
 proto.core.StockLocation.prototype.getSalesChannelsList = function() {
   return /** @type{!Array<!proto.core.SalesChannel>} */ (
-    jspb.Message.getRepeatedWrapperField(this, proto.core.SalesChannel, 8));
+    jspb.Message.getRepeatedWrapperField(this, proto.core.SalesChannel, 10));
 };
 
 
@@ -1292,7 +1352,7 @@ proto.core.StockLocation.prototype.getSalesChannelsList = function() {
  * @return {!proto.core.StockLocation} returns this
 */
 proto.core.StockLocation.prototype.setSalesChannelsList = function(value) {
-  return jspb.Message.setRepeatedWrapperField(this, 8, value);
+  return jspb.Message.setRepeatedWrapperField(this, 10, value);
 };
 
 
@@ -1302,7 +1362,7 @@ proto.core.StockLocation.prototype.setSalesChannelsList = function(value) {
  * @return {!proto.core.SalesChannel}
  */
 proto.core.StockLocation.prototype.addSalesChannels = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 8, opt_value, proto.core.SalesChannel, opt_index);
+  return jspb.Message.addToRepeatedWrapperField(this, 10, opt_value, proto.core.SalesChannel, opt_index);
 };
 
 

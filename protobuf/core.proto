@@ -39,7 +39,9 @@ message StockLocation {
     string name = 5;
     string address_id = 6;
     Address address = 7;
-    repeated SalesChannel sales_channels = 8;
+    string metadata = 8;
+    string place_name = 9;
+    repeated SalesChannel sales_channels = 10;
 }
 
 message StockLocations {

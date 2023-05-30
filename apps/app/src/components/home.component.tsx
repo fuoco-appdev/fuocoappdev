@@ -22,6 +22,7 @@ import Map, { MapRef, Marker, Popup } from 'react-map-gl';
 import ConfigService from '../services/config.service';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { SalesChannel } from '../models/home.model';
 
 function HomeDesktopComponent(): JSX.Element {
   const navigate = useNavigate();
@@ -36,9 +37,7 @@ function HomeMobileComponent(): JSX.Element {
   const mapRef = useRef<MapRef | null>(null);
   const { t, i18n } = useTranslation();
   const [mapStyleLoaded, setMapStyleLoaded] = useState<boolean>(false);
-  const [selectedPoint, setSelectedPoint] = useState<mapboxgl.LngLat | null>(
-    null
-  );
+  const [selectedPoint, setSelectedPoint] = useState<SalesChannel | null>(null);
 
   useLayoutEffect(() => {
     const labels = [
@@ -73,11 +72,11 @@ function HomeMobileComponent(): JSX.Element {
       onMove={(e) => HomeController.onMapMove(e.viewState)}
       onStyleData={(e) => setMapStyleLoaded(e.target ? true : false)}
     >
-      {props.salesChannelPoints.map((point: mapboxgl.LngLat, index: number) => (
+      {props.salesChannels.map((point: SalesChannel, index: number) => (
         <Marker
           key={`marker-${index}`}
-          latitude={point.lat}
-          longitude={point.lng}
+          latitude={point.coordinates.lat}
+          longitude={point.coordinates.lng}
           anchor={'bottom'}
           onClick={(e) => {
             e.originalEvent.stopPropagation();
@@ -94,10 +93,13 @@ function HomeMobileComponent(): JSX.Element {
         <Popup
           anchor={'top'}
           onClose={() => setSelectedPoint(null)}
-          latitude={selectedPoint.lat}
-          longitude={selectedPoint.lng}
+          latitude={selectedPoint.coordinates.lat}
+          longitude={selectedPoint.coordinates.lng}
         >
-          <div className={styles['marker-popup']}></div>
+          <div className={styles['marker-popup']}>
+            <div className={styles['company']}>{selectedPoint.company}</div>
+            <div className={styles['address']}>{selectedPoint.placeName}</div>
+          </div>
         </Popup>
       )}
     </Map>

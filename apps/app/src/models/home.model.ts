@@ -2,11 +2,17 @@ import { createStore, withProps } from '@ngneat/elf';
 import { Model } from '../model';
 import mapboxgl from 'mapbox-gl';
 
+export interface SalesChannel {
+  coordinates: mapboxgl.LngLat;
+  placeName: string;
+  company: string;
+}
+
 export interface HomeState {
   longitude: number;
   latitude: number;
   zoom: number;
-  salesChannelPoints: mapboxgl.LngLat[];
+  salesChannels: SalesChannel[];
 }
 
 export class HomeModel extends Model {
@@ -18,7 +24,7 @@ export class HomeModel extends Model {
           latitude: 46.1185,
           longitude: -74.5962,
           zoom: 14,
-          salesChannelPoints: [new mapboxgl.LngLat(-74.5962, 46.1185)],
+          salesChannels: [],
         })
       )
     );
@@ -54,13 +60,13 @@ export class HomeModel extends Model {
     }
   }
 
-  public get salesChannelPoints(): mapboxgl.LngLat[] {
-    return this.store.getValue().salesChannelPoints;
+  public get salesChannels(): SalesChannel[] {
+    return this.store.getValue().salesChannels;
   }
 
-  public set salesChannelPoints(value: mapboxgl.LngLat[]) {
-    if (JSON.stringify(this.salesChannelPoints) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, salesChannelPoints: value }));
+  public set salesChannels(value: SalesChannel[]) {
+    if (JSON.stringify(this.salesChannels) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, salesChannels: value }));
     }
   }
 }

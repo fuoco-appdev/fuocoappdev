@@ -236,7 +236,17 @@ export class StockLocation extends Message<StockLocation> {
   address?: Address;
 
   /**
-   * @generated from field: repeated core.SalesChannel sales_channels = 8;
+   * @generated from field: string metadata = 8;
+   */
+  metadata = "";
+
+  /**
+   * @generated from field: string place_name = 9;
+   */
+  placeName = "";
+
+  /**
+   * @generated from field: repeated core.SalesChannel sales_channels = 10;
    */
   salesChannels: SalesChannel[] = [];
 
@@ -255,7 +265,9 @@ export class StockLocation extends Message<StockLocation> {
     { no: 5, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 6, name: "address_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 7, name: "address", kind: "message", T: Address },
-    { no: 8, name: "sales_channels", kind: "message", T: SalesChannel, repeated: true },
+    { no: 8, name: "metadata", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 9, name: "place_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 10, name: "sales_channels", kind: "message", T: SalesChannel, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): StockLocation {
