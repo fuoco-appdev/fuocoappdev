@@ -86,6 +86,10 @@ class WindowController extends Controller {
     this._model.language = language;
   }
 
+  public updateCurrentPosition(value: GeolocationPosition) {
+    this._model.currentPosition = value;
+  }
+
   public updateOnLocationChanged(location: Location): void {
     if (location.pathname === RoutePaths.Home) {
       this._model.activeRoute = RoutePaths.Home;

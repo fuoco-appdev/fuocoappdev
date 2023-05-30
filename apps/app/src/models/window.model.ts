@@ -54,6 +54,7 @@ export interface WindowState {
   isLoading: boolean;
   toasts: ToastProps[];
   showNavigateBack: boolean;
+  currentPosition: GeolocationPosition | undefined;
   regions: Region[];
   selectedRegion: Region | undefined;
 }
@@ -79,6 +80,7 @@ export class WindowModel extends Model {
           isLoading: false,
           toasts: [],
           showNavigateBack: false,
+          currentPosition: undefined,
           regions: [],
           selectedRegion: undefined,
         })
@@ -233,6 +235,19 @@ export class WindowModel extends Model {
       this.localStore?.update((state) => ({
         ...state,
         language: value,
+      }));
+    }
+  }
+
+  public get currentPosition(): GeolocationPosition {
+    return this.localStore?.getValue().currentPosition;
+  }
+
+  public set currentPosition(value: GeolocationPosition) {
+    if (JSON.stringify(this.currentPosition) !== JSON.stringify(value)) {
+      this.store?.update((state) => ({
+        ...state,
+        currentPosition: value,
       }));
     }
   }

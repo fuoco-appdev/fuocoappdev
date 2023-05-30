@@ -47,9 +47,7 @@ function WindowMobileComponent(): JSX.Element {
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        console.log(position);
-      },
+      (position) => WindowController.updateCurrentPosition(position),
       (error) => console.error(error)
     );
   }, []);

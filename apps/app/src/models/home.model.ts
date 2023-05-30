@@ -13,6 +13,7 @@ export interface HomeState {
   latitude: number;
   zoom: number;
   salesChannels: SalesChannel[];
+  selectedSalesChannel: SalesChannel | undefined;
 }
 
 export class HomeModel extends Model {
@@ -25,6 +26,7 @@ export class HomeModel extends Model {
           longitude: -74.5962,
           zoom: 14,
           salesChannels: [],
+          selectedSalesChannel: undefined,
         })
       )
     );
@@ -67,6 +69,16 @@ export class HomeModel extends Model {
   public set salesChannels(value: SalesChannel[]) {
     if (JSON.stringify(this.salesChannels) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, salesChannels: value }));
+    }
+  }
+
+  public get selectedSalesChannel(): SalesChannel | undefined {
+    return this.store.getValue().selectedSalesChannel;
+  }
+
+  public set selectedSalesChannel(value: SalesChannel | undefined) {
+    if (JSON.stringify(this.selectedSalesChannel) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, selectedSalesChannel: value }));
     }
   }
 }

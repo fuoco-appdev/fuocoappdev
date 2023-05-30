@@ -39,7 +39,6 @@ class StoreController extends Controller {
       filter: ['type_value = Wine AND status = published'],
     });
     this._model.previews = result.hits as WinePreview[];
-    console.log(this._model.previews);
   }
 }
 
