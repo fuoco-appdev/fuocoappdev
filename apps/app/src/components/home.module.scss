@@ -11,4 +11,13 @@
     background-color: #fff;
     padding: $mp-2;
     border-radius: $rounded-md;
+
+    & .company {
+        color: $brand-900;
+        font-weight: $font-weight-bold;
+    }
+
+    & .address {
+        color: $brand-900;
+    }
 }

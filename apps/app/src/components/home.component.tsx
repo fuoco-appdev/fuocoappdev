@@ -70,7 +70,7 @@ function HomeMobileComponent(): JSX.Element {
       }}
       mapStyle={ConfigService.mapbox.style_url}
       onMove={(e) => HomeController.onMapMove(e.viewState)}
-      onStyleData={(e) => setMapStyleLoaded(e.target ? true : false)}
+      onLoad={(e) => setMapStyleLoaded(e.target ? true : false)}
     >
       {props.salesChannels.map((point: SalesChannel, index: number) => (
         <Marker
