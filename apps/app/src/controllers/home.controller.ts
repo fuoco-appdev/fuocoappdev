@@ -2,6 +2,7 @@
 import { ViewState } from 'react-map-gl';
 import { Controller } from '../controller';
 import { HomeModel } from '../models/home.model';
+import MedusaService from '../services/medusa.service';
 
 class HomeController extends Controller {
   private readonly _model: HomeModel;
@@ -16,7 +17,9 @@ class HomeController extends Controller {
     return this._model;
   }
 
-  public initialize(): void {}
+  public initialize(): void {
+    this.requestInventoryLocationsAsync();
+  }
 
   public dispose(): void {}
 
@@ -24,6 +27,11 @@ class HomeController extends Controller {
     this._model.longitude = state.longitude;
     this._model.latitude = state.latitude;
     this._model.zoom = state.zoom;
+  }
+
+  private async requestInventoryLocationsAsync(): Promise<void> {
+    const locations = await MedusaService.requestStockLocationsAsync();
+    console.log(locations);
   }
 }
 

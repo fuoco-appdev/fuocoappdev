@@ -114,6 +114,8 @@
   "uvc": "UVC",
   "alcohol": "Alcohol",
   "region": "Region",
+  "producerBottler": "Producer / Bottler",
+  "varietals": "Varietals",
   "addToCart": "Add to cart",
   "outOfStock": "Out of stock",
   "inStock": "in stock",

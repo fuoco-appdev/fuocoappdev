@@ -4,6 +4,8 @@ import { Model } from '../model';
 export enum ProductOptions {
   Alcohol = 'Alcohol',
   Brand = 'Brand',
+  Varietals = 'Varietals',
+  ProducerBottler = 'Producer Bottler',
   Code = 'Code',
   Format = 'Format',
   Region = 'Region',

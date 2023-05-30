@@ -111,6 +111,8 @@
   "vintage": "Mille",
   "type": "Sorte",
   "brand": "Marque",
+  "producerBottler": "Producteur / embouteilleur",
+  "varietals": "Variétés",
   "uvc": "UVC",
   "alcohol": "Alcool",
   "region": "Région",

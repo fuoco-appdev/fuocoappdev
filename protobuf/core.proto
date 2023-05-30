@@ -6,6 +6,46 @@ enum BucketType {
     Avatars = 0;
 }
 
+message Address {
+    string id = 1;
+    string address_1 = 2;
+    string address_2 = 3;
+    string company = 4;
+    string city = 5;
+    string country_code = 6;
+    string phone = 7;
+    string postal_code = 8;
+    string province = 9;
+    string created_at = 10;
+    string updated_at = 11;
+    string deleted_at = 12;
+}
+
+message SalesChannel {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    bool is_disabled = 4;
+    string created_at = 5;
+    string updated_at = 6;
+    string deleted_at = 7;
+}
+
+message StockLocation {
+    string id = 1;
+    string created_at = 2;
+    string updated_at = 3;
+    string deleted_at = 4;
+    string name = 5;
+    string address_id = 6;
+    Address address = 7;
+    repeated SalesChannel sales_channels = 8;
+}
+
+message StockLocations {
+    repeated StockLocation locations = 1;
+}
+
 message Account {
     string id = 1;
     string user_id = 2;

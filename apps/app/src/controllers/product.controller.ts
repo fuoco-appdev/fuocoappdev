@@ -64,10 +64,6 @@ class ProductController extends Controller {
         ? `${product.length}L x ${product.width}W x ${product.height}H`
         : '-';
     this._model.type = product.type ? product.type.value : '-';
-    if (product.metadata?.['specs']) {
-      this._model.metadata =
-        (product.metadata['specs'] as ProductMetadata) ?? {};
-    }
   }
 
   public updateIsLiked(value: boolean): void {

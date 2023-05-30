@@ -6,7 +6,7 @@
     "preinstall": "nx run api:install",
     "init": "nx run api:init",
     "start-web": "nx run app:serve-web",
-    "start-api": "cd ./apps/api && deno run --allow-net --allow-env --allow-read src/serve.ts",
+    "start-api": "cd ./apps/api && deno run --allow-net --allow-env --allow-read --watch src/serve.ts",
     "start-electron": "nx run app:serve-electron",
     "protobuf": "nx run-many --target=proto-generate --projects=api,app --parallel",
     "build": "nx build --configuration=production",

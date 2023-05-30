@@ -37,6 +37,10 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
   );
   const [alcohol, setAlcohol] = useState<string | undefined>('');
   const [brand, setBrand] = useState<string | undefined>('');
+  const [varietals, setVarietals] = useState<string | undefined>('');
+  const [producerBottler, setProducerBottler] = useState<string | undefined>(
+    ''
+  );
   const [code, setCode] = useState<string | undefined>('');
   const [format, setFormat] = useState<string | undefined>('');
   const [region, setRegion] = useState<string | undefined>('');
@@ -60,7 +64,13 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
       for (const variant of vintageOption.values) {
         tabProps.push({ id: variant.variant_id, label: variant.value });
       }
-      tabProps = tabProps.sort();
+      tabProps = tabProps.sort((n1, n2) => {
+        if (n1.label && n2.label) {
+          return n1.label < n2.label ? 1 : -1;
+        }
+
+        return 1;
+      });
       setTabs(tabProps);
 
       const selectedVariant = tabProps.length > 0 ? tabProps[0].id : undefined;
@@ -70,6 +80,18 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
   }, [props.options]);
 
   useEffect(() => {
+    const brandOption = ProductController.model.options.find(
+      (value) => value.title === ProductOptions.Brand
+    );
+    const regionOption = ProductController.model.options.find(
+      (value) => value.title === ProductOptions.Region
+    );
+    const varietalsOption = ProductController.model.options.find(
+      (value) => value.title === ProductOptions.Varietals
+    );
+    const producerBottlerOption = ProductController.model.options.find(
+      (value) => value.title === ProductOptions.ProducerBottler
+    );
     const alcoholOption = ProductController.model.options.find(
       (value) => value.title === ProductOptions.Alcohol
     );
@@ -93,6 +115,18 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
     );
 
     if (props.selectedVariant?.options) {
+      const brandValue = props.selectedVariant.options.find(
+        (value: ProductOption) => value.option_id === brandOption?.id
+      );
+      const regionValue = props.selectedVariant.options.find(
+        (value: ProductOption) => value.option_id === regionOption?.id
+      );
+      const varietalsValue = props.selectedVariant.options.find(
+        (value: ProductOption) => value.option_id === varietalsOption?.id
+      );
+      const producerBottlerValue = props.selectedVariant.options.find(
+        (value: ProductOption) => value.option_id === producerBottlerOption?.id
+      );
       const alcoholValue = props.selectedVariant.options.find(
         (value: ProductOption) => value.option_id === alcoholOption?.id
       );
@@ -115,11 +149,13 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
         (value: ProductOption) => value.option_id === vintageOption?.id
       );
 
+      setBrand(brandValue?.value);
+      setRegion(regionValue?.value);
+      setVarietals(varietalsValue?.value);
+      setProducerBottler(producerBottlerValue?.value);
       setAlcohol(alcoholValue?.value);
-      setBrand(props.metadata?.brand);
       setCode(codeValue?.value);
       setFormat(formatValue?.value);
-      setRegion(props.metadata?.region);
       setResidualSugar(residualSugarValue?.value);
       setType(typeValue?.value);
       setUVC(uvcValue?.value);
@@ -242,6 +278,14 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
               <div className={styles['option-value-mobile']}>{format}</div>
             </div>
             <div className={styles['option-content-mobile']}>
+              <div className={styles['option-title-mobile']}>
+                {t('producerBottler')}
+              </div>
+              <div className={styles['option-value-mobile']}>
+                {producerBottler}
+              </div>
+            </div>
+            <div className={styles['option-content-mobile']}>
               <div className={styles['option-title-mobile']}>{t('region')}</div>
               <div className={styles['option-value-mobile']}>{region}</div>
             </div>
@@ -260,6 +304,12 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
             <div className={styles['option-content-mobile']}>
               <div className={styles['option-title-mobile']}>{t('uvc')}</div>
               <div className={styles['option-value-mobile']}>{uvc}</div>
+            </div>
+            <div className={styles['option-content-mobile']}>
+              <div className={styles['option-title-mobile']}>
+                {t('varietals')}
+              </div>
+              <div className={styles['option-value-mobile']}>{varietals}</div>
             </div>
             <div className={styles['option-content-mobile']}>
               <div className={styles['option-title-mobile']}>

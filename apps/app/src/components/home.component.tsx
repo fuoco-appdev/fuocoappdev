@@ -18,7 +18,7 @@ import * as core from '../protobuf/core_pb';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import LoadingComponent from './loading.component';
 import { Store } from '@ngneat/elf';
-import Map, { MapRef, Marker } from 'react-map-gl';
+import Map, { MapRef, Marker, Popup } from 'react-map-gl';
 import ConfigService from '../services/config.service';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -36,6 +36,9 @@ function HomeMobileComponent(): JSX.Element {
   const mapRef = useRef<MapRef | null>(null);
   const { t, i18n } = useTranslation();
   const [mapStyleLoaded, setMapStyleLoaded] = useState<boolean>(false);
+  const [selectedPoint, setSelectedPoint] = useState<mapboxgl.LngLat | null>(
+    null
+  );
 
   useLayoutEffect(() => {
     const labels = [
@@ -76,6 +79,10 @@ function HomeMobileComponent(): JSX.Element {
           latitude={point.lat}
           longitude={point.lng}
           anchor={'bottom'}
+          onClick={(e) => {
+            e.originalEvent.stopPropagation();
+            setSelectedPoint(point);
+          }}
         >
           <img
             src={'../assets/svg/cruthology-pin.svg'}
@@ -83,6 +90,16 @@ function HomeMobileComponent(): JSX.Element {
           />
         </Marker>
       ))}
+      {selectedPoint && (
+        <Popup
+          anchor={'top'}
+          onClose={() => setSelectedPoint(null)}
+          latitude={selectedPoint.lat}
+          longitude={selectedPoint.lng}
+        >
+          <div className={styles['marker-popup']}></div>
+        </Popup>
+      )}
     </Map>
   );
 }

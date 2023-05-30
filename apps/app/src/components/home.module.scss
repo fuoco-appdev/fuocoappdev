@@ -1,6 +1,14 @@
+@import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
+
 .marker {
     background-size:cover;
     width: 56px;
     height: 56px;
     cursor: pointer;
+}
+
+.marker-popup {
+    background-color: #fff;
+    padding: $mp-2;
+    border-radius: $rounded-md;
 }
