@@ -5,43 +5,6 @@ import { RoutePaths } from '../route-paths';
 import * as core from '../protobuf/core_pb';
 import { LanguageCode, ToastProps } from '@fuoco.appdev/core-ui';
 
-export interface FulfillmentProvider {
-  id?: string;
-  is_installed?: boolean;
-}
-
-export interface PaymentProvider {
-  id?: string;
-  is_installed?: boolean;
-}
-
-export interface Country {
-  id?: number;
-  iso_2?: string;
-  iso_3?: string;
-  num_code?: number;
-  name?: string;
-}
-
-export interface Region {
-  automatic_taxes?: boolean;
-  countries?: Country[];
-  created_at?: Date;
-  currency_code?: string;
-  deleted_at?: Date | null;
-  fulfillment_providers?: FulfillmentProvider[];
-  gift_cards_taxable?: boolean;
-  id?: string;
-  includes_tax?: boolean;
-  metadata?: object | null;
-  name?: string;
-  payment_providers?: PaymentProvider[];
-  tax_code?: string;
-  tax_provider_id?: string | null;
-  tax_rate?: number;
-  updated_at?: Date;
-}
-
 export interface WindowState {
   user: object | null;
   customer: object | null;
@@ -55,8 +18,6 @@ export interface WindowState {
   toasts: ToastProps[];
   showNavigateBack: boolean;
   currentPosition: GeolocationPosition | undefined;
-  regions: Region[];
-  selectedRegion: Region | undefined;
 }
 
 export interface WindowLocalState {
@@ -81,8 +42,6 @@ export class WindowModel extends Model {
           toasts: [],
           showNavigateBack: false,
           currentPosition: undefined,
-          regions: [],
-          selectedRegion: undefined,
         })
       ),
       undefined,
@@ -248,32 +207,6 @@ export class WindowModel extends Model {
       this.store?.update((state) => ({
         ...state,
         currentPosition: value,
-      }));
-    }
-  }
-
-  public get regions(): Region[] {
-    return this.store?.getValue().regions;
-  }
-
-  public set regions(value: Region[]) {
-    if (JSON.stringify(this.regions) !== JSON.stringify(value)) {
-      this.store?.update((state) => ({
-        ...state,
-        regions: value,
-      }));
-    }
-  }
-
-  public get selectedRegion(): Region | undefined {
-    return this.store?.getValue().selectedRegion;
-  }
-
-  public set selectedRegion(value: Region | undefined) {
-    if (JSON.stringify(this.selectedRegion) !== JSON.stringify(value)) {
-      this.store?.update((state) => ({
-        ...state,
-        selectedRegion: value,
       }));
     }
   }

@@ -14,6 +14,8 @@ import { animated, useSpring } from 'react-spring';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import i18n from '../i18n';
 import ProductController from '../controllers/product.controller';
+import StoreController from '../controllers/store.controller';
+import { useObservable } from '@ngneat/use-observable';
 
 export interface ProductPreviewProps {
   parentRef: MutableRefObject<HTMLDivElement | null>;
@@ -40,6 +42,7 @@ function ProductPreviewMobileComponent({
   const [selectedVariantId, setSelectedVariantId] = useState<
     string | undefined
   >();
+  const [storeProps] = useObservable(StoreController.model.store);
   const [style, api] = useSpring(() => ({
     from: {
       top: ref?.current?.getBoundingClientRect().top,
@@ -109,9 +112,13 @@ function ProductPreviewMobileComponent({
   useEffect(() => {
     const variantPrices: WinePricePreview[] = [];
     for (const variant of preview.variants) {
-      // Change to selected currency
+      if (!storeProps.selectedRegion) {
+        continue;
+      }
+
       const selectedCurrencyPrices = variant.prices.filter(
-        (value) => value.currency_code === 'cad'
+        (value) =>
+          value.currency_code === storeProps.selectedRegion?.currency_code ?? ''
       );
       const cheapestPrice = selectedCurrencyPrices.reduce((prev, next) => {
         return prev.amount < next.amount ? prev : next;
@@ -124,7 +131,7 @@ function ProductPreviewMobileComponent({
     });
     setSelectedVariantId(cheapestVariant.variant_id);
     setPrice(formatPrice(cheapestVariant));
-  }, [preview]);
+  }, [preview, storeProps.selectedRegion]);
 
   return (
     <Card

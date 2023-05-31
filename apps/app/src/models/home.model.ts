@@ -6,6 +6,7 @@ export interface SalesChannel {
   coordinates: mapboxgl.LngLat;
   placeName: string;
   company: string;
+  region: string;
 }
 
 export interface HomeState {

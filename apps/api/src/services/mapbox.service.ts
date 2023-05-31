@@ -11,6 +11,14 @@ export interface GeocodingProperties {
   mapbox_id: string;
 }
 
+export interface GeocodingContext {
+  id: string;
+  short_code: string;
+  wikidata: string;
+  mapbox_id: string;
+  text: string;
+}
+
 export interface GeocodingFeature {
   id: string;
   type: string;
@@ -22,7 +30,7 @@ export interface GeocodingFeature {
   center: number[];
   geometry: GeocodingGeometry;
   address: string;
-  context: object[];
+  context: GeocodingContext[];
 }
 
 export interface Geocoding {

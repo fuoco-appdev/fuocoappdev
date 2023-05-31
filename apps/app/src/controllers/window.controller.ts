@@ -10,7 +10,6 @@ import { Location } from 'react-router-dom';
 import * as core from '../protobuf/core_pb';
 import { LanguageCode, ToastProps } from '@fuoco.appdev/core-ui';
 import AccountService from '../services/account.service';
-import MedusaService from '../services/medusa.service';
 
 class WindowController extends Controller {
   private readonly _model: WindowModel;
@@ -45,9 +44,7 @@ class WindowController extends Controller {
     }
   }
 
-  public initialize(): void {
-    this.requestRegionsAsync();
-  }
+  public initialize(): void {}
 
   public async checkUserIsAuthenticatedAsync(): Promise<void> {
     this._model.isLoading = true;
@@ -128,11 +125,6 @@ class WindowController extends Controller {
       this._model.activeRoute = RoutePaths.Account;
       this._model.showNavigateBack = false;
     }
-  }
-
-  private async requestRegionsAsync(): Promise<void> {
-    const response = await MedusaService.medusa.regions.list();
-    this._model.regions = response.regions;
   }
 
   private async onAuthStateChanged(

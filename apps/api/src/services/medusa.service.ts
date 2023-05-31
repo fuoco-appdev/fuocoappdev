@@ -78,6 +78,7 @@ class MedusaService {
         addressData &&
         (!metadata['coordinates'] ||
           !metadata['place_name'] ||
+          !metadata['region'] ||
           metadata['updated_at'] !== addressData['updated_at'])
       ) {
         let searchText = '';
@@ -102,6 +103,10 @@ class MedusaService {
           latitude: feature?.center[1],
         };
         metadata['place_name'] = feature?.place_name;
+        const context = feature?.context.find((value) =>
+          value.id.startsWith('region')
+        );
+        metadata['region'] = context?.text ?? '';
         metadata['updated_at'] = addressData['updated_at'];
         const { error } = await SupabaseService.client
           .from('stock_location')

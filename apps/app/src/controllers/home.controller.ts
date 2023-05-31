@@ -60,6 +60,7 @@ class HomeController extends Controller {
           ),
           placeName: metadata['place_name'],
           company: location.address?.company ?? '',
+          region: metadata['region'] ?? '',
         });
       }
     }

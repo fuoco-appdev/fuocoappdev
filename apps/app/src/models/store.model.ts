@@ -1,6 +1,43 @@
 import { createStore, withProps } from '@ngneat/elf';
 import { Model } from '../model';
 
+export interface FulfillmentProvider {
+  id?: string;
+  is_installed?: boolean;
+}
+
+export interface PaymentProvider {
+  id?: string;
+  is_installed?: boolean;
+}
+
+export interface Country {
+  id?: number;
+  iso_2?: string;
+  iso_3?: string;
+  num_code?: number;
+  name?: string;
+}
+
+export interface Region {
+  automatic_taxes?: boolean;
+  countries?: Country[];
+  created_at?: Date;
+  currency_code?: string;
+  deleted_at?: Date | null;
+  fulfillment_providers?: FulfillmentProvider[];
+  gift_cards_taxable?: boolean;
+  id?: string;
+  includes_tax?: boolean;
+  metadata?: object | null;
+  name?: string;
+  payment_providers?: PaymentProvider[];
+  tax_code?: string;
+  tax_provider_id?: string | null;
+  tax_rate?: number;
+  updated_at?: Date;
+}
+
 export interface WinePricePreview {
   amount: number;
   created_at: string;
@@ -31,7 +68,9 @@ export interface WinePreview {
 export interface StoreState {
   previews: WinePreview[];
   input: string;
-  selectedPreview: WinePreview | null;
+  selectedPreview: WinePreview | undefined;
+  regions: Region[];
+  selectedRegion: Region | undefined;
 }
 
 export class StoreModel extends Model {
@@ -42,7 +81,9 @@ export class StoreModel extends Model {
         withProps<StoreState>({
           previews: [],
           input: '',
-          selectedPreview: null,
+          selectedPreview: undefined,
+          regions: [],
+          selectedRegion: undefined,
         })
       )
     );
@@ -68,13 +109,39 @@ export class StoreModel extends Model {
     }
   }
 
-  public get selectedPreview(): WinePreview {
+  public get selectedPreview(): WinePreview | undefined {
     return this.store.getValue().selectedPreview;
   }
 
-  public set selectedPreview(value: WinePreview) {
+  public set selectedPreview(value: WinePreview | undefined) {
     if (JSON.stringify(this.selectedPreview) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, selectedPreview: value }));
+    }
+  }
+
+  public get regions(): Region[] {
+    return this.store?.getValue().regions;
+  }
+
+  public set regions(value: Region[]) {
+    if (JSON.stringify(this.regions) !== JSON.stringify(value)) {
+      this.store?.update((state) => ({
+        ...state,
+        regions: value,
+      }));
+    }
+  }
+
+  public get selectedRegion(): Region | undefined {
+    return this.store?.getValue().selectedRegion;
+  }
+
+  public set selectedRegion(value: Region | undefined) {
+    if (JSON.stringify(this.selectedRegion) !== JSON.stringify(value)) {
+      this.store?.update((state) => ({
+        ...state,
+        selectedRegion: value,
+      }));
     }
   }
 }

@@ -33,7 +33,7 @@ class ProductController extends Controller {
     this._selectedPreviewSubscription = StoreController.model.store
       .pipe(select((state: StoreState) => state.selectedPreview))
       .subscribe({
-        next: (value: WinePreview | null) => {
+        next: (value: WinePreview | undefined) => {
           this._model.thumbnail = value?.thumbnail ?? '';
           this._model.title = value?.title ?? '';
           this._model.subtitle = value?.subtitle ?? '';
