@@ -39,6 +39,9 @@ class HomeController extends Controller {
 
   private async initializeAsync(): Promise<void> {
     const salesChannels = await this.requestInventoryLocationsAsync();
+    if (salesChannels.length > 0) {
+      this._model.selectedSalesChannel = salesChannels[0];
+    }
     this._currentPositionSubscription = WindowController.model.store
       .pipe(select((model) => model.currentPosition))
       .subscribe({
@@ -85,6 +88,8 @@ class HomeController extends Controller {
         (value) => value.coordinates.distanceTo(point) === 0
       );
       this._model.selectedSalesChannel = selectedChannel ?? undefined;
+      this._model.longitude = selectedChannel?.coordinates.lng ?? 0;
+      this._model.latitude = selectedChannel?.coordinates.lat ?? 0;
     }
   }
 
