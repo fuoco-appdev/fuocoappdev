@@ -25,7 +25,7 @@ export class HomeModel extends Model {
         withProps<HomeState>({
           latitude: 46.1185,
           longitude: -74.5962,
-          zoom: 8,
+          zoom: 13,
           salesChannels: [],
           selectedSalesChannel: undefined,
         })

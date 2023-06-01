@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Index } from 'meilisearch';
 import { Controller } from '../controller';
-import { StoreModel, WinePreview } from '../models/store.model';
+import { Region, StoreModel, WinePreview } from '../models/store.model';
 import MeiliSearchService from '../services/meilisearch.service';
 import { Subscription } from 'rxjs';
 import HomeController from './home.controller';
@@ -66,6 +66,11 @@ class StoreController extends Controller {
     this._model.previews = hits;
   }
 
+  public async applyFilterAsync(regionId: string): Promise<void> {
+    const region = this._model.regions.find((value) => value.id === regionId);
+    await this.updateRegionAsync(region);
+  }
+
   private async intializeAsync(): Promise<void> {
     await this.requestRegionsAsync();
     this._selectedSalesChannelSubscription = HomeController.model.store
@@ -90,6 +95,10 @@ class StoreController extends Controller {
     const region = this._model.regions.find(
       (value) => value.name === salesChannel.region
     );
+    await this.updateRegionAsync(region);
+  }
+
+  private async updateRegionAsync(region: Region | undefined): Promise<void> {
     this._model.selectedRegion = region;
     await this.searchAsync('');
   }

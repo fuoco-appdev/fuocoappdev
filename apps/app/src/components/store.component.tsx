@@ -9,6 +9,8 @@ import {
   Input,
   Line,
   Tabs,
+  Listbox,
+  OptionProps,
 } from '@fuoco.appdev/core-ui';
 import { RoutePaths } from '../route-paths';
 import { useTranslation } from 'react-i18next';
@@ -19,8 +21,9 @@ import * as core from '../protobuf/core_pb';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import LoadingComponent from './loading.component';
 import { Store } from '@ngneat/elf';
-import { WinePreview } from '../models/store.model';
+import { Country, Region, WinePreview } from '../models/store.model';
 import ProductPreviewComponent from './product-preview.component';
+import ReactCountryFlag from 'react-country-flag';
 
 function StoreDesktopComponent(): JSX.Element {
   const navigate = useNavigate();
@@ -33,8 +36,94 @@ function StoreMobileComponent(): JSX.Element {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const [openFilter, setOpenFilter] = useState<boolean>(false);
+  const [countryOptions, setCountryOptions] = useState<OptionProps[]>([]);
+  const [regionOptions, setRegionOptions] = useState<OptionProps[]>([]);
+  const [selectedCountryIndex, setSelectedCountryIndex] = useState<number>(0);
+  const [selectedRegionIndex, setSelectedRegionIndex] = useState<number>(0);
   const [props] = useObservable(StoreController.model.store);
   const { t, i18n } = useTranslation();
+
+  useEffect(() => {
+    const countries: OptionProps[] = [];
+    for (const region of props.regions as Region[]) {
+      for (const country of region.countries as Country[]) {
+        const duplicate = countries.filter(
+          (value) => value.id === country.iso_2
+        );
+        if (duplicate.length > 0) {
+          continue;
+        }
+
+        countries.push({
+          id: country.iso_2,
+          value: country.name?.toLowerCase() ?? '',
+          addOnBefore: () => (
+            <ReactCountryFlag
+              className={styles['country-flag-mobile']}
+              countryCode={country.iso_2?.toUpperCase() ?? ''}
+              svg={true}
+              style={{ width: 18, height: 18 }}
+            />
+          ),
+          children: () => (
+            <div className={styles['option-name']}>
+              {country.name?.toLowerCase()}
+            </div>
+          ),
+        });
+      }
+    }
+
+    setCountryOptions(countries);
+  }, [props.regions]);
+
+  useEffect(() => {
+    if (!props.selectedRegion || !countryOptions) {
+      return;
+    }
+
+    for (const country of props.selectedRegion.countries) {
+      const selectedCountryIndex = countryOptions.findIndex(
+        (value) => value.id === country?.iso_2
+      );
+      if (selectedCountryIndex < 0) {
+        continue;
+      }
+
+      setSelectedCountryIndex(selectedCountryIndex);
+      setSelectedRegionIndex(0);
+      return;
+    }
+  }, [countryOptions, props.selectedRegion]);
+
+  useEffect(() => {
+    if (countryOptions.length <= 0) {
+      return;
+    }
+
+    const regions: OptionProps[] = [];
+    const selectedCountryOption = countryOptions[selectedCountryIndex];
+    for (const region of props.regions as Region[]) {
+      const countries = region.countries as Country[];
+      const validCountries = countries.filter(
+        (value) => value.iso_2 === selectedCountryOption?.id
+      );
+
+      if (validCountries.length <= 0) {
+        continue;
+      }
+
+      regions.push({
+        id: region?.id ?? '',
+        value: region?.name ?? '',
+        children: () => (
+          <div className={styles['option-name']}>{region?.name}</div>
+        ),
+      });
+    }
+
+    setRegionOptions(regions);
+  }, [selectedCountryIndex, countryOptions]);
 
   return (
     <div ref={rootRef} className={styles['root-mobile']}>
@@ -128,7 +217,55 @@ function StoreMobileComponent(): JSX.Element {
         open={openFilter}
         touchScreen={true}
         onClose={() => setOpenFilter(false)}
-      ></Dropdown>
+      >
+        <div className={styles['filter-content-mobile']}>
+          <Listbox
+            classNames={{
+              formLayout: {
+                label: styles['listbox-form-layout-label'],
+              },
+              listbox: styles['listbox'],
+              chevron: styles['listbox-chevron'],
+              label: styles['listbox-label'],
+            }}
+            touchScreen={true}
+            label={t('country') ?? ''}
+            options={countryOptions}
+            defaultIndex={selectedCountryIndex}
+            onChange={(index: number) => setSelectedCountryIndex(index)}
+          />
+          <Listbox
+            classNames={{
+              formLayout: {
+                label: styles['listbox-form-layout-label'],
+              },
+              listbox: styles['listbox'],
+              chevron: styles['listbox-chevron'],
+              label: styles['listbox-label'],
+            }}
+            touchScreen={true}
+            label={t('region') ?? ''}
+            options={regionOptions}
+            defaultIndex={selectedRegionIndex}
+            onChange={(index: number) => setSelectedRegionIndex(index)}
+          />
+          <Button
+            classNames={{
+              container: styles['apply-button-mobile'],
+            }}
+            block={true}
+            size={'large'}
+            onClick={() => {
+              StoreController.applyFilterAsync(
+                regionOptions[selectedRegionIndex].id ?? ''
+              );
+              setTimeout(() => setOpenFilter(false), 250);
+            }}
+          >
+            {t('apply')}
+          </Button>
+        </div>
+      </Dropdown>
     </div>
   );
 }

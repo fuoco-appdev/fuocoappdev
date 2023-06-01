@@ -128,5 +128,6 @@
   "fastDelivery": "Livraison rapide",
   "fastDeliveryDescription": "Votre colis arrivera dans les 3 à 5 jours ouvrables à votre lieu de retrait ou dans le confort de votre maison.",
   "easyReturns": "Easy returns",
-  "easyReturnsDescription": "Il vous suffit de renvoyer votre produit et nous vous remboursons. Aucune question n'est posée - nous ferons de notre mieux pour que votre retour se fasse sans problème."
+  "easyReturnsDescription": "Il vous suffit de renvoyer votre produit et nous vous remboursons. Aucune question n'est posée - nous ferons de notre mieux pour que votre retour se fasse sans problème.",
+  "country": "Pays"
 }
