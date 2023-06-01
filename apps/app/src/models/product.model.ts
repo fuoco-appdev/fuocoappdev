@@ -20,18 +20,25 @@ export interface ProductTag {
   metadata: Record<string, unknown>;
 }
 
-export interface ProductPrice {
-  amount?: number;
-  currency_code?: string;
-  region_id?: string;
-  variant_id?: string;
+export interface MoneyAmount {
+  id: string;
+  amount: number;
+  currency_code: string;
+  region_id: string;
+  variant_id: string;
+  created_at: Date | null;
+  updated_at: Date | null;
+  deleted_at: Date | null;
+  max_quantity: number | null;
+  min_quantity: number | null;
+  price_list_id: string | null;
 }
 
 export interface PricedVariant {
   id?: string;
   title?: string;
   options?: ProductOption[];
-  prices?: ProductPrice[];
+  prices?: MoneyAmount[];
   inventory_quantity?: number;
 }
 

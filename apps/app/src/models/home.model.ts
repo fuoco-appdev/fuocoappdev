@@ -10,11 +10,14 @@ export interface SalesChannel {
 }
 
 export interface HomeState {
+  salesChannels: SalesChannel[];
+  selectedSalesChannel: SalesChannel | undefined;
+}
+
+export interface HomeLocalState {
   longitude: number;
   latitude: number;
   zoom: number;
-  salesChannels: SalesChannel[];
-  selectedSalesChannel: SalesChannel | undefined;
 }
 
 export class HomeModel extends Model {
@@ -23,43 +26,49 @@ export class HomeModel extends Model {
       createStore(
         { name: 'home' },
         withProps<HomeState>({
+          salesChannels: [],
+          selectedSalesChannel: undefined,
+        })
+      ),
+      undefined,
+      createStore(
+        { name: 'home-local' },
+        withProps<HomeLocalState>({
           latitude: 46.1185,
           longitude: -74.5962,
           zoom: 13,
-          salesChannels: [],
-          selectedSalesChannel: undefined,
         })
       )
     );
   }
 
   public get latitude(): number {
-    return this.store.getValue().latitude;
+    return this.localStore?.getValue().latitude;
   }
 
   public set latitude(value: number) {
     if (this.latitude !== value) {
-      this.store.update((state) => ({ ...state, latitude: value }));
+      this.localStore?.update((state) => ({ ...state, latitude: value }));
     }
   }
 
   public get longitude(): number {
-    return this.store.getValue().longitude;
+    return this.localStore?.getValue().longitude;
   }
 
   public set longitude(value: number) {
     if (this.longitude !== value) {
-      this.store.update((state) => ({ ...state, longitude: value }));
+      this.localStore?.update((state) => ({ ...state, longitude: value }));
     }
   }
 
   public get zoom(): number {
-    return this.store.getValue().zoom;
+    return this.localStore?.getValue().zoom;
   }
 
   public set zoom(value: number) {
     if (this.zoom !== value) {
-      this.store.update((state) => ({ ...state, zoom: value }));
+      this.localStore?.update((state) => ({ ...state, zoom: value }));
     }
   }
 

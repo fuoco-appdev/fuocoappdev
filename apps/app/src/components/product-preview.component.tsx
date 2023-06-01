@@ -8,7 +8,8 @@ import {
   useState,
 } from 'react';
 import styles from './product-preview.module.scss';
-import { WinePreview, WinePricePreview } from '../models/store.model';
+import { ProductPreview } from '../models/store.model';
+import { MoneyAmount } from '../models/product.model';
 import { Button, Card, Line } from '@fuoco.appdev/core-ui';
 import { animated, useSpring } from 'react-spring';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
@@ -19,7 +20,7 @@ import { useObservable } from '@ngneat/use-observable';
 
 export interface ProductPreviewProps {
   parentRef: MutableRefObject<HTMLDivElement | null>;
-  preview: WinePreview;
+  preview: ProductPreview;
   onClick?: () => void;
   onRest?: () => void;
 }
@@ -65,7 +66,7 @@ function ProductPreviewMobileComponent({
     },
   }));
 
-  const formatPrice = (price: WinePricePreview): string => {
+  const formatPrice = (price: MoneyAmount): string => {
     if (!price.amount) {
       return 'null';
     }
@@ -110,24 +111,26 @@ function ProductPreviewMobileComponent({
   }, [expanded]);
 
   useEffect(() => {
-    const variantPrices: WinePricePreview[] = [];
+    const variantPrices: MoneyAmount[] = [];
     for (const variant of preview.variants) {
       if (!storeProps.selectedRegion) {
         continue;
       }
 
-      const selectedCurrencyPrices = variant.prices.filter(
+      const selectedCurrencyPrices = variant.prices?.filter(
         (value) =>
           value.currency_code === storeProps.selectedRegion?.currency_code ?? ''
       );
-      const cheapestPrice = selectedCurrencyPrices.reduce((prev, next) => {
-        return prev.amount < next.amount ? prev : next;
+      const cheapestPrice = selectedCurrencyPrices?.reduce((prev, next) => {
+        return (prev?.amount ?? 0) < (next?.amount ?? 0) ? prev : next;
       });
-      variantPrices.push(cheapestPrice);
+      if (cheapestPrice) {
+        variantPrices.push(cheapestPrice);
+      }
     }
 
     const cheapestVariant = variantPrices.reduce((prev, next) => {
-      return prev.amount < next.amount ? prev : next;
+      return (prev?.amount ?? 0) < (next?.amount ?? 0) ? prev : next;
     });
     setSelectedVariantId(cheapestVariant.variant_id);
     setPrice(formatPrice(cheapestVariant));

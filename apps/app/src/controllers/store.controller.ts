@@ -1,13 +1,19 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Index } from 'meilisearch';
 import { Controller } from '../controller';
-import { Region, StoreModel, WinePreview } from '../models/store.model';
+import {
+  Region,
+  StoreModel,
+  ProductPreview,
+  ProductTabs,
+} from '../models/store.model';
 import MeiliSearchService from '../services/meilisearch.service';
 import { Subscription } from 'rxjs';
 import HomeController from './home.controller';
 import { select } from '@ngneat/elf';
 import { SalesChannel } from '../models/home.model';
 import MedusaService from '../services/medusa.service';
+import { ProductOption, ProductOptions } from '../models/product.model';
 
 class StoreController extends Controller {
   private readonly _model: StoreModel;
@@ -40,8 +46,15 @@ class StoreController extends Controller {
     this.searchAsync(value);
   }
 
-  public updateSelectedPreview(value: WinePreview): void {
+  public updateSelectedPreview(value: ProductPreview): void {
     this._model.selectedPreview = value;
+  }
+
+  public async updateSelectedTabAsync(
+    value: ProductTabs | undefined
+  ): Promise<void> {
+    this._model.selectedTab = value;
+    await this.searchAsync('');
   }
 
   public async searchAsync(query: string): Promise<void> {
@@ -52,17 +65,57 @@ class StoreController extends Controller {
     const result = await this._productsIndex.search(query, {
       filter: ['type_value = Wine AND status = published'],
     });
-    const hits = result.hits as WinePreview[];
+    let hits = result.hits as ProductPreview[];
+    const removedHits: ProductPreview[] = [];
     for (let i = 0; i < hits.length; i++) {
+      const typeOption = hits[i].options.find(
+        (value) => value.title === ProductOptions.Type
+      );
       for (const variant of hits[i].variants) {
-        const price = variant.prices.find(
+        const price = variant.prices?.find(
           (value) => value.region_id === this._model.selectedRegion?.id
         );
         if (!price) {
           hits.splice(i, 1);
         }
+
+        // Remove hits with tabs
+        if (
+          this._model.selectedTab === ProductTabs.Red ||
+          this._model.selectedTab === ProductTabs.Rose ||
+          this._model.selectedTab === ProductTabs.Spirits ||
+          this._model.selectedTab === ProductTabs.White
+        ) {
+          const typeValue = variant.options?.find(
+            (value: ProductOption) => value.option_id === typeOption?.id
+          );
+          const duplicates = removedHits.filter(
+            (value) => value.id === hits[i].id
+          );
+          if (
+            duplicates.length <= 0 &&
+            typeValue?.value?.toLowerCase() !==
+              this._model.selectedTab?.toLowerCase()
+          ) {
+            removedHits.push(hits[i]);
+          }
+        }
       }
     }
+
+    for (const removedHit of removedHits) {
+      const index = hits.indexOf(removedHit);
+      hits.splice(index, 1);
+    }
+
+    if (this._model.selectedTab === ProductTabs.New) {
+      hits.sort(
+        (prev, next) =>
+          new Date(next.created_at ?? '').valueOf() -
+          new Date(prev.created_at ?? '').valueOf()
+      );
+    }
+
     this._model.previews = hits;
   }
 

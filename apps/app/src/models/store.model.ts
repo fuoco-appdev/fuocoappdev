@@ -1,5 +1,6 @@
 import { createStore, withProps } from '@ngneat/elf';
 import { Model } from '../model';
+import { PricedVariant, ProductOption } from './product.model';
 
 export interface FulfillmentProvider {
   id?: string;
@@ -38,39 +39,34 @@ export interface Region {
   updated_at?: Date;
 }
 
-export interface WinePricePreview {
-  amount: number;
-  created_at: string;
-  currency_code: string;
-  deleted_at: string;
-  id: string;
-  max_quantity: number;
-  min_quantity: number;
-  price_list_id: string;
-  region_id: string;
-  updated_at: string;
-  variant_id: string;
-}
-
-export interface WineVariantPreview {
-  prices: WinePricePreview[];
-}
-
-export interface WinePreview {
+export interface ProductPreview {
   id: string | null;
   title: string | null;
   subtitle: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  deleted_at: string | null;
   thumbnail: string | null;
   handle: string | null;
-  variants: WineVariantPreview[];
+  variants: PricedVariant[];
+  options: ProductOption[];
+}
+
+export enum ProductTabs {
+  New = 'new',
+  White = 'white',
+  Red = 'red',
+  Rose = 'rose',
+  Spirits = 'spirits',
 }
 
 export interface StoreState {
-  previews: WinePreview[];
+  previews: ProductPreview[];
   input: string;
-  selectedPreview: WinePreview | undefined;
+  selectedPreview: ProductPreview | undefined;
   regions: Region[];
   selectedRegion: Region | undefined;
+  selectedTab: ProductTabs | undefined;
 }
 
 export class StoreModel extends Model {
@@ -84,16 +80,17 @@ export class StoreModel extends Model {
           selectedPreview: undefined,
           regions: [],
           selectedRegion: undefined,
+          selectedTab: undefined,
         })
       )
     );
   }
 
-  public get previews(): WinePreview[] {
+  public get previews(): ProductPreview[] {
     return this.store.getValue().previews;
   }
 
-  public set previews(value: WinePreview[]) {
+  public set previews(value: ProductPreview[]) {
     if (JSON.stringify(this.previews) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, previews: value }));
     }
@@ -109,11 +106,11 @@ export class StoreModel extends Model {
     }
   }
 
-  public get selectedPreview(): WinePreview | undefined {
+  public get selectedPreview(): ProductPreview | undefined {
     return this.store.getValue().selectedPreview;
   }
 
-  public set selectedPreview(value: WinePreview | undefined) {
+  public set selectedPreview(value: ProductPreview | undefined) {
     if (JSON.stringify(this.selectedPreview) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, selectedPreview: value }));
     }
@@ -141,6 +138,19 @@ export class StoreModel extends Model {
       this.store?.update((state) => ({
         ...state,
         selectedRegion: value,
+      }));
+    }
+  }
+
+  public get selectedTab(): ProductTabs | undefined {
+    return this.store?.getValue().selectedTab;
+  }
+
+  public set selectedTab(value: ProductTabs | undefined) {
+    if (this.selectedTab !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        selectedTab: value,
       }));
     }
   }

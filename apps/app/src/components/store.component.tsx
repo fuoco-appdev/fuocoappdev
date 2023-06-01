@@ -21,7 +21,12 @@ import * as core from '../protobuf/core_pb';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import LoadingComponent from './loading.component';
 import { Store } from '@ngneat/elf';
-import { Country, Region, WinePreview } from '../models/store.model';
+import {
+  Country,
+  Region,
+  ProductPreview,
+  ProductTabs,
+} from '../models/store.model';
 import ProductPreviewComponent from './product-preview.component';
 import ReactCountryFlag from 'react-country-flag';
 
@@ -168,37 +173,39 @@ function StoreMobileComponent(): JSX.Element {
             }}
             removable={true}
             type={'pills'}
+            activeId={props.selectedTab}
+            onChange={(id) =>
+              StoreController.updateSelectedTabAsync(
+                id.length > 0 ? (id as ProductTabs) : undefined
+              )
+            }
             tabs={[
               {
-                id: 'best',
-                label: 'Best of',
+                id: ProductTabs.New,
+                label: t('new') ?? 'New',
               },
               {
-                id: 'new',
-                label: 'New',
+                id: ProductTabs.White,
+                label: t('white') ?? 'White',
               },
               {
-                id: 'white',
-                label: 'White',
+                id: ProductTabs.Red,
+                label: t('red') ?? 'Red',
               },
               {
-                id: 'red',
-                label: 'Red',
+                id: ProductTabs.Rose,
+                label: t('rose') ?? 'Rosé',
               },
               {
-                id: 'rose',
-                label: 'Rosé',
-              },
-              {
-                id: 'spirits',
-                label: 'Spirits',
+                id: ProductTabs.Spirits,
+                label: t('spirits') ?? 'Spirits',
               },
             ]}
           />
         </div>
       </div>
       <div className={styles['wine-previews-container-mobile']}>
-        {props.previews.map((preview: WinePreview, index: number) => (
+        {props.previews.map((preview: ProductPreview, index: number) => (
           <ProductPreviewComponent
             parentRef={rootRef}
             key={index}

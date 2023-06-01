@@ -34,6 +34,9 @@ function HomeDesktopComponent(): JSX.Element {
 function HomeMobileComponent(): JSX.Element {
   const navigate = useNavigate();
   const [props] = useObservable(HomeController.model.store);
+  const [localProps] = useObservable(
+    HomeController.model.localStore ?? HomeController.model.store
+  );
   const mapRef = useRef<MapRef | null>(null);
   const { t, i18n } = useTranslation();
   const [mapStyleLoaded, setMapStyleLoaded] = useState<boolean>(false);
@@ -64,9 +67,9 @@ function HomeMobileComponent(): JSX.Element {
       mapboxAccessToken={ConfigService.mapbox.access_token}
       ref={mapRef}
       initialViewState={{
-        longitude: props.longitude,
-        latitude: props.latitude,
-        zoom: props.zoom,
+        longitude: localProps.longitude,
+        latitude: localProps.latitude,
+        zoom: localProps.zoom,
       }}
       mapStyle={ConfigService.mapbox.style_url}
       onMove={(e) => HomeController.onMapMove(e.viewState)}
