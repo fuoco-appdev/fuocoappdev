@@ -10,12 +10,16 @@ import { Location } from 'react-router-dom';
 import * as core from '../protobuf/core_pb';
 import { LanguageCode, ToastProps } from '@fuoco.appdev/core-ui';
 import AccountService from '../services/account.service';
+import CartController from './cart.controller';
+import { Cart } from '@medusajs/medusa';
+import { select } from '@ngneat/elf';
 
 class WindowController extends Controller {
   private readonly _model: WindowModel;
   private _scrollRef: HTMLDivElement | null;
   private _userSubscription: Subscription | undefined;
   private _customerSubscription: Subscription | undefined;
+  private _cartSubscription: Subscription | undefined;
 
   constructor() {
     super();
@@ -24,6 +28,7 @@ class WindowController extends Controller {
     this._scrollRef = null;
 
     this.onAuthStateChanged = this.onAuthStateChanged.bind(this);
+    this.onCartChanged = this.onCartChanged.bind(this);
 
     SupabaseService.supabaseClient.auth.onAuthStateChange(
       this.onAuthStateChanged
@@ -44,7 +49,17 @@ class WindowController extends Controller {
     }
   }
 
-  public initialize(): void {}
+  public initialize(): void {
+    this._cartSubscription = CartController.model.store
+      .pipe(select((model) => model.cart))
+      .subscribe({ next: this.onCartChanged });
+  }
+
+  public dispose(): void {
+    this._userSubscription?.unsubscribe();
+    this._customerSubscription?.unsubscribe();
+    this._cartSubscription?.unsubscribe();
+  }
 
   public async checkUserIsAuthenticatedAsync(): Promise<void> {
     this._model.isLoading = true;
@@ -52,11 +67,6 @@ class WindowController extends Controller {
     if (!supabaseUser) {
       this._model.isLoading = false;
     }
-  }
-
-  public dispose(): void {
-    this._userSubscription?.unsubscribe();
-    this._customerSubscription?.unsubscribe();
   }
 
   public updateIsLoading(value: boolean): void {
@@ -125,6 +135,12 @@ class WindowController extends Controller {
       this._model.activeRoute = RoutePaths.Account;
       this._model.showNavigateBack = false;
     }
+  }
+
+  private onCartChanged(
+    value: Omit<Cart, 'refundable_amount' | 'refunded_total'> | undefined
+  ): void {
+    this._model.cartCount = value?.items.length ?? 0;
   }
 
   private async onAuthStateChanged(

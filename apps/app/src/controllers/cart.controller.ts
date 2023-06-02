@@ -4,7 +4,7 @@ import { Controller } from '../controller';
 import { CartModel } from '../models/cart.model';
 import StoreController from './store.controller';
 import { select } from '@ngneat/elf';
-import { Region } from '@medusajs/medusa';
+import { Region, Cart } from '@medusajs/medusa';
 import MedusaService from '../services/medusa.service';
 
 class CartController extends Controller {
@@ -35,6 +35,12 @@ class CartController extends Controller {
     this._selectedRegionSubscription?.unsubscribe();
   }
 
+  public updateCart(
+    value: Omit<Cart, 'refundable_amount' | 'refunded_total'>
+  ): void {
+    this._model.cart = value;
+  }
+
   private async onSelectedRegionChangedAsync(
     value: Region | undefined
   ): Promise<void> {
@@ -50,7 +56,6 @@ class CartController extends Controller {
       const cartResponse = await MedusaService.medusa.carts.retrieve(
         this._model.cartId ?? ''
       );
-      console.log(cartResponse.cart);
       this._model.cart = cartResponse.cart;
     }
   }

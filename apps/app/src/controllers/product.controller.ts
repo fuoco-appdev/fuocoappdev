@@ -8,6 +8,7 @@ import { StoreModel, StoreState } from '../models/store.model';
 import StoreController from './store.controller';
 import MedusaService from '../services/medusa.service';
 import i18n from '../i18n';
+import CartController from './cart.controller';
 
 class ProductController extends Controller {
   private readonly _model: ProductModel;
@@ -76,7 +77,24 @@ class ProductController extends Controller {
     }
   }
 
-  public async addToCartAsync(variantId: string): Promise<void> {}
+  public async addToCartAsync(
+    variantId: string,
+    quantity: number = 1
+  ): Promise<void> {
+    if (!CartController.model.cartId) {
+      return;
+    }
+
+    const cartResponse = await MedusaService.medusa.carts.lineItems.create(
+      CartController.model.cartId,
+      {
+        variant_id: variantId,
+        quantity: quantity,
+      }
+    );
+    console.log(cartResponse.cart);
+    CartController.updateCart(cartResponse.cart);
+  }
 
   private formatPrice(price: MoneyAmount): string {
     if (!price.amount) {
