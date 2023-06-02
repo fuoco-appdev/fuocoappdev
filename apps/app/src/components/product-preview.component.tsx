@@ -8,8 +8,7 @@ import {
   useState,
 } from 'react';
 import styles from './product-preview.module.scss';
-import { ProductPreview } from '../models/store.model';
-import { MoneyAmount } from '../models/product.model';
+import { MoneyAmount, Product } from '@medusajs/medusa';
 import { Button, Card, Line } from '@fuoco.appdev/core-ui';
 import { animated, useSpring } from 'react-spring';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
@@ -20,7 +19,7 @@ import { useObservable } from '@ngneat/use-observable';
 
 export interface ProductPreviewProps {
   parentRef: MutableRefObject<HTMLDivElement | null>;
-  preview: ProductPreview;
+  preview: Product;
   onClick?: () => void;
   onRest?: () => void;
 }
@@ -118,7 +117,7 @@ function ProductPreviewMobileComponent({
       }
 
       const selectedCurrencyPrices = variant.prices?.filter(
-        (value) =>
+        (value: MoneyAmount) =>
           value.currency_code === storeProps.selectedRegion?.currency_code ?? ''
       );
       const cheapestPrice = selectedCurrencyPrices?.reduce((prev, next) => {

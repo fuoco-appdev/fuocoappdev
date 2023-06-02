@@ -1,5 +1,7 @@
 import { createStore, withProps } from '@ngneat/elf';
 import { Model } from '../model';
+import { ProductTag, ProductOption } from '@medusajs/medusa';
+import { PricedVariant } from '@medusajs/medusa/dist/types/pricing';
 
 export enum ProductOptions {
   Alcohol = 'Alcohol',
@@ -15,47 +17,6 @@ export enum ProductOptions {
   Vintage = 'Vintage',
 }
 
-export interface ProductTag {
-  value: string;
-  metadata: Record<string, unknown>;
-}
-
-export interface MoneyAmount {
-  id: string;
-  amount: number;
-  currency_code: string;
-  region_id: string;
-  variant_id: string;
-  created_at: Date | null;
-  updated_at: Date | null;
-  deleted_at: Date | null;
-  max_quantity: number | null;
-  min_quantity: number | null;
-  price_list_id: string | null;
-}
-
-export interface PricedVariant {
-  id?: string;
-  title?: string;
-  options?: ProductOption[];
-  prices?: MoneyAmount[];
-  inventory_quantity?: number;
-}
-
-export interface ProductOption {
-  id?: string;
-  product_id?: string;
-  title?: string;
-  value?: string;
-  variant_id?: string;
-  option_id?: string;
-}
-
-export interface ProductMetadata {
-  brand?: string;
-  region?: string;
-}
-
 export interface ProductState {
   thumbnail: string;
   title: string;
@@ -67,7 +28,7 @@ export interface ProductState {
   tags: ProductTag[];
   options: ProductOption[];
   variants: PricedVariant[];
-  metadata: ProductMetadata;
+  metadata: Record<string, unknown>;
   selectedVariant: PricedVariant | undefined;
   material: string;
   weight: string;
@@ -204,11 +165,11 @@ export class ProductModel extends Model {
     }
   }
 
-  public get metadata(): ProductMetadata {
+  public get metadata(): Record<string, unknown> {
     return this.store.getValue().metadata;
   }
 
-  public set metadata(value: ProductMetadata) {
+  public set metadata(value: Record<string, unknown>) {
     if (JSON.stringify(this.metadata) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, metadata: value }));
     }

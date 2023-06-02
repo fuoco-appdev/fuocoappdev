@@ -21,12 +21,8 @@ import * as core from '../protobuf/core_pb';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import LoadingComponent from './loading.component';
 import { Store } from '@ngneat/elf';
-import {
-  Country,
-  Region,
-  ProductPreview,
-  ProductTabs,
-} from '../models/store.model';
+import { ProductTabs } from '../models/store.model';
+import { Country, Region, Product } from '@medusajs/medusa';
 import ProductPreviewComponent from './product-preview.component';
 import ReactCountryFlag from 'react-country-flag';
 
@@ -205,7 +201,7 @@ function StoreMobileComponent(): JSX.Element {
         </div>
       </div>
       <div className={styles['wine-previews-container-mobile']}>
-        {props.previews.map((preview: ProductPreview, index: number) => (
+        {props.previews.map((preview: Product, index: number) => (
           <ProductPreviewComponent
             parentRef={rootRef}
             key={index}

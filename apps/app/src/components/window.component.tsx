@@ -149,7 +149,7 @@ function WindowMobileComponent(): JSX.Element {
                     }
                   />
                 </div>
-                <div className={styles['tab-button-container']}>
+                {/* <div className={styles['tab-button-container']}>
                   <Button
                     rippleProps={{
                       color: 'rgba(252, 245, 227, .35)',
@@ -171,7 +171,7 @@ function WindowMobileComponent(): JSX.Element {
                       />
                     }
                   />
-                </div>
+                </div> */}
               </>
             )}
             {props.showNavigateBack && (

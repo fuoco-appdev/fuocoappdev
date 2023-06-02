@@ -1,14 +1,10 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Subscription } from 'rxjs';
 import { Controller } from '../controller';
-import {
-  PricedVariant,
-  ProductMetadata,
-  ProductModel,
-  MoneyAmount,
-} from '../models/product.model';
+import { Product, MoneyAmount } from '@medusajs/medusa';
+import { ProductModel } from '../models/product.model';
 import { select } from '@ngneat/elf';
-import { StoreModel, StoreState, ProductPreview } from '../models/store.model';
+import { StoreModel, StoreState } from '../models/store.model';
 import StoreController from './store.controller';
 import MedusaService from '../services/medusa.service';
 import i18n from '../i18n';
@@ -33,7 +29,7 @@ class ProductController extends Controller {
     this._selectedPreviewSubscription = StoreController.model.store
       .pipe(select((state: StoreState) => state.selectedPreview))
       .subscribe({
-        next: (value: ProductPreview | undefined) => {
+        next: (value: Product | undefined) => {
           this._model.thumbnail = value?.thumbnail ?? '';
           this._model.title = value?.title ?? '';
           this._model.subtitle = value?.subtitle ?? '';

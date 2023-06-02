@@ -1,19 +1,20 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Index } from 'meilisearch';
 import { Controller } from '../controller';
-import {
-  Region,
-  StoreModel,
-  ProductPreview,
-  ProductTabs,
-} from '../models/store.model';
+import { StoreModel, ProductTabs } from '../models/store.model';
 import MeiliSearchService from '../services/meilisearch.service';
 import { Subscription } from 'rxjs';
 import HomeController from './home.controller';
 import { select } from '@ngneat/elf';
 import { SalesChannel } from '../models/home.model';
 import MedusaService from '../services/medusa.service';
-import { ProductOption, ProductOptions } from '../models/product.model';
+import {
+  ProductOption,
+  Region,
+  Product,
+  ProductOptionValue,
+} from '@medusajs/medusa';
+import { ProductOptions } from '../models/product.model';
 
 class StoreController extends Controller {
   private readonly _model: StoreModel;
@@ -46,7 +47,7 @@ class StoreController extends Controller {
     this.searchAsync(value);
   }
 
-  public updateSelectedPreview(value: ProductPreview): void {
+  public updateSelectedPreview(value: Product): void {
     this._model.selectedPreview = value;
   }
 
@@ -65,8 +66,8 @@ class StoreController extends Controller {
     const result = await this._productsIndex.search(query, {
       filter: ['type_value = Wine AND status = published'],
     });
-    let hits = result.hits as ProductPreview[];
-    const removedHits: ProductPreview[] = [];
+    let hits = result.hits as Product[];
+    const removedHits: Product[] = [];
     for (let i = 0; i < hits.length; i++) {
       const typeOption = hits[i].options.find(
         (value) => value.title === ProductOptions.Type
@@ -87,7 +88,7 @@ class StoreController extends Controller {
           this._model.selectedTab === ProductTabs.White
         ) {
           const typeValue = variant.options?.find(
-            (value: ProductOption) => value.option_id === typeOption?.id
+            (value: ProductOptionValue) => value.option_id === typeOption?.id
           );
           const duplicates = removedHits.filter(
             (value) => value.id === hits[i].id

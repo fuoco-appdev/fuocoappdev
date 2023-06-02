@@ -10,11 +10,8 @@ import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import {
-  ProductOption,
-  ProductOptions,
-  ProductTag,
-} from '../models/product.model';
+import { ProductOptions } from '../models/product.model';
+import { ProductOption, ProductTag } from '@medusajs/medusa';
 import { TabProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/tabs/tabs';
 
 export interface ProductProps {}
@@ -116,37 +113,37 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
 
     if (props.selectedVariant?.options) {
       const brandValue = props.selectedVariant.options.find(
-        (value: ProductOption) => value.option_id === brandOption?.id
+        (value: ProductOption) => value.id === brandOption?.id
       );
       const regionValue = props.selectedVariant.options.find(
-        (value: ProductOption) => value.option_id === regionOption?.id
+        (value: ProductOption) => value.id === regionOption?.id
       );
       const varietalsValue = props.selectedVariant.options.find(
-        (value: ProductOption) => value.option_id === varietalsOption?.id
+        (value: ProductOption) => value.id === varietalsOption?.id
       );
       const producerBottlerValue = props.selectedVariant.options.find(
-        (value: ProductOption) => value.option_id === producerBottlerOption?.id
+        (value: ProductOption) => value.id === producerBottlerOption?.id
       );
       const alcoholValue = props.selectedVariant.options.find(
-        (value: ProductOption) => value.option_id === alcoholOption?.id
+        (value: ProductOption) => value.id === alcoholOption?.id
       );
       const codeValue = props.selectedVariant.options.find(
-        (value: ProductOption) => value.option_id === codeOption?.id
+        (value: ProductOption) => value.id === codeOption?.id
       );
       const formatValue = props.selectedVariant.options.find(
-        (value: ProductOption) => value.option_id === formatOption?.id
+        (value: ProductOption) => value.id === formatOption?.id
       );
       const residualSugarValue = props.selectedVariant.options.find(
-        (value: ProductOption) => value.option_id === residualSugarOption?.id
+        (value: ProductOption) => value.id === residualSugarOption?.id
       );
       const typeValue = props.selectedVariant.options.find(
-        (value: ProductOption) => value.option_id === typeOption?.id
+        (value: ProductOption) => value.id === typeOption?.id
       );
       const uvcValue = props.selectedVariant.options.find(
-        (value: ProductOption) => value.option_id === uvcOption?.id
+        (value: ProductOption) => value.id === uvcOption?.id
       );
       const vintageValue = props.selectedVariant.options.find(
-        (value: ProductOption) => value.option_id === vintageOption?.id
+        (value: ProductOption) => value.id === vintageOption?.id
       );
 
       setBrand(brandValue?.value);
