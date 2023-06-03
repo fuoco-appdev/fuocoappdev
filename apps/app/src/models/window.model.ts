@@ -11,11 +11,9 @@ export interface WindowState {
   isAuthenticated: boolean | undefined;
   activeRoute: RoutePaths | undefined;
   cartCount: number;
-  showConfirmEmailAlert: boolean;
-  showPasswordResetAlert: boolean;
   authState: AuthChangeEvent | undefined;
   isLoading: boolean;
-  toasts: ToastProps[];
+  toast: ToastProps | undefined;
   showNavigateBack: boolean;
   currentPosition: GeolocationPosition | undefined;
 }
@@ -35,11 +33,9 @@ export class WindowModel extends Model {
           isAuthenticated: undefined,
           activeRoute: undefined,
           cartCount: 0,
-          showConfirmEmailAlert: false,
-          showPasswordResetAlert: false,
           authState: undefined,
           isLoading: false,
-          toasts: [],
+          toast: undefined,
           showNavigateBack: false,
           currentPosition: undefined,
         })
@@ -110,29 +106,6 @@ export class WindowModel extends Model {
     }
   }
 
-  public get showConfirmEmailAlert(): boolean {
-    return this.store.getValue().showConfirmEmailAlert;
-  }
-
-  public set showConfirmEmailAlert(show: boolean) {
-    if (this.showConfirmEmailAlert !== show) {
-      this.store.update((state) => ({ ...state, showConfirmEmailAlert: show }));
-    }
-  }
-
-  public get showPasswordResetAlert(): boolean {
-    return this.store.getValue().showPasswordResetAlert;
-  }
-
-  public set showPasswordResetAlert(show: boolean) {
-    if (this.showPasswordResetAlert !== show) {
-      this.store.update((state) => ({
-        ...state,
-        showPasswordResetAlert: show,
-      }));
-    }
-  }
-
   public get authState(): AuthChangeEvent | undefined {
     return this.store.getValue().authState;
   }
@@ -159,15 +132,15 @@ export class WindowModel extends Model {
     }
   }
 
-  public get toasts(): ToastProps[] {
-    return this.store.getValue().toasts;
+  public get toast(): ToastProps | undefined {
+    return this.store.getValue().toast;
   }
 
-  public set toasts(value: ToastProps[]) {
-    if (this.toasts !== value) {
+  public set toast(value: ToastProps | undefined) {
+    if (this.toast !== value) {
       this.store.update((state) => ({
         ...state,
-        toasts: value,
+        toast: value,
       }));
     }
   }

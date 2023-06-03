@@ -9,7 +9,7 @@ import {
   LanguageCode,
   LanguageSwitch,
   Line,
-  Solid,
+  ToastOverlay,
 } from '@fuoco.appdev/core-ui';
 import { RoutePaths } from '../route-paths';
 import { useTranslation } from 'react-i18next';
@@ -55,6 +55,10 @@ function WindowMobileComponent(): JSX.Element {
   useEffect(() => {
     i18n.changeLanguage(localProps.language);
   }, [localProps.language]);
+
+  useEffect(() => {
+    WindowController.addToast(undefined);
+  }, [props.toast]);
 
   return (
     <div className={styles['root']}>
@@ -285,6 +289,16 @@ function WindowMobileComponent(): JSX.Element {
           </div>
         </div>
       </div>
+      <ToastOverlay
+        classNames={{
+          root: styles['toast-overlay-root'],
+          overlayContainer: styles['toast-overlay-container'],
+        }}
+        toasts={props.toast ? [props.toast] : []}
+        transition={'down'}
+        align={'center'}
+        touchScreen={true}
+      />
       <Dropdown
         open={openMore}
         touchScreen={true}
@@ -377,30 +391,6 @@ export default function WindowComponent(): JSX.Element {
       <ResponsiveMobile>
         <WindowMobileComponent />
       </ResponsiveMobile>
-      <Alert
-        className={styles['alert']}
-        style={confirmEmailTransitionStyle}
-        title={t('emailConfirmation')}
-        variant={'info'}
-        withIcon={true}
-        closable={true}
-        onCloseClick={() => WindowController.updateShowConfirmEmailAlert(false)}
-      >
-        {t('emailConfirmationDescription')}
-      </Alert>
-      <Alert
-        className={styles['alert']}
-        style={passwordResetTransitionStyle}
-        title={t('passwordReset')}
-        variant={'info'}
-        withIcon={true}
-        closable={true}
-        onCloseClick={() =>
-          WindowController.updateShowPasswordResetAlert(false)
-        }
-      >
-        {t('passwordResetDescription')}
-      </Alert>
       <LoadingComponent isVisible={props.isLoading} />
     </div>
   );

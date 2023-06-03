@@ -163,7 +163,12 @@ export default function SignupComponent(): JSX.Element {
         setErrorType(type)
       }
       onEmailConfirmationSent={() => {
-        WindowController.updateShowConfirmEmailAlert(true);
+        WindowController.addToast({
+          key: 'signup-email-confirmation-sent',
+          message: t('emailConfirmation') ?? '',
+          description: t('emailConfirmationDescription') ?? '',
+          type: 'loading',
+        });
       }}
     />
   );

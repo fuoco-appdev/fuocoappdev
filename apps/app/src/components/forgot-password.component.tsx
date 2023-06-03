@@ -105,7 +105,12 @@ export default function ForgotPasswordComponent(): JSX.Element {
         goBackToSignIn: t('goBackToSignIn') ?? '',
       }}
       onResetPasswordSent={() => {
-        WindowController.updateShowPasswordResetAlert(true);
+        WindowController.addToast({
+          key: 'reset-password-sent',
+          message: t('passwordReset') ?? '',
+          description: t('passwordResetDescription') ?? '',
+          type: 'loading',
+        });
         setError(null);
       }}
       onSigninRedirect={() => navigate(RoutePaths.Signin)}

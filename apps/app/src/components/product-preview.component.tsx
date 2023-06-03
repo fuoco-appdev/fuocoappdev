@@ -16,6 +16,8 @@ import i18n from '../i18n';
 import ProductController from '../controllers/product.controller';
 import StoreController from '../controllers/store.controller';
 import { useObservable } from '@ngneat/use-observable';
+import WindowController from '../controllers/window.controller';
+import { useTranslation } from 'react-i18next';
 
 export interface ProductPreviewProps {
   parentRef: MutableRefObject<HTMLDivElement | null>;
@@ -43,6 +45,7 @@ function ProductPreviewMobileComponent({
     string | undefined
   >();
   const [storeProps] = useObservable(StoreController.model.store);
+  const { t } = useTranslation();
   const [style, api] = useSpring(() => ({
     from: {
       top: ref?.current?.getBoundingClientRect().top,
@@ -180,9 +183,22 @@ function ProductPreviewMobileComponent({
                     color: 'rgba(133, 38, 122, .35)',
                   }}
                   rounded={true}
-                  onClick={() =>
-                    ProductController.addToCartAsync(selectedVariantId ?? '')
-                  }
+                  onClick={() => {
+                    ProductController.addToCartAsync(
+                      selectedVariantId ?? '',
+                      1,
+                      () =>
+                        WindowController.addToast({
+                          key: `add-to-cart-${Math.random()}`,
+                          message: t('addedToCart') ?? '',
+                          description:
+                            t('addedToCartDescription', {
+                              item: preview.title,
+                            }) ?? '',
+                          type: 'success',
+                        })
+                    );
+                  }}
                   icon={<Line.AddShoppingCart size={24} />}
                 />
               </div>

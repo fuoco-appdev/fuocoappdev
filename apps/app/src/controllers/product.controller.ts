@@ -79,7 +79,9 @@ class ProductController extends Controller {
 
   public async addToCartAsync(
     variantId: string,
-    quantity: number = 1
+    quantity: number = 1,
+    successCallback?: () => void,
+    errorCallback?: (error: Error) => void
   ): Promise<void> {
     if (!CartController.model.cartId) {
       return;
@@ -92,7 +94,12 @@ class ProductController extends Controller {
         quantity: quantity,
       }
     );
-    console.log(cartResponse.cart);
+    if (cartResponse.response.status >= 400) {
+      errorCallback?.(new Error(cartResponse.response.statusText));
+      return;
+    }
+
+    successCallback?.();
     CartController.updateCart(cartResponse.cart);
   }
 

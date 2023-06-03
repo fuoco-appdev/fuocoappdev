@@ -90,16 +90,13 @@ export default function ResetPasswordComponent(): JSX.Element {
         goBackToSignIn: t('goBackToSignIn') ?? '',
       }}
       onPasswordUpdated={() => {
-        WindowController.updateShowPasswordResetAlert(false);
-        WindowController.updateToasts([
-          {
-            key: `${Math.random()}`,
-            message: t('passwordUpdated') ?? '',
-            description: t('passwordUpdatedDescription') ?? '',
-            type: 'success',
-            closable: true,
-          },
-        ]);
+        WindowController.addToast({
+          key: `password-updated`,
+          message: t('passwordUpdated') ?? '',
+          description: t('passwordUpdatedDescription') ?? '',
+          type: 'success',
+          closable: true,
+        });
         setError(null);
         navigate(RoutePaths.Account);
       }}

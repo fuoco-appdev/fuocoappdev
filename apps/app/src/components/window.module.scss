@@ -101,9 +101,20 @@
     }
   }
 
-  .dropdown-text {
+  & .dropdown-text {
     color: $brand-900;
     font-weight: $font-weight-bold;
     text-transform: capitalize;
   }
+
+  & .toast-overlay-root {
+    padding-top: $mp-4;
+    height: 100%;
+  }
+
+  & .toast-overlay-container {
+    height: 100%;
+    width: 100%;
+  }
+
 }

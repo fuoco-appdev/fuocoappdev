@@ -134,5 +134,7 @@
   "white": "White",
   "red": "Red",
   "rose": "Rosé",
-  "spirits": "Spirits"
+  "spirits": "Spirits",
+  "addedToCart": "Added to cart",
+  "addedToCartDescription": "The item {{item, string}} has been added to you cart"
 }

@@ -77,16 +77,8 @@ class WindowController extends Controller {
     this._model.authState = value;
   }
 
-  public updateShowConfirmEmailAlert(show: boolean): void {
-    this._model.showConfirmEmailAlert = show;
-  }
-
-  public updateShowPasswordResetAlert(show: boolean): void {
-    this._model.showPasswordResetAlert = show;
-  }
-
-  public updateToasts(toasts: ToastProps[]): void {
-    this._model.toasts = toasts;
+  public addToast(toast: ToastProps | undefined): void {
+    this._model.toast = toast;
   }
 
   public updateLanguage(language: LanguageCode): void {
