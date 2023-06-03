@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react';
 import styles from './product-preview.module.scss';
-import { MoneyAmount, Product } from '@medusajs/medusa';
+import { MoneyAmount, Product, LineItem } from '@medusajs/medusa';
 import { Button, Card, Line } from '@fuoco.appdev/core-ui';
 import { animated, useSpring } from 'react-spring';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
@@ -18,6 +18,7 @@ import StoreController from '../controllers/store.controller';
 import { useObservable } from '@ngneat/use-observable';
 import WindowController from '../controllers/window.controller';
 import { useTranslation } from 'react-i18next';
+import CartController from '../controllers/cart.controller';
 
 export interface ProductPreviewProps {
   parentRef: MutableRefObject<HTMLDivElement | null>;
@@ -41,9 +42,11 @@ function ProductPreviewMobileComponent({
   const ref = useRef<HTMLDivElement | null>(null);
   const [expanded, setExpanded] = useState<boolean>(false);
   const [price, setPrice] = useState<string>('');
+  const [addedToCartCount, setAddedToCartCount] = useState<number>(0);
   const [selectedVariantId, setSelectedVariantId] = useState<
     string | undefined
   >();
+  const [outOfStock, setOutOfStock] = useState<boolean>(false);
   const [storeProps] = useObservable(StoreController.model.store);
   const { t } = useTranslation();
   const [style, api] = useSpring(() => ({
@@ -119,24 +122,55 @@ function ProductPreviewMobileComponent({
         continue;
       }
 
-      const selectedCurrencyPrices = variant.prices?.filter(
-        (value: MoneyAmount) =>
-          value.currency_code === storeProps.selectedRegion?.currency_code ?? ''
+      const selectedCurrencyPrices = ProductController.getPricesByRegion(
+        storeProps.selectedRegion,
+        variant
       );
-      const cheapestPrice = selectedCurrencyPrices?.reduce((prev, next) => {
-        return (prev?.amount ?? 0) < (next?.amount ?? 0) ? prev : next;
-      });
-      if (cheapestPrice) {
-        variantPrices.push(cheapestPrice);
+      if (!selectedCurrencyPrices || selectedCurrencyPrices.length <= 0) {
+        continue;
       }
+
+      if (!CartController.model.cart) {
+        continue;
+      }
+
+      const availablePrices = ProductController.getAvailablePrices(
+        selectedCurrencyPrices,
+        variant
+      );
+      if (!availablePrices || availablePrices.length <= 0) {
+        continue;
+      }
+
+      const cheapestPrice = ProductController.getCheapestPrice(availablePrices);
+      if (!cheapestPrice) {
+        continue;
+      }
+
+      variantPrices.push(cheapestPrice);
     }
 
-    const cheapestVariant = variantPrices.reduce((prev, next) => {
-      return (prev?.amount ?? 0) < (next?.amount ?? 0) ? prev : next;
-    });
-    setSelectedVariantId(cheapestVariant.variant_id);
-    setPrice(formatPrice(cheapestVariant));
-  }, [preview, storeProps.selectedRegion]);
+    if (variantPrices.length > 0) {
+      const cheapestVariantPrice =
+        ProductController.getCheapestPrice(variantPrices);
+      if (cheapestVariantPrice) {
+        setSelectedVariantId(cheapestVariantPrice.variant_id);
+        setPrice(formatPrice(cheapestVariantPrice));
+      }
+    } else {
+      setSelectedVariantId(undefined);
+      setPrice('');
+    }
+  }, [preview, addedToCartCount, storeProps.selectedRegion]);
+
+  useEffect(() => {
+    const selectedVariant = preview.variants.find(
+      (value) => value.id === selectedVariantId
+    );
+    if (selectedVariant) {
+      setOutOfStock(selectedVariant.inventory_quantity <= 0);
+    }
+  }, [selectedVariantId]);
 
   return (
     <Card
@@ -182,12 +216,13 @@ function ProductPreviewMobileComponent({
                   rippleProps={{
                     color: 'rgba(133, 38, 122, .35)',
                   }}
+                  disabled={!selectedVariantId || outOfStock}
                   rounded={true}
                   onClick={() => {
                     ProductController.addToCartAsync(
                       selectedVariantId ?? '',
                       1,
-                      () =>
+                      () => {
                         WindowController.addToast({
                           key: `add-to-cart-${Math.random()}`,
                           message: t('addedToCart') ?? '',
@@ -196,7 +231,9 @@ function ProductPreviewMobileComponent({
                               item: preview.title,
                             }) ?? '',
                           type: 'success',
-                        })
+                        });
+                        setAddedToCartCount(addedToCartCount + 1);
+                      }
                     );
                   }}
                   icon={<Line.AddShoppingCart size={24} />}
@@ -210,7 +247,13 @@ function ProductPreviewMobileComponent({
             <span className={styles['product-title-mobile']}>
               {preview.title}
             </span>
-            <span className={styles['product-price-mobile']}>{price}</span>
+            {selectedVariantId ? (
+              <span className={styles['product-price-mobile']}>{price}</span>
+            ) : (
+              <div className={styles['product-limit-icon-mobile']}>
+                <Line.ProductionQuantityLimits size={20} />
+              </div>
+            )}
           </div>
         )}
       </animated.div>

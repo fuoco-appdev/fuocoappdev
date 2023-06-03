@@ -9,6 +9,7 @@ import StoreController from './store.controller';
 import MedusaService from '../services/medusa.service';
 import i18n from '../i18n';
 import CartController from './cart.controller';
+import { ProductVariant, LineItem, Region } from '@medusajs/medusa';
 
 class ProductController extends Controller {
   private readonly _model: ProductModel;
@@ -101,6 +102,42 @@ class ProductController extends Controller {
 
     successCallback?.();
     CartController.updateCart(cartResponse.cart);
+  }
+
+  public getCheapestPrice(prices: MoneyAmount[]): MoneyAmount | undefined {
+    const cheapestPrice = prices?.reduce((current, next) => {
+      return (current?.amount ?? 0) < (next?.amount ?? 0) ? current : next;
+    });
+    return cheapestPrice;
+  }
+
+  public getPricesByRegion(
+    region: Region,
+    variant: ProductVariant
+  ): MoneyAmount[] {
+    const prices = variant.prices?.filter(
+      (value: MoneyAmount) =>
+        value.currency_code === region?.currency_code ?? ''
+    );
+    return prices;
+  }
+
+  public getAvailablePrices(
+    prices: MoneyAmount[],
+    variant: ProductVariant
+  ): MoneyAmount[] {
+    const availablePrices = prices?.filter((price) => {
+      const cartItem: LineItem | undefined =
+        CartController.model.cart?.items.find(
+          (item) => item.variant_id === price.variant_id
+        );
+      return (
+        !cartItem ||
+        variant.allow_backorder ||
+        cartItem.quantity < variant.inventory_quantity
+      );
+    });
+    return availablePrices;
   }
 
   private formatPrice(price: MoneyAmount): string {

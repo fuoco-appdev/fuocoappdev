@@ -18,6 +18,7 @@ import {
 } from '@medusajs/medusa';
 import { PricedVariant } from '@medusajs/medusa/dist/types/pricing';
 import { TabProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/tabs/tabs';
+import WindowController from '../controllers/window.controller';
 
 export interface ProductProps {}
 
@@ -50,6 +51,7 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
   const [type, setType] = useState<string | undefined>('');
   const [uvc, setUVC] = useState<string | undefined>('');
   const [vintage, setVintage] = useState<string | undefined>('');
+  const [hasQuantityLimit, setHasQuantityLimit] = useState<boolean>(false);
   const { id } = useParams();
   const { t } = useTranslation();
 
@@ -80,6 +82,14 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
       ProductController.updateSelectedVariant(selectedVariant ?? '');
     }
   }, [props.options]);
+
+  useEffect(() => {
+    const availablePrices = ProductController.getAvailablePrices(
+      props.selectedVariant?.prices,
+      props.selectedVariant
+    );
+    setHasQuantityLimit(!availablePrices || availablePrices?.length <= 0);
+  }, [props.selectedVariant]);
 
   useEffect(() => {
     const brandOption = ProductController.model.options.find(
@@ -334,15 +344,36 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
           rippleProps={{
             color: 'rgba(233, 33, 66, .35)',
           }}
-          icon={<Line.AddShoppingCart size={24} />}
-          disabled={props.selectedVariant?.inventory_quantity < 0}
+          icon={
+            hasQuantityLimit ||
+            props.selectedVariant?.inventory_quantity <= 0 ? (
+              <Line.ProductionQuantityLimits size={24} />
+            ) : (
+              <Line.AddShoppingCart size={24} />
+            )
+          }
+          disabled={
+            hasQuantityLimit || props.selectedVariant?.inventory_quantity <= 0
+          }
           onClick={() =>
-            ProductController.addToCartAsync(props.selectedVariant?.id)
+            ProductController.addToCartAsync(props.selectedVariant?.id, 1, () =>
+              WindowController.addToast({
+                key: `add-to-cart-${Math.random()}`,
+                message: t('addedToCart') ?? '',
+                description:
+                  t('addedToCartDescription', {
+                    item: props.title,
+                  }) ?? '',
+                type: 'success',
+              })
+            )
           }
         >
-          {props.selectedVariant?.inventory_quantity > 0
-            ? t('addToCart')
-            : t('outOfStock')}
+          {props.selectedVariant?.inventory_quantity <= 0 && t('outOfStock')}
+          {hasQuantityLimit && t('quantityLimit')}
+          {props.selectedVariant?.inventory_quantity > 0 &&
+            !hasQuantityLimit &&
+            t('addToCart')}
         </Button>
         <div className={styles['tab-container-mobile']}>
           <Tabs

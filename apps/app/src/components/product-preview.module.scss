@@ -88,6 +88,13 @@
         line-height: 32px;
         font-weight: $font-weight-bold;
       }
+
+      & .product-limit-icon-mobile {
+        display: flex;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+      }
     }
 }
 

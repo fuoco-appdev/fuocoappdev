@@ -293,7 +293,11 @@ function WindowMobileComponent(): JSX.Element {
         classNames={{
           root: styles['toast-overlay-root'],
           overlayContainer: styles['toast-overlay-container'],
+          toast: {
+            life: styles['toast-life'],
+          },
         }}
+        timeout={2500}
         toasts={props.toast ? [props.toast] : []}
         transition={'down'}
         align={'center'}

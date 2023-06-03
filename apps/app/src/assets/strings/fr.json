@@ -135,5 +135,6 @@
   "red": "Rouge",
   "rose": "Rosé",
   "spirits": "Spiritueux",
-  "addedToCart": "Ajouté au panier"
+  "addedToCart": "Ajouté au panier",
+  "quantityLimit": "Limite de quantité"
 }
