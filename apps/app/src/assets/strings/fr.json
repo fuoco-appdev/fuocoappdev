@@ -139,5 +139,6 @@
   "quantityLimit": "Limite de quantité",
   "alreadyHaveAnAccount": "Vous avez déjà un compte?",
   "alreadyHaveAnAccountDescription": "Connectez-vous pour une meilleure expérience.",
-  "shoppingCart": "Panier d'achat"
+  "shoppingCart": "Panier d'achat",
+  "quantity": "Quantité"
 }

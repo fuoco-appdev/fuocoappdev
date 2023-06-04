@@ -43,37 +43,6 @@
         & .shopping-cart-items-mobile {
             display: flex;
             flex-direction: column;
-
-            & .cart-item-container-mobile {
-                padding: $mp-2 0;
-
-                & .cart-item-details-mobile {
-                    display: flex;
-
-                    & .cart-item-thumbnail-mobile {
-                        display: flex;
-                        justify-content: center;
-                        height: 56px;
-                        width: 56px;
-                        background-color: $gray-100;
-                        margin-right: $mp-4;
-
-                        & .cart-thumbnail-image-mobile {
-                            padding: $mp-1 0;
-                            max-height: 100%;
-                            width: auto;
-                            color: $brand-900;
-                        }
-                    }
-
-                    & .cart-item-title-container-mobile {
-                        & .cart-item-title-mobile {
-                            font-size: $font-size-base;
-                            font-weight: $font-weight-bold;
-                        }
-                    }
-                }
-            }
         }
     }
 }

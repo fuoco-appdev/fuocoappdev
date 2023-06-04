@@ -13,6 +13,7 @@ import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import LoadingComponent from './loading.component';
 import { Store } from '@ngneat/elf';
 import { LineItem, ProductVariant } from '@medusajs/medusa';
+import CartItemComponent from './cart-item.component';
 
 function CartDesktopComponent(): JSX.Element {
   const navigate = useNavigate();
@@ -56,29 +57,9 @@ function CartMobileComponent(): JSX.Element {
           {t('shoppingCart')}
         </div>
         <div className={styles['shopping-cart-items-mobile']}>
-          {props.cart?.items.map((item: LineItem) => {
-            console.log(item.variant.options);
-            return (
-              <div
-                key={item.variant_id}
-                className={styles['cart-item-container-mobile']}
-              >
-                <div className={styles['cart-item-details-mobile']}>
-                  <div className={styles['cart-item-thumbnail-mobile']}>
-                    <img
-                      className={styles['cart-thumbnail-image-mobile']}
-                      src={item.thumbnail || '../assets/svg/wine-bottle.svg'}
-                    />
-                  </div>
-                  <div className={styles['cart-item-title-container-mobile']}>
-                    <div className={styles['cart-item-title-mobile']}>
-                      {item.title}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+          {props.cart?.items.map((item: LineItem) => (
+            <CartItemComponent item={item} />
+          ))}
         </div>
       </div>
     </div>

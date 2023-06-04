@@ -140,5 +140,6 @@
   "quantityLimit": "Quantity limit",
   "alreadyHaveAnAccount": "Already have an account?",
   "alreadyHaveAnAccountDescription": "Sign in for a better experience.",
-  "shoppingCart": "Shopping cart"
+  "shoppingCart": "Shopping cart",
+  "quantity": "Quantity"
 }

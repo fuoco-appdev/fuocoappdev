@@ -106,6 +106,10 @@ class HomeController extends Controller {
 
     const targetPoint = point([target.lng, target.lat]);
     const collection = featureCollection(features);
+    if (collection.features.length <= 0) {
+      return null;
+    }
+
     const nearest = nearestPoint(
       targetPoint,
       collection as helpers.FeatureCollection<helpers.Point, helpers.Properties>

@@ -50,7 +50,11 @@ class CartController extends Controller {
         items.push({
           ...item,
           // @ts-ignore
-          variant: variant,
+          variant: {
+            ...variant,
+            // @ts-ignore
+            product: productResponse.product,
+          },
         });
       }
     }
