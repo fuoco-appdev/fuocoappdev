@@ -137,5 +137,8 @@
   "spirits": "Spirits",
   "addedToCart": "Added to cart",
   "addedToCartDescription": "The item {{item, string}} has been added to you cart",
-  "quantityLimit": "Quantity limit"
+  "quantityLimit": "Quantity limit",
+  "alreadyHaveAnAccount": "Already have an account?",
+  "alreadyHaveAnAccountDescription": "Sign in for a better experience.",
+  "shoppingCart": "Shopping cart"
 }

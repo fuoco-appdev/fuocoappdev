@@ -1,29 +1,29 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import {Controller} from '../controller';
-import {TermsOfServiceModel} from '../models';
+import { Controller } from '../controller';
+import { TermsOfServiceModel } from '../models';
 
 class TermsOfServiceController extends Controller {
-    private readonly _model: TermsOfServiceModel;
+  private readonly _model: TermsOfServiceModel;
 
-    constructor() {
-        super();
+  constructor() {
+    super();
 
-        this._model = new TermsOfServiceModel();
-    }
+    this._model = new TermsOfServiceModel();
+  }
 
-    public get model(): TermsOfServiceModel {
-        return this._model;
-    }
+  public get model(): TermsOfServiceModel {
+    return this._model;
+  }
 
-    public initialize(): void {
-        fetch('../assets/markdown/terms_of_service.md')
-        .then((res) => res.text())
-        .then((md) => {
-            this._model.markdown = md;
-        });
-    }
+  public initialize(renderCount: number): void {
+    fetch('../assets/markdown/terms_of_service.md')
+      .then((res) => res.text())
+      .then((md) => {
+        this._model.markdown = md;
+      });
+  }
 
-    public dispose(): void {}
+  public dispose(renderCount: number): void {}
 }
 
 export default new TermsOfServiceController();

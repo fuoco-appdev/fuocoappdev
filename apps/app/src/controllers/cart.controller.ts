@@ -4,7 +4,7 @@ import { Controller } from '../controller';
 import { CartModel } from '../models/cart.model';
 import StoreController from './store.controller';
 import { select } from '@ngneat/elf';
-import { Region, Cart } from '@medusajs/medusa';
+import { Region, Cart, LineItem } from '@medusajs/medusa';
 import MedusaService from '../services/medusa.service';
 
 class CartController extends Controller {
@@ -23,7 +23,7 @@ class CartController extends Controller {
     return this._model;
   }
 
-  public initialize(): void {
+  public initialize(renderCount: number): void {
     this._selectedRegionSubscription = StoreController.model.store
       .pipe(select((model) => model.selectedRegion))
       .subscribe({
@@ -31,14 +31,34 @@ class CartController extends Controller {
       });
   }
 
-  public dispose(): void {
+  public dispose(renderCount: number): void {
     this._selectedRegionSubscription?.unsubscribe();
   }
 
-  public updateCart(
+  public async updateCartAsync(
     value: Omit<Cart, 'refundable_amount' | 'refunded_total'>
-  ): void {
-    this._model.cart = value;
+  ): Promise<void> {
+    const items: LineItem[] = [];
+    for (const item of value.items) {
+      const productResponse = await MedusaService.medusa.products.retrieve(
+        item.variant.product_id
+      );
+      const variant = productResponse.product.variants.find(
+        (value) => value.id === item.variant_id
+      );
+      if (variant) {
+        items.push({
+          ...item,
+          // @ts-ignore
+          variant: variant,
+        });
+      }
+    }
+
+    this._model.cart = {
+      ...value,
+      items: items,
+    };
   }
 
   private async onSelectedRegionChangedAsync(
@@ -48,15 +68,15 @@ class CartController extends Controller {
       const cartResponse = await MedusaService.medusa.carts.create({
         region_id: value.id,
       });
-      this._model.cart = cartResponse.cart;
       this._model.cartId = cartResponse.cart.id;
+      await this.updateCartAsync(cartResponse.cart);
     }
 
     if (!this._model.cart) {
       const cartResponse = await MedusaService.medusa.carts.retrieve(
         this._model.cartId ?? ''
       );
-      this._model.cart = cartResponse.cart;
+      await this.updateCartAsync(cartResponse.cart);
     }
   }
 }

@@ -27,7 +27,7 @@ class ProductController extends Controller {
     return this._model;
   }
 
-  public initialize(): void {
+  public initialize(renderCount: number): void {
     this._selectedPreviewSubscription = StoreController.model.store
       .pipe(select((state: StoreState) => state.selectedPreview))
       .subscribe({
@@ -39,7 +39,7 @@ class ProductController extends Controller {
       });
   }
 
-  public dispose(): void {
+  public dispose(renderCount: number): void {
     this._selectedPreviewSubscription?.unsubscribe();
   }
 
@@ -100,8 +100,9 @@ class ProductController extends Controller {
       return;
     }
 
+    await CartController.updateCartAsync(cartResponse.cart);
+
     successCallback?.();
-    CartController.updateCart(cartResponse.cart);
   }
 
   public getCheapestPrice(prices: MoneyAmount[]): MoneyAmount | undefined {

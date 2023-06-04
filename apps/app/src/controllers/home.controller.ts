@@ -23,11 +23,11 @@ class HomeController extends Controller {
     return this._model;
   }
 
-  public initialize(): void {
-    this.initializeAsync();
+  public initialize(renderCount: number): void {
+    this.initializeAsync(renderCount);
   }
 
-  public dispose(): void {
+  public dispose(renderCount: number): void {
     this._currentPositionSubscription?.unsubscribe();
   }
 
@@ -37,15 +37,18 @@ class HomeController extends Controller {
     this._model.zoom = state.zoom;
   }
 
-  private async initializeAsync(): Promise<void> {
-    const salesChannels = await this.requestInventoryLocationsAsync();
-    if (salesChannels.length > 0) {
-      this._model.selectedSalesChannel = salesChannels[0];
+  private async initializeAsync(renderCount: number): Promise<void> {
+    if (renderCount <= 1) {
+      this._model.salesChannels = await this.requestInventoryLocationsAsync();
+      if (this._model.salesChannels.length > 0) {
+        this._model.selectedSalesChannel = this._model.salesChannels[0];
+      }
     }
     this._currentPositionSubscription = WindowController.model.store
       .pipe(select((model) => model.currentPosition))
       .subscribe({
-        next: (value) => this.onCurrentPositionChanged(value, salesChannels),
+        next: (value) =>
+          this.onCurrentPositionChanged(value, this._model.salesChannels),
       });
   }
 
@@ -68,7 +71,6 @@ class HomeController extends Controller {
       }
     }
 
-    this._model.salesChannels = salesChannels;
     return salesChannels;
   }
 

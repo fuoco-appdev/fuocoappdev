@@ -136,5 +136,8 @@
   "rose": "Rosé",
   "spirits": "Spiritueux",
   "addedToCart": "Ajouté au panier",
-  "quantityLimit": "Limite de quantité"
+  "quantityLimit": "Limite de quantité",
+  "alreadyHaveAnAccount": "Vous avez déjà un compte?",
+  "alreadyHaveAnAccountDescription": "Connectez-vous pour une meilleure expérience.",
+  "shoppingCart": "Panier d'achat"
 }

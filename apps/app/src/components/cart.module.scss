@@ -1,0 +1,85 @@
+@import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
+
+.root-mobile {
+    width: 100%;
+
+    & .account-container-mobile {
+        margin-top: 56px;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+
+        & .already-have-an-account-title-mobile {
+            font-size: 14pt;
+            font-weight: $font-weight-bold;
+            color: $brand-900;
+            margin-bottom: $mp-2;
+        }
+
+        & .already-have-an-account-description-mobile {
+            font-size: $font-size-sm;
+            color: $brand-900;
+            margin-bottom: $mp-8;
+        }
+
+        & .sign-in-button-container {
+            margin-bottom: 56px;
+        }
+    }
+
+    & .shopping-cart-container-mobile {
+        padding: 0 $mp-4;
+
+        & .shopping-cart-title-mobile {
+            font-size: 14pt;
+            line-height: 42px;
+            font-weight: $font-weight-bold;
+            color: $brand-900;
+            margin-bottom: $mp-2;
+            border-bottom: solid $brand-900 1px;
+        }
+
+        & .shopping-cart-items-mobile {
+            display: flex;
+            flex-direction: column;
+
+            & .cart-item-container-mobile {
+                padding: $mp-2 0;
+
+                & .cart-item-details-mobile {
+                    display: flex;
+
+                    & .cart-item-thumbnail-mobile {
+                        display: flex;
+                        justify-content: center;
+                        height: 56px;
+                        width: 56px;
+                        background-color: $gray-100;
+                        margin-right: $mp-4;
+
+                        & .cart-thumbnail-image-mobile {
+                            padding: $mp-1 0;
+                            max-height: 100%;
+                            width: auto;
+                            color: $brand-900;
+                        }
+                    }
+
+                    & .cart-item-title-container-mobile {
+                        & .cart-item-title-mobile {
+                            font-size: $font-size-base;
+                            font-weight: $font-weight-bold;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.sign-in-button {
+    background-color: transparent !important;
+    border-color: $brand-900 !important;
+    color: $brand-900 !important;
+}

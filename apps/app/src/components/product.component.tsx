@@ -7,7 +7,7 @@ import gfm from 'remark-gfm';
 import ProductController from '../controllers/product.controller';
 import { useNavigate } from 'react-router-dom';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ProductOptions } from '../models/product.model';
@@ -52,11 +52,15 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
   const [uvc, setUVC] = useState<string | undefined>('');
   const [vintage, setVintage] = useState<string | undefined>('');
   const [hasQuantityLimit, setHasQuantityLimit] = useState<boolean>(false);
+  const isRenderedRef = useRef<boolean>(false);
   const { id } = useParams();
   const { t } = useTranslation();
 
   useEffect(() => {
-    ProductController.requestProductAsync(id ?? '');
+    if (!isRenderedRef.current) {
+      isRenderedRef.current = true;
+      ProductController.requestProductAsync(id ?? '');
+    }
   }, []);
 
   useEffect(() => {

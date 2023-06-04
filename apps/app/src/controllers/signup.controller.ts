@@ -1,27 +1,27 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Controller } from "../controller";
-import { SignupModel } from "../models/signup.model";
+import { Controller } from '../controller';
+import { SignupModel } from '../models/signup.model';
 
 class SignupController extends Controller {
-    private readonly _model: SignupModel;
+  private readonly _model: SignupModel;
 
-    constructor() {
-        super();
+  constructor() {
+    super();
 
-        this._model = new SignupModel();
-    }
+    this._model = new SignupModel();
+  }
 
-    public get model(): SignupModel {
-        return this._model;
-    }
+  public get model(): SignupModel {
+    return this._model;
+  }
 
-    public initialize(): void {}
+  public initialize(renderCount: number): void {}
 
-    public dispose(): void {}
+  public dispose(renderCount: number): void {}
 
-    public updateEmailConfirmationSent(emailConfirmationSent: boolean): void {
-        this._model.emailConfirmationSent = emailConfirmationSent;
-    }
+  public updateEmailConfirmationSent(emailConfirmationSent: boolean): void {
+    this._model.emailConfirmationSent = emailConfirmationSent;
+  }
 }
 
 export default new SignupController();

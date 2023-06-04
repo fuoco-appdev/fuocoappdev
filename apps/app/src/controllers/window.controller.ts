@@ -49,13 +49,13 @@ class WindowController extends Controller {
     }
   }
 
-  public initialize(): void {
+  public initialize(renderCount: number): void {
     this._cartSubscription = CartController.model.store
       .pipe(select((model) => model.cart))
       .subscribe({ next: this.onCartChanged });
   }
 
-  public dispose(): void {
+  public dispose(renderCount: number): void {
     this._userSubscription?.unsubscribe();
     this._customerSubscription?.unsubscribe();
     this._cartSubscription?.unsubscribe();

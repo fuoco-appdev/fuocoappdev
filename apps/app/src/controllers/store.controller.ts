@@ -34,11 +34,11 @@ class StoreController extends Controller {
     return this._model;
   }
 
-  public initialize(): void {
-    this.intializeAsync();
+  public initialize(renderCount: number): void {
+    this.intializeAsync(renderCount);
   }
 
-  public dispose(): void {
+  public dispose(renderCount: number): void {
     this._selectedSalesChannelSubscription?.unsubscribe();
   }
 
@@ -125,8 +125,11 @@ class StoreController extends Controller {
     await this.updateRegionAsync(region);
   }
 
-  private async intializeAsync(): Promise<void> {
-    await this.requestRegionsAsync();
+  private async intializeAsync(renderCount: number): Promise<void> {
+    if (renderCount <= 1) {
+      await this.requestRegionsAsync();
+    }
+
     this._selectedSalesChannelSubscription = HomeController.model.store
       .pipe(select((model) => model.selectedSalesChannel))
       .subscribe({
