@@ -19,6 +19,9 @@ import {
 import { PricedVariant } from '@medusajs/medusa/dist/types/pricing';
 import { TabProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/tabs/tabs';
 import WindowController from '../controllers/window.controller';
+// @ts-ignore
+import { formatAmount } from 'medusa-react';
+import StoreController from '../controllers/store.controller';
 
 export interface ProductProps {}
 
@@ -30,6 +33,7 @@ function ProductDesktopComponent({}: ProductProps): JSX.Element {
 
 function ProductMobileComponent({}: ProductProps): JSX.Element {
   const [props] = useObservable(ProductController.model.store);
+  const [storeProps] = useObservable(StoreController.model.store);
   const [showMore, setShowMore] = useState<boolean>(false);
   const [disableShowMore, setDisableShowMore] = useState<boolean>(false);
   const [description, setDescription] = useState<string>('');
@@ -254,7 +258,13 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
           )}
         </div>
         <div className={styles['price-mobile']}>
-          {props.price} &nbsp;
+          {storeProps.selectedRegion &&
+            formatAmount({
+              amount: props.price?.amount ?? 0,
+              region: storeProps.selectedRegion,
+              includeTaxes: false,
+            })}
+          &nbsp;
           <span className={styles['inventory-quantity-mobile']}>
             ({props.selectedVariant?.inventory_quantity}&nbsp;{t('inStock')})
           </span>

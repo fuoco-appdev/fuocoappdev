@@ -5,6 +5,7 @@
 
     & .details-mobile {
         display: flex;
+        margin-bottom: $mp-1;
 
         & .thumbnail-mobile {
             display: flex;
@@ -36,7 +37,7 @@
             }
         }
 
-        & .pricing-details-container-mobile {
+        & .quantity-details-container-mobile {
             display: flex;
             flex-direction: row;
             flex: 1;
@@ -69,10 +70,25 @@
                         margin-left: $mp-2;
                         margin-right: $mp-2;
                         color: $brand-900;
+                        font-size: $font-size-sm;
                         font-weight: $font-weight-bold;
                     }
                 }
             }
+        }
+    }
+
+    & .pricing-details-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: right;
+        width: 100%;
+
+        & .pricing {
+            width: fit-content;
+            color: $brand-900;
+            font-weight: $font-weight-bold;
+            font-size: $font-size-sm;
         }
     }
 }

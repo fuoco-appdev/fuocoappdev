@@ -74,7 +74,7 @@ class ProductController extends Controller {
 
     // Change based on selected region
     if (variant?.prices) {
-      this._model.price = this.formatPrice(variant?.prices[0]);
+      this._model.price = variant?.prices[0];
     }
   }
 
@@ -139,22 +139,6 @@ class ProductController extends Controller {
       );
     });
     return availablePrices;
-  }
-
-  private formatPrice(price: MoneyAmount): string {
-    if (!price.amount) {
-      return 'null';
-    }
-
-    let value = price.amount.toString();
-    let charList = value.split('');
-    charList.splice(-2, 0, '.');
-    value = charList.join('');
-
-    return new Intl.NumberFormat(i18n.language, {
-      style: 'currency',
-      currency: price.currency_code,
-    }).format(Number(value));
   }
 }
 

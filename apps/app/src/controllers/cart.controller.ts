@@ -35,6 +35,20 @@ class CartController extends Controller {
     this._selectedRegionSubscription?.unsubscribe();
   }
 
+  public async updateLineItemQuantityAsync(
+    quantity: number,
+    item: LineItem
+  ): Promise<void> {
+    const cartResponse = await MedusaService.medusa.carts.lineItems.update(
+      item.cart_id,
+      item.id,
+      {
+        quantity: quantity,
+      }
+    );
+    await this.updateCartAsync(cartResponse.cart);
+  }
+
   public async updateCartAsync(
     value: Omit<Cart, 'refundable_amount' | 'refunded_total'>
   ): Promise<void> {

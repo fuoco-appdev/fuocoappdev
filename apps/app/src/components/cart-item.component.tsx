@@ -5,6 +5,11 @@ import { useEffect, useState } from 'react';
 import { ProductOptions } from '../models/product.model';
 import { useTranslation } from 'react-i18next';
 import { Button, Line } from '@fuoco.appdev/core-ui';
+import CartController from '../controllers/cart.controller';
+// @ts-ignore
+import { formatAmount } from 'medusa-react';
+import StoreController from '../controllers/store.controller';
+import { useObservable } from '@ngneat/use-observable';
 
 export interface CartItemProps {
   item: LineItem;
@@ -15,6 +20,7 @@ function CartItemDesktopComponent({ item }: CartItemProps): JSX.Element {
 }
 
 function CartItemMobileComponent({ item }: CartItemProps): JSX.Element {
+  const [storeProps] = useObservable(StoreController.model.store);
   const [vintage, setVintage] = useState<string>('');
   const { t } = useTranslation();
 
@@ -27,6 +33,18 @@ function CartItemMobileComponent({ item }: CartItemProps): JSX.Element {
     );
     setVintage(vintageValue?.value ?? '');
   }, [item]);
+
+  const incrementItemQuantity = (value: number): void => {
+    if (item.quantity < item.variant.inventory_quantity) {
+      CartController.updateLineItemQuantityAsync(item.quantity + 1, item);
+    }
+  };
+
+  const decrementItemQuantity = (value: number): void => {
+    if (item.quantity > 0) {
+      CartController.updateLineItemQuantityAsync(item.quantity - 1, item);
+    }
+  };
 
   return (
     <div key={item.variant_id} className={styles['container-mobile']}>
@@ -43,7 +61,7 @@ function CartItemMobileComponent({ item }: CartItemProps): JSX.Element {
             'vintage'
           )}: ${vintage}`}</div>
         </div>
-        <div className={styles['pricing-details-container-mobile']}>
+        <div className={styles['quantity-details-container-mobile']}>
           <div className={styles['quantity-container-mobile']}>
             <div className={styles['quantity-text-mobile']}>
               {t('quantity')}
@@ -58,6 +76,7 @@ function CartItemMobileComponent({ item }: CartItemProps): JSX.Element {
                 rounded={true}
                 size={'tiny'}
                 icon={<Line.Remove size={18} />}
+                onClick={() => decrementItemQuantity(1)}
               />
               <div className={styles['quantity']}>{item.quantity}</div>
               <Button
@@ -69,9 +88,20 @@ function CartItemMobileComponent({ item }: CartItemProps): JSX.Element {
                 rounded={true}
                 size={'tiny'}
                 icon={<Line.Add size={18} />}
+                onClick={() => incrementItemQuantity(1)}
               />
             </div>
           </div>
+        </div>
+      </div>
+      <div className={styles['pricing-details-container']}>
+        <div className={styles['pricing']}>
+          {storeProps.selectedRegion &&
+            formatAmount({
+              amount: item.total ?? 0,
+              region: storeProps.selectedRegion,
+              includeTaxes: false,
+            })}
         </div>
       </div>
     </div>

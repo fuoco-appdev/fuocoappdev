@@ -57,9 +57,16 @@ function CartMobileComponent(): JSX.Element {
           {t('shoppingCart')}
         </div>
         <div className={styles['shopping-cart-items-mobile']}>
-          {props.cart?.items.map((item: LineItem) => (
-            <CartItemComponent item={item} />
-          ))}
+          {props.cart?.items
+            .sort((current: LineItem, next: LineItem) => {
+              return (
+                new Date(current.created_at).valueOf() -
+                new Date(next.created_at).valueOf()
+              );
+            })
+            .map((item: LineItem) => (
+              <CartItemComponent key={item.id} item={item} />
+            ))}
         </div>
       </div>
     </div>

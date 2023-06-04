@@ -1,6 +1,6 @@
 import { createStore, withProps } from '@ngneat/elf';
 import { Model } from '../model';
-import { ProductTag, ProductOption } from '@medusajs/medusa';
+import { ProductTag, ProductOption, MoneyAmount } from '@medusajs/medusa';
 import { PricedVariant } from '@medusajs/medusa/dist/types/pricing';
 
 export enum ProductOptions {
@@ -24,7 +24,7 @@ export interface ProductState {
   isLiked: boolean;
   likeCount: number;
   description: string;
-  price: string;
+  price: MoneyAmount | undefined;
   tags: ProductTag[];
   options: ProductOption[];
   variants: PricedVariant[];
@@ -49,7 +49,7 @@ export class ProductModel extends Model {
           isLiked: false,
           likeCount: 0,
           description: new Array(355).join(' '),
-          price: '',
+          price: undefined,
           tags: [],
           options: [],
           variants: [],
@@ -125,12 +125,12 @@ export class ProductModel extends Model {
     }
   }
 
-  public get price(): string {
+  public get price(): MoneyAmount {
     return this.store.getValue().price;
   }
 
-  public set price(value: string) {
-    if (this.price !== value) {
+  public set price(value: MoneyAmount) {
+    if (JSON.stringify(this.price) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, price: value }));
     }
   }

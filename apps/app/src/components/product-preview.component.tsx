@@ -19,6 +19,8 @@ import { useObservable } from '@ngneat/use-observable';
 import WindowController from '../controllers/window.controller';
 import { useTranslation } from 'react-i18next';
 import CartController from '../controllers/cart.controller';
+// @ts-ignore
+import { formatAmount } from 'medusa-react';
 
 export interface ProductPreviewProps {
   parentRef: MutableRefObject<HTMLDivElement | null>;
@@ -155,7 +157,13 @@ function ProductPreviewMobileComponent({
         ProductController.getCheapestPrice(variantPrices);
       if (cheapestVariantPrice) {
         setSelectedVariantId(cheapestVariantPrice.variant_id);
-        setPrice(formatPrice(cheapestVariantPrice));
+        setPrice(
+          formatAmount({
+            amount: cheapestVariantPrice.amount ?? 0,
+            region: storeProps.selectedRegion,
+            includeTaxes: false,
+          })
+        );
       }
     } else {
       setSelectedVariantId(undefined);
