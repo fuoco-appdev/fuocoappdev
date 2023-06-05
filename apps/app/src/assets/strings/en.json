@@ -141,5 +141,7 @@
   "alreadyHaveAnAccount": "Already have an account?",
   "alreadyHaveAnAccountDescription": "Sign in for a better experience.",
   "shoppingCart": "Shopping cart",
-  "quantity": "Quantity"
+  "quantity": "Quantity",
+  "removeItem": "Remove item?",
+  "removeItemDescription": "Item {{item, string}} will be removed from your cart."
 }

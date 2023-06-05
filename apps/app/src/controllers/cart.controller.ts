@@ -6,6 +6,7 @@ import StoreController from './store.controller';
 import { select } from '@ngneat/elf';
 import { Region, Cart, LineItem } from '@medusajs/medusa';
 import MedusaService from '../services/medusa.service';
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 
 class CartController extends Controller {
   private readonly _model: CartModel;
@@ -35,6 +36,14 @@ class CartController extends Controller {
     this._selectedRegionSubscription?.unsubscribe();
   }
 
+  public async removeLineItemAsync(item: LineItem): Promise<void> {
+    const cartResponse = await MedusaService.medusa.carts.lineItems.delete(
+      item.cart_id,
+      item.id
+    );
+    await this.updateCartAsync(cartResponse.cart);
+  }
+
   public async updateLineItemQuantityAsync(
     quantity: number,
     item: LineItem
@@ -54,10 +63,20 @@ class CartController extends Controller {
   ): Promise<void> {
     const items: LineItem[] = [];
     for (const item of value.items) {
-      const productResponse = await MedusaService.medusa.products.retrieve(
-        item.variant.product_id
+      const itemCache = this._model.cart?.items.find(
+        (value) => value.id === item.id
       );
-      const variant = productResponse.product.variants.find(
+      let product: PricedProduct | undefined = itemCache?.variant.product as
+        | PricedProduct
+        | undefined;
+      if (!product) {
+        const productResponse = await MedusaService.medusa.products.retrieve(
+          item.variant.product_id
+        );
+        product = productResponse.product;
+      }
+
+      const variant = product?.variants.find(
         (value) => value.id === item.variant_id
       );
       if (variant) {
@@ -67,7 +86,7 @@ class CartController extends Controller {
           variant: {
             ...variant,
             // @ts-ignore
-            product: productResponse.product,
+            product: product,
           },
         });
       }

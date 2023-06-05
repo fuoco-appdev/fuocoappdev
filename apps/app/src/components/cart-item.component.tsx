@@ -4,7 +4,7 @@ import styles from './cart-item.module.scss';
 import { useEffect, useState } from 'react';
 import { ProductOptions } from '../models/product.model';
 import { useTranslation } from 'react-i18next';
-import { Button, Line } from '@fuoco.appdev/core-ui';
+import { Button, Line, Modal } from '@fuoco.appdev/core-ui';
 import CartController from '../controllers/cart.controller';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
@@ -22,6 +22,10 @@ function CartItemDesktopComponent({ item }: CartItemProps): JSX.Element {
 function CartItemMobileComponent({ item }: CartItemProps): JSX.Element {
   const [storeProps] = useObservable(StoreController.model.store);
   const [vintage, setVintage] = useState<string>('');
+  const [hasReducedPrice, setHasReducedPrice] = useState<boolean>(
+    (item.discount_total ?? 0) > 0
+  );
+  const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -93,6 +97,19 @@ function CartItemMobileComponent({ item }: CartItemProps): JSX.Element {
             </div>
           </div>
         </div>
+        <div className={styles['remove-container']}>
+          <Button
+            block={true}
+            classNames={{
+              button: styles['remove-button'],
+            }}
+            type={'text'}
+            rounded={true}
+            size={'tiny'}
+            icon={<Line.Delete size={24} />}
+            onClick={() => setDeleteModalVisible(true)}
+          />
+        </div>
       </div>
       <div className={styles['pricing-details-container']}>
         <div className={styles['pricing']}>
@@ -103,7 +120,27 @@ function CartItemMobileComponent({ item }: CartItemProps): JSX.Element {
               includeTaxes: false,
             })}
         </div>
+        {hasReducedPrice && (
+          <div className={styles['discount-pricing']}>
+            {storeProps.selectedRegion &&
+              formatAmount({
+                amount: item.discount_total ?? 0,
+                region: storeProps.selectedRegion,
+                includeTaxes: false,
+              })}
+          </div>
+        )}
       </div>
+      <Modal
+        classNames={{
+          overlay: styles['overlay'],
+        }}
+        visible={deleteModalVisible}
+        onConfirm={() => CartController.removeLineItemAsync(item)}
+        onCancel={() => setDeleteModalVisible(false)}
+        title={t('removeItem') ?? ''}
+        description={t('removeItemDescription', { item: item.title }) ?? ''}
+      />
     </div>
   );
 }

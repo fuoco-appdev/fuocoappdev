@@ -42,6 +42,7 @@
             flex-direction: row;
             flex: 1;
             justify-content: right;
+            margin-right: $mp-2;
 
             & .quantity-container-mobile {
                 display: flex;
@@ -76,6 +77,12 @@
                 }
             }
         }
+
+        & .remove-container {
+            & .remove-button {
+                color: $brand-900;
+            }
+        }
     }
 
     & .pricing-details-container {
@@ -91,4 +98,8 @@
             font-size: $font-size-sm;
         }
     }
+}
+
+.overlay {
+    z-index: 24;
 }
