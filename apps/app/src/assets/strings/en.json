@@ -143,5 +143,11 @@
   "shoppingCart": "Shopping cart",
   "quantity": "Quantity",
   "removeItem": "Remove item?",
-  "removeItemDescription": "Item {{item, string}} will be removed from your cart."
+  "removeItemDescription": "Item {{item, string}} will be removed from your cart.",
+  "original": "Original",
+  "subtotal": "Subtotal",
+  "discount": "Discount",
+  "shipping": "Shipping",
+  "taxes": "Taxes",
+  "total": "Total"
 }

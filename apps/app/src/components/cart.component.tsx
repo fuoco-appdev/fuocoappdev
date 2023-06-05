@@ -14,6 +14,9 @@ import LoadingComponent from './loading.component';
 import { Store } from '@ngneat/elf';
 import { LineItem, ProductVariant } from '@medusajs/medusa';
 import CartItemComponent from './cart-item.component';
+import StoreController from '../controllers/store.controller';
+// @ts-ignore
+import { formatAmount } from 'medusa-react';
 
 function CartDesktopComponent(): JSX.Element {
   const navigate = useNavigate();
@@ -25,6 +28,7 @@ function CartDesktopComponent(): JSX.Element {
 function CartMobileComponent(): JSX.Element {
   const navigate = useNavigate();
   const [props] = useObservable(CartController.model.store);
+  const [storeProps] = useObservable(StoreController.model.store);
   const { t, i18n } = useTranslation();
 
   return (
@@ -67,6 +71,63 @@ function CartMobileComponent(): JSX.Element {
             .map((item: LineItem) => (
               <CartItemComponent key={item.id} item={item} />
             ))}
+        </div>
+      </div>
+      <div className={styles['pricing-container']}>
+        <div className={styles['subtotal-container']}>
+          <div className={styles['subtotal-text']}>{t('subtotal')}</div>
+          <div className={styles['subtotal-text']}>
+            {storeProps.selectedRegion &&
+              formatAmount({
+                amount: props.cart?.subtotal ?? 0,
+                region: storeProps.selectedRegion,
+                includeTaxes: false,
+              })}
+          </div>
+        </div>
+        <div className={styles['total-detail-container']}>
+          <div className={styles['total-detail-text']}>{t('discount')}</div>
+          <div className={styles['total-detail-text']}>
+            {storeProps.selectedRegion &&
+              formatAmount({
+                amount: -props.cart?.discount_total ?? 0,
+                region: storeProps.selectedRegion,
+                includeTaxes: false,
+              })}
+          </div>
+        </div>
+        <div className={styles['total-detail-container']}>
+          <div className={styles['total-detail-text']}>{t('shipping')}</div>
+          <div className={styles['total-detail-text']}>
+            {storeProps.selectedRegion &&
+              formatAmount({
+                amount: props.cart?.shipping_total ?? 0,
+                region: storeProps.selectedRegion,
+                includeTaxes: false,
+              })}
+          </div>
+        </div>
+        <div className={styles['total-detail-container']}>
+          <div className={styles['total-detail-text']}>{t('taxes')}</div>
+          <div className={styles['total-detail-text']}>
+            {storeProps.selectedRegion &&
+              formatAmount({
+                amount: props.cart?.tax_total ?? 0,
+                region: storeProps.selectedRegion,
+                includeTaxes: false,
+              })}
+          </div>
+        </div>
+        <div className={styles['total-container']}>
+          <div className={styles['total-text']}>{t('total')}</div>
+          <div className={styles['total-text']}>
+            {storeProps.selectedRegion &&
+              formatAmount({
+                amount: props.cart?.total ?? 0,
+                region: storeProps.selectedRegion,
+                includeTaxes: true,
+              })}
+          </div>
         </div>
       </div>
     </div>

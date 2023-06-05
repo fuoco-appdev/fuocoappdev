@@ -97,6 +97,25 @@
             font-weight: $font-weight-bold;
             font-size: $font-size-sm;
         }
+
+        & .pricing-canceled {
+            text-decoration: line-through;
+        }
+
+        & .discount-pricing {
+            width: fit-content;
+            color: $brand-900;
+            font-weight: $font-weight-bold;
+            font-size: $font-size-sm;
+            margin-left: $mp-2;
+        }
+
+        & .discount-percentage {
+            width: fit-content;
+            color: $brand-900;
+            font-size: $font-size-sm;
+            margin-left: $mp-2;
+        }
     }
 }
 

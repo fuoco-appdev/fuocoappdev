@@ -26,6 +26,7 @@ function CartItemMobileComponent({ item }: CartItemProps): JSX.Element {
     (item.discount_total ?? 0) > 0
   );
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
+  const [discountPercentage, setDiscountPercentage] = useState<string>('');
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -36,6 +37,11 @@ function CartItemMobileComponent({ item }: CartItemProps): JSX.Element {
       (value: ProductOptionValue) => value.option_id === vintageOption?.id
     );
     setVintage(vintageValue?.value ?? '');
+
+    const total = item?.total ?? 0;
+    const difference = total - (item?.raw_discount_total ?? 0);
+    const percentage = (difference / total) * 100;
+    setDiscountPercentage(percentage.toFixed());
   }, [item]);
 
   const incrementItemQuantity = (value: number): void => {
@@ -45,7 +51,7 @@ function CartItemMobileComponent({ item }: CartItemProps): JSX.Element {
   };
 
   const decrementItemQuantity = (value: number): void => {
-    if (item.quantity > 0) {
+    if (item.quantity > 1) {
       CartController.updateLineItemQuantityAsync(item.quantity - 1, item);
     }
   };
@@ -76,6 +82,9 @@ function CartItemMobileComponent({ item }: CartItemProps): JSX.Element {
                 classNames={{
                   button: styles['quantity-button'],
                 }}
+                rippleProps={{
+                  color: 'rgba(233, 33, 66, .35)',
+                }}
                 type={'text'}
                 rounded={true}
                 size={'tiny'}
@@ -87,6 +96,9 @@ function CartItemMobileComponent({ item }: CartItemProps): JSX.Element {
                 block={true}
                 classNames={{
                   button: styles['quantity-button'],
+                }}
+                rippleProps={{
+                  color: 'rgba(233, 33, 66, .35)',
                 }}
                 type={'text'}
                 rounded={true}
@@ -112,7 +124,13 @@ function CartItemMobileComponent({ item }: CartItemProps): JSX.Element {
         </div>
       </div>
       <div className={styles['pricing-details-container']}>
-        <div className={styles['pricing']}>
+        <div
+          className={[
+            styles['pricing'],
+            hasReducedPrice ? styles['pricing-canceled'] : '',
+          ].join(' ')}
+        >
+          {hasReducedPrice && `${t('original')}:`} &nbsp;
           {storeProps.selectedRegion &&
             formatAmount({
               amount: item.total ?? 0,
@@ -121,14 +139,19 @@ function CartItemMobileComponent({ item }: CartItemProps): JSX.Element {
             })}
         </div>
         {hasReducedPrice && (
-          <div className={styles['discount-pricing']}>
-            {storeProps.selectedRegion &&
-              formatAmount({
-                amount: item.discount_total ?? 0,
-                region: storeProps.selectedRegion,
-                includeTaxes: false,
-              })}
-          </div>
+          <>
+            <div className={styles['discount-pricing']}>
+              {storeProps.selectedRegion &&
+                formatAmount({
+                  amount: item.discount_total ?? 0,
+                  region: storeProps.selectedRegion,
+                  includeTaxes: false,
+                })}
+            </div>
+            <div className={styles['discount-percentage']}>
+              -{discountPercentage}%
+            </div>
+          </>
         )}
       </div>
       <Modal

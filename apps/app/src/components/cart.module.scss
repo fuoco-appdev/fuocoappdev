@@ -2,6 +2,7 @@
 
 .root-mobile {
     width: 100%;
+    overflow-y: auto;
 
     & .account-container-mobile {
         margin-top: 56px;
@@ -43,6 +44,54 @@
         & .shopping-cart-items-mobile {
             display: flex;
             flex-direction: column;
+        }
+    }
+
+    & .pricing-container {
+        padding: $mp-4;
+
+        & .subtotal-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin-bottom: $mp-4;
+
+            & .subtotal-text {
+                width: fit-content;
+                font-size: $font-size-lg;
+                font-weight: $font-weight-bold;
+                color: $brand-900;
+            }
+        }
+
+        & .total-detail-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin-bottom: $mp-2;
+
+            & .total-detail-text {
+                width: fit-content;
+                font-size: $font-size-sm;
+                color: $brand-900;
+            }
+        }
+
+        & .total-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin-top: $mp-4;
+            margin-bottom: $mp-4;
+            padding-top: $mp-2;
+            border-top: solid $brand-900 1px;
+
+            & .total-text {
+                width: fit-content;
+                font-size: $font-size-lg;
+                font-weight: $font-weight-bold;
+                color: $brand-900;
+            }
         }
     }
 }

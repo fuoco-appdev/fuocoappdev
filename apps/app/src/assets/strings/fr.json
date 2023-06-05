@@ -143,5 +143,11 @@
   "shoppingCart": "Panier d'achat",
   "quantity": "Quantité",
   "removeItem": "Supprimer un élément?",
-  "removeItemDescription": "L'article {{item, string}} sera retiré de votre panier."
+  "removeItemDescription": "L'article {{item, string}} sera retiré de votre panier.",
+  "original": "Original",
+  "subtotal": "Sous-total",
+  "discount": "Réduction",
+  "shipping": "Expédition",
+  "taxes": "Impôts",
+  "total": "Total"
 }
