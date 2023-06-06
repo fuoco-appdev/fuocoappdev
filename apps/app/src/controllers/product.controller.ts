@@ -100,7 +100,7 @@ class ProductController extends Controller {
       return;
     }
 
-    await CartController.updateCartAsync(cartResponse.cart);
+    await CartController.updateLocalCartAsync(cartResponse.cart);
 
     successCallback?.();
   }

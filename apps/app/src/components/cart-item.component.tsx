@@ -41,7 +41,7 @@ function CartItemMobileComponent({ item }: CartItemProps): JSX.Element {
     const total = item?.total ?? 0;
     const difference = total - (item?.raw_discount_total ?? 0);
     const percentage = (difference / total) * 100;
-    setDiscountPercentage(percentage.toFixed());
+    setDiscountPercentage((100 - percentage).toFixed());
   }, [item]);
 
   const incrementItemQuantity = (value: number): void => {
@@ -143,7 +143,7 @@ function CartItemMobileComponent({ item }: CartItemProps): JSX.Element {
             <div className={styles['discount-pricing']}>
               {storeProps.selectedRegion &&
                 formatAmount({
-                  amount: item.discount_total ?? 0,
+                  amount: (item.total ?? 0) - (item.discount_total ?? 0),
                   region: storeProps.selectedRegion,
                   includeTaxes: false,
                 })}

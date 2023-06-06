@@ -149,5 +149,7 @@
   "discount": "Discount",
   "shipping": "Shipping",
   "taxes": "Taxes",
-  "total": "Total"
+  "total": "Total",
+  "apply": "Apply",
+  "goToCheckout": "Go to checkout"
 }

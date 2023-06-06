@@ -5,6 +5,7 @@ import { Cart } from '@medusajs/medusa';
 
 export interface CartState {
   cart: Omit<Cart, 'refundable_amount' | 'refunded_total'> | undefined;
+  discountCode: string;
 }
 
 export interface CartLocalState {
@@ -18,6 +19,7 @@ export class CartModel extends Model {
         { name: 'cart' },
         withProps<CartState>({
           cart: undefined,
+          discountCode: '',
         })
       ),
       undefined,
@@ -39,8 +41,18 @@ export class CartModel extends Model {
   public set cart(
     value: Omit<Cart, 'refundable_amount' | 'refunded_total'> | undefined
   ) {
-    if (this.cart !== value) {
+    if (JSON.stringify(this.cart) !== JSON.stringify(value)) {
       this.store?.update((state) => ({ ...state, cart: value }));
+    }
+  }
+
+  public get discountCode(): string {
+    return this.store?.getValue().discountCode;
+  }
+
+  public set discountCode(value: string) {
+    if (this.discountCode !== value) {
+      this.store?.update((state) => ({ ...state, discountCode: value }));
     }
   }
 

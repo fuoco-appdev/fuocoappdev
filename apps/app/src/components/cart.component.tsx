@@ -2,17 +2,12 @@ import { useEffect, useLayoutEffect, useRef } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import CartController from '../controllers/cart.controller';
 import styles from './cart.module.scss';
-import { Alert, Button } from '@fuoco.appdev/core-ui';
+import { Button, Input, Line, Solid } from '@fuoco.appdev/core-ui';
 import { RoutePaths } from '../route-paths';
 import { useTranslation } from 'react-i18next';
-import SupabaseService from '../services/supabase.service';
 import { useObservable } from '@ngneat/use-observable';
-import { useSpring } from 'react-spring';
-import * as core from '../protobuf/core_pb';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
-import LoadingComponent from './loading.component';
-import { Store } from '@ngneat/elf';
-import { LineItem, ProductVariant } from '@medusajs/medusa';
+import { LineItem, ProductVariant, Discount } from '@medusajs/medusa';
 import CartItemComponent from './cart-item.component';
 import StoreController from '../controllers/store.controller';
 // @ts-ignore
@@ -46,7 +41,7 @@ function CartMobileComponent(): JSX.Element {
               button: styles['sign-in-button'],
             }}
             rippleProps={{
-              color: 'rgba(233, 33, 66, .35)',
+              color: 'rgba(133, 38, 122, .35)',
             }}
             size={'large'}
             touchScreen={true}
@@ -129,6 +124,62 @@ function CartMobileComponent(): JSX.Element {
               })}
           </div>
         </div>
+      </div>
+      <div className={styles['discount-container']}>
+        <div className={styles['discount-input-container']}>
+          <Input
+            classNames={{
+              formLayout: {
+                label: styles['input-form-layout-label'],
+              },
+              input: styles['input'],
+              container: styles['input-container'],
+            }}
+            label={t('discount') ?? ''}
+            value={props.discountCode}
+            onChange={(event) =>
+              CartController.updateDiscountCodeText(event.target.value)
+            }
+          />
+        </div>
+        <div className={styles['apply-button-container']}>
+          <Button
+            size={'large'}
+            classNames={{
+              button: styles['apply-button'],
+            }}
+            rippleProps={{
+              color: 'rgba(133, 38, 122, .35)',
+            }}
+            onClick={() => CartController.updateDiscountCodeAsync()}
+          >
+            {t('apply')}
+          </Button>
+        </div>
+      </div>
+      <div className={styles['discount-list-container']}>
+        {props.cart?.discounts?.map((value: Discount) => {
+          return (
+            <div key={value.id} className={styles['discount-code-tag']}>
+              {value.code}
+            </div>
+          );
+        })}
+      </div>
+      <div className={styles['go-to-checkout-container']}>
+        <Button
+          classNames={{
+            button: styles['checkout-button'],
+          }}
+          rippleProps={{
+            color: 'rgba(233, 33, 66, .35)',
+          }}
+          block={true}
+          size={'large'}
+          icon={<Line.ShoppingCart size={24} />}
+        >
+          {t('goToCheckout')}
+        </Button>
       </div>
     </div>
   );

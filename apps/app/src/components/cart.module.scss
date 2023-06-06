@@ -94,10 +94,71 @@
             }
         }
     }
+
+    & .discount-container {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        align-items: center;
+        padding: 0 $mp-4;
+
+        & .discount-input-container {
+            width: 100%;
+        }
+
+        & .apply-button-container {
+            margin-left: $mp-4;
+            margin-top: $mp-3;
+
+            & .apply-button {
+                background-color: transparent;
+                border-color: $brand-900;
+                color: $brand-900;
+            }
+        }
+    }
+
+    & .discount-list-container {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: $mp-6;
+        padding: 0 $mp-4;
+
+        & .discount-code-tag {
+            border-radius: $rounded-full;
+            padding: $mp-2 $mp-4;
+            background-color: $brand-900;
+            font-size: $font-size-sm;
+            margin-right: $mp-1;
+            margin-bottom: $mp-1;
+            color: #fff;
+        }
+    }
+
+    & .go-to-checkout-container {
+        padding: 0 $mp-4;
+        margin-bottom: $mp-10;
+
+        & .checkout-button {
+            background-color: $brand-700;
+        }
+    }
 }
 
 .sign-in-button {
     background-color: transparent !important;
     border-color: $brand-900 !important;
     color: $brand-900 !important;
+}
+
+.input-form-layout-label {
+    color: $brand-900 !important;
+}
+  
+.input {
+    color: $brand-900 !important;
+}
+  
+.input-container {
+    border-color: $brand-900 !important;
 }

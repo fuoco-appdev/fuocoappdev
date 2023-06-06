@@ -4,7 +4,12 @@ import { Controller } from '../controller';
 import { CartModel } from '../models/cart.model';
 import StoreController from './store.controller';
 import { select } from '@ngneat/elf';
-import { Region, Cart, LineItem } from '@medusajs/medusa';
+import {
+  Region,
+  Cart,
+  LineItem,
+  StorePostCartsCartReq,
+} from '@medusajs/medusa';
 import MedusaService from '../services/medusa.service';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 
@@ -36,12 +41,38 @@ class CartController extends Controller {
     this._selectedRegionSubscription?.unsubscribe();
   }
 
+  public updateDiscountCodeText(value: string): void {
+    this._model.discountCode = value;
+  }
+
+  public async updateDiscountCodeAsync(): Promise<void> {
+    if (!this._model.discountCode || this._model.discountCode.length <= 0) {
+      return;
+    }
+
+    await this.updateCartAsync({
+      discounts: [{ code: this._model.discountCode }],
+    });
+  }
+
+  public async updateCartAsync(payload: StorePostCartsCartReq): Promise<void> {
+    if (!this._model.cartId) {
+      return;
+    }
+
+    const cartResponse = await MedusaService.medusa.carts.update(
+      this._model.cartId,
+      payload
+    );
+    await this.updateLocalCartAsync(cartResponse.cart);
+  }
+
   public async removeLineItemAsync(item: LineItem): Promise<void> {
     const cartResponse = await MedusaService.medusa.carts.lineItems.delete(
       item.cart_id,
       item.id
     );
-    await this.updateCartAsync(cartResponse.cart);
+    await this.updateLocalCartAsync(cartResponse.cart);
   }
 
   public async updateLineItemQuantityAsync(
@@ -55,10 +86,10 @@ class CartController extends Controller {
         quantity: quantity,
       }
     );
-    await this.updateCartAsync(cartResponse.cart);
+    await this.updateLocalCartAsync(cartResponse.cart);
   }
 
-  public async updateCartAsync(
+  public async updateLocalCartAsync(
     value: Omit<Cart, 'refundable_amount' | 'refunded_total'>
   ): Promise<void> {
     const items: LineItem[] = [];
@@ -106,14 +137,14 @@ class CartController extends Controller {
         region_id: value.id,
       });
       this._model.cartId = cartResponse.cart.id;
-      await this.updateCartAsync(cartResponse.cart);
+      await this.updateLocalCartAsync(cartResponse.cart);
     }
 
     if (!this._model.cart) {
       const cartResponse = await MedusaService.medusa.carts.retrieve(
         this._model.cartId ?? ''
       );
-      await this.updateCartAsync(cartResponse.cart);
+      await this.updateLocalCartAsync(cartResponse.cart);
     }
   }
 }

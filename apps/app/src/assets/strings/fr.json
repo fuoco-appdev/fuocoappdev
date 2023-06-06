@@ -149,5 +149,7 @@
   "discount": "Réduction",
   "shipping": "Expédition",
   "taxes": "Impôts",
-  "total": "Total"
+  "total": "Total",
+  "apply": "Appliquer",
+  "goToCheckout": "Passer à la caisse"
 }
