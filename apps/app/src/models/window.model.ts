@@ -15,6 +15,7 @@ export interface WindowState {
   isLoading: boolean;
   toast: ToastProps | undefined;
   showNavigateBack: boolean;
+  hideCartButton: boolean;
   currentPosition: GeolocationPosition | undefined;
 }
 
@@ -37,6 +38,7 @@ export class WindowModel extends Model {
           isLoading: false,
           toast: undefined,
           showNavigateBack: false,
+          hideCartButton: false,
           currentPosition: undefined,
         })
       ),
@@ -154,6 +156,19 @@ export class WindowModel extends Model {
       this.store.update((state) => ({
         ...state,
         showNavigateBack: value,
+      }));
+    }
+  }
+
+  public get hideCartButton(): boolean {
+    return this.store.getValue().hideCartButton;
+  }
+
+  public set hideCartButton(value: boolean) {
+    if (this.hideCartButton !== value) {
+      this.store.update((state) => ({
+        ...state,
+        hideCartButton: value,
       }));
     }
   }

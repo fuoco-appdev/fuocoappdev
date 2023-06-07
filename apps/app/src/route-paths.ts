@@ -12,6 +12,7 @@ export enum RoutePaths {
   Events = '/events',
   Notifications = '/notifications',
   Cart = '/cart',
+  Checkout = '/checkout',
   Account = '/account',
   AccountEvents = '/account/events',
   AccountOrderHistory = '/account/order-history',

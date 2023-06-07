@@ -36,6 +36,7 @@ import AccountOrderHistoryComponent from './account-order-history.component';
 import AccountAddressesComponent from './account-addresses.component';
 import AccountSettingsComponent from './account-settings.component';
 import ProductComponent from './product.component';
+import CheckoutComponent from './checkout.component';
 
 interface RouteElementProps {
   element: JSX.Element;
@@ -125,6 +126,7 @@ export default function AppComponent(): JSX.Element {
           />
           <Route path={RoutePaths.Events} element={<EventsComponent />} />
           <Route path={RoutePaths.Cart} element={<CartComponent />} />
+          <Route path={RoutePaths.Checkout} element={<CheckoutComponent />} />
           <Route
             path={RoutePaths.Notifications}
             element={

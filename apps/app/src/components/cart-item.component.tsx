@@ -38,9 +38,9 @@ function CartItemMobileComponent({ item }: CartItemProps): JSX.Element {
     );
     setVintage(vintageValue?.value ?? '');
 
-    const total = item?.total ?? 0;
-    const difference = total - (item?.raw_discount_total ?? 0);
-    const percentage = (difference / total) * 100;
+    const subtotal = item?.subtotal ?? 0;
+    const difference = subtotal - (item?.discount_total ?? 0);
+    const percentage = (difference / subtotal) * 100;
     setDiscountPercentage((100 - percentage).toFixed());
   }, [item]);
 
@@ -133,7 +133,7 @@ function CartItemMobileComponent({ item }: CartItemProps): JSX.Element {
           {hasReducedPrice && `${t('original')}:`} &nbsp;
           {storeProps.selectedRegion &&
             formatAmount({
-              amount: item.total ?? 0,
+              amount: item.subtotal ?? 0,
               region: storeProps.selectedRegion,
               includeTaxes: false,
             })}
@@ -143,7 +143,7 @@ function CartItemMobileComponent({ item }: CartItemProps): JSX.Element {
             <div className={styles['discount-pricing']}>
               {storeProps.selectedRegion &&
                 formatAmount({
-                  amount: (item.total ?? 0) - (item.discount_total ?? 0),
+                  amount: (item.subtotal ?? 0) - (item.discount_total ?? 0),
                   region: storeProps.selectedRegion,
                   includeTaxes: false,
                 })}

@@ -93,39 +93,55 @@ class WindowController extends Controller {
     if (location.pathname === RoutePaths.Home) {
       this._model.activeRoute = RoutePaths.Home;
       this._model.showNavigateBack = false;
+      this._model.hideCartButton = false;
     } else if (location.pathname === RoutePaths.Store) {
       this._model.activeRoute = RoutePaths.Store;
       this._model.showNavigateBack = false;
+      this._model.hideCartButton = false;
     } else if (location.pathname.startsWith(`${RoutePaths.Store}/`)) {
       this._model.activeRoute = RoutePaths.StoreWithId;
       this._model.showNavigateBack = true;
+      this._model.hideCartButton = false;
     } else if (location.pathname === RoutePaths.Events) {
       this._model.activeRoute = RoutePaths.Events;
       this._model.showNavigateBack = false;
+      this._model.hideCartButton = false;
     } else if (location.pathname === RoutePaths.Cart) {
       this._model.activeRoute = RoutePaths.Cart;
       this._model.showNavigateBack = false;
+      this._model.hideCartButton = false;
+    } else if (location.pathname === RoutePaths.Checkout) {
+      this._model.activeRoute = RoutePaths.Checkout;
+      this._model.showNavigateBack = true;
+      this._model.hideCartButton = true;
     } else if (location.pathname === RoutePaths.Signin) {
       this._model.activeRoute = RoutePaths.Signin;
       this._model.showNavigateBack = false;
+      this._model.hideCartButton = false;
     } else if (location.pathname === RoutePaths.Signup) {
       this._model.activeRoute = RoutePaths.Signup;
       this._model.showNavigateBack = false;
+      this._model.hideCartButton = false;
     } else if (location.pathname === RoutePaths.ForgotPassword) {
       this._model.activeRoute = RoutePaths.ForgotPassword;
       this._model.showNavigateBack = false;
+      this._model.hideCartButton = false;
     } else if (location.pathname === RoutePaths.ResetPassword) {
       this._model.activeRoute = RoutePaths.ResetPassword;
       this._model.showNavigateBack = false;
+      this._model.hideCartButton = false;
     } else if (location.pathname === RoutePaths.TermsOfService) {
       this._model.activeRoute = RoutePaths.TermsOfService;
       this._model.showNavigateBack = false;
+      this._model.hideCartButton = false;
     } else if (location.pathname === RoutePaths.PrivacyPolicy) {
       this._model.activeRoute = RoutePaths.PrivacyPolicy;
       this._model.showNavigateBack = false;
+      this._model.hideCartButton = false;
     } else if (location.pathname === RoutePaths.Account) {
       this._model.activeRoute = RoutePaths.Account;
       this._model.showNavigateBack = false;
+      this._model.hideCartButton = false;
     }
   }
 

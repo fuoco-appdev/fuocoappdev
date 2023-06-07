@@ -66,94 +66,121 @@ function WindowMobileComponent(): JSX.Element {
         <Outlet />
       </div>
       <div className={styles['bottom-bar']}>
-        <div className={styles['shopping-cart-container']}>
-          <div className={styles['shopping-cart-container-details']}>
-            <Button
-              classNames={{
-                container: styles['shopping-cart-button-container'],
-                button: styles['shopping-cart-button'],
-              }}
-              rippleProps={{
-                color: 'rgba(88, 40, 109, .35)',
-              }}
-              onClick={() => {
-                if (props.activeRoute === RoutePaths.Cart) {
-                  navigate(-1);
-                } else {
-                  navigate(RoutePaths.Cart);
+        {!props.hideCartButton && (
+          <div className={styles['shopping-cart-container']}>
+            <div className={styles['shopping-cart-container-details']}>
+              <Button
+                classNames={{
+                  container: styles['shopping-cart-button-container'],
+                  button: styles['shopping-cart-button'],
+                }}
+                rippleProps={{
+                  color: 'rgba(88, 40, 109, .35)',
+                }}
+                onClick={() => {
+                  if (props.activeRoute === RoutePaths.Cart) {
+                    navigate(-1);
+                  } else {
+                    navigate(RoutePaths.Cart);
+                  }
+                }}
+                type={'primary'}
+                rounded={true}
+                size={'small'}
+                touchScreen={true}
+                icon={
+                  props.activeRoute !== RoutePaths.Cart ? (
+                    <Line.ShoppingCart size={22} color={'#2A2A5F'} />
+                  ) : (
+                    <Line.Close size={22} color={'#2A2A5F'} />
+                  )
                 }
-              }}
-              type={'primary'}
-              rounded={true}
-              size={'small'}
-              touchScreen={true}
-              icon={
-                props.activeRoute !== RoutePaths.Cart ? (
-                  <Line.ShoppingCart size={22} color={'#2A2A5F'} />
-                ) : (
-                  <Line.Close size={22} color={'#2A2A5F'} />
-                )
-              }
-            />
-            {props.activeRoute !== RoutePaths.Cart && props.cartCount > 0 && (
-              <div className={styles['cart-number-container']}>
-                <span className={styles['cart-number']}>{props.cartCount}</span>
+              />
+              {props.activeRoute !== RoutePaths.Cart && props.cartCount > 0 && (
+                <div className={styles['cart-number-container']}>
+                  <span className={styles['cart-number']}>
+                    {props.cartCount}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+        {props.showNavigateBack && (
+          <div className={styles['navigation-back-container']}>
+            <div className={styles['tab-button-container']}>
+              <Button
+                rippleProps={{
+                  color: 'rgba(252, 245, 227, .35)',
+                }}
+                onClick={() => setTimeout(() => navigate(-1), 150)}
+                type={'text'}
+                rounded={true}
+                size={'tiny'}
+                touchScreen={true}
+                icon={
+                  <Line.ArrowBack size={24} color={'rgba(252, 245, 227, 1)'} />
+                }
+              />
+            </div>
+            {props.hideCartButton && (
+              <div className={styles['navigation-back-text-container']}>
+                {props.activeRoute === RoutePaths.Checkout && t('checkout')}
               </div>
             )}
           </div>
-        </div>
-        <div className={styles['tab-container']}>
-          <div className={styles['left-tab-container']}>
-            {!props.showNavigateBack && (
-              <>
-                <div className={styles['tab-button-container']}>
-                  <Button
-                    rippleProps={{
-                      color: 'rgba(252, 245, 227, .35)',
-                    }}
-                    onClick={() => navigate(RoutePaths.Home)}
-                    disabled={props.activeRoute === RoutePaths.Cart}
-                    type={'text'}
-                    rounded={true}
-                    size={'tiny'}
-                    touchScreen={true}
-                    icon={
-                      <Line.Home
-                        size={24}
-                        color={
-                          props.activeRoute === RoutePaths.Home ||
-                          props.activeRoute === RoutePaths.Default
-                            ? 'rgba(252, 245, 227, 1)'
-                            : 'rgba(252, 245, 227, .6)'
-                        }
-                      />
-                    }
-                  />
-                </div>
-                <div className={styles['tab-button-container']}>
-                  <Button
-                    rippleProps={{
-                      color: 'rgba(252, 245, 227, .35)',
-                    }}
-                    onClick={() => navigate(RoutePaths.Store)}
-                    disabled={props.activeRoute === RoutePaths.Cart}
-                    type={'text'}
-                    rounded={true}
-                    size={'tiny'}
-                    touchScreen={true}
-                    icon={
-                      <Line.Storefront
-                        size={24}
-                        color={
-                          props.activeRoute === RoutePaths.Store
-                            ? 'rgba(252, 245, 227, 1)'
-                            : 'rgba(252, 245, 227, .6)'
-                        }
-                      />
-                    }
-                  />
-                </div>
-                {/* <div className={styles['tab-button-container']}>
+        )}
+        {!props.showNavigateBack && (
+          <div className={styles['tab-container']}>
+            <div className={styles['left-tab-container']}>
+              <div className={styles['tab-button-container']}>
+                <Button
+                  rippleProps={{
+                    color: 'rgba(252, 245, 227, .35)',
+                  }}
+                  onClick={() => navigate(RoutePaths.Home)}
+                  disabled={props.activeRoute === RoutePaths.Cart}
+                  type={'text'}
+                  rounded={true}
+                  size={'tiny'}
+                  touchScreen={true}
+                  icon={
+                    <Line.Home
+                      size={24}
+                      color={
+                        props.activeRoute === RoutePaths.Home ||
+                        props.activeRoute === RoutePaths.Default
+                          ? 'rgba(252, 245, 227, 1)'
+                          : 'rgba(252, 245, 227, .6)'
+                      }
+                    />
+                  }
+                />
+              </div>
+              <div className={styles['tab-button-container']}>
+                <Button
+                  rippleProps={{
+                    color: 'rgba(252, 245, 227, .35)',
+                  }}
+                  onClick={() => navigate(RoutePaths.Store)}
+                  disabled={props.activeRoute === RoutePaths.Cart}
+                  type={'text'}
+                  rounded={true}
+                  size={'tiny'}
+                  touchScreen={true}
+                  icon={
+                    <Line.Storefront
+                      size={24}
+                      color={
+                        props.activeRoute === RoutePaths.Store
+                          ? 'rgba(252, 245, 227, 1)'
+                          : 'rgba(252, 245, 227, .6)'
+                      }
+                    />
+                  }
+                />
+              </div>
+              {/* <div className={styles['tab-button-container']}>
                   <Button
                     rippleProps={{
                       color: 'rgba(252, 245, 227, .35)',
@@ -176,118 +203,99 @@ function WindowMobileComponent(): JSX.Element {
                     }
                   />
                 </div> */}
-              </>
-            )}
-            {props.showNavigateBack && (
-              <div className={styles['tab-button-container']}>
-                <Button
-                  rippleProps={{
-                    color: 'rgba(252, 245, 227, .35)',
-                  }}
-                  onClick={() => setTimeout(() => navigate(-1), 150)}
-                  type={'text'}
-                  rounded={true}
-                  size={'tiny'}
-                  touchScreen={true}
-                  icon={
-                    <Line.ArrowBack
-                      size={24}
-                      color={'rgba(252, 245, 227, 1)'}
+            </div>
+            <div className={styles['right-tab-container']}>
+              {!props.isAuthenticated && (
+                <>
+                  <div className={styles['tab-button-container']}>
+                    <LanguageSwitch
+                      touchScreen={true}
+                      supportedLanguages={[LanguageCode.EN, LanguageCode.FR]}
+                      hideText={true}
+                      language={localProps.language}
+                      onChange={(value) =>
+                        WindowController.updateLanguage(value)
+                      }
                     />
-                  }
-                />
-              </div>
-            )}
+                  </div>
+                  <div className={styles['tab-button-container']}>
+                    <Button
+                      rippleProps={{
+                        color: 'rgba(252, 245, 227, .35)',
+                      }}
+                      disabled={props.activeRoute === RoutePaths.Cart}
+                      onClick={() => setOpenMore(true)}
+                      type={'text'}
+                      rounded={true}
+                      size={'tiny'}
+                      touchScreen={true}
+                      icon={
+                        <Line.MoreVert
+                          size={24}
+                          color={
+                            props.activeRoute === RoutePaths.Cart
+                              ? 'rgba(252, 245, 227, .6)'
+                              : 'rgba(252, 245, 227, 1)'
+                          }
+                        />
+                      }
+                    />
+                  </div>
+                </>
+              )}
+              {props.isAuthenticated && (
+                <>
+                  <div className={styles['tab-button-container']}>
+                    <Button
+                      rippleProps={{
+                        color: 'rgba(252, 245, 227, .35)',
+                      }}
+                      onClick={() => navigate(RoutePaths.Notifications)}
+                      disabled={props.activeRoute === RoutePaths.Cart}
+                      type={'text'}
+                      rounded={true}
+                      size={'tiny'}
+                      touchScreen={true}
+                      icon={
+                        <Line.Notifications
+                          size={24}
+                          color={
+                            props.activeRoute === RoutePaths.Notifications
+                              ? 'rgba(252, 245, 227, 1)'
+                              : 'rgba(252, 245, 227, .6)'
+                          }
+                        />
+                      }
+                    />
+                  </div>
+                  <div className={styles['tab-button-container']}>
+                    <Button
+                      rippleProps={{
+                        color: 'rgba(252, 245, 227, .35)',
+                      }}
+                      onClick={() => navigate(RoutePaths.Account)}
+                      disabled={props.activeRoute === RoutePaths.Cart}
+                      type={'text'}
+                      rounded={true}
+                      size={'tiny'}
+                      touchScreen={true}
+                      icon={
+                        <Line.AccountCircle
+                          size={24}
+                          color={
+                            props.activeRoute === RoutePaths.Account
+                              ? 'rgba(252, 245, 227, 1)'
+                              : 'rgba(252, 245, 227, .6)'
+                          }
+                        />
+                      }
+                    />
+                  </div>
+                </>
+              )}
+            </div>
           </div>
-          <div className={styles['right-tab-container']}>
-            {!props.isAuthenticated && !props.showNavigateBack && (
-              <>
-                <div className={styles['tab-button-container']}>
-                  <LanguageSwitch
-                    touchScreen={true}
-                    supportedLanguages={[LanguageCode.EN, LanguageCode.FR]}
-                    hideText={true}
-                    language={localProps.language}
-                    onChange={(value) => WindowController.updateLanguage(value)}
-                  />
-                </div>
-                <div className={styles['tab-button-container']}>
-                  <Button
-                    rippleProps={{
-                      color: 'rgba(252, 245, 227, .35)',
-                    }}
-                    disabled={props.activeRoute === RoutePaths.Cart}
-                    onClick={() => setOpenMore(true)}
-                    type={'text'}
-                    rounded={true}
-                    size={'tiny'}
-                    touchScreen={true}
-                    icon={
-                      <Line.MoreVert
-                        size={24}
-                        color={
-                          props.activeRoute === RoutePaths.Cart
-                            ? 'rgba(252, 245, 227, .6)'
-                            : 'rgba(252, 245, 227, 1)'
-                        }
-                      />
-                    }
-                  />
-                </div>
-              </>
-            )}
-            {props.isAuthenticated && (
-              <>
-                <div className={styles['tab-button-container']}>
-                  <Button
-                    rippleProps={{
-                      color: 'rgba(252, 245, 227, .35)',
-                    }}
-                    onClick={() => navigate(RoutePaths.Notifications)}
-                    disabled={props.activeRoute === RoutePaths.Cart}
-                    type={'text'}
-                    rounded={true}
-                    size={'tiny'}
-                    touchScreen={true}
-                    icon={
-                      <Line.Notifications
-                        size={24}
-                        color={
-                          props.activeRoute === RoutePaths.Notifications
-                            ? 'rgba(252, 245, 227, 1)'
-                            : 'rgba(252, 245, 227, .6)'
-                        }
-                      />
-                    }
-                  />
-                </div>
-                <div className={styles['tab-button-container']}>
-                  <Button
-                    rippleProps={{
-                      color: 'rgba(252, 245, 227, .35)',
-                    }}
-                    onClick={() => navigate(RoutePaths.Account)}
-                    disabled={props.activeRoute === RoutePaths.Cart}
-                    type={'text'}
-                    rounded={true}
-                    size={'tiny'}
-                    touchScreen={true}
-                    icon={
-                      <Line.AccountCircle
-                        size={24}
-                        color={
-                          props.activeRoute === RoutePaths.Account
-                            ? 'rgba(252, 245, 227, 1)'
-                            : 'rgba(252, 245, 227, .6)'
-                        }
-                      />
-                    }
-                  />
-                </div>
-              </>
-            )}
-          </div>
-        </div>
+        )}
       </div>
       <ToastOverlay
         classNames={{
