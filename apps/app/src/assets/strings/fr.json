@@ -151,5 +151,19 @@
   "taxes": "Impôts",
   "total": "Total",
   "apply": "Appliquer",
-  "goToCheckout": "Passer à la caisse"
+  "goToCheckout": "Passer à la caisse",
+  "shippingAddress": "Adresse de livraison",
+  "delivery": "Livraison",
+  "giftCard": "Carte cadeau",
+  "pay": "Payer",
+  "email": "Courriel",
+  "firstName": "Prénom",
+  "lastName": "Nom de famille",
+  "address": "Adresse",
+  "appartments": "Appartements, suites, etc.",
+  "postalCode": "Code postal",
+  "city": "Ville",
+  "stateOrProvince": "État / province",
+  "sameAsBillingAddress": "Identique à l'adresse de facturation",
+  "continueToDelivery": "Passer à la livraison"
 }

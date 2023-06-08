@@ -151,5 +151,19 @@
   "taxes": "Taxes",
   "total": "Total",
   "apply": "Apply",
-  "goToCheckout": "Go to checkout"
+  "goToCheckout": "Go to checkout",
+  "shippingAddress": "Shipping address",
+  "delivery": "Delivery",
+  "giftCard": "Gift card",
+  "pay": "Pay",
+  "email": "Email",
+  "firstName": "First name",
+  "lastName": "Last name",
+  "address": "Address",
+  "appartments": "Apartments, suites, etc.",
+  "postalCode": "Postal code",
+  "city": "City",
+  "stateOrProvince": "State / province",
+  "sameAsBillingAddress": "Same as billing address",
+  "continueToDelivery": "Continue to delivery"
 }
