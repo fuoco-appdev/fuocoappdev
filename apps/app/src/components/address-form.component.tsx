@@ -60,8 +60,8 @@ export interface AddressFormValues {
   apartments?: string;
   postalCode?: string;
   city?: string;
-  countryIndex?: number;
-  regionIndex?: number;
+  countryCode?: string;
+  region?: string;
   phoneNumber?: string;
 }
 
@@ -87,22 +87,37 @@ function AddressFormMobileComponent({
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [countryOptions, setCountryOptions] = useState<OptionProps[]>([]);
   const [regionOptions, setRegionOptions] = useState<OptionProps[]>([]);
-  const [selectedCountryIndex, setSelectedCountryIndex] = useState<number>(
-    values?.countryIndex ?? 0
-  );
-  const [selectedRegionIndex, setSelectedRegionIndex] = useState<number>(
-    values?.regionIndex ?? 0
-  );
+  const [selectedCountryIndex, setSelectedCountryIndex] = useState<number>(0);
+  const [selectedRegionIndex, setSelectedRegionIndex] = useState<number>(0);
   const [selectedCountry, setSelectedCountry] = useState<string>('');
-  const [fullName, setFullName] = useState<string>('Lucas Fuoco');
-  const [location, setLocation] = useState<string>(
-    '1112 rue Estelle, J8E 2N9, Mont Tremblant, Quebec, Canada'
-  );
-  const [company, setCompany] = useState<string>('Cruthology');
-  const [phoneNumber, setPhoneNumber] = useState<string>('+1-5148893132');
-  const [email, setEmail] = useState<string>('lucasfuoco@gmail.com');
+  const [fullName, setFullName] = useState<string>();
+  const [location, setLocation] = useState<string>();
+  const [company, setCompany] = useState<string>();
+  const [phoneNumber, setPhoneNumber] = useState<string>();
+  const [email, setEmail] = useState<string>();
   const [storeProps] = useObservable(StoreController.model.store);
   const { t } = useTranslation();
+
+  useEffect(() => {
+    const country = countryOptions[selectedCountryIndex];
+    const region = regionOptions[selectedRegionIndex];
+
+    if (country) {
+      onChangeCallbacks?.country?.(
+        selectedCountryIndex,
+        country?.id ?? '',
+        country?.value ?? ''
+      );
+    }
+
+    if (region) {
+      onChangeCallbacks?.region?.(
+        selectedRegionIndex,
+        region?.id ?? '',
+        region?.value ?? ''
+      );
+    }
+  }, [countryOptions, regionOptions]);
 
   useEffect(() => {
     const countries: OptionProps[] = [];
@@ -152,7 +167,6 @@ function AddressFormMobileComponent({
       }
 
       setSelectedCountryIndex(selectedCountryIndex);
-      console.log(selectedCountryIndex);
       setSelectedCountry(country?.iso_2);
       setSelectedRegionIndex(0);
       return;
@@ -189,6 +203,23 @@ function AddressFormMobileComponent({
   }, [selectedCountryIndex, countryOptions]);
 
   useEffect(() => {
+    const countryIndex = countryOptions.findIndex(
+      (value) => value.id === values?.countryCode
+    );
+    const regionIndex = regionOptions.findIndex(
+      (value) => value.value === values?.region
+    );
+
+    if (countryIndex !== -1) {
+      setSelectedCountryIndex(countryIndex);
+    }
+
+    if (regionIndex !== -1) {
+      setSelectedRegionIndex(regionIndex);
+    }
+  }, [values, countryOptions, regionOptions]);
+
+  useEffect(() => {
     if (isComplete) {
       setFullName(`${values?.firstName} ${values?.lastName}`);
 
@@ -198,10 +229,14 @@ function AddressFormMobileComponent({
       }
       locationValue += `, ${values?.postalCode}, ${values?.city}`;
 
-      const region = regionOptions.at(values?.regionIndex ?? 0);
+      const region = regionOptions.find(
+        (value) => value.value === values?.region
+      );
       locationValue += `, ${region?.value}`;
 
-      const country = countryOptions.at(values?.countryIndex ?? 0);
+      const country = countryOptions.find(
+        (value) => value.id === values?.countryCode
+      );
       locationValue += `, ${country?.value}`;
       setLocation(locationValue);
 

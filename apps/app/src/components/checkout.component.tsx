@@ -104,13 +104,13 @@ function CheckoutMobileComponent(): JSX.Element {
                 CheckoutController.updateShippingAddress({
                   city: event.target.value,
                 }),
-              country: (index) =>
+              country: (index, id, value) =>
                 CheckoutController.updateShippingAddress({
-                  countryIndex: index,
+                  countryCode: id,
                 }),
-              region: (index) =>
+              region: (index, id, value) =>
                 CheckoutController.updateShippingAddress({
-                  regionIndex: index,
+                  region: value,
                 }),
               phoneNumber: (value, event, formattedValue) =>
                 CheckoutController.updateShippingAddress({
@@ -163,7 +163,9 @@ function CheckoutMobileComponent(): JSX.Element {
                   return;
                 }
 
-                CheckoutController.continueToDelivery();
+                CheckoutController.updateShippingFormComplete(true);
+                CheckoutController.updateBillingFormComplete(true);
+                CheckoutController.continueToDeliveryAsync();
               }}
             >
               {t('continueToDelivery')}
@@ -259,13 +261,13 @@ function CheckoutMobileComponent(): JSX.Element {
                       CheckoutController.updateBillingAddress({
                         city: event.target.value,
                       }),
-                    country: (index) =>
+                    country: (index, id) =>
                       CheckoutController.updateBillingAddress({
-                        countryIndex: index,
+                        countryCode: id,
                       }),
-                    region: (index) =>
+                    region: (index, id, value) =>
                       CheckoutController.updateBillingAddress({
-                        regionIndex: index,
+                        region: value,
                       }),
                     phoneNumber: (value, event, formattedValue) =>
                       CheckoutController.updateBillingAddress({
@@ -305,7 +307,8 @@ function CheckoutMobileComponent(): JSX.Element {
                         return;
                       }
 
-                      CheckoutController.continueToDelivery();
+                      CheckoutController.updateBillingFormComplete(true);
+                      CheckoutController.continueToDeliveryAsync();
                     }}
                   >
                     {t('continueToDelivery')}
