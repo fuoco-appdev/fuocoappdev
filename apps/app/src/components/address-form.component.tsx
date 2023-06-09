@@ -1,8 +1,10 @@
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import styles from './address-form.module.scss';
 import {
+  Button,
   Input,
   InputPhoneNumber,
+  Line,
   Listbox,
   OptionProps,
 } from '@fuoco.appdev/core-ui';
@@ -67,6 +69,8 @@ export interface AddressFormProps {
   values?: AddressFormValues;
   errors?: AddressFormErrors;
   onChangeCallbacks?: AddressFormOnChangeCallbacks;
+  isComplete?: boolean;
+  onEdit?: () => void;
 }
 
 function AddressFormDesktopComponent({}: AddressFormProps): JSX.Element {
@@ -77,6 +81,8 @@ function AddressFormMobileComponent({
   values,
   errors,
   onChangeCallbacks,
+  isComplete = false,
+  onEdit,
 }: AddressFormProps): JSX.Element {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [countryOptions, setCountryOptions] = useState<OptionProps[]>([]);
@@ -88,6 +94,13 @@ function AddressFormMobileComponent({
     values?.regionIndex ?? 0
   );
   const [selectedCountry, setSelectedCountry] = useState<string>('');
+  const [fullName, setFullName] = useState<string>('Lucas Fuoco');
+  const [location, setLocation] = useState<string>(
+    '1112 rue Estelle, J8E 2N9, Mont Tremblant, Quebec, Canada'
+  );
+  const [company, setCompany] = useState<string>('Cruthology');
+  const [phoneNumber, setPhoneNumber] = useState<string>('+1-5148893132');
+  const [email, setEmail] = useState<string>('lucasfuoco@gmail.com');
   const [storeProps] = useObservable(StoreController.model.store);
   const { t } = useTranslation();
 
@@ -175,7 +188,30 @@ function AddressFormMobileComponent({
     setRegionOptions(regions);
   }, [selectedCountryIndex, countryOptions]);
 
-  return (
+  useEffect(() => {
+    if (isComplete) {
+      setFullName(`${values?.firstName} ${values?.lastName}`);
+
+      let locationValue = `${values?.address}`;
+      if (values?.apartments) {
+        locationValue += `, ${values?.apartments}`;
+      }
+      locationValue += `, ${values?.postalCode}, ${values?.city}`;
+
+      const region = regionOptions.at(values?.regionIndex ?? 0);
+      locationValue += `, ${region?.value}`;
+
+      const country = countryOptions.at(values?.countryIndex ?? 0);
+      locationValue += `, ${country?.value}`;
+      setLocation(locationValue);
+
+      setCompany(values?.company ?? '');
+      setPhoneNumber(values?.phoneNumber ?? '');
+      setEmail(values?.email ?? '');
+    }
+  }, [isComplete]);
+
+  return !isComplete ? (
     <>
       <Input
         classNames={{
@@ -324,6 +360,35 @@ function AddressFormMobileComponent({
         onChange={onChangeCallbacks?.phoneNumber}
       />
     </>
+  ) : (
+    <div className={styles['completed-container']}>
+      <div className={styles['completed-details-container']}>
+        <Line.CheckCircle size={24} />
+        <div className={styles['completed-details']}>
+          <div className={styles['completed-details-text']}>{fullName}</div>
+          <div className={styles['completed-details-text']}>{location}</div>
+          <div className={styles['completed-details-text']}>{company}</div>
+          <div className={styles['completed-details-text']}>{phoneNumber}</div>
+          <div className={styles['completed-details-text']}>{email}</div>
+        </div>
+      </div>
+      <div className={styles['edit-button-container']}>
+        <Button
+          classNames={{
+            button: styles['edit-button'],
+          }}
+          rippleProps={{
+            color: 'rgba(133, 38, 122, .35)',
+          }}
+          size={'small'}
+          type={'outline'}
+          icon={<Line.Edit size={24} />}
+          onClick={onEdit}
+        >
+          {t('edit')}
+        </Button>
+      </div>
+    </div>
   );
 }
 

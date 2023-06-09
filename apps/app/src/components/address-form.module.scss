@@ -6,6 +6,37 @@
     gap: $mp-2;
 }
 
+.completed-container {
+    display: flex;
+    flex-direction: row;
+
+    & .completed-details-container {
+        display: flex;
+        flex: 1;
+        color: $brand-900;
+
+        & .completed-details {
+            margin-left: $mp-2;
+            
+            & .completed-details-text {
+                line-height: 24px;
+                color: $brand-900;
+                font-size: $font-size-sm;
+            }
+        }
+    }
+
+    & .edit-button-container {
+
+    }
+}
+
+.edit-button {
+    background-color: transparent !important;
+    border-color: $brand-900 !important;
+    color: $brand-900 !important;
+}
+
 .input-form-layout-label {
     color: $brand-900 !important;
 }

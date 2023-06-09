@@ -23,6 +23,7 @@ function CheckoutMobileComponent(): JSX.Element {
     form: AddressFormValues
   ): AddressFormErrors | undefined => {
     const errors: AddressFormErrors = {};
+
     if (!form.email || form.email?.length <= 0) {
       errors.email = t('fieldEmptyError') ?? '';
     }
@@ -68,6 +69,8 @@ function CheckoutMobileComponent(): JSX.Element {
           <AddressFormComponent
             values={props.shippingForm}
             errors={props.shippingFormErrors}
+            isComplete={props.shippingFormComplete}
+            onEdit={() => CheckoutController.updateShippingFormComplete(false)}
             onChangeCallbacks={{
               email: (event) =>
                 CheckoutController.updateShippingAddress({
@@ -128,7 +131,7 @@ function CheckoutMobileComponent(): JSX.Element {
               )
             }
           />
-          {props.sameAsBillingAddress ? (
+          {!props.shippingFormComplete && props.sameAsBillingAddress && (
             <Button
               classNames={{
                 container: styles['submit-button-container'],
@@ -138,6 +141,19 @@ function CheckoutMobileComponent(): JSX.Element {
               size={'large'}
               icon={<Line.DeliveryDining size={24} />}
               onClick={() => {
+                CheckoutController.updateShippingAddressErrors({
+                  email: undefined,
+                  firstName: undefined,
+                  lastName: undefined,
+                  company: undefined,
+                  address: undefined,
+                  apartments: undefined,
+                  postalCode: undefined,
+                  city: undefined,
+                  region: undefined,
+                  phoneNumber: undefined,
+                });
+
                 const errors = getAddressFormErrors(
                   CheckoutController.model.shippingForm
                 );
@@ -152,7 +168,8 @@ function CheckoutMobileComponent(): JSX.Element {
             >
               {t('continueToDelivery')}
             </Button>
-          ) : (
+          )}
+          {!props.shippingFormComplete && !props.sameAsBillingAddress && (
             <Button
               classNames={{
                 container: styles['submit-button-container'],
@@ -162,6 +179,19 @@ function CheckoutMobileComponent(): JSX.Element {
               size={'large'}
               icon={<Line.Receipt size={24} />}
               onClick={() => {
+                CheckoutController.updateShippingAddressErrors({
+                  email: undefined,
+                  firstName: undefined,
+                  lastName: undefined,
+                  company: undefined,
+                  address: undefined,
+                  apartments: undefined,
+                  postalCode: undefined,
+                  city: undefined,
+                  region: undefined,
+                  phoneNumber: undefined,
+                });
+
                 const errors = getAddressFormErrors(
                   CheckoutController.model.shippingForm
                 );
@@ -192,6 +222,10 @@ function CheckoutMobileComponent(): JSX.Element {
                 <AddressFormComponent
                   values={props.billingForm}
                   errors={props.billingFormErrors}
+                  isComplete={props.billingFormComplete}
+                  onEdit={() =>
+                    CheckoutController.updateBillingFormComplete(false)
+                  }
                   onChangeCallbacks={{
                     email: (event) =>
                       CheckoutController.updateBillingAddress({
@@ -239,29 +273,44 @@ function CheckoutMobileComponent(): JSX.Element {
                       }),
                   }}
                 />
-                <Button
-                  classNames={{
-                    container: styles['submit-button-container'],
-                    button: styles['submit-button'],
-                  }}
-                  block={true}
-                  size={'large'}
-                  icon={<Line.DeliveryDining size={24} />}
-                  onClick={() => {
-                    const errors = getAddressFormErrors(
-                      CheckoutController.model.billingForm
-                    );
+                {!props.billingFormComplete && (
+                  <Button
+                    classNames={{
+                      container: styles['submit-button-container'],
+                      button: styles['submit-button'],
+                    }}
+                    block={true}
+                    size={'large'}
+                    icon={<Line.DeliveryDining size={24} />}
+                    onClick={() => {
+                      CheckoutController.updateBillingAddressErrors({
+                        email: undefined,
+                        firstName: undefined,
+                        lastName: undefined,
+                        company: undefined,
+                        address: undefined,
+                        apartments: undefined,
+                        postalCode: undefined,
+                        city: undefined,
+                        region: undefined,
+                        phoneNumber: undefined,
+                      });
 
-                    if (errors) {
-                      CheckoutController.updateBillingAddressErrors(errors);
-                      return;
-                    }
+                      const errors = getAddressFormErrors(
+                        CheckoutController.model.billingForm
+                      );
 
-                    CheckoutController.continueToDelivery();
-                  }}
-                >
-                  {t('continueToDelivery')}
-                </Button>
+                      if (errors) {
+                        CheckoutController.updateBillingAddressErrors(errors);
+                        return;
+                      }
+
+                      CheckoutController.continueToDelivery();
+                    }}
+                  >
+                    {t('continueToDelivery')}
+                  </Button>
+                )}
               </>
             ) : (
               <div className={styles['card-description']}>

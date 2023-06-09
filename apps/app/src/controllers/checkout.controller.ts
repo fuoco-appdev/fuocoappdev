@@ -47,8 +47,20 @@ class CheckoutController extends Controller {
     this._model.shippingFormComplete = value;
   }
 
-  public continueToDelivery(): void {}
-  public continueToBilling(): void {}
+  public updateBillingFormComplete(value: boolean): void {
+    this._model.billingFormComplete = value;
+  }
+
+  public continueToDelivery(): void {
+    this._model.shippingFormComplete = true;
+    this._model.billingFormComplete = true;
+    if (this._model.sameAsBillingAddress) {
+      this._model.billingForm = this._model.shippingForm;
+    }
+  }
+  public continueToBilling(): void {
+    this._model.shippingFormComplete = true;
+  }
 }
 
 export default new CheckoutController();
