@@ -121,6 +121,7 @@ function CheckoutMobileComponent(): JSX.Element {
           <Checkbox
             classNames={{
               container: styles['checkbox-container'],
+              checkbox: styles['checkbox'],
               labelContainerLabelSpan: styles['checkbox-label'],
             }}
             label={t('sameAsBillingAddress') ?? ''}

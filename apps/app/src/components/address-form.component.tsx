@@ -90,32 +90,35 @@ function AddressFormMobileComponent({
   const [selectedCountryIndex, setSelectedCountryIndex] = useState<number>(0);
   const [selectedRegionIndex, setSelectedRegionIndex] = useState<number>(0);
   const [selectedCountry, setSelectedCountry] = useState<string>('');
-  const [fullName, setFullName] = useState<string>();
-  const [location, setLocation] = useState<string>();
-  const [company, setCompany] = useState<string>();
-  const [phoneNumber, setPhoneNumber] = useState<string>();
-  const [email, setEmail] = useState<string>();
+  const [fullName, setFullName] = useState<string>('');
+  const [location, setLocation] = useState<string>('');
+  const [company, setCompany] = useState<string>('');
+  const [phoneNumber, setPhoneNumber] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
   const [storeProps] = useObservable(StoreController.model.store);
   const { t } = useTranslation();
 
   useEffect(() => {
-    const country = countryOptions[selectedCountryIndex];
-    const region = regionOptions[selectedRegionIndex];
-
-    if (country) {
-      onChangeCallbacks?.country?.(
-        selectedCountryIndex,
-        country?.id ?? '',
-        country?.value ?? ''
-      );
+    if (countryOptions.length > 0) {
+      const country = countryOptions[selectedCountryIndex];
+      if (country) {
+        onChangeCallbacks?.country?.(
+          selectedCountryIndex,
+          country?.id ?? '',
+          country?.value ?? ''
+        );
+      }
     }
 
-    if (region) {
-      onChangeCallbacks?.region?.(
-        selectedRegionIndex,
-        region?.id ?? '',
-        region?.value ?? ''
-      );
+    if (regionOptions.length > 0) {
+      const region = regionOptions[selectedRegionIndex];
+      if (region) {
+        onChangeCallbacks?.region?.(
+          selectedRegionIndex,
+          region?.id ?? '',
+          region?.value ?? ''
+        );
+      }
     }
   }, [countryOptions, regionOptions]);
 
@@ -401,7 +404,14 @@ function AddressFormMobileComponent({
         <Line.CheckCircle size={24} />
         <div className={styles['completed-details']}>
           <div className={styles['completed-details-text']}>{fullName}</div>
-          <div className={styles['completed-details-text']}>{location}</div>
+          <div
+            className={[
+              styles['completed-details-text'],
+              styles['address-text'],
+            ].join(' ')}
+          >
+            {location}
+          </div>
           <div className={styles['completed-details-text']}>{company}</div>
           <div className={styles['completed-details-text']}>{phoneNumber}</div>
           <div className={styles['completed-details-text']}>{email}</div>

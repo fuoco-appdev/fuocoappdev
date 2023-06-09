@@ -123,21 +123,6 @@ class CheckoutController extends Controller {
   }
 
   private onCartChanged(value: Cart | undefined): void {
-    console.log(value);
-    if (
-      value?.shipping_address &&
-      Object.keys(value?.shipping_address).length > 0
-    ) {
-      this._model.shippingFormComplete = true;
-    }
-
-    if (
-      value?.billing_address &&
-      Object.keys(value?.billing_address).length > 0
-    ) {
-      this._model.billingFormComplete = true;
-    }
-
     this._model.shippingForm = {
       email: value?.email,
       firstName: value?.shipping_address?.first_name ?? '',
@@ -164,6 +149,20 @@ class CheckoutController extends Controller {
       region: value?.billing_address?.province ?? '',
       phoneNumber: value?.billing_address?.phone ?? '',
     };
+
+    if (
+      value?.shipping_address &&
+      Object.keys(value?.shipping_address).length > 0
+    ) {
+      this._model.shippingFormComplete = true;
+    }
+
+    if (
+      value?.billing_address &&
+      Object.keys(value?.billing_address).length > 0
+    ) {
+      this._model.billingFormComplete = true;
+    }
   }
 }
 

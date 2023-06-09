@@ -17,11 +17,15 @@
 
         & .completed-details {
             margin-left: $mp-2;
-            
+
             & .completed-details-text {
                 line-height: 24px;
                 color: $brand-900;
                 font-size: $font-size-sm;
+            }
+
+            & .address-text {
+                text-transform: capitalize;
             }
         }
     }

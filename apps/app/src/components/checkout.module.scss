@@ -98,6 +98,10 @@
     margin-top: $mp-8;
 }
 
+.checkbox:checked {
+    background-color: $brand-900 !important;
+}
+
 .checkbox-label {
     color: $brand-900 !important;
 }
