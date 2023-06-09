@@ -160,10 +160,15 @@
   "firstName": "Prénom",
   "lastName": "Nom de famille",
   "address": "Adresse",
-  "appartments": "Appartements, suites, etc.",
+  "apartments": "Appartements, suites, etc.",
   "postalCode": "Code postal",
   "city": "Ville",
   "stateOrProvince": "État / province",
   "sameAsBillingAddress": "Identique à l'adresse de facturation",
-  "continueToDelivery": "Passer à la livraison"
+  "continueToDelivery": "Passer à la livraison",
+  "continueToBilling": "Continuer à facturer",
+  "optional": "optionnel",
+  "enterShippingAddressForBilling": "Entrez votre adresse de livraison pour voir les options de facturation.",
+  "enterShippingAddressForDelivery": "Entrez votre adresse de livraison pour voir les options de livraison disponibles.",
+  "enterBillingAddressForDelivery": "Entrez votre adresse de facturation pour voir les options de livraison disponibles."
 }

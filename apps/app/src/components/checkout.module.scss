@@ -14,7 +14,7 @@
         box-shadow: $shadow-1;
         margin-bottom: $mp-2;
         padding-top: $mp-2;
-        padding-bottom: $mp-4;
+        padding-bottom: $mp-8;
 
         & .card-content-container {
             width: 100%;
@@ -25,7 +25,7 @@
                 align-items: center;
                 height: 56px;
                 width: 100%;
-    
+                margin-bottom: $mp-4;
     
                 & .step-count {
                     border-radius: $rounded-full;
@@ -48,10 +48,9 @@
                 }
             }
 
-            & .horizontal-input-container {
-                display: flex;
-                flex-direction: row;
-                gap: $mp-2;
+            & .card-description {
+                color: $brand-900;
+                font-size: $font-size-sm;
             }
         }
     }
@@ -97,11 +96,14 @@
 
 .checkbox-container {
     margin-top: $mp-8;
-    margin-bottom: $mp-4;
 }
 
 .checkbox-label {
     color: $brand-900 !important;
+}
+
+.submit-button-container {
+    margin-top: $mp-4;
 }
 
 .submit-button {
