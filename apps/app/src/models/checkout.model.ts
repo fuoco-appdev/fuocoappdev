@@ -4,6 +4,12 @@ import {
   AddressFormErrors,
   AddressFormValues,
 } from '../components/address-form.component';
+import { PricedShippingOption } from '@medusajs/medusa/dist/types/pricing';
+
+export enum ShippingType {
+  Standard = 'Standard',
+  Express = 'Express',
+}
 
 export interface CheckoutState {
   shippingForm: AddressFormValues;
@@ -13,6 +19,10 @@ export interface CheckoutState {
   billingFormErrors: AddressFormErrors;
   billingFormComplete: boolean;
   sameAsBillingAddress: boolean;
+  shippingOptions: PricedShippingOption[];
+  selectedShippingOptionId: string | undefined;
+  giftCardCode: string;
+  discountCode: string;
 }
 
 export class CheckoutModel extends Model {
@@ -52,6 +62,10 @@ export class CheckoutModel extends Model {
           billingFormErrors: {},
           billingFormComplete: true,
           sameAsBillingAddress: true,
+          shippingOptions: [],
+          selectedShippingOptionId: undefined,
+          giftCardCode: '',
+          discountCode: '',
         })
       )
     );
@@ -124,6 +138,55 @@ export class CheckoutModel extends Model {
   public set sameAsBillingAddress(value: boolean) {
     if (this.sameAsBillingAddress !== value) {
       this.store.update((state) => ({ ...state, sameAsBillingAddress: value }));
+    }
+  }
+
+  public get shippingOptions(): PricedShippingOption[] {
+    return this.store.getValue().shippingOptions;
+  }
+
+  public set shippingOptions(value: PricedShippingOption[]) {
+    if (JSON.stringify(this.shippingOptions) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, shippingOptions: value }));
+    }
+  }
+
+  public get selectedShippingOptionId(): string | undefined {
+    return this.store.getValue().selectedShippingOptionId;
+  }
+
+  public set selectedShippingOptionId(value: string | undefined) {
+    if (this.selectedShippingOptionId !== value) {
+      this.store.update((state) => ({
+        ...state,
+        selectedShippingOptionId: value,
+      }));
+    }
+  }
+
+  public get giftCardCode(): string {
+    return this.store.getValue().giftCardCode;
+  }
+
+  public set giftCardCode(value: string) {
+    if (this.giftCardCode !== value) {
+      this.store.update((state) => ({
+        ...state,
+        giftCardCode: value,
+      }));
+    }
+  }
+
+  public get discountCode(): string {
+    return this.store.getValue().discountCode;
+  }
+
+  public set discountCode(value: string) {
+    if (this.discountCode !== value) {
+      this.store.update((state) => ({
+        ...state,
+        discountCode: value,
+      }));
     }
   }
 }

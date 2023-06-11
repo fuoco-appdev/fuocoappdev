@@ -161,7 +161,26 @@ function CartMobileComponent(): JSX.Element {
         {props.cart?.discounts?.map((value: Discount) => {
           return (
             <div key={value.id} className={styles['discount-code-tag']}>
-              {value.code}
+              <div className={styles['discount-code-tag-text']}>
+                {value.code}
+              </div>
+              <div className={styles['discount-code-tag-button-container']}>
+                <Button
+                  classNames={{
+                    button: styles['discount-code-tag-button'],
+                  }}
+                  onClick={() =>
+                    CartController.removeDiscountCodeAsync(value.code)
+                  }
+                  rippleProps={{}}
+                  touchScreen={true}
+                  block={true}
+                  rounded={true}
+                  type={'primary'}
+                  size={'tiny'}
+                  icon={<Solid.Cancel size={14} />}
+                />
+              </div>
             </div>
           );
         })}

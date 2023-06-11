@@ -7,8 +7,14 @@ import { Controller } from '../controller';
 import { CheckoutModel } from '../models/checkout.model';
 import MedusaService from '../services/medusa.service';
 import CartController from './cart.controller';
-import { AddressPayload, Cart } from '@medusajs/medusa';
+import {
+  AddressPayload,
+  Cart,
+  ShippingMethod,
+  ShippingOption,
+} from '@medusajs/medusa';
 import { select } from '@ngneat/elf';
+import StoreController from './store.controller';
 
 class CheckoutController extends Controller {
   private readonly _model: CheckoutModel;
@@ -18,7 +24,7 @@ class CheckoutController extends Controller {
     super();
 
     this._model = new CheckoutModel();
-    this.onCartChanged = this.onCartChanged.bind(this);
+    this.onCartChangedAsync = this.onCartChangedAsync.bind(this);
   }
 
   public get model(): CheckoutModel {
@@ -26,10 +32,12 @@ class CheckoutController extends Controller {
   }
 
   public initialize(renderCount: number): void {
+    this.initializeAsync(renderCount);
+
     this._cartSubscription = CartController.model.store
       .pipe(select((model) => model.cart))
       .subscribe({
-        next: this.onCartChanged,
+        next: this.onCartChangedAsync,
       });
   }
 
@@ -37,7 +45,11 @@ class CheckoutController extends Controller {
     this._cartSubscription?.unsubscribe();
   }
 
-  public initializeAsync(renderCount: number): void {}
+  public async initializeAsync(renderCount: number): Promise<void> {
+    if (renderCount > 1) {
+      return;
+    }
+  }
 
   public updateShippingAddress(value: AddressFormValues): void {
     this._model.shippingForm = { ...this._model.shippingForm, ...value };
@@ -66,6 +78,24 @@ class CheckoutController extends Controller {
 
   public updateBillingFormComplete(value: boolean): void {
     this._model.billingFormComplete = value;
+  }
+
+  public async updateSelectedShippingOptionIdAsync(
+    value: string
+  ): Promise<void> {
+    if (
+      !CartController.model.cartId ||
+      this._model.selectedShippingOptionId === value
+    ) {
+      return;
+    }
+
+    const cartResponse = await MedusaService.medusa.carts.addShippingMethod(
+      CartController.model.cartId,
+      { option_id: value }
+    );
+    CartController.updateLocalCartAsync(cartResponse.cart);
+    this._model.selectedShippingOptionId = value;
   }
 
   public async continueToDeliveryAsync(): Promise<void> {
@@ -122,7 +152,19 @@ class CheckoutController extends Controller {
     this._model.shippingFormComplete = true;
   }
 
-  private onCartChanged(value: Cart | undefined): void {
+  public updateGiftCardCodeText(value: string): void {
+    this._model.giftCardCode = value;
+  }
+
+  public async updateGiftCardCodeAsync(): Promise<void> {}
+
+  public updateDiscountCodeText(value: string): void {
+    this._model.discountCode = value;
+  }
+
+  public async updateDiscountCodeAsync(): Promise<void> {}
+
+  private async onCartChangedAsync(value: Cart | undefined): Promise<void> {
     this._model.shippingForm = {
       email: value?.email,
       firstName: value?.shipping_address?.first_name ?? '',
@@ -162,6 +204,29 @@ class CheckoutController extends Controller {
       Object.keys(value?.billing_address).length > 0
     ) {
       this._model.billingFormComplete = true;
+    }
+
+    if (value?.region_id) {
+      const shippingOptionsResponse =
+        await MedusaService.medusa.shippingOptions.list();
+      const shippingOptionsFromRegion =
+        shippingOptionsResponse.shipping_options.filter(
+          (option) => option.region_id === value?.region_id
+        );
+      shippingOptionsFromRegion.sort(
+        (current, next) => (current.amount ?? 0) - (next.amount ?? 0)
+      );
+      this._model.shippingOptions = shippingOptionsFromRegion;
+
+      const shippingMethods: ShippingMethod[] = value?.shipping_methods;
+      if (shippingMethods && shippingMethods.length > 0) {
+        this._model.selectedShippingOptionId =
+          shippingMethods[0].shipping_option_id;
+      } else {
+        await this.updateSelectedShippingOptionIdAsync(
+          shippingOptionsFromRegion[0].id ?? ''
+        );
+      }
     }
   }
 }

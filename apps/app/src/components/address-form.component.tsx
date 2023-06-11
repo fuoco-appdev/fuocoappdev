@@ -220,28 +220,34 @@ function AddressFormMobileComponent({
     if (regionIndex !== -1) {
       setSelectedRegionIndex(regionIndex);
     }
+
+    setLocation(getLocationText());
   }, [values, countryOptions, regionOptions]);
+
+  const getLocationText = (): string => {
+    let locationValue = `${values?.address}`;
+    if (values?.apartments) {
+      locationValue += `, ${values?.apartments}`;
+    }
+    locationValue += `, ${values?.postalCode}, ${values?.city}`;
+
+    const region = regionOptions.find(
+      (value) => value.value === values?.region
+    );
+    locationValue += `, ${region?.value}`;
+
+    const country = countryOptions.find(
+      (value) => value.id === values?.countryCode
+    );
+    locationValue += `, ${country?.value}`;
+    return locationValue;
+  };
 
   useEffect(() => {
     if (isComplete) {
       setFullName(`${values?.firstName} ${values?.lastName}`);
 
-      let locationValue = `${values?.address}`;
-      if (values?.apartments) {
-        locationValue += `, ${values?.apartments}`;
-      }
-      locationValue += `, ${values?.postalCode}, ${values?.city}`;
-
-      const region = regionOptions.find(
-        (value) => value.value === values?.region
-      );
-      locationValue += `, ${region?.value}`;
-
-      const country = countryOptions.find(
-        (value) => value.id === values?.countryCode
-      );
-      locationValue += `, ${country?.value}`;
-      setLocation(locationValue);
+      setLocation(getLocationText());
 
       setCompany(values?.company ?? '');
       setPhoneNumber(values?.phoneNumber ?? '');

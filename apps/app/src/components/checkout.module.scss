@@ -52,6 +52,28 @@
                 color: $brand-900;
                 font-size: $font-size-sm;
             }
+
+            & .apply-card-container {
+                display: flex;
+                flex-direction: row;
+                width: 100%;
+                align-items: center;
+        
+                & .apply-card-input-container {
+                    width: 100%;
+                }
+        
+                & .apply-button-container {
+                    margin-left: $mp-4;
+                    margin-top: $mp-3;
+        
+                    & .apply-button {
+                        background-color: transparent;
+                        border-color: $brand-900;
+                        color: $brand-900;
+                    }
+                }
+            }
         }
     }
 }
@@ -98,10 +120,6 @@
     margin-top: $mp-8;
 }
 
-.checkbox:checked {
-    background-color: $brand-900 !important;
-}
-
 .checkbox-label {
     color: $brand-900 !important;
 }
@@ -112,4 +130,27 @@
 
 .submit-button {
     background-color: $brand-700 !important;
+}
+
+.radio-price-text {
+    font-size: $font-size-sm;
+    color: $brand-900;
+}
+
+.radio-container-card {
+    border-color: $brand-900 !important;
+}
+
+.radio-container-card-active {
+    background-color: rgba(133, 38, 122, .1) !important;
+}
+
+.radio-label-text {
+    color: $brand-900 !important;
+    font-weight: $font-weight-bold;
+    margin-bottom: $mp-2;
+}
+
+.radio-label-description-text {
+    color: $brand-900 !important;
 }

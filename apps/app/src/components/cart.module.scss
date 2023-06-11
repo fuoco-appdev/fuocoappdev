@@ -125,6 +125,7 @@
         padding: 0 $mp-4;
 
         & .discount-code-tag {
+            position: relative;
             border-radius: $rounded-full;
             padding: $mp-2 $mp-4;
             background-color: $brand-900;
@@ -132,6 +133,17 @@
             margin-right: $mp-1;
             margin-bottom: $mp-1;
             color: #fff;
+
+            & .discount-code-tag-button-container {
+                position: absolute;
+                top: -4px;
+                right: -8px;
+
+
+                & .discount-code-tag-button {
+                    padding: $mp-1;
+                }
+            }
         }
     }
 

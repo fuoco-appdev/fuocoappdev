@@ -42,6 +42,8 @@ function CartItemMobileComponent({ item }: CartItemProps): JSX.Element {
     const difference = subtotal - (item?.discount_total ?? 0);
     const percentage = (difference / subtotal) * 100;
     setDiscountPercentage((100 - percentage).toFixed());
+
+    setHasReducedPrice((item.discount_total ?? 0) > 0);
   }, [item]);
 
   const incrementItemQuantity = (value: number): void => {

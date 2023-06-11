@@ -170,5 +170,7 @@
   "optional": "optionnel",
   "enterShippingAddressForBilling": "Entrez votre adresse de livraison pour voir les options de facturation.",
   "enterShippingAddressForDelivery": "Entrez votre adresse de livraison pour voir les options de livraison disponibles.",
-  "enterBillingAddressForDelivery": "Entrez votre adresse de facturation pour voir les options de livraison disponibles."
+  "enterBillingAddressForDelivery": "Entrez votre adresse de facturation pour voir les options de livraison disponibles.",
+  "standardShippingDescription": "Livraison en 3-7 jours pendant les heures ouvrables",
+  "expressShippingDescription": "Livraison en 1-3 jours pendant les heures ouvrables"
 }

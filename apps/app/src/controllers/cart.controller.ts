@@ -53,6 +53,20 @@ class CartController extends Controller {
     await this.updateCartAsync({
       discounts: [{ code: this._model.discountCode }],
     });
+
+    this._model.discountCode = '';
+  }
+
+  public async removeDiscountCodeAsync(code: string): Promise<void> {
+    if (!this._model.cartId) {
+      return;
+    }
+
+    const cartResponse = await MedusaService.medusa.carts.deleteDiscount(
+      this._model.cartId,
+      code
+    );
+    this.updateLocalCartAsync(cartResponse.cart);
   }
 
   public async updateCartAsync(payload: StorePostCartsCartReq): Promise<void> {
