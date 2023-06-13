@@ -18,11 +18,13 @@ export interface CheckoutState {
   billingForm: AddressFormValues;
   billingFormErrors: AddressFormErrors;
   billingFormComplete: boolean;
+  errorStrings: AddressFormErrors;
   sameAsBillingAddress: boolean;
   shippingOptions: PricedShippingOption[];
   selectedShippingOptionId: string | undefined;
   giftCardCode: string;
   discountCode: string;
+  providerId: string | undefined;
 }
 
 export class CheckoutModel extends Model {
@@ -61,11 +63,13 @@ export class CheckoutModel extends Model {
           },
           billingFormErrors: {},
           billingFormComplete: true,
+          errorStrings: {},
           sameAsBillingAddress: true,
           shippingOptions: [],
           selectedShippingOptionId: undefined,
           giftCardCode: '',
           discountCode: '',
+          providerId: undefined,
         })
       )
     );
@@ -131,6 +135,16 @@ export class CheckoutModel extends Model {
     }
   }
 
+  public get errorStrings(): AddressFormErrors {
+    return this.store.getValue().errorStrings;
+  }
+
+  public set errorStrings(value: AddressFormErrors) {
+    if (JSON.stringify(this.errorStrings) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, errorStrings: value }));
+    }
+  }
+
   public get sameAsBillingAddress(): boolean {
     return this.store.getValue().sameAsBillingAddress;
   }
@@ -186,6 +200,19 @@ export class CheckoutModel extends Model {
       this.store.update((state) => ({
         ...state,
         discountCode: value,
+      }));
+    }
+  }
+
+  public get providerId(): string | undefined {
+    return this.store.getValue().providerId;
+  }
+
+  public set providerId(value: string | undefined) {
+    if (this.providerId !== value) {
+      this.store.update((state) => ({
+        ...state,
+        providerId: value,
       }));
     }
   }

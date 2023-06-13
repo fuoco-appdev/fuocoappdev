@@ -7,6 +7,7 @@ import {
   Line,
   Radio,
   Input,
+  Solid,
 } from '@fuoco.appdev/core-ui';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useRef, useState } from 'react';
@@ -20,6 +21,8 @@ import { RadioProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/radio/
 import StoreController from '../controllers/store.controller';
 import { PricedShippingOption } from '@medusajs/medusa/dist/types/pricing';
 import { ShippingType } from '../models/checkout.model';
+import CartController from '../controllers/cart.controller';
+import { Discount, GiftCard } from '@medusajs/medusa';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
 
@@ -30,9 +33,10 @@ function CheckoutDesktopComponent(): JSX.Element {
 function CheckoutMobileComponent(): JSX.Element {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [props] = useObservable(CheckoutController.model.store);
+  const [cartProps] = useObservable(CartController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
   const [shippingOptions, setShippingOptions] = useState<RadioProps[]>([]);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     const radioOptions: RadioProps[] = [];
@@ -64,44 +68,17 @@ function CheckoutMobileComponent(): JSX.Element {
     setShippingOptions(radioOptions);
   }, [props.shippingOptions]);
 
-  const getAddressFormErrors = (
-    form: AddressFormValues
-  ): AddressFormErrors | undefined => {
-    const errors: AddressFormErrors = {};
-
-    if (!form.email || form.email?.length <= 0) {
-      errors.email = t('fieldEmptyError') ?? '';
-    }
-
-    if (!form.firstName || form.firstName?.length <= 0) {
-      errors.firstName = t('fieldEmptyError') ?? '';
-    }
-
-    if (!form.lastName || form.lastName?.length <= 0) {
-      errors.lastName = t('fieldEmptyError') ?? '';
-    }
-
-    if (!form.address || form.address?.length <= 0) {
-      errors.address = t('fieldEmptyError') ?? '';
-    }
-
-    if (!form.postalCode || form.postalCode?.length <= 0) {
-      errors.postalCode = t('fieldEmptyError') ?? '';
-    }
-
-    if (!form.city || form.city?.length <= 0) {
-      errors.city = t('fieldEmptyError') ?? '';
-    }
-
-    if (!form.phoneNumber || form.phoneNumber?.length <= 0) {
-      errors.phoneNumber = t('fieldEmptyError') ?? '';
-    }
-
-    if (Object.keys(errors).length > 0) {
-      return errors;
-    }
-    return undefined;
-  };
+  useEffect(() => {
+    CheckoutController.updateErrorStrings({
+      email: t('fieldEmptyError') ?? '',
+      firstName: t('fieldEmptyError') ?? '',
+      lastName: t('fieldEmptyError') ?? '',
+      address: t('fieldEmptyError') ?? '',
+      postalCode: t('fieldEmptyError') ?? '',
+      city: t('fieldEmptyError') ?? '',
+      phoneNumber: t('fieldEmptyError') ?? '',
+    });
+  }, [i18n.language]);
 
   return (
     <div ref={rootRef} className={styles['root']}>
@@ -200,7 +177,7 @@ function CheckoutMobileComponent(): JSX.Element {
                   phoneNumber: undefined,
                 });
 
-                const errors = getAddressFormErrors(
+                const errors = CheckoutController.getAddressFormErrors(
                   CheckoutController.model.shippingForm
                 );
 
@@ -240,7 +217,7 @@ function CheckoutMobileComponent(): JSX.Element {
                   phoneNumber: undefined,
                 });
 
-                const errors = getAddressFormErrors(
+                const errors = CheckoutController.getAddressFormErrors(
                   CheckoutController.model.shippingForm
                 );
 
@@ -344,7 +321,7 @@ function CheckoutMobileComponent(): JSX.Element {
                         phoneNumber: undefined,
                       });
 
-                      const errors = getAddressFormErrors(
+                      const errors = CheckoutController.getAddressFormErrors(
                         CheckoutController.model.billingForm
                       );
 
@@ -429,7 +406,7 @@ function CheckoutMobileComponent(): JSX.Element {
                   container: styles['input-container'],
                 }}
                 label={t('code') ?? ''}
-                value={props.discountCode}
+                value={props.giftCardCode}
                 onChange={(event) =>
                   CheckoutController.updateGiftCardCodeText(event.target.value)
                 }
@@ -449,6 +426,15 @@ function CheckoutMobileComponent(): JSX.Element {
                 {t('apply')}
               </Button>
             </div>
+          </div>
+          <div className={styles['tag-list-container']}>
+            {cartProps.cart?.gift_cards?.map((value: GiftCard) => {
+              return (
+                <div key={value.id} className={styles['tag']}>
+                  <div className={styles['tag-text']}>{value.code}</div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -489,9 +475,108 @@ function CheckoutMobileComponent(): JSX.Element {
               </Button>
             </div>
           </div>
+          <div className={styles['tag-list-container']}>
+            {cartProps.cart?.discounts?.map((value: Discount) => {
+              return (
+                <div key={value.id} className={styles['tag']}>
+                  <div className={styles['tag-text']}>{value.code}</div>
+                  <div className={styles['tag-button-container']}>
+                    <Button
+                      classNames={{
+                        button: styles['tag-button'],
+                      }}
+                      onClick={() =>
+                        CartController.removeDiscountCodeAsync(value.code)
+                      }
+                      rippleProps={{}}
+                      touchScreen={true}
+                      block={true}
+                      rounded={true}
+                      type={'primary'}
+                      size={'tiny'}
+                      icon={<Solid.Cancel size={14} />}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
-      <div className={styles['card-container']}></div>
+      <div className={styles['card-container']}>
+        <div className={styles['pricing-container']}>
+          <div className={styles['subtotal-container']}>
+            <div className={styles['subtotal-text']}>{t('subtotal')}</div>
+            <div className={styles['subtotal-text']}>
+              {storeProps.selectedRegion &&
+                formatAmount({
+                  amount: cartProps.cart?.subtotal ?? 0,
+                  region: storeProps.selectedRegion,
+                  includeTaxes: false,
+                })}
+            </div>
+          </div>
+          <div className={styles['total-detail-container']}>
+            <div className={styles['total-detail-text']}>{t('discount')}</div>
+            <div className={styles['total-detail-text']}>
+              {storeProps.selectedRegion &&
+                formatAmount({
+                  amount: -cartProps.cart?.discount_total ?? 0,
+                  region: storeProps.selectedRegion,
+                  includeTaxes: false,
+                })}
+            </div>
+          </div>
+          <div className={styles['total-detail-container']}>
+            <div className={styles['total-detail-text']}>{t('shipping')}</div>
+            <div className={styles['total-detail-text']}>
+              {storeProps.selectedRegion &&
+                formatAmount({
+                  amount: cartProps.cart?.shipping_total ?? 0,
+                  region: storeProps.selectedRegion,
+                  includeTaxes: false,
+                })}
+            </div>
+          </div>
+          <div className={styles['total-detail-container']}>
+            <div className={styles['total-detail-text']}>{t('taxes')}</div>
+            <div className={styles['total-detail-text']}>
+              {storeProps.selectedRegion &&
+                formatAmount({
+                  amount: cartProps.cart?.tax_total ?? 0,
+                  region: storeProps.selectedRegion,
+                  includeTaxes: false,
+                })}
+            </div>
+          </div>
+          <div className={styles['total-container']}>
+            <div className={styles['total-text']}>{t('total')}</div>
+            <div className={styles['total-text']}>
+              {storeProps.selectedRegion &&
+                formatAmount({
+                  amount: cartProps.cart?.total ?? 0,
+                  region: storeProps.selectedRegion,
+                  includeTaxes: true,
+                })}
+            </div>
+          </div>
+        </div>
+        <div className={styles['pay-button-container']}>
+          <Button
+            classNames={{
+              container: styles['submit-button-container'],
+              button: styles['submit-button'],
+            }}
+            block={true}
+            disabled={!props.shippingFormComplete || !props.billingFormComplete}
+            size={'large'}
+            icon={<Line.Payment size={24} />}
+            onClick={() => CheckoutController.proceedToPaymentAsync()}
+          >
+            {t('proceedToPayment')}
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

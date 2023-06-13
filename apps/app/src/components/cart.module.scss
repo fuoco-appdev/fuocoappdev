@@ -155,6 +155,10 @@
             background-color: $brand-700;
         }
     }
+
+    & .pay-button-container {
+        padding: 0 $mp-4;
+    }
 }
 
 .sign-in-button {

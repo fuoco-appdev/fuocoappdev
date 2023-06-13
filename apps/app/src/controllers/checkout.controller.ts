@@ -12,6 +12,8 @@ import {
   Cart,
   ShippingMethod,
   ShippingOption,
+  Order,
+  Swap,
 } from '@medusajs/medusa';
 import { select } from '@ngneat/elf';
 import StoreController from './store.controller';
@@ -65,6 +67,10 @@ class CheckoutController extends Controller {
 
   public updateBillingAddressErrors(value: AddressFormErrors): void {
     this._model.billingFormErrors = value;
+  }
+
+  public updateErrorStrings(value: AddressFormErrors): void {
+    this._model.errorStrings = value;
   }
 
   public updateSameAsBillingAddress(value: boolean): void {
@@ -156,15 +162,100 @@ class CheckoutController extends Controller {
     this._model.giftCardCode = value;
   }
 
-  public async updateGiftCardCodeAsync(): Promise<void> {}
+  public async updateGiftCardCodeAsync(): Promise<void> {
+    if (!this._model.giftCardCode || this._model.giftCardCode.length <= 0) {
+      return;
+    }
+
+    await CartController.updateCartAsync({
+      gift_cards: [{ code: this._model.giftCardCode }],
+    });
+
+    this._model.giftCardCode = '';
+  }
 
   public updateDiscountCodeText(value: string): void {
     this._model.discountCode = value;
   }
 
-  public async updateDiscountCodeAsync(): Promise<void> {}
+  public async updateDiscountCodeAsync(): Promise<void> {
+    if (!this._model.discountCode || this._model.discountCode.length <= 0) {
+      return;
+    }
+
+    await CartController.updateCartAsync({
+      discounts: [{ code: this._model.discountCode }],
+    });
+
+    this._model.discountCode = '';
+  }
+
+  public async proceedToPaymentAsync(): Promise<void> {
+    const completeCart = await CartController.completeCartAsync();
+    this.resetCheckoutStates();
+    console.log(completeCart);
+    await CartController.resetCartAsync();
+  }
+
+  public getAddressFormErrors(
+    form: AddressFormValues
+  ): AddressFormErrors | undefined {
+    const errors: AddressFormErrors = {};
+
+    if (!form.email || form.email?.length <= 0) {
+      errors.email = this._model.errorStrings.email;
+    }
+
+    if (!form.firstName || form.firstName?.length <= 0) {
+      errors.firstName = this._model.errorStrings.firstName;
+    }
+
+    if (!form.lastName || form.lastName?.length <= 0) {
+      errors.lastName = this._model.errorStrings.lastName;
+    }
+
+    if (!form.address || form.address?.length <= 0) {
+      errors.address = this._model.errorStrings.address;
+    }
+
+    if (!form.postalCode || form.postalCode?.length <= 0) {
+      errors.postalCode = this._model.errorStrings.postalCode;
+    }
+
+    if (!form.city || form.city?.length <= 0) {
+      errors.city = this._model.errorStrings.city;
+    }
+
+    if (!form.phoneNumber || form.phoneNumber?.length <= 0) {
+      errors.phoneNumber = this._model.errorStrings.phoneNumber;
+    }
+
+    if (Object.keys(errors).length > 0) {
+      return errors;
+    }
+    return undefined;
+  }
+
+  private resetCheckoutStates(): void {
+    this._model.shippingForm = {};
+    this._model.shippingFormErrors = {};
+    this._model.shippingFormComplete = false;
+    this._model.billingForm = {};
+    this._model.billingFormErrors = {};
+    this._model.billingFormComplete = false;
+    this._model.sameAsBillingAddress = true;
+    this._model.shippingOptions = [];
+    this._model.selectedShippingOptionId = undefined;
+    this._model.giftCardCode = '';
+    this._model.discountCode = '';
+    this._model.providerId = '';
+  }
 
   private async onCartChangedAsync(value: Cart | undefined): Promise<void> {
+    if (!value) {
+      return;
+    }
+
     this._model.shippingForm = {
       email: value?.email,
       firstName: value?.shipping_address?.first_name ?? '',
@@ -194,14 +285,16 @@ class CheckoutController extends Controller {
 
     if (
       value?.shipping_address &&
-      Object.keys(value?.shipping_address).length > 0
+      Object.keys(this.getAddressFormErrors(this._model.shippingForm) ?? {})
+        .length <= 0
     ) {
       this._model.shippingFormComplete = true;
     }
 
     if (
       value?.billing_address &&
-      Object.keys(value?.billing_address).length > 0
+      Object.keys(this.getAddressFormErrors(this._model.billingForm) ?? {})
+        .length <= 0
     ) {
       this._model.billingFormComplete = true;
     }
@@ -227,6 +320,25 @@ class CheckoutController extends Controller {
           shippingOptionsFromRegion[0].id ?? ''
         );
       }
+    }
+
+    await this.initializePaymentSessionAsync(value);
+  }
+
+  private async initializePaymentSessionAsync(cart: Cart): Promise<void> {
+    if (cart?.id && !cart.payment_sessions?.length && cart?.items?.length) {
+      const cartResponse =
+        await MedusaService.medusa.carts.createPaymentSessions(cart.id);
+      await CartController.updateLocalCartAsync(cartResponse.cart);
+    }
+
+    if (cart.payment_session) {
+      const cartResponse =
+        await MedusaService.medusa.carts.refreshPaymentSession(
+          cart.id,
+          cart.payment_session.id
+        );
+      await CartController.updateLocalCartAsync(cartResponse.cart);
     }
   }
 }

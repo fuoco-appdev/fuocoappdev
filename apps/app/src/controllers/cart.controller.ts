@@ -9,9 +9,12 @@ import {
   Cart,
   LineItem,
   StorePostCartsCartReq,
+  Order,
+  Swap,
 } from '@medusajs/medusa';
 import MedusaService from '../services/medusa.service';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+import WindowController from './window.controller';
 
 class CartController extends Controller {
   private readonly _model: CartModel;
@@ -81,6 +84,30 @@ class CartController extends Controller {
     await this.updateLocalCartAsync(cartResponse.cart);
   }
 
+  public async completeCartAsync(): Promise<Cart | Order | Swap | null> {
+    if (!this._model.cartId) {
+      return null;
+    }
+
+    if (!this._model.cart?.payment_id) {
+      const completeCartResponse = await MedusaService.medusa.carts.complete(
+        this._model.cartId
+      );
+
+      return completeCartResponse.data;
+    }
+
+    return null;
+  }
+
+  public async resetCartAsync(): Promise<void> {
+    if (!StoreController.model.selectedRegion) {
+      return;
+    }
+
+    await this.createCartAsync(StoreController.model.selectedRegion.id);
+  }
+
   public async removeLineItemAsync(item: LineItem): Promise<void> {
     const cartResponse = await MedusaService.medusa.carts.lineItems.delete(
       item.cart_id,
@@ -143,15 +170,24 @@ class CartController extends Controller {
     };
   }
 
+  private async createCartAsync(
+    regionId: string
+  ): Promise<Omit<Cart, 'refundable_amount' | 'refunded_total'>> {
+    const cartResponse = await MedusaService.medusa.carts.create({
+      region_id: regionId,
+    });
+
+    this._model.cartId = cartResponse.cart.id;
+    await this.updateLocalCartAsync(cartResponse.cart);
+
+    return cartResponse.cart;
+  }
+
   private async onSelectedRegionChangedAsync(
     value: Region | undefined
   ): Promise<void> {
     if (!this._model.cartId && value?.id) {
-      const cartResponse = await MedusaService.medusa.carts.create({
-        region_id: value.id,
-      });
-      this._model.cartId = cartResponse.cart.id;
-      await this.updateLocalCartAsync(cartResponse.cart);
+      await this.createCartAsync(value.id);
     }
 
     if (!this._model.cart) {
