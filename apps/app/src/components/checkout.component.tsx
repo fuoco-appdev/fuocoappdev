@@ -20,9 +20,9 @@ import AddressFormComponent, {
 import { RadioProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/radio/radio';
 import StoreController from '../controllers/store.controller';
 import { PricedShippingOption } from '@medusajs/medusa/dist/types/pricing';
-import { ShippingType } from '../models/checkout.model';
+import { ProviderType, ShippingType } from '../models/checkout.model';
 import CartController from '../controllers/cart.controller';
-import { Discount, GiftCard } from '@medusajs/medusa';
+import { Discount, GiftCard, PaymentSession } from '@medusajs/medusa';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
 
@@ -36,6 +36,7 @@ function CheckoutMobileComponent(): JSX.Element {
   const [cartProps] = useObservable(CartController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
   const [shippingOptions, setShippingOptions] = useState<RadioProps[]>([]);
+  const [providerOptions, setProviderOptions] = useState<RadioProps[]>([]);
   const { t, i18n } = useTranslation();
 
   useEffect(() => {
@@ -67,6 +68,33 @@ function CheckoutMobileComponent(): JSX.Element {
     }
     setShippingOptions(radioOptions);
   }, [props.shippingOptions]);
+
+  useEffect(() => {
+    if (!cartProps.cart) {
+      return;
+    }
+
+    const radioOptions: RadioProps[] = [];
+    for (const session of cartProps.cart.payment_sessions as PaymentSession[]) {
+      let description = '';
+      let name = '';
+      if (session.provider_id === ProviderType.Manual) {
+        name = t('manualProviderName');
+        description = t('manualProviderDescription');
+      } else if (session.provider_id === ProviderType.VisaCheckout) {
+        name = t('visaCheckoutProviderName');
+        description = t('visaCheckoutProviderDescription');
+      }
+
+      radioOptions.push({
+        id: session.provider_id,
+        label: name,
+        value: name,
+        description: description,
+      });
+    }
+    setProviderOptions(radioOptions);
+  }, [cartProps.cart]);
 
   useEffect(() => {
     CheckoutController.updateErrorStrings({
@@ -504,6 +532,33 @@ function CheckoutMobileComponent(): JSX.Element {
         </div>
       </div>
       <div className={styles['card-container']}>
+        <div className={styles['card-content-container']}>
+          <div className={styles['header-container']}>
+            <div className={styles['header-title']}>{t('payment')}</div>
+          </div>
+          <Radio.Group
+            id={''}
+            activeId={props.selectedProviderId ?? ''}
+            rippleProps={{
+              color: 'rgba(42, 42, 95, .35)',
+            }}
+            classNames={{
+              radio: {
+                containerCard: styles['radio-container-card'],
+                labelText: styles['radio-label-text'],
+                labelDescription: styles['radio-label-description-text'],
+                containerCardActive: styles['radio-container-card-active'],
+              },
+            }}
+            options={providerOptions}
+            type={'cards'}
+            onChange={(event) =>
+              CheckoutController.updateSelectedProviderIdAsync(
+                event.target.value
+              )
+            }
+          />
+        </div>
         <div className={styles['pricing-container']}>
           <div className={styles['subtotal-container']}>
             <div className={styles['subtotal-text']}>{t('subtotal')}</div>

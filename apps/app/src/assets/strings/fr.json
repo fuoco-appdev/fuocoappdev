@@ -155,6 +155,7 @@
   "shippingAddress": "Adresse de livraison",
   "delivery": "Livraison",
   "giftCard": "Carte cadeau",
+  "payment": "Paiement",
   "pay": "Payer",
   "proceedToPayment": "Procéder au paiement",
   "email": "Courriel",
@@ -173,5 +174,9 @@
   "enterShippingAddressForDelivery": "Entrez votre adresse de livraison pour voir les options de livraison disponibles.",
   "enterBillingAddressForDelivery": "Entrez votre adresse de facturation pour voir les options de livraison disponibles.",
   "standardShippingDescription": "Livraison en 3-7 jours pendant les heures ouvrables",
-  "expressShippingDescription": "Livraison en 1-3 jours pendant les heures ouvrables"
+  "expressShippingDescription": "Livraison en 1-3 jours pendant les heures ouvrables",
+  "manualProviderName": "Paiement du test",
+  "manualProviderDescription": "Tester le paiement en utilisant medusa-payment-manual",
+  "visaCheckoutProviderName": "Carte de crédit",
+  "visaCheckoutProviderDescription": "Paiement sécurisé par carte de crédit"
 }

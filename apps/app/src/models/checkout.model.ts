@@ -11,6 +11,11 @@ export enum ShippingType {
   Express = 'Express',
 }
 
+export enum ProviderType {
+  Manual = 'manual',
+  VisaCheckout = 'visa-checkout',
+}
+
 export interface CheckoutState {
   shippingForm: AddressFormValues;
   shippingFormErrors: AddressFormErrors;
@@ -24,7 +29,7 @@ export interface CheckoutState {
   selectedShippingOptionId: string | undefined;
   giftCardCode: string;
   discountCode: string;
-  providerId: string | undefined;
+  selectedProviderId: string | undefined;
 }
 
 export class CheckoutModel extends Model {
@@ -69,7 +74,7 @@ export class CheckoutModel extends Model {
           selectedShippingOptionId: undefined,
           giftCardCode: '',
           discountCode: '',
-          providerId: undefined,
+          selectedProviderId: undefined,
         })
       )
     );
@@ -204,15 +209,15 @@ export class CheckoutModel extends Model {
     }
   }
 
-  public get providerId(): string | undefined {
-    return this.store.getValue().providerId;
+  public get selectedProviderId(): string | undefined {
+    return this.store.getValue().selectedProviderId;
   }
 
-  public set providerId(value: string | undefined) {
-    if (this.providerId !== value) {
+  public set selectedProviderId(value: string | undefined) {
+    if (this.selectedProviderId !== value) {
       this.store.update((state) => ({
         ...state,
-        providerId: value,
+        selectedProviderId: value,
       }));
     }
   }

@@ -91,7 +91,9 @@ class CheckoutController extends Controller {
   ): Promise<void> {
     if (
       !CartController.model.cartId ||
-      this._model.selectedShippingOptionId === value
+      this._model.selectedShippingOptionId === value ||
+      !CartController.model.cart ||
+      CartController.model.cart?.items.length <= 0
     ) {
       return;
     }
@@ -102,6 +104,25 @@ class CheckoutController extends Controller {
     );
     CartController.updateLocalCartAsync(cartResponse.cart);
     this._model.selectedShippingOptionId = value;
+  }
+
+  public async updateSelectedProviderIdAsync(value: string): Promise<void> {
+    if (
+      !CartController.model.cartId ||
+      !CartController.model.cart ||
+      this._model.selectedProviderId === value
+    ) {
+      return;
+    }
+
+    const cartResponse = await MedusaService.medusa.carts.setPaymentSession(
+      CartController.model.cartId,
+      {
+        provider_id: value,
+      }
+    );
+    CartController.updateLocalCartAsync(cartResponse.cart);
+    this._model.selectedProviderId = value;
   }
 
   public async continueToDeliveryAsync(): Promise<void> {
@@ -248,7 +269,7 @@ class CheckoutController extends Controller {
     this._model.selectedShippingOptionId = undefined;
     this._model.giftCardCode = '';
     this._model.discountCode = '';
-    this._model.providerId = '';
+    this._model.selectedProviderId = '';
   }
 
   private async onCartChangedAsync(value: Cart | undefined): Promise<void> {
@@ -320,6 +341,12 @@ class CheckoutController extends Controller {
           shippingOptionsFromRegion[0].id ?? ''
         );
       }
+    }
+
+    if (!this._model.selectedProviderId && value?.payment_sessions.length > 0) {
+      await this.updateSelectedProviderIdAsync(
+        value?.payment_sessions[0].provider_id
+      );
     }
 
     await this.initializePaymentSessionAsync(value);
