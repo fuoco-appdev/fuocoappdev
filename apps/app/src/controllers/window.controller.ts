@@ -142,6 +142,10 @@ class WindowController extends Controller {
       this._model.activeRoute = RoutePaths.Account;
       this._model.showNavigateBack = false;
       this._model.hideCartButton = false;
+    } else if (location.pathname.startsWith(`${RoutePaths.OrderConfirmed}/`)) {
+      this._model.activeRoute = RoutePaths.OrderConfirmedWithId;
+      this._model.showNavigateBack = true;
+      this._model.hideCartButton = true;
     }
   }
 

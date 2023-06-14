@@ -211,11 +211,14 @@ class CheckoutController extends Controller {
     this._model.discountCode = '';
   }
 
-  public async proceedToPaymentAsync(): Promise<void> {
+  public async proceedToPaymentAndGetCompleteCartIdAsync(): Promise<
+    string | undefined
+  > {
     const completeCart = await CartController.completeCartAsync();
-    this.resetCheckoutStates();
     console.log(completeCart);
+    this.resetCheckoutStates();
     await CartController.resetCartAsync();
+    return completeCart?.id;
   }
 
   public getAddressFormErrors(

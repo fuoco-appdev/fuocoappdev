@@ -38,6 +38,7 @@ import AccountAddressesComponent from './account-addresses.component';
 import AccountSettingsComponent from './account-settings.component';
 import ProductComponent from './product.component';
 import CheckoutComponent from './checkout.component';
+import OrderConfirmedComponent from './order-confirmed.component';
 
 interface RouteElementProps {
   element: JSX.Element;
@@ -130,6 +131,10 @@ export default function AppComponent(): JSX.Element {
           <Route path={RoutePaths.Events} element={<EventsComponent />} />
           <Route path={RoutePaths.Cart} element={<CartComponent />} />
           <Route path={RoutePaths.Checkout} element={<CheckoutComponent />} />
+          <Route
+            path={`${RoutePaths.OrderConfirmed}/:id`}
+            element={<OrderConfirmedComponent />}
+          />
           <Route
             path={RoutePaths.Notifications}
             element={

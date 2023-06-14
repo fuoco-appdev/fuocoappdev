@@ -15,6 +15,7 @@ import {
 import MedusaService from '../services/medusa.service';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import WindowController from './window.controller';
+import { v4 as uuidv4 } from 'uuid';
 
 class CartController extends Controller {
   private readonly _model: CartModel;
@@ -89,15 +90,14 @@ class CartController extends Controller {
       return null;
     }
 
-    if (!this._model.cart?.payment_id) {
-      const completeCartResponse = await MedusaService.medusa.carts.complete(
-        this._model.cartId
-      );
+    const completeCartResponse = await MedusaService.medusa.carts.complete(
+      this._model.cartId,
+      {
+        'Idempotency-Key': uuidv4(),
+      }
+    );
 
-      return completeCartResponse.data;
-    }
-
-    return null;
+    return completeCartResponse.data;
   }
 
   public async resetCartAsync(): Promise<void> {
@@ -172,9 +172,14 @@ class CartController extends Controller {
 
   private async createCartAsync(
     regionId: string
-  ): Promise<Omit<Cart, 'refundable_amount' | 'refunded_total'>> {
+  ): Promise<Omit<Cart, 'refundable_amount' | 'refunded_total'> | null> {
+    console.log(StoreController.model.selectedSalesChannel);
+    if (!StoreController.model.selectedSalesChannel) {
+      return null;
+    }
     const cartResponse = await MedusaService.medusa.carts.create({
       region_id: regionId,
+      sales_channel_id: StoreController.model.selectedSalesChannel.id,
     });
 
     this._model.cartId = cartResponse.cart.id;

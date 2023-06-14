@@ -6,7 +6,7 @@ import MeiliSearchService from '../services/meilisearch.service';
 import { Subscription } from 'rxjs';
 import HomeController from './home.controller';
 import { select } from '@ngneat/elf';
-import { SalesChannel } from '../models/home.model';
+import { InventoryLocation } from '../models/home.model';
 import MedusaService from '../services/medusa.service';
 import {
   ProductOption,
@@ -19,15 +19,15 @@ import { ProductOptions } from '../models/product.model';
 class StoreController extends Controller {
   private readonly _model: StoreModel;
   private readonly _productsIndex: Index<Record<string, any>>;
-  private _selectedSalesChannelSubscription: Subscription | undefined;
+  private _selectedInventoryLocationSubscription: Subscription | undefined;
 
   constructor() {
     super();
 
     this._model = new StoreModel();
     this._productsIndex = MeiliSearchService.client.index('products');
-    this.onSelectedSalesChannelChangedAsync =
-      this.onSelectedSalesChannelChangedAsync.bind(this);
+    this.onSelectedInventoryLocationChangedAsync =
+      this.onSelectedInventoryLocationChangedAsync.bind(this);
   }
 
   public get model(): StoreModel {
@@ -39,7 +39,7 @@ class StoreController extends Controller {
   }
 
   public dispose(renderCount: number): void {
-    this._selectedSalesChannelSubscription?.unsubscribe();
+    this._selectedInventoryLocationSubscription?.unsubscribe();
   }
 
   public updateInput(value: string): void {
@@ -130,10 +130,10 @@ class StoreController extends Controller {
       await this.requestRegionsAsync();
     }
 
-    this._selectedSalesChannelSubscription = HomeController.model.store
-      .pipe(select((model) => model.selectedSalesChannel))
+    this._selectedInventoryLocationSubscription = HomeController.model.store
+      .pipe(select((model) => model.selectedInventoryLocation))
       .subscribe({
-        next: this.onSelectedSalesChannelChangedAsync,
+        next: this.onSelectedInventoryLocationChangedAsync,
       });
   }
 
@@ -142,17 +142,28 @@ class StoreController extends Controller {
     this._model.regions = response.regions;
   }
 
-  private async onSelectedSalesChannelChangedAsync(
-    salesChannel: SalesChannel
+  private async onSelectedInventoryLocationChangedAsync(
+    inventoryLocation: InventoryLocation
   ): Promise<void> {
-    if (!salesChannel?.region) {
+    if (!inventoryLocation?.region) {
       return;
     }
 
     const region = this._model.regions.find(
-      (value) => value.name === salesChannel.region
+      (value) => value.name === inventoryLocation.region
     );
     await this.updateRegionAsync(region);
+
+    if (inventoryLocation.salesChannels.length <= 0) {
+      return;
+    }
+
+    const min = 0;
+    const max = inventoryLocation.salesChannels.length - 1;
+    const randomSalesChannelIndex =
+      Math.floor(Math.random() * (max - min + 1)) + min;
+    this._model.selectedSalesChannel =
+      inventoryLocation.salesChannels[randomSalesChannelIndex];
   }
 
   private async updateRegionAsync(region: Region | undefined): Promise<void> {

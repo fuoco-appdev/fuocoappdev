@@ -22,7 +22,7 @@ import Map, { MapRef, Marker, Popup } from 'react-map-gl';
 import ConfigService from '../services/config.service';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { SalesChannel } from '../models/home.model';
+import { InventoryLocation } from '../models/home.model';
 
 function HomeDesktopComponent(): JSX.Element {
   const navigate = useNavigate();
@@ -40,7 +40,9 @@ function HomeMobileComponent(): JSX.Element {
   const mapRef = useRef<MapRef | null>(null);
   const { t, i18n } = useTranslation();
   const [mapStyleLoaded, setMapStyleLoaded] = useState<boolean>(false);
-  const [selectedPoint, setSelectedPoint] = useState<SalesChannel | null>(null);
+  const [selectedPoint, setSelectedPoint] = useState<InventoryLocation | null>(
+    null
+  );
 
   useLayoutEffect(() => {
     const labels = [
@@ -75,23 +77,25 @@ function HomeMobileComponent(): JSX.Element {
       onMove={(e) => HomeController.onMapMove(e.viewState)}
       onLoad={(e) => setMapStyleLoaded(e.target ? true : false)}
     >
-      {props.salesChannels.map((point: SalesChannel, index: number) => (
-        <Marker
-          key={`marker-${index}`}
-          latitude={point.coordinates.lat}
-          longitude={point.coordinates.lng}
-          anchor={'bottom'}
-          onClick={(e) => {
-            e.originalEvent.stopPropagation();
-            setSelectedPoint(point);
-          }}
-        >
-          <img
-            src={'../assets/svg/cruthology-pin.svg'}
-            className={styles['marker']}
-          />
-        </Marker>
-      ))}
+      {props.inventoryLocations?.map(
+        (point: InventoryLocation, index: number) => (
+          <Marker
+            key={`marker-${index}`}
+            latitude={point.coordinates.lat}
+            longitude={point.coordinates.lng}
+            anchor={'bottom'}
+            onClick={(e) => {
+              e.originalEvent.stopPropagation();
+              setSelectedPoint(point);
+            }}
+          >
+            <img
+              src={'../assets/svg/cruthology-pin.svg'}
+              className={styles['marker']}
+            />
+          </Marker>
+        )
+      )}
       {selectedPoint && (
         <Popup
           anchor={'top'}

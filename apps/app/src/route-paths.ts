@@ -19,4 +19,6 @@ export enum RoutePaths {
   AccountAddresses = '/account/addresses',
   AccountEdit = '/account/edit',
   AccountSettings = '/account/settings',
+  OrderConfirmed = '/order/confirmed',
+  OrderConfirmedWithId = '/order/confirmed/:id',
 }

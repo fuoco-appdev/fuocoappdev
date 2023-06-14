@@ -25,6 +25,8 @@ import CartController from '../controllers/cart.controller';
 import { Discount, GiftCard, PaymentSession } from '@medusajs/medusa';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
+import { useNavigate } from 'react-router-dom';
+import { RoutePaths } from '../route-paths';
 
 function CheckoutDesktopComponent(): JSX.Element {
   return <></>;
@@ -38,6 +40,13 @@ function CheckoutMobileComponent(): JSX.Element {
   const [shippingOptions, setShippingOptions] = useState<RadioProps[]>([]);
   const [providerOptions, setProviderOptions] = useState<RadioProps[]>([]);
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (cartProps.cart && cartProps.cart.items.length <= 0) {
+      navigate(RoutePaths.Store);
+    }
+  }, [cartProps.cart]);
 
   useEffect(() => {
     const radioOptions: RadioProps[] = [];
@@ -626,7 +635,11 @@ function CheckoutMobileComponent(): JSX.Element {
             disabled={!props.shippingFormComplete || !props.billingFormComplete}
             size={'large'}
             icon={<Line.Payment size={24} />}
-            onClick={() => CheckoutController.proceedToPaymentAsync()}
+            onClick={async () => {
+              const id =
+                await CheckoutController.proceedToPaymentAndGetCompleteCartIdAsync();
+              navigate(`${RoutePaths.OrderConfirmed}/${id}`);
+            }}
           >
             {t('proceedToPayment')}
           </Button>

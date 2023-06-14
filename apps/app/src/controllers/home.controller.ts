@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { ViewState } from 'react-map-gl';
 import { Controller } from '../controller';
-import { HomeModel, SalesChannel } from '../models/home.model';
+import { HomeModel, InventoryLocation } from '../models/home.model';
 import MedusaService from '../services/medusa.service';
 import mapboxgl from 'mapbox-gl';
 import { point, featureCollection, nearestPoint, helpers } from '@turf/turf';
@@ -39,27 +39,30 @@ class HomeController extends Controller {
 
   private async initializeAsync(renderCount: number): Promise<void> {
     if (renderCount <= 1) {
-      this._model.salesChannels = await this.requestInventoryLocationsAsync();
-      if (this._model.salesChannels.length > 0) {
-        this._model.selectedSalesChannel = this._model.salesChannels[0];
+      this._model.inventoryLocations =
+        await this.requestInventoryLocationsAsync();
+      if (this._model.inventoryLocations.length > 0) {
+        this._model.selectedInventoryLocation =
+          this._model.inventoryLocations[0];
       }
     }
     this._currentPositionSubscription = WindowController.model.store
       .pipe(select((model) => model.currentPosition))
       .subscribe({
         next: (value) =>
-          this.onCurrentPositionChanged(value, this._model.salesChannels),
+          this.onCurrentPositionChanged(value, this._model.inventoryLocations),
       });
   }
 
-  private async requestInventoryLocationsAsync(): Promise<SalesChannel[]> {
+  private async requestInventoryLocationsAsync(): Promise<InventoryLocation[]> {
     const locations = await MedusaService.requestStockLocationsAsync();
-    const salesChannels: SalesChannel[] = [];
+    const inventoryLocations: InventoryLocation[] = [];
     for (const location of locations.locations) {
       const metadata = JSON.parse(location.metadata);
       const coordinates = metadata['coordinates'];
       if (coordinates) {
-        salesChannels.push({
+        inventoryLocations.push({
+          salesChannels: location.salesChannels,
           coordinates: new mapboxgl.LngLat(
             coordinates['longitude'],
             coordinates['latitude']
@@ -71,12 +74,12 @@ class HomeController extends Controller {
       }
     }
 
-    return salesChannels;
+    return inventoryLocations;
   }
 
   private onCurrentPositionChanged(
     value: GeolocationPosition,
-    salesChannels: SalesChannel[]
+    inventoryLocations: InventoryLocation[]
   ): void {
     if (!value?.coords) {
       return;
@@ -84,24 +87,26 @@ class HomeController extends Controller {
 
     const { longitude, latitude } = value.coords;
     const currentPoint = new mapboxgl.LngLat(longitude, latitude);
-    const point = this.findNearestPoint(currentPoint, salesChannels);
+    const point = this.findNearestPoint(currentPoint, inventoryLocations);
     if (point) {
-      const selectedChannel = salesChannels.find(
+      const inventoryLocation = inventoryLocations.find(
         (value) => value.coordinates.distanceTo(point) === 0
       );
-      this._model.selectedSalesChannel = selectedChannel ?? undefined;
-      this._model.longitude = selectedChannel?.coordinates.lng ?? 0;
-      this._model.latitude = selectedChannel?.coordinates.lat ?? 0;
+      this._model.selectedInventoryLocation = inventoryLocation ?? undefined;
+      this._model.longitude = inventoryLocation?.coordinates.lng ?? 0;
+      this._model.latitude = inventoryLocation?.coordinates.lat ?? 0;
     }
   }
 
   private findNearestPoint(
     target: mapboxgl.LngLat,
-    channels: SalesChannel[]
+    locations: InventoryLocation[]
   ): mapboxgl.LngLat | null {
     const features = [];
-    for (const channel of channels) {
-      features.push(point([channel.coordinates.lng, channel.coordinates.lat]));
+    for (const location of locations) {
+      features.push(
+        point([location.coordinates.lng, location.coordinates.lat])
+      );
     }
 
     const targetPoint = point([target.lng, target.lat]);

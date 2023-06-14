@@ -1,17 +1,19 @@
 import { createStore, withProps } from '@ngneat/elf';
 import { Model } from '../model';
 import mapboxgl from 'mapbox-gl';
+import { SalesChannel } from '@medusajs/medusa';
 
-export interface SalesChannel {
+export interface InventoryLocation {
   coordinates: mapboxgl.LngLat;
   placeName: string;
   company: string;
   region: string;
+  salesChannels: Partial<SalesChannel>[];
 }
 
 export interface HomeState {
-  salesChannels: SalesChannel[];
-  selectedSalesChannel: SalesChannel | undefined;
+  inventoryLocations: InventoryLocation[];
+  selectedInventoryLocation: InventoryLocation | undefined;
 }
 
 export interface HomeLocalState {
@@ -26,8 +28,8 @@ export class HomeModel extends Model {
       createStore(
         { name: 'home' },
         withProps<HomeState>({
-          salesChannels: [],
-          selectedSalesChannel: undefined,
+          inventoryLocations: [],
+          selectedInventoryLocation: undefined,
         })
       ),
       undefined,
@@ -72,23 +74,28 @@ export class HomeModel extends Model {
     }
   }
 
-  public get salesChannels(): SalesChannel[] {
-    return this.store.getValue().salesChannels;
+  public get inventoryLocations(): InventoryLocation[] {
+    return this.store.getValue().inventoryLocations;
   }
 
-  public set salesChannels(value: SalesChannel[]) {
-    if (JSON.stringify(this.salesChannels) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, salesChannels: value }));
+  public set inventoryLocations(value: InventoryLocation[]) {
+    if (JSON.stringify(this.inventoryLocations) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, inventoryLocations: value }));
     }
   }
 
-  public get selectedSalesChannel(): SalesChannel | undefined {
-    return this.store.getValue().selectedSalesChannel;
+  public get selectedInventoryLocation(): InventoryLocation | undefined {
+    return this.store.getValue().selectedInventoryLocation;
   }
 
-  public set selectedSalesChannel(value: SalesChannel | undefined) {
-    if (JSON.stringify(this.selectedSalesChannel) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, selectedSalesChannel: value }));
+  public set selectedInventoryLocation(value: InventoryLocation | undefined) {
+    if (
+      JSON.stringify(this.selectedInventoryLocation) !== JSON.stringify(value)
+    ) {
+      this.store.update((state) => ({
+        ...state,
+        selectedInventoryLocation: value,
+      }));
     }
   }
 }

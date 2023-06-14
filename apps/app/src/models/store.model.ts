@@ -1,6 +1,6 @@
 import { createStore, withProps } from '@ngneat/elf';
 import { Model } from '../model';
-import { Product, Region } from '@medusajs/medusa';
+import { Product, Region, SalesChannel } from '@medusajs/medusa';
 
 export enum ProductTabs {
   New = 'new',
@@ -17,6 +17,7 @@ export interface StoreState {
   regions: Region[];
   selectedRegion: Region | undefined;
   selectedTab: ProductTabs | undefined;
+  selectedSalesChannel: Partial<SalesChannel> | undefined;
 }
 
 export class StoreModel extends Model {
@@ -31,6 +32,7 @@ export class StoreModel extends Model {
           regions: [],
           selectedRegion: undefined,
           selectedTab: undefined,
+          selectedSalesChannel: undefined,
         })
       )
     );
@@ -101,6 +103,19 @@ export class StoreModel extends Model {
       this.store?.update((state) => ({
         ...state,
         selectedTab: value,
+      }));
+    }
+  }
+
+  public get selectedSalesChannel(): Partial<SalesChannel> | undefined {
+    return this.store?.getValue().selectedSalesChannel;
+  }
+
+  public set selectedSalesChannel(value: Partial<SalesChannel> | undefined) {
+    if (JSON.stringify(this.selectedSalesChannel) !== JSON.stringify(value)) {
+      this.store?.update((state) => ({
+        ...state,
+        selectedSalesChannel: value,
       }));
     }
   }
