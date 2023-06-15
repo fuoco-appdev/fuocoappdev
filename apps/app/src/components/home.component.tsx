@@ -44,6 +44,12 @@ function HomeMobileComponent(): JSX.Element {
     null
   );
 
+  useEffect(() => {
+    if (location.pathname === RoutePaths.Default) {
+      navigate(RoutePaths.Home);
+    }
+  }, []);
+
   useLayoutEffect(() => {
     const labels = [
       'country-label',
