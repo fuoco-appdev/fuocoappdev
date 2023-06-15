@@ -27,7 +27,7 @@ class ProductController extends Controller {
     return this._model;
   }
 
-  public initialize(renderCount: number): void {
+  public override initialize(renderCount: number): void {
     this._selectedPreviewSubscription = StoreController.model.store
       .pipe(select((state: StoreState) => state.selectedPreview))
       .subscribe({
@@ -39,7 +39,7 @@ class ProductController extends Controller {
       });
   }
 
-  public dispose(renderCount: number): void {
+  public override dispose(renderCount: number): void {
     this._selectedPreviewSubscription?.unsubscribe();
   }
 

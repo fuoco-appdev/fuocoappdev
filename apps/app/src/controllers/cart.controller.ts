@@ -15,7 +15,6 @@ import {
 import MedusaService from '../services/medusa.service';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import WindowController from './window.controller';
-import { v4 as uuidv4 } from 'uuid';
 
 class CartController extends Controller {
   private readonly _model: CartModel;
@@ -33,7 +32,7 @@ class CartController extends Controller {
     return this._model;
   }
 
-  public initialize(renderCount: number): void {
+  public override initialize(renderCount: number): void {
     this._selectedRegionSubscription = StoreController.model.store
       .pipe(select((model) => model.selectedRegion))
       .subscribe({
@@ -41,7 +40,7 @@ class CartController extends Controller {
       });
   }
 
-  public dispose(renderCount: number): void {
+  public override dispose(renderCount: number): void {
     this._selectedRegionSubscription?.unsubscribe();
   }
 
@@ -91,10 +90,7 @@ class CartController extends Controller {
     }
 
     const completeCartResponse = await MedusaService.medusa.carts.complete(
-      this._model.cartId,
-      {
-        'Idempotency-Key': uuidv4(),
-      }
+      this._model.cartId
     );
 
     return completeCartResponse.data;
@@ -173,7 +169,6 @@ class CartController extends Controller {
   private async createCartAsync(
     regionId: string
   ): Promise<Omit<Cart, 'refundable_amount' | 'refunded_total'> | null> {
-    console.log(StoreController.model.selectedSalesChannel);
     if (!StoreController.model.selectedSalesChannel) {
       return null;
     }

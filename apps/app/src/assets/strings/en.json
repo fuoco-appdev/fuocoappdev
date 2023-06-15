@@ -126,7 +126,7 @@
   "countryOfOrigin": "Country of origin",
   "dimensions": "Dimensions",
   "fastDelivery": "Fast delivery",
-  "fastDeliveryDescription": "Your package will arrive in 3-5 business days at your pick up location or in the comfort of your home.",
+  "fastDeliveryDescription": "Your package will arrive in 1-5 business days at your pick up location or in the comfort of your home.",
   "easyReturns": "Easy returns",
   "easyReturnsDescription": "Just return your product and we’ll refund your money. No questions asked - we’ll do our best to make sure your return is hassle-free.",
   "country": "Country",
@@ -178,5 +178,13 @@
   "manualProviderName": "Test payment",
   "manualProviderDescription": "Test payment using medusa-payment-manual",
   "visaCheckoutProviderName": "Credit card",
-  "visaCheckoutProviderDescription": "Secure payment with credit card"
+  "visaCheckoutProviderDescription": "Secure payment with credit card",
+  "confirmedOrder": "Confirmed Order",
+  "thankyouForOrder": "Thank you, your order has been successfully placed",
+  "items": "items",
+  "item": "item",
+  "deliveryMethod": "Delivery method",
+  "orderSummary": "Order summary",
+  "shippingStatus": "Shipping status",
+  "paymentStatus": "Payment status"
 }

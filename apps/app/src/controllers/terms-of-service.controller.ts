@@ -15,7 +15,7 @@ class TermsOfServiceController extends Controller {
     return this._model;
   }
 
-  public initialize(renderCount: number): void {
+  public override initialize(renderCount: number): void {
     fetch('../assets/markdown/terms_of_service.md')
       .then((res) => res.text())
       .then((md) => {
@@ -23,7 +23,7 @@ class TermsOfServiceController extends Controller {
       });
   }
 
-  public dispose(renderCount: number): void {}
+  public override dispose(renderCount: number): void {}
 }
 
 export default new TermsOfServiceController();

@@ -34,11 +34,11 @@ class StoreController extends Controller {
     return this._model;
   }
 
-  public initialize(renderCount: number): void {
+  public override initialize(renderCount: number): void {
     this.intializeAsync(renderCount);
   }
 
-  public dispose(renderCount: number): void {
+  public override dispose(renderCount: number): void {
     this._selectedInventoryLocationSubscription?.unsubscribe();
   }
 

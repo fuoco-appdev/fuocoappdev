@@ -33,7 +33,7 @@ class CheckoutController extends Controller {
     return this._model;
   }
 
-  public initialize(renderCount: number): void {
+  public override initialize(renderCount: number): void {
     this.initializeAsync(renderCount);
 
     this._cartSubscription = CartController.model.store
@@ -43,7 +43,7 @@ class CheckoutController extends Controller {
       });
   }
 
-  public dispose(renderCount: number): void {
+  public override dispose(renderCount: number): void {
     this._cartSubscription?.unsubscribe();
   }
 
@@ -346,6 +346,7 @@ class CheckoutController extends Controller {
       }
     }
 
+    // Select first provider by default
     if (!this._model.selectedProviderId && value?.payment_sessions.length > 0) {
       await this.updateSelectedProviderIdAsync(
         value?.payment_sessions[0].provider_id

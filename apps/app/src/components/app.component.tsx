@@ -10,6 +10,7 @@ import StoreController from '../controllers/store.controller';
 import EventsController from '../controllers/events.controller';
 import CartController from '../controllers/cart.controller';
 import CheckoutController from '../controllers/checkout.controller';
+import OrderConfirmedController from '../controllers/order-confirmed.controller';
 import NotificationsController from '../controllers/notifications.controller';
 import TermsOfServiceController from '../controllers/terms-of-service.controller';
 import PrivacyPolicyController from '../controllers/privacy-policy.controller';
@@ -72,6 +73,7 @@ export default function AppComponent(): JSX.Element {
     EventsController.initialize(renderCountRef.current);
     CartController.initialize(renderCountRef.current);
     CheckoutController.initialize(renderCountRef.current);
+    OrderConfirmedController.initialize(renderCountRef.current);
     NotificationsController.initialize(renderCountRef.current);
     ProductController.initialize(renderCountRef.current);
 
@@ -89,6 +91,7 @@ export default function AppComponent(): JSX.Element {
       EventsController.dispose(renderCountRef.current);
       CartController.dispose(renderCountRef.current);
       CheckoutController.dispose(renderCountRef.current);
+      OrderConfirmedController.dispose(renderCountRef.current);
       NotificationsController.dispose(renderCountRef.current);
       ProductController.dispose(renderCountRef.current);
     };

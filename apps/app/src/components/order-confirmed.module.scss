@@ -1,0 +1,128 @@
+@import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
+
+.root-mobile {
+    display: flex;
+    flex-direction: column;
+    padding: 0 $mp-4;
+    padding-top: 56px;
+    padding-bottom: $mp-8;
+    overflow-y: auto;
+
+    & .thankyou-text {
+        color: $brand-900;
+        font-size: $font-size-lg;
+        margin-bottom: $mp-6;
+    }
+
+    & .order-number-text {
+        color: $brand-900;
+        font-size: 24pt;
+        font-weight: $font-weight-bold;
+        margin-bottom: $mp-2;
+    }
+
+    & .order-id-text {
+        color: $brand-900;
+        font-size: $font-size-lg;
+        margin-bottom: $mp-6;
+    }
+
+    & .date-container {
+        display: flex;
+        flex-direction: row;
+        margin-bottom: $mp-2;
+
+        & .date-text {
+            color: $brand-900;
+            font-size: $font-size-base;
+            margin-right: $mp-4;
+        }
+
+        & .item-count-text {
+            color: $brand-900;
+            font-size: $font-size-lg;
+        }
+    }
+
+    & .shipping-items {
+        display: flex;
+        flex-direction: column;
+    }
+
+    & .content-container {
+        width: 100%;
+        margin-bottom: $mp-4;
+
+        & .header-container {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            margin-bottom: $mp-4;
+            line-height: 42px;
+            border-bottom: solid $brand-900 1px;
+
+            & .header-title {
+                font-size: $font-size-base;
+                color: $brand-900;
+                font-weight: $font-weight-bold;
+            }
+        }
+
+        & .subheader-title {
+            font-size: $font-size-sm;
+            color: $brand-900;
+            font-weight: $font-weight-bold;
+            margin-bottom: $mp-1;
+        }
+
+        & .detail-text {
+            font-size: $font-size-sm;
+            color: $brand-900;
+        }
+
+        & .pricing-container {    
+            & .subtotal-container {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                margin-bottom: $mp-4;
+    
+                & .subtotal-text {
+                    width: fit-content;
+                    font-size: $font-size-sm;
+                    font-weight: $font-weight-bold;
+                    color: $brand-900;
+                }
+            }
+    
+            & .total-detail-container {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                margin-bottom: $mp-2;
+    
+                & .total-detail-text {
+                    width: fit-content;
+                    font-size: $font-size-sm;
+                    color: $brand-900;
+                }
+            }
+    
+            & .total-container {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                margin-top: $mp-4;
+                margin-bottom: $mp-4;
+                padding-top: $mp-2;
+    
+                & .total-text {
+                    width: fit-content;
+                    font-size: $font-size-sm;
+                    font-weight: $font-weight-bold;
+                    color: $brand-900;
+                }
+            }
+        }
+    }
+}

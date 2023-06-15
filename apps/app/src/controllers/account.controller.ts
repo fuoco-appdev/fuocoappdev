@@ -24,7 +24,7 @@ class AccountController extends Controller {
     return this._model;
   }
 
-  public initialize(renderCount: number): void {
+  public override initialize(renderCount: number): void {
     this._accountSubscription =
       AccountService.activeAccountObservable.subscribe({
         next: (account: core.Account | null) => {
@@ -41,7 +41,7 @@ class AccountController extends Controller {
       });
   }
 
-  public dispose(renderCount: number): void {
+  public override dispose(renderCount: number): void {
     this._customerSubscription?.unsubscribe();
     this._accountSubscription?.unsubscribe();
     this._secretsSubscription?.unsubscribe();

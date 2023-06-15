@@ -23,11 +23,11 @@ class HomeController extends Controller {
     return this._model;
   }
 
-  public initialize(renderCount: number): void {
+  public override initialize(renderCount: number): void {
     this.initializeAsync(renderCount);
   }
 
-  public dispose(renderCount: number): void {
+  public override dispose(renderCount: number): void {
     this._currentPositionSubscription?.unsubscribe();
   }
 

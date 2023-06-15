@@ -126,6 +126,8 @@ function WindowMobileComponent(): JSX.Element {
             {props.hideCartButton && (
               <div className={styles['navigation-back-text-container']}>
                 {props.activeRoute === RoutePaths.Checkout && t('checkout')}
+                {props.activeRoute === RoutePaths.OrderConfirmedWithId &&
+                  t('confirmedOrder')}
               </div>
             )}
           </div>

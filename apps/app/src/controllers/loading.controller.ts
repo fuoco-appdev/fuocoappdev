@@ -15,9 +15,9 @@ class LoadingController extends Controller {
     return this._model;
   }
 
-  public initialize(renderCount: number): void {}
+  public override initialize(renderCount: number): void {}
 
-  public dispose(renderCount: number): void {}
+  public override dispose(renderCount: number): void {}
 
   public updateIsLoading(isLoading: boolean): void {
     this._model.isLoading = isLoading;

@@ -194,7 +194,7 @@ function CartMobileComponent(): JSX.Element {
             color: 'rgba(233, 33, 66, .35)',
           }}
           block={true}
-          disabled={props.cart?.items?.length <= 0}
+          disabled={!props.cart || props.cart?.items?.length <= 0}
           size={'large'}
           icon={<Line.ShoppingCart size={24} />}
           onClick={() => navigate(RoutePaths.Checkout)}

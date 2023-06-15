@@ -15,9 +15,9 @@ class NotificationsController extends Controller {
     return this._model;
   }
 
-  public initialize(renderCount: number): void {}
+  public override initialize(renderCount: number): void {}
 
-  public dispose(renderCount: number): void {}
+  public override dispose(renderCount: number): void {}
 }
 
 export default new NotificationsController();
