@@ -186,5 +186,6 @@
   "deliveryMethod": "Delivery method",
   "orderSummary": "Order summary",
   "shippingStatus": "Shipping status",
-  "paymentStatus": "Payment status"
+  "paymentStatus": "Payment status",
+  "cellar": "Cellar"
 }

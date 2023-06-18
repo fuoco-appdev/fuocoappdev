@@ -22,9 +22,11 @@ import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import LoadingComponent from './loading.component';
 import { Store } from '@ngneat/elf';
 import { ProductTabs } from '../models/store.model';
-import { Country, Region, Product } from '@medusajs/medusa';
+import { Country, Region, Product, SalesChannel } from '@medusajs/medusa';
 import ProductPreviewComponent from './product-preview.component';
 import ReactCountryFlag from 'react-country-flag';
+import HomeController from '../controllers/home.controller';
+import { InventoryLocation } from '../models/home.model';
 
 function StoreDesktopComponent(): JSX.Element {
   const navigate = useNavigate();
@@ -39,9 +41,12 @@ function StoreMobileComponent(): JSX.Element {
   const [openFilter, setOpenFilter] = useState<boolean>(false);
   const [countryOptions, setCountryOptions] = useState<OptionProps[]>([]);
   const [regionOptions, setRegionOptions] = useState<OptionProps[]>([]);
+  const [cellarOptions, setCellarOptions] = useState<OptionProps[]>([]);
   const [selectedCountryIndex, setSelectedCountryIndex] = useState<number>(0);
   const [selectedRegionIndex, setSelectedRegionIndex] = useState<number>(0);
+  const [selectedCellarIndex, setSelectedCellarIndex] = useState<number>(0);
   const [props] = useObservable(StoreController.model.store);
+  const [homeProps] = useObservable(HomeController.model.store);
   const { t, i18n } = useTranslation();
 
   useEffect(() => {
@@ -77,6 +82,39 @@ function StoreMobileComponent(): JSX.Element {
 
     setCountryOptions(countries);
   }, [props.regions]);
+
+  useEffect(() => {
+    if (
+      !homeProps.inventoryLocations ||
+      !props.selectedRegion ||
+      !homeProps.selectedInventoryLocation
+    ) {
+      return;
+    }
+
+    const inventoryLocationsInRegion = homeProps.inventoryLocations?.filter(
+      (value: InventoryLocation) => value.region === props.selectedRegion.name
+    );
+
+    const cellars: OptionProps[] = [];
+    for (const location of inventoryLocationsInRegion as InventoryLocation[]) {
+      cellars.push({
+        id: location.company,
+        value: location.placeName ?? '',
+        children: () => (
+          <div className={styles['option-name']}>
+            {location.placeName.toLowerCase()}
+          </div>
+        ),
+      });
+    }
+
+    setCellarOptions(cellars);
+  }, [
+    homeProps.inventoryLocations,
+    homeProps.selectedInventoryLocation,
+    props.selectedRegion,
+  ]);
 
   useEffect(() => {
     if (!props.selectedRegion || !countryOptions) {
@@ -251,6 +289,21 @@ function StoreMobileComponent(): JSX.Element {
             options={regionOptions}
             defaultIndex={selectedRegionIndex}
             onChange={(index: number) => setSelectedRegionIndex(index)}
+          />
+          <Listbox
+            classNames={{
+              formLayout: {
+                label: styles['listbox-form-layout-label'],
+              },
+              listbox: styles['listbox'],
+              chevron: styles['listbox-chevron'],
+              label: styles['listbox-label'],
+            }}
+            touchScreen={true}
+            label={t('cellar') ?? ''}
+            options={cellarOptions}
+            defaultIndex={selectedCellarIndex}
+            onChange={(index: number) => setSelectedCellarIndex(index)}
           />
           <Button
             classNames={{

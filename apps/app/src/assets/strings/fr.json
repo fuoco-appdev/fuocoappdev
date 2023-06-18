@@ -186,5 +186,6 @@
   "deliveryMethod": "Mode de livraison",
   "orderSummary": "Résumé de la commande",
   "shippingStatus": "Statut de livraison",
-  "paymentStatus": "Statut du paiement"
+  "paymentStatus": "Statut du paiement",
+  "cellar": "cave"
 }
