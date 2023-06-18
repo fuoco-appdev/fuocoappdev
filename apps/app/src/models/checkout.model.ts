@@ -29,7 +29,7 @@ export interface CheckoutState {
   selectedShippingOptionId: string | undefined;
   giftCardCode: string;
   discountCode: string;
-  selectedProviderId: string | undefined;
+  selectedProviderId: ProviderType | undefined;
 }
 
 export class CheckoutModel extends Model {
@@ -209,11 +209,11 @@ export class CheckoutModel extends Model {
     }
   }
 
-  public get selectedProviderId(): string | undefined {
+  public get selectedProviderId(): ProviderType | undefined {
     return this.store.getValue().selectedProviderId;
   }
 
-  public set selectedProviderId(value: string | undefined) {
+  public set selectedProviderId(value: ProviderType | undefined) {
     if (this.selectedProviderId !== value) {
       this.store.update((state) => ({
         ...state,

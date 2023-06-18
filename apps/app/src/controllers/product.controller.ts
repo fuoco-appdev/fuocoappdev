@@ -88,21 +88,19 @@ class ProductController extends Controller {
       return;
     }
 
-    const cartResponse = await MedusaService.medusa.carts.lineItems.create(
-      CartController.model.cartId,
-      {
-        variant_id: variantId,
-        quantity: quantity,
-      }
-    );
-    if (cartResponse.response.status >= 400) {
-      errorCallback?.(new Error(cartResponse.response.statusText));
-      return;
+    try {
+      const cartResponse = await MedusaService.medusa.carts.lineItems.create(
+        CartController.model.cartId,
+        {
+          variant_id: variantId,
+          quantity: quantity,
+        }
+      );
+      await CartController.updateLocalCartAsync(cartResponse.cart);
+      successCallback?.();
+    } catch (error: any) {
+      errorCallback?.(error);
     }
-
-    await CartController.updateLocalCartAsync(cartResponse.cart);
-
-    successCallback?.();
   }
 
   public getCheapestPrice(prices: MoneyAmount[]): MoneyAmount | undefined {

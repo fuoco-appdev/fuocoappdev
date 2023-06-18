@@ -370,16 +370,26 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
             hasQuantityLimit || props.selectedVariant?.inventory_quantity <= 0
           }
           onClick={() =>
-            ProductController.addToCartAsync(props.selectedVariant?.id, 1, () =>
-              WindowController.addToast({
-                key: `add-to-cart-${Math.random()}`,
-                message: t('addedToCart') ?? '',
-                description:
-                  t('addedToCartDescription', {
-                    item: props.title,
-                  }) ?? '',
-                type: 'success',
-              })
+            ProductController.addToCartAsync(
+              props.selectedVariant?.id,
+              1,
+              () =>
+                WindowController.addToast({
+                  key: `add-to-cart-${Math.random()}`,
+                  message: t('addedToCart') ?? '',
+                  description:
+                    t('addedToCartDescription', {
+                      item: props.title,
+                    }) ?? '',
+                  type: 'success',
+                }),
+              (error) =>
+                WindowController.addToast({
+                  key: `add-to-cart-${Math.random()}`,
+                  message: error.name,
+                  description: error.message,
+                  type: 'error',
+                })
             )
           }
         >

@@ -563,7 +563,7 @@ function CheckoutMobileComponent(): JSX.Element {
             type={'cards'}
             onChange={(event) =>
               CheckoutController.updateSelectedProviderIdAsync(
-                event.target.value
+                event.target.value as ProviderType
               )
             }
           />

@@ -3,6 +3,7 @@ import { OrderConfirmedModel } from '../models/order-confirmed.model';
 import MedusaService from '../services/medusa.service';
 import { Order, LineItem } from '@medusajs/medusa';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+import WindowController from './window.controller';
 
 class OrderConfirmedController extends Controller {
   private readonly _model: OrderConfirmedModel;
@@ -21,8 +22,17 @@ class OrderConfirmedController extends Controller {
   public override dispose(renderCount: number): void {}
 
   public async requestOrderAsync(orderId: string): Promise<void> {
-    const orderResponse = await MedusaService.medusa.orders.retrieve(orderId);
-    await this.updateLocalOrderAsync(orderResponse.order);
+    try {
+      const orderResponse = await MedusaService.medusa.orders.retrieve(orderId);
+      await this.updateLocalOrderAsync(orderResponse.order);
+    } catch (error: any) {
+      WindowController.addToast({
+        key: `retrieve-order-${Math.random()}`,
+        message: error.name,
+        description: error.message,
+        type: 'error',
+      });
+    }
   }
 
   private async updateLocalOrderAsync(value: Order): Promise<void> {
@@ -35,10 +45,19 @@ class OrderConfirmedController extends Controller {
         | PricedProduct
         | undefined;
       if (!product) {
-        const productResponse = await MedusaService.medusa.products.retrieve(
-          item.variant.product_id
-        );
-        product = productResponse.product;
+        try {
+          const productResponse = await MedusaService.medusa.products.retrieve(
+            item.variant.product_id
+          );
+          product = productResponse.product;
+        } catch (error: any) {
+          WindowController.addToast({
+            key: `retrieve-product-${Math.random()}`,
+            message: error.name,
+            description: error.message,
+            type: 'error',
+          });
+        }
       }
 
       const variant = product?.variants.find(

@@ -4,7 +4,7 @@ import {
   AddressFormValues,
 } from '../components/address-form.component';
 import { Controller } from '../controller';
-import { CheckoutModel } from '../models/checkout.model';
+import { CheckoutModel, ProviderType } from '../models/checkout.model';
 import MedusaService from '../services/medusa.service';
 import CartController from './cart.controller';
 import {
@@ -16,7 +16,7 @@ import {
   Swap,
 } from '@medusajs/medusa';
 import { select } from '@ngneat/elf';
-import StoreController from './store.controller';
+import WindowController from './window.controller';
 
 class CheckoutController extends Controller {
   private readonly _model: CheckoutModel;
@@ -98,15 +98,26 @@ class CheckoutController extends Controller {
       return;
     }
 
-    const cartResponse = await MedusaService.medusa.carts.addShippingMethod(
-      CartController.model.cartId,
-      { option_id: value }
-    );
-    CartController.updateLocalCartAsync(cartResponse.cart);
-    this._model.selectedShippingOptionId = value;
+    try {
+      const cartResponse = await MedusaService.medusa.carts.addShippingMethod(
+        CartController.model.cartId,
+        { option_id: value }
+      );
+      CartController.updateLocalCartAsync(cartResponse.cart);
+      this._model.selectedShippingOptionId = value;
+    } catch (error: any) {
+      WindowController.addToast({
+        key: `add-shipping-method-${Math.random()}`,
+        message: error.name,
+        description: error.message,
+        type: 'error',
+      });
+    }
   }
 
-  public async updateSelectedProviderIdAsync(value: string): Promise<void> {
+  public async updateSelectedProviderIdAsync(
+    value: ProviderType
+  ): Promise<void> {
     if (
       !CartController.model.cartId ||
       !CartController.model.cart ||
@@ -115,14 +126,23 @@ class CheckoutController extends Controller {
       return;
     }
 
-    const cartResponse = await MedusaService.medusa.carts.setPaymentSession(
-      CartController.model.cartId,
-      {
-        provider_id: value,
-      }
-    );
-    CartController.updateLocalCartAsync(cartResponse.cart);
-    this._model.selectedProviderId = value;
+    try {
+      const cartResponse = await MedusaService.medusa.carts.setPaymentSession(
+        CartController.model.cartId,
+        {
+          provider_id: value,
+        }
+      );
+      CartController.updateLocalCartAsync(cartResponse.cart);
+      this._model.selectedProviderId = value;
+    } catch (error: any) {
+      WindowController.addToast({
+        key: `set-payment-session-${Math.random()}`,
+        message: error.name,
+        description: error.message,
+        type: 'error',
+      });
+    }
   }
 
   public async continueToDeliveryAsync(): Promise<void> {
@@ -160,19 +180,28 @@ class CheckoutController extends Controller {
       postal_code: this._model.billingForm.postalCode,
     };
 
-    const cartResponse = await MedusaService.medusa.carts.update(
-      CartController.model.cartId,
-      {
-        email: this._model.shippingForm.email,
-        shipping_address: this._model.shippingFormComplete
-          ? shippingAddressPayload
-          : undefined,
-        billing_address: this._model.shippingFormComplete
-          ? billingAddressPayload
-          : undefined,
-      }
-    );
-    await CartController.updateLocalCartAsync(cartResponse.cart);
+    try {
+      const cartResponse = await MedusaService.medusa.carts.update(
+        CartController.model.cartId,
+        {
+          email: this._model.shippingForm.email,
+          shipping_address: this._model.shippingFormComplete
+            ? shippingAddressPayload
+            : undefined,
+          billing_address: this._model.shippingFormComplete
+            ? billingAddressPayload
+            : undefined,
+        }
+      );
+      await CartController.updateLocalCartAsync(cartResponse.cart);
+    } catch (error: any) {
+      WindowController.addToast({
+        key: `update-cart-${Math.random()}`,
+        message: error.name,
+        description: error.message,
+        type: 'error',
+      });
+    }
   }
 
   public continueToBilling(): void {
@@ -214,11 +243,14 @@ class CheckoutController extends Controller {
   public async proceedToPaymentAndGetCompleteCartIdAsync(): Promise<
     string | undefined
   > {
-    const completeCart = await CartController.completeCartAsync();
-    console.log(completeCart);
-    this.resetCheckoutStates();
-    await CartController.resetCartAsync();
-    return completeCart?.id;
+    if (this._model.selectedProviderId === ProviderType.Manual) {
+      const completeCart = await CartController.completeCartAsync();
+      this.resetCheckoutStates();
+      await CartController.resetCartAsync();
+      return completeCart?.id;
+    }
+
+    return undefined;
   }
 
   public getAddressFormErrors(
@@ -272,7 +304,7 @@ class CheckoutController extends Controller {
     this._model.selectedShippingOptionId = undefined;
     this._model.giftCardCode = '';
     this._model.discountCode = '';
-    this._model.selectedProviderId = '';
+    this._model.selectedProviderId = undefined;
   }
 
   private async onCartChangedAsync(value: Cart | undefined): Promise<void> {
@@ -324,32 +356,41 @@ class CheckoutController extends Controller {
     }
 
     if (value?.region_id) {
-      const shippingOptionsResponse =
-        await MedusaService.medusa.shippingOptions.list();
-      const shippingOptionsFromRegion =
-        shippingOptionsResponse.shipping_options.filter(
-          (option) => option.region_id === value?.region_id
+      try {
+        const shippingOptionsResponse =
+          await MedusaService.medusa.shippingOptions.list();
+        const shippingOptionsFromRegion =
+          shippingOptionsResponse.shipping_options.filter(
+            (option) => option.region_id === value?.region_id
+          );
+        shippingOptionsFromRegion.sort(
+          (current, next) => (current.amount ?? 0) - (next.amount ?? 0)
         );
-      shippingOptionsFromRegion.sort(
-        (current, next) => (current.amount ?? 0) - (next.amount ?? 0)
-      );
-      this._model.shippingOptions = shippingOptionsFromRegion;
+        this._model.shippingOptions = shippingOptionsFromRegion;
 
-      const shippingMethods: ShippingMethod[] = value?.shipping_methods;
-      if (shippingMethods && shippingMethods.length > 0) {
-        this._model.selectedShippingOptionId =
-          shippingMethods[0].shipping_option_id;
-      } else {
-        await this.updateSelectedShippingOptionIdAsync(
-          shippingOptionsFromRegion[0].id ?? ''
-        );
+        const shippingMethods: ShippingMethod[] = value?.shipping_methods;
+        if (shippingMethods && shippingMethods.length > 0) {
+          this._model.selectedShippingOptionId =
+            shippingMethods[0].shipping_option_id;
+        } else {
+          await this.updateSelectedShippingOptionIdAsync(
+            shippingOptionsFromRegion[0].id ?? ''
+          );
+        }
+      } catch (error: any) {
+        WindowController.addToast({
+          key: `list-shipping-options-${Math.random()}`,
+          message: error.name,
+          description: error.message,
+          type: 'error',
+        });
       }
     }
 
     // Select first provider by default
     if (!this._model.selectedProviderId && value?.payment_sessions.length > 0) {
       await this.updateSelectedProviderIdAsync(
-        value?.payment_sessions[0].provider_id
+        value?.payment_sessions[0].provider_id as ProviderType
       );
     }
 
@@ -358,18 +399,36 @@ class CheckoutController extends Controller {
 
   private async initializePaymentSessionAsync(cart: Cart): Promise<void> {
     if (cart?.id && !cart.payment_sessions?.length && cart?.items?.length) {
-      const cartResponse =
-        await MedusaService.medusa.carts.createPaymentSessions(cart.id);
-      await CartController.updateLocalCartAsync(cartResponse.cart);
+      try {
+        const cartResponse =
+          await MedusaService.medusa.carts.createPaymentSessions(cart.id);
+        await CartController.updateLocalCartAsync(cartResponse.cart);
+      } catch (error: any) {
+        WindowController.addToast({
+          key: `create-payment-sessions-${Math.random()}`,
+          message: error.name,
+          description: error.message,
+          type: 'error',
+        });
+      }
     }
 
     if (cart.payment_session) {
-      const cartResponse =
-        await MedusaService.medusa.carts.refreshPaymentSession(
-          cart.id,
-          cart.payment_session.id
-        );
-      await CartController.updateLocalCartAsync(cartResponse.cart);
+      try {
+        const cartResponse =
+          await MedusaService.medusa.carts.refreshPaymentSession(
+            cart.id,
+            cart.payment_session.id
+          );
+        await CartController.updateLocalCartAsync(cartResponse.cart);
+      } catch (error: any) {
+        WindowController.addToast({
+          key: `refresh-payment-session-${Math.random()}`,
+          message: error.name,
+          description: error.message,
+          type: 'error',
+        });
+      }
     }
   }
 }
