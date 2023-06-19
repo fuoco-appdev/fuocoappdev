@@ -37,6 +37,12 @@ class HomeController extends Controller {
     this._model.zoom = state.zoom;
   }
 
+  public updateSelectedInventoryLocation(
+    value: InventoryLocation | undefined
+  ): void {
+    this._model.selectedInventoryLocation = value;
+  }
+
   private async initializeAsync(renderCount: number): Promise<void> {
     if (renderCount <= 1) {
       this._model.inventoryLocations =

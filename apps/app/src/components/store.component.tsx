@@ -110,11 +110,20 @@ function StoreMobileComponent(): JSX.Element {
     }
 
     setCellarOptions(cellars);
-  }, [
-    homeProps.inventoryLocations,
-    homeProps.selectedInventoryLocation,
-    props.selectedRegion,
-  ]);
+  }, [homeProps.inventoryLocations, props.selectedRegion]);
+
+  useEffect(() => {
+    if (cellarOptions.length <= 0) {
+      return;
+    }
+
+    const locationIndex = cellarOptions.findIndex(
+      (value) => value.id === homeProps.selectedInventoryLocation?.company
+    );
+    if (locationIndex > -1 && locationIndex !== selectedCellarIndex) {
+      setSelectedCellarIndex(locationIndex);
+    }
+  }, [homeProps.selectedInventoryLocation, cellarOptions]);
 
   useEffect(() => {
     if (!props.selectedRegion || !countryOptions) {
@@ -313,7 +322,8 @@ function StoreMobileComponent(): JSX.Element {
             size={'large'}
             onClick={() => {
               StoreController.applyFilterAsync(
-                regionOptions[selectedRegionIndex].id ?? ''
+                regionOptions[selectedRegionIndex].id ?? '',
+                cellarOptions[selectedCellarIndex].id ?? ''
               );
               setTimeout(() => setOpenFilter(false), 250);
             }}

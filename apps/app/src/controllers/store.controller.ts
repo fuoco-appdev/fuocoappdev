@@ -120,9 +120,19 @@ class StoreController extends Controller {
     this._model.previews = hits;
   }
 
-  public async applyFilterAsync(regionId: string): Promise<void> {
+  public async applyFilterAsync(
+    regionId: string,
+    cellarId: string
+  ): Promise<void> {
     const region = this._model.regions.find((value) => value.id === regionId);
     await this.updateRegionAsync(region);
+
+    const inventoryLocation = HomeController.model.inventoryLocations.find(
+      (value) => value.company === cellarId
+    );
+    if (inventoryLocation) {
+      HomeController.updateSelectedInventoryLocation(inventoryLocation);
+    }
   }
 
   private async intializeAsync(renderCount: number): Promise<void> {
