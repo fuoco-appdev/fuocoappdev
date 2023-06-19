@@ -187,5 +187,7 @@
   "orderSummary": "Order summary",
   "shippingStatus": "Shipping status",
   "paymentStatus": "Payment status",
-  "cellar": "Cellar"
+  "cellar": "Cellar",
+  "selected": "Selected",
+  "select": "Select"
 }

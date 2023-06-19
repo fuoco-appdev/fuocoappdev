@@ -8,7 +8,7 @@ import {
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import HomeController from '../controllers/home.controller';
 import styles from './home.module.scss';
-import { Alert } from '@fuoco.appdev/core-ui';
+import { Alert, Button } from '@fuoco.appdev/core-ui';
 import { RoutePaths } from '../route-paths';
 import { useTranslation } from 'react-i18next';
 import SupabaseService from '../services/supabase.service';
@@ -96,7 +96,11 @@ function HomeMobileComponent(): JSX.Element {
             }}
           >
             <img
-              src={'../assets/svg/cruthology-pin.svg'}
+              src={
+                props.selectedInventoryLocation?.company !== point.company
+                  ? '../assets/svg/cruthology-pin.svg'
+                  : '../assets/svg/cruthology-selected-pin.svg'
+              }
               className={styles['marker']}
             />
           </Marker>
@@ -112,6 +116,35 @@ function HomeMobileComponent(): JSX.Element {
           <div className={styles['marker-popup']}>
             <div className={styles['company']}>{selectedPoint.company}</div>
             <div className={styles['address']}>{selectedPoint.placeName}</div>
+            <div className={styles['select-button-container']}>
+              <div>
+                <Button
+                  classNames={{
+                    button: styles['select-button'],
+                  }}
+                  rippleProps={{
+                    color: 'rgba(133, 38, 122, .35)',
+                  }}
+                  block={false}
+                  size={'tiny'}
+                  disabled={
+                    selectedPoint?.company ===
+                    props.selectedInventoryLocation?.company
+                  }
+                  type={'text'}
+                  onClick={() =>
+                    HomeController.updateSelectedInventoryLocation(
+                      selectedPoint
+                    )
+                  }
+                >
+                  {selectedPoint?.company !==
+                  props.selectedInventoryLocation?.company
+                    ? t('select')
+                    : t('selected')}
+                </Button>
+              </div>
+            </div>
           </div>
         </Popup>
       )}

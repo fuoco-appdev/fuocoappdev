@@ -20,4 +20,17 @@
     & .address {
         color: $brand-900;
     }
+
+    & .select-button-container {
+        display: flex;
+        margin-top: $mp-2;
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+
+.select-button {
+    background-color: transparent !important;
+    border-color: $brand-900 !important;
+    color: $brand-900 !important;
 }
