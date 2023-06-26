@@ -30,17 +30,25 @@
     & .date-container {
         display: flex;
         flex-direction: row;
+        justify-content: space-between;
         margin-bottom: $mp-2;
 
-        & .date-text {
-            color: $brand-900;
-            font-size: $font-size-base;
-            margin-right: $mp-4;
-        }
+        & .date-content {
+            display: flex;
+            flex-direction: row;
 
-        & .item-count-text {
-            color: $brand-900;
-            font-size: $font-size-lg;
+            & .date-text {
+                color: $brand-900;
+                font-size: $font-size-lg;
+                margin-right: $mp-4;
+                line-height: 34px;
+            }
+    
+            & .item-count-text {
+                color: $brand-900;
+                font-size: $font-size-lg;
+                line-height: 34px;
+            }
         }
     }
 
@@ -125,4 +133,25 @@
             }
         }
     }
+
+    & .refund-items-container {
+        display: flex;
+        flex-direction: column;
+        padding: $mp-4;
+    }
+
+    & .request-refund-button-container {
+        padding: $mp-4;
+    }
+}
+
+.button {
+    background-color: transparent !important;
+    color: $brand-900 !important;
+}
+
+.option-name {
+    color: $brand-900;
+    font-size: $font-size-sm;
+    overflow: hidden;
 }

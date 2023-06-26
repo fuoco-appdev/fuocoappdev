@@ -173,12 +173,13 @@
   "enterShippingAddressForBilling": "Enter your shipping address to see billing options.",
   "enterShippingAddressForDelivery": "Enter your shipping address to see available delivery options.",
   "enterBillingAddressForDelivery": "Enter your billing address to see available delivery options.",
+  "enterBillingAddressForPayment": "Enter your billing address to see available payment options.",
   "standardShippingDescription": "3-7 day delivery on business hours",
   "expressShippingDescription": "1-3 day delivery on business hours",
   "manualProviderName": "Test payment",
   "manualProviderDescription": "Test payment using medusa-payment-manual",
-  "visaCheckoutProviderName": "Credit card",
-  "visaCheckoutProviderDescription": "Secure payment with credit card",
+  "creditCardProviderName": "Credit card",
+  "creditCardProviderDescription": "Secure payment with credit card",
   "confirmedOrder": "Confirmed Order",
   "thankyouForOrder": "Thank you, your order has been successfully placed",
   "items": "items",
@@ -189,5 +190,10 @@
   "paymentStatus": "Payment status",
   "cellar": "Cellar",
   "selected": "Selected",
-  "select": "Select"
+  "select": "Select",
+  "refund": "Refund",
+  "note": "Note",
+  "reason": "Reason",
+  "requestRefund": "Request refund",
+  "requestRefundSuccessMessage": "Request for refund has been sent."
 }

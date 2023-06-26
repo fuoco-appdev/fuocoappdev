@@ -1,0 +1,123 @@
+@import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
+
+.container-mobile {
+    padding: $mp-2 0;
+
+    & .details-mobile {
+        display: flex;
+        margin-bottom: $mp-1;
+
+        & .thumbnail-mobile {
+            display: flex;
+            justify-content: center;
+            height: 56px;
+            width: 56px;
+            background-color: $gray-100;
+            margin-right: $mp-4;
+
+            & .thumbnail-image-mobile {
+                padding: $mp-1 0;
+                max-height: 100%;
+                width: auto;
+                color: $brand-900;
+            }
+        }
+
+        & .title-container-mobile {
+            & .title-mobile {
+                color: $brand-900;
+                font-size: $font-size-base;
+                font-weight: $font-weight-bold;
+                margin-bottom: $mp-1;
+            }
+
+            & .variant-mobile {
+                color: $brand-900;
+                font-size: $font-size-sm;
+            }
+        }
+
+        & .quantity-details-container-mobile {
+            display: flex;
+            flex-direction: row;
+            flex: 1;
+            justify-content: right;
+            margin-right: $mp-2;
+
+            & .quantity-container-mobile {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: fit-content;
+
+                & .quantity-text-mobile {
+                    color: $brand-900;
+                    font-size: $font-size-xs;
+                }
+
+                & .quantity-buttons-mobile {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: center;
+                    align-items: center;
+
+                    & .quantity-button {
+                        padding: $mp-1;
+                        color: $brand-900;
+                    }
+    
+                    & .quantity {
+                        margin-left: $mp-2;
+                        margin-right: $mp-2;
+                        color: $brand-900;
+                        font-size: $font-size-sm;
+                        font-weight: $font-weight-bold;
+                    }
+                }
+            }
+        }
+    }
+
+    & .input-container {
+        display: flex;
+        flex-direction: column;
+
+        & .reason-container {
+            margin-top: $mp-2;
+        }
+    
+        & .note-container {
+            margin-top: $mp-2;
+        }
+    }
+}
+
+.input-form-layout-label {
+    color: $brand-900 !important;
+}
+  
+.input {
+    color: $brand-900 !important;
+}
+  
+.input-container {
+    border-color: $brand-900 !important;
+}
+
+.listbox-form-layout-label {
+    color: $brand-900 !important;
+}
+
+.listbox {
+    border-color: $brand-900 !important;
+}
+  
+.listbox-chevron {
+    color: $brand-900 !important;
+}
+
+.listbox-label {
+    color: $brand-900 !important;
+    text-transform: capitalize !important;
+}

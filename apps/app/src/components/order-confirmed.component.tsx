@@ -2,7 +2,7 @@ import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import styles from './order-confirmed.module.scss';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useRef, useState } from 'react';
-import { LineItem, ShippingMethod } from '@medusajs/medusa';
+import { LineItem, ShippingMethod, ReturnReason } from '@medusajs/medusa';
 import OrderConfirmedController from '../controllers/order-confirmed.controller';
 import StoreController from '../controllers/store.controller';
 import { useParams } from 'react-router-dom';
@@ -10,6 +10,10 @@ import { useObservable } from '@ngneat/use-observable';
 import ShippingItemComponent from './shipping-item.component';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
+import { Button, Dropdown, OptionProps } from '@fuoco.appdev/core-ui';
+import RefundItemComponent from './refund-item.component';
+import { RefundItem } from '../models/order-confirmed.model';
+import WindowController from '../controllers/window.controller';
 
 export interface OrderConfirmedProps {}
 
@@ -23,6 +27,10 @@ function OrderConfirmedMobileComponent({}: OrderConfirmedProps): JSX.Element {
   const [props] = useObservable(OrderConfirmedController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
   const [quantity, setQuantity] = useState<number>(0);
+  const [openRefund, setOpenRefund] = useState<boolean>(false);
+  const [returnReasonOptions, setReturnReasonOptions] = useState<OptionProps[]>(
+    []
+  );
   const isRenderedRef = useRef<boolean>(false);
 
   useEffect(() => {
@@ -33,15 +41,41 @@ function OrderConfirmedMobileComponent({}: OrderConfirmedProps): JSX.Element {
   }, []);
 
   useEffect(() => {
-    if (props.order) {
-      setQuantity(
-        props.order.items.reduce(
-          (current: number, next: LineItem) => current + next.quantity,
-          0
-        )
-      );
+    const options = [];
+    for (const returnReason of props.returnReasons as ReturnReason[]) {
+      options.push({
+        id: returnReason.id,
+        value: returnReason.label,
+        children: () => (
+          <div className={styles['option-name']}>{returnReason.label}</div>
+        ),
+      });
     }
-  }, [props.order]);
+
+    setReturnReasonOptions(options);
+  }, [props.returnReasons]);
+
+  useEffect(() => {
+    if (!props.order || !props.returnReasons) {
+      return;
+    }
+
+    setQuantity(
+      props.order.items.reduce(
+        (current: number, next: LineItem) => current + next.quantity,
+        0
+      )
+    );
+
+    for (const item of props.order.items as LineItem[]) {
+      OrderConfirmedController.updateRefundItem(item.id, {
+        item_id: item.id,
+        quantity: item.quantity,
+        reason_id: props.returnReasons[0].id ?? '',
+        note: '',
+      });
+    }
+  }, [props.order, props.returnReasons]);
 
   const formatStatus = (str: string) => {
     const formatted = str.split('_').join(' ');
@@ -58,12 +92,25 @@ function OrderConfirmedMobileComponent({}: OrderConfirmedProps): JSX.Element {
         </div>
         <div className={styles['order-id-text']}>{props.order?.id}</div>
         <div className={styles['date-container']}>
-          <div className={styles['date-text']}>
-            {new Date(props.order?.created_at).toDateString()}
+          <div className={styles['date-content']}>
+            <div className={styles['date-text']}>
+              {new Date(props.order?.created_at).toDateString()}
+            </div>
+            <div className={styles['item-count-text']}>{`${quantity} ${
+              quantity !== 1 ? t('items') : t('item')
+            }`}</div>
           </div>
-          <div className={styles['item-count-text']}>{`${quantity} ${
-            quantity !== 1 ? t('items') : t('item')
-          }`}</div>
+          <div>
+            <Button
+              classNames={{ button: styles['button'] }}
+              type={'text'}
+              size={'small'}
+              rippleProps={{ color: 'rgba(133, 38, 122, .35)' }}
+              onClick={() => setOpenRefund(true)}
+            >
+              {t('refund')}
+            </Button>
+          </div>
         </div>
         <div className={styles['shipping-items']}>
           {props.order?.items
@@ -185,6 +232,47 @@ function OrderConfirmedMobileComponent({}: OrderConfirmedProps): JSX.Element {
             </div>
           </div>
         </div>
+        <Dropdown
+          open={openRefund}
+          touchScreen={true}
+          onClose={() => setOpenRefund(false)}
+        >
+          <div className={styles['refund-items-container']}>
+            {props.order?.items.map((item: LineItem) => (
+              <RefundItemComponent
+                item={item}
+                refundItem={props.refundItems[item.id]}
+                returnReasonOptions={returnReasonOptions}
+                onChanged={(value) =>
+                  OrderConfirmedController.updateRefundItem(item.id, value)
+                }
+              />
+            ))}
+          </div>
+          <div className={styles['request-refund-button-container']}>
+            <Button
+              block={true}
+              size={'large'}
+              disabled={
+                Object.values(props.refundItems as RefundItem[]).find(
+                  (value: RefundItem) => value.quantity > 0
+                ) === undefined
+              }
+              onClick={async () => {
+                await OrderConfirmedController.createReturnAsync();
+                setOpenRefund(false);
+                WindowController.addToast({
+                  key: `refund-request-success-${Math.random()}`,
+                  message: t('requestRefund') ?? '',
+                  description: t('requestRefundSuccessMessage') ?? '',
+                  type: 'success',
+                });
+              }}
+            >
+              {t('requestRefund')}
+            </Button>
+          </div>
+        </Dropdown>
       </div>
     )
   );

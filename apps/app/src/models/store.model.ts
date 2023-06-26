@@ -1,6 +1,7 @@
 import { createStore, withProps } from '@ngneat/elf';
 import { Model } from '../model';
 import { Product, Region, SalesChannel } from '@medusajs/medusa';
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 
 export enum ProductTabs {
   New = 'new',
@@ -11,9 +12,9 @@ export enum ProductTabs {
 }
 
 export interface StoreState {
-  previews: Product[];
+  previews: PricedProduct[];
   input: string;
-  selectedPreview: Product | undefined;
+  selectedPreview: PricedProduct | undefined;
   regions: Region[];
   selectedRegion: Region | undefined;
   selectedTab: ProductTabs | undefined;
@@ -38,11 +39,11 @@ export class StoreModel extends Model {
     );
   }
 
-  public get previews(): Product[] {
+  public get previews(): PricedProduct[] {
     return this.store.getValue().previews;
   }
 
-  public set previews(value: Product[]) {
+  public set previews(value: PricedProduct[]) {
     if (JSON.stringify(this.previews) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, previews: value }));
     }

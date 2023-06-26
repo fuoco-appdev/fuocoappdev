@@ -13,7 +13,7 @@ export enum ShippingType {
 
 export enum ProviderType {
   Manual = 'manual',
-  VisaCheckout = 'visa-checkout',
+  AuthorizeNet = 'authorize-net',
 }
 
 export interface CheckoutState {
@@ -67,7 +67,7 @@ export class CheckoutModel extends Model {
             phoneNumber: '',
           },
           billingFormErrors: {},
-          billingFormComplete: true,
+          billingFormComplete: false,
           errorStrings: {},
           sameAsBillingAddress: true,
           shippingOptions: [],

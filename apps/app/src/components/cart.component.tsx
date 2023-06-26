@@ -64,7 +64,14 @@ function CartMobileComponent(): JSX.Element {
               );
             })
             .map((item: LineItem) => (
-              <CartItemComponent key={item.id} item={item} />
+              <CartItemComponent
+                key={item.id}
+                item={item}
+                onQuantityChanged={(quantity) =>
+                  CartController.updateLineItemQuantityAsync(quantity, item)
+                }
+                onRemove={() => CartController.removeLineItemAsync(item)}
+              />
             ))}
         </div>
       </div>

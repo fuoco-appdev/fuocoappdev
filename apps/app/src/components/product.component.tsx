@@ -61,10 +61,7 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
   const { t } = useTranslation();
 
   useEffect(() => {
-    if (!isRenderedRef.current) {
-      isRenderedRef.current = true;
-      ProductController.requestProductAsync(id ?? '');
-    }
+    ProductController.requestProductAsync(id ?? '');
   }, []);
 
   useEffect(() => {

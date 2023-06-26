@@ -121,6 +121,7 @@ class CheckoutController extends Controller {
     if (
       !CartController.model.cartId ||
       !CartController.model.cart ||
+      !this._model.billingFormComplete ||
       this._model.selectedProviderId === value
     ) {
       return;
@@ -133,7 +134,7 @@ class CheckoutController extends Controller {
           provider_id: value,
         }
       );
-      CartController.updateLocalCartAsync(cartResponse.cart);
+      await CartController.updateLocalCartAsync(cartResponse.cart);
       this._model.selectedProviderId = value;
     } catch (error: any) {
       WindowController.addToast({
@@ -388,7 +389,11 @@ class CheckoutController extends Controller {
     }
 
     // Select first provider by default
-    if (!this._model.selectedProviderId && value?.payment_sessions.length > 0) {
+    if (
+      this._model.billingFormComplete &&
+      !this._model.selectedProviderId &&
+      value?.payment_sessions.length > 0
+    ) {
       await this.updateSelectedProviderIdAsync(
         value?.payment_sessions[0].provider_id as ProviderType
       );

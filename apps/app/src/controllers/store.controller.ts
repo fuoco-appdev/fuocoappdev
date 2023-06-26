@@ -13,8 +13,10 @@ import {
   Region,
   Product,
   ProductOptionValue,
+  SalesChannel,
 } from '@medusajs/medusa';
 import { ProductOptions } from '../models/product.model';
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 
 class StoreController extends Controller {
   private readonly _model: StoreModel;
@@ -59,7 +61,7 @@ class StoreController extends Controller {
   }
 
   public async searchAsync(query: string): Promise<void> {
-    if (!this._model.selectedRegion) {
+    if (!this._model.selectedRegion || !this._model.selectedSalesChannel) {
       return;
     }
 
@@ -67,17 +69,24 @@ class StoreController extends Controller {
       filter: ['type_value = Wine AND status = published'],
     });
     let hits = result.hits as Product[];
-    const removedHits: Product[] = [];
-    for (let i = 0; i < hits.length; i++) {
-      const typeOption = hits[i].options.find(
+
+    const productIds: string[] = hits.map((value: Product) => value.id);
+    const productsResponse = await MedusaService.medusa.products.list({
+      id: productIds,
+      sales_channel_id: [this._model.selectedSalesChannel.id ?? ''],
+    });
+    const removedHits: PricedProduct[] = [];
+    const products = productsResponse.products;
+    for (let i = 0; i < products.length; i++) {
+      const typeOption = products[i].options?.find(
         (value) => value.title === ProductOptions.Type
       );
-      for (const variant of hits[i].variants) {
+      for (const variant of products[i].variants) {
         const price = variant.prices?.find(
           (value) => value.region_id === this._model.selectedRegion?.id
         );
         if (!price) {
-          hits.splice(i, 1);
+          products.splice(i, 1);
         }
 
         // Remove hits with tabs
@@ -91,33 +100,33 @@ class StoreController extends Controller {
             (value: ProductOptionValue) => value.option_id === typeOption?.id
           );
           const duplicates = removedHits.filter(
-            (value) => value.id === hits[i].id
+            (value) => value.id === products[i].id
           );
           if (
             duplicates.length <= 0 &&
             typeValue?.value?.toLowerCase() !==
               this._model.selectedTab?.toLowerCase()
           ) {
-            removedHits.push(hits[i]);
+            removedHits.push(products[i]);
           }
         }
       }
     }
 
     for (const removedHit of removedHits) {
-      const index = hits.indexOf(removedHit);
-      hits.splice(index, 1);
+      const index = products.findIndex((value) => value.id === removedHit.id);
+      products.splice(index, 1);
     }
 
     if (this._model.selectedTab === ProductTabs.New) {
-      hits.sort(
+      products.sort(
         (prev, next) =>
           new Date(next.created_at ?? '').valueOf() -
           new Date(prev.created_at ?? '').valueOf()
       );
     }
 
-    this._model.previews = hits;
+    this._model.previews = products;
   }
 
   public async applyFilterAsync(
@@ -174,11 +183,11 @@ class StoreController extends Controller {
       Math.floor(Math.random() * (max - min + 1)) + min;
     this._model.selectedSalesChannel =
       inventoryLocation.salesChannels[randomSalesChannelIndex];
+    await this.searchAsync('');
   }
 
   private async updateRegionAsync(region: Region | undefined): Promise<void> {
     this._model.selectedRegion = region;
-    await this.searchAsync('');
   }
 }
 

@@ -13,13 +13,19 @@ import { useObservable } from '@ngneat/use-observable';
 
 export interface CartItemProps {
   item: LineItem;
+  onQuantityChanged?: (quantity: number) => void;
+  onRemove?: () => void;
 }
 
 function CartItemDesktopComponent({ item }: CartItemProps): JSX.Element {
   return <></>;
 }
 
-function CartItemMobileComponent({ item }: CartItemProps): JSX.Element {
+function CartItemMobileComponent({
+  item,
+  onQuantityChanged,
+  onRemove,
+}: CartItemProps): JSX.Element {
   const [storeProps] = useObservable(StoreController.model.store);
   const [vintage, setVintage] = useState<string>('');
   const [hasReducedPrice, setHasReducedPrice] = useState<boolean>(
@@ -48,13 +54,13 @@ function CartItemMobileComponent({ item }: CartItemProps): JSX.Element {
 
   const incrementItemQuantity = (value: number): void => {
     if (item.quantity < item.variant.inventory_quantity) {
-      CartController.updateLineItemQuantityAsync(item.quantity + 1, item);
+      onQuantityChanged?.(item.quantity + 1);
     }
   };
 
   const decrementItemQuantity = (value: number): void => {
     if (item.quantity > 1) {
-      CartController.updateLineItemQuantityAsync(item.quantity - 1, item);
+      onQuantityChanged?.(item.quantity - 1);
     }
   };
 
@@ -161,7 +167,7 @@ function CartItemMobileComponent({ item }: CartItemProps): JSX.Element {
           overlay: styles['overlay'],
         }}
         visible={deleteModalVisible}
-        onConfirm={() => CartController.removeLineItemAsync(item)}
+        onConfirm={onRemove}
         onCancel={() => setDeleteModalVisible(false)}
         title={t('removeItem') ?? ''}
         description={t('removeItemDescription', { item: item.title }) ?? ''}

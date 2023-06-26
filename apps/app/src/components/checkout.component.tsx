@@ -83,16 +83,16 @@ function CheckoutMobileComponent(): JSX.Element {
       return;
     }
 
-    const radioOptions: RadioProps[] = [];
+    let radioOptions: RadioProps[] = [];
     for (const session of cartProps.cart.payment_sessions as PaymentSession[]) {
       let description = '';
       let name = '';
       if (session.provider_id === ProviderType.Manual) {
         name = t('manualProviderName');
         description = t('manualProviderDescription');
-      } else if (session.provider_id === ProviderType.VisaCheckout) {
-        name = t('visaCheckoutProviderName');
-        description = t('visaCheckoutProviderDescription');
+      } else if (session.provider_id === ProviderType.AuthorizeNet) {
+        name = t('creditCardProviderName');
+        description = t('creditCardProviderDescription');
       }
 
       radioOptions.push({
@@ -102,6 +102,8 @@ function CheckoutMobileComponent(): JSX.Element {
         description: description,
       });
     }
+
+    radioOptions = radioOptions.sort((a, b) => (a.label < b.label ? -1 : 1));
     setProviderOptions(radioOptions);
   }, [cartProps.cart]);
 
@@ -545,28 +547,35 @@ function CheckoutMobileComponent(): JSX.Element {
           <div className={styles['header-container']}>
             <div className={styles['header-title']}>{t('payment')}</div>
           </div>
-          <Radio.Group
-            id={''}
-            activeId={props.selectedProviderId ?? ''}
-            rippleProps={{
-              color: 'rgba(42, 42, 95, .35)',
-            }}
-            classNames={{
-              radio: {
-                containerCard: styles['radio-container-card'],
-                labelText: styles['radio-label-text'],
-                labelDescription: styles['radio-label-description-text'],
-                containerCardActive: styles['radio-container-card-active'],
-              },
-            }}
-            options={providerOptions}
-            type={'cards'}
-            onChange={(event) =>
-              CheckoutController.updateSelectedProviderIdAsync(
-                event.target.value as ProviderType
-              )
-            }
-          />
+          {props.billingFormComplete && (
+            <Radio.Group
+              id={''}
+              activeId={props.selectedProviderId ?? ''}
+              rippleProps={{
+                color: 'rgba(42, 42, 95, .35)',
+              }}
+              classNames={{
+                radio: {
+                  containerCard: styles['radio-container-card'],
+                  labelText: styles['radio-label-text'],
+                  labelDescription: styles['radio-label-description-text'],
+                  containerCardActive: styles['radio-container-card-active'],
+                },
+              }}
+              options={providerOptions}
+              type={'cards'}
+              onChange={(event) =>
+                CheckoutController.updateSelectedProviderIdAsync(
+                  event.target.id as ProviderType
+                )
+              }
+            />
+          )}
+          {!props.billingFormComplete && (
+            <div className={styles['card-description']}>
+              {t('enterBillingAddressForPayment')}
+            </div>
+          )}
         </div>
         <div className={styles['pricing-container']}>
           <div className={styles['subtotal-container']}>

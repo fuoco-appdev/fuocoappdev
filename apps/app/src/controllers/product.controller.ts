@@ -9,11 +9,18 @@ import StoreController from './store.controller';
 import MedusaService from '../services/medusa.service';
 import i18n from '../i18n';
 import CartController from './cart.controller';
-import { ProductVariant, LineItem, Region } from '@medusajs/medusa';
+import {
+  ProductVariant,
+  LineItem,
+  Region,
+  SalesChannel,
+} from '@medusajs/medusa';
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 
 class ProductController extends Controller {
   private readonly _model: ProductModel;
   private _selectedPreviewSubscription: Subscription | undefined;
+  private _selectedSalesChannelSubscription: Subscription | undefined;
 
   constructor() {
     super();
@@ -31,7 +38,7 @@ class ProductController extends Controller {
     this._selectedPreviewSubscription = StoreController.model.store
       .pipe(select((state: StoreState) => state.selectedPreview))
       .subscribe({
-        next: (value: Product | undefined) => {
+        next: (value: PricedProduct | undefined) => {
           this._model.thumbnail = value?.thumbnail ?? '';
           this._model.title = value?.title ?? '';
           this._model.subtitle = value?.subtitle ?? '';
@@ -41,27 +48,41 @@ class ProductController extends Controller {
 
   public override dispose(renderCount: number): void {
     this._selectedPreviewSubscription?.unsubscribe();
+    this._selectedSalesChannelSubscription?.unsubscribe();
   }
 
   public async requestProductAsync(id: string): Promise<void> {
-    const productResponse = await MedusaService.medusa.products.retrieve(id);
-    const product = productResponse.product;
-    this._model.thumbnail = product.thumbnail ?? '';
-    this._model.title = product.title ?? '';
-    this._model.subtitle = product.subtitle ?? '';
-    this._model.description = product.description ?? '';
-    this._model.tags = product.tags ?? [];
-    this._model.options = product.options ?? [];
-    this._model.variants = product.variants ?? [];
-    this._model.material = product.material ?? '-';
-    this._model.weight =
-      product.weight && product.weight > 0 ? `${product.weight} g` : '-';
-    this._model.countryOrigin = product.origin_country ?? '-';
-    this._model.dimensions =
-      product.length && product.width && product.height
-        ? `${product.length}L x ${product.width}W x ${product.height}H`
-        : '-';
-    this._model.type = product.type ? product.type.value : '-';
+    this._selectedSalesChannelSubscription = StoreController.model.store
+      .pipe(select((model) => model.selectedSalesChannel))
+      .subscribe({
+        next: async (value: SalesChannel | undefined) => {
+          if (!value) {
+            return;
+          }
+
+          const productResponse = await MedusaService.medusa.products.list({
+            id: id,
+            sales_channel_id: [value.id],
+          });
+          const product = productResponse.products[0];
+          this._model.thumbnail = product.thumbnail ?? '';
+          this._model.title = product.title ?? '';
+          this._model.subtitle = product.subtitle ?? '';
+          this._model.description = product.description ?? '';
+          this._model.tags = product.tags ?? [];
+          this._model.options = product.options ?? [];
+          this._model.variants = product.variants ?? [];
+          this._model.material = product.material ?? '-';
+          this._model.weight =
+            product.weight && product.weight > 0 ? `${product.weight} g` : '-';
+          this._model.countryOrigin = product.origin_country ?? '-';
+          this._model.dimensions =
+            product.length && product.width && product.height
+              ? `${product.length}L x ${product.width}W x ${product.height}H`
+              : '-';
+          this._model.type = product.type ? product.type.value : '-';
+        },
+      });
   }
 
   public updateIsLiked(value: boolean): void {

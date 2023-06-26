@@ -173,12 +173,13 @@
   "enterShippingAddressForBilling": "Entrez votre adresse de livraison pour voir les options de facturation.",
   "enterShippingAddressForDelivery": "Entrez votre adresse de livraison pour voir les options de livraison disponibles.",
   "enterBillingAddressForDelivery": "Entrez votre adresse de facturation pour voir les options de livraison disponibles.",
+  "enterBillingAddressForPayment": "Entrez votre adresse de facturation pour voir les options de paiement disponibles.",
   "standardShippingDescription": "Livraison en 3-7 jours pendant les heures ouvrables",
   "expressShippingDescription": "Livraison en 1-3 jours pendant les heures ouvrables",
   "manualProviderName": "Paiement du test",
   "manualProviderDescription": "Tester le paiement en utilisant medusa-payment-manual",
-  "visaCheckoutProviderName": "Carte de crédit",
-  "visaCheckoutProviderDescription": "Paiement sécurisé par carte de crédit",
+  "creditCardProviderName": "Carte de crédit",
+  "creditCardProviderDescription": "Paiement sécurisé par carte de crédit",
   "confirmedOrder": "Commande Confirmée",
   "thankyouForOrder": "Merci, votre commande a été passée avec succès",
   "items": "articles",
@@ -189,5 +190,10 @@
   "paymentStatus": "Statut du paiement",
   "cellar": "cave",
   "selected": "Sélectionné",
-  "select": "Sélectionner"
+  "select": "Sélectionner",
+  "refund": "Remboursement",
+  "note": "Note",
+  "reason": "Raison",
+  "requestRefund": "Demande de remboursement",
+  "requestRefundSuccessMessage": "La demande de remboursement a été envoyée."
 }
