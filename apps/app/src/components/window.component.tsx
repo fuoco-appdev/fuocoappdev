@@ -17,7 +17,11 @@ import SupabaseService from '../services/supabase.service';
 import { useObservable } from '@ngneat/use-observable';
 import { useSpring } from 'react-spring';
 import * as core from '../protobuf/core_pb';
-import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import {
+  ResponsiveDesktop,
+  ResponsiveMobile,
+  ResponsiveTablet,
+} from './responsive.component';
 import LoadingComponent from './loading.component';
 import { Store } from '@ngneat/elf';
 
@@ -33,7 +37,43 @@ function WindowDesktopComponent(): JSX.Element {
     i18n.changeLanguage(localProps.language);
   }, [localProps.language]);
 
-  return <></>;
+  return (
+    <div className={styles['root-desktop']}>
+      <div className={styles['content-container-desktop']}>
+        <img
+          src={'../assets/svg/logo.svg'}
+          className={styles['logo-desktop']}
+        />
+        <div className={styles['not-supported-text-desktop']}>
+          {t('desktopNotSupported')}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function WindowTabletComponent(): JSX.Element {
+  const navigate = useNavigate();
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [props] = useObservable(WindowController.model.store);
+  const [localProps] = useObservable(
+    WindowController.model.localStore ?? Store.prototype
+  );
+  const { t, i18n } = useTranslation();
+  useEffect(() => {
+    i18n.changeLanguage(localProps.language);
+  }, [localProps.language]);
+
+  return (
+    <div className={styles['root-tablet']}>
+      <div className={styles['content-container-tablet']}>
+        <img src={'../assets/svg/logo.svg'} className={styles['logo-tablet']} />
+        <div className={styles['not-supported-text-tablet']}>
+          {t('tabletNotSupported')}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function WindowMobileComponent(): JSX.Element {
@@ -402,6 +442,9 @@ export default function WindowComponent(): JSX.Element {
       <ResponsiveDesktop>
         <WindowDesktopComponent />
       </ResponsiveDesktop>
+      <ResponsiveTablet>
+        <WindowTabletComponent />
+      </ResponsiveTablet>
       <ResponsiveMobile>
         <WindowMobileComponent />
       </ResponsiveMobile>

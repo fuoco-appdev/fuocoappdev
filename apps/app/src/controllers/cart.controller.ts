@@ -185,10 +185,12 @@ class CartController extends Controller {
         | undefined;
       if (!product) {
         try {
-          const productResponse = await MedusaService.medusa.products.retrieve(
-            item.variant.product_id
-          );
-          product = productResponse.product;
+          const productResponse = await MedusaService.medusa.products.list({
+            id: item.variant.product_id,
+            sales_channel_id: [value.sales_channel_id ?? ''],
+          });
+          console.log(productResponse.products);
+          product = productResponse.products[0];
         } catch (error: any) {
           WindowController.addToast({
             key: `retrieve-product-${Math.random()}`,

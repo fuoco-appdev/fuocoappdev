@@ -195,5 +195,7 @@
   "note": "Note",
   "reason": "Reason",
   "requestRefund": "Request refund",
-  "requestRefundSuccessMessage": "Request for refund has been sent."
+  "requestRefundSuccessMessage": "Request for refund has been sent.",
+  "tabletNotSupported": "Tablet view is not supported yet.",
+  "desktopNotSupported": "Desktop view is not supported yet."
 }

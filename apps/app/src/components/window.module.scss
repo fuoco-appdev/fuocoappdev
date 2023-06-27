@@ -141,3 +141,59 @@
     background-image: linear-gradient(130deg, #85267A, #E92142);
   }
 }
+
+.root-tablet {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: $brand-900;
+  height: 100%;
+  width: 100%;
+
+  & .content-container-tablet {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    & .logo-tablet {
+      width: 25%;
+      height: auto;
+      margin-bottom: $mp-4;
+    }
+
+    & .not-supported-text-tablet {
+      color: white;
+      font-size: 12pt;
+    }
+  }
+}
+
+.root-desktop {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: $brand-900;
+  height: 100%;
+  width: 100%;
+
+  & .content-container-desktop {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    & .logo-desktop {
+      width: 50%;
+      height: auto;
+      margin-bottom: $mp-4;
+    }
+
+    & .not-supported-text-desktop {
+      color: white;
+      font-size: 14pt;
+    }
+  }
+}
