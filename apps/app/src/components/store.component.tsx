@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import StoreController from '../controllers/store.controller';
 import styles from './store.module.scss';
@@ -27,6 +27,8 @@ import ProductPreviewComponent from './product-preview.component';
 import ReactCountryFlag from 'react-country-flag';
 import HomeController from '../controllers/home.controller';
 import { InventoryLocation } from '../models/home.model';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { center } from '@turf/turf';
 
 function StoreDesktopComponent(): JSX.Element {
   const navigate = useNavigate();
@@ -37,6 +39,7 @@ function StoreDesktopComponent(): JSX.Element {
 
 function StoreMobileComponent(): JSX.Element {
   const rootRef = useRef<HTMLDivElement | null>(null);
+  const previewsContainerRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const [openFilter, setOpenFilter] = useState<boolean>(false);
   const [countryOptions, setCountryOptions] = useState<OptionProps[]>([]);
@@ -247,22 +250,38 @@ function StoreMobileComponent(): JSX.Element {
           />
         </div>
       </div>
-      <div className={styles['wine-previews-container-mobile']}>
-        {props.previews.map((preview: Product, index: number) => (
-          <ProductPreviewComponent
-            parentRef={rootRef}
-            key={index}
-            preview={preview}
-            onClick={() => {
-              StoreController.updateSelectedPreview(preview);
-            }}
-            onRest={() => {
-              navigate(`${RoutePaths.Store}/${preview.id}`);
-            }}
-          />
-        ))}
+      <div
+        className={styles['scroll-container-mobile']}
+        ref={previewsContainerRef}
+      >
+        <InfiniteScroll
+          dataLength={props.previews.length}
+          next={() => StoreController.onNextScrollAsync()}
+          className={styles['scroll-mobile']}
+          hasMore={props.hasMorePreviews}
+          height={previewsContainerRef.current?.clientHeight ?? 0 - 16}
+          loader={
+            <img
+              src={'../assets/svg/ring-resize.svg'}
+              className={styles['loading-ring']}
+            />
+          }
+        >
+          {props.previews.map((preview: Product, index: number) => (
+            <ProductPreviewComponent
+              parentRef={rootRef}
+              key={index}
+              preview={preview}
+              onClick={() => {
+                StoreController.updateSelectedPreview(preview);
+              }}
+              onRest={() => {
+                navigate(`${RoutePaths.Store}/${preview.id}`);
+              }}
+            />
+          ))}
+        </InfiniteScroll>
       </div>
-
       <Dropdown
         open={openFilter}
         touchScreen={true}

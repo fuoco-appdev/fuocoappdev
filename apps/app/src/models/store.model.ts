@@ -19,6 +19,8 @@ export interface StoreState {
   selectedRegion: Region | undefined;
   selectedTab: ProductTabs | undefined;
   selectedSalesChannel: Partial<SalesChannel> | undefined;
+  pagination: number;
+  hasMorePreviews: boolean;
 }
 
 export class StoreModel extends Model {
@@ -34,6 +36,8 @@ export class StoreModel extends Model {
           selectedRegion: undefined,
           selectedTab: undefined,
           selectedSalesChannel: undefined,
+          pagination: 1,
+          hasMorePreviews: true,
         })
       )
     );
@@ -117,6 +121,32 @@ export class StoreModel extends Model {
       this.store?.update((state) => ({
         ...state,
         selectedSalesChannel: value,
+      }));
+    }
+  }
+
+  public get pagination(): number {
+    return this.store?.getValue().pagination;
+  }
+
+  public set pagination(value: number) {
+    if (this.pagination !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        pagination: value,
+      }));
+    }
+  }
+
+  public get hasMorePreviews(): boolean {
+    return this.store?.getValue().hasMorePreviews;
+  }
+
+  public set hasMorePreviews(value: boolean) {
+    if (this.hasMorePreviews !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        hasMorePreviews: value,
       }));
     }
   }

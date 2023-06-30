@@ -103,6 +103,7 @@
     "protoc-gen-ts": "^0.8.5",
     "react-country-flag": "^3.1.0",
     "react-credit-cards-2": "^1.0.1",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-map-gl": "^7.0.25",
     "react-spring-bottom-sheet": "^3.4.1",
     "react-i18next": "^12.1.5",

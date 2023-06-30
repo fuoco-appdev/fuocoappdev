@@ -48,7 +48,6 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
   const [producerBottler, setProducerBottler] = useState<string | undefined>(
     ''
   );
-  const [code, setCode] = useState<string | undefined>('');
   const [format, setFormat] = useState<string | undefined>('');
   const [region, setRegion] = useState<string | undefined>('');
   const [residualSugar, setResidualSugar] = useState<string | undefined>('');
@@ -56,7 +55,6 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
   const [uvc, setUVC] = useState<string | undefined>('');
   const [vintage, setVintage] = useState<string | undefined>('');
   const [hasQuantityLimit, setHasQuantityLimit] = useState<boolean>(false);
-  const isRenderedRef = useRef<boolean>(false);
   const { id } = useParams();
   const { t } = useTranslation();
 
@@ -97,23 +95,8 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
   }, [props.selectedVariant]);
 
   useEffect(() => {
-    const brandOption = ProductController.model.options.find(
-      (value) => value.title === ProductOptions.Brand
-    );
-    const regionOption = ProductController.model.options.find(
-      (value) => value.title === ProductOptions.Region
-    );
-    const varietalsOption = ProductController.model.options.find(
-      (value) => value.title === ProductOptions.Varietals
-    );
-    const producerBottlerOption = ProductController.model.options.find(
-      (value) => value.title === ProductOptions.ProducerBottler
-    );
     const alcoholOption = ProductController.model.options.find(
       (value) => value.title === ProductOptions.Alcohol
-    );
-    const codeOption = ProductController.model.options.find(
-      (value) => value.title === ProductOptions.Code
     );
     const formatOption = ProductController.model.options.find(
       (value) => value.title === ProductOptions.Format
@@ -133,24 +116,8 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
 
     if (props.selectedVariant?.options) {
       const variant = props.selectedVariant as PricedVariant;
-      const brandValue = variant.options?.find(
-        (value: ProductOptionValue) => value.option_id === brandOption?.id
-      );
-      const regionValue = variant.options?.find(
-        (value: ProductOptionValue) => value.option_id === regionOption?.id
-      );
-      const varietalsValue = variant.options?.find(
-        (value: ProductOptionValue) => value.option_id === varietalsOption?.id
-      );
-      const producerBottlerValue = variant.options?.find(
-        (value: ProductOptionValue) =>
-          value.option_id === producerBottlerOption?.id
-      );
       const alcoholValue = variant.options?.find(
         (value: ProductOptionValue) => value.option_id === alcoholOption?.id
-      );
-      const codeValue = variant.options?.find(
-        (value: ProductOptionValue) => value.option_id === codeOption?.id
       );
       const formatValue = variant.options?.find(
         (value: ProductOptionValue) => value.option_id === formatOption?.id
@@ -169,12 +136,11 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
         (value: ProductOptionValue) => value.option_id === vintageOption?.id
       );
 
-      setBrand(brandValue?.value);
-      setRegion(regionValue?.value);
-      setVarietals(varietalsValue?.value);
-      setProducerBottler(producerBottlerValue?.value);
+      setBrand(variant.metadata?.['brand'] as string);
+      setRegion(variant.metadata?.['region'] as string);
+      setVarietals(variant.metadata?.['varietals'] as string);
+      setProducerBottler(variant.metadata?.['producer_bottler'] as string);
       setAlcohol(alcoholValue?.value);
-      setCode(codeValue?.value);
       setFormat(formatValue?.value);
       setResidualSugar(residualSugarValue?.value);
       setType(typeValue?.value);
@@ -294,10 +260,6 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
             <div className={styles['option-content-mobile']}>
               <div className={styles['option-title-mobile']}>{t('brand')}</div>
               <div className={styles['option-value-mobile']}>{brand}</div>
-            </div>
-            <div className={styles['option-content-mobile']}>
-              <div className={styles['option-title-mobile']}>{t('code')}</div>
-              <div className={styles['option-value-mobile']}>{code}</div>
             </div>
             <div className={styles['option-content-mobile']}>
               <div className={styles['option-title-mobile']}>{t('format')}</div>

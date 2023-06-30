@@ -46,6 +46,7 @@ class StoreController extends Controller {
 
   public updateInput(value: string): void {
     this._model.input = value;
+    this._model.pagination = 1;
     this.searchAsync(value);
   }
 
@@ -60,15 +61,38 @@ class StoreController extends Controller {
     await this.searchAsync('');
   }
 
-  public async searchAsync(query: string): Promise<void> {
+  public async onNextScrollAsync(): Promise<void> {
+    this._model.pagination = this._model.pagination + 1;
+
+    const limit = 10;
+    const offset = limit * (this._model.pagination - 1);
+    await this.searchAsync(this._model.input, offset, limit);
+  }
+
+  public async searchAsync(
+    query: string,
+    offset: number = 0,
+    limit: number = 10
+  ): Promise<void> {
     if (!this._model.selectedRegion || !this._model.selectedSalesChannel) {
       return;
     }
 
     const result = await this._productsIndex.search(query, {
       filter: ['type_value = Wine AND status = published'],
+      offset: offset,
+      limit: limit,
     });
     let hits = result.hits as Product[];
+
+    if (hits.length <= 0 && this._model.hasMorePreviews) {
+      this._model.hasMorePreviews = false;
+      return;
+    }
+
+    if (hits.length > 0 && !this._model.hasMorePreviews) {
+      this._model.hasMorePreviews = true;
+    }
 
     const productIds: string[] = hits.map((value: Product) => value.id);
     const productsResponse = await MedusaService.medusa.products.list({
@@ -124,6 +148,13 @@ class StoreController extends Controller {
           new Date(next.created_at ?? '').valueOf() -
           new Date(prev.created_at ?? '').valueOf()
       );
+    }
+
+    if (offset > 0) {
+      console.log(products);
+      const previews = this._model.previews;
+      this._model.previews = previews.concat(products);
+      return;
     }
 
     this._model.previews = products;
@@ -183,6 +214,7 @@ class StoreController extends Controller {
       Math.floor(Math.random() * (max - min + 1)) + min;
     this._model.selectedSalesChannel =
       inventoryLocation.salesChannels[randomSalesChannelIndex];
+    this._model.pagination = 1;
     await this.searchAsync('');
   }
 
