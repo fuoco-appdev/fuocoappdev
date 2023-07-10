@@ -8,12 +8,14 @@ interface LoadingProps {
 export default function LoadingComponent({
   isVisible = true,
 }: LoadingProps): JSX.Element {
-  return (
+  return isVisible ? (
     <div
       className={styles['root']}
       style={{ display: isVisible ? 'flex' : 'none' }}
     >
-      {/* <Lottie loop={true} animationData={{}} className={styles['animation']} /> */}
+      <img className={styles['logo']} src={'../assets/svg/logo.svg'} />
     </div>
+  ) : (
+    <></>
   );
 }

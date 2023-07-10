@@ -14,7 +14,7 @@ message Account {
     string id = 1;
     string user_id = 2;
     string supabase_id = 3;
-    string language = 4;
+    string profile_url = 4;
 }
 
 message Accounts {

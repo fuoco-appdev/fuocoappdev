@@ -61,20 +61,22 @@ class HomeController extends Controller {
   }
 
   private async requestInventoryLocationsAsync(): Promise<InventoryLocation[]> {
-    const locations = await MedusaService.requestStockLocationsAsync();
+    const stockLocations = await MedusaService.requestStockLocationsAsync();
     const inventoryLocations: InventoryLocation[] = [];
-    for (const location of locations.locations) {
-      const metadata = JSON.parse(location.metadata);
+    for (const stockLocation of stockLocations) {
+      const location = stockLocation.location;
+      const metadata = stockLocation.metadata;
+      const address = location.address;
       const coordinates = metadata['coordinates'];
       if (coordinates) {
         inventoryLocations.push({
-          salesChannels: location.salesChannels,
+          salesChannels: location['sales_channels'],
           coordinates: new mapboxgl.LngLat(
             coordinates['longitude'],
             coordinates['latitude']
           ),
           placeName: metadata['place_name'],
-          company: location.address?.company ?? '',
+          company: address['company'] ?? '',
           region: metadata['region'] ?? '',
         });
       }

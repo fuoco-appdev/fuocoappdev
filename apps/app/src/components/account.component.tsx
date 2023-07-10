@@ -11,6 +11,8 @@ import {
   Modal,
   LanguageSwitch,
   LanguageCode,
+  Line,
+  Avatar,
 } from '@fuoco.appdev/core-ui';
 import styles from './account.module.scss';
 import AccountController from '../controllers/account.controller';
@@ -24,36 +26,40 @@ import { useTranslation } from 'react-i18next';
 
 function AccountDesktopComponent(): JSX.Element {
   const [props] = useObservable(AccountController.model.store);
-  const navigate = useNavigate();
-  const containerRef = React.createRef<HTMLDivElement>();
-  const [companyIconLit, setCompanyIconLit] = useState<boolean>(false);
-  const [emailAddressIconLit, setEmailAddressIconLit] =
-    useState<boolean>(false);
-  const [locationIconLit, setLocationIconLit] = useState<boolean>(false);
   const { t, i18n } = useTranslation();
-
-  useEffect(() => {
-    i18n.changeLanguage(props.updatedLanguage);
-  }, [props.updatedLanguage]);
 
   return <></>;
 }
 
 function AccountMobileComponent(): JSX.Element {
   const [props] = useObservable(AccountController.model.store);
-  const navigate = useNavigate();
-  const containerRef = React.createRef<HTMLDivElement>();
-  const [companyIconLit, setCompanyIconLit] = useState<boolean>(false);
-  const [emailAddressIconLit, setEmailAddressIconLit] =
-    useState<boolean>(false);
-  const [locationIconLit, setLocationIconLit] = useState<boolean>(false);
   const { t, i18n } = useTranslation();
 
-  useEffect(() => {
-    i18n.changeLanguage(props.updatedLanguage);
-  }, [props.updatedLanguage]);
-
-  return <></>;
+  return (
+    <div className={styles['root-mobile']}>
+      <div className={styles['top-bar-mobile']}>
+        <div className={styles['left-tab-container']}></div>
+        <div className={styles['right-tab-container']}>
+          <div className={styles['tab-button-container']}>
+            <Button
+              rippleProps={{
+                color: 'rgba(88, 40, 109, .35)',
+              }}
+              onClick={() => console.log('')}
+              type={'text'}
+              rounded={true}
+              size={'tiny'}
+              touchScreen={true}
+              icon={<Line.Settings size={24} color={'#2A2A5F'} />}
+            />
+          </div>
+        </div>
+      </div>
+      <div className={styles['avatar-container']}>
+        <Avatar editMode={true} size={'large'} />
+      </div>
+    </div>
+  );
 }
 
 export default function AccountComponent(): JSX.Element {
@@ -61,7 +67,7 @@ export default function AccountComponent(): JSX.Element {
   const { t } = useTranslation();
 
   return (
-    <div className={styles['root']}>
+    <>
       <ResponsiveDesktop>
         <AccountDesktopComponent />
       </ResponsiveDesktop>
@@ -79,12 +85,11 @@ export default function AccountComponent(): JSX.Element {
           modal: styles['delete-modal'],
         }}
         visible={props.showDeleteModal}
-        onCancel={() => AccountController.updateShowDeleteModal(false)}
+        onCancel={() => console.log('cancel')}
         onConfirm={() => {
           AccountController.deleteAsync();
-          AccountController.updateShowDeleteModal(false);
         }}
       ></Modal>
-    </div>
+    </>
   );
 }

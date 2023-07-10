@@ -62,9 +62,12 @@ class WindowController extends Controller {
   }
 
   public async checkUserIsAuthenticatedAsync(): Promise<void> {
-    this._model.isLoading = true;
-    const supabaseUser = await SupabaseService.requestUserAsync();
-    if (!supabaseUser) {
+    try {
+      this._model.isLoading = true;
+      await SupabaseService.requestUserAsync();
+      this._model.isLoading = false;
+    } catch (error: any) {
+      console.error(error);
       this._model.isLoading = false;
     }
   }
@@ -171,10 +174,13 @@ class WindowController extends Controller {
       // } else {
       //   await this.requestActiveAccountAsync(user.id);
       // }
+      this._model.isAuthenticated = true;
     } else if (event === 'SIGNED_OUT') {
       AccountService.clearActiveAccount();
+      this._model.isAuthenticated = false;
     } else {
       AccountService.clearActiveAccount();
+      this._model.isAuthenticated = false;
     }
 
     this._model.authState = event;

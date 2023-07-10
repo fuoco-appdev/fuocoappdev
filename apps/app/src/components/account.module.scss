@@ -1,125 +1,49 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
 .root {
-  overflow: hidden;
 
-  & .animated-content-desktop {
+}
+
+.root-mobile {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  & .top-bar-mobile {
+    height: 56px;
+    width: 100%;
     display: grid;
-    padding-top: 8vh;
-    margin-left: 2.5%;
-    margin-right: 2.5%;
-    grid-template-columns: 16fr 1408fr 16fr;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+    align-items: center;
 
-    & .content-desktop {
+    & .tab-button-container {
+      width: fit-content;
+      padding-right: $mp-1;
+    }
+
+    & .left-tab-container {
+      grid-column-start: 1;
+      grid-column-end: 2;
+      padding: 0 $mp-2;
+      display: flex;
+      justify-content: flex-start;
+      flex-direction: row;
+    }
+
+    & .right-tab-container {
       grid-column-start: 2;
       grid-column-end: 3;
-
-      & .accordion-desktop {
-        & .accordion-item-desktop {
-          & .info-container-desktop {
-            max-width: 800px;
-          }
-        }
-      }
-    }
-  }
-
-  & .animated-content-mobile {
-    & .content-mobile {
-      padding: 0 $mp-4;
-      padding-top: calc(56px + 16px);
-      padding-bottom: calc(56px + 16px);
-
-      & .header-bar-mobile {
-        & .account-title-mobile {
-          font-size: 20pt;
-        }
-      }
-
-      & .accordion-mobile {
-        & .accordion-item-mobile {
-          padding: 0;
-
-          & .info-container-mobile {
-          }
-        }
-      }
-
-      & .button-container-mobile {
-        display: flex;
-        flex-direction: column;
-        gap: $mp-4;
-      }
-    }
-  }
-
-  & .animated-content {
-    & .content {
+      padding: 0 $mp-2;
       display: flex;
-      flex-direction: column;
-
-      & .header-bar {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: $mp-8;
-
-        & .account-title {
-        }
-
-        & .header-button-container {
-          display: flex;
-          height: fit-content;
-          flex-direction: row;
-          gap: $mp-2;
-
-          & .header-button {
-            margin-right: $mp-4;
-
-            & .button-text {
-              text-transform: capitalize;
-            }
-          }
-        }
-      }
-
-      & .accordion {
-        width: inherit;
-
-        & .accordion-item {
-          & .accordion-description {
-            color: $gray-100;
-          }
-
-          & .info-container {
-            display: flex;
-            flex-wrap: wrap;
-            margin-top: $mp-8;
-            margin-bottom: $mp-8;
-
-            & .info-input {
-            }
-
-            & .dropdown-label {
-              font-size: 0.875rem;
-            }
-          }
-        }
-      }
+      justify-content: flex-end;
+      flex-direction: row;
     }
   }
 
-  & .delete-modal {
+  & .avatar-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
   }
-}
-
-.info-input-desktop {
-  width: 304px;
-  margin-right: 24px;
-  margin-bottom: 24px;
-}
-
-.info-input-mobile {
-  width: 100%;
 }

@@ -287,7 +287,7 @@ function WindowMobileComponent(): JSX.Element {
               )}
               {props.isAuthenticated && (
                 <>
-                  <div className={styles['tab-button-container']}>
+                  {/* <div className={styles['tab-button-container']}>
                     <Button
                       rippleProps={{
                         color: 'rgba(252, 245, 227, .35)',
@@ -309,7 +309,7 @@ function WindowMobileComponent(): JSX.Element {
                         />
                       }
                     />
-                  </div>
+                  </div> */}
                   <div className={styles['tab-button-container']}>
                     <Button
                       rippleProps={{
@@ -391,24 +391,6 @@ export default function WindowComponent(): JSX.Element {
   const [props] = useObservable(WindowController.model.store);
   const isMounted = useRef<boolean>(false);
   const { t } = useTranslation();
-  const confirmEmailTransitionStyle = useSpring({
-    from: { y: -200 },
-    to: props.showConfirmEmailAlert ? { y: 50 } : { y: -200 },
-    config: {
-      friction: 30,
-      tension: 600,
-      bounce: 1,
-    },
-  });
-  const passwordResetTransitionStyle = useSpring({
-    from: { y: -200 },
-    to: props.showPasswordResetAlert ? { y: 50 } : { y: -200 },
-    config: {
-      friction: 30,
-      tension: 600,
-      bounce: 1,
-    },
-  });
 
   useEffect(() => {
     if (!isMounted.current) {

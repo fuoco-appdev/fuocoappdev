@@ -7,7 +7,7 @@ import { RoutePaths } from '../route-paths';
 import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
-import { LineItem, ProductVariant, Discount } from '@medusajs/medusa';
+import { LineItem, ProductVariant, Discount, Cart } from '@medusajs/medusa';
 import CartItemComponent from './cart-item.component';
 import StoreController from '../controllers/store.controller';
 // @ts-ignore

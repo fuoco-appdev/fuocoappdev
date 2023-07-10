@@ -3,21 +3,8 @@ import { createStore, withProps } from '@ngneat/elf';
 import { Model } from '../model';
 
 export interface AccountState {
-  company: string;
-  updatedCompany: string;
-  emailAddress: string;
-  updatedEmailAddress: string;
-  phoneNumber: string;
-  updatedPhoneNumber: string;
-  location: [number, number];
-  updatedLocation: [number, number];
-  language: LanguageCode;
-  updatedLanguage: string;
-  isEmailAddressDisabled: boolean;
-  isUpdatePasswordDisabled: boolean;
-  isSaveDisabled: boolean;
-  showDeleteModal: boolean;
-  mapboxAccessToken: string;
+  profileUrl: string | undefined;
+  username: string;
 }
 
 export class AccountModel extends Model {
@@ -26,179 +13,30 @@ export class AccountModel extends Model {
       createStore(
         { name: 'account' },
         withProps<AccountState>({
-          company: '',
-          updatedCompany: '',
-          emailAddress: '',
-          updatedEmailAddress: '',
-          phoneNumber: '',
-          updatedPhoneNumber: '',
-          location: [0, 0],
-          updatedLocation: [0, 0],
-          language: LanguageCode.EN,
-          updatedLanguage: '',
-          isEmailAddressDisabled: true,
-          isUpdatePasswordDisabled: true,
-          isSaveDisabled: true,
-          showDeleteModal: false,
-          mapboxAccessToken: '',
+          profileUrl: undefined,
+          username: '',
         })
       )
     );
   }
 
-  public get company(): string {
-    return this.store.getValue().company;
+  public get profileUrl(): string | undefined {
+    return this.store.getValue().profileUrl;
   }
 
-  public set company(value: string) {
-    if (this.company !== value) {
-      this.store.update((state) => ({ ...state, company: value }));
+  public set profileUrl(value: string | undefined) {
+    if (this.profileUrl !== value) {
+      this.store.update((state) => ({ ...state, profileUrl: value }));
     }
   }
 
-  public get updatedCompany(): string {
-    return this.store.getValue().updatedCompany;
+  public get username(): string {
+    return this.store.getValue().username;
   }
 
-  public set updatedCompany(value: string) {
-    if (this.updatedCompany !== value) {
-      this.store.update((state) => ({ ...state, updatedCompany: value }));
-    }
-  }
-
-  public get emailAddress(): string {
-    return this.store.getValue().emailAddress;
-  }
-
-  public set emailAddress(value: string) {
-    if (this.emailAddress !== value) {
-      this.store.update((state) => ({ ...state, emailAddress: value }));
-    }
-  }
-
-  public get updatedEmailAddress(): string {
-    return this.store.getValue().updatedEmailAddress;
-  }
-
-  public set updatedEmailAddress(value: string) {
-    if (this.updatedEmailAddress !== value) {
-      this.store.update((state) => ({ ...state, updatedEmailAddress: value }));
-    }
-  }
-
-  public get phoneNumber(): string {
-    return this.store.getValue().phoneNumber;
-  }
-
-  public set phoneNumber(value: string) {
-    if (this.phoneNumber !== value) {
-      this.store.update((state) => ({ ...state, phoneNumber: value }));
-    }
-  }
-
-  public get updatedPhoneNumber(): string {
-    return this.store.getValue().updatedPhoneNumber;
-  }
-
-  public set updatedPhoneNumber(value: string) {
-    if (this.updatedPhoneNumber !== value) {
-      this.store.update((state) => ({ ...state, updatedPhoneNumber: value }));
-    }
-  }
-
-  public get location(): [number, number] {
-    return this.store.getValue().location;
-  }
-
-  public set location(value: [number, number]) {
-    if (this.location !== value) {
-      this.store.update((state) => ({ ...state, location: value }));
-    }
-  }
-
-  public get updatedLocation(): [number, number] {
-    return this.store.getValue().updatedLocation;
-  }
-
-  public set updatedLocation(value: [number, number]) {
-    if (this.updatedLocation !== value) {
-      this.store.update((state) => ({ ...state, updatedLocation: value }));
-    }
-  }
-
-  public get language(): LanguageCode {
-    return this.store.getValue().language;
-  }
-
-  public set language(value: LanguageCode) {
-    if (this.language !== value) {
-      this.store.update((state) => ({ ...state, language: value }));
-    }
-  }
-
-  public get updatedLanguage(): LanguageCode {
-    return this.store.getValue().updatedLanguage;
-  }
-
-  public set updatedLanguage(value: LanguageCode) {
-    if (this.updatedLanguage !== value) {
-      this.store.update((state) => ({ ...state, updatedLanguage: value }));
-    }
-  }
-
-  public get isEmailAddressDisabled(): boolean {
-    return this.store.getValue().isEmailAddressDisabled;
-  }
-
-  public set isEmailAddressDisabled(value: boolean) {
-    if (this.isEmailAddressDisabled !== value) {
-      this.store.update((state) => ({
-        ...state,
-        isEmailAddressDisabled: value,
-      }));
-    }
-  }
-
-  public get isUpdatePasswordDisabled(): boolean {
-    return this.store.getValue().isUpdatePasswordDisabled;
-  }
-
-  public set isUpdatePasswordDisabled(value: boolean) {
-    if (this.isUpdatePasswordDisabled !== value) {
-      this.store.update((state) => ({
-        ...state,
-        isUpdatePasswordDisabled: value,
-      }));
-    }
-  }
-
-  public get isSaveDisabled(): boolean {
-    return this.store.getValue().isSaveDisabled;
-  }
-
-  public set isSaveDisabled(value: boolean) {
-    if (this.isSaveDisabled !== value) {
-      this.store.update((state) => ({ ...state, isSaveDisabled: value }));
-    }
-  }
-
-  public get showDeleteModal(): boolean {
-    return this.store.getValue().showDeleteModal;
-  }
-
-  public set showDeleteModal(value: boolean) {
-    if (this.showDeleteModal !== value) {
-      this.store.update((state) => ({ ...state, showDeleteModal: value }));
-    }
-  }
-
-  public get mapboxAccessToken(): string {
-    return this.store.getValue().mapboxAccessToken;
-  }
-
-  public set mapboxAccessToken(value: string) {
-    if (this.mapboxAccessToken !== value) {
-      this.store.update((state) => ({ ...state, mapboxAccessToken: value }));
+  public set username(value: string) {
+    if (this.username !== value) {
+      this.store.update((state) => ({ ...state, username: value }));
     }
   }
 }

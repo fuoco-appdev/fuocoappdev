@@ -1,10 +1,5 @@
 import axiod from 'https://deno.land/x/axiod@0.26.2/mod.ts';
-import {
-  StockLocations,
-  StockLocation,
-  Address,
-  SalesChannel,
-} from '../protobuf/core_pb.js';
+import { StockLocations } from '../protobuf/core_pb.js';
 import 'https://deno.land/x/dotenv@v3.2.0/load.ts';
 import MapboxService, {
   Geocoding,
@@ -44,31 +39,7 @@ class MedusaService {
     const stockLocations = new StockLocations();
     const data = stockLocationsResponse.data['stock_locations'];
     for (const location of data) {
-      const stockLocation = new StockLocation();
-      stockLocation.setId(location['id']);
-      stockLocation.setCreatedAt(location['created_at']);
-      stockLocation.setUpdatedAt(location['updated_at']);
-      stockLocation.setName(location['name']);
-      stockLocation.setAddressId(location['address_id']);
-
-      const address = new Address();
       const addressData = location['address'];
-      if (addressData) {
-        address.setId(addressData['id']);
-        address.setCreatedAt(addressData['created_at']);
-        address.setUpdatedAt(addressData['updated_at']);
-        address.setDeletedAt(addressData['deleted_at']);
-        address.setAddress1(addressData['address_1']);
-        address.setAddress2(addressData['address_2']);
-        address.setCompany(addressData['company']);
-        address.setCity(addressData['city']);
-        address.setCountryCode(addressData['country_code']);
-        address.setPhone(addressData['phone']);
-        address.setProvince(addressData['province']);
-        address.setPostalCode(addressData['postal_code']);
-      }
-      stockLocation.setAddress(address);
-
       let metadata = location['metadata'];
       if (!metadata) {
         metadata = {};
@@ -119,28 +90,9 @@ class MedusaService {
         }
       }
 
-      metadata && stockLocation.setMetadata(JSON.stringify(metadata));
-
-      for (const channel of location['sales_channels']) {
-        const salesChannel = new SalesChannel();
-        const channelId = channel['id'];
-        const channelName = channel['name'];
-        const channelDescription = channel['description'];
-        const channelIsDisabled = channel['is_disabled'];
-        const channelCreatedAt = channel['created_at'];
-        const channelUpdatedAt = channel['updated_at'];
-        const channelDeletedAt = channel['deleted_at'];
-        channelId && salesChannel.setId(channelId);
-        channelName && salesChannel.setName(channelName);
-        channelDescription && salesChannel.setDescription(channelDescription);
-        channelIsDisabled && salesChannel.setIsDisabled(channelIsDisabled);
-        channelCreatedAt && salesChannel.setCreatedAt(channelCreatedAt);
-        channelUpdatedAt && salesChannel.setUpdatedAt(channelUpdatedAt);
-        channelDeletedAt && salesChannel.setDeletedAt(channelDeletedAt);
-        stockLocation.addSalesChannels(salesChannel);
-      }
-
-      stockLocations.addLocations(stockLocation);
+      stockLocations.addLocations(
+        JSON.stringify({ location, metadata: metadata })
+      );
     }
 
     return stockLocations;

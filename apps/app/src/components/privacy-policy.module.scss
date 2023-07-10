@@ -37,6 +37,8 @@
 }
 
 .root {
+  overflow-y: auto;
+  
   & .content {
     display: flex;
   }

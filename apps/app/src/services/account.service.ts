@@ -113,7 +113,6 @@ class AccountService extends Service {
     const session = await SupabaseService.requestSessionAsync();
     const user = new core.Account({
       userId: userId,
-      language: WindowController.model.language,
     });
 
     const response = await axios({
@@ -162,9 +161,7 @@ class AccountService extends Service {
     }
   ): Promise<core.Account> {
     const session = await SupabaseService.requestSessionAsync();
-    const user = new core.Account({
-      language: props.language ? props.language : this.activeAccount?.language,
-    });
+    const user = new core.Account({});
     const response = await axios({
       method: 'post',
       url: `${this.endpointUrl}/account/update/${supabaseId}`,

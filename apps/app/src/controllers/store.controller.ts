@@ -150,8 +150,21 @@ class StoreController extends Controller {
       );
     }
 
+    // Sort available products to the top
+    products.sort((prev, next) => {
+      for (const variant of next.variants) {
+        const quantity = variant.inventory_quantity ?? 0;
+        if (quantity <= 0) {
+          return -1;
+        } else {
+          return 1;
+        }
+      }
+
+      return 1;
+    });
+
     if (offset > 0) {
-      console.log(products);
       const previews = this._model.previews;
       this._model.previews = previews.concat(products);
       return;
@@ -204,12 +217,12 @@ class StoreController extends Controller {
     );
     await this.updateRegionAsync(region);
 
-    if (inventoryLocation.salesChannels.length <= 0) {
+    if (!inventoryLocation || inventoryLocation.salesChannels?.length <= 0) {
       return;
     }
 
     const min = 0;
-    const max = inventoryLocation.salesChannels.length - 1;
+    const max = inventoryLocation.salesChannels?.length - 1;
     const randomSalesChannelIndex =
       Math.floor(Math.random() * (max - min + 1)) + min;
     this._model.selectedSalesChannel =

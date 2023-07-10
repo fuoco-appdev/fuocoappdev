@@ -22,7 +22,7 @@ class MedusaService extends Service {
     return this._medusa;
   }
 
-  public async requestStockLocationsAsync(): Promise<core.StockLocations> {
+  public async requestStockLocationsAsync(): Promise<any[]> {
     const response = await axios({
       method: 'post',
       url: `${this.endpointUrl}/medusa/stock-locations`,
@@ -36,7 +36,17 @@ class MedusaService extends Service {
     this.assertResponse(arrayBuffer);
 
     const stockLocationsResponse = core.StockLocations.fromBinary(arrayBuffer);
-    return stockLocationsResponse;
+    const locations: any[] = [];
+    for (const stockLocation of stockLocationsResponse.locations) {
+      const json = JSON.parse(stockLocation);
+      if (!json) {
+        continue;
+      }
+
+      locations.push(json);
+    }
+
+    return locations;
   }
 }
 

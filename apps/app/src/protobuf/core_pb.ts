@@ -21,280 +21,13 @@ proto3.util.setEnumType(BucketType, "core.BucketType", [
 ]);
 
 /**
- * @generated from message core.Address
- */
-export class Address extends Message<Address> {
-  /**
-   * @generated from field: string id = 1;
-   */
-  id = "";
-
-  /**
-   * @generated from field: string address_1 = 2;
-   */
-  address1 = "";
-
-  /**
-   * @generated from field: string address_2 = 3;
-   */
-  address2 = "";
-
-  /**
-   * @generated from field: string company = 4;
-   */
-  company = "";
-
-  /**
-   * @generated from field: string city = 5;
-   */
-  city = "";
-
-  /**
-   * @generated from field: string country_code = 6;
-   */
-  countryCode = "";
-
-  /**
-   * @generated from field: string phone = 7;
-   */
-  phone = "";
-
-  /**
-   * @generated from field: string postal_code = 8;
-   */
-  postalCode = "";
-
-  /**
-   * @generated from field: string province = 9;
-   */
-  province = "";
-
-  /**
-   * @generated from field: string created_at = 10;
-   */
-  createdAt = "";
-
-  /**
-   * @generated from field: string updated_at = 11;
-   */
-  updatedAt = "";
-
-  /**
-   * @generated from field: string deleted_at = 12;
-   */
-  deletedAt = "";
-
-  constructor(data?: PartialMessage<Address>) {
-    super();
-    proto3.util.initPartial(data, this);
-  }
-
-  static readonly runtime = proto3;
-  static readonly typeName = "core.Address";
-  static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "address_1", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "address_2", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "company", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 5, name: "city", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 6, name: "country_code", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 7, name: "phone", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 8, name: "postal_code", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 9, name: "province", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 10, name: "created_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 11, name: "updated_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 12, name: "deleted_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-  ]);
-
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Address {
-    return new Address().fromBinary(bytes, options);
-  }
-
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Address {
-    return new Address().fromJson(jsonValue, options);
-  }
-
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Address {
-    return new Address().fromJsonString(jsonString, options);
-  }
-
-  static equals(a: Address | PlainMessage<Address> | undefined, b: Address | PlainMessage<Address> | undefined): boolean {
-    return proto3.util.equals(Address, a, b);
-  }
-}
-
-/**
- * @generated from message core.SalesChannel
- */
-export class SalesChannel extends Message<SalesChannel> {
-  /**
-   * @generated from field: string id = 1;
-   */
-  id = "";
-
-  /**
-   * @generated from field: string name = 2;
-   */
-  name = "";
-
-  /**
-   * @generated from field: string description = 3;
-   */
-  description = "";
-
-  /**
-   * @generated from field: bool is_disabled = 4;
-   */
-  isDisabled = false;
-
-  /**
-   * @generated from field: string created_at = 5;
-   */
-  createdAt = "";
-
-  /**
-   * @generated from field: string updated_at = 6;
-   */
-  updatedAt = "";
-
-  /**
-   * @generated from field: string deleted_at = 7;
-   */
-  deletedAt = "";
-
-  constructor(data?: PartialMessage<SalesChannel>) {
-    super();
-    proto3.util.initPartial(data, this);
-  }
-
-  static readonly runtime = proto3;
-  static readonly typeName = "core.SalesChannel";
-  static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "description", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "is_disabled", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
-    { no: 5, name: "created_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 6, name: "updated_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 7, name: "deleted_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-  ]);
-
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SalesChannel {
-    return new SalesChannel().fromBinary(bytes, options);
-  }
-
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SalesChannel {
-    return new SalesChannel().fromJson(jsonValue, options);
-  }
-
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SalesChannel {
-    return new SalesChannel().fromJsonString(jsonString, options);
-  }
-
-  static equals(a: SalesChannel | PlainMessage<SalesChannel> | undefined, b: SalesChannel | PlainMessage<SalesChannel> | undefined): boolean {
-    return proto3.util.equals(SalesChannel, a, b);
-  }
-}
-
-/**
- * @generated from message core.StockLocation
- */
-export class StockLocation extends Message<StockLocation> {
-  /**
-   * @generated from field: string id = 1;
-   */
-  id = "";
-
-  /**
-   * @generated from field: string created_at = 2;
-   */
-  createdAt = "";
-
-  /**
-   * @generated from field: string updated_at = 3;
-   */
-  updatedAt = "";
-
-  /**
-   * @generated from field: string deleted_at = 4;
-   */
-  deletedAt = "";
-
-  /**
-   * @generated from field: string name = 5;
-   */
-  name = "";
-
-  /**
-   * @generated from field: string address_id = 6;
-   */
-  addressId = "";
-
-  /**
-   * @generated from field: core.Address address = 7;
-   */
-  address?: Address;
-
-  /**
-   * @generated from field: string metadata = 8;
-   */
-  metadata = "";
-
-  /**
-   * @generated from field: string place_name = 9;
-   */
-  placeName = "";
-
-  /**
-   * @generated from field: repeated core.SalesChannel sales_channels = 10;
-   */
-  salesChannels: SalesChannel[] = [];
-
-  constructor(data?: PartialMessage<StockLocation>) {
-    super();
-    proto3.util.initPartial(data, this);
-  }
-
-  static readonly runtime = proto3;
-  static readonly typeName = "core.StockLocation";
-  static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "created_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "updated_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "deleted_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 5, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 6, name: "address_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 7, name: "address", kind: "message", T: Address },
-    { no: 8, name: "metadata", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 9, name: "place_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 10, name: "sales_channels", kind: "message", T: SalesChannel, repeated: true },
-  ]);
-
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): StockLocation {
-    return new StockLocation().fromBinary(bytes, options);
-  }
-
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): StockLocation {
-    return new StockLocation().fromJson(jsonValue, options);
-  }
-
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): StockLocation {
-    return new StockLocation().fromJsonString(jsonString, options);
-  }
-
-  static equals(a: StockLocation | PlainMessage<StockLocation> | undefined, b: StockLocation | PlainMessage<StockLocation> | undefined): boolean {
-    return proto3.util.equals(StockLocation, a, b);
-  }
-}
-
-/**
  * @generated from message core.StockLocations
  */
 export class StockLocations extends Message<StockLocations> {
   /**
-   * @generated from field: repeated core.StockLocation locations = 1;
+   * @generated from field: repeated string locations = 1;
    */
-  locations: StockLocation[] = [];
+  locations: string[] = [];
 
   constructor(data?: PartialMessage<StockLocations>) {
     super();
@@ -304,7 +37,7 @@ export class StockLocations extends Message<StockLocations> {
   static readonly runtime = proto3;
   static readonly typeName = "core.StockLocations";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "locations", kind: "message", T: StockLocation, repeated: true },
+    { no: 1, name: "locations", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): StockLocations {
@@ -344,9 +77,9 @@ export class Account extends Message<Account> {
   supabaseId = "";
 
   /**
-   * @generated from field: string language = 4;
+   * @generated from field: string profile_url = 4;
    */
-  language = "";
+  profileUrl = "";
 
   constructor(data?: PartialMessage<Account>) {
     super();
@@ -359,7 +92,7 @@ export class Account extends Message<Account> {
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "user_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "supabase_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "language", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "profile_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Account {
