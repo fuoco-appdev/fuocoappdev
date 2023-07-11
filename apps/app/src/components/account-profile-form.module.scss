@@ -1,0 +1,45 @@
+@import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
+
+.horizontal-input-container {
+    display: flex;
+    flex-direction: row;
+    gap: $mp-2;
+}
+
+.input-form-layout-label {
+    color: $brand-900 !important;
+}
+  
+.input {
+    color: $brand-900 !important;
+}
+  
+.input-container {
+    border-color: $brand-900 !important;
+}
+
+.listbox-form-layout-label {
+    color: $brand-900 !important;
+}
+
+.listbox {
+    border-color: $brand-900 !important;
+}
+  
+.listbox-chevron {
+    color: $brand-900 !important;
+}
+
+.listbox-label {
+    color: $brand-900 !important;
+    text-transform: capitalize !important;
+}
+
+.country-flag-mobile {
+    margin-right: $mp-2;
+}
+
+.option-name {
+    color: $brand-900 !important;
+    font-size: $font-size-sm;
+}

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AuthChangeEvent, Session } from '@supabase/supabase-js';
+import { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
 import { Subscription } from 'rxjs';
 import { Controller } from '../controller';
 import { WindowModel } from '../models/window.model';
@@ -163,18 +163,16 @@ class WindowController extends Controller {
     session: Session | null
   ): Promise<void> {
     if (event === 'SIGNED_IN') {
-      // Request admin, member or developer
-      // const user = await this.requestActiveUserAsync();
-      // if (!user) {
-      //   // Request customer
-      //   const customer = await this.requestActiveCustomerAsync();
-      //   if (customer) {
-      //     await this.requestActiveAccountAsync(customer.id);
-      //   }
-      // } else {
-      //   await this.requestActiveAccountAsync(user.id);
-      // }
-      this._model.isAuthenticated = true;
+      if (!session) {
+        return;
+      }
+
+      const account = await this.requestActiveAccountAsync(session);
+      if (account) {
+        this._model.isAuthenticated = true;
+      } else {
+        this._model.isAuthenticated = false;
+      }
     } else if (event === 'SIGNED_OUT') {
       AccountService.clearActiveAccount();
       this._model.isAuthenticated = false;
@@ -188,10 +186,10 @@ class WindowController extends Controller {
   }
 
   private async requestActiveAccountAsync(
-    userId: string
+    session: Session
   ): Promise<core.Account | null> {
     try {
-      return await AccountService.requestActiveAsync();
+      return await AccountService.requestActiveAsync(session);
     } catch (error: any) {
       if (error.status !== 404) {
         console.error(error);
@@ -199,7 +197,7 @@ class WindowController extends Controller {
       }
 
       try {
-        return await AccountService.requestCreateAsync(userId);
+        return await AccountService.requestCreateAsync(session);
       } catch (error: any) {
         console.error(error);
         return null;

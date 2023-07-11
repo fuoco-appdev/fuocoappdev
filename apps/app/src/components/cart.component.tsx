@@ -68,7 +68,6 @@ function CartMobileComponent(): JSX.Element {
                 key={item.id}
                 item={item}
                 onQuantityChanged={(quantity) => {
-                  console.log(quantity);
                   CartController.updateLineItemQuantityAsync(quantity, item);
                 }}
                 onRemove={() => CartController.removeLineItemAsync(item)}

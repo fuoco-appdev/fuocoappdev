@@ -39,16 +39,21 @@ class SupabaseService {
   }
 
   public async requestUserAsync(): Promise<User | null> {
-    const { data, error } = await this.supabaseClient.auth.getUser();
-    if (error) {
+    try {
+      const { data, error } = await this.supabaseClient.auth.getUser();
+      if (error) {
+        return null;
+      }
+
+      if (this._user !== data.user) {
+        this._user = data.user;
+      }
+
+      return data.user;
+    } catch (error: any) {
+      console.error(error);
       return null;
     }
-
-    if (this._user !== data.user) {
-      this._user = data.user;
-    }
-
-    return data.user;
   }
 
   public async requestSessionAsync(): Promise<Session | null> {

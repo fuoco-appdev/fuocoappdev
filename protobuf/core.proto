@@ -6,15 +6,29 @@ enum BucketType {
     Avatars = 0;
 }
 
-message StockLocations {
+message CustomerRequest {
+    string email = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string phone = 4;
+    string metadata = 5;
+}
+
+message CustomerResponse {
+    string data = 1;
+}
+
+message StockLocationsResponse {
     repeated string locations = 1;
 }
 
 message Account {
     string id = 1;
-    string user_id = 2;
+    string customer_id = 2;
     string supabase_id = 3;
     string profile_url = 4;
+    string status = 5;
+    string update_at = 6;
 }
 
 message Accounts {

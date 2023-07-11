@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import SupabaseService from './supabase.service';
 import axios, { AxiosError } from 'axios';
 import WindowController from '../controllers/window.controller';
+import { Session, User } from '@supabase/supabase-js';
 
 class AccountService extends Service {
   private readonly _activeAccountBehaviorSubject: BehaviorSubject<core.Account | null>;
@@ -33,18 +34,16 @@ class AccountService extends Service {
     this._activeAccountBehaviorSubject.next(null);
   }
 
-  public async requestActiveAsync(): Promise<core.Account> {
-    const supabaseUser = await SupabaseService.requestUserAsync();
-    if (!supabaseUser) {
-      throw new Error('No active user');
-    }
-    const account = await this.requestAsync(supabaseUser.id);
+  public async requestActiveAsync(session: Session): Promise<core.Account> {
+    const account = await this.requestAsync(session, session.user.id);
     this._activeAccountBehaviorSubject.next(account);
     return account;
   }
 
-  public async requestAsync(supabaseId: string): Promise<core.Account> {
-    const session = await SupabaseService.requestSessionAsync();
+  public async requestAsync(
+    session: Session,
+    supabaseId: string
+  ): Promise<core.Account> {
     const response = await axios({
       method: 'post',
       url: `${this.endpointUrl}/account/${supabaseId}`,
@@ -105,16 +104,10 @@ class AccountService extends Service {
     return accountsResponse;
   }
 
-  public async requestCreateAsync(userId: string): Promise<core.Account> {
-    const supabaseUser = await SupabaseService.requestUserAsync();
-    if (!supabaseUser) {
-      throw new Error('No user');
-    }
-    const session = await SupabaseService.requestSessionAsync();
-    const user = new core.Account({
-      userId: userId,
+  public async requestCreateAsync(session: Session): Promise<core.Account> {
+    const account = new core.Account({
+      supabaseId: session.user.id,
     });
-
     const response = await axios({
       method: 'post',
       url: `${this.endpointUrl}/account/create`,
@@ -122,7 +115,7 @@ class AccountService extends Service {
         ...this.headers,
         'Session-Token': `${session?.access_token}`,
       },
-      data: user.toBinary(),
+      data: account.toBinary(),
       responseType: 'arraybuffer',
     });
 
@@ -136,10 +129,9 @@ class AccountService extends Service {
   }
 
   public async requestUpdateActiveAsync(props: {
-    company?: string;
-    phoneNumber?: string;
-    location?: [number, number];
-    language?: string;
+    customerId?: string;
+    profileUrl?: string;
+    status?: 'Incomplete' | 'Complete';
   }): Promise<core.Account> {
     const supabaseUser = await SupabaseService.requestUserAsync();
     if (!supabaseUser) {
@@ -154,14 +146,17 @@ class AccountService extends Service {
   public async requestUpdateAsync(
     supabaseId: string,
     props: {
-      company?: string;
-      phoneNumber?: string;
-      location?: [number, number];
-      language?: string;
+      customerId?: string;
+      profileUrl?: string;
+      status?: 'Incomplete' | 'Complete';
     }
   ): Promise<core.Account> {
     const session = await SupabaseService.requestSessionAsync();
-    const user = new core.Account({});
+    const user = new core.Account({
+      customerId: props.customerId,
+      profileUrl: props.profileUrl,
+      status: props.status,
+    });
     const response = await axios({
       method: 'post',
       url: `${this.endpointUrl}/account/update/${supabaseId}`,

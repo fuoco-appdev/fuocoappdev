@@ -1,5 +1,9 @@
 import axiod from 'https://deno.land/x/axiod@0.26.2/mod.ts';
-import { StockLocations } from '../protobuf/core_pb.js';
+import {
+  StockLocationsResponse,
+  CustomerResponse,
+  CustomerRequest,
+} from '../protobuf/core_pb.js';
 import 'https://deno.land/x/dotenv@v3.2.0/load.ts';
 import MapboxService, {
   Geocoding,
@@ -21,8 +25,89 @@ class MedusaService {
       throw new Error("MEDUSA_API_TOKEN doesn't exist");
     }
   }
+
+  public async getCustomerAsync(
+    email: string
+  ): Promise<InstanceType<typeof CustomerResponse>> {
+    const params = new URLSearchParams({
+      q: email,
+    }).toString();
+    const customerResponse = await axiod.get(
+      `${this._url}/admin/customers?${params}`,
+      {
+        headers: {
+          Authorization: `Bearer ${this._token}`,
+        },
+      }
+    );
+    const customer = new CustomerResponse();
+    const customers = customerResponse.data['customers'];
+    if (customers.length > 0) {
+      customer.setData(JSON.stringify(customers[0]));
+    }
+
+    return customer;
+  }
+
+  public async createCustomerAsync(
+    request: InstanceType<typeof CustomerRequest>
+  ): Promise<InstanceType<typeof CustomerResponse>> {
+    const email = request.getEmail();
+    const firstName = request.getFirstName();
+    const lastName = request.getLastName();
+    const phone = request.getPhone();
+    const metadata = request.getMetadata();
+    const customerResponse = await axiod.post(
+      `${this._url}/admin/customers/create`,
+      {
+        ...(email && { email: email }),
+        ...(firstName && { first_name: firstName }),
+        ...(lastName && { last_name: lastName }),
+        ...(phone && { phone: phone }),
+        ...(metadata && { metadata: metadata }),
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${this._token}`,
+        },
+      }
+    );
+    const customer = new CustomerResponse();
+    const data = customerResponse.data['customer'];
+    customer.setData(JSON.stringify(data));
+    return customer;
+  }
+
+  public async updateCustomerAsync(
+    customerId: string,
+    request: InstanceType<typeof CustomerRequest>
+  ): Promise<InstanceType<typeof CustomerResponse>> {
+    const firstName = request.getFirstName();
+    const lastName = request.getLastName();
+    const phone = request.getPhone();
+    const metadata = request.getMetadata();
+    const customerResponse = await axiod.post(
+      `${this._url}/admin/customers/${customerId}`,
+      {
+        ...(firstName && { first_name: firstName }),
+        ...(lastName && { last_name: lastName }),
+        ...(phone && { phone: phone }),
+        ...(metadata && { metadata: metadata }),
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${this._token}`,
+        },
+      }
+    );
+    const customer = new CustomerResponse();
+    const data = customerResponse.data['customer'];
+    customer.setData(JSON.stringify(data));
+    return customer;
+  }
+
   public async getStockLocationsAsync(): Promise<
-    InstanceType<typeof StockLocations>
+    InstanceType<typeof StockLocationsResponse>
   > {
     const params = new URLSearchParams({
       expand: 'address,sales_channels',
@@ -36,7 +121,7 @@ class MedusaService {
       }
     );
 
-    const stockLocations = new StockLocations();
+    const stockLocations = new StockLocationsResponse();
     const data = stockLocationsResponse.data['stock_locations'];
     for (const location of data) {
       const addressData = location['address'];

@@ -197,5 +197,7 @@
   "requestRefund": "Request refund",
   "requestRefundSuccessMessage": "Request for refund has been sent.",
   "tabletNotSupported": "Tablet view is not supported yet.",
-  "desktopNotSupported": "Desktop view is not supported yet."
+  "desktopNotSupported": "Desktop view is not supported yet.",
+  "completeProfile": "Complete profile",
+  "complete": "Complete"
 }

@@ -3,9 +3,11 @@ import { Account, Accounts } from '../protobuf/core_pb.js';
 
 export interface AccountProps {
   id?: string;
-  user_id?: string;
+  customer_id?: string;
   supabase_id?: string;
   profile_url?: string;
+  status?: string;
+  updated_at?: string;
 }
 
 export class AccountService {
@@ -40,12 +42,9 @@ export class AccountService {
       return null;
     }
 
-    const userId = account.getUserId();
     const accountData = this.assignAndGetAccountData({
       supabaseId,
-      userId,
     });
-
     const { data, error } = await SupabaseService.client
       .from('account')
       .insert([accountData])
@@ -63,10 +62,14 @@ export class AccountService {
     supabaseId: string,
     account: InstanceType<typeof Account>
   ): Promise<AccountProps | null> {
+    const customerId = account.getCustomerId();
     const profileUrl = account.getProfileUrl();
+    const status = account.getStatus();
 
     const accountData = this.assignAndGetAccountData({
+      customerId,
       profileUrl,
+      status,
     });
     const { data, error } = await SupabaseService.client
       .from('account')
@@ -137,23 +140,29 @@ export class AccountService {
     const account = new Account();
 
     props.id && account.setId(props.id);
-    props.user_id && account.setUserId(props.user_id);
+    props.customer_id && account.setCustomerId(props.customer_id);
     props.supabase_id && account.setSupabaseId(props.supabase_id);
     props.profile_url && account.setProfileUrl(props.profile_url);
+    props.status && account.setStatus(props.status);
+    props.updated_at && account.setUpdateAt(props.updated_at);
 
     return account;
   }
 
   public assignAndGetAccountData(props: {
     id?: string;
-    userId?: string;
+    customerId?: string;
     supabaseId?: string;
     profileUrl?: string;
+    status?: string;
   }) {
+    const date = new Date(Date.now());
     return {
       ...(props.supabaseId && { supabase_id: props.supabaseId }),
-      ...(props.userId && { user_id: props.userId }),
+      ...(props.customerId && { customer_id: props.customerId }),
       ...(props.profileUrl && { profile_url: props.profileUrl }),
+      ...(props.status && { status: props.status }),
+      updated_at: date.toUTCString(),
     };
   }
 }

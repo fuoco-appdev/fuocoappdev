@@ -41,9 +41,39 @@
     }
   }
 
+  & .incomplete-profile-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0 $mp-4;
+
+    & .complete-profile-title {
+      margin: $mp-4 0;
+      font-size: 14pt;
+      font-weight: $font-weight-bold;
+      line-height: 42pt;
+      color: $brand-900;
+      border-bottom: 1px solid $brand-900;
+    }
+  
+    & .form-container {
+      padding: $mp-4 0;
+      flex: 1;
+    }
+  }
+
   & .avatar-container {
     display: flex;
     flex-direction: row;
     justify-content: center;
   }
+}
+
+.submit-button-container {
+  margin-top: $mp-4;
+  margin-bottom: $mp-10;
+}
+
+.submit-button {
+  background-color: $brand-700 !important;
 }

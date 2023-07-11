@@ -197,5 +197,7 @@
   "requestRefund": "Demande de remboursement",
   "requestRefundSuccessMessage": "La demande de remboursement a été envoyée.",
   "tabletNotSupported": "L'affichage sur tablette n'est pas encore pris en charge.",
-  "desktopNotSupported": "L'affichage sur le bureau n'est pas encore pris en charge."
+  "desktopNotSupported": "L'affichage sur le bureau n'est pas encore pris en charge.",
+  "completeProfile": "Compléter le profil",
+  "complete": "Compléter"
 }
