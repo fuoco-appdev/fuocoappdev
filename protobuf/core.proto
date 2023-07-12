@@ -2,8 +2,13 @@ syntax = "proto3";
 
 package core;
 
-enum BucketType {
+enum StorageFolderType {
     Avatars = 0;
+}
+
+message Secrets {
+    string s3_access_key_id = 1;
+    string s3_secret_access_key = 2;
 }
 
 message CustomerRequest {

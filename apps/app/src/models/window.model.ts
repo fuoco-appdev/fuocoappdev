@@ -6,8 +6,7 @@ import * as core from '../protobuf/core_pb';
 import { LanguageCode, ToastProps } from '@fuoco.appdev/core-ui';
 
 export interface WindowState {
-  user: object | null;
-  customer: object | null;
+  account: core.Account | null;
   isAuthenticated: boolean | undefined;
   activeRoute: RoutePaths | undefined;
   cartCount: number;
@@ -29,8 +28,7 @@ export class WindowModel extends Model {
       createStore(
         { name: 'window' },
         withProps<WindowState>({
-          user: null,
-          customer: null,
+          account: null,
           isAuthenticated: undefined,
           activeRoute: undefined,
           cartCount: 0,
@@ -50,6 +48,16 @@ export class WindowModel extends Model {
         })
       )
     );
+  }
+
+  public get account(): core.Account | null {
+    return this.store.getValue().account;
+  }
+
+  public set account(value: core.Account | null) {
+    if (JSON.stringify(this.account) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, account: value }));
+    }
   }
 
   public get user(): object | null {

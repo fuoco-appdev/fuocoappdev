@@ -4,6 +4,7 @@ import WindowController from '../controllers/window.controller';
 import styles from './window.module.scss';
 import {
   Alert,
+  Avatar,
   Button,
   Dropdown,
   LanguageCode,
@@ -24,6 +25,8 @@ import {
 } from './responsive.component';
 import LoadingComponent from './loading.component';
 import { Store } from '@ngneat/elf';
+import { Customer } from '@medusajs/medusa';
+import AccountController from '../controllers/account.controller';
 
 function WindowDesktopComponent(): JSX.Element {
   const navigate = useNavigate();
@@ -80,6 +83,7 @@ function WindowMobileComponent(): JSX.Element {
   const navigate = useNavigate();
   const [openMore, setOpenMore] = useState<boolean>(false);
   const [props] = useObservable(WindowController.model.store);
+  const [accountProps] = useObservable(AccountController.model.store);
   const { t, i18n } = useTranslation();
   const [localProps] = useObservable(
     WindowController.model.localStore ?? Store.prototype
@@ -100,6 +104,8 @@ function WindowMobileComponent(): JSX.Element {
     WindowController.addToast(undefined);
   }, [props.toast]);
 
+  const account = props.account as core.Account;
+  const customer = accountProps.customer as Customer;
   return (
     <div className={styles['root']}>
       <div className={styles['content']}>
@@ -322,14 +328,34 @@ function WindowMobileComponent(): JSX.Element {
                       size={'tiny'}
                       touchScreen={true}
                       icon={
-                        <Line.AccountCircle
-                          size={24}
-                          color={
-                            props.activeRoute === RoutePaths.Account
-                              ? 'rgba(252, 245, 227, 1)'
-                              : 'rgba(252, 245, 227, .6)'
-                          }
-                        />
+                        account.status === 'Incomplete' ? (
+                          <Line.AccountCircle
+                            size={24}
+                            color={
+                              props.activeRoute === RoutePaths.Account
+                                ? 'rgba(252, 245, 227, 1)'
+                                : 'rgba(252, 245, 227, .6)'
+                            }
+                          />
+                        ) : (
+                          <div
+                            className={
+                              props.activeRoute === RoutePaths.Account
+                                ? styles['avatar-container-selected']
+                                : undefined
+                            }
+                          >
+                            <Avatar
+                              classNames={{
+                                container: styles['avatar-container'],
+                              }}
+                              size={'custom'}
+                              text={customer?.first_name}
+                              src={accountProps?.profileUrl}
+                              touchScreen={true}
+                            />
+                          </div>
+                        )
                       }
                     />
                   </div>

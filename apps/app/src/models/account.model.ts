@@ -2,6 +2,7 @@ import { LanguageCode } from '@fuoco.appdev/core-ui';
 import { createStore, withProps } from '@ngneat/elf';
 import { Model } from '../model';
 import * as core from '../protobuf/core_pb';
+import { Customer } from '@medusajs/medusa';
 import {
   ProfileFormErrors,
   ProfileFormValues,
@@ -9,6 +10,7 @@ import {
 
 export interface AccountState {
   account: core.Account | undefined;
+  customer: Customer | undefined;
   profileForm: ProfileFormValues;
   profileFormErrors: ProfileFormErrors;
   errorStrings: ProfileFormErrors;
@@ -23,6 +25,7 @@ export class AccountModel extends Model {
         { name: 'account' },
         withProps<AccountState>({
           account: undefined,
+          customer: undefined,
           profileForm: {
             firstName: '',
             lastName: '',
@@ -74,6 +77,16 @@ export class AccountModel extends Model {
   public set profileUrl(value: string | undefined) {
     if (this.profileUrl !== value) {
       this.store.update((state) => ({ ...state, profileUrl: value }));
+    }
+  }
+
+  public get customer(): Customer | undefined {
+    return this.store.getValue().customer;
+  }
+
+  public set customer(value: Customer | undefined) {
+    if (JSON.stringify(this.customer) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, customer: value }));
     }
   }
 

@@ -25,6 +25,7 @@ import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import { useTranslation } from 'react-i18next';
 import * as core from '../protobuf/core_pb';
 import AccountProfileFormComponent from './account-profile-form.component';
+import { Customer } from '@medusajs/medusa';
 
 function AccountDesktopComponent(): JSX.Element {
   const [props] = useObservable(AccountController.model.store);
@@ -46,6 +47,7 @@ function AccountMobileComponent(): JSX.Element {
   }, [i18n.language]);
 
   const account = props.account as core.Account;
+  const customer = props.customer as Customer;
   return (
     <div className={styles['root-mobile']}>
       <div className={styles['top-bar-mobile']}>
@@ -124,7 +126,19 @@ function AccountMobileComponent(): JSX.Element {
       {account?.status === 'Complete' && (
         <>
           <div className={styles['avatar-container']}>
-            <Avatar editMode={true} size={'large'} />
+            <Avatar
+              classNames={{
+                button: {
+                  button: styles['avatar-button'],
+                },
+              }}
+              text={customer.first_name}
+              src={props.profileUrl}
+              editMode={true}
+              onChange={AccountController.uploadAvatarAsync}
+              size={'large'}
+              touchScreen={true}
+            />
           </div>
         </>
       )}

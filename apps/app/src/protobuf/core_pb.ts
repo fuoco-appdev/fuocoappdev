@@ -7,18 +7,61 @@ import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialM
 import { Message, proto3 } from "@bufbuild/protobuf";
 
 /**
- * @generated from enum core.BucketType
+ * @generated from enum core.StorageFolderType
  */
-export enum BucketType {
+export enum StorageFolderType {
   /**
    * @generated from enum value: Avatars = 0;
    */
   Avatars = 0,
 }
-// Retrieve enum metadata with: proto3.getEnumType(BucketType)
-proto3.util.setEnumType(BucketType, "core.BucketType", [
+// Retrieve enum metadata with: proto3.getEnumType(StorageFolderType)
+proto3.util.setEnumType(StorageFolderType, "core.StorageFolderType", [
   { no: 0, name: "Avatars" },
 ]);
+
+/**
+ * @generated from message core.Secrets
+ */
+export class Secrets extends Message<Secrets> {
+  /**
+   * @generated from field: string s3_access_key_id = 1;
+   */
+  s3AccessKeyId = "";
+
+  /**
+   * @generated from field: string s3_secret_access_key = 2;
+   */
+  s3SecretAccessKey = "";
+
+  constructor(data?: PartialMessage<Secrets>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.Secrets";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "s3_access_key_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "s3_secret_access_key", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Secrets {
+    return new Secrets().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Secrets {
+    return new Secrets().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Secrets {
+    return new Secrets().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Secrets | PlainMessage<Secrets> | undefined, b: Secrets | PlainMessage<Secrets> | undefined): boolean {
+    return proto3.util.equals(Secrets, a, b);
+  }
+}
 
 /**
  * @generated from message core.CustomerRequest

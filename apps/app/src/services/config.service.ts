@@ -22,11 +22,17 @@ export interface MapboxConfig {
   access_token: string;
 }
 
+export interface S3Config {
+  url: string;
+  bucket_name: string;
+}
+
 class ConfigService {
   private readonly _supabase!: SupabaseConfig;
   private readonly _medusa!: MedusaConfig;
   private readonly _meiliSearch!: MeiliSearchConfig;
   private readonly _mapbox!: MapboxConfig;
+  private readonly _s3!: S3Config;
 
   constructor() {
     if (process.env['NODE_ENV'] === 'development') {
@@ -34,6 +40,7 @@ class ConfigService {
       this._medusa = DevelopmentConfig.medusa;
       this._meiliSearch = DevelopmentConfig.meilisearch;
       this._mapbox = DevelopmentConfig.mapbox;
+      this._s3 = DevelopmentConfig.s3;
     }
     // eslint-disable-next-line no-empty
     else if (process.env['NODE_ENV'] === 'production') {
@@ -41,6 +48,7 @@ class ConfigService {
       this._medusa = ProductionConfig.medusa;
       this._meiliSearch = ProductionConfig.meilisearch;
       this._mapbox = ProductionConfig.mapbox;
+      this._s3 = ProductionConfig.s3;
     }
   }
 
@@ -58,6 +66,10 @@ class ConfigService {
 
   public get mapbox(): MapboxConfig {
     return this._mapbox;
+  }
+
+  public get s3(): S3Config {
+    return this._s3;
   }
 }
 

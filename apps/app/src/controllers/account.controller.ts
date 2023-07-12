@@ -15,6 +15,8 @@ import {
   ProfileFormErrors,
   ProfileFormValues,
 } from '../components/account-profile-form.component';
+import { v4 as uuidv4 } from 'uuid';
+import mime from 'mime';
 
 class AccountController extends Controller {
   private readonly _model: AccountModel;
@@ -24,6 +26,8 @@ class AccountController extends Controller {
     super();
 
     this._model = new AccountModel();
+    this.onActiveAccountChangedAsync =
+      this.onActiveAccountChangedAsync.bind(this);
   }
 
   public get model(): AccountModel {
@@ -33,18 +37,7 @@ class AccountController extends Controller {
   public override initialize(renderCount: number): void {
     this._accountSubscription =
       AccountService.activeAccountObservable.subscribe({
-        next: (account: core.Account | null) => {
-          if (!account) {
-            return;
-          }
-
-          this._model.account = account;
-          this._model.profileUrl =
-            BucketService.getPublicUrl(
-              core.BucketType.Avatars,
-              account.profileUrl
-            ) ?? undefined;
-        },
+        next: this.onActiveAccountChangedAsync,
       });
   }
 
@@ -125,10 +118,40 @@ class AccountController extends Controller {
     }
   }
 
+  public async uploadAvatarAsync(index: number, blob: Blob): Promise<void> {
+    const extension = mime.getExtension(blob.type);
+    const newFile = `public/${uuidv4()}.${extension}`;
+    await BucketService.uploadPublicAsync(
+      core.StorageFolderType.Avatars,
+      newFile,
+      blob
+    );
+    await AccountService.requestUpdateActiveAsync({
+      profileUrl: newFile,
+    });
+  }
+
   public async deleteAsync(): Promise<void> {
     await AccountService.requestActiveDeleteAsync();
     AccountService.clearActiveAccount();
     SupabaseService.clear();
+  }
+
+  private async onActiveAccountChangedAsync(
+    value: core.Account | null
+  ): Promise<void> {
+    if (!value || !SupabaseService.user) {
+      return;
+    }
+
+    this._model.customer = await MedusaService.requestCustomerAsync(
+      SupabaseService.user?.email ?? ''
+    );
+    this._model.account = value;
+    this._model.profileUrl = await BucketService.getPublicUrlAsync(
+      core.StorageFolderType.Avatars,
+      value.profileUrl
+    );
   }
 }
 

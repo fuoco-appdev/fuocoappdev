@@ -197,3 +197,15 @@
     }
   }
 }
+
+
+.avatar-container {
+  width: 24px;
+  height: 24px;
+  background-color: $brand-700 !important;
+}
+
+.avatar-container-selected {
+  border-radius: $rounded-full;
+  border: solid 2px $brand-100;
+}

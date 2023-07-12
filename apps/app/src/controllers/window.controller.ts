@@ -13,12 +13,13 @@ import AccountService from '../services/account.service';
 import CartController from './cart.controller';
 import { Cart } from '@medusajs/medusa';
 import { select } from '@ngneat/elf';
+import SecretsService from '../services/secrets.service';
+import BucketService from '../services/bucket.service';
 
 class WindowController extends Controller {
   private readonly _model: WindowModel;
   private _scrollRef: HTMLDivElement | null;
-  private _userSubscription: Subscription | undefined;
-  private _customerSubscription: Subscription | undefined;
+  private _accountSubscription: Subscription | undefined;
   private _cartSubscription: Subscription | undefined;
 
   constructor() {
@@ -29,6 +30,7 @@ class WindowController extends Controller {
 
     this.onAuthStateChanged = this.onAuthStateChanged.bind(this);
     this.onCartChanged = this.onCartChanged.bind(this);
+    this.onActiveAccountChanged = this.onActiveAccountChanged.bind(this);
 
     SupabaseService.supabaseClient.auth.onAuthStateChange(
       this.onAuthStateChanged
@@ -53,11 +55,15 @@ class WindowController extends Controller {
     this._cartSubscription = CartController.model.store
       .pipe(select((model) => model.cart))
       .subscribe({ next: this.onCartChanged });
+
+    this._accountSubscription =
+      AccountService.activeAccountObservable.subscribe({
+        next: this.onActiveAccountChanged,
+      });
   }
 
   public override dispose(renderCount: number): void {
-    this._userSubscription?.unsubscribe();
-    this._customerSubscription?.unsubscribe();
+    this._accountSubscription?.unsubscribe();
     this._cartSubscription?.unsubscribe();
   }
 
@@ -169,6 +175,8 @@ class WindowController extends Controller {
 
       const account = await this.requestActiveAccountAsync(session);
       if (account) {
+        await this.requestSecretsAsync(session);
+
         this._model.isAuthenticated = true;
       } else {
         this._model.isAuthenticated = false;
@@ -185,6 +193,10 @@ class WindowController extends Controller {
     this._model.isLoading = false;
   }
 
+  private onActiveAccountChanged(value: core.Account | null): void {
+    this._model.account = value;
+  }
+
   private async requestActiveAccountAsync(
     session: Session
   ): Promise<core.Account | null> {
@@ -199,9 +211,31 @@ class WindowController extends Controller {
       try {
         return await AccountService.requestCreateAsync(session);
       } catch (error: any) {
-        console.error(error);
+        this.addToast({
+          key: `active-account-${Math.random()}`,
+          message: error.name,
+          description: error.message,
+          type: 'error',
+        });
         return null;
       }
+    }
+  }
+
+  private async requestSecretsAsync(session: Session): Promise<void> {
+    try {
+      const secrets = await SecretsService.requestAllAsync(session);
+      BucketService.initializeS3(
+        secrets.s3AccessKeyId,
+        secrets.s3SecretAccessKey
+      );
+    } catch (error: any) {
+      this.addToast({
+        key: `secrets-${Math.random()}`,
+        message: error.name,
+        description: error.message,
+        type: 'error',
+      });
     }
   }
 }
