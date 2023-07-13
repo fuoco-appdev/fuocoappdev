@@ -13,6 +13,7 @@ import {
   LanguageCode,
   Line,
   Avatar,
+  Tabs,
 } from '@fuoco.appdev/core-ui';
 import styles from './account.module.scss';
 import AccountController from '../controllers/account.controller';
@@ -131,6 +132,11 @@ function AccountMobileComponent(): JSX.Element {
                 button: {
                   button: styles['avatar-button'],
                 },
+                cropImage: {
+                  overlay: {
+                    background: styles['avatar-overlay-background'],
+                  },
+                },
               }}
               text={customer.first_name}
               src={props.profileUrl}
@@ -140,6 +146,16 @@ function AccountMobileComponent(): JSX.Element {
               touchScreen={true}
             />
           </div>
+          <div
+            className={styles['username']}
+          >{`${customer.first_name} ${customer.last_name}`}</div>
+          <Tabs
+            flex={true}
+            classNames={{
+              tabButton: styles['tab-button'],
+              tabOutline: styles['tab-outline'],
+            }}
+          />
         </>
       )}
     </div>

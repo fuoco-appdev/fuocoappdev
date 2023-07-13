@@ -67,6 +67,15 @@
     flex-direction: row;
     justify-content: center;
   }
+
+  & .username {
+    color: $brand-900;
+    font-weight: $font-weight-bold;
+    font-size: $font-size-lg;
+    width: 100%;
+    text-align: center;
+    margin-top: $mp-2;
+  }
 }
 
 .submit-button-container {
@@ -80,4 +89,20 @@
 
 .avatar-button {
   background-color: $brand-700 !important;
+}
+
+.avatar-overlay-background {
+  background-color: #fff !important;
+  backdrop-filter: none !important;
+}
+
+.tab-button {
+  color: $brand-900 !important;
+  font-weight: $font-weight-bold;
+  text-transform: uppercase;
+  font-size: $font-size-sm !important;
+}
+
+.tab-outline {
+  background-color: $brand-900 !important;
 }

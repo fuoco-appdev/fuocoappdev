@@ -28,6 +28,7 @@ class AccountController extends Controller {
     this._model = new AccountModel();
     this.onActiveAccountChangedAsync =
       this.onActiveAccountChangedAsync.bind(this);
+    this.uploadAvatarAsync = this.uploadAvatarAsync.bind(this);
   }
 
   public get model(): AccountModel {
@@ -121,12 +122,18 @@ class AccountController extends Controller {
   public async uploadAvatarAsync(index: number, blob: Blob): Promise<void> {
     const extension = mime.getExtension(blob.type);
     const newFile = `public/${uuidv4()}.${extension}`;
+    if (this._model.account?.profileUrl) {
+      await BucketService.removeAsync(
+        core.StorageFolderType.Avatars,
+        this._model.account?.profileUrl
+      );
+    }
     await BucketService.uploadPublicAsync(
       core.StorageFolderType.Avatars,
       newFile,
       blob
     );
-    await AccountService.requestUpdateActiveAsync({
+    this._model.account = await AccountService.requestUpdateActiveAsync({
       profileUrl: newFile,
     });
   }

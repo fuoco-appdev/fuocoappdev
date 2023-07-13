@@ -78,6 +78,8 @@ class BucketService {
     type: core.StorageFolderType,
     file: string
   ): Promise<boolean | undefined> {
+    const storageName = this.getStorageFolderName(type);
+
     return new Promise<boolean | undefined>((resolve, reject) => {
       if (!this._s3) {
         reject(new Error('S3 instance not defined'));
@@ -87,7 +89,7 @@ class BucketService {
       this._s3
         .deleteObject({
           Bucket: ConfigService.s3.bucket_name,
-          Key: file,
+          Key: `${storageName}/${file}`,
         })
         .send((error, data) => {
           if (error) {
