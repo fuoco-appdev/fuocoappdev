@@ -21,6 +21,7 @@ class WindowController extends Controller {
   private _scrollRef: HTMLDivElement | null;
   private _accountSubscription: Subscription | undefined;
   private _cartSubscription: Subscription | undefined;
+  private _sessionSubscription: Subscription | undefined;
 
   constructor() {
     super();
@@ -63,6 +64,7 @@ class WindowController extends Controller {
   }
 
   public override dispose(renderCount: number): void {
+    this._sessionSubscription?.unsubscribe();
     this._accountSubscription?.unsubscribe();
     this._cartSubscription?.unsubscribe();
   }
@@ -73,7 +75,12 @@ class WindowController extends Controller {
       await SupabaseService.requestUserAsync();
       this._model.isLoading = false;
     } catch (error: any) {
-      console.error(error);
+      this.addToast({
+        key: `user-check-${Math.random()}`,
+        message: error.name,
+        description: error.message,
+        type: 'error',
+      });
       this._model.isLoading = false;
     }
   }
@@ -151,6 +158,18 @@ class WindowController extends Controller {
       this._model.activeRoute = RoutePaths.Account;
       this._model.showNavigateBack = false;
       this._model.hideCartButton = false;
+    } else if (location.pathname === RoutePaths.AccountOrderHistory) {
+      this._model.activeRoute = RoutePaths.AccountOrderHistory;
+      this._model.showNavigateBack = false;
+      this._model.hideCartButton = false;
+    } else if (location.pathname === RoutePaths.AccountAddresses) {
+      this._model.activeRoute = RoutePaths.AccountAddresses;
+      this._model.showNavigateBack = false;
+      this._model.hideCartButton = false;
+    } else if (location.pathname === RoutePaths.AccountEdit) {
+      this._model.activeRoute = RoutePaths.AccountEdit;
+      this._model.showNavigateBack = false;
+      this._model.hideCartButton = false;
     } else if (location.pathname.startsWith(`${RoutePaths.OrderConfirmed}/`)) {
       this._model.activeRoute = RoutePaths.OrderConfirmedWithId;
       this._model.showNavigateBack = true;
@@ -168,7 +187,7 @@ class WindowController extends Controller {
     event: AuthChangeEvent,
     session: Session | null
   ): Promise<void> {
-    if (event === 'SIGNED_IN') {
+    if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
       if (!session) {
         return;
       }
@@ -179,6 +198,7 @@ class WindowController extends Controller {
 
         this._model.isAuthenticated = true;
       } else {
+        AccountService.clearActiveAccount();
         this._model.isAuthenticated = false;
       }
     } else if (event === 'SIGNED_OUT') {

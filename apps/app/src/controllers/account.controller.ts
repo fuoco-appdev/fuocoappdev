@@ -17,10 +17,12 @@ import {
 } from '../components/account-profile-form.component';
 import { v4 as uuidv4 } from 'uuid';
 import mime from 'mime';
+import { User } from '@supabase/supabase-js';
 
 class AccountController extends Controller {
   private readonly _model: AccountModel;
   private _accountSubscription: Subscription | undefined;
+  private _userSubscription: Subscription | undefined;
 
   constructor() {
     super();
@@ -28,6 +30,7 @@ class AccountController extends Controller {
     this._model = new AccountModel();
     this.onActiveAccountChangedAsync =
       this.onActiveAccountChangedAsync.bind(this);
+    this.onActiveUserChangedAsync = this.onActiveUserChangedAsync.bind(this);
     this.uploadAvatarAsync = this.uploadAvatarAsync.bind(this);
   }
 
@@ -40,10 +43,14 @@ class AccountController extends Controller {
       AccountService.activeAccountObservable.subscribe({
         next: this.onActiveAccountChangedAsync,
       });
+    this._userSubscription = SupabaseService.userObservable.subscribe({
+      next: this.onActiveUserChangedAsync,
+    });
   }
 
   public override dispose(renderCount: number): void {
     this._accountSubscription?.unsubscribe();
+    this._userSubscription?.unsubscribe();
   }
 
   public updateProfile(value: ProfileFormValues): void {
@@ -105,7 +112,7 @@ class AccountController extends Controller {
         });
       }
 
-      await AccountService.requestUpdateActiveAsync({
+      this._model.account = await AccountService.requestUpdateActiveAsync({
         customerId: customer?.id,
         status: 'Complete',
       });
@@ -147,17 +154,24 @@ class AccountController extends Controller {
   private async onActiveAccountChangedAsync(
     value: core.Account | null
   ): Promise<void> {
+    if (!value) {
+      return;
+    }
+
+    this._model.account = value;
+    this._model.profileUrl = await BucketService.getPublicUrlAsync(
+      core.StorageFolderType.Avatars,
+      value.profileUrl
+    );
+  }
+
+  private async onActiveUserChangedAsync(value: User | null): Promise<void> {
     if (!value || !SupabaseService.user) {
       return;
     }
 
     this._model.customer = await MedusaService.requestCustomerAsync(
-      SupabaseService.user?.email ?? ''
-    );
-    this._model.account = value;
-    this._model.profileUrl = await BucketService.getPublicUrlAsync(
-      core.StorageFolderType.Avatars,
-      value.profileUrl
+      value?.email ?? ''
     );
   }
 }

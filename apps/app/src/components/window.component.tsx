@@ -328,11 +328,13 @@ function WindowMobileComponent(): JSX.Element {
                       size={'tiny'}
                       touchScreen={true}
                       icon={
-                        account.status === 'Incomplete' ? (
+                        account?.status === 'Incomplete' ? (
                           <Line.AccountCircle
                             size={24}
                             color={
-                              props.activeRoute === RoutePaths.Account
+                              props.activeRoute.startsWith(
+                                `${RoutePaths.Account}/`
+                              )
                                 ? 'rgba(252, 245, 227, 1)'
                                 : 'rgba(252, 245, 227, .6)'
                             }
@@ -340,7 +342,9 @@ function WindowMobileComponent(): JSX.Element {
                         ) : (
                           <div
                             className={
-                              props.activeRoute === RoutePaths.Account
+                              props.activeRoute.startsWith(
+                                `${RoutePaths.Account}/`
+                              )
                                 ? styles['avatar-container-selected']
                                 : undefined
                             }
@@ -427,7 +431,7 @@ export default function WindowComponent(): JSX.Element {
 
   useEffect(() => {
     WindowController.updateOnLocationChanged(location);
-  }, [location, props.authState]);
+  }, [location.pathname, props.authState]);
 
   useEffect(() => {
     if (props.authState === 'SIGNED_IN') {

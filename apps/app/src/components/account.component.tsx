@@ -20,7 +20,7 @@ import AccountController from '../controllers/account.controller';
 import WindowController from '../controllers/window.controller';
 import { animated, useTransition, config } from 'react-spring';
 import { useObservable } from '@ngneat/use-observable';
-import { useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { RoutePaths } from '../route-paths';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import { useTranslation } from 'react-i18next';
@@ -37,7 +37,9 @@ function AccountDesktopComponent(): JSX.Element {
 
 function AccountMobileComponent(): JSX.Element {
   const [props] = useObservable(AccountController.model.store);
+  const [windowProps] = useObservable(WindowController.model.store);
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     AccountController.updateErrorStrings({
@@ -138,7 +140,7 @@ function AccountMobileComponent(): JSX.Element {
                   },
                 },
               }}
-              text={customer.first_name}
+              text={customer?.first_name}
               src={props.profileUrl}
               editMode={true}
               onChange={AccountController.uploadAvatarAsync}
@@ -148,14 +150,35 @@ function AccountMobileComponent(): JSX.Element {
           </div>
           <div
             className={styles['username']}
-          >{`${customer.first_name} ${customer.last_name}`}</div>
-          <Tabs
-            flex={true}
-            classNames={{
-              tabButton: styles['tab-button'],
-              tabOutline: styles['tab-outline'],
-            }}
-          />
+          >{`${customer?.first_name} ${customer?.last_name}`}</div>
+          <div className={styles['tabs-container']}>
+            <Tabs
+              flex={true}
+              touchScreen={true}
+              activeId={windowProps.activeRoute}
+              classNames={{
+                tabButton: styles['tab-button'],
+                tabOutline: styles['tab-outline'],
+              }}
+              onChange={(id) => navigate(id)}
+              type={'underlined'}
+              tabs={[
+                {
+                  id: RoutePaths.AccountOrderHistory,
+                  icon: <Line.History size={24} />,
+                },
+                {
+                  id: RoutePaths.AccountAddresses,
+                  icon: <Line.LocationOn size={24} />,
+                },
+                {
+                  id: RoutePaths.AccountEdit,
+                  icon: <Line.Edit size={24} />,
+                },
+              ]}
+            />
+          </div>
+          <Outlet />
         </>
       )}
     </div>
@@ -165,6 +188,13 @@ function AccountMobileComponent(): JSX.Element {
 export default function AccountComponent(): JSX.Element {
   const [props] = useObservable(AccountController.model.store);
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (location.hash === `#${RoutePaths.Account}`) {
+      navigate(RoutePaths.AccountOrderHistory);
+    }
+  }, [location.hash]);
 
   return (
     <>

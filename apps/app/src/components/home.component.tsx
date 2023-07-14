@@ -45,7 +45,7 @@ function HomeMobileComponent(): JSX.Element {
   );
 
   useEffect(() => {
-    if (location.pathname === RoutePaths.Default) {
+    if (location.hash === '') {
       navigate(RoutePaths.Home);
     }
   }, []);

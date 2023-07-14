@@ -5,11 +5,12 @@ import {
   Session,
 } from '@supabase/supabase-js';
 import ConfigService from './config.service';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 class SupabaseService {
   private readonly _supabaseClient!: SupabaseClient;
-  private _user: User | null;
-  private _session: Session | null;
+  private _userBehaviorSubject: BehaviorSubject<User | null>;
+  private _sessionBehaviorSubject: BehaviorSubject<Session | null>;
 
   constructor() {
     this._supabaseClient = createClient(
@@ -17,16 +18,24 @@ class SupabaseService {
       ConfigService.supabase.key
     );
 
-    this._user = null;
-    this._session = null;
+    this._userBehaviorSubject = new BehaviorSubject<User | null>(null);
+    this._sessionBehaviorSubject = new BehaviorSubject<Session | null>(null);
   }
 
   public get user(): User | null {
-    return this._user;
+    return this._userBehaviorSubject.getValue();
   }
 
   public get session(): Session | null {
-    return this._session;
+    return this._sessionBehaviorSubject.getValue();
+  }
+
+  public get userObservable(): Observable<User | null> {
+    return this._userBehaviorSubject.asObservable();
+  }
+
+  public get sessionObservable(): Observable<Session | null> {
+    return this._sessionBehaviorSubject.asObservable();
   }
 
   public get supabaseClient(): SupabaseClient {
@@ -34,8 +43,8 @@ class SupabaseService {
   }
 
   public clear(): void {
-    this._session = null;
-    this._user = null;
+    this._sessionBehaviorSubject.next(null);
+    this._userBehaviorSubject.next(null);
   }
 
   public async requestUserAsync(): Promise<User | null> {
@@ -45,8 +54,8 @@ class SupabaseService {
         return null;
       }
 
-      if (this._user !== data.user) {
-        this._user = data.user;
+      if (JSON.stringify(this.user) !== JSON.stringify(data.user)) {
+        this._userBehaviorSubject.next(data.user);
       }
 
       return data.user;
@@ -62,8 +71,8 @@ class SupabaseService {
       throw error;
     }
 
-    if (this._session !== data?.session) {
-      this._session = data?.session;
+    if (this.session !== data?.session) {
+      this._sessionBehaviorSubject.next(data?.session);
     }
 
     return data?.session;

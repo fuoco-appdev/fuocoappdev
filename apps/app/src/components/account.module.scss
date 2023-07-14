@@ -74,7 +74,11 @@
     font-size: $font-size-lg;
     width: 100%;
     text-align: center;
-    margin-top: $mp-2;
+    margin: $mp-2 0;
+  }
+
+  & .tabs-container {
+    padding: 0 $mp-4;
   }
 }
 
@@ -101,6 +105,7 @@
   font-weight: $font-weight-bold;
   text-transform: uppercase;
   font-size: $font-size-sm !important;
+  margin-right: 0 !important;
 }
 
 .tab-outline {
