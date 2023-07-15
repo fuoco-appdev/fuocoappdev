@@ -253,7 +253,7 @@ function WindowMobileComponent(): JSX.Element {
                 </div> */}
             </div>
             <div className={styles['right-tab-container']}>
-              {!props.isAuthenticated && (
+              {!props.account && (
                 <>
                   <div className={styles['tab-button-container']}>
                     <LanguageSwitch
@@ -291,7 +291,7 @@ function WindowMobileComponent(): JSX.Element {
                   </div>
                 </>
               )}
-              {props.isAuthenticated && (
+              {props.account && (
                 <>
                   {/* <div className={styles['tab-button-container']}>
                     <Button

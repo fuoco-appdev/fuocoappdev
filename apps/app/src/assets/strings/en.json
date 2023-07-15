@@ -199,5 +199,17 @@
   "tabletNotSupported": "Tablet view is not supported yet.",
   "desktopNotSupported": "Desktop view is not supported yet.",
   "completeProfile": "Complete profile",
-  "complete": "Complete"
+  "complete": "Complete",
+  "order": "Order",
+  "canceled": "Canceled",
+  "fulfilled": "Fulfilled",
+  "notFulfilled": "Not fulfilled",
+  "partiallyFulfilled": "Partially fulfilled",
+  "partiallyReturned": "Partially returned",
+  "partiallyShipped": "Partially shipped",
+  "requiresAction": "Requires action",
+  "returned": "Returned",
+  "shipped": "Shipped",
+  "orderHistory": "Order history",
+  "addresses": "Addresses"
 }

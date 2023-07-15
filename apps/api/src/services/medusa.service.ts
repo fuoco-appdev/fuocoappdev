@@ -3,6 +3,8 @@ import {
   StockLocationsResponse,
   CustomerResponse,
   CustomerRequest,
+  OrdersResponse,
+  OrdersRequest,
 } from '../protobuf/core_pb.js';
 import 'https://deno.land/x/dotenv@v3.2.0/load.ts';
 import MapboxService, {
@@ -181,6 +183,32 @@ class MedusaService {
     }
 
     return stockLocations;
+  }
+
+  public async getOrdersAsync(
+    customerId: string,
+    request: InstanceType<typeof OrdersRequest>
+  ): Promise<InstanceType<typeof OrdersResponse>> {
+    const offset = request.getOffset();
+    const limit = request.getLimit();
+    const params = new URLSearchParams({
+      customer_id: customerId,
+      offset: offset,
+      limit: limit,
+    }).toString();
+    const ordersResponse = await axiod.get(
+      `${this._url}/admin/orders?${params}`,
+      {
+        headers: {
+          Authorization: `Bearer ${this._token}`,
+        },
+      }
+    );
+    const orders = new OrdersResponse();
+    const data = ordersResponse.data['orders'];
+    orders.setData(JSON.stringify(data));
+
+    return orders;
   }
 
   private async getFeatureAsync(

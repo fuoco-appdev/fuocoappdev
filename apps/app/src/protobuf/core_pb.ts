@@ -162,6 +162,86 @@ export class CustomerResponse extends Message<CustomerResponse> {
 }
 
 /**
+ * @generated from message core.OrdersRequest
+ */
+export class OrdersRequest extends Message<OrdersRequest> {
+  /**
+   * @generated from field: int32 offset = 1;
+   */
+  offset = 0;
+
+  /**
+   * @generated from field: int32 limit = 2;
+   */
+  limit = 0;
+
+  constructor(data?: PartialMessage<OrdersRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.OrdersRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "offset", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 2, name: "limit", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): OrdersRequest {
+    return new OrdersRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): OrdersRequest {
+    return new OrdersRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): OrdersRequest {
+    return new OrdersRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: OrdersRequest | PlainMessage<OrdersRequest> | undefined, b: OrdersRequest | PlainMessage<OrdersRequest> | undefined): boolean {
+    return proto3.util.equals(OrdersRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message core.OrdersResponse
+ */
+export class OrdersResponse extends Message<OrdersResponse> {
+  /**
+   * @generated from field: string data = 1;
+   */
+  data = "";
+
+  constructor(data?: PartialMessage<OrdersResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.OrdersResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "data", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): OrdersResponse {
+    return new OrdersResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): OrdersResponse {
+    return new OrdersResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): OrdersResponse {
+    return new OrdersResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: OrdersResponse | PlainMessage<OrdersResponse> | undefined, b: OrdersResponse | PlainMessage<OrdersResponse> | undefined): boolean {
+    return proto3.util.equals(OrdersResponse, a, b);
+  }
+}
+
+/**
  * @generated from message core.StockLocationsResponse
  */
 export class StockLocationsResponse extends Message<StockLocationsResponse> {

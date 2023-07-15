@@ -199,5 +199,17 @@
   "tabletNotSupported": "L'affichage sur tablette n'est pas encore pris en charge.",
   "desktopNotSupported": "L'affichage sur le bureau n'est pas encore pris en charge.",
   "completeProfile": "Compléter le profil",
-  "complete": "Compléter"
+  "complete": "Compléter",
+  "order": "Commande",
+  "canceled": "Annulé",
+  "fulfilled": "Exécuté",
+  "notFulfilled": "Non exécuté",
+  "partiallyFulfilled": "Partiellement exécuté",
+  "partiallyReturned": "Partiellement renvoyé",
+  "partiallyShipped": "Partiellement expédié",
+  "requiresAction": "Nécessite une action",
+  "returned": "Renvoyé",
+  "shipped": "Expédié",
+  "orderHistory": "Historique des commandes",
+  "addresses": "Adresses"
 }

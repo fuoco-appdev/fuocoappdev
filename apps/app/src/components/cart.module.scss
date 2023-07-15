@@ -3,6 +3,7 @@
 .root-mobile {
     width: 100%;
     overflow-y: auto;
+    padding-top: 56px;
 
     & .account-container-mobile {
         margin-top: 56px;
@@ -33,7 +34,7 @@
         padding: 0 $mp-4;
 
         & .shopping-cart-title-mobile {
-            font-size: 14pt;
+            font-size: $font-size-lg;
             line-height: 42px;
             font-weight: $font-weight-bold;
             color: $brand-900;

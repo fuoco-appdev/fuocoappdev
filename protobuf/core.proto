@@ -23,6 +23,15 @@ message CustomerResponse {
     string data = 1;
 }
 
+message OrdersRequest {
+    int32 offset = 1;
+    int32 limit = 2;
+}
+
+message OrdersResponse {
+    string data = 1;
+}
+
 message StockLocationsResponse {
     repeated string locations = 1;
 }

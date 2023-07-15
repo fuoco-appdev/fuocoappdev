@@ -1,0 +1,31 @@
+@import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
+
+.root {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+
+    & .order-history-text {
+        margin: 0 $mp-4;
+        margin-bottom: $mp-2;
+        color: $brand-900;
+        font-weight: $font-weight-bold;
+        line-height: 42px;
+        font-size: $font-size-lg;
+        border-bottom: solid 1px $brand-900;
+    }
+
+    & .scroll-mobile {
+        width: 100%;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        padding: $mp-4 0;
+        
+        & .loading-ring {
+            width: 100%;
+            height: 24px;
+        }
+    }
+}

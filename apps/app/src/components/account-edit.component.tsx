@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import AccountController from '../controllers/account.controller';
-import styles from './account-addresses.module.scss';
+import styles from './window.module.scss';
 import { Alert } from '@fuoco.appdev/core-ui';
 import { RoutePaths } from '../route-paths';
 import { useTranslation } from 'react-i18next';
@@ -13,33 +13,29 @@ import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import LoadingComponent from './loading.component';
 import { Store } from '@ngneat/elf';
 
-function AccountAddressesDesktopComponent(): JSX.Element {
+function AccountEditDesktopComponent(): JSX.Element {
   const navigate = useNavigate();
   const [props] = useObservable(AccountController.model.store);
 
   return <></>;
 }
 
-function AccountAddressesMobileComponent(): JSX.Element {
+function AccountEditMobileComponent(): JSX.Element {
   const navigate = useNavigate();
   const [props] = useObservable(AccountController.model.store);
   const { t, i18n } = useTranslation();
 
-  return (
-    <div className={styles['root']}>
-      <div className={styles['addresses-text']}>{t('addresses')}</div>
-    </div>
-  );
+  return <></>;
 }
 
-export default function AccountAddressesComponent(): JSX.Element {
+export default function AccountEditComponent(): JSX.Element {
   return (
     <>
       <ResponsiveDesktop>
-        <AccountAddressesDesktopComponent />
+        <AccountEditDesktopComponent />
       </ResponsiveDesktop>
       <ResponsiveMobile>
-        <AccountAddressesMobileComponent />
+        <AccountEditMobileComponent />
       </ResponsiveMobile>
     </>
   );

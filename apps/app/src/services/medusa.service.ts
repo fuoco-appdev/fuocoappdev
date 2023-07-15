@@ -1,5 +1,5 @@
 import Medusa from '@medusajs/medusa-js';
-import { Customer } from '@medusajs/medusa';
+import { Customer, Order } from '@medusajs/medusa';
 import ConfigService from './config.service';
 import axios, { AxiosError } from 'axios';
 import { Service } from '../service';
@@ -135,6 +135,35 @@ class MedusaService extends Service {
     }
 
     return locations;
+  }
+
+  public async requestOrdersAsync(
+    customerId: string,
+    props: {
+      offset: number;
+      limit: number;
+    }
+  ): Promise<Order[] | undefined> {
+    const session = await SupabaseService.requestSessionAsync();
+    const ordersRequest = new core.OrdersRequest({
+      offset: props.offset,
+      limit: props.limit,
+    });
+    const response = await axios({
+      method: 'post',
+      url: `${this.endpointUrl}/medusa/orders/${customerId}`,
+      headers: {
+        ...this.headers,
+        'Session-Token': `${session?.access_token}`,
+      },
+      data: ordersRequest.toBinary(),
+      responseType: 'arraybuffer',
+    });
+    const arrayBuffer = new Uint8Array(response.data);
+    this.assertResponse(arrayBuffer);
+
+    const ordersResponse = core.OrdersResponse.fromBinary(arrayBuffer);
+    return ordersResponse.data && JSON.parse(ordersResponse.data);
   }
 }
 

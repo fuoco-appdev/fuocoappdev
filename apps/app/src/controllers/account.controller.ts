@@ -53,6 +53,14 @@ class AccountController extends Controller {
     this._userSubscription?.unsubscribe();
   }
 
+  public async onNextOrderScrollAsync(): Promise<void> {
+    this._model.orderPagination = this._model.orderPagination + 1;
+
+    const limit = 10;
+    const offset = limit * (this._model.orderPagination - 1);
+    await this.requestOrdersAsync(offset, limit);
+  }
+
   public updateProfile(value: ProfileFormValues): void {
     this._model.profileForm = { ...this._model.profileForm, ...value };
   }
@@ -151,6 +159,35 @@ class AccountController extends Controller {
     SupabaseService.clear();
   }
 
+  private async requestOrdersAsync(
+    offset: number = 0,
+    limit: number = 10
+  ): Promise<void> {
+    if (!this._model.customer) {
+      return;
+    }
+
+    const orders = await MedusaService.requestOrdersAsync(
+      this._model.customer.id,
+      {
+        offset: offset,
+        limit: limit,
+      }
+    );
+
+    if (!orders || orders.length <= 0) {
+      this._model.hasMoreOrders = false;
+      return;
+    }
+
+    if (offset <= 0) {
+      this._model.orders = [];
+      this._model.hasMoreOrders = true;
+    }
+
+    this._model.orders = this._model.orders.concat(orders);
+  }
+
   private async onActiveAccountChangedAsync(
     value: core.Account | null
   ): Promise<void> {
@@ -173,6 +210,8 @@ class AccountController extends Controller {
     this._model.customer = await MedusaService.requestCustomerAsync(
       value?.email ?? ''
     );
+
+    await this.requestOrdersAsync();
   }
 }
 

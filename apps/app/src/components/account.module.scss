@@ -80,6 +80,11 @@
   & .tabs-container {
     padding: 0 $mp-4;
   }
+
+  & .outlet-container {
+    flex: 1;
+    overflow-y: auto;
+  }
 }
 
 .submit-button-container {

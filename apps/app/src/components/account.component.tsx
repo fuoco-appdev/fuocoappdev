@@ -178,7 +178,9 @@ function AccountMobileComponent(): JSX.Element {
               ]}
             />
           </div>
-          <Outlet />
+          <div className={styles['outlet-container']}>
+            <Outlet />
+          </div>
         </>
       )}
     </div>

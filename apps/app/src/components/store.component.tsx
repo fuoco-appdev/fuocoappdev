@@ -259,7 +259,7 @@ function StoreMobileComponent(): JSX.Element {
           next={() => StoreController.onNextScrollAsync()}
           className={styles['scroll-mobile']}
           hasMore={props.hasMorePreviews}
-          height={previewsContainerRef.current?.clientHeight ?? 0 - 16}
+          height={previewsContainerRef.current?.clientHeight ?? 0 - 8}
           loader={
             <img
               src={'../assets/svg/ring-resize.svg'}

@@ -113,6 +113,7 @@
     "react-responsive": "^9.0.2",
     "react-ripples": "^2.2.1",
     "react-spring": "^9.6.1",
+    "react-transition-group": "^4.4.5",
     "sass": "^1.54.8",
     "three": "^0.144.0",
     "lodash.throttle": "^4.1.1",

@@ -1,0 +1,91 @@
+@import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
+
+.root {
+    & .ripples {
+        width: 100%;
+        height: 100%;
+
+        & .container-mobile {
+            padding: $mp-2 $mp-4;
+            width: 100%;
+        
+            & .details-mobile {
+                display: flex;
+                margin-bottom: $mp-1;
+        
+                & .thumbnail-mobile {
+                    display: flex;
+                    justify-content: center;
+                    height: 56px;
+                    width: 56px;
+                    background-color: $gray-100;
+                    margin-right: $mp-4;
+        
+                    & .thumbnail-image-mobile {
+                        padding: $mp-1 0;
+                        max-height: 100%;
+                        width: auto;
+                        color: $brand-900;
+                    }
+                }
+        
+                & .title-container-mobile {
+                    & .title-mobile {
+                        color: $brand-900;
+                        font-size: $font-size-base;
+                        font-weight: $font-weight-bold;
+                        margin-bottom: $mp-1;
+                    }
+        
+                    & .status-mobile {
+                        color: $brand-900;
+                        font-size: $font-size-sm;
+                    }
+                }
+        
+                & .pricing-details-container {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: right;
+                    flex: 1;
+            
+                    & .pricing {
+                        width: fit-content;
+                        color: $brand-900;
+                        font-weight: $font-weight-bold;
+                        font-size: $font-size-sm;
+                    }
+            
+                    & .pricing-canceled {
+                        text-decoration: line-through;
+                    }
+            
+                    & .discount-pricing {
+                        width: fit-content;
+                        color: $brand-900;
+                        font-weight: $font-weight-bold;
+                        font-size: $font-size-sm;
+                        margin-left: $mp-2;
+                    }
+            
+                    & .discount-percentage {
+                        width: fit-content;
+                        color: $brand-900;
+                        font-size: $font-size-sm;
+                        margin-left: $mp-2;
+                    }
+                }
+        
+                & .remove-container {
+                    & .remove-button {
+                        color: $brand-900;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.overlay {
+    z-index: 24;
+}

@@ -12,6 +12,7 @@ import CartItemComponent from './cart-item.component';
 import StoreController from '../controllers/store.controller';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
+import WindowController from '../controllers/window.controller';
 
 function CartDesktopComponent(): JSX.Element {
   const navigate = useNavigate();
@@ -24,33 +25,36 @@ function CartMobileComponent(): JSX.Element {
   const navigate = useNavigate();
   const [props] = useObservable(CartController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
+  const [windowProps] = useObservable(WindowController.model.store);
   const { t, i18n } = useTranslation();
 
   return (
     <div className={styles['root-mobile']}>
-      <div className={styles['account-container-mobile']}>
-        <div className={styles['already-have-an-account-title-mobile']}>
-          {t('alreadyHaveAnAccount')}
+      {!windowProps.isAuthenticated && (
+        <div className={styles['account-container-mobile']}>
+          <div className={styles['already-have-an-account-title-mobile']}>
+            {t('alreadyHaveAnAccount')}
+          </div>
+          <div className={styles['already-have-an-account-description-mobile']}>
+            {t('alreadyHaveAnAccountDescription')}
+          </div>
+          <div className={styles['sign-in-button-container']}>
+            <Button
+              classNames={{
+                button: styles['sign-in-button'],
+              }}
+              rippleProps={{
+                color: 'rgba(133, 38, 122, .35)',
+              }}
+              size={'large'}
+              touchScreen={true}
+              onClick={() => navigate(RoutePaths.Signin)}
+            >
+              {t('signIn')}
+            </Button>
+          </div>
         </div>
-        <div className={styles['already-have-an-account-description-mobile']}>
-          {t('alreadyHaveAnAccountDescription')}
-        </div>
-        <div className={styles['sign-in-button-container']}>
-          <Button
-            classNames={{
-              button: styles['sign-in-button'],
-            }}
-            rippleProps={{
-              color: 'rgba(133, 38, 122, .35)',
-            }}
-            size={'large'}
-            touchScreen={true}
-            onClick={() => navigate(RoutePaths.Signin)}
-          >
-            {t('signIn')}
-          </Button>
-        </div>
-      </div>
+      )}
       <div className={styles['shopping-cart-container-mobile']}>
         <div className={styles['shopping-cart-title-mobile']}>
           {t('shoppingCart')}

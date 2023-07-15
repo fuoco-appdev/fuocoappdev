@@ -2,7 +2,7 @@ import { LanguageCode } from '@fuoco.appdev/core-ui';
 import { createStore, withProps } from '@ngneat/elf';
 import { Model } from '../model';
 import * as core from '../protobuf/core_pb';
-import { Customer } from '@medusajs/medusa';
+import { Customer, Order } from '@medusajs/medusa';
 import {
   ProfileFormErrors,
   ProfileFormValues,
@@ -16,6 +16,9 @@ export interface AccountState {
   errorStrings: ProfileFormErrors;
   profileUrl: string | undefined;
   username: string;
+  orders: Order[];
+  orderPagination: number;
+  hasMoreOrders: boolean;
 }
 
 export class AccountModel extends Model {
@@ -35,6 +38,9 @@ export class AccountModel extends Model {
           errorStrings: {},
           profileUrl: undefined,
           username: '',
+          orders: [],
+          orderPagination: 1,
+          hasMoreOrders: true,
         })
       )
     );
@@ -107,6 +113,42 @@ export class AccountModel extends Model {
   public set username(value: string) {
     if (this.username !== value) {
       this.store.update((state) => ({ ...state, username: value }));
+    }
+  }
+
+  public get orders(): Order[] {
+    return this.store.getValue().orders;
+  }
+
+  public set orders(value: Order[]) {
+    if (JSON.stringify(this.orders) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, orders: value }));
+    }
+  }
+
+  public get orderPagination(): number {
+    return this.store?.getValue().orderPagination;
+  }
+
+  public set orderPagination(value: number) {
+    if (this.orderPagination !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        orderPagination: value,
+      }));
+    }
+  }
+
+  public get hasMoreOrders(): boolean {
+    return this.store?.getValue().hasMoreOrders;
+  }
+
+  public set hasMoreOrders(value: boolean) {
+    if (this.hasMoreOrders !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        hasMoreOrders: value,
+      }));
     }
   }
 }
