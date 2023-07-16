@@ -1,14 +1,33 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
 .root {
-    & .addresses-text {
+    & .addresses-text-container {
+        display: flex;
+        flex-direction: row;
         margin: 0 $mp-4;
         margin-top: $mp-4;
         margin-bottom: $mp-2;
-        color: $brand-900;
-        font-weight: $font-weight-bold;
-        line-height: 42px;
-        font-size: $font-size-lg;
         border-bottom: solid 1px $brand-900;
+
+        & .addresses-text {
+            flex: 1;
+            color: $brand-900;
+            font-weight: $font-weight-bold;
+            line-height: 42px;
+            font-size: $font-size-lg;
+        }
+    }
+
+    & .add-address-container {
+        padding: $mp-4;
+
+        & .add-address-button-container {
+            width: 100%;
+            padding-top: $mp-4;
+
+            & .add-address-button {
+                background-color: $brand-700;
+            }
+        }
     }
 }

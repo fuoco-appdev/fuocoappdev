@@ -6,7 +6,6 @@ import * as HttpError from 'https://deno.land/x/http_errors@3.0.0/mod.ts';
 import { readAll } from 'https://deno.land/std@0.105.0/io/util.ts';
 import SupabaseService from '../services/supabase.service.ts';
 import AccountService from '../services/account.service.ts';
-import MailService from '../services/mail.service.ts';
 
 @Controller('/account')
 export class AccountController {

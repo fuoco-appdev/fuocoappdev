@@ -7,11 +7,9 @@ import {
   OrdersRequest,
 } from '../protobuf/core_pb.js';
 import 'https://deno.land/x/dotenv@v3.2.0/load.ts';
-import MapboxService, {
-  Geocoding,
-  GeocodingFeature,
-} from './mapbox.service.ts';
+import MapboxService, { GeocodingFeature } from './mapbox.service.ts';
 import SupabaseService from './supabase.service.ts';
+import { User } from 'https://esm.sh/@supabase/supabase-js@2.7.0';
 
 class MedusaService {
   private _url: string | undefined;
@@ -29,29 +27,48 @@ class MedusaService {
   }
 
   public async getCustomerAsync(
+    sessionToken: string,
     email: string
   ): Promise<InstanceType<typeof CustomerResponse>> {
-    const params = new URLSearchParams({
+    const fetchParams = new URLSearchParams({
       q: email,
     }).toString();
     const customerResponse = await axiod.get(
-      `${this._url}/admin/customers?${params}`,
+      `${this._url}/admin/customers?${fetchParams}`,
       {
         headers: {
           Authorization: `Bearer ${this._token}`,
         },
       }
     );
-    const customer = new CustomerResponse();
     const customers = customerResponse.data['customers'];
+    const customer = new CustomerResponse();
     if (customers.length > 0) {
-      customer.setData(JSON.stringify(customers[0]));
+      const updateParams = new URLSearchParams({
+        expand: 'shipping_addresses',
+      }).toString();
+      const updateCustomerResponse = await axiod.post(
+        `${this._url}/admin/customers/${customers[0].id}?${updateParams}`,
+        {
+          password: sessionToken,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${this._token}`,
+          },
+        }
+      );
+
+      const customerData = updateCustomerResponse.data['customer'];
+      customer.setData(JSON.stringify(customerData));
+      customer.setPassword(sessionToken);
     }
 
     return customer;
   }
 
   public async createCustomerAsync(
+    sessionToken: string,
     request: InstanceType<typeof CustomerRequest>
   ): Promise<InstanceType<typeof CustomerResponse>> {
     const email = request.getEmail();
@@ -59,10 +76,13 @@ class MedusaService {
     const lastName = request.getLastName();
     const phone = request.getPhone();
     const metadata = request.getMetadata();
+    const params = new URLSearchParams({
+      expand: 'shipping_addresses',
+    }).toString();
     const customerResponse = await axiod.post(
-      `${this._url}/admin/customers/create`,
+      `${this._url}/admin/customers?${params}`,
       {
-        ...(email && { email: email }),
+        ...(email && { email: email, password: sessionToken }),
         ...(firstName && { first_name: firstName }),
         ...(lastName && { last_name: lastName }),
         ...(phone && { phone: phone }),
@@ -77,6 +97,7 @@ class MedusaService {
     const customer = new CustomerResponse();
     const data = customerResponse.data['customer'];
     customer.setData(JSON.stringify(data));
+    customer.setPassword(sessionToken);
     return customer;
   }
 
@@ -88,8 +109,11 @@ class MedusaService {
     const lastName = request.getLastName();
     const phone = request.getPhone();
     const metadata = request.getMetadata();
+    const params = new URLSearchParams({
+      expand: 'shipping_addresses',
+    }).toString();
     const customerResponse = await axiod.post(
-      `${this._url}/admin/customers/${customerId}`,
+      `${this._url}/admin/customers/${customerId}?${params}`,
       {
         ...(firstName && { first_name: firstName }),
         ...(lastName && { last_name: lastName }),

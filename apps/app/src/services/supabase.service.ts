@@ -3,6 +3,7 @@ import {
   SupabaseClient,
   User,
   Session,
+  AuthChangeEvent,
 } from '@supabase/supabase-js';
 import ConfigService from './config.service';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -20,6 +21,9 @@ class SupabaseService {
 
     this._userBehaviorSubject = new BehaviorSubject<User | null>(null);
     this._sessionBehaviorSubject = new BehaviorSubject<Session | null>(null);
+
+    this.onAuthStateChanged = this.onAuthStateChanged.bind(this);
+    this._supabaseClient.auth.onAuthStateChange(this.onAuthStateChanged);
   }
 
   public get user(): User | null {
@@ -85,6 +89,25 @@ class SupabaseService {
     }
 
     this.clear();
+  }
+
+  private async onAuthStateChanged(
+    event: AuthChangeEvent,
+    session: Session | null
+  ): Promise<void> {
+    if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
+      if (!session) {
+        this.clear();
+        return;
+      }
+
+      this._sessionBehaviorSubject.next(session);
+      this._userBehaviorSubject.next(session.user);
+    } else if (event === 'SIGNED_OUT') {
+      this.clear();
+    } else {
+      this.clear();
+    }
   }
 }
 

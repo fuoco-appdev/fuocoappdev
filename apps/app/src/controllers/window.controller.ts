@@ -6,7 +6,7 @@ import { Controller } from '../controller';
 import { WindowModel } from '../models/window.model';
 import { RoutePaths } from '../route-paths';
 import SupabaseService from '../services/supabase.service';
-import { Location } from 'react-router-dom';
+import { Location as RouterLocation } from 'react-router-dom';
 import * as core from '../protobuf/core_pb';
 import { LanguageCode, ToastProps } from '@fuoco.appdev/core-ui';
 import AccountService from '../services/account.service';
@@ -32,6 +32,7 @@ class WindowController extends Controller {
     this.onAuthStateChanged = this.onAuthStateChanged.bind(this);
     this.onCartChanged = this.onCartChanged.bind(this);
     this.onActiveAccountChanged = this.onActiveAccountChanged.bind(this);
+    this.onSessionChangedAsync = this.onSessionChangedAsync.bind(this);
 
     SupabaseService.supabaseClient.auth.onAuthStateChange(
       this.onAuthStateChanged
@@ -61,28 +62,16 @@ class WindowController extends Controller {
       AccountService.activeAccountObservable.subscribe({
         next: this.onActiveAccountChanged,
       });
+
+    this._sessionSubscription = SupabaseService.sessionObservable.subscribe({
+      next: this.onSessionChangedAsync,
+    });
   }
 
   public override dispose(renderCount: number): void {
     this._sessionSubscription?.unsubscribe();
     this._accountSubscription?.unsubscribe();
     this._cartSubscription?.unsubscribe();
-  }
-
-  public async checkUserIsAuthenticatedAsync(): Promise<void> {
-    try {
-      this._model.isLoading = true;
-      await SupabaseService.requestUserAsync();
-      this._model.isLoading = false;
-    } catch (error: any) {
-      this.addToast({
-        key: `user-check-${Math.random()}`,
-        message: error.name,
-        description: error.message,
-        type: 'error',
-      });
-      this._model.isLoading = false;
-    }
   }
 
   public updateIsLoading(value: boolean): void {
@@ -101,11 +90,15 @@ class WindowController extends Controller {
     this._model.language = language;
   }
 
-  public updateCurrentPosition(value: GeolocationPosition) {
+  public updateCurrentPosition(value: GeolocationPosition): void {
     this._model.currentPosition = value;
   }
 
-  public updateOnLocationChanged(location: Location): void {
+  public updateLoadedHash(value: string): void {
+    this._model.loadedHash = value;
+  }
+
+  public updateOnLocationChanged(location: RouterLocation): void {
     if (location.pathname === RoutePaths.Home) {
       this._model.activeRoute = RoutePaths.Home;
       this._model.showNavigateBack = false;
@@ -187,29 +180,27 @@ class WindowController extends Controller {
     event: AuthChangeEvent,
     session: Session | null
   ): Promise<void> {
-    if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
-      if (!session) {
-        return;
-      }
+    this._model.authState = event;
+  }
 
-      const account = await this.requestActiveAccountAsync(session);
-      if (account) {
-        await this.requestSecretsAsync(session);
-
-        this._model.isAuthenticated = true;
-      } else {
-        AccountService.clearActiveAccount();
-        this._model.isAuthenticated = false;
-      }
-    } else if (event === 'SIGNED_OUT') {
+  private async onSessionChangedAsync(value: Session | null): Promise<void> {
+    if (!value) {
       AccountService.clearActiveAccount();
       this._model.isAuthenticated = false;
+      this._model.isLoading = false;
+      return;
+    }
+
+    const account = await this.requestActiveAccountAsync(value);
+    if (account) {
+      await this.requestSecretsAsync(value);
+
+      this._model.isAuthenticated = true;
     } else {
       AccountService.clearActiveAccount();
       this._model.isAuthenticated = false;
     }
 
-    this._model.authState = event;
     this._model.isLoading = false;
   }
 

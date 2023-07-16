@@ -104,8 +104,12 @@
     & .filter-content-mobile {
         padding: $mp-4;
 
-        & .apply-button-mobile {
+        & .apply-button-container-mobile {
             margin-top: $mp-4;
+        }
+
+        & .apply-button {
+            background-color: $brand-700;
         }
     }
 }

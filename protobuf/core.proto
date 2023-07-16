@@ -21,6 +21,7 @@ message CustomerRequest {
 
 message CustomerResponse {
     string data = 1;
+    string password = 2;
 }
 
 message OrdersRequest {

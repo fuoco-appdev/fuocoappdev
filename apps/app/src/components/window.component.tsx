@@ -424,7 +424,7 @@ export default function WindowComponent(): JSX.Element {
 
   useEffect(() => {
     if (!isMounted.current) {
-      WindowController.checkUserIsAuthenticatedAsync();
+      WindowController.updateIsLoading(true);
       isMounted.current = true;
     }
   }, []);

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import WindowController from '../controllers/window.controller';
 import SigninController from '../controllers/signin.controller';
@@ -48,19 +48,24 @@ interface RouteElementProps {
 }
 
 function GuestComponent({ element }: RouteElementProps): React.ReactElement {
-  const [user] = useObservable(SupabaseService.userObservable);
-  return !user ? element : <Navigate to={RoutePaths.Account} />;
+  const [props] = useObservable(WindowController.model.store);
+  return !props.isAuthenticated ? (
+    element
+  ) : (
+    <Navigate to={RoutePaths.Account} />
+  );
 }
 
 function AuthenticatedComponent({
   element,
 }: RouteElementProps): React.ReactElement {
-  const [user] = useObservable(SupabaseService.userObservable);
-  return user ? element : <Navigate to={RoutePaths.Signin} />;
+  const [props] = useObservable(WindowController.model.store);
+  return props.isAuthenticated ? element : <Navigate to={RoutePaths.Signin} />;
 }
 
 export default function AppComponent(): JSX.Element {
   const renderCountRef = useRef<number>(0);
+  const memoCountRef = useRef<number>(0);
   useEffect(() => {
     renderCountRef.current += 1;
 
@@ -100,6 +105,16 @@ export default function AppComponent(): JSX.Element {
       ProductController.dispose(renderCountRef.current);
     };
   }, []);
+
+  useMemo(() => {
+    memoCountRef.current += 1;
+    if (memoCountRef.current > 1) {
+      return;
+    }
+
+    WindowController.updateLoadedHash(window.location.hash);
+  }, []);
+
   return (
     <HashRouter>
       <Routes>

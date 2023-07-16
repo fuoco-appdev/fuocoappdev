@@ -211,5 +211,6 @@
   "returned": "Returned",
   "shipped": "Shipped",
   "orderHistory": "Order history",
-  "addresses": "Addresses"
+  "addresses": "Addresses",
+  "addAddress": "Add address"
 }

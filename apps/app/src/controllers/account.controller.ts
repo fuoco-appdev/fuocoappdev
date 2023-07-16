@@ -18,6 +18,10 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import mime from 'mime';
 import { User } from '@supabase/supabase-js';
+import {
+  AddressFormErrors,
+  AddressFormValues,
+} from '../components/address-form.component';
 
 class AccountController extends Controller {
   private readonly _model: AccountModel;
@@ -73,6 +77,57 @@ class AccountController extends Controller {
     this._model.errorStrings = value;
   }
 
+  public updateShippingAddress(value: AddressFormValues): void {
+    this._model.shippingForm = { ...this._model.shippingForm, ...value };
+  }
+
+  public updateShippingAddressErrors(value: AddressFormErrors): void {
+    this._model.shippingFormErrors = value;
+  }
+
+  public updateAddressErrorStrings(value: AddressFormErrors): void {
+    this._model.addressErrorStrings = value;
+  }
+
+  public getAddressFormErrors(
+    form: AddressFormValues
+  ): AddressFormErrors | undefined {
+    const errors: AddressFormErrors = {};
+
+    if (!form.email || form.email?.length <= 0) {
+      errors.email = this._model.addressErrorStrings.email;
+    }
+
+    if (!form.firstName || form.firstName?.length <= 0) {
+      errors.firstName = this._model.addressErrorStrings.firstName;
+    }
+
+    if (!form.lastName || form.lastName?.length <= 0) {
+      errors.lastName = this._model.addressErrorStrings.lastName;
+    }
+
+    if (!form.address || form.address?.length <= 0) {
+      errors.address = this._model.addressErrorStrings.address;
+    }
+
+    if (!form.postalCode || form.postalCode?.length <= 0) {
+      errors.postalCode = this._model.addressErrorStrings.postalCode;
+    }
+
+    if (!form.city || form.city?.length <= 0) {
+      errors.city = this._model.addressErrorStrings.city;
+    }
+
+    if (!form.phoneNumber || form.phoneNumber?.length <= 0) {
+      errors.phoneNumber = this._model.addressErrorStrings.phoneNumber;
+    }
+
+    if (Object.keys(errors).length > 0) {
+      return errors;
+    }
+    return undefined;
+  }
+
   public getProfileFormErrors(
     form: ProfileFormValues
   ): ProfileFormErrors | undefined {
@@ -112,12 +167,18 @@ class AccountController extends Controller {
           last_name: this._model.profileForm.lastName ?? '',
           phone: this._model.profileForm.phoneNumber,
         });
+        if (!customer) {
+          throw new Error('No customer created');
+        }
       } else {
         customer = await MedusaService.requestUpdateCustomerAsync(customer.id, {
           first_name: this._model.profileForm.firstName ?? '',
           last_name: this._model.profileForm.lastName ?? '',
           phone: this._model.profileForm.phoneNumber,
         });
+        if (!customer) {
+          throw new Error('No customer updated');
+        }
       }
 
       this._model.account = await AccountService.requestUpdateActiveAsync({
@@ -151,6 +212,10 @@ class AccountController extends Controller {
     this._model.account = await AccountService.requestUpdateActiveAsync({
       profileUrl: newFile,
     });
+  }
+
+  public async addAddressAsync(): Promise<void> {
+    this._model.shippingForm = {};
   }
 
   public async deleteAsync(): Promise<void> {
@@ -203,7 +268,7 @@ class AccountController extends Controller {
   }
 
   private async onActiveUserChangedAsync(value: User | null): Promise<void> {
-    if (!value || !SupabaseService.user) {
+    if (!value) {
       return;
     }
 

@@ -7,6 +7,10 @@ import {
   ProfileFormErrors,
   ProfileFormValues,
 } from '../components/account-profile-form.component';
+import {
+  AddressFormErrors,
+  AddressFormValues,
+} from '../components/address-form.component';
 
 export interface AccountState {
   account: core.Account | undefined;
@@ -19,6 +23,9 @@ export interface AccountState {
   orders: Order[];
   orderPagination: number;
   hasMoreOrders: boolean;
+  shippingForm: AddressFormValues;
+  shippingFormErrors: AddressFormErrors;
+  addressErrorStrings: AddressFormErrors;
 }
 
 export class AccountModel extends Model {
@@ -41,6 +48,21 @@ export class AccountModel extends Model {
           orders: [],
           orderPagination: 1,
           hasMoreOrders: true,
+          shippingForm: {
+            email: '',
+            firstName: '',
+            lastName: '',
+            company: '',
+            address: '',
+            apartments: '',
+            postalCode: '',
+            city: '',
+            countryCode: '',
+            region: '',
+            phoneNumber: '',
+          },
+          shippingFormErrors: {},
+          addressErrorStrings: {},
         })
       )
     );
@@ -149,6 +171,36 @@ export class AccountModel extends Model {
         ...state,
         hasMoreOrders: value,
       }));
+    }
+  }
+
+  public get shippingForm(): AddressFormValues {
+    return this.store.getValue().shippingForm;
+  }
+
+  public set shippingForm(value: AddressFormValues) {
+    if (JSON.stringify(this.shippingForm) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, shippingForm: value }));
+    }
+  }
+
+  public get shippingFormErrors(): AddressFormErrors {
+    return this.store.getValue().shippingFormErrors;
+  }
+
+  public set shippingFormErrors(value: AddressFormErrors) {
+    if (JSON.stringify(this.shippingFormErrors) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, shippingFormErrors: value }));
+    }
+  }
+
+  public get addressErrorStrings(): AddressFormErrors {
+    return this.store.getValue().addressErrorStrings;
+  }
+
+  public set addressErrorStrings(value: AddressFormErrors) {
+    if (JSON.stringify(this.addressErrorStrings) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, addressErrorStrings: value }));
     }
   }
 }

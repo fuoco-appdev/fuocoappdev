@@ -1,0 +1,39 @@
+@import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
+
+.root {
+        & .container-mobile {
+            padding: $mp-2 $mp-4;
+            width: 100%;
+        
+            & .details-mobile {
+                display: flex;
+                margin-bottom: $mp-1;
+        
+                & .title-container-mobile {
+                    & .title-mobile {
+                        color: $brand-900;
+                        font-size: $font-size-base;
+                        font-weight: $font-weight-bold;
+                        margin-bottom: $mp-1;
+                    }
+                }
+        
+                & .right-details-container {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: right;
+                    flex: 1;
+
+                    & .right-details-content {
+                        display: flex;
+                        flex-direction: column;
+                    }
+            
+                }
+            }
+        }
+}
+
+.overlay {
+    z-index: 24;
+}

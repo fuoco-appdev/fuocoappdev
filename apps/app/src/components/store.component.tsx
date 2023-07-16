@@ -335,7 +335,11 @@ function StoreMobileComponent(): JSX.Element {
           />
           <Button
             classNames={{
-              container: styles['apply-button-mobile'],
+              container: styles['apply-button-container-mobile'],
+              button: styles['apply-button'],
+            }}
+            rippleProps={{
+              color: 'rgba(233, 33, 66, .35)',
             }}
             block={true}
             size={'large'}

@@ -640,7 +640,8 @@ proto.core.CustomerResponse.prototype.toObject = function(opt_includeInstance) {
  */
 proto.core.CustomerResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    data: jspb.Message.getFieldWithDefault(msg, 1, "")
+    data: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    password: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -681,6 +682,10 @@ proto.core.CustomerResponse.deserializeBinaryFromReader = function(msg, reader) 
       var value = /** @type {string} */ (reader.readString());
       msg.setData(value);
       break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setPassword(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -717,6 +722,13 @@ proto.core.CustomerResponse.serializeBinaryToWriter = function(message, writer) 
       f
     );
   }
+  f = message.getPassword();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
 };
 
 
@@ -735,6 +747,24 @@ proto.core.CustomerResponse.prototype.getData = function() {
  */
 proto.core.CustomerResponse.prototype.setData = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * optional string password = 2;
+ * @return {string}
+ */
+proto.core.CustomerResponse.prototype.getPassword = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.core.CustomerResponse} returns this
+ */
+proto.core.CustomerResponse.prototype.setPassword = function(value) {
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 

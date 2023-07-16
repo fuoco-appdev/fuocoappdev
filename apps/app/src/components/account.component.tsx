@@ -189,14 +189,21 @@ function AccountMobileComponent(): JSX.Element {
 
 export default function AccountComponent(): JSX.Element {
   const [props] = useObservable(AccountController.model.store);
+  const [windowProps] = useObservable(WindowController.model.store);
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   useEffect(() => {
+    const loadedLocation = windowProps.loadedHash as string;
     if (location.hash === `#${RoutePaths.Account}`) {
-      navigate(RoutePaths.AccountOrderHistory);
+      const formattedLocation = loadedLocation.replace('#', '');
+      navigate(
+        formattedLocation.startsWith(RoutePaths.Account)
+          ? formattedLocation
+          : RoutePaths.AccountOrderHistory
+      );
     }
-  }, [location.hash]);
+  }, [location.hash, windowProps.loadedLocation]);
 
   return (
     <>

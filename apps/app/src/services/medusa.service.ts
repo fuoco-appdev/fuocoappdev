@@ -41,7 +41,25 @@ class MedusaService extends Service {
     this.assertResponse(arrayBuffer);
 
     const customerResponse = core.CustomerResponse.fromBinary(arrayBuffer);
-    return customerResponse.data && JSON.parse(customerResponse.data);
+    if (customerResponse.data.length <= 0) {
+      return undefined;
+    }
+
+    try {
+      await this.medusa.auth.getSession();
+    } catch (error: any) {
+      if (customerResponse.password.length > 0) {
+        const authResponse = await this.medusa.auth.authenticate({
+          email: email,
+          password: customerResponse.password,
+        });
+        if (!authResponse.customer) {
+          return undefined;
+        }
+      }
+    }
+
+    return JSON.parse(customerResponse.data);
   }
 
   public async requestCreateCustomerAsync(props: {
@@ -73,7 +91,25 @@ class MedusaService extends Service {
     this.assertResponse(arrayBuffer);
 
     const customerResponse = core.CustomerResponse.fromBinary(arrayBuffer);
-    return customerResponse.data && JSON.parse(customerResponse.data);
+    if (customerResponse.data.length <= 0) {
+      return undefined;
+    }
+
+    try {
+      await this.medusa.auth.getSession();
+    } catch (error: any) {
+      if (customerResponse.password.length > 0 && props.email) {
+        const authResponse = await this.medusa.auth.authenticate({
+          email: props.email,
+          password: customerResponse.password,
+        });
+        if (!authResponse.customer) {
+          return undefined;
+        }
+      }
+    }
+
+    return JSON.parse(customerResponse.data);
   }
 
   public async requestUpdateCustomerAsync(

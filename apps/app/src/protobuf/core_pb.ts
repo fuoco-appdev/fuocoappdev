@@ -133,6 +133,11 @@ export class CustomerResponse extends Message<CustomerResponse> {
    */
   data = "";
 
+  /**
+   * @generated from field: string password = 2;
+   */
+  password = "";
+
   constructor(data?: PartialMessage<CustomerResponse>) {
     super();
     proto3.util.initPartial(data, this);
@@ -142,6 +147,7 @@ export class CustomerResponse extends Message<CustomerResponse> {
   static readonly typeName = "core.CustomerResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "data", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "password", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CustomerResponse {

@@ -54,6 +54,12 @@ function OrderItemMobileComponent({ order }: OrderItemProps): JSX.Element {
       setFulfillmentStatus(t('shipped') ?? '');
   }, [order, i18n.language]);
 
+  const getNumberOfItems = (items: LineItem[]) => {
+    return items.reduce((acc, item) => {
+      return acc + item.quantity;
+    }, 0);
+  };
+
   return (
     <div className={styles['root']}>
       <Ripples
@@ -83,15 +89,20 @@ function OrderItemMobileComponent({ order }: OrderItemProps): JSX.Element {
               <div className={styles['status-mobile']}>{`${t(
                 'status'
               )}: ${fulfillmentStatus}`}</div>
+              <div className={styles['status-mobile']}>{`${t(
+                'items'
+              )}: ${getNumberOfItems(order.items)}`}</div>
             </div>
-            <div className={styles['pricing-details-container']}>
-              <div className={[styles['pricing']].join(' ')}>
-                {order.region &&
-                  formatAmount({
-                    amount: order.payments[0].amount ?? 0,
-                    region: order.region,
-                    includeTaxes: true,
-                  })}
+            <div className={styles['right-details-container']}>
+              <div className={styles['right-details-content']}>
+                <div className={[styles['pricing']].join(' ')}>
+                  {order.region &&
+                    formatAmount({
+                      amount: order.payments[0].amount ?? 0,
+                      region: order.region,
+                      includeTaxes: true,
+                    })}
+                </div>
               </div>
             </div>
           </div>

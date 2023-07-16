@@ -211,5 +211,6 @@
   "returned": "Renvoyé",
   "shipped": "Expédié",
   "orderHistory": "Historique des commandes",
-  "addresses": "Adresses"
+  "addresses": "Adresses",
+  "addAddress": "Ajouter une adresse"
 }
