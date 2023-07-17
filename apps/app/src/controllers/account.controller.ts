@@ -9,7 +9,7 @@ import SupabaseService from '../services/supabase.service';
 import BucketService from '../services/bucket.service';
 import { LanguageCode } from '@fuoco.appdev/core-ui';
 import MedusaService from '../services/medusa.service';
-import { StorePostCustomersReq, Customer } from '@medusajs/medusa';
+import { StorePostCustomersReq, Customer, Address } from '@medusajs/medusa';
 import WindowController from './window.controller';
 import {
   ProfileFormErrors,
@@ -89,14 +89,25 @@ class AccountController extends Controller {
     this._model.addressErrorStrings = value;
   }
 
+  public updateSelectedAddress(value: Address | undefined): void {
+    this._model.selectedAddress = value;
+  }
+
+  public updateEditShippingAddress(value: AddressFormValues): void {
+    this._model.editShippingForm = {
+      ...this._model.editShippingForm,
+      ...value,
+    };
+  }
+
+  public updateEditShippingAddressErrors(value: AddressFormErrors): void {
+    this._model.editShippingFormErrors = value;
+  }
+
   public getAddressFormErrors(
     form: AddressFormValues
   ): AddressFormErrors | undefined {
     const errors: AddressFormErrors = {};
-
-    if (!form.email || form.email?.length <= 0) {
-      errors.email = this._model.addressErrorStrings.email;
-    }
 
     if (!form.firstName || form.firstName?.length <= 0) {
       errors.firstName = this._model.addressErrorStrings.firstName;
@@ -215,7 +226,58 @@ class AccountController extends Controller {
   }
 
   public async addAddressAsync(): Promise<void> {
+    const customerResponse =
+      await MedusaService.medusa.customers.addresses.addAddress({
+        address: {
+          first_name: this._model.shippingForm.firstName ?? '',
+          last_name: this._model.shippingForm.lastName ?? '',
+          phone: this._model.shippingForm.phoneNumber ?? '',
+          company: this._model.shippingForm.company ?? '',
+          address_1: this._model.shippingForm.address ?? '',
+          address_2: this._model.shippingForm.apartments ?? '',
+          city: this._model.shippingForm.city ?? '',
+          country_code: this._model.shippingForm.countryCode ?? '',
+          province: this._model.shippingForm.region ?? '',
+          postal_code: this._model.shippingForm.postalCode ?? '',
+          metadata: {},
+        },
+      });
+    this._model.customer = customerResponse.customer as Customer;
     this._model.shippingForm = {};
+  }
+
+  public async deleteAddressAsync(id: string | undefined): Promise<void> {
+    if (!id) {
+      return;
+    }
+
+    const customerResponse =
+      await MedusaService.medusa.customers.addresses.deleteAddress(id);
+    this._model.customer = customerResponse.customer as Customer;
+    this._model.selectedAddress = undefined;
+  }
+
+  public async updateAddressAsync(id: string | undefined): Promise<void> {
+    if (!id) {
+      return;
+    }
+
+    const customerResponse =
+      await MedusaService.medusa.customers.addresses.updateAddress(id, {
+        first_name: this._model.editShippingForm.firstName ?? '',
+        last_name: this._model.editShippingForm.lastName ?? '',
+        phone: this._model.editShippingForm.phoneNumber ?? '',
+        company: this._model.editShippingForm.company ?? '',
+        address_1: this._model.editShippingForm.address ?? '',
+        address_2: this._model.editShippingForm.apartments ?? '',
+        city: this._model.editShippingForm.city ?? '',
+        country_code: this._model.editShippingForm.countryCode ?? '',
+        province: this._model.editShippingForm.region ?? '',
+        postal_code: this._model.editShippingForm.postalCode ?? '',
+        metadata: {},
+      });
+    this._model.customer = customerResponse.customer as Customer;
+    this._model.editShippingForm = {};
   }
 
   public async deleteAsync(): Promise<void> {

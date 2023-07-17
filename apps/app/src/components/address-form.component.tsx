@@ -66,6 +66,7 @@ export interface AddressFormValues {
 }
 
 export interface AddressFormProps {
+  isAuthenticated?: boolean;
   values?: AddressFormValues;
   errors?: AddressFormErrors;
   onChangeCallbacks?: AddressFormOnChangeCallbacks;
@@ -78,6 +79,7 @@ function AddressFormDesktopComponent({}: AddressFormProps): JSX.Element {
 }
 
 function AddressFormMobileComponent({
+  isAuthenticated = false,
   values,
   errors,
   onChangeCallbacks,
@@ -257,17 +259,19 @@ function AddressFormMobileComponent({
 
   return !isComplete ? (
     <>
-      <Input
-        classNames={{
-          formLayout: { label: styles['input-form-layout-label'] },
-          input: styles['input'],
-          container: styles['input-container'],
-        }}
-        label={t('email') ?? ''}
-        value={values?.email}
-        error={errors?.email}
-        onChange={onChangeCallbacks?.email}
-      />
+      {!isAuthenticated && (
+        <Input
+          classNames={{
+            formLayout: { label: styles['input-form-layout-label'] },
+            input: styles['input'],
+            container: styles['input-container'],
+          }}
+          label={t('email') ?? ''}
+          value={values?.email}
+          error={errors?.email}
+          onChange={onChangeCallbacks?.email}
+        />
+      )}
       <div className={styles['horizontal-input-container']}>
         <Input
           classNames={{
@@ -389,7 +393,6 @@ function AddressFormMobileComponent({
       />
       <InputPhoneNumber
         defaultValue={values?.phoneNumber}
-        parentRef={rootRef}
         classNames={{
           formLayout: { label: styles['input-form-layout-label'] },
           inputPhoneNumber: styles['input'],
@@ -400,7 +403,7 @@ function AddressFormMobileComponent({
         label={t('phoneNumber') ?? ''}
         error={errors?.phoneNumber}
         touchScreen={true}
-        country={selectedCountry}
+        country={'ca'}
         onChange={onChangeCallbacks?.phoneNumber}
       />
     </>

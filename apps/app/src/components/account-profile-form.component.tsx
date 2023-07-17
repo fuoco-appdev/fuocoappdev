@@ -112,7 +112,6 @@ function AccountProfileFormMobileComponent({
       </div>
       <InputPhoneNumber
         defaultValue={values?.phoneNumber}
-        parentRef={rootRef}
         classNames={{
           formLayout: { label: styles['input-form-layout-label'] },
           inputPhoneNumber: styles['input'],

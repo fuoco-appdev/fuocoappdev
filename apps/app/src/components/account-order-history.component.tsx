@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useRef } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import AccountController from '../controllers/account.controller';
 import styles from './account-order-history.module.scss';
-import { Alert } from '@fuoco.appdev/core-ui';
+import { Alert, Button } from '@fuoco.appdev/core-ui';
 import { RoutePaths } from '../route-paths';
 import { useTranslation } from 'react-i18next';
 import SupabaseService from '../services/supabase.service';
@@ -46,16 +46,41 @@ function AccountOrderHistoryMobileComponent(): JSX.Element {
         }
       >
         <div className={styles['order-history-text']}>{t('orderHistory')}</div>
-        {orders
-          .sort((current: Order, next: Order) => {
-            return (
-              new Date(next.created_at).valueOf() -
-              new Date(current.created_at).valueOf()
-            );
-          })
-          .map((order: Order) => (
-            <OrderItemComponent key={order.id} order={order} />
-          ))}
+        {orders.length > 0 ? (
+          orders
+            .sort((current: Order, next: Order) => {
+              return (
+                new Date(next.created_at).valueOf() -
+                new Date(current.created_at).valueOf()
+              );
+            })
+            .map((order: Order) => (
+              <OrderItemComponent key={order.id} order={order} />
+            ))
+        ) : (
+          <>
+            <div className={styles['no-order-history-text']}>
+              {t('noOrderHistory')}
+            </div>
+            <div className={styles['shop-button-container']}>
+              <Button
+                classNames={{
+                  button: styles['shop-button'],
+                }}
+                rippleProps={{
+                  color: 'rgba(133, 38, 122, .35)',
+                }}
+                size={'large'}
+                touchScreen={true}
+                onClick={() =>
+                  setTimeout(() => navigate(RoutePaths.Store), 200)
+                }
+              >
+                {t('shopNow')}
+              </Button>
+            </div>
+          </>
+        )}
       </InfiniteScroll>
     </div>
   );

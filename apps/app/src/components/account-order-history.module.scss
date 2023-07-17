@@ -11,9 +11,23 @@
         margin-bottom: $mp-2;
         color: $brand-900;
         font-weight: $font-weight-bold;
-        line-height: 42px;
+        line-height: 46px;
         font-size: $font-size-lg;
         border-bottom: solid 1px $brand-900;
+    }
+
+    & .no-order-history-text {
+        margin-top: $mp-10;
+        color: $brand-900;
+        font-size: $font-size-sm;
+        text-align: center;
+    }
+
+    & .shop-button-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        margin-top: $mp-8;
     }
 
     & .scroll-mobile {
@@ -28,4 +42,10 @@
             height: 24px;
         }
     }
+}
+
+.shop-button {
+    background-color: transparent !important;
+    border-color: $brand-900 !important;
+    color: $brand-900 !important;
 }

@@ -18,6 +18,15 @@
         }
     }
 
+    & .address-list-container {
+        & .no-addresses-text {
+            color: $brand-900;
+            font-size: $font-size-sm;
+            text-align: center;
+            margin: $mp-10;
+        }
+    }
+
     & .add-address-container {
         padding: $mp-4;
 
@@ -26,6 +35,19 @@
             padding-top: $mp-4;
 
             & .add-address-button {
+                background-color: $brand-700;
+            }
+        }
+    }
+
+    & .edit-address-container {
+        padding: $mp-4;
+
+        & .edit-address-button-container {
+            width: 100%;
+            padding-top: $mp-4;
+
+            & .edit-address-button {
                 background-color: $brand-700;
             }
         }

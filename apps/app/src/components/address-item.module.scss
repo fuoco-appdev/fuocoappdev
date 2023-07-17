@@ -12,9 +12,14 @@
                 & .title-container-mobile {
                     & .title-mobile {
                         color: $brand-900;
-                        font-size: $font-size-base;
+                        font-size: $font-size-sm;
                         font-weight: $font-weight-bold;
                         margin-bottom: $mp-1;
+                    }
+
+                    & .subtitle-mobile {
+                        color: $brand-900;
+                        font-size: $font-size-sm;
                     }
                 }
         
@@ -26,7 +31,7 @@
 
                     & .right-details-content {
                         display: flex;
-                        flex-direction: column;
+                        flex-direction: row;
                     }
             
                 }
@@ -36,4 +41,12 @@
 
 .overlay {
     z-index: 24;
+}
+
+.edit-button {
+    color: $brand-900 !important;
+}
+
+.remove-button {
+    color: $brand-900 !important;
 }

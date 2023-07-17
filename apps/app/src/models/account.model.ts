@@ -2,7 +2,7 @@ import { LanguageCode } from '@fuoco.appdev/core-ui';
 import { createStore, withProps } from '@ngneat/elf';
 import { Model } from '../model';
 import * as core from '../protobuf/core_pb';
-import { Customer, Order } from '@medusajs/medusa';
+import { Customer, Order, Address } from '@medusajs/medusa';
 import {
   ProfileFormErrors,
   ProfileFormValues,
@@ -26,6 +26,9 @@ export interface AccountState {
   shippingForm: AddressFormValues;
   shippingFormErrors: AddressFormErrors;
   addressErrorStrings: AddressFormErrors;
+  selectedAddress: Address | undefined;
+  editShippingForm: AddressFormValues;
+  editShippingFormErrors: AddressFormErrors;
 }
 
 export class AccountModel extends Model {
@@ -63,6 +66,21 @@ export class AccountModel extends Model {
           },
           shippingFormErrors: {},
           addressErrorStrings: {},
+          selectedAddress: undefined,
+          editShippingForm: {
+            email: '',
+            firstName: '',
+            lastName: '',
+            company: '',
+            address: '',
+            apartments: '',
+            postalCode: '',
+            city: '',
+            countryCode: '',
+            region: '',
+            phoneNumber: '',
+          },
+          editShippingFormErrors: {},
         })
       )
     );
@@ -201,6 +219,39 @@ export class AccountModel extends Model {
   public set addressErrorStrings(value: AddressFormErrors) {
     if (JSON.stringify(this.addressErrorStrings) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, addressErrorStrings: value }));
+    }
+  }
+
+  public get selectedAddress(): Address | undefined {
+    return this.store.getValue().selectedAddress;
+  }
+
+  public set selectedAddress(value: Address | undefined) {
+    if (JSON.stringify(this.selectedAddress) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, selectedAddress: value }));
+    }
+  }
+
+  public get editShippingForm(): AddressFormValues {
+    return this.store.getValue().editShippingForm;
+  }
+
+  public set editShippingForm(value: AddressFormValues) {
+    if (JSON.stringify(this.editShippingForm) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, editShippingForm: value }));
+    }
+  }
+
+  public get editShippingFormErrors(): AddressFormErrors {
+    return this.store.getValue().editShippingFormErrors;
+  }
+
+  public set editShippingFormErrors(value: AddressFormErrors) {
+    if (JSON.stringify(this.editShippingFormErrors) !== JSON.stringify(value)) {
+      this.store.update((state) => ({
+        ...state,
+        editShippingFormErrors: value,
+      }));
     }
   }
 }
