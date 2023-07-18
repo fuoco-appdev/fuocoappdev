@@ -27,6 +27,7 @@ import LoadingComponent from './loading.component';
 import { Store } from '@ngneat/elf';
 import { Customer } from '@medusajs/medusa';
 import AccountController from '../controllers/account.controller';
+import e from 'express';
 
 function WindowDesktopComponent(): JSX.Element {
   const navigate = useNavigate();
@@ -81,6 +82,7 @@ function WindowTabletComponent(): JSX.Element {
 
 function WindowMobileComponent(): JSX.Element {
   const navigate = useNavigate();
+  const location = useLocation();
   const [openMore, setOpenMore] = useState<boolean>(false);
   const [props] = useObservable(WindowController.model.store);
   const [accountProps] = useObservable(AccountController.model.store);
@@ -174,6 +176,8 @@ function WindowMobileComponent(): JSX.Element {
                 {props.activeRoute === RoutePaths.Checkout && t('checkout')}
                 {props.activeRoute === RoutePaths.OrderConfirmedWithId &&
                   t('confirmedOrder')}
+                {props.activeRoute === RoutePaths.AccountSettings &&
+                  t('settings')}
               </div>
             )}
           </div>

@@ -61,7 +61,7 @@ function AccountMobileComponent(): JSX.Element {
               rippleProps={{
                 color: 'rgba(88, 40, 109, .35)',
               }}
-              onClick={() => console.log('')}
+              onClick={() => navigate(RoutePaths.AccountSettings)}
               type={'text'}
               rounded={true}
               size={'tiny'}
@@ -204,14 +204,15 @@ export default function AccountComponent(): JSX.Element {
       location.hash === `#${RoutePaths.Account}`
     ) {
       const formattedLocation = loadedLocation.replace('#', '');
+      if (!formattedLocation.startsWith(RoutePaths.AccountSettings)) {
+        AccountController.updateActiveTabId(formattedLocation);
+      }
       WindowController.updateLoadedHash(undefined);
-      navigate(
-        formattedLocation.startsWith(RoutePaths.Account)
-          ? formattedLocation
-          : RoutePaths.AccountOrderHistory
-      );
+      navigate(formattedLocation);
     } else {
-      navigate(props.activeTabId);
+      if (!loadedLocation?.startsWith(`#${RoutePaths.AccountSettings}`)) {
+        navigate(props.activeTabId);
+      }
     }
   }, [location.hash, windowProps.loadedLocation]);
 

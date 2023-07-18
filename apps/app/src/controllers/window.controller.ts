@@ -163,6 +163,10 @@ class WindowController extends Controller {
       this._model.activeRoute = RoutePaths.AccountEdit;
       this._model.showNavigateBack = false;
       this._model.hideCartButton = false;
+    } else if (location.pathname === RoutePaths.AccountSettings) {
+      this._model.activeRoute = RoutePaths.AccountSettings;
+      this._model.showNavigateBack = true;
+      this._model.hideCartButton = true;
     } else if (location.pathname.startsWith(`${RoutePaths.OrderConfirmed}/`)) {
       this._model.activeRoute = RoutePaths.OrderConfirmedWithId;
       this._model.showNavigateBack = true;
