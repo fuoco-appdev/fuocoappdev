@@ -16,7 +16,7 @@ export interface WindowState {
   showNavigateBack: boolean;
   hideCartButton: boolean;
   currentPosition: GeolocationPosition | undefined;
-  loadedHash: string;
+  loadedHash: string | undefined;
 }
 
 export interface WindowLocalState {
@@ -39,7 +39,7 @@ export class WindowModel extends Model {
           showNavigateBack: false,
           hideCartButton: false,
           currentPosition: undefined,
-          loadedHash: '',
+          loadedHash: undefined,
         })
       ),
       undefined,
@@ -183,6 +183,19 @@ export class WindowModel extends Model {
     }
   }
 
+  public get loadedHash(): string | undefined {
+    return this.store?.getValue().loadedHash;
+  }
+
+  public set loadedHash(value: string | undefined) {
+    if (this.loadedHash !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        loadedHash: value,
+      }));
+    }
+  }
+
   public get language(): LanguageCode {
     return this.localStore?.getValue().language;
   }
@@ -205,19 +218,6 @@ export class WindowModel extends Model {
       this.store?.update((state) => ({
         ...state,
         currentPosition: value,
-      }));
-    }
-  }
-
-  public get loadedHash(): string {
-    return this.localStore?.getValue().loadedHash;
-  }
-
-  public set loadedHash(value: string) {
-    if (this.loadedHash !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        loadedHash: value,
       }));
     }
   }

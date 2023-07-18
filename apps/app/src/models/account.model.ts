@@ -11,6 +11,7 @@ import {
   AddressFormErrors,
   AddressFormValues,
 } from '../components/address-form.component';
+import { RoutePaths } from '../route-paths';
 
 export interface AccountState {
   account: core.Account | undefined;
@@ -29,6 +30,7 @@ export interface AccountState {
   selectedAddress: Address | undefined;
   editShippingForm: AddressFormValues;
   editShippingFormErrors: AddressFormErrors;
+  activeTabId: string;
 }
 
 export class AccountModel extends Model {
@@ -81,6 +83,7 @@ export class AccountModel extends Model {
             phoneNumber: '',
           },
           editShippingFormErrors: {},
+          activeTabId: RoutePaths.AccountOrderHistory,
         })
       )
     );
@@ -251,6 +254,19 @@ export class AccountModel extends Model {
       this.store.update((state) => ({
         ...state,
         editShippingFormErrors: value,
+      }));
+    }
+  }
+
+  public get activeTabId(): string {
+    return this.store.getValue().activeTabId;
+  }
+
+  public set activeTabId(value: string) {
+    if (this.activeTabId !== value) {
+      this.store.update((state) => ({
+        ...state,
+        activeTabId: value,
       }));
     }
   }

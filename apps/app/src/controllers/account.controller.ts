@@ -104,6 +104,10 @@ class AccountController extends Controller {
     this._model.editShippingFormErrors = value;
   }
 
+  public updateActiveTabId(value: string): void {
+    this._model.activeTabId = value;
+  }
+
   public getAddressFormErrors(
     form: AddressFormValues
   ): AddressFormErrors | undefined {
@@ -198,7 +202,28 @@ class AccountController extends Controller {
       });
     } catch (error: any) {
       WindowController.addToast({
-        key: `create-customer-${Math.random()}`,
+        key: `complete-customer-${Math.random()}`,
+        message: error.name,
+        description: error.message,
+        type: 'error',
+      });
+    }
+  }
+
+  public async updateCustomerAsync(form: ProfileFormValues): Promise<void> {
+    if (!this._model.customer) {
+      return;
+    }
+
+    try {
+      await MedusaService.requestUpdateCustomerAsync(this._model.customer.id, {
+        first_name: form.firstName ?? '',
+        last_name: form.lastName ?? '',
+        phone: form.phoneNumber,
+      });
+    } catch (error: any) {
+      WindowController.addToast({
+        key: `update-customer-${Math.random()}`,
         message: error.name,
         description: error.message,
         type: 'error',
@@ -337,6 +362,12 @@ class AccountController extends Controller {
     this._model.customer = await MedusaService.requestCustomerAsync(
       value?.email ?? ''
     );
+
+    this._model.profileForm = {
+      firstName: this._model.customer?.first_name,
+      lastName: this._model.customer?.last_name,
+      phoneNumber: this._model.customer?.phone,
+    };
 
     await this.requestOrdersAsync();
   }

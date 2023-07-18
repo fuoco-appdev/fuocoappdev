@@ -1,0 +1,41 @@
+@import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
+
+.root {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    & .edit-text-container {
+        display: flex;
+        flex-direction: row;
+        margin: 0 $mp-4;
+        margin-top: $mp-4;
+        margin-bottom: $mp-2;
+        border-bottom: solid 1px $brand-900;
+
+        & .edit-text {
+            flex: 1;
+            color: $brand-900;
+            font-weight: $font-weight-bold;
+            line-height: 46px;
+            font-size: $font-size-lg;
+        }
+    }
+
+    & .profile-form-container {
+        padding: $mp-4;
+    }
+
+    & .save-button-container {
+        padding: 0 $mp-4;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        justify-content: flex-end;
+        margin-bottom: $mp-10;
+    }
+}
+
+.save-button {
+    background-color: $brand-700 !important;
+}

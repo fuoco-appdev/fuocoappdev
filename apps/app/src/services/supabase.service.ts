@@ -95,7 +95,11 @@ class SupabaseService {
     event: AuthChangeEvent,
     session: Session | null
   ): Promise<void> {
-    if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
+    if (
+      event === 'SIGNED_IN' ||
+      event === 'INITIAL_SESSION' ||
+      event === 'TOKEN_REFRESHED'
+    ) {
       if (!session) {
         this.clear();
         return;

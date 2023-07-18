@@ -155,12 +155,15 @@ function AccountMobileComponent(): JSX.Element {
             <Tabs
               flex={true}
               touchScreen={true}
-              activeId={windowProps.activeRoute}
+              activeId={props.activeTabId}
               classNames={{
                 tabButton: styles['tab-button'],
                 tabOutline: styles['tab-outline'],
               }}
-              onChange={(id) => navigate(id)}
+              onChange={(id) => {
+                AccountController.updateActiveTabId(id);
+                navigate(id);
+              }}
               type={'underlined'}
               tabs={[
                 {
@@ -194,14 +197,21 @@ export default function AccountComponent(): JSX.Element {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const loadedLocation = windowProps.loadedHash as string;
-    if (location.hash === `#${RoutePaths.Account}`) {
+    const loadedLocation = windowProps.loadedHash as string | undefined;
+    if (
+      loadedLocation &&
+      loadedLocation !== `#${RoutePaths.Account}` &&
+      location.hash === `#${RoutePaths.Account}`
+    ) {
       const formattedLocation = loadedLocation.replace('#', '');
+      WindowController.updateLoadedHash(undefined);
       navigate(
         formattedLocation.startsWith(RoutePaths.Account)
           ? formattedLocation
           : RoutePaths.AccountOrderHistory
       );
+    } else {
+      navigate(props.activeTabId);
     }
   }, [location.hash, windowProps.loadedLocation]);
 

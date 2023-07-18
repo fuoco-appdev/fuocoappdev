@@ -94,7 +94,7 @@ class WindowController extends Controller {
     this._model.currentPosition = value;
   }
 
-  public updateLoadedHash(value: string): void {
+  public updateLoadedHash(value: string | undefined): void {
     this._model.loadedHash = value;
   }
 
