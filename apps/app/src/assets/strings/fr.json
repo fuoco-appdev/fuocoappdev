@@ -219,5 +219,6 @@
   "noAddresses": "Aucune adresse n'a été trouvée. Ajoutez-les à votre liste pour accélérer le processus de paiement!",
   "removeAddress": "Supprimer l'adresse?",
   "removeAddressDescription": "L'adresse {{address_1, string}} {{address_2, string}}, {{postal_code, string}}, {{city, string}}, {{province, string}}, {{country_code, string}} sera supprimée de votre compte.",
-  "applyChanges": "Appliquer les changements"
+  "applyChanges": "Appliquer les changements",
+  "security": "Sécurité"
 }

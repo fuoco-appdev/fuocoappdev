@@ -172,32 +172,35 @@ class AccountController extends Controller {
     }
 
     try {
-      let customer = await MedusaService.requestCustomerAsync(
+      this._model.customer = await MedusaService.requestCustomerAsync(
         SupabaseService.user.email ?? ''
       );
-      if (!customer) {
-        customer = await MedusaService.requestCreateCustomerAsync({
+      if (!this._model.customer) {
+        this._model.customer = await MedusaService.requestCreateCustomerAsync({
           email: SupabaseService.user.email,
           first_name: this._model.profileForm.firstName ?? '',
           last_name: this._model.profileForm.lastName ?? '',
           phone: this._model.profileForm.phoneNumber,
         });
-        if (!customer) {
+        if (!this._model.customer) {
           throw new Error('No customer created');
         }
       } else {
-        customer = await MedusaService.requestUpdateCustomerAsync(customer.id, {
-          first_name: this._model.profileForm.firstName ?? '',
-          last_name: this._model.profileForm.lastName ?? '',
-          phone: this._model.profileForm.phoneNumber,
-        });
-        if (!customer) {
+        this._model.customer = await MedusaService.requestUpdateCustomerAsync(
+          this._model.customer.id,
+          {
+            first_name: this._model.profileForm.firstName ?? '',
+            last_name: this._model.profileForm.lastName ?? '',
+            phone: this._model.profileForm.phoneNumber,
+          }
+        );
+        if (!this._model.customer) {
           throw new Error('No customer updated');
         }
       }
 
       this._model.account = await AccountService.requestUpdateActiveAsync({
-        customerId: customer?.id,
+        customerId: this._model.customer?.id,
         status: 'Complete',
       });
     } catch (error: any) {
@@ -305,10 +308,33 @@ class AccountController extends Controller {
     this._model.editShippingForm = {};
   }
 
+  public async logoutAsync(): Promise<void> {
+    try {
+      await MedusaService.medusa.auth.deleteSession();
+      await SupabaseService.signoutAsync();
+    } catch (error: any) {
+      WindowController.addToast({
+        key: `logout-${Math.random()}`,
+        message: error.name,
+        description: error.message,
+        type: 'error',
+      });
+    }
+  }
+
   public async deleteAsync(): Promise<void> {
-    await AccountService.requestActiveDeleteAsync();
-    AccountService.clearActiveAccount();
-    SupabaseService.clear();
+    try {
+      await AccountService.requestActiveDeleteAsync();
+      AccountService.clearActiveAccount();
+      SupabaseService.clear();
+    } catch (error: any) {
+      WindowController.addToast({
+        key: `delete-${Math.random()}`,
+        message: error.name,
+        description: error.message,
+        type: 'error',
+      });
+    }
   }
 
   private async requestOrdersAsync(

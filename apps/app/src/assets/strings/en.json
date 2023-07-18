@@ -219,5 +219,6 @@
   "noAddresses": "No addresses have been found. Add them to your list for a quicker checkout experience!",
   "removeAddress": "Remove address?",
   "removeAddressDescription": "Address {{address_1, string}} {{address_2, string}}, {{postal_code, string}}, {{city, string}}, {{province, string}}, {{country_code, string}} will be removed from your account.",
-  "applyChanges": "Apply changes"
+  "applyChanges": "Apply changes",
+  "security": "Security"
 }

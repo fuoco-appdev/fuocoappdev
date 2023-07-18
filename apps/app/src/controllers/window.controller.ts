@@ -184,6 +184,10 @@ class WindowController extends Controller {
     event: AuthChangeEvent,
     session: Session | null
   ): Promise<void> {
+    if (event === 'SIGNED_IN') {
+      this._model.isLoading = true;
+    }
+
     this._model.authState = event;
   }
 

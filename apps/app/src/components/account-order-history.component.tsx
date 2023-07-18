@@ -73,7 +73,7 @@ function AccountOrderHistoryMobileComponent(): JSX.Element {
                 size={'large'}
                 touchScreen={true}
                 onClick={() =>
-                  setTimeout(() => navigate(RoutePaths.Store), 200)
+                  setTimeout(() => navigate(RoutePaths.Store), 150)
                 }
               >
                 {t('shopNow')}

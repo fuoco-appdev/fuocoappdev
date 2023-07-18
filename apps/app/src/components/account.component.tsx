@@ -224,22 +224,6 @@ export default function AccountComponent(): JSX.Element {
       <ResponsiveMobile>
         <AccountMobileComponent />
       </ResponsiveMobile>
-      <Modal
-        title={t('deleteYourAccount') ?? ''}
-        description={t('deleteYourAccountDescription') ?? ''}
-        confirmText={t('delete') ?? ''}
-        cancelText={t('cancel') ?? ''}
-        variant={'danger'}
-        size={'small'}
-        classNames={{
-          modal: styles['delete-modal'],
-        }}
-        visible={props.showDeleteModal}
-        onCancel={() => console.log('cancel')}
-        onConfirm={() => {
-          AccountController.deleteAsync();
-        }}
-      ></Modal>
     </>
   );
 }
