@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
 import WindowController from '../controllers/window.controller';
 import styles from './window.module.scss';
 import {
@@ -178,6 +178,8 @@ function WindowMobileComponent(): JSX.Element {
                   t('confirmedOrder')}
                 {props.activeRoute === RoutePaths.AccountSettings &&
                   t('settings')}
+                {props.activeRoute === RoutePaths.AccountSettingsSecurity &&
+                  t('security')}
               </div>
             )}
           </div>

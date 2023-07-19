@@ -42,6 +42,7 @@ import CheckoutComponent from './checkout.component';
 import OrderConfirmedComponent from './order-confirmed.component';
 import { useObservable } from '@ngneat/use-observable';
 import AccountEditComponent from './account-edit.component';
+import AccountSettingsSecurityComponent from './account-settings-security.component';
 
 interface RouteElementProps {
   element: JSX.Element;
@@ -200,6 +201,14 @@ export default function AppComponent(): JSX.Element {
             path={RoutePaths.AccountSettings}
             element={
               <AuthenticatedComponent element={<AccountSettingsComponent />} />
+            }
+          />
+          <Route
+            path={RoutePaths.AccountSettingsSecurity}
+            element={
+              <AuthenticatedComponent
+                element={<AccountSettingsSecurityComponent />}
+              />
             }
           />
         </Route>

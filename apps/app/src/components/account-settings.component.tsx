@@ -33,6 +33,9 @@ function AccountSettingsMobileComponent(): JSX.Element {
         <Ripples
           className={styles['setting-button-container']}
           color={'rgba(42, 42, 95, .35)'}
+          onClick={() =>
+            setTimeout(() => navigate(RoutePaths.AccountSettingsSecurity), 150)
+          }
         >
           <div className={styles['setting-button-content']}>
             <div className={styles['setting-icon']}>

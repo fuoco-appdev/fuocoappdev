@@ -1,0 +1,47 @@
+@import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
+
+.root {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    padding: $mp-4 0;
+}
+
+.accordion-top-bar {
+    padding: 0 $mp-4;
+}
+
+.accordion-panel {
+    padding: 0 $mp-4;
+}
+
+.accordion-button {
+    color: $brand-900 !important;
+}
+
+.accordion-top-bar-label {
+    color: $brand-900 !important;
+    font-size: $font-size-lg !important;
+    font-weight: $font-weight-bold;
+}
+
+.auth-input-form-layout-label {
+    color: $brand-900 !important;
+}
+  
+.auth-input {
+    color: $brand-900 !important;
+}
+
+.auth-input-icon-container {
+    color: $brand-900 !important;
+}
+  
+.auth-input-container {
+    border-color: $brand-900 !important;
+}
+  
+.auth-button {
+    background-color: $brand-700 !important;
+}
