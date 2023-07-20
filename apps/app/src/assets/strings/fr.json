@@ -34,6 +34,8 @@
   "passwordLengthError": "Doit comporter au moins 6 caractères",
   "successfullyUpdatedPassword": "Mise à jour réussie",
   "successfullyUpdatedPasswordDescription": "Votre mot de passe a été mis à jour avec succès",
+  "successfullyUpdatedUser": "Mise à jour réussie",
+  "successfullyUpdatedUserDescription": "Votre compte a été mis à jour avec succès",
   "privacyPolicy": "Politique de confidentialité",
   "yourEmailAddress": "Votre adresse électronique",
   "sendResetPasswordInstructions": "Envoyer la réinitialisation du mot de passe",

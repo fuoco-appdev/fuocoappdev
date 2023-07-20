@@ -34,6 +34,8 @@
   "passwordLengthError": "Should be at least 6 characters",
   "successfullyUpdatedPassword": "Successfully updated",
   "successfullyUpdatedPasswordDescription": "Your password has been successfully updated",
+  "successfullyUpdatedUser": "Successfully updated",
+  "successfullyUpdatedUserDescription": "Your account has been successfully updated",
   "privacyPolicy": "Privacy Policy",
   "yourEmailAddress": "Your email address",
   "sendResetPasswordInstructions": "Send password reset",

@@ -219,11 +219,12 @@ class AccountController extends Controller {
     }
 
     try {
-      await MedusaService.requestUpdateCustomerAsync(this._model.customer.id, {
+      const customerResponse = await MedusaService.medusa.customers.update({
         first_name: form.firstName ?? '',
         last_name: form.lastName ?? '',
         phone: form.phoneNumber,
       });
+      this._model.customer = customerResponse.customer as Customer;
     } catch (error: any) {
       WindowController.addToast({
         key: `update-customer-${Math.random()}`,
