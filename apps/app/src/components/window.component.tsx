@@ -178,7 +178,7 @@ function WindowMobileComponent(): JSX.Element {
                   t('confirmedOrder')}
                 {props.activeRoute === RoutePaths.AccountSettings &&
                   t('settings')}
-                {props.activeRoute === RoutePaths.AccountSettingsSecurity &&
+                {props.activeRoute === RoutePaths.AccountSettingsAccount &&
                   t('security')}
               </div>
             )}

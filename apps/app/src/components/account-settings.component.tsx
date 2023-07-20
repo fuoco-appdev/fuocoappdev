@@ -24,7 +24,6 @@ function AccountSettingsDesktopComponent(): JSX.Element {
 function AccountSettingsMobileComponent(): JSX.Element {
   const navigate = useNavigate();
   const [props] = useObservable(AccountController.model.store);
-  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const { t, i18n } = useTranslation();
 
   return (
@@ -34,32 +33,17 @@ function AccountSettingsMobileComponent(): JSX.Element {
           className={styles['setting-button-container']}
           color={'rgba(42, 42, 95, .35)'}
           onClick={() =>
-            setTimeout(() => navigate(RoutePaths.AccountSettingsSecurity), 150)
+            setTimeout(() => navigate(RoutePaths.AccountSettingsAccount), 150)
           }
         >
           <div className={styles['setting-button-content']}>
             <div className={styles['setting-icon']}>
-              <Line.Security size={24} />
+              <Line.Person size={24} />
             </div>
-            <div className={styles['setting-text']}>{t('security')}</div>
+            <div className={styles['setting-text']}>{t('account')}</div>
           </div>
         </Ripples>
         <div className={styles['bottom-content-container']}>
-          <Button
-            block={true}
-            size={'large'}
-            classNames={{
-              container: styles['delete-button-container'],
-              button: styles['delete-button'],
-            }}
-            rippleProps={{
-              color: 'rgba(133, 38, 122, .35)',
-            }}
-            touchScreen={true}
-            onClick={() => setShowDeleteModal(true)}
-          >
-            {t('deleteAccount')}
-          </Button>
           <Button
             block={true}
             size={'large'}
@@ -76,23 +60,6 @@ function AccountSettingsMobileComponent(): JSX.Element {
           </Button>
         </div>
       </div>
-      <Modal
-        title={t('deleteYourAccount') ?? ''}
-        description={t('deleteYourAccountDescription') ?? ''}
-        confirmText={t('delete') ?? ''}
-        cancelText={t('cancel') ?? ''}
-        variant={'danger'}
-        size={'small'}
-        classNames={{
-          modal: styles['delete-modal'],
-        }}
-        visible={showDeleteModal}
-        onCancel={() => setShowDeleteModal(false)}
-        onConfirm={async () => {
-          await AccountController.deleteAsync();
-          setShowDeleteModal(false);
-        }}
-      ></Modal>
     </>
   );
 }

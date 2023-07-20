@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import AccountController from '../controllers/account.controller';
-import styles from './account-settings-security.module.scss';
+import styles from './account-settings-account.module.scss';
 import {
   Accordion,
   Alert,
@@ -24,14 +24,14 @@ import Ripples from 'react-ripples';
 import { AuthError } from '@supabase/supabase-js';
 import windowController from '../controllers/window.controller';
 
-function AccountSettingsSecurityDesktopComponent(): JSX.Element {
+function AccountSettingsAccountDesktopComponent(): JSX.Element {
   const navigate = useNavigate();
   const [props] = useObservable(AccountController.model.store);
 
   return <></>;
 }
 
-function AccountSettingsSecurityMobileComponent(): JSX.Element {
+function AccountSettingsAccountMobileComponent(): JSX.Element {
   const navigate = useNavigate();
   const [props] = useObservable(AccountController.model.store);
   const [updatePasswordError, setUpdatePasswordError] = useState<
@@ -40,6 +40,7 @@ function AccountSettingsSecurityMobileComponent(): JSX.Element {
   const [confirmPasswordError, setConfirmPasswordError] = useState<
     string | undefined
   >(undefined);
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const { t, i18n } = useTranslation();
 
   const accordionItemClassNames: AccordionItemClasses = {
@@ -101,18 +102,52 @@ function AccountSettingsSecurityMobileComponent(): JSX.Element {
           />
         </Accordion.Item>
       </Accordion>
+      <div className={styles['bottom-content-container']}>
+        <Button
+          block={true}
+          size={'large'}
+          classNames={{
+            container: styles['delete-button-container'],
+            button: styles['delete-button'],
+          }}
+          rippleProps={{
+            color: 'rgba(133, 38, 122, .35)',
+          }}
+          touchScreen={true}
+          onClick={() => setShowDeleteModal(true)}
+        >
+          {t('deleteAccount')}
+        </Button>
+      </div>
+      <Modal
+        title={t('deleteYourAccount') ?? ''}
+        description={t('deleteYourAccountDescription') ?? ''}
+        confirmText={t('delete') ?? ''}
+        cancelText={t('cancel') ?? ''}
+        variant={'danger'}
+        size={'small'}
+        classNames={{
+          modal: styles['delete-modal'],
+        }}
+        visible={showDeleteModal}
+        onCancel={() => setShowDeleteModal(false)}
+        onConfirm={async () => {
+          await AccountController.deleteAsync();
+          setShowDeleteModal(false);
+        }}
+      ></Modal>
     </div>
   );
 }
 
-export default function AccountSettingsSecurityComponent(): JSX.Element {
+export default function AccountSettingsAccountComponent(): JSX.Element {
   return (
     <>
       <ResponsiveDesktop>
-        <AccountSettingsSecurityDesktopComponent />
+        <AccountSettingsAccountDesktopComponent />
       </ResponsiveDesktop>
       <ResponsiveMobile>
-        <AccountSettingsSecurityMobileComponent />
+        <AccountSettingsAccountMobileComponent />
       </ResponsiveMobile>
     </>
   );
