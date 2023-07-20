@@ -374,10 +374,12 @@ class AccountController extends Controller {
     }
 
     this._model.account = value;
-    this._model.profileUrl = await BucketService.getPublicUrlAsync(
-      core.StorageFolderType.Avatars,
-      value.profileUrl
-    );
+    if (value.profileUrl && value.profileUrl.length > 0) {
+      this._model.profileUrl = await BucketService.getPublicUrlAsync(
+        core.StorageFolderType.Avatars,
+        value.profileUrl
+      );
+    }
   }
 
   private async onActiveUserChangedAsync(value: User | null): Promise<void> {

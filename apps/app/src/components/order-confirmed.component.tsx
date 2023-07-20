@@ -253,6 +253,12 @@ function OrderConfirmedMobileComponent({}: OrderConfirmedProps): JSX.Element {
             <Button
               block={true}
               size={'large'}
+              classNames={{
+                button: styles['refund-button'],
+              }}
+              rippleProps={{
+                color: 'rgba(233, 33, 66, .35)',
+              }}
               disabled={
                 Object.values(props.refundItems as RefundItem[]).find(
                   (value: RefundItem) => value.quantity > 0

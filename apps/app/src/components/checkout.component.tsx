@@ -98,9 +98,12 @@ function CheckoutMobileComponent(): JSX.Element {
       let description = '';
       let name = '';
       if (session.provider_id === ProviderType.Manual) {
+        if (process.env['NODE_ENV'] === 'production') {
+          continue;
+        }
         name = t('manualProviderName');
         description = t('manualProviderDescription');
-      } else if (session.provider_id === ProviderType.AuthorizeNet) {
+      } else if (session.provider_id === ProviderType.Stripe) {
         name = t('creditCardProviderName');
         description = t('creditCardProviderDescription');
       }

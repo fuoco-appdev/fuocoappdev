@@ -13,7 +13,7 @@ export enum ShippingType {
 
 export enum ProviderType {
   Manual = 'manual',
-  AuthorizeNet = 'authorize-net',
+  Stripe = 'stripe',
 }
 
 export interface CheckoutState {
