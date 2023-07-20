@@ -17,6 +17,7 @@ import {
 } from '@medusajs/medusa';
 import { select } from '@ngneat/elf';
 import WindowController from './window.controller';
+import AccountController from './account.controller';
 
 class CheckoutController extends Controller {
   private readonly _model: CheckoutModel;
@@ -69,6 +70,14 @@ class CheckoutController extends Controller {
     this._model.billingFormErrors = value;
   }
 
+  public updateAddShippingAddress(value: AddressFormValues): void {
+    this._model.addShippingForm = { ...this._model.addShippingForm, ...value };
+  }
+
+  public updateAddShippingAddressErrors(value: AddressFormErrors): void {
+    this._model.addShippingFormErrors = value;
+  }
+
   public updateErrorStrings(value: AddressFormErrors): void {
     this._model.errorStrings = value;
   }
@@ -91,7 +100,7 @@ class CheckoutController extends Controller {
   ): Promise<void> {
     if (
       !CartController.model.cartId ||
-      this._model.selectedShippingOptionId === value ||
+      this._model.selectedShippingAddressOptionId === value ||
       !CartController.model.cart ||
       CartController.model.cart?.items.length <= 0
     ) {
@@ -107,12 +116,51 @@ class CheckoutController extends Controller {
       this._model.selectedShippingOptionId = value;
     } catch (error: any) {
       WindowController.addToast({
-        key: `add-shipping-method-${Math.random()}`,
+        key: `add-shipping-address-${Math.random()}`,
         message: error.name,
         description: error.message,
         type: 'error',
       });
     }
+  }
+
+  public async addShippingAddressAsync(): Promise<void> {
+    await AccountController.addAddressAsync(this._model.addShippingForm);
+  }
+
+  public async updateSelectedShippingAddressOptionIdAsync(
+    value: string
+  ): Promise<void> {
+    const customer = AccountController.model.customer;
+    const address = customer?.shipping_addresses.find(
+      (address) => address.id === value
+    );
+    if (!address) {
+      return;
+    }
+
+    this.updateShippingAddress({
+      email: customer?.email,
+      firstName: address?.first_name ?? '',
+      lastName: address?.last_name ?? '',
+      company: address?.company ?? '',
+      address: address?.address_1 ?? '',
+      apartments: address?.address_2 ?? '',
+      postalCode: address?.postal_code ?? '',
+      city: address?.city ?? '',
+      countryCode: address.country_code ?? '',
+      region: address?.province ?? '',
+      phoneNumber: address?.phone ?? '',
+    });
+
+    this._model.selectedShippingAddressOptionId = value;
+    this._model.shippingFormComplete = true;
+
+    if (this._model.sameAsBillingAddress && !this._model.billingFormComplete) {
+      this._model.billingFormComplete = true;
+    }
+
+    await this.continueToDeliveryAsync();
   }
 
   public async updateSelectedProviderIdAsync(
@@ -259,7 +307,10 @@ class CheckoutController extends Controller {
   ): AddressFormErrors | undefined {
     const errors: AddressFormErrors = {};
 
-    if (!form.email || form.email?.length <= 0) {
+    if (
+      !AccountController.model.customer &&
+      (!form.email || form.email?.length <= 0)
+    ) {
       errors.email = this._model.errorStrings.email;
     }
 
@@ -313,47 +364,50 @@ class CheckoutController extends Controller {
       return;
     }
 
-    this._model.shippingForm = {
-      email: value?.email,
-      firstName: value?.shipping_address?.first_name ?? '',
-      lastName: value?.shipping_address?.last_name ?? '',
-      company: value?.shipping_address?.company ?? '',
-      address: value?.shipping_address?.address_1 ?? '',
-      apartments: value?.shipping_address?.address_2 ?? '',
-      postalCode: value?.shipping_address?.postal_code ?? '',
-      city: value?.shipping_address?.city ?? '',
-      countryCode: value?.shipping_address?.country_code ?? '',
-      region: value?.shipping_address?.province ?? '',
-      phoneNumber: value?.shipping_address?.phone ?? '',
-    };
-    this._model.billingForm = {
-      email: value?.email,
-      firstName: value?.billing_address?.first_name ?? '',
-      lastName: value?.billing_address?.last_name ?? '',
-      company: value?.billing_address?.company ?? '',
-      address: value?.billing_address?.address_1 ?? '',
-      apartments: value?.billing_address?.address_2 ?? '',
-      postalCode: value?.billing_address?.postal_code ?? '',
-      city: value?.billing_address?.city ?? '',
-      countryCode: value?.billing_address?.country_code ?? '',
-      region: value?.billing_address?.province ?? '',
-      phoneNumber: value?.billing_address?.phone ?? '',
-    };
+    const customer = AccountController.model.customer;
+    if (!customer) {
+      this._model.shippingForm = {
+        email: value?.email,
+        firstName: value?.shipping_address?.first_name ?? '',
+        lastName: value?.shipping_address?.last_name ?? '',
+        company: value?.shipping_address?.company ?? '',
+        address: value?.shipping_address?.address_1 ?? '',
+        apartments: value?.shipping_address?.address_2 ?? '',
+        postalCode: value?.shipping_address?.postal_code ?? '',
+        city: value?.shipping_address?.city ?? '',
+        countryCode: value?.shipping_address?.country_code ?? '',
+        region: value?.shipping_address?.province ?? '',
+        phoneNumber: value?.shipping_address?.phone ?? '',
+      };
+      this._model.billingForm = {
+        email: value?.email,
+        firstName: value?.billing_address?.first_name ?? '',
+        lastName: value?.billing_address?.last_name ?? '',
+        company: value?.billing_address?.company ?? '',
+        address: value?.billing_address?.address_1 ?? '',
+        apartments: value?.billing_address?.address_2 ?? '',
+        postalCode: value?.billing_address?.postal_code ?? '',
+        city: value?.billing_address?.city ?? '',
+        countryCode: value?.billing_address?.country_code ?? '',
+        region: value?.billing_address?.province ?? '',
+        phoneNumber: value?.billing_address?.phone ?? '',
+      };
 
-    if (
-      value?.shipping_address &&
-      Object.keys(this.getAddressFormErrors(this._model.shippingForm) ?? {})
-        .length <= 0
-    ) {
-      this._model.shippingFormComplete = true;
-    }
+      if (
+        value?.shipping_address &&
+        Object.keys(this.getAddressFormErrors(this._model.shippingForm) ?? {})
+          .length <= 0
+      ) {
+        this._model.shippingFormComplete = true;
+      }
 
-    if (
-      value?.billing_address &&
-      Object.keys(this.getAddressFormErrors(this._model.billingForm) ?? {})
-        .length <= 0
-    ) {
-      this._model.billingFormComplete = true;
+      if (
+        value?.billing_address &&
+        Object.keys(this.getAddressFormErrors(this._model.billingForm) ?? {})
+          .length <= 0
+      ) {
+        this._model.billingFormComplete = true;
+      }
     }
 
     if (value?.region_id) {
@@ -386,6 +440,17 @@ class CheckoutController extends Controller {
           type: 'error',
         });
       }
+    }
+
+    // Select first shipping address
+    if (
+      customer &&
+      !this._model.selectedShippingAddressOptionId &&
+      customer.shipping_addresses.length > 0
+    ) {
+      await this.updateSelectedShippingAddressOptionIdAsync(
+        customer.shipping_addresses[0].id ?? ''
+      );
     }
 
     // Select first provider by default

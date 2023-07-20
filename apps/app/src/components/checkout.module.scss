@@ -46,6 +46,14 @@
                     color: $brand-900;
                     font-weight: $font-weight-bold;
                 }
+
+                & .header-right-content {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: flex-end;
+                    height: 100%;
+                }
             }
 
             & .card-description {
@@ -154,6 +162,19 @@
 
         & .pay-button-container {
             padding: 0 $mp-4;
+        }
+    }
+
+    & .add-address-container {
+        padding: $mp-4;
+
+        & .add-address-button-container {
+            width: 100%;
+            padding-top: $mp-4;
+
+            & .add-address-button {
+                background-color: $brand-700;
+            }
         }
     }
 }

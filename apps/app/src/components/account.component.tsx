@@ -204,7 +204,10 @@ export default function AccountComponent(): JSX.Element {
       location.hash === `#${RoutePaths.Account}`
     ) {
       const formattedLocation = loadedLocation.replace('#', '');
-      if (!formattedLocation.startsWith(RoutePaths.AccountSettings)) {
+      if (
+        formattedLocation.startsWith(RoutePaths.Account) &&
+        !formattedLocation.startsWith(RoutePaths.AccountSettings)
+      ) {
         AccountController.updateActiveTabId(formattedLocation);
       }
       WindowController.updateLoadedHash(undefined);

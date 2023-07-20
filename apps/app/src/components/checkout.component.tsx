@@ -8,6 +8,7 @@ import {
   Radio,
   Input,
   Solid,
+  Dropdown,
 } from '@fuoco.appdev/core-ui';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useRef, useState } from 'react';
@@ -22,11 +23,13 @@ import StoreController from '../controllers/store.controller';
 import { PricedShippingOption } from '@medusajs/medusa/dist/types/pricing';
 import { ProviderType, ShippingType } from '../models/checkout.model';
 import CartController from '../controllers/cart.controller';
-import { Discount, GiftCard, PaymentSession } from '@medusajs/medusa';
+import { Discount, GiftCard, PaymentSession, Customer } from '@medusajs/medusa';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
 import { useNavigate } from 'react-router-dom';
 import { RoutePaths } from '../route-paths';
+import WindowController from '../controllers/window.controller';
+import AccountController from '../controllers/account.controller';
 
 function CheckoutDesktopComponent(): JSX.Element {
   return <></>;
@@ -35,12 +38,19 @@ function CheckoutDesktopComponent(): JSX.Element {
 function CheckoutMobileComponent(): JSX.Element {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [props] = useObservable(CheckoutController.model.store);
+  const [windowProps] = useObservable(WindowController.model.store);
+  const [accountProps] = useObservable(AccountController.model.store);
   const [cartProps] = useObservable(CartController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
   const [shippingOptions, setShippingOptions] = useState<RadioProps[]>([]);
   const [providerOptions, setProviderOptions] = useState<RadioProps[]>([]);
+  const [shippingAddressOptions, setShippingAddressOptions] = useState<
+    RadioProps[]
+  >([]);
+  const [openAddDropdown, setOpenAddDropdown] = useState<boolean>(false);
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const customer = accountProps.customer as Customer;
 
   useEffect(() => {
     if (cartProps.cart && cartProps.cart.items.length <= 0) {
@@ -108,6 +118,42 @@ function CheckoutMobileComponent(): JSX.Element {
   }, [cartProps.cart]);
 
   useEffect(() => {
+    let radioOptions: RadioProps[] = [];
+    if (!customer) {
+      return;
+    }
+
+    for (const address of customer?.shipping_addresses) {
+      let value = `${address.address_1}`;
+      let description = `${address.first_name} ${address.last_name}, ${address.phone}`;
+      if (address?.address_2) {
+        value += ` ${address.address_2}, `;
+      } else {
+        value += ', ';
+      }
+
+      if (address?.province) {
+        value += `${address.province}, `;
+      }
+
+      value += address.country_code?.toUpperCase();
+
+      if (address.company) {
+        description += `, ${address.company}`;
+      }
+
+      radioOptions.push({
+        id: address.id,
+        label: value,
+        value: value,
+        description: description,
+      });
+    }
+
+    setShippingAddressOptions(radioOptions);
+  }, [accountProps.customer]);
+
+  useEffect(() => {
     CheckoutController.updateErrorStrings({
       email: t('fieldEmptyError') ?? '',
       firstName: t('fieldEmptyError') ?? '',
@@ -126,59 +172,104 @@ function CheckoutMobileComponent(): JSX.Element {
           <div className={styles['header-container']}>
             <div className={styles['step-count']}>1</div>
             <div className={styles['header-title']}>{t('shippingAddress')}</div>
+            <div className={styles['header-right-content']}>
+              {windowProps.isAuthenticated && (
+                <div>
+                  <Button
+                    rounded={true}
+                    icon={<Line.Add size={24} color={'#2A2A5F'} />}
+                    type={'text'}
+                    rippleProps={{
+                      color: 'rgba(42, 42, 95, .35)',
+                    }}
+                    touchScreen={true}
+                    onClick={() => setOpenAddDropdown(true)}
+                  />
+                </div>
+              )}
+            </div>
           </div>
-          <AddressFormComponent
-            values={props.shippingForm}
-            errors={props.shippingFormErrors}
-            isComplete={props.shippingFormComplete}
-            onEdit={() => CheckoutController.updateShippingFormComplete(false)}
-            onChangeCallbacks={{
-              email: (event) =>
-                CheckoutController.updateShippingAddress({
-                  email: event.target.value,
-                }),
-              firstName: (event) =>
-                CheckoutController.updateShippingAddress({
-                  firstName: event.target.value,
-                }),
-              lastName: (event) =>
-                CheckoutController.updateShippingAddress({
-                  lastName: event.target.value,
-                }),
-              company: (event) =>
-                CheckoutController.updateShippingAddress({
-                  company: event.target.value,
-                }),
-              address: (event) =>
-                CheckoutController.updateShippingAddress({
-                  address: event.target.value,
-                }),
-              apartments: (event) =>
-                CheckoutController.updateShippingAddress({
-                  apartments: event.target.value,
-                }),
-              postalCode: (event) =>
-                CheckoutController.updateShippingAddress({
-                  postalCode: event.target.value,
-                }),
-              city: (event) =>
-                CheckoutController.updateShippingAddress({
-                  city: event.target.value,
-                }),
-              country: (index, id, value) =>
-                CheckoutController.updateShippingAddress({
-                  countryCode: id,
-                }),
-              region: (index, id, value) =>
-                CheckoutController.updateShippingAddress({
-                  region: value,
-                }),
-              phoneNumber: (value, event, formattedValue) =>
-                CheckoutController.updateShippingAddress({
-                  phoneNumber: value,
-                }),
-            }}
-          />
+          {!windowProps.isAuthenticated && (
+            <AddressFormComponent
+              values={props.shippingForm}
+              errors={props.shippingFormErrors}
+              isComplete={props.shippingFormComplete}
+              onEdit={() =>
+                CheckoutController.updateShippingFormComplete(false)
+              }
+              onChangeCallbacks={{
+                email: (event) =>
+                  CheckoutController.updateShippingAddress({
+                    email: event.target.value,
+                  }),
+                firstName: (event) =>
+                  CheckoutController.updateShippingAddress({
+                    firstName: event.target.value,
+                  }),
+                lastName: (event) =>
+                  CheckoutController.updateShippingAddress({
+                    lastName: event.target.value,
+                  }),
+                company: (event) =>
+                  CheckoutController.updateShippingAddress({
+                    company: event.target.value,
+                  }),
+                address: (event) =>
+                  CheckoutController.updateShippingAddress({
+                    address: event.target.value,
+                  }),
+                apartments: (event) =>
+                  CheckoutController.updateShippingAddress({
+                    apartments: event.target.value,
+                  }),
+                postalCode: (event) =>
+                  CheckoutController.updateShippingAddress({
+                    postalCode: event.target.value,
+                  }),
+                city: (event) =>
+                  CheckoutController.updateShippingAddress({
+                    city: event.target.value,
+                  }),
+                country: (index, id, value) =>
+                  CheckoutController.updateShippingAddress({
+                    countryCode: id,
+                  }),
+                region: (index, id, value) =>
+                  CheckoutController.updateShippingAddress({
+                    region: value,
+                  }),
+                phoneNumber: (value, event, formattedValue) =>
+                  CheckoutController.updateShippingAddress({
+                    phoneNumber: value,
+                  }),
+              }}
+            />
+          )}
+          {windowProps.isAuthenticated &&
+            customer?.shipping_addresses.length > 0 && (
+              <Radio.Group
+                id={''}
+                activeId={props.selectedShippingAddressOptionId ?? ''}
+                rippleProps={{
+                  color: 'rgba(42, 42, 95, .35)',
+                }}
+                classNames={{
+                  radio: {
+                    containerCard: styles['radio-container-card'],
+                    labelText: styles['radio-label-text'],
+                    labelDescription: styles['radio-label-description-text'],
+                    containerCardActive: styles['radio-container-card-active'],
+                  },
+                }}
+                options={shippingAddressOptions}
+                type={'cards'}
+                onChange={(event) =>
+                  CheckoutController.updateSelectedShippingAddressOptionIdAsync(
+                    event.target.id
+                  )
+                }
+              />
+            )}
           <Checkbox
             classNames={{
               container: styles['checkbox-container'],
@@ -193,46 +284,48 @@ function CheckoutMobileComponent(): JSX.Element {
               )
             }
           />
-          {!props.shippingFormComplete && props.sameAsBillingAddress && (
-            <Button
-              classNames={{
-                container: styles['submit-button-container'],
-                button: styles['submit-button'],
-              }}
-              block={true}
-              size={'large'}
-              icon={<Line.DeliveryDining size={24} />}
-              onClick={() => {
-                CheckoutController.updateShippingAddressErrors({
-                  email: undefined,
-                  firstName: undefined,
-                  lastName: undefined,
-                  company: undefined,
-                  address: undefined,
-                  apartments: undefined,
-                  postalCode: undefined,
-                  city: undefined,
-                  region: undefined,
-                  phoneNumber: undefined,
-                });
+          {!accountProps.customer &&
+            !props.shippingFormComplete &&
+            props.sameAsBillingAddress && (
+              <Button
+                classNames={{
+                  container: styles['submit-button-container'],
+                  button: styles['submit-button'],
+                }}
+                block={true}
+                size={'large'}
+                icon={<Line.DeliveryDining size={24} />}
+                onClick={() => {
+                  CheckoutController.updateShippingAddressErrors({
+                    email: undefined,
+                    firstName: undefined,
+                    lastName: undefined,
+                    company: undefined,
+                    address: undefined,
+                    apartments: undefined,
+                    postalCode: undefined,
+                    city: undefined,
+                    region: undefined,
+                    phoneNumber: undefined,
+                  });
 
-                const errors = CheckoutController.getAddressFormErrors(
-                  CheckoutController.model.shippingForm
-                );
+                  const errors = CheckoutController.getAddressFormErrors(
+                    props.shippingForm
+                  );
 
-                if (errors) {
-                  CheckoutController.updateShippingAddressErrors(errors);
-                  return;
-                }
+                  if (errors) {
+                    CheckoutController.updateShippingAddressErrors(errors);
+                    return;
+                  }
 
-                CheckoutController.updateShippingFormComplete(true);
-                CheckoutController.updateBillingFormComplete(true);
-                CheckoutController.continueToDeliveryAsync();
-              }}
-            >
-              {t('continueToDelivery')}
-            </Button>
-          )}
+                  CheckoutController.updateShippingFormComplete(true);
+                  CheckoutController.updateBillingFormComplete(true);
+                  CheckoutController.continueToDeliveryAsync();
+                }}
+              >
+                {t('continueToDelivery')}
+              </Button>
+            )}
           {!props.shippingFormComplete && !props.sameAsBillingAddress && (
             <Button
               classNames={{
@@ -257,7 +350,7 @@ function CheckoutMobileComponent(): JSX.Element {
                 });
 
                 const errors = CheckoutController.getAddressFormErrors(
-                  CheckoutController.model.shippingForm
+                  props.shippingForm
                 );
 
                 if (errors) {
@@ -654,6 +747,101 @@ function CheckoutMobileComponent(): JSX.Element {
           </Button>
         </div>
       </div>
+      <Dropdown
+        open={openAddDropdown}
+        touchScreen={true}
+        onClose={() => setOpenAddDropdown(false)}
+      >
+        <div className={styles['add-address-container']}>
+          <AddressFormComponent
+            isAuthenticated={true}
+            values={props.addShippingForm}
+            errors={props.addShippingFormErrors}
+            onChangeCallbacks={{
+              firstName: (event) =>
+                CheckoutController.updateAddShippingAddress({
+                  firstName: event.target.value,
+                }),
+              lastName: (event) =>
+                CheckoutController.updateAddShippingAddress({
+                  lastName: event.target.value,
+                }),
+              company: (event) =>
+                CheckoutController.updateAddShippingAddress({
+                  company: event.target.value,
+                }),
+              address: (event) =>
+                CheckoutController.updateAddShippingAddress({
+                  address: event.target.value,
+                }),
+              apartments: (event) =>
+                CheckoutController.updateAddShippingAddress({
+                  apartments: event.target.value,
+                }),
+              postalCode: (event) =>
+                CheckoutController.updateAddShippingAddress({
+                  postalCode: event.target.value,
+                }),
+              city: (event) =>
+                CheckoutController.updateAddShippingAddress({
+                  city: event.target.value,
+                }),
+              country: (index, id, value) =>
+                CheckoutController.updateAddShippingAddress({
+                  countryCode: id,
+                }),
+              region: (index, id, value) =>
+                CheckoutController.updateAddShippingAddress({
+                  region: value,
+                }),
+              phoneNumber: (value, event, formattedValue) =>
+                CheckoutController.updateAddShippingAddress({
+                  phoneNumber: value,
+                }),
+            }}
+          />
+          <div className={styles['add-address-button-container']}>
+            <Button
+              classNames={{
+                button: styles['add-address-button'],
+              }}
+              rippleProps={{
+                color: 'rgba(233, 33, 66, .35)',
+              }}
+              touchScreen={true}
+              block={true}
+              size={'large'}
+              onClick={async () => {
+                CheckoutController.updateAddShippingAddressErrors({
+                  email: undefined,
+                  firstName: undefined,
+                  lastName: undefined,
+                  company: undefined,
+                  address: undefined,
+                  apartments: undefined,
+                  postalCode: undefined,
+                  city: undefined,
+                  region: undefined,
+                  phoneNumber: undefined,
+                });
+
+                const errors = CheckoutController.getAddressFormErrors(
+                  props.addShippingForm
+                );
+                if (errors) {
+                  CheckoutController.updateAddShippingAddressErrors(errors);
+                  return;
+                }
+
+                await CheckoutController.addShippingAddressAsync();
+                setOpenAddDropdown(false);
+              }}
+            >
+              {t('addAddress')}
+            </Button>
+          </div>
+        </div>
+      </Dropdown>
     </div>
   );
 }

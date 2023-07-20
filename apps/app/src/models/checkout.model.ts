@@ -20,9 +20,12 @@ export interface CheckoutState {
   shippingForm: AddressFormValues;
   shippingFormErrors: AddressFormErrors;
   shippingFormComplete: boolean;
+  selectedShippingAddressOptionId: string;
   billingForm: AddressFormValues;
   billingFormErrors: AddressFormErrors;
   billingFormComplete: boolean;
+  addShippingForm: AddressFormValues;
+  addShippingFormErrors: AddressFormErrors;
   errorStrings: AddressFormErrors;
   sameAsBillingAddress: boolean;
   shippingOptions: PricedShippingOption[];
@@ -53,6 +56,7 @@ export class CheckoutModel extends Model {
           },
           shippingFormErrors: {},
           shippingFormComplete: false,
+          selectedShippingAddressOptionId: '',
           billingForm: {
             email: '',
             firstName: '',
@@ -68,6 +72,20 @@ export class CheckoutModel extends Model {
           },
           billingFormErrors: {},
           billingFormComplete: false,
+          addShippingForm: {
+            email: '',
+            firstName: '',
+            lastName: '',
+            company: '',
+            address: '',
+            apartments: '',
+            postalCode: '',
+            city: '',
+            countryCode: '',
+            region: '',
+            phoneNumber: '',
+          },
+          addShippingFormErrors: {},
           errorStrings: {},
           sameAsBillingAddress: true,
           shippingOptions: [],
@@ -110,6 +128,19 @@ export class CheckoutModel extends Model {
     }
   }
 
+  public get selectedShippingAddressOptionId(): string | undefined {
+    return this.store.getValue().selectedShippingAddressOptionId;
+  }
+
+  public set selectedShippingAddressOptionId(value: string | undefined) {
+    if (this.selectedShippingAddressOptionId !== value) {
+      this.store.update((state) => ({
+        ...state,
+        selectedShippingAddressOptionId: value,
+      }));
+    }
+  }
+
   public get billingForm(): AddressFormValues {
     return this.store.getValue().billingForm;
   }
@@ -137,6 +168,29 @@ export class CheckoutModel extends Model {
   public set billingFormComplete(value: boolean) {
     if (this.billingFormComplete !== value) {
       this.store.update((state) => ({ ...state, billingFormComplete: value }));
+    }
+  }
+
+  public get addShippingForm(): AddressFormValues {
+    return this.store.getValue().addShippingForm;
+  }
+
+  public set addShippingForm(value: AddressFormValues) {
+    if (JSON.stringify(this.addShippingForm) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, addShippingForm: value }));
+    }
+  }
+
+  public get addShippingFormErrors(): AddressFormErrors {
+    return this.store.getValue().addShippingFormErrors;
+  }
+
+  public set addShippingFormErrors(value: AddressFormErrors) {
+    if (JSON.stringify(this.addShippingFormErrors) !== JSON.stringify(value)) {
+      this.store.update((state) => ({
+        ...state,
+        addShippingFormErrors: value,
+      }));
     }
   }
 

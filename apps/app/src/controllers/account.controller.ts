@@ -253,20 +253,20 @@ class AccountController extends Controller {
     });
   }
 
-  public async addAddressAsync(): Promise<void> {
+  public async addAddressAsync(addressForm: AddressFormValues): Promise<void> {
     const customerResponse =
       await MedusaService.medusa.customers.addresses.addAddress({
         address: {
-          first_name: this._model.shippingForm.firstName ?? '',
-          last_name: this._model.shippingForm.lastName ?? '',
-          phone: this._model.shippingForm.phoneNumber ?? '',
-          company: this._model.shippingForm.company ?? '',
-          address_1: this._model.shippingForm.address ?? '',
-          address_2: this._model.shippingForm.apartments ?? '',
-          city: this._model.shippingForm.city ?? '',
-          country_code: this._model.shippingForm.countryCode ?? '',
-          province: this._model.shippingForm.region ?? '',
-          postal_code: this._model.shippingForm.postalCode ?? '',
+          first_name: addressForm.firstName ?? '',
+          last_name: addressForm.lastName ?? '',
+          phone: addressForm.phoneNumber ?? '',
+          company: addressForm.company ?? '',
+          address_1: addressForm.address ?? '',
+          address_2: addressForm.apartments ?? '',
+          city: addressForm.city ?? '',
+          country_code: addressForm.countryCode ?? '',
+          province: addressForm.region ?? '',
+          postal_code: addressForm.postalCode ?? '',
           metadata: {},
         },
       });

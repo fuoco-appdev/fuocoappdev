@@ -173,14 +173,14 @@ function AccountAddressesMobileComponent(): JSX.Element {
                 });
 
                 const errors = AccountController.getAddressFormErrors(
-                  AccountController.model.shippingForm
+                  props.shippingForm
                 );
                 if (errors) {
                   AccountController.updateShippingAddressErrors(errors);
                   return;
                 }
 
-                await AccountController.addAddressAsync();
+                await AccountController.addAddressAsync(props.shippingForm);
                 setOpenAddDropdown(false);
               }}
             >
