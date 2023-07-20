@@ -246,30 +246,34 @@ function CheckoutMobileComponent(): JSX.Element {
             />
           )}
           {windowProps.isAuthenticated &&
-            customer?.shipping_addresses.length > 0 && (
-              <Radio.Group
-                id={''}
-                activeId={props.selectedShippingAddressOptionId ?? ''}
-                rippleProps={{
-                  color: 'rgba(42, 42, 95, .35)',
-                }}
-                classNames={{
-                  radio: {
-                    containerCard: styles['radio-container-card'],
-                    labelText: styles['radio-label-text'],
-                    labelDescription: styles['radio-label-description-text'],
-                    containerCardActive: styles['radio-container-card-active'],
-                  },
-                }}
-                options={shippingAddressOptions}
-                type={'cards'}
-                onChange={(event) =>
-                  CheckoutController.updateSelectedShippingAddressOptionIdAsync(
-                    event.target.id
-                  )
-                }
-              />
-            )}
+          customer?.shipping_addresses.length > 0 ? (
+            <Radio.Group
+              id={''}
+              activeId={props.selectedShippingAddressOptionId ?? ''}
+              rippleProps={{
+                color: 'rgba(42, 42, 95, .35)',
+              }}
+              classNames={{
+                radio: {
+                  containerCard: styles['radio-container-card'],
+                  labelText: styles['radio-label-text'],
+                  labelDescription: styles['radio-label-description-text'],
+                  containerCardActive: styles['radio-container-card-active'],
+                },
+              }}
+              options={shippingAddressOptions}
+              type={'cards'}
+              onChange={(event) =>
+                CheckoutController.updateSelectedShippingAddressOptionIdAsync(
+                  event.target.id
+                )
+              }
+            />
+          ) : (
+            <div className={styles['card-description']}>
+              {t('noAddressAddedDescription')}
+            </div>
+          )}
           <Checkbox
             classNames={{
               container: styles['checkbox-container'],

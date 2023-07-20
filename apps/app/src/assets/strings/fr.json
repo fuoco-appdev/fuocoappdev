@@ -217,6 +217,7 @@
   "orderHistory": "Historique des commandes",
   "addresses": "Adresses",
   "addAddress": "Ajouter une adresse",
+  "noAddressAddedDescription": "Aucune adresse n'a été trouvée. Veuillez en ajouter une pour procéder à votre commande.",
   "noOrderHistory": "Aucun historique de commande n'a été trouvé.",
   "shopNow": "Magasiné",
   "noAddresses": "Aucune adresse n'a été trouvée. Ajoutez-les à votre liste pour accélérer le processus de paiement!",

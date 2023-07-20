@@ -14,6 +14,7 @@ import {
   ShippingOption,
   Order,
   Swap,
+  Customer,
 } from '@medusajs/medusa';
 import { select } from '@ngneat/elf';
 import WindowController from './window.controller';
@@ -22,12 +23,14 @@ import AccountController from './account.controller';
 class CheckoutController extends Controller {
   private readonly _model: CheckoutModel;
   private _cartSubscription: Subscription | undefined;
+  private _customerSubscription: Subscription | undefined;
 
   constructor() {
     super();
 
     this._model = new CheckoutModel();
     this.onCartChangedAsync = this.onCartChangedAsync.bind(this);
+    this.onCustomerChangedAsync = this.onCustomerChangedAsync.bind(this);
   }
 
   public get model(): CheckoutModel {
@@ -42,9 +45,16 @@ class CheckoutController extends Controller {
       .subscribe({
         next: this.onCartChangedAsync,
       });
+
+    this._customerSubscription = AccountController.model.store
+      .pipe(select((model) => model.customer))
+      .subscribe({
+        next: this.onCustomerChangedAsync,
+      });
   }
 
   public override dispose(renderCount: number): void {
+    this._customerSubscription?.unsubscribe();
     this._cartSubscription?.unsubscribe();
   }
 
@@ -442,17 +452,6 @@ class CheckoutController extends Controller {
       }
     }
 
-    // Select first shipping address
-    if (
-      customer &&
-      !this._model.selectedShippingAddressOptionId &&
-      customer.shipping_addresses.length > 0
-    ) {
-      await this.updateSelectedShippingAddressOptionIdAsync(
-        customer.shipping_addresses[0].id ?? ''
-      );
-    }
-
     // Select first provider by default
     if (
       this._model.billingFormComplete &&
@@ -499,6 +498,25 @@ class CheckoutController extends Controller {
           type: 'error',
         });
       }
+    }
+  }
+
+  private async onCustomerChangedAsync(
+    value: Customer | undefined
+  ): Promise<void> {
+    if (value && value?.shipping_addresses.length <= 0) {
+      this._model.selectedShippingAddressOptionId = undefined;
+    }
+
+    // Select first shipping address
+    if (
+      value &&
+      !this._model.selectedShippingAddressOptionId &&
+      value.shipping_addresses.length > 0
+    ) {
+      await this.updateSelectedShippingAddressOptionIdAsync(
+        value.shipping_addresses[0].id ?? ''
+      );
     }
   }
 }
