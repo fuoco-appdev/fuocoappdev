@@ -104,9 +104,6 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
     const residualSugarOption = ProductController.model.options.find(
       (value) => value.title === ProductOptions.ResidualSugar
     );
-    const typeOption = ProductController.model.options.find(
-      (value) => value.title === ProductOptions.Type
-    );
     const uvcOption = ProductController.model.options.find(
       (value) => value.title === ProductOptions.UVC
     );
@@ -126,9 +123,6 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
         (value: ProductOptionValue) =>
           value.option_id === residualSugarOption?.id
       );
-      const typeValue = variant.options?.find(
-        (value: ProductOptionValue) => value.option_id === typeOption?.id
-      );
       const uvcValue = variant.options?.find(
         (value: ProductOptionValue) => value.option_id === uvcOption?.id
       );
@@ -136,14 +130,14 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
         (value: ProductOptionValue) => value.option_id === vintageOption?.id
       );
 
-      setBrand(variant.metadata?.['brand'] as string);
-      setRegion(variant.metadata?.['region'] as string);
-      setVarietals(variant.metadata?.['varietals'] as string);
-      setProducerBottler(variant.metadata?.['producer_bottler'] as string);
+      setBrand(props.metadata?.['brand'] as string);
+      setRegion(props.metadata?.['region'] as string);
+      setVarietals(props.metadata?.['varietals'] as string);
+      setProducerBottler(props.metadata?.['producer_bottler'] as string);
+      setType(props.metadata?.['type'] as string);
       setAlcohol(alcoholValue?.value);
       setFormat(formatValue?.value);
       setResidualSugar(residualSugarValue?.value);
-      setType(typeValue?.value);
       setUVC(uvcValue?.value);
       setVintage(vintageValue?.value);
     }

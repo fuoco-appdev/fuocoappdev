@@ -62,28 +62,6 @@ export class MedusaController {
     context.response.body = response.serializeBinary();
   }
 
-  @Post('/customer/update/:id')
-  @Guard(AuthGuard)
-  @ContentType('application/x-protobuf')
-  public async updateCustomerAsync(
-    context: Oak.RouterContext<
-      string,
-      Oak.RouteParams<string>,
-      Record<string, any>
-    >
-  ): Promise<void> {
-    const paramsId = context.params['id'];
-    const body = await context.request.body({ type: 'reader' });
-    const requestValue = await readAll(body.value);
-    const customerRequest = CustomerRequest.deserializeBinary(requestValue);
-    const response = await MedusaService.updateCustomerAsync(
-      paramsId,
-      customerRequest
-    );
-    context.response.type = 'application/x-protobuf';
-    context.response.body = response.serializeBinary();
-  }
-
   @Post('/orders/:customerId')
   @Guard(AuthGuard)
   @ContentType('application/x-protobuf')

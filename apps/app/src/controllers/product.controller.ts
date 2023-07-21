@@ -72,6 +72,7 @@ class ProductController extends Controller {
           this._model.tags = product.tags ?? [];
           this._model.options = product.options ?? [];
           this._model.variants = product.variants ?? [];
+          this._model.metadata = product.metadata ?? {};
           this._model.material = product.material ?? '-';
           this._model.weight =
             product.weight && product.weight > 0 ? `${product.weight} g` : '-';

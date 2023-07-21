@@ -101,37 +101,6 @@ class MedusaService {
     return customer;
   }
 
-  public async updateCustomerAsync(
-    customerId: string,
-    request: InstanceType<typeof CustomerRequest>
-  ): Promise<InstanceType<typeof CustomerResponse>> {
-    const firstName = request.getFirstName();
-    const lastName = request.getLastName();
-    const phone = request.getPhone();
-    const metadata = request.getMetadata();
-    const params = new URLSearchParams({
-      expand: 'shipping_addresses',
-    }).toString();
-    const customerResponse = await axiod.post(
-      `${this._url}/admin/customers/${customerId}?${params}`,
-      {
-        ...(firstName && { first_name: firstName }),
-        ...(lastName && { last_name: lastName }),
-        ...(phone && { phone: phone }),
-        ...(metadata && { metadata: metadata }),
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${this._token}`,
-        },
-      }
-    );
-    const customer = new CustomerResponse();
-    const data = customerResponse.data['customer'];
-    customer.setData(JSON.stringify(data));
-    return customer;
-  }
-
   public async getStockLocationsAsync(): Promise<
     InstanceType<typeof StockLocationsResponse>
   > {
