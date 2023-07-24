@@ -22,6 +22,7 @@ import {
   AddressFormErrors,
   AddressFormValues,
 } from '../components/address-form.component';
+import { RoutePaths } from '../route-paths';
 
 class AccountController extends Controller {
   private readonly _model: AccountModel;
@@ -105,7 +106,22 @@ class AccountController extends Controller {
   }
 
   public updateActiveTabId(value: string): void {
+    this._model.prevTabIndex = this._model.activeTabIndex;
     this._model.activeTabId = value;
+
+    switch (value) {
+      case RoutePaths.AccountOrderHistory:
+        this._model.activeTabIndex = 1;
+        break;
+      case RoutePaths.AccountAddresses:
+        this._model.activeTabIndex = 2;
+        break;
+      case RoutePaths.AccountEdit:
+        this._model.activeTabIndex = 3;
+        break;
+      default:
+        break;
+    }
   }
 
   public getAddressFormErrors(
@@ -388,17 +404,26 @@ class AccountController extends Controller {
       return;
     }
 
-    this._model.customer = await MedusaService.requestCustomerAsync(
-      value?.email ?? ''
-    );
+    try {
+      this._model.customer = await MedusaService.requestCustomerAsync(
+        value?.email ?? ''
+      );
 
-    this._model.profileForm = {
-      firstName: this._model.customer?.first_name,
-      lastName: this._model.customer?.last_name,
-      phoneNumber: this._model.customer?.phone,
-    };
+      this._model.profileForm = {
+        firstName: this._model.customer?.first_name,
+        lastName: this._model.customer?.last_name,
+        phoneNumber: this._model.customer?.phone,
+      };
 
-    await this.requestOrdersAsync();
+      await this.requestOrdersAsync();
+    } catch (error: any) {
+      WindowController.addToast({
+        key: `request-customer-${Math.random()}`,
+        message: error.name,
+        description: error.message,
+        type: 'error',
+      });
+    }
   }
 }
 

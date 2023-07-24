@@ -27,6 +27,7 @@ import { useTranslation } from 'react-i18next';
 import * as core from '../protobuf/core_pb';
 import AccountProfileFormComponent from './account-profile-form.component';
 import { Customer } from '@medusajs/medusa';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 function AccountDesktopComponent(): JSX.Element {
   const [props] = useObservable(AccountController.model.store);
@@ -182,7 +183,58 @@ function AccountMobileComponent(): JSX.Element {
             />
           </div>
           <div className={styles['outlet-container']}>
-            <Outlet />
+            <TransitionGroup
+              component={null}
+              childFactory={(child) =>
+                React.cloneElement(child, {
+                  classNames: {
+                    enter:
+                      props.activeTabIndex < props.prevTabIndex
+                        ? styles['left-to-right-enter']
+                        : styles['right-to-left-enter'],
+                    enterActive:
+                      props.activeTabIndex < props.prevTabIndex
+                        ? styles['left-to-right-enter-active']
+                        : styles['right-to-left-enter-active'],
+                    exit:
+                      props.activeTabIndex < props.prevTabIndex
+                        ? styles['left-to-right-exit']
+                        : styles['right-to-left-exit'],
+                    exitActive:
+                      props.activeTabIndex < props.prevTabIndex
+                        ? styles['left-to-right-exit-active']
+                        : styles['right-to-left-exit-active'],
+                  },
+                  timeout: 250,
+                })
+              }
+            >
+              <CSSTransition
+                key={props.activeTabIndex}
+                classNames={{
+                  enter:
+                    props.activeTabIndex > props.prevTabIndex
+                      ? styles['left-to-right-enter']
+                      : styles['right-to-left-enter'],
+                  enterActive:
+                    props.activeTabIndex > props.prevTabIndex
+                      ? styles['left-to-right-enter-active']
+                      : styles['right-to-left-enter-active'],
+                  exit:
+                    props.activeTabIndex > props.prevTabIndex
+                      ? styles['left-to-right-exit']
+                      : styles['right-to-left-exit'],
+                  exitActive:
+                    props.activeTabIndex > props.prevTabIndex
+                      ? styles['left-to-right-exit-active']
+                      : styles['right-to-left-exit-active'],
+                }}
+                timeout={250}
+                unmountOnExit={true}
+              >
+                <Outlet />
+              </CSSTransition>
+            </TransitionGroup>
           </div>
         </>
       )}

@@ -31,6 +31,8 @@ export interface AccountState {
   editShippingForm: AddressFormValues;
   editShippingFormErrors: AddressFormErrors;
   activeTabId: string;
+  prevTabIndex: number;
+  activeTabIndex: number;
 }
 
 export class AccountModel extends Model {
@@ -84,6 +86,8 @@ export class AccountModel extends Model {
           },
           editShippingFormErrors: {},
           activeTabId: RoutePaths.AccountOrderHistory,
+          prevTabIndex: 0,
+          activeTabIndex: 0,
         })
       )
     );
@@ -267,6 +271,32 @@ export class AccountModel extends Model {
       this.store.update((state) => ({
         ...state,
         activeTabId: value,
+      }));
+    }
+  }
+
+  public get prevTabIndex(): number {
+    return this.store.getValue().prevTabIndex;
+  }
+
+  public set prevTabIndex(value: number) {
+    if (this.prevTabIndex !== value) {
+      this.store.update((state) => ({
+        ...state,
+        prevTabIndex: value,
+      }));
+    }
+  }
+
+  public get activeTabIndex(): number {
+    return this.store.getValue().activeTabIndex;
+  }
+
+  public set activeTabIndex(value: number) {
+    if (this.activeTabIndex !== value) {
+      this.store.update((state) => ({
+        ...state,
+        activeTabIndex: value,
       }));
     }
   }

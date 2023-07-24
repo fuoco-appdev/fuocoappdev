@@ -48,6 +48,7 @@ function AccountSettingsMobileComponent(): JSX.Element {
             block={true}
             size={'large'}
             classNames={{
+              container: styles['logout-button-container'],
               button: styles['logout-button'],
             }}
             rippleProps={{
