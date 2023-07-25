@@ -208,7 +208,7 @@ function CartMobileComponent(): JSX.Element {
           disabled={!props.cart || props.cart?.items?.length <= 0}
           size={'large'}
           icon={<Line.ShoppingCart size={24} />}
-          onClick={() => navigate(RoutePaths.Checkout)}
+          onClick={() => setTimeout(() => navigate(RoutePaths.Checkout), 150)}
         >
           {t('goToCheckout')}
         </Button>

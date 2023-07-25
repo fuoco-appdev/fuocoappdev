@@ -4,6 +4,7 @@
   display: grid;
   grid-template-columns: 132fr 352fr 956fr;
   height: 100%;
+  min-width: 100%;
 
   & .content-desktop {
     grid-column-start: 2;

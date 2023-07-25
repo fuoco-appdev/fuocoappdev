@@ -7,6 +7,7 @@
     padding-top: 56px;
     padding-bottom: $mp-8;
     overflow-y: auto;
+    min-width: 100%;
 
     & .thankyou-text {
         color: $brand-900;

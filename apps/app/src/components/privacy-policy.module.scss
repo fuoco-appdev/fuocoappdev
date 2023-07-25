@@ -5,6 +5,7 @@
   grid-template-columns: 132fr 352fr 956fr;
   margin-top: 5%;
   height: 95%;
+  min-width: 100%;
 
   & .content-desktop {
     grid-column-start: 2;

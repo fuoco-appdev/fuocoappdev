@@ -130,7 +130,7 @@ class WindowController extends Controller {
       this._model.activeRoute = RoutePaths.Checkout;
       this._model.showNavigateBack = true;
       this._model.hideCartButton = true;
-      this._model.transitionKeyIndex = 0;
+      this._model.transitionKeyIndex = 1;
     } else if (location.pathname === RoutePaths.Signin) {
       this._model.activeRoute = RoutePaths.Signin;
       this._model.showNavigateBack = false;
