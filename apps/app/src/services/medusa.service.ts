@@ -116,39 +116,6 @@ class MedusaService extends Service {
     return JSON.parse(customerResponse.data);
   }
 
-  public async requestUpdateCustomerAsync(
-    customerId: string,
-    props: {
-      first_name?: string;
-      last_name?: string;
-      phone?: string;
-      metadata?: string;
-    }
-  ): Promise<Customer | undefined> {
-    const session = await SupabaseService.requestSessionAsync();
-    const customerRequest = new core.CustomerRequest({
-      firstName: props.first_name,
-      lastName: props.last_name,
-      phone: props.phone,
-      metadata: props.metadata,
-    });
-    const response = await axios({
-      method: 'post',
-      url: `${this.endpointUrl}/medusa/customer/update/${customerId}`,
-      headers: {
-        ...this.headers,
-        'Session-Token': `${session?.access_token}`,
-      },
-      data: customerRequest.toBinary(),
-      responseType: 'arraybuffer',
-    });
-    const arrayBuffer = new Uint8Array(response.data);
-    this.assertResponse(arrayBuffer);
-
-    const customerResponse = core.CustomerResponse.fromBinary(arrayBuffer);
-    return customerResponse.data && JSON.parse(customerResponse.data);
-  }
-
   public async requestStockLocationsAsync(): Promise<any[]> {
     const response = await axios({
       method: 'post',

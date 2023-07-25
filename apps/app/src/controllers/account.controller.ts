@@ -202,14 +202,13 @@ class AccountController extends Controller {
           throw new Error('No customer created');
         }
       } else {
-        this._model.customer = await MedusaService.requestUpdateCustomerAsync(
-          this._model.customer.id,
-          {
-            first_name: this._model.profileForm.firstName ?? '',
-            last_name: this._model.profileForm.lastName ?? '',
-            phone: this._model.profileForm.phoneNumber,
-          }
-        );
+        const customerResponse = await MedusaService.medusa.customers.update({
+          first_name: this._model.profileForm.firstName ?? '',
+          last_name: this._model.profileForm.lastName ?? '',
+          phone: this._model.profileForm.phoneNumber,
+        });
+
+        this._model.customer = customerResponse.customer as Customer;
         if (!this._model.customer) {
           throw new Error('No customer updated');
         }
