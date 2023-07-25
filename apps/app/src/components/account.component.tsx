@@ -189,19 +189,19 @@ function AccountMobileComponent(): JSX.Element {
                 React.cloneElement(child, {
                   classNames: {
                     enter:
-                      props.activeTabIndex < props.prevTabIndex
+                      props.activeTabIndex > props.prevTabIndex
                         ? styles['left-to-right-enter']
                         : styles['right-to-left-enter'],
                     enterActive:
-                      props.activeTabIndex < props.prevTabIndex
+                      props.activeTabIndex > props.prevTabIndex
                         ? styles['left-to-right-enter-active']
                         : styles['right-to-left-enter-active'],
                     exit:
-                      props.activeTabIndex < props.prevTabIndex
+                      props.activeTabIndex > props.prevTabIndex
                         ? styles['left-to-right-exit']
                         : styles['right-to-left-exit'],
                     exitActive:
-                      props.activeTabIndex < props.prevTabIndex
+                      props.activeTabIndex > props.prevTabIndex
                         ? styles['left-to-right-exit-active']
                         : styles['right-to-left-exit-active'],
                   },
@@ -213,24 +213,24 @@ function AccountMobileComponent(): JSX.Element {
                 key={props.activeTabIndex}
                 classNames={{
                   enter:
-                    props.activeTabIndex > props.prevTabIndex
+                    props.activeTabIndex < props.prevTabIndex
                       ? styles['left-to-right-enter']
                       : styles['right-to-left-enter'],
                   enterActive:
-                    props.activeTabIndex > props.prevTabIndex
+                    props.activeTabIndex < props.prevTabIndex
                       ? styles['left-to-right-enter-active']
                       : styles['right-to-left-enter-active'],
                   exit:
-                    props.activeTabIndex > props.prevTabIndex
+                    props.activeTabIndex < props.prevTabIndex
                       ? styles['left-to-right-exit']
                       : styles['right-to-left-exit'],
                   exitActive:
-                    props.activeTabIndex > props.prevTabIndex
+                    props.activeTabIndex < props.prevTabIndex
                       ? styles['left-to-right-exit-active']
                       : styles['right-to-left-exit-active'],
                 }}
                 timeout={250}
-                unmountOnExit={true}
+                unmountOnExit={false}
               >
                 <Outlet />
               </CSSTransition>
