@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import * as React from 'react';
 import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
 import WindowController from '../controllers/window.controller';
 import styles from './window.module.scss';
@@ -27,6 +28,7 @@ import LoadingComponent from './loading.component';
 import { Store } from '@ngneat/elf';
 import { Customer } from '@medusajs/medusa';
 import AccountController from '../controllers/account.controller';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import e from 'express';
 
 function WindowDesktopComponent(): JSX.Element {
@@ -111,7 +113,58 @@ function WindowMobileComponent(): JSX.Element {
   return (
     <div className={styles['root']}>
       <div className={styles['content']}>
-        <Outlet />
+        <TransitionGroup
+          component={null}
+          childFactory={(child) =>
+            React.cloneElement(child, {
+              classNames: {
+                enter:
+                  props.transitionKeyIndex < props.prevTransitionKeyIndex
+                    ? styles['left-to-right-enter']
+                    : styles['right-to-left-enter'],
+                enterActive:
+                  props.transitionKeyIndex < props.prevTransitionKeyIndex
+                    ? styles['left-to-right-enter-active']
+                    : styles['right-to-left-enter-active'],
+                exit:
+                  props.transitionKeyIndex < props.prevTransitionKeyIndex
+                    ? styles['left-to-right-exit']
+                    : styles['right-to-left-exit'],
+                exitActive:
+                  props.transitionKeyIndex < props.prevTransitionKeyIndex
+                    ? styles['left-to-right-exit-active']
+                    : styles['right-to-left-exit-active'],
+              },
+              timeout: 250,
+            })
+          }
+        >
+          <CSSTransition
+            key={props.transitionKeyIndex}
+            classNames={{
+              enter:
+                props.transitionKeyIndex > props.prevTransitionKeyIndex
+                  ? styles['left-to-right-enter']
+                  : styles['right-to-left-enter'],
+              enterActive:
+                props.transitionKeyIndex > props.prevTransitionKeyIndex
+                  ? styles['left-to-right-enter-active']
+                  : styles['right-to-left-enter-active'],
+              exit:
+                props.transitionKeyIndex > props.prevTransitionKeyIndex
+                  ? styles['left-to-right-exit']
+                  : styles['right-to-left-exit'],
+              exitActive:
+                props.transitionKeyIndex > props.prevTransitionKeyIndex
+                  ? styles['left-to-right-exit-active']
+                  : styles['right-to-left-exit-active'],
+            }}
+            timeout={250}
+            unmountOnExit={true}
+          >
+            <Outlet />
+          </CSSTransition>
+        </TransitionGroup>
       </div>
       <div className={styles['bottom-bar']}>
         {!props.hideCartButton && (

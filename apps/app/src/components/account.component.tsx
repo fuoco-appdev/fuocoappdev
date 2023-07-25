@@ -230,7 +230,7 @@ function AccountMobileComponent(): JSX.Element {
                       : styles['right-to-left-exit-active'],
                 }}
                 timeout={250}
-                unmountOnExit={false}
+                unmountOnExit={true}
               >
                 <Outlet />
               </CSSTransition>
