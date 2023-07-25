@@ -62,7 +62,9 @@ function AccountMobileComponent(): JSX.Element {
               rippleProps={{
                 color: 'rgba(88, 40, 109, .35)',
               }}
-              onClick={() => navigate(RoutePaths.AccountSettings)}
+              onClick={() =>
+                setTimeout(() => navigate(RoutePaths.AccountSettings), 150)
+              }
               type={'text'}
               rounded={true}
               size={'tiny'}

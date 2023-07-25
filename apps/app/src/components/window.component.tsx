@@ -182,7 +182,7 @@ function WindowMobileComponent(): JSX.Element {
                   if (props.activeRoute === RoutePaths.Cart) {
                     navigate(-1);
                   } else {
-                    navigate(RoutePaths.Cart);
+                    setTimeout(() => navigate(RoutePaths.Cart), 150);
                   }
                 }}
                 type={'primary'}
