@@ -210,6 +210,7 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
           ) : (
             <Skeleton
               count={6}
+              borderRadius={9999}
               className={styles['skeleton-description-mobile']}
             />
           )}
