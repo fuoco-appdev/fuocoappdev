@@ -72,6 +72,7 @@
     & .description-container-mobile {
       font-size: $font-size-sm;
       color: $brand-900;
+      word-break: break-all;
 
       & .skeleton-description-mobile {
         font-size: $font-size-sm;

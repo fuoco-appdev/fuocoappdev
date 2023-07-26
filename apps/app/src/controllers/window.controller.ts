@@ -154,13 +154,13 @@ class WindowController extends Controller {
     } else if (location.pathname === RoutePaths.TermsOfService) {
       this._model.transitionKeyIndex = 1;
       this._model.activeRoute = RoutePaths.TermsOfService;
-      this._model.showNavigateBack = false;
-      this._model.hideCartButton = false;
+      this._model.showNavigateBack = true;
+      this._model.hideCartButton = true;
     } else if (location.pathname === RoutePaths.PrivacyPolicy) {
       this._model.transitionKeyIndex = 1;
       this._model.activeRoute = RoutePaths.PrivacyPolicy;
-      this._model.showNavigateBack = false;
-      this._model.hideCartButton = false;
+      this._model.showNavigateBack = true;
+      this._model.hideCartButton = true;
     } else if (location.pathname === RoutePaths.Account) {
       this._model.transitionKeyIndex = 0;
       this._model.activeRoute = RoutePaths.Account;
