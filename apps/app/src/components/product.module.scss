@@ -73,6 +73,10 @@
       font-size: $font-size-sm;
       color: $brand-900;
 
+      & .skeleton-description-mobile {
+        font-size: $font-size-sm;
+      }
+
       & .show-more-container-mobile {
         width: 100%;
         text-align: end;

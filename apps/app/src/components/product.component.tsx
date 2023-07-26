@@ -22,6 +22,8 @@ import WindowController from '../controllers/window.controller';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
 import StoreController from '../controllers/store.controller';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 export interface ProductProps {}
 
@@ -203,7 +205,14 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
           </div> */}
         </div>
         <div className={styles['description-container-mobile']}>
-          <ReactMarkdown remarkPlugins={[gfm]} children={description} />
+          {description.length > 0 ? (
+            <ReactMarkdown remarkPlugins={[gfm]} children={description} />
+          ) : (
+            <Skeleton
+              count={6}
+              className={styles['skeleton-description-mobile']}
+            />
+          )}
           {props.description && !disableShowMore && (
             <div className={styles['show-more-container-mobile']}>
               <Typography.Link
