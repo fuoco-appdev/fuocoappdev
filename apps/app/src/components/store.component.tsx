@@ -102,7 +102,7 @@ function StoreMobileComponent(): JSX.Element {
     const cellars: OptionProps[] = [];
     for (const location of inventoryLocationsInRegion as InventoryLocation[]) {
       cellars.push({
-        id: location.company,
+        id: location.placeName ?? '',
         value: location.placeName ?? '',
         children: () => (
           <div className={styles['option-name']}>
@@ -121,7 +121,7 @@ function StoreMobileComponent(): JSX.Element {
     }
 
     const locationIndex = cellarOptions.findIndex(
-      (value) => value.id === homeProps.selectedInventoryLocation?.company
+      (value) => value.id === homeProps.selectedInventoryLocation?.placeName
     );
     if (locationIndex > -1 && locationIndex !== selectedCellarIndex) {
       setSelectedCellarIndex(locationIndex);

@@ -97,7 +97,7 @@ function HomeMobileComponent(): JSX.Element {
           >
             <img
               src={
-                props.selectedInventoryLocation?.company !== point.company
+                props.selectedInventoryLocation?.placeName !== point.placeName
                   ? '../assets/svg/cruthology-pin.svg'
                   : '../assets/svg/cruthology-selected-pin.svg'
               }
@@ -128,8 +128,8 @@ function HomeMobileComponent(): JSX.Element {
                   block={false}
                   size={'tiny'}
                   disabled={
-                    selectedPoint?.company ===
-                    props.selectedInventoryLocation?.company
+                    selectedPoint?.placeName ===
+                    props.selectedInventoryLocation?.placeName
                   }
                   type={'text'}
                   onClick={() =>
@@ -138,8 +138,8 @@ function HomeMobileComponent(): JSX.Element {
                     )
                   }
                 >
-                  {selectedPoint?.company !==
-                  props.selectedInventoryLocation?.company
+                  {selectedPoint?.placeName !==
+                  props.selectedInventoryLocation?.placeName
                     ? t('select')
                     : t('selected')}
                 </Button>
