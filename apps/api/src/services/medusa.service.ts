@@ -9,7 +9,9 @@ import {
 import 'https://deno.land/x/dotenv@v3.2.0/load.ts';
 import MapboxService, { GeocodingFeature } from './mapbox.service.ts';
 import SupabaseService from './supabase.service.ts';
+import AccountService from './account.service.ts';
 import { User } from 'https://esm.sh/@supabase/supabase-js@2.7.0';
+import { IAxiodResponse } from 'https://deno.land/x/axiod@0.26.2/interfaces.ts';
 
 class MedusaService {
   private _url: string | undefined;
@@ -28,27 +30,48 @@ class MedusaService {
 
   public async getCustomerAsync(
     sessionToken: string,
-    email: string
+    supabaseId: string
   ): Promise<InstanceType<typeof CustomerResponse>> {
-    const fetchParams = new URLSearchParams({
-      q: email,
-    }).toString();
-    const customerResponse = await axiod.get(
-      `${this._url}/admin/customers?${fetchParams}`,
-      {
-        headers: {
-          Authorization: `Bearer ${this._token}`,
-        },
+    const account = await AccountService.findAsync(supabaseId);
+    let customerData: any | undefined;
+    if (account && account?.customer_id) {
+      const customerResponse = await axiod.get(
+        `${this._url}/admin/customers/${account.customer_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${this._token}`,
+          },
+        }
+      );
+      customerData = customerResponse?.data['customer'];
+    } else {
+      const supabaseUser = await SupabaseService.client.auth.admin.getUserById(
+        supabaseId
+      );
+      const fetchParams = new URLSearchParams({
+        q: supabaseUser.data.user?.email ?? '',
+      }).toString();
+      const customerResponse = await axiod.get(
+        `${this._url}/admin/customers?${fetchParams}`,
+        {
+          headers: {
+            Authorization: `Bearer ${this._token}`,
+          },
+        }
+      );
+      const customerListData = customerResponse?.data['customers'] ?? [];
+      if (customerListData.length) {
+        customerData = customerListData[0];
       }
-    );
-    const customers = customerResponse.data['customers'];
+    }
+
     const customer = new CustomerResponse();
-    if (customers.length > 0) {
+    if (customerData) {
       const updateParams = new URLSearchParams({
         expand: 'shipping_addresses',
       }).toString();
       const updateCustomerResponse = await axiod.post(
-        `${this._url}/admin/customers/${customers[0].id}?${updateParams}`,
+        `${this._url}/admin/customers/${customerData.id}?${updateParams}`,
         {
           password: sessionToken,
         },
@@ -59,8 +82,8 @@ class MedusaService {
         }
       );
 
-      const customerData = updateCustomerResponse.data['customer'];
-      customer.setData(JSON.stringify(customerData));
+      const updatedCustomerData = updateCustomerResponse.data['customer'];
+      customer.setData(JSON.stringify(updatedCustomerData));
       customer.setPassword(sessionToken);
     }
 

@@ -189,7 +189,7 @@ class AccountController extends Controller {
 
     try {
       this._model.customer = await MedusaService.requestCustomerAsync(
-        SupabaseService.user.email ?? ''
+        SupabaseService.user.id ?? ''
       );
       if (!this._model.customer) {
         this._model.customer = await MedusaService.requestCreateCustomerAsync({
@@ -405,7 +405,7 @@ class AccountController extends Controller {
 
     try {
       this._model.customer = await MedusaService.requestCustomerAsync(
-        value?.email ?? ''
+        value?.id ?? ''
       );
 
       this._model.profileForm = {

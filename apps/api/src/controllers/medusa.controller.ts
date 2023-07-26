@@ -45,7 +45,7 @@ export class MedusaController {
     context.response.body = response.serializeBinary();
   }
 
-  @Post('/customer/:email')
+  @Post('/customer/:supabaseId')
   @Guard(AuthGuard)
   @ContentType('application/x-protobuf')
   public async getCustomerAsync(
@@ -56,8 +56,11 @@ export class MedusaController {
     >
   ): Promise<void> {
     const token = context.request.headers.get('session-token') ?? '';
-    const paramsEmail = context.params['email'];
-    const response = await MedusaService.getCustomerAsync(token, paramsEmail);
+    const paramsSupabaseId = context.params['supabaseId'];
+    const response = await MedusaService.getCustomerAsync(
+      token,
+      paramsSupabaseId
+    );
     context.response.type = 'application/x-protobuf';
     context.response.body = response.serializeBinary();
   }

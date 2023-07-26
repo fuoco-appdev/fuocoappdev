@@ -24,12 +24,12 @@ class MedusaService extends Service {
   }
 
   public async requestCustomerAsync(
-    email: string
+    supabaseId: string
   ): Promise<Customer | undefined> {
     const session = await SupabaseService.requestSessionAsync();
     const response = await axios({
       method: 'post',
-      url: `${this.endpointUrl}/medusa/customer/${email}`,
+      url: `${this.endpointUrl}/medusa/customer/${supabaseId}`,
       headers: {
         ...this.headers,
         'Session-Token': `${session?.access_token}`,
@@ -50,7 +50,7 @@ class MedusaService extends Service {
     } catch (error: any) {
       if (customerResponse.password.length > 0) {
         const authResponse = await this.medusa.auth.authenticate({
-          email: email,
+          email: session?.user.email ?? '',
           password: customerResponse.password,
         });
         if (!authResponse.customer) {
