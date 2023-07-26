@@ -28,6 +28,8 @@ import * as core from '../protobuf/core_pb';
 import AccountProfileFormComponent from './account-profile-form.component';
 import { Customer } from '@medusajs/medusa';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 function AccountDesktopComponent(): JSX.Element {
   const [props] = useObservable(AccountController.model.store);
@@ -151,9 +153,17 @@ function AccountMobileComponent(): JSX.Element {
               touchScreen={true}
             />
           </div>
-          <div
-            className={styles['username']}
-          >{`${customer?.first_name} ${customer?.last_name}`}</div>
+          <div className={styles['username']}>
+            {customer ? (
+              `${customer?.first_name} ${customer?.last_name}`
+            ) : (
+              <Skeleton
+                count={1}
+                borderRadius={9999}
+                className={styles['skeleton-user-mobile']}
+              />
+            )}
+          </div>
           <div className={styles['tabs-container']}>
             <Tabs
               flex={true}
