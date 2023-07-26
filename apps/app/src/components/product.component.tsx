@@ -146,11 +146,12 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
   useEffect(() => {
     if (props.description.length < 356) {
       setDisableShowMore(true);
+      setDescription(props.description);
     } else {
       setDisableShowMore(false);
       if (!showMore) {
         let index = props.description.indexOf('\n');
-        if (index > 355) {
+        if (index === -1 || index > 355) {
           index = 355;
         }
         let shortDescription = props.description.substring(0, index);

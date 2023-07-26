@@ -252,11 +252,7 @@ export default function AccountComponent(): JSX.Element {
 
   useEffect(() => {
     const loadedLocation = windowProps.loadedHash as string | undefined;
-    if (
-      loadedLocation &&
-      loadedLocation !== `#${RoutePaths.Account}` &&
-      location.hash === `#${RoutePaths.Account}`
-    ) {
+    if (loadedLocation && loadedLocation !== `#${RoutePaths.Account}`) {
       const formattedLocation = loadedLocation.replace('#', '');
       if (
         formattedLocation.startsWith(RoutePaths.Account) &&
