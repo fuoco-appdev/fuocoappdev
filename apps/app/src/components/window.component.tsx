@@ -391,7 +391,7 @@ function WindowMobileComponent(): JSX.Element {
                           <Line.AccountCircle
                             size={24}
                             color={
-                              props.activeRoute.startsWith(
+                              props.activeRoute?.startsWith(
                                 `${RoutePaths.Account}/`
                               )
                                 ? 'rgba(252, 245, 227, 1)'
@@ -401,7 +401,7 @@ function WindowMobileComponent(): JSX.Element {
                         ) : (
                           <div
                             className={
-                              props.activeRoute.startsWith(
+                              props.activeRoute?.startsWith(
                                 `${RoutePaths.Account}/`
                               )
                                 ? styles['avatar-container-selected']

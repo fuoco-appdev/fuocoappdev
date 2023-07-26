@@ -267,6 +267,10 @@ export default function AccountComponent(): JSX.Element {
         navigate(props.activeTabId);
       }
     }
+
+    if (location.hash.startsWith(`#${RoutePaths.Account}/access_token=`)) {
+      navigate(props.activeTabId);
+    }
   }, [location.hash, windowProps.loadedLocation]);
 
   return (
