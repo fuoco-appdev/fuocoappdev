@@ -58,7 +58,7 @@ class StoreController extends Controller {
     value: ProductTabs | undefined
   ): Promise<void> {
     this._model.selectedTab = value;
-    await this.searchAsync('');
+    await this.searchAsync(this._model.input);
   }
 
   public async onNextScrollAsync(): Promise<void> {
@@ -102,9 +102,7 @@ class StoreController extends Controller {
     const removedHits: PricedProduct[] = [];
     const products = productsResponse.products;
     for (let i = 0; i < products.length; i++) {
-      const typeOption = products[i].options?.find(
-        (value) => value.title === ProductOptions.Type
-      );
+      const type = products[i].metadata?.['type'] as string;
       for (const variant of products[i].variants) {
         const price = variant.prices?.find(
           (value) => value.region_id === this._model.selectedRegion?.id
@@ -120,16 +118,12 @@ class StoreController extends Controller {
           this._model.selectedTab === ProductTabs.Spirits ||
           this._model.selectedTab === ProductTabs.White
         ) {
-          const typeValue = variant.options?.find(
-            (value: ProductOptionValue) => value.option_id === typeOption?.id
-          );
           const duplicates = removedHits.filter(
             (value) => value.id === products[i].id
           );
           if (
             duplicates.length <= 0 &&
-            typeValue?.value?.toLowerCase() !==
-              this._model.selectedTab?.toLowerCase()
+            type?.toLowerCase() !== this._model.selectedTab?.toLowerCase()
           ) {
             removedHits.push(products[i]);
           }
@@ -228,7 +222,7 @@ class StoreController extends Controller {
     this._model.selectedSalesChannel =
       inventoryLocation.salesChannels[randomSalesChannelIndex];
     this._model.pagination = 1;
-    await this.searchAsync('');
+    await this.searchAsync(this._model.input);
   }
 
   private async updateRegionAsync(region: Region | undefined): Promise<void> {

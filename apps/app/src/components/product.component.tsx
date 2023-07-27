@@ -152,10 +152,7 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
     } else {
       setDisableShowMore(false);
       if (!showMore) {
-        let index = props.description.indexOf('\n');
-        if (index === -1 || index > 355) {
-          index = 355;
-        }
+        let index = 355;
         let shortDescription = props.description.substring(0, index);
         if (shortDescription.endsWith('.')) {
           shortDescription += '..';
