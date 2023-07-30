@@ -1,0 +1,26 @@
+{
+  "supabase": {
+    "url": "https://supabase.cruthology.com",
+    "functions_url": "https://api.cruthology.com",
+    "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICAgInJvbGUiOiAiYW5vbiIsCiAgICAiaXNzIjogInN1cGFiYXNlIiwKICAgICJpYXQiOiAxNjc3NDc0MDAwLAogICAgImV4cCI6IDE4MzUyNDA0MDAKfQ.KQkdZ12qlDWYy1shm4qWeuO5aR4Dd6nGsH_v2RlrN1Y"
+  },
+  "medusa": {
+    "url": "https://medusa.cruthology.com",
+    "key": "pk_01GTD1M5RFEJV1RNY05VDHG5E4"
+  },
+  "meilisearch": {
+    "url": "https://meilisearch.cruthology.com",
+    "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICAgInJvbGUiOiAiYW5vbiIsCiAgICAiaXNzIjogInN1cGFiYXNlIiwKICAgICJpYXQiOiAxNjgzNzc3NjAwLAogICAgImV4cCI6IDE4NDE2MzA0MDAKfQ.DDAUgHEbZHyTKL3v_aZK70b1DBoozhNuHXTlAvJvlho"
+  },
+  "mapbox": {
+    "style_url": "mapbox://styles/lucasfuoco/cli44l6r902mw01qyaoqoa46t",
+    "access_token": "pk.eyJ1IjoibHVjYXNmdW9jbyIsImEiOiJjbGFjeWl5YWMwM2MyM3ZueW5xNnRnbWFiIn0.SKWlyHhXNfAwdTLqfIdLYQ"
+  },
+  "s3": {
+    "url": "https://nyc3.digitaloceanspaces.com",
+    "bucket_name": "medusa"
+  },
+  "stripe": {
+    "key": ""
+  }
+}

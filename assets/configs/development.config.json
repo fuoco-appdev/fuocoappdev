@@ -1,0 +1,26 @@
+{
+  "supabase": {
+    "url": "http://192.168.100.15:8000",
+    "functions_url": "http://192.168.100.15:8001",
+    "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICAgInJvbGUiOiAiYW5vbiIsCiAgICAiaXNzIjogInN1cGFiYXNlIiwKICAgICJpYXQiOiAxNjgzNzc3NjAwLAogICAgImV4cCI6IDE4NDE2MzA0MDAKfQ.uKHtXlVXjFGozrOEbtTayv2Vrr5LS7eavQBiOdZekZ4"
+  },
+  "medusa": {
+    "url": "http://192.168.100.15:9000",
+    "key": "pk_01H05KWEWJ6BM4Z3HNPHFJS42E"
+  },
+  "meilisearch": {
+    "url": "http://192.168.100.15:7700",
+    "key": "CE4CF1AE6E2553818DC854BB74E22"
+  },
+  "mapbox": {
+    "style_url": "mapbox://styles/lucasfuoco/cli44l6r902mw01qyaoqoa46t",
+    "access_token": "pk.eyJ1IjoibHVjYXNmdW9jbyIsImEiOiJjbGFjeWl5YWMwM2MyM3ZueW5xNnRnbWFiIn0.SKWlyHhXNfAwdTLqfIdLYQ"
+  },
+  "s3": {
+    "url": "https://nyc3.digitaloceanspaces.com",
+    "bucket_name": "medusa"
+  },
+  "stripe": {
+    "key": "pk_test_51LYEuECedGdlGLWKQQOaHbCq2lPRQ7rNGa2rDvGSrMmHtiByN11wxv6b1slwpDkooqF9pGuIWct26SxTN8fG9ucl00Aou2dGBY"
+  }
+}
