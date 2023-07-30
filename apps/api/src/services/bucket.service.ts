@@ -1,14 +1,14 @@
 import SupabaseService from './supabase.service.ts';
-import { BucketType } from '../protobuf/core_pb.js';
+import { StorageFolderType } from '../protobuf/core_pb.js';
 
 class BucketService {
   public async initializeDevelopmentAsync(): Promise<void> {
     const avatarsBucket = await SupabaseService.client.storage.getBucket(
-      this.getBucketName(BucketType.AVATARS)
+      this.getBucketName(StorageFolderType.AVATARS)
     );
     if (avatarsBucket.error) {
       const { error } = await SupabaseService.client.storage.createBucket(
-        this.getBucketName(BucketType.AVATARS),
+        this.getBucketName(StorageFolderType.AVATARS),
         { public: true }
       );
 
@@ -19,7 +19,7 @@ class BucketService {
   }
 
   private getBucketName(type: number): string {
-    const name = Object.keys(BucketType)[type];
+    const name = Object.keys(StorageFolderType)[type];
     return name.toLowerCase().replace('_', '-');
   }
 }
