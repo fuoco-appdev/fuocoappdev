@@ -63,6 +63,6 @@ jobs:
       - name: Deploy serve file
         uses: denoland/deployctl@v1
         with:
-          project: "fuoco-appdev-api"
+          project: "cruthology-api"
           entrypoint: serve.ts
           root: apps/api/src
