@@ -3,6 +3,17 @@
 -- and may require manual changes to the script to ensure changes are applied in the correct order.
 -- Please report an issue for any failure with the reproduction steps. 
  BEGIN; 
+
+ -- Type: account_status_enum
+
+-- DROP TYPE IF EXISTS public.account_status_enum;
+
+CREATE TYPE public.account_status_enum AS ENUM
+    ('Incomplete', 'Complete');
+
+ALTER TYPE public.account_status_enum
+    OWNER TO supabase_admin;
+    
  CREATE TABLE IF NOT EXISTS public.account
 (
     id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -34,14 +45,5 @@ GRANT ALL ON TABLE public.account TO postgres;
 GRANT ALL ON TABLE public.account TO service_role;
 
 GRANT ALL ON TABLE public.account TO supabase_admin;
--- Type: account_status_enum
-
--- DROP TYPE IF EXISTS public.account_status_enum;
-
-CREATE TYPE public.account_status_enum AS ENUM
-    ('Incomplete', 'Complete');
-
-ALTER TYPE public.account_status_enum
-    OWNER TO supabase_admin;
 
  END;
