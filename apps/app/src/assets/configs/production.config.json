@@ -21,6 +21,6 @@
     "bucket_name": "medusa"
   },
   "stripe": {
-    "key": ""
+    "key": "pk_live_51LYEuECedGdlGLWKAYNb2hrpD1ncAqOWjm7aUxMEJ0etOyOLPHkWD23x1Nlkb9tWZRDTLFxfJtbOlKfUO2qJRnks00N7c6uzKD"
   }
 }
