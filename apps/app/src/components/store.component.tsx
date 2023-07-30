@@ -262,7 +262,7 @@ function StoreMobileComponent(): JSX.Element {
           height={previewsContainerRef.current?.clientHeight ?? 0 - 8}
           loader={
             <img
-              src={'../assets/svg/ring-resize.svg'}
+              src={'../assets/svg/ring-resize-dark.svg'}
               className={styles['loading-ring']}
             />
           }

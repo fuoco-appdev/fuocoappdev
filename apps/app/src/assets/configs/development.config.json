@@ -19,5 +19,8 @@
   "s3": {
     "url": "https://nyc3.digitaloceanspaces.com",
     "bucket_name": "medusa"
+  },
+  "stripe": {
+    "key": "pk_test_51LYEuECedGdlGLWKQQOaHbCq2lPRQ7rNGa2rDvGSrMmHtiByN11wxv6b1slwpDkooqF9pGuIWct26SxTN8fG9ucl00Aou2dGBY"
   }
 }

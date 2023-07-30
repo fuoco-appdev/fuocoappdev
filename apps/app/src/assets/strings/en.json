@@ -226,5 +226,8 @@
   "removeAddress": "Remove address?",
   "removeAddressDescription": "Address {{address_1, string}} {{address_2, string}}, {{postal_code, string}}, {{city, string}}, {{province, string}}, {{country_code, string}} will be removed from your account.",
   "applyChanges": "Apply changes",
-  "security": "Security"
+  "security": "Security",
+  "creditCardNumber": "Card number",
+  "expirationDate": "Expiration date",
+  "cvc": "CVC"
 }

@@ -33,6 +33,7 @@ export interface CheckoutState {
   giftCardCode: string;
   discountCode: string;
   selectedProviderId: ProviderType | undefined;
+  isPaymentLoading: boolean;
 }
 
 export class CheckoutModel extends Model {
@@ -93,6 +94,7 @@ export class CheckoutModel extends Model {
           giftCardCode: '',
           discountCode: '',
           selectedProviderId: undefined,
+          isPaymentLoading: false,
         })
       )
     );
@@ -272,6 +274,19 @@ export class CheckoutModel extends Model {
       this.store.update((state) => ({
         ...state,
         selectedProviderId: value,
+      }));
+    }
+  }
+
+  public get isPaymentLoading(): boolean {
+    return this.store.getValue().isPaymentLoading;
+  }
+
+  public set isPaymentLoading(value: boolean) {
+    if (this.isPaymentLoading !== value) {
+      this.store.update((state) => ({
+        ...state,
+        isPaymentLoading: value,
       }));
     }
   }

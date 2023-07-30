@@ -19,6 +19,11 @@ import {
 import { select } from '@ngneat/elf';
 import WindowController from './window.controller';
 import AccountController from './account.controller';
+import {
+  Stripe,
+  StripeElements,
+  StripeCardNumberElement,
+} from '@stripe/stripe-js';
 
 class CheckoutController extends Controller {
   private readonly _model: CheckoutModel;
@@ -299,17 +304,64 @@ class CheckoutController extends Controller {
     this._model.discountCode = '';
   }
 
-  public async proceedToPaymentAndGetCompleteCartIdAsync(): Promise<
-    string | undefined
-  > {
-    if (this._model.selectedProviderId === ProviderType.Manual) {
-      const completeCart = await CartController.completeCartAsync();
-      this.resetCheckoutStates();
-      await CartController.resetCartAsync();
-      return completeCart?.id;
+  public async proceedToStripePaymentAsync(
+    stripe: Stripe | null | undefined,
+    card: StripeCardNumberElement | null | undefined,
+    clientSecret: string | undefined
+  ): Promise<string | undefined> {
+    if (
+      !card ||
+      !clientSecret ||
+      !stripe ||
+      this._model.selectedProviderId !== ProviderType.Stripe
+    ) {
+      return undefined;
     }
 
-    return undefined;
+    try {
+      this._model.isPaymentLoading = true;
+      const payment = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: card,
+          billing_details: {
+            name: `${this._model.billingForm.firstName} ${this._model.billingForm.lastName}`,
+            email: this._model.shippingForm.email,
+            phone: this._model.billingForm.phoneNumber,
+            address: {
+              city: this._model.billingForm.city,
+              country: this._model.billingForm.countryCode,
+              line1: this._model.billingForm.address,
+              line2: this._model.billingForm.apartments,
+              postal_code: this._model.billingForm.postalCode,
+            },
+          },
+        },
+      });
+
+      if (payment.error) {
+        throw payment.error;
+      }
+    } catch (error: any) {
+      this._model.isPaymentLoading = false;
+      WindowController.addToast({
+        key: `pay-${Math.random()}`,
+        message: error.name,
+        description: error.message,
+        type: 'error',
+      });
+
+      return undefined;
+    }
+
+    return this.getCompleteCartIdAsync();
+  }
+
+  public async proceedToManualPaymentAsync(): Promise<string | undefined> {
+    if (this._model.selectedProviderId !== ProviderType.Manual) {
+      return undefined;
+    }
+
+    return this.getCompleteCartIdAsync();
   }
 
   public getAddressFormErrors(
@@ -354,10 +406,21 @@ class CheckoutController extends Controller {
     return undefined;
   }
 
+  private async getCompleteCartIdAsync(): Promise<string | undefined> {
+    const completeCart = await CartController.completeCartAsync();
+    this.resetCheckoutStates();
+    await CartController.resetCartAsync();
+    this._model.isPaymentLoading = false;
+    return completeCart?.id;
+  }
+
   private resetCheckoutStates(): void {
-    this._model.shippingForm = {};
-    this._model.shippingFormErrors = {};
-    this._model.shippingFormComplete = false;
+    if (!WindowController.model.isAuthenticated) {
+      this._model.shippingForm = {};
+      this._model.shippingFormErrors = {};
+      this._model.shippingFormComplete = false;
+    }
+
     this._model.billingForm = {};
     this._model.billingFormErrors = {};
     this._model.billingFormComplete = false;

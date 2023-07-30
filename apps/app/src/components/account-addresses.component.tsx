@@ -289,7 +289,15 @@ function AccountAddressesMobileComponent(): JSX.Element {
       </Dropdown>
       <Modal
         classNames={{
-          overlay: styles['overlay'],
+          overlay: styles['modal-overlay'],
+          title: styles['modal-title'],
+          description: styles['modal-description'],
+          cancelButton: {
+            button: styles['modal-cancel-button'],
+          },
+          confirmButton: {
+            button: styles['modal-confirm-button'],
+          },
         }}
         visible={deleteModalVisible}
         onConfirm={() => {

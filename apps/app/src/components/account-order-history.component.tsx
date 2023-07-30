@@ -40,7 +40,7 @@ function AccountOrderHistoryMobileComponent(): JSX.Element {
         height={rootRef.current?.clientHeight ?? 0 - 8}
         loader={
           <img
-            src={'../assets/svg/ring-resize.svg'}
+            src={'../assets/svg/ring-resize-dark.svg'}
             className={styles['loading-ring']}
           />
         }

@@ -27,12 +27,17 @@ export interface S3Config {
   bucket_name: string;
 }
 
+export interface StripeConfig {
+  key: string;
+}
+
 class ConfigService {
   private readonly _supabase!: SupabaseConfig;
   private readonly _medusa!: MedusaConfig;
   private readonly _meiliSearch!: MeiliSearchConfig;
   private readonly _mapbox!: MapboxConfig;
   private readonly _s3!: S3Config;
+  private readonly _stripe!: StripeConfig;
 
   constructor() {
     if (process.env['NODE_ENV'] === 'development') {
@@ -41,6 +46,7 @@ class ConfigService {
       this._meiliSearch = DevelopmentConfig.meilisearch;
       this._mapbox = DevelopmentConfig.mapbox;
       this._s3 = DevelopmentConfig.s3;
+      this._stripe = DevelopmentConfig.stripe;
     }
     // eslint-disable-next-line no-empty
     else if (process.env['NODE_ENV'] === 'production') {
@@ -49,6 +55,7 @@ class ConfigService {
       this._meiliSearch = ProductionConfig.meilisearch;
       this._mapbox = ProductionConfig.mapbox;
       this._s3 = ProductionConfig.s3;
+      this._stripe = ProductionConfig.stripe;
     }
   }
 
@@ -70,6 +77,10 @@ class ConfigService {
 
   public get s3(): S3Config {
     return this._s3;
+  }
+
+  public get stripe(): StripeConfig {
+    return this._stripe;
   }
 }
 

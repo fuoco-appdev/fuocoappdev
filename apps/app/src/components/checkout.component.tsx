@@ -9,9 +9,10 @@ import {
   Input,
   Solid,
   Dropdown,
+  FormLayout,
 } from '@fuoco.appdev/core-ui';
 import { useTranslation } from 'react-i18next';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useObservable } from '@ngneat/use-observable';
 import CheckoutController from '../controllers/checkout.controller';
 import AddressFormComponent, {
@@ -23,13 +24,94 @@ import StoreController from '../controllers/store.controller';
 import { PricedShippingOption } from '@medusajs/medusa/dist/types/pricing';
 import { ProviderType, ShippingType } from '../models/checkout.model';
 import CartController from '../controllers/cart.controller';
-import { Discount, GiftCard, PaymentSession, Customer } from '@medusajs/medusa';
+import {
+  Discount,
+  GiftCard,
+  PaymentSession,
+  Customer,
+  Cart,
+} from '@medusajs/medusa';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
 import { useNavigate } from 'react-router-dom';
 import { RoutePaths } from '../route-paths';
 import WindowController from '../controllers/window.controller';
 import AccountController from '../controllers/account.controller';
+import {
+  Elements,
+  useElements,
+  useStripe,
+  CardCvcElement,
+  CardExpiryElement,
+  CardNumberElement,
+} from '@stripe/react-stripe-js';
+import {
+  loadStripe,
+  StripeCardCvcElementOptions,
+  StripeCardExpiryElementOptions,
+  StripeCardNumberElement,
+  StripeCardNumberElementOptions,
+  StripeElementsOptions,
+} from '@stripe/stripe-js';
+import ConfigService from '../services/config.service';
+
+interface PayButtonProps {
+  stripeOptions?: StripeElementsOptions;
+  onPaymentComplete: () => void;
+}
+
+function PayButtonComponent({
+  stripeOptions,
+  onPaymentComplete,
+}: PayButtonProps): JSX.Element {
+  const navigate = useNavigate();
+  const elements = useElements();
+  const stripe = useStripe();
+  const [props] = useObservable(CheckoutController.model.store);
+  const cardRef = useRef<StripeCardNumberElement | null | undefined>(null);
+  const { t, i18n } = useTranslation();
+
+  useEffect(() => {
+    cardRef.current = elements?.getElement('cardNumber');
+    console.log(cardRef.current);
+  }, [elements]);
+
+  return (
+    <div className={styles['pay-button-container']}>
+      <Button
+        classNames={{
+          button: styles['pay-button'],
+        }}
+        rippleProps={{
+          color: 'rgba(233, 33, 66, .35)',
+        }}
+        touchScreen={true}
+        block={true}
+        size={'large'}
+        icon={<Line.Lock size={24} />}
+        onClick={async () => {
+          let id: string | undefined = undefined;
+          if (props.selectedProviderId === ProviderType.Manual) {
+            id = await CheckoutController.proceedToManualPaymentAsync();
+          } else if (props.selectedProviderId === ProviderType.Stripe) {
+            id = await CheckoutController.proceedToStripePaymentAsync(
+              stripe,
+              cardRef.current,
+              stripeOptions?.clientSecret
+            );
+          }
+
+          if (id) {
+            onPaymentComplete?.();
+            navigate(`${RoutePaths.OrderConfirmed}/${id}`);
+          }
+        }}
+      >
+        {t('pay')}
+      </Button>
+    </div>
+  );
+}
 
 function CheckoutDesktopComponent(): JSX.Element {
   return <></>;
@@ -47,10 +129,24 @@ function CheckoutMobileComponent(): JSX.Element {
   const [shippingAddressOptions, setShippingAddressOptions] = useState<
     RadioProps[]
   >([]);
-  const [openAddDropdown, setOpenAddDropdown] = useState<boolean>(false);
+  const [isAddDropdownOpen, setIsAddDropdownOpen] = useState<boolean>(false);
+  const [isPayDropdownOpen, setIsPayDropdownOpen] = useState<boolean>(false);
+  const [stripeOptions, setStripeOptions] = useState<StripeElementsOptions>({});
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const customer = accountProps.customer as Customer;
+  const stripePromise = loadStripe(ConfigService.stripe.key);
+
+  const stripeElementOptions:
+    | StripeCardNumberElementOptions
+    | StripeCardExpiryElementOptions
+    | StripeCardCvcElementOptions = useMemo(() => {
+    return {
+      classes: {
+        base: styles['stripe-input-base'],
+      },
+    };
+  }, []);
 
   useEffect(() => {
     if (cartProps.cart && cartProps.cart.items.length <= 0) {
@@ -93,8 +189,9 @@ function CheckoutMobileComponent(): JSX.Element {
       return;
     }
 
+    const cart = cartProps.cart as Cart;
     let radioOptions: RadioProps[] = [];
-    for (const session of cartProps.cart.payment_sessions as PaymentSession[]) {
+    for (const session of cart.payment_sessions as PaymentSession[]) {
       let description = '';
       let name = '';
       if (session.provider_id === ProviderType.Manual) {
@@ -118,6 +215,14 @@ function CheckoutMobileComponent(): JSX.Element {
 
     radioOptions = radioOptions.sort((a, b) => (a.label < b.label ? -1 : 1));
     setProviderOptions(radioOptions);
+
+    if (cart.payment_session) {
+      setStripeOptions({
+        clientSecret: cart.payment_session.data['client_secret'] as
+          | string
+          | undefined,
+      });
+    }
   }, [cartProps.cart]);
 
   useEffect(() => {
@@ -186,7 +291,7 @@ function CheckoutMobileComponent(): JSX.Element {
                       color: 'rgba(42, 42, 95, .35)',
                     }}
                     touchScreen={true}
-                    onClick={() => setOpenAddDropdown(true)}
+                    onClick={() => setIsAddDropdownOpen(true)}
                   />
                 </div>
               )}
@@ -568,15 +673,17 @@ function CheckoutMobileComponent(): JSX.Element {
               </Button>
             </div>
           </div>
-          <div className={styles['tag-list-container']}>
-            {cartProps.cart?.gift_cards?.map((value: GiftCard) => {
-              return (
-                <div key={value.id} className={styles['tag']}>
-                  <div className={styles['tag-text']}>{value.code}</div>
-                </div>
-              );
-            })}
-          </div>
+          {cartProps.cart?.gift_cards.length > 0 && (
+            <div className={styles['tag-list-container']}>
+              {cartProps.cart?.gift_cards?.map((value: GiftCard) => {
+                return (
+                  <div key={value.id} className={styles['tag']}>
+                    <div className={styles['tag-text']}>{value.code}</div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
       <div className={styles['card-container']}>
@@ -616,32 +723,34 @@ function CheckoutMobileComponent(): JSX.Element {
               </Button>
             </div>
           </div>
-          <div className={styles['tag-list-container']}>
-            {cartProps.cart?.discounts?.map((value: Discount) => {
-              return (
-                <div key={value.id} className={styles['tag']}>
-                  <div className={styles['tag-text']}>{value.code}</div>
-                  <div className={styles['tag-button-container']}>
-                    <Button
-                      classNames={{
-                        button: styles['tag-button'],
-                      }}
-                      onClick={() =>
-                        CartController.removeDiscountCodeAsync(value.code)
-                      }
-                      rippleProps={{}}
-                      touchScreen={true}
-                      block={true}
-                      rounded={true}
-                      type={'primary'}
-                      size={'tiny'}
-                      icon={<Solid.Cancel size={14} />}
-                    />
+          {cartProps.cart?.discounts.length > 0 && (
+            <div className={styles['tag-list-container']}>
+              {cartProps.cart?.discounts?.map((value: Discount) => {
+                return (
+                  <div key={value.id} className={styles['tag']}>
+                    <div className={styles['tag-text']}>{value.code}</div>
+                    <div className={styles['tag-button-container']}>
+                      <Button
+                        classNames={{
+                          button: styles['tag-button'],
+                        }}
+                        onClick={() =>
+                          CartController.removeDiscountCodeAsync(value.code)
+                        }
+                        rippleProps={{}}
+                        touchScreen={true}
+                        block={true}
+                        rounded={true}
+                        type={'primary'}
+                        size={'tiny'}
+                        icon={<Solid.Cancel size={14} />}
+                      />
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
       <div className={styles['card-container']}>
@@ -746,20 +855,16 @@ function CheckoutMobileComponent(): JSX.Element {
             disabled={!props.shippingFormComplete || !props.billingFormComplete}
             size={'large'}
             icon={<Line.Payment size={24} />}
-            onClick={async () => {
-              const id =
-                await CheckoutController.proceedToPaymentAndGetCompleteCartIdAsync();
-              navigate(`${RoutePaths.OrderConfirmed}/${id}`);
-            }}
+            onClick={() => setIsPayDropdownOpen(true)}
           >
             {t('proceedToPayment')}
           </Button>
         </div>
       </div>
       <Dropdown
-        open={openAddDropdown}
+        open={isAddDropdownOpen}
         touchScreen={true}
-        onClose={() => setOpenAddDropdown(false)}
+        onClose={() => setIsAddDropdownOpen(false)}
       >
         <div className={styles['add-address-container']}>
           <AddressFormComponent
@@ -843,7 +948,7 @@ function CheckoutMobileComponent(): JSX.Element {
                 }
 
                 await CheckoutController.addShippingAddressAsync();
-                setOpenAddDropdown(false);
+                setIsAddDropdownOpen(false);
               }}
             >
               {t('addAddress')}
@@ -851,6 +956,71 @@ function CheckoutMobileComponent(): JSX.Element {
           </div>
         </div>
       </Dropdown>
+      <Dropdown
+        open={isPayDropdownOpen}
+        touchScreen={true}
+        onClose={() => setIsPayDropdownOpen(false)}
+      >
+        <div className={styles['pay-container']}>
+          {props.selectedProviderId === ProviderType.Manual && (
+            <>
+              <div className={styles['manual-provider-text']}>
+                {t('manualProviderDescription')}
+              </div>
+              <PayButtonComponent
+                onPaymentComplete={() => setIsPayDropdownOpen(false)}
+              />
+            </>
+          )}
+          {props.selectedProviderId === ProviderType.Stripe && (
+            <Elements stripe={stripePromise} options={stripeOptions}>
+              <FormLayout
+                label={t('creditCardNumber') ?? ''}
+                error={''}
+                classNames={{
+                  label: styles['input-form-layout-label'],
+                }}
+              >
+                <CardNumberElement options={stripeElementOptions} />
+              </FormLayout>
+              <div className={styles['horizontal-input-container']}>
+                <FormLayout
+                  label={t('expirationDate') ?? ''}
+                  error={''}
+                  classNames={{
+                    root: styles['input-form-root'],
+                    label: styles['input-form-layout-label'],
+                  }}
+                >
+                  <CardExpiryElement options={stripeElementOptions} />
+                </FormLayout>
+                <FormLayout
+                  label={t('cvc') ?? ''}
+                  error={''}
+                  classNames={{
+                    root: styles['input-form-root'],
+                    label: styles['input-form-layout-label'],
+                  }}
+                >
+                  <CardCvcElement options={stripeElementOptions} />
+                </FormLayout>
+              </div>
+              <PayButtonComponent
+                stripeOptions={stripeOptions}
+                onPaymentComplete={() => setIsPayDropdownOpen(false)}
+              />
+            </Elements>
+          )}
+        </div>
+      </Dropdown>
+      {props.isPaymentLoading && (
+        <div className={styles['loading-container']}>
+          <img
+            src={'../assets/svg/ring-resize-light.svg'}
+            className={styles['loading-ring']}
+          />
+        </div>
+      )}
     </div>
   );
 }
