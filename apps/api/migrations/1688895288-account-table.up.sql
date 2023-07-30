@@ -8,12 +8,13 @@
     id uuid NOT NULL DEFAULT gen_random_uuid(),
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
-    user_id uuid,
+    customer_id text COLLATE pg_catalog."default",
     supabase_id uuid,
     profile_url text COLLATE pg_catalog."default",
+    status account_status_enum DEFAULT 'Incomplete'::account_status_enum,
     CONSTRAINT account_pkey PRIMARY KEY (id),
     CONSTRAINT account_supabase_id_key UNIQUE (supabase_id),
-    CONSTRAINT account_user_id_key UNIQUE (user_id)
+    CONSTRAINT account_user_id_key UNIQUE (customer_id)
 )
 
 TABLESPACE pg_default;
@@ -33,5 +34,14 @@ GRANT ALL ON TABLE public.account TO postgres;
 GRANT ALL ON TABLE public.account TO service_role;
 
 GRANT ALL ON TABLE public.account TO supabase_admin;
+-- Type: account_status_enum
+
+-- DROP TYPE IF EXISTS public.account_status_enum;
+
+CREATE TYPE public.account_status_enum AS ENUM
+    ('Incomplete', 'Complete');
+
+ALTER TYPE public.account_status_enum
+    OWNER TO supabase_admin;
 
  END;
