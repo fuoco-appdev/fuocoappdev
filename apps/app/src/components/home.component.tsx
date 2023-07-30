@@ -71,84 +71,122 @@ function HomeMobileComponent(): JSX.Element {
   }, [mapStyleLoaded, i18n.language]);
 
   return (
-    <Map
-      mapboxAccessToken={ConfigService.mapbox.access_token}
-      ref={mapRef}
-      initialViewState={{
-        longitude: localProps.longitude,
-        latitude: localProps.latitude,
-        zoom: localProps.zoom,
-      }}
-      mapStyle={ConfigService.mapbox.style_url}
-      onMove={(e) => HomeController.onMapMove(e.viewState)}
-      onLoad={(e) => setMapStyleLoaded(e.target ? true : false)}
-    >
-      {props.inventoryLocations?.map(
-        (point: InventoryLocation, index: number) => (
-          <Marker
-            key={`marker-${index}`}
-            latitude={point.coordinates.lat}
-            longitude={point.coordinates.lng}
-            anchor={'bottom'}
-            onClick={(e) => {
-              e.originalEvent.stopPropagation();
-              setSelectedPoint(point);
-            }}
-          >
-            <img
-              src={
-                props.selectedInventoryLocation?.placeName !== point.placeName
-                  ? '../assets/svg/cruthology-pin.svg'
-                  : '../assets/svg/cruthology-selected-pin.svg'
-              }
-              className={styles['marker']}
-            />
-          </Marker>
-        )
-      )}
-      {selectedPoint && (
-        <Popup
-          anchor={'top'}
-          onClose={() => setSelectedPoint(null)}
-          latitude={selectedPoint.coordinates.lat}
-          longitude={selectedPoint.coordinates.lng}
-        >
-          <div className={styles['marker-popup']}>
-            <div className={styles['company']}>{selectedPoint.company}</div>
-            <div className={styles['address']}>{selectedPoint.placeName}</div>
-            <div className={styles['select-button-container']}>
-              <div>
-                <Button
-                  classNames={{
-                    button: styles['select-button'],
-                  }}
-                  rippleProps={{
-                    color: 'rgba(133, 38, 122, .35)',
-                  }}
-                  block={false}
-                  size={'tiny'}
-                  disabled={
-                    selectedPoint?.placeName ===
-                    props.selectedInventoryLocation?.placeName
-                  }
-                  type={'text'}
-                  onClick={() =>
-                    HomeController.updateSelectedInventoryLocation(
-                      selectedPoint
-                    )
-                  }
-                >
-                  {selectedPoint?.placeName !==
-                  props.selectedInventoryLocation?.placeName
-                    ? t('select')
-                    : t('selected')}
-                </Button>
-              </div>
-            </div>
+    <div className={styles['root']}>
+      <div className={styles['content-container']}>
+        <img
+          src={'../assets/images/vineyard1.png'}
+          className={styles['background-image']}
+        />
+        <div className={styles['background-filter']} />
+        <div className={styles['content']}>
+          <img src={'../assets/svg/logo.svg'} className={styles['logo']} />
+          <img
+            src={'../assets/svg/logo-text.svg'}
+            className={styles['logo-text']}
+          />
+          <div className={styles['call-to-action-text']}>
+            {t('utilizeSearchEngineDescription', { product_count: 0 })}
           </div>
-        </Popup>
-      )}
-    </Map>
+          <div>
+            <Button
+              classNames={{
+                button: styles['shop-now-button'],
+              }}
+              rippleProps={{
+                color: 'rgba(252, 245, 227, .35)',
+              }}
+              size={'large'}
+              onClick={() => setTimeout(() => navigate(RoutePaths.Store), 150)}
+            >
+              {t('shopNow')}
+            </Button>
+          </div>
+        </div>
+      </div>
+      <div className={styles['map-container']}>
+        <Map
+          mapboxAccessToken={ConfigService.mapbox.access_token}
+          ref={mapRef}
+          initialViewState={{
+            longitude: localProps.longitude,
+            latitude: localProps.latitude,
+            zoom: localProps.zoom,
+          }}
+          mapStyle={ConfigService.mapbox.style_url}
+          onMove={(e) => HomeController.onMapMove(e.viewState)}
+          onLoad={(e) => setMapStyleLoaded(e.target ? true : false)}
+        >
+          {props.inventoryLocations?.map(
+            (point: InventoryLocation, index: number) => (
+              <Marker
+                key={`marker-${index}`}
+                latitude={point.coordinates.lat}
+                longitude={point.coordinates.lng}
+                anchor={'bottom'}
+                onClick={(e) => {
+                  e.originalEvent.stopPropagation();
+                  setSelectedPoint(point);
+                }}
+              >
+                <img
+                  src={
+                    props.selectedInventoryLocation?.placeName !==
+                    point.placeName
+                      ? '../assets/svg/cruthology-pin.svg'
+                      : '../assets/svg/cruthology-selected-pin.svg'
+                  }
+                  className={styles['marker']}
+                />
+              </Marker>
+            )
+          )}
+          {selectedPoint && (
+            <Popup
+              anchor={'top'}
+              onClose={() => setSelectedPoint(null)}
+              latitude={selectedPoint.coordinates.lat}
+              longitude={selectedPoint.coordinates.lng}
+            >
+              <div className={styles['marker-popup']}>
+                <div className={styles['company']}>{selectedPoint.company}</div>
+                <div className={styles['address']}>
+                  {selectedPoint.placeName}
+                </div>
+                <div className={styles['select-button-container']}>
+                  <div>
+                    <Button
+                      classNames={{
+                        button: styles['select-button'],
+                      }}
+                      rippleProps={{
+                        color: 'rgba(133, 38, 122, .35)',
+                      }}
+                      block={false}
+                      size={'tiny'}
+                      disabled={
+                        selectedPoint?.placeName ===
+                        props.selectedInventoryLocation?.placeName
+                      }
+                      type={'text'}
+                      onClick={() =>
+                        HomeController.updateSelectedInventoryLocation(
+                          selectedPoint
+                        )
+                      }
+                    >
+                      {selectedPoint?.placeName !==
+                      props.selectedInventoryLocation?.placeName
+                        ? t('select')
+                        : t('selected')}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </Popup>
+          )}
+        </Map>
+      </div>
+    </div>
   );
 }
 

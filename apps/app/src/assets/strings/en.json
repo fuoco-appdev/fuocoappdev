@@ -229,5 +229,6 @@
   "security": "Security",
   "creditCardNumber": "Card number",
   "expirationDate": "Expiration date",
-  "cvc": "CVC"
+  "cvc": "CVC",
+  "utilizeSearchEngineDescription": "Utilize an integrated search engine to explore a wide array of {{product_count, string}} selections."
 }
