@@ -14,6 +14,7 @@ export interface InventoryLocation {
 export interface HomeState {
   inventoryLocations: InventoryLocation[];
   selectedInventoryLocation: InventoryLocation | undefined;
+  wineCount: number;
 }
 
 export interface HomeLocalState {
@@ -30,6 +31,7 @@ export class HomeModel extends Model {
         withProps<HomeState>({
           inventoryLocations: [],
           selectedInventoryLocation: undefined,
+          wineCount: 0,
         })
       ),
       undefined,
@@ -81,6 +83,16 @@ export class HomeModel extends Model {
   public set inventoryLocations(value: InventoryLocation[]) {
     if (JSON.stringify(this.inventoryLocations) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, inventoryLocations: value }));
+    }
+  }
+
+  public get wineCount(): number {
+    return this.store.getValue().wineCount;
+  }
+
+  public set wineCount(value: number) {
+    if (this.wineCount !== value) {
+      this.store.update((state) => ({ ...state, wineCount: value }));
     }
   }
 

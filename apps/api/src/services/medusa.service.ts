@@ -5,13 +5,13 @@ import {
   CustomerRequest,
   OrdersResponse,
   OrdersRequest,
+  ProductCountResponse,
+  ProductCountRequest,
 } from '../protobuf/core_pb.js';
 import 'https://deno.land/x/dotenv@v3.2.0/load.ts';
 import MapboxService, { GeocodingFeature } from './mapbox.service.ts';
 import SupabaseService from './supabase.service.ts';
 import AccountService from './account.service.ts';
-import { User } from 'https://esm.sh/@supabase/supabase-js@2.7.0';
-import { IAxiodResponse } from 'https://deno.land/x/axiod@0.26.2/interfaces.ts';
 
 class MedusaService {
   private _url: string | undefined;
@@ -201,6 +201,43 @@ class MedusaService {
     return stockLocations;
   }
 
+  public async getProductCountAsync(
+    request: InstanceType<typeof ProductCountRequest>
+  ): Promise<InstanceType<typeof ProductCountResponse>> {
+    const type = request.getType();
+    const response = new ProductCountResponse();
+    const productTypeResponse = await SupabaseService.client
+      .from('product_type')
+      .select()
+      .match({ value: type });
+
+    if (productTypeResponse.error) {
+      console.error(productTypeResponse.error);
+      response.setCount(0);
+      return response;
+    }
+
+    if (productTypeResponse.data.length <= 0) {
+      response.setCount(0);
+      return response;
+    }
+
+    const typeData = productTypeResponse.data[0];
+    const { data, error } = await SupabaseService.client
+      .from('product')
+      .select()
+      .match({ type_id: typeData['id'] });
+
+    if (error) {
+      console.error(error);
+      response.setCount(0);
+      return response;
+    }
+
+    response.setCount(data.length);
+    return response;
+  }
+
   public async getOrdersAsync(
     customerId: string,
     request: InstanceType<typeof OrdersRequest>
@@ -209,8 +246,8 @@ class MedusaService {
     const limit = request.getLimit();
     const params = new URLSearchParams({
       customer_id: customerId,
-      offset: offset,
-      limit: limit,
+      offset: offset.toString(),
+      limit: limit.toString(),
     }).toString();
     const ordersResponse = await axiod.get(
       `${this._url}/admin/orders?${params}`,

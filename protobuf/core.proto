@@ -33,6 +33,14 @@ message OrdersResponse {
     string data = 1;
 }
 
+message ProductCountRequest {
+    string type = 1;
+}
+
+message ProductCountResponse {
+    int32 count = 1;
+}
+
 message StockLocationsResponse {
     repeated string locations = 1;
 }

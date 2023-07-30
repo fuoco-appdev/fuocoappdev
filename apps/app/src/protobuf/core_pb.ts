@@ -248,6 +248,80 @@ export class OrdersResponse extends Message<OrdersResponse> {
 }
 
 /**
+ * @generated from message core.ProductCountRequest
+ */
+export class ProductCountRequest extends Message<ProductCountRequest> {
+  /**
+   * @generated from field: string type = 1;
+   */
+  type = "";
+
+  constructor(data?: PartialMessage<ProductCountRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.ProductCountRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "type", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ProductCountRequest {
+    return new ProductCountRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ProductCountRequest {
+    return new ProductCountRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ProductCountRequest {
+    return new ProductCountRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ProductCountRequest | PlainMessage<ProductCountRequest> | undefined, b: ProductCountRequest | PlainMessage<ProductCountRequest> | undefined): boolean {
+    return proto3.util.equals(ProductCountRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message core.ProductCountResponse
+ */
+export class ProductCountResponse extends Message<ProductCountResponse> {
+  /**
+   * @generated from field: int32 count = 1;
+   */
+  count = 0;
+
+  constructor(data?: PartialMessage<ProductCountResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.ProductCountResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "count", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ProductCountResponse {
+    return new ProductCountResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ProductCountResponse {
+    return new ProductCountResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ProductCountResponse {
+    return new ProductCountResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ProductCountResponse | PlainMessage<ProductCountResponse> | undefined, b: ProductCountResponse | PlainMessage<ProductCountResponse> | undefined): boolean {
+    return proto3.util.equals(ProductCountResponse, a, b);
+  }
+}
+
+/**
  * @generated from message core.StockLocationsResponse
  */
 export class StockLocationsResponse extends Message<StockLocationsResponse> {

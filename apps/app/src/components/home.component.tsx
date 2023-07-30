@@ -85,7 +85,9 @@ function HomeMobileComponent(): JSX.Element {
             className={styles['logo-text']}
           />
           <div className={styles['call-to-action-text']}>
-            {t('utilizeSearchEngineDescription', { product_count: 0 })}
+            {t('utilizeSearchEngineDescription', {
+              product_count: props.wineCount,
+            })}
           </div>
           <div>
             <Button

@@ -23,6 +23,25 @@ class MedusaService extends Service {
     return this._medusa;
   }
 
+  public async requestProductCountAsync(type: string): Promise<number> {
+    const productCountRequest = new core.ProductCountRequest({ type: type });
+    const response = await axios({
+      method: 'post',
+      url: `${this.endpointUrl}/medusa/products/count`,
+      headers: {
+        ...this.headers,
+      },
+      data: productCountRequest.toBinary(),
+      responseType: 'arraybuffer',
+    });
+    const arrayBuffer = new Uint8Array(response.data);
+    this.assertResponse(arrayBuffer);
+
+    const productCountResponse =
+      core.ProductCountResponse.fromBinary(arrayBuffer);
+    return productCountResponse.count;
+  }
+
   public async requestCustomerAsync(
     supabaseId: string
   ): Promise<Customer | undefined> {

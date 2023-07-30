@@ -51,6 +51,8 @@ class HomeController extends Controller {
         this._model.selectedInventoryLocation =
           this._model.inventoryLocations[0];
       }
+
+      this._model.wineCount = await this.requestWineCountAsync();
     }
     this._currentPositionSubscription = WindowController.model.store
       .pipe(select((model) => model.currentPosition))
@@ -58,6 +60,11 @@ class HomeController extends Controller {
         next: (value) =>
           this.onCurrentPositionChanged(value, this._model.inventoryLocations),
       });
+  }
+
+  private async requestWineCountAsync(): Promise<number> {
+    const count = await MedusaService.requestProductCountAsync('Wine');
+    return count;
   }
 
   private async requestInventoryLocationsAsync(): Promise<InventoryLocation[]> {

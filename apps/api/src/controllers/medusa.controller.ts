@@ -1,6 +1,10 @@
 import { AuthGuard } from '../guards/auth.guard.ts';
 import * as Oak from 'https://deno.land/x/oak@v11.1.0/mod.ts';
-import { CustomerRequest, OrdersRequest } from '../protobuf/core_pb.js';
+import {
+  CustomerRequest,
+  OrdersRequest,
+  ProductCountRequest,
+} from '../protobuf/core_pb.js';
 import { Controller, Post, Guard, ContentType } from '../index.ts';
 import { readAll } from 'https://deno.land/std@0.105.0/io/util.ts';
 import MedusaService from '../services/medusa.service.ts';
@@ -19,6 +23,23 @@ export class MedusaController {
     >
   ): Promise<void> {
     const response = await MedusaService.getStockLocationsAsync();
+    context.response.type = 'application/x-protobuf';
+    context.response.body = response.serializeBinary();
+  }
+
+  @Post('/products/count')
+  @ContentType('application/x-protobuf')
+  public async getProductCountAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >
+  ): Promise<void> {
+    const body = await context.request.body({ type: 'reader' });
+    const requestValue = await readAll(body.value);
+    const request = ProductCountRequest.deserializeBinary(requestValue);
+    const response = await MedusaService.getProductCountAsync(request);
     context.response.type = 'application/x-protobuf';
     context.response.body = response.serializeBinary();
   }
