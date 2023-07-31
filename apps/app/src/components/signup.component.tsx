@@ -170,6 +170,7 @@ export default function SignupComponent(): JSX.Element {
           type: 'loading',
         });
       }}
+      redirectTo={RoutePaths.Account}
     />
   );
 

@@ -1,7 +1,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import React, { useEffect, useMemo, useRef } from 'react';
-import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import {
+  HashRouter,
+  Routes,
+  Route,
+  Navigate,
+  Router,
+  BrowserRouter,
+} from 'react-router-dom';
 import WindowController from '../controllers/window.controller';
 import SigninController from '../controllers/signin.controller';
 import SignupController from '../controllers/signup.controller';
@@ -43,6 +50,7 @@ import OrderConfirmedComponent from './order-confirmed.component';
 import { useObservable } from '@ngneat/use-observable';
 import AccountEditComponent from './account-edit.component';
 import AccountSettingsAccountComponent from './account-settings-account.component';
+import LoadingComponent from './loading.component';
 
 interface RouteElementProps {
   element: JSX.Element;
@@ -117,102 +125,115 @@ export default function AppComponent(): JSX.Element {
   }, []);
 
   return (
-    <HashRouter>
-      <Routes>
-        <Route path={RoutePaths.Default} element={<WindowComponent />}>
-          <Route index element={<HomeComponent />} />
-          <Route path={RoutePaths.Home} element={<HomeComponent />} />
-          <Route
-            path={RoutePaths.Signin}
-            element={<GuestComponent element={<SigninComponent />} />}
-          />
-          <Route
-            path={RoutePaths.Signup}
-            element={<GuestComponent element={<SignupComponent />} />}
-          />
-          <Route
-            path={RoutePaths.ForgotPassword}
-            element={<GuestComponent element={<ForgotPasswordComponent />} />}
-          />
-          <Route
-            path={RoutePaths.TermsOfService}
-            element={<TermsOfServiceComponent />}
-          />
-          <Route
-            path={RoutePaths.PrivacyPolicy}
-            element={<PrivacyPolicyComponent />}
-          />
-          <Route
-            path={RoutePaths.ResetPassword}
-            element={<ResetPasswordComponent />}
-          />
-          <Route path={RoutePaths.Store} element={<StoreComponent />} />
-          <Route
-            path={`${RoutePaths.Store}/:id`}
-            element={<ProductComponent />}
-          />
-          <Route path={RoutePaths.Events} element={<EventsComponent />} />
-          <Route path={RoutePaths.Cart} element={<CartComponent />} />
-          <Route path={RoutePaths.Checkout} element={<CheckoutComponent />} />
-          <Route
-            path={`${RoutePaths.OrderConfirmed}/:id`}
-            element={<OrderConfirmedComponent />}
-          />
-          <Route
-            path={RoutePaths.Notifications}
-            element={
-              <AuthenticatedComponent element={<NotificationsComponent />} />
-            }
-          />
-          <Route
-            path={RoutePaths.Account}
-            element={<AuthenticatedComponent element={<AccountComponent />} />}
-          >
+    <>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<LoadingComponent isVisible={true} />} />
+        </Routes>
+      </BrowserRouter>
+      <HashRouter>
+        <Routes>
+          <Route path={RoutePaths.Default} element={<WindowComponent />}>
+            <Route index element={<HomeComponent />} />
+            <Route path={RoutePaths.Home} element={<HomeComponent />} />
             <Route
-              path={RoutePaths.AccountEvents}
+              path={RoutePaths.Signin}
+              element={<GuestComponent element={<SigninComponent />} />}
+            />
+            <Route
+              path={RoutePaths.Signup}
+              element={<GuestComponent element={<SignupComponent />} />}
+            />
+            <Route
+              path={RoutePaths.ForgotPassword}
+              element={<GuestComponent element={<ForgotPasswordComponent />} />}
+            />
+            <Route
+              path={RoutePaths.TermsOfService}
+              element={<TermsOfServiceComponent />}
+            />
+            <Route
+              path={RoutePaths.PrivacyPolicy}
+              element={<PrivacyPolicyComponent />}
+            />
+            <Route
+              path={RoutePaths.ResetPassword}
+              element={<ResetPasswordComponent />}
+            />
+            <Route path={RoutePaths.Store} element={<StoreComponent />} />
+            <Route
+              path={`${RoutePaths.Store}/:id`}
+              element={<ProductComponent />}
+            />
+            <Route path={RoutePaths.Events} element={<EventsComponent />} />
+            <Route path={RoutePaths.Cart} element={<CartComponent />} />
+            <Route path={RoutePaths.Checkout} element={<CheckoutComponent />} />
+            <Route
+              path={`${RoutePaths.OrderConfirmed}/:id`}
+              element={<OrderConfirmedComponent />}
+            />
+            <Route
+              path={RoutePaths.Notifications}
               element={
-                <AuthenticatedComponent element={<AccountEventsComponent />} />
+                <AuthenticatedComponent element={<NotificationsComponent />} />
               }
             />
             <Route
-              path={RoutePaths.AccountOrderHistory}
+              path={RoutePaths.Account}
+              element={
+                <AuthenticatedComponent element={<AccountComponent />} />
+              }
+            >
+              <Route
+                path={RoutePaths.AccountEvents}
+                element={
+                  <AuthenticatedComponent
+                    element={<AccountEventsComponent />}
+                  />
+                }
+              />
+              <Route
+                path={RoutePaths.AccountOrderHistory}
+                element={
+                  <AuthenticatedComponent
+                    element={<AccountOrderHistoryComponent />}
+                  />
+                }
+              />
+              <Route
+                path={RoutePaths.AccountAddresses}
+                element={
+                  <AuthenticatedComponent
+                    element={<AccountAddressesComponent />}
+                  />
+                }
+              />
+              <Route
+                path={RoutePaths.AccountEdit}
+                element={
+                  <AuthenticatedComponent element={<AccountEditComponent />} />
+                }
+              />
+            </Route>
+            <Route
+              path={RoutePaths.AccountSettings}
               element={
                 <AuthenticatedComponent
-                  element={<AccountOrderHistoryComponent />}
+                  element={<AccountSettingsComponent />}
                 />
               }
             />
             <Route
-              path={RoutePaths.AccountAddresses}
+              path={RoutePaths.AccountSettingsAccount}
               element={
                 <AuthenticatedComponent
-                  element={<AccountAddressesComponent />}
+                  element={<AccountSettingsAccountComponent />}
                 />
-              }
-            />
-            <Route
-              path={RoutePaths.AccountEdit}
-              element={
-                <AuthenticatedComponent element={<AccountEditComponent />} />
               }
             />
           </Route>
-          <Route
-            path={RoutePaths.AccountSettings}
-            element={
-              <AuthenticatedComponent element={<AccountSettingsComponent />} />
-            }
-          />
-          <Route
-            path={RoutePaths.AccountSettingsAccount}
-            element={
-              <AuthenticatedComponent
-                element={<AccountSettingsAccountComponent />}
-              />
-            }
-          />
-        </Route>
-      </Routes>
-    </HashRouter>
+        </Routes>
+      </HashRouter>
+    </>
   );
 }

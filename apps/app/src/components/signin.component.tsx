@@ -143,6 +143,7 @@ export default function SigninComponent(): JSX.Element {
       onSigninRedirect={() => navigate(RoutePaths.Signin)}
       onSignupRedirect={() => navigate(RoutePaths.Signup)}
       onSigninError={(error: AuthError) => setError(error)}
+      redirectTo={RoutePaths.Account}
     />
   );
   return (
