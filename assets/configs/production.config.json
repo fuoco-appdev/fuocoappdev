@@ -10,7 +10,7 @@
   },
   "meilisearch": {
     "url": "https://meilisearch.cruthology.com",
-    "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICAgInJvbGUiOiAiYW5vbiIsCiAgICAiaXNzIjogInN1cGFiYXNlIiwKICAgICJpYXQiOiAxNjgzNzc3NjAwLAogICAgImV4cCI6IDE4NDE2MzA0MDAKfQ.DDAUgHEbZHyTKL3v_aZK70b1DBoozhNuHXTlAvJvlho"
+    "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICAgInJvbGUiOiAiYW5vbiIsCiAgICAiaXNzIjogInN1cGFiYXNlIiwKICAgICJpYXQiOiAxNjgxMzU4NDAwLAogICAgImV4cCI6IDE4MzkyMTEyMDAKfQ.jbh5Y95Sl-jHjsK8FwL_CjpxFFAWaFwDI6GcNGxEO48"
   },
   "mapbox": {
     "style_url": "mapbox://styles/lucasfuoco/cli44l6r902mw01qyaoqoa46t",
