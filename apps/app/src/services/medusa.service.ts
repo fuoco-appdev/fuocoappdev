@@ -88,7 +88,10 @@ class MedusaService extends Service {
     phone?: string;
     metadata?: string;
   }): Promise<Customer | undefined> {
-    if (await this.medusa.auth.exists(props?.email ?? '')) {
+    const userExistsResponse = await this.medusa.auth.exists(
+      props?.email ?? ''
+    );
+    if (userExistsResponse.exists) {
       return undefined;
     }
 
