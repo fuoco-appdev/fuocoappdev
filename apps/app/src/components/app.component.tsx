@@ -126,11 +126,6 @@ export default function AppComponent(): JSX.Element {
 
   return (
     <>
-      <BrowserRouter>
-        <Routes>
-          <Route element={<LoadingComponent isVisible={true} />} />
-        </Routes>
-      </BrowserRouter>
       <HashRouter>
         <Routes>
           <Route path={RoutePaths.Default} element={<WindowComponent />}>
@@ -234,6 +229,11 @@ export default function AppComponent(): JSX.Element {
           </Route>
         </Routes>
       </HashRouter>
+      <BrowserRouter>
+        <Routes>
+          <Route path={'*'} element={<LoadingComponent isVisible={true} />} />
+        </Routes>
+      </BrowserRouter>
     </>
   );
 }
