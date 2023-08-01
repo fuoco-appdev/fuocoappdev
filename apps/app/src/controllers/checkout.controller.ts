@@ -567,7 +567,7 @@ class CheckoutController extends Controller {
   private async onCustomerChangedAsync(
     value: Customer | undefined
   ): Promise<void> {
-    if (value && value?.shipping_addresses.length <= 0) {
+    if (value && value?.shipping_addresses?.length <= 0) {
       this._model.selectedShippingAddressOptionId = undefined;
     }
 
@@ -575,7 +575,7 @@ class CheckoutController extends Controller {
     if (
       value &&
       !this._model.selectedShippingAddressOptionId &&
-      value.shipping_addresses.length > 0
+      value.shipping_addresses?.length > 0
     ) {
       await this.updateSelectedShippingAddressOptionIdAsync(
         value.shipping_addresses[0].id ?? ''

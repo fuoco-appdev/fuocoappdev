@@ -354,7 +354,7 @@ function CheckoutMobileComponent(): JSX.Element {
             />
           )}
           {windowProps.isAuthenticated &&
-            customer?.shipping_addresses.length > 0 && (
+            customer?.shipping_addresses?.length > 0 && (
               <Radio.Group
                 id={''}
                 activeId={props.selectedShippingAddressOptionId ?? ''}
@@ -379,7 +379,7 @@ function CheckoutMobileComponent(): JSX.Element {
               />
             )}
           {windowProps.isAuthenticated &&
-            customer?.shipping_addresses.length <= 0 && (
+            customer?.shipping_addresses?.length <= 0 && (
               <div className={styles['card-description']}>
                 {t('noAddressAddedDescription')}
               </div>

@@ -63,7 +63,7 @@ function AccountAddressesMobileComponent(): JSX.Element {
         </div>
       </div>
       <div className={styles['address-list-container']}>
-        {customer && customer?.shipping_addresses.length > 0 ? (
+        {customer && customer?.shipping_addresses?.length > 0 ? (
           customer?.shipping_addresses?.map((value: Address) => (
             <AddressItemComponent
               key={value.id}
