@@ -121,7 +121,7 @@ export default function SigninComponent(): JSX.Element {
       }}
       defaultIconColor={'#2A2A5F'}
       litIconColor={'#2A2A5F'}
-      providers={['facebook', 'google', 'twitter']}
+      providers={['facebook', 'google']}
       view={'sign_in'}
       socialColors={false}
       strings={{
@@ -143,7 +143,7 @@ export default function SigninComponent(): JSX.Element {
       onSigninRedirect={() => navigate(RoutePaths.Signin)}
       onSignupRedirect={() => navigate(RoutePaths.Signup)}
       onSigninError={(error: AuthError) => setError(error)}
-      redirectTo={RoutePaths.Account}
+      redirectTo={window.location.origin}
     />
   );
   return (

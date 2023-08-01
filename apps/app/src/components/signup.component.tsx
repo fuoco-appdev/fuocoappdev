@@ -82,6 +82,7 @@ export default function SignupComponent(): JSX.Element {
   const [errorType, setErrorType] = useState<AuthErrorType | null>(null);
   const { t } = useTranslation();
 
+  const url = `${window.location.protocol}//${window.location.hostname}.com`;
   const auth = (
     <Auth
       classNames={{
@@ -123,7 +124,7 @@ export default function SignupComponent(): JSX.Element {
       }}
       defaultIconColor={'#2A2A5F'}
       litIconColor={'#2A2A5F'}
-      providers={['facebook', 'google', 'twitter']}
+      providers={['facebook', 'google']}
       view={'sign_up'}
       socialColors={false}
       strings={{
@@ -170,7 +171,7 @@ export default function SignupComponent(): JSX.Element {
           type: 'loading',
         });
       }}
-      redirectTo={RoutePaths.Account}
+      redirectTo={window.location.origin}
     />
   );
 
