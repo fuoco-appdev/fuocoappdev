@@ -90,6 +90,7 @@
             padding-top: $mp-4;
             padding-left: $mp-4;
             padding-bottom: calc(56px * 3);
+            align-content: flex-start;
             
             & .loading-ring {
                 width: 100%;
