@@ -62,6 +62,10 @@ class StoreController extends Controller {
   }
 
   public async onNextScrollAsync(): Promise<void> {
+    await this.searchNextPageAsync();
+  }
+
+  public async searchNextPageAsync(): Promise<void> {
     this._model.pagination = this._model.pagination + 1;
 
     const limit = 10;
@@ -165,6 +169,10 @@ class StoreController extends Controller {
     }
 
     this._model.previews = products;
+
+    if (hits.length === limit && products.length < limit) {
+      await this.searchNextPageAsync();
+    }
   }
 
   public async applyFilterAsync(
