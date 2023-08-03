@@ -169,7 +169,7 @@ class StoreController extends Controller {
       this._model.previews = products;
     }
 
-    if (hits.length === limit && products.length < limit) {
+    if (products.length < limit) {
       await this.searchNextPageAsync();
     }
   }
