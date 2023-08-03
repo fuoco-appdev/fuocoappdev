@@ -99,6 +99,36 @@ class MedusaService {
     const lastName = request.getLastName();
     const phone = request.getPhone();
     const metadata = request.getMetadata();
+
+    const customer = new CustomerResponse();
+    const existingCustomers = await this.findCustomerAsync(email);
+    if (existingCustomers.length > 0) {
+      const firstCustomer = existingCustomers[0];
+      const updateParams = new URLSearchParams({
+        expand: 'shipping_addresses',
+      }).toString();
+      const updateCustomerResponse = await axiod.post(
+        `${this._url}/admin/customers/${firstCustomer.id}?${updateParams}`,
+        {
+          ...(email && { email: email, password: sessionToken }),
+          ...(firstName && { first_name: firstName }),
+          ...(lastName && { last_name: lastName }),
+          ...(phone && { phone: phone }),
+          ...(metadata && { metadata: metadata }),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${this._token}`,
+          },
+        }
+      );
+
+      const updatedCustomerData = updateCustomerResponse.data['customer'];
+      customer.setData(JSON.stringify(updatedCustomerData));
+      customer.setPassword(sessionToken);
+      return customer;
+    }
+
     const params = new URLSearchParams({
       expand: 'shipping_addresses',
     }).toString();
@@ -117,7 +147,7 @@ class MedusaService {
         },
       }
     );
-    const customer = new CustomerResponse();
+
     const data = customerResponse.data['customer'];
     customer.setData(JSON.stringify(data));
     customer.setPassword(sessionToken);
@@ -262,6 +292,23 @@ class MedusaService {
     orders.setData(JSON.stringify(data));
 
     return orders;
+  }
+
+  private async findCustomerAsync(
+    email: string
+  ): Promise<Record<string, unknown>[]> {
+    const params = new URLSearchParams({
+      q: email,
+    }).toString();
+    const customerListResponse = await axiod.get(
+      `${this._url}/admin/customers?${params}`,
+      {
+        headers: {
+          Authorization: `Bearer ${this._token}`,
+        },
+      }
+    );
+    return customerListResponse.data['customers'];
   }
 
   private async getFeatureAsync(

@@ -2,6 +2,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Auth } from '@fuoco.appdev/core-ui';
 import SigninController from '../controllers/signin.controller';
+import WindowController from '../controllers/window.controller';
 import styles from './signin.module.scss';
 import SupabaseService from '../services/supabase.service';
 import { RoutePaths } from '../route-paths';
@@ -10,6 +11,7 @@ import { useState, useEffect } from 'react';
 import { animated, config, useTransition } from 'react-spring';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import { useTranslation } from 'react-i18next';
+import { useObservable } from '@ngneat/use-observable';
 
 function SigninDesktopComponent({ children }: any): JSX.Element {
   const [show, setShow] = useState(false);
@@ -77,8 +79,41 @@ export default function SigninComponent(): JSX.Element {
   const location = useLocation();
   SigninController.model.location = location;
   const navigate = useNavigate();
-  const [error, setError] = useState<AuthError | null>(null);
+  const [props] = useObservable(SigninController.model.store);
+  const [authError, setAuthError] = useState<AuthError | null>(null);
+  const [emailError, setEmailError] = useState<string>('');
+  const [passwordError, setPasswordError] = useState<string>('');
   const { t } = useTranslation();
+
+  useEffect(() => {
+    if (authError?.message === 'Invalid login credentials') {
+      setEmailError(t('invalidLoginCredentials') ?? '');
+      setPasswordError(t('invalidLoginCredentials') ?? '');
+    } else if (authError?.message === 'Email not confirmed') {
+      setEmailError(t('emailNotConfirmed') ?? '');
+      setPasswordError('');
+      SigninController.resendEmailConfirmationAsync(props.email ?? '', () => {
+        WindowController.addToast({
+          key: `signin-email-confirmation-sent-${Math.random()}`,
+          message: t('emailConfirmation') ?? '',
+          description: t('emailConfirmationDescription') ?? '',
+          type: 'loading',
+        });
+      });
+    } else {
+      if (authError) {
+        WindowController.addToast({
+          key: `signin-${Math.random()}`,
+          message: authError?.name,
+          description: authError?.message,
+          type: 'error',
+        });
+      }
+
+      setEmailError('');
+      setPasswordError('');
+    }
+  }, [authError, props.email]);
 
   const auth = (
     <Auth
@@ -119,6 +154,8 @@ export default function SigninComponent(): JSX.Element {
           color: 'rgba(233, 33, 66, .35)',
         },
       }}
+      emailValue={props.email ?? ''}
+      passwordValue={props.password ?? ''}
       defaultIconColor={'#2A2A5F'}
       litIconColor={'#2A2A5F'}
       providers={['facebook', 'google']}
@@ -134,15 +171,17 @@ export default function SigninComponent(): JSX.Element {
         signIn: t('signIn') ?? '',
         dontHaveAnAccount: t('dontHaveAnAccount') ?? '',
       }}
-      emailErrorMessage={error ? t('emailErrorMessage') ?? '' : undefined}
-      passwordErrorMessage={error ? t('passwordErrorMessage') ?? '' : undefined}
+      emailErrorMessage={emailError}
+      passwordErrorMessage={passwordError}
       supabaseClient={SupabaseService.supabaseClient}
+      onEmailChanged={(e) => SigninController.updateEmail(e.target.value)}
+      onPasswordChanged={(e) => SigninController.updatePassword(e.target.value)}
       onForgotPasswordRedirect={() => navigate(RoutePaths.ForgotPassword)}
       onTermsOfServiceRedirect={() => navigate(RoutePaths.TermsOfService)}
       onPrivacyPolicyRedirect={() => navigate(RoutePaths.PrivacyPolicy)}
       onSigninRedirect={() => navigate(RoutePaths.Signin)}
       onSignupRedirect={() => navigate(RoutePaths.Signup)}
-      onSigninError={(error: AuthError) => setError(error)}
+      onSigninError={(error: AuthError) => setAuthError(error)}
       redirectTo={window.location.origin}
     />
   );

@@ -88,13 +88,6 @@ class MedusaService extends Service {
     phone?: string;
     metadata?: string;
   }): Promise<Customer | undefined> {
-    const userExistsResponse = await this.medusa.auth.exists(
-      props?.email ?? ''
-    );
-    if (userExistsResponse.exists) {
-      return undefined;
-    }
-
     const session = await SupabaseService.requestSessionAsync();
     const customerRequest = new core.CustomerRequest({
       email: props.email,

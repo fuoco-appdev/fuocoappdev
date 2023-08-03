@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Auth, AuthErrorType } from '@fuoco.appdev/core-ui';
+import { Auth } from '@fuoco.appdev/core-ui';
 import SignupController from '../controllers/signup.controller';
 import WindowController from '../controllers/window.controller';
 import styles from './signup.module.scss';
@@ -79,10 +79,36 @@ export default function SignupComponent(): JSX.Element {
   const location = useLocation();
   SignupController.model.location = location;
   const navigate = useNavigate();
-  const [errorType, setErrorType] = useState<AuthErrorType | null>(null);
+  const [authError, setAuthError] = useState<AuthError | null>(null);
+  const [emailError, setEmailError] = useState<string>('');
+  const [passwordError, setPasswordError] = useState<string>('');
+  const [confirmPasswordError, setConfirmPasswordError] = useState<string>('');
   const { t } = useTranslation();
 
-  const url = `${window.location.protocol}//${window.location.hostname}.com`;
+  useEffect(() => {
+    if (authError?.status === 400) {
+      setEmailError(t('userAlreadyRegistered') ?? '');
+      setPasswordError(t('userAlreadyRegistered') ?? '');
+    } else if (authError?.status === 429) {
+      WindowController.addToast({
+        key: `signup-too-many-requests-${Math.random()}`,
+        message: t('authTooManyRequests') ?? '',
+        description: t('authTooManyRequestsDescription') ?? '',
+        type: 'error',
+      });
+    } else {
+      WindowController.addToast({
+        key: `signup-${Math.random()}`,
+        message: authError?.name,
+        description: authError?.message,
+        type: 'error',
+      });
+      setEmailError('');
+      setPasswordError('');
+      setConfirmPasswordError('');
+    }
+  }, [authError]);
+
   const auth = (
     <Auth
       classNames={{
@@ -139,30 +165,21 @@ export default function SignupComponent(): JSX.Element {
         signUp: t('signUp') ?? '',
         doYouHaveAnAccount: t('doYouHaveAnAccount') ?? '',
       }}
-      emailErrorMessage={
-        errorType === AuthErrorType.BadAuthentication
-          ? t('emailErrorMessage') ?? ''
-          : undefined
-      }
-      passwordErrorMessage={
-        errorType === AuthErrorType.BadAuthentication
-          ? t('passwordErrorMessage') ?? ''
-          : undefined
-      }
-      confirmPasswordErrorMessage={
-        errorType === AuthErrorType.ConfirmPasswordNoMatch
-          ? t('confirmPasswordErrorMessage') ?? ''
-          : undefined
-      }
+      emailErrorMessage={emailError}
+      passwordErrorMessage={passwordError}
+      confirmPasswordErrorMessage={confirmPasswordError}
       supabaseClient={SupabaseService.supabaseClient}
       onForgotPasswordRedirect={() => navigate(RoutePaths.ForgotPassword)}
       onTermsOfServiceRedirect={() => navigate(RoutePaths.TermsOfService)}
       onPrivacyPolicyRedirect={() => navigate(RoutePaths.PrivacyPolicy)}
       onSigninRedirect={() => navigate(RoutePaths.Signin)}
-      onSignupRedirect={() => navigate(RoutePaths.Signup)}
-      onSignupError={(error: AuthError, type: AuthErrorType) =>
-        setErrorType(type)
-      }
+      onSignupRedirect={() => {
+        setEmailError('');
+        setPasswordError('');
+        setConfirmPasswordError('');
+        navigate(RoutePaths.Signup);
+      }}
+      onSignupError={(error: AuthError) => setAuthError(error)}
       onEmailConfirmationSent={() => {
         WindowController.addToast({
           key: 'signup-email-confirmation-sent',

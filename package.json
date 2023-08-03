@@ -38,7 +38,7 @@
     "@capacitor/ios": "^4.6.3",
     "@capacitor/cli": "^4.6.3",
     "@capacitor/core": "^4.6.3",
-    "@fuoco.appdev/core-ui": "^0.14.31",
+    "@fuoco.appdev/core-ui": "^0.14.36",
     "@medusajs/medusa-js": "^6.0.2",
     "@ngneat/elf": "^2.1.0",
     "@ngneat/elf-entities": "^4.4.2",

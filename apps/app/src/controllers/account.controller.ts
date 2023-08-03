@@ -188,30 +188,14 @@ class AccountController extends Controller {
     }
 
     try {
-      this._model.customer = await MedusaService.requestCustomerAsync(
-        SupabaseService.user.id ?? ''
-      );
+      this._model.customer = await MedusaService.requestCreateCustomerAsync({
+        email: SupabaseService.user.email,
+        first_name: this._model.profileForm.firstName ?? '',
+        last_name: this._model.profileForm.lastName ?? '',
+        phone: this._model.profileForm.phoneNumber,
+      });
       if (!this._model.customer) {
-        this._model.customer = await MedusaService.requestCreateCustomerAsync({
-          email: SupabaseService.user.email,
-          first_name: this._model.profileForm.firstName ?? '',
-          last_name: this._model.profileForm.lastName ?? '',
-          phone: this._model.profileForm.phoneNumber,
-        });
-        if (!this._model.customer) {
-          throw new Error('No customer created');
-        }
-      } else {
-        const customerResponse = await MedusaService.medusa.customers.update({
-          first_name: this._model.profileForm.firstName ?? '',
-          last_name: this._model.profileForm.lastName ?? '',
-          phone: this._model.profileForm.phoneNumber,
-        });
-
-        this._model.customer = customerResponse.customer as Customer;
-        if (!this._model.customer) {
-          throw new Error('No customer updated');
-        }
+        throw new Error('No customer created');
       }
 
       this._model.account = await AccountService.requestUpdateActiveAsync({
