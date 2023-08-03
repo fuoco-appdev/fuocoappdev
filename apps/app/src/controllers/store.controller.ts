@@ -58,11 +58,21 @@ class StoreController extends Controller {
     value: ProductTabs | undefined
   ): Promise<void> {
     this._model.selectedTab = value;
+    this._model.pagination = 1;
     await this.searchAsync(this._model.input);
+    await this.searchNextPageUntilLimit();
   }
 
   public async onNextScrollAsync(): Promise<void> {
     await this.searchNextPageAsync();
+  }
+
+  public async searchNextPageUntilLimit(limit: number = 10): Promise<void> {
+    await this.searchNextPageAsync();
+
+    if (this._model.hasMorePreviews && this._model.previews.length < limit) {
+      this.searchNextPageUntilLimit(limit);
+    }
   }
 
   public async searchNextPageAsync(): Promise<void> {
@@ -167,10 +177,6 @@ class StoreController extends Controller {
       this._model.previews = previews.concat(products);
     } else {
       this._model.previews = products;
-    }
-
-    if (products.length < limit) {
-      await this.searchNextPageAsync();
     }
   }
 
