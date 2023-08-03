@@ -165,10 +165,9 @@ class StoreController extends Controller {
     if (offset > 0) {
       const previews = this._model.previews;
       this._model.previews = previews.concat(products);
-      return;
+    } else {
+      this._model.previews = products;
     }
-
-    this._model.previews = products;
 
     if (hits.length === limit && products.length < limit) {
       await this.searchNextPageAsync();
