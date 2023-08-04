@@ -4,11 +4,11 @@ import { Product, Region, SalesChannel } from '@medusajs/medusa';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 
 export enum ProductTabs {
-  New = 'new',
-  White = 'white',
-  Red = 'red',
-  Rose = 'rose',
-  Spirits = 'spirits',
+  New = 'New',
+  White = 'White',
+  Red = 'Red',
+  Rose = 'Rose',
+  Spirits = 'Spirits',
 }
 
 export interface StoreState {

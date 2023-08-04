@@ -92,7 +92,13 @@ class StoreController extends Controller {
       return;
     }
 
-    const result = await this._productsIndex.search(query, {
+    let queryWithFilter = '';
+    if (this._model.selectedTab) {
+      queryWithFilter += `\"${this._model.selectedTab}\" `;
+    }
+
+    queryWithFilter += query;
+    const result = await this._productsIndex.search(queryWithFilter, {
       filter: ['type_value = Wine AND status = published'],
       offset: offset,
       limit: limit,
