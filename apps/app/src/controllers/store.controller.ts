@@ -93,7 +93,13 @@ class StoreController extends Controller {
     }
 
     let queryWithFilter = '';
-    if (this._model.selectedTab) {
+    if (
+      this._model.selectedTab &&
+      (this._model.selectedTab === ProductTabs.Red ||
+        this._model.selectedTab === ProductTabs.Rose ||
+        this._model.selectedTab === ProductTabs.Spirits ||
+        this._model.selectedTab === ProductTabs.White)
+    ) {
       queryWithFilter += `\"${this._model.selectedTab}\" `;
     }
 
