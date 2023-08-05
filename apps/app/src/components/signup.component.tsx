@@ -79,6 +79,7 @@ export default function SignupComponent(): JSX.Element {
   const location = useLocation();
   SignupController.model.location = location;
   const navigate = useNavigate();
+  const [props] = useObservable(SignupController.model.store);
   const [authError, setAuthError] = useState<AuthError | null>(null);
   const [emailError, setEmailError] = useState<string>('');
   const [passwordError, setPasswordError] = useState<string>('');
@@ -149,6 +150,9 @@ export default function SignupComponent(): JSX.Element {
         },
       }}
       defaultIconColor={'#2A2A5F'}
+      emailValue={props?.email ?? ''}
+      passwordValue={props?.password ?? ''}
+      confirmPasswordValue={props?.confirmationPassword ?? ''}
       litIconColor={'#2A2A5F'}
       providers={['facebook', 'google']}
       view={'sign_up'}
@@ -169,6 +173,11 @@ export default function SignupComponent(): JSX.Element {
       passwordErrorMessage={passwordError}
       confirmPasswordErrorMessage={confirmPasswordError}
       supabaseClient={SupabaseService.supabaseClient}
+      onEmailChanged={(e) => SignupController.updateEmail(e.target.value)}
+      onPasswordChanged={(e) => SignupController.updatePassword(e.target.value)}
+      onConfirmPasswordChanged={(e) =>
+        SignupController.updateConfirmationPassword(e.target.value)
+      }
       onForgotPasswordRedirect={() => navigate(RoutePaths.ForgotPassword)}
       onTermsOfServiceRedirect={() => navigate(RoutePaths.TermsOfService)}
       onPrivacyPolicyRedirect={() => navigate(RoutePaths.PrivacyPolicy)}

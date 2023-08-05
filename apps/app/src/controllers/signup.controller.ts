@@ -22,6 +22,18 @@ class SignupController extends Controller {
   public updateEmailConfirmationSent(emailConfirmationSent: boolean): void {
     this._model.emailConfirmationSent = emailConfirmationSent;
   }
+
+  public updateEmail(value: string): void {
+    this._model.email = value;
+  }
+
+  public updatePassword(value: string): void {
+    this._model.password = value;
+  }
+
+  public updateConfirmationPassword(value: string): void {
+    this._model.confirmationPassword = value;
+  }
 }
 
 export default new SignupController();
