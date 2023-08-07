@@ -230,17 +230,15 @@ class WindowController extends Controller {
       return;
     }
 
-    if (!this._model.isAuthenticated) {
-      const account = await this.requestActiveAccountAsync(value);
-      if (account) {
-        await this.requestPrivateSecretsAsync(value);
+    const account = await this.requestActiveAccountAsync(value);
+    if (account) {
+      await this.requestPrivateSecretsAsync(value);
 
-        this._model.isAuthenticated = true;
-      } else {
-        AccountService.clearActiveAccount();
-        SecretsService.clearPrivateSecrets();
-        this._model.isAuthenticated = false;
-      }
+      this._model.isAuthenticated = true;
+    } else {
+      AccountService.clearActiveAccount();
+      SecretsService.clearPrivateSecrets();
+      this._model.isAuthenticated = false;
     }
 
     this._model.isLoading = false;
