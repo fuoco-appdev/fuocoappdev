@@ -80,7 +80,7 @@ export default function ResetPasswordComponent(): JSX.Element {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
 
-  const resetPassword = (
+  const resetPassword = SupabaseService.supabaseClient && (
     <Auth.ResetPassword
       passwordErrorMessage={error ? error.message : undefined}
       strings={{

@@ -20,14 +20,13 @@ import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 
 class StoreController extends Controller {
   private readonly _model: StoreModel;
-  private readonly _productsIndex: Index<Record<string, any>>;
+  private _productsIndex: Index<Record<string, any>> | undefined;
   private _selectedInventoryLocationSubscription: Subscription | undefined;
 
   constructor() {
     super();
 
     this._model = new StoreModel();
-    this._productsIndex = MeiliSearchService.client.index('products');
     this.onSelectedInventoryLocationChangedAsync =
       this.onSelectedInventoryLocationChangedAsync.bind(this);
   }
@@ -37,6 +36,7 @@ class StoreController extends Controller {
   }
 
   public override initialize(renderCount: number): void {
+    this._productsIndex = MeiliSearchService.client?.index('products');
     this.intializeAsync(renderCount);
   }
 
@@ -104,12 +104,12 @@ class StoreController extends Controller {
     }
 
     queryWithFilter += query;
-    const result = await this._productsIndex.search(queryWithFilter, {
+    const result = await this._productsIndex?.search(queryWithFilter, {
       filter: ['type_value = Wine AND status = published'],
       offset: offset,
       limit: limit,
     });
-    let hits = result.hits as Product[];
+    let hits = result?.hits as Product[];
 
     if (hits.length <= 0 && this._model.hasMorePreviews) {
       this._model.hasMorePreviews = false;
@@ -121,12 +121,12 @@ class StoreController extends Controller {
     }
 
     const productIds: string[] = hits.map((value: Product) => value.id);
-    const productsResponse = await MedusaService.medusa.products.list({
+    const productsResponse = await MedusaService.medusa?.products.list({
       id: productIds,
       sales_channel_id: [this._model.selectedSalesChannel.id ?? ''],
     });
     const removedHits: PricedProduct[] = [];
-    const products = productsResponse.products;
+    const products = productsResponse?.products ?? [];
     for (let i = 0; i < products.length; i++) {
       const type = products[i].metadata?.['type'] as string;
       for (const variant of products[i].variants) {
@@ -220,8 +220,8 @@ class StoreController extends Controller {
   }
 
   private async requestRegionsAsync(): Promise<void> {
-    const response = await MedusaService.medusa.regions.list();
-    this._model.regions = response.regions;
+    const response = await MedusaService.medusa?.regions.list();
+    this._model.regions = response?.regions ?? [];
   }
 
   private async onSelectedInventoryLocationChangedAsync(

@@ -19,6 +19,7 @@ import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import LoadingComponent from './loading.component';
 import { Store } from '@ngneat/elf';
 import Map, { MapRef, Marker, Popup } from 'react-map-gl';
+import SecretsService from '../services/secrets.service';
 import ConfigService from '../services/config.service';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -107,7 +108,7 @@ function HomeMobileComponent(): JSX.Element {
       </div>
       <div className={styles['map-container']}>
         <Map
-          mapboxAccessToken={ConfigService.mapbox.access_token}
+          mapboxAccessToken={SecretsService.mapboxAccessToken}
           ref={mapRef}
           initialViewState={{
             longitude: localProps.longitude,

@@ -1,21 +1,19 @@
 import { AxiosError } from 'axios';
 import ConfigService from './services/config.service';
+import SupabaseService from './services/supabase.service';
 
 export class Service {
-  private readonly _headers: { [key: string]: string };
   private readonly _endpointUrl: string;
 
   constructor() {
-    this._headers = {
-      Authorization: `Bearer ${ConfigService.supabase.key}`,
-      'Content-Type': 'application/x-protobuf',
-    };
-
     this._endpointUrl = ConfigService.supabase.functions_url;
   }
 
   public get headers(): { [key: string]: string } {
-    return this._headers;
+    return {
+      Authorization: `Bearer ${SupabaseService.anonKey}`,
+      'Content-Type': 'application/x-protobuf',
+    };
   }
 
   public get endpointUrl(): string {

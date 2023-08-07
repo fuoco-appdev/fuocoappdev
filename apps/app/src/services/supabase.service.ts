@@ -9,21 +9,16 @@ import ConfigService from './config.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 class SupabaseService {
-  private readonly _supabaseClient!: SupabaseClient;
+  private _supabaseClient: SupabaseClient | undefined;
   private _userBehaviorSubject: BehaviorSubject<User | null>;
   private _sessionBehaviorSubject: BehaviorSubject<Session | null>;
+  private _anonKey: string | undefined;
 
   constructor() {
-    this._supabaseClient = createClient(
-      ConfigService.supabase.url,
-      ConfigService.supabase.key
-    );
-
     this._userBehaviorSubject = new BehaviorSubject<User | null>(null);
     this._sessionBehaviorSubject = new BehaviorSubject<Session | null>(null);
 
     this.onAuthStateChanged = this.onAuthStateChanged.bind(this);
-    this._supabaseClient.auth.onAuthStateChange(this.onAuthStateChanged);
   }
 
   public get user(): User | null {
@@ -42,27 +37,40 @@ class SupabaseService {
     return this._sessionBehaviorSubject.asObservable();
   }
 
-  public get supabaseClient(): SupabaseClient {
+  public get supabaseClient(): SupabaseClient | undefined {
     return this._supabaseClient;
   }
 
+  public get anonKey(): string | undefined {
+    return this._anonKey;
+  }
+
+  public initializeSupabase(anonKey: string): void {
+    this._supabaseClient = createClient(ConfigService.supabase.url, anonKey);
+    this._anonKey = anonKey;
+    this._supabaseClient.auth.onAuthStateChange(this.onAuthStateChanged);
+  }
+
   public clear(): void {
+    this._anonKey = undefined;
     this._sessionBehaviorSubject.next(null);
     this._userBehaviorSubject.next(null);
   }
 
   public async requestUserAsync(): Promise<User | null> {
     try {
-      const { data, error } = await this.supabaseClient.auth.getUser();
-      if (error) {
+      const userResponse = await this.supabaseClient?.auth.getUser();
+      if (userResponse?.error) {
         return null;
       }
 
-      if (JSON.stringify(this.user) !== JSON.stringify(data.user)) {
-        this._userBehaviorSubject.next(data.user);
+      if (
+        JSON.stringify(this.user) !== JSON.stringify(userResponse?.data.user)
+      ) {
+        this._userBehaviorSubject.next(userResponse?.data.user ?? null);
       }
 
-      return data.user;
+      return userResponse?.data.user ?? null;
     } catch (error: any) {
       console.error(error);
       return null;
@@ -70,22 +78,22 @@ class SupabaseService {
   }
 
   public async requestSessionAsync(): Promise<Session | null> {
-    const { data, error } = await this.supabaseClient.auth.getSession();
-    if (error) {
-      throw error;
+    const sessionResponse = await this.supabaseClient?.auth.getSession();
+    if (sessionResponse?.error) {
+      throw sessionResponse?.error;
     }
 
-    if (this.session !== data?.session) {
-      this._sessionBehaviorSubject.next(data?.session);
+    if (this.session !== sessionResponse?.data?.session) {
+      this._sessionBehaviorSubject.next(sessionResponse?.data?.session ?? null);
     }
 
-    return data?.session;
+    return sessionResponse?.data?.session ?? null;
   }
 
   public async signoutAsync(): Promise<void> {
-    const { error } = await this.supabaseClient.auth.signOut();
-    if (error) {
-      throw error;
+    const response = await this.supabaseClient?.auth.signOut();
+    if (response?.error) {
+      throw response?.error;
     }
 
     this.clear();

@@ -7,20 +7,22 @@ import SupabaseService from './supabase.service';
 import * as core from '../protobuf/core_pb';
 
 class MedusaService extends Service {
-  private readonly _medusa: Medusa;
+  private _medusa: Medusa | undefined;
 
   constructor() {
     super();
-
-    this._medusa = new Medusa({
-      baseUrl: ConfigService.medusa.url,
-      apiKey: ConfigService.medusa.key,
-      maxRetries: 3,
-    });
   }
 
-  public get medusa(): Medusa {
+  public get medusa(): Medusa | undefined {
     return this._medusa;
+  }
+
+  public intializeMedusa(publicKey: string): void {
+    this._medusa = new Medusa({
+      baseUrl: ConfigService.medusa.url,
+      apiKey: publicKey,
+      maxRetries: 3,
+    });
   }
 
   public async requestProductCountAsync(type: string): Promise<number> {
@@ -65,14 +67,14 @@ class MedusaService extends Service {
     }
 
     try {
-      await this.medusa.auth.getSession();
+      await this.medusa?.auth.getSession();
     } catch (error: any) {
       if (customerResponse.password.length > 0) {
-        const authResponse = await this.medusa.auth.authenticate({
+        const authResponse = await this.medusa?.auth.authenticate({
           email: session?.user.email ?? '',
           password: customerResponse.password,
         });
-        if (!authResponse.customer) {
+        if (!authResponse?.customer) {
           return undefined;
         }
       }
@@ -115,14 +117,14 @@ class MedusaService extends Service {
     }
 
     try {
-      await this.medusa.auth.getSession();
+      await this.medusa?.auth.getSession();
     } catch (error: any) {
       if (customerResponse.password.length > 0 && props.email) {
-        const authResponse = await this.medusa.auth.authenticate({
+        const authResponse = await this.medusa?.auth.authenticate({
           email: props.email,
           password: customerResponse.password,
         });
-        if (!authResponse.customer) {
+        if (!authResponse?.customer) {
           return undefined;
         }
       }

@@ -53,7 +53,7 @@ import {
   StripeCardNumberElementOptions,
   StripeElementsOptions,
 } from '@stripe/stripe-js';
-import ConfigService from '../services/config.service';
+import SecretsService from '../services/secrets.service';
 
 interface PayButtonProps {
   stripeOptions?: StripeElementsOptions;
@@ -135,7 +135,7 @@ function CheckoutMobileComponent(): JSX.Element {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const customer = accountProps.customer as Customer;
-  const stripePromise = loadStripe(ConfigService.stripe.key);
+  const stripePromise = loadStripe(SecretsService.stripePublishableKey ?? '');
 
   const stripeElementOptions:
     | StripeCardNumberElementOptions

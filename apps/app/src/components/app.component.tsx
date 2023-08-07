@@ -10,21 +10,6 @@ import {
   BrowserRouter,
 } from 'react-router-dom';
 import WindowController from '../controllers/window.controller';
-import SigninController from '../controllers/signin.controller';
-import SignupController from '../controllers/signup.controller';
-import HomeController from '../controllers/home.controller';
-import StoreController from '../controllers/store.controller';
-import EventsController from '../controllers/events.controller';
-import CartController from '../controllers/cart.controller';
-import CheckoutController from '../controllers/checkout.controller';
-import OrderConfirmedController from '../controllers/order-confirmed.controller';
-import NotificationsController from '../controllers/notifications.controller';
-import TermsOfServiceController from '../controllers/terms-of-service.controller';
-import PrivacyPolicyController from '../controllers/privacy-policy.controller';
-import LoadingController from '../controllers/loading.controller';
-import ResetPasswordController from '../controllers/reset-password.controller';
-import AccountController from '../controllers/account.controller';
-import ProductController from '../controllers/product.controller';
 import WindowComponent from './window.component';
 import SigninComponent from './signin.component';
 import SignupComponent from './signup.component';
@@ -51,6 +36,7 @@ import { useObservable } from '@ngneat/use-observable';
 import AccountEditComponent from './account-edit.component';
 import AccountSettingsAccountComponent from './account-settings-account.component';
 import LoadingComponent from './loading.component';
+import AppController from '../controllers/app.controller';
 
 interface RouteElementProps {
   element: JSX.Element;
@@ -78,40 +64,9 @@ export default function AppComponent(): JSX.Element {
   useEffect(() => {
     renderCountRef.current += 1;
 
-    LoadingController.initialize(renderCountRef.current);
-    SigninController.initialize(renderCountRef.current);
-    SignupController.initialize(renderCountRef.current);
-    WindowController.initialize(renderCountRef.current);
-    TermsOfServiceController.initialize(renderCountRef.current);
-    PrivacyPolicyController.initialize(renderCountRef.current);
-    ResetPasswordController.initialize(renderCountRef.current);
-    AccountController.initialize(renderCountRef.current);
-    HomeController.initialize(renderCountRef.current);
-    StoreController.initialize(renderCountRef.current);
-    EventsController.initialize(renderCountRef.current);
-    CartController.initialize(renderCountRef.current);
-    CheckoutController.initialize(renderCountRef.current);
-    OrderConfirmedController.initialize(renderCountRef.current);
-    NotificationsController.initialize(renderCountRef.current);
-    ProductController.initialize(renderCountRef.current);
-
+    AppController.initialize(renderCountRef.current);
     return () => {
-      SigninController.dispose(renderCountRef.current);
-      SignupController.dispose(renderCountRef.current);
-      WindowController.dispose(renderCountRef.current);
-      TermsOfServiceController.dispose(renderCountRef.current);
-      PrivacyPolicyController.dispose(renderCountRef.current);
-      ResetPasswordController.dispose(renderCountRef.current);
-      AccountController.dispose(renderCountRef.current);
-      LoadingController.dispose(renderCountRef.current);
-      HomeController.dispose(renderCountRef.current);
-      StoreController.dispose(renderCountRef.current);
-      EventsController.dispose(renderCountRef.current);
-      CartController.dispose(renderCountRef.current);
-      CheckoutController.dispose(renderCountRef.current);
-      OrderConfirmedController.dispose(renderCountRef.current);
-      NotificationsController.dispose(renderCountRef.current);
-      ProductController.dispose(renderCountRef.current);
+      AppController.dispose(renderCountRef.current);
     };
   }, []);
 

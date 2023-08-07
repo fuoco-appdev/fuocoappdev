@@ -328,7 +328,7 @@ function WindowMobileComponent(): JSX.Element {
                         { isoCode: 'fr', countryCode: 'FR' },
                       ]}
                       hideText={true}
-                      language={props.languageCode}
+                      language={localProps.languageCode}
                       onChange={(isoCode, info) =>
                         WindowController.updateLanguageInfo(isoCode, info)
                       }

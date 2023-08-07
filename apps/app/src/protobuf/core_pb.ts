@@ -21,9 +21,70 @@ proto3.util.setEnumType(StorageFolderType, "core.StorageFolderType", [
 ]);
 
 /**
- * @generated from message core.Secrets
+ * @generated from message core.PublicSecrets
  */
-export class Secrets extends Message<Secrets> {
+export class PublicSecrets extends Message<PublicSecrets> {
+  /**
+   * @generated from field: string supabase_anon_key = 1;
+   */
+  supabaseAnonKey = "";
+
+  /**
+   * @generated from field: string medusa_public_key = 2;
+   */
+  medusaPublicKey = "";
+
+  /**
+   * @generated from field: string meilisearch_public_key = 3;
+   */
+  meilisearchPublicKey = "";
+
+  /**
+   * @generated from field: string mapbox_access_token = 4;
+   */
+  mapboxAccessToken = "";
+
+  /**
+   * @generated from field: string stripe_publishable_key = 5;
+   */
+  stripePublishableKey = "";
+
+  constructor(data?: PartialMessage<PublicSecrets>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.PublicSecrets";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "supabase_anon_key", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "medusa_public_key", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "meilisearch_public_key", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "mapbox_access_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "stripe_publishable_key", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): PublicSecrets {
+    return new PublicSecrets().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): PublicSecrets {
+    return new PublicSecrets().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): PublicSecrets {
+    return new PublicSecrets().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: PublicSecrets | PlainMessage<PublicSecrets> | undefined, b: PublicSecrets | PlainMessage<PublicSecrets> | undefined): boolean {
+    return proto3.util.equals(PublicSecrets, a, b);
+  }
+}
+
+/**
+ * @generated from message core.PrivateSecrets
+ */
+export class PrivateSecrets extends Message<PrivateSecrets> {
   /**
    * @generated from field: string s3_access_key_id = 1;
    */
@@ -34,32 +95,32 @@ export class Secrets extends Message<Secrets> {
    */
   s3SecretAccessKey = "";
 
-  constructor(data?: PartialMessage<Secrets>) {
+  constructor(data?: PartialMessage<PrivateSecrets>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime = proto3;
-  static readonly typeName = "core.Secrets";
+  static readonly typeName = "core.PrivateSecrets";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "s3_access_key_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "s3_secret_access_key", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Secrets {
-    return new Secrets().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): PrivateSecrets {
+    return new PrivateSecrets().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Secrets {
-    return new Secrets().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): PrivateSecrets {
+    return new PrivateSecrets().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Secrets {
-    return new Secrets().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): PrivateSecrets {
+    return new PrivateSecrets().fromJsonString(jsonString, options);
   }
 
-  static equals(a: Secrets | PlainMessage<Secrets> | undefined, b: Secrets | PlainMessage<Secrets> | undefined): boolean {
-    return proto3.util.equals(Secrets, a, b);
+  static equals(a: PrivateSecrets | PlainMessage<PrivateSecrets> | undefined, b: PrivateSecrets | PlainMessage<PrivateSecrets> | undefined): boolean {
+    return proto3.util.equals(PrivateSecrets, a, b);
   }
 }
 

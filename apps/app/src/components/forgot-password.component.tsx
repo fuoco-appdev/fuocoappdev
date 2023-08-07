@@ -79,7 +79,7 @@ export default function ForgotPasswordComponent(): JSX.Element {
   const { t, i18n } = useTranslation();
 
   const { origin } = window.location;
-  const forgotPassword = (
+  const forgotPassword = SupabaseService.supabaseClient && (
     <Auth.ForgottenPassword
       classNames={{
         input: {

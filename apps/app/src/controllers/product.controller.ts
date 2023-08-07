@@ -60,28 +60,28 @@ class ProductController extends Controller {
             return;
           }
 
-          const productResponse = await MedusaService.medusa.products.list({
+          const productResponse = await MedusaService.medusa?.products.list({
             id: id,
             sales_channel_id: [value.id],
           });
-          const product = productResponse.products[0];
-          this._model.thumbnail = product.thumbnail ?? '';
-          this._model.title = product.title ?? '';
-          this._model.subtitle = product.subtitle ?? '';
-          this._model.description = product.description ?? '';
-          this._model.tags = product.tags ?? [];
-          this._model.options = product.options ?? [];
-          this._model.variants = product.variants ?? [];
-          this._model.metadata = product.metadata ?? {};
-          this._model.material = product.material ?? '-';
+          const product = productResponse?.products[0];
+          this._model.thumbnail = product?.thumbnail ?? '';
+          this._model.title = product?.title ?? '';
+          this._model.subtitle = product?.subtitle ?? '';
+          this._model.description = product?.description ?? '';
+          this._model.tags = product?.tags ?? [];
+          this._model.options = product?.options ?? [];
+          this._model.variants = product?.variants ?? [];
+          this._model.metadata = product?.metadata ?? {};
+          this._model.material = product?.material ?? '-';
           this._model.weight =
-            product.weight && product.weight > 0 ? `${product.weight} g` : '-';
-          this._model.countryOrigin = product.origin_country ?? '-';
+            product?.weight && product.weight > 0 ? `${product.weight} g` : '-';
+          this._model.countryOrigin = product?.origin_country ?? '-';
           this._model.dimensions =
-            product.length && product.width && product.height
+            product?.length && product.width && product.height
               ? `${product.length}L x ${product.width}W x ${product.height}H`
               : '-';
-          this._model.type = product.type ? product.type.value : '-';
+          this._model.type = product?.type ? product.type.value : '-';
         },
       });
   }
@@ -111,14 +111,17 @@ class ProductController extends Controller {
     }
 
     try {
-      const cartResponse = await MedusaService.medusa.carts.lineItems.create(
+      const cartResponse = await MedusaService.medusa?.carts.lineItems.create(
         CartController.model.cartId,
         {
           variant_id: variantId,
           quantity: quantity,
         }
       );
-      await CartController.updateLocalCartAsync(cartResponse.cart);
+      if (cartResponse?.cart) {
+        await CartController.updateLocalCartAsync(cartResponse.cart);
+      }
+
       successCallback?.();
     } catch (error: any) {
       errorCallback?.(error);

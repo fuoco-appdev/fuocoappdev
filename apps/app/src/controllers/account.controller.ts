@@ -229,12 +229,12 @@ class AccountController extends Controller {
     }
 
     try {
-      const customerResponse = await MedusaService.medusa.customers.update({
+      const customerResponse = await MedusaService.medusa?.customers.update({
         first_name: form.firstName ?? '',
         last_name: form.lastName ?? '',
         phone: form.phoneNumber,
       });
-      this._model.customer = customerResponse.customer as Customer;
+      this._model.customer = customerResponse?.customer as Customer;
     } catch (error: any) {
       WindowController.addToast({
         key: `update-customer-${Math.random()}`,
@@ -266,7 +266,7 @@ class AccountController extends Controller {
 
   public async addAddressAsync(addressForm: AddressFormValues): Promise<void> {
     const customerResponse =
-      await MedusaService.medusa.customers.addresses.addAddress({
+      await MedusaService.medusa?.customers.addresses.addAddress({
         address: {
           first_name: addressForm.firstName ?? '',
           last_name: addressForm.lastName ?? '',
@@ -281,7 +281,7 @@ class AccountController extends Controller {
           metadata: {},
         },
       });
-    this._model.customer = customerResponse.customer as Customer;
+    this._model.customer = customerResponse?.customer as Customer;
     this._model.shippingForm = {};
   }
 
@@ -291,8 +291,8 @@ class AccountController extends Controller {
     }
 
     const customerResponse =
-      await MedusaService.medusa.customers.addresses.deleteAddress(id);
-    this._model.customer = customerResponse.customer as Customer;
+      await MedusaService.medusa?.customers.addresses.deleteAddress(id);
+    this._model.customer = customerResponse?.customer as Customer;
     this._model.selectedAddress = undefined;
   }
 
@@ -302,7 +302,7 @@ class AccountController extends Controller {
     }
 
     const customerResponse =
-      await MedusaService.medusa.customers.addresses.updateAddress(id, {
+      await MedusaService.medusa?.customers.addresses.updateAddress(id, {
         first_name: this._model.editShippingForm.firstName ?? '',
         last_name: this._model.editShippingForm.lastName ?? '',
         phone: this._model.editShippingForm.phoneNumber ?? '',
@@ -315,13 +315,13 @@ class AccountController extends Controller {
         postal_code: this._model.editShippingForm.postalCode ?? '',
         metadata: {},
       });
-    this._model.customer = customerResponse.customer as Customer;
+    this._model.customer = customerResponse?.customer as Customer;
     this._model.editShippingForm = {};
   }
 
   public async logoutAsync(): Promise<void> {
     try {
-      await MedusaService.medusa.auth.deleteSession();
+      await MedusaService.medusa?.auth.deleteSession();
       await SupabaseService.signoutAsync();
     } catch (error: any) {
       WindowController.addToast({

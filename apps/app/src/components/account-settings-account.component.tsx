@@ -88,46 +88,51 @@ function AccountSettingsAccountMobileComponent(): JSX.Element {
           classNames={accordionItemClassNames}
           touchScreen={true}
         >
-          <Auth.UpdatePassword
-            supabaseClient={SupabaseService.supabaseClient}
-            defaultIconColor={'#2A2A5F'}
-            litIconColor={'#2A2A5F'}
-            passwordErrorMessage={updatePasswordError}
-            confirmPasswordErrorMessage={confirmPasswordError}
-            classNames={{
-              input: {
-                formLayout: {
-                  label: styles['auth-input-form-layout-label'],
+          {SupabaseService.supabaseClient && (
+            <Auth.UpdatePassword
+              supabaseClient={SupabaseService.supabaseClient}
+              defaultIconColor={'#2A2A5F'}
+              litIconColor={'#2A2A5F'}
+              passwordErrorMessage={updatePasswordError}
+              confirmPasswordErrorMessage={confirmPasswordError}
+              classNames={{
+                input: {
+                  formLayout: {
+                    label: styles['auth-input-form-layout-label'],
+                  },
+                  input: styles['auth-input'],
+                  container: styles['auth-input-container'],
                 },
-                input: styles['auth-input'],
-                container: styles['auth-input-container'],
-              },
-              button: {
-                button: styles['auth-button'],
-              },
-            }}
-            strings={{
-              newPassword: t('newPassword') ?? '',
-              enterYourNewPassword: t('enterYourNewPassword') ?? '',
-              updatePassword: t('updatePassword') ?? '',
-              confirmNewPassword: t('confirmPassword') ?? '',
-            }}
-            onUpdatePasswordError={(error: AuthError) => {
-              if (error.status === 422) {
-                setUpdatePasswordError(t('passwordLengthError') ?? '');
-              } else if (error.status === 401) {
-                setConfirmPasswordError(t('confirmPasswordErrorMessage') ?? '');
-              }
-            }}
-            onPasswordUpdated={() => {
-              WindowController.addToast({
-                key: `update-password-${Math.random()}`,
-                message: t('successfullyUpdatedPassword') ?? '',
-                description: t('successfullyUpdatedPasswordDescription') ?? '',
-                type: 'success',
-              });
-            }}
-          />
+                button: {
+                  button: styles['auth-button'],
+                },
+              }}
+              strings={{
+                newPassword: t('newPassword') ?? '',
+                enterYourNewPassword: t('enterYourNewPassword') ?? '',
+                updatePassword: t('updatePassword') ?? '',
+                confirmNewPassword: t('confirmPassword') ?? '',
+              }}
+              onUpdatePasswordError={(error: AuthError) => {
+                if (error.status === 422) {
+                  setUpdatePasswordError(t('passwordLengthError') ?? '');
+                } else if (error.status === 401) {
+                  setConfirmPasswordError(
+                    t('confirmPasswordErrorMessage') ?? ''
+                  );
+                }
+              }}
+              onPasswordUpdated={() => {
+                WindowController.addToast({
+                  key: `update-password-${Math.random()}`,
+                  message: t('successfullyUpdatedPassword') ?? '',
+                  description:
+                    t('successfullyUpdatedPasswordDescription') ?? '',
+                  type: 'success',
+                });
+              }}
+            />
+          )}
         </Accordion.Item>
       </Accordion>
       <div className={styles['bottom-content-container']}>
@@ -167,7 +172,7 @@ function AccountSettingsAccountMobileComponent(): JSX.Element {
       <LanguageSwitch
         type={'none'}
         touchScreen={true}
-        language={windowProps.languageCode}
+        language={windowLocalProps.languageCode}
         open={isLanguageOpen}
         supportedLanguages={[
           { isoCode: 'en', countryCode: 'GB' },

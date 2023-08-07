@@ -15,6 +15,7 @@ import { Cart } from '@medusajs/medusa';
 import { select } from '@ngneat/elf';
 import SecretsService from '../services/secrets.service';
 import BucketService from '../services/bucket.service';
+import MedusaService from '../services/medusa.service';
 
 class WindowController extends Controller {
   private readonly _model: WindowModel;
@@ -33,10 +34,6 @@ class WindowController extends Controller {
     this.onCartChanged = this.onCartChanged.bind(this);
     this.onActiveAccountChanged = this.onActiveAccountChanged.bind(this);
     this.onSessionChangedAsync = this.onSessionChangedAsync.bind(this);
-
-    SupabaseService.supabaseClient.auth.onAuthStateChange(
-      this.onAuthStateChanged
-    );
   }
 
   public get model(): WindowModel {
@@ -66,6 +63,10 @@ class WindowController extends Controller {
     this._sessionSubscription = SupabaseService.sessionObservable.subscribe({
       next: this.onSessionChangedAsync,
     });
+
+    SupabaseService.supabaseClient?.auth.onAuthStateChange(
+      this.onAuthStateChanged
+    );
   }
 
   public override dispose(renderCount: number): void {
@@ -229,14 +230,17 @@ class WindowController extends Controller {
       return;
     }
 
-    const account = await this.requestActiveAccountAsync(value);
-    if (account) {
-      await this.requestSecretsAsync(value);
+    if (!this._model.isAuthenticated) {
+      const account = await this.requestActiveAccountAsync(value);
+      if (account) {
+        await this.requestPrivateSecretsAsync(value);
 
-      this._model.isAuthenticated = true;
-    } else {
-      AccountService.clearActiveAccount();
-      this._model.isAuthenticated = false;
+        this._model.isAuthenticated = true;
+      } else {
+        AccountService.clearActiveAccount();
+        SecretsService.clearPrivateSecrets();
+        this._model.isAuthenticated = false;
+      }
     }
 
     this._model.isLoading = false;
@@ -271,9 +275,9 @@ class WindowController extends Controller {
     }
   }
 
-  private async requestSecretsAsync(session: Session): Promise<void> {
+  private async requestPrivateSecretsAsync(session: Session): Promise<void> {
     try {
-      const secrets = await SecretsService.requestAllAsync(session);
+      const secrets = await SecretsService.requestPrivateAsync(session);
       BucketService.initializeS3(
         secrets.s3AccessKeyId,
         secrets.s3SecretAccessKey

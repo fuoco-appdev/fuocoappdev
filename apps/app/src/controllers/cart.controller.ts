@@ -66,11 +66,13 @@ class CartController extends Controller {
     }
 
     try {
-      const cartResponse = await MedusaService.medusa.carts.deleteDiscount(
+      const cartResponse = await MedusaService.medusa?.carts.deleteDiscount(
         this._model.cartId,
         code
       );
-      this.updateLocalCartAsync(cartResponse.cart);
+      if (cartResponse?.cart) {
+        await this.updateLocalCartAsync(cartResponse.cart);
+      }
     } catch (error: any) {
       WindowController.addToast({
         key: `remove-discount-code-${Math.random()}`,
@@ -87,11 +89,13 @@ class CartController extends Controller {
     }
 
     try {
-      const cartResponse = await MedusaService.medusa.carts.update(
+      const cartResponse = await MedusaService.medusa?.carts.update(
         this._model.cartId,
         payload
       );
-      await this.updateLocalCartAsync(cartResponse.cart);
+      if (cartResponse?.cart) {
+        await this.updateLocalCartAsync(cartResponse.cart);
+      }
     } catch (error: any) {
       WindowController.addToast({
         key: `update-cart-${Math.random()}`,
@@ -102,17 +106,19 @@ class CartController extends Controller {
     }
   }
 
-  public async completeCartAsync(): Promise<Cart | Order | Swap | null> {
+  public async completeCartAsync(): Promise<
+    Cart | Order | Swap | null | undefined
+  > {
     if (!this._model.cartId) {
       return null;
     }
 
     try {
-      const completeCartResponse = await MedusaService.medusa.carts.complete(
+      const completeCartResponse = await MedusaService.medusa?.carts.complete(
         this._model.cartId
       );
 
-      return completeCartResponse.data;
+      return completeCartResponse?.data;
     } catch (error: any) {
       WindowController.addToast({
         key: `complete-cart-${Math.random()}`,
@@ -134,11 +140,13 @@ class CartController extends Controller {
 
   public async removeLineItemAsync(item: LineItem): Promise<void> {
     try {
-      const cartResponse = await MedusaService.medusa.carts.lineItems.delete(
+      const cartResponse = await MedusaService.medusa?.carts.lineItems.delete(
         item.cart_id,
         item.id
       );
-      await this.updateLocalCartAsync(cartResponse.cart);
+      if (cartResponse?.cart) {
+        await this.updateLocalCartAsync(cartResponse.cart);
+      }
     } catch (error: any) {
       WindowController.addToast({
         key: `remove-line-item-${Math.random()}`,
@@ -154,14 +162,16 @@ class CartController extends Controller {
     item: LineItem
   ): Promise<void> {
     try {
-      const cartResponse = await MedusaService.medusa.carts.lineItems.update(
+      const cartResponse = await MedusaService.medusa?.carts.lineItems.update(
         item.cart_id,
         item.id,
         {
           quantity: quantity,
         }
       );
-      await this.updateLocalCartAsync(cartResponse.cart);
+      if (cartResponse?.cart) {
+        await this.updateLocalCartAsync(cartResponse.cart);
+      }
     } catch (error: any) {
       WindowController.addToast({
         key: `update-line-item-quantity-${Math.random()}`,
@@ -185,11 +195,11 @@ class CartController extends Controller {
         | undefined;
       if (!product) {
         try {
-          const productResponse = await MedusaService.medusa.products.list({
+          const productResponse = await MedusaService.medusa?.products.list({
             id: item.variant.product_id,
             sales_channel_id: [value.sales_channel_id ?? ''],
           });
-          product = productResponse.products[0];
+          product = productResponse?.products[0];
         } catch (error: any) {
           WindowController.addToast({
             key: `retrieve-product-${Math.random()}`,
@@ -224,22 +234,26 @@ class CartController extends Controller {
 
   private async createCartAsync(
     regionId: string
-  ): Promise<Omit<Cart, 'refundable_amount' | 'refunded_total'> | null> {
+  ): Promise<
+    Omit<Cart, 'refundable_amount' | 'refunded_total'> | null | undefined
+  > {
     const { selectedSalesChannel } = StoreController.model;
     if (!selectedSalesChannel) {
       return null;
     }
 
     try {
-      const cartResponse = await MedusaService.medusa.carts.create({
+      const cartResponse = await MedusaService.medusa?.carts.create({
         region_id: regionId,
         sales_channel_id: selectedSalesChannel.id,
       });
 
-      this._model.cartId = cartResponse.cart.id;
-      await this.updateLocalCartAsync(cartResponse.cart);
+      this._model.cartId = cartResponse?.cart.id;
+      if (cartResponse?.cart) {
+        await this.updateLocalCartAsync(cartResponse.cart);
+      }
 
-      return cartResponse.cart;
+      return cartResponse?.cart;
     } catch (error: any) {
       WindowController.addToast({
         key: `create-cart-${Math.random()}`,
@@ -260,10 +274,12 @@ class CartController extends Controller {
 
     if (this._model.cartId && this._model.cartId?.length > 0) {
       try {
-        const cartResponse = await MedusaService.medusa.carts.retrieve(
+        const cartResponse = await MedusaService.medusa?.carts.retrieve(
           this._model.cartId
         );
-        await this.updateLocalCartAsync(cartResponse.cart);
+        if (cartResponse?.cart) {
+          await this.updateLocalCartAsync(cartResponse.cart);
+        }
       } catch (error: any) {
         WindowController.addToast({
           key: `retrieve-cart-${Math.random()}`,

@@ -6,7 +6,15 @@ enum StorageFolderType {
     Avatars = 0;
 }
 
-message Secrets {
+message PublicSecrets {
+    string supabase_anon_key = 1;
+    string medusa_public_key = 2;
+    string meilisearch_public_key = 3;
+    string mapbox_access_token = 4;
+    string stripe_publishable_key = 5;
+}
+
+message PrivateSecrets {
     string s3_access_key_id = 1;
     string s3_secret_access_key = 2;
 }

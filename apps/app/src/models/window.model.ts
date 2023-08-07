@@ -19,10 +19,10 @@ export interface WindowState {
   loadedHash: string | undefined;
   prevTransitionKeyIndex: number;
   transitionKeyIndex: number;
-  languageCode: string;
 }
 
 export interface WindowLocalState {
+  languageCode: string;
   languageInfo: { isoCode: string; info: LanguageInfo } | undefined;
 }
 
@@ -45,13 +45,13 @@ export class WindowModel extends Model {
           loadedHash: undefined,
           prevTransitionKeyIndex: 0,
           transitionKeyIndex: 0,
-          languageCode: '',
         })
       ),
       undefined,
       createStore(
         { name: 'window-local' },
         withProps<WindowLocalState>({
+          languageCode: '',
           languageInfo: undefined,
         })
       )
@@ -203,12 +203,12 @@ export class WindowModel extends Model {
   }
 
   public get languageCode(): string {
-    return this.store?.getValue().languageCode;
+    return this.localStore?.getValue().languageCode;
   }
 
   public set languageCode(value: string) {
     if (this.languageCode !== value) {
-      this.store?.update((state) => ({
+      this.localStore?.update((state) => ({
         ...state,
         languageCode: value,
       }));

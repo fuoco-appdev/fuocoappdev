@@ -32,8 +32,12 @@ class OrderConfirmedController extends Controller {
 
   public async requestOrderAsync(orderId: string): Promise<void> {
     try {
-      const orderResponse = await MedusaService.medusa.orders.retrieve(orderId);
-      await this.updateLocalOrderAsync(orderResponse.order);
+      const orderResponse = await MedusaService.medusa?.orders.retrieve(
+        orderId
+      );
+      if (orderResponse?.order) {
+        await this.updateLocalOrderAsync(orderResponse.order);
+      }
     } catch (error: any) {
       WindowController.addToast({
         key: `retrieve-order-${Math.random()}`,
@@ -64,7 +68,7 @@ class OrderConfirmedController extends Controller {
     }
 
     try {
-      const returnResponse = await MedusaService.medusa.returns.create({
+      const returnResponse = await MedusaService.medusa?.returns.create({
         order_id: this._model.order?.id,
         items: items,
       });
@@ -85,8 +89,8 @@ class OrderConfirmedController extends Controller {
   private async requestReturnReasons(): Promise<void> {
     try {
       const returnReasonsResponse =
-        await MedusaService.medusa.returnReasons.list();
-      this._model.returnReasons = returnReasonsResponse.return_reasons;
+        await MedusaService.medusa?.returnReasons.list();
+      this._model.returnReasons = returnReasonsResponse?.return_reasons ?? [];
     } catch (error: any) {
       throw error;
     }
@@ -103,10 +107,10 @@ class OrderConfirmedController extends Controller {
         | undefined;
       if (!product) {
         try {
-          const productResponse = await MedusaService.medusa.products.retrieve(
+          const productResponse = await MedusaService.medusa?.products.retrieve(
             item.variant.product_id
           );
-          product = productResponse.product;
+          product = productResponse?.product;
         } catch (error: any) {
           WindowController.addToast({
             key: `retrieve-product-${Math.random()}`,

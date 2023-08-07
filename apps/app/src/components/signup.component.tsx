@@ -110,7 +110,7 @@ export default function SignupComponent(): JSX.Element {
     }
   }, [authError]);
 
-  const auth = (
+  const auth = SupabaseService.supabaseClient && (
     <Auth
       classNames={{
         socialAuth: {

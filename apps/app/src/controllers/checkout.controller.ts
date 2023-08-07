@@ -123,11 +123,14 @@ class CheckoutController extends Controller {
     }
 
     try {
-      const cartResponse = await MedusaService.medusa.carts.addShippingMethod(
+      const cartResponse = await MedusaService.medusa?.carts.addShippingMethod(
         CartController.model.cartId,
         { option_id: value }
       );
-      CartController.updateLocalCartAsync(cartResponse.cart);
+      if (cartResponse?.cart) {
+        await CartController.updateLocalCartAsync(cartResponse.cart);
+      }
+
       this._model.selectedShippingOptionId = value;
     } catch (error: any) {
       WindowController.addToast({
@@ -191,13 +194,16 @@ class CheckoutController extends Controller {
     }
 
     try {
-      const cartResponse = await MedusaService.medusa.carts.setPaymentSession(
+      const cartResponse = await MedusaService.medusa?.carts.setPaymentSession(
         CartController.model.cartId,
         {
           provider_id: value,
         }
       );
-      await CartController.updateLocalCartAsync(cartResponse.cart);
+      if (cartResponse?.cart) {
+        await CartController.updateLocalCartAsync(cartResponse.cart);
+      }
+
       this._model.selectedProviderId = value;
     } catch (error: any) {
       WindowController.addToast({
@@ -245,7 +251,7 @@ class CheckoutController extends Controller {
     };
 
     try {
-      const cartResponse = await MedusaService.medusa.carts.update(
+      const cartResponse = await MedusaService.medusa?.carts.update(
         CartController.model.cartId,
         {
           email: this._model.shippingForm.email,
@@ -257,7 +263,9 @@ class CheckoutController extends Controller {
             : undefined,
         }
       );
-      await CartController.updateLocalCartAsync(cartResponse.cart);
+      if (cartResponse?.cart) {
+        await CartController.updateLocalCartAsync(cartResponse.cart);
+      }
     } catch (error: any) {
       WindowController.addToast({
         key: `update-cart-${Math.random()}`,
@@ -486,15 +494,15 @@ class CheckoutController extends Controller {
     if (value?.region_id) {
       try {
         const shippingOptionsResponse =
-          await MedusaService.medusa.shippingOptions.list();
+          await MedusaService.medusa?.shippingOptions.list();
         const shippingOptionsFromRegion =
-          shippingOptionsResponse.shipping_options.filter(
+          shippingOptionsResponse?.shipping_options.filter(
             (option) => option.region_id === value?.region_id
           );
-        shippingOptionsFromRegion.sort(
+        shippingOptionsFromRegion?.sort(
           (current, next) => (current.amount ?? 0) - (next.amount ?? 0)
         );
-        this._model.shippingOptions = shippingOptionsFromRegion;
+        this._model.shippingOptions = shippingOptionsFromRegion ?? [];
 
         const shippingMethods: ShippingMethod[] = value?.shipping_methods;
         if (shippingMethods && shippingMethods.length > 0) {
@@ -502,7 +510,7 @@ class CheckoutController extends Controller {
             shippingMethods[0].shipping_option_id;
         } else {
           await this.updateSelectedShippingOptionIdAsync(
-            shippingOptionsFromRegion[0].id ?? ''
+            shippingOptionsFromRegion?.[0].id ?? ''
           );
         }
       } catch (error: any) {
@@ -533,8 +541,10 @@ class CheckoutController extends Controller {
     if (cart?.id && !cart.payment_sessions?.length && cart?.items?.length) {
       try {
         const cartResponse =
-          await MedusaService.medusa.carts.createPaymentSessions(cart.id);
-        await CartController.updateLocalCartAsync(cartResponse.cart);
+          await MedusaService.medusa?.carts.createPaymentSessions(cart.id);
+        if (cartResponse?.cart) {
+          await CartController.updateLocalCartAsync(cartResponse.cart);
+        }
       } catch (error: any) {
         WindowController.addToast({
           key: `create-payment-sessions-${Math.random()}`,
@@ -548,11 +558,13 @@ class CheckoutController extends Controller {
     if (cart.payment_session) {
       try {
         const cartResponse =
-          await MedusaService.medusa.carts.refreshPaymentSession(
+          await MedusaService.medusa?.carts.refreshPaymentSession(
             cart.id,
             cart.payment_session.id
           );
-        await CartController.updateLocalCartAsync(cartResponse.cart);
+        if (cartResponse?.cart) {
+          await CartController.updateLocalCartAsync(cartResponse.cart);
+        }
       } catch (error: any) {
         WindowController.addToast({
           key: `refresh-payment-session-${Math.random()}`,

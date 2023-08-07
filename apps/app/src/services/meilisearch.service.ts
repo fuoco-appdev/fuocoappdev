@@ -2,17 +2,19 @@ import ConfigService from './config.service';
 import { MeiliSearch } from 'meilisearch';
 
 class MeiliSearchService {
-  private readonly _client: MeiliSearch;
+  private _client: MeiliSearch | undefined;
 
-  constructor() {
-    this._client = new MeiliSearch({
-      host: ConfigService.meilisearch.url,
-      apiKey: ConfigService.meilisearch.key,
-    });
+  constructor() {}
+
+  public get client(): MeiliSearch | undefined {
+    return this._client;
   }
 
-  public get client(): MeiliSearch {
-    return this._client;
+  public initializeMeiliSearch(publicKey: string): void {
+    this._client = new MeiliSearch({
+      host: ConfigService.meilisearch.url,
+      apiKey: publicKey,
+    });
   }
 }
 
