@@ -389,6 +389,12 @@ class AccountController extends Controller {
     }
 
     this._model.account = value;
+    if (
+      value?.languageCode &&
+      value?.languageCode !== WindowController.model.languageCode
+    ) {
+      WindowController.updateLanguageCode(value.languageCode);
+    }
     if (value.profileUrl && value.profileUrl.length > 0) {
       this._model.profileUrl = await BucketService.getPublicUrlAsync(
         core.StorageFolderType.Avatars,
