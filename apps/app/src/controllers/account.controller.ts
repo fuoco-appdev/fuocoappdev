@@ -435,8 +435,6 @@ class AccountController extends Controller {
       value?.languageCode &&
       value?.languageCode !== WindowController.model.languageCode
     ) {
-      console.log(value?.languageCode);
-      console.log(WindowController.model.languageCode);
       WindowController.updateLanguageCode(value?.languageCode);
     }
   }
