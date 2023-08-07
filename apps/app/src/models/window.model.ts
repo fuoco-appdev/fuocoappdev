@@ -3,7 +3,7 @@ import { AuthChangeEvent } from '@supabase/supabase-js';
 import { Model } from '../model';
 import { RoutePaths } from '../route-paths';
 import * as core from '../protobuf/core_pb';
-import { LanguageCode, ToastProps } from '@fuoco.appdev/core-ui';
+import { ToastProps, LanguageInfo } from '@fuoco.appdev/core-ui';
 
 export interface WindowState {
   account: core.Account | null;
@@ -19,10 +19,11 @@ export interface WindowState {
   loadedHash: string | undefined;
   prevTransitionKeyIndex: number;
   transitionKeyIndex: number;
+  languageCode: string;
 }
 
 export interface WindowLocalState {
-  language: LanguageCode;
+  languageInfo: { isoCode: string; info: LanguageInfo } | undefined;
 }
 
 export class WindowModel extends Model {
@@ -44,13 +45,14 @@ export class WindowModel extends Model {
           loadedHash: undefined,
           prevTransitionKeyIndex: 0,
           transitionKeyIndex: 0,
+          languageCode: '',
         })
       ),
       undefined,
       createStore(
         { name: 'window-local' },
         withProps<WindowLocalState>({
-          language: LanguageCode.EN,
+          languageInfo: undefined,
         })
       )
     );
@@ -200,15 +202,32 @@ export class WindowModel extends Model {
     }
   }
 
-  public get language(): LanguageCode {
-    return this.localStore?.getValue().language;
+  public get languageCode(): string {
+    return this.store?.getValue().languageCode;
   }
 
-  public set language(value: LanguageCode) {
-    if (this.language !== value) {
+  public set languageCode(value: string) {
+    if (this.languageCode !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        languageCode: value,
+      }));
+    }
+  }
+
+  public get languageInfo():
+    | { isoCode: string; info: LanguageInfo }
+    | undefined {
+    return this.localStore?.getValue().languageInfo;
+  }
+
+  public set languageInfo(
+    value: { isoCode: string; info: LanguageInfo } | undefined
+  ) {
+    if (JSON.stringify(this.languageInfo) !== JSON.stringify(value)) {
       this.localStore?.update((state) => ({
         ...state,
-        language: value,
+        languageInfo: value,
       }));
     }
   }

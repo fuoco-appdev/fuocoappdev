@@ -132,6 +132,7 @@ class AccountService extends Service {
     customerId?: string;
     profileUrl?: string;
     status?: 'Incomplete' | 'Complete';
+    languageCode?: string;
   }): Promise<core.Account> {
     const supabaseUser = await SupabaseService.requestUserAsync();
     if (!supabaseUser) {
@@ -149,6 +150,7 @@ class AccountService extends Service {
       customerId?: string;
       profileUrl?: string;
       status?: 'Incomplete' | 'Complete';
+      languageCode?: string;
     }
   ): Promise<core.Account> {
     const session = await SupabaseService.requestSessionAsync();
@@ -156,6 +158,7 @@ class AccountService extends Service {
       customerId: props.customerId,
       profileUrl: props.profileUrl,
       status: props.status,
+      languageCode: props.languageCode,
     });
     const response = await axios({
       method: 'post',

@@ -10,6 +10,7 @@ import {
   Line,
   Modal,
   AccordionItemClasses,
+  LanguageSwitch,
 } from '@fuoco.appdev/core-ui';
 import { RoutePaths } from '../route-paths';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +23,10 @@ import LoadingComponent from './loading.component';
 import { Store } from '@ngneat/elf';
 import Ripples from 'react-ripples';
 import { AuthError } from '@supabase/supabase-js';
-import windowController from '../controllers/window.controller';
+import WindowController from '../controllers/window.controller';
+import ReactCountryFlag from 'react-country-flag';
+import { Observable } from 'rxjs';
+import { WindowLocalState } from '../models';
 
 function AccountSettingsAccountDesktopComponent(): JSX.Element {
   const navigate = useNavigate();
@@ -32,8 +36,11 @@ function AccountSettingsAccountDesktopComponent(): JSX.Element {
 }
 
 function AccountSettingsAccountMobileComponent(): JSX.Element {
-  const navigate = useNavigate();
   const [props] = useObservable(AccountController.model.store);
+  const [windowProps] = useObservable(WindowController.model.store);
+  const [windowLocalProps] = useObservable(
+    WindowController.model.localStore ?? Store.prototype
+  );
   const [updatePasswordError, setUpdatePasswordError] = useState<
     string | undefined
   >(undefined);
@@ -41,6 +48,7 @@ function AccountSettingsAccountMobileComponent(): JSX.Element {
     string | undefined
   >(undefined);
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+  const [isLanguageOpen, setIsLanguageOpen] = useState<boolean>(false);
   const { t, i18n } = useTranslation();
 
   const accordionItemClassNames: AccordionItemClasses = {
@@ -51,8 +59,28 @@ function AccountSettingsAccountMobileComponent(): JSX.Element {
       button: styles['accordion-button'],
     },
   };
+
   return (
     <div className={styles['root']}>
+      <Ripples
+        className={styles['setting-button-container']}
+        color={'rgba(42, 42, 95, .35)'}
+        onClick={() => setIsLanguageOpen(true)}
+      >
+        <div className={styles['setting-button-content']}>
+          <div className={styles['setting-icon']}>
+            <Line.Language size={24} />
+          </div>
+          <div className={styles['setting-text']}>{t('language')}</div>
+          <div className={styles['setting-icon-right']}>
+            <ReactCountryFlag
+              countryCode={windowLocalProps.languageInfo?.info?.countryCode}
+              style={{ width: 24 }}
+              svg
+            />
+          </div>
+        </div>
+      </Ripples>
       <Accordion defaultActiveId={['password-reset']}>
         <Accordion.Item
           id={'password-reset'}
@@ -92,7 +120,7 @@ function AccountSettingsAccountMobileComponent(): JSX.Element {
               }
             }}
             onPasswordUpdated={() => {
-              windowController.addToast({
+              WindowController.addToast({
                 key: `update-password-${Math.random()}`,
                 message: t('successfullyUpdatedPassword') ?? '',
                 description: t('successfullyUpdatedPasswordDescription') ?? '',
@@ -136,6 +164,21 @@ function AccountSettingsAccountMobileComponent(): JSX.Element {
           setShowDeleteModal(false);
         }}
       ></Modal>
+      <LanguageSwitch
+        type={'none'}
+        touchScreen={true}
+        language={windowProps.languageCode}
+        open={isLanguageOpen}
+        supportedLanguages={[
+          { isoCode: 'en', countryCode: 'GB' },
+          { isoCode: 'fr', countryCode: 'FR' },
+        ]}
+        onChange={(code, info) =>
+          AccountController.updateAccountLanguageAsync(code, info)
+        }
+        onOpen={() => setIsLanguageOpen(true)}
+        onClose={() => setIsLanguageOpen(false)}
+      />
     </div>
   );
 }

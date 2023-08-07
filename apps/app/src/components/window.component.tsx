@@ -8,7 +8,6 @@ import {
   Avatar,
   Button,
   Dropdown,
-  LanguageCode,
   LanguageSwitch,
   Line,
   ToastOverlay,
@@ -40,8 +39,8 @@ function WindowDesktopComponent(): JSX.Element {
   );
   const { t, i18n } = useTranslation();
   useEffect(() => {
-    i18n.changeLanguage(localProps.language);
-  }, [localProps.language]);
+    i18n.changeLanguage(localProps.languageInfo?.isoCode);
+  }, [localProps.languageInfo]);
 
   return (
     <div className={styles['root-desktop']}>
@@ -67,8 +66,8 @@ function WindowTabletComponent(): JSX.Element {
   );
   const { t, i18n } = useTranslation();
   useEffect(() => {
-    i18n.changeLanguage(localProps.language);
-  }, [localProps.language]);
+    i18n.changeLanguage(localProps.languageInfo?.isoCode);
+  }, [localProps.languageInfo]);
 
   return (
     <div className={styles['root-tablet']}>
@@ -84,10 +83,10 @@ function WindowTabletComponent(): JSX.Element {
 
 function WindowMobileComponent(): JSX.Element {
   const navigate = useNavigate();
-  const location = useLocation();
   const [openMore, setOpenMore] = useState<boolean>(false);
   const [props] = useObservable(WindowController.model.store);
   const [accountProps] = useObservable(AccountController.model.store);
+  const [isLanguageOpen, setIsLanguageOpen] = useState<boolean>(false);
   const { t, i18n } = useTranslation();
   const [localProps] = useObservable(
     WindowController.model.localStore ?? Store.prototype
@@ -101,8 +100,8 @@ function WindowMobileComponent(): JSX.Element {
   }, []);
 
   useEffect(() => {
-    i18n.changeLanguage(localProps.language);
-  }, [localProps.language]);
+    i18n.changeLanguage(localProps.languageInfo?.isoCode);
+  }, [localProps.languageInfo]);
 
   useEffect(() => {
     WindowController.addToast(undefined);
@@ -320,12 +319,18 @@ function WindowMobileComponent(): JSX.Element {
                 <>
                   <div className={styles['tab-button-container']}>
                     <LanguageSwitch
+                      open={isLanguageOpen}
+                      onOpen={() => setIsLanguageOpen(true)}
+                      onClose={() => setIsLanguageOpen(false)}
                       touchScreen={true}
-                      supportedLanguages={[LanguageCode.EN, LanguageCode.FR]}
+                      supportedLanguages={[
+                        { isoCode: 'en', countryCode: 'GB' },
+                        { isoCode: 'fr', countryCode: 'FR' },
+                      ]}
                       hideText={true}
-                      language={localProps.language}
-                      onChange={(value) =>
-                        WindowController.updateLanguage(value)
+                      language={props.languageCode}
+                      onChange={(isoCode, info) =>
+                        WindowController.updateLanguageInfo(isoCode, info)
                       }
                     />
                   </div>

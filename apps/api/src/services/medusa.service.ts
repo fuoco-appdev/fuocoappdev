@@ -101,20 +101,22 @@ class MedusaService {
     const metadata = request.getMetadata();
 
     const customer = new CustomerResponse();
-    const existingCustomers = await this.findCustomerAsync(email);
+    const existingCustomers = await this.findCustomersAsync(email);
     if (existingCustomers.length > 0) {
       const firstCustomer = existingCustomers[0];
       const updateParams = new URLSearchParams({
         expand: 'shipping_addresses',
       }).toString();
+
       const updateCustomerResponse = await axiod.post(
         `${this._url}/admin/customers/${firstCustomer.id}?${updateParams}`,
         {
-          ...(email && { email: email, password: sessionToken }),
+          ...(email && { email: email }),
           ...(firstName && { first_name: firstName }),
           ...(lastName && { last_name: lastName }),
           ...(phone && { phone: phone }),
           ...(metadata && { metadata: metadata }),
+          password: sessionToken,
         },
         {
           headers: {
@@ -294,7 +296,7 @@ class MedusaService {
     return orders;
   }
 
-  private async findCustomerAsync(
+  private async findCustomersAsync(
     email: string
   ): Promise<Record<string, unknown>[]> {
     const params = new URLSearchParams({

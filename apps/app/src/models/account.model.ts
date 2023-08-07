@@ -1,4 +1,3 @@
-import { LanguageCode } from '@fuoco.appdev/core-ui';
 import { createStore, withProps } from '@ngneat/elf';
 import { Model } from '../model';
 import * as core from '../protobuf/core_pb';

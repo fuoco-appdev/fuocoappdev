@@ -8,7 +8,7 @@ import { RoutePaths } from '../route-paths';
 import SupabaseService from '../services/supabase.service';
 import { Location as RouterLocation } from 'react-router-dom';
 import * as core from '../protobuf/core_pb';
-import { LanguageCode, ToastProps } from '@fuoco.appdev/core-ui';
+import { ToastProps, LanguageInfo } from '@fuoco.appdev/core-ui';
 import AccountService from '../services/account.service';
 import CartController from './cart.controller';
 import { Cart } from '@medusajs/medusa';
@@ -86,8 +86,13 @@ class WindowController extends Controller {
     this._model.toast = toast;
   }
 
-  public updateLanguage(language: LanguageCode): void {
-    this._model.language = language;
+  public updateLanguageCode(code: string): void {
+    this._model.languageCode = code;
+  }
+
+  public updateLanguageInfo(code: string, info: LanguageInfo): void {
+    this._model.languageInfo = { isoCode: code, info: info };
+    this._model.languageCode = code;
   }
 
   public updateCurrentPosition(value: GeolocationPosition): void {

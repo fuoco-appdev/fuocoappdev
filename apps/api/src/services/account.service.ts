@@ -8,6 +8,7 @@ export interface AccountProps {
   profile_url?: string;
   status?: string;
   updated_at?: string;
+  language_code?: string;
 }
 
 export class AccountService {
@@ -65,11 +66,13 @@ export class AccountService {
     const customerId = account.getCustomerId();
     const profileUrl = account.getProfileUrl();
     const status = account.getStatus();
+    const languageCode = account.getLanguageCode();
 
     const accountData = this.assignAndGetAccountData({
       customerId,
       profileUrl,
       status,
+      languageCode,
     });
     const { data, error } = await SupabaseService.client
       .from('account')
@@ -145,6 +148,7 @@ export class AccountService {
     props.profile_url && account.setProfileUrl(props.profile_url);
     props.status && account.setStatus(props.status);
     props.updated_at && account.setUpdateAt(props.updated_at);
+    props.language_code && account.setLanguageCode(props.language_code);
 
     return account;
   }
@@ -155,6 +159,7 @@ export class AccountService {
     supabaseId?: string;
     profileUrl?: string;
     status?: string;
+    languageCode?: string;
   }) {
     const date = new Date(Date.now());
     return {
@@ -162,6 +167,7 @@ export class AccountService {
       ...(props.customerId && { customer_id: props.customerId }),
       ...(props.profileUrl && { profile_url: props.profileUrl }),
       ...(props.status && { status: props.status }),
+      ...(props.languageCode && { language_code: props.languageCode }),
       updated_at: date.toUTCString(),
     };
   }

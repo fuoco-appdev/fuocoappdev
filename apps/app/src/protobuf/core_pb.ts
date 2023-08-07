@@ -392,6 +392,11 @@ export class Account extends Message<Account> {
    */
   updateAt = "";
 
+  /**
+   * @generated from field: string language_code = 7;
+   */
+  languageCode = "";
+
   constructor(data?: PartialMessage<Account>) {
     super();
     proto3.util.initPartial(data, this);
@@ -406,6 +411,7 @@ export class Account extends Message<Account> {
     { no: 4, name: "profile_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "status", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 6, name: "update_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 7, name: "language_code", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Account {

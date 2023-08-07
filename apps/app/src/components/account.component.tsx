@@ -10,7 +10,6 @@ import {
   OptionProps,
   Modal,
   LanguageSwitch,
-  LanguageCode,
   Line,
   Avatar,
   Tabs,

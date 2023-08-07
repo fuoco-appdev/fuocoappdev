@@ -52,6 +52,7 @@ message Account {
     string profile_url = 4;
     string status = 5;
     string update_at = 6;
+    string language_code = 7;
 }
 
 message Accounts {

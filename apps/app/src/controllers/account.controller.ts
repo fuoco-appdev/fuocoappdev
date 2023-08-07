@@ -7,7 +7,6 @@ import AccountService from '../services/account.service';
 import * as core from '../protobuf/core_pb';
 import SupabaseService from '../services/supabase.service';
 import BucketService from '../services/bucket.service';
-import { LanguageCode } from '@fuoco.appdev/core-ui';
 import MedusaService from '../services/medusa.service';
 import { StorePostCustomersReq, Customer, Address } from '@medusajs/medusa';
 import WindowController from './window.controller';
@@ -23,9 +22,12 @@ import {
   AddressFormValues,
 } from '../components/address-form.component';
 import { RoutePaths } from '../route-paths';
+import { LanguageInfo } from '@fuoco.appdev/core-ui';
+import { select } from '@ngneat/elf';
 
 class AccountController extends Controller {
   private readonly _model: AccountModel;
+  private _activeAccountSubscription: Subscription | undefined;
   private _accountSubscription: Subscription | undefined;
   private _userSubscription: Subscription | undefined;
 
@@ -36,6 +38,7 @@ class AccountController extends Controller {
     this.onActiveAccountChangedAsync =
       this.onActiveAccountChangedAsync.bind(this);
     this.onActiveUserChangedAsync = this.onActiveUserChangedAsync.bind(this);
+    this.onAccountChanged = this.onAccountChanged.bind(this);
     this.uploadAvatarAsync = this.uploadAvatarAsync.bind(this);
   }
 
@@ -44,9 +47,14 @@ class AccountController extends Controller {
   }
 
   public override initialize(renderCount: number): void {
-    this._accountSubscription =
+    this._activeAccountSubscription =
       AccountService.activeAccountObservable.subscribe({
         next: this.onActiveAccountChangedAsync,
+      });
+    this._accountSubscription = this._model.store
+      .pipe(select((model) => model.account))
+      .subscribe({
+        next: this.onAccountChanged,
       });
     this._userSubscription = SupabaseService.userObservable.subscribe({
       next: this.onActiveUserChangedAsync,
@@ -54,6 +62,7 @@ class AccountController extends Controller {
   }
 
   public override dispose(renderCount: number): void {
+    this._activeAccountSubscription?.unsubscribe();
     this._accountSubscription?.unsubscribe();
     this._userSubscription?.unsubscribe();
   }
@@ -194,6 +203,7 @@ class AccountController extends Controller {
         last_name: this._model.profileForm.lastName ?? '',
         phone: this._model.profileForm.phoneNumber,
       });
+
       if (!this._model.customer) {
         throw new Error('No customer created');
       }
@@ -201,6 +211,7 @@ class AccountController extends Controller {
       this._model.account = await AccountService.requestUpdateActiveAsync({
         customerId: this._model.customer?.id,
         status: 'Complete',
+        languageCode: WindowController.model.languageInfo?.isoCode,
       });
     } catch (error: any) {
       WindowController.addToast({
@@ -337,6 +348,16 @@ class AccountController extends Controller {
     }
   }
 
+  public async updateAccountLanguageAsync(
+    code: string,
+    info: LanguageInfo
+  ): Promise<void> {
+    WindowController.updateLanguageInfo(code, info);
+    this._model.account = await AccountService.requestUpdateActiveAsync({
+      languageCode: code,
+    });
+  }
+
   private async requestOrdersAsync(
     offset: number = 0,
     limit: number = 10
@@ -406,6 +427,17 @@ class AccountController extends Controller {
         description: error.message,
         type: 'error',
       });
+    }
+  }
+
+  private onAccountChanged(value: core.Account | undefined): void {
+    if (
+      value?.languageCode &&
+      value?.languageCode !== WindowController.model.languageCode
+    ) {
+      console.log(value?.languageCode);
+      console.log(WindowController.model.languageCode);
+      WindowController.updateLanguageCode(value?.languageCode);
     }
   }
 }

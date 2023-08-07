@@ -57,7 +57,7 @@ function AccountSettingsMobileComponent(): JSX.Element {
             touchScreen={true}
             onClick={() => AccountController.logoutAsync()}
           >
-            {t('logout')}
+            {t('signOut')}
           </Button>
         </div>
       </div>

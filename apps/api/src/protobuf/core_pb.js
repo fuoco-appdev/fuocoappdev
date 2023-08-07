@@ -1555,7 +1555,8 @@ proto.core.Account.toObject = function(includeInstance, msg) {
     supabaseId: jspb.Message.getFieldWithDefault(msg, 3, ""),
     profileUrl: jspb.Message.getFieldWithDefault(msg, 4, ""),
     status: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    updateAt: jspb.Message.getFieldWithDefault(msg, 6, "")
+    updateAt: jspb.Message.getFieldWithDefault(msg, 6, ""),
+    languageCode: jspb.Message.getFieldWithDefault(msg, 7, "")
   };
 
   if (includeInstance) {
@@ -1615,6 +1616,10 @@ proto.core.Account.deserializeBinaryFromReader = function(msg, reader) {
     case 6:
       var value = /** @type {string} */ (reader.readString());
       msg.setUpdateAt(value);
+      break;
+    case 7:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setLanguageCode(value);
       break;
     default:
       reader.skipField();
@@ -1684,6 +1689,13 @@ proto.core.Account.serializeBinaryToWriter = function(message, writer) {
   if (f.length > 0) {
     writer.writeString(
       6,
+      f
+    );
+  }
+  f = message.getLanguageCode();
+  if (f.length > 0) {
+    writer.writeString(
+      7,
       f
     );
   }
@@ -1795,6 +1807,24 @@ proto.core.Account.prototype.getUpdateAt = function() {
  */
 proto.core.Account.prototype.setUpdateAt = function(value) {
   return jspb.Message.setProto3StringField(this, 6, value);
+};
+
+
+/**
+ * optional string language_code = 7;
+ * @return {string}
+ */
+proto.core.Account.prototype.getLanguageCode = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.core.Account} returns this
+ */
+proto.core.Account.prototype.setLanguageCode = function(value) {
+  return jspb.Message.setProto3StringField(this, 7, value);
 };
 
 
