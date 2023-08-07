@@ -28,7 +28,6 @@ import { select } from '@ngneat/elf';
 class AccountController extends Controller {
   private readonly _model: AccountModel;
   private _activeAccountSubscription: Subscription | undefined;
-  private _accountSubscription: Subscription | undefined;
   private _userSubscription: Subscription | undefined;
 
   constructor() {
@@ -38,7 +37,6 @@ class AccountController extends Controller {
     this.onActiveAccountChangedAsync =
       this.onActiveAccountChangedAsync.bind(this);
     this.onActiveUserChangedAsync = this.onActiveUserChangedAsync.bind(this);
-    this.onAccountChanged = this.onAccountChanged.bind(this);
     this.uploadAvatarAsync = this.uploadAvatarAsync.bind(this);
   }
 
@@ -51,11 +49,6 @@ class AccountController extends Controller {
       AccountService.activeAccountObservable.subscribe({
         next: this.onActiveAccountChangedAsync,
       });
-    this._accountSubscription = this._model.store
-      .pipe(select((model) => model.account))
-      .subscribe({
-        next: this.onAccountChanged,
-      });
     this._userSubscription = SupabaseService.userObservable.subscribe({
       next: this.onActiveUserChangedAsync,
     });
@@ -63,7 +56,6 @@ class AccountController extends Controller {
 
   public override dispose(renderCount: number): void {
     this._activeAccountSubscription?.unsubscribe();
-    this._accountSubscription?.unsubscribe();
     this._userSubscription?.unsubscribe();
   }
 
@@ -352,10 +344,12 @@ class AccountController extends Controller {
     code: string,
     info: LanguageInfo
   ): Promise<void> {
-    WindowController.updateLanguageInfo(code, info);
-    this._model.account = await AccountService.requestUpdateActiveAsync({
-      languageCode: code,
-    });
+    if (this._model.account?.languageCode !== code) {
+      this._model.account = await AccountService.requestUpdateActiveAsync({
+        languageCode: code,
+      });
+      WindowController.updateLanguageInfo(code, info);
+    }
   }
 
   private async requestOrdersAsync(
@@ -427,15 +421,6 @@ class AccountController extends Controller {
         description: error.message,
         type: 'error',
       });
-    }
-  }
-
-  private onAccountChanged(value: core.Account | undefined): void {
-    if (
-      value?.languageCode &&
-      value?.languageCode !== WindowController.model.languageCode
-    ) {
-      WindowController.updateLanguageCode(value?.languageCode);
     }
   }
 }
