@@ -51,7 +51,7 @@ export class WindowModel extends Model {
       createStore(
         { name: 'window-local' },
         withProps<WindowLocalState>({
-          languageCode: '',
+          languageCode: 'en',
           languageInfo: undefined,
         })
       )
