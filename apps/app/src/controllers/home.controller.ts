@@ -8,10 +8,13 @@ import { point, featureCollection, nearestPoint, helpers } from '@turf/turf';
 import WindowController from './window.controller';
 import { Subscription } from 'rxjs';
 import { select } from '@ngneat/elf';
+import SecretsService from '../services/secrets.service';
+import { PublicSecrets } from '../protobuf/core_pb';
 
 class HomeController extends Controller {
   private readonly _model: HomeModel;
   private _currentPositionSubscription: Subscription | undefined;
+  private _publicSecretsSubscription: Subscription | undefined;
 
   constructor() {
     super();
@@ -28,6 +31,7 @@ class HomeController extends Controller {
   }
 
   public override dispose(renderCount: number): void {
+    this._publicSecretsSubscription?.unsubscribe();
     this._currentPositionSubscription?.unsubscribe();
   }
 
@@ -60,6 +64,17 @@ class HomeController extends Controller {
         next: (value) =>
           this.onCurrentPositionChanged(value, this._model.inventoryLocations),
       });
+
+    this._publicSecretsSubscription =
+      SecretsService.publicSecretsObservable.subscribe(
+        (value: PublicSecrets | null) => {
+          if (!value) {
+            return;
+          }
+
+          this._model.accessToken = value.mapboxAccessToken;
+        }
+      );
   }
 
   private async requestWineCountAsync(): Promise<number> {

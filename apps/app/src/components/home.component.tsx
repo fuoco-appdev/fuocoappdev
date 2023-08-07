@@ -107,87 +107,91 @@ function HomeMobileComponent(): JSX.Element {
         </div>
       </div>
       <div className={styles['map-container']}>
-        <Map
-          mapboxAccessToken={SecretsService.mapboxAccessToken}
-          ref={mapRef}
-          initialViewState={{
-            longitude: localProps.longitude,
-            latitude: localProps.latitude,
-            zoom: localProps.zoom,
-          }}
-          mapStyle={ConfigService.mapbox.style_url}
-          onMove={(e) => HomeController.onMapMove(e.viewState)}
-          onLoad={(e) => setMapStyleLoaded(e.target ? true : false)}
-        >
-          {props.inventoryLocations?.map(
-            (point: InventoryLocation, index: number) => (
-              <Marker
-                key={`marker-${index}`}
-                latitude={point.coordinates.lat}
-                longitude={point.coordinates.lng}
-                anchor={'bottom'}
-                onClick={(e) => {
-                  e.originalEvent.stopPropagation();
-                  setSelectedPoint(point);
-                }}
+        {props.accessToken && (
+          <Map
+            mapboxAccessToken={props.accessToken}
+            ref={mapRef}
+            initialViewState={{
+              longitude: localProps.longitude,
+              latitude: localProps.latitude,
+              zoom: localProps.zoom,
+            }}
+            mapStyle={ConfigService.mapbox.style_url}
+            onMove={(e) => HomeController.onMapMove(e.viewState)}
+            onLoad={(e) => setMapStyleLoaded(e.target ? true : false)}
+          >
+            {props.inventoryLocations?.map(
+              (point: InventoryLocation, index: number) => (
+                <Marker
+                  key={`marker-${index}`}
+                  latitude={point.coordinates.lat}
+                  longitude={point.coordinates.lng}
+                  anchor={'bottom'}
+                  onClick={(e) => {
+                    e.originalEvent.stopPropagation();
+                    setSelectedPoint(point);
+                  }}
+                >
+                  <img
+                    src={
+                      props.selectedInventoryLocation?.placeName !==
+                      point.placeName
+                        ? '../assets/svg/cruthology-pin.svg'
+                        : '../assets/svg/cruthology-selected-pin.svg'
+                    }
+                    className={styles['marker']}
+                  />
+                </Marker>
+              )
+            )}
+            {selectedPoint && (
+              <Popup
+                anchor={'top'}
+                onClose={() => setSelectedPoint(null)}
+                latitude={selectedPoint.coordinates.lat}
+                longitude={selectedPoint.coordinates.lng}
               >
-                <img
-                  src={
-                    props.selectedInventoryLocation?.placeName !==
-                    point.placeName
-                      ? '../assets/svg/cruthology-pin.svg'
-                      : '../assets/svg/cruthology-selected-pin.svg'
-                  }
-                  className={styles['marker']}
-                />
-              </Marker>
-            )
-          )}
-          {selectedPoint && (
-            <Popup
-              anchor={'top'}
-              onClose={() => setSelectedPoint(null)}
-              latitude={selectedPoint.coordinates.lat}
-              longitude={selectedPoint.coordinates.lng}
-            >
-              <div className={styles['marker-popup']}>
-                <div className={styles['company']}>{selectedPoint.company}</div>
-                <div className={styles['address']}>
-                  {selectedPoint.placeName}
-                </div>
-                <div className={styles['select-button-container']}>
-                  <div>
-                    <Button
-                      classNames={{
-                        button: styles['select-button'],
-                      }}
-                      rippleProps={{
-                        color: 'rgba(133, 38, 122, .35)',
-                      }}
-                      block={false}
-                      size={'tiny'}
-                      disabled={
-                        selectedPoint?.placeName ===
+                <div className={styles['marker-popup']}>
+                  <div className={styles['company']}>
+                    {selectedPoint.company}
+                  </div>
+                  <div className={styles['address']}>
+                    {selectedPoint.placeName}
+                  </div>
+                  <div className={styles['select-button-container']}>
+                    <div>
+                      <Button
+                        classNames={{
+                          button: styles['select-button'],
+                        }}
+                        rippleProps={{
+                          color: 'rgba(133, 38, 122, .35)',
+                        }}
+                        block={false}
+                        size={'tiny'}
+                        disabled={
+                          selectedPoint?.placeName ===
+                          props.selectedInventoryLocation?.placeName
+                        }
+                        type={'text'}
+                        onClick={() =>
+                          HomeController.updateSelectedInventoryLocation(
+                            selectedPoint
+                          )
+                        }
+                      >
+                        {selectedPoint?.placeName !==
                         props.selectedInventoryLocation?.placeName
-                      }
-                      type={'text'}
-                      onClick={() =>
-                        HomeController.updateSelectedInventoryLocation(
-                          selectedPoint
-                        )
-                      }
-                    >
-                      {selectedPoint?.placeName !==
-                      props.selectedInventoryLocation?.placeName
-                        ? t('select')
-                        : t('selected')}
-                    </Button>
+                          ? t('select')
+                          : t('selected')}
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Popup>
-          )}
-        </Map>
+              </Popup>
+            )}
+          </Map>
+        )}
       </div>
     </div>
   );

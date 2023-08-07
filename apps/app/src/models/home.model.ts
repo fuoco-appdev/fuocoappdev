@@ -15,6 +15,7 @@ export interface HomeState {
   inventoryLocations: InventoryLocation[];
   selectedInventoryLocation: InventoryLocation | undefined;
   wineCount: number;
+  accessToken: string | undefined;
 }
 
 export interface HomeLocalState {
@@ -32,6 +33,7 @@ export class HomeModel extends Model {
           inventoryLocations: [],
           selectedInventoryLocation: undefined,
           wineCount: 0,
+          accessToken: undefined,
         })
       ),
       undefined,
@@ -108,6 +110,16 @@ export class HomeModel extends Model {
         ...state,
         selectedInventoryLocation: value,
       }));
+    }
+  }
+
+  public get accessToken(): string {
+    return this.store?.getValue().accessToken;
+  }
+
+  public set accessToken(value: string) {
+    if (this.accessToken !== value) {
+      this.store?.update((state) => ({ ...state, accessToken: value }));
     }
   }
 }
