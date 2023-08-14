@@ -49,6 +49,11 @@ export class PublicSecrets extends Message<PublicSecrets> {
    */
   stripePublishableKey = "";
 
+  /**
+   * @generated from field: string deepl_auth_key = 6;
+   */
+  deeplAuthKey = "";
+
   constructor(data?: PartialMessage<PublicSecrets>) {
     super();
     proto3.util.initPartial(data, this);
@@ -62,6 +67,7 @@ export class PublicSecrets extends Message<PublicSecrets> {
     { no: 3, name: "meilisearch_public_key", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "mapbox_access_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "stripe_publishable_key", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "deepl_auth_key", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): PublicSecrets {

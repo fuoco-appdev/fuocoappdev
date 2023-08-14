@@ -15,6 +15,7 @@ class SecretsService extends Service {
   private _meilisearchPublicKey: string | undefined;
   private _mapboxAccessToken: string | undefined;
   private _stripePublishableKey: string | undefined;
+  private _deeplAuthKey: string | undefined;
 
   constructor() {
     super();
@@ -40,6 +41,7 @@ class SecretsService extends Service {
     this._meilisearchPublicKey = undefined;
     this._mapboxAccessToken = undefined;
     this._stripePublishableKey = undefined;
+    this._deeplAuthKey = undefined;
   }
 
   public clearPrivateSecrets(): void {
@@ -76,6 +78,10 @@ class SecretsService extends Service {
     return this._stripePublishableKey;
   }
 
+  public get deeplAuthKey(): string | undefined {
+    return this._deeplAuthKey;
+  }
+
   public async requestPublicAsync(): Promise<core.PublicSecrets> {
     const response = await axios({
       method: 'post',
@@ -98,6 +104,7 @@ class SecretsService extends Service {
     this._meilisearchPublicKey = deserializedResponse.meilisearchPublicKey;
     this._mapboxAccessToken = deserializedResponse.mapboxAccessToken;
     this._stripePublishableKey = deserializedResponse.stripePublishableKey;
+    this._deeplAuthKey = deserializedResponse.deeplAuthKey;
 
     return deserializedResponse;
   }

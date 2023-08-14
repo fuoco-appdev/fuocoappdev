@@ -9,6 +9,7 @@ class SecretsService {
   private _meilisearchPublicKey: string | undefined;
   private _mapboxAccessToken: string | undefined;
   private _stripePublishableKey: string | undefined;
+  private _deeplAuthKey: string | undefined;
 
   constructor() {
     this._s3AccessKeyId = Deno.env.get('S3_ACCESS_KEY_ID');
@@ -18,6 +19,7 @@ class SecretsService {
     this._meilisearchPublicKey = Deno.env.get('MEILISEARCH_PUBLIC_KEY');
     this._mapboxAccessToken = Deno.env.get('MAPBOX_ACCESS_TOKEN');
     this._stripePublishableKey = Deno.env.get('STRIPE_PUBLISHABLE_KEY');
+    this._deeplAuthKey = Deno.env.get('DEEPL_AUTH_KEY');
     if (!this._s3AccessKeyId) {
       throw new Error("S3_ACCESS_KEY_ID doesn't exist");
     }
@@ -39,6 +41,9 @@ class SecretsService {
     if (!this._stripePublishableKey) {
       throw new Error("STRIPE_PUBLISHABLE_KEY doesn't exist");
     }
+    if (!this._deeplAuthKey) {
+      throw new Error("DEEPL_AUTH_KEY doesn't exist");
+    }
   }
 
   public getPublicSecrets(): InstanceType<typeof PublicSecrets> {
@@ -48,6 +53,7 @@ class SecretsService {
     secrets.setMeilisearchPublicKey(this._meilisearchPublicKey ?? '');
     secrets.setMapboxAccessToken(this._mapboxAccessToken ?? '');
     secrets.setStripePublishableKey(this._stripePublishableKey ?? '');
+    secrets.setDeeplAuthKey(this._deeplAuthKey ?? '');
 
     return secrets;
   }

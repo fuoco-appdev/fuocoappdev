@@ -22,6 +22,7 @@ import AccountController from '../controllers/account.controller';
 import ProductController from '../controllers/product.controller';
 import SupabaseService from '../services/supabase.service';
 import MeilisearchService from '../services/meilisearch.service';
+import DeepLService from '../services/deepl.service';
 
 class AppController extends Controller {
   constructor() {
@@ -82,6 +83,7 @@ class AppController extends Controller {
       SupabaseService.initializeSupabase(secrets.supabaseAnonKey);
       MeilisearchService.initializeMeiliSearch(secrets.meilisearchPublicKey);
       MedusaService.intializeMedusa(secrets.medusaPublicKey);
+      DeepLService.initializeDeepL(secrets.deeplAuthKey);
     } catch (error: any) {
       WindowController.addToast({
         key: `secrets-${Math.random()}`,

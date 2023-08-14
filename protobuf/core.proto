@@ -12,6 +12,7 @@ message PublicSecrets {
     string meilisearch_public_key = 3;
     string mapbox_access_token = 4;
     string stripe_publishable_key = 5;
+    string deepl_auth_key = 6;
 }
 
 message PrivateSecrets {

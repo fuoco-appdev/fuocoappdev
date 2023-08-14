@@ -300,7 +300,8 @@ proto.core.PublicSecrets.toObject = function(includeInstance, msg) {
     medusaPublicKey: jspb.Message.getFieldWithDefault(msg, 2, ""),
     meilisearchPublicKey: jspb.Message.getFieldWithDefault(msg, 3, ""),
     mapboxAccessToken: jspb.Message.getFieldWithDefault(msg, 4, ""),
-    stripePublishableKey: jspb.Message.getFieldWithDefault(msg, 5, "")
+    stripePublishableKey: jspb.Message.getFieldWithDefault(msg, 5, ""),
+    deeplAuthKey: jspb.Message.getFieldWithDefault(msg, 6, "")
   };
 
   if (includeInstance) {
@@ -356,6 +357,10 @@ proto.core.PublicSecrets.deserializeBinaryFromReader = function(msg, reader) {
     case 5:
       var value = /** @type {string} */ (reader.readString());
       msg.setStripePublishableKey(value);
+      break;
+    case 6:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setDeeplAuthKey(value);
       break;
     default:
       reader.skipField();
@@ -418,6 +423,13 @@ proto.core.PublicSecrets.serializeBinaryToWriter = function(message, writer) {
   if (f.length > 0) {
     writer.writeString(
       5,
+      f
+    );
+  }
+  f = message.getDeeplAuthKey();
+  if (f.length > 0) {
+    writer.writeString(
+      6,
       f
     );
   }
@@ -511,6 +523,24 @@ proto.core.PublicSecrets.prototype.getStripePublishableKey = function() {
  */
 proto.core.PublicSecrets.prototype.setStripePublishableKey = function(value) {
   return jspb.Message.setProto3StringField(this, 5, value);
+};
+
+
+/**
+ * optional string deepl_auth_key = 6;
+ * @return {string}
+ */
+proto.core.PublicSecrets.prototype.getDeeplAuthKey = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.core.PublicSecrets} returns this
+ */
+proto.core.PublicSecrets.prototype.setDeeplAuthKey = function(value) {
+  return jspb.Message.setProto3StringField(this, 6, value);
 };
 
 
