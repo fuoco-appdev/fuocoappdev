@@ -1,11 +1,17 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Controller } from '../controller';
 import { SignupModel } from '../models/signup.model';
-import { Session, AuthChangeEvent } from '@supabase/supabase-js';
+import {
+  Session,
+  AuthChangeEvent,
+  SupabaseClient,
+} from '@supabase/supabase-js';
 import SupabaseService from '../services/supabase.service';
+import { Subscription } from 'rxjs';
 
 class SignupController extends Controller {
   private readonly _model: SignupModel;
+  private _supabaseClientSubscription: Subscription | undefined;
 
   constructor() {
     super();
@@ -23,9 +29,18 @@ class SignupController extends Controller {
     SupabaseService.supabaseClient?.auth.onAuthStateChange(
       this.onAuthStateChanged
     );
+
+    this._supabaseClientSubscription =
+      SupabaseService.supabaseClientObservable.subscribe({
+        next: (value: SupabaseClient | undefined) => {
+          this._model.supabaseClient = value;
+        },
+      });
   }
 
-  public override dispose(renderCount: number): void {}
+  public override dispose(renderCount: number): void {
+    this._supabaseClientSubscription?.unsubscribe();
+  }
 
   public updateEmailConfirmationSent(emailConfirmationSent: boolean): void {
     this._model.emailConfirmationSent = emailConfirmationSent;

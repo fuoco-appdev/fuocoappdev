@@ -15,6 +15,8 @@ import StoreController from '../controllers/store.controller';
 import { Region, Country } from '@medusajs/medusa';
 import ReactCountryFlag from 'react-country-flag';
 import { CountryDataProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/input-phone-number/country-data';
+import { AddressFormDesktopComponent } from './desktop/address-form.desktop.component';
+import { AddressFormMobileComponent } from './mobile/address-form.mobile.component';
 
 export interface AddressFormOnChangeCallbacks {
   email?: (event: ChangeEvent<HTMLInputElement>) => void;
@@ -74,11 +76,21 @@ export interface AddressFormProps {
   onEdit?: () => void;
 }
 
-function AddressFormDesktopComponent({}: AddressFormProps): JSX.Element {
-  return <div></div>;
+export interface AddressFormResponsiveProps extends AddressFormProps {
+  countryOptions: OptionProps[];
+  regionOptions: OptionProps[];
+  selectedCountryIndex: number;
+  setSelectedCountryIndex: (value: number) => void;
+  selectedRegionIndex: number;
+  setSelectedRegionIndex: (value: number) => void;
+  fullName: string;
+  location: string;
+  company: string;
+  phoneNumber: string;
+  email: string;
 }
 
-function AddressFormMobileComponent({
+export default function AddressFormComponent({
   isAuthenticated = false,
   values,
   errors,
@@ -86,7 +98,7 @@ function AddressFormMobileComponent({
   isComplete = false,
   onEdit,
 }: AddressFormProps): JSX.Element {
-  const rootRef = useRef<HTMLDivElement | null>(null);
+  const [storeProps] = useObservable(StoreController.model.store);
   const [countryOptions, setCountryOptions] = useState<OptionProps[]>([]);
   const [regionOptions, setRegionOptions] = useState<OptionProps[]>([]);
   const [selectedCountryIndex, setSelectedCountryIndex] = useState<number>(0);
@@ -97,8 +109,6 @@ function AddressFormMobileComponent({
   const [company, setCompany] = useState<string>('');
   const [phoneNumber, setPhoneNumber] = useState<string>('');
   const [email, setEmail] = useState<string>('');
-  const [storeProps] = useObservable(StoreController.model.store);
-  const { t } = useTranslation();
 
   useEffect(() => {
     if (countryOptions.length > 0) {
@@ -257,205 +267,37 @@ function AddressFormMobileComponent({
     }
   }, [isComplete]);
 
-  return !isComplete ? (
-    <>
-      {!isAuthenticated && (
-        <Input
-          classNames={{
-            formLayout: { label: styles['input-form-layout-label'] },
-            input: styles['input'],
-            container: styles['input-container'],
-          }}
-          label={t('email') ?? ''}
-          value={values?.email}
-          error={errors?.email}
-          onChange={onChangeCallbacks?.email}
-        />
-      )}
-      <div className={styles['horizontal-input-container']}>
-        <Input
-          classNames={{
-            formLayout: { label: styles['input-form-layout-label'] },
-            input: styles['input'],
-            container: styles['input-container'],
-          }}
-          label={t('firstName') ?? ''}
-          value={values?.firstName}
-          error={errors?.firstName}
-          onChange={onChangeCallbacks?.firstName}
-        />
-        <Input
-          classNames={{
-            formLayout: { label: styles['input-form-layout-label'] },
-            input: styles['input'],
-            container: styles['input-container'],
-          }}
-          label={t('lastName') ?? ''}
-          value={values?.lastName}
-          error={errors?.lastName}
-          onChange={onChangeCallbacks?.lastName}
-        />
-      </div>
-      <Input
-        classNames={{
-          formLayout: { label: styles['input-form-layout-label'] },
-          input: styles['input'],
-          container: styles['input-container'],
-        }}
-        label={`${t('company') ?? ''} (${t('optional') ?? ''})`}
-        value={values?.company}
-        error={errors?.company}
-        onChange={onChangeCallbacks?.company}
-      />
-      <Input
-        classNames={{
-          formLayout: { label: styles['input-form-layout-label'] },
-          input: styles['input'],
-          container: styles['input-container'],
-        }}
-        label={t('address') ?? ''}
-        value={values?.address}
-        error={errors?.address}
-        onChange={onChangeCallbacks?.address}
-      />
-      <Input
-        classNames={{
-          formLayout: { label: styles['input-form-layout-label'] },
-          input: styles['input'],
-          container: styles['input-container'],
-        }}
-        label={`${t('apartments') ?? ''} (${t('optional') ?? ''})`}
-        value={values?.apartments}
-        error={errors?.apartments}
-        onChange={onChangeCallbacks?.apartments}
-      />
-      <div className={styles['horizontal-input-container']}>
-        <Input
-          classNames={{
-            formLayout: { label: styles['input-form-layout-label'] },
-            input: styles['input'],
-            container: styles['input-container'],
-          }}
-          label={t('postalCode') ?? ''}
-          value={values?.postalCode}
-          error={errors?.postalCode}
-          onChange={onChangeCallbacks?.postalCode}
-        />
-        <Input
-          classNames={{
-            formLayout: { label: styles['input-form-layout-label'] },
-            input: styles['input'],
-            container: styles['input-container'],
-          }}
-          label={t('city') ?? ''}
-          value={values?.city}
-          error={errors?.city}
-          onChange={onChangeCallbacks?.city}
-        />
-      </div>
-      <Listbox
-        classNames={{
-          formLayout: {
-            label: styles['listbox-form-layout-label'],
-          },
-          listbox: styles['listbox'],
-          chevron: styles['listbox-chevron'],
-          label: styles['listbox-label'],
-        }}
-        touchScreen={true}
-        label={t('country') ?? ''}
-        error={errors?.country}
-        options={countryOptions}
-        defaultIndex={selectedCountryIndex}
-        onChange={(index: number, id: string, value: string) => {
-          setSelectedCountryIndex(index);
-          onChangeCallbacks?.country?.(index, id, value);
-        }}
-      />
-      <Listbox
-        classNames={{
-          formLayout: {
-            label: styles['listbox-form-layout-label'],
-          },
-          listbox: styles['listbox'],
-          chevron: styles['listbox-chevron'],
-          label: styles['listbox-label'],
-        }}
-        touchScreen={true}
-        label={t('region') ?? ''}
-        options={regionOptions}
-        error={errors?.region}
-        defaultIndex={selectedRegionIndex}
-        onChange={(index: number, id: string, value: string) => {
-          setSelectedRegionIndex(index);
-          onChangeCallbacks?.region?.(index, id, value);
-        }}
-      />
-      <InputPhoneNumber
-        defaultValue={values?.phoneNumber}
-        classNames={{
-          formLayout: { label: styles['input-form-layout-label'] },
-          inputPhoneNumber: styles['input'],
-          inputContainer: styles['input-container'],
-          countryName: styles['option-name'],
-        }}
-        iconColor={'#2A2A5F'}
-        label={t('phoneNumber') ?? ''}
-        error={errors?.phoneNumber}
-        touchScreen={true}
-        country={'ca'}
-        onChange={onChangeCallbacks?.phoneNumber}
-      />
-    </>
-  ) : (
-    <div className={styles['completed-container']}>
-      <div className={styles['completed-details-container']}>
-        <Line.CheckCircle size={24} />
-        <div className={styles['completed-details']}>
-          <div className={styles['completed-details-text']}>{fullName}</div>
-          <div
-            className={[
-              styles['completed-details-text'],
-              styles['address-text'],
-            ].join(' ')}
-          >
-            {location}
-          </div>
-          <div className={styles['completed-details-text']}>{company}</div>
-          <div className={styles['completed-details-text']}>{phoneNumber}</div>
-          <div className={styles['completed-details-text']}>{email}</div>
-        </div>
-      </div>
-      <div className={styles['edit-button-container']}>
-        <Button
-          classNames={{
-            button: styles['edit-button'],
-          }}
-          rippleProps={{
-            color: 'rgba(133, 38, 122, .35)',
-          }}
-          size={'small'}
-          type={'outline'}
-          icon={<Line.Edit size={24} />}
-          onClick={onEdit}
-        >
-          {t('edit')}
-        </Button>
-      </div>
-    </div>
-  );
-}
-
-export default function AddressFormComponent(
-  props: AddressFormProps
-): JSX.Element {
   return (
     <>
       <ResponsiveDesktop>
-        <AddressFormDesktopComponent {...props} />
+        <AddressFormDesktopComponent
+          countryOptions={countryOptions}
+          regionOptions={regionOptions}
+          selectedCountryIndex={selectedCountryIndex}
+          selectedRegionIndex={selectedRegionIndex}
+          fullName={fullName}
+          location={location}
+          company={company}
+          phoneNumber={phoneNumber}
+          email={email}
+          setSelectedCountryIndex={setSelectedCountryIndex}
+          setSelectedRegionIndex={setSelectedRegionIndex}
+        />
       </ResponsiveDesktop>
       <ResponsiveMobile>
-        <AddressFormMobileComponent {...props} />
+        <AddressFormMobileComponent
+          countryOptions={countryOptions}
+          regionOptions={regionOptions}
+          selectedCountryIndex={selectedCountryIndex}
+          selectedRegionIndex={selectedRegionIndex}
+          fullName={fullName}
+          location={location}
+          company={company}
+          phoneNumber={phoneNumber}
+          email={email}
+          setSelectedCountryIndex={setSelectedCountryIndex}
+          setSelectedRegionIndex={setSelectedRegionIndex}
+        />
       </ResponsiveMobile>
     </>
   );

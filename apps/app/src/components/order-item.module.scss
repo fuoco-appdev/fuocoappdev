@@ -5,15 +5,14 @@
         width: 100%;
         height: 100%;
 
-        & .container-mobile {
-            padding: $mp-2 $mp-4;
+        & .container {
             width: 100%;
         
-            & .details-mobile {
+            & .details {
                 display: flex;
                 margin-bottom: $mp-1;
         
-                & .thumbnail-mobile {
+                & .thumbnail {
                     display: flex;
                     justify-content: center;
                     height: 56px;
@@ -21,7 +20,7 @@
                     background-color: $gray-100;
                     margin-right: $mp-4;
         
-                    & .thumbnail-image-mobile {
+                    & .thumbnail-image {
                         padding: $mp-1 0;
                         max-height: 100%;
                         width: auto;
@@ -29,15 +28,15 @@
                     }
                 }
         
-                & .title-container-mobile {
-                    & .title-mobile {
+                & .title-container {
+                    & .title {
                         color: $brand-900;
                         font-size: $font-size-base;
                         font-weight: $font-weight-bold;
                         margin-bottom: $mp-1;
                     }
         
-                    & .status-mobile {
+                    & .status {
                         color: $brand-900;
                         font-size: $font-size-sm;
                         text-transform: capitalize;
@@ -67,6 +66,85 @@
                 & .remove-container {
                     & .remove-button {
                         color: $brand-900;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.root-desktop {
+    & .ripples-desktop {
+        cursor: pointer;
+        transition: all $transition-standard-easing 150ms;
+
+        & .container-desktop {   
+            padding: $mp-2 $mp-6;
+
+            & .details-desktop {       
+                & .thumbnail-desktop {        
+                    & .thumbnail-image-desktop {
+                    }
+                }
+        
+                & .title-container-desktop {
+                    & .title-desktop {
+                    }
+        
+                    & .status-desktop {
+                    }
+                }
+        
+                & .right-details-container-desktop {
+                    & .right-details-content-desktop {
+                        & .pricing-desktop {
+                        }
+                    }
+            
+                }
+        
+                & .remove-container-desktop {
+                    & .remove-button-desktop {
+                    }
+                }
+            }
+        }
+    }
+
+    & .ripples-desktop:hover {
+        background-color: rgba(42, 42, 95, .05);
+    }
+}
+
+.root-mobile {
+    & .ripples-mobile {
+        & .container-mobile {   
+            padding: $mp-2 $mp-4;
+
+            & .details-mobile {       
+                & .thumbnail-mobile {        
+                    & .thumbnail-image-mobile {
+                    }
+                }
+        
+                & .title-container-mobile {
+                    & .title-mobile {
+                    }
+        
+                    & .status-mobile {
+                    }
+                }
+        
+                & .right-details-container-mobile {
+                    & .right-details-content-mobile {
+                        & .pricing-mobile {
+                        }
+                    }
+            
+                }
+        
+                & .remove-container-mobile {
+                    & .remove-button-mobile {
                     }
                 }
             }

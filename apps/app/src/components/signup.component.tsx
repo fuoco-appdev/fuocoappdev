@@ -110,7 +110,7 @@ export default function SignupComponent(): JSX.Element {
     }
   }, [authError]);
 
-  const auth = SupabaseService.supabaseClient && (
+  const auth = props.supabaseClient && (
     <Auth
       classNames={{
         socialAuth: {
@@ -172,7 +172,7 @@ export default function SignupComponent(): JSX.Element {
       emailErrorMessage={emailError}
       passwordErrorMessage={passwordError}
       confirmPasswordErrorMessage={confirmPasswordError}
-      supabaseClient={SupabaseService.supabaseClient}
+      supabaseClient={props.supabaseClient}
       onEmailChanged={(e) => SignupController.updateEmail(e.target.value)}
       onPasswordChanged={(e) => SignupController.updatePassword(e.target.value)}
       onConfirmPasswordChanged={(e) =>

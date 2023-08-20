@@ -39,7 +39,7 @@
 
 html, body { 
   position: fixed;
-  overflow-y: scroll;
+  overflow: overlay;
   -webkit-overflow-scrolling: touch;
    height: 100%; 
    overflow-x: hidden;

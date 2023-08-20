@@ -1,7 +1,8 @@
-import styles from './loading.module.scss';
-import Lottie from 'lottie-react';
+import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import LoadingMobileComponent from './mobile/loading.mobile.component';
+import LoadingDesktopComponent from './desktop/loading.desktop.component';
 
-interface LoadingProps {
+export interface LoadingProps {
   isVisible: boolean;
 }
 
@@ -9,12 +10,14 @@ export default function LoadingComponent({
   isVisible = true,
 }: LoadingProps): JSX.Element {
   return isVisible ? (
-    <div
-      className={styles['root']}
-      style={{ display: isVisible ? 'flex' : 'none' }}
-    >
-      <img className={styles['logo']} src={'../assets/svg/logo.svg'} />
-    </div>
+    <>
+      <ResponsiveDesktop>
+        <LoadingDesktopComponent />
+      </ResponsiveDesktop>
+      <ResponsiveMobile>
+        <LoadingMobileComponent />
+      </ResponsiveMobile>
+    </>
   ) : (
     <></>
   );

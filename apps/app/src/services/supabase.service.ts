@@ -10,11 +10,17 @@ import { BehaviorSubject, Observable } from 'rxjs';
 
 class SupabaseService {
   private _supabaseClient: SupabaseClient | undefined;
+  private _supabaseClientBehaviorSubject: BehaviorSubject<
+    SupabaseClient | undefined
+  >;
   private _userBehaviorSubject: BehaviorSubject<User | null>;
   private _sessionBehaviorSubject: BehaviorSubject<Session | null>;
   private _anonKey: string | undefined;
 
   constructor() {
+    this._supabaseClientBehaviorSubject = new BehaviorSubject<
+      SupabaseClient | undefined
+    >(undefined);
     this._userBehaviorSubject = new BehaviorSubject<User | null>(null);
     this._sessionBehaviorSubject = new BehaviorSubject<Session | null>(null);
 
@@ -27,6 +33,12 @@ class SupabaseService {
 
   public get session(): Session | null {
     return this._sessionBehaviorSubject.getValue();
+  }
+
+  public get supabaseClientObservable(): Observable<
+    SupabaseClient | undefined
+  > {
+    return this._supabaseClientBehaviorSubject.asObservable();
   }
 
   public get userObservable(): Observable<User | null> {
@@ -47,6 +59,8 @@ class SupabaseService {
 
   public initializeSupabase(anonKey: string): void {
     this._supabaseClient = createClient(ConfigService.supabase.url, anonKey);
+    this._supabaseClientBehaviorSubject.next(this._supabaseClient);
+
     this._anonKey = anonKey;
     this._supabaseClient.auth.onAuthStateChange(this.onAuthStateChanged);
   }

@@ -1,38 +1,77 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
-.root {
-        & .container-mobile {
-            padding: $mp-2 $mp-4;
-            width: 100%;
+.root-desktop {
+    & .container-desktop {
+        padding: $mp-2 $mp-6;
+        width: 100%;
         
-            & .details-mobile {
-                display: flex;
-                margin-bottom: $mp-1;
+        & .details-desktop {
+            display: flex;
+            margin-bottom: $mp-1;
         
-                & .title-container-mobile {
-                    & .title-mobile {
-                        color: $brand-900;
-                        font-size: $font-size-sm;
-                        font-weight: $font-weight-bold;
-                        margin-bottom: $mp-1;
-                    }
-
-                    & .subtitle-mobile {
-                        color: $brand-900;
-                        font-size: $font-size-sm;
-                    }
+            & .title-container-desktop {
+                & .title-desktop {
+                    color: $brand-900;
+                    font-size: $font-size-sm;
+                    font-weight: $font-weight-bold;
+                    margin-bottom: $mp-1;
                 }
+
+                & .subtitle-desktop {
+                    color: $brand-900;
+                    font-size: $font-size-sm;
+                }
+            }
         
-                & .right-details-container {
+            & .right-details-container-desktop {
+                display: flex;
+                flex-direction: row;
+                justify-content: right;
+                flex: 1;
+
+                & .right-details-content-desktop {
                     display: flex;
                     flex-direction: row;
-                    justify-content: right;
-                    flex: 1;
+                }
+            
+            }
+        }
+    }
+}
 
-                    & .right-details-content {
-                        display: flex;
-                        flex-direction: row;
-                    }
+.root-mobile {
+    & .container-mobile {
+        padding: $mp-2 $mp-4;
+        width: 100%;
+        
+        & .details-mobile {
+            display: flex;
+            margin-bottom: $mp-1;
+        
+            & .title-container-mobile {
+                & .title-mobile {
+                    color: $brand-900;
+                    font-size: $font-size-sm;
+                    font-weight: $font-weight-bold;
+                    margin-bottom: $mp-1;
+                }
+
+                & .subtitle-mobile {
+                    color: $brand-900;
+                    font-size: $font-size-sm;
+                }
+            }
+        
+            & .right-details-container-mobile {
+                display: flex;
+                flex-direction: row;
+                justify-content: right;
+                flex: 1;
+
+                & .right-details-content-mobile {
+                    display: flex;
+                    flex-direction: row;
+                }
             
                 }
             }

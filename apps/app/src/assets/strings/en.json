@@ -236,5 +236,8 @@
   "creditCardNumber": "Card number",
   "expirationDate": "Expiration date",
   "cvc": "CVC",
-  "utilizeSearchEngineDescription": "Utilize an integrated search engine to explore a wide array of {{product_count, string}} selections."
+  "utilizeSearchEngineDescription": "Utilize an integrated search engine to explore a wide array of {{product_count, string}} selections.",
+  "menu": "Menu",
+  "home": "Home",
+  "store": "Store"
 }

@@ -1,44 +1,23 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
 .root {
-
-}
-
-.root-mobile {
   display: flex;
   flex-direction: column;
   width: 100%;
   min-width: 100%;
 
-  & .top-bar-mobile {
+  & .top-bar {
     height: 56px;
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    min-height: 56px;
     width: 100%;
     align-items: center;
 
-    & .tab-button-container {
-      width: fit-content;
-      padding-right: $mp-1;
-    }
-
     & .left-tab-container {
-      grid-column-start: 1;
-      grid-column-end: 2;
-      padding: 0 $mp-2;
-      display: flex;
-      justify-content: flex-start;
-      flex-direction: row;
+
     }
 
     & .right-tab-container {
-      grid-column-start: 2;
-      grid-column-end: 3;
-      padding: 0 $mp-2;
-      display: flex;
-      justify-content: flex-end;
-      flex-direction: row;
+
     }
   }
 
@@ -78,7 +57,7 @@
     margin: $mp-2 0;
   }
 
-  & .skeleton-user-mobile {
+  & .skeleton-user {
     max-width: 30%;
   }
 
@@ -90,6 +69,150 @@
     flex: 1;
     overflow-y: auto;
   }
+}
+
+.root-desktop {
+  height: 100%;
+
+  & .top-bar-desktop {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0 $mp-4;
+
+    & .left-tab-container-desktop {
+
+    }
+
+    & .right-tab-container-desktop {
+
+    }
+  }
+
+  & .incomplete-profile-container-desktop {
+
+    & .complete-profile-title-desktop {
+
+    }
+  
+    & .form-container-desktop {
+
+    }
+  }
+
+  & .avatar-container-desktop {
+
+  }
+
+  & .username-desktop {
+
+  }
+
+  & .content-desktop {
+    display: flex;
+    justify-content: center;
+    padding: $mp-6 0;
+    height: 100%;
+    width: 100%;
+    gap: $mp-6;
+
+    & .card-container-desktop {
+      min-width: 35vw;
+      border: 1px solid rgba(42, 42, 95, .6);
+      border-radius: 6px;
+      height: 50%;
+    }
+
+    & .left-card-container-desktop {
+      height: 100%;
+    }
+
+    & .left-content-desktop {
+      display: flex;
+      flex-direction: column;
+      gap: $mp-6;
+    }
+
+    & .right-content-desktop {
+      display: flex;
+      flex-direction: column;
+      gap: $mp-6;
+    }
+  }
+
+  & .skeleton-user-desktop {
+
+  }
+
+  & .tabs-container-desktop {
+
+  }
+
+  & .outlet-container-desktop {
+
+  }
+}
+
+.root-mobile {
+
+  & .top-bar-mobile {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    & .left-tab-container-mobile {
+      padding: 0 $mp-2;
+      display: flex;
+      justify-content: flex-start;
+      flex-direction: row;
+      grid-column-start: 1;
+      grid-column-end: 2;
+    }
+
+    & .right-tab-container-mobile {
+      padding: 0 $mp-2;
+      display: flex;
+      justify-content: flex-end;
+      flex-direction: row;
+      grid-column-start: 2;
+      grid-column-end: 3;
+    }
+  }
+
+  & .incomplete-profile-container-mobile {
+
+    & .complete-profile-title-mobile {
+
+    }
+  
+    & .form-container-mobile {
+
+    }
+  }
+
+  & .avatar-container-mobile {
+
+  }
+
+  & .username-mobile {
+
+  }
+
+  & .skeleton-user-mobile {
+
+  }
+
+  & .tabs-container-mobile {
+
+  }
+
+  & .outlet-container-mobile {
+
+  }
+}
+
+.tab-button-container {
+  width: fit-content;
+  padding-right: $mp-1;
 }
 
 .submit-button-container {

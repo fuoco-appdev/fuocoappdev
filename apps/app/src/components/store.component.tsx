@@ -214,7 +214,7 @@ function StoreMobileComponent(): JSX.Element {
           <Tabs
             classNames={{
               tabButton: styles['tab-button'],
-              selectedTabButton: styles['selected-tab-button'],
+              hoveredTabButton: styles['hovered-tab-button'],
               tabSliderPill: styles['tab-slider-pill'],
             }}
             removable={true}

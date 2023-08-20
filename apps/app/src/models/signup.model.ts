@@ -1,8 +1,10 @@
 import { createStore, withProps } from '@ngneat/elf';
 import { Location } from 'react-router-dom';
 import { Model } from '../model';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 export interface SignupState {
+  supabaseClient?: SupabaseClient | undefined;
   emailConfirmationSent: boolean;
   location?: Location;
   email?: string;
@@ -16,6 +18,7 @@ export class SignupModel extends Model {
       createStore(
         { name: 'signup' },
         withProps<SignupState>({
+          supabaseClient: undefined,
           emailConfirmationSent: false,
           location: undefined,
           email: '',
@@ -24,6 +27,16 @@ export class SignupModel extends Model {
         })
       )
     );
+  }
+
+  public get supabaseClient(): SupabaseClient | undefined {
+    return this.store.getValue().supabaseClient;
+  }
+
+  public set supabaseClient(value: SupabaseClient | undefined) {
+    if (JSON.stringify(this.supabaseClient) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, supabaseClient: value }));
+    }
   }
 
   public get emailConfirmationSent(): boolean {
