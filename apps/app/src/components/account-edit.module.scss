@@ -10,9 +10,6 @@
     & .edit-text-container {
         display: flex;
         flex-direction: row;
-        margin: 0 $mp-4;
-        margin-top: $mp-4;
-        margin-bottom: $mp-2;
         border-bottom: solid 1px $brand-900;
 
         & .edit-text {
@@ -25,15 +22,54 @@
     }
 
     & .profile-form-container {
-        padding: $mp-4;
+        
     }
 
     & .save-button-container {
-        padding: 0 $mp-4;
         display: flex;
         flex-direction: column;
         flex: 1;
         justify-content: flex-end;
+    }
+}
+
+.root-desktop {
+    & .edit-text-container-desktop {
+        margin: 0 $mp-6;
+        margin-top: $mp-6;
+        margin-bottom: $mp-2;
+
+        & .edit-text-desktop {
+
+        }
+    }
+
+    & .profile-form-container-desktop {
+        padding: 0 $mp-6;
+        padding-top: $mp-6;
+    }
+
+    & .save-button-container-desktop {
+        padding: $mp-6;
+    }
+}
+
+.root-mobile {
+    & .edit-text-container-mobile {
+        margin: 0 $mp-4;
+        margin-top: $mp-4;
+        margin-bottom: $mp-2;
+
+        & .edit-text-mobile {
+        }
+    }
+
+    & .profile-form-container-mobile {
+        padding: $mp-4;
+    }
+
+    & .save-button-container-mobile {
+        padding: 0 $mp-4;
         margin-bottom: $mp-10;
     }
 }

@@ -239,5 +239,6 @@
   "utilizeSearchEngineDescription": "Utilisez un moteur de recherche intégré pour explorer un large éventail de sélections {{product_count, string}}.",
   "menu": "Menu",
   "home": "Accueil",
-  "store": "Magasin"
+  "store": "Magasin",
+  "remove": "Supprimer"
 }

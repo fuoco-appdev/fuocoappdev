@@ -31,6 +31,7 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import AccountOrderHistoryComponent from '../account-order-history.component';
 import AccountAddressesComponent from '../account-addresses.component';
+import AccountEditComponent from '../account-edit.component';
 
 export function AccountDesktopComponent(): JSX.Element {
   const [props] = useObservable(AccountController.model.store);
@@ -264,7 +265,9 @@ export function AccountDesktopComponent(): JSX.Element {
                   styles['card-container'],
                   styles['card-container-desktop'],
                 ].join(' ')}
-              ></div>
+              >
+                <AccountEditComponent />
+              </div>
             </div>
           </div>
         </>
