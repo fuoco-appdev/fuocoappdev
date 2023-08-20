@@ -39,8 +39,6 @@
     }
 
     & .edit-address-container {
-        padding: $mp-4;
-
         & .edit-address-button-container {
             width: 100%;
             padding-top: $mp-4;
@@ -80,6 +78,10 @@
     }
 
     & .edit-address-container-desktop {
+        padding: $mp-6;
+        overflow-y: auto;
+        max-height: 80vh;
+
         & .edit-address-button-container-desktop {
             & .edit-address-button-desktop {
             }
@@ -112,6 +114,8 @@
     }
 
     & .edit-address-container-mobile {
+        padding: $mp-4;
+
         & .edit-address-button-container-mobile {
             & .edit-address-button-mobile {
             }
@@ -123,6 +127,11 @@
     z-index: 24;
 }
 
+.modal-text-desktop {
+    padding: $mp-6 !important;
+    max-width: 30vw;
+}
+
 .modal-title {
     color: $brand-900 !important;
 }
@@ -132,16 +141,25 @@
 }
 
 .modal-footer-button-container-desktop {
-    border-top: 1px solid rgba(42, 42, 95, .6);
     padding-left: $mp-6 !important;
     padding-right: $mp-6 !important;
+    height: 100%;
+    align-items: center;
+}
+
+.modal-address-footer-button-container-desktop {
+    border-top: 1px solid rgba(42, 42, 95, .6);
 }
 
 .modal-cancel-button {
     background-color: transparent !important;
     border: 1px solid $brand-900 !important;
+    padding-left: $mp-4 !important;
+    padding-right: $mp-4 !important;
 }
 
 .modal-confirm-button {
     background-color: $brand-700 !important;
+    padding-left: $mp-4 !important;
+    padding-right: $mp-4 !important;
 }

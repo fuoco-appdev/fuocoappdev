@@ -14,13 +14,23 @@ import { Store } from '@ngneat/elf';
 import { Customer, Address } from '@medusajs/medusa';
 import AddressItemComponent from '../address-item.component';
 import AddressFormComponent from '../address-form.component';
+import { AccountAddressResponsiveProps } from '../account-addresses.component';
 
-export function AccountAddressesDesktopComponent(): JSX.Element {
+export function AccountAddressesDesktopComponent({
+  onAddAddressAsync,
+  onEditAddressAsync,
+  onDeleteAddressConfirmedAsync,
+  onDeleteAddressCanceledAsync,
+  onEditAddressButtonClicked,
+  onDeleteAddressButtonClicked,
+  openAddDropdown,
+  openEditDropdown,
+  deleteModalVisible,
+  setOpenAddDropdown,
+  setOpenEditDropdown,
+}: AccountAddressResponsiveProps): JSX.Element {
   const [props] = useObservable(AccountController.model.store);
   const { t, i18n } = useTranslation();
-  const [openAddDropdown, setOpenAddDropdown] = useState<boolean>(false);
-  const [openEditDropdown, setOpenEditDropdown] = useState<boolean>(false);
-  const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
 
   const customer = props.customer as Customer | undefined;
   const selectedAddress = props.selectedAddress as Address | undefined;
@@ -64,26 +74,8 @@ export function AccountAddressesDesktopComponent(): JSX.Element {
             <AddressItemComponent
               key={value.id}
               address={value}
-              onEdit={() => {
-                AccountController.updateSelectedAddress(value);
-                AccountController.updateEditShippingAddress({
-                  firstName: value.first_name ?? '',
-                  lastName: value.last_name ?? '',
-                  company: value.company ?? '',
-                  address: value.address_1 ?? '',
-                  apartments: value.address_2 ?? '',
-                  postalCode: value.postal_code ?? '',
-                  city: value.city ?? '',
-                  countryCode: value.country_code ?? '',
-                  region: value.province ?? '',
-                  phoneNumber: value.phone ?? '',
-                });
-                setOpenEditDropdown(true);
-              }}
-              onDelete={() => {
-                AccountController.updateSelectedAddress(value);
-                setDeleteModalVisible(true);
-              }}
+              onEdit={() => onEditAddressButtonClicked(value)}
+              onDelete={() => onDeleteAddressButtonClicked(value)}
             />
           ))
         ) : (
@@ -113,6 +105,7 @@ export function AccountAddressesDesktopComponent(): JSX.Element {
           footerButtonContainer: [
             styles['modal-footer-button-container'],
             styles['modal-footer-button-container-desktop'],
+            styles['modal-address-footer-button-container-desktop'],
           ].join(' '),
           cancelButton: {
             button: [
@@ -128,34 +121,10 @@ export function AccountAddressesDesktopComponent(): JSX.Element {
           },
         }}
         visible={openAddDropdown}
-        confirmText={t('add') ?? ''}
+        confirmText={t('addAddress') ?? ''}
         cancelText={t('cancel') ?? ''}
         onCancel={() => setOpenAddDropdown(false)}
-        onConfirm={async () => {
-          AccountController.updateShippingAddressErrors({
-            email: undefined,
-            firstName: undefined,
-            lastName: undefined,
-            company: undefined,
-            address: undefined,
-            apartments: undefined,
-            postalCode: undefined,
-            city: undefined,
-            region: undefined,
-            phoneNumber: undefined,
-          });
-
-          const errors = AccountController.getAddressFormErrors(
-            props.shippingForm
-          );
-          if (errors) {
-            AccountController.updateShippingAddressErrors(errors);
-            return;
-          }
-
-          await AccountController.addAddressAsync(props.shippingForm);
-          setOpenAddDropdown(false);
-        }}
+        onConfirm={onAddAddressAsync}
       >
         <div
           className={[
@@ -228,6 +197,7 @@ export function AccountAddressesDesktopComponent(): JSX.Element {
           footerButtonContainer: [
             styles['modal-footer-button-container'],
             styles['modal-footer-button-container-desktop'],
+            styles['modal-address-footer-button-container-desktop'],
           ].join(' '),
           cancelButton: {
             button: [
@@ -336,6 +306,7 @@ export function AccountAddressesDesktopComponent(): JSX.Element {
             styles['modal-overlay'],
             styles['modal-overlay-desktop'],
           ].join(' '),
+          text: [styles['modal-text'], styles['modal-text-desktop']].join(' '),
           title: [styles['modal-title'], styles['modal-title-desktop']].join(
             ' '
           ),
@@ -360,15 +331,10 @@ export function AccountAddressesDesktopComponent(): JSX.Element {
             ].join(' '),
           },
         }}
+        confirmText={t('remove') ?? ''}
         visible={deleteModalVisible}
-        onConfirm={() => {
-          AccountController.deleteAddressAsync(selectedAddress?.id);
-          setDeleteModalVisible(false);
-        }}
-        onCancel={() => {
-          AccountController.updateSelectedAddress(undefined);
-          setDeleteModalVisible(false);
-        }}
+        onConfirm={onDeleteAddressConfirmedAsync}
+        onCancel={onDeleteAddressCanceledAsync}
         title={t('removeAddress') ?? ''}
         description={
           t('removeAddressDescription', {

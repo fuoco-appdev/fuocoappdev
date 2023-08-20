@@ -15,13 +15,23 @@ import { Store } from '@ngneat/elf';
 import { Customer, Address } from '@medusajs/medusa';
 import AddressItemComponent from '../address-item.component';
 import AddressFormComponent from '../address-form.component';
+import { AccountAddressResponsiveProps } from '../account-addresses.component';
 
-export function AccountAddressesMobileComponent(): JSX.Element {
+export function AccountAddressesMobileComponent({
+  onAddAddressAsync,
+  onEditAddressAsync,
+  onDeleteAddressConfirmedAsync,
+  onDeleteAddressCanceledAsync,
+  onEditAddressButtonClicked,
+  onDeleteAddressButtonClicked,
+  openAddDropdown,
+  openEditDropdown,
+  deleteModalVisible,
+  setOpenAddDropdown,
+  setOpenEditDropdown,
+}: AccountAddressResponsiveProps): JSX.Element {
   const [props] = useObservable(AccountController.model.store);
   const { t, i18n } = useTranslation();
-  const [openAddDropdown, setOpenAddDropdown] = useState<boolean>(false);
-  const [openEditDropdown, setOpenEditDropdown] = useState<boolean>(false);
-  const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
 
   const customer = props.customer as Customer | undefined;
   const selectedAddress = props.selectedAddress as Address | undefined;
@@ -65,26 +75,8 @@ export function AccountAddressesMobileComponent(): JSX.Element {
             <AddressItemComponent
               key={value.id}
               address={value}
-              onEdit={() => {
-                AccountController.updateSelectedAddress(value);
-                AccountController.updateEditShippingAddress({
-                  firstName: value.first_name ?? '',
-                  lastName: value.last_name ?? '',
-                  company: value.company ?? '',
-                  address: value.address_1 ?? '',
-                  apartments: value.address_2 ?? '',
-                  postalCode: value.postal_code ?? '',
-                  city: value.city ?? '',
-                  countryCode: value.country_code ?? '',
-                  region: value.province ?? '',
-                  phoneNumber: value.phone ?? '',
-                });
-                setOpenEditDropdown(true);
-              }}
-              onDelete={() => {
-                AccountController.updateSelectedAddress(value);
-                setDeleteModalVisible(true);
-              }}
+              onEdit={() => onEditAddressButtonClicked(value)}
+              onDelete={() => onDeleteAddressButtonClicked(value)}
             />
           ))
         ) : (
@@ -175,31 +167,7 @@ export function AccountAddressesMobileComponent(): JSX.Element {
               touchScreen={true}
               block={true}
               size={'large'}
-              onClick={async () => {
-                AccountController.updateShippingAddressErrors({
-                  email: undefined,
-                  firstName: undefined,
-                  lastName: undefined,
-                  company: undefined,
-                  address: undefined,
-                  apartments: undefined,
-                  postalCode: undefined,
-                  city: undefined,
-                  region: undefined,
-                  phoneNumber: undefined,
-                });
-
-                const errors = AccountController.getAddressFormErrors(
-                  props.shippingForm
-                );
-                if (errors) {
-                  AccountController.updateShippingAddressErrors(errors);
-                  return;
-                }
-
-                await AccountController.addAddressAsync(props.shippingForm);
-                setOpenAddDropdown(false);
-              }}
+              onClick={onAddAddressAsync}
             >
               {t('addAddress')}
             </Button>
@@ -283,34 +251,7 @@ export function AccountAddressesMobileComponent(): JSX.Element {
               touchScreen={true}
               block={true}
               size={'large'}
-              onClick={async () => {
-                AccountController.updateEditShippingAddressErrors({
-                  email: undefined,
-                  firstName: undefined,
-                  lastName: undefined,
-                  company: undefined,
-                  address: undefined,
-                  apartments: undefined,
-                  postalCode: undefined,
-                  city: undefined,
-                  region: undefined,
-                  phoneNumber: undefined,
-                });
-
-                const errors = AccountController.getAddressFormErrors(
-                  AccountController.model.editShippingForm
-                );
-                if (errors) {
-                  AccountController.updateEditShippingAddressErrors(errors);
-                  return;
-                }
-
-                await AccountController.updateAddressAsync(
-                  AccountController.model.selectedAddress?.id
-                );
-                AccountController.updateSelectedAddress(undefined);
-                setOpenEditDropdown(false);
-              }}
+              onClick={onEditAddressAsync}
             >
               {t('applyChanges')}
             </Button>
@@ -344,15 +285,10 @@ export function AccountAddressesMobileComponent(): JSX.Element {
           },
         }}
         visible={deleteModalVisible}
-        onConfirm={() => {
-          AccountController.deleteAddressAsync(selectedAddress?.id);
-          setDeleteModalVisible(false);
-        }}
-        onCancel={() => {
-          AccountController.updateSelectedAddress(undefined);
-          setDeleteModalVisible(false);
-        }}
+        onConfirm={onDeleteAddressConfirmedAsync}
+        onCancel={onDeleteAddressCanceledAsync}
         title={t('removeAddress') ?? ''}
+        confirmText={t('remove') ?? ''}
         description={
           t('removeAddressDescription', {
             address_1: selectedAddress?.address_1,

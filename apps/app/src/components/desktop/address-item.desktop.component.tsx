@@ -79,7 +79,7 @@ export function AddressItemDesktopComponent({
                       styles['remove-button-desktop'],
                     ].join(' '),
                   }}
-                  floatingLabel={t('delete') ?? ''}
+                  floatingLabel={t('remove') ?? ''}
                   type={'text'}
                   rounded={true}
                   size={'tiny'}

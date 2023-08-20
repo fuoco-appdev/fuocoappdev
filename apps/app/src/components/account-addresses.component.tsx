@@ -18,8 +18,112 @@ import AddressFormComponent from './address-form.component';
 import { AccountAddressesDesktopComponent } from './desktop/account-addresses.desktop.component';
 import { AccountAddressesMobileComponent } from './mobile/account-addresses.mobile.component';
 
+export interface AccountAddressResponsiveProps {
+  onAddAddressAsync: () => void;
+  onEditAddressAsync: () => void;
+  onDeleteAddressConfirmedAsync: () => void;
+  onDeleteAddressCanceledAsync: () => void;
+  onEditAddressButtonClicked: (value: Address) => void;
+  onDeleteAddressButtonClicked: (value: Address) => void;
+  openAddDropdown: boolean;
+  setOpenAddDropdown: (value: boolean) => void;
+  openEditDropdown: boolean;
+  setOpenEditDropdown: (value: boolean) => void;
+  deleteModalVisible: boolean;
+}
+
 export default function AccountAddressesComponent(): JSX.Element {
   const { t, i18n } = useTranslation();
+  const [props] = useObservable(AccountController.model.store);
+  const [openAddDropdown, setOpenAddDropdown] = useState<boolean>(false);
+  const [openEditDropdown, setOpenEditDropdown] = useState<boolean>(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
+
+  const onAddAddressAsync = async () => {
+    AccountController.updateShippingAddressErrors({
+      email: undefined,
+      firstName: undefined,
+      lastName: undefined,
+      company: undefined,
+      address: undefined,
+      apartments: undefined,
+      postalCode: undefined,
+      city: undefined,
+      region: undefined,
+      phoneNumber: undefined,
+    });
+
+    const errors = AccountController.getAddressFormErrors(props.shippingForm);
+    if (errors) {
+      AccountController.updateShippingAddressErrors(errors);
+      return;
+    }
+
+    await AccountController.addAddressAsync(props.shippingForm);
+    setOpenAddDropdown(false);
+  };
+
+  const onEditAddressAsync = async () => {
+    AccountController.updateEditShippingAddressErrors({
+      email: undefined,
+      firstName: undefined,
+      lastName: undefined,
+      company: undefined,
+      address: undefined,
+      apartments: undefined,
+      postalCode: undefined,
+      city: undefined,
+      region: undefined,
+      phoneNumber: undefined,
+    });
+
+    const errors = AccountController.getAddressFormErrors(
+      AccountController.model.editShippingForm
+    );
+    if (errors) {
+      AccountController.updateEditShippingAddressErrors(errors);
+      return;
+    }
+
+    await AccountController.updateAddressAsync(
+      AccountController.model.selectedAddress?.id
+    );
+    AccountController.updateSelectedAddress(undefined);
+    setOpenEditDropdown(false);
+  };
+
+  const onDeleteAddressConfirmedAsync = async () => {
+    const selectedAddress = props.selectedAddress as Address | undefined;
+    AccountController.deleteAddressAsync(selectedAddress?.id);
+    setDeleteModalVisible(false);
+  };
+
+  const onDeleteAddressCanceledAsync = async () => {
+    AccountController.updateSelectedAddress(undefined);
+    setDeleteModalVisible(false);
+  };
+
+  const onEditAddressButtonClicked = (value: Address) => {
+    AccountController.updateSelectedAddress(value);
+    AccountController.updateEditShippingAddress({
+      firstName: value.first_name ?? '',
+      lastName: value.last_name ?? '',
+      company: value.company ?? '',
+      address: value.address_1 ?? '',
+      apartments: value.address_2 ?? '',
+      postalCode: value.postal_code ?? '',
+      city: value.city ?? '',
+      countryCode: value.country_code ?? '',
+      region: value.province ?? '',
+      phoneNumber: value.phone ?? '',
+    });
+    setOpenEditDropdown(true);
+  };
+
+  const onDeleteAddressButtonClicked = (value: Address) => {
+    AccountController.updateSelectedAddress(value);
+    setDeleteModalVisible(true);
+  };
 
   useEffect(() => {
     AccountController.updateAddressErrorStrings({
@@ -36,10 +140,34 @@ export default function AccountAddressesComponent(): JSX.Element {
   return (
     <>
       <ResponsiveDesktop>
-        <AccountAddressesDesktopComponent />
+        <AccountAddressesDesktopComponent
+          onAddAddressAsync={onAddAddressAsync}
+          onEditAddressAsync={onEditAddressAsync}
+          onDeleteAddressConfirmedAsync={onDeleteAddressConfirmedAsync}
+          onDeleteAddressCanceledAsync={onDeleteAddressCanceledAsync}
+          onEditAddressButtonClicked={onEditAddressButtonClicked}
+          onDeleteAddressButtonClicked={onDeleteAddressButtonClicked}
+          openAddDropdown={openAddDropdown}
+          openEditDropdown={openEditDropdown}
+          deleteModalVisible={deleteModalVisible}
+          setOpenAddDropdown={setOpenAddDropdown}
+          setOpenEditDropdown={setOpenEditDropdown}
+        />
       </ResponsiveDesktop>
       <ResponsiveMobile>
-        <AccountAddressesMobileComponent />
+        <AccountAddressesMobileComponent
+          onAddAddressAsync={onAddAddressAsync}
+          onEditAddressAsync={onEditAddressAsync}
+          onDeleteAddressConfirmedAsync={onDeleteAddressConfirmedAsync}
+          onDeleteAddressCanceledAsync={onDeleteAddressCanceledAsync}
+          onEditAddressButtonClicked={onEditAddressButtonClicked}
+          onDeleteAddressButtonClicked={onDeleteAddressButtonClicked}
+          openAddDropdown={openAddDropdown}
+          openEditDropdown={openEditDropdown}
+          deleteModalVisible={deleteModalVisible}
+          setOpenAddDropdown={setOpenAddDropdown}
+          setOpenEditDropdown={setOpenEditDropdown}
+        />
       </ResponsiveMobile>
     </>
   );
