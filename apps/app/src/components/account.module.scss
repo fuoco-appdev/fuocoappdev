@@ -5,6 +5,7 @@
   flex-direction: column;
   width: 100%;
   min-width: 100%;
+  min-height: 100%;
 
   & .top-bar {
     height: 56px;
@@ -232,6 +233,14 @@
 .avatar-overlay-background {
   background-color: #fff !important;
   backdrop-filter: none !important;
+}
+
+.button {
+  color: $brand-900 !important;
+}
+
+.button:hover {
+  background-color: rgba(42, 42, 95, .15) !important;
 }
 
 .tab-button {

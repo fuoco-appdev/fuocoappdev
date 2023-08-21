@@ -123,6 +123,14 @@
     }
 }
 
+.button {
+    color: $brand-900 !important;
+}
+  
+.button:hover {
+    background-color: rgba(42, 42, 95, .15) !important;
+}
+
 .modal-overlay {
     z-index: 24;
 }

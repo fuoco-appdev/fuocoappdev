@@ -74,7 +74,6 @@ export function AccountEditDesktopComponent({
           rippleProps={{
             color: 'rgba(233, 33, 66, .35)',
           }}
-          touchScreen={true}
           block={true}
           size={'large'}
           onClick={onSaveAsync}

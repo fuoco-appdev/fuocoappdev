@@ -182,7 +182,10 @@ export function WindowMobileComponent({
                 size={'tiny'}
                 touchScreen={true}
                 icon={
-                  <Line.ArrowBack size={24} color={'rgba(252, 245, 227, 1)'} />
+                  <Line.ArrowBackIos
+                    size={24}
+                    color={'rgba(252, 245, 227, 1)'}
+                  />
                 }
               />
             </div>

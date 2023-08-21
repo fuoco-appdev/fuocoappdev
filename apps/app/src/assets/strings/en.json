@@ -240,5 +240,6 @@
   "menu": "Menu",
   "home": "Home",
   "store": "Store",
-  "remove": "Remove"
+  "remove": "Remove",
+  "goBack": "Go back"
 }

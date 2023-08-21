@@ -386,7 +386,68 @@ export function WindowDesktopComponent({
                 styles['navigation-back-container'],
                 styles['navigation-back-container-desktop'],
               ].join(' ')}
-            ></div>
+            >
+              <div
+                className={[
+                  styles['navigation-back-left-content'],
+                  styles['navigation-back-left-content-desktop'],
+                ].join(' ')}
+              >
+                <Button
+                  classNames={{
+                    button: styles['button'],
+                  }}
+                  rippleProps={{
+                    color: 'rgba(252, 245, 227, .35)',
+                  }}
+                  rounded={true}
+                  size={'tiny'}
+                  onClick={() => navigate(-1)}
+                  floatingLabel={t('goBack') ?? ''}
+                  type={'text'}
+                  icon={<Line.ArrowBackIos size={24} color={'#2A2A5F'} />}
+                />
+              </div>
+              <div
+                className={[
+                  styles['navigation-back-center-content'],
+                  styles['navigation-back-center-content-desktop'],
+                ].join(' ')}
+              >
+                {props.activeRoute.startsWith(RoutePaths.AccountSettings) && (
+                  <>
+                    <Line.Settings size={24} />
+                    <div
+                      className={[styles['navigation-back-title']].join(' ')}
+                    >
+                      {t('settings')}
+                    </div>
+                  </>
+                )}
+              </div>
+              <div
+                className={[
+                  styles['navigation-back-right-content'],
+                  styles['navigation-back-right-content-desktop'],
+                ].join(' ')}
+              >
+                {props.activeRoute.startsWith(RoutePaths.AccountSettings) && (
+                  <Button
+                    classNames={{
+                      button: styles['button'],
+                    }}
+                    rippleProps={{
+                      color: 'rgba(252, 245, 227, .35)',
+                    }}
+                    rounded={true}
+                    onClick={() => AccountController.logoutAsync()}
+                    floatingLabel={t('signOut') ?? ''}
+                    type={'text'}
+                    icon={<Line.Logout size={24} color={'#2A2A5F'} />}
+                  />
+                )}
+              </div>
+            </div>
           )}
           <TransitionGroup
             component={null}
@@ -395,22 +456,22 @@ export function WindowDesktopComponent({
                 classNames: {
                   enter:
                     props.transitionKeyIndex < props.prevTransitionKeyIndex
-                      ? styles['left-to-right-enter']
-                      : styles['right-to-left-enter'],
+                      ? styles['in-and-out-enter']
+                      : styles['out-and-in-enter'],
                   enterActive:
                     props.transitionKeyIndex < props.prevTransitionKeyIndex
-                      ? styles['left-to-right-enter-active']
-                      : styles['right-to-left-enter-active'],
+                      ? styles['in-and-out-enter-active']
+                      : styles['out-and-in-enter-active'],
                   exit:
                     props.transitionKeyIndex < props.prevTransitionKeyIndex
-                      ? styles['left-to-right-exit']
-                      : styles['right-to-left-exit'],
+                      ? styles['in-and-out-exit']
+                      : styles['out-and-in-exit'],
                   exitActive:
                     props.transitionKeyIndex < props.prevTransitionKeyIndex
-                      ? styles['left-to-right-exit-active']
-                      : styles['right-to-left-exit-active'],
+                      ? styles['in-and-out-exit-active']
+                      : styles['out-and-in-exit-active'],
                 },
-                timeout: 250,
+                timeout: 150,
               })
             }
           >
@@ -419,22 +480,22 @@ export function WindowDesktopComponent({
               classNames={{
                 enter:
                   props.transitionKeyIndex > props.prevTransitionKeyIndex
-                    ? styles['left-to-right-enter']
-                    : styles['right-to-left-enter'],
+                    ? styles['in-and-out-enter']
+                    : styles['out-and-in-enter'],
                 enterActive:
                   props.transitionKeyIndex > props.prevTransitionKeyIndex
-                    ? styles['left-to-right-enter-active']
-                    : styles['right-to-left-enter-active'],
+                    ? styles['in-and-out-enter-active']
+                    : styles['out-and-in-enter-active'],
                 exit:
                   props.transitionKeyIndex > props.prevTransitionKeyIndex
-                    ? styles['left-to-right-exit']
-                    : styles['right-to-left-exit'],
+                    ? styles['in-and-out-exit']
+                    : styles['out-and-in-exit'],
                 exitActive:
                   props.transitionKeyIndex > props.prevTransitionKeyIndex
-                    ? styles['left-to-right-exit-active']
-                    : styles['right-to-left-exit-active'],
+                    ? styles['in-and-out-exit-active']
+                    : styles['out-and-in-exit-active'],
               }}
-              timeout={250}
+              timeout={150}
               unmountOnExit={true}
             >
               <Outlet />

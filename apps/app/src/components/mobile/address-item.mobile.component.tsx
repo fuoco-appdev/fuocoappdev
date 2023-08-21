@@ -75,10 +75,9 @@ export function AddressItemMobileComponent({
                 <Button
                   block={true}
                   classNames={{
-                    button: [
-                      styles['edit-button'],
-                      styles['edit-button-mobile'],
-                    ].join(' '),
+                    button: [styles['button'], styles['button-mobile']].join(
+                      ' '
+                    ),
                   }}
                   type={'text'}
                   rounded={true}
@@ -92,10 +91,9 @@ export function AddressItemMobileComponent({
                 <Button
                   block={true}
                   classNames={{
-                    button: [
-                      styles['remove-button'],
-                      styles['remove-button-mobile'],
-                    ].join(' '),
+                    button: [styles['button'], styles['button-mobile']].join(
+                      ' '
+                    ),
                   }}
                   type={'text'}
                   rounded={true}

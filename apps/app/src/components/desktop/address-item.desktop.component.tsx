@@ -57,10 +57,9 @@ export function AddressItemDesktopComponent({
                 <Button
                   block={true}
                   classNames={{
-                    button: [
-                      styles['edit-button'],
-                      styles['edit-button-desktop'],
-                    ].join(' '),
+                    button: [styles['button'], styles['button-desktop']].join(
+                      ' '
+                    ),
                   }}
                   floatingLabel={t('edit') ?? ''}
                   type={'text'}
@@ -74,10 +73,9 @@ export function AddressItemDesktopComponent({
                 <Button
                   block={true}
                   classNames={{
-                    button: [
-                      styles['remove-button'],
-                      styles['remove-button-desktop'],
-                    ].join(' '),
+                    button: [styles['button'], styles['button-desktop']].join(
+                      ' '
+                    ),
                   }}
                   floatingLabel={t('remove') ?? ''}
                   type={'text'}

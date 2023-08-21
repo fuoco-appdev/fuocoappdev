@@ -240,5 +240,6 @@
   "menu": "Menu",
   "home": "Accueil",
   "store": "Magasin",
-  "remove": "Supprimer"
+  "remove": "Supprimer",
+  "goBack": "Retourner"
 }

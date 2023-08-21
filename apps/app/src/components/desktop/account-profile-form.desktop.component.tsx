@@ -55,7 +55,6 @@ export function AccountProfileFormDesktopComponent({
         iconColor={'#2A2A5F'}
         label={t('phoneNumber') ?? ''}
         error={errors?.phoneNumber}
-        touchScreen={true}
         country={selectedCountry}
         onChange={onChangeCallbacks?.phoneNumber}
       />

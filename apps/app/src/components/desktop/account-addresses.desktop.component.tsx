@@ -52,6 +52,9 @@ export function AccountAddressesDesktopComponent({
         </div>
         <div>
           <Button
+            classNames={{
+              button: styles['button'],
+            }}
             rounded={true}
             icon={<Line.Add size={24} color={'#2A2A5F'} />}
             type={'text'}

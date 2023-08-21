@@ -86,6 +86,9 @@ export function AccountDesktopComponent(): JSX.Element {
             ].join(' ')}
           >
             <Button
+              classNames={{
+                button: styles['button'],
+              }}
               rippleProps={{
                 color: 'rgba(88, 40, 109, .35)',
               }}
