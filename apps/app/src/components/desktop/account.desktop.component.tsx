@@ -19,7 +19,7 @@ import AccountController from '../../controllers/account.controller';
 import WindowController from '../../controllers/window.controller';
 import { animated, useTransition, config } from 'react-spring';
 import { useObservable } from '@ngneat/use-observable';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { RoutePaths } from '../../route-paths';
 import { ResponsiveDesktop, ResponsiveMobile } from '../responsive.component';
 import { useTranslation } from 'react-i18next';
@@ -38,6 +38,7 @@ export function AccountDesktopComponent(): JSX.Element {
   const [windowProps] = useObservable(WindowController.model.store);
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
+  const location = useLocation();
 
   useEffect(() => {
     const loadedLocation = windowProps.loadedHash as string | undefined;

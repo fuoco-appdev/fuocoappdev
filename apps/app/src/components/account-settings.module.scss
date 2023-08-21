@@ -1,13 +1,6 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
 .root {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    width: 100%;
-    min-width: 100%;
-    min-height: 100%;
-
     & .setting-button-container {
         width: 100%;
         height: 48px;
@@ -45,7 +38,13 @@
 }
 
 .root-desktop {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    
     & .side-bar-desktop {
+        display: flex;
+        flex-direction: column;
         border-right-width: 1px;
         border-left-width: 0px;
         border-top-width: 0px;
@@ -53,8 +52,15 @@
         border-color: rgba(42, 42, 95, .6);
         border-style: solid;
         padding: 0 $mp-4;
-        height: 100%;
+        min-height: 100%;
         width: 256px;
+        min-width: 256px;
+    }
+
+    & .outlet-container-desktop {
+        display: flex;
+        justify-content: center;
+        width: 100%;
     }
 
     & .setting-button-container-desktop {
@@ -75,6 +81,12 @@
 }
 
 .root-mobile {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    min-width: 100%;
+    min-height: 100%;
     padding: $mp-4 0;
 
     & .setting-button-container-mobile {
@@ -100,4 +112,29 @@
 
 .logout-button {
     background-color: $brand-700 !important;
+}
+
+.tab-outline {
+    background-color: $brand-700 !important;
+}
+  
+.tab-slider {
+    background-color: rgba(133, 38, 122, .2) !important;
+}
+  
+.tab-icon {
+    color: $brand-900 !important;
+}
+  
+.tab-button {
+    color: $brand-900 !important;
+    font-weight: $font-weight-bold;
+}
+
+.hovered-tab-icon {
+    color: $brand-700 !important;
+}
+  
+.hovered-tab-button {
+    color: $brand-700 !important;
 }

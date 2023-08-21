@@ -245,6 +245,9 @@
     flex-direction: row;
 
     & .side-bar-desktop {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       border-right-width: 1px;
       border-left-width: 0px;
       border-top-width: 0px;
@@ -252,7 +255,7 @@
       border-color: rgba(42, 42, 95, .6);
       border-style: solid;
       padding: 0 $mp-4;
-      width: 256px;
+      height: 100%;
     }
 
     & .right-content-desktop {
@@ -396,46 +399,6 @@
 .left-to-right-exit-active {
   transform: translateX(100%);
   transition: all 250ms cubic-bezier(0.4, 0.0, 0.2, 1);
-}
-
-.out-and-in-enter {
-  opacity: 0;
-  transition: all 250ms $transition-standard-easing;
-}
-
-.out-and-in-enter-active {
-  opacity: 1;
-  transition: all 250ms $transition-standard-easing;
-}      
-
-.out-and-in-exit {
-  opacity: 1;
-  transition: all 250ms $transition-standard-easing;
-}
-
-.out-and-in-exit-active {
-  opacity: 0;
-  transition: all 250ms $transition-standard-easing;
-}      
-
-.in-and-out-enter {
-  opacity: 0;
-  transition: all 250ms $transition-standard-easing;
-}
-
-.in-and-out-enter-active {
-  opacity: 1;
-  transition: all 250ms $transition-standard-easing;
-}      
-
-.in-and-out-exit {
-  opacity: 1;
-  transition: all 250ms $transition-standard-easing;
-}
-
-.in-and-out-exit-active {
-  opacity: 0;
-  transition: all 250ms $transition-standard-easing;
 }
 
 .side-bar-appear {

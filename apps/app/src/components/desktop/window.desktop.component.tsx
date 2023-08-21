@@ -31,6 +31,7 @@ import AccountController from '../../controllers/account.controller';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import e from 'express';
 import { WindowResponsiveProps } from '../window.component';
+import AccountSettingsComponent from '../account-settings.component';
 
 export function WindowDesktopComponent({
   openMore,
@@ -402,7 +403,16 @@ export function WindowDesktopComponent({
                   }}
                   rounded={true}
                   size={'tiny'}
-                  onClick={() => navigate(-1)}
+                  onClick={() => {
+                    if (
+                      props.activeRoute.startsWith(RoutePaths.AccountSettings)
+                    ) {
+                      navigate(RoutePaths.Account);
+                      return;
+                    }
+
+                    navigate(-1);
+                  }}
                   floatingLabel={t('goBack') ?? ''}
                   type={'text'}
                   icon={<Line.ArrowBackIos size={24} color={'#2A2A5F'} />}
@@ -449,58 +459,7 @@ export function WindowDesktopComponent({
               </div>
             </div>
           )}
-          <TransitionGroup
-            component={null}
-            childFactory={(child) =>
-              React.cloneElement(child, {
-                classNames: {
-                  enter:
-                    props.transitionKeyIndex < props.prevTransitionKeyIndex
-                      ? styles['in-and-out-enter']
-                      : styles['out-and-in-enter'],
-                  enterActive:
-                    props.transitionKeyIndex < props.prevTransitionKeyIndex
-                      ? styles['in-and-out-enter-active']
-                      : styles['out-and-in-enter-active'],
-                  exit:
-                    props.transitionKeyIndex < props.prevTransitionKeyIndex
-                      ? styles['in-and-out-exit']
-                      : styles['out-and-in-exit'],
-                  exitActive:
-                    props.transitionKeyIndex < props.prevTransitionKeyIndex
-                      ? styles['in-and-out-exit-active']
-                      : styles['out-and-in-exit-active'],
-                },
-                timeout: 150,
-              })
-            }
-          >
-            <CSSTransition
-              key={props.transitionKeyIndex}
-              classNames={{
-                enter:
-                  props.transitionKeyIndex > props.prevTransitionKeyIndex
-                    ? styles['in-and-out-enter']
-                    : styles['out-and-in-enter'],
-                enterActive:
-                  props.transitionKeyIndex > props.prevTransitionKeyIndex
-                    ? styles['in-and-out-enter-active']
-                    : styles['out-and-in-enter-active'],
-                exit:
-                  props.transitionKeyIndex > props.prevTransitionKeyIndex
-                    ? styles['in-and-out-exit']
-                    : styles['out-and-in-exit'],
-                exitActive:
-                  props.transitionKeyIndex > props.prevTransitionKeyIndex
-                    ? styles['in-and-out-exit-active']
-                    : styles['out-and-in-exit-active'],
-              }}
-              timeout={150}
-              unmountOnExit={true}
-            >
-              <Outlet />
-            </CSSTransition>
-          </TransitionGroup>
+          <Outlet />
         </div>
       </div>
     </div>

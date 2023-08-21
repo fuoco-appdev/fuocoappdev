@@ -206,7 +206,7 @@ export function WindowMobileComponent({
                 {props.activeRoute === RoutePaths.AccountSettings &&
                   t('settings')}
                 {props.activeRoute === RoutePaths.AccountSettingsAccount &&
-                  t('security')}
+                  t('account')}
               </div>
             )}
           </div>

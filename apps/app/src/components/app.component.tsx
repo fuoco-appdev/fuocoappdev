@@ -172,15 +172,16 @@ export default function AppComponent(): JSX.Element {
                   element={<AccountSettingsComponent />}
                 />
               }
-            />
-            <Route
-              path={RoutePaths.AccountSettingsAccount}
-              element={
-                <AuthenticatedComponent
-                  element={<AccountSettingsAccountComponent />}
-                />
-              }
-            />
+            >
+              <Route
+                path={RoutePaths.AccountSettingsAccount}
+                element={
+                  <AuthenticatedComponent
+                    element={<AccountSettingsAccountComponent />}
+                  />
+                }
+              />
+            </Route>
           </Route>
         </Routes>
       </HashRouter>

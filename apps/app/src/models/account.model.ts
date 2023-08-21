@@ -11,8 +11,10 @@ import {
   AddressFormValues,
 } from '../components/address-form.component';
 import { RoutePaths } from '../route-paths';
+import { User } from '@supabase/supabase-js';
 
 export interface AccountState {
+  user: User | null;
   account: core.Account | undefined;
   customer: Customer | undefined;
   profileForm: ProfileFormValues;
@@ -40,6 +42,7 @@ export class AccountModel extends Model {
       createStore(
         { name: 'account' },
         withProps<AccountState>({
+          user: null,
           account: undefined,
           customer: undefined,
           profileForm: {
@@ -90,6 +93,16 @@ export class AccountModel extends Model {
         })
       )
     );
+  }
+
+  public get user(): User | undefined {
+    return this.store.getValue().user;
+  }
+
+  public set user(value: User | undefined) {
+    if (JSON.stringify(this.user) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, user: value }));
+    }
   }
 
   public get profileForm(): ProfileFormValues {

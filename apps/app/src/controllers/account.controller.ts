@@ -420,6 +420,8 @@ class AccountController extends Controller {
       };
 
       await this.requestOrdersAsync();
+
+      this._model.user = value;
     } catch (error: any) {
       WindowController.addToast({
         key: `request-customer-${Math.random()}`,
