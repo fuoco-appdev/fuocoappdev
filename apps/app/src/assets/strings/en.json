@@ -241,5 +241,8 @@
   "home": "Home",
   "store": "Store",
   "remove": "Remove",
-  "goBack": "Go back"
+  "goBack": "Go back",
+  "add": "Add",
+  "minus": "Minus",
+  "checkout": "Checkout"
 }

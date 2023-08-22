@@ -38,7 +38,6 @@ export function AccountDesktopComponent(): JSX.Element {
   const [windowProps] = useObservable(WindowController.model.store);
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
-  const location = useLocation();
 
   useEffect(() => {
     const loadedLocation = windowProps.loadedHash as string | undefined;

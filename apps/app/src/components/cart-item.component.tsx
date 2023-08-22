@@ -10,6 +10,8 @@ import CartController from '../controllers/cart.controller';
 import { formatAmount } from 'medusa-react';
 import StoreController from '../controllers/store.controller';
 import { useObservable } from '@ngneat/use-observable';
+import { CartItemDesktopComponent } from './desktop/cart-item.desktop.component';
+import { CartItemMobileComponent } from './mobile/cart-item.mobile.component';
 
 export interface CartItemProps {
   item: LineItem;
@@ -17,23 +19,27 @@ export interface CartItemProps {
   onRemove?: () => void;
 }
 
-function CartItemDesktopComponent({ item }: CartItemProps): JSX.Element {
-  return <></>;
+export interface CartItemResponsiveProps extends CartItemProps {
+  vintage: string;
+  hasReducedPrice: boolean;
+  deleteModalVisible: boolean;
+  discountPercentage: string;
+  setDeleteModalVisible: (value: boolean) => void;
+  incrementItemQuantity: (value: number) => void;
+  decrementItemQuantity: (value: number) => void;
 }
 
-function CartItemMobileComponent({
+export default function CartItemComponent({
   item,
   onQuantityChanged,
   onRemove,
 }: CartItemProps): JSX.Element {
-  const [storeProps] = useObservable(StoreController.model.store);
   const [vintage, setVintage] = useState<string>('');
   const [hasReducedPrice, setHasReducedPrice] = useState<boolean>(
     (item.discount_total ?? 0) > 0
   );
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
   const [discountPercentage, setDiscountPercentage] = useState<string>('');
-  const { t } = useTranslation();
 
   useEffect(() => {
     const vintageOption = item.variant.product.options.find(
@@ -65,133 +71,32 @@ function CartItemMobileComponent({
   };
 
   return (
-    <div key={item.variant_id} className={styles['container-mobile']}>
-      <div className={styles['details-mobile']}>
-        <div className={styles['thumbnail-mobile']}>
-          <img
-            className={styles['thumbnail-image-mobile']}
-            src={item.thumbnail || '../assets/svg/wine-bottle.svg'}
-          />
-        </div>
-        <div className={styles['title-container-mobile']}>
-          <div className={styles['title-mobile']}>{item.title}</div>
-          <div className={styles['variant-mobile']}>{`${t(
-            'vintage'
-          )}: ${vintage}`}</div>
-        </div>
-        <div className={styles['quantity-details-container-mobile']}>
-          <div className={styles['quantity-container-mobile']}>
-            <div className={styles['quantity-text-mobile']}>
-              {t('quantity')}
-            </div>
-            <div className={styles['quantity-buttons-mobile']}>
-              <Button
-                block={true}
-                classNames={{
-                  button: styles['quantity-button'],
-                }}
-                rippleProps={{
-                  color: 'rgba(233, 33, 66, .35)',
-                }}
-                type={'text'}
-                rounded={true}
-                size={'tiny'}
-                icon={<Line.Remove size={18} />}
-                onClick={() => decrementItemQuantity(1)}
-              />
-              <div className={styles['quantity']}>{item.quantity}</div>
-              <Button
-                block={true}
-                classNames={{
-                  button: styles['quantity-button'],
-                }}
-                rippleProps={{
-                  color: 'rgba(233, 33, 66, .35)',
-                }}
-                type={'text'}
-                rounded={true}
-                size={'tiny'}
-                icon={<Line.Add size={18} />}
-                onClick={() => incrementItemQuantity(1)}
-              />
-            </div>
-          </div>
-        </div>
-        <div className={styles['remove-container']}>
-          <Button
-            block={true}
-            classNames={{
-              button: styles['remove-button'],
-            }}
-            type={'text'}
-            rounded={true}
-            size={'tiny'}
-            icon={<Line.Delete size={24} />}
-            onClick={() => setDeleteModalVisible(true)}
-          />
-        </div>
-      </div>
-      <div className={styles['pricing-details-container']}>
-        <div
-          className={[
-            styles['pricing'],
-            hasReducedPrice ? styles['pricing-canceled'] : '',
-          ].join(' ')}
-        >
-          {hasReducedPrice && `${t('original')}:`} &nbsp;
-          {storeProps.selectedRegion &&
-            formatAmount({
-              amount: item.subtotal ?? 0,
-              region: storeProps.selectedRegion,
-              includeTaxes: false,
-            })}
-        </div>
-        {hasReducedPrice && (
-          <>
-            <div className={styles['discount-pricing']}>
-              {storeProps.selectedRegion &&
-                formatAmount({
-                  amount: (item.subtotal ?? 0) - (item.discount_total ?? 0),
-                  region: storeProps.selectedRegion,
-                  includeTaxes: false,
-                })}
-            </div>
-            <div className={styles['discount-percentage']}>
-              -{discountPercentage}%
-            </div>
-          </>
-        )}
-      </div>
-      <Modal
-        classNames={{
-          overlay: styles['modal-overlay'],
-          title: styles['modal-title'],
-          description: styles['modal-description'],
-          cancelButton: {
-            button: styles['modal-cancel-button'],
-          },
-          confirmButton: {
-            button: styles['modal-confirm-button'],
-          },
-        }}
-        visible={deleteModalVisible}
-        onConfirm={onRemove}
-        onCancel={() => setDeleteModalVisible(false)}
-        title={t('removeItem') ?? ''}
-        description={t('removeItemDescription', { item: item.title }) ?? ''}
-      />
-    </div>
-  );
-}
-
-export default function CartItemComponent(props: CartItemProps): JSX.Element {
-  return (
     <>
       <ResponsiveDesktop>
-        <CartItemDesktopComponent {...props} />
+        <CartItemDesktopComponent
+          item={item}
+          onRemove={onRemove}
+          vintage={vintage}
+          hasReducedPrice={hasReducedPrice}
+          setDeleteModalVisible={setDeleteModalVisible}
+          deleteModalVisible={deleteModalVisible}
+          discountPercentage={discountPercentage}
+          incrementItemQuantity={incrementItemQuantity}
+          decrementItemQuantity={decrementItemQuantity}
+        />
       </ResponsiveDesktop>
       <ResponsiveMobile>
-        <CartItemMobileComponent {...props} />
+        <CartItemMobileComponent
+          item={item}
+          onRemove={onRemove}
+          vintage={vintage}
+          hasReducedPrice={hasReducedPrice}
+          setDeleteModalVisible={setDeleteModalVisible}
+          deleteModalVisible={deleteModalVisible}
+          discountPercentage={discountPercentage}
+          incrementItemQuantity={incrementItemQuantity}
+          decrementItemQuantity={decrementItemQuantity}
+        />
       </ResponsiveMobile>
     </>
   );

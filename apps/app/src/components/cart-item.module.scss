@@ -1,13 +1,13 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
-.container-mobile {
+.container {
     padding: $mp-2 0;
 
-    & .details-mobile {
+    & .details {
         display: flex;
         margin-bottom: $mp-1;
 
-        & .thumbnail-mobile {
+        & .thumbnail {
             display: flex;
             justify-content: center;
             height: 56px;
@@ -15,7 +15,7 @@
             background-color: $gray-100;
             margin-right: $mp-4;
 
-            & .thumbnail-image-mobile {
+            & .thumbnail-image {
                 padding: $mp-1 0;
                 max-height: 100%;
                 width: auto;
@@ -23,49 +23,44 @@
             }
         }
 
-        & .title-container-mobile {
-            & .title-mobile {
+        & .title-container {
+            & .title {
                 color: $brand-900;
                 font-size: $font-size-base;
                 font-weight: $font-weight-bold;
                 margin-bottom: $mp-1;
             }
 
-            & .variant-mobile {
+            & .variant {
                 color: $brand-900;
                 font-size: $font-size-sm;
             }
         }
 
-        & .quantity-details-container-mobile {
+        & .quantity-details-container {
             display: flex;
             flex-direction: row;
             flex: 1;
             justify-content: right;
             margin-right: $mp-2;
 
-            & .quantity-container-mobile {
+            & .quantity-container {
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
                 height: fit-content;
 
-                & .quantity-text-mobile {
+                & .quantity-text {
                     color: $brand-900;
                     font-size: $font-size-xs;
                 }
 
-                & .quantity-buttons-mobile {
+                & .quantity-buttons {
                     display: flex;
                     flex-direction: row;
                     justify-content: center;
                     align-items: center;
-
-                    & .quantity-button {
-                        padding: $mp-1;
-                        color: $brand-900;
-                    }
     
                     & .quantity {
                         margin-left: $mp-2;
@@ -79,9 +74,7 @@
         }
 
         & .remove-container {
-            & .remove-button {
-                color: $brand-900;
-            }
+ 
         }
     }
 
@@ -117,6 +110,125 @@
             margin-left: $mp-2;
         }
     }
+}
+
+.container-desktop {
+    & .details-desktop {
+        & .thumbnail-desktop {
+            & .thumbnail-image-desktop {
+            }
+        }
+
+        & .title-container-desktop {
+            & .title-desktop {
+
+            }
+
+            & .variant-desktop {
+            }
+        }
+
+        & .quantity-details-container-desktop {
+            & .quantity-container-desktop {
+                & .quantity-text-desktop {
+                }
+
+                & .quantity-buttons-desktop {
+                    & .quantity-button-desktop {
+                    }
+    
+                    & .quantity-deskop {
+                    }
+                }
+            }
+        }
+
+        & .remove-container-desktop {
+
+        }
+    }
+
+    & .pricing-details-container-desktop {
+        & .pricing-desktop {
+        }
+
+        & .pricing-canceled-desktop {
+        }
+
+        & .discount-pricing-desktop {
+        }
+
+        & .discount-percentage-desktop {
+        }
+    }
+}
+
+.container-mobile {
+    & .details-mobile {
+        & .thumbnail-mobile {
+            & .thumbnail-image-mobile {
+            }
+        }
+
+        & .title-container-mobile {
+            & .title-mobile {
+
+            }
+
+            & .variant-mobile {
+            }
+        }
+
+        & .quantity-details-container-mobile {
+            & .quantity-container-mobile {
+                & .quantity-text-mobile {
+                }
+
+                & .quantity-buttons-mobile {
+                    & .quantity-button-mobile {
+                    }
+    
+                    & .quantity-mobile {
+                    }
+                }
+            }
+        }
+
+        & .remove-container-mobile {
+
+        }
+    }
+
+    & .pricing-details-container-mobile {
+        & .pricing-mobile {
+        }
+
+        & .pricing-canceled-mobile {
+        }
+
+        & .discount-pricing-mobile {
+        }
+
+        & .discount-percentage-mobile {
+        }
+    }
+}
+
+.quantity-button {
+    padding: $mp-1 !important;
+    color: $brand-900 !important;
+}
+
+.quantity-button:hover {
+    background-color: rgba(42, 42, 95, .15) !important;
+}
+
+.remove-button {
+    color: $brand-900 !important;
+}
+
+.remove-button:hover {
+    background-color: rgba(42, 42, 95, .15) !important;
 }
 
 .modal-overlay {

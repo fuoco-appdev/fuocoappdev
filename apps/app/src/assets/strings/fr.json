@@ -241,5 +241,8 @@
   "home": "Accueil",
   "store": "Magasin",
   "remove": "Supprimer",
-  "goBack": "Retourner"
+  "goBack": "Retourner",
+  "add": "Ajouter",
+  "minus": "Moins",
+  "checkout": "La caisse"
 }

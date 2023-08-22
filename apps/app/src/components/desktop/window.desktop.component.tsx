@@ -12,6 +12,7 @@ import {
   Line,
   Tabs,
   ToastOverlay,
+  Typography,
 } from '@fuoco.appdev/core-ui';
 import { RoutePaths } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
@@ -144,7 +145,8 @@ export function WindowDesktopComponent({
               rounded={true}
               size={'tiny'}
               icon={
-                props.activeRoute !== RoutePaths.Cart ? (
+                props.activeRoute !== RoutePaths.Cart &&
+                props.activeRoute !== RoutePaths.Checkout ? (
                   <Line.ShoppingCart
                     size={24}
                     color={'rgba(252, 245, 227, .8)'}
@@ -373,6 +375,46 @@ export function WindowDesktopComponent({
                 },
               ]}
             />
+            {isSideBarOpen && (
+              <div
+                className={[
+                  styles['side-bar-bottom-content'],
+                  styles['side-bar-bottom-content-desktop'],
+                ].join(' ')}
+              >
+                <div
+                  className={[
+                    styles['side-bar-link-container'],
+                    styles['side-bar-link-container-desktop'],
+                  ].join(' ')}
+                >
+                  <Typography.Link
+                    onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+                      navigate(RoutePaths.TermsOfService);
+                      e.preventDefault();
+                    }}
+                  >
+                    {t('termsOfService')}
+                  </Typography.Link>
+                  <Typography.Link
+                    onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+                      navigate(RoutePaths.PrivacyPolicy);
+                      e.preventDefault();
+                    }}
+                  >
+                    {t('privacyPolicy')}
+                  </Typography.Link>
+                </div>
+                <div
+                  className={[
+                    styles['copyright-text'],
+                    styles['copyright-text-desktop'],
+                  ].join(' ')}
+                >
+                  Cruthology <Line.Copyright size={16} /> 2023
+                </div>
+              </div>
+            )}
           </div>
         </CSSTransition>
         <div
@@ -431,6 +473,16 @@ export function WindowDesktopComponent({
                       className={[styles['navigation-back-title']].join(' ')}
                     >
                       {t('settings')}
+                    </div>
+                  </>
+                )}
+                {props.activeRoute === RoutePaths.Checkout && (
+                  <>
+                    <Line.ShoppingCart size={24} />
+                    <div
+                      className={[styles['navigation-back-title']].join(' ')}
+                    >
+                      {t('checkout')}
                     </div>
                   </>
                 )}

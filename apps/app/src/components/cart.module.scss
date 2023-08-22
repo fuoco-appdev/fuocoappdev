@@ -1,25 +1,25 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
-.root-mobile {
+.root {
     width: 100%;
     min-width: 100%;
     overflow-y: auto;
 
-    & .account-container-mobile {
+    & .account-container {
         margin-top: 56px;
         display: flex;
         justify-content: center;
         flex-direction: column;
         text-align: center;
 
-        & .already-have-an-account-title-mobile {
+        & .already-have-an-account-title {
             font-size: 14pt;
             font-weight: $font-weight-bold;
             color: $brand-900;
             margin-bottom: $mp-2;
         }
 
-        & .already-have-an-account-description-mobile {
+        & .already-have-an-account-description {
             font-size: $font-size-sm;
             color: $brand-900;
             margin-bottom: $mp-8;
@@ -33,11 +33,8 @@
         }
     }
 
-    & .shopping-cart-container-mobile {
-        margin-top: $mp-8;
-        padding: 0 $mp-4;
-
-        & .shopping-cart-title-mobile {
+    & .shopping-cart-container {
+        & .shopping-cart-title {
             font-size: $font-size-lg;
             line-height: 46px;
             font-weight: $font-weight-bold;
@@ -46,15 +43,13 @@
             border-bottom: solid $brand-900 1px;
         }
 
-        & .shopping-cart-items-mobile {
+        & .shopping-cart-items {
             display: flex;
             flex-direction: column;
         }
     }
 
     & .pricing-container {
-        padding: $mp-4;
-
         & .subtotal-container {
             display: flex;
             flex-direction: row;
@@ -105,7 +100,6 @@
         flex-direction: row;
         width: 100%;
         align-items: center;
-        padding: 0 $mp-4;
 
         & .discount-input-container {
             width: 100%;
@@ -153,9 +147,6 @@
     }
 
     & .go-to-checkout-container {
-        padding: 0 $mp-4;
-        margin-bottom: $mp-10;
-
         & .checkout-button {
             background-color: $brand-700;
         }
@@ -163,6 +154,190 @@
 
     & .pay-button-container {
         padding: 0 $mp-4;
+    }
+}
+
+.root-desktop {
+    height: 100%;
+    padding: $mp-10;
+
+    & .content-desktop {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: $mp-6;
+
+        & .card-container-desktop {
+            padding: $mp-6;
+            min-width: 28vw;
+            border: 1px solid rgba(42, 42, 95, .6);
+            border-radius: 6px;
+            height: fit-content;
+        }
+    }
+
+    & .account-container-desktop {
+        & .already-have-an-account-title-desktop {
+
+        }
+
+        & .already-have-an-account-description-desktop {
+
+        }
+
+        & .sign-in-button-container-desktop {
+
+        }
+    }
+
+    & .shopping-cart-container-desktop {
+        & .shopping-cart-title-desktop {
+
+        }
+
+        & .shopping-cart-items-desktop {
+
+        }
+    }
+
+    & .pricing-container-desktop {
+        & .subtotal-container-desktop {
+            & .subtotal-text-desktop {
+
+            }
+        }
+
+        & .total-detail-container-desktop {
+            & .total-detail-text-desktop {
+   
+            }
+        }
+
+        & .total-container-desktop {
+            & .total-text-desktop {
+ 
+            }
+        }
+    }
+
+    & .discount-container-desktop {
+        & .discount-input-container-desktop {
+
+        }
+
+        & .apply-button-container-desktop {
+            & .apply-button-desktop {
+
+            }
+        }
+    }
+
+    & .discount-list-container-desktop {
+        & .discount-code-tag-desktop {
+            & .discount-code-tag-button-container-desktop {
+                & .discount-code-tag-button-desktop {
+    
+                }
+            }
+        }
+    }
+
+    & .go-to-checkout-container-desktop {
+        & .checkout-button-desktop {
+        
+        }
+    }
+
+    & .pay-button-container-desktop {
+ 
+    }
+}
+
+.root-mobile {
+    & .account-container-mobile {
+        & .already-have-an-account-title-mobile {
+
+        }
+
+        & .already-have-an-account-description-mobile {
+
+        }
+
+        & .sign-in-button-container-mobile {
+
+        }
+    }
+
+    & .shopping-cart-container-mobile {
+        margin-top: $mp-8;
+        padding: 0 $mp-4;
+
+        & .shopping-cart-title-mobile {
+
+        }
+
+        & .shopping-cart-items-mobile {
+
+        }
+    }
+
+    & .pricing-container-mobile {
+        padding: $mp-4;
+
+        & .subtotal-container-mobile {
+            & .subtotal-text-mobile {
+
+            }
+        }
+
+        & .total-detail-container-mobile {
+            & .total-detail-text-mobile {
+   
+            }
+        }
+
+        & .total-container-mobile {
+            & .total-text-mobile {
+ 
+            }
+        }
+    }
+
+    & .discount-container-mobile {
+        padding: 0 $mp-4;
+
+        & .discount-input-container-mobile {
+
+        }
+
+        & .apply-button-container-mobile {
+            & .apply-button-mobile {
+
+            }
+        }
+    }
+
+    & .discount-list-container-mobile {
+        & .discount-code-tag-mobile {
+            & .discount-code-tag-button-container-mobile {
+                & .discount-code-tag-button-mobile {
+    
+                }
+            }
+        }
+    }
+
+    & .go-to-checkout-container-mobile {
+        padding: 0 $mp-4;
+        margin-bottom: $mp-10;
+
+        & .checkout-button-mobile {
+        
+        }
+    }
+
+    & .pay-button-container-mobile {
+ 
     }
 }
 

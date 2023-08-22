@@ -256,6 +256,31 @@
       border-style: solid;
       padding: 0 $mp-4;
       height: 100%;
+
+      & .side-bar-bottom-content-desktop {
+        border-right-width: 0px;
+        border-left-width: 0px;
+        border-top-width: 1px;
+        border-bottom-width: 0px;
+        border-color: rgba(42, 42, 95, .6);
+        border-style: solid;
+        padding: $mp-4 0;
+
+        & .side-bar-link-container-desktop {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+        }
+
+        & .copyright-text-desktop {
+          display: flex;
+          justify-content: center;
+          width: 100%;
+          padding: $mp-4;
+          font-size: $font-size-xs;
+          color: $brand-900;
+        }
+      }
     }
 
     & .right-content-desktop {
