@@ -1,6 +1,6 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
-.root-mobile {
+.root {
     display: flex;
     flex-direction: column;
     padding: 0 $mp-4;
@@ -146,9 +146,171 @@
     }
 }
 
+.root-desktop {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: $mp-6;
+    padding: $mp-10;
+
+    & .left-content-desktop {
+        display: flex;
+        flex-direction: column;
+        gap: $mp-6;
+        width: 28vw;
+        height: fit-content;
+    }
+
+    & .right-content-desktop {
+        display: flex;
+        flex-direction: column;
+        gap: $mp-6;
+        width: 28vw;
+        height: fit-content;
+    }
+
+    & .card-container-desktop {
+        padding: $mp-6;
+        border: 1px solid rgba(42, 42, 95, .6);
+        border-radius: 6px;
+        margin-bottom: $mp-2;
+    }
+
+    & .thankyou-text-desktop {
+    }
+
+    & .order-number-text-desktop {
+    }
+
+    & .order-id-text-desktop {
+    }
+
+    & .date-container-desktop {
+        & .date-content-desktop {
+            & .date-text-desktop {
+            }
+    
+            & .item-count-text-desktop {
+            }
+        }
+    }
+
+    & .shipping-items-desktop {
+    }
+
+    & .content-container-desktop {
+        & .header-container-desktop {
+            & .header-title-desktop {
+            }
+        }
+
+        & .subheader-title-desktop {
+        }
+
+        & .detail-text-desktop {
+        }
+
+        & .pricing-container-desktop {    
+            & .subtotal-container-desktop {    
+                & .subtotal-text-desktop {
+                }
+            }
+    
+            & .total-detail-container-desktop {    
+                & .total-detail-text-desktop {
+                }
+            }
+    
+            & .total-container-desktop {    
+                & .total-text-desktop {
+                }
+            }
+        }
+    }
+
+    & .refund-items-container-desktop {
+        width: 28vw;
+    }
+
+    & .request-refund-button-container-desktop {
+    }
+}
+
+.root-mobile {
+    & .thankyou-text-mobile {
+    }
+
+    & .order-number-text-mobile {
+    }
+
+    & .order-id-text-mobile {
+    }
+
+    & .date-container-mobile {
+        & .date-content-mobile {
+            & .date-text-mobile {
+            }
+    
+            & .item-count-text-mobile {
+            }
+        }
+    }
+
+    & .shipping-items-mobile {
+    }
+
+    & .content-container-mobile {
+        & .header-container-mobile {
+            & .header-title-mobile {
+            }
+        }
+
+        & .subheader-title-mobile {
+        }
+
+        & .detail-text-mobile {
+        }
+
+        & .pricing-container-mobile {    
+            & .subtotal-container-mobile {    
+                & .subtotal-text-mobile {
+                }
+            }
+    
+            & .total-detail-container-mobile {    
+                & .total-detail-text-mobile {
+                }
+            }
+    
+            & .total-container-mobile {    
+                & .total-text-mobile {
+                }
+            }
+        }
+    }
+
+    & .refund-items-container-mobile {
+    }
+
+    & .request-refund-button-container-mobile {
+    }
+}
+
+.modal-overlay {
+    z-index: 24;
+}
+
+.modal-container {
+    height: 100%;
+}
+
 .button {
     background-color: transparent !important;
     color: $brand-900 !important;
+}
+
+.button:hover {
+    background-color: rgba(42, 42, 95, .15) !important;
 }
 
 .refund-button {

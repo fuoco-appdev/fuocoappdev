@@ -11,15 +11,9 @@
         width: 100%;
         height: fit-content;
         max-height: fit-content;
-        background-color: #fff;
-        box-shadow: $shadow-1;
-        margin-bottom: $mp-2;
-        padding-top: $mp-2;
-        padding-bottom: $mp-4;
 
         & .card-content-container {
             width: 100%;
-            padding: 0 $mp-4;
 
             & .header-container {
                 display: flex;
@@ -113,9 +107,7 @@
             }
         }
 
-        & .pricing-container {
-            padding: $mp-4;
-    
+        & .pricing-container {    
             & .subtotal-container {
                 display: flex;
                 flex-direction: row;
@@ -162,13 +154,11 @@
         }
 
         & .pay-button-container {
-            padding: 0 $mp-4;
+            
         }
     }
 
     & .add-address-container {
-        padding: $mp-4;
-
         & .add-address-button-container {
             width: 100%;
             padding-top: $mp-4;
@@ -180,8 +170,6 @@
     }
 
     & .pay-container {
-        padding: $mp-4;
-
         & .add-address-button-container {
             width: 100%;
             padding-top: $mp-4;
@@ -197,6 +185,9 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
         width: 100vw;
         height: 100vh;
         background-color: rgba(42, 42, 95, .35);
@@ -205,6 +196,216 @@
         & .loading-ring {
             width: 100%;
             height: 32px;
+        }
+    }
+}
+
+.root-desktop {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: $mp-6;
+    padding: $mp-10;
+
+    & .left-content-desktop {
+        display: flex;
+        flex-direction: column;
+        gap: $mp-6;
+        width: 28vw;
+        height: fit-content;
+    }
+
+    & .right-content-desktop {
+        display: flex;
+        flex-direction: column;
+        gap: $mp-6;
+        width: 28vw;
+        height: fit-content;
+    }
+
+    & .card-container-desktop {
+        border: 1px solid rgba(42, 42, 95, .6);
+        border-radius: 6px;
+        margin-bottom: $mp-2;
+        padding: $mp-6;
+
+        & .card-content-container-desktop {
+
+            & .header-container-desktop {   
+                & .step-count-desktop {
+                }
+    
+                & .header-title-desktop {
+                }
+
+                & .header-right-content-desktop {
+                }
+            }
+
+            & .card-description-desktop {
+            }
+
+            & .apply-card-container-desktop {        
+                & .apply-card-input-container-desktop {
+                }
+        
+                & .apply-button-container-desktop {
+                    & .apply-button-desktop {
+                    }
+                }
+            }
+
+            & .tag-list-container-desktop {        
+                & .tag-desktop {        
+                    & .tag-button-container-desktop {        
+                        & .tag-button-desktop {
+                        }
+                    }
+                }
+            }
+        }
+
+        & .pricing-container-desktop {
+            padding: $mp-4 0;
+
+            & .subtotal-container-desktop {
+                & .subtotal-text-desktop {
+                }
+            }
+    
+            & .total-detail-container-desktop {    
+                & .total-detail-text-desktop {
+
+                }
+            }
+    
+            & .total-container-desktop {    
+                & .total-text-desktop {
+                }
+            }
+        }
+
+        & .pay-button-container-desktop {
+            
+        }
+    }
+
+    & .add-address-container-desktop {
+        padding: $mp-6;
+
+        & .add-address-button-container-desktop {
+            & .add-address-button-desktop {
+            }
+        }
+    }
+
+    & .pay-container-desktop {
+        padding: $mp-6;
+        min-width: 28vw;
+
+        & .add-address-button-container-desktop {
+            & .add-address-button-desktop {
+            }
+        }
+    }
+
+    & .loading-container-desktop {
+        & .loading-ring-desktop {
+
+        }
+    }
+}
+
+.root-mobile {
+    & .card-container-mobile {
+        border-bottom: 1px solid rgba(42, 42, 95, .6);
+        margin-bottom: $mp-2;
+        padding-top: $mp-2;
+        padding-bottom: $mp-4;
+
+        & .card-content-container-mobile {
+            padding: 0 $mp-4;
+
+            & .header-container-mobile {   
+                & .step-count-mobile {
+                }
+    
+                & .header-title-mobile {
+                }
+
+                & .header-right-content-mobile {
+                }
+            }
+
+            & .card-description-mobile {
+            }
+
+            & .apply-card-container-mobile {        
+                & .apply-card-input-container-mobile {
+                }
+        
+                & .apply-button-container-mobile {
+                    & .apply-button-mobile {
+                    }
+                }
+            }
+
+            & .tag-list-container-mobile {        
+                & .tag-mobile {        
+                    & .tag-button-container-mobile {        
+                        & .tag-button-mobile {
+                        }
+                    }
+                }
+            }
+        }
+
+        & .pricing-container-mobile {
+            padding: $mp-4;
+
+            & .subtotal-container-mobile {
+                & .subtotal-text-mobile {
+                }
+            }
+    
+            & .total-detail-container-mobile {    
+                & .total-detail-text-mobile {
+
+                }
+            }
+    
+            & .total-container-mobile {    
+                & .total-text-mobile {
+                }
+            }
+        }
+
+        & .pay-button-container-mobile {
+            padding: 0 $mp-4;
+        }
+    }
+
+    & .add-address-container-mobile {
+        padding: $mp-4;
+
+        & .add-address-button-container-mobile {
+            & .add-address-button-mobile {
+            }
+        }
+    }
+
+    & .pay-container-mobile {
+        padding: $mp-4;
+
+        & .add-address-button-container-mobile {
+            & .add-address-button-mobile {
+            }
+        }
+    }
+
+    & .loading-container-mobile {
+        & .loading-ring-mobile {
+
         }
     }
 }
@@ -298,6 +499,14 @@
     background-color: $brand-700 !important;
 }
 
+.button {
+    color: $brand-900 !important;
+}
+
+.button:hover {
+    background-color: rgba(42, 42, 95, .15) !important;
+}
+
 .stripe-input-base {
     border-width: 1px;
     border-style: solid;
@@ -321,4 +530,45 @@
     flex-direction: row;
     gap: $mp-2;
     width: 100%;
+}
+
+.modal-overlay {
+    z-index: 24;
+}
+
+.modal-text-desktop {
+    padding: $mp-6 !important;
+    max-width: 30vw;
+}
+
+.modal-title {
+    color: $brand-900 !important;
+}
+
+.modal-description {
+    color: $brand-900 !important;
+}
+
+.modal-footer-button-container-desktop {
+    padding-left: $mp-6 !important;
+    padding-right: $mp-6 !important;
+    height: 100%;
+    align-items: center;
+}
+
+.modal-address-footer-button-container-desktop {
+    border-top: 1px solid rgba(42, 42, 95, .6);
+}
+
+.modal-cancel-button {
+    background-color: transparent !important;
+    border: 1px solid $brand-900 !important;
+    padding-left: $mp-4 !important;
+    padding-right: $mp-4 !important;
+}
+
+.modal-confirm-button {
+    background-color: $brand-700 !important;
+    padding-left: $mp-4 !important;
+    padding-right: $mp-4 !important;
 }

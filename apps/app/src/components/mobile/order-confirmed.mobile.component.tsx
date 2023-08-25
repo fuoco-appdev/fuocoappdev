@@ -14,91 +14,78 @@ import { Button, Dropdown, OptionProps } from '@fuoco.appdev/core-ui';
 import RefundItemComponent from '../refund-item.component';
 import { RefundItem } from '../../models/order-confirmed.model';
 import WindowController from '../../controllers/window.controller';
+import { OrderConfirmedResponsiveProps } from '../order-confirmed.component';
 
-export function OrderConfirmedMobileComponent(): JSX.Element {
+export function OrderConfirmedMobileComponent({
+  quantity,
+  openRefund,
+  returnReasonOptions,
+  setOpenRefund,
+  formatStatus,
+}: OrderConfirmedResponsiveProps): JSX.Element {
   const { t } = useTranslation();
-  const { id } = useParams();
   const [props] = useObservable(OrderConfirmedController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
-  const [quantity, setQuantity] = useState<number>(0);
-  const [openRefund, setOpenRefund] = useState<boolean>(false);
-  const [returnReasonOptions, setReturnReasonOptions] = useState<OptionProps[]>(
-    []
-  );
-  const isRenderedRef = useRef<boolean>(false);
-
-  useEffect(() => {
-    if (!isRenderedRef.current) {
-      isRenderedRef.current = true;
-      OrderConfirmedController.requestOrderAsync(id ?? '');
-    }
-  }, []);
-
-  useEffect(() => {
-    const options = [];
-    for (const returnReason of props.returnReasons as ReturnReason[]) {
-      options.push({
-        id: returnReason.id,
-        value: returnReason.label,
-        children: () => (
-          <div className={styles['option-name']}>{returnReason.label}</div>
-        ),
-      });
-    }
-
-    setReturnReasonOptions(options);
-  }, [props.returnReasons]);
-
-  useEffect(() => {
-    if (!props.order || !props.returnReasons) {
-      return;
-    }
-
-    setQuantity(
-      props.order.items.reduce(
-        (current: number, next: LineItem) => current + next.quantity,
-        0
-      )
-    );
-
-    for (const item of props.order.items as LineItem[]) {
-      OrderConfirmedController.updateRefundItem(item.id, {
-        item_id: item.id,
-        quantity: item.quantity,
-        reason_id: props.returnReasons[0].id ?? '',
-        note: '',
-      });
-    }
-  }, [props.order, props.returnReasons]);
-
-  const formatStatus = (str: string) => {
-    const formatted = str.split('_').join(' ');
-
-    return formatted.slice(0, 1).toUpperCase() + formatted.slice(1);
-  };
 
   return (
     props.order && (
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
-        <div className={styles['thankyou-text']}>{t('thankyouForOrder')}</div>
-        <div className={styles['order-number-text']}>
+        <div
+          className={[
+            styles['thankyou-text'],
+            styles['thankyou-text-mobile'],
+          ].join(' ')}
+        >
+          {t('thankyouForOrder')}
+        </div>
+        <div
+          className={[
+            styles['order-number-text'],
+            styles['order-number-text-mobile'],
+          ].join(' ')}
+        >
           {`#${props.order?.display_id}`}
         </div>
-        <div className={styles['order-id-text']}>{props.order?.id}</div>
-        <div className={styles['date-container']}>
-          <div className={styles['date-content']}>
-            <div className={styles['date-text']}>
+        <div
+          className={[
+            styles['order-id-text'],
+            styles['order-id-text-mobile'],
+          ].join(' ')}
+        >
+          {props.order?.id}
+        </div>
+        <div
+          className={[
+            styles['date-container'],
+            styles['date-container-mobile'],
+          ].join(' ')}
+        >
+          <div
+            className={[
+              styles['date-content'],
+              styles['date-content-mobile'],
+            ].join(' ')}
+          >
+            <div
+              className={[styles['date-text'], styles['date-text-mobile']].join(
+                ' '
+              )}
+            >
               {new Date(props.order?.created_at).toDateString()}
             </div>
-            <div className={styles['item-count-text']}>{`${quantity} ${
-              quantity !== 1 ? t('items') : t('item')
-            }`}</div>
+            <div
+              className={[
+                styles['item-count-text'],
+                styles['item-count-text-mobile'],
+              ].join(' ')}
+            >{`${quantity} ${quantity !== 1 ? t('items') : t('item')}`}</div>
           </div>
           <div>
             <Button
               classNames={{ button: styles['button'] }}
               type={'text'}
               size={'small'}
+              touchScreen={true}
               rippleProps={{ color: 'rgba(133, 38, 122, .35)' }}
               onClick={() => setOpenRefund(true)}
             >
@@ -106,7 +93,12 @@ export function OrderConfirmedMobileComponent(): JSX.Element {
             </Button>
           </div>
         </div>
-        <div className={styles['shipping-items']}>
+        <div
+          className={[
+            styles['shipping-items'],
+            styles['shipping-items-mobile'],
+          ].join(' ')}
+        >
           {props.order?.items
             .sort((current: LineItem, next: LineItem) => {
               return (
@@ -118,60 +110,196 @@ export function OrderConfirmedMobileComponent(): JSX.Element {
               <ShippingItemComponent key={item.id} item={item} />
             ))}
         </div>
-        <div className={styles['content-container']}>
-          <div className={styles['header-container']}>
-            <div className={styles['header-title']}>{t('status')}</div>
+        <div
+          className={[
+            styles['content-container'],
+            styles['content-container-mobile'],
+          ].join(' ')}
+        >
+          <div
+            className={[
+              styles['header-container'],
+              styles['header-container-mobile'],
+            ].join(' ')}
+          >
+            <div
+              className={[
+                styles['header-title'],
+                styles['header-title-mobile'],
+              ].join(' ')}
+            >
+              {t('status')}
+            </div>
           </div>
-          <div className={styles['subheader-title']}>{t('shipping')}</div>
-          <div className={styles['detail-text']}>
+          <div
+            className={[
+              styles['subheader-title'],
+              styles['subheader-title-mobile'],
+            ].join(' ')}
+          >
+            {t('shipping')}
+          </div>
+          <div
+            className={[
+              styles['detail-text'],
+              styles['detail-text-mobile'],
+            ].join(' ')}
+          >
             {formatStatus(props.order?.fulfillment_status)}
           </div>
         </div>
-        <div className={styles['content-container']}>
-          <div className={styles['subheader-title']}>{t('payment')}</div>
+        <div
+          className={[
+            styles['content-container'],
+            styles['content-container-mobile'],
+          ].join(' ')}
+        >
+          <div
+            className={[
+              styles['subheader-title'],
+              styles['subheader-title-mobile'],
+            ].join(' ')}
+          >
+            {t('payment')}
+          </div>
           <div className={styles['detail-text']}>
             {formatStatus(props.order?.payment_status)}
           </div>
         </div>
-        <div className={styles['content-container']}>
-          <div className={styles['header-container']}>
-            <div className={styles['header-title']}>{t('delivery')}</div>
-          </div>
-          <div className={styles['subheader-title']}>{t('address')}</div>
+        <div
+          className={[
+            styles['content-container'],
+            styles['content-container-mobile'],
+          ].join(' ')}
+        >
           <div
-            className={styles['detail-text']}
+            className={[
+              styles['header-container'],
+              styles['header-container-mobile'],
+            ].join(' ')}
+          >
+            <div
+              className={[
+                styles['header-title'],
+                styles['header-title-mobile'],
+              ].join(' ')}
+            >
+              {t('delivery')}
+            </div>
+          </div>
+          <div
+            className={[
+              styles['subheader-title'],
+              styles['subheader-title-mobile'],
+            ].join(' ')}
+          >
+            {t('address')}
+          </div>
+          <div
+            className={[
+              styles['detail-text'],
+              styles['detail-text-mobile'],
+            ].join(' ')}
           >{`${props.order?.shipping_address.first_name} ${props.order?.shipping_address.last_name}`}</div>
-          <div className={styles['detail-text']}>{`${
-            props.order?.shipping_address.address_1
-          }${
+          <div
+            className={[
+              styles['detail-text'],
+              styles['detail-text-mobile'],
+            ].join(' ')}
+          >{`${props.order?.shipping_address.address_1}${
             props.order?.shipping_address.address_2 &&
             ', ' + props.order?.shipping_address.address_2
           }`}</div>
           <div
-            className={styles['detail-text']}
+            className={[
+              styles['detail-text'],
+              styles['detail-text-mobile'],
+            ].join(' ')}
           >{`${props.order?.shipping_address.city}, ${props.order?.shipping_address.province} ${props.order?.shipping_address.postal_code}`}</div>
-          <div className={styles['detail-text']}>
+          <div
+            className={[
+              styles['detail-text'],
+              styles['detail-text-mobile'],
+            ].join(' ')}
+          >
             {props.order?.shipping_address.country_code?.toUpperCase()}
           </div>
         </div>
-        <div className={styles['content-container']}>
-          <div className={styles['subheader-title']}>{t('deliveryMethod')}</div>
+        <div
+          className={[
+            styles['content-container'],
+            styles['content-container-mobile'],
+          ].join(' ')}
+        >
+          <div
+            className={[
+              styles['subheader-title'],
+              styles['subheader-title-mobile'],
+            ].join(' ')}
+          >
+            {t('deliveryMethod')}
+          </div>
           {props.order?.shipping_methods.map((value: ShippingMethod) => {
             return (
-              <div className={styles['detail-text']} key={value.id}>
+              <div
+                className={[
+                  styles['detail-text'],
+                  styles['detail-text-mobile'],
+                ].join(' ')}
+                key={value.id}
+              >
                 {value.shipping_option.name}
               </div>
             );
           })}
         </div>
-        <div className={styles['content-container']}>
-          <div className={styles['header-container']}>
-            <div className={styles['header-title']}>{t('orderSummary')}</div>
+        <div
+          className={[
+            styles['content-container'],
+            styles['content-container-mobile'],
+          ].join(' ')}
+        >
+          <div
+            className={[
+              styles['header-container'],
+              styles['header-container-mobile'],
+            ].join(' ')}
+          >
+            <div
+              className={[
+                styles['header-title'],
+                styles['header-title-mobile'],
+              ].join(' ')}
+            >
+              {t('orderSummary')}
+            </div>
           </div>
-          <div className={styles['pricing-container']}>
-            <div className={styles['subtotal-container']}>
-              <div className={styles['subtotal-text']}>{t('subtotal')}</div>
-              <div className={styles['subtotal-text']}>
+          <div
+            className={[
+              styles['pricing-container'],
+              styles['pricing-container-mobile'],
+            ].join(' ')}
+          >
+            <div
+              className={[
+                styles['subtotal-container'],
+                styles['subtotal-container-mobile'],
+              ].join(' ')}
+            >
+              <div
+                className={[
+                  styles['subtotal-text'],
+                  styles['subtotal-text-mobile'],
+                ].join(' ')}
+              >
+                {t('subtotal')}
+              </div>
+              <div
+                className={[
+                  styles['subtotal-text'],
+                  styles['subtotal-text-mobile'],
+                ].join(' ')}
+              >
                 {storeProps.selectedRegion &&
                   formatAmount({
                     amount: props.order?.subtotal ?? 0,
@@ -180,9 +308,26 @@ export function OrderConfirmedMobileComponent(): JSX.Element {
                   })}
               </div>
             </div>
-            <div className={styles['total-detail-container']}>
-              <div className={styles['total-detail-text']}>{t('discount')}</div>
-              <div className={styles['total-detail-text']}>
+            <div
+              className={[
+                styles['total-detail-container'],
+                styles['total-detail-container-mobile'],
+              ].join(' ')}
+            >
+              <div
+                className={[
+                  styles['total-detail-text'],
+                  styles['total-detail-text-mobile'],
+                ].join(' ')}
+              >
+                {t('discount')}
+              </div>
+              <div
+                className={[
+                  styles['total-detail-text'],
+                  styles['total-detail-text-mobile'],
+                ].join(' ')}
+              >
                 {storeProps.selectedRegion &&
                   formatAmount({
                     amount: -props.order?.discount_total ?? 0,
@@ -191,9 +336,26 @@ export function OrderConfirmedMobileComponent(): JSX.Element {
                   })}
               </div>
             </div>
-            <div className={styles['total-detail-container']}>
-              <div className={styles['total-detail-text']}>{t('shipping')}</div>
-              <div className={styles['total-detail-text']}>
+            <div
+              className={[
+                styles['total-detail-container'],
+                styles['total-detail-container-mobile'],
+              ].join(' ')}
+            >
+              <div
+                className={[
+                  styles['total-detail-text'],
+                  styles['total-detail-text-mobile'],
+                ].join(' ')}
+              >
+                {t('shipping')}
+              </div>
+              <div
+                className={[
+                  styles['total-detail-text'],
+                  styles['total-detail-text-mobile'],
+                ].join(' ')}
+              >
                 {storeProps.selectedRegion &&
                   formatAmount({
                     amount: props.order?.shipping_total ?? 0,
@@ -202,9 +364,26 @@ export function OrderConfirmedMobileComponent(): JSX.Element {
                   })}
               </div>
             </div>
-            <div className={styles['total-detail-container']}>
-              <div className={styles['total-detail-text']}>{t('taxes')}</div>
-              <div className={styles['total-detail-text']}>
+            <div
+              className={[
+                styles['total-detail-container'],
+                styles['total-detail-container-mobile'],
+              ].join(' ')}
+            >
+              <div
+                className={[
+                  styles['total-detail-text'],
+                  styles['total-detail-text-mobile'],
+                ].join(' ')}
+              >
+                {t('taxes')}
+              </div>
+              <div
+                className={[
+                  styles['total-detail-text'],
+                  styles['total-detail-text-mobile'],
+                ].join(' ')}
+              >
                 {storeProps.selectedRegion &&
                   formatAmount({
                     amount: props.order?.tax_total ?? 0,
@@ -213,9 +392,26 @@ export function OrderConfirmedMobileComponent(): JSX.Element {
                   })}
               </div>
             </div>
-            <div className={styles['total-container']}>
-              <div className={styles['total-text']}>{t('total')}</div>
-              <div className={styles['total-text']}>
+            <div
+              className={[
+                styles['total-container'],
+                styles['total-container-mobile'],
+              ].join(' ')}
+            >
+              <div
+                className={[
+                  styles['total-text'],
+                  styles['total-text-mobile'],
+                ].join(' ')}
+              >
+                {t('total')}
+              </div>
+              <div
+                className={[
+                  styles['total-text'],
+                  styles['total-text-mobile'],
+                ].join(' ')}
+              >
                 {storeProps.selectedRegion &&
                   formatAmount({
                     amount: props.order?.total ?? 0,
@@ -231,7 +427,12 @@ export function OrderConfirmedMobileComponent(): JSX.Element {
           touchScreen={true}
           onClose={() => setOpenRefund(false)}
         >
-          <div className={styles['refund-items-container']}>
+          <div
+            className={[
+              styles['refund-items-container'],
+              styles['refund-items-container-mobile'],
+            ].join(' ')}
+          >
             {props.order?.items.map((item: LineItem) => (
               <RefundItemComponent
                 item={item}
@@ -243,7 +444,12 @@ export function OrderConfirmedMobileComponent(): JSX.Element {
               />
             ))}
           </div>
-          <div className={styles['request-refund-button-container']}>
+          <div
+            className={[
+              styles['request-refund-button-container'],
+              styles['request-refund-button-container-mobile'],
+            ].join(' ')}
+          >
             <Button
               block={true}
               size={'large'}

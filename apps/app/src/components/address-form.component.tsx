@@ -271,6 +271,12 @@ export default function AddressFormComponent({
     <>
       <ResponsiveDesktop>
         <AddressFormDesktopComponent
+          isAuthenticated={isAuthenticated}
+          values={values}
+          errors={errors}
+          onChangeCallbacks={onChangeCallbacks}
+          isComplete={isComplete}
+          onEdit={onEdit}
           countryOptions={countryOptions}
           regionOptions={regionOptions}
           selectedCountryIndex={selectedCountryIndex}
@@ -286,6 +292,12 @@ export default function AddressFormComponent({
       </ResponsiveDesktop>
       <ResponsiveMobile>
         <AddressFormMobileComponent
+          isAuthenticated={isAuthenticated}
+          values={values}
+          errors={errors}
+          onChangeCallbacks={onChangeCallbacks}
+          isComplete={isComplete}
+          onEdit={onEdit}
           countryOptions={countryOptions}
           regionOptions={regionOptions}
           selectedCountryIndex={selectedCountryIndex}

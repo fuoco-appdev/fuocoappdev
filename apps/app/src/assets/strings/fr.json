@@ -244,5 +244,6 @@
   "goBack": "Retourner",
   "add": "Ajouter",
   "minus": "Moins",
-  "checkout": "La caisse"
+  "checkout": "La caisse",
+  "orderConfirmed": "Commande Confirmée"
 }

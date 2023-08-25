@@ -124,10 +124,8 @@ export function AccountAddressesDesktopComponent({
           },
         }}
         visible={openAddDropdown}
-        confirmText={t('addAddress') ?? ''}
-        cancelText={t('cancel') ?? ''}
+        hideFooter={true}
         onCancel={() => setOpenAddDropdown(false)}
-        onConfirm={onAddAddressAsync}
       >
         <div
           className={[
@@ -182,6 +180,26 @@ export function AccountAddressesDesktopComponent({
                 }),
             }}
           />
+          <div
+            className={[
+              styles['add-address-button-container'],
+              styles['add-address-button-container-desktop'],
+            ].join(' ')}
+          >
+            <Button
+              classNames={{
+                button: styles['add-address-button'],
+              }}
+              rippleProps={{
+                color: 'rgba(233, 33, 66, .35)',
+              }}
+              block={true}
+              size={'large'}
+              onClick={onAddAddressAsync}
+            >
+              {t('addAddress')}
+            </Button>
+          </div>
         </div>
       </Modal>
       <Modal
@@ -215,38 +233,9 @@ export function AccountAddressesDesktopComponent({
             ].join(' '),
           },
         }}
-        confirmText={t('apply') ?? ''}
-        cancelText={t('cancel') ?? ''}
         visible={openEditDropdown}
         onCancel={() => setOpenEditDropdown(false)}
-        onConfirm={async () => {
-          AccountController.updateEditShippingAddressErrors({
-            email: undefined,
-            firstName: undefined,
-            lastName: undefined,
-            company: undefined,
-            address: undefined,
-            apartments: undefined,
-            postalCode: undefined,
-            city: undefined,
-            region: undefined,
-            phoneNumber: undefined,
-          });
-
-          const errors = AccountController.getAddressFormErrors(
-            AccountController.model.editShippingForm
-          );
-          if (errors) {
-            AccountController.updateEditShippingAddressErrors(errors);
-            return;
-          }
-
-          await AccountController.updateAddressAsync(
-            AccountController.model.selectedAddress?.id
-          );
-          AccountController.updateSelectedAddress(undefined);
-          setOpenEditDropdown(false);
-        }}
+        hideFooter={true}
       >
         <div
           className={[
@@ -301,6 +290,29 @@ export function AccountAddressesDesktopComponent({
                 }),
             }}
           />
+          <div
+            className={[
+              styles['edit-address-button-container'],
+              styles['edit-address-button-container-desktop'],
+            ].join(' ')}
+          >
+            <Button
+              classNames={{
+                button: [
+                  styles['edit-address-button'],
+                  styles['edit-address-button-desktop'],
+                ].join(' '),
+              }}
+              rippleProps={{
+                color: 'rgba(233, 33, 66, .35)',
+              }}
+              block={true}
+              size={'large'}
+              onClick={onEditAddressAsync}
+            >
+              {t('applyChanges')}
+            </Button>
+          </div>
         </div>
       </Modal>
       <Modal

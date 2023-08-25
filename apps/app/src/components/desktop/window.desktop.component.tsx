@@ -486,6 +486,16 @@ export function WindowDesktopComponent({
                     </div>
                   </>
                 )}
+                {props.activeRoute.startsWith(RoutePaths.OrderConfirmed) && (
+                  <>
+                    <Line.ShoppingCart size={24} />
+                    <div
+                      className={[styles['navigation-back-title']].join(' ')}
+                    >
+                      {t('orderConfirmed')}
+                    </div>
+                  </>
+                )}
               </div>
               <div
                 className={[

@@ -244,5 +244,6 @@
   "goBack": "Go back",
   "add": "Add",
   "minus": "Minus",
-  "checkout": "Checkout"
+  "checkout": "Checkout",
+  "orderConfirmed": "Order Confirmed"
 }

@@ -24,6 +24,8 @@ import {
   StripeElements,
   StripeCardNumberElement,
 } from '@stripe/stripe-js';
+import SupabaseService from '../services/supabase.service';
+import { AuthChangeEvent, Session } from '@supabase/supabase-js';
 
 class CheckoutController extends Controller {
   private readonly _model: CheckoutModel;
@@ -36,6 +38,7 @@ class CheckoutController extends Controller {
     this._model = new CheckoutModel();
     this.onCartChangedAsync = this.onCartChangedAsync.bind(this);
     this.onCustomerChangedAsync = this.onCustomerChangedAsync.bind(this);
+    this.onAuthStateChanged = this.onAuthStateChanged.bind(this);
   }
 
   public get model(): CheckoutModel {
@@ -56,6 +59,10 @@ class CheckoutController extends Controller {
       .subscribe({
         next: this.onCustomerChangedAsync,
       });
+
+    SupabaseService.supabaseClient?.auth.onAuthStateChange(
+      this.onAuthStateChanged
+    );
   }
 
   public override dispose(renderCount: number): void {
@@ -592,6 +599,18 @@ class CheckoutController extends Controller {
       await this.updateSelectedShippingAddressOptionIdAsync(
         value.shipping_addresses[0].id ?? ''
       );
+    }
+  }
+
+  private onAuthStateChanged(
+    event: AuthChangeEvent,
+    session: Session | null
+  ): void {
+    if (event === 'SIGNED_OUT') {
+      this._model.shippingForm = {};
+      this._model.billingForm = {};
+      this._model.shippingFormComplete = false;
+      this._model.billingFormComplete = false;
     }
   }
 }

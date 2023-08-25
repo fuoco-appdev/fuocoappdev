@@ -41,6 +41,7 @@ export function AddressFormDesktopComponent({
       {!isAuthenticated && (
         <Input
           classNames={{
+            root: styles['input-root'],
             formLayout: { label: styles['input-form-layout-label'] },
             input: styles['input'],
             container: styles['input-container'],
@@ -59,6 +60,7 @@ export function AddressFormDesktopComponent({
       >
         <Input
           classNames={{
+            root: styles['input-root'],
             formLayout: { label: styles['input-form-layout-label'] },
             input: styles['input'],
             container: styles['input-container'],
@@ -70,6 +72,7 @@ export function AddressFormDesktopComponent({
         />
         <Input
           classNames={{
+            root: styles['input-root'],
             formLayout: { label: styles['input-form-layout-label'] },
             input: styles['input'],
             container: styles['input-container'],
@@ -82,6 +85,7 @@ export function AddressFormDesktopComponent({
       </div>
       <Input
         classNames={{
+          root: styles['input-root'],
           formLayout: { label: styles['input-form-layout-label'] },
           input: styles['input'],
           container: styles['input-container'],
@@ -93,6 +97,7 @@ export function AddressFormDesktopComponent({
       />
       <Input
         classNames={{
+          root: styles['input-root'],
           formLayout: { label: styles['input-form-layout-label'] },
           input: styles['input'],
           container: styles['input-container'],
@@ -104,6 +109,7 @@ export function AddressFormDesktopComponent({
       />
       <Input
         classNames={{
+          root: styles['input-root'],
           formLayout: { label: styles['input-form-layout-label'] },
           input: styles['input'],
           container: styles['input-container'],
@@ -121,6 +127,7 @@ export function AddressFormDesktopComponent({
       >
         <Input
           classNames={{
+            root: styles['input-root'],
             formLayout: { label: styles['input-form-layout-label'] },
             input: styles['input'],
             container: styles['input-container'],
@@ -132,6 +139,7 @@ export function AddressFormDesktopComponent({
         />
         <Input
           classNames={{
+            root: styles['input-root'],
             formLayout: { label: styles['input-form-layout-label'] },
             input: styles['input'],
             container: styles['input-container'],
