@@ -245,5 +245,6 @@
   "add": "Add",
   "minus": "Minus",
   "checkout": "Checkout",
-  "orderConfirmed": "Order Confirmed"
+  "orderConfirmed": "Order Confirmed",
+  "filter": "Filter"
 }

@@ -245,5 +245,6 @@
   "add": "Ajouter",
   "minus": "Moins",
   "checkout": "La caisse",
-  "orderConfirmed": "Commande Confirmée"
+  "orderConfirmed": "Commande Confirmée",
+  "filter": "Filtre"
 }
