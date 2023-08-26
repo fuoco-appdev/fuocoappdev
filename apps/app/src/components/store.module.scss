@@ -1,100 +1,251 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
-.root-mobile {
+.root {
     width: 100%;
     min-width: 100%;
 
-    & .top-bar-container-mobile {
+    & .top-bar-container {
         display: flex;
-        flex-direction: column;
-        border: 1px solid rgba(42, 42, 95, .6);
+        border-bottom: 1px solid rgba(42, 42, 95, .6);
         
-        & .search-container-mobile {
+        & .search-container {
             display: flex;
             flex-direction: row;
             width: 100%;
             height: fit-content;
-            padding-left: $mp-4;
-            padding-right: $mp-4;
-            padding-top: $mp-4;
         
             & .search-input-root {
                 display: flex;
                 flex-direction: column;
                 flex: 1;
-                padding-right: $mp-4;
                 
-                & .search-input-container-mobile {
+                & .search-input-container {
                     background-color: transparent;
                     border-color: $brand-900;
                     border-radius: $rounded-full;
                 }
         
-                & .search-input-mobile {
+                & .search-input {
                     color: $brand-900;
                 }
 
-                & .search-input-mobile::placeholder {
+                & .search-input::placeholder {
                     color: $brand-900;
                 }
 
-                & .search-input-mobile:-ms-input-placeholder {
+                & .search-input:-ms-input-placeholder {
                     color: $brand-900;
                 }
 
-                & .search-input-mobile::-ms-input-placeholder {
+                & .search-input::-ms-input-placeholder {
                     color: $brand-900;
                 }
-            }
-        
-            & .filter-button {
-                background-color: $brand-700;
             }
         }
     
-        & .tab-container-mobile {
-            margin: 0 $mp-4;
+        & .tab-container {
             overflow-x: auto;
             -ms-overflow-style: none;  /* IE and Edge */
             scrollbar-width: none;  /* Firefox */
-    
-            & .tab-button {
-                color: $brand-900;
-                font-size: $font-size-sm;
-                font-weight: $font-weight-bold;
-            }
-    
-            & .hovered-tab-button {
-                color: #fff;
-            }
-    
-            & .tab-slider-pill {
-                background-color: $brand-900;
-            }
         }
     
-        & .tab-container-mobile::-webkit-scrollbar {
+        & .tab-container::-webkit-scrollbar {
             display: none;
         }
     }
 
-    & .scroll-container-mobile {
+    & .scroll-container {
         height: 100%;
         width: 100%;
 
-        & .scroll-mobile {
+        & .scroll {
             width: 100%;
             height: auto;
             display: flex;
             flex-wrap: wrap;
-            padding-top: $mp-4;
-            padding-left: $mp-4;
-            padding-bottom: calc(56px * 3);
             align-content: flex-start;
             
             & .loading-ring {
                 width: 100%;
                 height: 24px;
+            }
+        }
+
+        & .wine-previews-container {
+
+        }
+    }
+
+    & .filter-content {
+        padding: $mp-4;
+
+        & .apply-button-container {
+            margin-top: $mp-4;
+        }
+
+        & .apply-button {
+            background-color: $brand-700;
+        }
+    }
+}
+
+.root-desktop {
+    & .top-bar-container-desktop {
+        padding-top: $mp-4;
+        flex-direction: row;
+
+        & .top-bar-left-content-desktop {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            align-items: center;
+        }
+
+        & .top-bar-right-content-desktop {
+            padding-right: $mp-4;
+        }
+                
+        & .search-container-desktop {
+            padding-left: $mp-4;
+            padding-right: $mp-4;
+
+            & .search-input-root-desktop {
+                padding: 0 25vw;
+
+                & .search-input-container-desktop {
+
+                }
+        
+                & .search-input-desktop {
+
+                }
+
+                & .search-input-desktop::placeholder {
+
+                }
+
+                & .search-input-desktop:-ms-input-placeholder {
+
+                }
+
+                & .search-input-desktop::-ms-input-placeholder {
+                }
+            }
+        
+            & .filter-button-desktop {
+
+            }
+        }
+    
+        & .tab-container-desktop { 
+            width: fit-content;
+
+            & .tab-button-desktop {
+
+            }
+    
+            & .hovered-tab-button-desktop {
+            }
+    
+            & .tab-slider-pill-desktop {
+            }
+        }
+    
+        & .tab-container-desktop::-webkit-scrollbar {
+
+        }
+    }
+
+    & .scroll-container-desktop {
+        & .scroll-desktop { 
+            justify-content: center;
+            gap: $mp-6;     
+            padding: $mp-6;
+
+            & .loading-ring-desktop {
+
+            }
+        }
+
+        & .wine-previews-container-desktop {
+
+        }
+    }
+
+    & .filter-content-desktop {
+        & .apply-button-container-desktop {
+        }
+
+        & .apply-button-desktop {
+        }
+    }
+}
+
+.root-mobile {
+    & .top-bar-container-mobile {
+        flex-direction: column;
+
+        & .search-container-mobile {  
+            padding-left: $mp-4;
+            padding-right: $mp-4;
+            padding-top: $mp-4;
+
+            & .search-input-root-mobile {
+                padding-right: $mp-4;
+
+                & .search-input-container-mobile {
+
+                }
+        
+                & .search-input-mobile {
+
+                }
+
+                & .search-input-mobile::placeholder {
+
+                }
+
+                & .search-input-mobile:-ms-input-placeholder {
+
+                }
+
+                & .search-input-mobile::-ms-input-placeholder {
+                }
+            }
+        
+            & .filter-button-mobile {
+
+            }
+        }
+    
+        & .tab-container-mobile { 
+            padding: 0 $mp-4;
+
+            & .tab-button-mobile {
+
+            }
+    
+            & .hovered-tab-button-mobile {
+            }
+    
+            & .tab-slider-pill-mobile {
+            }
+        }
+    
+        & .tab-container-mobile::-webkit-scrollbar {
+
+        }
+    }
+
+    & .scroll-container-mobile {
+        & .scroll-mobile {
+            gap: $mp-4;
+            padding-top: $mp-4;
+            padding-left: $mp-4;
+            padding-bottom: calc(56px * 3);
+
+            & .loading-ring-mobile {
+
             }
         }
 
@@ -104,14 +255,10 @@
     }
 
     & .filter-content-mobile {
-        padding: $mp-4;
-
         & .apply-button-container-mobile {
-            margin-top: $mp-4;
         }
 
-        & .apply-button {
-            background-color: $brand-700;
+        & .apply-button-mobile {
         }
     }
 }
@@ -133,7 +280,7 @@
     text-transform: capitalize !important;
 }
 
-.country-flag-mobile {
+.country-flag {
     margin-right: $mp-2;
 }
 
@@ -141,4 +288,23 @@
     color: $brand-900;
     font-size: $font-size-sm;
     overflow: hidden;
+}
+
+.filter-button {
+    background-color: $brand-700 !important;
+}
+
+.tab-button {
+    color: $brand-900 !important;
+    font-size: $font-size-sm !important;
+    font-weight: $font-weight-bold !important;
+    padding: $mp-3 $mp-6 !important;
+}
+
+.selected-tab-button {
+    color: #fff !important;
+}
+
+.tab-slider-pill {
+    background-color: $brand-900 !important;
 }

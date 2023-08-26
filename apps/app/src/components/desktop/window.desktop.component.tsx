@@ -117,7 +117,7 @@ export function WindowDesktopComponent({
                 }}
                 hideText={true}
                 language={localProps.languageCode}
-                onChange={(isoCode, info) =>
+                onChange={(isoCode: string, info) =>
                   WindowController.updateLanguageInfo(isoCode, info)
                 }
               />
@@ -348,7 +348,7 @@ export function WindowDesktopComponent({
               activeId={props.activeRoute}
               direction={'vertical'}
               type={'underlined'}
-              onChange={(id) => navigate(id)}
+              onChange={(id: string) => navigate(id)}
               classNames={{
                 tabOutline: [
                   styles['tab-outline'],
@@ -524,6 +524,25 @@ export function WindowDesktopComponent({
           <Outlet />
         </div>
       </div>
+      <ToastOverlay
+        classNames={{
+          root: [
+            styles['toast-overlay-root'],
+            styles['toast-overlay-root-mobile'],
+          ].join(' '),
+          overlayContainer: [
+            styles['toast-overlay-container'],
+            styles['toast-overlay-container-mobile'],
+          ].join(' '),
+          toast: {
+            life: [styles['toast-life'], styles['toast-life-mobile']].join(' '),
+          },
+        }}
+        timeout={2500}
+        toasts={props.toast ? [props.toast] : []}
+        transition={'down'}
+        align={'right'}
+      />
     </div>
   );
 }

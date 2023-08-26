@@ -29,18 +29,26 @@ import HomeController from '../controllers/home.controller';
 import { InventoryLocation } from '../models/home.model';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { center } from '@turf/turf';
+import { StoreDesktopComponent } from './desktop/store.desktop.component';
+import { StoreMobileComponent } from './mobile/store.mobile.component';
 
-function StoreDesktopComponent(): JSX.Element {
-  const navigate = useNavigate();
-  const [props] = useObservable(StoreController.model.store);
-
-  return <></>;
+export interface StoreResponsiveProps {
+  openFilter: boolean;
+  countryOptions: OptionProps[];
+  regionOptions: OptionProps[];
+  cellarOptions: OptionProps[];
+  selectedCountryIndex: number;
+  selectedRegionIndex: number;
+  selectedCellarIndex: number;
+  setOpenFilter: (value: boolean) => void;
+  setSelectedCountryIndex: (value: number) => void;
+  setSelectedRegionIndex: (value: number) => void;
+  setSelectedCellarIndex: (value: number) => void;
 }
 
-function StoreMobileComponent(): JSX.Element {
-  const rootRef = useRef<HTMLDivElement | null>(null);
-  const previewsContainerRef = useRef<HTMLDivElement | null>(null);
-  const navigate = useNavigate();
+export default function StoreComponent(): JSX.Element {
+  const [props] = useObservable(StoreController.model.store);
+  const [homeProps] = useObservable(HomeController.model.store);
   const [openFilter, setOpenFilter] = useState<boolean>(false);
   const [countryOptions, setCountryOptions] = useState<OptionProps[]>([]);
   const [regionOptions, setRegionOptions] = useState<OptionProps[]>([]);
@@ -48,9 +56,6 @@ function StoreMobileComponent(): JSX.Element {
   const [selectedCountryIndex, setSelectedCountryIndex] = useState<number>(0);
   const [selectedRegionIndex, setSelectedRegionIndex] = useState<number>(0);
   const [selectedCellarIndex, setSelectedCellarIndex] = useState<number>(0);
-  const [props] = useObservable(StoreController.model.store);
-  const [homeProps] = useObservable(HomeController.model.store);
-  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     const countries: OptionProps[] = [];
@@ -68,7 +73,7 @@ function StoreMobileComponent(): JSX.Element {
           value: country.name?.toLowerCase() ?? '',
           addOnBefore: () => (
             <ReactCountryFlag
-              className={styles['country-flag-mobile']}
+              className={styles['country-flag']}
               countryCode={country.iso_2?.toUpperCase() ?? ''}
               svg={true}
               style={{ width: 18, height: 18 }}
@@ -177,196 +182,36 @@ function StoreMobileComponent(): JSX.Element {
   }, [selectedCountryIndex, countryOptions]);
 
   return (
-    <div ref={rootRef} className={styles['root-mobile']}>
-      <div className={styles['top-bar-container-mobile']}>
-        <div className={styles['search-container-mobile']}>
-          <div className={styles['search-input-root']}>
-            <Input
-              value={props.input}
-              classNames={{
-                container: styles['search-input-container-mobile'],
-                input: styles['search-input-mobile'],
-              }}
-              placeholder={t('search') ?? ''}
-              icon={<Line.Search size={24} color={'#2A2A5F'} />}
-              onChange={(event) =>
-                StoreController.updateInput(event.target.value)
-              }
-            />
-          </div>
-          <div>
-            <Button
-              classNames={{
-                container: styles['filter-container'],
-                button: styles['filter-button'],
-              }}
-              onClick={() => setOpenFilter(true)}
-              rippleProps={{
-                color: 'rgba(233, 33, 66, .35)',
-              }}
-              block={true}
-              icon={<Line.FilterList size={24} color={'#fff'} />}
-              rounded={true}
-            />
-          </div>
-        </div>
-        <div className={styles['tab-container-mobile']}>
-          <Tabs
-            classNames={{
-              tabButton: styles['tab-button'],
-              hoveredTabButton: styles['hovered-tab-button'],
-              tabSliderPill: styles['tab-slider-pill'],
-            }}
-            removable={true}
-            type={'pills'}
-            activeId={props.selectedTab}
-            onChange={(id) =>
-              StoreController.updateSelectedTabAsync(
-                id.length > 0 ? (id as ProductTabs) : undefined
-              )
-            }
-            tabs={[
-              {
-                id: ProductTabs.New,
-                label: t('new') ?? 'New',
-              },
-              {
-                id: ProductTabs.White,
-                label: t('white') ?? 'White',
-              },
-              {
-                id: ProductTabs.Red,
-                label: t('red') ?? 'Red',
-              },
-              {
-                id: ProductTabs.Rose,
-                label: t('rose') ?? 'Rosé',
-              },
-              {
-                id: ProductTabs.Spirits,
-                label: t('spirits') ?? 'Spirits',
-              },
-            ]}
-          />
-        </div>
-      </div>
-      <div
-        className={styles['scroll-container-mobile']}
-        ref={previewsContainerRef}
-      >
-        <InfiniteScroll
-          dataLength={props.previews.length}
-          next={() => StoreController.onNextScrollAsync()}
-          className={styles['scroll-mobile']}
-          hasMore={props.hasMorePreviews}
-          height={previewsContainerRef.current?.clientHeight ?? 0 - 8}
-          loader={
-            <img
-              src={'../assets/svg/ring-resize-dark.svg'}
-              className={styles['loading-ring']}
-            />
-          }
-        >
-          {props.previews.map((preview: Product, index: number) => (
-            <ProductPreviewComponent
-              parentRef={rootRef}
-              key={index}
-              preview={preview}
-              onClick={() => {
-                StoreController.updateSelectedPreview(preview);
-              }}
-              onRest={() => {
-                navigate(`${RoutePaths.Store}/${preview.id}`);
-              }}
-            />
-          ))}
-        </InfiniteScroll>
-      </div>
-      <Dropdown
-        open={openFilter}
-        touchScreen={true}
-        onClose={() => setOpenFilter(false)}
-      >
-        <div className={styles['filter-content-mobile']}>
-          <Listbox
-            classNames={{
-              formLayout: {
-                label: styles['listbox-form-layout-label'],
-              },
-              listbox: styles['listbox'],
-              chevron: styles['listbox-chevron'],
-              label: styles['listbox-label'],
-            }}
-            touchScreen={true}
-            label={t('country') ?? ''}
-            options={countryOptions}
-            defaultIndex={selectedCountryIndex}
-            onChange={(index: number) => setSelectedCountryIndex(index)}
-          />
-          <Listbox
-            classNames={{
-              formLayout: {
-                label: styles['listbox-form-layout-label'],
-              },
-              listbox: styles['listbox'],
-              chevron: styles['listbox-chevron'],
-              label: styles['listbox-label'],
-            }}
-            touchScreen={true}
-            label={t('region') ?? ''}
-            options={regionOptions}
-            defaultIndex={selectedRegionIndex}
-            onChange={(index: number) => setSelectedRegionIndex(index)}
-          />
-          <Listbox
-            classNames={{
-              formLayout: {
-                label: styles['listbox-form-layout-label'],
-              },
-              listbox: styles['listbox'],
-              chevron: styles['listbox-chevron'],
-              label: styles['listbox-label'],
-            }}
-            touchScreen={true}
-            label={t('cellar') ?? ''}
-            options={cellarOptions}
-            defaultIndex={selectedCellarIndex}
-            onChange={(index: number) => setSelectedCellarIndex(index)}
-          />
-          <Button
-            classNames={{
-              container: styles['apply-button-container-mobile'],
-              button: styles['apply-button'],
-            }}
-            rippleProps={{
-              color: 'rgba(233, 33, 66, .35)',
-            }}
-            block={true}
-            size={'large'}
-            onClick={() => {
-              StoreController.applyFilterAsync(
-                regionOptions[selectedRegionIndex].id ?? '',
-                cellarOptions[selectedCellarIndex].id ?? ''
-              );
-              setTimeout(() => setOpenFilter(false), 250);
-            }}
-          >
-            {t('apply')}
-          </Button>
-        </div>
-      </Dropdown>
-    </div>
-  );
-}
-
-export default function StoreComponent(): JSX.Element {
-  return (
     <>
       <ResponsiveDesktop>
-        <StoreDesktopComponent />
+        <StoreDesktopComponent
+          openFilter={openFilter}
+          countryOptions={countryOptions}
+          regionOptions={regionOptions}
+          cellarOptions={cellarOptions}
+          selectedCountryIndex={selectedCountryIndex}
+          selectedRegionIndex={selectedRegionIndex}
+          selectedCellarIndex={selectedCellarIndex}
+          setOpenFilter={setOpenFilter}
+          setSelectedCountryIndex={setSelectedCountryIndex}
+          setSelectedRegionIndex={setSelectedRegionIndex}
+          setSelectedCellarIndex={setSelectedCellarIndex}
+        />
       </ResponsiveDesktop>
       <ResponsiveMobile>
-        <StoreMobileComponent />
+        <StoreMobileComponent
+          openFilter={openFilter}
+          countryOptions={countryOptions}
+          regionOptions={regionOptions}
+          cellarOptions={cellarOptions}
+          selectedCountryIndex={selectedCountryIndex}
+          selectedRegionIndex={selectedRegionIndex}
+          selectedCellarIndex={selectedCellarIndex}
+          setOpenFilter={setOpenFilter}
+          setSelectedCountryIndex={setSelectedCountryIndex}
+          setSelectedRegionIndex={setSelectedRegionIndex}
+          setSelectedCellarIndex={setSelectedCellarIndex}
+        />
       </ResponsiveMobile>
     </>
   );
