@@ -22,6 +22,8 @@ import CartController from '../../controllers/cart.controller';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
 import { ProductPreviewResponsiveProps } from '../product-preview.component';
+import ReactMarkdown from 'react-markdown';
+import gfm from 'remark-gfm';
 
 export function ProductPreviewDesktopComponent({
   preview,
@@ -149,8 +151,14 @@ export function ProductPreviewDesktopComponent({
               styles['product-description-desktop'],
             ].join(' ')}
           >
-            {preview.description?.slice(0, 205)}
-            {preview.description && preview.description.length > 205 && '...'}
+            {preview.description && preview.description?.length > 0 && (
+              <ReactMarkdown
+                remarkPlugins={[gfm]}
+                children={`${preview.description?.slice(0, 205)}${
+                  preview.description.length > 205 ? '...' : ''
+                }`}
+              />
+            )}
           </div>
           <div
             className={[

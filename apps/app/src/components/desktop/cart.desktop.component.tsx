@@ -114,7 +114,7 @@ export function CartDesktopComponent(): JSX.Element {
                     onRemove={() => CartController.removeLineItemAsync(item)}
                   />
                 ))}
-              {props.cart?.items.length <= 0 && (
+              {props.cart && props.cart?.items.length <= 0 && (
                 <>
                   <div
                     className={[
