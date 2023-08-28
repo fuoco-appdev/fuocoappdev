@@ -12,8 +12,9 @@
 
         & .background-image {
             position: absolute;
-            height: 100%;
+            object-fit: cover;
             width: 100%;
+            height: 100%;
         }
 
         & .background-filter {
@@ -54,6 +55,7 @@
 
     & .map-container {
         height: 40vh;
+        width: 100vw;
     }
 }
 
