@@ -53,7 +53,7 @@ export function CartDesktopComponent(): JSX.Element {
           >
             <Button
               classNames={{
-                button: styles['sign-in-button'],
+                button: styles['outline-button'],
               }}
               rippleProps={{
                 color: 'rgba(133, 38, 122, .35)',
@@ -114,6 +114,40 @@ export function CartDesktopComponent(): JSX.Element {
                     onRemove={() => CartController.removeLineItemAsync(item)}
                   />
                 ))}
+              {props.cart?.items.length <= 0 && (
+                <>
+                  <div
+                    className={[
+                      styles['no-items-text'],
+                      styles['no-items-text-desktop'],
+                    ].join(' ')}
+                  >
+                    {t('noCartItems')}
+                  </div>
+                  <div
+                    className={[
+                      styles['shop-button-container'],
+                      styles['shop-button-container-desktop'],
+                    ].join(' ')}
+                  >
+                    <Button
+                      classNames={{
+                        button: styles['outline-button'],
+                      }}
+                      rippleProps={{
+                        color: 'rgba(133, 38, 122, .35)',
+                      }}
+                      size={'large'}
+                      touchScreen={true}
+                      onClick={() =>
+                        setTimeout(() => navigate(RoutePaths.Store), 150)
+                      }
+                    >
+                      {t('shopNow')}
+                    </Button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

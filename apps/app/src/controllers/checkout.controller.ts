@@ -31,6 +31,7 @@ class CheckoutController extends Controller {
   private readonly _model: CheckoutModel;
   private _cartSubscription: Subscription | undefined;
   private _customerSubscription: Subscription | undefined;
+  private _shippingFormSubscription: Subscription | undefined;
 
   constructor() {
     super();
@@ -38,6 +39,7 @@ class CheckoutController extends Controller {
     this._model = new CheckoutModel();
     this.onCartChangedAsync = this.onCartChangedAsync.bind(this);
     this.onCustomerChangedAsync = this.onCustomerChangedAsync.bind(this);
+    this.onShippingFormChanged = this.onShippingFormChanged.bind(this);
     this.onAuthStateChanged = this.onAuthStateChanged.bind(this);
   }
 
@@ -60,12 +62,17 @@ class CheckoutController extends Controller {
         next: this.onCustomerChangedAsync,
       });
 
+    this._shippingFormSubscription = this._model.store
+      .pipe(select((model) => model.shippingForm))
+      .subscribe({ next: this.onShippingFormChanged });
+
     SupabaseService.supabaseClient?.auth.onAuthStateChange(
       this.onAuthStateChanged
     );
   }
 
   public override dispose(renderCount: number): void {
+    this._shippingFormSubscription?.unsubscribe();
     this._customerSubscription?.unsubscribe();
     this._cartSubscription?.unsubscribe();
   }
@@ -430,15 +437,6 @@ class CheckoutController extends Controller {
   }
 
   private resetCheckoutStates(): void {
-    if (!WindowController.model.isAuthenticated) {
-      this._model.shippingForm = {};
-      this._model.shippingFormErrors = {};
-      this._model.shippingFormComplete = false;
-    }
-
-    this._model.billingForm = {};
-    this._model.billingFormErrors = {};
-    this._model.billingFormComplete = false;
     this._model.sameAsBillingAddress = true;
     this._model.shippingOptions = [];
     this._model.selectedShippingOptionId = undefined;
@@ -467,19 +465,6 @@ class CheckoutController extends Controller {
         region: value?.shipping_address?.province ?? '',
         phoneNumber: value?.shipping_address?.phone ?? '',
       };
-      this._model.billingForm = {
-        email: value?.email,
-        firstName: value?.billing_address?.first_name ?? '',
-        lastName: value?.billing_address?.last_name ?? '',
-        company: value?.billing_address?.company ?? '',
-        address: value?.billing_address?.address_1 ?? '',
-        apartments: value?.billing_address?.address_2 ?? '',
-        postalCode: value?.billing_address?.postal_code ?? '',
-        city: value?.billing_address?.city ?? '',
-        countryCode: value?.billing_address?.country_code ?? '',
-        region: value?.billing_address?.province ?? '',
-        phoneNumber: value?.billing_address?.phone ?? '',
-      };
 
       if (
         value?.shipping_address &&
@@ -487,14 +472,6 @@ class CheckoutController extends Controller {
           .length <= 0
       ) {
         this._model.shippingFormComplete = true;
-      }
-
-      if (
-        value?.billing_address &&
-        Object.keys(this.getAddressFormErrors(this._model.billingForm) ?? {})
-          .length <= 0
-      ) {
-        this._model.billingFormComplete = true;
       }
     }
 
@@ -599,6 +576,13 @@ class CheckoutController extends Controller {
       await this.updateSelectedShippingAddressOptionIdAsync(
         value.shipping_addresses[0].id ?? ''
       );
+    }
+  }
+
+  private onShippingFormChanged(value: AddressFormValues): void {
+    if (this._model.sameAsBillingAddress) {
+      this._model.billingForm = value;
+      this._model.billingFormComplete = true;
     }
   }
 

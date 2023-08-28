@@ -28,8 +28,10 @@ import {
   CardExpiryElement,
   CardNumberElement,
 } from '@stripe/react-stripe-js';
-import PayButtonComponent from '../pay-button.component';
+import StripePayButtonComponent from '../stripe-pay-button.component';
 import { CheckoutResponsiveProps } from '../checkout.component';
+import { useNavigate } from 'react-router-dom';
+import { RoutePaths } from '../../route-paths';
 
 export function CheckoutMobileComponent({
   shippingOptions,
@@ -53,6 +55,7 @@ export function CheckoutMobileComponent({
   const [storeProps] = useObservable(StoreController.model.store);
   const [cartProps] = useObservable(CartController.model.store);
   const [windowProps] = useObservable(WindowController.model.store);
+  const navigate = useNavigate();
   const { t } = useTranslation();
 
   const customer = accountProps.customer as Customer;
@@ -1014,9 +1017,25 @@ export function CheckoutMobileComponent({
               >
                 {t('manualProviderDescription')}
               </div>
-              <PayButtonComponent
-                onPaymentComplete={() => setIsPayOpen(false)}
-              />
+              <Button
+                classNames={{
+                  button: styles['pay-button'],
+                }}
+                rippleProps={{
+                  color: 'rgba(233, 33, 66, .35)',
+                }}
+                block={true}
+                size={'large'}
+                icon={<Line.Lock size={24} />}
+                onClick={async () => {
+                  setIsPayOpen(false);
+                  const id =
+                    await CheckoutController.proceedToManualPaymentAsync();
+                  navigate(`${RoutePaths.OrderConfirmed}/${id}`);
+                }}
+              >
+                {t('pay')}
+              </Button>
             </>
           )}
           {props.selectedProviderId === ProviderType.Stripe && (
@@ -1052,9 +1071,9 @@ export function CheckoutMobileComponent({
                   <CardCvcElement options={stripeElementOptions} />
                 </FormLayout>
               </div>
-              <PayButtonComponent
+              <StripePayButtonComponent
                 stripeOptions={stripeOptions}
-                onPaymentComplete={() => setIsPayOpen(false)}
+                onPaymentClick={() => setIsPayOpen(false)}
               />
             </Elements>
           )}

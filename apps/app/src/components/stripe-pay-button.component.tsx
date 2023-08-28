@@ -16,28 +16,30 @@ import {
   StripeCardNumberElementOptions,
   StripeElementsOptions,
 } from '@stripe/stripe-js';
-import { PayButtonMobileComponent } from './mobile/pay-button.mobile.component';
+import { StripePayButtonMobileComponent } from './mobile/stripe-pay-button.mobile.component';
 import { useNavigate } from 'react-router-dom';
 import { useObservable } from '@ngneat/use-observable';
 import CheckoutController from '../controllers/checkout.controller';
 import { useTranslation } from 'react-i18next';
 import { ProviderType } from '../models/checkout.model';
 import { RoutePaths } from '../route-paths';
-import { PayButtonDesktopComponent } from './desktop/pay-button.desktop.component';
+import { StripePayButtonDesktopComponent } from './desktop/stripe-pay-button.desktop.component';
 
-export interface PayButtonProps {
+export interface StripePayButtonProps {
   stripeOptions?: StripeElementsOptions;
-  onPaymentComplete: () => void;
+  onPaymentClick?: () => void;
+  onPaymentComplete?: () => void;
 }
 
-export interface PayButtonResponsiveProps {
+export interface StripePayButtonResponsiveProps {
   onPayAsync: () => void;
 }
 
-export default function PayButtonComponent({
+export default function StripePayButtonComponent({
   stripeOptions,
+  onPaymentClick,
   onPaymentComplete,
-}: PayButtonProps): JSX.Element {
+}: StripePayButtonProps): JSX.Element {
   const navigate = useNavigate();
   const stripe = useStripe();
   const [props] = useObservable(CheckoutController.model.store);
@@ -49,16 +51,13 @@ export default function PayButtonComponent({
   }, [elements]);
 
   const onPayAsync = async () => {
-    let id: string | undefined = undefined;
-    if (props.selectedProviderId === ProviderType.Manual) {
-      id = await CheckoutController.proceedToManualPaymentAsync();
-    } else if (props.selectedProviderId === ProviderType.Stripe) {
-      id = await CheckoutController.proceedToStripePaymentAsync(
-        stripe,
-        cardRef.current,
-        stripeOptions?.clientSecret
-      );
-    }
+    onPaymentClick?.();
+
+    const id = await CheckoutController.proceedToStripePaymentAsync(
+      stripe,
+      cardRef.current,
+      stripeOptions?.clientSecret
+    );
 
     if (id) {
       onPaymentComplete?.();
@@ -69,10 +68,10 @@ export default function PayButtonComponent({
   return (
     <>
       <ResponsiveDesktop>
-        <PayButtonDesktopComponent onPayAsync={onPayAsync} />
+        <StripePayButtonDesktopComponent onPayAsync={onPayAsync} />
       </ResponsiveDesktop>
       <ResponsiveMobile>
-        <PayButtonMobileComponent onPayAsync={onPayAsync} />
+        <StripePayButtonMobileComponent onPayAsync={onPayAsync} />
       </ResponsiveMobile>
     </>
   );
