@@ -227,6 +227,7 @@
   "addAddress": "Add address",
   "noAddressAddedDescription": "No address has been found. Please add one to procceed with your order.",
   "noOrderHistory": "No order history has been found.",
+  "noCartItems": "No cart items have been found.",
   "shopNow": "Shop now",
   "noAddresses": "No addresses have been found. Add them to your list for a quicker checkout experience!",
   "removeAddress": "Remove address?",
@@ -236,5 +237,15 @@
   "creditCardNumber": "Card number",
   "expirationDate": "Expiration date",
   "cvc": "CVC",
-  "utilizeSearchEngineDescription": "Utilize an integrated search engine to explore a wide array of {{product_count, string}} selections."
+  "utilizeSearchEngineDescription": "Utilize an integrated search engine to explore a wide array of {{product_count, string}} selections.",
+  "menu": "Menu",
+  "home": "Home",
+  "store": "Store",
+  "remove": "Remove",
+  "goBack": "Go back",
+  "add": "Add",
+  "minus": "Minus",
+  "checkout": "Checkout",
+  "orderConfirmed": "Order Confirmed",
+  "filter": "Filter"
 }

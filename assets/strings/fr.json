@@ -227,6 +227,7 @@
   "addAddress": "Ajouter une adresse",
   "noAddressAddedDescription": "Aucune adresse n'a été trouvée. Veuillez en ajouter une pour procéder à votre commande.",
   "noOrderHistory": "Aucun historique de commande n'a été trouvé.",
+  "noCartItems": "Aucun élément du panier n'a été trouvé.",
   "shopNow": "Magasiné",
   "noAddresses": "Aucune adresse n'a été trouvée. Ajoutez-les à votre liste pour accélérer le processus de paiement!",
   "removeAddress": "Supprimer l'adresse?",
@@ -236,5 +237,15 @@
   "creditCardNumber": "Numéro de la carte",
   "expirationDate": "Date d'expiration",
   "cvc": "CVC",
-  "utilizeSearchEngineDescription": "Utilisez un moteur de recherche intégré pour explorer un large éventail de sélections {{product_count, string}}."
+  "utilizeSearchEngineDescription": "Utilisez un moteur de recherche intégré pour explorer un large éventail de sélections {{product_count, string}}.",
+  "menu": "Menu",
+  "home": "Accueil",
+  "store": "Magasin",
+  "remove": "Supprimer",
+  "goBack": "Retourner",
+  "add": "Ajouter",
+  "minus": "Moins",
+  "checkout": "La caisse",
+  "orderConfirmed": "Commande Confirmée",
+  "filter": "Filtre"
 }
