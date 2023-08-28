@@ -38,6 +38,13 @@ export function ProductPreviewDesktopComponent({
   const ref = useRef<HTMLDivElement | null>(null);
   const { t } = useTranslation();
 
+  const formatDescription = (description: string): string => {
+    const regex = /\*\*(.*?)\*\*/g;
+    const cleanDescription = description.trim();
+    const descriptionWithoutTitles = cleanDescription.replace(regex, '');
+    return descriptionWithoutTitles;
+  };
+
   return (
     <Card
       ref={ref}
@@ -151,14 +158,13 @@ export function ProductPreviewDesktopComponent({
               styles['product-description-desktop'],
             ].join(' ')}
           >
-            {preview.description && preview.description?.length > 0 && (
-              <ReactMarkdown
-                remarkPlugins={[gfm]}
-                children={`${preview.description?.slice(0, 205)}${
+            {preview.description &&
+              preview.description?.length > 0 &&
+              formatDescription(
+                `${preview.description?.slice(0, 205)}${
                   preview.description.length > 205 ? '...' : ''
-                }`}
-              />
-            )}
+                }`
+              )}
           </div>
           <div
             className={[
