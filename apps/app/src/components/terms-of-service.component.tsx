@@ -8,65 +8,50 @@ import TermsOfServiceController from '../controllers/terms-of-service.controller
 import { useNavigate } from 'react-router-dom';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 
-function BackButton(): JSX.Element {
-  const navigate = useNavigate();
-  return (
-    <div className={styles['backButton']}>
-      <Button
-        icon={<Line.ChevronLeft />}
-        type={'text'}
-        onClick={() => navigate(-1)}
-      />
-    </div>
-  );
-}
+export function TermsOfServiceDesktopComponent({ children }: any): JSX.Element {
+  const [props] = useObservable(TermsOfServiceController.model.store);
 
-function TermsOfServiceDesktopComponent({ children }: any): JSX.Element {
   return (
     <div className={[styles['root'], styles['root-desktop']].join(' ')}>
       <div className={[styles['content'], styles['content-desktop']].join(' ')}>
-        {children}
-      </div>
-      <div className={styles['backButtonContainer']}>
-        <BackButton />
+        <Auth.TermsOfService
+          termsOfService={
+            <Typography tag="article" className={styles['typography']}>
+              <ReactMarkdown remarkPlugins={[gfm]} children={props.markdown} />
+            </Typography>
+          }
+        />
       </div>
     </div>
   );
 }
 
-function TermsOfServiceMobileComponent({ children }: any): JSX.Element {
+export function TermsOfServiceMobileComponent({ children }: any): JSX.Element {
+  const [props] = useObservable(TermsOfServiceController.model.store);
+
   return (
     <div className={[styles['root'], styles['root-mobile']].join(' ')}>
       <div className={[styles['content'], styles['content-mobile']].join(' ')}>
-        {children}
+        <Auth.TermsOfService
+          termsOfService={
+            <Typography tag="article" className={styles['typography']}>
+              <ReactMarkdown remarkPlugins={[gfm]} children={props.markdown} />
+            </Typography>
+          }
+        />
       </div>
     </div>
   );
 }
 
 export default function TermsOfServiceComponent(): JSX.Element {
-  const [props] = useObservable(TermsOfServiceController.model.store);
-
-  const termsOfService = (
-    <Auth.TermsOfService
-      termsOfService={
-        <Typography tag="article" className={styles['typography']}>
-          <ReactMarkdown remarkPlugins={[gfm]} children={props.markdown} />
-        </Typography>
-      }
-    />
-  );
   return (
     <>
       <ResponsiveDesktop>
-        <TermsOfServiceDesktopComponent>
-          {termsOfService}
-        </TermsOfServiceDesktopComponent>
+        <TermsOfServiceDesktopComponent />
       </ResponsiveDesktop>
       <ResponsiveMobile>
-        <TermsOfServiceMobileComponent>
-          {termsOfService}
-        </TermsOfServiceMobileComponent>
+        <TermsOfServiceMobileComponent />
       </ResponsiveMobile>
     </>
   );

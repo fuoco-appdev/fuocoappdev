@@ -74,12 +74,12 @@ export class StoreModel extends Model {
   }
 
   public get regions(): Region[] {
-    return this.store?.getValue().regions;
+    return this.store.getValue().regions;
   }
 
   public set regions(value: Region[]) {
     if (JSON.stringify(this.regions) !== JSON.stringify(value)) {
-      this.store?.update((state) => ({
+      this.store.update((state) => ({
         ...state,
         regions: value,
       }));
@@ -87,12 +87,12 @@ export class StoreModel extends Model {
   }
 
   public get selectedRegion(): Region | undefined {
-    return this.store?.getValue().selectedRegion;
+    return this.store.getValue().selectedRegion;
   }
 
   public set selectedRegion(value: Region | undefined) {
     if (JSON.stringify(this.selectedRegion) !== JSON.stringify(value)) {
-      this.store?.update((state) => ({
+      this.store.update((state) => ({
         ...state,
         selectedRegion: value,
       }));
@@ -100,12 +100,12 @@ export class StoreModel extends Model {
   }
 
   public get selectedTab(): ProductTabs | undefined {
-    return this.store?.getValue().selectedTab;
+    return this.store.getValue().selectedTab;
   }
 
   public set selectedTab(value: ProductTabs | undefined) {
     if (this.selectedTab !== value) {
-      this.store?.update((state) => ({
+      this.store.update((state) => ({
         ...state,
         selectedTab: value,
       }));
@@ -113,12 +113,12 @@ export class StoreModel extends Model {
   }
 
   public get selectedSalesChannel(): Partial<SalesChannel> | undefined {
-    return this.store?.getValue().selectedSalesChannel;
+    return this.store.getValue().selectedSalesChannel;
   }
 
   public set selectedSalesChannel(value: Partial<SalesChannel> | undefined) {
     if (JSON.stringify(this.selectedSalesChannel) !== JSON.stringify(value)) {
-      this.store?.update((state) => ({
+      this.store.update((state) => ({
         ...state,
         selectedSalesChannel: value,
       }));
@@ -126,12 +126,12 @@ export class StoreModel extends Model {
   }
 
   public get pagination(): number {
-    return this.store?.getValue().pagination;
+    return this.store.getValue().pagination;
   }
 
   public set pagination(value: number) {
     if (this.pagination !== value) {
-      this.store?.update((state) => ({
+      this.store.update((state) => ({
         ...state,
         pagination: value,
       }));
@@ -139,12 +139,12 @@ export class StoreModel extends Model {
   }
 
   public get hasMorePreviews(): boolean {
-    return this.store?.getValue().hasMorePreviews;
+    return this.store.getValue().hasMorePreviews;
   }
 
   public set hasMorePreviews(value: boolean) {
     if (this.hasMorePreviews !== value) {
-      this.store?.update((state) => ({
+      this.store.update((state) => ({
         ...state,
         hasMorePreviews: value,
       }));

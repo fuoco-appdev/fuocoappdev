@@ -88,7 +88,7 @@ export function SigninDesktopComponent({
                     passwordValue={props.password ?? ''}
                     defaultIconColor={'#2A2A5F'}
                     litIconColor={'#2A2A5F'}
-                    providers={['facebook', 'google']}
+                    providers={['google']}
                     view={'sign_in'}
                     socialColors={false}
                     strings={{

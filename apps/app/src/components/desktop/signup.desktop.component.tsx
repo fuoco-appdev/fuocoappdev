@@ -95,7 +95,7 @@ export function SignupDesktopComponent({
                     passwordValue={props?.password ?? ''}
                     confirmPasswordValue={props?.confirmationPassword ?? ''}
                     litIconColor={'#2A2A5F'}
-                    providers={['facebook', 'google']}
+                    providers={['google']}
                     view={'sign_up'}
                     socialColors={false}
                     strings={{

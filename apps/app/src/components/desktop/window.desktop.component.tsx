@@ -44,11 +44,16 @@ export function WindowDesktopComponent({
   const navigate = useNavigate();
   const sideBarRef = useRef<HTMLDivElement | null>(null);
   const [isSideBarOpen, setIsSideBarOpen] = useState<boolean>(true);
+  const [date, setDate] = useState<Date | null>(null);
   const [props] = useObservable(WindowController.model.store);
   const [accountProps] = useObservable(AccountController.model.store);
   const [localProps] = useObservable(
     WindowController.model.localStore ?? Store.prototype
   );
+
+  useEffect(() => {
+    setDate(new Date(Date.now()));
+  }, []);
 
   const account = props.account as core.Account;
   const customer = accountProps.customer as Customer;
@@ -411,7 +416,7 @@ export function WindowDesktopComponent({
                     styles['copyright-text-desktop'],
                   ].join(' ')}
                 >
-                  Cruthology <Line.Copyright size={16} /> 2023
+                  Cruthology <Line.Copyright size={16} /> {date?.getFullYear()}
                 </div>
               </div>
             )}
@@ -483,6 +488,26 @@ export function WindowDesktopComponent({
                       className={[styles['navigation-back-title']].join(' ')}
                     >
                       {t('checkout')}
+                    </div>
+                  </>
+                )}
+                {props.activeRoute === RoutePaths.TermsOfService && (
+                  <>
+                    <Line.Gavel size={24} />
+                    <div
+                      className={[styles['navigation-back-title']].join(' ')}
+                    >
+                      {t('termsOfService')}
+                    </div>
+                  </>
+                )}
+                {props.activeRoute === RoutePaths.PrivacyPolicy && (
+                  <>
+                    <Line.Gavel size={24} />
+                    <div
+                      className={[styles['navigation-back-title']].join(' ')}
+                    >
+                      {t('privacyPolicy')}
                     </div>
                   </>
                 )}

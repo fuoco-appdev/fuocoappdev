@@ -1,39 +1,11 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
 .root-desktop {
-  display: grid;
-  grid-template-columns: 132fr 352fr 956fr;
-  margin-top: 5%;
-  height: 95%;
-
-  & .content-desktop {
-    grid-column-start: 2;
-    grid-column-end: 3;
-    margin-bottom: 30%;
-  }
-
-  & .backButtonContainer {
-    display: grid;
-    position: absolute;
-    grid-template-columns: 68fr 426fr 956fr;
-    width: 100%;
-
-    & .backButton {
-      position: relative;
-      display: flex;
-      align-items: center;
-      height: 38px;
-      grid-column-start: 2;
-      grid-column-end: 3;
-    }
-  }
+  padding: $mp-6;
 }
 
 .root-mobile {
-  & .content-mobile {
-    margin-top: $mp-8;
-    padding: 0 $mp-4;
-  }
+  padding: $mp-6 $mp-4;
 }
 
 .root {

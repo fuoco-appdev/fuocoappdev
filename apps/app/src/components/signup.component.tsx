@@ -47,13 +47,14 @@ export default function SignupComponent(): JSX.Element {
         description: t('authTooManyRequestsDescription') ?? '',
         type: 'error',
       });
-    } else {
+    } else if (authError?.status && authError?.status > 400) {
       WindowController.addToast({
         key: `signup-${Math.random()}`,
         message: authError?.name,
         description: authError?.message,
         type: 'error',
       });
+    } else {
       setEmailError('');
       setPasswordError('');
       setConfirmPasswordError('');

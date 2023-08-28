@@ -18,6 +18,7 @@ export enum ProductOptions {
 }
 
 export interface ProductState {
+  productId: string | undefined;
   thumbnail: string;
   title: string;
   subtitle: string;
@@ -43,6 +44,7 @@ export class ProductModel extends Model {
       createStore(
         { name: 'product' },
         withProps<ProductState>({
+          productId: undefined,
           thumbnail: '',
           title: '',
           subtitle: '',
@@ -63,6 +65,16 @@ export class ProductModel extends Model {
         })
       )
     );
+  }
+
+  public get productId(): string | undefined {
+    return this.store.getValue().productId;
+  }
+
+  public set productId(value: string | undefined) {
+    if (this.productId !== value) {
+      this.store.update((state) => ({ ...state, productId: value }));
+    }
   }
 
   public get thumbnail(): string {

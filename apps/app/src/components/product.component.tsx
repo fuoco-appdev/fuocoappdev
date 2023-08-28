@@ -1,43 +1,42 @@
-import { Auth, Typography, Button, Tabs, Solid } from '@fuoco.appdev/core-ui';
-import { Line } from '@fuoco.appdev/core-ui';
 import { useObservable } from '@ngneat/use-observable';
-import styles from './product.module.scss';
-import ReactMarkdown from 'react-markdown';
-import gfm from 'remark-gfm';
 import ProductController from '../controllers/product.controller';
-import { useNavigate } from 'react-router-dom';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { ProductOptions } from '../models/product.model';
-import {
-  ProductOptionValue,
-  ProductTag,
-  ProductOption,
-} from '@medusajs/medusa';
+import { ProductOptionValue, ProductOption } from '@medusajs/medusa';
 import { PricedVariant } from '@medusajs/medusa/dist/types/pricing';
 import { TabProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/tabs/tabs';
-import WindowController from '../controllers/window.controller';
-// @ts-ignore
-import { formatAmount } from 'medusa-react';
 import StoreController from '../controllers/store.controller';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
+import { ProductDesktopComponent } from './desktop/product.desktop.component';
+import { ProductMobileComponent } from './mobile/product.mobile.component';
 
 export interface ProductProps {}
 
-function ProductDesktopComponent({}: ProductProps): JSX.Element {
-  return (
-    <div className={[styles['root'], styles['root-desktop']].join(' ')}></div>
-  );
+export interface ProductResponsiveProps {
+  description: string;
+  tabs: TabProps[];
+  activeVariant: string | undefined;
+  activeDetails: string | undefined;
+  alcohol: string | undefined;
+  brand: string | undefined;
+  varietals: string | undefined;
+  producerBottler: string | undefined;
+  format: string | undefined;
+  region: string | undefined;
+  residualSugar: string | undefined;
+  type: string | undefined;
+  uvc: string | undefined;
+  vintage: string | undefined;
+  hasQuantityLimit: boolean;
+  setActiveDetails: (value: string | undefined) => void;
+  setDescription: (value: string) => void;
 }
 
-function ProductMobileComponent({}: ProductProps): JSX.Element {
+export default function ProductComponent(): JSX.Element {
   const [props] = useObservable(ProductController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
-  const [showMore, setShowMore] = useState<boolean>(false);
-  const [disableShowMore, setDisableShowMore] = useState<boolean>(false);
+  const { id } = useParams();
   const [description, setDescription] = useState<string>('');
   const [tabs, setTabs] = useState<TabProps[]>([]);
   const [activeVariant, setActiveVariant] = useState<string | undefined>();
@@ -57,11 +56,10 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
   const [uvc, setUVC] = useState<string | undefined>('');
   const [vintage, setVintage] = useState<string | undefined>('');
   const [hasQuantityLimit, setHasQuantityLimit] = useState<boolean>(false);
-  const { id } = useParams();
-  const { t } = useTranslation();
 
   useEffect(() => {
-    ProductController.requestProductAsync(id ?? '');
+    ProductController.resetDetails();
+    ProductController.updateProductId(id);
   }, []);
 
   useEffect(() => {
@@ -145,331 +143,49 @@ function ProductMobileComponent({}: ProductProps): JSX.Element {
     }
   }, [props.selectedVariant, props.metadata]);
 
-  useEffect(() => {
-    if (props.description.length < 356) {
-      setDisableShowMore(true);
-      setDescription(props.description);
-    } else {
-      setDisableShowMore(false);
-      if (!showMore) {
-        let index = 355;
-        let shortDescription = props.description.substring(0, index);
-        if (shortDescription.endsWith('.')) {
-          shortDescription += '..';
-        } else {
-          shortDescription += '...';
-        }
-        setDescription(shortDescription);
-      } else {
-        setDescription(props.description);
-      }
-    }
-  }, [props.description, showMore]);
-
-  return (
-    <div className={[styles['root'], styles['root-mobile']].join(' ')}>
-      <div className={styles['thumbnail-container-mobile']}>
-        <img
-          className={styles['thumbnail-image-mobile']}
-          src={props.thumbnail || '../assets/svg/wine-bottle.svg'}
-        />
-      </div>
-      <div className={styles['content-mobile']}>
-        <div className={styles['header-container-mobile']}>
-          <div className={styles['title-container-mobile']}>
-            <div className={styles['title']}>{props.title}</div>
-            <div className={styles['subtitle']}>{props.subtitle}</div>
-          </div>
-          {/* <div className={styles['like-container-mobile']}>
-            <div className={styles['like-count-mobile']}>{props.likeCount}</div>
-            <Button
-              rippleProps={{
-                color: !props.isLiked
-                  ? 'rgba(233, 33, 66, .35)'
-                  : 'rgba(42, 42, 95, .35)',
-              }}
-              rounded={true}
-              onClick={() => ProductController.updateIsLiked(!props.isLiked)}
-              type={'text'}
-              icon={
-                props.isLiked ? (
-                  <Line.Favorite size={24} color={'#E92142'} />
-                ) : (
-                  <Line.FavoriteBorder size={24} color={'#2A2A5F'} />
-                )
-              }
-            />
-          </div> */}
-        </div>
-        <div className={styles['description-container-mobile']}>
-          {description.length > 0 ? (
-            <ReactMarkdown remarkPlugins={[gfm]} children={description} />
-          ) : (
-            <Skeleton
-              count={6}
-              borderRadius={9999}
-              className={styles['skeleton-description-mobile']}
-            />
-          )}
-          {props.description && !disableShowMore && (
-            <div className={styles['show-more-container-mobile']}>
-              <Typography.Link
-                className={styles['show-more-link']}
-                onClick={() => setShowMore(!showMore)}
-              >
-                {!showMore ? t('showMore') : t('showLess')}
-              </Typography.Link>
-            </div>
-          )}
-        </div>
-        <div className={styles['price-mobile']}>
-          {storeProps.selectedRegion &&
-            formatAmount({
-              amount: props.price?.amount ?? 0,
-              region: storeProps.selectedRegion,
-              includeTaxes: false,
-            })}
-          &nbsp;
-          <span className={styles['inventory-quantity-mobile']}>
-            ({props.selectedVariant?.inventory_quantity}&nbsp;{t('inStock')})
-          </span>
-        </div>
-        <div className={styles['tags-container-mobile']}>
-          {props.tags.map((value: ProductTag) => (
-            <div className={styles['tag-mobile']}>{value.value}</div>
-          ))}
-        </div>
-        <div className={styles['tab-container-mobile']}>
-          <Tabs
-            flex={true}
-            classNames={{
-              tabButton: styles['tab-button'],
-              tabOutline: styles['tab-outline'],
-            }}
-            type={'underlined'}
-            tabs={tabs}
-            touchScreen={true}
-            activeId={activeVariant}
-            onChange={ProductController.updateSelectedVariant}
-          />
-          <div className={styles['options-container-mobile']}>
-            <div className={styles['option-content-mobile']}>
-              <div className={styles['option-title-mobile']}>
-                {t('alcohol')}
-              </div>
-              <div className={styles['option-value-mobile']}>{alcohol}</div>
-            </div>
-            <div className={styles['option-content-mobile']}>
-              <div className={styles['option-title-mobile']}>{t('brand')}</div>
-              <div className={styles['option-value-mobile']}>{brand}</div>
-            </div>
-            <div className={styles['option-content-mobile']}>
-              <div className={styles['option-title-mobile']}>{t('format')}</div>
-              <div className={styles['option-value-mobile']}>{format}</div>
-            </div>
-            <div className={styles['option-content-mobile']}>
-              <div className={styles['option-title-mobile']}>
-                {t('producerBottler')}
-              </div>
-              <div className={styles['option-value-mobile']}>
-                {producerBottler}
-              </div>
-            </div>
-            <div className={styles['option-content-mobile']}>
-              <div className={styles['option-title-mobile']}>{t('region')}</div>
-              <div className={styles['option-value-mobile']}>{region}</div>
-            </div>
-            <div className={styles['option-content-mobile']}>
-              <div className={styles['option-title-mobile']}>
-                {t('residualSugar')}
-              </div>
-              <div className={styles['option-value-mobile']}>
-                {residualSugar}
-              </div>
-            </div>
-            <div className={styles['option-content-mobile']}>
-              <div className={styles['option-title-mobile']}>{t('type')}</div>
-              <div className={styles['option-value-mobile']}>{type}</div>
-            </div>
-            <div className={styles['option-content-mobile']}>
-              <div className={styles['option-title-mobile']}>{t('uvc')}</div>
-              <div className={styles['option-value-mobile']}>{uvc}</div>
-            </div>
-            <div className={styles['option-content-mobile']}>
-              <div className={styles['option-title-mobile']}>
-                {t('varietals')}
-              </div>
-              <div className={styles['option-value-mobile']}>{varietals}</div>
-            </div>
-            <div className={styles['option-content-mobile']}>
-              <div className={styles['option-title-mobile']}>
-                {t('vintage')}
-              </div>
-              <div className={styles['option-value-mobile']}>{vintage}</div>
-            </div>
-          </div>
-        </div>
-        <Button
-          classNames={{
-            container: styles['add-to-cart-button-container-mobile'],
-            button: styles['add-to-cart-button-mobile'],
-          }}
-          block={true}
-          size={'full'}
-          rippleProps={{
-            color: 'rgba(233, 33, 66, .35)',
-          }}
-          icon={
-            hasQuantityLimit ||
-            props.selectedVariant?.inventory_quantity <= 0 ? (
-              <Line.ProductionQuantityLimits size={24} />
-            ) : (
-              <Line.AddShoppingCart size={24} />
-            )
-          }
-          disabled={
-            hasQuantityLimit || props.selectedVariant?.inventory_quantity <= 0
-          }
-          onClick={() =>
-            ProductController.addToCartAsync(
-              props.selectedVariant?.id,
-              1,
-              () =>
-                WindowController.addToast({
-                  key: `add-to-cart-${Math.random()}`,
-                  message: t('addedToCart') ?? '',
-                  description:
-                    t('addedToCartDescription', {
-                      item: props.title,
-                    }) ?? '',
-                  type: 'success',
-                }),
-              (error) =>
-                WindowController.addToast({
-                  key: `add-to-cart-${Math.random()}`,
-                  message: error.name,
-                  description: error.message,
-                  type: 'error',
-                })
-            )
-          }
-        >
-          {props.selectedVariant?.inventory_quantity <= 0 && t('outOfStock')}
-          {hasQuantityLimit && t('quantityLimit')}
-          {props.selectedVariant?.inventory_quantity > 0 &&
-            !hasQuantityLimit &&
-            t('addToCart')}
-        </Button>
-        <div className={styles['tab-container-mobile']}>
-          <Tabs
-            flex={true}
-            classNames={{
-              tabButton: styles['tab-button'],
-              tabOutline: styles['tab-outline'],
-            }}
-            type={'underlined'}
-            tabs={[
-              {
-                id: 'information',
-                label: t('information').toString(),
-              },
-              {
-                id: 'shipping-and-returns',
-                label: t('shippingAndReturns').toString(),
-              },
-            ]}
-            touchScreen={true}
-            activeId={activeDetails}
-            onChange={(id) => setActiveDetails(id)}
-          />
-          {activeDetails === 'information' && (
-            <div className={styles['details-container-mobile']}>
-              <div className={styles['details-item-content-mobile']}>
-                <div className={styles['details-item-title-mobile']}>
-                  {t('material')}
-                </div>
-                <div className={styles['details-item-value-mobile']}>
-                  {props.material}
-                </div>
-              </div>
-              <div className={styles['details-item-content-mobile']}>
-                <div className={styles['details-item-title-mobile']}>
-                  {t('weight')}
-                </div>
-                <div className={styles['details-item-value-mobile']}>
-                  {props.weight}
-                </div>
-              </div>
-              <div className={styles['details-item-content-mobile']}>
-                <div className={styles['details-item-title-mobile']}>
-                  {t('countryOfOrigin')}
-                </div>
-                <div className={styles['details-item-value-mobile']}>
-                  {props.countryOrigin}
-                </div>
-              </div>
-              <div className={styles['details-item-content-mobile']}>
-                <div className={styles['details-item-title-mobile']}>
-                  {t('dimensions')}
-                </div>
-                <div className={styles['details-item-value-mobile']}>
-                  {props.dimensions}
-                </div>
-              </div>
-              <div className={styles['details-item-content-mobile']}>
-                <div className={styles['details-item-title-mobile']}>
-                  {t('type')}
-                </div>
-                <div className={styles['details-item-value-mobile']}>
-                  {props.type}
-                </div>
-              </div>
-            </div>
-          )}
-          {activeDetails === 'shipping-and-returns' && (
-            <div className={styles['shipping-returns-container-mobile']}>
-              <div className={styles['shipping-returns-content-mobile']}>
-                <div
-                  className={styles['shipping-returns-title-container-mobile']}
-                >
-                  <Line.LocalShipping size={16} color={'#2A2A5F'} />
-                  <div className={styles['shipping-returns-title-mobile']}>
-                    {t('fastDelivery')}
-                  </div>
-                </div>
-                <div className={styles['shipping-returns-description-mobile']}>
-                  {t('fastDeliveryDescription')}
-                </div>
-              </div>
-              <div className={styles['shipping-returns-content-mobile']}>
-                <div
-                  className={styles['shipping-returns-title-container-mobile']}
-                >
-                  <Line.Replay size={16} color={'#2A2A5F'} />
-                  <div className={styles['shipping-returns-title-mobile']}>
-                    {t('easyReturns')}
-                  </div>
-                </div>
-                <div className={styles['shipping-returns-description-mobile']}>
-                  {t('easyReturnsDescription')}
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default function ProductComponent(): JSX.Element {
   return (
     <>
       <ResponsiveDesktop>
-        <ProductDesktopComponent />
+        <ProductDesktopComponent
+          description={description}
+          tabs={tabs}
+          activeVariant={activeVariant}
+          activeDetails={activeDetails}
+          alcohol={alcohol}
+          brand={brand}
+          varietals={varietals}
+          producerBottler={producerBottler}
+          format={format}
+          region={region}
+          residualSugar={residualSugar}
+          type={type}
+          uvc={uvc}
+          vintage={vintage}
+          hasQuantityLimit={hasQuantityLimit}
+          setActiveDetails={setActiveDetails}
+          setDescription={setDescription}
+        />
       </ResponsiveDesktop>
       <ResponsiveMobile>
-        <ProductMobileComponent />
+        <ProductMobileComponent
+          description={description}
+          tabs={tabs}
+          activeVariant={activeVariant}
+          activeDetails={activeDetails}
+          alcohol={alcohol}
+          brand={brand}
+          varietals={varietals}
+          producerBottler={producerBottler}
+          format={format}
+          region={region}
+          residualSugar={residualSugar}
+          type={type}
+          uvc={uvc}
+          vintage={vintage}
+          hasQuantityLimit={hasQuantityLimit}
+          setActiveDetails={setActiveDetails}
+          setDescription={setDescription}
+        />
       </ResponsiveMobile>
     </>
   );
