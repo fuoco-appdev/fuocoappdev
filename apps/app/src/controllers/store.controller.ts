@@ -63,20 +63,13 @@ class StoreController extends Controller {
   ): Promise<void> {
     this._model.selectedTab = value;
     this._model.pagination = 1;
-    await this.searchAsync(this._model.input);
-    await this.searchNextPageUntilLimit();
+    const limit = 10;
+    const offset = limit * (this._model.pagination - 1);
+    await this.searchAsync(this._model.input, offset, limit);
   }
 
   public async onNextScrollAsync(): Promise<void> {
     await this.searchNextPageAsync();
-  }
-
-  public async searchNextPageUntilLimit(limit: number = 10): Promise<void> {
-    await this.searchNextPageAsync();
-
-    if (this._model.hasMorePreviews && this._model.previews.length < limit) {
-      this.searchNextPageUntilLimit(limit);
-    }
   }
 
   public async searchNextPageAsync(): Promise<void> {
@@ -96,7 +89,7 @@ class StoreController extends Controller {
       return;
     }
 
-    let queryWithFilter = '';
+    let filter = 'type_value = Wine AND status = published';
     if (
       this._model.selectedTab &&
       (this._model.selectedTab === ProductTabs.Red ||
@@ -104,20 +97,26 @@ class StoreController extends Controller {
         this._model.selectedTab === ProductTabs.Spirits ||
         this._model.selectedTab === ProductTabs.White)
     ) {
-      queryWithFilter += `\"${this._model.selectedTab}\" `;
+      filter += ` AND metadata.type = ${this._model.selectedTab}`;
     }
 
-    queryWithFilter += query;
-    const result = await this._productsIndex?.search(queryWithFilter, {
-      filter: ['type_value = Wine AND status = published'],
+    const result = await this._productsIndex?.search(query, {
+      filter: [filter],
       sort: ['total_inventory_quantity:desc'],
       offset: offset,
       limit: limit,
     });
 
     let hits = result?.hits as Product[];
+    if (hits.length <= 0 && offset <= 0) {
+      this._model.previews = [];
+    }
+
     if (hits.length <= 0 && this._model.hasMorePreviews) {
       this._model.hasMorePreviews = false;
+    }
+
+    if (hits.length <= 0) {
       return;
     }
 
@@ -125,15 +124,24 @@ class StoreController extends Controller {
       this._model.hasMorePreviews = true;
     }
 
+    const hitsOrder = hits.map((value) => value.id);
     const productIds: string[] = hits.map((value: Product) => value.id);
     const productsResponse = await MedusaService.medusa?.products.list({
       id: productIds,
       sales_channel_id: [this._model.selectedSalesChannel.id ?? ''],
     });
-    const removedHits: PricedProduct[] = [];
     const products = productsResponse?.products ?? [];
+    products.sort((a, b) => {
+      const currentId = a['id'] ?? '';
+      const nextId = b['id'] ?? '';
+
+      if (hitsOrder.indexOf(currentId) > hitsOrder.indexOf(nextId)) {
+        return 1;
+      } else {
+        return -1;
+      }
+    });
     for (let i = 0; i < products.length; i++) {
-      const type = products[i].metadata?.['type'] as string;
       for (const variant of products[i].variants) {
         const price = variant.prices?.find(
           (value) => value.region_id === this._model.selectedRegion?.id
@@ -141,53 +149,8 @@ class StoreController extends Controller {
         if (!price) {
           products.splice(i, 1);
         }
-
-        // Remove hits with tabs
-        if (
-          this._model.selectedTab === ProductTabs.Red ||
-          this._model.selectedTab === ProductTabs.Rose ||
-          this._model.selectedTab === ProductTabs.Spirits ||
-          this._model.selectedTab === ProductTabs.White
-        ) {
-          const duplicates = removedHits.filter(
-            (value) => value.id === products[i].id
-          );
-          if (
-            duplicates.length <= 0 &&
-            type?.toLowerCase() !== this._model.selectedTab?.toLowerCase()
-          ) {
-            removedHits.push(products[i]);
-          }
-        }
       }
     }
-
-    for (const removedHit of removedHits) {
-      const index = products.findIndex((value) => value.id === removedHit.id);
-      products.splice(index, 1);
-    }
-
-    if (this._model.selectedTab === ProductTabs.New) {
-      products.sort(
-        (prev, next) =>
-          new Date(next.created_at ?? '').valueOf() -
-          new Date(prev.created_at ?? '').valueOf()
-      );
-    }
-
-    // Sort available products to the top
-    products.sort((prev, next) => {
-      for (const variant of next.variants) {
-        const quantity = variant.inventory_quantity ?? 0;
-        if (quantity <= 0) {
-          return -1;
-        } else {
-          return 1;
-        }
-      }
-
-      return 1;
-    });
 
     if (offset > 0) {
       const previews = this._model.previews;

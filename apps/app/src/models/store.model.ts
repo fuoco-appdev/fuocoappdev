@@ -4,7 +4,6 @@ import { Product, Region, SalesChannel } from '@medusajs/medusa';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 
 export enum ProductTabs {
-  New = 'New',
   White = 'White',
   Red = 'Red',
   Rose = 'Rose',

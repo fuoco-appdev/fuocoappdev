@@ -126,10 +126,6 @@ export function StoreDesktopComponent({
                 }
                 tabs={[
                   {
-                    id: ProductTabs.New,
-                    label: t('new') ?? 'New',
-                  },
-                  {
                     id: ProductTabs.White,
                     label: t('white') ?? 'White',
                   },
