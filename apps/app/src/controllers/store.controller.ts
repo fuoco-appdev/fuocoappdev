@@ -110,11 +110,12 @@ class StoreController extends Controller {
     queryWithFilter += query;
     const result = await this._productsIndex?.search(queryWithFilter, {
       filter: ['type_value = Wine AND status = published'],
+      sort: ['total_inventory_quantity:desc'],
       offset: offset,
       limit: limit,
     });
-    let hits = result?.hits as Product[];
 
+    let hits = result?.hits as Product[];
     if (hits.length <= 0 && this._model.hasMorePreviews) {
       this._model.hasMorePreviews = false;
       return;
