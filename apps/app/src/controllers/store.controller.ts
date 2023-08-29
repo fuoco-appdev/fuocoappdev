@@ -20,6 +20,7 @@ import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 
 class StoreController extends Controller {
   private readonly _model: StoreModel;
+  private _timerId: NodeJS.Timeout | number | undefined;
   private _productsIndex: Index<Record<string, any>> | undefined;
   private _selectedInventoryLocationSubscription: Subscription | undefined;
 
@@ -47,9 +48,8 @@ class StoreController extends Controller {
   public updateInput(value: string): void {
     this._model.input = value;
     this._model.pagination = 1;
-    let timerId: NodeJS.Timeout | number | undefined = undefined;
-    clearTimeout(timerId as number | undefined);
-    timerId = setTimeout(() => {
+    clearTimeout(this._timerId as number | undefined);
+    this._timerId = setTimeout(() => {
       this.searchAsync(value);
     }, 750);
   }
