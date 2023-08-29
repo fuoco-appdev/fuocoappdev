@@ -113,70 +113,77 @@ export function AccountDesktopComponent(): JSX.Element {
         >
           <div
             className={[
-              styles['complete-profile-title'],
-              styles['complete-profile-title-desktop'],
+              styles['incomplete-content'],
+              styles['incomplete-content-desktop'],
             ].join(' ')}
           >
-            {t('completeProfile')}
-          </div>
-          <div
-            className={[
-              styles['form-container'],
-              styles['form-container-desktop'],
-            ].join(' ')}
-          >
-            <AccountProfileFormComponent
-              values={props.profileForm}
-              errors={props.profileFormErrors}
-              onChangeCallbacks={{
-                firstName: (event) =>
-                  AccountController.updateProfile({
-                    firstName: event.target.value,
-                  }),
-                lastName: (event) =>
-                  AccountController.updateProfile({
-                    lastName: event.target.value,
-                  }),
-                phoneNumber: (value, event, formattedValue) =>
-                  AccountController.updateProfile({
-                    phoneNumber: value,
-                  }),
-              }}
-            />
-          </div>
-          <div>
-            <Button
-              classNames={{
-                container: [
-                  styles['submit-button-container'],
-                  styles['submit-button-container-desktop'],
-                ].join(' '),
-                button: [
-                  styles['submit-button'],
-                  styles['submit-button-desktop'],
-                ].join(' '),
-              }}
-              block={true}
-              size={'large'}
-              icon={<Line.Done size={24} />}
-              onClick={() => {
-                AccountController.updateProfileErrors({
-                  firstName: undefined,
-                  lastName: undefined,
-                  phoneNumber: undefined,
-                });
-                const errors = AccountController.getProfileFormErrors(
-                  props.profileForm
-                );
-                if (errors) {
-                  AccountController.updateProfileErrors(errors);
-                  return;
-                }
-                AccountController.completeProfileAsync();
-              }}
+            <div
+              className={[
+                styles['complete-profile-title'],
+                styles['complete-profile-title-desktop'],
+              ].join(' ')}
             >
-              {t('complete')}
-            </Button>
+              {t('completeProfile')}
+            </div>
+            <div
+              className={[
+                styles['form-container'],
+                styles['form-container-desktop'],
+              ].join(' ')}
+            >
+              <AccountProfileFormComponent
+                values={props.profileForm}
+                errors={props.profileFormErrors}
+                onChangeCallbacks={{
+                  firstName: (event) =>
+                    AccountController.updateProfile({
+                      firstName: event.target.value,
+                    }),
+                  lastName: (event) =>
+                    AccountController.updateProfile({
+                      lastName: event.target.value,
+                    }),
+                  phoneNumber: (value, event, formattedValue) =>
+                    AccountController.updateProfile({
+                      phoneNumber: value,
+                    }),
+                }}
+              />
+            </div>
+            <div>
+              <Button
+                classNames={{
+                  container: [
+                    styles['submit-button-container'],
+                    styles['submit-button-container-desktop'],
+                  ].join(' '),
+                  button: [
+                    styles['submit-button'],
+                    styles['submit-button-desktop'],
+                  ].join(' '),
+                }}
+                block={true}
+                size={'large'}
+                icon={<Line.Done size={24} />}
+                onClick={() => {
+                  AccountController.updateProfileErrors({
+                    firstName: undefined,
+                    lastName: undefined,
+                    phoneNumber: undefined,
+                  });
+                  const errors = AccountController.getProfileFormErrors(
+                    props.profileForm
+                  );
+                  if (errors) {
+                    AccountController.updateProfileErrors(errors);
+                    return;
+                  }
+                  AccountController.completeProfileAsync();
+                }}
+              >
+                {t('complete')}
+              </Button>
+            </div>
           </div>
         </div>
       )}

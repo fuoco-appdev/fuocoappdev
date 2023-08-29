@@ -47,7 +47,11 @@ class StoreController extends Controller {
   public updateInput(value: string): void {
     this._model.input = value;
     this._model.pagination = 1;
-    this.searchAsync(value);
+    let timerId: NodeJS.Timeout | number | undefined = undefined;
+    clearTimeout(timerId as number | undefined);
+    timerId = setTimeout(() => {
+      this.searchAsync(value);
+    }, 750);
   }
 
   public updateSelectedPreview(value: Product): void {

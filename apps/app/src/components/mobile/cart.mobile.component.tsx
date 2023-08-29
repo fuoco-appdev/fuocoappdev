@@ -105,40 +105,41 @@ export function CartMobileComponent(): JSX.Element {
                 onRemove={() => CartController.removeLineItemAsync(item)}
               />
             ))}
-          {props.cart?.items.length <= 0 && (
-            <>
-              <div
-                className={[
-                  styles['no-items-text'],
-                  styles['no-items-text-mobile'],
-                ].join(' ')}
-              >
-                {t('noCartItems')}
-              </div>
-              <div
-                className={[
-                  styles['shop-button-container'],
-                  styles['shop-button-container-mobile'],
-                ].join(' ')}
-              >
-                <Button
-                  classNames={{
-                    button: styles['outline-button'],
-                  }}
-                  rippleProps={{
-                    color: 'rgba(133, 38, 122, .35)',
-                  }}
-                  size={'large'}
-                  touchScreen={true}
-                  onClick={() =>
-                    setTimeout(() => navigate(RoutePaths.Store), 150)
-                  }
+          {!props.cart ||
+            (props.cart?.items.length <= 0 && (
+              <>
+                <div
+                  className={[
+                    styles['no-items-text'],
+                    styles['no-items-text-mobile'],
+                  ].join(' ')}
                 >
-                  {t('shopNow')}
-                </Button>
-              </div>
-            </>
-          )}
+                  {t('noCartItems')}
+                </div>
+                <div
+                  className={[
+                    styles['shop-button-container'],
+                    styles['shop-button-container-mobile'],
+                  ].join(' ')}
+                >
+                  <Button
+                    classNames={{
+                      button: styles['outline-button'],
+                    }}
+                    rippleProps={{
+                      color: 'rgba(133, 38, 122, .35)',
+                    }}
+                    size={'large'}
+                    touchScreen={true}
+                    onClick={() =>
+                      setTimeout(() => navigate(RoutePaths.Store), 150)
+                    }
+                  >
+                    {t('shopNow')}
+                  </Button>
+                </div>
+              </>
+            ))}
         </div>
       </div>
       <div

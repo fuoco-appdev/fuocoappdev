@@ -291,7 +291,7 @@ export function WindowDesktopComponent({
                         color={
                           props.activeRoute?.startsWith(RoutePaths.Account)
                             ? 'rgba(252, 245, 227, 1)'
-                            : 'rgba(252, 245, 227, .6)'
+                            : 'rgba(252, 245, 227, .8)'
                         }
                       />
                     ) : (
