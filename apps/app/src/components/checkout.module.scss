@@ -107,6 +107,10 @@
             }
         }
 
+        & .is-legal-age-container {
+                
+        }
+
         & .pricing-container {    
             & .subtotal-container {
                 display: flex;
@@ -265,6 +269,10 @@
             }
         }
 
+        & .is-legal-age-container-desktop {
+                
+        }
+
         & .pricing-container-desktop {
             padding: $mp-4 0;
 
@@ -358,6 +366,10 @@
                     }
                 }
             }
+        }
+
+        & .is-legal-age-container-mobile {
+            padding: 0 $mp-4;
         }
 
         & .pricing-container-mobile {

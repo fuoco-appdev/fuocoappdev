@@ -31,7 +31,6 @@ export function ProductPreviewDesktopComponent({
   price,
   addedToCartCount,
   selectedVariantId,
-  outOfStock,
   setAddedToCartCount,
   onRest,
 }: ProductPreviewResponsiveProps): JSX.Element {
@@ -126,7 +125,7 @@ export function ProductPreviewDesktopComponent({
               </div>
             )}
           </div>
-          {selectedVariantId ? (
+          {price.length > 0 ? (
             <span
               className={[
                 styles['product-price'],
@@ -172,18 +171,15 @@ export function ProductPreviewDesktopComponent({
               styles['product-status-actions-container-desktop'],
             ].join(' ')}
           >
-            <Button
-              classNames={{ button: styles['floating-button'] }}
-              rippleProps={{
-                color: 'rgba(133, 38, 122, .35)',
-              }}
-              disabled={!selectedVariantId || outOfStock}
-              rounded={true}
-              onClick={() => {
-                ProductController.addToCartAsync(
-                  selectedVariantId ?? '',
-                  1,
-                  () => {
+            {selectedVariantId && (
+              <Button
+                classNames={{ button: styles['floating-button'] }}
+                rippleProps={{
+                  color: 'rgba(133, 38, 122, .35)',
+                }}
+                rounded={true}
+                onClick={() => {
+                  ProductController.addToCartAsync(selectedVariantId, 1, () => {
                     WindowController.addToast({
                       key: `add-to-cart-${Math.random()}`,
                       message: t('addedToCart') ?? '',
@@ -194,11 +190,11 @@ export function ProductPreviewDesktopComponent({
                       type: 'success',
                     });
                     setAddedToCartCount(addedToCartCount + 1);
-                  }
-                );
-              }}
-              icon={<Line.AddShoppingCart size={24} />}
-            />
+                  });
+                }}
+                icon={<Line.AddShoppingCart size={24} />}
+              />
+            )}
           </div>
         </div>
       </div>

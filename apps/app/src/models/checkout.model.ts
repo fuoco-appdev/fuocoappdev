@@ -34,6 +34,7 @@ export interface CheckoutState {
   discountCode: string;
   selectedProviderId: ProviderType | undefined;
   isPaymentLoading: boolean;
+  isLegalAge: boolean;
 }
 
 export class CheckoutModel extends Model {
@@ -95,6 +96,7 @@ export class CheckoutModel extends Model {
           discountCode: '',
           selectedProviderId: undefined,
           isPaymentLoading: false,
+          isLegalAge: false,
         })
       )
     );
@@ -287,6 +289,19 @@ export class CheckoutModel extends Model {
       this.store.update((state) => ({
         ...state,
         isPaymentLoading: value,
+      }));
+    }
+  }
+
+  public get isLegalAge(): boolean {
+    return this.store.getValue().isLegalAge;
+  }
+
+  public set isLegalAge(value: boolean) {
+    if (this.isLegalAge !== value) {
+      this.store.update((state) => ({
+        ...state,
+        isLegalAge: value,
       }));
     }
   }

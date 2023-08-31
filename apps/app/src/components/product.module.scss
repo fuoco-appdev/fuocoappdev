@@ -20,6 +20,10 @@
       color: $brand-900;
       padding: $mp-4 0;
     }
+
+    & .thumbnail-image-skeleton {
+      height: 382px;
+    }
   }
 
   & .content {
@@ -109,19 +113,29 @@
     display: flex;
     flex-wrap: wrap;
     margin-bottom: $mp-2;
+    gap: $mp-1;
 
     & .tag {
       border-radius: $rounded-full;
       padding: $mp-2 $mp-4;
       background-color: $brand-900;
       font-size: $font-size-sm;
-      margin-right: $mp-1;
       margin-bottom: $mp-1;
       color: #fff;
+    }
+
+    & .tag-skeleton {
+      min-height: 24px;
+      width: 68px;
+      margin-bottom: $mp-1;
     }
   }
 
   & .tab-container {
+    & .tabs-skeleton {
+      height: 56px;
+    }
+
     & .options-container {
       display: flex;
       flex-wrap: wrap;
@@ -146,6 +160,17 @@
           color: $brand-900;
           font-weight: $font-weight-medium;
           font-size: $font-size-xs;
+        }
+
+        & .option-title-skeleton {
+          font-size: $font-size-xs;
+          width: 42px;
+          margin-bottom: $mp-1;
+        }
+
+        & .option-value-skeleton {
+          font-size: $font-size-xs;
+          width: 36px;
         }
       }
     }
@@ -174,6 +199,17 @@
           color: $brand-900;
           font-weight: $font-weight-medium;
           font-size: $font-size-xs;
+        }
+
+        & .details-title-skeleton {
+          font-size: $font-size-xs;
+          width: 42px;
+          margin-bottom: $mp-1;
+        }
+
+        & .details-value-skeleton {
+          font-size: $font-size-xs;
+          width: 36px;
         }
       }
     }
@@ -208,6 +244,11 @@
   }
 
   & .add-to-cart-button-container {
+    margin-bottom: $mp-4;
+  }
+
+  & .add-to-cart-button-skeleton {
+    height: 42px;
     margin-bottom: $mp-4;
   }
 
@@ -253,6 +294,10 @@
     width: 382px;
 
     & .thumbnail-image-desktop {
+    }
+
+    & .thumbnail-image-skeleton-desktop {
+      width: 382px;
     }
   }
 
@@ -337,6 +382,10 @@
 .root-mobile {
   & .thumbnail-container-mobile {
     & .thumbnail-image-mobile {
+    }
+
+    & .thumbnail-image-skeleton-mobile {
+      width: 100vw;
     }
   }
 

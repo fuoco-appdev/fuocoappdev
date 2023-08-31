@@ -18,6 +18,7 @@ export enum ProductOptions {
 }
 
 export interface ProductState {
+  isLoading: boolean;
   productId: string | undefined;
   thumbnail: string;
   title: string;
@@ -44,6 +45,7 @@ export class ProductModel extends Model {
       createStore(
         { name: 'product' },
         withProps<ProductState>({
+          isLoading: true,
           productId: undefined,
           thumbnail: '',
           title: '',
@@ -65,6 +67,16 @@ export class ProductModel extends Model {
         })
       )
     );
+  }
+
+  public get isLoading(): boolean {
+    return this.store.getValue().isLoading;
+  }
+
+  public set isLoading(value: boolean) {
+    if (this.isLoading !== value) {
+      this.store.update((state) => ({ ...state, isLoading: value }));
+    }
   }
 
   public get productId(): string | undefined {

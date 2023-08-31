@@ -73,6 +73,7 @@ class ProductController extends Controller {
   }
 
   public override dispose(renderCount: number): void {
+    this._productIdSubscription?.unsubscribe();
     this._selectedPreviewSubscription?.unsubscribe();
     this._selectedSalesChannelSubscription?.unsubscribe();
   }
@@ -81,6 +82,7 @@ class ProductController extends Controller {
     id: string,
     salesChannelId: string
   ): Promise<void> {
+    this._model.isLoading = true;
     const productResponse = await MedusaService.medusa?.products.list({
       id: id,
       sales_channel_id: [salesChannelId],
@@ -103,6 +105,7 @@ class ProductController extends Controller {
         ? `${product.length}L x ${product.width}W x ${product.height}H`
         : '-';
     this._model.type = product?.type ? product.type.value : '-';
+    this._model.isLoading = false;
   }
 
   public resetDetails(): void {

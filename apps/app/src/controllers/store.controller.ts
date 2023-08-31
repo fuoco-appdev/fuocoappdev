@@ -102,7 +102,6 @@ class StoreController extends Controller {
 
     const result = await this._productsIndex?.search(query, {
       filter: [filter],
-      sort: ['total_inventory_quantity:desc'],
       offset: offset,
       limit: limit,
     });
@@ -208,14 +207,9 @@ class StoreController extends Controller {
       return;
     }
 
-    const min = 0;
-    const max = inventoryLocation.salesChannels?.length - 1;
-    const randomSalesChannelIndex =
-      Math.floor(Math.random() * (max - min + 1)) + min;
-    this._model.selectedSalesChannel =
-      inventoryLocation.salesChannels[randomSalesChannelIndex];
+    this._model.selectedSalesChannel = inventoryLocation.salesChannels[0];
     this._model.pagination = 1;
-    await this.searchAsync(this._model.input);
+    this.searchAsync('');
   }
 
   private async updateRegionAsync(region: Region | undefined): Promise<void> {

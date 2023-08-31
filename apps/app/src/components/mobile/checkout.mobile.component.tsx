@@ -70,7 +70,12 @@ export function CheckoutMobileComponent({
           styles['card-container-mobile'],
         ].join(' ')}
       >
-        <div className={[styles['card-content-container']].join(' ')}>
+        <div
+          className={[
+            styles['card-content-container'],
+            styles['card-content-container-mobile'],
+          ].join(' ')}
+        >
           <div
             className={[
               styles['header-container'],
@@ -895,6 +900,24 @@ export function CheckoutMobileComponent({
         </div>
         <div
           className={[
+            styles['is-legal-age-container'],
+            styles['is-legal-age-container-mobile'],
+          ].join(' ')}
+        >
+          <Checkbox
+            classNames={{
+              checkbox: styles['checkbox'],
+              labelContainerLabel: styles['checkbox-label'],
+            }}
+            label={t('isLegalAgeDescription') ?? ''}
+            checked={props.isLegalAge}
+            onChange={() =>
+              CheckoutController.updateIsLegalAge(!props.isLegalAge)
+            }
+          />
+        </div>
+        <div
+          className={[
             styles['pay-button-container'],
             styles['pay-button-container-mobile'],
           ].join(' ')}
@@ -906,7 +929,11 @@ export function CheckoutMobileComponent({
             }}
             block={true}
             touchScreen={true}
-            disabled={!props.shippingFormComplete || !props.billingFormComplete}
+            disabled={
+              !props.shippingFormComplete ||
+              !props.billingFormComplete ||
+              !props.isLegalAge
+            }
             size={'large'}
             icon={<Line.Payment size={24} />}
             onClick={() => setIsPayOpen(true)}

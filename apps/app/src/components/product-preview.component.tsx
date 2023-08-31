@@ -35,11 +35,9 @@ export interface ProductPreviewResponsiveProps extends ProductPreviewProps {
   price: string;
   addedToCartCount: number;
   selectedVariantId: string | undefined;
-  outOfStock: boolean;
   setPrice: (value: string) => void;
   setAddedToCartCount: (value: number) => void;
   setSelectedVariantId: (value: string | undefined) => void;
-  setOutOfStock: (value: boolean) => void;
   formatPrice: (price: MoneyAmount) => string;
 }
 
@@ -53,8 +51,7 @@ export default function ProductPreviewComponent({
   const [addedToCartCount, setAddedToCartCount] = useState<number>(0);
   const [selectedVariantId, setSelectedVariantId] = useState<
     string | undefined
-  >();
-  const [outOfStock, setOutOfStock] = useState<boolean>(false);
+  >(undefined);
   const [storeProps] = useObservable(StoreController.model.store);
 
   const formatPrice = (price: MoneyAmount): string => {
@@ -75,7 +72,10 @@ export default function ProductPreviewComponent({
 
   useEffect(() => {
     const variantPrices: MoneyAmount[] = [];
-    for (const variant of preview.variants) {
+    const purchasableVariants = preview.variants.filter(
+      (value) => value.purchasable === true
+    );
+    for (const variant of purchasableVariants) {
       if (!storeProps.selectedRegion) {
         continue;
       }
@@ -84,11 +84,8 @@ export default function ProductPreviewComponent({
         storeProps.selectedRegion,
         variant
       );
-      if (!selectedCurrencyPrices || selectedCurrencyPrices.length <= 0) {
-        continue;
-      }
 
-      if (!CartController.model.cart) {
+      if (!selectedCurrencyPrices || selectedCurrencyPrices.length <= 0) {
         continue;
       }
 
@@ -127,15 +124,6 @@ export default function ProductPreviewComponent({
     }
   }, [preview, addedToCartCount, storeProps.selectedRegion]);
 
-  useEffect(() => {
-    const selectedVariant = preview.variants.find(
-      (value) => value.id === selectedVariantId
-    );
-    if (selectedVariant) {
-      setOutOfStock(selectedVariant.inventory_quantity <= 0);
-    }
-  }, [selectedVariantId]);
-
   return (
     <>
       <ResponsiveDesktop>
@@ -147,11 +135,9 @@ export default function ProductPreviewComponent({
           price={price}
           addedToCartCount={addedToCartCount}
           selectedVariantId={selectedVariantId}
-          outOfStock={outOfStock}
           setPrice={setPrice}
           setAddedToCartCount={setAddedToCartCount}
           setSelectedVariantId={setSelectedVariantId}
-          setOutOfStock={setOutOfStock}
           formatPrice={formatPrice}
         />
       </ResponsiveDesktop>
@@ -164,11 +150,9 @@ export default function ProductPreviewComponent({
           price={price}
           addedToCartCount={addedToCartCount}
           selectedVariantId={selectedVariantId}
-          outOfStock={outOfStock}
           setPrice={setPrice}
           setAddedToCartCount={setAddedToCartCount}
           setSelectedVariantId={setSelectedVariantId}
-          setOutOfStock={setOutOfStock}
           formatPrice={formatPrice}
         />
       </ResponsiveMobile>

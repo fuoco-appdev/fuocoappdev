@@ -16,7 +16,7 @@ export interface ProductProps {}
 export interface ProductResponsiveProps {
   description: string;
   tabs: TabProps[];
-  activeVariant: string | undefined;
+  activeVariantId: string | undefined;
   activeDetails: string | undefined;
   alcohol: string | undefined;
   brand: string | undefined;
@@ -35,11 +35,10 @@ export interface ProductResponsiveProps {
 
 export default function ProductComponent(): JSX.Element {
   const [props] = useObservable(ProductController.model.store);
-  const [storeProps] = useObservable(StoreController.model.store);
   const { id } = useParams();
   const [description, setDescription] = useState<string>('');
   const [tabs, setTabs] = useState<TabProps[]>([]);
-  const [activeVariant, setActiveVariant] = useState<string | undefined>();
+  const [activeVariantId, setActiveVariantId] = useState<string | undefined>();
   const [activeDetails, setActiveDetails] = useState<string | undefined>(
     'information'
   );
@@ -81,7 +80,7 @@ export default function ProductComponent(): JSX.Element {
       setTabs(tabProps);
 
       const selectedVariant = tabProps.length > 0 ? tabProps[0].id : undefined;
-      setActiveVariant(selectedVariant);
+      setActiveVariantId(selectedVariant);
       ProductController.updateSelectedVariant(selectedVariant ?? '');
     }
   }, [props.options]);
@@ -149,7 +148,7 @@ export default function ProductComponent(): JSX.Element {
         <ProductDesktopComponent
           description={description}
           tabs={tabs}
-          activeVariant={activeVariant}
+          activeVariantId={activeVariantId}
           activeDetails={activeDetails}
           alcohol={alcohol}
           brand={brand}
@@ -170,7 +169,7 @@ export default function ProductComponent(): JSX.Element {
         <ProductMobileComponent
           description={description}
           tabs={tabs}
-          activeVariant={activeVariant}
+          activeVariantId={activeVariantId}
           activeDetails={activeDetails}
           alcohol={alcohol}
           brand={brand}

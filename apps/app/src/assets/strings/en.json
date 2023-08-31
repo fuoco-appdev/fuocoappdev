@@ -247,5 +247,6 @@
   "minus": "Minus",
   "checkout": "Checkout",
   "orderConfirmed": "Order Confirmed",
-  "filter": "Filter"
+  "filter": "Filter",
+  "isLegalAgeDescription": "I certify that I am of legal drinking age in my jurisdiction."
 }

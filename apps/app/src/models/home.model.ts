@@ -4,6 +4,7 @@ import mapboxgl from 'mapbox-gl';
 import { SalesChannel } from '@medusajs/medusa';
 
 export interface InventoryLocation {
+  id: string;
   coordinates: mapboxgl.LngLat;
   placeName: string;
   company: string;
@@ -22,6 +23,7 @@ export interface HomeLocalState {
   longitude: number;
   latitude: number;
   zoom: number;
+  selectedInventoryLocationId: string | undefined;
 }
 
 export class HomeModel extends Model {
@@ -43,6 +45,7 @@ export class HomeModel extends Model {
           latitude: 46.1185,
           longitude: -74.5962,
           zoom: 13,
+          selectedInventoryLocationId: undefined,
         })
       )
     );
@@ -75,6 +78,19 @@ export class HomeModel extends Model {
   public set zoom(value: number) {
     if (this.zoom !== value) {
       this.localStore?.update((state) => ({ ...state, zoom: value }));
+    }
+  }
+
+  public get selectedInventoryLocationId(): string | undefined {
+    return this.localStore?.getValue().selectedInventoryLocationId;
+  }
+
+  public set selectedInventoryLocationId(value: string | undefined) {
+    if (this.selectedInventoryLocationId !== value) {
+      this.localStore?.update((state) => ({
+        ...state,
+        selectedInventoryLocationId: value,
+      }));
     }
   }
 

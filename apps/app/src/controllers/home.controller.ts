@@ -13,6 +13,7 @@ import { PublicSecrets } from '../protobuf/core_pb';
 
 class HomeController extends Controller {
   private readonly _model: HomeModel;
+  private _selectedInventoryLocationIdSubscription: Subscription | undefined;
   private _currentPositionSubscription: Subscription | undefined;
   private _publicSecretsSubscription: Subscription | undefined;
 
@@ -32,7 +33,7 @@ class HomeController extends Controller {
 
   public override dispose(renderCount: number): void {
     this._publicSecretsSubscription?.unsubscribe();
-    this._currentPositionSubscription?.unsubscribe();
+    this._selectedInventoryLocationIdSubscription?.unsubscribe();
   }
 
   public onMapMove(state: ViewState): void {
@@ -51,13 +52,27 @@ class HomeController extends Controller {
     if (renderCount <= 1) {
       this._model.inventoryLocations =
         await this.requestInventoryLocationsAsync();
-      if (this._model.inventoryLocations.length > 0) {
-        this._model.selectedInventoryLocation =
-          this._model.inventoryLocations[0];
-      }
 
       this._model.wineCount = await this.requestWineCountAsync();
     }
+    this._selectedInventoryLocationIdSubscription = this._model.store
+      .pipe(select((model) => model.selectedInventoryLocationId))
+      .subscribe({
+        next: (id: string | undefined) => {
+          if (!id) {
+            return;
+          }
+
+          const inventoryLocation = this._model.inventoryLocations.find(
+            (value) => value.id === id
+          );
+          this._model.selectedInventoryLocation =
+            inventoryLocation ?? undefined;
+          this._model.longitude = inventoryLocation?.coordinates.lng ?? 0;
+          this._model.latitude = inventoryLocation?.coordinates.lat ?? 0;
+        },
+      });
+
     this._currentPositionSubscription = WindowController.model.store
       .pipe(select((model) => model.currentPosition))
       .subscribe({
@@ -92,6 +107,7 @@ class HomeController extends Controller {
       const coordinates = metadata['coordinates'];
       if (coordinates) {
         inventoryLocations.push({
+          id: location['id'],
           salesChannels: location['sales_channels'],
           coordinates: new mapboxgl.LngLat(
             coordinates['longitude'],
@@ -111,7 +127,7 @@ class HomeController extends Controller {
     value: GeolocationPosition,
     inventoryLocations: InventoryLocation[]
   ): void {
-    if (!value?.coords) {
+    if (!value?.coords || this._model.selectedInventoryLocationId) {
       return;
     }
 
@@ -119,7 +135,7 @@ class HomeController extends Controller {
     const currentPoint = new mapboxgl.LngLat(longitude, latitude);
     const point = this.findNearestPoint(currentPoint, inventoryLocations);
     if (point) {
-      const inventoryLocation = inventoryLocations.find(
+      const inventoryLocation = this._model.inventoryLocations.find(
         (value) => value.coordinates.distanceTo(point) === 0
       );
       this._model.selectedInventoryLocation = inventoryLocation ?? undefined;

@@ -124,6 +124,10 @@ class CheckoutController extends Controller {
     this._model.billingFormComplete = value;
   }
 
+  public updateIsLegalAge(value: boolean): void {
+    this._model.isLegalAge = value;
+  }
+
   public async updateSelectedShippingOptionIdAsync(
     value: string
   ): Promise<void> {

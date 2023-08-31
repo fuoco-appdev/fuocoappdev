@@ -31,7 +31,6 @@ export function ProductPreviewMobileComponent({
   price,
   addedToCartCount,
   selectedVariantId,
-  outOfStock,
   setAddedToCartCount,
 }: ProductPreviewResponsiveProps): JSX.Element {
   const [expanded, setExpanded] = useState<boolean>(false);
@@ -147,33 +146,34 @@ export function ProductPreviewMobileComponent({
                   styles['thumbnail-bottom-content-mobile'],
                 ].join(' ')}
               >
-                <Button
-                  classNames={{ button: styles['floating-button'] }}
-                  rippleProps={{
-                    color: 'rgba(133, 38, 122, .35)',
-                  }}
-                  disabled={!selectedVariantId || outOfStock}
-                  rounded={true}
-                  onClick={() => {
-                    ProductController.addToCartAsync(
-                      selectedVariantId ?? '',
-                      1,
-                      () => {
-                        WindowController.addToast({
-                          key: `add-to-cart-${Math.random()}`,
-                          message: t('addedToCart') ?? '',
-                          description:
-                            t('addedToCartDescription', {
-                              item: preview.title,
-                            }) ?? '',
-                          type: 'success',
-                        });
-                        setAddedToCartCount(addedToCartCount + 1);
-                      }
-                    );
-                  }}
-                  icon={<Line.AddShoppingCart size={24} />}
-                />
+                {selectedVariantId && (
+                  <Button
+                    classNames={{ button: styles['floating-button'] }}
+                    rippleProps={{
+                      color: 'rgba(133, 38, 122, .35)',
+                    }}
+                    rounded={true}
+                    onClick={() => {
+                      ProductController.addToCartAsync(
+                        selectedVariantId,
+                        1,
+                        () => {
+                          WindowController.addToast({
+                            key: `add-to-cart-${Math.random()}`,
+                            message: t('addedToCart') ?? '',
+                            description:
+                              t('addedToCartDescription', {
+                                item: preview.title,
+                              }) ?? '',
+                            type: 'success',
+                          });
+                          setAddedToCartCount(addedToCartCount + 1);
+                        }
+                      );
+                    }}
+                    icon={<Line.AddShoppingCart size={24} />}
+                  />
+                )}
               </div>
             )}
           </div>
@@ -192,7 +192,7 @@ export function ProductPreviewMobileComponent({
             >
               {preview.title}
             </span>
-            {selectedVariantId ? (
+            {price.length > 0 ? (
               <span
                 className={[
                   styles['product-price'],
