@@ -33,6 +33,7 @@ class HomeController extends Controller {
 
   public override dispose(renderCount: number): void {
     this._publicSecretsSubscription?.unsubscribe();
+    this._currentPositionSubscription?.unsubscribe();
     this._selectedInventoryLocationIdSubscription?.unsubscribe();
   }
 
@@ -45,6 +46,7 @@ class HomeController extends Controller {
   public updateSelectedInventoryLocation(
     value: InventoryLocation | undefined
   ): void {
+    this._model.selectedInventoryLocationId = value?.id;
     this._model.selectedInventoryLocation = value;
   }
 
@@ -55,29 +57,34 @@ class HomeController extends Controller {
 
       this._model.wineCount = await this.requestWineCountAsync();
     }
-    this._selectedInventoryLocationIdSubscription = this._model.store
-      .pipe(select((model) => model.selectedInventoryLocationId))
+    this._selectedInventoryLocationIdSubscription = this._model.localStore
+      ?.pipe(select((model) => model.selectedInventoryLocationId))
       .subscribe({
         next: (id: string | undefined) => {
           if (!id) {
+            this._currentPositionSubscription?.unsubscribe();
+            this._currentPositionSubscription = WindowController.model.store
+              .pipe(select((model) => model.currentPosition))
+              .subscribe({
+                next: (value) =>
+                  this.onCurrentPositionChanged(
+                    value,
+                    this._model.inventoryLocations
+                  ),
+              });
             return;
           }
 
           const inventoryLocation = this._model.inventoryLocations.find(
             (value) => value.id === id
           );
-          this._model.selectedInventoryLocation =
-            inventoryLocation ?? undefined;
-          this._model.longitude = inventoryLocation?.coordinates.lng ?? 0;
-          this._model.latitude = inventoryLocation?.coordinates.lat ?? 0;
+          if (inventoryLocation) {
+            this._model.selectedInventoryLocationId = inventoryLocation.id;
+            this._model.selectedInventoryLocation = inventoryLocation;
+            this._model.longitude = inventoryLocation.coordinates.lng;
+            this._model.latitude = inventoryLocation.coordinates.lat;
+          }
         },
-      });
-
-    this._currentPositionSubscription = WindowController.model.store
-      .pipe(select((model) => model.currentPosition))
-      .subscribe({
-        next: (value) =>
-          this.onCurrentPositionChanged(value, this._model.inventoryLocations),
       });
 
     this._publicSecretsSubscription =
@@ -138,9 +145,12 @@ class HomeController extends Controller {
       const inventoryLocation = this._model.inventoryLocations.find(
         (value) => value.coordinates.distanceTo(point) === 0
       );
-      this._model.selectedInventoryLocation = inventoryLocation ?? undefined;
-      this._model.longitude = inventoryLocation?.coordinates.lng ?? 0;
-      this._model.latitude = inventoryLocation?.coordinates.lat ?? 0;
+      if (inventoryLocation) {
+        this._model.selectedInventoryLocationId = inventoryLocation.id;
+        this._model.selectedInventoryLocation = inventoryLocation;
+        this._model.longitude = inventoryLocation.coordinates.lng;
+        this._model.latitude = inventoryLocation.coordinates.lat;
+      }
     }
   }
 
