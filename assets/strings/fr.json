@@ -247,5 +247,6 @@
   "minus": "Moins",
   "checkout": "La caisse",
   "orderConfirmed": "Commande Confirmée",
-  "filter": "Filtre"
+  "filter": "Filtre",
+  "isLegalAgeDescription": "Je certifie que j'ai l'âge légal pour consommer de l'alcool dans ma juridiction."
 }
