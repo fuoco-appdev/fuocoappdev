@@ -11,18 +11,19 @@ import {
   Listbox,
   OptionProps,
 } from '@fuoco.appdev/core-ui';
-import { useObservable } from '@ngneat/use-observable';
+import { RefundItemDesktopComponent } from './desktop/refund-item.desktop.component';
+import { RefundItemMobileComponent } from './mobile/refund-item.mobile.component';
 
 export interface RefundItemProps {
   item: LineItem;
-  refundItem?: {
+  refundItem: {
     item_id: string;
     quantity: number;
     reason_id?: string;
     note?: string;
   };
-  returnReasonOptions?: OptionProps[];
-  onChanged?: (item: {
+  returnReasonOptions: OptionProps[];
+  onChanged: (item: {
     item_id: string;
     quantity: number;
     reason_id?: string;
@@ -30,19 +31,19 @@ export interface RefundItemProps {
   }) => void;
 }
 
-function RefundItemDesktopComponent({ item }: RefundItemProps): JSX.Element {
-  return <></>;
+export interface RefundItemResponsiveProps extends RefundItemProps {
+  vintage: string;
+  incrementItemQuantity: () => void;
+  decrementItemQuantity: () => void;
 }
 
-function RefundItemMobileComponent({
+export default function RefundItemComponent({
   item,
   refundItem,
-  returnReasonOptions = [],
+  returnReasonOptions,
   onChanged,
 }: RefundItemProps): JSX.Element {
   const [vintage, setVintage] = useState<string>('');
-  const [openReturnReasons, setOpenReturnReasons] = useState<boolean>(false);
-  const { t } = useTranslation();
 
   useEffect(() => {
     const vintageOption = item.variant.product.options.find(
@@ -81,108 +82,28 @@ function RefundItemMobileComponent({
   };
 
   return (
-    <div key={item.variant_id} className={styles['container-mobile']}>
-      <div className={styles['details-mobile']}>
-        <div className={styles['thumbnail-mobile']}>
-          <img
-            className={styles['thumbnail-image-mobile']}
-            src={item.thumbnail || '../assets/svg/wine-bottle.svg'}
-          />
-        </div>
-        <div className={styles['title-container-mobile']}>
-          <div className={styles['title-mobile']}>{item.title}</div>
-          <div className={styles['variant-mobile']}>{`${t(
-            'vintage'
-          )}: ${vintage}`}</div>
-        </div>
-        <div className={styles['quantity-details-container-mobile']}>
-          <div className={styles['quantity-container-mobile']}>
-            <div className={styles['quantity-text-mobile']}>
-              {t('quantity')}
-            </div>
-            <div className={styles['quantity-buttons-mobile']}>
-              <Button
-                block={true}
-                classNames={{
-                  button: styles['quantity-button'],
-                }}
-                rippleProps={{
-                  color: 'rgba(233, 33, 66, .35)',
-                }}
-                type={'text'}
-                rounded={true}
-                size={'tiny'}
-                icon={<Line.Remove size={18} />}
-                onClick={() => decrementItemQuantity()}
-              />
-              <div className={styles['quantity']}>{refundItem?.quantity}</div>
-              <Button
-                block={true}
-                classNames={{
-                  button: styles['quantity-button'],
-                }}
-                rippleProps={{
-                  color: 'rgba(233, 33, 66, .35)',
-                }}
-                type={'text'}
-                rounded={true}
-                size={'tiny'}
-                icon={<Line.Add size={18} />}
-                onClick={() => incrementItemQuantity()}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-      {refundItem && refundItem.quantity > 0 && (
-        <div className={styles['input-container']}>
-          <div className={styles['reason-container']}>
-            <Listbox
-              touchScreen={true}
-              classNames={{
-                formLayout: {
-                  label: styles['listbox-form-layout-label'],
-                },
-                listbox: styles['listbox'],
-                chevron: styles['listbox-chevron'],
-                label: styles['listbox-label'],
-              }}
-              label={t('reason') ?? ''}
-              options={returnReasonOptions}
-              onChange={(index, id) =>
-                onChanged?.({
-                  ...refundItem,
-                  reason_id: id,
-                })
-              }
-            />
-          </div>
-          <div className={styles['note-container']}>
-            <Input.TextArea
-              classNames={{
-                formLayout: { label: styles['input-form-layout-label'] },
-                input: styles['input'],
-                inputContainer: styles['input-container'],
-              }}
-              label={t('note') ?? ''}
-            />
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default function RefundItemComponent(
-  props: RefundItemProps
-): JSX.Element {
-  return (
     <>
       <ResponsiveDesktop>
-        <RefundItemDesktopComponent {...props} />
+        <RefundItemDesktopComponent
+          item={item}
+          refundItem={refundItem}
+          returnReasonOptions={returnReasonOptions}
+          vintage={vintage}
+          incrementItemQuantity={incrementItemQuantity}
+          decrementItemQuantity={decrementItemQuantity}
+          onChanged={onChanged}
+        />
       </ResponsiveDesktop>
       <ResponsiveMobile>
-        <RefundItemMobileComponent {...props} />
+        <RefundItemMobileComponent
+          item={item}
+          refundItem={refundItem}
+          returnReasonOptions={returnReasonOptions}
+          vintage={vintage}
+          incrementItemQuantity={incrementItemQuantity}
+          decrementItemQuantity={decrementItemQuantity}
+          onChanged={onChanged}
+        />
       </ResponsiveMobile>
     </>
   );

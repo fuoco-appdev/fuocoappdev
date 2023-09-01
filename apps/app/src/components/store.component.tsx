@@ -37,25 +37,28 @@ export interface StoreResponsiveProps {
   countryOptions: OptionProps[];
   regionOptions: OptionProps[];
   cellarOptions: OptionProps[];
-  selectedCountryIndex: number;
-  selectedRegionIndex: number;
-  selectedCellarIndex: number;
+  selectedCountryId: string;
+  selectedRegionId: string;
+  selectedCellarId: string;
   setOpenFilter: (value: boolean) => void;
-  setSelectedCountryIndex: (value: number) => void;
-  setSelectedRegionIndex: (value: number) => void;
-  setSelectedCellarIndex: (value: number) => void;
+  setSelectedCountryId: (value: string) => void;
+  setSelectedRegionId: (value: string) => void;
+  setSelectedCellarId: (value: string) => void;
 }
 
 export default function StoreComponent(): JSX.Element {
   const [props] = useObservable(StoreController.model.store);
   const [homeProps] = useObservable(HomeController.model.store);
+  const [homeLocalProps] = useObservable(
+    HomeController.model.localStore ?? Store.prototype
+  );
   const [openFilter, setOpenFilter] = useState<boolean>(false);
   const [countryOptions, setCountryOptions] = useState<OptionProps[]>([]);
   const [regionOptions, setRegionOptions] = useState<OptionProps[]>([]);
   const [cellarOptions, setCellarOptions] = useState<OptionProps[]>([]);
-  const [selectedCountryIndex, setSelectedCountryIndex] = useState<number>(0);
-  const [selectedRegionIndex, setSelectedRegionIndex] = useState<number>(0);
-  const [selectedCellarIndex, setSelectedCellarIndex] = useState<number>(0);
+  const [selectedCountryId, setSelectedCountryId] = useState<string>('');
+  const [selectedRegionId, setSelectedRegionId] = useState<string>('');
+  const [selectedCellarId, setSelectedCellarId] = useState<string>('');
 
   useEffect(() => {
     const countries: OptionProps[] = [];
@@ -107,7 +110,7 @@ export default function StoreComponent(): JSX.Element {
     const cellars: OptionProps[] = [];
     for (const location of inventoryLocationsInRegion as InventoryLocation[]) {
       cellars.push({
-        id: location.placeName ?? '',
+        id: location.id ?? '',
         value: location.placeName ?? '',
         children: () => (
           <div className={styles['option-name']}>
@@ -125,40 +128,33 @@ export default function StoreComponent(): JSX.Element {
       return;
     }
 
-    const locationIndex = cellarOptions.findIndex(
-      (value) => value.id === homeProps.selectedInventoryLocation?.placeName
-    );
-    if (locationIndex > -1 && locationIndex !== selectedCellarIndex) {
-      setSelectedCellarIndex(locationIndex);
-    }
-  }, [homeProps.selectedInventoryLocation, cellarOptions]);
+    setSelectedCellarId(homeLocalProps.selectedInventoryLocationId);
+  }, [homeLocalProps.selectedInventoryLocationId, cellarOptions]);
 
   useEffect(() => {
-    if (!props.selectedRegion || !countryOptions) {
+    if (!props.selectedRegion || countryOptions.length <= 0) {
       return;
     }
 
-    for (const country of props.selectedRegion.countries) {
-      const selectedCountryIndex = countryOptions.findIndex(
-        (value) => value.id === country?.iso_2
-      );
-      if (selectedCountryIndex < 0) {
-        continue;
-      }
+    const region = props.selectedRegion as Region;
+    const country = region.countries[0];
+    const selectedCountry = countryOptions.find(
+      (value) => value.id === country?.iso_2
+    );
 
-      setSelectedCountryIndex(selectedCountryIndex);
-      setSelectedRegionIndex(0);
-      return;
-    }
+    setSelectedCountryId(selectedCountry?.id ?? '');
+    setSelectedRegionId('');
   }, [countryOptions, props.selectedRegion]);
 
   useEffect(() => {
-    if (countryOptions.length <= 0) {
+    if (countryOptions.length <= 0 || selectedCountryId.length <= 0) {
       return;
     }
 
     const regions: OptionProps[] = [];
-    const selectedCountryOption = countryOptions[selectedCountryIndex];
+    const selectedCountryOption = countryOptions.find(
+      (value) => value.id === selectedCountryId
+    );
     for (const region of props.regions as Region[]) {
       const countries = region.countries as Country[];
       const validCountries = countries.filter(
@@ -179,7 +175,15 @@ export default function StoreComponent(): JSX.Element {
     }
 
     setRegionOptions(regions);
-  }, [selectedCountryIndex, countryOptions]);
+  }, [selectedCountryId, countryOptions]);
+
+  useEffect(() => {
+    if (!props.selectedRegion || regionOptions.length <= 0) {
+      return;
+    }
+
+    setSelectedRegionId(props.selectedRegion.id);
+  }, [regionOptions, props.selectedRegion]);
 
   return (
     <>
@@ -189,13 +193,13 @@ export default function StoreComponent(): JSX.Element {
           countryOptions={countryOptions}
           regionOptions={regionOptions}
           cellarOptions={cellarOptions}
-          selectedCountryIndex={selectedCountryIndex}
-          selectedRegionIndex={selectedRegionIndex}
-          selectedCellarIndex={selectedCellarIndex}
+          selectedCountryId={selectedCountryId}
+          selectedRegionId={selectedRegionId}
+          selectedCellarId={selectedCellarId}
           setOpenFilter={setOpenFilter}
-          setSelectedCountryIndex={setSelectedCountryIndex}
-          setSelectedRegionIndex={setSelectedRegionIndex}
-          setSelectedCellarIndex={setSelectedCellarIndex}
+          setSelectedCountryId={setSelectedCountryId}
+          setSelectedRegionId={setSelectedRegionId}
+          setSelectedCellarId={setSelectedCellarId}
         />
       </ResponsiveDesktop>
       <ResponsiveMobile>
@@ -204,13 +208,13 @@ export default function StoreComponent(): JSX.Element {
           countryOptions={countryOptions}
           regionOptions={regionOptions}
           cellarOptions={cellarOptions}
-          selectedCountryIndex={selectedCountryIndex}
-          selectedRegionIndex={selectedRegionIndex}
-          selectedCellarIndex={selectedCellarIndex}
+          selectedCountryId={selectedCountryId}
+          selectedRegionId={selectedRegionId}
+          selectedCellarId={selectedCellarId}
           setOpenFilter={setOpenFilter}
-          setSelectedCountryIndex={setSelectedCountryIndex}
-          setSelectedRegionIndex={setSelectedRegionIndex}
-          setSelectedCellarIndex={setSelectedCellarIndex}
+          setSelectedCountryId={setSelectedCountryId}
+          setSelectedRegionId={setSelectedRegionId}
+          setSelectedCellarId={setSelectedCellarId}
         />
       </ResponsiveMobile>
     </>

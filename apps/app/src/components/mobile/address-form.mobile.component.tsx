@@ -25,10 +25,10 @@ export function AddressFormMobileComponent({
   onEdit,
   countryOptions,
   regionOptions,
-  selectedCountryIndex,
-  setSelectedCountryIndex,
-  selectedRegionIndex,
-  setSelectedRegionIndex,
+  selectedCountryId,
+  setSelectedCountryId,
+  selectedRegionId,
+  setSelectedRegionId,
   fullName,
   location,
   company,
@@ -155,10 +155,10 @@ export function AddressFormMobileComponent({
         label={t('country') ?? ''}
         error={errors?.country}
         options={countryOptions}
-        defaultIndex={selectedCountryIndex}
-        onChange={(index: number, id: string, value: string) => {
-          setSelectedCountryIndex(index);
-          onChangeCallbacks?.country?.(index, id, value);
+        selectedId={selectedCountryId}
+        onChange={(index: number, id: string, value?: string) => {
+          setSelectedCountryId(id);
+          onChangeCallbacks?.country?.(id, value ?? '');
         }}
       />
       <Listbox
@@ -174,10 +174,10 @@ export function AddressFormMobileComponent({
         label={t('region') ?? ''}
         options={regionOptions}
         error={errors?.region}
-        defaultIndex={selectedRegionIndex}
-        onChange={(index: number, id: string, value: string) => {
-          setSelectedRegionIndex(index);
-          onChangeCallbacks?.region?.(index, id, value);
+        selectedId={selectedRegionId}
+        onChange={(index: number, id: string, value?: string) => {
+          setSelectedRegionId(id);
+          onChangeCallbacks?.region?.(id, value ?? '');
         }}
       />
       <InputPhoneNumber

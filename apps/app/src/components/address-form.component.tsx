@@ -27,8 +27,8 @@ export interface AddressFormOnChangeCallbacks {
   apartments?: (event: ChangeEvent<HTMLInputElement>) => void;
   postalCode?: (event: ChangeEvent<HTMLInputElement>) => void;
   city?: (event: ChangeEvent<HTMLInputElement>) => void;
-  country?: (index: number, id: string, value: string) => void;
-  region?: (index: number, id: string, value: string) => void;
+  country?: (id: string, value: string) => void;
+  region?: (id: string, value: string) => void;
   phoneNumber?: (
     value: string,
     data: {} | CountryDataProps,
@@ -79,10 +79,10 @@ export interface AddressFormProps {
 export interface AddressFormResponsiveProps extends AddressFormProps {
   countryOptions: OptionProps[];
   regionOptions: OptionProps[];
-  selectedCountryIndex: number;
-  setSelectedCountryIndex: (value: number) => void;
-  selectedRegionIndex: number;
-  setSelectedRegionIndex: (value: number) => void;
+  selectedCountryId: string;
+  setSelectedCountryId: (value: string) => void;
+  selectedRegionId: string;
+  setSelectedRegionId: (value: string) => void;
   fullName: string;
   location: string;
   company: string;
@@ -101,8 +101,8 @@ export default function AddressFormComponent({
   const [storeProps] = useObservable(StoreController.model.store);
   const [countryOptions, setCountryOptions] = useState<OptionProps[]>([]);
   const [regionOptions, setRegionOptions] = useState<OptionProps[]>([]);
-  const [selectedCountryIndex, setSelectedCountryIndex] = useState<number>(0);
-  const [selectedRegionIndex, setSelectedRegionIndex] = useState<number>(0);
+  const [selectedCountryId, setSelectedCountryId] = useState<string>('');
+  const [selectedRegionId, setSelectedRegionId] = useState<string>('');
   const [selectedCountry, setSelectedCountry] = useState<string>('');
   const [fullName, setFullName] = useState<string>('');
   const [location, setLocation] = useState<string>('');
@@ -112,24 +112,20 @@ export default function AddressFormComponent({
 
   useEffect(() => {
     if (countryOptions.length > 0) {
-      const country = countryOptions[selectedCountryIndex];
+      const country = countryOptions.find(
+        (value) => value.id === selectedCountryId
+      );
       if (country) {
-        onChangeCallbacks?.country?.(
-          selectedCountryIndex,
-          country?.id ?? '',
-          country?.value ?? ''
-        );
+        onChangeCallbacks?.country?.(country?.id ?? '', country?.value ?? '');
       }
     }
 
     if (regionOptions.length > 0) {
-      const region = regionOptions[selectedRegionIndex];
+      const region = regionOptions.find(
+        (value) => value.id === selectedRegionId
+      );
       if (region) {
-        onChangeCallbacks?.region?.(
-          selectedRegionIndex,
-          region?.id ?? '',
-          region?.value ?? ''
-        );
+        onChangeCallbacks?.region?.(region?.id ?? '', region?.value ?? '');
       }
     }
   }, [countryOptions, regionOptions]);
@@ -173,19 +169,10 @@ export default function AddressFormComponent({
       return;
     }
 
-    for (const country of storeProps.selectedRegion.countries) {
-      const selectedCountryIndex = countryOptions.findIndex(
-        (value) => value.id === country?.iso_2
-      );
-      if (selectedCountryIndex < 0) {
-        continue;
-      }
-
-      setSelectedCountryIndex(selectedCountryIndex);
-      setSelectedCountry(country?.iso_2);
-      setSelectedRegionIndex(0);
-      return;
-    }
+    const selectedCountry = storeProps.selectedRegion.countries[0];
+    setSelectedCountryId(selectedCountry.id);
+    setSelectedCountry(selectedCountry?.iso_2);
+    setSelectedRegionId('');
   }, [countryOptions, storeProps.selectedRegion]);
 
   useEffect(() => {
@@ -194,7 +181,9 @@ export default function AddressFormComponent({
     }
 
     const regions: OptionProps[] = [];
-    const selectedCountryOption = countryOptions[selectedCountryIndex];
+    const selectedCountryOption = countryOptions.find(
+      (value) => value.id === selectedCountryId
+    );
     for (const region of storeProps.regions as Region[]) {
       const countries = region.countries as Country[];
       const validCountries = countries.filter(
@@ -215,22 +204,22 @@ export default function AddressFormComponent({
     }
 
     setRegionOptions(regions);
-  }, [selectedCountryIndex, countryOptions]);
+  }, [selectedCountryId, countryOptions]);
 
   useEffect(() => {
-    const countryIndex = countryOptions.findIndex(
+    const country = countryOptions.find(
       (value) => value.id === values?.countryCode
     );
-    const regionIndex = regionOptions.findIndex(
+    const region = regionOptions.find(
       (value) => value.value === values?.region
     );
 
-    if (countryIndex !== -1) {
-      setSelectedCountryIndex(countryIndex);
+    if (country) {
+      setSelectedCountryId(country.id);
     }
 
-    if (regionIndex !== -1) {
-      setSelectedRegionIndex(regionIndex);
+    if (region) {
+      setSelectedRegionId(region.id);
     }
 
     setLocation(getLocationText());
@@ -279,15 +268,15 @@ export default function AddressFormComponent({
           onEdit={onEdit}
           countryOptions={countryOptions}
           regionOptions={regionOptions}
-          selectedCountryIndex={selectedCountryIndex}
-          selectedRegionIndex={selectedRegionIndex}
+          selectedCountryId={selectedCountryId}
+          selectedRegionId={selectedRegionId}
           fullName={fullName}
           location={location}
           company={company}
           phoneNumber={phoneNumber}
           email={email}
-          setSelectedCountryIndex={setSelectedCountryIndex}
-          setSelectedRegionIndex={setSelectedRegionIndex}
+          setSelectedCountryId={setSelectedCountryId}
+          setSelectedRegionId={setSelectedRegionId}
         />
       </ResponsiveDesktop>
       <ResponsiveMobile>
@@ -300,15 +289,15 @@ export default function AddressFormComponent({
           onEdit={onEdit}
           countryOptions={countryOptions}
           regionOptions={regionOptions}
-          selectedCountryIndex={selectedCountryIndex}
-          selectedRegionIndex={selectedRegionIndex}
+          selectedCountryId={selectedCountryId}
+          selectedRegionId={selectedRegionId}
           fullName={fullName}
           location={location}
           company={company}
           phoneNumber={phoneNumber}
           email={email}
-          setSelectedCountryIndex={setSelectedCountryIndex}
-          setSelectedRegionIndex={setSelectedRegionIndex}
+          setSelectedCountryId={setSelectedCountryId}
+          setSelectedRegionId={setSelectedRegionId}
         />
       </ResponsiveMobile>
     </>

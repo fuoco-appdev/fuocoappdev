@@ -134,11 +134,11 @@ export function AccountAddressesMobileComponent({
                 AccountController.updateShippingAddress({
                   city: event.target.value,
                 }),
-              country: (index, id, value) =>
+              country: (id, value) =>
                 AccountController.updateShippingAddress({
                   countryCode: id,
                 }),
-              region: (index, id, value) =>
+              region: (id, value) =>
                 AccountController.updateShippingAddress({
                   region: value,
                 }),
@@ -218,11 +218,11 @@ export function AccountAddressesMobileComponent({
                 AccountController.updateEditShippingAddress({
                   city: event.target.value,
                 }),
-              country: (index, id, value) =>
+              country: (id, value) =>
                 AccountController.updateEditShippingAddress({
                   countryCode: id,
                 }),
-              region: (index, id, value) =>
+              region: (id, value) =>
                 AccountController.updateEditShippingAddress({
                   region: value,
                 }),

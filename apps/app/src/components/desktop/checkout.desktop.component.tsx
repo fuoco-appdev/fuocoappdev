@@ -171,11 +171,11 @@ export function CheckoutDesktopComponent({
                     CheckoutController.updateShippingAddress({
                       city: event.target.value,
                     }),
-                  country: (index, id, value) =>
+                  country: (id, value) =>
                     CheckoutController.updateShippingAddress({
                       countryCode: id,
                     }),
-                  region: (index, id, value) =>
+                  region: (id, value) =>
                     CheckoutController.updateShippingAddress({
                       region: value,
                     }),
@@ -351,7 +351,7 @@ export function CheckoutDesktopComponent({
                         CheckoutController.updateBillingAddress({
                           countryCode: id,
                         }),
-                      region: (index, id, value) =>
+                      region: (id, value) =>
                         CheckoutController.updateBillingAddress({
                           region: value,
                         }),
@@ -1038,11 +1038,11 @@ export function CheckoutDesktopComponent({
                 CheckoutController.updateAddShippingAddress({
                   city: event.target.value,
                 }),
-              country: (index, id, value) =>
+              country: (id, value) =>
                 CheckoutController.updateAddShippingAddress({
                   countryCode: id,
                 }),
-              region: (index, id, value) =>
+              region: (id, value) =>
                 CheckoutController.updateAddShippingAddress({
                   region: value,
                 }),

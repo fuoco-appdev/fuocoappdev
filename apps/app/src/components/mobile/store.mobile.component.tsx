@@ -34,13 +34,13 @@ export function StoreMobileComponent({
   countryOptions,
   regionOptions,
   cellarOptions,
-  selectedCountryIndex,
-  selectedRegionIndex,
-  selectedCellarIndex,
+  selectedCountryId,
+  selectedRegionId,
+  selectedCellarId,
   setOpenFilter,
-  setSelectedCountryIndex,
-  setSelectedRegionIndex,
-  setSelectedCellarIndex,
+  setSelectedCountryId,
+  setSelectedRegionId,
+  setSelectedCellarId,
 }: StoreResponsiveProps): JSX.Element {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const previewsContainerRef = useRef<HTMLDivElement | null>(null);
@@ -121,7 +121,7 @@ export function StoreMobileComponent({
             removable={true}
             type={'pills'}
             activeId={props.selectedTab}
-            onChange={(id) =>
+            onChange={(id: string) =>
               StoreController.updateSelectedTabAsync(
                 id.length > 0 ? (id as ProductTabs) : undefined
               )
@@ -205,8 +205,8 @@ export function StoreMobileComponent({
             touchScreen={true}
             label={t('country') ?? ''}
             options={countryOptions}
-            defaultIndex={selectedCountryIndex}
-            onChange={(index: number) => setSelectedCountryIndex(index)}
+            selectedId={selectedCountryId}
+            onChange={(index: number, id: string) => setSelectedCountryId(id)}
           />
           <Listbox
             classNames={{
@@ -220,8 +220,8 @@ export function StoreMobileComponent({
             touchScreen={true}
             label={t('region') ?? ''}
             options={regionOptions}
-            defaultIndex={selectedRegionIndex}
-            onChange={(index: number) => setSelectedRegionIndex(index)}
+            selectedId={selectedRegionId}
+            onChange={(index: number, id: string) => setSelectedRegionId(id)}
           />
           <Listbox
             classNames={{
@@ -235,8 +235,8 @@ export function StoreMobileComponent({
             touchScreen={true}
             label={t('cellar') ?? ''}
             options={cellarOptions}
-            defaultIndex={selectedCellarIndex}
-            onChange={(index: number) => setSelectedCellarIndex(index)}
+            selectedId={selectedCellarId}
+            onChange={(index: number, id: string) => setSelectedCellarId(id)}
           />
           <Button
             classNames={{
@@ -252,9 +252,16 @@ export function StoreMobileComponent({
             block={true}
             size={'large'}
             onClick={() => {
+              if (
+                selectedRegionId.length <= 0 ||
+                selectedCellarId.length <= 0
+              ) {
+                return;
+              }
+
               StoreController.applyFilterAsync(
-                regionOptions[selectedRegionIndex].id ?? '',
-                cellarOptions[selectedCellarIndex].id ?? ''
+                selectedRegionId,
+                selectedCellarId
               );
               setTimeout(() => setOpenFilter(false), 250);
             }}
