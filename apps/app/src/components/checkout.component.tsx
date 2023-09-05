@@ -73,6 +73,7 @@ export default function CheckoutComponent(): JSX.Element {
       classes: {
         base: styles['stripe-input-base'],
       },
+      showIcon: true,
     };
   }, []);
 
