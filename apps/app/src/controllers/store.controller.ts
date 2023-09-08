@@ -200,18 +200,18 @@ class StoreController extends Controller {
       return;
     }
 
-    const region = this._model.regions.find(
-      (value) => value.name === inventoryLocation.region
-    );
-    await this.updateRegionAsync(region);
-
     if (!inventoryLocation || inventoryLocation.salesChannels?.length <= 0) {
       return;
     }
 
     this._model.selectedSalesChannel = inventoryLocation.salesChannels[0];
     this._model.pagination = 1;
-    this.searchAsync('');
+
+    const region = this._model.regions.find(
+      (value) => value.name === inventoryLocation.region
+    );
+    await this.updateRegionAsync(region);
+    await this.searchAsync('');
   }
 
   private async updateRegionAsync(region: Region | undefined): Promise<void> {

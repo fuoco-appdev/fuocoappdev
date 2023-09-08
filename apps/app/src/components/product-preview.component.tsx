@@ -33,12 +33,11 @@ export interface ProductPreviewProps {
 
 export interface ProductPreviewResponsiveProps extends ProductPreviewProps {
   price: string;
-  addedToCartCount: number;
   selectedVariantId: string | undefined;
   setPrice: (value: string) => void;
-  setAddedToCartCount: (value: number) => void;
   setSelectedVariantId: (value: string | undefined) => void;
   formatPrice: (price: MoneyAmount) => string;
+  addToCartAsync: () => void;
 }
 
 export default function ProductPreviewComponent({
@@ -53,6 +52,7 @@ export default function ProductPreviewComponent({
     string | undefined
   >(undefined);
   const [storeProps] = useObservable(StoreController.model.store);
+  const { t } = useTranslation();
 
   const formatPrice = (price: MoneyAmount): string => {
     if (!price.amount) {
@@ -124,6 +124,25 @@ export default function ProductPreviewComponent({
     }
   }, [preview, addedToCartCount, storeProps.selectedRegion]);
 
+  const addToCartAsync = async () => {
+    if (!selectedVariantId) {
+      return;
+    }
+
+    ProductController.addToCartAsync(selectedVariantId, 1, () => {
+      WindowController.addToast({
+        key: `add-to-cart-${Math.random()}`,
+        message: t('addedToCart') ?? '',
+        description:
+          t('addedToCartDescription', {
+            item: preview.title,
+          }) ?? '',
+        type: 'success',
+      });
+      setAddedToCartCount(addedToCartCount + 1);
+    });
+  };
+
   return (
     <>
       <ResponsiveDesktop>
@@ -133,12 +152,11 @@ export default function ProductPreviewComponent({
           onClick={onClick}
           onRest={onRest}
           price={price}
-          addedToCartCount={addedToCartCount}
           selectedVariantId={selectedVariantId}
           setPrice={setPrice}
-          setAddedToCartCount={setAddedToCartCount}
           setSelectedVariantId={setSelectedVariantId}
           formatPrice={formatPrice}
+          addToCartAsync={addToCartAsync}
         />
       </ResponsiveDesktop>
       <ResponsiveMobile>
@@ -148,12 +166,11 @@ export default function ProductPreviewComponent({
           onClick={onClick}
           onRest={onRest}
           price={price}
-          addedToCartCount={addedToCartCount}
           selectedVariantId={selectedVariantId}
           setPrice={setPrice}
-          setAddedToCartCount={setAddedToCartCount}
           setSelectedVariantId={setSelectedVariantId}
           formatPrice={formatPrice}
+          addToCartAsync={addToCartAsync}
         />
       </ResponsiveMobile>
     </>

@@ -29,14 +29,11 @@ export function ProductPreviewDesktopComponent({
   preview,
   onClick,
   price,
-  addedToCartCount,
   selectedVariantId,
-  setAddedToCartCount,
+  addToCartAsync,
   onRest,
 }: ProductPreviewResponsiveProps): JSX.Element {
   const ref = useRef<HTMLDivElement | null>(null);
-  const { t } = useTranslation();
-
   const formatDescription = (description: string): string => {
     const regex = /\*\*(.*?)\*\*/g;
     const cleanDescription = description.trim();
@@ -178,20 +175,7 @@ export function ProductPreviewDesktopComponent({
                   color: 'rgba(133, 38, 122, .35)',
                 }}
                 rounded={true}
-                onClick={() => {
-                  ProductController.addToCartAsync(selectedVariantId, 1, () => {
-                    WindowController.addToast({
-                      key: `add-to-cart-${Math.random()}`,
-                      message: t('addedToCart') ?? '',
-                      description:
-                        t('addedToCartDescription', {
-                          item: preview.title,
-                        }) ?? '',
-                      type: 'success',
-                    });
-                    setAddedToCartCount(addedToCartCount + 1);
-                  });
-                }}
+                onClick={addToCartAsync}
                 icon={<Line.AddShoppingCart size={24} />}
               />
             )}
