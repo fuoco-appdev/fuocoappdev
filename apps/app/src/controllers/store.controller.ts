@@ -48,6 +48,8 @@ class StoreController extends Controller {
   public updateInput(value: string): void {
     this._model.input = value;
     this._model.pagination = 1;
+    this._model.previews = [];
+    this._model.hasMorePreviews = true;
     clearTimeout(this._timerId as number | undefined);
     this._timerId = setTimeout(() => {
       this.searchAsync(value);
