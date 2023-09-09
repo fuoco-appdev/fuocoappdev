@@ -148,13 +148,17 @@ class ProductController extends Controller {
     successCallback?: () => void,
     errorCallback?: (error: Error) => void
   ): Promise<void> {
-    if (!CartController.model.cartId) {
+    const { selectedSalesChannel } = StoreController.model;
+    const cartId = selectedSalesChannel?.id
+      ? CartController.model.cartIds[selectedSalesChannel.id]
+      : undefined;
+    if (!cartId) {
       return;
     }
 
     try {
       const cartResponse = await MedusaService.medusa?.carts.lineItems.create(
-        CartController.model.cartId,
+        cartId,
         {
           variant_id: variantId,
           quantity: quantity,

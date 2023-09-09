@@ -105,6 +105,7 @@ export function HomeMobileComponent({
       >
         {props.accessToken && (
           <Map
+            style={{ borderRadius: 6, minWidth: '100%' }}
             mapboxAccessToken={props.accessToken}
             ref={mapRef}
             initialViewState={{

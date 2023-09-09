@@ -26,6 +26,7 @@ import {
 } from '@stripe/stripe-js';
 import SupabaseService from '../services/supabase.service';
 import { AuthChangeEvent, Session } from '@supabase/supabase-js';
+import StoreController from './store.controller';
 
 class CheckoutController extends Controller {
   private readonly _model: CheckoutModel;
@@ -131,8 +132,12 @@ class CheckoutController extends Controller {
   public async updateSelectedShippingOptionIdAsync(
     value: string
   ): Promise<void> {
+    const { selectedSalesChannel } = StoreController.model;
+    const cartId = selectedSalesChannel?.id
+      ? CartController.model.cartIds[selectedSalesChannel.id]
+      : undefined;
     if (
-      !CartController.model.cartId ||
+      !cartId ||
       this._model.selectedShippingAddressOptionId === value ||
       !CartController.model.cart ||
       CartController.model.cart?.items.length <= 0
@@ -142,7 +147,7 @@ class CheckoutController extends Controller {
 
     try {
       const cartResponse = await MedusaService.medusa?.carts.addShippingMethod(
-        CartController.model.cartId,
+        cartId,
         { option_id: value }
       );
       if (cartResponse?.cart) {
@@ -202,8 +207,12 @@ class CheckoutController extends Controller {
   public async updateSelectedProviderIdAsync(
     value: ProviderType
   ): Promise<void> {
+    const { selectedSalesChannel } = StoreController.model;
+    const cartId = selectedSalesChannel?.id
+      ? CartController.model.cartIds[selectedSalesChannel.id]
+      : undefined;
     if (
-      !CartController.model.cartId ||
+      !cartId ||
       !CartController.model.cart ||
       !this._model.billingFormComplete ||
       this._model.selectedProviderId === value
@@ -213,7 +222,7 @@ class CheckoutController extends Controller {
 
     try {
       const cartResponse = await MedusaService.medusa?.carts.setPaymentSession(
-        CartController.model.cartId,
+        cartId,
         {
           provider_id: value,
         }
@@ -234,7 +243,11 @@ class CheckoutController extends Controller {
   }
 
   public async continueToDeliveryAsync(): Promise<void> {
-    if (!CartController.model.cartId) {
+    const { selectedSalesChannel } = StoreController.model;
+    const cartId = selectedSalesChannel?.id
+      ? CartController.model.cartIds[selectedSalesChannel.id]
+      : undefined;
+    if (!cartId) {
       return;
     }
 
@@ -269,18 +282,15 @@ class CheckoutController extends Controller {
     };
 
     try {
-      const cartResponse = await MedusaService.medusa?.carts.update(
-        CartController.model.cartId,
-        {
-          email: this._model.shippingForm.email,
-          shipping_address: this._model.shippingFormComplete
-            ? shippingAddressPayload
-            : undefined,
-          billing_address: this._model.shippingFormComplete
-            ? billingAddressPayload
-            : undefined,
-        }
-      );
+      const cartResponse = await MedusaService.medusa?.carts.update(cartId, {
+        email: this._model.shippingForm.email,
+        shipping_address: this._model.shippingFormComplete
+          ? shippingAddressPayload
+          : undefined,
+        billing_address: this._model.shippingFormComplete
+          ? billingAddressPayload
+          : undefined,
+      });
       if (cartResponse?.cart) {
         await CartController.updateLocalCartAsync(cartResponse.cart);
       }

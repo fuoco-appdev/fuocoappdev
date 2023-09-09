@@ -11,6 +11,7 @@ import {
   StorePostCartsCartReq,
   Order,
   Swap,
+  SalesChannel,
 } from '@medusajs/medusa';
 import MedusaService from '../services/medusa.service';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
@@ -19,6 +20,7 @@ import WindowController from './window.controller';
 class CartController extends Controller {
   private readonly _model: CartModel;
   private _selectedRegionSubscription: Subscription | undefined;
+  private _selectedSalesChannelSubscription: Subscription | undefined;
 
   constructor() {
     super();
@@ -61,13 +63,17 @@ class CartController extends Controller {
   }
 
   public async removeDiscountCodeAsync(code: string): Promise<void> {
-    if (!this._model.cartId) {
+    const { selectedSalesChannel } = StoreController.model;
+    const cartId = selectedSalesChannel?.id
+      ? this._model.cartIds[selectedSalesChannel.id]
+      : undefined;
+    if (!cartId) {
       return;
     }
 
     try {
       const cartResponse = await MedusaService.medusa?.carts.deleteDiscount(
-        this._model.cartId,
+        cartId,
         code
       );
       if (cartResponse?.cart) {
@@ -84,13 +90,17 @@ class CartController extends Controller {
   }
 
   public async updateCartAsync(payload: StorePostCartsCartReq): Promise<void> {
-    if (!this._model.cartId) {
+    const { selectedSalesChannel } = StoreController.model;
+    const cartId = selectedSalesChannel?.id
+      ? this._model.cartIds[selectedSalesChannel.id]
+      : undefined;
+    if (!cartId) {
       return;
     }
 
     try {
       const cartResponse = await MedusaService.medusa?.carts.update(
-        this._model.cartId,
+        cartId,
         payload
       );
       if (cartResponse?.cart) {
@@ -109,13 +119,17 @@ class CartController extends Controller {
   public async completeCartAsync(): Promise<
     Cart | Order | Swap | null | undefined
   > {
-    if (!this._model.cartId) {
+    const { selectedSalesChannel } = StoreController.model;
+    const cartId = selectedSalesChannel?.id
+      ? this._model.cartIds[selectedSalesChannel.id]
+      : undefined;
+    if (!cartId) {
       return null;
     }
 
     try {
       const completeCartResponse = await MedusaService.medusa?.carts.complete(
-        this._model.cartId
+        cartId
       );
 
       return completeCartResponse?.data;
@@ -135,7 +149,11 @@ class CartController extends Controller {
       return;
     }
 
-    await this.createCartAsync(StoreController.model.selectedRegion.id);
+    const { selectedSalesChannel } = StoreController.model;
+    await this.createCartAsync(
+      StoreController.model.selectedRegion.id,
+      selectedSalesChannel
+    );
   }
 
   public async removeLineItemAsync(item: LineItem): Promise<void> {
@@ -233,12 +251,12 @@ class CartController extends Controller {
   }
 
   private async createCartAsync(
-    regionId: string
+    regionId: string,
+    selectedSalesChannel: Partial<SalesChannel | undefined>
   ): Promise<
     Omit<Cart, 'refundable_amount' | 'refunded_total'> | null | undefined
   > {
-    const { selectedSalesChannel } = StoreController.model;
-    if (!selectedSalesChannel) {
+    if (!selectedSalesChannel || !selectedSalesChannel.id) {
       return null;
     }
 
@@ -248,7 +266,10 @@ class CartController extends Controller {
         sales_channel_id: selectedSalesChannel.id,
       });
 
-      this._model.cartId = cartResponse?.cart.id;
+      const cartIds = { ...this._model.cartIds };
+      cartIds[selectedSalesChannel.id] = cartResponse?.cart.id;
+      this._model.cartIds = cartIds;
+
       if (cartResponse?.cart) {
         await this.updateLocalCartAsync(cartResponse.cart);
       }
@@ -268,15 +289,18 @@ class CartController extends Controller {
   private async onSelectedRegionChangedAsync(
     value: Region | undefined
   ): Promise<void> {
-    if (!this._model.cartId && value?.id) {
-      await this.createCartAsync(value.id);
+    const { selectedSalesChannel } = StoreController.model;
+    const cartId = selectedSalesChannel?.id
+      ? this._model.cartIds[selectedSalesChannel.id]
+      : undefined;
+
+    if (selectedSalesChannel && !cartId && value?.id) {
+      await this.createCartAsync(value.id, selectedSalesChannel);
     }
 
-    if (this._model.cartId && this._model.cartId?.length > 0) {
+    if (cartId && cartId.length > 0) {
       try {
-        const cartResponse = await MedusaService.medusa?.carts.retrieve(
-          this._model.cartId
-        );
+        const cartResponse = await MedusaService.medusa?.carts.retrieve(cartId);
         if (cartResponse?.cart) {
           await this.updateLocalCartAsync(cartResponse.cart);
         }

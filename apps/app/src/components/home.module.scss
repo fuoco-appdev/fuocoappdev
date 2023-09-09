@@ -8,13 +8,15 @@
 
     & .content-container {
         position: relative;
-        height: 60vh;
+        height: 50vh;
+        border-radius: 6px;
 
         & .background-image {
             position: absolute;
             object-fit: cover;
             width: 100%;
             height: 100%;
+            border-radius: 6px;
         }
 
         & .background-filter {
@@ -22,6 +24,7 @@
             height: 100%;
             width: 100%;
             background-color: rgba(42, 42, 95, .45);
+            border-radius: 6px;
         }
 
         & .content {
@@ -30,6 +33,7 @@
             justify-content: center;
             align-items: center;
             height: 100%;
+            border-radius: 6px;
 
             & .logo {
                 height: 96px;
@@ -55,7 +59,74 @@
 
     & .map-container {
         height: 40vh;
-        width: 100vw;
+        width: 100%;
+        border-radius: 6px;
+    }
+}
+
+.root-desktop {
+    gap: $mp-4;
+    padding: $mp-4;
+
+    & .content-container-desktop {
+        & .background-image-desktop {
+
+        }
+
+        & .background-filter-desktop {
+
+        }
+
+        & .content-desktop {
+            & .logo-desktop {
+
+            }
+
+            & .logo-text-desktop {
+
+            }
+
+            & .call-to-action-text-desktop {
+
+            }
+        }
+    }
+
+    & .map-container-desktop {
+
+    }
+}
+
+.root-mobile {
+    gap: $mp-2;
+    padding: $mp-2;
+
+    & .content-container-mobile {
+        & .background-image-mobile {
+
+        }
+
+        & .background-filter-mobile {
+
+        }
+
+        & .content-mobile {
+            & .logo-mobile {
+
+            }
+
+            & .logo-text-mobile {
+
+            }
+
+            & .call-to-action-text-mobile {
+
+            }
+        }
+    }
+
+    & .map-container-mobile {
+
     }
 }
 

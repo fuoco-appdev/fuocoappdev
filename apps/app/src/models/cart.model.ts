@@ -9,7 +9,7 @@ export interface CartState {
 }
 
 export interface CartLocalState {
-  cartId: string | undefined;
+  cartIds: Record<string, string | undefined>;
 }
 
 export class CartModel extends Model {
@@ -26,7 +26,7 @@ export class CartModel extends Model {
       createStore(
         { name: 'cart-local' },
         withProps<CartLocalState>({
-          cartId: undefined,
+          cartIds: {},
         })
       )
     );
@@ -56,13 +56,13 @@ export class CartModel extends Model {
     }
   }
 
-  public get cartId(): string | undefined {
-    return this.localStore?.getValue().cartId;
+  public get cartIds(): Record<string, string | undefined> {
+    return this.localStore?.getValue().cartIds;
   }
 
-  public set cartId(value: string | undefined) {
-    if (this.cartId !== value) {
-      this.localStore?.update((state) => ({ ...state, cartId: value }));
+  public set cartIds(value: Record<string, string | undefined>) {
+    if (JSON.stringify(this.cartIds) !== JSON.stringify(value)) {
+      this.localStore?.update((state) => ({ ...state, cartIds: value }));
     }
   }
 }
