@@ -57,7 +57,6 @@ export default function ProductComponent(): JSX.Element {
   const [hasQuantityLimit, setHasQuantityLimit] = useState<boolean>(false);
 
   useEffect(() => {
-    ProductController.resetDetails();
     ProductController.updateProductId(id);
   }, []);
 

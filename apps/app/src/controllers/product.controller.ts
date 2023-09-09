@@ -68,6 +68,7 @@ class ProductController extends Controller {
             return;
           }
 
+          this.resetDetails();
           this.requestProductAsync(value, channel?.id ?? '');
         },
       });

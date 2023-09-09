@@ -34,7 +34,7 @@ export function HomeDesktopComponent({
   const { t } = useTranslation();
   const [props] = useObservable(HomeController.model.store);
   const [localProps] = useObservable(
-    HomeController.model.localStore ?? HomeController.model.store
+    HomeController.model.localStore ?? Store.prototype
   );
 
   return (

@@ -24,6 +24,8 @@
         }
 
         & .title-container {
+            cursor: pointer;
+
             & .title {
                 color: $brand-900;
                 font-size: $font-size-base;
@@ -125,6 +127,16 @@
             }
 
             & .variant-desktop {
+            }
+        }
+
+        & .title-container-desktop:hover {
+            & .title-desktop {
+                color: $brand-700;
+            }
+
+            & .variant-desktop {
+                color: $brand-700;
             }
         }
 

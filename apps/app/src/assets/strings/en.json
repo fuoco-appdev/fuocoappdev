@@ -228,6 +228,7 @@
   "noAddressAddedDescription": "No address has been found. Please add one to procceed with your order.",
   "noOrderHistory": "No order history has been found.",
   "noCartItems": "No cart items have been found.",
+  "chooseASalesChannel": "Choose a sales channel from the map.",
   "shopNow": "Shop now",
   "noAddresses": "No addresses have been found. Add them to your list for a quicker checkout experience!",
   "removeAddress": "Remove address?",

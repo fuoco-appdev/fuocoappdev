@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useRef } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import CartController from '../../controllers/cart.controller';
 import styles from '../cart.module.scss';
-import { Button, Input, Line, Solid } from '@fuoco.appdev/core-ui';
+import { Button, Input, Line, Solid, Tabs } from '@fuoco.appdev/core-ui';
 import { RoutePaths } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
@@ -13,12 +13,20 @@ import StoreController from '../../controllers/store.controller';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
 import WindowController from '../../controllers/window.controller';
+import { CartResponsiveProps } from '../cart.component';
+import HomeController from '../../controllers/home.controller';
+import { Store } from '@ngneat/elf';
 
-export function CartMobileComponent(): JSX.Element {
+export function CartMobileComponent({
+  salesChannelTabs,
+}: CartResponsiveProps): JSX.Element {
   const navigate = useNavigate();
   const [props] = useObservable(CartController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
   const [windowProps] = useObservable(WindowController.model.store);
+  const [homeLocalProps] = useObservable(
+    HomeController.model.localStore ?? Store.prototype
+  );
   const { t, i18n } = useTranslation();
 
   return (
@@ -88,6 +96,31 @@ export function CartMobileComponent(): JSX.Element {
             styles['shopping-cart-items-mobile'],
           ].join(' ')}
         >
+          {salesChannelTabs.length > 0 && (
+            <div
+              className={[
+                styles['tab-container'],
+                styles['tab-container-mobile'],
+              ].join(' ')}
+            >
+              <Tabs
+                flex={true}
+                touchScreen={true}
+                classNames={{
+                  nav: styles['tab-nav'],
+                  tabButton: styles['tab-button'],
+                  selectedTabButton: styles['selected-tab-button'],
+                  tabSliderPill: styles['tab-slider-pill'],
+                }}
+                type={'pills'}
+                activeId={homeLocalProps.selectedInventoryLocationId}
+                onChange={(id: string) =>
+                  HomeController.updateSelectedInventoryLocationId(id)
+                }
+                tabs={salesChannelTabs}
+              />
+            </div>
+          )}
           {props.cart?.items
             .sort((current: LineItem, next: LineItem) => {
               return (
@@ -105,6 +138,40 @@ export function CartMobileComponent(): JSX.Element {
                 onRemove={() => CartController.removeLineItemAsync(item)}
               />
             ))}
+          {salesChannelTabs.length <= 0 && (
+            <>
+              <div
+                className={[
+                  styles['no-items-text'],
+                  styles['no-items-text-mobile'],
+                ].join(' ')}
+              >
+                {t('chooseASalesChannel')}
+              </div>
+              <div
+                className={[
+                  styles['no-items-container'],
+                  styles['no-items-container-mobile'],
+                ].join(' ')}
+              >
+                <Button
+                  classNames={{
+                    button: styles['outline-button'],
+                  }}
+                  rippleProps={{
+                    color: 'rgba(133, 38, 122, .35)',
+                  }}
+                  size={'large'}
+                  touchScreen={true}
+                  onClick={() =>
+                    setTimeout(() => navigate(RoutePaths.Home), 150)
+                  }
+                >
+                  {t('home')}
+                </Button>
+              </div>
+            </>
+          )}
           {(!props.cart || props.cart?.items.length <= 0) && (
             <>
               <div
@@ -117,8 +184,8 @@ export function CartMobileComponent(): JSX.Element {
               </div>
               <div
                 className={[
-                  styles['shop-button-container'],
-                  styles['shop-button-container-mobile'],
+                  styles['no-items-container'],
+                  styles['no-items-container-mobile'],
                 ].join(' ')}
               >
                 <Button

@@ -21,15 +21,14 @@ import { InventoryLocation } from '../models/home.model';
 
 class CartController extends Controller {
   private readonly _model: CartModel;
-  private _selectedRegionSubscription: Subscription | undefined;
-  private _selectedSalesChannelSubscription: Subscription | undefined;
+  private _selectedInventoryLocationSubscription: Subscription | undefined;
 
   constructor() {
     super();
 
     this._model = new CartModel();
-    this.onSelectedRegionChangedAsync =
-      this.onSelectedRegionChangedAsync.bind(this);
+    this.onSelectedInventoryLocationChangedAsync =
+      this.onSelectedInventoryLocationChangedAsync.bind(this);
   }
 
   public get model(): CartModel {
@@ -37,15 +36,15 @@ class CartController extends Controller {
   }
 
   public override initialize(renderCount: number): void {
-    this._selectedRegionSubscription = StoreController.model.store
-      .pipe(select((model) => model.selectedRegion))
+    this._selectedInventoryLocationSubscription = HomeController.model.store
+      .pipe(select((model) => model.selectedInventoryLocation))
       .subscribe({
-        next: this.onSelectedRegionChangedAsync,
+        next: this.onSelectedInventoryLocationChangedAsync,
       });
   }
 
   public override dispose(renderCount: number): void {
-    this._selectedRegionSubscription?.unsubscribe();
+    this._selectedInventoryLocationSubscription?.unsubscribe();
   }
 
   public updateDiscountCodeText(value: string): void {
@@ -290,16 +289,14 @@ class CartController extends Controller {
     }
   }
 
-  private async onSelectedRegionChangedAsync(
-    value: Region | undefined
+  private async onSelectedInventoryLocationChangedAsync(
+    value: InventoryLocation | undefined
   ): Promise<void> {
-    const { selectedInventoryLocation } = HomeController.model;
-    const cartId = selectedInventoryLocation?.id
-      ? this._model.cartIds[selectedInventoryLocation.id]
-      : undefined;
+    const { selectedRegion } = StoreController.model;
+    const cartId = value?.id ? this._model.cartIds[value.id] : undefined;
 
-    if (selectedInventoryLocation && !cartId && value?.id) {
-      await this.createCartAsync(value.id, selectedInventoryLocation);
+    if (value && !cartId && selectedRegion?.id) {
+      await this.createCartAsync(selectedRegion.id, value);
     }
 
     if (cartId && cartId.length > 0) {
