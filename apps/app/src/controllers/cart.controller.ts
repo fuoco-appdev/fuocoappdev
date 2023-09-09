@@ -16,6 +16,8 @@ import {
 import MedusaService from '../services/medusa.service';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import WindowController from './window.controller';
+import HomeController from './home.controller';
+import { InventoryLocation } from '../models/home.model';
 
 class CartController extends Controller {
   private readonly _model: CartModel;
@@ -63,9 +65,9 @@ class CartController extends Controller {
   }
 
   public async removeDiscountCodeAsync(code: string): Promise<void> {
-    const { selectedSalesChannel } = StoreController.model;
-    const cartId = selectedSalesChannel?.id
-      ? this._model.cartIds[selectedSalesChannel.id]
+    const { selectedInventoryLocationId } = HomeController.model;
+    const cartId = selectedInventoryLocationId
+      ? this._model.cartIds[selectedInventoryLocationId]
       : undefined;
     if (!cartId) {
       return;
@@ -90,9 +92,9 @@ class CartController extends Controller {
   }
 
   public async updateCartAsync(payload: StorePostCartsCartReq): Promise<void> {
-    const { selectedSalesChannel } = StoreController.model;
-    const cartId = selectedSalesChannel?.id
-      ? this._model.cartIds[selectedSalesChannel.id]
+    const { selectedInventoryLocationId } = HomeController.model;
+    const cartId = selectedInventoryLocationId
+      ? this._model.cartIds[selectedInventoryLocationId]
       : undefined;
     if (!cartId) {
       return;
@@ -119,9 +121,9 @@ class CartController extends Controller {
   public async completeCartAsync(): Promise<
     Cart | Order | Swap | null | undefined
   > {
-    const { selectedSalesChannel } = StoreController.model;
-    const cartId = selectedSalesChannel?.id
-      ? this._model.cartIds[selectedSalesChannel.id]
+    const { selectedInventoryLocationId } = HomeController.model;
+    const cartId = selectedInventoryLocationId
+      ? this._model.cartIds[selectedInventoryLocationId]
       : undefined;
     if (!cartId) {
       return null;
@@ -149,10 +151,10 @@ class CartController extends Controller {
       return;
     }
 
-    const { selectedSalesChannel } = StoreController.model;
+    const { selectedInventoryLocation } = HomeController.model;
     await this.createCartAsync(
       StoreController.model.selectedRegion.id,
-      selectedSalesChannel
+      selectedInventoryLocation
     );
   }
 
@@ -252,22 +254,24 @@ class CartController extends Controller {
 
   private async createCartAsync(
     regionId: string,
-    selectedSalesChannel: Partial<SalesChannel | undefined>
+    selectedInventoryLocation: InventoryLocation | undefined
   ): Promise<
     Omit<Cart, 'refundable_amount' | 'refunded_total'> | null | undefined
   > {
-    if (!selectedSalesChannel || !selectedSalesChannel.id) {
+    if (!selectedInventoryLocation || !selectedInventoryLocation.id) {
       return null;
     }
 
     try {
+      const selectedSalesChannelId =
+        selectedInventoryLocation.salesChannels[0].id;
       const cartResponse = await MedusaService.medusa?.carts.create({
         region_id: regionId,
-        sales_channel_id: selectedSalesChannel.id,
+        sales_channel_id: selectedSalesChannelId,
       });
 
       const cartIds = { ...this._model.cartIds };
-      cartIds[selectedSalesChannel.id] = cartResponse?.cart.id;
+      cartIds[selectedInventoryLocation.id] = cartResponse?.cart.id;
       this._model.cartIds = cartIds;
 
       if (cartResponse?.cart) {
@@ -289,13 +293,13 @@ class CartController extends Controller {
   private async onSelectedRegionChangedAsync(
     value: Region | undefined
   ): Promise<void> {
-    const { selectedSalesChannel } = StoreController.model;
-    const cartId = selectedSalesChannel?.id
-      ? this._model.cartIds[selectedSalesChannel.id]
+    const { selectedInventoryLocation } = HomeController.model;
+    const cartId = selectedInventoryLocation?.id
+      ? this._model.cartIds[selectedInventoryLocation.id]
       : undefined;
 
-    if (selectedSalesChannel && !cartId && value?.id) {
-      await this.createCartAsync(value.id, selectedSalesChannel);
+    if (selectedInventoryLocation && !cartId && value?.id) {
+      await this.createCartAsync(value.id, selectedInventoryLocation);
     }
 
     if (cartId && cartId.length > 0) {

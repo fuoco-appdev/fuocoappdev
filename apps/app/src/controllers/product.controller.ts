@@ -6,6 +6,7 @@ import { ProductModel } from '../models/product.model';
 import { select } from '@ngneat/elf';
 import { StoreModel, StoreState } from '../models/store.model';
 import StoreController from './store.controller';
+import HomeController from './home.controller';
 import MedusaService from '../services/medusa.service';
 import i18n from '../i18n';
 import CartController from './cart.controller';
@@ -148,9 +149,9 @@ class ProductController extends Controller {
     successCallback?: () => void,
     errorCallback?: (error: Error) => void
   ): Promise<void> {
-    const { selectedSalesChannel } = StoreController.model;
-    const cartId = selectedSalesChannel?.id
-      ? CartController.model.cartIds[selectedSalesChannel.id]
+    const { selectedInventoryLocationId } = HomeController.model;
+    const cartId = selectedInventoryLocationId
+      ? CartController.model.cartIds[selectedInventoryLocationId]
       : undefined;
     if (!cartId) {
       return;

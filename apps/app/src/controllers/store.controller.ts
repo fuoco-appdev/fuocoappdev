@@ -169,7 +169,7 @@ class StoreController extends Controller {
     await this.updateRegionAsync(region);
 
     const inventoryLocation = HomeController.model.inventoryLocations.find(
-      (value) => value.placeName === cellarId
+      (value) => value.id === cellarId
     );
     if (inventoryLocation) {
       HomeController.updateSelectedInventoryLocation(inventoryLocation);
