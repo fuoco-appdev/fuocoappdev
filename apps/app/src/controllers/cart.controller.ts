@@ -292,11 +292,13 @@ class CartController extends Controller {
   private async onSelectedInventoryLocationChangedAsync(
     value: InventoryLocation | undefined
   ): Promise<void> {
-    const { selectedRegion } = StoreController.model;
+    const region = StoreController.model.regions.find(
+      (region) => region.name === value?.region
+    );
     const cartId = value?.id ? this._model.cartIds[value.id] : undefined;
 
-    if (value && !cartId && selectedRegion?.id) {
-      await this.createCartAsync(selectedRegion.id, value);
+    if (value && !cartId && region?.id) {
+      await this.createCartAsync(region.id, value);
     }
 
     if (cartId && cartId.length > 0) {
