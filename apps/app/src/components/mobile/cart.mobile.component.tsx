@@ -172,40 +172,41 @@ export function CartMobileComponent({
               </div>
             </>
           )}
-          {(!props.cart || props.cart?.items.length <= 0) && (
-            <>
-              <div
-                className={[
-                  styles['no-items-text'],
-                  styles['no-items-text-mobile'],
-                ].join(' ')}
-              >
-                {t('noCartItems')}
-              </div>
-              <div
-                className={[
-                  styles['no-items-container'],
-                  styles['no-items-container-mobile'],
-                ].join(' ')}
-              >
-                <Button
-                  classNames={{
-                    button: styles['outline-button'],
-                  }}
-                  rippleProps={{
-                    color: 'rgba(133, 38, 122, .35)',
-                  }}
-                  size={'large'}
-                  touchScreen={true}
-                  onClick={() =>
-                    setTimeout(() => navigate(RoutePaths.Store), 150)
-                  }
+          {salesChannelTabs.length > 0 &&
+            (!props.cart || props.cart?.items.length <= 0) && (
+              <>
+                <div
+                  className={[
+                    styles['no-items-text'],
+                    styles['no-items-text-mobile'],
+                  ].join(' ')}
                 >
-                  {t('shopNow')}
-                </Button>
-              </div>
-            </>
-          )}
+                  {t('noCartItems')}
+                </div>
+                <div
+                  className={[
+                    styles['no-items-container'],
+                    styles['no-items-container-mobile'],
+                  ].join(' ')}
+                >
+                  <Button
+                    classNames={{
+                      button: styles['outline-button'],
+                    }}
+                    rippleProps={{
+                      color: 'rgba(133, 38, 122, .35)',
+                    }}
+                    size={'large'}
+                    touchScreen={true}
+                    onClick={() =>
+                      setTimeout(() => navigate(RoutePaths.Store), 150)
+                    }
+                  >
+                    {t('shopNow')}
+                  </Button>
+                </div>
+              </>
+            )}
         </div>
       </div>
       <div

@@ -179,39 +179,40 @@ export function CartDesktopComponent({
                   </div>
                 </>
               )}
-              {(!props.cart || props.cart?.items.length <= 0) && (
-                <>
-                  <div
-                    className={[
-                      styles['no-items-text'],
-                      styles['no-items-text-desktop'],
-                    ].join(' ')}
-                  >
-                    {t('noCartItems')}
-                  </div>
-                  <div
-                    className={[
-                      styles['no-items-container'],
-                      styles['no-items-container-desktop'],
-                    ].join(' ')}
-                  >
-                    <Button
-                      classNames={{
-                        button: styles['outline-button'],
-                      }}
-                      rippleProps={{
-                        color: 'rgba(133, 38, 122, .35)',
-                      }}
-                      size={'large'}
-                      onClick={() =>
-                        setTimeout(() => navigate(RoutePaths.Store), 150)
-                      }
+              {salesChannelTabs.length > 0 &&
+                (!props.cart || props.cart?.items.length <= 0) && (
+                  <>
+                    <div
+                      className={[
+                        styles['no-items-text'],
+                        styles['no-items-text-desktop'],
+                      ].join(' ')}
                     >
-                      {t('shopNow')}
-                    </Button>
-                  </div>
-                </>
-              )}
+                      {t('noCartItems')}
+                    </div>
+                    <div
+                      className={[
+                        styles['no-items-container'],
+                        styles['no-items-container-desktop'],
+                      ].join(' ')}
+                    >
+                      <Button
+                        classNames={{
+                          button: styles['outline-button'],
+                        }}
+                        rippleProps={{
+                          color: 'rgba(133, 38, 122, .35)',
+                        }}
+                        size={'large'}
+                        onClick={() =>
+                          setTimeout(() => navigate(RoutePaths.Store), 150)
+                        }
+                      >
+                        {t('shopNow')}
+                      </Button>
+                    </div>
+                  </>
+                )}
             </div>
           </div>
         </div>
