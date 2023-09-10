@@ -141,14 +141,18 @@
       width: 100%;
 
       & .navigation-back-text-container {
+        display: flex;
+        flex-direction: row;
         font-size: $font-size-sm;
-        text-transform: uppercase;
+        text-transform: capitalize;
         color: $brand-100;
         font-weight: $font-weight-bold;
         padding-right: 40px;
         width: 100%;
         flex: 1;
+        gap: $mp-2;
         text-align: center;
+        justify-content: center;
       }
     }
   }

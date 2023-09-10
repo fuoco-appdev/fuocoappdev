@@ -196,17 +196,66 @@ export function WindowMobileComponent({
                   styles['navigation-back-text-container-mobile'],
                 ].join(' ')}
               >
-                {props.activeRoute === RoutePaths.TermsOfService &&
-                  t('termsOfService')}
-                {props.activeRoute === RoutePaths.PrivacyPolicy &&
-                  t('privacyPolicy')}
-                {props.activeRoute === RoutePaths.Checkout && t('checkout')}
-                {props.activeRoute === RoutePaths.OrderConfirmedWithId &&
-                  t('confirmedOrder')}
-                {props.activeRoute === RoutePaths.AccountSettings &&
-                  t('settings')}
-                {props.activeRoute === RoutePaths.AccountSettingsAccount &&
-                  t('account')}
+                {props.activeRoute === RoutePaths.TermsOfService && (
+                  <>
+                    <Line.Gavel size={24} />
+                    <div
+                      className={[styles['navigation-back-title']].join(' ')}
+                    >
+                      {t('termsOfService')}
+                    </div>
+                  </>
+                )}
+                {props.activeRoute === RoutePaths.PrivacyPolicy && (
+                  <>
+                    <Line.Gavel size={24} />
+                    <div
+                      className={[styles['navigation-back-title']].join(' ')}
+                    >
+                      {t('privacyPolicy')}
+                    </div>
+                  </>
+                )}
+                {props.activeRoute === RoutePaths.Checkout && (
+                  <>
+                    <Line.ShoppingCart size={24} />
+                    <div
+                      className={[styles['navigation-back-title']].join(' ')}
+                    >
+                      {t('checkout')}
+                    </div>
+                  </>
+                )}
+                {props.activeRoute === RoutePaths.OrderConfirmedWithId && (
+                  <>
+                    <Line.ShoppingCart size={24} />
+                    <div
+                      className={[styles['navigation-back-title']].join(' ')}
+                    >
+                      {t('orderConfirmed')}
+                    </div>
+                  </>
+                )}
+                {props.activeRoute === RoutePaths.AccountSettings && (
+                  <>
+                    <Line.Settings size={24} />
+                    <div
+                      className={[styles['navigation-back-title']].join(' ')}
+                    >
+                      {t('settings')}
+                    </div>
+                  </>
+                )}
+                {props.activeRoute === RoutePaths.AccountSettingsAccount && (
+                  <>
+                    <Line.Person size={24} />
+                    <div
+                      className={[styles['navigation-back-title']].join(' ')}
+                    >
+                      {t('account')}
+                    </div>
+                  </>
+                )}
               </div>
             )}
           </div>

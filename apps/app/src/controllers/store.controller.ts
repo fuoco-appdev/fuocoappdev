@@ -211,7 +211,7 @@ class StoreController extends Controller {
       (value) => value.name === inventoryLocation.region
     );
     await this.updateRegionAsync(region);
-    await this.searchAsync('');
+    await this.searchAsync(this._model.input);
   }
 
   private async updateRegionAsync(region: Region | undefined): Promise<void> {
