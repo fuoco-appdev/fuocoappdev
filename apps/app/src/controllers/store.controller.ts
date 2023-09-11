@@ -18,6 +18,8 @@ import {
 } from '@medusajs/medusa';
 import { ProductOptions } from '../models/product.model';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+import { AuthChangeEvent, Session } from '@supabase/supabase-js';
+import SupabaseService from '../services/supabase.service';
 
 class StoreController extends Controller {
   private readonly _model: StoreModel;
@@ -31,6 +33,7 @@ class StoreController extends Controller {
     this._model = new StoreModel();
     this.onSelectedInventoryLocationChangedAsync =
       this.onSelectedInventoryLocationChangedAsync.bind(this);
+    this.onAuthStateChanged = this.onAuthStateChanged.bind(this);
   }
 
   public get model(): StoreModel {
@@ -40,6 +43,9 @@ class StoreController extends Controller {
   public override initialize(renderCount: number): void {
     this._productsIndex = MeiliSearchService.client?.index('products');
     this.intializeAsync(renderCount);
+    SupabaseService.supabaseClient?.auth.onAuthStateChange(
+      this.onAuthStateChanged
+    );
   }
 
   public override dispose(renderCount: number): void {
@@ -224,6 +230,15 @@ class StoreController extends Controller {
 
   private async updateRegionAsync(region: Region | undefined): Promise<void> {
     this._model.selectedRegion = region;
+  }
+
+  private async onAuthStateChanged(
+    event: AuthChangeEvent,
+    session: Session | null
+  ): Promise<void> {
+    if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+      this.searchAsync(this._model.input);
+    }
   }
 }
 
