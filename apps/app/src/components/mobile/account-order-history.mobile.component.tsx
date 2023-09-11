@@ -25,7 +25,10 @@ export function AccountOrderHistoryMobileComponent({
       ref={rootRef}
       className={[styles['root'], styles['root-mobile']].join(' ')}
     >
-      <div className={[styles['scroll'], styles['scroll-mobile']].join(' ')}>
+      <div
+        ref={ordersContainerRef}
+        className={[styles['scroll'], styles['scroll-mobile']].join(' ')}
+      >
         <div
           className={[
             styles['order-history-text'],

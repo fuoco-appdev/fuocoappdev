@@ -29,7 +29,10 @@ export function AccountOrderHistoryDesktopComponent({
       ref={rootRef}
       className={[styles['root'], styles['root-desktop']].join(' ')}
     >
-      <div className={[styles['scroll'], styles['scroll-desktop']].join(' ')}>
+      <div
+        ref={ordersContainerRef}
+        className={[styles['scroll'], styles['scroll-desktop']].join(' ')}
+      >
         <div
           className={[
             styles['order-history-text'],
