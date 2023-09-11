@@ -44,6 +44,7 @@ class ProductController extends Controller {
             return;
           }
 
+          this._model.isLoading = true;
           this._model.thumbnail = product?.thumbnail ?? '';
           this._model.title = product?.title ?? '';
           this._model.subtitle = product?.subtitle ?? '';
@@ -61,6 +62,7 @@ class ProductController extends Controller {
               ? `${product.length}L x ${product.width}W x ${product.height}H`
               : '-';
           this._model.type = product?.type ? product.type.value : '-';
+          this._model.isLoading = false;
         },
       });
 
