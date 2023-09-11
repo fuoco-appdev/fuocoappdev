@@ -60,7 +60,7 @@
   }
 
   & .toast-life {
-    background-image: linear-gradient(130deg, #85267A, #E92142);
+    background-image: $gray-100;
   }
 }
 
@@ -337,6 +337,10 @@
         }
       }
     }
+  }
+
+  & .toast-container-desktop {
+    max-width: 400px;
   }
 }
 

@@ -28,6 +28,10 @@ import HomeController from '../../controllers/home.controller';
 import { InventoryLocation } from '../../models/home.model';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { StoreResponsiveProps } from '../store.component';
+import {
+  PricedProduct,
+  PricedVariant,
+} from '@medusajs/medusa/dist/types/pricing';
 
 export function StoreMobileComponent({
   openFilter,
@@ -167,7 +171,7 @@ export function StoreMobileComponent({
             />
           }
         >
-          {props.previews.map((preview: Product, index: number) => (
+          {props.previews.map((preview: PricedProduct, index: number) => (
             <ProductPreviewComponent
               parentRef={rootRef}
               key={index}

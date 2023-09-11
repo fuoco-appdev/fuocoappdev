@@ -214,9 +214,16 @@ class CartController extends Controller {
         | undefined;
       if (!product) {
         try {
+          const { selectedRegion } = StoreController.model;
+          const { cart } = this._model;
           const productResponse = await MedusaService.medusa?.products.list({
             id: item.variant.product_id,
             sales_channel_id: [value.sales_channel_id ?? ''],
+            ...(selectedRegion && {
+              region_id: selectedRegion.id,
+              currency_code: selectedRegion.currency_code,
+            }),
+            ...(cart && { cart_id: cart.id }),
           });
           product = productResponse?.products[0];
         } catch (error: any) {

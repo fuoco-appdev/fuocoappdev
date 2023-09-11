@@ -32,7 +32,6 @@ export function ProductDesktopComponent({
   type,
   uvc,
   vintage,
-  hasQuantityLimit,
   setActiveDetails,
   setDescription,
 }: ProductResponsiveProps): JSX.Element {

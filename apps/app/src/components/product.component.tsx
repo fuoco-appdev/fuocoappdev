@@ -28,7 +28,6 @@ export interface ProductResponsiveProps {
   type: string | undefined;
   uvc: string | undefined;
   vintage: string | undefined;
-  hasQuantityLimit: boolean;
   setActiveDetails: (value: string | undefined) => void;
   setDescription: (value: string) => void;
 }
@@ -54,7 +53,6 @@ export default function ProductComponent(): JSX.Element {
   const [type, setType] = useState<string | undefined>('');
   const [uvc, setUVC] = useState<string | undefined>('');
   const [vintage, setVintage] = useState<string | undefined>('');
-  const [hasQuantityLimit, setHasQuantityLimit] = useState<boolean>(false);
 
   useEffect(() => {
     ProductController.updateProductId(id);
@@ -83,14 +81,6 @@ export default function ProductComponent(): JSX.Element {
       ProductController.updateSelectedVariant(selectedVariant ?? '');
     }
   }, [props.options]);
-
-  useEffect(() => {
-    const availablePrices = ProductController.getAvailablePrices(
-      props.selectedVariant?.prices,
-      props.selectedVariant
-    );
-    setHasQuantityLimit(!availablePrices || availablePrices?.length <= 0);
-  }, [props.selectedVariant]);
 
   useEffect(() => {
     const alcoholOption = ProductController.model.options.find(
@@ -159,7 +149,6 @@ export default function ProductComponent(): JSX.Element {
           type={type}
           uvc={uvc}
           vintage={vintage}
-          hasQuantityLimit={hasQuantityLimit}
           setActiveDetails={setActiveDetails}
           setDescription={setDescription}
         />
@@ -180,7 +169,6 @@ export default function ProductComponent(): JSX.Element {
           type={type}
           uvc={uvc}
           vintage={vintage}
-          hasQuantityLimit={hasQuantityLimit}
           setActiveDetails={setActiveDetails}
           setDescription={setDescription}
         />

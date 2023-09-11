@@ -10,13 +10,11 @@ import HomeController from './home.controller';
 import MedusaService from '../services/medusa.service';
 import i18n from '../i18n';
 import CartController from './cart.controller';
+import { LineItem, Region, SalesChannel } from '@medusajs/medusa';
 import {
-  ProductVariant,
-  LineItem,
-  Region,
-  SalesChannel,
-} from '@medusajs/medusa';
-import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+  PricedProduct,
+  PricedVariant,
+} from '@medusajs/medusa/dist/types/pricing';
 
 class ProductController extends Controller {
   private readonly _model: ProductModel;
@@ -55,6 +53,7 @@ class ProductController extends Controller {
             return;
           }
 
+          this.resetDetails();
           this.requestProductAsync(this._model.productId, value.id);
         },
       });
@@ -85,11 +84,19 @@ class ProductController extends Controller {
     salesChannelId: string
   ): Promise<void> {
     this._model.isLoading = true;
+    const { selectedRegion } = StoreController.model;
+    const { cart } = CartController.model;
     const productResponse = await MedusaService.medusa?.products.list({
       id: id,
       sales_channel_id: [salesChannelId],
+      ...(selectedRegion && {
+        region_id: selectedRegion.id,
+        currency_code: selectedRegion.currency_code,
+      }),
+      ...(cart && { cart_id: cart.id }),
     });
     const product = productResponse?.products[0];
+    console.log(product);
     this._model.thumbnail = product?.thumbnail ?? '';
     this._model.title = product?.title ?? '';
     this._model.subtitle = product?.subtitle ?? '';
@@ -176,40 +183,17 @@ class ProductController extends Controller {
     }
   }
 
-  public getCheapestPrice(prices: MoneyAmount[]): MoneyAmount | undefined {
-    const cheapestPrice = prices?.reduce((current, next) => {
-      return (current?.amount ?? 0) < (next?.amount ?? 0) ? current : next;
-    });
-    return cheapestPrice;
-  }
-
-  public getPricesByRegion(
-    region: Region,
-    variant: ProductVariant
-  ): MoneyAmount[] {
-    const prices = variant.prices?.filter(
-      (value: MoneyAmount) =>
-        value.currency_code === region?.currency_code ?? ''
+  public getCheapestPrice(
+    variants: PricedVariant[]
+  ): Partial<PricedVariant> | undefined {
+    const cheapestVariant = variants?.reduce(
+      (current: PricedVariant, next: PricedVariant) => {
+        return (current?.calculated_price ?? 0) < (next?.calculated_price ?? 0)
+          ? current
+          : next;
+      }
     );
-    return prices;
-  }
-
-  public getAvailablePrices(
-    prices: MoneyAmount[],
-    variant: ProductVariant
-  ): MoneyAmount[] {
-    const availablePrices = prices?.filter((price) => {
-      const cartItem: LineItem | undefined =
-        CartController.model.cart?.items.find(
-          (item) => item.variant_id === price.variant_id
-        );
-      return (
-        !cartItem ||
-        variant.allow_backorder ||
-        cartItem.quantity < variant.inventory_quantity
-      );
-    });
-    return availablePrices;
+    return cheapestVariant;
   }
 }
 

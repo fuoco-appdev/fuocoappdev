@@ -32,7 +32,6 @@ export function ProductMobileComponent({
   type,
   uvc,
   vintage,
-  hasQuantityLimit,
   setActiveDetails,
   setDescription,
 }: ProductResponsiveProps): JSX.Element {

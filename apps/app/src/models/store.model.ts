@@ -62,11 +62,11 @@ export class StoreModel extends Model {
     }
   }
 
-  public get selectedPreview(): Product | undefined {
+  public get selectedPreview(): PricedProduct | undefined {
     return this.store.getValue().selectedPreview;
   }
 
-  public set selectedPreview(value: Product | undefined) {
+  public set selectedPreview(value: PricedProduct | undefined) {
     if (JSON.stringify(this.selectedPreview) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, selectedPreview: value }));
     }

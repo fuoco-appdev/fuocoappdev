@@ -95,7 +95,7 @@ export function WindowDesktopComponent({
             <div
               className={[
                 styles['top-bar-button-container'],
-                styles['top-bar-button-container-mobile'],
+                styles['top-bar-button-container-desktop'],
               ].join(' ')}
             >
               <LanguageSwitch
@@ -177,7 +177,7 @@ export function WindowDesktopComponent({
               <div
                 className={[
                   styles['top-bar-button-container'],
-                  styles['top-bar-button-container-mobile'],
+                  styles['top-bar-button-container-desktop'],
                 ].join(' ')}
               >
                 <Button
@@ -207,7 +207,7 @@ export function WindowDesktopComponent({
               <div
                 className={[
                   styles['top-bar-button-container'],
-                  styles['top-bar-button-container-mobile'],
+                  styles['top-bar-button-container-desktop'],
                 ].join(' ')}
               >
                 <Button
@@ -258,7 +258,7 @@ export function WindowDesktopComponent({
               <div
                 className={[
                   styles['top-bar-button-container'],
-                  styles['top-bar-button-container-mobile'],
+                  styles['top-bar-button-container-desktop'],
                 ].join(' ')}
               >
                 <Button
@@ -290,7 +290,7 @@ export function WindowDesktopComponent({
                           props.activeRoute?.startsWith(RoutePaths.Account)
                             ? [
                                 styles['avatar-container-selected'],
-                                styles['avatar-container-selected-mobile'],
+                                styles['avatar-container-selected-desktop'],
                               ].join(' ')
                             : undefined
                         }
@@ -299,7 +299,7 @@ export function WindowDesktopComponent({
                           classNames={{
                             container: [
                               styles['avatar-container'],
-                              styles['avatar-container-mobile'],
+                              styles['avatar-container-desktop'],
                             ].join(' '),
                           }}
                           size={'custom'}
@@ -543,14 +543,20 @@ export function WindowDesktopComponent({
         classNames={{
           root: [
             styles['toast-overlay-root'],
-            styles['toast-overlay-root-mobile'],
+            styles['toast-overlay-root-desktop'],
           ].join(' '),
           overlayContainer: [
             styles['toast-overlay-container'],
-            styles['toast-overlay-container-mobile'],
+            styles['toast-overlay-container-desktop'],
           ].join(' '),
           toast: {
-            life: [styles['toast-life'], styles['toast-life-mobile']].join(' '),
+            container: [
+              styles['toast-container'],
+              styles['toast-container-desktop'],
+            ].join(' '),
+            life: [styles['toast-life'], styles['toast-life-desktop']].join(
+              ' '
+            ),
           },
         }}
         timeout={2500}

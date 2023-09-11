@@ -8,6 +8,7 @@ import HomeController from './home.controller';
 import { select } from '@ngneat/elf';
 import { InventoryLocation } from '../models/home.model';
 import MedusaService from '../services/medusa.service';
+import CartController from '../controllers/cart.controller';
 import {
   ProductOption,
   Region,
@@ -56,7 +57,7 @@ class StoreController extends Controller {
     }, 750);
   }
 
-  public updateSelectedPreview(value: Product): void {
+  public updateSelectedPreview(value: PricedProduct): void {
     this._model.selectedPreview = value;
   }
 
@@ -127,9 +128,16 @@ class StoreController extends Controller {
 
     const hitsOrder = hits.map((value) => value.id);
     const productIds: string[] = hits.map((value: Product) => value.id);
+    const { selectedRegion } = this._model;
+    const { cart } = CartController.model;
     const productsResponse = await MedusaService.medusa?.products.list({
       id: productIds,
       sales_channel_id: [this._model.selectedSalesChannel.id ?? ''],
+      ...(selectedRegion && {
+        region_id: selectedRegion.id,
+        currency_code: selectedRegion.currency_code,
+      }),
+      ...(cart && { cart_id: cart.id }),
     });
     const products = productsResponse?.products ?? [];
     products.sort((a, b) => {

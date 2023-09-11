@@ -9,6 +9,10 @@ import {
 } from 'react';
 import styles from './product-preview.module.scss';
 import { MoneyAmount, Product, LineItem } from '@medusajs/medusa';
+import {
+  PricedProduct,
+  PricedVariant,
+} from '@medusajs/medusa/dist/types/pricing';
 import { Button, Card, Line } from '@fuoco.appdev/core-ui';
 import { animated, useSpring } from 'react-spring';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
@@ -26,7 +30,7 @@ import { ProductPreviewMobileComponent } from './mobile/product-preview.mobile.c
 
 export interface ProductPreviewProps {
   parentRef: MutableRefObject<HTMLDivElement | null>;
-  preview: Product;
+  preview: PricedProduct;
   onClick?: () => void;
   onRest?: () => void;
 }
@@ -71,48 +75,18 @@ export default function ProductPreviewComponent({
   };
 
   useEffect(() => {
-    const variantPrices: MoneyAmount[] = [];
     const purchasableVariants = preview.variants.filter(
       (value) => value.purchasable === true
     );
-    for (const variant of purchasableVariants) {
-      if (!storeProps.selectedRegion) {
-        continue;
-      }
 
-      const selectedCurrencyPrices = ProductController.getPricesByRegion(
-        storeProps.selectedRegion,
-        variant
-      );
-
-      if (!selectedCurrencyPrices || selectedCurrencyPrices.length <= 0) {
-        continue;
-      }
-
-      const availablePrices = ProductController.getAvailablePrices(
-        selectedCurrencyPrices,
-        variant
-      );
-      if (!availablePrices || availablePrices.length <= 0) {
-        continue;
-      }
-
-      const cheapestPrice = ProductController.getCheapestPrice(availablePrices);
-      if (!cheapestPrice) {
-        continue;
-      }
-
-      variantPrices.push(cheapestPrice);
-    }
-
-    if (variantPrices.length > 0) {
-      const cheapestVariantPrice =
-        ProductController.getCheapestPrice(variantPrices);
-      if (cheapestVariantPrice) {
-        setSelectedVariantId(cheapestVariantPrice.variant_id);
+    if (purchasableVariants.length > 0) {
+      const cheapestVariant =
+        ProductController.getCheapestPrice(purchasableVariants);
+      if (cheapestVariant) {
+        setSelectedVariantId(cheapestVariant.id);
         setPrice(
           formatAmount({
-            amount: cheapestVariantPrice.amount ?? 0,
+            amount: cheapestVariant.calculated_price ?? 0,
             region: storeProps.selectedRegion,
             includeTaxes: false,
           })
