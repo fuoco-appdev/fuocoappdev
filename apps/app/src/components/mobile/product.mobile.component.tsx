@@ -187,7 +187,7 @@ export function ProductMobileComponent({
             <>
               {storeProps.selectedRegion &&
                 formatAmount({
-                  amount: props.price?.amount ?? 0,
+                  amount: props.selectedVariant?.calculated_price ?? 0,
                   region: storeProps.selectedRegion,
                   includeTaxes: false,
                 })}

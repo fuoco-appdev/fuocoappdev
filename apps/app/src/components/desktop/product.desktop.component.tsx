@@ -43,6 +43,8 @@ export function ProductDesktopComponent({
     setDescription(props.description);
   }, [props.description]);
 
+  console.log(props.selectedVariant);
+
   return (
     <div className={[styles['root'], styles['root-desktop']].join(' ')}>
       <div
@@ -173,7 +175,7 @@ export function ProductDesktopComponent({
             <>
               {storeProps.selectedRegion &&
                 formatAmount({
-                  amount: props.price?.amount ?? 0,
+                  amount: props.selectedVariant?.calculated_price ?? 0,
                   region: storeProps.selectedRegion,
                   includeTaxes: false,
                 })}

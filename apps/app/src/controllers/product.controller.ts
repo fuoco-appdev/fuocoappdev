@@ -20,6 +20,7 @@ class ProductController extends Controller {
   private readonly _model: ProductModel;
   private _selectedPreviewSubscription: Subscription | undefined;
   private _selectedSalesChannelSubscription: Subscription | undefined;
+  private _selectedRegionSubscription: Subscription | undefined;
   private _productIdSubscription: Subscription | undefined;
 
   constructor() {
@@ -38,37 +39,76 @@ class ProductController extends Controller {
     this._selectedPreviewSubscription = StoreController.model.store
       .pipe(select((model: StoreState) => model.selectedPreview))
       .subscribe({
-        next: (value: PricedProduct | undefined) => {
-          this._model.thumbnail = value?.thumbnail ?? '';
-          this._model.title = value?.title ?? '';
-          this._model.subtitle = value?.subtitle ?? '';
-        },
-      });
-
-    this._selectedSalesChannelSubscription = StoreController.model.store
-      .pipe(select((model: StoreState) => model.selectedSalesChannel))
-      .subscribe({
-        next: (value: Partial<SalesChannel> | undefined) => {
-          if (!this._model.productId || !value || !value?.id) {
+        next: (product: PricedProduct | undefined) => {
+          if (!product) {
             return;
           }
 
+          this._model.thumbnail = product?.thumbnail ?? '';
+          this._model.title = product?.title ?? '';
+          this._model.subtitle = product?.subtitle ?? '';
+          this._model.description = product?.description ?? '';
+          this._model.tags = product?.tags ?? [];
+          this._model.options = product?.options ?? [];
+          this._model.variants = product?.variants ?? [];
+          this._model.metadata = product?.metadata ?? {};
+          this._model.material = product?.material ?? '-';
+          this._model.weight =
+            product?.weight && product.weight > 0 ? `${product.weight} g` : '-';
+          this._model.countryOrigin = product?.origin_country ?? '-';
+          this._model.dimensions =
+            product?.length && product.width && product.height
+              ? `${product.length}L x ${product.width}W x ${product.height}H`
+              : '-';
+          this._model.type = product?.type ? product.type.value : '-';
+        },
+      });
+
+    this._selectedRegionSubscription?.unsubscribe();
+    this._selectedRegionSubscription = StoreController.model.store
+      .pipe(select((model) => model.selectedRegion))
+      .subscribe({
+        next: (region: Region | undefined) => {
+          if (StoreController.model.selectedPreview) {
+            return;
+          }
+
+          const channel = StoreController.model.selectedSalesChannel;
           this.resetDetails();
-          this.requestProductAsync(this._model.productId, value.id);
+          this.requestProductAsync(
+            this._model.productId ?? '',
+            channel?.id ?? '',
+            region?.id ?? ''
+          );
         },
       });
 
     this._productIdSubscription = this._model.store
       .pipe(select((model) => model.productId))
       .subscribe({
-        next: (value: string | undefined) => {
-          const channel = StoreController.model.selectedSalesChannel;
-          if (!value || !channel) {
+        next: (id: string | undefined) => {
+          if (StoreController.model.selectedPreview) {
             return;
           }
 
-          this.resetDetails();
-          this.requestProductAsync(value, channel?.id ?? '');
+          this._selectedRegionSubscription?.unsubscribe();
+          this._selectedRegionSubscription = StoreController.model.store
+            .pipe(select((model) => model.selectedRegion))
+            .subscribe({
+              next: (region: Region | undefined) => {
+                const channel = StoreController.model.selectedSalesChannel;
+                if (!id || !channel) {
+                  return;
+                }
+
+                this.resetDetails();
+                this.requestProductAsync(
+                  id,
+                  channel?.id ?? '',
+                  region?.id ?? ''
+                );
+              },
+            });
         },
       });
   }
@@ -76,27 +116,26 @@ class ProductController extends Controller {
   public override dispose(renderCount: number): void {
     this._productIdSubscription?.unsubscribe();
     this._selectedPreviewSubscription?.unsubscribe();
+    this._selectedRegionSubscription?.unsubscribe();
     this._selectedSalesChannelSubscription?.unsubscribe();
   }
 
   public async requestProductAsync(
     id: string,
-    salesChannelId: string
+    salesChannelId: string,
+    regionId?: string
   ): Promise<void> {
     this._model.isLoading = true;
-    const { selectedRegion } = StoreController.model;
     const { cart } = CartController.model;
     const productResponse = await MedusaService.medusa?.products.list({
       id: id,
       sales_channel_id: [salesChannelId],
-      ...(selectedRegion && {
-        region_id: selectedRegion.id,
-        currency_code: selectedRegion.currency_code,
+      ...(regionId && {
+        region_id: regionId,
       }),
       ...(cart && { cart_id: cart.id }),
     });
     const product = productResponse?.products[0];
-    console.log(product);
     this._model.thumbnail = product?.thumbnail ?? '';
     this._model.title = product?.title ?? '';
     this._model.subtitle = product?.subtitle ?? '';
@@ -144,11 +183,6 @@ class ProductController extends Controller {
   public updateSelectedVariant(id: string): void {
     const variant = this._model.variants.find((value) => value.id === id);
     this._model.selectedVariant = variant;
-
-    // Change based on selected region
-    if (variant?.prices) {
-      this._model.price = variant?.prices[0];
-    }
   }
 
   public async addToCartAsync(

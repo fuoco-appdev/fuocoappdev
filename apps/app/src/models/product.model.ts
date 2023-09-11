@@ -26,7 +26,6 @@ export interface ProductState {
   isLiked: boolean;
   likeCount: number;
   description: string;
-  price: MoneyAmount | undefined;
   tags: ProductTag[];
   options: ProductOption[];
   variants: PricedVariant[];
@@ -53,7 +52,6 @@ export class ProductModel extends Model {
           isLiked: false,
           likeCount: 0,
           description: new Array(355).join(' '),
-          price: undefined,
           tags: [],
           options: [],
           variants: [],
@@ -146,16 +144,6 @@ export class ProductModel extends Model {
   public set description(value: string) {
     if (this.description !== value) {
       this.store.update((state) => ({ ...state, description: value }));
-    }
-  }
-
-  public get price(): MoneyAmount {
-    return this.store.getValue().price;
-  }
-
-  public set price(value: MoneyAmount) {
-    if (JSON.stringify(this.price) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, price: value }));
     }
   }
 
