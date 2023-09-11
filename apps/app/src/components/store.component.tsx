@@ -27,12 +27,12 @@ import ProductPreviewComponent from './product-preview.component';
 import ReactCountryFlag from 'react-country-flag';
 import HomeController from '../controllers/home.controller';
 import { InventoryLocation } from '../models/home.model';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import { center } from '@turf/turf';
 import { StoreDesktopComponent } from './desktop/store.desktop.component';
 import { StoreMobileComponent } from './mobile/store.mobile.component';
 
 export interface StoreResponsiveProps {
+  previewsContainerRef: React.MutableRefObject<HTMLDivElement | null>;
   openFilter: boolean;
   countryOptions: OptionProps[];
   regionOptions: OptionProps[];
@@ -47,6 +47,7 @@ export interface StoreResponsiveProps {
 }
 
 export default function StoreComponent(): JSX.Element {
+  const previewsContainerRef = useRef<HTMLDivElement | null>(null);
   const [props] = useObservable(StoreController.model.store);
   const [homeProps] = useObservable(HomeController.model.store);
   const [homeLocalProps] = useObservable(
@@ -59,6 +60,33 @@ export default function StoreComponent(): JSX.Element {
   const [selectedCountryId, setSelectedCountryId] = useState<string>('');
   const [selectedRegionId, setSelectedRegionId] = useState<string>('');
   const [selectedCellarId, setSelectedCellarId] = useState<string>('');
+
+  const onScroll = () => {
+    const scrollTop = previewsContainerRef.current?.scrollTop ?? 0;
+    const scrollHeight = previewsContainerRef.current?.scrollHeight ?? 0;
+    const clientHeight = previewsContainerRef.current?.clientHeight ?? 0;
+    const scrollOffset = scrollHeight - scrollTop - clientHeight;
+    if (scrollOffset > 0) {
+      return;
+    }
+
+    if (StoreController.model.hasMorePreviews) {
+      StoreController.onNextScrollAsync();
+    }
+  };
+
+  useEffect(() => {
+    previewsContainerRef.current?.addEventListener('scroll', onScroll);
+    return () =>
+      previewsContainerRef.current?.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useLayoutEffect(() => {
+    if (props.scrollPosition) {
+      previewsContainerRef.current?.scrollTo(0, props.scrollPosition);
+      StoreController.updateScrollPosition(undefined);
+    }
+  }, [previewsContainerRef.current]);
 
   useEffect(() => {
     const countries: OptionProps[] = [];
@@ -189,6 +217,7 @@ export default function StoreComponent(): JSX.Element {
     <>
       <ResponsiveDesktop>
         <StoreDesktopComponent
+          previewsContainerRef={previewsContainerRef}
           openFilter={openFilter}
           countryOptions={countryOptions}
           regionOptions={regionOptions}
@@ -204,6 +233,7 @@ export default function StoreComponent(): JSX.Element {
       </ResponsiveDesktop>
       <ResponsiveMobile>
         <StoreMobileComponent
+          previewsContainerRef={previewsContainerRef}
           openFilter={openFilter}
           countryOptions={countryOptions}
           regionOptions={regionOptions}

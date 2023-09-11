@@ -20,6 +20,8 @@ export interface StoreState {
   selectedSalesChannel: Partial<SalesChannel> | undefined;
   pagination: number;
   hasMorePreviews: boolean;
+  scrollPosition: number | undefined;
+  isLoading: boolean;
 }
 
 export class StoreModel extends Model {
@@ -37,6 +39,8 @@ export class StoreModel extends Model {
           selectedSalesChannel: undefined,
           pagination: 1,
           hasMorePreviews: true,
+          scrollPosition: undefined,
+          isLoading: false,
         })
       )
     );
@@ -146,6 +150,32 @@ export class StoreModel extends Model {
       this.store.update((state) => ({
         ...state,
         hasMorePreviews: value,
+      }));
+    }
+  }
+
+  public get scrollPosition(): number | undefined {
+    return this.store.getValue().scrollPosition;
+  }
+
+  public set scrollPosition(value: number | undefined) {
+    if (this.scrollPosition !== value) {
+      this.store.update((state) => ({
+        ...state,
+        scrollPosition: value,
+      }));
+    }
+  }
+
+  public get isLoading(): boolean {
+    return this.store.getValue().isLoading;
+  }
+
+  public set isLoading(value: boolean) {
+    if (this.isLoading !== value) {
+      this.store.update((state) => ({
+        ...state,
+        isLoading: value,
       }));
     }
   }

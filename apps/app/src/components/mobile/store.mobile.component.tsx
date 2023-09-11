@@ -26,7 +26,6 @@ import ProductPreviewComponent from '../product-preview.component';
 import ReactCountryFlag from 'react-country-flag';
 import HomeController from '../../controllers/home.controller';
 import { InventoryLocation } from '../../models/home.model';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import { StoreResponsiveProps } from '../store.component';
 import {
   PricedProduct,
@@ -34,6 +33,7 @@ import {
 } from '@medusajs/medusa/dist/types/pricing';
 
 export function StoreMobileComponent({
+  previewsContainerRef,
   openFilter,
   countryOptions,
   regionOptions,
@@ -47,7 +47,6 @@ export function StoreMobileComponent({
   setSelectedCellarId,
 }: StoreResponsiveProps): JSX.Element {
   const rootRef = useRef<HTMLDivElement | null>(null);
-  const previewsContainerRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const [props] = useObservable(StoreController.model.store);
   const { t, i18n } = useTranslation();
@@ -158,33 +157,28 @@ export function StoreMobileComponent({
         ].join(' ')}
         ref={previewsContainerRef}
       >
-        <InfiniteScroll
-          dataLength={props.previews.length}
-          next={() => StoreController.onNextScrollAsync()}
-          className={[styles['scroll'], styles['scroll-mobile']].join(' ')}
-          hasMore={props.hasMorePreviews}
-          height={previewsContainerRef.current?.clientHeight ?? 0 - 8}
-          loader={
-            <img
-              src={'../assets/svg/ring-resize-dark.svg'}
-              className={styles['loading-ring']}
-            />
-          }
-        >
-          {props.previews.map((preview: PricedProduct, index: number) => (
-            <ProductPreviewComponent
-              parentRef={rootRef}
-              key={index}
-              preview={preview}
-              onClick={() => {
-                StoreController.updateSelectedPreview(preview);
-              }}
-              onRest={() => {
-                navigate(`${RoutePaths.Store}/${preview.id}`);
-              }}
-            />
-          ))}
-        </InfiniteScroll>
+        {props.previews.map((preview: PricedProduct, index: number) => (
+          <ProductPreviewComponent
+            parentRef={rootRef}
+            key={index}
+            preview={preview}
+            onClick={() => {
+              StoreController.updateSelectedPreview(preview);
+              StoreController.updateScrollPosition(
+                previewsContainerRef.current?.scrollTop
+              );
+            }}
+            onRest={() => {
+              navigate(`${RoutePaths.Store}/${preview.id}`);
+            }}
+          />
+        ))}
+        {props.hasMorePreviews && (
+          <img
+            src={'../assets/svg/ring-resize-dark.svg'}
+            className={styles['loading-ring']}
+          />
+        )}
       </div>
       <Dropdown
         open={openFilter}

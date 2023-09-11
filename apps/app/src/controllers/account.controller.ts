@@ -356,9 +356,11 @@ class AccountController extends Controller {
     offset: number = 0,
     limit: number = 10
   ): Promise<void> {
-    if (!this._model.customer) {
+    if (this._model.areOrdersLoading || !this._model.customer) {
       return;
     }
+
+    this._model.areOrdersLoading = true;
 
     const orders = await MedusaService.requestOrdersAsync(
       this._model.customer.id,
@@ -370,15 +372,22 @@ class AccountController extends Controller {
 
     if (!orders || orders.length <= 0) {
       this._model.hasMoreOrders = false;
+      this._model.areOrdersLoading = false;
       return;
+    }
+
+    if (orders.length < limit) {
+      this._model.hasMoreOrders = false;
+    } else {
+      this._model.hasMoreOrders = true;
     }
 
     if (offset <= 0) {
       this._model.orders = [];
-      this._model.hasMoreOrders = true;
     }
 
     this._model.orders = this._model.orders.concat(orders);
+    this._model.areOrdersLoading = false;
   }
 
   private async onActiveAccountChangedAsync(

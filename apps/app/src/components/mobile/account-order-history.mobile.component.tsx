@@ -9,9 +9,11 @@ import { useObservable } from '@ngneat/use-observable';
 import { ResponsiveDesktop, ResponsiveMobile } from '../responsive.component';
 import { Order } from '@medusajs/medusa';
 import OrderItemComponent from '../order-item.component';
-import InfiniteScroll from 'react-infinite-scroll-component';
+import { AccountOrderHistoryResponsiveProps } from '../account-order-history.component';
 
-export function AccountOrderHistoryMobileComponent(): JSX.Element {
+export function AccountOrderHistoryMobileComponent({
+  ordersContainerRef,
+}: AccountOrderHistoryResponsiveProps): JSX.Element {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const [props] = useObservable(AccountController.model.store);
@@ -23,22 +25,7 @@ export function AccountOrderHistoryMobileComponent(): JSX.Element {
       ref={rootRef}
       className={[styles['root'], styles['root-mobile']].join(' ')}
     >
-      <InfiniteScroll
-        dataLength={orders.length}
-        next={() => AccountController.onNextOrderScrollAsync()}
-        className={[styles['scroll'], styles['scroll-mobile']].join(' ')}
-        hasMore={props.hasMoreOrders}
-        height={rootRef.current?.clientHeight ?? 0 - 8}
-        loader={
-          <img
-            src={'../assets/svg/ring-resize-dark.svg'}
-            className={[
-              styles['loading-ring'],
-              styles['loading-ring-mobile'],
-            ].join(' ')}
-          />
-        }
-      >
+      <div className={[styles['scroll'], styles['scroll-mobile']].join(' ')}>
         <div
           className={[
             styles['order-history-text'],
@@ -47,7 +34,7 @@ export function AccountOrderHistoryMobileComponent(): JSX.Element {
         >
           {t('orderHistory')}
         </div>
-        {orders.length > 0 ? (
+        {orders.length > 0 &&
           orders
             .sort((current: Order, next: Order) => {
               return (
@@ -57,8 +44,17 @@ export function AccountOrderHistoryMobileComponent(): JSX.Element {
             })
             .map((order: Order) => (
               <OrderItemComponent key={order.id} order={order} />
-            ))
-        ) : (
+            ))}
+        {props.hasMoreOrders && (
+          <img
+            src={'../assets/svg/ring-resize-dark.svg'}
+            className={[
+              styles['loading-ring'],
+              styles['loading-ring-mobile'],
+            ].join(' ')}
+          />
+        )}
+        {!props.areOrdersLoading && orders.length <= 0 && (
           <>
             <div
               className={[
@@ -85,7 +81,6 @@ export function AccountOrderHistoryMobileComponent(): JSX.Element {
                   color: 'rgba(133, 38, 122, .35)',
                 }}
                 size={'large'}
-                touchScreen={true}
                 onClick={() =>
                   setTimeout(() => navigate(RoutePaths.Store), 150)
                 }
@@ -95,7 +90,7 @@ export function AccountOrderHistoryMobileComponent(): JSX.Element {
             </div>
           </>
         )}
-      </InfiniteScroll>
+      </div>
     </div>
   );
 }

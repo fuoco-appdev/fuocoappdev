@@ -34,6 +34,7 @@ export interface AccountState {
   activeTabId: string;
   prevTabIndex: number;
   activeTabIndex: number;
+  areOrdersLoading: boolean;
 }
 
 export class AccountModel extends Model {
@@ -90,6 +91,7 @@ export class AccountModel extends Model {
           activeTabId: RoutePaths.AccountOrderHistory,
           prevTabIndex: 0,
           activeTabIndex: 0,
+          areOrdersLoading: false,
         })
       )
     );
@@ -309,6 +311,19 @@ export class AccountModel extends Model {
       this.store.update((state) => ({
         ...state,
         activeTabIndex: value,
+      }));
+    }
+  }
+
+  public get areOrdersLoading(): boolean {
+    return this.store.getValue().areOrdersLoading;
+  }
+
+  public set areOrdersLoading(value: boolean) {
+    if (this.areOrdersLoading !== value) {
+      this.store.update((state) => ({
+        ...state,
+        areOrdersLoading: value,
       }));
     }
   }

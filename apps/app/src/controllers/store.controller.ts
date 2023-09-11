@@ -67,6 +67,10 @@ class StoreController extends Controller {
     this._model.selectedPreview = value;
   }
 
+  public updateScrollPosition(value: number | undefined) {
+    this._model.scrollPosition = value;
+  }
+
   public async updateSelectedTabAsync(
     value: ProductTabs | undefined
   ): Promise<void> {
@@ -94,9 +98,17 @@ class StoreController extends Controller {
     offset: number = 0,
     limit: number = 10
   ): Promise<void> {
-    if (!this._model.selectedRegion || !this._model.selectedSalesChannel) {
+    if (
+      this._model.isLoading ||
+      !this._model.selectedRegion ||
+      !this._model.selectedSalesChannel
+    ) {
       return;
     }
+
+    console.log('load');
+
+    this._model.isLoading = true;
 
     let filter = 'type_value = Wine AND status = published';
     if (
@@ -125,6 +137,7 @@ class StoreController extends Controller {
     }
 
     if (hits.length <= 0) {
+      this._model.isLoading = false;
       return;
     }
 
@@ -173,6 +186,8 @@ class StoreController extends Controller {
     } else {
       this._model.previews = products;
     }
+
+    this._model.isLoading = false;
   }
 
   public async applyFilterAsync(

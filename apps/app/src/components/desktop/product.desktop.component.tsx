@@ -43,8 +43,6 @@ export function ProductDesktopComponent({
     setDescription(props.description);
   }, [props.description]);
 
-  console.log(props.selectedVariant);
-
   return (
     <div className={[styles['root'], styles['root-desktop']].join(' ')}>
       <div
