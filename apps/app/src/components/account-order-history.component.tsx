@@ -7,7 +7,6 @@ import { useObservable } from '@ngneat/use-observable';
 
 export interface AccountOrderHistoryResponsiveProps {
   ordersContainerRef: React.MutableRefObject<HTMLDivElement | null>;
-  onScroll: () => void;
 }
 
 export default function AccountOrderHistoryComponent(): JSX.Element {
@@ -34,6 +33,11 @@ export default function AccountOrderHistoryComponent(): JSX.Element {
       ordersContainerRef.current?.scrollTo(0, props.scrollPosition);
       AccountController.updateOrdersScrollPosition(undefined);
     }
+
+    ordersContainerRef.current?.addEventListener('scroll', onScroll, true);
+    return () => {
+      ordersContainerRef.current?.removeEventListener('scroll', onScroll);
+    };
   }, [ordersContainerRef.current]);
 
   return (
@@ -41,13 +45,11 @@ export default function AccountOrderHistoryComponent(): JSX.Element {
       <ResponsiveDesktop>
         <AccountOrderHistoryDesktopComponent
           ordersContainerRef={ordersContainerRef}
-          onScroll={onScroll}
         />
       </ResponsiveDesktop>
       <ResponsiveMobile>
         <AccountOrderHistoryMobileComponent
           ordersContainerRef={ordersContainerRef}
-          onScroll={onScroll}
         />
       </ResponsiveMobile>
     </>

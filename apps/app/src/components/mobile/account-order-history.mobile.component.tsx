@@ -13,7 +13,6 @@ import { AccountOrderHistoryResponsiveProps } from '../account-order-history.com
 
 export function AccountOrderHistoryMobileComponent({
   ordersContainerRef,
-  onScroll,
 }: AccountOrderHistoryResponsiveProps): JSX.Element {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
@@ -29,7 +28,6 @@ export function AccountOrderHistoryMobileComponent({
       <div
         ref={ordersContainerRef}
         className={[styles['scroll'], styles['scroll-mobile']].join(' ')}
-        onScroll={onScroll}
       >
         <div
           className={[

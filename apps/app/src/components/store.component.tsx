@@ -44,7 +44,6 @@ export interface StoreResponsiveProps {
   setSelectedCountryId: (value: string) => void;
   setSelectedRegionId: (value: string) => void;
   setSelectedCellarId: (value: string) => void;
-  onScroll: () => void;
 }
 
 export default function StoreComponent(): JSX.Element {
@@ -80,6 +79,11 @@ export default function StoreComponent(): JSX.Element {
     if (props.scrollPosition) {
       previewsContainerRef.current?.scrollTo(0, props.scrollPosition);
     }
+
+    previewsContainerRef.current?.addEventListener('scroll', onScroll, true);
+    return () => {
+      previewsContainerRef.current?.removeEventListener('scroll', onScroll);
+    };
   }, [previewsContainerRef.current]);
 
   useEffect(() => {
@@ -223,7 +227,6 @@ export default function StoreComponent(): JSX.Element {
           setSelectedCountryId={setSelectedCountryId}
           setSelectedRegionId={setSelectedRegionId}
           setSelectedCellarId={setSelectedCellarId}
-          onScroll={onScroll}
         />
       </ResponsiveDesktop>
       <ResponsiveMobile>
@@ -240,7 +243,6 @@ export default function StoreComponent(): JSX.Element {
           setSelectedCountryId={setSelectedCountryId}
           setSelectedRegionId={setSelectedRegionId}
           setSelectedCellarId={setSelectedCellarId}
-          onScroll={onScroll}
         />
       </ResponsiveMobile>
     </>
