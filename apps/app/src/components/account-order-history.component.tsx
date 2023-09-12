@@ -34,8 +34,11 @@ export default function AccountOrderHistoryComponent(): JSX.Element {
     }
 
     ordersContainerRef.current?.addEventListener('scroll', onScroll);
-    return () =>
+    ordersContainerRef.current?.addEventListener('touchmove', onScroll);
+    return () => {
       ordersContainerRef.current?.removeEventListener('scroll', onScroll);
+      ordersContainerRef.current?.removeEventListener('touchmove', onScroll);
+    };
   }, [ordersContainerRef.current]);
 
   return (

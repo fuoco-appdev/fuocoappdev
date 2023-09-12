@@ -80,8 +80,11 @@ export default function StoreComponent(): JSX.Element {
     }
 
     previewsContainerRef.current?.addEventListener('scroll', onScroll);
-    return () =>
+    previewsContainerRef.current?.addEventListener('touchmove', onScroll);
+    return () => {
       previewsContainerRef.current?.removeEventListener('scroll', onScroll);
+      previewsContainerRef.current?.removeEventListener('touchmove', onScroll);
+    };
   }, [previewsContainerRef.current]);
 
   useEffect(() => {
