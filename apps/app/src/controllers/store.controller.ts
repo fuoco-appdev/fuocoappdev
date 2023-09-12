@@ -95,8 +95,6 @@ class StoreController extends Controller {
       return;
     }
 
-    console.log('load');
-
     this._model.pagination = this._model.pagination + 1;
 
     const limit = 10;
@@ -141,7 +139,7 @@ class StoreController extends Controller {
       this._model.previews = [];
     }
 
-    if (hits.length <= 0 && this._model.hasMorePreviews) {
+    if (hits.length < limit && this._model.hasMorePreviews) {
       this._model.hasMorePreviews = false;
     }
 
@@ -150,7 +148,7 @@ class StoreController extends Controller {
       return;
     }
 
-    if (hits.length > 0 && !this._model.hasMorePreviews) {
+    if (hits.length >= limit && !this._model.hasMorePreviews) {
       this._model.hasMorePreviews = true;
     }
 
