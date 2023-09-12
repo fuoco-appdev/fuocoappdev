@@ -125,6 +125,10 @@ class AccountController extends Controller {
     }
   }
 
+  public updateOrdersScrollPosition(value: number | undefined) {
+    this._model.ordersScrollPosition = value;
+  }
+
   public getAddressFormErrors(
     form: AddressFormValues
   ): AddressFormErrors | undefined {

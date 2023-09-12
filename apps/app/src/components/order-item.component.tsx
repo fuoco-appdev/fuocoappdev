@@ -7,16 +7,17 @@ import { useTranslation } from 'react-i18next';
 
 export interface OrderItemProps {
   order: Order;
+  onClick: () => void;
 }
 
-export interface OrderItemResponsiveProps {
-  order: Order;
+export interface OrderItemResponsiveProps extends OrderItemProps {
   fulfillmentStatus: string;
   getNumberOfItems: (items: LineItem[]) => number;
 }
 
 export default function OrderItemComponent({
   order,
+  onClick,
 }: OrderItemProps): JSX.Element {
   const [fulfillmentStatus, setFulfillmentStatus] = useState<string>('');
   const { t, i18n } = useTranslation();
@@ -55,6 +56,7 @@ export default function OrderItemComponent({
           order={order}
           fulfillmentStatus={fulfillmentStatus}
           getNumberOfItems={getNumberOfItems}
+          onClick={onClick}
         />
       </ResponsiveDesktop>
       <ResponsiveMobile>
@@ -62,6 +64,7 @@ export default function OrderItemComponent({
           order={order}
           fulfillmentStatus={fulfillmentStatus}
           getNumberOfItems={getNumberOfItems}
+          onClick={onClick}
         />
       </ResponsiveMobile>
     </>

@@ -50,7 +50,19 @@ export function AccountOrderHistoryDesktopComponent({
               );
             })
             .map((order: Order) => (
-              <OrderItemComponent key={order.id} order={order} />
+              <OrderItemComponent
+                key={order.id}
+                order={order}
+                onClick={() => {
+                  AccountController.updateOrdersScrollPosition(
+                    ordersContainerRef.current?.scrollTop
+                  );
+                  setTimeout(
+                    () => navigate(`${RoutePaths.OrderConfirmed}/${order.id}`),
+                    250
+                  );
+                }}
+              />
             ))}
         {props.hasMoreOrders && (
           <img

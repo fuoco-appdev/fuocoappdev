@@ -66,26 +66,22 @@ export default function StoreComponent(): JSX.Element {
     const scrollHeight = previewsContainerRef.current?.scrollHeight ?? 0;
     const clientHeight = previewsContainerRef.current?.clientHeight ?? 0;
     const scrollOffset = scrollHeight - scrollTop - clientHeight;
-    if (scrollOffset > 0) {
+    if (scrollOffset > 0 || !StoreController.model.hasMorePreviews) {
       return;
     }
 
-    if (StoreController.model.hasMorePreviews) {
-      StoreController.onNextScrollAsync();
-    }
+    StoreController.onNextScrollAsync();
   };
-
-  useEffect(() => {
-    previewsContainerRef.current?.addEventListener('scroll', onScroll);
-    return () =>
-      previewsContainerRef.current?.removeEventListener('scroll', onScroll);
-  }, []);
 
   useLayoutEffect(() => {
     if (props.scrollPosition) {
       previewsContainerRef.current?.scrollTo(0, props.scrollPosition);
       StoreController.updateScrollPosition(undefined);
     }
+
+    previewsContainerRef.current?.addEventListener('scroll', onScroll);
+    return () =>
+      previewsContainerRef.current?.removeEventListener('scroll', onScroll);
   }, [previewsContainerRef.current]);
 
   useEffect(() => {

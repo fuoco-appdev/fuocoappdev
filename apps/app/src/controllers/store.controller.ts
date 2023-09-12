@@ -106,8 +106,6 @@ class StoreController extends Controller {
       return;
     }
 
-    console.log('load');
-
     this._model.isLoading = true;
 
     let filter = 'type_value = Wine AND status = published';

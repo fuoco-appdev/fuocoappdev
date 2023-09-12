@@ -1,8 +1,9 @@
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import { AccountOrderHistoryDesktopComponent } from './desktop/account-order-history.desktop.component';
 import { AccountOrderHistoryMobileComponent } from './mobile/account-order-history.mobile.component';
-import { useEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import AccountController from '../controllers/account.controller';
+import { useObservable } from '@ngneat/use-observable';
 
 export interface AccountOrderHistoryResponsiveProps {
   ordersContainerRef: React.MutableRefObject<HTMLDivElement | null>;
@@ -10,6 +11,7 @@ export interface AccountOrderHistoryResponsiveProps {
 
 export default function AccountOrderHistoryComponent(): JSX.Element {
   const ordersContainerRef = useRef<HTMLDivElement | null>(null);
+  const [props] = useObservable(AccountController.model.store);
 
   const onScroll = () => {
     const scrollTop = ordersContainerRef.current?.scrollTop ?? 0;
@@ -25,11 +27,16 @@ export default function AccountOrderHistoryComponent(): JSX.Element {
     }
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if (props.scrollPosition) {
+      ordersContainerRef.current?.scrollTo(0, props.scrollPosition);
+      AccountController.updateOrdersScrollPosition(undefined);
+    }
+
     ordersContainerRef.current?.addEventListener('scroll', onScroll);
     return () =>
       ordersContainerRef.current?.removeEventListener('scroll', onScroll);
-  }, []);
+  }, [ordersContainerRef.current]);
 
   return (
     <>

@@ -21,6 +21,7 @@ export function OrderItemMobileComponent({
   order,
   fulfillmentStatus,
   getNumberOfItems,
+  onClick,
 }: OrderItemResponsiveProps): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -30,12 +31,7 @@ export function OrderItemMobileComponent({
       <Ripples
         color={'rgba(42, 42, 95, .35)'}
         className={[styles['ripples'], styles['ripples-mobile']].join(' ')}
-        onClick={() =>
-          setTimeout(
-            () => navigate(`${RoutePaths.OrderConfirmed}/${order.id}`),
-            250
-          )
-        }
+        onClick={onClick}
       >
         <div
           key={order.id}

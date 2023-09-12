@@ -27,6 +27,7 @@ export function OrderItemDesktopComponent({
   order,
   fulfillmentStatus,
   getNumberOfItems,
+  onClick,
 }: OrderItemResponsiveProps): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -36,12 +37,7 @@ export function OrderItemDesktopComponent({
       <Ripples
         color={'rgba(42, 42, 95, .35)'}
         className={[styles['ripples'], styles['ripples-desktop']].join(' ')}
-        onClick={() =>
-          setTimeout(
-            () => navigate(`${RoutePaths.OrderConfirmed}/${order.id}`),
-            250
-          )
-        }
+        onClick={onClick}
       >
         <div
           key={order.id}

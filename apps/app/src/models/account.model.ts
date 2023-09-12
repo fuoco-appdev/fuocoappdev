@@ -35,6 +35,7 @@ export interface AccountState {
   prevTabIndex: number;
   activeTabIndex: number;
   areOrdersLoading: boolean;
+  ordersScrollPosition: number | undefined;
 }
 
 export class AccountModel extends Model {
@@ -92,6 +93,7 @@ export class AccountModel extends Model {
           prevTabIndex: 0,
           activeTabIndex: 0,
           areOrdersLoading: false,
+          ordersScrollPosition: undefined,
         })
       )
     );
@@ -324,6 +326,19 @@ export class AccountModel extends Model {
       this.store.update((state) => ({
         ...state,
         areOrdersLoading: value,
+      }));
+    }
+  }
+
+  public get ordersScrollPosition(): number | undefined {
+    return this.store.getValue().ordersScrollPosition;
+  }
+
+  public set ordersScrollPosition(value: number | undefined) {
+    if (this.ordersScrollPosition !== value) {
+      this.store.update((state) => ({
+        ...state,
+        ordersScrollPosition: value,
       }));
     }
   }
