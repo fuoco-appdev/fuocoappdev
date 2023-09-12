@@ -7,6 +7,9 @@
     & .top-bar-container {
         display: flex;
         border-bottom: 1px solid rgba(42, 42, 95, .6);
+        transition-property: all;
+        transition-duration: 75ms;
+        transition-timing-function: $transition-standard-easing;
         
         & .search-container {
             display: flex;
@@ -47,6 +50,9 @@
             overflow-x: auto;
             -ms-overflow-style: none;  /* IE and Edge */
             scrollbar-width: none;  /* Firefox */
+            transition-property: all;
+            transition-duration: 150ms;
+            transition-timing-function: $transition-standard-easing;
         }
     
         & .tab-container::-webkit-scrollbar {
@@ -265,7 +271,7 @@
     & .scroll-container-mobile {
         gap: $mp-4;
         padding: $mp-4;
-        padding-bottom: calc((56px * 3) + 24px);
+        padding-bottom: calc((56px * 2));
 
         & .loading-ring-mobile {
 

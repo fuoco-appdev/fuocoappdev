@@ -44,6 +44,7 @@ export interface StoreResponsiveProps {
   setSelectedCountryId: (value: string) => void;
   setSelectedRegionId: (value: string) => void;
   setSelectedCellarId: (value: string) => void;
+  onScroll: () => void;
 }
 
 export default function StoreComponent(): JSX.Element {
@@ -66,6 +67,8 @@ export default function StoreComponent(): JSX.Element {
     const scrollHeight = previewsContainerRef.current?.scrollHeight ?? 0;
     const clientHeight = previewsContainerRef.current?.clientHeight ?? 0;
     const scrollOffset = scrollHeight - scrollTop - clientHeight;
+
+    StoreController.updateScrollPosition(scrollTop);
     if (scrollOffset > 0 || !StoreController.model.hasMorePreviews) {
       return;
     }
@@ -76,15 +79,7 @@ export default function StoreComponent(): JSX.Element {
   useLayoutEffect(() => {
     if (props.scrollPosition) {
       previewsContainerRef.current?.scrollTo(0, props.scrollPosition);
-      StoreController.updateScrollPosition(undefined);
     }
-
-    previewsContainerRef.current?.addEventListener('scroll', onScroll);
-    previewsContainerRef.current?.addEventListener('touchmove', onScroll);
-    return () => {
-      previewsContainerRef.current?.removeEventListener('scroll', onScroll);
-      previewsContainerRef.current?.removeEventListener('touchmove', onScroll);
-    };
   }, [previewsContainerRef.current]);
 
   useEffect(() => {
@@ -228,6 +223,7 @@ export default function StoreComponent(): JSX.Element {
           setSelectedCountryId={setSelectedCountryId}
           setSelectedRegionId={setSelectedRegionId}
           setSelectedCellarId={setSelectedCellarId}
+          onScroll={onScroll}
         />
       </ResponsiveDesktop>
       <ResponsiveMobile>
@@ -244,6 +240,7 @@ export default function StoreComponent(): JSX.Element {
           setSelectedCountryId={setSelectedCountryId}
           setSelectedRegionId={setSelectedRegionId}
           setSelectedCellarId={setSelectedCellarId}
+          onScroll={onScroll}
         />
       </ResponsiveMobile>
     </>

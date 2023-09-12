@@ -20,7 +20,9 @@ export interface StoreState {
   selectedSalesChannel: Partial<SalesChannel> | undefined;
   pagination: number;
   hasMorePreviews: boolean;
-  scrollPosition: number | undefined;
+  oldScrollPosition: number;
+  scrollPosition: number;
+  hideSearchTabs: boolean;
   isLoading: boolean;
 }
 
@@ -39,7 +41,9 @@ export class StoreModel extends Model {
           selectedSalesChannel: undefined,
           pagination: 1,
           hasMorePreviews: true,
-          scrollPosition: undefined,
+          hideSearchTabs: false,
+          oldScrollPosition: 0,
+          scrollPosition: 0,
           isLoading: false,
         })
       )
@@ -154,11 +158,37 @@ export class StoreModel extends Model {
     }
   }
 
-  public get scrollPosition(): number | undefined {
+  public get hideSearchTabs(): boolean {
+    return this.store.getValue().hideSearchTabs;
+  }
+
+  public set hideSearchTabs(value: boolean) {
+    if (this.hideSearchTabs !== value) {
+      this.store.update((state) => ({
+        ...state,
+        hideSearchTabs: value,
+      }));
+    }
+  }
+
+  public get oldScrollPosition(): number {
+    return this.store.getValue().oldScrollPosition;
+  }
+
+  public set oldScrollPosition(value: number) {
+    if (this.oldScrollPosition !== value) {
+      this.store.update((state) => ({
+        ...state,
+        oldScrollPosition: value,
+      }));
+    }
+  }
+
+  public get scrollPosition(): number {
     return this.store.getValue().scrollPosition;
   }
 
-  public set scrollPosition(value: number | undefined) {
+  public set scrollPosition(value: number) {
     if (this.scrollPosition !== value) {
       this.store.update((state) => ({
         ...state,

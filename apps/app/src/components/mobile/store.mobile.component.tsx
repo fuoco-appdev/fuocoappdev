@@ -45,6 +45,7 @@ export function StoreMobileComponent({
   setSelectedCountryId,
   setSelectedRegionId,
   setSelectedCellarId,
+  onScroll,
 }: StoreResponsiveProps): JSX.Element {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
@@ -61,6 +62,9 @@ export function StoreMobileComponent({
           styles['top-bar-container'],
           styles['top-bar-container-mobile'],
         ].join(' ')}
+        style={{
+          minHeight: props.hideSearchTabs ? '78px' : 'auto',
+        }}
       >
         <div
           className={[
@@ -114,6 +118,9 @@ export function StoreMobileComponent({
             styles['tab-container'],
             styles['tab-container-mobile'],
           ].join(' ')}
+          style={{
+            display: props.hideSearchTabs ? 'none' : 'flex',
+          }}
         >
           <Tabs
             classNames={{
@@ -156,6 +163,7 @@ export function StoreMobileComponent({
           styles['scroll-container-mobile'],
         ].join(' ')}
         ref={previewsContainerRef}
+        onScroll={onScroll}
       >
         {props.previews.map((preview: PricedProduct, index: number) => (
           <ProductPreviewComponent
@@ -164,9 +172,6 @@ export function StoreMobileComponent({
             preview={preview}
             onClick={() => {
               StoreController.updateSelectedPreview(preview);
-              StoreController.updateScrollPosition(
-                previewsContainerRef.current?.scrollTop
-              );
             }}
             onRest={() => {
               navigate(`${RoutePaths.Store}/${preview.id}`);

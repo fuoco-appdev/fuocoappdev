@@ -17,6 +17,7 @@ import { AccountOrderHistoryResponsiveProps } from '../account-order-history.com
 
 export function AccountOrderHistoryDesktopComponent({
   ordersContainerRef,
+  onScroll,
 }: AccountOrderHistoryResponsiveProps): JSX.Element {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
@@ -32,6 +33,7 @@ export function AccountOrderHistoryDesktopComponent({
       <div
         ref={ordersContainerRef}
         className={[styles['scroll'], styles['scroll-desktop']].join(' ')}
+        onScroll={onScroll}
       >
         <div
           className={[

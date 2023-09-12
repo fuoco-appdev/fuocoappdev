@@ -45,6 +45,7 @@ export function StoreDesktopComponent({
   setSelectedCountryId,
   setSelectedRegionId,
   setSelectedCellarId,
+  onScroll,
 }: StoreResponsiveProps): JSX.Element {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const sideBarRef = useRef<HTMLDivElement | null>(null);
@@ -183,6 +184,7 @@ export function StoreDesktopComponent({
             styles['scroll-container-desktop'],
           ].join(' ')}
           ref={previewsContainerRef}
+          onScroll={onScroll}
         >
           {props.previews.map((preview: PricedProduct, index: number) => (
             <ProductPreviewComponent
@@ -191,9 +193,6 @@ export function StoreDesktopComponent({
               preview={preview}
               onClick={() => {
                 StoreController.updateSelectedPreview(preview);
-                StoreController.updateScrollPosition(
-                  previewsContainerRef.current?.scrollTop
-                );
               }}
               onRest={() => {
                 navigate(`${RoutePaths.Store}/${preview.id}`);
