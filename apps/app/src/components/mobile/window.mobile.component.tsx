@@ -377,6 +377,9 @@ export function WindowMobileComponent({
                         { isoCode: 'en', countryCode: 'GB' },
                         { isoCode: 'fr', countryCode: 'FR' },
                       ]}
+                      rippleProps={{
+                        color: 'rgba(252, 245, 227, .35)',
+                      }}
                       hideText={true}
                       language={localProps.languageCode}
                       onChange={(isoCode, info) =>
