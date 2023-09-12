@@ -80,8 +80,14 @@ export default function StoreComponent(): JSX.Element {
       previewsContainerRef.current?.scrollTo(0, props.scrollPosition);
     }
 
-    previewsContainerRef.current?.addEventListener('scroll', onScroll, true);
+    previewsContainerRef.current?.addEventListener(
+      'touchmove',
+      onScroll,
+      false
+    );
+    previewsContainerRef.current?.addEventListener('scroll', onScroll, false);
     return () => {
+      previewsContainerRef.current?.removeEventListener('touchmove', onScroll);
       previewsContainerRef.current?.removeEventListener('scroll', onScroll);
     };
   }, [previewsContainerRef.current]);
