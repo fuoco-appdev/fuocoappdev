@@ -81,6 +81,7 @@ class StoreController extends Controller {
   ): Promise<void> {
     this._model.selectedTab = value;
     this._model.pagination = 1;
+    this._model.previews = [];
     const limit = 10;
     const offset = limit * (this._model.pagination - 1);
     await this.searchAsync(this._model.input, offset, limit);
