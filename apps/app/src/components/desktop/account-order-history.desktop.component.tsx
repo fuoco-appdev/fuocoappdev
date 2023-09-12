@@ -64,15 +64,14 @@ export function AccountOrderHistoryDesktopComponent({
                 }}
               />
             ))}
-        {props.hasMoreOrders && (
-          <img
-            src={'../assets/svg/ring-resize-dark.svg'}
-            className={[
-              styles['loading-ring'],
-              styles['loading-ring-desktop'],
-            ].join(' ')}
-          />
-        )}
+        <img
+          src={'../assets/svg/ring-resize-dark.svg'}
+          className={[
+            styles['loading-ring'],
+            styles['loading-ring-desktop'],
+          ].join(' ')}
+          style={{ display: props.hasMoreOrders ? 'flex' : 'none' }}
+        />
         {!props.areOrdersLoading && orders.length <= 0 && (
           <>
             <div

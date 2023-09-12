@@ -179,13 +179,17 @@ export function StoreMobileComponent({
             }}
           />
         ))}
-        {homeLocalProps.selectedInventoryLocationId &&
-          props.hasMorePreviews && (
-            <img
-              src={'../assets/svg/ring-resize-dark.svg'}
-              className={styles['loading-ring']}
-            />
-          )}
+        <img
+          src={'../assets/svg/ring-resize-dark.svg'}
+          className={styles['loading-ring']}
+          style={{
+            display:
+              homeLocalProps.selectedInventoryLocationId &&
+              props.hasMorePreviews
+                ? 'flex'
+                : 'none',
+          }}
+        />
         {!homeLocalProps.selectedInventoryLocationId && (
           <div
             className={[

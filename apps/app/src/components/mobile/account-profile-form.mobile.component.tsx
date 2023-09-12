@@ -68,6 +68,7 @@ export function AccountProfileFormMobileComponent({
           inputPhoneNumber: styles['input'],
           inputContainer: styles['input-container'],
           countryName: styles['option-name'],
+          dropdown: styles['input-phone-number-dropdown'],
         }}
         iconColor={'#2A2A5F'}
         label={t('phoneNumber') ?? ''}
