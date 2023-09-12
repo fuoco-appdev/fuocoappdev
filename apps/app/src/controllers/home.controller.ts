@@ -65,6 +65,13 @@ class HomeController extends Controller {
 
       this._model.wineCount = await this.requestWineCountAsync();
     }
+    this._currentPositionSubscription = WindowController.model.store
+      .pipe(select((model) => model.currentPosition))
+      .subscribe({
+        next: (value) =>
+          this.onCurrentPositionChanged(value, this._model.inventoryLocations),
+      });
+
     this._selectedInventoryLocationIdSubscription = this._model.localStore
       ?.pipe(select((model) => model.selectedInventoryLocationId))
       .subscribe({

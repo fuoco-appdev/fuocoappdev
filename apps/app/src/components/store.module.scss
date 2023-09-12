@@ -88,6 +88,28 @@
         & .wine-previews-container {
 
         }
+
+        & .no-inventory-location-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 100%;
+
+            & .no-items-text {
+                margin-top: $mp-4;
+                color: $brand-900;
+                font-size: $font-size-sm;
+                text-align: center;
+            }
+        
+            & .no-items-container {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                margin-top: $mp-8;
+                margin-bottom: $mp-4;
+            }
+        }
     }
 
     & .filter-content {
@@ -305,6 +327,12 @@
         & .apply-button-mobile {
         }
     }
+}
+
+.outline-button {
+    background-color: transparent !important;
+    border-color: $brand-900 !important;
+    color: $brand-900 !important;
 }
 
 .listbox-form-layout-label {

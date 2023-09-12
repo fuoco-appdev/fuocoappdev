@@ -49,6 +49,9 @@ export function StoreMobileComponent({
   const rootRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const [props] = useObservable(StoreController.model.store);
+  const [homeLocalProps] = useObservable(
+    HomeController.model.localStore ?? Store.prototype
+  );
   const { t, i18n } = useTranslation();
 
   return (
@@ -176,11 +179,48 @@ export function StoreMobileComponent({
             }}
           />
         ))}
-        {props.hasMorePreviews && (
-          <img
-            src={'../assets/svg/ring-resize-dark.svg'}
-            className={styles['loading-ring']}
-          />
+        {homeLocalProps.selectedInventoryLocationId &&
+          props.hasMorePreviews && (
+            <img
+              src={'../assets/svg/ring-resize-dark.svg'}
+              className={styles['loading-ring']}
+            />
+          )}
+        {!homeLocalProps.selectedInventoryLocationId && (
+          <div
+            className={[
+              styles['no-inventory-location-container'],
+              styles['no-inventory-location-container-desktop'],
+            ].join(' ')}
+          >
+            <div
+              className={[
+                styles['no-items-text'],
+                styles['no-items-text-desktop'],
+              ].join(' ')}
+            >
+              {t('chooseASalesChannel')}
+            </div>
+            <div
+              className={[
+                styles['no-items-container'],
+                styles['no-items-container-desktop'],
+              ].join(' ')}
+            >
+              <Button
+                classNames={{
+                  button: styles['outline-button'],
+                }}
+                rippleProps={{
+                  color: 'rgba(133, 38, 122, .35)',
+                }}
+                size={'large'}
+                onClick={() => setTimeout(() => navigate(RoutePaths.Home), 150)}
+              >
+                {t('home')}
+              </Button>
+            </div>
+          </div>
         )}
       </div>
       <Dropdown
