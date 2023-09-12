@@ -8,6 +8,22 @@
   background: #fff;
   overflow: hidden;
   flex-direction: column;
+  /* Prevent native touch events on Windows */
+  -ms-touch-action: none;
+
+  /* Prevent the callout on tap-hold and text selection */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  /* Prevent text resize on orientation change, useful for web-apps */
+  -webkit-text-size-adjust: none;
+  -moz-text-size-adjust: none;
+  -ms-text-size-adjust: none;
+  -o-text-size-adjust: none;
+  text-size-adjust: none;
 
   & .alert {
     position: absolute;
@@ -21,6 +37,22 @@
     height: 100%;
     width: 100%;
     overflow-y: hidden;
+    /* Prevent native touch events on Windows */
+    -ms-touch-action: none;
+
+    /* Prevent the callout on tap-hold and text selection */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    /* Prevent text resize on orientation change, useful for web-apps */
+    -webkit-text-size-adjust: none;
+    -moz-text-size-adjust: none;
+    -ms-text-size-adjust: none;
+    -o-text-size-adjust: none;
+    text-size-adjust: none;
   }
 
   & .shopping-cart-container-details {
@@ -293,6 +325,22 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      /* Prevent native touch events on Windows */
+      -ms-touch-action: none;
+
+      /* Prevent the callout on tap-hold and text selection */
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+
+      /* Prevent text resize on orientation change, useful for web-apps */
+      -webkit-text-size-adjust: none;
+      -moz-text-size-adjust: none;
+      -ms-text-size-adjust: none;
+      -o-text-size-adjust: none;
+      text-size-adjust: none;
       width: 100%;
 
       & .navigation-back-container-desktop {

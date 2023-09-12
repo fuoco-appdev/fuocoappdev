@@ -70,8 +70,10 @@ class StoreController extends Controller {
   public updateScrollPosition(value: number) {
     this._model.oldScrollPosition = this._model.scrollPosition;
     this._model.scrollPosition = value;
-    this._model.hideSearchTabs =
-      this._model.scrollPosition >= this._model.oldScrollPosition;
+  }
+
+  public updateHideSearchTabs(value: boolean) {
+    this._model.hideSearchTabs = value;
   }
 
   public async updateSelectedTabAsync(
@@ -89,6 +91,12 @@ class StoreController extends Controller {
   }
 
   public async searchNextPageAsync(): Promise<void> {
+    if (this._model.isLoading) {
+      return;
+    }
+
+    console.log('load');
+
     this._model.pagination = this._model.pagination + 1;
 
     const limit = 10;

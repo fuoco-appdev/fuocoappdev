@@ -61,14 +61,25 @@ export default function StoreComponent(): JSX.Element {
   const [selectedRegionId, setSelectedRegionId] = useState<string>('');
   const [selectedCellarId, setSelectedCellarId] = useState<string>('');
 
-  const onScroll = () => {
+  const onScroll = (e: Event) => {
     const scrollTop = previewsContainerRef.current?.scrollTop ?? 0;
     const scrollHeight = previewsContainerRef.current?.scrollHeight ?? 0;
     const clientHeight = previewsContainerRef.current?.clientHeight ?? 0;
     const scrollOffset = scrollHeight - scrollTop - clientHeight;
 
     StoreController.updateScrollPosition(scrollTop);
-    if (scrollOffset > 0 || !StoreController.model.hasMorePreviews) {
+    const difference = Math.abs(
+      StoreController.model.scrollPosition -
+        StoreController.model.oldScrollPosition
+    );
+    if (difference > 30 && scrollOffset > 16) {
+      StoreController.updateHideSearchTabs(
+        StoreController.model.scrollPosition >=
+          StoreController.model.oldScrollPosition
+      );
+    }
+
+    if (scrollOffset > 16 || !StoreController.model.hasMorePreviews) {
       return;
     }
 
@@ -80,14 +91,8 @@ export default function StoreComponent(): JSX.Element {
       previewsContainerRef.current?.scrollTo(0, props.scrollPosition);
     }
 
-    previewsContainerRef.current?.addEventListener(
-      'touchmove',
-      onScroll,
-      false
-    );
     previewsContainerRef.current?.addEventListener('scroll', onScroll, false);
     return () => {
-      previewsContainerRef.current?.removeEventListener('touchmove', onScroll);
       previewsContainerRef.current?.removeEventListener('scroll', onScroll);
     };
   }, [previewsContainerRef.current]);

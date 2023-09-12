@@ -19,13 +19,11 @@ export default function AccountOrderHistoryComponent(): JSX.Element {
     const clientHeight = ordersContainerRef.current?.clientHeight ?? 0;
     const scrollOffset = scrollHeight - scrollTop - clientHeight;
 
-    if (scrollOffset > 0) {
+    if (scrollOffset > 8 || !AccountController.model.hasMoreOrders) {
       return;
     }
 
-    if (AccountController.model.hasMoreOrders) {
-      AccountController.onNextOrderScrollAsync();
-    }
+    AccountController.onNextOrderScrollAsync();
   };
 
   useLayoutEffect(() => {
@@ -34,10 +32,8 @@ export default function AccountOrderHistoryComponent(): JSX.Element {
       AccountController.updateOrdersScrollPosition(undefined);
     }
 
-    ordersContainerRef.current?.addEventListener('touchmove', onScroll, false);
     ordersContainerRef.current?.addEventListener('scroll', onScroll, false);
     return () => {
-      ordersContainerRef.current?.removeEventListener('touchmove', onScroll);
       ordersContainerRef.current?.removeEventListener('scroll', onScroll);
     };
   }, [ordersContainerRef.current]);

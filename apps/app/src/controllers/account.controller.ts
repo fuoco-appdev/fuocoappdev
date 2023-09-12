@@ -60,6 +60,10 @@ class AccountController extends Controller {
   }
 
   public async onNextOrderScrollAsync(): Promise<void> {
+    if (this._model.areOrdersLoading) {
+      return;
+    }
+
     this._model.orderPagination = this._model.orderPagination + 1;
 
     const limit = 10;
