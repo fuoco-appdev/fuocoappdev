@@ -69,18 +69,26 @@ export default function ProductComponent(): JSX.Element {
       }
       tabProps = tabProps.sort((n1, n2) => {
         if (n1.label && n2.label) {
-          return n1.label < n2.label ? 1 : -1;
+          return n1.label > n2.label ? 1 : -1;
         }
 
         return 1;
       });
       setTabs(tabProps);
-
-      const selectedVariant = tabProps.length > 0 ? tabProps[0].id : undefined;
-      setActiveVariantId(selectedVariant);
-      ProductController.updateSelectedVariant(selectedVariant ?? '');
     }
   }, [props.options]);
+
+  useEffect(() => {
+    if (props.variants.length <= 0) {
+      return;
+    }
+    const selectedVariant = ProductController.getCheapestPrice(props.variants);
+    ProductController.updateSelectedVariant(selectedVariant?.id ?? '');
+  }, [props.variants]);
+
+  useEffect(() => {
+    setActiveVariantId(props.selectedVariant?.id);
+  }, [props.selectedVariant]);
 
   useEffect(() => {
     const alcoholOption = ProductController.model.options.find(

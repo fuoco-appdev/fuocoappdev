@@ -260,7 +260,7 @@ export function ProductMobileComponent({
               tabs={tabs}
               touchScreen={true}
               activeId={activeVariantId}
-              onChange={ProductController.updateSelectedVariant}
+              onChange={(id) => ProductController.updateSelectedVariant(id)}
             />
           ) : (
             <Skeleton

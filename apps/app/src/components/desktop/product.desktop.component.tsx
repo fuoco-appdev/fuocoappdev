@@ -245,7 +245,7 @@ export function ProductDesktopComponent({
               type={'underlined'}
               tabs={tabs}
               activeId={activeVariantId}
-              onChange={ProductController.updateSelectedVariant}
+              onChange={(id) => ProductController.updateSelectedVariant(id)}
             />
           ) : (
             <Skeleton
