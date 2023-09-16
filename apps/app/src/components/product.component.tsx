@@ -168,6 +168,8 @@ export default function ProductComponent(): JSX.Element {
     <>
       <Helmet>
         <title>{fullName}</title>
+        <link rel="canonical" href={window.location.href} />
+        <meta name="title" content={fullName} />
         <meta name="description" content={shortDescription} />
         <meta property="og:image" content={props.thumbnail} />
         <meta property="og:title" content={fullName} />
