@@ -10,6 +10,7 @@ import { TabProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/tabs/tab
 import StoreController from '../controllers/store.controller';
 import { ProductDesktopComponent } from './desktop/product.desktop.component';
 import { ProductMobileComponent } from './mobile/product.mobile.component';
+import { Helmet } from 'react-helmet';
 
 export interface ProductProps {}
 
@@ -35,7 +36,9 @@ export interface ProductResponsiveProps {
 export default function ProductComponent(): JSX.Element {
   const [props] = useObservable(ProductController.model.store);
   const { id } = useParams();
+  const [fullName, setFullName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
+  const [shortDescription, setShortDescription] = useState<string>('');
   const [tabs, setTabs] = useState<TabProps[]>([]);
   const [activeVariantId, setActiveVariantId] = useState<string | undefined>();
   const [activeDetails, setActiveDetails] = useState<string | undefined>(
@@ -53,6 +56,13 @@ export default function ProductComponent(): JSX.Element {
   const [type, setType] = useState<string | undefined>('');
   const [uvc, setUVC] = useState<string | undefined>('');
   const [vintage, setVintage] = useState<string | undefined>('');
+
+  const formatDescription = (description: string): string => {
+    const regex = /\*\*(.*?)\*\*/g;
+    const cleanDescription = description.trim();
+    const descriptionWithoutTitles = cleanDescription.replace(regex, '');
+    return descriptionWithoutTitles;
+  };
 
   useEffect(() => {
     ProductController.updateProductId(id);
@@ -139,8 +149,32 @@ export default function ProductComponent(): JSX.Element {
     }
   }, [props.selectedVariant, props.metadata]);
 
+  useEffect(() => {
+    let name = props.title;
+    if (props.subtitle.length > 0) {
+      name += `, ${props.subtitle}`;
+    }
+    setFullName(name);
+  }, [props.title, props.subtitle]);
+
+  useEffect(() => {
+    const formattedDescription = formatDescription(
+      `${props.description?.slice(0, 205)}...`
+    );
+    setShortDescription(formattedDescription);
+  }, [props.description]);
+
   return (
     <>
+      <Helmet>
+        <title>{fullName}</title>
+        <meta name="description" content={shortDescription} />
+        <meta property="og:image" content={props.thumbnail} />
+        <meta property="og:title" content={fullName} />
+        <meta property="og:description" content={shortDescription} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+      </Helmet>
       <ResponsiveDesktop>
         <ProductDesktopComponent
           description={description}
