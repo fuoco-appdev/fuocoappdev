@@ -86,9 +86,11 @@ export function WindowMobileComponent({
                   : styles['right-to-left-exit-active'],
             }}
             timeout={250}
-            unmountOnExit={true}
+            unmountOnExit={false}
           >
-            <Outlet />
+            <div style={{ minWidth: '100%', minHeight: '100%' }}>
+              <Outlet />
+            </div>
           </CSSTransition>
         </TransitionGroup>
       </div>
