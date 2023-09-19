@@ -7,24 +7,24 @@ export default function PrivacyPolicyComponent(): JSX.Element {
   return (
     <>
       <Helmet>
-        <title>Cruthology</title>
+        <title>Privacy Policy | Cruthology</title>
         <link rel="canonical" href={window.location.href} />
-        <meta name="title" content={'Cruthology'} />
+        <meta name="title" content={'Privacy Policy | Cruthology'} />
         <meta
           name="description"
           content={
-            'An exclusive wine club offering high-end dinners, entertainment, and enchanting wine tastings, providing a gateway to extraordinary cultural experiences.'
+            'This privacy notice for Cruthology ("we," "us," or "our"), describes how and why we might collect, store, use, and/or share ("process") your information when you use our services ("Services"), such as when you...'
           }
         />
         <meta
           property="og:image"
           content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
         />
-        <meta property="og:title" content={'Cruthology'} />
+        <meta property="og:title" content={'Privacy Policy | Cruthology'} />
         <meta
           property="og:description"
           content={
-            'An exclusive wine club offering high-end dinners, entertainment, and enchanting wine tastings, providing a gateway to extraordinary cultural experiences.'
+            'This privacy notice for Cruthology ("we," "us," or "our"), describes how and why we might collect, store, use, and/or share ("process") your information when you use our services ("Services"), such as when you...'
           }
         />
         <meta property="og:image:width" content="1200" />

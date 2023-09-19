@@ -59,24 +59,24 @@ export default function HomeComponent(): JSX.Element {
   return (
     <>
       <Helmet>
-        <title>Cruthology</title>
+        <title>Home | Cruthology</title>
         <link rel="canonical" href={window.location.href} />
-        <meta name="title" content={'Cruthology'} />
+        <meta name="title" content={'Home | Cruthology'} />
         <meta
           name="description"
           content={
-            'An exclusive wine club offering high-end dinners, entertainment, and enchanting wine tastings, providing a gateway to extraordinary cultural experiences.'
+            'Elevate your wine journey with Cruthology and join a community of enthusiasts who appreciate the artistry and craftsmanship behind every bottle. Welcome to the intersection of wine, culture, and luxury.'
           }
         />
         <meta
           property="og:image"
           content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
         />
-        <meta property="og:title" content={'Cruthology'} />
+        <meta property="og:title" content={'Home | Cruthology'} />
         <meta
           property="og:description"
           content={
-            'An exclusive wine club offering high-end dinners, entertainment, and enchanting wine tastings, providing a gateway to extraordinary cultural experiences.'
+            'Elevate your wine journey with Cruthology and join a community of enthusiasts who appreciate the artistry and craftsmanship behind every bottle. Welcome to the intersection of wine, culture, and luxury.'
           }
         />
         <meta property="og:image:width" content="1200" />

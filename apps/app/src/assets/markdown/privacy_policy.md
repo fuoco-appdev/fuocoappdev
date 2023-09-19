@@ -10,7 +10,7 @@
 
   
 
-This privacy notice for fuoco.appdev ("**we**," "**us**," or "**our**"), describes how and why we might collect, store, use, and/or share ("**process**") your information when you use our services ("**Services**"), such as when you:
+This privacy notice for Cruthology ("**we**," "**us**," or "**our**"), describes how and why we might collect, store, use, and/or share ("**process**") your information when you use our services ("**Services**"), such as when you:
 
 *   Visit our website at [https://cruthology.com](https://cruthology.com), or any website of ours that links to this privacy notice
 
@@ -407,7 +407,7 @@ If you have questions or comments about this notice, you may email us at support
 
   
 
-fuoco.appdev
+Cruthology
 
 1110 Rue Estelle, Mont-Tremblant, QC J8E 2N9, Canada
 

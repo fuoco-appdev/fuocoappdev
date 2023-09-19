@@ -159,12 +159,12 @@ export default function ProductComponent(): JSX.Element {
   return (
     <>
       <Helmet>
-        <title>{fullName}</title>
+        <title>{`${fullName} | Cruthology`}</title>
         <link rel="canonical" href={window.location.href} />
-        <meta name="title" content={fullName} />
+        <meta name="title" content={`${fullName} | Cruthology`} />
         <meta name="description" content={shortDescription} />
         <meta property="og:image" content={props.thumbnail} />
-        <meta property="og:title" content={fullName} />
+        <meta property="og:title" content={`${fullName} | Cruthology`} />
         <meta property="og:description" content={shortDescription} />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />

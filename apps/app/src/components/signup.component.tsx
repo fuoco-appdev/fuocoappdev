@@ -65,25 +65,21 @@ export default function SignupComponent(): JSX.Element {
   return (
     <>
       <Helmet>
-        <title>Cruthology</title>
+        <title>Sign Up | Cruthology</title>
         <link rel="canonical" href={window.location.href} />
-        <meta name="title" content={'Cruthology'} />
+        <meta name="title" content={'Sign Up | Cruthology'} />
         <meta
           name="description"
-          content={
-            'An exclusive wine club offering high-end dinners, entertainment, and enchanting wine tastings, providing a gateway to extraordinary cultural experiences.'
-          }
+          content={`Join Cruthology, the epitome of wine sophistication and exclusivity. As a member, you'll unlock a world of fine wines, gourmet experiences, and cultural enrichment. Sign up now to embark on an extraordinary wine journey.`}
         />
         <meta
           property="og:image"
           content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
         />
-        <meta property="og:title" content={'Cruthology'} />
+        <meta property="og:title" content={'Sign Up | Cruthology'} />
         <meta
           property="og:description"
-          content={
-            'An exclusive wine club offering high-end dinners, entertainment, and enchanting wine tastings, providing a gateway to extraordinary cultural experiences.'
-          }
+          content={`Join Cruthology, the epitome of wine sophistication and exclusivity. As a member, you'll unlock a world of fine wines, gourmet experiences, and cultural enrichment. Sign up now to embark on an extraordinary wine journey.`}
         />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />

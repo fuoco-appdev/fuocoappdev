@@ -65,24 +65,24 @@ export default function SigninComponent(): JSX.Element {
   return (
     <>
       <Helmet>
-        <title>Cruthology</title>
+        <title>Sign In | Cruthology</title>
         <link rel="canonical" href={window.location.href} />
-        <meta name="title" content={'Cruthology'} />
+        <meta name="title" content={'Sign In | Cruthology'} />
         <meta
           name="description"
           content={
-            'An exclusive wine club offering high-end dinners, entertainment, and enchanting wine tastings, providing a gateway to extraordinary cultural experiences.'
+            'Sign in to your Cruthology account to continue your journey through the world of exceptional wines, gourmet experiences, and exclusive cultural events. Your palate is in for a treat!'
           }
         />
         <meta
           property="og:image"
           content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
         />
-        <meta property="og:title" content={'Cruthology'} />
+        <meta property="og:title" content={'Sign In | Cruthology'} />
         <meta
           property="og:description"
           content={
-            'An exclusive wine club offering high-end dinners, entertainment, and enchanting wine tastings, providing a gateway to extraordinary cultural experiences.'
+            'Sign in to your Cruthology account to continue your journey through the world of exceptional wines, gourmet experiences, and exclusive cultural events. Your palate is in for a treat!'
           }
         />
         <meta property="og:image:width" content="1200" />

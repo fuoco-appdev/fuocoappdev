@@ -218,25 +218,21 @@ export default function StoreComponent(): JSX.Element {
   return (
     <>
       <Helmet>
-        <title>Cruthology</title>
+        <title>Store | Cruthology</title>
         <link rel="canonical" href={window.location.href} />
-        <meta name="title" content={'Cruthology'} />
+        <meta name="title" content={'Store | Cruthology'} />
         <meta
           name="description"
-          content={
-            'An exclusive wine club offering high-end dinners, entertainment, and enchanting wine tastings, providing a gateway to extraordinary cultural experiences.'
-          }
+          content={`Elevate your wine journey to the next level. Explore, select, and savor the extraordinary with Cruthology's exclusive wine selection.`}
         />
         <meta
           property="og:image"
           content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
         />
-        <meta property="og:title" content={'Cruthology'} />
+        <meta property="og:title" content={'Store | Cruthology'} />
         <meta
           property="og:description"
-          content={
-            'An exclusive wine club offering high-end dinners, entertainment, and enchanting wine tastings, providing a gateway to extraordinary cultural experiences.'
-          }
+          content={`Elevate your wine journey to the next level. Explore, select, and savor the extraordinary with Cruthology's exclusive wine selection.`}
         />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />

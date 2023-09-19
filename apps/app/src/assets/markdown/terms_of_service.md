@@ -76,7 +76,7 @@
 
   
 
-These Terms of Service constitute a legally binding agreement made between you, whether personally or on behalf of an entity (“you”) and fuoco.appdev ("**Company**", “**we**”, “**us**”, or “**our**”), concerning your access to and use of the [https://cruthology.com](https://cruthology.com) website as well as any other media form, media channel, mobile website or mobile application related, linked, or otherwise connected thereto (collectively, the “Site”). We are registered in Canada and have our registered office at 1110 Rue Estelle, Mont-Tremblant, QC J8E 2N9, Canada, Mont-Tremblant, Quebec J8E 2N9. You agree that by accessing the Site, you have read, understood, and agree to be bound by all of these Terms of Service. IF YOU DO NOT AGREE WITH ALL OF THESE TERMS OF SERVICE, THEN YOU ARE EXPRESSLY PROHIBITED FROM USING THE SITE AND YOU MUST DISCONTINUE USE IMMEDIATELY.
+These Terms of Service constitute a legally binding agreement made between you, whether personally or on behalf of an entity (“you”) and Cruthology ("**Company**", “**we**”, “**us**”, or “**our**”), concerning your access to and use of the [https://cruthology.com](https://cruthology.com) website as well as any other media form, media channel, mobile website or mobile application related, linked, or otherwise connected thereto (collectively, the “Site”). We are registered in Canada and have our registered office at 1110 Rue Estelle, Mont-Tremblant, QC J8E 2N9, Canada, Mont-Tremblant, Quebec J8E 2N9. You agree that by accessing the Site, you have read, understood, and agree to be bound by all of these Terms of Service. IF YOU DO NOT AGREE WITH ALL OF THESE TERMS OF SERVICE, THEN YOU ARE EXPRESSLY PROHIBITED FROM USING THE SITE AND YOU MUST DISCONTINUE USE IMMEDIATELY.
 
   
 
@@ -375,7 +375,7 @@ We cannot guarantee the Site will be available at all times. We may experience h
 
   
 
-These Terms shall be governed by and defined following the laws of Canada. fuoco.appdev and yourself irrevocably consent that the courts of Canada shall have exclusive jurisdiction to resolve any dispute which may arise in connection with these terms.
+These Terms shall be governed by and defined following the laws of Canada. Cruthology and yourself irrevocably consent that the courts of Canada shall have exclusive jurisdiction to resolve any dispute which may arise in connection with these terms.
 
   
 
@@ -497,7 +497,7 @@ In order to resolve a complaint regarding the Site or to receive further informa
 
   
 
-**fuoco.appdev**
+**Cruthology**
 
 **1110 Rue Estelle, Mont-Tremblant, QC J8E 2N9, Canada**
 
