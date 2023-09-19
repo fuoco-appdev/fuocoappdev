@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
 import Ripples from 'react-ripples';
 import WindowController from '../../controllers/window.controller';
+import { useDesktopEffect } from '../responsive.component';
 
 export function AccountSettingsDesktopComponent(): JSX.Element {
   const navigate = useNavigate();
@@ -15,11 +16,11 @@ export function AccountSettingsDesktopComponent(): JSX.Element {
   const location = useLocation();
   const { t, i18n } = useTranslation();
 
-  useEffect(() => {
-    if (location.hash !== `#${RoutePaths.AccountSettings}`) {
+  useDesktopEffect(() => {
+    if (location.pathname === RoutePaths.AccountSettings) {
       navigate(RoutePaths.AccountSettingsAccount);
     }
-  }, [location.hash]);
+  }, [location.pathname]);
 
   return (
     <div className={[styles['root'], styles['root-desktop']].join(' ')}>

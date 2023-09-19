@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { RoutePaths } from '../route-paths';
 import { useTranslation } from 'react-i18next';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
@@ -7,6 +7,7 @@ import { MapRef } from 'react-map-gl';
 import { InventoryLocation } from '../models/home.model';
 import { HomeDesktopComponent } from './desktop/home.desktop.component';
 import { HomeMobileComponent } from './mobile/home.mobile.component';
+import { Helmet } from 'react-helmet-async';
 
 export interface HomeResponsiveProps {
   mapRef: React.Ref<MapRef> | undefined;
@@ -22,13 +23,18 @@ export default function HomeComponent(): JSX.Element {
     null
   );
   const mapRef = useRef<MapRef | null>(null);
+  const location = useLocation();
   const { i18n } = useTranslation();
 
   useEffect(() => {
-    if (location.hash === '') {
+    if (location.hash.startsWith(`#access_token=`)) {
+      return;
+    }
+
+    if (location.pathname === RoutePaths.Default) {
       navigate(RoutePaths.Home);
     }
-  }, []);
+  }, [location.pathname]);
 
   useLayoutEffect(() => {
     const labels = [
@@ -52,6 +58,30 @@ export default function HomeComponent(): JSX.Element {
 
   return (
     <>
+      <Helmet>
+        <title>Cruthology</title>
+        <link rel="canonical" href={window.location.href} />
+        <meta name="title" content={'Cruthology'} />
+        <meta
+          name="description"
+          content={
+            'An exclusive wine club offering high-end dinners, entertainment, and enchanting wine tastings, providing a gateway to extraordinary cultural experiences.'
+          }
+        />
+        <meta
+          property="og:image"
+          content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
+        />
+        <meta property="og:title" content={'Cruthology'} />
+        <meta
+          property="og:description"
+          content={
+            'An exclusive wine club offering high-end dinners, entertainment, and enchanting wine tastings, providing a gateway to extraordinary cultural experiences.'
+          }
+        />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+      </Helmet>
       <ResponsiveDesktop>
         <HomeDesktopComponent
           mapRef={mapRef}

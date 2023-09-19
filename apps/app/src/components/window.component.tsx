@@ -47,13 +47,7 @@ export default function WindowComponent(): JSX.Element {
   }, [location.pathname, props.authState]);
 
   useEffect(() => {
-    if (props.authState === 'SIGNED_IN') {
-      if (props.activeRoute === RoutePaths.ResetPassword) {
-        return;
-      }
-
-      navigate(RoutePaths.Account);
-    } else if (props.authState === 'SIGNED_OUT') {
+    if (props.authState === 'SIGNED_OUT') {
       navigate(RoutePaths.Signin);
     } else if (props.authState === 'USER_DELETED') {
       navigate(RoutePaths.Signup);
@@ -78,7 +72,7 @@ export default function WindowComponent(): JSX.Element {
   }, [props.toast]);
 
   return (
-    <div className={styles['root']}>
+    <>
       <ResponsiveDesktop>
         <WindowDesktopComponent
           openMore={openMore}
@@ -104,6 +98,6 @@ export default function WindowComponent(): JSX.Element {
         />
       </ResponsiveMobile>
       <LoadingComponent isVisible={props.isLoading} />
-    </div>
+    </>
   );
 }

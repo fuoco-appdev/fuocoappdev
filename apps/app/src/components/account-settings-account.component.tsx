@@ -26,7 +26,7 @@ export default function AccountSettingsAccountComponent(): JSX.Element {
 
   return (
     <>
-      <ResponsiveDesktop>
+      <ResponsiveDesktop inheritStyles={false}>
         <AccountSettingsAccountDesktopComponent
           updatePasswordError={updatePasswordError}
           setUpdatePasswordError={setUpdatePasswordError}

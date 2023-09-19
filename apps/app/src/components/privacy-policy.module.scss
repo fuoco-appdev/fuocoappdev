@@ -1,19 +1,30 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
 .root-desktop {
-  padding: $mp-6;
+  & .content-desktop {
+    & .typography-desktop {
+      padding: $mp-6;
+      padding-bottom: 56px;
+    }
+  }
 }
 
 .root-mobile {
-  padding: $mp-6 $mp-4;
+  & .content-mobile {
+    & .typography-mobile {
+      padding: $mp-6 $mp-4;
+    }
+  }
 }
 
 .root {
-  overflow-y: auto;
   min-width: 100%;
+  height: 100%;
   
   & .content {
     display: flex;
+    height: 100%;
+    overflow-y: auto;
   }
 
   & .typography {

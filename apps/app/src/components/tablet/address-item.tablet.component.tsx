@@ -1,4 +1,3 @@
-import { ResponsiveDesktop, ResponsiveMobile } from '../responsive.component';
 import {
   LineItem,
   ProductOptionValue,

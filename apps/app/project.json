@@ -12,14 +12,14 @@
         "parallel": false
       }
     },
-    "build": {
+    "build-client": {
       "executor": "@nrwl/web:webpack",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
         "compiler": "babel",
         "tsConfig": "apps/app/tsconfig.app.json",
-        "outputPath": "dist/apps/app",
+        "outputPath": "dist/apps/app/client",
         "index": "apps/app/src/index.html",
         "baseHref": "/",
         "main": "apps/app/src/main.tsx",
@@ -48,24 +48,130 @@
           "sourceMap": false,
           "namedChunks": false,
           "extractLicenses": true,
-          "vendorChunk": false
+          "vendorChunk": false,
+          "extractCss": true
         }
       }
     },
-    "serve-web": {
+    "build-server": {
+      "executor": "@nrwl/web:webpack",
+      "defaultConfiguration": "production",
+      "options": {
+        "compiler": "babel",
+        "tsConfig": "apps/app/tsconfig.server.json",
+        "outputPath": "dist/apps/app/server",
+        "index": "apps/app/src/index.html",
+        "baseHref": "/",
+        "main": "apps/app/src/main.server.tsx",
+        "polyfills": "apps/app/src/polyfills.ts",
+        "assets": ["apps/app/src/favicon.ico", "apps/app/src/assets"],
+        "styles": ["apps/app/src/styles.scss"],
+        "scripts": [],
+        "webpackConfig": "apps/app/webpack.server.config.js"
+      },
+      "configurations": {
+        "development": {
+          "extractLicenses": false,
+          "optimization": false,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "namedChunks": false,
+          "vendorChunk": false
+        },
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/app/src/environments/environment.ts",
+              "with": "apps/app/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "extractCss": true
+        }
+      }
+    },
+    "build-ssr": {
+      "builder": "@nrwl/node:webpack",
+      "options": {
+        "outputPath": "dist/apps/app/ssr",
+        "main": "apps/app/ssr/main.ts",
+        "tsConfig": "apps/app/tsconfig.server.json",
+        "assets": ["apps/app/src/assets"]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false,
+          "fileReplacements": [
+            {
+              "replace": "apps/app/src/environments/environment.ts",
+              "with": "apps/app/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve-client": {
       "executor": "@nrwl/web:dev-server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "app:build",
+        "buildTarget": "app:build-client",
         "hmr": true,
         "proxyConfig": "apps/app/proxy.conf.json"
       },
       "configurations": {
         "development": {
-          "buildTarget": "app:build:development"
+          "buildTarget": "app:build-client:development"
         },
         "production": {
-          "buildTarget": "app:build:production",
+          "buildTarget": "app:build-client:production",
+          "hmr": false
+        }
+      }
+    },
+    "serve-server": {
+      "executor": "@nrwl/web:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "app:build-server",
+        "hmr": true,
+        "proxyConfig": "apps/app/proxy.conf.json"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "app:build-server:development"
+        },
+        "production": {
+          "buildTarget": "app:build-server:production",
+          "hmr": false
+        }
+      }
+    },
+    "serve-ssr": {
+      "builder": "@nrwl/workspace:run-commands",
+      "defaultConfiguration": "development",
+      "options": {
+      },
+      "configurations": {
+        "development": {
+          "commands": [
+            "nx run app:build-ssr:development",
+            "nodemon ./dist/apps/app/ssr/main.js"
+          ],
+          "parallel": false
+        },
+        "production": {
+          "commands": [
+            "nx run app:build-ssr:production",
+            "nodemon ./dist/apps/app/ssr/main.js"
+          ],
+          "parallel": false,
           "hmr": false
         }
       }

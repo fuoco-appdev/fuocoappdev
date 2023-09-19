@@ -2,16 +2,18 @@ import { useEffect } from 'react';
 import AccountController from '../controllers/account.controller';
 import WindowController from '../controllers/window.controller';
 import { useObservable } from '@ngneat/use-observable';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { RoutePaths } from '../route-paths';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import { useTranslation } from 'react-i18next';
 import { AccountMobileComponent } from './mobile/account.mobile.component';
 import { AccountDesktopComponent } from './desktop/account.desktop.component';
 import 'react-loading-skeleton/dist/skeleton.css';
+import { Helmet } from 'react-helmet-async';
 
 export default function AccountComponent(): JSX.Element {
   const { t, i18n } = useTranslation();
+  const location = useLocation();
 
   useEffect(() => {
     AccountController.updateErrorStrings({
@@ -23,6 +25,30 @@ export default function AccountComponent(): JSX.Element {
 
   return (
     <>
+      <Helmet>
+        <title>Cruthology</title>
+        <link rel="canonical" href={window.location.href} />
+        <meta name="title" content={'Cruthology'} />
+        <meta
+          name="description"
+          content={
+            'An exclusive wine club offering high-end dinners, entertainment, and enchanting wine tastings, providing a gateway to extraordinary cultural experiences.'
+          }
+        />
+        <meta
+          property="og:image"
+          content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
+        />
+        <meta property="og:title" content={'Cruthology'} />
+        <meta
+          property="og:description"
+          content={
+            'An exclusive wine club offering high-end dinners, entertainment, and enchanting wine tastings, providing a gateway to extraordinary cultural experiences.'
+          }
+        />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+      </Helmet>
       <ResponsiveDesktop>
         <AccountDesktopComponent />
       </ResponsiveDesktop>

@@ -1,4 +1,3 @@
-import { ResponsiveDesktop, ResponsiveMobile } from '../responsive.component';
 import styles from './checkout.module.scss';
 import {
   Button,

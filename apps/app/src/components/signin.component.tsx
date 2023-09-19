@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
 import { SigninDesktopComponent } from './desktop/signin.desktop.component';
 import { SigninMobileComponent } from './mobile/signin.mobile.component';
+import { Helmet } from 'react-helmet-async';
 
 export interface SigninResponsiveProps {
   setAuthError: (error: AuthError | null) => void;
@@ -63,6 +64,30 @@ export default function SigninComponent(): JSX.Element {
   }, [authError, props.email]);
   return (
     <>
+      <Helmet>
+        <title>Cruthology</title>
+        <link rel="canonical" href={window.location.href} />
+        <meta name="title" content={'Cruthology'} />
+        <meta
+          name="description"
+          content={
+            'An exclusive wine club offering high-end dinners, entertainment, and enchanting wine tastings, providing a gateway to extraordinary cultural experiences.'
+          }
+        />
+        <meta
+          property="og:image"
+          content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
+        />
+        <meta property="og:title" content={'Cruthology'} />
+        <meta
+          property="og:description"
+          content={
+            'An exclusive wine club offering high-end dinners, entertainment, and enchanting wine tastings, providing a gateway to extraordinary cultural experiences.'
+          }
+        />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+      </Helmet>
       <ResponsiveDesktop>
         <SigninDesktopComponent
           setAuthError={setAuthError}

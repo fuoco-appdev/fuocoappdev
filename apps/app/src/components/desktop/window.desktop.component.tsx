@@ -23,6 +23,7 @@ import { Customer } from '@medusajs/medusa';
 import AccountController from '../../controllers/account.controller';
 import { CSSTransition } from 'react-transition-group';
 import { WindowResponsiveProps } from '../window.component';
+import { useDesktopEffect } from '../responsive.component';
 
 export function WindowDesktopComponent({
   openMore,
@@ -41,7 +42,7 @@ export function WindowDesktopComponent({
     WindowController.model.localStore ?? Store.prototype
   );
 
-  useEffect(() => {
+  useDesktopEffect(() => {
     setDate(new Date(Date.now()));
   }, []);
 

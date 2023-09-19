@@ -11,8 +11,8 @@ import { useObservable } from '@ngneat/use-observable';
 import { useTranslation } from 'react-i18next';
 import { AuthError } from '@supabase/supabase-js';
 import { animated, config, useTransition } from 'react-spring';
-import { ResponsiveDesktop, ResponsiveMobile } from '../responsive.component';
 import { SignupResponsiveProps } from '../signup.component';
+import { useMobileEffect } from '../responsive.component';
 
 export function SignupMobileComponent({
   emailError,
@@ -28,7 +28,7 @@ export function SignupMobileComponent({
   const [show, setShow] = useState(false);
   const { t } = useTranslation();
 
-  useEffect(() => {
+  useMobileEffect(() => {
     setShow(true);
 
     return () => {

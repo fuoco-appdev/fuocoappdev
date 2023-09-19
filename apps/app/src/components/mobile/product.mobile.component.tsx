@@ -16,6 +16,7 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { ProductResponsiveProps } from '../product.component';
 import { useEffect, useState } from 'react';
+import { useMobileEffect } from '../responsive.component';
 
 export function ProductMobileComponent({
   description,
@@ -41,7 +42,7 @@ export function ProductMobileComponent({
   const [showMore, setShowMore] = useState<boolean>(false);
   const [disableShowMore, setDisableShowMore] = useState<boolean>(false);
 
-  useEffect(() => {
+  useMobileEffect(() => {
     if (props.description.length < 356) {
       setDisableShowMore(true);
       setDescription(props.description);

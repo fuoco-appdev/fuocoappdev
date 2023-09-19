@@ -7,6 +7,7 @@ import MedusaService from '../services/medusa.service';
 import WindowController from '../controllers/window.controller';
 import SigninController from '../controllers/signin.controller';
 import SignupController from '../controllers/signup.controller';
+import ForgotPasswordController from './forgot-password.controller';
 import HomeController from '../controllers/home.controller';
 import StoreController from '../controllers/store.controller';
 import EventsController from '../controllers/events.controller';
@@ -39,6 +40,7 @@ class AppController extends Controller {
     WindowController.dispose(renderCount);
     SigninController.dispose(renderCount);
     SignupController.dispose(renderCount);
+    ForgotPasswordController.dispose(renderCount);
     TermsOfServiceController.dispose(renderCount);
     PrivacyPolicyController.dispose(renderCount);
     ResetPasswordController.dispose(renderCount);
@@ -63,6 +65,7 @@ class AppController extends Controller {
     LoadingController.initialize(renderCount);
     SigninController.initialize(renderCount);
     SignupController.initialize(renderCount);
+    ForgotPasswordController.initialize(renderCount);
     TermsOfServiceController.initialize(renderCount);
     PrivacyPolicyController.initialize(renderCount);
     ResetPasswordController.initialize(renderCount);

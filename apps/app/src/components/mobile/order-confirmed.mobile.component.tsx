@@ -1,4 +1,3 @@
-import { ResponsiveDesktop, ResponsiveMobile } from '../responsive.component';
 import styles from '../order-confirmed.module.scss';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useRef, useState } from 'react';

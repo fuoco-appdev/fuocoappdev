@@ -13,7 +13,13 @@ export function PrivacyPolicyDesktopComponent(): JSX.Element {
       <div className={[styles['content'], styles['content-desktop']].join(' ')}>
         <Auth.PrivacyPolicy
           privacyPolicy={
-            <Typography tag="article" className={styles['typography']}>
+            <Typography
+              tag="article"
+              className={[
+                styles['typography'],
+                styles['typography-desktop'],
+              ].join(' ')}
+            >
               <ReactMarkdown remarkPlugins={[gfm]} children={props.markdown} />
             </Typography>
           }

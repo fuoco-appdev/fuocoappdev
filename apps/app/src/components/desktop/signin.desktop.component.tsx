@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Auth } from '@fuoco.appdev/core-ui';
 import SigninController from '../../controllers/signin.controller';
 import styles from '../signin.module.scss';
@@ -10,6 +10,7 @@ import { animated, config, useTransition } from 'react-spring';
 import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
 import { SigninResponsiveProps } from '../signin.component';
+import { useDesktopEffect } from '../responsive.component';
 
 export function SigninDesktopComponent({
   emailError,
@@ -20,8 +21,9 @@ export function SigninDesktopComponent({
   const [show, setShow] = useState(false);
   const { t } = useTranslation();
   const [props] = useObservable(SigninController.model.store);
+  const location = useLocation();
 
-  useEffect(() => {
+  useDesktopEffect(() => {
     setShow(true);
 
     return () => {

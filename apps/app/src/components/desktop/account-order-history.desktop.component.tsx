@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { createRef, useEffect, useLayoutEffect, useRef } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import AccountController from '../../controllers/account.controller';
 import styles from '../account-order-history.module.scss';
@@ -9,15 +9,16 @@ import SupabaseService from '../../services/supabase.service';
 import { useObservable } from '@ngneat/use-observable';
 import { useSpring } from 'react-spring';
 import * as core from '../../protobuf/core_pb';
-import { ResponsiveDesktop, ResponsiveMobile } from '../responsive.component';
 import { Store } from '@ngneat/elf';
 import { Customer, Order } from '@medusajs/medusa';
 import OrderItemComponent from '../order-item.component';
 import { AccountOrderHistoryResponsiveProps } from '../account-order-history.component';
 
 export function AccountOrderHistoryDesktopComponent({
-  ordersContainerRef,
+  onOrdersScroll,
+  onOrdersLoad,
 }: AccountOrderHistoryResponsiveProps): JSX.Element {
+  const ordersContainerRef = createRef<HTMLDivElement>();
   const rootRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const [props] = useObservable(AccountController.model.store);
@@ -31,6 +32,8 @@ export function AccountOrderHistoryDesktopComponent({
     >
       <div
         ref={ordersContainerRef}
+        onScroll={onOrdersScroll}
+        onLoad={onOrdersLoad}
         className={[styles['scroll'], styles['scroll-desktop']].join(' ')}
       >
         <div

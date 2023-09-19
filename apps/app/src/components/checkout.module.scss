@@ -5,6 +5,7 @@
     flex-direction: column;
     width: 100%;
     min-width: 100%;
+    height: 100%;
     overflow-y: auto;
 
     & .card-container {
@@ -217,6 +218,7 @@
         gap: $mp-6;
         width: 500px;
         height: fit-content;
+        padding-bottom: $mp-10;
     }
 
     & .right-content-desktop {
@@ -225,6 +227,7 @@
         gap: $mp-6;
         width: 500px;
         height: fit-content;
+        padding-bottom: $mp-10;
     }
 
     & .card-container-desktop {

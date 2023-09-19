@@ -1,4 +1,11 @@
-import { ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import {
+  ReactNode,
+  createRef,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import StoreController from '../../controllers/store.controller';
 import styles from '../store.module.scss';
@@ -33,7 +40,6 @@ import {
 } from '@medusajs/medusa/dist/types/pricing';
 
 export function StoreDesktopComponent({
-  previewsContainerRef,
   openFilter,
   countryOptions,
   regionOptions,
@@ -45,8 +51,11 @@ export function StoreDesktopComponent({
   setSelectedCountryId,
   setSelectedRegionId,
   setSelectedCellarId,
+  onPreviewsScroll,
+  onPreviewsLoad,
 }: StoreResponsiveProps): JSX.Element {
-  const rootRef = useRef<HTMLDivElement | null>(null);
+  const previewsContainerRef = createRef<HTMLDivElement>();
+  const rootRef = createRef<HTMLDivElement>();
   const sideBarRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const [props] = useObservable(StoreController.model.store);
@@ -185,7 +194,9 @@ export function StoreDesktopComponent({
             styles['scroll-container'],
             styles['scroll-container-desktop'],
           ].join(' ')}
+          onScroll={onPreviewsScroll}
           ref={previewsContainerRef}
+          onLoad={onPreviewsLoad}
         >
           {props.previews.map((preview: PricedProduct, index: number) => (
             <ProductPreviewComponent
@@ -193,6 +204,9 @@ export function StoreDesktopComponent({
               key={index}
               preview={preview}
               onClick={() => {
+                StoreController.updateScrollPosition(
+                  previewsContainerRef.current?.scrollTop ?? 0
+                );
                 StoreController.updateSelectedPreview(preview);
               }}
               onRest={() => {

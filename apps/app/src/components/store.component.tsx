@@ -1,4 +1,11 @@
-import { ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import {
+  ReactNode,
+  createRef,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import StoreController from '../controllers/store.controller';
 import styles from './store.module.scss';
@@ -30,9 +37,10 @@ import { InventoryLocation } from '../models/home.model';
 import { center } from '@turf/turf';
 import { StoreDesktopComponent } from './desktop/store.desktop.component';
 import { StoreMobileComponent } from './mobile/store.mobile.component';
+import { Helmet } from 'react-helmet-async';
+import ReactDOM from 'react-dom';
 
 export interface StoreResponsiveProps {
-  previewsContainerRef: React.MutableRefObject<HTMLDivElement | null>;
   openFilter: boolean;
   countryOptions: OptionProps[];
   regionOptions: OptionProps[];
@@ -44,10 +52,11 @@ export interface StoreResponsiveProps {
   setSelectedCountryId: (value: string) => void;
   setSelectedRegionId: (value: string) => void;
   setSelectedCellarId: (value: string) => void;
+  onPreviewsScroll: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
+  onPreviewsLoad: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
 }
 
 export default function StoreComponent(): JSX.Element {
-  const previewsContainerRef = useRef<HTMLDivElement | null>(null);
   const [props] = useObservable(StoreController.model.store);
   const [homeProps] = useObservable(HomeController.model.store);
   const [homeLocalProps] = useObservable(
@@ -61,23 +70,11 @@ export default function StoreComponent(): JSX.Element {
   const [selectedRegionId, setSelectedRegionId] = useState<string>('');
   const [selectedCellarId, setSelectedCellarId] = useState<string>('');
 
-  const onScroll = (e: Event) => {
-    const scrollTop = previewsContainerRef.current?.scrollTop ?? 0;
-    const scrollHeight = previewsContainerRef.current?.scrollHeight ?? 0;
-    const clientHeight = previewsContainerRef.current?.clientHeight ?? 0;
+  const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    const scrollTop = e.currentTarget?.scrollTop ?? 0;
+    const scrollHeight = e.currentTarget?.scrollHeight ?? 0;
+    const clientHeight = e.currentTarget?.clientHeight ?? 0;
     const scrollOffset = scrollHeight - scrollTop - clientHeight;
-
-    StoreController.updateScrollPosition(scrollTop);
-    const difference = Math.abs(
-      StoreController.model.scrollPosition -
-        StoreController.model.oldScrollPosition
-    );
-    if (difference > 30 && scrollOffset > 16) {
-      StoreController.updateHideSearchTabs(
-        StoreController.model.scrollPosition >=
-          StoreController.model.oldScrollPosition
-      );
-    }
 
     if (scrollOffset > 16 || !StoreController.model.hasMorePreviews) {
       return;
@@ -86,16 +83,12 @@ export default function StoreComponent(): JSX.Element {
     StoreController.onNextScrollAsync();
   };
 
-  useLayoutEffect(() => {
+  const onLoad = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
     if (props.scrollPosition) {
-      previewsContainerRef.current?.scrollTo(0, props.scrollPosition);
+      e.currentTarget.scrollTop = props.scrollPosition as number;
+      StoreController.updateScrollPosition(undefined);
     }
-
-    previewsContainerRef.current?.addEventListener('scroll', onScroll, false);
-    return () => {
-      previewsContainerRef.current?.removeEventListener('scroll', onScroll);
-    };
-  }, [previewsContainerRef.current]);
+  };
 
   useEffect(() => {
     const countries: OptionProps[] = [];
@@ -224,9 +217,32 @@ export default function StoreComponent(): JSX.Element {
 
   return (
     <>
+      <Helmet>
+        <title>Cruthology</title>
+        <link rel="canonical" href={window.location.href} />
+        <meta name="title" content={'Cruthology'} />
+        <meta
+          name="description"
+          content={
+            'An exclusive wine club offering high-end dinners, entertainment, and enchanting wine tastings, providing a gateway to extraordinary cultural experiences.'
+          }
+        />
+        <meta
+          property="og:image"
+          content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
+        />
+        <meta property="og:title" content={'Cruthology'} />
+        <meta
+          property="og:description"
+          content={
+            'An exclusive wine club offering high-end dinners, entertainment, and enchanting wine tastings, providing a gateway to extraordinary cultural experiences.'
+          }
+        />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+      </Helmet>
       <ResponsiveDesktop>
         <StoreDesktopComponent
-          previewsContainerRef={previewsContainerRef}
           openFilter={openFilter}
           countryOptions={countryOptions}
           regionOptions={regionOptions}
@@ -238,11 +254,12 @@ export default function StoreComponent(): JSX.Element {
           setSelectedCountryId={setSelectedCountryId}
           setSelectedRegionId={setSelectedRegionId}
           setSelectedCellarId={setSelectedCellarId}
+          onPreviewsScroll={onScroll}
+          onPreviewsLoad={onLoad}
         />
       </ResponsiveDesktop>
       <ResponsiveMobile>
         <StoreMobileComponent
-          previewsContainerRef={previewsContainerRef}
           openFilter={openFilter}
           countryOptions={countryOptions}
           regionOptions={regionOptions}
@@ -254,6 +271,8 @@ export default function StoreComponent(): JSX.Element {
           setSelectedCountryId={setSelectedCountryId}
           setSelectedRegionId={setSelectedRegionId}
           setSelectedCellarId={setSelectedCellarId}
+          onPreviewsScroll={onScroll}
+          onPreviewsLoad={onLoad}
         />
       </ResponsiveMobile>
     </>

@@ -6,48 +6,45 @@ import AccountController from '../controllers/account.controller';
 import { useObservable } from '@ngneat/use-observable';
 
 export interface AccountOrderHistoryResponsiveProps {
-  ordersContainerRef: React.MutableRefObject<HTMLDivElement | null>;
+  onOrdersScroll: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
+  onOrdersLoad: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
 }
 
 export default function AccountOrderHistoryComponent(): JSX.Element {
-  const ordersContainerRef = useRef<HTMLDivElement | null>(null);
   const [props] = useObservable(AccountController.model.store);
 
-  const onScroll = () => {
-    const scrollTop = ordersContainerRef.current?.scrollTop ?? 0;
-    const scrollHeight = ordersContainerRef.current?.scrollHeight ?? 0;
-    const clientHeight = ordersContainerRef.current?.clientHeight ?? 0;
+  const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    const scrollTop = e.currentTarget?.scrollTop ?? 0;
+    const scrollHeight = e.currentTarget?.scrollHeight ?? 0;
+    const clientHeight = e.currentTarget?.clientHeight ?? 0;
     const scrollOffset = scrollHeight - scrollTop - clientHeight;
 
-    if (scrollOffset > 8 || !AccountController.model.hasMoreOrders) {
+    if (scrollOffset > 16 || !AccountController.model.hasMoreOrders) {
       return;
     }
 
     AccountController.onNextOrderScrollAsync();
   };
 
-  useLayoutEffect(() => {
+  const onLoad = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
     if (props.scrollPosition) {
-      ordersContainerRef.current?.scrollTo(0, props.scrollPosition);
+      e.currentTarget.scrollTop = props.scrollPosition as number;
       AccountController.updateOrdersScrollPosition(undefined);
     }
-
-    ordersContainerRef.current?.addEventListener('scroll', onScroll, false);
-    return () => {
-      ordersContainerRef.current?.removeEventListener('scroll', onScroll);
-    };
-  }, [ordersContainerRef.current]);
+  };
 
   return (
     <>
       <ResponsiveDesktop>
         <AccountOrderHistoryDesktopComponent
-          ordersContainerRef={ordersContainerRef}
+          onOrdersScroll={onScroll}
+          onOrdersLoad={onLoad}
         />
       </ResponsiveDesktop>
       <ResponsiveMobile>
         <AccountOrderHistoryMobileComponent
-          ordersContainerRef={ordersContainerRef}
+          onOrdersScroll={onScroll}
+          onOrdersLoad={onLoad}
         />
       </ResponsiveMobile>
     </>

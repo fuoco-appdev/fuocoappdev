@@ -13,7 +13,13 @@ export function TermsOfServiceDesktopComponent(): JSX.Element {
       <div className={[styles['content'], styles['content-desktop']].join(' ')}>
         <Auth.TermsOfService
           termsOfService={
-            <Typography tag="article" className={styles['typography']}>
+            <Typography
+              tag="article"
+              className={[
+                styles['typography'],
+                styles['typography-desktop'],
+              ].join(' ')}
+            >
               <ReactMarkdown remarkPlugins={[gfm]} children={props.markdown} />
             </Typography>
           }

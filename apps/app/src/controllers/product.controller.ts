@@ -62,6 +62,8 @@ class ProductController extends Controller {
               ? `${product.length}L x ${product.width}W x ${product.height}H`
               : '-';
           this._model.type = product?.type ? product.type.value : '-';
+          const selectedVariant = this.getCheapestPrice(this._model.variants);
+          this.updateSelectedVariant(selectedVariant?.id ?? '');
           this._model.isLoading = false;
         },
       });
@@ -155,6 +157,8 @@ class ProductController extends Controller {
         ? `${product.length}L x ${product.width}W x ${product.height}H`
         : '-';
     this._model.type = product?.type ? product.type.value : '-';
+    const selectedVariant = this.getCheapestPrice(this._model.variants);
+    this.updateSelectedVariant(selectedVariant?.id ?? '');
     this._model.isLoading = false;
   }
 

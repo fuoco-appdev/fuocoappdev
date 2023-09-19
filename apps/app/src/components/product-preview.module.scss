@@ -229,7 +229,7 @@
 }
 
 .root-mobile {
-  width: calc(50% - $mp-2) !important;
+  width: calc(50vw - ($mp-2 * 3)) !important;
   height: 200px;
 
     & .thumbnail-container-mobile {

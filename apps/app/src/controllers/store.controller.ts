@@ -67,13 +67,8 @@ class StoreController extends Controller {
     this._model.selectedPreview = value;
   }
 
-  public updateScrollPosition(value: number) {
-    this._model.oldScrollPosition = this._model.scrollPosition;
+  public updateScrollPosition(value: number | undefined) {
     this._model.scrollPosition = value;
-  }
-
-  public updateHideSearchTabs(value: boolean) {
-    this._model.hideSearchTabs = value;
   }
 
   public async updateSelectedTabAsync(

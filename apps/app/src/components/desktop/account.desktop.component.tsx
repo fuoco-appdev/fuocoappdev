@@ -21,7 +21,6 @@ import { animated, useTransition, config } from 'react-spring';
 import { useObservable } from '@ngneat/use-observable';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { RoutePaths } from '../../route-paths';
-import { ResponsiveDesktop, ResponsiveMobile } from '../responsive.component';
 import { useTranslation } from 'react-i18next';
 import * as core from '../../protobuf/core_pb';
 import AccountProfileFormComponent from '../account-profile-form.component';
@@ -32,35 +31,31 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import AccountOrderHistoryComponent from '../account-order-history.component';
 import AccountAddressesComponent from '../account-addresses.component';
 import AccountEditComponent from '../account-edit.component';
+import { useDesktopEffect } from '../responsive.component';
 
 export function AccountDesktopComponent(): JSX.Element {
   const [props] = useObservable(AccountController.model.store);
   const [windowProps] = useObservable(WindowController.model.store);
   const navigate = useNavigate();
+  const location = useLocation();
   const { t, i18n } = useTranslation();
 
-  useEffect(() => {
-    const loadedLocation = windowProps.loadedHash as string | undefined;
-    if (loadedLocation && loadedLocation !== `#${RoutePaths.Account}`) {
-      const formattedLocation = loadedLocation.replace('#', '');
+  useDesktopEffect(() => {
+    const loadedLocation = windowProps.loadedLocationPath as string | undefined;
+    if (loadedLocation && loadedLocation !== RoutePaths.Account) {
       if (
-        formattedLocation.startsWith(RoutePaths.Account) &&
-        !formattedLocation.startsWith(RoutePaths.AccountSettings)
+        loadedLocation.startsWith(RoutePaths.Account) &&
+        !loadedLocation.startsWith(RoutePaths.AccountSettings)
       ) {
-        AccountController.updateActiveTabId(formattedLocation);
+        AccountController.updateActiveTabId(loadedLocation);
       }
-      WindowController.updateLoadedHash(undefined);
-      navigate(formattedLocation);
+      WindowController.updateLoadedLocationPath(undefined);
     } else {
-      if (!loadedLocation?.startsWith(`#${RoutePaths.AccountSettings}`)) {
+      if (!loadedLocation?.startsWith(RoutePaths.AccountSettings)) {
         navigate(RoutePaths.Account);
       }
     }
-
-    if (location.hash.startsWith(`#${RoutePaths.Account}/access_token=`)) {
-      navigate(RoutePaths.Account);
-    }
-  }, [location.hash, windowProps.loadedLocation]);
+  }, [windowProps.loadedLocationPath]);
 
   const account = props.account as core.Account;
   const customer = props.customer as Customer;

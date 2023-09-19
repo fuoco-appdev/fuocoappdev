@@ -15,7 +15,13 @@ export function TermsOfServiceMobileComponent({ children }: any): JSX.Element {
       <div className={[styles['content'], styles['content-mobile']].join(' ')}>
         <Auth.TermsOfService
           termsOfService={
-            <Typography tag="article" className={styles['typography']}>
+            <Typography
+              tag="article"
+              className={[
+                styles['typography'],
+                styles['typography-mobile'],
+              ].join(' ')}
+            >
               <ReactMarkdown remarkPlugins={[gfm]} children={props.markdown} />
             </Typography>
           }

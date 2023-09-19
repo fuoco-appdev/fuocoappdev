@@ -11,7 +11,6 @@ import styles from '../product-preview.module.scss';
 import { MoneyAmount, Product, LineItem } from '@medusajs/medusa';
 import { Button, Card, Line } from '@fuoco.appdev/core-ui';
 import { animated, useSpring } from 'react-spring';
-import { ResponsiveDesktop, ResponsiveMobile } from '../responsive.component';
 import i18n from '../../i18n';
 import ProductController from '../../controllers/product.controller';
 import StoreController from '../../controllers/store.controller';

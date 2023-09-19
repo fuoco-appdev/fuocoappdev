@@ -19,9 +19,8 @@ import AccountController from '../../controllers/account.controller';
 import WindowController from '../../controllers/window.controller';
 import { animated, useTransition, config } from 'react-spring';
 import { useObservable } from '@ngneat/use-observable';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { RoutePaths } from '../../route-paths';
-import { ResponsiveDesktop, ResponsiveMobile } from '../responsive.component';
 import { useTranslation } from 'react-i18next';
 import * as core from '../../protobuf/core_pb';
 import AccountProfileFormComponent from '../account-profile-form.component';
@@ -29,35 +28,31 @@ import { Customer } from '@medusajs/medusa';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import { useMobileEffect } from '../responsive.component';
 
 export function AccountMobileComponent(): JSX.Element {
   const [props] = useObservable(AccountController.model.store);
   const [windowProps] = useObservable(WindowController.model.store);
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  useEffect(() => {
-    const loadedLocation = windowProps.loadedHash as string | undefined;
-    if (loadedLocation && loadedLocation !== `#${RoutePaths.Account}`) {
-      const formattedLocation = loadedLocation.replace('#', '');
+  useMobileEffect(() => {
+    const loadedLocation = windowProps.loadedLocationPath as string | undefined;
+    if (loadedLocation && loadedLocation !== RoutePaths.Account) {
       if (
-        formattedLocation.startsWith(RoutePaths.Account) &&
-        !formattedLocation.startsWith(RoutePaths.AccountSettings)
+        loadedLocation.startsWith(RoutePaths.Account) &&
+        !loadedLocation.startsWith(RoutePaths.AccountSettings)
       ) {
-        AccountController.updateActiveTabId(formattedLocation);
+        AccountController.updateActiveTabId(loadedLocation);
       }
-      WindowController.updateLoadedHash(undefined);
-      navigate(formattedLocation);
+      WindowController.updateLoadedLocationPath(undefined);
     } else {
-      if (!loadedLocation?.startsWith(`#${RoutePaths.AccountSettings}`)) {
+      if (!loadedLocation?.startsWith(RoutePaths.AccountSettings)) {
         navigate(props.activeTabId);
       }
     }
-
-    if (location.hash.startsWith(`#${RoutePaths.Account}/access_token=`)) {
-      navigate(props.activeTabId);
-    }
-  }, [location.hash, windowProps.loadedLocation]);
+  }, [windowProps.loadedLocationPath]);
 
   const account = props.account as core.Account;
   const customer = props.customer as Customer;

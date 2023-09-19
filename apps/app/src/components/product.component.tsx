@@ -10,7 +10,7 @@ import { TabProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/tabs/tab
 import StoreController from '../controllers/store.controller';
 import { ProductDesktopComponent } from './desktop/product.desktop.component';
 import { ProductMobileComponent } from './mobile/product.mobile.component';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 export interface ProductProps {}
 
@@ -87,14 +87,6 @@ export default function ProductComponent(): JSX.Element {
       setTabs(tabProps);
     }
   }, [props.options]);
-
-  useEffect(() => {
-    if (props.variants.length <= 0) {
-      return;
-    }
-    const selectedVariant = ProductController.getCheapestPrice(props.variants);
-    ProductController.updateSelectedVariant(selectedVariant?.id ?? '');
-  }, [props.variants]);
 
   useEffect(() => {
     setActiveVariantId(props.selectedVariant?.id);

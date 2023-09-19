@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { createRef, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AccountController from '../../controllers/account.controller';
 import styles from '../account-order-history.module.scss';
@@ -6,14 +6,15 @@ import { Button } from '@fuoco.appdev/core-ui';
 import { RoutePaths } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
-import { ResponsiveDesktop, ResponsiveMobile } from '../responsive.component';
 import { Order } from '@medusajs/medusa';
 import OrderItemComponent from '../order-item.component';
 import { AccountOrderHistoryResponsiveProps } from '../account-order-history.component';
 
 export function AccountOrderHistoryMobileComponent({
-  ordersContainerRef,
+  onOrdersScroll,
+  onOrdersLoad,
 }: AccountOrderHistoryResponsiveProps): JSX.Element {
+  const ordersContainerRef = createRef<HTMLDivElement>();
   const rootRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const [props] = useObservable(AccountController.model.store);
@@ -27,6 +28,8 @@ export function AccountOrderHistoryMobileComponent({
     >
       <div
         ref={ordersContainerRef}
+        onScroll={onOrdersScroll}
+        onLoad={onOrdersLoad}
         className={[styles['scroll'], styles['scroll-mobile']].join(' ')}
       >
         <div

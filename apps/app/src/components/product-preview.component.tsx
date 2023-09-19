@@ -119,7 +119,7 @@ export default function ProductPreviewComponent({
 
   return (
     <>
-      <ResponsiveDesktop>
+      <ResponsiveDesktop inheritStyles={false}>
         <ProductPreviewDesktopComponent
           parentRef={parentRef}
           preview={preview}
@@ -133,7 +133,7 @@ export default function ProductPreviewComponent({
           addToCartAsync={addToCartAsync}
         />
       </ResponsiveDesktop>
-      <ResponsiveMobile>
+      <ResponsiveMobile inheritStyles={false}>
         <ProductPreviewMobileComponent
           parentRef={parentRef}
           preview={preview}

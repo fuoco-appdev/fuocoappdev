@@ -16,6 +16,7 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { ProductResponsiveProps } from '../product.component';
 import { useEffect } from 'react';
+import { useDesktopEffect } from '../responsive.component';
 
 export function ProductDesktopComponent({
   description,
@@ -39,7 +40,7 @@ export function ProductDesktopComponent({
   const [storeProps] = useObservable(StoreController.model.store);
   const { t } = useTranslation();
 
-  useEffect(() => {
+  useDesktopEffect(() => {
     setDescription(props.description);
   }, [props.description]);
 

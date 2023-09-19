@@ -1,4 +1,11 @@
-import { ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import {
+  ReactNode,
+  createRef,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import StoreController from '../../controllers/store.controller';
 import styles from '../store.module.scss';
@@ -18,7 +25,6 @@ import SupabaseService from '../../services/supabase.service';
 import { useObservable } from '@ngneat/use-observable';
 import { useSpring } from 'react-spring';
 import * as core from '../../protobuf/core_pb';
-import { ResponsiveDesktop, ResponsiveMobile } from '../responsive.component';
 import { Store } from '@ngneat/elf';
 import { ProductTabs } from '../../models/store.model';
 import { Country, Region, Product, SalesChannel } from '@medusajs/medusa';
@@ -33,7 +39,6 @@ import {
 } from '@medusajs/medusa/dist/types/pricing';
 
 export function StoreMobileComponent({
-  previewsContainerRef,
   openFilter,
   countryOptions,
   regionOptions,
@@ -45,14 +50,20 @@ export function StoreMobileComponent({
   setSelectedCountryId,
   setSelectedRegionId,
   setSelectedCellarId,
+  onPreviewsScroll,
+  onPreviewsLoad,
 }: StoreResponsiveProps): JSX.Element {
-  const rootRef = useRef<HTMLDivElement | null>(null);
+  const previewsContainerRef = createRef<HTMLDivElement>();
+  const rootRef = createRef<HTMLDivElement>();
+  const topBarRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const [props] = useObservable(StoreController.model.store);
   const [homeLocalProps] = useObservable(
     HomeController.model.localStore ?? Store.prototype
   );
   const { t, i18n } = useTranslation();
+  let prevPreviewScrollTop = 0;
+  let topBarTop = 0;
 
   return (
     <div
@@ -60,6 +71,7 @@ export function StoreMobileComponent({
       className={[styles['root'], styles['root-mobile']].join(' ')}
     >
       <div
+        ref={topBarRef}
         className={[
           styles['top-bar-container'],
           styles['top-bar-container-mobile'],
@@ -164,7 +176,43 @@ export function StoreMobileComponent({
           styles['scroll-container'],
           styles['scroll-container-mobile'],
         ].join(' ')}
+        onScroll={(e) => {
+          onPreviewsScroll(e);
+          const scrollTop = e.currentTarget.scrollTop;
+          const elementHeight = topBarRef.current?.offsetHeight ?? 0;
+
+          if (prevPreviewScrollTop > scrollTop) {
+            topBarTop = scrollTop;
+          }
+
+          let opacity = 1;
+          let yPosition = topBarTop;
+          if (scrollTop > topBarTop) {
+            opacity = 1 - (scrollTop - topBarTop) / elementHeight;
+            yPosition = 0 - (scrollTop - topBarTop);
+          }
+
+          if (opacity < 0) {
+            opacity = 0;
+          }
+
+          if (prevPreviewScrollTop > scrollTop) {
+            topBarRef.current!.style.opacity = '1';
+            topBarRef.current!.style.top = '0';
+          } else {
+            topBarRef.current!.style.top = `${yPosition}px`;
+            topBarRef.current!.style.opacity = opacity.toString();
+          }
+
+          prevPreviewScrollTop = e.currentTarget.scrollTop;
+        }}
         ref={previewsContainerRef}
+        onLoad={(e) => {
+          onPreviewsLoad(e);
+
+          const topBarRect = topBarRef.current?.getBoundingClientRect();
+          topBarTop = topBarRect?.top ?? 0;
+        }}
       >
         {props.previews.map((preview: PricedProduct, index: number) => (
           <ProductPreviewComponent
@@ -172,6 +220,9 @@ export function StoreMobileComponent({
             key={index}
             preview={preview}
             onClick={() => {
+              StoreController.updateScrollPosition(
+                previewsContainerRef.current?.scrollTop ?? 0
+              );
               StoreController.updateSelectedPreview(preview);
             }}
             onRest={() => {

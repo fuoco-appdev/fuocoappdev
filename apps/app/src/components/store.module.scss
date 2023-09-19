@@ -64,10 +64,10 @@
 
     & .scroll-container {
         width: 100%;
-        height: 100%;
         display: flex;
         flex-wrap: wrap;
         align-content: flex-start;
+        height: 100%;
         overflow-y: auto;
         scroll-behavior: smooth;
 
@@ -198,6 +198,7 @@
             justify-content: center;
             gap: $mp-6;
             padding: $mp-6;
+            height: 100%;
 
             & .loading-ring-desktop {
 
@@ -298,7 +299,8 @@
         gap: $mp-4;
         padding: $mp-4;
         padding-top: calc(157px + 16px);
-        padding-bottom: 56px;
+        padding-bottom: calc(56px + (56px / 2));
+        height: 100vh;
 
         & .loading-ring-mobile {
 

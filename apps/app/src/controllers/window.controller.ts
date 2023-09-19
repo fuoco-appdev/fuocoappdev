@@ -100,8 +100,8 @@ class WindowController extends Controller {
     this._model.currentPosition = value;
   }
 
-  public updateLoadedHash(value: string | undefined): void {
-    this._model.loadedHash = value;
+  public updateLoadedLocationPath(value: string | undefined): void {
+    this._model.loadedLocationPath = value;
   }
 
   public updateOnLocationChanged(location: RouterLocation): void {
