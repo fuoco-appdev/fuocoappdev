@@ -123,7 +123,7 @@
       }
     },
     "build": {
-      "builder": "nx:run-commands",
+      "executor": "nx:run-commands",
       "defaultConfiguration": "production",
       "options": {},
       "configurations": {
@@ -183,7 +183,7 @@
       }
     },
     "serve-ssr": {
-      "builder": "nx:run-commands",
+      "executor": "nx:run-commands",
       "defaultConfiguration": "development",
       "options": {},
       "configurations": {
