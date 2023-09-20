@@ -38,6 +38,7 @@ import AccountEditComponent from './account-edit.component';
 import AccountSettingsAccountComponent from './account-settings-account.component';
 import LoadingComponent from './loading.component';
 import AppController from '../controllers/app.controller';
+import styles from './app.module.scss';
 
 interface RouteElementProps {
   element: JSX.Element;

@@ -25,8 +25,7 @@
         "main": "apps/app/src/main.tsx",
         "polyfills": "apps/app/src/polyfills.ts",
         "assets": ["apps/app/src/favicon.ico", "apps/app/src/assets"],
-        "styles": ["apps/app/src/styles.scss"],
-        "scripts": [],
+        "styles": ["apps/app/src/styles.scss", "node_modules/@fuoco.appdev/core-ui/dist/cjs/index.css"],
         "webpackConfig": "apps/app/webpack.config.js"
       },
       "configurations": {
@@ -44,7 +43,6 @@
             }
           ],
           "optimization": true,
-          "outputHashing": "all",
           "sourceMap": false,
           "namedChunks": false,
           "extractLicenses": true,
@@ -55,6 +53,7 @@
     },
     "build-server": {
       "executor": "@nrwl/web:webpack",
+      "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
         "compiler": "babel",
@@ -65,7 +64,7 @@
         "main": "apps/app/src/main.server.tsx",
         "polyfills": "apps/app/src/polyfills.ts",
         "assets": ["apps/app/src/favicon.ico", "apps/app/src/assets"],
-        "styles": ["apps/app/src/styles.scss"],
+        "styles": ["apps/app/src/styles.scss", "node_modules/@fuoco.appdev/core-ui/dist/cjs/index.css"],
         "scripts": [],
         "webpackConfig": "apps/app/webpack.server.config.js"
       },
@@ -73,7 +72,6 @@
         "development": {
           "extractLicenses": false,
           "optimization": false,
-          "outputHashing": "all",
           "sourceMap": true,
           "namedChunks": false,
           "vendorChunk": false
@@ -86,7 +84,6 @@
             }
           ],
           "optimization": true,
-          "outputHashing": "all",
           "sourceMap": false,
           "namedChunks": false,
           "extractLicenses": true,
@@ -97,6 +94,7 @@
     },
     "build-ssr": {
       "builder": "@nrwl/node:webpack",
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/app/ssr",
         "main": "apps/app/ssr/main.ts",

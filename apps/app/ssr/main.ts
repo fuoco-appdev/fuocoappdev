@@ -28,7 +28,7 @@ router.use('*', (req, res) => {
     delete __non_webpack_require__.cache[mainPath];
   }
   const main = __non_webpack_require__(mainPath);
-  const { html, helmet, style } = main.render(req);
+  const { html, helmet } = main.render(req);
   if (helmet?.htmlAttributes) {
     indexData = indexData.replace(
       /<html[^>]+>/g,
@@ -46,9 +46,6 @@ router.use('*', (req, res) => {
       /<title[^>]+>(.*?)<\/title>/g,
       helmet.title.toString()
     );
-  }
-  if (style) {
-    indexData = indexData.replace(/<style[^>]+>(.*?)<\/style>/g, style);
   }
   if (helmet?.meta) {
     indexData = indexData.replace(
