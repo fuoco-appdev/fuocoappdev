@@ -1,10 +1,11 @@
 {
+  "name": "api",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/api/src",
   "projectType": "application",
   "targets": {
     "build-protoc-gen-js": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": ["bazel build //generator:protoc-gen-js"],
         "parallel": false,
@@ -12,7 +13,7 @@
       }
     },
     "install": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "defaultConfiguration": "production",
       "configurations": {
         "development": {
@@ -31,7 +32,7 @@
       }
     },
     "proto-generate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "protoc --plugin=protoc-gen-js=submodules/protobuf-javascript/bazel-bin/generator/protoc-gen-js.exe --js_out=import_style=commonjs,binary:protobuf protobuf/core.proto",
@@ -41,7 +42,7 @@
       }
     },
     "create-migration": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": ["npx pg-migrate new {args.name}"],
         "parallel": false,
@@ -49,7 +50,7 @@
       }
     },
     "migrate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "npx pg-migrate migrate --migrations-table=app_migrations --connection={args.connection}"
@@ -59,7 +60,7 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": ["supabase functions serve development"],
         "cwd": "apps/api/src",
@@ -75,7 +76,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/api"],
+      "outputs": ["{workspaceRoot}/coverage/apps/api"],
       "options": {
         "jestConfig": "apps/api/jest.config.ts",
         "passWithNoTests": true
