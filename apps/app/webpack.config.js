@@ -6,5 +6,8 @@ module.exports = (config, context) => {
     devServer: {
       host: process.env.HOST,
     },
+    output: {
+      filename: '[name].js',
+    },
   });
 };

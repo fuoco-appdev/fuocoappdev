@@ -115,6 +115,31 @@
         }
       }
     },
+    "build": {
+      "builder": "@nrwl/workspace:run-commands",
+      "defaultConfiguration": "production",
+      "options": {
+      },
+      "configurations": {
+        "development": {
+          "commands": [
+            "nx run app:build-server:development",
+            "nx run app:build-client:development",
+            "nx run app:build-ssr:development"
+          ],
+          "parallel": false
+        },
+        "production": {
+          "commands": [
+            "nx run app:build-server:production",
+            "nx run app:build-client:production",
+            "nx run app:build-ssr:production"
+          ],
+          "parallel": false,
+          "hmr": false
+        }
+      }
+    },
     "serve-client": {
       "executor": "@nrwl/web:dev-server",
       "defaultConfiguration": "development",
