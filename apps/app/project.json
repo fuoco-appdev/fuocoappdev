@@ -30,7 +30,7 @@
           "apps/app/src/styles.scss",
           "node_modules/@fuoco.appdev/core-ui/dist/cjs/index.css"
         ],
-        "webpackConfig": "apps/app/webpack.config.js",
+        "webpackConfig": "apps/app/webpack.config.js"
       },
       "configurations": {
         "development": {
@@ -51,8 +51,7 @@
           "namedChunks": false,
           "extractLicenses": true,
           "vendorChunk": false,
-          "extractCss": true,
-          "memoryLimit": 1500
+          "extractCss": true
         }
       }
     },
@@ -96,8 +95,7 @@
           "namedChunks": false,
           "extractLicenses": true,
           "vendorChunk": false,
-          "extractCss": true,
-          "memoryLimit": 1500
+          "extractCss": true
         }
       }
     },
@@ -123,8 +121,7 @@
               "replace": "apps/app/src/environments/environment.ts",
               "with": "apps/app/src/environments/environment.prod.ts"
             }
-          ],
-          "memoryLimit": 1500
+          ]
         }
       }
     },
