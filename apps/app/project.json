@@ -100,9 +100,12 @@
       }
     },
     "build-ssr": {
-      "builder": "@nrwl/node:webpack",
+      "executor": "@nx/webpack:webpack",
       "defaultConfiguration": "production",
       "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "isolatedConfig": false,
         "outputPath": "dist/apps/app/ssr",
         "main": "apps/app/ssr/main.ts",
         "tsConfig": "apps/app/tsconfig.server.json",
