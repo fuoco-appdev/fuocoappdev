@@ -2,8 +2,21 @@ import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import { PrivacyPolicyDesktopComponent } from './desktop/privacy-policy.desktop.component';
 import { PrivacyPolicyMobileComponent } from './mobile/privacy-policy.mobile.component';
 import { Helmet } from 'react-helmet-async';
+import { useState, useEffect } from 'react';
+
+export interface PrivacyPolicyResponsiveProps {
+  remarkPlugins: any[];
+}
 
 export default function PrivacyPolicyComponent(): JSX.Element {
+  const [remarkPlugins, setRemarkPlugins] = useState<any[]>([]);
+
+  useEffect(() => {
+    import('remark-gfm').then((plugin) => {
+      setRemarkPlugins([plugin.default]);
+    });
+  }, []);
+
   return (
     <>
       <Helmet>
@@ -31,10 +44,10 @@ export default function PrivacyPolicyComponent(): JSX.Element {
         <meta property="og:image:height" content="630" />
       </Helmet>
       <ResponsiveDesktop>
-        <PrivacyPolicyDesktopComponent />
+        <PrivacyPolicyDesktopComponent remarkPlugins={remarkPlugins} />
       </ResponsiveDesktop>
       <ResponsiveMobile>
-        <PrivacyPolicyMobileComponent />
+        <PrivacyPolicyMobileComponent remarkPlugins={remarkPlugins} />
       </ResponsiveMobile>
     </>
   );

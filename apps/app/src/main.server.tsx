@@ -1,13 +1,13 @@
 import ReactDOMServer from 'react-dom/server';
 import AppComponent from './components/app.component';
 import { StrictMode } from 'react';
-import { HelmetData, HelmetProvider } from 'react-helmet-async';
+import { HelmetServerState, HelmetProvider } from 'react-helmet-async';
 import { StaticRouter } from 'react-router-dom/server';
 import { Request } from 'express';
 
 export function render(request: Request): {
   html: string;
-  helmet: HelmetData | undefined;
+  helmet: HelmetServerState | undefined;
 } {
   const helmetContext: any = {};
   HelmetProvider.canUseDOM = false;

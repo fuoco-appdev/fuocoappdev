@@ -2,8 +2,21 @@ import { Helmet } from 'react-helmet-async';
 import { TermsOfServiceDesktopComponent } from './desktop/terms-of-service.desktop.component';
 import { TermsOfServiceMobileComponent } from './mobile/terms-of-service.mobile.component';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import { useState, useEffect } from 'react';
+
+export interface TermsOfServiceResponsiveProps {
+  remarkPlugins: any[];
+}
 
 export default function TermsOfServiceComponent(): JSX.Element {
+  const [remarkPlugins, setRemarkPlugins] = useState<any[]>([]);
+
+  useEffect(() => {
+    import('remark-gfm').then((plugin) => {
+      setRemarkPlugins([plugin.default]);
+    });
+  }, []);
+
   return (
     <>
       <Helmet>
@@ -31,10 +44,10 @@ export default function TermsOfServiceComponent(): JSX.Element {
         <meta property="og:image:height" content="630" />
       </Helmet>
       <ResponsiveDesktop>
-        <TermsOfServiceDesktopComponent />
+        <TermsOfServiceDesktopComponent remarkPlugins={remarkPlugins} />
       </ResponsiveDesktop>
       <ResponsiveMobile>
-        <TermsOfServiceMobileComponent />
+        <TermsOfServiceMobileComponent remarkPlugins={remarkPlugins} />
       </ResponsiveMobile>
     </>
   );

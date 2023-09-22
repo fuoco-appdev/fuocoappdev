@@ -15,6 +15,7 @@ import { Helmet } from 'react-helmet-async';
 export interface ProductProps {}
 
 export interface ProductResponsiveProps {
+  remarkPlugins: any[];
   description: string;
   tabs: TabProps[];
   activeVariantId: string | undefined;
@@ -56,6 +57,7 @@ export default function ProductComponent(): JSX.Element {
   const [type, setType] = useState<string | undefined>('');
   const [uvc, setUVC] = useState<string | undefined>('');
   const [vintage, setVintage] = useState<string | undefined>('');
+  const [remarkPlugins, setRemarkPlugins] = useState<any[]>([]);
 
   const formatDescription = (description: string): string => {
     const regex = /\*\*(.*?)\*\*/g;
@@ -65,6 +67,10 @@ export default function ProductComponent(): JSX.Element {
   };
 
   useEffect(() => {
+    import('remark-gfm').then((plugin) => {
+      setRemarkPlugins([plugin.default]);
+    });
+
     ProductController.updateProductId(id);
   }, []);
 
@@ -171,6 +177,7 @@ export default function ProductComponent(): JSX.Element {
       </Helmet>
       <ResponsiveDesktop>
         <ProductDesktopComponent
+          remarkPlugins={remarkPlugins}
           description={description}
           tabs={tabs}
           activeVariantId={activeVariantId}
@@ -191,6 +198,7 @@ export default function ProductComponent(): JSX.Element {
       </ResponsiveDesktop>
       <ResponsiveMobile>
         <ProductMobileComponent
+          remarkPlugins={remarkPlugins}
           description={description}
           tabs={tabs}
           activeVariantId={activeVariantId}

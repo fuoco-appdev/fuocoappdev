@@ -2,8 +2,6 @@ import { Typography, Button, Tabs } from '@fuoco.appdev/core-ui';
 import { Line } from '@fuoco.appdev/core-ui';
 import { useObservable } from '@ngneat/use-observable';
 import styles from '../product.module.scss';
-import ReactMarkdown from 'react-markdown';
-import gfm from 'remark-gfm';
 import ProductController from '../../controllers/product.controller';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -13,12 +11,14 @@ import WindowController from '../../controllers/window.controller';
 import { formatAmount } from 'medusa-react';
 import StoreController from '../../controllers/store.controller';
 import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
 import { ProductResponsiveProps } from '../product.component';
-import { useEffect } from 'react';
+import { useEffect, lazy } from 'react';
 import { useDesktopEffect } from '../responsive.component';
 
+const ReactMarkdown = lazy(() => import('react-markdown'));
+
 export function ProductDesktopComponent({
+  remarkPlugins,
   description,
   tabs,
   activeVariantId,
@@ -148,7 +148,10 @@ export function ProductDesktopComponent({
           ].join(' ')}
         >
           {!props.isLoading ? (
-            <ReactMarkdown remarkPlugins={[gfm]} children={description} />
+            <ReactMarkdown
+              remarkPlugins={remarkPlugins}
+              children={description}
+            />
           ) : (
             <Skeleton
               count={16}

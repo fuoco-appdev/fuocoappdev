@@ -1,11 +1,14 @@
 import { Auth, Typography, Button, Line } from '@fuoco.appdev/core-ui';
 import { useObservable } from '@ngneat/use-observable';
 import styles from '../privacy-policy.module.scss';
-import ReactMarkdown from 'react-markdown';
-import gfm from 'remark-gfm';
 import PrivacyPolicyController from '../../controllers/privacy-policy.controller';
+import { lazy } from 'react';
+import { PrivacyPolicyResponsiveProps } from '../privacy-policy.component';
+const ReactMarkdown = lazy(() => import('react-markdown'));
 
-export function PrivacyPolicyMobileComponent(): JSX.Element {
+export function PrivacyPolicyMobileComponent({
+  remarkPlugins,
+}: PrivacyPolicyResponsiveProps): JSX.Element {
   const [props] = useObservable(PrivacyPolicyController.model.store);
 
   return (
@@ -20,7 +23,10 @@ export function PrivacyPolicyMobileComponent(): JSX.Element {
                 styles['typography-mobile'],
               ].join(' ')}
             >
-              <ReactMarkdown remarkPlugins={[gfm]} children={props.markdown} />
+              <ReactMarkdown
+                remarkPlugins={remarkPlugins}
+                children={props.markdown}
+              />
             </Typography>
           }
         />

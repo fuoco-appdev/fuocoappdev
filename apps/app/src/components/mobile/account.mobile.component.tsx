@@ -27,7 +27,6 @@ import AccountProfileFormComponent from '../account-profile-form.component';
 import { Customer } from '@medusajs/medusa';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
 import { useMobileEffect } from '../responsive.component';
 
 export function AccountMobileComponent(): JSX.Element {

@@ -6,6 +6,7 @@ import {
   useLayoutEffect,
   useRef,
   useState,
+  lazy,
 } from 'react';
 import styles from '../product-preview.module.scss';
 import { MoneyAmount, Product, LineItem } from '@medusajs/medusa';
@@ -21,8 +22,6 @@ import CartController from '../../controllers/cart.controller';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
 import { ProductPreviewResponsiveProps } from '../product-preview.component';
-import ReactMarkdown from 'react-markdown';
-import gfm from 'remark-gfm';
 
 export function ProductPreviewDesktopComponent({
   preview,

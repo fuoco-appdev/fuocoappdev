@@ -1,7 +1,0 @@
-{
-  "name": "fuoco.appdev",
-  "version": "1.0.0",
-  "main": "electron/electron.js",
-  "author": "Lucas Fuoco",
-  "license": "MIT"
-}

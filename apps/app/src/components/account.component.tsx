@@ -8,7 +8,6 @@ import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import { useTranslation } from 'react-i18next';
 import { AccountMobileComponent } from './mobile/account.mobile.component';
 import { AccountDesktopComponent } from './desktop/account.desktop.component';
-import 'react-loading-skeleton/dist/skeleton.css';
 import { Helmet } from 'react-helmet-async';
 
 export default function AccountComponent(): JSX.Element {

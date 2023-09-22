@@ -19,6 +19,7 @@
       "defaultConfiguration": "production",
       "options": {
         "compiler": "babel",
+        "target": "web",
         "tsConfig": "apps/app/tsconfig.app.json",
         "outputPath": "dist/apps/app/client",
         "index": "apps/app/src/index.html",
@@ -27,8 +28,10 @@
         "polyfills": "apps/app/src/polyfills.ts",
         "assets": ["apps/app/src/favicon.ico", "apps/app/src/assets"],
         "styles": [
-          "apps/app/src/styles.scss",
-          "node_modules/@fuoco.appdev/core-ui/dist/cjs/index.css"
+          "node_modules/@fuoco.appdev/core-ui/dist/cjs/index.css",
+          "node_modules/mapbox-gl/dist/mapbox-gl.css",
+          "node_modules/react-loading-skeleton/dist/skeleton.css",
+          "apps/app/src/styles.scss"
         ],
         "webpackConfig": "apps/app/webpack.config.js"
       },
@@ -37,7 +40,7 @@
           "extractLicenses": false,
           "optimization": false,
           "sourceMap": true,
-          "vendorChunk": true
+          "vendorChunk": false
         },
         "production": {
           "fileReplacements": [
@@ -61,6 +64,7 @@
       "defaultConfiguration": "production",
       "options": {
         "compiler": "babel",
+        "target": "node",
         "tsConfig": "apps/app/tsconfig.server.json",
         "outputPath": "dist/apps/app/server",
         "index": "apps/app/src/index.html",
@@ -69,8 +73,10 @@
         "polyfills": "apps/app/src/polyfills.ts",
         "assets": ["apps/app/src/favicon.ico", "apps/app/src/assets"],
         "styles": [
-          "apps/app/src/styles.scss",
-          "node_modules/@fuoco.appdev/core-ui/dist/cjs/index.css"
+          "node_modules/@fuoco.appdev/core-ui/dist/cjs/index.css",
+          "node_modules/mapbox-gl/dist/mapbox-gl.css",
+          "node_modules/react-loading-skeleton/dist/skeleton.css",
+          "apps/app/src/styles.scss"
         ],
         "scripts": [],
         "webpackConfig": "apps/app/webpack.server.config.js"
@@ -103,15 +109,22 @@
       "executor": "@nx/webpack:webpack",
       "defaultConfiguration": "production",
       "options": {
+        "compiler": "babel",
         "target": "node",
-        "compiler": "tsc",
-        "isolatedConfig": false,
         "outputPath": "dist/apps/app/ssr",
         "main": "apps/app/ssr/main.ts",
         "tsConfig": "apps/app/tsconfig.server.json",
-        "assets": ["apps/app/src/assets"]
+        "assets": [],
+        "webpackConfig": "apps/app/webpack.server.config.js"
       },
       "configurations": {
+        "development": {
+          "extractLicenses": false,
+          "optimization": false,
+          "sourceMap": true,
+          "namedChunks": false,
+          "vendorChunk": false
+        },
         "production": {
           "optimization": true,
           "extractLicenses": true,
@@ -150,7 +163,7 @@
       }
     },
     "serve-client": {
-      "executor": "@nrwl/web:dev-server",
+      "executor": "@nx/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "app:build-client",
@@ -168,7 +181,7 @@
       }
     },
     "serve-server": {
-      "executor": "@nrwl/web:dev-server",
+      "executor": "@nx/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "app:build-server",

@@ -1,11 +1,14 @@
 import { Auth, Typography } from '@fuoco.appdev/core-ui';
 import { useObservable } from '@ngneat/use-observable';
 import styles from '../terms-of-service.module.scss';
-import ReactMarkdown from 'react-markdown';
-import gfm from 'remark-gfm';
 import TermsOfServiceController from '../../controllers/terms-of-service.controller';
+import { lazy } from 'react';
+import { TermsOfServiceResponsiveProps } from '../terms-of-service.component';
+const ReactMarkdown = lazy(() => import('react-markdown'));
 
-export function TermsOfServiceDesktopComponent(): JSX.Element {
+export function TermsOfServiceDesktopComponent({
+  remarkPlugins,
+}: TermsOfServiceResponsiveProps): JSX.Element {
   const [props] = useObservable(TermsOfServiceController.model.store);
 
   return (
@@ -20,7 +23,10 @@ export function TermsOfServiceDesktopComponent(): JSX.Element {
                 styles['typography-desktop'],
               ].join(' ')}
             >
-              <ReactMarkdown remarkPlugins={[gfm]} children={props.markdown} />
+              <ReactMarkdown
+                remarkPlugins={remarkPlugins}
+                children={props.markdown}
+              />
             </Typography>
           }
         />

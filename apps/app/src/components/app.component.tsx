@@ -39,6 +39,8 @@ import AccountSettingsAccountComponent from './account-settings-account.componen
 import LoadingComponent from './loading.component';
 import AppController from '../controllers/app.controller';
 import styles from './app.module.scss';
+//@ts-ignore
+import withStyles from 'isomorphic-style-loader/withStyles';
 
 interface RouteElementProps {
   element: JSX.Element;
@@ -84,7 +86,6 @@ export default function AppComponent(): JSX.Element {
   return (
     <Routes>
       <Route path={RoutePaths.Default} element={<WindowComponent />}>
-        <Route index element={<HomeComponent />} />
         <Route path={RoutePaths.Home} element={<HomeComponent />} />
         <Route
           path={RoutePaths.Signin}

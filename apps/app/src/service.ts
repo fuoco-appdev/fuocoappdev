@@ -6,7 +6,7 @@ export class Service {
   private readonly _endpointUrl: string;
 
   constructor() {
-    this._endpointUrl = ConfigService.supabase.functions_url;
+    this._endpointUrl = ConfigService.supabase?.functions_url ?? '';
   }
 
   public get headers(): { [key: string]: string } {

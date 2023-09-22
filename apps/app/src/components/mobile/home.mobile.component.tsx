@@ -19,8 +19,6 @@ import { Store } from '@ngneat/elf';
 import Map, { MapRef, Marker, Popup } from 'react-map-gl';
 import SecretsService from '../../services/secrets.service';
 import ConfigService from '../../services/config.service';
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
 import { InventoryLocation } from '../../models/home.model';
 import { HomeResponsiveProps } from '../home.component';
 
