@@ -86,6 +86,7 @@ export default function AppComponent(): JSX.Element {
   return (
     <Routes>
       <Route path={RoutePaths.Default} element={<WindowComponent />}>
+        <Route index element={<HomeComponent />} />
         <Route path={RoutePaths.Home} element={<HomeComponent />} />
         <Route
           path={RoutePaths.Signin}
