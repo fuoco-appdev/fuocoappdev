@@ -142,7 +142,7 @@
             "nx run app:build-client:development",
             "nx run app:build-ssr:development"
           ],
-          "parallel": false
+          "parallel": true
         },
         "production": {
           "commands": [
@@ -150,8 +150,7 @@
             "nx run app:build-client:production",
             "nx run app:build-ssr:production"
           ],
-          "parallel": false,
-          "hmr": false
+          "parallel": true
         }
       }
     },
