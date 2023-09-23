@@ -114,8 +114,7 @@
         "outputPath": "dist/apps/app/ssr",
         "main": "apps/app/ssr/main.ts",
         "tsConfig": "apps/app/tsconfig.server.json",
-        "assets": [],
-        "webpackConfig": "apps/app/webpack.server.config.js"
+        "assets": []
       },
       "configurations": {
         "development": {
@@ -128,13 +127,7 @@
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false,
-          "fileReplacements": [
-            {
-              "replace": "apps/app/src/environments/environment.ts",
-              "with": "apps/app/src/environments/environment.prod.ts"
-            }
-          ]
+          "inspect": false
         }
       }
     },
