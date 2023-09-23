@@ -21,7 +21,6 @@ global['sessionStorage'] = mock.getSessionStorage();
 const mainPath = path.resolve(__dirname, '../server/main.js');
 const indexHtmlPath = path.resolve(__dirname, '../client/index.html');
 router.use(express.static(path.resolve(__dirname, '../client')));
-//router.use(express.static(path.resolve(__dirname, '../server')));
 router.get('*', (req, res) => {
   let indexData = fs.readFileSync(indexHtmlPath, 'utf8');
   // Skip caching ssr fragment in dev mode.
