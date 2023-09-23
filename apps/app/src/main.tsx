@@ -5,14 +5,17 @@ import './i18n';
 import AppComponent from './components/app.component';
 import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
+import { loadableReady } from '@loadable/component';
 
-ReactDOM.hydrateRoot(
-  document.getElementById('root') as HTMLElement,
-  <StrictMode>
-    <HelmetProvider>
-      <BrowserRouter>
-        <AppComponent />
-      </BrowserRouter>
-    </HelmetProvider>
-  </StrictMode>
-);
+loadableReady(() => {
+  ReactDOM.hydrateRoot(
+    document.getElementById('root') as HTMLElement,
+    <StrictMode>
+      <HelmetProvider>
+        <BrowserRouter>
+          <AppComponent />
+        </BrowserRouter>
+      </HelmetProvider>
+    </StrictMode>
+  );
+});

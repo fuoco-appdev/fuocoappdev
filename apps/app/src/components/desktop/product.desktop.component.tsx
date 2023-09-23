@@ -12,10 +12,12 @@ import { formatAmount } from 'medusa-react';
 import StoreController from '../../controllers/store.controller';
 import Skeleton from 'react-loading-skeleton';
 import { ProductResponsiveProps } from '../product.component';
-import { useEffect, lazy } from 'react';
 import { useDesktopEffect } from '../responsive.component';
-
-const ReactMarkdown = lazy(() => import('react-markdown'));
+import loadable from '@loadable/component';
+const ReactMarkdown = loadable(async () => {
+  const reactMarkdown = await import('react-markdown');
+  return (props: any) => <reactMarkdown.default {...props} />;
+});
 
 export function ProductDesktopComponent({
   remarkPlugins,

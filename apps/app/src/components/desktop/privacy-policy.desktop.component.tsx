@@ -4,7 +4,11 @@ import styles from '../privacy-policy.module.scss';
 import PrivacyPolicyController from '../../controllers/privacy-policy.controller';
 import { lazy } from 'react';
 import { PrivacyPolicyResponsiveProps } from '../privacy-policy.component';
-const ReactMarkdown = lazy(() => import('react-markdown'));
+import loadable from '@loadable/component';
+const ReactMarkdown = loadable(async () => {
+  const reactMarkdown = await import('react-markdown');
+  return (props: any) => <reactMarkdown.default {...props} />;
+});
 
 export function PrivacyPolicyDesktopComponent({
   remarkPlugins,

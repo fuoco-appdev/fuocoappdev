@@ -4,9 +4,10 @@
       "@nrwl/react/babel",
       {
         "runtime": "automatic"
-      },
-      "babel-plugin-transform-import-meta"
+      }
     ]
   ],
-  "plugins": []
+  "plugins": [
+    "@loadable/babel-plugin"
+  ]
 }

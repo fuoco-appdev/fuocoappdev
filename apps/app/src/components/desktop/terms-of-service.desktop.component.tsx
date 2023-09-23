@@ -4,7 +4,11 @@ import styles from '../terms-of-service.module.scss';
 import TermsOfServiceController from '../../controllers/terms-of-service.controller';
 import { lazy } from 'react';
 import { TermsOfServiceResponsiveProps } from '../terms-of-service.component';
-const ReactMarkdown = lazy(() => import('react-markdown'));
+import loadable from '@loadable/component';
+const ReactMarkdown = loadable(async () => {
+  const reactMarkdown = await import('react-markdown');
+  return (props: any) => <reactMarkdown.default {...props} />;
+});
 
 export function TermsOfServiceDesktopComponent({
   remarkPlugins,

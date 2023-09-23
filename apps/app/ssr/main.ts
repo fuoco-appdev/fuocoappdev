@@ -28,7 +28,7 @@ router.get('*', (req, res) => {
     delete __non_webpack_require__.cache[mainPath];
   }
   const main = __non_webpack_require__(mainPath);
-  const { html, helmet } = main.render(req);
+  const { html, helmet, scripts } = main.render(req);
   if (helmet?.htmlAttributes) {
     indexData = indexData.replace(
       /<html[^>]+>/g,
@@ -64,6 +64,16 @@ router.get('*', (req, res) => {
       /<div (id="root")[^>]+>(.*?)<\/div>/g,
       `<div id="root" style="height: 100%; width: 100%;">${html}</div>`
     );
+  }
+  if (scripts) {
+    const bodyRegex = /<body[^>]*>(.*?)<\/body>/is;
+    let bodyHtml = indexData.match(bodyRegex)?.[0] ?? '';
+    const firstBodyTag = bodyHtml?.match(/<body[^>]*>/g)?.[0] ?? '';
+    const lastBodyTag = bodyHtml?.match(/<\/body>/g)?.[0] ?? '';
+    bodyHtml = bodyHtml?.replace(firstBodyTag, '');
+    bodyHtml = bodyHtml?.replace(lastBodyTag, '');
+    const htmlWithScripts = firstBodyTag + bodyHtml + scripts + lastBodyTag;
+    indexData.replace(bodyRegex, htmlWithScripts);
   }
 
   return res.send(indexData);
