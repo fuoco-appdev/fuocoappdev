@@ -15,10 +15,13 @@ import { ProductResponsiveProps } from '../product.component';
 import { useEffect, useState, lazy } from 'react';
 import { useMobileEffect } from '../responsive.component';
 import loadable from '@loadable/component';
-const ReactMarkdown = loadable(async () => {
-  const reactMarkdown = await import('react-markdown');
-  return (props: any) => <reactMarkdown.default {...props} />;
-});
+const ReactMarkdown = loadable(
+  async () => {
+    const reactMarkdown = await import('react-markdown');
+    return (props: any) => <reactMarkdown.default {...props} />;
+  },
+  { ssr: false }
+);
 
 export function ProductMobileComponent({
   remarkPlugins,

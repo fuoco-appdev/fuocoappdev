@@ -4,13 +4,15 @@ import { useObservable } from '@ngneat/use-observable';
 import styles from '../terms-of-service.module.scss';
 import TermsOfServiceController from '../../controllers/terms-of-service.controller';
 import { useNavigate } from 'react-router-dom';
-import { lazy } from 'react';
 import { TermsOfServiceResponsiveProps } from '../terms-of-service.component';
 import loadable from '@loadable/component';
-const ReactMarkdown = loadable(async () => {
-  const reactMarkdown = await import('react-markdown');
-  return (props: any) => <reactMarkdown.default {...props} />;
-});
+const ReactMarkdown = loadable(
+  async () => {
+    const reactMarkdown = await import('react-markdown');
+    return (props: any) => <reactMarkdown.default {...props} />;
+  },
+  { ssr: false }
+);
 
 export function TermsOfServiceMobileComponent({
   remarkPlugins,

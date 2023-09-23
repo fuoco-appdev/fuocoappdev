@@ -14,10 +14,13 @@ import Skeleton from 'react-loading-skeleton';
 import { ProductResponsiveProps } from '../product.component';
 import { useDesktopEffect } from '../responsive.component';
 import loadable from '@loadable/component';
-const ReactMarkdown = loadable(async () => {
-  const reactMarkdown = await import('react-markdown');
-  return (props: any) => <reactMarkdown.default {...props} />;
-});
+const ReactMarkdown = loadable(
+  async () => {
+    const reactMarkdown = await import('react-markdown');
+    return (props: any) => <reactMarkdown.default {...props} />;
+  },
+  { ssr: false }
+);
 
 export function ProductDesktopComponent({
   remarkPlugins,
