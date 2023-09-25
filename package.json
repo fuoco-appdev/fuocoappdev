@@ -16,6 +16,12 @@
   },
   "private": true,
   "homepage": "http://cruthology.github.io/cruthology-app-api",
+  "optionalDependencies": {
+    "@nx/nx-darwin-arm64": "^16.9.0",
+    "@nx/nx-darwin-x64": "^16.9.0",
+    "@nx/nx-linux-x64-gnu": "^16.9.0",
+    "@nx/nx-win32-x64-msvc": "^16.9.0"
+  },
   "dependencies": {
     "@medusajs/medusa-js": "^6.0.2",
     "core-js": "^3.6.5",
