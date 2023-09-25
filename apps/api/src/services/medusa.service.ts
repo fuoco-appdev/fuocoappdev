@@ -7,6 +7,7 @@ import {
   OrdersRequest,
   ProductCountResponse,
   ProductCountRequest,
+  ProductResponse,
 } from '../protobuf/core_pb.js';
 import 'https://deno.land/x/dotenv@v3.2.0/load.ts';
 import MapboxService, { GeocodingFeature } from './mapbox.service.ts';
@@ -268,6 +269,24 @@ class MedusaService {
 
     response.setCount(data.length);
     return response;
+  }
+
+  public async getProductAsync(
+    productId: string
+  ): Promise<InstanceType<typeof ProductResponse>> {
+    const productResponse = await axiod.get(
+      `${this._url}/admin/products/${productId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${this._token}`,
+        },
+      }
+    );
+    const product = new ProductResponse();
+    const data = productResponse.data['product'];
+    product.setData(JSON.stringify(data));
+
+    return product;
   }
 
   public async getOrdersAsync(

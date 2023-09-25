@@ -19,64 +19,20 @@ global['localStorage'] = mock.getLocalStorage();
 global['sessionStorage'] = mock.getSessionStorage();
 
 const mainPath = path.resolve(__dirname, '../server/main.js');
-const indexHtmlPath = path.resolve(__dirname, '../client/index.html');
 router.use(express.static(path.resolve(__dirname, '../client')));
 router.get('*', (req, res) => {
-  let indexData = fs.readFileSync(indexHtmlPath, 'utf8');
   // Skip caching ssr fragment in dev mode.
   if (process.env['NODE_ENV'] !== 'production') {
     delete __non_webpack_require__.cache[mainPath];
   }
+  Object.defineProperty(window, 'location', {
+    value: {
+      pathname: req.url,
+    },
+    writable: true,
+  });
   const main = __non_webpack_require__(mainPath);
-  const { html, helmet, scripts } = main.render(req);
-  if (helmet?.htmlAttributes) {
-    indexData = indexData.replace(
-      /<html[^>]+>/g,
-      `<html ${helmet.htmlAttributes.toString()}>`
-    );
-  }
-  if (helmet?.bodyAttributes) {
-    indexData = indexData.replace(
-      /<body[^>]+>/g,
-      `<body ${helmet.bodyAttributes.toString()}>`
-    );
-  }
-  if (helmet?.title) {
-    indexData = indexData.replace(
-      /<title[^>]+>(.*?)<\/title>/g,
-      helmet.title.toString()
-    );
-  }
-  if (helmet?.meta) {
-    indexData = indexData.replace(
-      /<meta (data-react-helmet="true")(.*?)\/>/g,
-      helmet.meta.toString()
-    );
-  }
-  if (helmet?.link) {
-    indexData = indexData.replace(
-      /<link (data-react-helmet="true")(.*?)\/>/g,
-      helmet.link.toString()
-    );
-  }
-  if (html) {
-    indexData = indexData.replace(
-      /<div (id="root")[^>]+>(.*?)<\/div>/g,
-      `<div id="root" style="height: 100%; width: 100%;">${html}</div>`
-    );
-  }
-  if (scripts) {
-    const bodyRegex = /<body[^>]*>(.*?)<\/body>/is;
-    let bodyHtml = indexData.match(bodyRegex)?.[0] ?? '';
-    const firstBodyTag = bodyHtml?.match(/<body[^>]*>/g)?.[0] ?? '';
-    const lastBodyTag = bodyHtml?.match(/<\/body>/g)?.[0] ?? '';
-    bodyHtml = bodyHtml?.replace(firstBodyTag, '');
-    bodyHtml = bodyHtml?.replace(lastBodyTag, '');
-    const htmlWithScripts = firstBodyTag + bodyHtml + scripts + lastBodyTag;
-    indexData.replace(bodyRegex, htmlWithScripts);
-  }
-
-  return res.send(indexData);
+  main.render(req, res);
 });
 
 app.use(cors());

@@ -9,7 +9,7 @@ import WindowController from '../../controllers/window.controller';
 import { useDesktopEffect, useMobileEffect } from '../responsive.component';
 import { useTranslation } from 'react-i18next';
 import { AuthError } from '@supabase/supabase-js';
-import { RoutePaths } from '../../route-paths';
+import { RoutePathsType } from '../../route-paths';
 
 export function ForgotPasswordMobileComponent(): JSX.Element {
   const navigate = useNavigate();
@@ -75,13 +75,13 @@ export function ForgotPasswordMobileComponent(): JSX.Element {
                       });
                       setError(null);
                     }}
-                    onSigninRedirect={() => navigate(RoutePaths.Signin)}
+                    onSigninRedirect={() => navigate(RoutePathsType.Signin)}
                     emailErrorMessage={
                       error ? t('emailErrorMessage') ?? '' : undefined
                     }
                     onResetPasswordError={(error: AuthError) => setError(error)}
                     supabaseClient={props.supabaseClient}
-                    redirectTo={`${window.location.origin}${RoutePaths.ResetPassword}`}
+                    redirectTo={`${window.location.origin}${RoutePathsType.ResetPassword}`}
                   />
                 )}
               </animated.div>

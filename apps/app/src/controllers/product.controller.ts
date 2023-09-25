@@ -45,23 +45,7 @@ class ProductController extends Controller {
           }
 
           this._model.isLoading = true;
-          this._model.thumbnail = product?.thumbnail ?? '';
-          this._model.title = product?.title ?? '';
-          this._model.subtitle = product?.subtitle ?? '';
-          this._model.description = product?.description ?? '';
-          this._model.tags = product?.tags ?? [];
-          this._model.options = product?.options ?? [];
-          this._model.variants = product?.variants ?? [];
-          this._model.metadata = product?.metadata ?? {};
-          this._model.material = product?.material ?? '-';
-          this._model.weight =
-            product?.weight && product.weight > 0 ? `${product.weight} g` : '-';
-          this._model.countryOrigin = product?.origin_country ?? '-';
-          this._model.dimensions =
-            product?.length && product.width && product.height
-              ? `${product.length}L x ${product.width}W x ${product.height}H`
-              : '-';
-          this._model.type = product?.type ? product.type.value : '-';
+          this.updateDetails(product);
           const selectedVariant = this.getCheapestPrice(this._model.variants);
           this.updateSelectedVariant(selectedVariant?.id ?? '');
           this._model.isLoading = false;
@@ -79,7 +63,7 @@ class ProductController extends Controller {
 
           const channel = StoreController.model.selectedSalesChannel;
           this.resetDetails();
-          this.requestProductAsync(
+          this.requestProductWithChannelAsync(
             this._model.productId ?? '',
             channel?.id ?? '',
             region?.id ?? ''
@@ -106,7 +90,7 @@ class ProductController extends Controller {
                 }
 
                 this.resetDetails();
-                this.requestProductAsync(
+                this.requestProductWithChannelAsync(
                   id,
                   channel?.id ?? '',
                   region?.id ?? ''
@@ -125,6 +109,13 @@ class ProductController extends Controller {
   }
 
   public async requestProductAsync(
+    id: string
+  ): Promise<PricedProduct | undefined> {
+    const productResponse = await MedusaService.medusa?.products.retrieve(id);
+    return productResponse?.product;
+  }
+
+  public async requestProductWithChannelAsync(
     id: string,
     salesChannelId: string,
     regionId?: string
@@ -140,13 +131,19 @@ class ProductController extends Controller {
       ...(cart && { cart_id: cart.id }),
     });
     const product = productResponse?.products[0];
+    this.updateDetails(product);
+    const selectedVariant = this.getCheapestPrice(this._model.variants);
+    this.updateSelectedVariant(selectedVariant?.id ?? '');
+    this._model.isLoading = false;
+  }
+
+  public updateDetails(product: PricedProduct | undefined): void {
     this._model.thumbnail = product?.thumbnail ?? '';
     this._model.title = product?.title ?? '';
     this._model.subtitle = product?.subtitle ?? '';
     this._model.description = product?.description ?? '';
     this._model.tags = product?.tags ?? [];
     this._model.options = product?.options ?? [];
-    this._model.variants = product?.variants ?? [];
     this._model.metadata = product?.metadata ?? {};
     this._model.material = product?.material ?? '-';
     this._model.weight =
@@ -157,9 +154,7 @@ class ProductController extends Controller {
         ? `${product.length}L x ${product.width}W x ${product.height}H`
         : '-';
     this._model.type = product?.type ? product.type.value : '-';
-    const selectedVariant = this.getCheapestPrice(this._model.variants);
-    this.updateSelectedVariant(selectedVariant?.id ?? '');
-    this._model.isLoading = false;
+    this._model.variants = product?.variants ?? [];
   }
 
   public resetDetails(): void {

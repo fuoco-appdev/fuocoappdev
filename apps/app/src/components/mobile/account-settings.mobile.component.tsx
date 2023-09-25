@@ -3,7 +3,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import AccountController from '../../controllers/account.controller';
 import styles from '../account-settings.module.scss';
 import { Alert, Button, Line, Modal } from '@fuoco.appdev/core-ui';
-import { RoutePaths } from '../../route-paths';
+import { RoutePathsType } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import SupabaseService from '../../services/supabase.service';
 import { useObservable } from '@ngneat/use-observable';
@@ -19,7 +19,7 @@ export function AccountSettingsMobileComponent(): JSX.Element {
   const [windowProps] = useObservable(WindowController.model.store);
   const { t, i18n } = useTranslation();
 
-  return windowProps.activeRoute === RoutePaths.AccountSettings ? (
+  return windowProps.activeRoute === RoutePathsType.AccountSettings ? (
     <div className={[styles['root'], styles['root-mobile']].join(' ')}>
       <Ripples
         className={[
@@ -28,7 +28,7 @@ export function AccountSettingsMobileComponent(): JSX.Element {
         ].join(' ')}
         color={'rgba(42, 42, 95, .35)'}
         onClick={() =>
-          setTimeout(() => navigate(RoutePaths.AccountSettingsAccount), 150)
+          setTimeout(() => navigate(RoutePathsType.AccountSettingsAccount), 150)
         }
       >
         <div

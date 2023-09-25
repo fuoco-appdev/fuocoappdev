@@ -4,18 +4,17 @@ import './i18n';
 
 import AppComponent from './components/app.component';
 import { BrowserRouter } from 'react-router-dom';
-import { HelmetProvider } from 'react-helmet-async';
 import { loadableReady } from '@loadable/component';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { getRoutePaths } from './route-paths';
+const routePaths = getRoutePaths();
+const router = createBrowserRouter(routePaths);
 
 loadableReady(() => {
   ReactDOM.hydrateRoot(
     document.getElementById('root') as HTMLElement,
     <StrictMode>
-      <HelmetProvider>
-        <BrowserRouter>
-          <AppComponent />
-        </BrowserRouter>
-      </HelmetProvider>
+      <RouterProvider router={router} />
     </StrictMode>
   );
 });

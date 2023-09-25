@@ -33,7 +33,7 @@ import {
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
 import { useNavigate } from 'react-router-dom';
-import { RoutePaths } from '../../route-paths';
+import { RoutePathsType } from '../../route-paths';
 import WindowController from '../../controllers/window.controller';
 import AccountController from '../../controllers/account.controller';
 import {

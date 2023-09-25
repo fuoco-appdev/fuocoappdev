@@ -1,13 +1,13 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { RoutePaths } from '../route-paths';
+import { RoutePathsType } from '../route-paths';
 import { useTranslation } from 'react-i18next';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import { MapRef } from 'react-map-gl';
 import { InventoryLocation } from '../models/home.model';
 import { HomeDesktopComponent } from './desktop/home.desktop.component';
 import { HomeMobileComponent } from './mobile/home.mobile.component';
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from 'react-helmet';
 
 export interface HomeResponsiveProps {
   mapRef: React.Ref<MapRef> | undefined;
@@ -31,8 +31,8 @@ export default function HomeComponent(): JSX.Element {
       return;
     }
 
-    if (location.pathname === RoutePaths.Default) {
-      navigate(RoutePaths.Home);
+    if (location.pathname === RoutePathsType.Default) {
+      navigate(RoutePathsType.Home);
     }
   }, [location.pathname]);
 

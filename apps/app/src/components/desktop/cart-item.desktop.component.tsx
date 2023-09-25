@@ -11,7 +11,7 @@ import StoreController from '../../controllers/store.controller';
 import { useObservable } from '@ngneat/use-observable';
 import { CartItemResponsiveProps } from '../cart-item.component';
 import { useNavigate } from 'react-router-dom';
-import { RoutePaths } from '../../route-paths';
+import { RoutePathsType } from '../../route-paths';
 
 export function CartItemDesktopComponent({
   item,
@@ -53,7 +53,7 @@ export function CartItemDesktopComponent({
             styles['title-container-desktop'],
           ].join(' ')}
           onClick={() =>
-            navigate(`${RoutePaths.Store}/${item.variant.product_id}`)
+            navigate(`${RoutePathsType.Store}/${item.variant.product_id}`)
           }
         >
           <div className={[styles['title'], styles['title-desktop']].join(' ')}>

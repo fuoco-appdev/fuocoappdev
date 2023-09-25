@@ -1,18 +1,34 @@
 import { useObservable } from '@ngneat/use-observable';
 import ProductController from '../controllers/product.controller';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
-import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Suspense, useEffect, useRef, useState } from 'react';
+import { RouteObject, useParams } from 'react-router-dom';
 import { ProductOptions } from '../models/product.model';
 import { ProductOptionValue, ProductOption } from '@medusajs/medusa';
-import { PricedVariant } from '@medusajs/medusa/dist/types/pricing';
+import {
+  PricedProduct,
+  PricedVariant,
+} from '@medusajs/medusa/dist/types/pricing';
 import { TabProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/tabs/tabs';
-import StoreController from '../controllers/store.controller';
 import { ProductDesktopComponent } from './desktop/product.desktop.component';
 import { ProductMobileComponent } from './mobile/product.mobile.component';
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from 'react-helmet';
+import MedusaService from '../services/medusa.service';
 
-export interface ProductProps {}
+// let product: PricedProduct | undefined = undefined;
+//   if (!StoreController.model.selectedPreview) {
+//     const id = window.location.pathname.split('/').at(-1) ?? '';
+//     product = await MedusaService.requestProductAsync(id);
+//     console.log(product);
+//   }
+//   const component = await import(
+//     './loadable/product-headers.loadable.component'
+//   );
+//   return () => <component.default product={product} />;
+
+export interface ProductProps {
+  product?: PricedProduct | undefined;
+}
 
 export interface ProductResponsiveProps {
   remarkPlugins: any[];
@@ -34,12 +50,10 @@ export interface ProductResponsiveProps {
   setDescription: (value: string) => void;
 }
 
-export default function ProductComponent(): JSX.Element {
+function ProductComponent({ product }: ProductProps): JSX.Element {
   const [props] = useObservable(ProductController.model.store);
   const { id } = useParams();
-  const [fullName, setFullName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
-  const [shortDescription, setShortDescription] = useState<string>('');
   const [tabs, setTabs] = useState<TabProps[]>([]);
   const [activeVariantId, setActiveVariantId] = useState<string | undefined>();
   const [activeDetails, setActiveDetails] = useState<string | undefined>(
@@ -59,12 +73,39 @@ export default function ProductComponent(): JSX.Element {
   const [vintage, setVintage] = useState<string | undefined>('');
   const [remarkPlugins, setRemarkPlugins] = useState<any[]>([]);
 
+  const formatName = (title: string, subtitle?: string | null) => {
+    let name = props.title;
+    if (subtitle && subtitle?.length > 0) {
+      name += `, ${props.subtitle}`;
+    }
+    return name;
+  };
+
   const formatDescription = (description: string): string => {
     const regex = /\*\*(.*?)\*\*/g;
     const cleanDescription = description.trim();
     const descriptionWithoutTitles = cleanDescription.replace(regex, '');
     return descriptionWithoutTitles;
   };
+
+  const [fullName, setFullName] = useState<string>(
+    formatName(product?.title ?? '', product?.subtitle) ?? ''
+  );
+  const [shortDescription, setShortDescription] = useState<string>(
+    formatDescription(`${props.description?.slice(0, 205)}...`)
+  );
+
+  useEffect(() => {
+    const formattedName = formatName(props.title, props.subtitle);
+    setFullName(formattedName);
+  }, [props.title, props.subtitle]);
+
+  useEffect(() => {
+    const formattedDescription = formatDescription(
+      `${props.description?.slice(0, 205)}...`
+    );
+    setShortDescription(formattedDescription);
+  }, [props.description]);
 
   useEffect(() => {
     import('remark-gfm').then((plugin) => {
@@ -147,30 +188,27 @@ export default function ProductComponent(): JSX.Element {
     }
   }, [props.selectedVariant, props.metadata]);
 
-  useEffect(() => {
-    let name = props.title;
-    if (props.subtitle.length > 0) {
-      name += `, ${props.subtitle}`;
-    }
-    setFullName(name);
-  }, [props.title, props.subtitle]);
-
-  useEffect(() => {
-    const formattedDescription = formatDescription(
-      `${props.description?.slice(0, 205)}...`
-    );
-    setShortDescription(formattedDescription);
-  }, [props.description]);
-
   return (
     <>
       <Helmet>
-        <title>{`${fullName} | Cruthology`}</title>
+        <title>
+          {fullName.length > 0 ? `${fullName} | Cruthology` : 'Cruthology'}
+        </title>
         <link rel="canonical" href={window.location.href} />
-        <meta name="title" content={`${fullName} | Cruthology`} />
+        <meta
+          name="title"
+          content={
+            fullName.length > 0 ? `${fullName} | Cruthology` : 'Cruthology'
+          }
+        />
         <meta name="description" content={shortDescription} />
         <meta property="og:image" content={props.thumbnail} />
-        <meta property="og:title" content={`${fullName} | Cruthology`} />
+        <meta
+          property="og:title"
+          content={
+            fullName.length > 0 ? `${fullName} | Cruthology` : 'Cruthology'
+          }
+        />
         <meta property="og:description" content={shortDescription} />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
@@ -220,3 +258,18 @@ export default function ProductComponent(): JSX.Element {
     </>
   );
 }
+
+ProductComponent.getServerSidePropsAsync = async (
+  route: RouteObject,
+  request: Request,
+  result: Response
+): Promise<ProductProps> => {
+  const id = request.url.split('/').at(-1) ?? '';
+  const product = await MedusaService.requestProductAsync(id);
+  ProductController.updateDetails(product);
+  return Promise.resolve({
+    product: product,
+  });
+};
+
+export default ProductComponent;

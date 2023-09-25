@@ -19,7 +19,7 @@ import {
   Listbox,
   OptionProps,
 } from '@fuoco.appdev/core-ui';
-import { RoutePaths } from '../route-paths';
+import { RoutePathsType } from '../route-paths';
 import { useTranslation } from 'react-i18next';
 import SupabaseService from '../services/supabase.service';
 import { useObservable } from '@ngneat/use-observable';
@@ -37,7 +37,7 @@ import { InventoryLocation } from '../models/home.model';
 import { center } from '@turf/turf';
 import { StoreDesktopComponent } from './desktop/store.desktop.component';
 import { StoreMobileComponent } from './mobile/store.mobile.component';
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from 'react-helmet';
 import ReactDOM from 'react-dom';
 
 export interface StoreResponsiveProps {

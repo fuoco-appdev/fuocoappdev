@@ -31,7 +31,7 @@ import {
 } from '@stripe/react-stripe-js';
 import StripePayButtonComponent from '../stripe-pay-button.component';
 import { CheckoutResponsiveProps } from '../checkout.component';
-import { RoutePaths } from '../../route-paths';
+import { RoutePathsType } from '../../route-paths';
 import { useNavigate } from 'react-router-dom';
 
 export function CheckoutDesktopComponent({
@@ -1140,7 +1140,7 @@ export function CheckoutDesktopComponent({
                   setIsPayOpen(false);
                   const id =
                     await CheckoutController.proceedToManualPaymentAsync();
-                  navigate(`${RoutePaths.OrderConfirmed}/${id}`);
+                  navigate(`${RoutePathsType.OrderConfirmed}/${id}`);
                 }}
               >
                 {t('pay')}

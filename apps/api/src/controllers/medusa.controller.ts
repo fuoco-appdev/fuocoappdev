@@ -44,6 +44,21 @@ export class MedusaController {
     context.response.body = response.serializeBinary();
   }
 
+  @Post('/products/:productId')
+  @ContentType('application/x-protobuf')
+  public async getProductAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >
+  ): Promise<void> {
+    const paramsProductId = context.params['productId'];
+    const response = await MedusaService.getProductAsync(paramsProductId);
+    context.response.type = 'application/x-protobuf';
+    context.response.body = response.serializeBinary();
+  }
+
   @Post('/customer/create')
   @Guard(AuthGuard)
   @ContentType('application/x-protobuf')

@@ -13,7 +13,7 @@ import { PaymentSession, Customer, Cart } from '@medusajs/medusa';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
 import { useNavigate } from 'react-router-dom';
-import { RoutePaths } from '../route-paths';
+import { RoutePathsType } from '../route-paths';
 import AccountController from '../controllers/account.controller';
 import {
   loadStripe,
@@ -26,6 +26,7 @@ import {
 import SecretsService from '../services/secrets.service';
 import { CheckoutMobileComponent } from './mobile/checkout.mobile.component';
 import { CheckoutDesktopComponent } from './desktop/checkout.desktop.component';
+import { Helmet } from 'react-helmet';
 
 export interface CheckoutResponsiveProps {
   shippingOptions: RadioProps[];
@@ -79,7 +80,7 @@ export default function CheckoutComponent(): JSX.Element {
 
   useEffect(() => {
     if (cartProps.cart && cartProps.cart.items.length <= 0) {
-      navigate(RoutePaths.Store);
+      navigate(RoutePathsType.Store);
     }
   }, [cartProps.cart]);
 
@@ -308,6 +309,30 @@ export default function CheckoutComponent(): JSX.Element {
 
   return (
     <>
+      <Helmet>
+        <title>Cruthology</title>
+        <link rel="canonical" href={window.location.href} />
+        <meta name="title" content={'Cruthology'} />
+        <meta
+          name="description"
+          content={
+            'An exclusive wine club offering high-end dinners, entertainment, and enchanting wine tastings, providing a gateway to extraordinary cultural experiences.'
+          }
+        />
+        <meta
+          property="og:image"
+          content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
+        />
+        <meta property="og:title" content={'Home | Cruthology'} />
+        <meta
+          property="og:description"
+          content={
+            'An exclusive wine club offering high-end dinners, entertainment, and enchanting wine tastings, providing a gateway to extraordinary cultural experiences.'
+          }
+        />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+      </Helmet>
       <ResponsiveDesktop>
         <CheckoutDesktopComponent
           shippingOptions={shippingOptions}

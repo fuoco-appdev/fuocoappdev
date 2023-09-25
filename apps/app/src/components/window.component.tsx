@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import WindowController from '../controllers/window.controller';
 import styles from './window.module.scss';
-import { RoutePaths } from '../route-paths';
+import { RoutePathsType } from '../route-paths';
 import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
 import {
@@ -50,11 +50,11 @@ export default function WindowComponent(): JSX.Element {
 
   useEffect(() => {
     if (props.authState === 'SIGNED_OUT') {
-      navigate(RoutePaths.Signin);
+      navigate(RoutePathsType.Signin);
     } else if (props.authState === 'USER_DELETED') {
-      navigate(RoutePaths.Signup);
+      navigate(RoutePathsType.Signup);
     } else if (props.authState === 'PASSWORD_RECOVERY') {
-      navigate(RoutePaths.ResetPassword);
+      navigate(RoutePathsType.ResetPassword);
     }
   }, [props.authState]);
 

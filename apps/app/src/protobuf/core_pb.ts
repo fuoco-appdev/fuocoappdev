@@ -389,6 +389,43 @@ export class ProductCountResponse extends Message<ProductCountResponse> {
 }
 
 /**
+ * @generated from message core.ProductResponse
+ */
+export class ProductResponse extends Message<ProductResponse> {
+  /**
+   * @generated from field: string data = 1;
+   */
+  data = "";
+
+  constructor(data?: PartialMessage<ProductResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.ProductResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "data", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ProductResponse {
+    return new ProductResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ProductResponse {
+    return new ProductResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ProductResponse {
+    return new ProductResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ProductResponse | PlainMessage<ProductResponse> | undefined, b: ProductResponse | PlainMessage<ProductResponse> | undefined): boolean {
+    return proto3.util.equals(ProductResponse, a, b);
+  }
+}
+
+/**
  * @generated from message core.StockLocationsResponse
  */
 export class StockLocationsResponse extends Message<StockLocationsResponse> {

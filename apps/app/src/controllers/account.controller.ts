@@ -21,7 +21,7 @@ import {
   AddressFormErrors,
   AddressFormValues,
 } from '../components/address-form.component';
-import { RoutePaths } from '../route-paths';
+import { RoutePathsType } from '../route-paths';
 import { LanguageInfo } from '@fuoco.appdev/core-ui';
 import { select } from '@ngneat/elf';
 
@@ -115,13 +115,13 @@ class AccountController extends Controller {
     this._model.activeTabId = value;
 
     switch (value) {
-      case RoutePaths.AccountOrderHistory:
+      case RoutePathsType.AccountOrderHistory:
         this._model.activeTabIndex = 1;
         break;
-      case RoutePaths.AccountAddresses:
+      case RoutePathsType.AccountAddresses:
         this._model.activeTabIndex = 2;
         break;
-      case RoutePaths.AccountEdit:
+      case RoutePathsType.AccountEdit:
         this._model.activeTabIndex = 3;
         break;
       default:

@@ -5,6 +5,6 @@
       "types": ["node"]
     },
     "exclude": ["**/*.spec.ts"],
-    "include": ["**/*.ts"]
+    "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.scss"]
   }
   

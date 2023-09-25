@@ -3,7 +3,7 @@ import { Auth } from '@fuoco.appdev/core-ui';
 import SigninController from '../../controllers/signin.controller';
 import styles from '../signin.module.scss';
 import SupabaseService from '../../services/supabase.service';
-import { RoutePaths } from '../../route-paths';
+import { RoutePathsType } from '../../route-paths';
 import { AuthError } from '@supabase/supabase-js';
 import { useState, useEffect } from 'react';
 import { animated, config, useTransition } from 'react-spring';
@@ -113,16 +113,16 @@ export function SigninDesktopComponent({
                       SigninController.updatePassword(e.target.value)
                     }
                     onForgotPasswordRedirect={() =>
-                      navigate(RoutePaths.ForgotPassword)
+                      navigate(RoutePathsType.ForgotPassword)
                     }
                     onTermsOfServiceRedirect={() =>
-                      navigate(RoutePaths.TermsOfService)
+                      navigate(RoutePathsType.TermsOfService)
                     }
                     onPrivacyPolicyRedirect={() =>
-                      navigate(RoutePaths.PrivacyPolicy)
+                      navigate(RoutePathsType.PrivacyPolicy)
                     }
-                    onSigninRedirect={() => navigate(RoutePaths.Signin)}
-                    onSignupRedirect={() => navigate(RoutePaths.Signup)}
+                    onSigninRedirect={() => navigate(RoutePathsType.Signin)}
+                    onSignupRedirect={() => navigate(RoutePathsType.Signup)}
                     onSigninError={(error: AuthError) => setAuthError(error)}
                     redirectTo={window.location.origin}
                   />

@@ -1,7 +1,7 @@
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import { PrivacyPolicyDesktopComponent } from './desktop/privacy-policy.desktop.component';
 import { PrivacyPolicyMobileComponent } from './mobile/privacy-policy.mobile.component';
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from 'react-helmet';
 import { useState, useEffect } from 'react';
 
 export interface PrivacyPolicyResponsiveProps {

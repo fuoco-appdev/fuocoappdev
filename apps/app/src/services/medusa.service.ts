@@ -5,6 +5,7 @@ import axios, { AxiosError } from 'axios';
 import { Service } from '../service';
 import SupabaseService from './supabase.service';
 import * as core from '../protobuf/core_pb';
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 
 class MedusaService extends Service {
   private _medusa: Medusa | undefined;
@@ -23,6 +24,25 @@ class MedusaService extends Service {
       apiKey: publicKey,
       maxRetries: 3,
     });
+  }
+
+  public async requestProductAsync(
+    productId: string
+  ): Promise<PricedProduct | undefined> {
+    const response = await axios({
+      method: 'post',
+      url: `${this.endpointUrl}/medusa/products/${productId}`,
+      headers: {
+        ...this.headers,
+      },
+      data: '',
+      responseType: 'arraybuffer',
+    });
+    const arrayBuffer = new Uint8Array(response.data);
+    this.assertResponse(arrayBuffer);
+
+    const productResponse = core.ProductResponse.fromBinary(arrayBuffer);
+    return JSON.parse(productResponse.data) as PricedProduct | undefined;
   }
 
   public async requestProductCountAsync(type: string): Promise<number> {

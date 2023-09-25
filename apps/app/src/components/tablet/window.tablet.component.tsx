@@ -12,7 +12,7 @@ import {
   Line,
   ToastOverlay,
 } from '@fuoco.appdev/core-ui';
-import { RoutePaths } from '../../route-paths';
+import { RoutePathsType } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import SupabaseService from '../../services/supabase.service';
 import { useObservable } from '@ngneat/use-observable';

@@ -22,7 +22,7 @@ import { useObservable } from '@ngneat/use-observable';
 import CheckoutController from '../controllers/checkout.controller';
 import { useTranslation } from 'react-i18next';
 import { ProviderType } from '../models/checkout.model';
-import { RoutePaths } from '../route-paths';
+import { RoutePathsType } from '../route-paths';
 import { StripePayButtonDesktopComponent } from './desktop/stripe-pay-button.desktop.component';
 
 export interface StripePayButtonProps {
@@ -61,7 +61,7 @@ export default function StripePayButtonComponent({
 
     if (id) {
       onPaymentComplete?.();
-      navigate(`${RoutePaths.OrderConfirmed}/${id}`);
+      navigate(`${RoutePathsType.OrderConfirmed}/${id}`);
     }
   };
 

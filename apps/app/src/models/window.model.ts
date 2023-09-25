@@ -1,14 +1,14 @@
 import { createStore, withProps } from '@ngneat/elf';
 import { AuthChangeEvent } from '@supabase/supabase-js';
 import { Model } from '../model';
-import { RoutePaths } from '../route-paths';
+import { RoutePathsType } from '../route-paths';
 import * as core from '../protobuf/core_pb';
 import { ToastProps, LanguageInfo } from '@fuoco.appdev/core-ui';
 
 export interface WindowState {
   account: core.Account | null;
   isAuthenticated: boolean | undefined;
-  activeRoute: RoutePaths | undefined;
+  activeRoute: RoutePathsType | undefined;
   cartCount: number;
   authState: AuthChangeEvent | undefined;
   isLoading: boolean;
@@ -101,11 +101,11 @@ export class WindowModel extends Model {
     }
   }
 
-  public get activeRoute(): RoutePaths | undefined {
+  public get activeRoute(): RoutePathsType | undefined {
     return this.store.getValue().activeRoute;
   }
 
-  public set activeRoute(value: RoutePaths | undefined) {
+  public set activeRoute(value: RoutePathsType | undefined) {
     if (this.activeRoute !== value) {
       this.store.update((state) => ({ ...state, activeRoute: value }));
     }

@@ -18,6 +18,7 @@ const webpack = require('webpack');
 const {
   ids,
 } = require('webpack');
+const LoadablePlugin = require('@loadable/webpack-plugin');
 
 function postcssOptionsCreator(
   options,
@@ -170,7 +171,7 @@ module.exports = composePlugins(withNx(), (config, { options, context }) => {
     },
     externals: ["react-helmet"],
     resolve: {
-      extensions: [ '.ts', '.tsx', '.mjs', '.js', '.jsx' ],
+      extensions: [ '.ts', '.tsx', '.mjs', '.js', '.jsx', '.json' ],
       alias: {},
       mainFields: [ 'browser', 'module', 'main' ] 
     },
@@ -230,6 +231,7 @@ module.exports = composePlugins(withNx(), (config, { options, context }) => {
       ]
     },
     plugins: [
+      new LoadablePlugin(),
       new WriteIndexHtmlPlugin({
         crossOrigin: options.crossOrigin,
         sri: options.subresourceIntegrity,
@@ -245,7 +247,10 @@ module.exports = composePlugins(withNx(), (config, { options, context }) => {
       }),
       new webpack.DefinePlugin(
         getClientEnvironment(process.env.NODE_ENV).stringified
-      )
+      ),
+      new webpack.DefinePlugin({
+        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
+      })
     ],
   });
 });

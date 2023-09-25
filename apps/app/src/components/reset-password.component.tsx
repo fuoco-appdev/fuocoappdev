@@ -7,7 +7,7 @@ import { AuthError } from '@supabase/supabase-js';
 import { useState, useEffect } from 'react';
 import { animated, config, useTransition } from 'react-spring';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { RoutePaths } from '../route-paths';
+import { RoutePathsType } from '../route-paths';
 import ResetPasswordController from '../controllers/reset-password.controller';
 import { useObservable } from '@ngneat/use-observable';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
@@ -98,7 +98,7 @@ export default function ResetPasswordComponent(): JSX.Element {
           closable: true,
         });
         setError(null);
-        navigate(RoutePaths.Account);
+        navigate(RoutePathsType.Account);
       }}
       onResetPasswordError={(error: AuthError) => setError(error)}
       supabaseClient={SupabaseService.supabaseClient}

@@ -16,7 +16,7 @@ import StoreController from '../../controllers/store.controller';
 import { useObservable } from '@ngneat/use-observable';
 import Ripples from 'react-ripples';
 import { useNavigate } from 'react-router-dom';
-import { RoutePaths } from '../../route-paths';
+import { RoutePathsType } from '../../route-paths';
 import {
   OrderItemProps,
   OrderItemResponsiveProps,

@@ -3,7 +3,7 @@ import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
 import AccountController from '../../controllers/account.controller';
 import styles from '../account-settings.module.scss';
 import { Alert, Button, Line, Modal, Tabs } from '@fuoco.appdev/core-ui';
-import { RoutePaths } from '../../route-paths';
+import { RoutePathsType } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
 import Ripples from 'react-ripples';
@@ -17,8 +17,8 @@ export function AccountSettingsDesktopComponent(): JSX.Element {
   const { t, i18n } = useTranslation();
 
   useDesktopEffect(() => {
-    if (location.pathname === RoutePaths.AccountSettings) {
-      navigate(RoutePaths.AccountSettingsAccount);
+    if (location.pathname === RoutePathsType.AccountSettings) {
+      navigate(RoutePathsType.AccountSettingsAccount);
     }
   }, [location.pathname]);
 
@@ -42,7 +42,7 @@ export function AccountSettingsDesktopComponent(): JSX.Element {
           }}
           tabs={[
             {
-              id: RoutePaths.AccountSettingsAccount,
+              id: RoutePathsType.AccountSettingsAccount,
               icon: <Line.Person size={24} />,
               label: t('account') ?? '',
             },

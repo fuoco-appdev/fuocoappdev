@@ -31,7 +31,7 @@ import {
 import StripePayButtonComponent from '../stripe-pay-button.component';
 import { CheckoutResponsiveProps } from '../checkout.component';
 import { useNavigate } from 'react-router-dom';
-import { RoutePaths } from '../../route-paths';
+import { RoutePathsType } from '../../route-paths';
 
 export function CheckoutMobileComponent({
   shippingOptions,
@@ -1058,7 +1058,7 @@ export function CheckoutMobileComponent({
                   setIsPayOpen(false);
                   const id =
                     await CheckoutController.proceedToManualPaymentAsync();
-                  navigate(`${RoutePaths.OrderConfirmed}/${id}`);
+                  navigate(`${RoutePathsType.OrderConfirmed}/${id}`);
                 }}
               >
                 {t('pay')}

@@ -10,7 +10,7 @@ import {
   Line,
   ToastOverlay,
 } from '@fuoco.appdev/core-ui';
-import { RoutePaths } from '../../route-paths';
+import { RoutePathsType } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
 import * as core from '../../protobuf/core_pb';
@@ -123,10 +123,10 @@ export function WindowMobileComponent({
                   color: 'rgba(88, 40, 109, .35)',
                 }}
                 onClick={() => {
-                  if (props.activeRoute === RoutePaths.Cart) {
+                  if (props.activeRoute === RoutePathsType.Cart) {
                     navigate(-1);
                   } else {
-                    setTimeout(() => navigate(RoutePaths.Cart), 150);
+                    setTimeout(() => navigate(RoutePathsType.Cart), 150);
                   }
                 }}
                 type={'primary'}
@@ -134,30 +134,31 @@ export function WindowMobileComponent({
                 size={'small'}
                 touchScreen={true}
                 icon={
-                  props.activeRoute !== RoutePaths.Cart ? (
+                  props.activeRoute !== RoutePathsType.Cart ? (
                     <Line.ShoppingCart size={22} color={'#2A2A5F'} />
                   ) : (
                     <Line.Close size={22} color={'#2A2A5F'} />
                   )
                 }
               />
-              {props.activeRoute !== RoutePaths.Cart && props.cartCount > 0 && (
-                <div
-                  className={[
-                    styles['cart-number-container'],
-                    styles['cart-number-container-mobile'],
-                  ].join(' ')}
-                >
-                  <span
+              {props.activeRoute !== RoutePathsType.Cart &&
+                props.cartCount > 0 && (
+                  <div
                     className={[
-                      styles['cart-number'],
-                      styles['cart-number-mobile'],
+                      styles['cart-number-container'],
+                      styles['cart-number-container-mobile'],
                     ].join(' ')}
                   >
-                    {props.cartCount}
-                  </span>
-                </div>
-              )}
+                    <span
+                      className={[
+                        styles['cart-number'],
+                        styles['cart-number-mobile'],
+                      ].join(' ')}
+                    >
+                      {props.cartCount}
+                    </span>
+                  </div>
+                )}
             </div>
           </div>
         )}
@@ -198,7 +199,7 @@ export function WindowMobileComponent({
                   styles['navigation-back-text-container-mobile'],
                 ].join(' ')}
               >
-                {props.activeRoute === RoutePaths.TermsOfService && (
+                {props.activeRoute === RoutePathsType.TermsOfService && (
                   <>
                     <Line.Gavel size={24} />
                     <div
@@ -208,7 +209,7 @@ export function WindowMobileComponent({
                     </div>
                   </>
                 )}
-                {props.activeRoute === RoutePaths.PrivacyPolicy && (
+                {props.activeRoute === RoutePathsType.PrivacyPolicy && (
                   <>
                     <Line.Gavel size={24} />
                     <div
@@ -218,7 +219,7 @@ export function WindowMobileComponent({
                     </div>
                   </>
                 )}
-                {props.activeRoute === RoutePaths.Checkout && (
+                {props.activeRoute === RoutePathsType.Checkout && (
                   <>
                     <Line.ShoppingCart size={24} />
                     <div
@@ -228,7 +229,7 @@ export function WindowMobileComponent({
                     </div>
                   </>
                 )}
-                {props.activeRoute === RoutePaths.OrderConfirmedWithId && (
+                {props.activeRoute === RoutePathsType.OrderConfirmedWithId && (
                   <>
                     <Line.ShoppingCart size={24} />
                     <div
@@ -238,7 +239,7 @@ export function WindowMobileComponent({
                     </div>
                   </>
                 )}
-                {props.activeRoute === RoutePaths.AccountSettings && (
+                {props.activeRoute === RoutePathsType.AccountSettings && (
                   <>
                     <Line.Settings size={24} />
                     <div
@@ -248,7 +249,8 @@ export function WindowMobileComponent({
                     </div>
                   </>
                 )}
-                {props.activeRoute === RoutePaths.AccountSettingsAccount && (
+                {props.activeRoute ===
+                  RoutePathsType.AccountSettingsAccount && (
                   <>
                     <Line.Person size={24} />
                     <div
@@ -285,8 +287,8 @@ export function WindowMobileComponent({
                   rippleProps={{
                     color: 'rgba(252, 245, 227, .35)',
                   }}
-                  onClick={() => navigate(RoutePaths.Home)}
-                  disabled={props.activeRoute === RoutePaths.Cart}
+                  onClick={() => navigate(RoutePathsType.Home)}
+                  disabled={props.activeRoute === RoutePathsType.Cart}
                   type={'text'}
                   rounded={true}
                   size={'tiny'}
@@ -295,8 +297,8 @@ export function WindowMobileComponent({
                     <Line.Home
                       size={24}
                       color={
-                        props.activeRoute === RoutePaths.Home ||
-                        props.activeRoute === RoutePaths.Default
+                        props.activeRoute === RoutePathsType.Home ||
+                        props.activeRoute === RoutePathsType.Default
                           ? 'rgba(252, 245, 227, 1)'
                           : 'rgba(252, 245, 227, .6)'
                       }
@@ -314,8 +316,8 @@ export function WindowMobileComponent({
                   rippleProps={{
                     color: 'rgba(252, 245, 227, .35)',
                   }}
-                  onClick={() => navigate(RoutePaths.Store)}
-                  disabled={props.activeRoute === RoutePaths.Cart}
+                  onClick={() => navigate(RoutePathsType.Store)}
+                  disabled={props.activeRoute === RoutePathsType.Cart}
                   type={'text'}
                   rounded={true}
                   size={'tiny'}
@@ -324,7 +326,7 @@ export function WindowMobileComponent({
                     <Line.Storefront
                       size={24}
                       color={
-                        props.activeRoute === RoutePaths.Store
+                        props.activeRoute === RoutePathsType.Store
                           ? 'rgba(252, 245, 227, 1)'
                           : 'rgba(252, 245, 227, .6)'
                       }
@@ -337,8 +339,8 @@ export function WindowMobileComponent({
                       rippleProps={{
                         color: 'rgba(252, 245, 227, .35)',
                       }}
-                      onClick={() => navigate(RoutePaths.Events)}
-                      disabled={props.activeRoute === RoutePaths.Cart}
+                      onClick={() => navigate(RoutePathsType.Events)}
+                      disabled={props.activeRoute === RoutePathsType.Cart}
                       type={'text'}
                       rounded={true}
                       size={'tiny'}
@@ -347,7 +349,7 @@ export function WindowMobileComponent({
                         <Line.Event
                           size={24}
                           color={
-                            props.activeRoute === RoutePaths.Events
+                            props.activeRoute === RoutePathsType.Events
                               ? 'rgba(252, 245, 227, 1)'
                               : 'rgba(252, 245, 227, .6)'
                           }
@@ -399,7 +401,7 @@ export function WindowMobileComponent({
                       rippleProps={{
                         color: 'rgba(252, 245, 227, .35)',
                       }}
-                      disabled={props.activeRoute === RoutePaths.Cart}
+                      disabled={props.activeRoute === RoutePathsType.Cart}
                       onClick={() => setOpenMore(true)}
                       type={'text'}
                       rounded={true}
@@ -409,7 +411,7 @@ export function WindowMobileComponent({
                         <Line.MoreVert
                           size={24}
                           color={
-                            props.activeRoute === RoutePaths.Cart
+                            props.activeRoute === RoutePathsType.Cart
                               ? 'rgba(252, 245, 227, .6)'
                               : 'rgba(252, 245, 227, 1)'
                           }
@@ -426,8 +428,8 @@ export function WindowMobileComponent({
                         rippleProps={{
                           color: 'rgba(252, 245, 227, .35)',
                         }}
-                        onClick={() => navigate(RoutePaths.Notifications)}
-                        disabled={props.activeRoute === RoutePaths.Cart}
+                        onClick={() => navigate(RoutePathsType.Notifications)}
+                        disabled={props.activeRoute === RoutePathsType.Cart}
                         type={'text'}
                         rounded={true}
                         size={'tiny'}
@@ -436,7 +438,7 @@ export function WindowMobileComponent({
                           <Line.Notifications
                             size={24}
                             color={
-                              props.activeRoute === RoutePaths.Notifications
+                              props.activeRoute === RoutePathsType.Notifications
                                 ? 'rgba(252, 245, 227, 1)'
                                 : 'rgba(252, 245, 227, .6)'
                             }
@@ -454,8 +456,8 @@ export function WindowMobileComponent({
                       rippleProps={{
                         color: 'rgba(252, 245, 227, .35)',
                       }}
-                      onClick={() => navigate(RoutePaths.Account)}
-                      disabled={props.activeRoute === RoutePaths.Cart}
+                      onClick={() => navigate(RoutePathsType.Account)}
+                      disabled={props.activeRoute === RoutePathsType.Cart}
                       type={'text'}
                       rounded={true}
                       size={'tiny'}
@@ -466,7 +468,7 @@ export function WindowMobileComponent({
                             size={24}
                             color={
                               props.activeRoute?.startsWith(
-                                `${RoutePaths.Account}/`
+                                `${RoutePathsType.Account}/`
                               )
                                 ? 'rgba(252, 245, 227, 1)'
                                 : 'rgba(252, 245, 227, .6)'
@@ -476,7 +478,7 @@ export function WindowMobileComponent({
                           <div
                             className={
                               props.activeRoute?.startsWith(
-                                `${RoutePaths.Account}/`
+                                `${RoutePathsType.Account}/`
                               )
                                 ? [
                                     styles['avatar-container-selected'],
@@ -535,7 +537,7 @@ export function WindowMobileComponent({
       >
         <Dropdown.Item
           onClick={() => {
-            navigate(RoutePaths.Signin);
+            navigate(RoutePathsType.Signin);
             setOpenMore(false);
           }}
         >
@@ -553,7 +555,7 @@ export function WindowMobileComponent({
         </Dropdown.Item>
         <Dropdown.Item
           onClick={() => {
-            navigate(RoutePaths.Signup);
+            navigate(RoutePathsType.Signup);
             setOpenMore(false);
           }}
         >

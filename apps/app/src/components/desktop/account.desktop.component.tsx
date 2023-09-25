@@ -20,7 +20,7 @@ import WindowController from '../../controllers/window.controller';
 import { animated, useTransition, config } from 'react-spring';
 import { useObservable } from '@ngneat/use-observable';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { RoutePaths } from '../../route-paths';
+import { RoutePathsType } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import * as core from '../../protobuf/core_pb';
 import AccountProfileFormComponent from '../account-profile-form.component';
@@ -40,17 +40,17 @@ export function AccountDesktopComponent(): JSX.Element {
 
   useDesktopEffect(() => {
     const loadedLocation = windowProps.loadedLocationPath as string | undefined;
-    if (loadedLocation && loadedLocation !== RoutePaths.Account) {
+    if (loadedLocation && loadedLocation !== RoutePathsType.Account) {
       if (
-        loadedLocation.startsWith(RoutePaths.Account) &&
-        !loadedLocation.startsWith(RoutePaths.AccountSettings)
+        loadedLocation.startsWith(RoutePathsType.Account) &&
+        !loadedLocation.startsWith(RoutePathsType.AccountSettings)
       ) {
         AccountController.updateActiveTabId(loadedLocation);
       }
       WindowController.updateLoadedLocationPath(undefined);
     } else {
-      if (!loadedLocation?.startsWith(RoutePaths.AccountSettings)) {
-        navigate(RoutePaths.Account);
+      if (!loadedLocation?.startsWith(RoutePathsType.AccountSettings)) {
+        navigate(RoutePathsType.Account);
       }
     }
   }, [windowProps.loadedLocationPath]);
@@ -86,7 +86,7 @@ export function AccountDesktopComponent(): JSX.Element {
                 color: 'rgba(88, 40, 109, .35)',
               }}
               onClick={() =>
-                setTimeout(() => navigate(RoutePaths.AccountSettings), 150)
+                setTimeout(() => navigate(RoutePathsType.AccountSettings), 150)
               }
               type={'text'}
               rounded={true}

@@ -4,13 +4,13 @@ import { Auth } from '@fuoco.appdev/core-ui';
 import styles from './forgot-password.module.scss';
 import WindowController from '../controllers/window.controller';
 import SupabaseService from '../services/supabase.service';
-import { RoutePaths } from '../route-paths';
+import { RoutePathsType } from '../route-paths';
 import { AuthError } from '@supabase/supabase-js';
 import { useState, useEffect } from 'react';
 import { animated, config, useTransition } from 'react-spring';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import { useTranslation } from 'react-i18next';
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from 'react-helmet';
 import { ForgotPasswordMobileComponent } from './mobile/forgot-password.mobile.component';
 import { ForgotPasswordDesktopComponent } from './desktop/forgot-password.desktop.component';
 

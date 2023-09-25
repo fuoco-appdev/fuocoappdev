@@ -19,7 +19,7 @@ import {
   Listbox,
   OptionProps,
 } from '@fuoco.appdev/core-ui';
-import { RoutePaths } from '../../route-paths';
+import { RoutePathsType } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import SupabaseService from '../../services/supabase.service';
 import { useObservable } from '@ngneat/use-observable';
@@ -210,7 +210,7 @@ export function StoreDesktopComponent({
                 StoreController.updateSelectedPreview(preview);
               }}
               onRest={() => {
-                navigate(`${RoutePaths.Store}/${preview.id}`);
+                navigate(`${RoutePathsType.Store}/${preview.id}`);
               }}
             />
           ))}
@@ -255,7 +255,7 @@ export function StoreDesktopComponent({
                   }}
                   size={'large'}
                   onClick={() =>
-                    setTimeout(() => navigate(RoutePaths.Home), 150)
+                    setTimeout(() => navigate(RoutePathsType.Home), 150)
                   }
                 >
                   {t('home')}

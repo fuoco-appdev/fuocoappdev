@@ -102,11 +102,23 @@ export function ProductDesktopComponent({
             ].join(' ')}
           >
             {!props.isLoading ? (
-              <div
-                className={[styles['title'], styles['title-desktop']].join(' ')}
-              >
-                {props.title}
-              </div>
+              <>
+                <div
+                  className={[styles['title'], styles['title-desktop']].join(
+                    ' '
+                  )}
+                >
+                  {props.title}
+                </div>
+                <div
+                  className={[
+                    styles['subtitle'],
+                    styles['subtitle-desktop'],
+                  ].join(' ')}
+                >
+                  {props.subtitle}
+                </div>
+              </>
             ) : (
               <Skeleton
                 count={1}
@@ -117,13 +129,6 @@ export function ProductDesktopComponent({
                 ].join(' ')}
               />
             )}
-            <div
-              className={[styles['subtitle'], styles['subtitle-desktop']].join(
-                ' '
-              )}
-            >
-              {props.subtitle}
-            </div>
           </div>
           {/* <div className={styles['like-container-desktop']}>
                 <div className={styles['like-count-desktop']}>{props.likeCount}</div>

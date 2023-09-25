@@ -3,7 +3,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import CartController from '../../controllers/cart.controller';
 import styles from '../cart.module.scss';
 import { Button, Input, Line, Solid, Tabs } from '@fuoco.appdev/core-ui';
-import { RoutePaths } from '../../route-paths';
+import { RoutePathsType } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
 import { LineItem, ProductVariant, Discount, Cart } from '@medusajs/medusa';
@@ -68,7 +68,7 @@ export function CartDesktopComponent({
               }}
               size={'large'}
               touchScreen={true}
-              onClick={() => navigate(RoutePaths.Signin)}
+              onClick={() => navigate(RoutePathsType.Signin)}
             >
               {t('signIn')}
             </Button>
@@ -171,7 +171,7 @@ export function CartDesktopComponent({
                       }}
                       size={'large'}
                       onClick={() =>
-                        setTimeout(() => navigate(RoutePaths.Home), 150)
+                        setTimeout(() => navigate(RoutePathsType.Home), 150)
                       }
                     >
                       {t('home')}
@@ -205,7 +205,7 @@ export function CartDesktopComponent({
                         }}
                         size={'large'}
                         onClick={() =>
-                          setTimeout(() => navigate(RoutePaths.Store), 150)
+                          setTimeout(() => navigate(RoutePathsType.Store), 150)
                         }
                       >
                         {t('shopNow')}
@@ -482,7 +482,7 @@ export function CartDesktopComponent({
               size={'large'}
               icon={<Line.ShoppingCart size={24} />}
               onClick={() =>
-                setTimeout(() => navigate(RoutePaths.Checkout), 150)
+                setTimeout(() => navigate(RoutePathsType.Checkout), 150)
               }
             >
               {t('goToCheckout')}

@@ -6,7 +6,7 @@ import SignupController from '../controllers/signup.controller';
 import WindowController from '../controllers/window.controller';
 import styles from './signup.module.scss';
 import SupabaseService from '../services/supabase.service';
-import { RoutePaths } from '../route-paths';
+import { RoutePathsType } from '../route-paths';
 import { useObservable } from '@ngneat/use-observable';
 import { useTranslation } from 'react-i18next';
 import { AuthError } from '@supabase/supabase-js';
@@ -14,7 +14,7 @@ import { animated, config, useTransition } from 'react-spring';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import { SignupDesktopComponent } from './desktop/signup.desktop.component';
 import { SignupMobileComponent } from './mobile/signup.mobile.component';
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from 'react-helmet';
 
 export interface SignupProps {}
 

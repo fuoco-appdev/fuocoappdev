@@ -3,7 +3,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import AccountController from '../../controllers/account.controller';
 import styles from '../account-order-history.module.scss';
 import { Alert, Button } from '@fuoco.appdev/core-ui';
-import { RoutePaths } from '../../route-paths';
+import { RoutePathsType } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import SupabaseService from '../../services/supabase.service';
 import { useObservable } from '@ngneat/use-observable';
@@ -61,7 +61,8 @@ export function AccountOrderHistoryDesktopComponent({
                     ordersContainerRef.current?.scrollTop
                   );
                   setTimeout(
-                    () => navigate(`${RoutePaths.OrderConfirmed}/${order.id}`),
+                    () =>
+                      navigate(`${RoutePathsType.OrderConfirmed}/${order.id}`),
                     250
                   );
                 }}
@@ -103,7 +104,7 @@ export function AccountOrderHistoryDesktopComponent({
                 }}
                 size={'large'}
                 onClick={() =>
-                  setTimeout(() => navigate(RoutePaths.Store), 150)
+                  setTimeout(() => navigate(RoutePathsType.Store), 150)
                 }
               >
                 {t('shopNow')}

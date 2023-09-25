@@ -5,7 +5,7 @@ import SigninController from '../controllers/signin.controller';
 import WindowController from '../controllers/window.controller';
 import styles from './signin.module.scss';
 import SupabaseService from '../services/supabase.service';
-import { RoutePaths } from '../route-paths';
+import { RoutePathsType } from '../route-paths';
 import { AuthError } from '@supabase/supabase-js';
 import { useState, useEffect } from 'react';
 import { animated, config, useTransition } from 'react-spring';
@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
 import { SigninDesktopComponent } from './desktop/signin.desktop.component';
 import { SigninMobileComponent } from './mobile/signin.mobile.component';
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from 'react-helmet';
 
 export interface SigninResponsiveProps {
   setAuthError: (error: AuthError | null) => void;

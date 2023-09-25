@@ -108,11 +108,23 @@ export function ProductMobileComponent({
             ].join(' ')}
           >
             {!props.isLoading ? (
-              <div
-                className={[styles['title'], styles['title-mobile']].join(' ')}
-              >
-                {props.title}
-              </div>
+              <>
+                <div
+                  className={[styles['title'], styles['title-mobile']].join(
+                    ' '
+                  )}
+                >
+                  {props.title}
+                </div>
+                <div
+                  className={[
+                    styles['subtitle'],
+                    styles['subtitle-mobile'],
+                  ].join(' ')}
+                >
+                  {props.subtitle}
+                </div>
+              </>
             ) : (
               <Skeleton
                 count={1}
@@ -123,13 +135,6 @@ export function ProductMobileComponent({
                 ].join(' ')}
               />
             )}
-            <div
-              className={[styles['subtitle'], styles['subtitle-mobile']].join(
-                ' '
-              )}
-            >
-              {props.subtitle}
-            </div>
           </div>
           {/* <div className={styles['like-container-mobile']}>
               <div className={styles['like-count-mobile']}>{props.likeCount}</div>

@@ -6,7 +6,7 @@ import SignupController from '../../controllers/signup.controller';
 import WindowController from '../../controllers/window.controller';
 import styles from '../signup.module.scss';
 import SupabaseService from '../../services/supabase.service';
-import { RoutePaths } from '../../route-paths';
+import { RoutePathsType } from '../../route-paths';
 import { useObservable } from '@ngneat/use-observable';
 import { useTranslation } from 'react-i18next';
 import { AuthError } from '@supabase/supabase-js';
@@ -127,20 +127,20 @@ export function SignupMobileComponent({
                       )
                     }
                     onForgotPasswordRedirect={() =>
-                      navigate(RoutePaths.ForgotPassword)
+                      navigate(RoutePathsType.ForgotPassword)
                     }
                     onTermsOfServiceRedirect={() =>
-                      navigate(RoutePaths.TermsOfService)
+                      navigate(RoutePathsType.TermsOfService)
                     }
                     onPrivacyPolicyRedirect={() =>
-                      navigate(RoutePaths.PrivacyPolicy)
+                      navigate(RoutePathsType.PrivacyPolicy)
                     }
-                    onSigninRedirect={() => navigate(RoutePaths.Signin)}
+                    onSigninRedirect={() => navigate(RoutePathsType.Signin)}
                     onSignupRedirect={() => {
                       setEmailError('');
                       setPasswordError('');
                       setConfirmPasswordError('');
-                      navigate(RoutePaths.Signup);
+                      navigate(RoutePathsType.Signup);
                     }}
                     onSignupError={(error: AuthError) => setAuthError(error)}
                     onEmailConfirmationSent={() => {

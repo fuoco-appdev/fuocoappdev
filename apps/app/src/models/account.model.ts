@@ -10,7 +10,7 @@ import {
   AddressFormErrors,
   AddressFormValues,
 } from '../components/address-form.component';
-import { RoutePaths } from '../route-paths';
+import { RoutePathsType } from '../route-paths';
 import { User } from '@supabase/supabase-js';
 
 export interface AccountState {
@@ -89,7 +89,7 @@ export class AccountModel extends Model {
             phoneNumber: '',
           },
           editShippingFormErrors: {},
-          activeTabId: RoutePaths.AccountOrderHistory,
+          activeTabId: '',
           prevTabIndex: 0,
           activeTabIndex: 0,
           areOrdersLoading: false,

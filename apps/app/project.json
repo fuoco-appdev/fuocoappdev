@@ -18,14 +18,13 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "compiler": "babel",
         "target": "web",
+        "compiler": "babel",
         "tsConfig": "apps/app/tsconfig.app.json",
         "outputPath": "dist/apps/app/client",
         "index": "apps/app/src/index.html",
         "baseHref": "/",
         "main": "apps/app/src/main.tsx",
-        "polyfills": "apps/app/src/polyfills.ts",
         "assets": ["apps/app/src/favicon.ico", "apps/app/src/assets"],
         "styles": [
           "node_modules/@fuoco.appdev/core-ui/dist/cjs/index.css",
@@ -33,6 +32,7 @@
           "node_modules/react-loading-skeleton/dist/skeleton.css",
           "apps/app/src/styles.scss"
         ],
+        "isolatedConfig": true,
         "webpackConfig": "apps/app/webpack.config.js"
       },
       "configurations": {
@@ -40,7 +40,7 @@
           "extractLicenses": false,
           "optimization": false,
           "sourceMap": true,
-          "vendorChunk": false
+          "vendorChunk": true
         },
         "production": {
           "fileReplacements": [
@@ -53,8 +53,7 @@
           "sourceMap": false,
           "namedChunks": false,
           "extractLicenses": true,
-          "vendorChunk": false,
-          "extractCss": true
+          "vendorChunk": false
         }
       }
     },
@@ -63,14 +62,13 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "compiler": "babel",
         "target": "node",
+        "compiler": "babel",
         "tsConfig": "apps/app/tsconfig.server.json",
         "outputPath": "dist/apps/app/server",
         "index": "apps/app/src/index.html",
         "baseHref": "/",
         "main": "apps/app/src/main.server.tsx",
-        "polyfills": "apps/app/src/polyfills.ts",
         "assets": ["apps/app/src/favicon.ico", "apps/app/src/assets"],
         "styles": [
           "node_modules/@fuoco.appdev/core-ui/dist/cjs/index.css",

@@ -9,7 +9,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import HomeController from '../../controllers/home.controller';
 import styles from '../home.module.scss';
 import { Alert, Button } from '@fuoco.appdev/core-ui';
-import { RoutePaths } from '../../route-paths';
+import { RoutePathsType } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import SupabaseService from '../../services/supabase.service';
 import { useObservable } from '@ngneat/use-observable';
@@ -88,7 +88,9 @@ export function HomeDesktopComponent({
                 color: 'rgba(252, 245, 227, .35)',
               }}
               size={'large'}
-              onClick={() => setTimeout(() => navigate(RoutePaths.Store), 150)}
+              onClick={() =>
+                setTimeout(() => navigate(RoutePathsType.Store), 150)
+              }
             >
               {t('shopNow')}
             </Button>
