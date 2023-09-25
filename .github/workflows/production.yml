@@ -51,11 +51,6 @@ jobs:
         
       - name: Build app
         run: npm run build
-      
-      - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          folder: dist/apps/app
           
       - name: Migrate
         run: npx nx run api:migrate --connection=$DATABASE_URL
