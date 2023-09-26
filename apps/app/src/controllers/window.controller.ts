@@ -104,6 +104,10 @@ class WindowController extends Controller {
     this._model.loadedLocationPath = value;
   }
 
+  public updateShowNavigateBack(value: boolean): void {
+    this._model.showNavigateBack = value;
+  }
+
   public updateOnLocationChanged(location: RouterLocation): void {
     this._model.prevTransitionKeyIndex = this._model.transitionKeyIndex;
 
@@ -204,6 +208,8 @@ class WindowController extends Controller {
       this._model.activeRoute = RoutePathsType.OrderConfirmedWithId;
       this._model.showNavigateBack = true;
       this._model.hideCartButton = true;
+    } else {
+      this._model.showNavigateBack = false;
     }
   }
 

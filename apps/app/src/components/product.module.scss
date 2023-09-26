@@ -1,7 +1,6 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
 .root {
-  height: 100%;
   overflow-y: auto;
   width: 100%;
   min-width: 100%;
@@ -268,6 +267,8 @@
   justify-content: center;
   gap: $mp-6;
   padding: $mp-6;
+  height: 100%;
+  padding-top: calc(56px + 24px);
 
   & .content-desktop {
     
@@ -381,6 +382,8 @@
 }
 
 .root-mobile {
+  height: 100%;
+  
   & .thumbnail-container-mobile {
     & .thumbnail-image-mobile {
     }

@@ -34,7 +34,9 @@ export function WindowDesktopComponent({
   const { t } = useTranslation();
   const navigate = useNavigate();
   const sideBarRef = useRef<HTMLDivElement | null>(null);
+  const navigationBackRef = useRef<HTMLDivElement | null>(null);
   const [isSideBarOpen, setIsSideBarOpen] = useState<boolean>(true);
+  const [isNavigateBackOpen, setIsNavigateBackOpen] = useState<boolean>(true);
   const [date, setDate] = useState<Date | null>(null);
   const [props] = useObservable(WindowController.model.store);
   const [accountProps] = useObservable(AccountController.model.store);
@@ -45,6 +47,10 @@ export function WindowDesktopComponent({
   useDesktopEffect(() => {
     setDate(new Date(Date.now()));
   }, []);
+
+  useDesktopEffect(() => {
+    setIsNavigateBackOpen(props.showNavigateBack);
+  }, [props.showNavigateBack]);
 
   const account = props.account as core.Account;
   const customer = accountProps.customer as Customer;
@@ -421,12 +427,28 @@ export function WindowDesktopComponent({
             styles['right-content-desktop'],
           ].join(' ')}
         >
-          {props.showNavigateBack && (
+          <CSSTransition
+            nodeRef={navigationBackRef}
+            in={isNavigateBackOpen}
+            timeout={0}
+            classNames={{
+              appear: styles['navigation-back-appear'],
+              appearActive: styles['navigation-back-appear-active'],
+              appearDone: styles['navigation-back-appear-done'],
+              enter: styles['navigation-back-enter'],
+              enterActive: styles['navigation-back-enter-active'],
+              enterDone: styles['navigation-back-enter-done'],
+              exit: styles['navigation-back-exit'],
+              exitActive: styles['navigation-back-exit-active'],
+              exitDone: styles['navigation-back-exit-done'],
+            }}
+          >
             <div
               className={[
                 styles['navigation-back-container'],
                 styles['navigation-back-container-desktop'],
               ].join(' ')}
+              ref={navigationBackRef}
             >
               <div
                 className={[
@@ -443,19 +465,21 @@ export function WindowDesktopComponent({
                   }}
                   rounded={true}
                   size={'tiny'}
+                  disabled={!isNavigateBackOpen}
                   onClick={() => {
+                    setIsNavigateBackOpen(false);
+
                     if (
-                      props.activeRoute.startsWith(
+                      props.activeRoute?.startsWith(
                         RoutePathsType.AccountSettings
                       )
                     ) {
-                      navigate(RoutePathsType.Account);
+                      setTimeout(() => navigate(RoutePathsType.Account), 150);
                       return;
                     }
 
-                    navigate(-1);
+                    setTimeout(() => navigate(-1), 150);
                   }}
-                  floatingLabel={t('goBack') ?? ''}
                   type={'text'}
                   icon={<Line.ArrowBackIos size={24} color={'#2A2A5F'} />}
                 />
@@ -466,7 +490,7 @@ export function WindowDesktopComponent({
                   styles['navigation-back-center-content-desktop'],
                 ].join(' ')}
               >
-                {props.activeRoute.startsWith(
+                {props.activeRoute?.startsWith(
                   RoutePathsType.AccountSettings
                 ) && (
                   <>
@@ -508,7 +532,7 @@ export function WindowDesktopComponent({
                     </div>
                   </>
                 )}
-                {props.activeRoute.startsWith(
+                {props.activeRoute?.startsWith(
                   RoutePathsType.OrderConfirmed
                 ) && (
                   <>
@@ -527,7 +551,7 @@ export function WindowDesktopComponent({
                   styles['navigation-back-right-content-desktop'],
                 ].join(' ')}
               >
-                {props.activeRoute.startsWith(
+                {props.activeRoute?.startsWith(
                   RoutePathsType.AccountSettings
                 ) && (
                   <Button
@@ -546,7 +570,7 @@ export function WindowDesktopComponent({
                 )}
               </div>
             </div>
-          )}
+          </CSSTransition>
           <Outlet />
         </div>
       </div>

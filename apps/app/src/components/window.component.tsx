@@ -15,8 +15,6 @@ import { Store } from '@ngneat/elf';
 import { WindowMobileComponent } from './mobile/window.mobile.component';
 import { WindowDesktopComponent } from './desktop/window.desktop.component';
 import { WindowTabletComponent } from './tablet/window.tablet.component';
-//@ts-ignore
-import withStyles from 'isomorphic-style-loader/withStyles';
 
 export interface WindowResponsiveProps {
   openMore: boolean;

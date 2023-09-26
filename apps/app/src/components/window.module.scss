@@ -345,10 +345,14 @@
       width: 100%;
 
       & .navigation-back-container-desktop {
+        position: absolute;
+        top: -16px;
         display: flex;
         justify-content: space-between;
         flex-direction: row;
-        width: 100%;
+        width: -moz-available;          /* WebKit-based browsers will ignore this. */
+        width: -webkit-fill-available;  /* Mozilla-based browsers will ignore this. */
+        width: stretch;
         height: 56px;
         min-height: 56px;
         border-right-width: 0px;
@@ -358,6 +362,8 @@
         border-color: rgba(42, 42, 95, .6);
         border-style: solid;
         padding: 0 $mp-4;
+        z-index: 10;
+        background-color: #fff;
 
         & .navigation-back-left-content-desktop {
           display: flex;
@@ -539,6 +545,54 @@
   width: 88px;
   min-width: 88px;
   transition-duration: 300ms;
+  transition-timing-function: $transition-decelerated-easing;
+}
+
+.navigation-back-appear {
+  top: 56px !important;
+}
+
+.navigation-back-appear-active {
+  top: 56px !important;
+}
+
+.navigation-back-appear-done {
+  top: 56px !important;
+}
+
+.navigation-back-enter {
+  top: -4px !important;
+  transition-duration: 75ms;
+  transition-timing-function: $transition-standard-easing;
+}
+
+.navigation-back-enter-active {
+  top: 56px !important;
+  transition-duration: 75ms;
+  transition-timing-function: $transition-standard-easing;
+}
+
+.navigation-back-enter-done {
+  top: 56px !important;
+  transition-duration: 75ms;
+  transition-timing-function: $transition-standard-easing;
+}
+
+.navigation-back-exit {
+  top: 56px !important;
+  transition-duration: 75ms;
+  transition-timing-function: $transition-decelerated-easing;
+}
+
+.navigation-back-exit-active {
+  top: -4px !important;
+  transition-duration: 75ms;
+  transition-timing-function: $transition-decelerated-easing;
+}
+
+.navigation-back-exit-done {
+  top: -4px !important;
+  transition-duration: 75ms;
   transition-timing-function: $transition-decelerated-easing;
 }
 
