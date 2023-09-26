@@ -85,7 +85,7 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
     const regex = /\*\*(.*?)\*\*/g;
     const cleanDescription = description.trim();
     const descriptionWithoutTitles = cleanDescription.replace(regex, '');
-    return descriptionWithoutTitles;
+    return descriptionWithoutTitles.replace(/\s/g, '');
   };
 
   const [fullName, setFullName] = useState<string>(
