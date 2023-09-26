@@ -85,7 +85,7 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
     const regex = /\*\*(.*?)\*\*/g;
     const cleanDescription = description.trim();
     const descriptionWithoutTitles = cleanDescription.replace(regex, '');
-    return descriptionWithoutTitles.replace(/\s/g, '');
+    return descriptionWithoutTitles.trim();
   };
 
   const [fullName, setFullName] = useState<string>(
@@ -222,6 +222,7 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
             fullName.length > 0 ? `${fullName} | Cruthology` : 'Cruthology'
           }
         />
+        <meta property="twitter:image" content={props.thumbnail} />
         <meta property="twitter:description" content={shortDescription} />
       </Helmet>
       <ResponsiveDesktop>
