@@ -55,6 +55,8 @@ export default function EventsComponent(): JSX.Element {
         />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={window.location.href} />
       </Helmet>
       <ResponsiveDesktop>
         <EventsDesktopComponent />

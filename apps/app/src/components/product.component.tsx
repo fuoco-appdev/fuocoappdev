@@ -202,6 +202,7 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
           }
         />
         <meta name="description" content={shortDescription} />
+        <meta property="og:image" content={props.thumbnail} />
         <meta property="og:image:secure_url" content={props.thumbnail} />
         <meta
           property="og:title"
@@ -212,6 +213,9 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
         <meta property="og:description" content={shortDescription} />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={window.location.href} />
       </Helmet>
       <ResponsiveDesktop>
         <ProductDesktopComponent
