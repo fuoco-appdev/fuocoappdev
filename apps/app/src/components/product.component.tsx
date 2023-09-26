@@ -202,7 +202,7 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
           }
         />
         <meta name="description" content={shortDescription} />
-        <meta property="og:image" content={props.thumbnail} />
+        <meta property="og:image:secure_url" content={props.thumbnail} />
         <meta
           property="og:title"
           content={
