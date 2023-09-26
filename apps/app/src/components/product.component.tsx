@@ -216,6 +216,13 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
         <meta property="og:image:type" content="image/png" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={window.location.href} />
+        <meta
+          property="twitter:title"
+          content={
+            fullName.length > 0 ? `${fullName} | Cruthology` : 'Cruthology'
+          }
+        />
+        <meta property="twitter:description" content={shortDescription} />
       </Helmet>
       <ResponsiveDesktop>
         <ProductDesktopComponent
