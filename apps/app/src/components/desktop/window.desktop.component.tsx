@@ -10,6 +10,7 @@ import {
   Dropdown,
   LanguageSwitch,
   Line,
+  Solid,
   Tabs,
   ToastOverlay,
   Typography,
@@ -154,7 +155,7 @@ export function WindowDesktopComponent({
                     color={'rgba(252, 245, 227, .8)'}
                   />
                 ) : (
-                  <Line.ShoppingCart
+                  <Solid.ShoppingCart
                     size={24}
                     color={'rgba(252, 245, 227, 1)'}
                   />
@@ -203,7 +204,7 @@ export function WindowDesktopComponent({
                         color={'rgba(252, 245, 227, .8)'}
                       />
                     ) : (
-                      <Line.PersonAdd
+                      <Solid.PersonAdd
                         size={24}
                         color={'rgba(252, 245, 227, 1)'}
                       />
@@ -371,12 +372,22 @@ export function WindowDesktopComponent({
               tabs={[
                 {
                   id: RoutePathsType.Home,
-                  icon: <Line.Home size={24} />,
+                  icon:
+                    windowProps.activeRoute === RoutePathsType.Home ? (
+                      <Solid.Home size={24} />
+                    ) : (
+                      <Line.Home size={24} />
+                    ),
                   label: isSideBarOpen ? t('home') ?? '' : undefined,
                 },
                 {
                   id: RoutePathsType.Store,
-                  icon: <Line.Storefront size={24} />,
+                  icon:
+                    windowProps.activeRoute === RoutePathsType.Store ? (
+                      <Solid.Store size={24} />
+                    ) : (
+                      <Line.Store size={24} />
+                    ),
                   label: isSideBarOpen ? t('store') ?? '' : undefined,
                 },
               ]}
@@ -483,7 +494,7 @@ export function WindowDesktopComponent({
                     setTimeout(() => navigate(-1), 150);
                   }}
                   type={'text'}
-                  icon={<Line.ArrowBackIos size={24} color={'#2A2A5F'} />}
+                  icon={<Line.ArrowBack size={24} color={'#2A2A5F'} />}
                 />
               </div>
               <div

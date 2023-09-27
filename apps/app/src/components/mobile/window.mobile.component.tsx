@@ -8,6 +8,7 @@ import {
   Dropdown,
   LanguageSwitch,
   Line,
+  Solid,
   ToastOverlay,
 } from '@fuoco.appdev/core-ui';
 import { RoutePathsType } from '../../route-paths';
@@ -349,15 +350,18 @@ export function WindowMobileComponent({
                       size={'tiny'}
                       touchScreen={true}
                       icon={
-                        <Line.Home
-                          size={24}
-                          color={
-                            windowProps.activeRoute === RoutePathsType.Home ||
-                            windowProps.activeRoute === RoutePathsType.Default
-                              ? 'rgba(252, 245, 227, 1)'
-                              : 'rgba(252, 245, 227, .6)'
-                          }
-                        />
+                        windowProps.activeRoute === RoutePathsType.Home ||
+                        windowProps.activeRoute === RoutePathsType.Default ? (
+                          <Solid.Home
+                            size={24}
+                            color={'rgba(252, 245, 227, 1)'}
+                          />
+                        ) : (
+                          <Line.Home
+                            size={24}
+                            color={'rgba(252, 245, 227, .6)'}
+                          />
+                        )
                       }
                     />
                   </div>
@@ -378,14 +382,17 @@ export function WindowMobileComponent({
                       size={'tiny'}
                       touchScreen={true}
                       icon={
-                        <Line.Storefront
-                          size={24}
-                          color={
-                            windowProps.activeRoute === RoutePathsType.Store
-                              ? 'rgba(252, 245, 227, 1)'
-                              : 'rgba(252, 245, 227, .6)'
-                          }
-                        />
+                        windowProps.activeRoute === RoutePathsType.Store ? (
+                          <Solid.Store
+                            size={24}
+                            color={'rgba(252, 245, 227, 1)'}
+                          />
+                        ) : (
+                          <Line.Store
+                            size={24}
+                            color={'rgba(252, 245, 227, .6)'}
+                          />
+                        )
                       }
                     />
                   </div>
