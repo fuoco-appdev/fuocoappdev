@@ -10,10 +10,12 @@ import { useDesktopEffect } from '../responsive.component';
 import { useTranslation } from 'react-i18next';
 import { AuthError } from '@supabase/supabase-js';
 import { RoutePathsType } from '../../route-paths';
+import { ForgotPasswordResponsiveProps } from '../forgot-password.component';
 
-export function ForgotPasswordDesktopComponent(): JSX.Element {
+export function ForgotPasswordDesktopComponent({
+  forgotPasswordProps,
+}: ForgotPasswordResponsiveProps): JSX.Element {
   const navigate = useNavigate();
-  const [props] = useObservable(ForgotPasswordController.model.store);
   const [show, setShow] = useState(false);
   const [error, setError] = useState<AuthError | null>(null);
   const { t, i18n } = useTranslation();
@@ -40,7 +42,7 @@ export function ForgotPasswordDesktopComponent(): JSX.Element {
           (style, item) =>
             item && (
               <animated.div style={style}>
-                {props.supabaseClient && (
+                {forgotPasswordProps.supabaseClient && (
                   <Auth.ForgottenPassword
                     classNames={{
                       input: {
@@ -80,7 +82,7 @@ export function ForgotPasswordDesktopComponent(): JSX.Element {
                       error ? t('emailErrorMessage') ?? '' : undefined
                     }
                     onResetPasswordError={(error: AuthError) => setError(error)}
-                    supabaseClient={props.supabaseClient}
+                    supabaseClient={forgotPasswordProps.supabaseClient}
                     redirectTo={`${window.location.origin}${RoutePathsType.ResetPassword}`}
                   />
                 )}

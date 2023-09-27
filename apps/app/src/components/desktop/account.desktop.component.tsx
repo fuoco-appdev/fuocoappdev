@@ -30,33 +30,18 @@ import AccountOrderHistoryComponent from '../account-order-history.component';
 import AccountAddressesComponent from '../account-addresses.component';
 import AccountEditComponent from '../account-edit.component';
 import { useDesktopEffect } from '../responsive.component';
+import { AccountResponsiveProps } from '../account.component';
 
-export function AccountDesktopComponent(): JSX.Element {
-  const [props] = useObservable(AccountController.model.store);
-  const [windowProps] = useObservable(WindowController.model.store);
+export function AccountDesktopComponent({
+  windowProps,
+  accountProps,
+  storeProps,
+}: AccountResponsiveProps): JSX.Element {
   const navigate = useNavigate();
-  const location = useLocation();
   const { t, i18n } = useTranslation();
 
-  useDesktopEffect(() => {
-    const loadedLocation = windowProps.loadedLocationPath as string | undefined;
-    if (loadedLocation && loadedLocation !== RoutePathsType.Account) {
-      if (
-        loadedLocation.startsWith(RoutePathsType.Account) &&
-        !loadedLocation.startsWith(RoutePathsType.AccountSettings)
-      ) {
-        AccountController.updateActiveTabId(loadedLocation);
-      }
-      WindowController.updateLoadedLocationPath(undefined);
-    } else {
-      if (!loadedLocation?.startsWith(RoutePathsType.AccountSettings)) {
-        navigate(RoutePathsType.Account);
-      }
-    }
-  }, [windowProps.loadedLocationPath]);
-
-  const account = props.account as core.Account;
-  const customer = props.customer as Customer;
+  const account = accountProps.account as core.Account;
+  const customer = accountProps.customer as Customer;
   return (
     <div className={[styles['root'], styles['root-desktop']].join(' ')}>
       <div className={[styles['top-bar'], styles['top-bar-desktop']].join(' ')}>
@@ -125,8 +110,9 @@ export function AccountDesktopComponent(): JSX.Element {
               ].join(' ')}
             >
               <AccountProfileFormComponent
-                values={props.profileForm}
-                errors={props.profileFormErrors}
+                storeProps={storeProps}
+                values={accountProps.profileForm}
+                errors={accountProps.profileFormErrors}
                 onChangeCallbacks={{
                   firstName: (event) =>
                     AccountController.updateProfile({
@@ -165,7 +151,7 @@ export function AccountDesktopComponent(): JSX.Element {
                     phoneNumber: undefined,
                   });
                   const errors = AccountController.getProfileFormErrors(
-                    props.profileForm
+                    accountProps.profileForm
                   );
                   if (errors) {
                     AccountController.updateProfileErrors(errors);
@@ -206,7 +192,7 @@ export function AccountDesktopComponent(): JSX.Element {
                 },
               }}
               text={customer?.first_name}
-              src={props.profileUrl}
+              src={accountProps.profileUrl}
               editMode={true}
               onChange={AccountController.uploadAvatarAsync}
               size={'large'}

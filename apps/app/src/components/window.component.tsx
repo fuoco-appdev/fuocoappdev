@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import WindowController from '../controllers/window.controller';
+import AccountController from '../controllers/account.controller';
 import styles from './window.module.scss';
 import { RoutePathsType } from '../route-paths';
 import { useTranslation } from 'react-i18next';
@@ -15,8 +16,13 @@ import { Store } from '@ngneat/elf';
 import { WindowMobileComponent } from './mobile/window.mobile.component';
 import { WindowDesktopComponent } from './desktop/window.desktop.component';
 import { WindowTabletComponent } from './tablet/window.tablet.component';
+import { WindowLocalState, WindowState } from '../models/window.model';
+import { AccountState } from '../models/account.model';
 
 export interface WindowResponsiveProps {
+  windowProps: WindowState;
+  windowLocalProps: WindowLocalState;
+  accountProps: AccountState;
   openMore: boolean;
   isLanguageOpen: boolean;
   setOpenMore: (value: boolean) => void;
@@ -26,12 +32,13 @@ export interface WindowResponsiveProps {
 export default function WindowComponent(): JSX.Element {
   const location = useLocation();
   const navigate = useNavigate();
-  const [props] = useObservable(WindowController.model.store);
+  const [windowProps] = useObservable(WindowController.model.store);
+  const [accountProps] = useObservable(AccountController.model.store);
   const isMounted = useRef<boolean>(false);
   const { i18n } = useTranslation();
   const [openMore, setOpenMore] = useState<boolean>(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState<boolean>(false);
-  const [localProps] = useObservable(
+  const [windowLocalProps] = useObservable(
     WindowController.model.localStore ?? Store.prototype
   );
 
@@ -44,17 +51,17 @@ export default function WindowComponent(): JSX.Element {
 
   useEffect(() => {
     WindowController.updateOnLocationChanged(location);
-  }, [location.pathname, props.authState]);
+  }, [location.pathname, windowProps.authState]);
 
   useEffect(() => {
-    if (props.authState === 'SIGNED_OUT') {
+    if (windowProps.authState === 'SIGNED_OUT') {
       navigate(RoutePathsType.Signin);
-    } else if (props.authState === 'USER_DELETED') {
+    } else if (windowProps.authState === 'USER_DELETED') {
       navigate(RoutePathsType.Signup);
-    } else if (props.authState === 'PASSWORD_RECOVERY') {
+    } else if (windowProps.authState === 'PASSWORD_RECOVERY') {
       navigate(RoutePathsType.ResetPassword);
     }
-  }, [props.authState]);
+  }, [windowProps.authState]);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
@@ -64,17 +71,20 @@ export default function WindowComponent(): JSX.Element {
   }, []);
 
   useEffect(() => {
-    i18n.changeLanguage(localProps.languageInfo?.isoCode);
-  }, [localProps.languageInfo]);
+    i18n.changeLanguage(windowLocalProps.languageInfo?.isoCode);
+  }, [windowLocalProps.languageInfo]);
 
   useEffect(() => {
     WindowController.addToast(undefined);
-  }, [props.toast]);
+  }, [windowProps.toast]);
 
   return (
     <>
       <ResponsiveDesktop>
         <WindowDesktopComponent
+          windowProps={windowProps}
+          windowLocalProps={windowLocalProps}
+          accountProps={accountProps}
           openMore={openMore}
           isLanguageOpen={isLanguageOpen}
           setOpenMore={setOpenMore}
@@ -83,6 +93,9 @@ export default function WindowComponent(): JSX.Element {
       </ResponsiveDesktop>
       <ResponsiveTablet>
         <WindowTabletComponent
+          windowProps={windowProps}
+          windowLocalProps={windowLocalProps}
+          accountProps={accountProps}
           openMore={openMore}
           isLanguageOpen={isLanguageOpen}
           setOpenMore={setOpenMore}
@@ -91,13 +104,16 @@ export default function WindowComponent(): JSX.Element {
       </ResponsiveTablet>
       <ResponsiveMobile>
         <WindowMobileComponent
+          windowProps={windowProps}
+          windowLocalProps={windowLocalProps}
+          accountProps={accountProps}
           openMore={openMore}
           isLanguageOpen={isLanguageOpen}
           setOpenMore={setOpenMore}
           setIsLanguageOpen={setIsLanguageOpen}
         />
       </ResponsiveMobile>
-      <LoadingComponent isVisible={props.isLoading} />
+      <LoadingComponent isVisible={windowProps.isLoading} />
     </>
   );
 }

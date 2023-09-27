@@ -15,7 +15,6 @@ import {
 import { RoutePathsType } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import SupabaseService from '../../services/supabase.service';
-import { useObservable } from '@ngneat/use-observable';
 import { useSpring } from 'react-spring';
 import * as core from '../../protobuf/core_pb';
 import { Store } from '@ngneat/elf';
@@ -24,10 +23,11 @@ import { AuthError, User } from '@supabase/supabase-js';
 import WindowController from '../../controllers/window.controller';
 import ReactCountryFlag from 'react-country-flag';
 import { Observable } from 'rxjs';
-import { WindowLocalState } from '../../models';
 import { AccountSettingsAccountResponsiveProps } from '../account-settings-account.component';
 
 export function AccountSettingsAccountDesktopComponent({
+  accountProps,
+  windowLocalProps,
   updatePasswordError,
   setUpdatePasswordError,
   confirmPasswordError,
@@ -37,10 +37,6 @@ export function AccountSettingsAccountDesktopComponent({
   isLanguageOpen,
   setIsLanguageOpen,
 }: AccountSettingsAccountResponsiveProps): JSX.Element {
-  const [windowLocalProps] = useObservable(
-    WindowController.model.localStore ?? Store.prototype
-  );
-  const [props] = useObservable(AccountController.model.store);
   const { t, i18n } = useTranslation();
 
   const accordionItemClassNames: AccordionItemClasses = {
@@ -52,7 +48,7 @@ export function AccountSettingsAccountDesktopComponent({
     },
   };
 
-  const user = props.user as User | null;
+  const user = accountProps.user as User | null;
   const provider = user?.app_metadata['provider'];
   return (
     <div className={[styles['root'], styles['root-desktop']].join(' ')}>

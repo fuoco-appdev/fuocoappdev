@@ -7,7 +7,11 @@ import CheckoutController from '../controllers/checkout.controller';
 import { RadioProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/radio/radio';
 import StoreController from '../controllers/store.controller';
 import { PricedShippingOption } from '@medusajs/medusa/dist/types/pricing';
-import { ProviderType, ShippingType } from '../models/checkout.model';
+import {
+  CheckoutState,
+  ProviderType,
+  ShippingType,
+} from '../models/checkout.model';
 import CartController from '../controllers/cart.controller';
 import { PaymentSession, Customer, Cart } from '@medusajs/medusa';
 // @ts-ignore
@@ -15,6 +19,7 @@ import { formatAmount } from 'medusa-react';
 import { useNavigate } from 'react-router-dom';
 import { RoutePathsType } from '../route-paths';
 import AccountController from '../controllers/account.controller';
+import WindowController from '../controllers/window.controller';
 import {
   loadStripe,
   Stripe,
@@ -27,8 +32,17 @@ import SecretsService from '../services/secrets.service';
 import { CheckoutMobileComponent } from './mobile/checkout.mobile.component';
 import { CheckoutDesktopComponent } from './desktop/checkout.desktop.component';
 import { Helmet } from 'react-helmet';
+import { AccountState } from '../models/account.model';
+import { StoreState } from '../models/store.model';
+import { CartState } from '../models/cart.model';
+import { WindowState } from '../models/window.model';
 
 export interface CheckoutResponsiveProps {
+  checkoutProps: CheckoutState;
+  accountProps: AccountState;
+  storeProps: StoreState;
+  cartProps: CartState;
+  windowProps: WindowState;
   shippingOptions: RadioProps[];
   providerOptions: RadioProps[];
   shippingAddressOptions: RadioProps[];
@@ -49,10 +63,11 @@ export interface CheckoutResponsiveProps {
 }
 
 export default function CheckoutComponent(): JSX.Element {
-  const [props] = useObservable(CheckoutController.model.store);
+  const [checkoutProps] = useObservable(CheckoutController.model.store);
   const [accountProps] = useObservable(AccountController.model.store);
   const [cartProps] = useObservable(CartController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
+  const [windowProps] = useObservable(WindowController.model.store);
   const [shippingOptions, setShippingOptions] = useState<RadioProps[]>([]);
   const [providerOptions, setProviderOptions] = useState<RadioProps[]>([]);
   const [shippingAddressOptions, setShippingAddressOptions] = useState<
@@ -86,7 +101,7 @@ export default function CheckoutComponent(): JSX.Element {
 
   useEffect(() => {
     const radioOptions: RadioProps[] = [];
-    for (const option of props.shippingOptions as PricedShippingOption[]) {
+    for (const option of checkoutProps.shippingOptions as PricedShippingOption[]) {
       let description = '';
       if (option.name === ShippingType.Standard) {
         description = t('standardShippingDescription');
@@ -112,7 +127,7 @@ export default function CheckoutComponent(): JSX.Element {
       });
     }
     setShippingOptions(radioOptions);
-  }, [props.shippingOptions]);
+  }, [checkoutProps.shippingOptions]);
 
   useEffect(() => {
     if (!cartProps.cart) {
@@ -217,7 +232,9 @@ export default function CheckoutComponent(): JSX.Element {
       phoneNumber: undefined,
     });
 
-    const errors = CheckoutController.getAddressFormErrors(props.shippingForm);
+    const errors = CheckoutController.getAddressFormErrors(
+      checkoutProps.shippingForm
+    );
 
     if (errors) {
       CheckoutController.updateShippingAddressErrors(errors);
@@ -243,7 +260,9 @@ export default function CheckoutComponent(): JSX.Element {
       phoneNumber: undefined,
     });
 
-    const errors = CheckoutController.getAddressFormErrors(props.shippingForm);
+    const errors = CheckoutController.getAddressFormErrors(
+      checkoutProps.shippingForm
+    );
 
     if (errors) {
       CheckoutController.updateShippingAddressErrors(errors);
@@ -296,7 +315,7 @@ export default function CheckoutComponent(): JSX.Element {
     });
 
     const errors = CheckoutController.getAddressFormErrors(
-      props.addShippingForm
+      checkoutProps.addShippingForm
     );
     if (errors) {
       CheckoutController.updateAddShippingAddressErrors(errors);
@@ -337,6 +356,11 @@ export default function CheckoutComponent(): JSX.Element {
       </Helmet>
       <ResponsiveDesktop>
         <CheckoutDesktopComponent
+          checkoutProps={checkoutProps}
+          accountProps={accountProps}
+          storeProps={storeProps}
+          cartProps={cartProps}
+          windowProps={windowProps}
           shippingOptions={shippingOptions}
           providerOptions={providerOptions}
           shippingAddressOptions={shippingAddressOptions}
@@ -361,6 +385,11 @@ export default function CheckoutComponent(): JSX.Element {
       </ResponsiveDesktop>
       <ResponsiveMobile>
         <CheckoutMobileComponent
+          checkoutProps={checkoutProps}
+          accountProps={accountProps}
+          storeProps={storeProps}
+          cartProps={cartProps}
+          windowProps={windowProps}
           shippingOptions={shippingOptions}
           providerOptions={providerOptions}
           shippingAddressOptions={shippingAddressOptions}

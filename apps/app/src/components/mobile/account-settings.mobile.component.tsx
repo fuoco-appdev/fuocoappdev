@@ -12,11 +12,12 @@ import * as core from '../../protobuf/core_pb';
 import LoadingComponent from '../loading.component';
 import { Store } from '@ngneat/elf';
 import Ripples from 'react-ripples';
-import WindowController from '../../controllers/window.controller';
+import { AccountSettingsResponsiveProps } from '../account-settings.component';
 
-export function AccountSettingsMobileComponent(): JSX.Element {
+export function AccountSettingsMobileComponent({
+  windowProps,
+}: AccountSettingsResponsiveProps): JSX.Element {
   const navigate = useNavigate();
-  const [windowProps] = useObservable(WindowController.model.store);
   const { t, i18n } = useTranslation();
 
   return windowProps.activeRoute === RoutePathsType.AccountSettings ? (

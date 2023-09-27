@@ -3,12 +3,19 @@ import { TermsOfServiceDesktopComponent } from './desktop/terms-of-service.deskt
 import { TermsOfServiceMobileComponent } from './mobile/terms-of-service.mobile.component';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import { useState, useEffect } from 'react';
+import { TermsOfServiceState } from '../models/terms-of-service.model';
+import { useObservable } from '@ngneat/use-observable';
+import TermsOfServiceController from '../controllers/terms-of-service.controller';
 
 export interface TermsOfServiceResponsiveProps {
+  termsOfServiceProps: TermsOfServiceState;
   remarkPlugins: any[];
 }
 
 export default function TermsOfServiceComponent(): JSX.Element {
+  const [termsOfServiceProps] = useObservable(
+    TermsOfServiceController.model.store
+  );
   const [remarkPlugins, setRemarkPlugins] = useState<any[]>([]);
 
   useEffect(() => {
@@ -46,10 +53,16 @@ export default function TermsOfServiceComponent(): JSX.Element {
         <meta property="og:url" content={window.location.href} />
       </Helmet>
       <ResponsiveDesktop>
-        <TermsOfServiceDesktopComponent remarkPlugins={remarkPlugins} />
+        <TermsOfServiceDesktopComponent
+          termsOfServiceProps={termsOfServiceProps}
+          remarkPlugins={remarkPlugins}
+        />
       </ResponsiveDesktop>
       <ResponsiveMobile>
-        <TermsOfServiceMobileComponent remarkPlugins={remarkPlugins} />
+        <TermsOfServiceMobileComponent
+          termsOfServiceProps={termsOfServiceProps}
+          remarkPlugins={remarkPlugins}
+        />
       </ResponsiveMobile>
     </>
   );

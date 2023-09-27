@@ -11,16 +11,16 @@ import OrderItemComponent from '../order-item.component';
 import { AccountOrderHistoryResponsiveProps } from '../account-order-history.component';
 
 export function AccountOrderHistoryMobileComponent({
+  accountProps,
   onOrdersScroll,
   onOrdersLoad,
 }: AccountOrderHistoryResponsiveProps): JSX.Element {
   const ordersContainerRef = createRef<HTMLDivElement>();
   const rootRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
-  const [props] = useObservable(AccountController.model.store);
   const { t, i18n } = useTranslation();
 
-  const orders = props.orders as Order[];
+  const orders = accountProps.orders as Order[];
   return (
     <div
       ref={rootRef}
@@ -70,9 +70,9 @@ export function AccountOrderHistoryMobileComponent({
             styles['loading-ring'],
             styles['loading-ring-mobile'],
           ].join(' ')}
-          style={{ display: props.hasMoreOrders ? 'flex' : 'none' }}
+          style={{ display: accountProps.hasMoreOrders ? 'flex' : 'none' }}
         />
-        {!props.areOrdersLoading && orders.length <= 0 && (
+        {!accountProps.areOrdersLoading && orders.length <= 0 && (
           <>
             <div
               className={[

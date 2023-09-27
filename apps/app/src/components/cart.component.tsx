@@ -3,28 +3,48 @@ import { CartDesktopComponent } from './desktop/cart.desktop.component';
 import { CartMobileComponent } from './mobile/cart.mobile.component';
 import { useEffect, useState } from 'react';
 import { TabProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/tabs/tabs';
+import StoreController from '../controllers/store.controller';
 import { useObservable } from '@ngneat/use-observable';
 import CartController from '../controllers/cart.controller';
 import HomeController from '../controllers/home.controller';
+import WindowController from '../controllers/window.controller';
 import { Store } from '@ngneat/elf';
-import { InventoryLocation } from '../models/home.model';
+import {
+  HomeLocalState,
+  HomeState,
+  InventoryLocation,
+} from '../models/home.model';
 import { Helmet } from 'react-helmet';
+import { CartState } from '../models/cart.model';
+import { StoreState } from '../models/store.model';
+import { WindowState } from '../models/window.model';
 
 export interface CartResponsiveProps {
+  cartProps: CartState;
+  homeProps: HomeState;
+  storeProps: StoreState;
+  windowProps: WindowState;
+  homeLocalProps: HomeLocalState;
   salesChannelTabs: TabProps[];
 }
 
 export default function CartComponent(): JSX.Element {
+  const [cartProps] = useObservable(CartController.model.store);
   const [homeProps] = useObservable(HomeController.model.store);
-  const [localProps] = useObservable(
+  const [storeProps] = useObservable(StoreController.model.store);
+  const [windowProps] = useObservable(WindowController.model.store);
+  const [cartLocalProps] = useObservable(
     CartController.model.localStore ?? Store.prototype
+  );
+  const [homeLocalProps] = useObservable(
+    HomeController.model.localStore ?? Store.prototype
   );
   const [salesChannelTabs, setSalesChannelTabs] = useState<TabProps[]>([]);
 
   useEffect(() => {
     const tabProps: TabProps[] = [];
     const locations = homeProps.inventoryLocations as InventoryLocation[];
-    for (const key in localProps.cartIds) {
+    for (const key in cartLocalProps.cartIds) {
       if (!key.startsWith('sloc_')) {
         continue;
       }
@@ -35,7 +55,7 @@ export default function CartComponent(): JSX.Element {
     }
 
     setSalesChannelTabs(tabProps);
-  }, [localProps.cartIds, homeProps.inventoryLocations]);
+  }, [cartLocalProps.cartIds, homeProps.inventoryLocations]);
 
   return (
     <>
@@ -66,10 +86,24 @@ export default function CartComponent(): JSX.Element {
         <meta property="og:url" content={window.location.href} />
       </Helmet>
       <ResponsiveDesktop>
-        <CartDesktopComponent salesChannelTabs={salesChannelTabs} />
+        <CartDesktopComponent
+          cartProps={cartProps}
+          homeProps={homeProps}
+          storeProps={storeProps}
+          windowProps={windowProps}
+          homeLocalProps={homeLocalProps}
+          salesChannelTabs={salesChannelTabs}
+        />
       </ResponsiveDesktop>
       <ResponsiveMobile>
-        <CartMobileComponent salesChannelTabs={salesChannelTabs} />
+        <CartMobileComponent
+          cartProps={cartProps}
+          homeProps={homeProps}
+          storeProps={storeProps}
+          windowProps={windowProps}
+          homeLocalProps={homeLocalProps}
+          salesChannelTabs={salesChannelTabs}
+        />
       </ResponsiveMobile>
     </>
   );

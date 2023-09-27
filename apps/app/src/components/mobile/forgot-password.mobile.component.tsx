@@ -4,16 +4,17 @@ import styles from '../forgot-password.module.scss';
 import { useState, useEffect } from 'react';
 import { animated, config, useTransition } from 'react-spring';
 import { useObservable } from '@ngneat/use-observable';
-import ForgotPasswordController from '../../controllers/forgot-password.controller';
 import WindowController from '../../controllers/window.controller';
 import { useDesktopEffect, useMobileEffect } from '../responsive.component';
 import { useTranslation } from 'react-i18next';
 import { AuthError } from '@supabase/supabase-js';
 import { RoutePathsType } from '../../route-paths';
+import { ForgotPasswordResponsiveProps } from '../forgot-password.component';
 
-export function ForgotPasswordMobileComponent(): JSX.Element {
+export function ForgotPasswordMobileComponent({
+  forgotPasswordProps,
+}: ForgotPasswordResponsiveProps): JSX.Element {
   const navigate = useNavigate();
-  const [props] = useObservable(ForgotPasswordController.model.store);
   const [show, setShow] = useState(false);
   const [error, setError] = useState<AuthError | null>(null);
   const { t, i18n } = useTranslation();
@@ -40,7 +41,7 @@ export function ForgotPasswordMobileComponent(): JSX.Element {
           (style, item) =>
             item && (
               <animated.div style={style}>
-                {props.supabaseClient && (
+                {forgotPasswordProps.supabaseClient && (
                   <Auth.ForgottenPassword
                     classNames={{
                       input: {
@@ -80,7 +81,7 @@ export function ForgotPasswordMobileComponent(): JSX.Element {
                       error ? t('emailErrorMessage') ?? '' : undefined
                     }
                     onResetPasswordError={(error: AuthError) => setError(error)}
-                    supabaseClient={props.supabaseClient}
+                    supabaseClient={forgotPasswordProps.supabaseClient}
                     redirectTo={`${window.location.origin}${RoutePathsType.ResetPassword}`}
                   />
                 )}

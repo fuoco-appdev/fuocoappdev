@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import AccountController from '../controllers/account.controller';
 import WindowController from '../controllers/window.controller';
+import StoreController from '../controllers/store.controller';
 import { useObservable } from '@ngneat/use-observable';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { RoutePathsType } from '../route-paths';
@@ -9,10 +10,21 @@ import { useTranslation } from 'react-i18next';
 import { AccountMobileComponent } from './mobile/account.mobile.component';
 import { AccountDesktopComponent } from './desktop/account.desktop.component';
 import { Helmet } from 'react-helmet';
+import { AccountState } from '../models/account.model';
+import { WindowState } from '../models/window.model';
+import { StoreState } from '../models/store.model';
+
+export interface AccountResponsiveProps {
+  windowProps: WindowState;
+  accountProps: AccountState;
+  storeProps: StoreState;
+}
 
 export default function AccountComponent(): JSX.Element {
   const { t, i18n } = useTranslation();
-  const location = useLocation();
+  const [accountProps] = useObservable(AccountController.model.store);
+  const [windowProps] = useObservable(WindowController.model.store);
+  const [storeProps] = useObservable(StoreController.model.store);
 
   useEffect(() => {
     AccountController.updateErrorStrings({
@@ -51,10 +63,18 @@ export default function AccountComponent(): JSX.Element {
         <meta property="og:url" content={window.location.href} />
       </Helmet>
       <ResponsiveDesktop>
-        <AccountDesktopComponent />
+        <AccountDesktopComponent
+          accountProps={accountProps}
+          windowProps={windowProps}
+          storeProps={storeProps}
+        />
       </ResponsiveDesktop>
       <ResponsiveMobile>
-        <AccountMobileComponent />
+        <AccountMobileComponent
+          accountProps={accountProps}
+          windowProps={windowProps}
+          storeProps={storeProps}
+        />
       </ResponsiveMobile>
     </>
   );

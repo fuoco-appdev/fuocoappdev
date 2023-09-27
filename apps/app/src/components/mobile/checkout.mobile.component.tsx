@@ -20,7 +20,6 @@ import CartController from '../../controllers/cart.controller';
 import { Discount, GiftCard, Customer } from '@medusajs/medusa';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
-import WindowController from '../../controllers/window.controller';
 import AccountController from '../../controllers/account.controller';
 import {
   Elements,
@@ -34,6 +33,11 @@ import { useNavigate } from 'react-router-dom';
 import { RoutePathsType } from '../../route-paths';
 
 export function CheckoutMobileComponent({
+  checkoutProps,
+  accountProps,
+  storeProps,
+  cartProps,
+  windowProps,
   shippingOptions,
   providerOptions,
   shippingAddressOptions,
@@ -50,11 +54,6 @@ export function CheckoutMobileComponent({
   onAddAddressAsync,
 }: CheckoutResponsiveProps): JSX.Element {
   const rootRef = useRef<HTMLDivElement | null>(null);
-  const [props] = useObservable(CheckoutController.model.store);
-  const [accountProps] = useObservable(AccountController.model.store);
-  const [storeProps] = useObservable(StoreController.model.store);
-  const [cartProps] = useObservable(CartController.model.store);
-  const [windowProps] = useObservable(WindowController.model.store);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -122,9 +121,9 @@ export function CheckoutMobileComponent({
           </div>
           {!windowProps.isAuthenticated && (
             <AddressFormComponent
-              values={props.shippingForm}
-              errors={props.shippingFormErrors}
-              isComplete={props.shippingFormComplete}
+              values={checkoutProps.shippingForm}
+              errors={checkoutProps.shippingFormErrors}
+              isComplete={checkoutProps.shippingFormComplete}
               onEdit={() =>
                 CheckoutController.updateShippingFormComplete(false)
               }
@@ -180,7 +179,7 @@ export function CheckoutMobileComponent({
             customer?.shipping_addresses?.length > 0 && (
               <Radio.Group
                 id={''}
-                activeId={props.selectedShippingAddressOptionId ?? ''}
+                activeId={checkoutProps.selectedShippingAddressOptionId ?? ''}
                 rippleProps={{
                   color: 'rgba(42, 42, 95, .35)',
                 }}
@@ -219,16 +218,16 @@ export function CheckoutMobileComponent({
               labelContainerLabelSpan: styles['checkbox-label'],
             }}
             label={t('sameAsBillingAddress') ?? ''}
-            checked={props.sameAsBillingAddress}
+            checked={checkoutProps.sameAsBillingAddress}
             onChange={() =>
               CheckoutController.updateSameAsBillingAddress(
-                !props.sameAsBillingAddress
+                !checkoutProps.sameAsBillingAddress
               )
             }
           />
           {!accountProps.customer &&
-            !props.shippingFormComplete &&
-            props.sameAsBillingAddress && (
+            !checkoutProps.shippingFormComplete &&
+            checkoutProps.sameAsBillingAddress && (
               <Button
                 classNames={{
                   container: styles['submit-button-container'],
@@ -243,23 +242,24 @@ export function CheckoutMobileComponent({
                 {t('continueToDelivery')}
               </Button>
             )}
-          {!props.shippingFormComplete && !props.sameAsBillingAddress && (
-            <Button
-              classNames={{
-                container: styles['submit-button-container'],
-                button: styles['submit-button'],
-              }}
-              block={true}
-              size={'large'}
-              icon={<Line.Receipt size={24} />}
-              onClick={onContinueToBillingFromShippingAddress}
-            >
-              {t('continueToBilling')}
-            </Button>
-          )}
+          {!checkoutProps.shippingFormComplete &&
+            !checkoutProps.sameAsBillingAddress && (
+              <Button
+                classNames={{
+                  container: styles['submit-button-container'],
+                  button: styles['submit-button'],
+                }}
+                block={true}
+                size={'large'}
+                icon={<Line.Receipt size={24} />}
+                onClick={onContinueToBillingFromShippingAddress}
+              >
+                {t('continueToBilling')}
+              </Button>
+            )}
         </div>
       </div>
-      {!props.sameAsBillingAddress && (
+      {!checkoutProps.sameAsBillingAddress && (
         <div
           className={[
             styles['card-container'],
@@ -295,12 +295,12 @@ export function CheckoutMobileComponent({
                 {t('billing')}
               </div>
             </div>
-            {props.shippingFormComplete ? (
+            {checkoutProps.shippingFormComplete ? (
               <>
                 <AddressFormComponent
-                  values={props.billingForm}
-                  errors={props.billingFormErrors}
-                  isComplete={props.billingFormComplete}
+                  values={checkoutProps.billingForm}
+                  errors={checkoutProps.billingFormErrors}
+                  isComplete={checkoutProps.billingFormComplete}
                   onEdit={() =>
                     CheckoutController.updateBillingFormComplete(false)
                   }
@@ -351,7 +351,7 @@ export function CheckoutMobileComponent({
                       }),
                   }}
                 />
-                {!props.billingFormComplete && (
+                {!checkoutProps.billingFormComplete && (
                   <Button
                     classNames={{
                       container: styles['submit-button-container'],
@@ -404,7 +404,7 @@ export function CheckoutMobileComponent({
                 styles['step-count-mobile'],
               ].join(' ')}
             >
-              {props.sameAsBillingAddress ? 2 : 3}
+              {checkoutProps.sameAsBillingAddress ? 2 : 3}
             </div>
             <div
               className={[
@@ -415,7 +415,7 @@ export function CheckoutMobileComponent({
               {t('delivery')}
             </div>
           </div>
-          {!props.shippingFormComplete && (
+          {!checkoutProps.shippingFormComplete && (
             <div
               className={[
                 styles['card-description'],
@@ -425,40 +425,42 @@ export function CheckoutMobileComponent({
               {t('enterShippingAddressForDelivery')}
             </div>
           )}
-          {props.shippingFormComplete && !props.billingFormComplete && (
-            <div
-              className={[
-                styles['card-description'],
-                styles['card-description-mobile'],
-              ].join(' ')}
-            >
-              {t('enterBillingAddressForDelivery')}
-            </div>
-          )}
-          {props.shippingFormComplete && props.billingFormComplete && (
-            <Radio.Group
-              id={''}
-              activeId={props.selectedShippingOptionId ?? ''}
-              rippleProps={{
-                color: 'rgba(42, 42, 95, .35)',
-              }}
-              classNames={{
-                radio: {
-                  containerCard: styles['radio-container-card'],
-                  labelText: styles['radio-label-text'],
-                  labelDescription: styles['radio-label-description-text'],
-                  containerCardActive: styles['radio-container-card-active'],
-                },
-              }}
-              options={shippingOptions}
-              type={'cards'}
-              onChange={(event) =>
-                CheckoutController.updateSelectedShippingOptionIdAsync(
-                  event.target.value
-                )
-              }
-            />
-          )}
+          {checkoutProps.shippingFormComplete &&
+            !checkoutProps.billingFormComplete && (
+              <div
+                className={[
+                  styles['card-description'],
+                  styles['card-description-mobile'],
+                ].join(' ')}
+              >
+                {t('enterBillingAddressForDelivery')}
+              </div>
+            )}
+          {checkoutProps.shippingFormComplete &&
+            checkoutProps.billingFormComplete && (
+              <Radio.Group
+                id={''}
+                activeId={checkoutProps.selectedShippingOptionId ?? ''}
+                rippleProps={{
+                  color: 'rgba(42, 42, 95, .35)',
+                }}
+                classNames={{
+                  radio: {
+                    containerCard: styles['radio-container-card'],
+                    labelText: styles['radio-label-text'],
+                    labelDescription: styles['radio-label-description-text'],
+                    containerCardActive: styles['radio-container-card-active'],
+                  },
+                }}
+                options={shippingOptions}
+                type={'cards'}
+                onChange={(event) =>
+                  CheckoutController.updateSelectedShippingOptionIdAsync(
+                    event.target.value
+                  )
+                }
+              />
+            )}
         </div>
       </div>
       <div
@@ -509,7 +511,7 @@ export function CheckoutMobileComponent({
                   container: styles['input-container'],
                 }}
                 label={t('code') ?? ''}
-                value={props.giftCardCode}
+                value={checkoutProps.giftCardCode}
                 onChange={(event) =>
                   CheckoutController.updateGiftCardCodeText(event.target.value)
                 }
@@ -536,32 +538,35 @@ export function CheckoutMobileComponent({
               </Button>
             </div>
           </div>
-          {cartProps.cart?.gift_cards.length > 0 && (
-            <div
-              className={[
-                styles['tag-list-container'],
-                styles['tag-list-container-mobile'],
-              ].join(' ')}
-            >
-              {cartProps.cart?.gift_cards?.map((value: GiftCard) => {
-                return (
-                  <div
-                    key={value.id}
-                    className={[styles['tag'], styles['tag-mobile']].join(' ')}
-                  >
+          {cartProps.cart?.gift_cards &&
+            cartProps.cart?.gift_cards.length > 0 && (
+              <div
+                className={[
+                  styles['tag-list-container'],
+                  styles['tag-list-container-mobile'],
+                ].join(' ')}
+              >
+                {cartProps.cart?.gift_cards?.map((value: GiftCard) => {
+                  return (
                     <div
-                      className={[
-                        styles['tag-text'],
-                        styles['tag-text-mobile'],
-                      ].join(' ')}
+                      key={value.id}
+                      className={[styles['tag'], styles['tag-mobile']].join(
+                        ' '
+                      )}
                     >
-                      {value.code}
+                      <div
+                        className={[
+                          styles['tag-text'],
+                          styles['tag-text-mobile'],
+                        ].join(' ')}
+                      >
+                        {value.code}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                  );
+                })}
+              </div>
+            )}
         </div>
       </div>
       <div
@@ -612,7 +617,7 @@ export function CheckoutMobileComponent({
                   container: styles['input-container'],
                 }}
                 label={t('code') ?? ''}
-                value={props.discountCode}
+                value={checkoutProps.discountCode}
                 onChange={(event) =>
                   CheckoutController.updateDiscountCodeText(event.target.value)
                 }
@@ -639,54 +644,57 @@ export function CheckoutMobileComponent({
               </Button>
             </div>
           </div>
-          {cartProps.cart?.discounts.length > 0 && (
-            <div
-              className={[
-                styles['tag-list-container'],
-                styles['tag-list-container-mobile'],
-              ].join(' ')}
-            >
-              {cartProps.cart?.discounts?.map((value: Discount) => {
-                return (
-                  <div
-                    key={value.id}
-                    className={[styles['tag'], styles['tag-mobile']].join(' ')}
-                  >
+          {cartProps.cart?.discounts &&
+            cartProps.cart?.discounts.length > 0 && (
+              <div
+                className={[
+                  styles['tag-list-container'],
+                  styles['tag-list-container-mobile'],
+                ].join(' ')}
+              >
+                {cartProps.cart?.discounts?.map((value: Discount) => {
+                  return (
                     <div
-                      className={[
-                        styles['tag-text'],
-                        styles['tag-text-mobile'],
-                      ].join(' ')}
+                      key={value.id}
+                      className={[styles['tag'], styles['tag-mobile']].join(
+                        ' '
+                      )}
                     >
-                      {value.code}
+                      <div
+                        className={[
+                          styles['tag-text'],
+                          styles['tag-text-mobile'],
+                        ].join(' ')}
+                      >
+                        {value.code}
+                      </div>
+                      <div
+                        className={[
+                          styles['tag-button-container'],
+                          styles['tag-button-container-mobile'],
+                        ].join(' ')}
+                      >
+                        <Button
+                          classNames={{
+                            button: styles['tag-button'],
+                          }}
+                          onClick={() =>
+                            CartController.removeDiscountCodeAsync(value.code)
+                          }
+                          rippleProps={{}}
+                          touchScreen={true}
+                          block={true}
+                          rounded={true}
+                          type={'primary'}
+                          size={'tiny'}
+                          icon={<Solid.Cancel size={14} />}
+                        />
+                      </div>
                     </div>
-                    <div
-                      className={[
-                        styles['tag-button-container'],
-                        styles['tag-button-container-mobile'],
-                      ].join(' ')}
-                    >
-                      <Button
-                        classNames={{
-                          button: styles['tag-button'],
-                        }}
-                        onClick={() =>
-                          CartController.removeDiscountCodeAsync(value.code)
-                        }
-                        rippleProps={{}}
-                        touchScreen={true}
-                        block={true}
-                        rounded={true}
-                        type={'primary'}
-                        size={'tiny'}
-                        icon={<Solid.Cancel size={14} />}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                  );
+                })}
+              </div>
+            )}
         </div>
       </div>
       <div
@@ -716,10 +724,10 @@ export function CheckoutMobileComponent({
               {t('payment')}
             </div>
           </div>
-          {props.billingFormComplete && (
+          {checkoutProps.billingFormComplete && (
             <Radio.Group
               id={''}
-              activeId={props.selectedProviderId ?? ''}
+              activeId={checkoutProps.selectedProviderId ?? ''}
               rippleProps={{
                 color: 'rgba(42, 42, 95, .35)',
               }}
@@ -740,7 +748,7 @@ export function CheckoutMobileComponent({
               }
             />
           )}
-          {!props.billingFormComplete && (
+          {!checkoutProps.billingFormComplete && (
             <div
               className={[
                 styles['card-description'],
@@ -807,7 +815,7 @@ export function CheckoutMobileComponent({
             >
               {storeProps.selectedRegion &&
                 formatAmount({
-                  amount: -cartProps.cart?.discount_total ?? 0,
+                  amount: -(cartProps.cart?.discount_total ?? 0),
                   region: storeProps.selectedRegion,
                   includeTaxes: false,
                 })}
@@ -910,9 +918,9 @@ export function CheckoutMobileComponent({
               labelContainerLabel: styles['checkbox-label'],
             }}
             label={t('isLegalAgeDescription') ?? ''}
-            checked={props.isLegalAge}
+            checked={checkoutProps.isLegalAge}
             onChange={() =>
-              CheckoutController.updateIsLegalAge(!props.isLegalAge)
+              CheckoutController.updateIsLegalAge(!checkoutProps.isLegalAge)
             }
           />
         </div>
@@ -930,9 +938,9 @@ export function CheckoutMobileComponent({
             block={true}
             touchScreen={true}
             disabled={
-              !props.shippingFormComplete ||
-              !props.billingFormComplete ||
-              !props.isLegalAge
+              !checkoutProps.shippingFormComplete ||
+              !checkoutProps.billingFormComplete ||
+              !checkoutProps.isLegalAge
             }
             size={'large'}
             icon={<Line.Payment size={24} />}
@@ -955,8 +963,8 @@ export function CheckoutMobileComponent({
         >
           <AddressFormComponent
             isAuthenticated={true}
-            values={props.addShippingForm}
-            errors={props.addShippingFormErrors}
+            values={checkoutProps.addShippingForm}
+            errors={checkoutProps.addShippingFormErrors}
             onChangeCallbacks={{
               firstName: (event) =>
                 CheckoutController.updateAddShippingAddress({
@@ -1034,7 +1042,7 @@ export function CheckoutMobileComponent({
             styles['pay-container-mobile'],
           ].join(' ')}
         >
-          {props.selectedProviderId === ProviderType.Manual && (
+          {checkoutProps.selectedProviderId === ProviderType.Manual && (
             <>
               <div
                 className={[
@@ -1065,7 +1073,7 @@ export function CheckoutMobileComponent({
               </Button>
             </>
           )}
-          {props.selectedProviderId === ProviderType.Stripe && (
+          {checkoutProps.selectedProviderId === ProviderType.Stripe && (
             <Elements stripe={stripePromise} options={stripeOptions}>
               <FormLayout
                 label={t('creditCardNumber') ?? ''}
@@ -1106,7 +1114,7 @@ export function CheckoutMobileComponent({
           )}
         </div>
       </Dropdown>
-      {props.isPaymentLoading && (
+      {checkoutProps.isPaymentLoading && (
         <div
           className={[
             styles['loading-container'],

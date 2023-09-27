@@ -23,6 +23,8 @@ import { InventoryLocation } from '../../models/home.model';
 import { HomeResponsiveProps } from '../home.component';
 
 export function HomeMobileComponent({
+  homeProps,
+  homeLocalProps,
   mapRef,
   selectedPoint,
   setMapStyleLoaded,
@@ -30,10 +32,6 @@ export function HomeMobileComponent({
 }: HomeResponsiveProps): JSX.Element {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const [props] = useObservable(HomeController.model.store);
-  const [localProps] = useObservable(
-    HomeController.model.localStore ?? HomeController.model.store
-  );
 
   return (
     <div className={[styles['root'], styles['root-mobile']].join(' ')}>
@@ -76,7 +74,7 @@ export function HomeMobileComponent({
             ].join(' ')}
           >
             {t('utilizeSearchEngineDescription', {
-              product_count: props.wineCount,
+              product_count: homeProps.wineCount,
             })}
           </div>
           <div>
@@ -103,21 +101,21 @@ export function HomeMobileComponent({
           styles['map-container-mobile'],
         ].join(' ')}
       >
-        {props.accessToken && (
+        {homeProps.accessToken && (
           <Map
             style={{ borderRadius: 6, minWidth: '100%' }}
-            mapboxAccessToken={props.accessToken}
+            mapboxAccessToken={homeProps.accessToken}
             ref={mapRef}
             initialViewState={{
-              longitude: localProps.longitude,
-              latitude: localProps.latitude,
-              zoom: localProps.zoom,
+              longitude: homeLocalProps.longitude,
+              latitude: homeLocalProps.latitude,
+              zoom: homeLocalProps.zoom,
             }}
             mapStyle={ConfigService.mapbox.style_url}
             onMove={(e) => HomeController.onMapMove(e.viewState)}
             onLoad={(e) => setMapStyleLoaded(e.target ? true : false)}
           >
-            {props.inventoryLocations?.map(
+            {homeProps.inventoryLocations?.map(
               (point: InventoryLocation, index: number) => (
                 <Marker
                   key={`marker-${index}`}
@@ -131,7 +129,7 @@ export function HomeMobileComponent({
                 >
                   <img
                     src={
-                      props.selectedInventoryLocation?.placeName !==
+                      homeProps.selectedInventoryLocation?.placeName !==
                       point.placeName
                         ? '../assets/svg/cruthology-pin.svg'
                         : '../assets/svg/cruthology-selected-pin.svg'
@@ -190,7 +188,7 @@ export function HomeMobileComponent({
                         size={'tiny'}
                         disabled={
                           selectedPoint?.placeName ===
-                          props.selectedInventoryLocation?.placeName
+                          homeProps.selectedInventoryLocation?.placeName
                         }
                         type={'text'}
                         onClick={() =>
@@ -200,7 +198,7 @@ export function HomeMobileComponent({
                         }
                       >
                         {selectedPoint?.placeName !==
-                        props.selectedInventoryLocation?.placeName
+                        homeProps.selectedInventoryLocation?.placeName
                           ? t('select')
                           : t('selected')}
                       </Button>

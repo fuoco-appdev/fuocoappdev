@@ -2,8 +2,16 @@ import { useState } from 'react';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import { AccountSettingsAccountDesktopComponent } from './desktop/account-settings-account.desktop.component';
 import { AccountSettingsAccountMobileComponent } from './mobile/account-settings-account.mobile.component';
+import { WindowLocalState } from '../models/window.model';
+import { useObservable } from '@ngneat/use-observable';
+import WindowController from '../controllers/window.controller';
+import AccountController from '../controllers/account.controller';
+import { Store } from '@ngneat/elf';
+import { AccountState } from '../models/account.model';
 
 export interface AccountSettingsAccountResponsiveProps {
+  accountProps: AccountState;
+  windowLocalProps: WindowLocalState;
   updatePasswordError: string | undefined;
   setUpdatePasswordError: (value: string | undefined) => void;
   confirmPasswordError: string | undefined;
@@ -15,6 +23,10 @@ export interface AccountSettingsAccountResponsiveProps {
 }
 
 export default function AccountSettingsAccountComponent(): JSX.Element {
+  const [windowLocalProps] = useObservable(
+    WindowController.model.localStore ?? Store.prototype
+  );
+  const [accountProps] = useObservable(AccountController.model.store);
   const [updatePasswordError, setUpdatePasswordError] = useState<
     string | undefined
   >(undefined);
@@ -28,6 +40,8 @@ export default function AccountSettingsAccountComponent(): JSX.Element {
     <>
       <ResponsiveDesktop inheritStyles={false}>
         <AccountSettingsAccountDesktopComponent
+          accountProps={accountProps}
+          windowLocalProps={windowLocalProps}
           updatePasswordError={updatePasswordError}
           setUpdatePasswordError={setUpdatePasswordError}
           confirmPasswordError={confirmPasswordError}
@@ -40,6 +54,8 @@ export default function AccountSettingsAccountComponent(): JSX.Element {
       </ResponsiveDesktop>
       <ResponsiveMobile>
         <AccountSettingsAccountMobileComponent
+          accountProps={accountProps}
+          windowLocalProps={windowLocalProps}
           updatePasswordError={updatePasswordError}
           setUpdatePasswordError={setUpdatePasswordError}
           confirmPasswordError={confirmPasswordError}

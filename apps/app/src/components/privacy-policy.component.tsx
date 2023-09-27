@@ -3,12 +3,19 @@ import { PrivacyPolicyDesktopComponent } from './desktop/privacy-policy.desktop.
 import { PrivacyPolicyMobileComponent } from './mobile/privacy-policy.mobile.component';
 import { Helmet } from 'react-helmet';
 import { useState, useEffect } from 'react';
+import { useObservable } from '@ngneat/use-observable';
+import PrivacyPolicyController from '../controllers/privacy-policy.controller';
+import { PrivacyPolicyState } from '../models';
 
 export interface PrivacyPolicyResponsiveProps {
+  privacyPolicyProps: PrivacyPolicyState;
   remarkPlugins: any[];
 }
 
 export default function PrivacyPolicyComponent(): JSX.Element {
+  const [privacyPolicyProps] = useObservable(
+    PrivacyPolicyController.model.store
+  );
   const [remarkPlugins, setRemarkPlugins] = useState<any[]>([]);
 
   useEffect(() => {
@@ -46,10 +53,16 @@ export default function PrivacyPolicyComponent(): JSX.Element {
         <meta property="og:url" content={window.location.href} />
       </Helmet>
       <ResponsiveDesktop>
-        <PrivacyPolicyDesktopComponent remarkPlugins={remarkPlugins} />
+        <PrivacyPolicyDesktopComponent
+          privacyPolicyProps={privacyPolicyProps}
+          remarkPlugins={remarkPlugins}
+        />
       </ResponsiveDesktop>
       <ResponsiveMobile>
-        <PrivacyPolicyMobileComponent remarkPlugins={remarkPlugins} />
+        <PrivacyPolicyMobileComponent
+          privacyPolicyProps={privacyPolicyProps}
+          remarkPlugins={remarkPlugins}
+        />
       </ResponsiveMobile>
     </>
   );

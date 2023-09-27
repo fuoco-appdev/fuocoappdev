@@ -15,6 +15,7 @@ import AccountProfileFormComponent from '../account-profile-form.component';
 import { AccountEditResponsiveProps } from '../account-edit.component';
 
 export function AccountEditDesktopComponent({
+  storeProps,
   onSaveAsync,
 }: AccountEditResponsiveProps): JSX.Element {
   const [props] = useObservable(AccountController.model.store);
@@ -43,6 +44,7 @@ export function AccountEditDesktopComponent({
         ].join(' ')}
       >
         <AccountProfileFormComponent
+          storeProps={storeProps}
           values={props.profileForm}
           errors={props.profileFormErrors}
           onChangeCallbacks={{

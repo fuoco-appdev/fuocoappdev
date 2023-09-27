@@ -13,6 +13,7 @@ import { SigninResponsiveProps } from '../signin.component';
 import { useMobileEffect } from '../responsive.component';
 
 export function SigninMobileComponent({
+  signInProps,
   emailError,
   passwordError,
   setAuthError,
@@ -20,7 +21,6 @@ export function SigninMobileComponent({
   const [show, setShow] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const [props] = useObservable(SigninController.model.store);
 
   useMobileEffect(() => {
     setShow(true);
@@ -45,7 +45,7 @@ export function SigninMobileComponent({
             item && (
               <animated.div style={style}>
                 <div className={styles['signin-container']}>
-                  {props.supabaseClient && (
+                  {signInProps.supabaseClient && (
                     <Auth
                       touchScreen={true}
                       classNames={{
@@ -86,8 +86,8 @@ export function SigninMobileComponent({
                           color: 'rgba(233, 33, 66, .35)',
                         },
                       }}
-                      emailValue={props.email ?? ''}
-                      passwordValue={props.password ?? ''}
+                      emailValue={signInProps.email ?? ''}
+                      passwordValue={signInProps.password ?? ''}
                       defaultIconColor={'#2A2A5F'}
                       litIconColor={'#2A2A5F'}
                       providers={['google']}
@@ -105,7 +105,7 @@ export function SigninMobileComponent({
                       }}
                       emailErrorMessage={emailError}
                       passwordErrorMessage={passwordError}
-                      supabaseClient={props.supabaseClient}
+                      supabaseClient={signInProps.supabaseClient}
                       onEmailChanged={(e) =>
                         SigninController.updateEmail(e.target.value)
                       }

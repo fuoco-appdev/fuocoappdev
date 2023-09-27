@@ -9,10 +9,12 @@ import { useObservable } from '@ngneat/use-observable';
 import Ripples from 'react-ripples';
 import WindowController from '../../controllers/window.controller';
 import { useDesktopEffect } from '../responsive.component';
+import { AccountSettingsResponsiveProps } from '../account-settings.component';
 
-export function AccountSettingsDesktopComponent(): JSX.Element {
+export function AccountSettingsDesktopComponent({
+  windowProps,
+}: AccountSettingsResponsiveProps): JSX.Element {
   const navigate = useNavigate();
-  const [windowProps] = useObservable(WindowController.model.store);
   const location = useLocation();
   const { t, i18n } = useTranslation();
 

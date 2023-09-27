@@ -28,6 +28,8 @@ import { WindowLocalState } from '../../models';
 import { AccountSettingsAccountResponsiveProps } from '../account-settings-account.component';
 
 export function AccountSettingsAccountMobileComponent({
+  accountProps,
+  windowLocalProps,
   updatePasswordError,
   setUpdatePasswordError,
   confirmPasswordError,
@@ -37,10 +39,6 @@ export function AccountSettingsAccountMobileComponent({
   isLanguageOpen,
   setIsLanguageOpen,
 }: AccountSettingsAccountResponsiveProps): JSX.Element {
-  const [windowLocalProps] = useObservable(
-    WindowController.model.localStore ?? Store.prototype
-  );
-  const [props] = useObservable(AccountController.model.store);
   const { t, i18n } = useTranslation();
 
   const accordionItemClassNames: AccordionItemClasses = {
@@ -52,7 +50,7 @@ export function AccountSettingsAccountMobileComponent({
     },
   };
 
-  const user = props.user as User | null;
+  const user = accountProps.user as User | null;
   const provider = user?.app_metadata['provider'];
   return (
     <div className={[styles['root'], styles['root-mobile']].join(' ')}>
@@ -93,7 +91,9 @@ export function AccountSettingsAccountMobileComponent({
             ].join(' ')}
           >
             <ReactCountryFlag
-              countryCode={windowLocalProps.languageInfo?.info?.countryCode}
+              countryCode={
+                windowLocalProps.languageInfo?.info?.countryCode ?? ''
+              }
               style={{ width: 24 }}
               svg
             />

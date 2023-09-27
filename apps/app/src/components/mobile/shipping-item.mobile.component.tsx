@@ -7,12 +7,12 @@ import { useObservable } from '@ngneat/use-observable';
 import { ShippingItemResponsiveProps } from '../shipping-item.component';
 
 export function ShippingItemMobileComponent({
+  storeProps,
   item,
   vintage,
   hasReducedPrice,
   discountPercentage,
 }: ShippingItemResponsiveProps): JSX.Element {
-  const [storeProps] = useObservable(StoreController.model.store);
   const { t } = useTranslation();
 
   return (

@@ -4,14 +4,16 @@ import { AccountOrderHistoryMobileComponent } from './mobile/account-order-histo
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import AccountController from '../controllers/account.controller';
 import { useObservable } from '@ngneat/use-observable';
+import { AccountState } from '../models/account.model';
 
 export interface AccountOrderHistoryResponsiveProps {
+  accountProps: AccountState;
   onOrdersScroll: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
   onOrdersLoad: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
 }
 
 export default function AccountOrderHistoryComponent(): JSX.Element {
-  const [props] = useObservable(AccountController.model.store);
+  const [accountProps] = useObservable(AccountController.model.store);
 
   const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const scrollTop = e.currentTarget?.scrollTop ?? 0;
@@ -27,8 +29,8 @@ export default function AccountOrderHistoryComponent(): JSX.Element {
   };
 
   const onLoad = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
-    if (props.scrollPosition) {
-      e.currentTarget.scrollTop = props.scrollPosition as number;
+    if (accountProps.scrollPosition) {
+      e.currentTarget.scrollTop = accountProps.scrollPosition as number;
       AccountController.updateOrdersScrollPosition(undefined);
     }
   };
@@ -37,12 +39,14 @@ export default function AccountOrderHistoryComponent(): JSX.Element {
     <>
       <ResponsiveDesktop>
         <AccountOrderHistoryDesktopComponent
+          accountProps={accountProps}
           onOrdersScroll={onScroll}
           onOrdersLoad={onLoad}
         />
       </ResponsiveDesktop>
       <ResponsiveMobile>
         <AccountOrderHistoryMobileComponent
+          accountProps={accountProps}
           onOrdersScroll={onScroll}
           onOrdersLoad={onLoad}
         />

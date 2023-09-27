@@ -17,15 +17,13 @@ import HomeController from '../../controllers/home.controller';
 import { Store } from '@ngneat/elf';
 
 export function CartMobileComponent({
+  cartProps,
+  homeLocalProps,
+  storeProps,
+  windowProps,
   salesChannelTabs,
 }: CartResponsiveProps): JSX.Element {
   const navigate = useNavigate();
-  const [props] = useObservable(CartController.model.store);
-  const [storeProps] = useObservable(StoreController.model.store);
-  const [windowProps] = useObservable(WindowController.model.store);
-  const [homeLocalProps] = useObservable(
-    HomeController.model.localStore ?? Store.prototype
-  );
   const { t, i18n } = useTranslation();
 
   return (
@@ -120,7 +118,7 @@ export function CartMobileComponent({
               />
             </div>
           )}
-          {props.cart?.items
+          {cartProps.cart?.items
             .sort((current: LineItem, next: LineItem) => {
               return (
                 new Date(current.created_at).valueOf() -
@@ -131,6 +129,7 @@ export function CartMobileComponent({
               <CartItemComponent
                 key={item.id}
                 item={item}
+                storeProps={storeProps}
                 onQuantityChanged={(quantity) => {
                   CartController.updateLineItemQuantityAsync(quantity, item);
                 }}
@@ -172,7 +171,7 @@ export function CartMobileComponent({
             </>
           )}
           {salesChannelTabs.length > 0 &&
-            (!props.cart || props.cart?.items.length <= 0) && (
+            (!cartProps.cart || cartProps.cart?.items.length <= 0) && (
               <>
                 <div
                   className={[
@@ -236,7 +235,7 @@ export function CartMobileComponent({
           >
             {storeProps.selectedRegion &&
               formatAmount({
-                amount: props.cart?.subtotal ?? 0,
+                amount: cartProps.cart?.subtotal ?? 0,
                 region: storeProps.selectedRegion,
                 includeTaxes: false,
               })}
@@ -264,7 +263,7 @@ export function CartMobileComponent({
           >
             {storeProps.selectedRegion &&
               formatAmount({
-                amount: -props.cart?.discount_total ?? 0,
+                amount: -(cartProps.cart?.discount_total ?? 0),
                 region: storeProps.selectedRegion,
                 includeTaxes: false,
               })}
@@ -292,7 +291,7 @@ export function CartMobileComponent({
           >
             {storeProps.selectedRegion &&
               formatAmount({
-                amount: props.cart?.shipping_total ?? 0,
+                amount: cartProps.cart?.shipping_total ?? 0,
                 region: storeProps.selectedRegion,
                 includeTaxes: false,
               })}
@@ -320,7 +319,7 @@ export function CartMobileComponent({
           >
             {storeProps.selectedRegion &&
               formatAmount({
-                amount: props.cart?.tax_total ?? 0,
+                amount: cartProps.cart?.tax_total ?? 0,
                 region: storeProps.selectedRegion,
                 includeTaxes: false,
               })}
@@ -346,7 +345,7 @@ export function CartMobileComponent({
           >
             {storeProps.selectedRegion &&
               formatAmount({
-                amount: props.cart?.total ?? 0,
+                amount: cartProps.cart?.total ?? 0,
                 region: storeProps.selectedRegion,
                 includeTaxes: true,
               })}
@@ -374,7 +373,7 @@ export function CartMobileComponent({
               container: styles['input-container'],
             }}
             label={t('discount') ?? ''}
-            value={props.discountCode}
+            value={cartProps.discountCode}
             onChange={(event) =>
               CartController.updateDiscountCodeText(event.target.value)
             }
@@ -406,7 +405,7 @@ export function CartMobileComponent({
           styles['discount-list-container-mobile'],
         ].join(' ')}
       >
-        {props.cart?.discounts?.map((value: Discount) => {
+        {cartProps.cart?.discounts?.map((value: Discount) => {
           return (
             <div
               key={value.id}
@@ -463,7 +462,7 @@ export function CartMobileComponent({
             color: 'rgba(233, 33, 66, .35)',
           }}
           block={true}
-          disabled={!props.cart || props.cart?.items?.length <= 0}
+          disabled={!cartProps.cart || cartProps.cart?.items?.length <= 0}
           size={'large'}
           icon={<Line.ShoppingCart size={24} />}
           onClick={() =>

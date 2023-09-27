@@ -12,8 +12,10 @@ import StoreController from '../controllers/store.controller';
 import { useObservable } from '@ngneat/use-observable';
 import { CartItemDesktopComponent } from './desktop/cart-item.desktop.component';
 import { CartItemMobileComponent } from './mobile/cart-item.mobile.component';
+import { StoreState } from '../models/store.model';
 
 export interface CartItemProps {
+  storeProps: StoreState;
   item: LineItem;
   onQuantityChanged?: (quantity: number) => void;
   onRemove?: () => void;
@@ -30,6 +32,7 @@ export interface CartItemResponsiveProps extends CartItemProps {
 }
 
 export default function CartItemComponent({
+  storeProps,
   item,
   onQuantityChanged,
   onRemove,
@@ -74,6 +77,7 @@ export default function CartItemComponent({
     <>
       <ResponsiveDesktop>
         <CartItemDesktopComponent
+          storeProps={storeProps}
           item={item}
           onRemove={onRemove}
           vintage={vintage}
@@ -87,6 +91,7 @@ export default function CartItemComponent({
       </ResponsiveDesktop>
       <ResponsiveMobile>
         <CartItemMobileComponent
+          storeProps={storeProps}
           item={item}
           onRemove={onRemove}
           vintage={vintage}

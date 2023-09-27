@@ -39,6 +39,9 @@ import {
 } from '@medusajs/medusa/dist/types/pricing';
 
 export function StoreMobileComponent({
+  storeProps,
+  homeProps,
+  homeLocalProps,
   openFilter,
   countryOptions,
   regionOptions,
@@ -57,13 +60,9 @@ export function StoreMobileComponent({
   const rootRef = createRef<HTMLDivElement>();
   const topBarRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
-  const [props] = useObservable(StoreController.model.store);
-  const [homeLocalProps] = useObservable(
-    HomeController.model.localStore ?? Store.prototype
-  );
   const { t, i18n } = useTranslation();
   let prevPreviewScrollTop = 0;
-  let topBarTop = 0;
+  let yPosition = 0;
 
   return (
     <div
@@ -76,9 +75,6 @@ export function StoreMobileComponent({
           styles['top-bar-container'],
           styles['top-bar-container-mobile'],
         ].join(' ')}
-        style={{
-          minHeight: props.hideSearchTabs ? '78px' : 'auto',
-        }}
       >
         <div
           className={[
@@ -93,7 +89,7 @@ export function StoreMobileComponent({
             ].join(' ')}
           >
             <Input
-              value={props.input}
+              value={storeProps.input}
               classNames={{
                 container: [
                   styles['search-input-container'],
@@ -132,9 +128,6 @@ export function StoreMobileComponent({
             styles['tab-container'],
             styles['tab-container-mobile'],
           ].join(' ')}
-          style={{
-            display: props.hideSearchTabs ? 'none' : 'flex',
-          }}
         >
           <Tabs
             classNames={{
@@ -144,7 +137,7 @@ export function StoreMobileComponent({
             }}
             removable={true}
             type={'pills'}
-            activeId={props.selectedTab}
+            activeId={storeProps.selectedTab}
             onChange={(id: string) =>
               StoreController.updateSelectedTabAsync(
                 id.length > 0 ? (id as ProductTabs) : undefined
@@ -178,30 +171,22 @@ export function StoreMobileComponent({
         ].join(' ')}
         onScroll={(e) => {
           onPreviewsScroll(e);
+          const elementHeight = topBarRef.current?.clientHeight ?? 0;
           const scrollTop = e.currentTarget.scrollTop;
-          const elementHeight = topBarRef.current?.offsetHeight ?? 0;
-
           if (prevPreviewScrollTop > scrollTop) {
-            topBarTop = scrollTop;
-          }
+            yPosition += prevPreviewScrollTop - scrollTop;
+            if (yPosition >= 0) {
+              yPosition = 0;
+            }
 
-          let opacity = 1;
-          let yPosition = topBarTop;
-          if (scrollTop > topBarTop) {
-            opacity = 1 - (scrollTop - topBarTop) / elementHeight;
-            yPosition = 0 - (scrollTop - topBarTop);
-          }
-
-          if (opacity < 0) {
-            opacity = 0;
-          }
-
-          if (prevPreviewScrollTop > scrollTop) {
-            topBarRef.current!.style.opacity = '1';
-            topBarRef.current!.style.top = '0';
+            topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
           } else {
-            topBarRef.current!.style.top = `${yPosition}px`;
-            topBarRef.current!.style.opacity = opacity.toString();
+            yPosition -= scrollTop - prevPreviewScrollTop;
+            if (yPosition <= -elementHeight) {
+              yPosition = -elementHeight;
+            }
+
+            topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
           }
 
           prevPreviewScrollTop = e.currentTarget.scrollTop;
@@ -209,15 +194,13 @@ export function StoreMobileComponent({
         ref={previewsContainerRef}
         onLoad={(e) => {
           onPreviewsLoad(e);
-
-          const topBarRect = topBarRef.current?.getBoundingClientRect();
-          topBarTop = topBarRect?.top ?? 0;
         }}
       >
-        {props.previews.map((preview: PricedProduct, index: number) => (
+        {storeProps.previews.map((preview: PricedProduct, index: number) => (
           <ProductPreviewComponent
             parentRef={rootRef}
             key={index}
+            storeProps={storeProps}
             preview={preview}
             onClick={() => {
               StoreController.updateScrollPosition(
@@ -236,7 +219,7 @@ export function StoreMobileComponent({
           style={{
             display:
               homeLocalProps.selectedInventoryLocationId &&
-              props.hasMorePreviews
+              storeProps.hasMorePreviews
                 ? 'flex'
                 : 'none',
           }}

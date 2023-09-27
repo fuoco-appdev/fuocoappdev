@@ -9,10 +9,12 @@ import { useEffect, useRef, useState } from 'react';
 import { OptionProps } from '@fuoco.appdev/core-ui';
 import { LineItem, ShippingMethod, ReturnReason } from '@medusajs/medusa';
 import styles from './order-confirmed.module.scss';
+import { StoreState } from '../models/store.model';
 
 export interface OrderConfirmedProps {}
 
 export interface OrderConfirmedResponsiveProps {
+  storeProps: StoreState;
   quantity: number;
   openRefund: boolean;
   returnReasonOptions: OptionProps[];
@@ -23,6 +25,7 @@ export interface OrderConfirmedResponsiveProps {
 export default function OrderConfirmedComponent(): JSX.Element {
   const { id } = useParams();
   const [props] = useObservable(OrderConfirmedController.model.store);
+  const [storeProps] = useObservable(StoreController.model.store);
   const [quantity, setQuantity] = useState<number>(0);
   const [openRefund, setOpenRefund] = useState<boolean>(false);
   const [returnReasonOptions, setReturnReasonOptions] = useState<OptionProps[]>(
@@ -84,6 +87,7 @@ export default function OrderConfirmedComponent(): JSX.Element {
     <>
       <ResponsiveDesktop>
         <OrderConfirmedDesktopComponent
+          storeProps={storeProps}
           quantity={quantity}
           openRefund={openRefund}
           returnReasonOptions={returnReasonOptions}
@@ -93,6 +97,7 @@ export default function OrderConfirmedComponent(): JSX.Element {
       </ResponsiveDesktop>
       <ResponsiveMobile>
         <OrderConfirmedMobileComponent
+          storeProps={storeProps}
           quantity={quantity}
           openRefund={openRefund}
           returnReasonOptions={returnReasonOptions}

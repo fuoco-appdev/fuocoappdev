@@ -27,8 +27,10 @@ import CartController from '../controllers/cart.controller';
 import { formatAmount } from 'medusa-react';
 import { ProductPreviewDesktopComponent } from './desktop/product-preview.desktop.component';
 import { ProductPreviewMobileComponent } from './mobile/product-preview.mobile.component';
+import { StoreState } from '../models/store.model';
 
 export interface ProductPreviewProps {
+  storeProps: StoreState;
   parentRef: MutableRefObject<HTMLDivElement | null>;
   preview: PricedProduct;
   onClick?: () => void;
@@ -45,6 +47,7 @@ export interface ProductPreviewResponsiveProps extends ProductPreviewProps {
 }
 
 export default function ProductPreviewComponent({
+  storeProps,
   parentRef,
   preview,
   onClick,
@@ -55,7 +58,6 @@ export default function ProductPreviewComponent({
   const [selectedVariantId, setSelectedVariantId] = useState<
     string | undefined
   >(undefined);
-  const [storeProps] = useObservable(StoreController.model.store);
   const { t } = useTranslation();
 
   const formatPrice = (price: MoneyAmount): string => {
@@ -82,7 +84,7 @@ export default function ProductPreviewComponent({
     if (purchasableVariants.length > 0) {
       const cheapestVariant =
         ProductController.getCheapestPrice(purchasableVariants);
-      if (cheapestVariant) {
+      if (cheapestVariant && storeProps.selectedRegion) {
         setSelectedVariantId(cheapestVariant.id);
         setPrice(
           formatAmount({
@@ -121,6 +123,7 @@ export default function ProductPreviewComponent({
     <>
       <ResponsiveDesktop inheritStyles={false}>
         <ProductPreviewDesktopComponent
+          storeProps={storeProps}
           parentRef={parentRef}
           preview={preview}
           onClick={onClick}
@@ -135,6 +138,7 @@ export default function ProductPreviewComponent({
       </ResponsiveDesktop>
       <ResponsiveMobile inheritStyles={false}>
         <ProductPreviewMobileComponent
+          storeProps={storeProps}
           parentRef={parentRef}
           preview={preview}
           onClick={onClick}

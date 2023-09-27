@@ -16,6 +16,7 @@ import WindowController from '../../controllers/window.controller';
 import { OrderConfirmedResponsiveProps } from '../order-confirmed.component';
 
 export function OrderConfirmedMobileComponent({
+  storeProps,
   quantity,
   openRefund,
   returnReasonOptions,
@@ -24,7 +25,6 @@ export function OrderConfirmedMobileComponent({
 }: OrderConfirmedResponsiveProps): JSX.Element {
   const { t } = useTranslation();
   const [props] = useObservable(OrderConfirmedController.model.store);
-  const [storeProps] = useObservable(StoreController.model.store);
 
   return (
     props.order && (
@@ -106,7 +106,11 @@ export function OrderConfirmedMobileComponent({
               );
             })
             .map((item: LineItem) => (
-              <ShippingItemComponent key={item.id} item={item} />
+              <ShippingItemComponent
+                key={item.id}
+                item={item}
+                storeProps={storeProps}
+              />
             ))}
         </div>
         <div

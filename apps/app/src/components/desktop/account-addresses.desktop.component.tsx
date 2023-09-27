@@ -17,6 +17,7 @@ import AddressFormComponent from '../address-form.component';
 import { AccountAddressResponsiveProps } from '../account-addresses.component';
 
 export function AccountAddressesDesktopComponent({
+  accountProps,
   onAddAddressAsync,
   onEditAddressAsync,
   onDeleteAddressConfirmedAsync,
@@ -29,11 +30,10 @@ export function AccountAddressesDesktopComponent({
   setOpenAddDropdown,
   setOpenEditDropdown,
 }: AccountAddressResponsiveProps): JSX.Element {
-  const [props] = useObservable(AccountController.model.store);
   const { t, i18n } = useTranslation();
 
-  const customer = props.customer as Customer | undefined;
-  const selectedAddress = props.selectedAddress as Address | undefined;
+  const customer = accountProps.customer as Customer | undefined;
+  const selectedAddress = accountProps.selectedAddress as Address | undefined;
   return (
     <div className={[styles['root'], styles['root-desktop']].join(' ')}>
       <div
@@ -135,8 +135,8 @@ export function AccountAddressesDesktopComponent({
         >
           <AddressFormComponent
             isAuthenticated={true}
-            values={props.shippingForm}
-            errors={props.shippingFormErrors}
+            values={accountProps.shippingForm}
+            errors={accountProps.shippingFormErrors}
             onChangeCallbacks={{
               firstName: (event) =>
                 AccountController.updateShippingAddress({
@@ -245,8 +245,8 @@ export function AccountAddressesDesktopComponent({
         >
           <AddressFormComponent
             isAuthenticated={true}
-            values={props.editShippingForm}
-            errors={props.editShippingFormErrors}
+            values={accountProps.editShippingForm}
+            errors={accountProps.editShippingFormErrors}
             onChangeCallbacks={{
               firstName: (event) =>
                 AccountController.updateEditShippingAddress({

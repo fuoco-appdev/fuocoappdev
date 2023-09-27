@@ -15,10 +15,9 @@ const ReactMarkdown = loadable(
 );
 
 export function TermsOfServiceMobileComponent({
+  termsOfServiceProps,
   remarkPlugins,
 }: TermsOfServiceResponsiveProps): JSX.Element {
-  const [props] = useObservable(TermsOfServiceController.model.store);
-
   return (
     <div className={[styles['root'], styles['root-mobile']].join(' ')}>
       <div className={[styles['content'], styles['content-mobile']].join(' ')}>
@@ -33,7 +32,7 @@ export function TermsOfServiceMobileComponent({
             >
               <ReactMarkdown
                 remarkPlugins={remarkPlugins}
-                children={props.markdown}
+                children={termsOfServiceProps.markdown}
               />
             </Typography>
           }

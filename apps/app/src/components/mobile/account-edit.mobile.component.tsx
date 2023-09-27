@@ -16,6 +16,7 @@ import WindowController from '../../controllers/window.controller';
 import { AccountEditResponsiveProps } from '../account-edit.component';
 
 export function AccountEditMobileComponent({
+  storeProps,
   onSaveAsync,
 }: AccountEditResponsiveProps): JSX.Element {
   const [props] = useObservable(AccountController.model.store);
@@ -44,6 +45,7 @@ export function AccountEditMobileComponent({
         ].join(' ')}
       >
         <AccountProfileFormComponent
+          storeProps={storeProps}
           values={props.profileForm}
           errors={props.profileFormErrors}
           onChangeCallbacks={{

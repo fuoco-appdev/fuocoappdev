@@ -2,8 +2,16 @@ import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import { AccountSettingsDesktopComponent } from './desktop/account-settings.desktop.component';
 import { AccountSettingsMobileComponent } from './mobile/account-settings.mobile.component';
 import { Helmet } from 'react-helmet';
+import { useObservable } from '@ngneat/use-observable';
+import WindowController from '../controllers/window.controller';
+import { WindowState } from '../models/window.model';
+
+export interface AccountSettingsResponsiveProps {
+  windowProps: WindowState;
+}
 
 export default function AccountSettingsComponent(): JSX.Element {
+  const [windowProps] = useObservable(WindowController.model.store);
   return (
     <>
       <Helmet>
@@ -33,10 +41,10 @@ export default function AccountSettingsComponent(): JSX.Element {
         <meta property="og:url" content={window.location.href} />
       </Helmet>
       <ResponsiveDesktop>
-        <AccountSettingsDesktopComponent />
+        <AccountSettingsDesktopComponent windowProps={windowProps} />
       </ResponsiveDesktop>
       <ResponsiveMobile>
-        <AccountSettingsMobileComponent />
+        <AccountSettingsMobileComponent windowProps={windowProps} />
       </ResponsiveMobile>
     </>
   );

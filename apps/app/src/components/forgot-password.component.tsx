@@ -13,10 +13,19 @@ import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet';
 import { ForgotPasswordMobileComponent } from './mobile/forgot-password.mobile.component';
 import { ForgotPasswordDesktopComponent } from './desktop/forgot-password.desktop.component';
+import { useObservable } from '@ngneat/use-observable';
+import ForgotPasswordController from '../controllers/forgot-password.controller';
+import { ForgotPasswordState } from '../models/forgot-password.model';
 
-export interface ForgotPasswordProps {}
+export interface ForgotPasswordResponsiveProps {
+  forgotPasswordProps: ForgotPasswordState;
+}
 
 export default function ForgotPasswordComponent(): JSX.Element {
+  const [forgotPasswordProps] = useObservable(
+    ForgotPasswordController.model.store
+  );
+
   return (
     <>
       <Helmet>
@@ -42,10 +51,14 @@ export default function ForgotPasswordComponent(): JSX.Element {
         <meta property="og:url" content={window.location.href} />
       </Helmet>
       <ResponsiveDesktop>
-        <ForgotPasswordDesktopComponent />
+        <ForgotPasswordDesktopComponent
+          forgotPasswordProps={forgotPasswordProps}
+        />
       </ResponsiveDesktop>
       <ResponsiveMobile>
-        <ForgotPasswordMobileComponent />
+        <ForgotPasswordMobileComponent
+          forgotPasswordProps={forgotPasswordProps}
+        />
       </ResponsiveMobile>
     </>
   );

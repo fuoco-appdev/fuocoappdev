@@ -4,12 +4,21 @@ import { RoutePathsType } from '../route-paths';
 import { useTranslation } from 'react-i18next';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import { MapRef } from 'react-map-gl';
-import { InventoryLocation } from '../models/home.model';
+import {
+  HomeLocalState,
+  HomeState,
+  InventoryLocation,
+} from '../models/home.model';
 import { HomeDesktopComponent } from './desktop/home.desktop.component';
 import { HomeMobileComponent } from './mobile/home.mobile.component';
 import { Helmet } from 'react-helmet';
+import { useObservable } from '@ngneat/use-observable';
+import HomeController from '../controllers/home.controller';
+import { Store } from '@ngneat/elf';
 
 export interface HomeResponsiveProps {
+  homeProps: HomeState;
+  homeLocalProps: HomeLocalState;
   mapRef: React.Ref<MapRef> | undefined;
   selectedPoint: InventoryLocation | null;
   setMapStyleLoaded: (value: boolean) => void;
@@ -18,6 +27,10 @@ export interface HomeResponsiveProps {
 
 export default function HomeComponent(): JSX.Element {
   const navigate = useNavigate();
+  const [homeProps] = useObservable(HomeController.model.store);
+  const [homeLocalProps] = useObservable(
+    HomeController.model.localStore ?? Store.prototype
+  );
   const [mapStyleLoaded, setMapStyleLoaded] = useState<boolean>(false);
   const [selectedPoint, setSelectedPoint] = useState<InventoryLocation | null>(
     null
@@ -86,6 +99,8 @@ export default function HomeComponent(): JSX.Element {
       </Helmet>
       <ResponsiveDesktop>
         <HomeDesktopComponent
+          homeProps={homeProps}
+          homeLocalProps={homeLocalProps}
           mapRef={mapRef}
           selectedPoint={selectedPoint}
           setMapStyleLoaded={setMapStyleLoaded}
@@ -94,6 +109,8 @@ export default function HomeComponent(): JSX.Element {
       </ResponsiveDesktop>
       <ResponsiveMobile>
         <HomeMobileComponent
+          homeProps={homeProps}
+          homeLocalProps={homeLocalProps}
           mapRef={mapRef}
           selectedPoint={selectedPoint}
           setMapStyleLoaded={setMapStyleLoaded}

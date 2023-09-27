@@ -3,7 +3,7 @@ import ProductController from '../controllers/product.controller';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { RouteObject, useParams } from 'react-router-dom';
-import { ProductOptions } from '../models/product.model';
+import { ProductOptions, ProductState } from '../models/product.model';
 import { ProductOptionValue, ProductOption } from '@medusajs/medusa';
 import {
   PricedProduct,
@@ -14,6 +14,8 @@ import { ProductDesktopComponent } from './desktop/product.desktop.component';
 import { ProductMobileComponent } from './mobile/product.mobile.component';
 import { Helmet } from 'react-helmet';
 import MedusaService from '../services/medusa.service';
+import StoreController from '../controllers/store.controller';
+import { StoreState } from '../models/store.model';
 
 // let product: PricedProduct | undefined = undefined;
 //   if (!StoreController.model.selectedPreview) {
@@ -31,6 +33,8 @@ export interface ProductProps {
 }
 
 export interface ProductResponsiveProps {
+  productProps: ProductState;
+  storeProps: StoreState;
   remarkPlugins: any[];
   description: string;
   tabs: TabProps[];
@@ -51,7 +55,8 @@ export interface ProductResponsiveProps {
 }
 
 function ProductComponent({ product }: ProductProps): JSX.Element {
-  const [props] = useObservable(ProductController.model.store);
+  const [productProps] = useObservable(ProductController.model.store);
+  const [storeProps] = useObservable(StoreController.model.store);
   const { id } = useParams();
   const [description, setDescription] = useState<string>('');
   const [tabs, setTabs] = useState<TabProps[]>([]);
@@ -74,9 +79,9 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
   const [remarkPlugins, setRemarkPlugins] = useState<any[]>([]);
 
   const formatName = (title: string, subtitle?: string | null) => {
-    let name = props.title;
+    let name = productProps.title;
     if (subtitle && subtitle?.length > 0) {
-      name += `, ${props.subtitle}`;
+      name += `, ${productProps.subtitle}`;
     }
     return name;
   };
@@ -92,20 +97,20 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
     formatName(product?.title ?? '', product?.subtitle) ?? ''
   );
   const [shortDescription, setShortDescription] = useState<string>(
-    formatDescription(`${props.description?.slice(0, 205)}...`)
+    formatDescription(`${productProps.description?.slice(0, 205)}...`)
   );
 
   useEffect(() => {
-    const formattedName = formatName(props.title, props.subtitle);
+    const formattedName = formatName(productProps.title, productProps.subtitle);
     setFullName(formattedName);
-  }, [props.title, props.subtitle]);
+  }, [productProps.title, productProps.subtitle]);
 
   useEffect(() => {
     const formattedDescription = formatDescription(
-      `${props.description?.slice(0, 205)}...`
+      `${productProps.description?.slice(0, 205)}...`
     );
     setShortDescription(formattedDescription);
-  }, [props.description]);
+  }, [productProps.description]);
 
   useEffect(() => {
     import('remark-gfm').then((plugin) => {
@@ -117,7 +122,7 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
 
   useEffect(() => {
     let tabProps: TabProps[] = [];
-    const vintageOption = props.options.find(
+    const vintageOption = productProps.options.find(
       (value: ProductOption) => value.title === ProductOptions.Vintage
     );
     if (vintageOption) {
@@ -133,11 +138,11 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
       });
       setTabs(tabProps);
     }
-  }, [props.options]);
+  }, [productProps.options]);
 
   useEffect(() => {
-    setActiveVariantId(props.selectedVariant?.id);
-  }, [props.selectedVariant]);
+    setActiveVariantId(productProps.selectedVariant?.id);
+  }, [productProps.selectedVariant]);
 
   useEffect(() => {
     const alcoholOption = ProductController.model.options.find(
@@ -156,8 +161,8 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
       (value) => value.title === ProductOptions.Vintage
     );
 
-    if (props.selectedVariant?.options) {
-      const variant = props.selectedVariant as PricedVariant;
+    if (productProps.selectedVariant?.options) {
+      const variant = productProps.selectedVariant as PricedVariant;
       const alcoholValue = variant.options?.find(
         (value: ProductOptionValue) => value.option_id === alcoholOption?.id
       );
@@ -175,18 +180,18 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
         (value: ProductOptionValue) => value.option_id === vintageOption?.id
       );
 
-      setBrand(props.metadata?.['brand'] as string);
-      setRegion(props.metadata?.['region'] as string);
-      setVarietals(props.metadata?.['varietals'] as string);
-      setProducerBottler(props.metadata?.['producer_bottler'] as string);
-      setType(props.metadata?.['type'] as string);
+      setBrand(productProps.metadata?.['brand'] as string);
+      setRegion(productProps.metadata?.['region'] as string);
+      setVarietals(productProps.metadata?.['varietals'] as string);
+      setProducerBottler(productProps.metadata?.['producer_bottler'] as string);
+      setType(productProps.metadata?.['type'] as string);
       setAlcohol(alcoholValue?.value);
       setFormat(formatValue?.value);
       setResidualSugar(residualSugarValue?.value);
       setUVC(uvcValue?.value);
       setVintage(vintageValue?.value);
     }
-  }, [props.selectedVariant, props.metadata]);
+  }, [productProps.selectedVariant, productProps.metadata]);
 
   return (
     <>
@@ -202,8 +207,8 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
           }
         />
         <meta name="description" content={shortDescription} />
-        <meta property="og:image" content={props.thumbnail} />
-        <meta property="og:image:secure_url" content={props.thumbnail} />
+        <meta property="og:image" content={productProps.thumbnail} />
+        <meta property="og:image:secure_url" content={productProps.thumbnail} />
         <meta
           property="og:title"
           content={
@@ -222,11 +227,13 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
             fullName.length > 0 ? `${fullName} | Cruthology` : 'Cruthology'
           }
         />
-        <meta property="twitter:image" content={props.thumbnail} />
+        <meta property="twitter:image" content={productProps.thumbnail} />
         <meta property="twitter:description" content={shortDescription} />
       </Helmet>
       <ResponsiveDesktop>
         <ProductDesktopComponent
+          productProps={productProps}
+          storeProps={storeProps}
           remarkPlugins={remarkPlugins}
           description={description}
           tabs={tabs}
@@ -248,6 +255,8 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
       </ResponsiveDesktop>
       <ResponsiveMobile>
         <ProductMobileComponent
+          productProps={productProps}
+          storeProps={storeProps}
           remarkPlugins={remarkPlugins}
           description={description}
           tabs={tabs}

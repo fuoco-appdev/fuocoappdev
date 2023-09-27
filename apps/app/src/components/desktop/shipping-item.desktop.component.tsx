@@ -7,17 +7,16 @@ import { Button, Line, Modal } from '@fuoco.appdev/core-ui';
 import CartController from '../../controllers/cart.controller';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
-import StoreController from '../../controllers/store.controller';
 import { useObservable } from '@ngneat/use-observable';
 import { ShippingItemResponsiveProps } from '../shipping-item.component';
 
 export function ShippingItemDesktopComponent({
+  storeProps,
   item,
   vintage,
   hasReducedPrice,
   discountPercentage,
 }: ShippingItemResponsiveProps): JSX.Element {
-  const [storeProps] = useObservable(StoreController.model.store);
   const { t } = useTranslation();
 
   return (

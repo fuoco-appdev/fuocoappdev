@@ -3,14 +3,19 @@ import { AccountEditDesktopComponent } from './desktop/account-edit.desktop.comp
 import { AccountEditMobileComponent } from './mobile/account-edit.mobile.component';
 import AccountController from '../controllers/account.controller';
 import WindowController from '../controllers/window.controller';
+import StoreController from '../controllers/store.controller';
 import { useTranslation } from 'react-i18next';
+import { useObservable } from '@ngneat/use-observable';
+import { StoreState } from '../models/store.model';
 
 export interface AccountEditResponsiveProps {
+  storeProps: StoreState;
   onSaveAsync: () => void;
 }
 
 export default function AccountEditComponent(): JSX.Element {
   const { t, i18n } = useTranslation();
+  const [storeProps] = useObservable(StoreController.model.store);
 
   const onSaveAsync = async () => {
     await AccountController.updateCustomerAsync(
@@ -27,10 +32,16 @@ export default function AccountEditComponent(): JSX.Element {
   return (
     <>
       <ResponsiveDesktop>
-        <AccountEditDesktopComponent onSaveAsync={onSaveAsync} />
+        <AccountEditDesktopComponent
+          storeProps={storeProps}
+          onSaveAsync={onSaveAsync}
+        />
       </ResponsiveDesktop>
       <ResponsiveMobile>
-        <AccountEditMobileComponent onSaveAsync={onSaveAsync} />
+        <AccountEditMobileComponent
+          storeProps={storeProps}
+          onSaveAsync={onSaveAsync}
+        />
       </ResponsiveMobile>
     </>
   );

@@ -8,24 +8,20 @@ import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
 import { LineItem, ProductVariant, Discount, Cart } from '@medusajs/medusa';
 import CartItemComponent from '../cart-item.component';
-import StoreController from '../../controllers/store.controller';
 import HomeController from '../../controllers/home.controller';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
-import WindowController from '../../controllers/window.controller';
 import { CartResponsiveProps } from '../cart.component';
 import { Store } from '@ngneat/elf';
 
 export function CartDesktopComponent({
+  cartProps,
+  homeLocalProps,
+  storeProps,
+  windowProps,
   salesChannelTabs,
 }: CartResponsiveProps): JSX.Element {
   const navigate = useNavigate();
-  const [props] = useObservable(CartController.model.store);
-  const [homeLocalProps] = useObservable(
-    HomeController.model.localStore ?? Store.prototype
-  );
-  const [storeProps] = useObservable(StoreController.model.store);
-  const [windowProps] = useObservable(WindowController.model.store);
   const { t, i18n } = useTranslation();
 
   return (
@@ -126,7 +122,7 @@ export function CartDesktopComponent({
                   />
                 </div>
               )}
-              {props.cart?.items
+              {cartProps.cart?.items
                 .sort((current: LineItem, next: LineItem) => {
                   return (
                     new Date(current.created_at).valueOf() -
@@ -137,6 +133,7 @@ export function CartDesktopComponent({
                   <CartItemComponent
                     key={item.id}
                     item={item}
+                    storeProps={storeProps}
                     onQuantityChanged={(quantity) => {
                       CartController.updateLineItemQuantityAsync(
                         quantity,
@@ -180,7 +177,7 @@ export function CartDesktopComponent({
                 </>
               )}
               {salesChannelTabs.length > 0 &&
-                (!props.cart || props.cart?.items.length <= 0) && (
+                (!cartProps.cart || cartProps.cart?.items.length <= 0) && (
                   <>
                     <div
                       className={[
@@ -250,7 +247,7 @@ export function CartDesktopComponent({
               >
                 {storeProps.selectedRegion &&
                   formatAmount({
-                    amount: props.cart?.subtotal ?? 0,
+                    amount: cartProps.cart?.subtotal ?? 0,
                     region: storeProps.selectedRegion,
                     includeTaxes: false,
                   })}
@@ -278,7 +275,7 @@ export function CartDesktopComponent({
               >
                 {storeProps.selectedRegion &&
                   formatAmount({
-                    amount: -props.cart?.discount_total ?? 0,
+                    amount: -(cartProps.cart?.discount_total ?? 0),
                     region: storeProps.selectedRegion,
                     includeTaxes: false,
                   })}
@@ -306,7 +303,7 @@ export function CartDesktopComponent({
               >
                 {storeProps.selectedRegion &&
                   formatAmount({
-                    amount: props.cart?.shipping_total ?? 0,
+                    amount: cartProps.cart?.shipping_total ?? 0,
                     region: storeProps.selectedRegion,
                     includeTaxes: false,
                   })}
@@ -334,7 +331,7 @@ export function CartDesktopComponent({
               >
                 {storeProps.selectedRegion &&
                   formatAmount({
-                    amount: props.cart?.tax_total ?? 0,
+                    amount: cartProps.cart?.tax_total ?? 0,
                     region: storeProps.selectedRegion,
                     includeTaxes: false,
                   })}
@@ -362,7 +359,7 @@ export function CartDesktopComponent({
               >
                 {storeProps.selectedRegion &&
                   formatAmount({
-                    amount: props.cart?.total ?? 0,
+                    amount: cartProps.cart?.total ?? 0,
                     region: storeProps.selectedRegion,
                     includeTaxes: true,
                   })}
@@ -390,7 +387,7 @@ export function CartDesktopComponent({
                   container: styles['input-container'],
                 }}
                 label={t('discount') ?? ''}
-                value={props.discountCode}
+                value={cartProps.discountCode}
                 onChange={(event) =>
                   CartController.updateDiscountCodeText(event.target.value)
                 }
@@ -422,7 +419,7 @@ export function CartDesktopComponent({
               styles['discount-list-container-desktop'],
             ].join(' ')}
           >
-            {props.cart?.discounts?.map((value: Discount) => {
+            {cartProps.cart?.discounts?.map((value: Discount) => {
               return (
                 <div
                   key={value.id}
@@ -478,7 +475,7 @@ export function CartDesktopComponent({
                 color: 'rgba(233, 33, 66, .35)',
               }}
               block={true}
-              disabled={!props.cart || props.cart?.items?.length <= 0}
+              disabled={!cartProps.cart || cartProps.cart?.items?.length <= 0}
               size={'large'}
               icon={<Line.ShoppingCart size={24} />}
               onClick={() =>

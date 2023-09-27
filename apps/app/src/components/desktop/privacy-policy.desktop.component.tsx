@@ -14,10 +14,9 @@ const ReactMarkdown = loadable(
 );
 
 export function PrivacyPolicyDesktopComponent({
+  privacyPolicyProps,
   remarkPlugins,
 }: PrivacyPolicyResponsiveProps): JSX.Element {
-  const [props] = useObservable(PrivacyPolicyController.model.store);
-
   return (
     <div className={[styles['root'], styles['root-desktop']].join(' ')}>
       <div className={[styles['content'], styles['content-desktop']].join(' ')}>
@@ -32,7 +31,7 @@ export function PrivacyPolicyDesktopComponent({
             >
               <ReactMarkdown
                 remarkPlugins={remarkPlugins}
-                children={props.markdown}
+                children={privacyPolicyProps.markdown}
               />
             </Typography>
           }

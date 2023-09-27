@@ -4,8 +4,12 @@ import { useEffect, useState } from 'react';
 import { ProductOptions } from '../models/product.model';
 import { ShippingItemDesktopComponent } from './desktop/shipping-item.desktop.component';
 import { ShippingItemMobileComponent } from './mobile/shipping-item.mobile.component';
+import { useObservable } from '@ngneat/use-observable';
+import StoreController from '../controllers/store.controller';
+import { StoreState } from '../models/store.model';
 
 export interface ShippingItemProps {
+  storeProps: StoreState;
   item: LineItem;
 }
 
@@ -16,6 +20,7 @@ export interface ShippingItemResponsiveProps extends ShippingItemProps {
 }
 
 export default function ShippingItemComponent({
+  storeProps,
   item,
 }: ShippingItemProps): JSX.Element {
   const [vintage, setVintage] = useState<string>('');
@@ -45,6 +50,7 @@ export default function ShippingItemComponent({
     <>
       <ResponsiveDesktop>
         <ShippingItemDesktopComponent
+          storeProps={storeProps}
           item={item}
           vintage={vintage}
           hasReducedPrice={hasReducedPrice}
@@ -53,6 +59,7 @@ export default function ShippingItemComponent({
       </ResponsiveDesktop>
       <ResponsiveMobile>
         <ShippingItemMobileComponent
+          storeProps={storeProps}
           item={item}
           vintage={vintage}
           hasReducedPrice={hasReducedPrice}

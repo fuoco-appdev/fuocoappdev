@@ -17,8 +17,10 @@ import AddressItemComponent from './address-item.component';
 import AddressFormComponent from './address-form.component';
 import { AccountAddressesDesktopComponent } from './desktop/account-addresses.desktop.component';
 import { AccountAddressesMobileComponent } from './mobile/account-addresses.mobile.component';
+import { AccountState } from '../models/account.model';
 
 export interface AccountAddressResponsiveProps {
+  accountProps: AccountState;
   onAddAddressAsync: () => void;
   onEditAddressAsync: () => void;
   onDeleteAddressConfirmedAsync: () => void;
@@ -34,7 +36,7 @@ export interface AccountAddressResponsiveProps {
 
 export default function AccountAddressesComponent(): JSX.Element {
   const { t, i18n } = useTranslation();
-  const [props] = useObservable(AccountController.model.store);
+  const [accountProps] = useObservable(AccountController.model.store);
   const [openAddDropdown, setOpenAddDropdown] = useState<boolean>(false);
   const [openEditDropdown, setOpenEditDropdown] = useState<boolean>(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
@@ -53,13 +55,15 @@ export default function AccountAddressesComponent(): JSX.Element {
       phoneNumber: undefined,
     });
 
-    const errors = AccountController.getAddressFormErrors(props.shippingForm);
+    const errors = AccountController.getAddressFormErrors(
+      accountProps.shippingForm
+    );
     if (errors) {
       AccountController.updateShippingAddressErrors(errors);
       return;
     }
 
-    await AccountController.addAddressAsync(props.shippingForm);
+    await AccountController.addAddressAsync(accountProps.shippingForm);
     setOpenAddDropdown(false);
   };
 
@@ -93,7 +97,7 @@ export default function AccountAddressesComponent(): JSX.Element {
   };
 
   const onDeleteAddressConfirmedAsync = async () => {
-    const selectedAddress = props.selectedAddress as Address | undefined;
+    const selectedAddress = accountProps.selectedAddress as Address | undefined;
     AccountController.deleteAddressAsync(selectedAddress?.id);
     setDeleteModalVisible(false);
   };
@@ -141,6 +145,7 @@ export default function AccountAddressesComponent(): JSX.Element {
     <>
       <ResponsiveDesktop>
         <AccountAddressesDesktopComponent
+          accountProps={accountProps}
           onAddAddressAsync={onAddAddressAsync}
           onEditAddressAsync={onEditAddressAsync}
           onDeleteAddressConfirmedAsync={onDeleteAddressConfirmedAsync}
@@ -156,6 +161,7 @@ export default function AccountAddressesComponent(): JSX.Element {
       </ResponsiveDesktop>
       <ResponsiveMobile>
         <AccountAddressesMobileComponent
+          accountProps={accountProps}
           onAddAddressAsync={onAddAddressAsync}
           onEditAddressAsync={onEditAddressAsync}
           onDeleteAddressConfirmedAsync={onDeleteAddressConfirmedAsync}

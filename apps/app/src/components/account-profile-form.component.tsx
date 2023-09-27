@@ -5,6 +5,7 @@ import StoreController from '../controllers/store.controller';
 import { CountryDataProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/input-phone-number/country-data';
 import { AccountProfileFormDesktopComponent } from './desktop/account-profile-form.desktop.component';
 import { AccountProfileFormMobileComponent } from './mobile/account-profile-form.mobile.component';
+import { StoreState } from '../models/store.model';
 
 export interface ProfileFormOnChangeCallbacks {
   firstName?: (event: ChangeEvent<HTMLInputElement>) => void;
@@ -32,6 +33,7 @@ export interface ProfileFormValues {
 }
 
 export interface AccountProfileFormProps {
+  storeProps: StoreState;
   values?: ProfileFormValues;
   errors?: ProfileFormErrors;
   onChangeCallbacks?: ProfileFormOnChangeCallbacks;
@@ -43,11 +45,11 @@ export interface AccountProfileFormResponsiveProps
 }
 
 export default function AccountProfileFormComponent({
+  storeProps,
   values,
   errors,
   onChangeCallbacks,
 }: AccountProfileFormProps): JSX.Element {
-  const [storeProps] = useObservable(StoreController.model.store);
   const [selectedCountry, setSelectedCountry] = useState<string>('');
 
   useEffect(() => {
@@ -64,6 +66,7 @@ export default function AccountProfileFormComponent({
     <>
       <ResponsiveDesktop>
         <AccountProfileFormDesktopComponent
+          storeProps={storeProps}
           values={values}
           errors={errors}
           onChangeCallbacks={onChangeCallbacks}
@@ -72,6 +75,7 @@ export default function AccountProfileFormComponent({
       </ResponsiveDesktop>
       <ResponsiveMobile>
         <AccountProfileFormMobileComponent
+          storeProps={storeProps}
           values={values}
           errors={errors}
           onChangeCallbacks={onChangeCallbacks}

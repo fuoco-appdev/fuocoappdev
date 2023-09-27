@@ -18,12 +18,14 @@ import loadable from '@loadable/component';
 const ReactMarkdown = loadable(
   async () => {
     const reactMarkdown = await import('react-markdown');
-    return (props: any) => <reactMarkdown.default {...props} />;
+    return (productProps: any) => <reactMarkdown.default {...productProps} />;
   },
   { ssr: false }
 );
 
 export function ProductMobileComponent({
+  productProps,
+  storeProps,
   remarkPlugins,
   description,
   tabs,
@@ -42,21 +44,19 @@ export function ProductMobileComponent({
   setActiveDetails,
   setDescription,
 }: ProductResponsiveProps): JSX.Element {
-  const [props] = useObservable(ProductController.model.store);
-  const [storeProps] = useObservable(StoreController.model.store);
   const { t } = useTranslation();
   const [showMore, setShowMore] = useState<boolean>(false);
   const [disableShowMore, setDisableShowMore] = useState<boolean>(false);
 
   useMobileEffect(() => {
-    if (props.description.length < 356) {
+    if (productProps.description.length < 356) {
       setDisableShowMore(true);
-      setDescription(props.description);
+      setDescription(productProps.description);
     } else {
       setDisableShowMore(false);
       if (!showMore) {
         let index = 355;
-        let shortDescription = props.description.substring(0, index);
+        let shortDescription = productProps.description.substring(0, index);
         if (shortDescription.endsWith('.')) {
           shortDescription += '..';
         } else {
@@ -64,10 +64,10 @@ export function ProductMobileComponent({
         }
         setDescription(shortDescription);
       } else {
-        setDescription(props.description);
+        setDescription(productProps.description);
       }
     }
-  }, [props.description, showMore]);
+  }, [productProps.description, showMore]);
 
   return (
     <div className={[styles['root'], styles['root-mobile']].join(' ')}>
@@ -77,13 +77,13 @@ export function ProductMobileComponent({
           styles['thumbnail-container-mobile'],
         ].join(' ')}
       >
-        {!props.isLoading ? (
+        {!productProps.isLoading ? (
           <img
             className={[
               styles['thumbnail-image'],
               styles['thumbnail-image-mobile'],
             ].join(' ')}
-            src={props.thumbnail || '../assets/svg/wine-bottle.svg'}
+            src={productProps.thumbnail || '../assets/svg/wine-bottle.svg'}
           />
         ) : (
           <Skeleton
@@ -107,14 +107,14 @@ export function ProductMobileComponent({
               styles['title-container-mobile'],
             ].join(' ')}
           >
-            {!props.isLoading ? (
+            {!productProps.isLoading ? (
               <>
                 <div
                   className={[styles['title'], styles['title-mobile']].join(
                     ' '
                   )}
                 >
-                  {props.title}
+                  {productProps.title}
                 </div>
                 <div
                   className={[
@@ -122,7 +122,7 @@ export function ProductMobileComponent({
                     styles['subtitle-mobile'],
                   ].join(' ')}
                 >
-                  {props.subtitle}
+                  {productProps.subtitle}
                 </div>
               </>
             ) : (
@@ -137,18 +137,18 @@ export function ProductMobileComponent({
             )}
           </div>
           {/* <div className={styles['like-container-mobile']}>
-              <div className={styles['like-count-mobile']}>{props.likeCount}</div>
+              <div className={styles['like-count-mobile']}>{productProps.likeCount}</div>
               <Button
                 rippleProps={{
-                  color: !props.isLiked
+                  color: !productProps.isLiked
                     ? 'rgba(233, 33, 66, .35)'
                     : 'rgba(42, 42, 95, .35)',
                 }}
                 rounded={true}
-                onClick={() => ProductController.updateIsLiked(!props.isLiked)}
+                onClick={() => ProductController.updateIsLiked(!productProps.isLiked)}
                 type={'text'}
                 icon={
-                  props.isLiked ? (
+                  productProps.isLiked ? (
                     <Line.Favorite size={24} color={'#E92142'} />
                   ) : (
                     <Line.FavoriteBorder size={24} color={'#2A2A5F'} />
@@ -163,7 +163,7 @@ export function ProductMobileComponent({
             styles['description-container-mobile'],
           ].join(' ')}
         >
-          {!props.isLoading ? (
+          {!productProps.isLoading ? (
             <ReactMarkdown
               remarkPlugins={remarkPlugins}
               children={description}
@@ -178,31 +178,33 @@ export function ProductMobileComponent({
               ].join(' ')}
             />
           )}
-          {!props.isLoading && props.description && !disableShowMore && (
-            <div
-              className={[
-                styles['show-more-container'],
-                styles['show-more-container-mobile'],
-              ].join(' ')}
-            >
-              <Typography.Link
+          {!productProps.isLoading &&
+            productProps.description &&
+            !disableShowMore && (
+              <div
                 className={[
-                  styles['show-more-link'],
-                  styles['show-more-link-mobile'],
+                  styles['show-more-container'],
+                  styles['show-more-container-mobile'],
                 ].join(' ')}
-                onClick={() => setShowMore(!showMore)}
               >
-                {!showMore ? t('showMore') : t('showLess')}
-              </Typography.Link>
-            </div>
-          )}
+                <Typography.Link
+                  className={[
+                    styles['show-more-link'],
+                    styles['show-more-link-mobile'],
+                  ].join(' ')}
+                  onClick={() => setShowMore(!showMore)}
+                >
+                  {!showMore ? t('showMore') : t('showLess')}
+                </Typography.Link>
+              </div>
+            )}
         </div>
         <div className={[styles['price'], styles['price-mobile']].join(' ')}>
-          {!props.isLoading ? (
+          {!productProps.isLoading ? (
             <>
               {storeProps.selectedRegion &&
                 formatAmount({
-                  amount: props.selectedVariant?.calculated_price ?? 0,
+                  amount: productProps.selectedVariant?.calculated_price ?? 0,
                   region: storeProps.selectedRegion,
                   includeTaxes: false,
                 })}
@@ -213,8 +215,8 @@ export function ProductMobileComponent({
                   styles['inventory-quantity-mobile'],
                 ].join(' ')}
               >
-                ({props.selectedVariant?.inventory_quantity}&nbsp;{t('inStock')}
-                )
+                ({productProps.selectedVariant?.inventory_quantity}&nbsp;
+                {t('inStock')})
               </span>
             </>
           ) : (
@@ -234,9 +236,9 @@ export function ProductMobileComponent({
             styles['tags-container-mobile'],
           ].join(' ')}
         >
-          {!props.isLoading ? (
+          {!productProps.isLoading ? (
             <>
-              {props.tags.map((value: ProductTag) => (
+              {productProps.tags.map((value: ProductTag) => (
                 <div
                   className={[styles['tag'], styles['tag-mobile']].join(' ')}
                 >
@@ -264,7 +266,7 @@ export function ProductMobileComponent({
             styles['tab-container-mobile'],
           ].join(' ')}
         >
-          {!props.isLoading ? (
+          {!productProps.isLoading ? (
             <Tabs
               flex={true}
               classNames={{
@@ -291,7 +293,7 @@ export function ProductMobileComponent({
               styles['options-container-mobile'],
             ].join(' ')}
           >
-            {!props.isLoading ? (
+            {!productProps.isLoading ? (
               <>
                 <div
                   className={[
@@ -551,7 +553,7 @@ export function ProductMobileComponent({
             )}
           </div>
         </div>
-        {!props.isLoading ? (
+        {!productProps.isLoading ? (
           <Button
             classNames={{
               container: styles['add-to-cart-button-container'],
@@ -563,16 +565,16 @@ export function ProductMobileComponent({
               color: 'rgba(233, 33, 66, .35)',
             }}
             icon={
-              !props.selectedVariant?.purchasable ? (
+              !productProps.selectedVariant?.purchasable ? (
                 <Line.ProductionQuantityLimits size={24} />
               ) : (
                 <Line.AddShoppingCart size={24} />
               )
             }
-            disabled={!props.selectedVariant?.purchasable}
+            disabled={!productProps.selectedVariant?.purchasable}
             onClick={() =>
               ProductController.addToCartAsync(
-                props.selectedVariant?.id,
+                productProps.selectedVariant?.id ?? '',
                 1,
                 () =>
                   WindowController.addToast({
@@ -580,7 +582,7 @@ export function ProductMobileComponent({
                     message: t('addedToCart') ?? '',
                     description:
                       t('addedToCartDescription', {
-                        item: props.title,
+                        item: productProps.title,
                       }) ?? '',
                     type: 'success',
                   }),
@@ -594,8 +596,8 @@ export function ProductMobileComponent({
               )
             }
           >
-            {!props.selectedVariant?.purchasable && t('outOfStock')}
-            {props.selectedVariant?.purchasable && t('addToCart')}
+            {!productProps.selectedVariant?.purchasable && t('outOfStock')}
+            {productProps.selectedVariant?.purchasable && t('addToCart')}
           </Button>
         ) : (
           <Skeleton
@@ -611,7 +613,7 @@ export function ProductMobileComponent({
             styles['tab-container-mobile'],
           ].join(' ')}
         >
-          {!props.isLoading ? (
+          {!productProps.isLoading ? (
             <Tabs
               flex={true}
               classNames={{
@@ -641,7 +643,7 @@ export function ProductMobileComponent({
               ].join(' ')}
             />
           )}
-          {!props.isLoading ? (
+          {!productProps.isLoading ? (
             <>
               {activeDetails === 'information' && (
                 <div
@@ -670,7 +672,7 @@ export function ProductMobileComponent({
                         styles['details-item-value-mobile'],
                       ].join(' ')}
                     >
-                      {props.material}
+                      {productProps.material}
                     </div>
                   </div>
                   <div
@@ -693,7 +695,7 @@ export function ProductMobileComponent({
                         styles['details-item-value-mobile'],
                       ].join(' ')}
                     >
-                      {props.weight}
+                      {productProps.weight}
                     </div>
                   </div>
                   <div
@@ -716,7 +718,7 @@ export function ProductMobileComponent({
                         styles['details-item-value-mobile'],
                       ].join(' ')}
                     >
-                      {props.countryOrigin}
+                      {productProps.countryOrigin}
                     </div>
                   </div>
                   <div
@@ -739,7 +741,7 @@ export function ProductMobileComponent({
                         styles['details-item-value-mobile'],
                       ].join(' ')}
                     >
-                      {props.dimensions}
+                      {productProps.dimensions}
                     </div>
                   </div>
                   <div
@@ -762,7 +764,7 @@ export function ProductMobileComponent({
                         styles['details-item-value-mobile'],
                       ].join(' ')}
                     >
-                      {props.type}
+                      {productProps.type}
                     </div>
                   </div>
                 </div>

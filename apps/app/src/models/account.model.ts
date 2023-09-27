@@ -89,7 +89,7 @@ export class AccountModel extends Model {
             phoneNumber: '',
           },
           editShippingFormErrors: {},
-          activeTabId: '',
+          activeTabId: '/account/order-history',
           prevTabIndex: 0,
           activeTabIndex: 0,
           areOrdersLoading: false,

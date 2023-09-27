@@ -28,33 +28,42 @@ import { Customer } from '@medusajs/medusa';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import Skeleton from 'react-loading-skeleton';
 import { useMobileEffect } from '../responsive.component';
+import { AccountResponsiveProps } from '../account.component';
+import StoreController from 'src/controllers/store.controller';
 
-export function AccountMobileComponent(): JSX.Element {
-  const [props] = useObservable(AccountController.model.store);
-  const [windowProps] = useObservable(WindowController.model.store);
+export function AccountMobileComponent({
+  windowProps,
+  accountProps,
+  storeProps,
+}: AccountResponsiveProps): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const location = useLocation();
 
   useMobileEffect(() => {
-    const loadedLocation = windowProps.loadedLocationPath as string | undefined;
-    if (loadedLocation && loadedLocation !== RoutePathsType.Account) {
-      if (
-        loadedLocation.startsWith(RoutePathsType.Account) &&
-        !loadedLocation.startsWith(RoutePathsType.AccountSettings)
-      ) {
-        AccountController.updateActiveTabId(loadedLocation);
-      }
-      WindowController.updateLoadedLocationPath(undefined);
-    } else {
-      if (!loadedLocation?.startsWith(RoutePathsType.AccountSettings)) {
-        navigate(props.activeTabId);
-      }
+    if (windowProps.activeRoute === RoutePathsType.Account) {
+      navigate(RoutePathsType.AccountOrderHistory);
     }
-  }, [windowProps.loadedLocationPath]);
+  }, [windowProps.activeRoute]);
 
-  const account = props.account as core.Account;
-  const customer = props.customer as Customer;
+  // useMobileEffect(() => {
+  //   const loadedLocation = windowProps.loadedLocationPath as string | undefined;
+  //   if (loadedLocation && loadedLocation !== RoutePathsType.Account) {
+  //     if (
+  //       loadedLocation.startsWith(RoutePathsType.Account) &&
+  //       !loadedLocation.startsWith(RoutePathsType.AccountSettings)
+  //     ) {
+  //       AccountController.updateActiveTabId(loadedLocation);
+  //     }
+  //     WindowController.updateLoadedLocationPath(undefined);
+  //   } else {
+  //     if (!loadedLocation?.startsWith(RoutePathsType.AccountSettings)) {
+  //       navigate(accountProps.activeTabId);
+  //     }
+  //   }
+  // }, [windowProps.loadedLocationPath]);
+
+  const account = accountProps.account as core.Account;
+  const customer = accountProps.customer as Customer;
   return (
     <div className={[styles['root'], styles['root-mobile']].join(' ')}>
       <div className={[styles['top-bar'], styles['top-bar-mobile']].join(' ')}>
@@ -114,8 +123,9 @@ export function AccountMobileComponent(): JSX.Element {
             ].join(' ')}
           >
             <AccountProfileFormComponent
-              values={props.profileForm}
-              errors={props.profileFormErrors}
+              storeProps={storeProps}
+              values={accountProps.profileForm}
+              errors={accountProps.profileFormErrors}
               onChangeCallbacks={{
                 firstName: (event) =>
                   AccountController.updateProfile({
@@ -154,7 +164,7 @@ export function AccountMobileComponent(): JSX.Element {
                   phoneNumber: undefined,
                 });
                 const errors = AccountController.getProfileFormErrors(
-                  props.profileForm
+                  accountProps.profileForm
                 );
                 if (errors) {
                   AccountController.updateProfileErrors(errors);
@@ -194,7 +204,7 @@ export function AccountMobileComponent(): JSX.Element {
                 },
               }}
               text={customer?.first_name}
-              src={props.profileUrl}
+              src={accountProps.profileUrl}
               editMode={true}
               onChange={AccountController.uploadAvatarAsync}
               size={'large'}
@@ -228,7 +238,7 @@ export function AccountMobileComponent(): JSX.Element {
             <Tabs
               flex={true}
               touchScreen={true}
-              activeId={props.activeTabId}
+              activeId={accountProps.activeTabId}
               classNames={{
                 tabButton: [
                   styles['tab-button'],
@@ -272,19 +282,19 @@ export function AccountMobileComponent(): JSX.Element {
                 React.cloneElement(child, {
                   classNames: {
                     enter:
-                      props.activeTabIndex > props.prevTabIndex
+                      accountProps.activeTabIndex > accountProps.prevTabIndex
                         ? styles['left-to-right-enter']
                         : styles['right-to-left-enter'],
                     enterActive:
-                      props.activeTabIndex > props.prevTabIndex
+                      accountProps.activeTabIndex > accountProps.prevTabIndex
                         ? styles['left-to-right-enter-active']
                         : styles['right-to-left-enter-active'],
                     exit:
-                      props.activeTabIndex > props.prevTabIndex
+                      accountProps.activeTabIndex > accountProps.prevTabIndex
                         ? styles['left-to-right-exit']
                         : styles['right-to-left-exit'],
                     exitActive:
-                      props.activeTabIndex > props.prevTabIndex
+                      accountProps.activeTabIndex > accountProps.prevTabIndex
                         ? styles['left-to-right-exit-active']
                         : styles['right-to-left-exit-active'],
                   },
@@ -293,22 +303,22 @@ export function AccountMobileComponent(): JSX.Element {
               }
             >
               <CSSTransition
-                key={props.activeTabIndex}
+                key={accountProps.activeTabIndex}
                 classNames={{
                   enter:
-                    props.activeTabIndex < props.prevTabIndex
+                    accountProps.activeTabIndex < accountProps.prevTabIndex
                       ? styles['left-to-right-enter']
                       : styles['right-to-left-enter'],
                   enterActive:
-                    props.activeTabIndex < props.prevTabIndex
+                    accountProps.activeTabIndex < accountProps.prevTabIndex
                       ? styles['left-to-right-enter-active']
                       : styles['right-to-left-enter-active'],
                   exit:
-                    props.activeTabIndex < props.prevTabIndex
+                    accountProps.activeTabIndex < accountProps.prevTabIndex
                       ? styles['left-to-right-exit']
                       : styles['right-to-left-exit'],
                   exitActive:
-                    props.activeTabIndex < props.prevTabIndex
+                    accountProps.activeTabIndex < accountProps.prevTabIndex
                       ? styles['left-to-right-exit-active']
                       : styles['right-to-left-exit-active'],
                 }}

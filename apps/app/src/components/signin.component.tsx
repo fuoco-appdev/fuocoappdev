@@ -15,8 +15,10 @@ import { useObservable } from '@ngneat/use-observable';
 import { SigninDesktopComponent } from './desktop/signin.desktop.component';
 import { SigninMobileComponent } from './mobile/signin.mobile.component';
 import { Helmet } from 'react-helmet';
+import { SigninState } from '../models/signin.model';
 
 export interface SigninResponsiveProps {
+  signInProps: SigninState;
   setAuthError: (error: AuthError | null) => void;
   emailError: string;
   passwordError: string;
@@ -28,7 +30,7 @@ export default function SigninComponent(): JSX.Element {
   const location = useLocation();
   SigninController.model.location = location;
   const { t } = useTranslation();
-  const [props] = useObservable(SigninController.model.store);
+  const [signInProps] = useObservable(SigninController.model.store);
   const [authError, setAuthError] = useState<AuthError | null>(null);
   const [emailError, setEmailError] = useState<string>('');
   const [passwordError, setPasswordError] = useState<string>('');
@@ -40,14 +42,17 @@ export default function SigninComponent(): JSX.Element {
     } else if (authError?.message === 'Email not confirmed') {
       setEmailError(t('emailNotConfirmed') ?? '');
       setPasswordError('');
-      SigninController.resendEmailConfirmationAsync(props.email ?? '', () => {
-        WindowController.addToast({
-          key: `signin-email-confirmation-sent-${Math.random()}`,
-          message: t('emailConfirmation') ?? '',
-          description: t('emailConfirmationDescription') ?? '',
-          type: 'loading',
-        });
-      });
+      SigninController.resendEmailConfirmationAsync(
+        signInProps.email ?? '',
+        () => {
+          WindowController.addToast({
+            key: `signin-email-confirmation-sent-${Math.random()}`,
+            message: t('emailConfirmation') ?? '',
+            description: t('emailConfirmationDescription') ?? '',
+            type: 'loading',
+          });
+        }
+      );
     } else {
       if (authError) {
         WindowController.addToast({
@@ -61,7 +66,7 @@ export default function SigninComponent(): JSX.Element {
       setEmailError('');
       setPasswordError('');
     }
-  }, [authError, props.email]);
+  }, [authError, signInProps.email]);
   return (
     <>
       <Helmet>
@@ -92,6 +97,7 @@ export default function SigninComponent(): JSX.Element {
       </Helmet>
       <ResponsiveDesktop>
         <SigninDesktopComponent
+          signInProps={signInProps}
           setAuthError={setAuthError}
           emailError={emailError}
           passwordError={passwordError}
@@ -99,6 +105,7 @@ export default function SigninComponent(): JSX.Element {
       </ResponsiveDesktop>
       <ResponsiveMobile>
         <SigninMobileComponent
+          signInProps={signInProps}
           setAuthError={setAuthError}
           emailError={emailError}
           passwordError={passwordError}

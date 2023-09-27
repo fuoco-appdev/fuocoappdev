@@ -6,7 +6,6 @@ import {
   useState,
 } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import HomeController from '../../controllers/home.controller';
 import styles from '../home.module.scss';
 import { Alert, Button } from '@fuoco.appdev/core-ui';
 import { RoutePathsType } from '../../route-paths';
@@ -15,14 +14,16 @@ import SupabaseService from '../../services/supabase.service';
 import { useObservable } from '@ngneat/use-observable';
 import { useSpring } from 'react-spring';
 import * as core from '../../protobuf/core_pb';
-import { Store } from '@ngneat/elf';
 import Map, { MapRef, Marker, Popup } from 'react-map-gl';
 import SecretsService from '../../services/secrets.service';
 import ConfigService from '../../services/config.service';
 import { InventoryLocation } from '../../models/home.model';
 import { HomeResponsiveProps } from '../home.component';
+import HomeController from '../../controllers/home.controller';
 
 export function HomeDesktopComponent({
+  homeProps,
+  homeLocalProps,
   mapRef,
   selectedPoint,
   setMapStyleLoaded,
@@ -30,10 +31,6 @@ export function HomeDesktopComponent({
 }: HomeResponsiveProps): JSX.Element {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const [props] = useObservable(HomeController.model.store);
-  const [localProps] = useObservable(
-    HomeController.model.localStore ?? Store.prototype
-  );
 
   return (
     <div className={[styles['root'], styles['root-desktop']].join(' ')}>
@@ -76,7 +73,7 @@ export function HomeDesktopComponent({
             ].join(' ')}
           >
             {t('utilizeSearchEngineDescription', {
-              product_count: props.wineCount,
+              product_count: homeProps.wineCount,
             })}
           </div>
           <div>
@@ -103,21 +100,21 @@ export function HomeDesktopComponent({
           styles['map-container-desktop'],
         ].join(' ')}
       >
-        {props.accessToken && (
+        {homeProps.accessToken && (
           <Map
             style={{ borderRadius: 6, minWidth: '100%' }}
-            mapboxAccessToken={props.accessToken}
+            mapboxAccessToken={homeProps.accessToken}
             ref={mapRef}
             initialViewState={{
-              longitude: localProps.longitude,
-              latitude: localProps.latitude,
-              zoom: localProps.zoom,
+              longitude: homeLocalProps.longitude,
+              latitude: homeLocalProps.latitude,
+              zoom: homeLocalProps.zoom,
             }}
             mapStyle={ConfigService.mapbox.style_url}
             onMove={(e) => HomeController.onMapMove(e.viewState)}
             onLoad={(e) => setMapStyleLoaded(e.target ? true : false)}
           >
-            {props.inventoryLocations?.map(
+            {homeProps.inventoryLocations?.map(
               (point: InventoryLocation, index: number) => (
                 <Marker
                   key={`marker-${index}`}
@@ -131,7 +128,7 @@ export function HomeDesktopComponent({
                 >
                   <img
                     src={
-                      props.selectedInventoryLocation?.placeName !==
+                      homeProps.selectedInventoryLocation?.placeName !==
                       point.placeName
                         ? '../assets/svg/cruthology-pin.svg'
                         : '../assets/svg/cruthology-selected-pin.svg'
@@ -191,7 +188,7 @@ export function HomeDesktopComponent({
                         size={'tiny'}
                         disabled={
                           selectedPoint?.placeName ===
-                          props.selectedInventoryLocation?.placeName
+                          homeProps.selectedInventoryLocation?.placeName
                         }
                         type={'text'}
                         onClick={() =>
@@ -201,7 +198,7 @@ export function HomeDesktopComponent({
                         }
                       >
                         {selectedPoint?.placeName !==
-                        props.selectedInventoryLocation?.placeName
+                        homeProps.selectedInventoryLocation?.placeName
                           ? t('select')
                           : t('selected')}
                       </Button>

@@ -26,6 +26,9 @@ import { WindowResponsiveProps } from '../window.component';
 import { useDesktopEffect } from '../responsive.component';
 
 export function WindowDesktopComponent({
+  windowProps,
+  windowLocalProps,
+  accountProps,
   openMore,
   isLanguageOpen,
   setOpenMore,
@@ -38,21 +41,16 @@ export function WindowDesktopComponent({
   const [isSideBarOpen, setIsSideBarOpen] = useState<boolean>(true);
   const [isNavigateBackOpen, setIsNavigateBackOpen] = useState<boolean>(true);
   const [date, setDate] = useState<Date | null>(null);
-  const [props] = useObservable(WindowController.model.store);
-  const [accountProps] = useObservable(AccountController.model.store);
-  const [localProps] = useObservable(
-    WindowController.model.localStore ?? Store.prototype
-  );
 
   useDesktopEffect(() => {
     setDate(new Date(Date.now()));
   }, []);
 
   useDesktopEffect(() => {
-    setIsNavigateBackOpen(props.showNavigateBack);
-  }, [props.showNavigateBack]);
+    setIsNavigateBackOpen(windowProps.showNavigateBack);
+  }, [windowProps.showNavigateBack]);
 
-  const account = props.account as core.Account;
+  const account = windowProps.account as core.Account;
   const customer = accountProps.customer as Customer;
   return (
     <div className={[styles['root'], styles['root-desktop']].join(' ')}>
@@ -98,7 +96,7 @@ export function WindowDesktopComponent({
             styles['top-bar-right-content-desktop'],
           ].join(' ')}
         >
-          {!props.account && (
+          {!windowProps.account && (
             <div
               className={[
                 styles['top-bar-button-container'],
@@ -118,7 +116,7 @@ export function WindowDesktopComponent({
                   color: 'rgba(252, 245, 227, .35)',
                 }}
                 hideText={true}
-                language={localProps.languageCode}
+                language={windowLocalProps.languageCode}
                 onChange={(isoCode: string, info) =>
                   WindowController.updateLanguageInfo(isoCode, info)
                 }
@@ -149,8 +147,8 @@ export function WindowDesktopComponent({
               rounded={true}
               size={'tiny'}
               icon={
-                props.activeRoute !== RoutePathsType.Cart &&
-                props.activeRoute !== RoutePathsType.Checkout ? (
+                windowProps.activeRoute !== RoutePathsType.Cart &&
+                windowProps.activeRoute !== RoutePathsType.Checkout ? (
                   <Line.ShoppingCart
                     size={24}
                     color={'rgba(252, 245, 227, .8)'}
@@ -163,7 +161,7 @@ export function WindowDesktopComponent({
                 )
               }
             />
-            {props.cartCount > 0 && (
+            {windowProps.cartCount > 0 && (
               <div
                 className={[
                   styles['cart-number-container'],
@@ -176,12 +174,12 @@ export function WindowDesktopComponent({
                     styles['cart-number-desktop'],
                   ].join(' ')}
                 >
-                  {props.cartCount}
+                  {windowProps.cartCount}
                 </span>
               </div>
             )}
           </div>
-          {!props.account && (
+          {!windowProps.account && (
             <>
               <div
                 className={[
@@ -199,7 +197,7 @@ export function WindowDesktopComponent({
                   rounded={true}
                   size={'tiny'}
                   icon={
-                    props.activeRoute !== RoutePathsType.Signup ? (
+                    windowProps.activeRoute !== RoutePathsType.Signup ? (
                       <Line.PersonAdd
                         size={24}
                         color={'rgba(252, 245, 227, .8)'}
@@ -229,7 +227,7 @@ export function WindowDesktopComponent({
                   rounded={true}
                   size={'tiny'}
                   icon={
-                    props.activeRoute !== RoutePathsType.Signin ? (
+                    windowProps.activeRoute !== RoutePathsType.Signin ? (
                       <Line.Login size={24} color={'rgba(252, 245, 227, .8)'} />
                     ) : (
                       <Line.Login size={24} color={'rgba(252, 245, 227, 1)'} />
@@ -239,7 +237,7 @@ export function WindowDesktopComponent({
               </div>
             </>
           )}
-          {props.account && (
+          {windowProps.account && (
             <>
               {/* <div className={styles['tab-button-container']}>
                       <Button
@@ -247,7 +245,7 @@ export function WindowDesktopComponent({
                           color: 'rgba(252, 245, 227, .35)',
                         }}
                         onClick={() => navigate(RoutePathsType.Notifications)}
-                        disabled={props.activeRoute === RoutePathsType.Cart}
+                        disabled={windowProps.activeRoute === RoutePathsType.Cart}
                         type={'text'}
                         rounded={true}
                         size={'tiny'}
@@ -256,7 +254,7 @@ export function WindowDesktopComponent({
                           <Line.Notifications
                             size={24}
                             color={
-                              props.activeRoute === RoutePathsType.Notifications
+                              windowProps.activeRoute === RoutePathsType.Notifications
                                 ? 'rgba(252, 245, 227, 1)'
                                 : 'rgba(252, 245, 227, .6)'
                             }
@@ -288,7 +286,9 @@ export function WindowDesktopComponent({
                       <Line.AccountCircle
                         size={24}
                         color={
-                          props.activeRoute?.startsWith(RoutePathsType.Account)
+                          windowProps.activeRoute?.startsWith(
+                            RoutePathsType.Account
+                          )
                             ? 'rgba(252, 245, 227, 1)'
                             : 'rgba(252, 245, 227, .8)'
                         }
@@ -296,7 +296,9 @@ export function WindowDesktopComponent({
                     ) : (
                       <div
                         className={
-                          props.activeRoute?.startsWith(RoutePathsType.Account)
+                          windowProps.activeRoute?.startsWith(
+                            RoutePathsType.Account
+                          )
                             ? [
                                 styles['avatar-container-selected'],
                                 styles['avatar-container-selected-desktop'],
@@ -349,7 +351,7 @@ export function WindowDesktopComponent({
             )}
           >
             <Tabs
-              activeId={props.activeRoute}
+              activeId={windowProps.activeRoute}
               direction={'vertical'}
               type={'underlined'}
               onChange={(id: string) => navigate(id)}
@@ -470,7 +472,7 @@ export function WindowDesktopComponent({
                     setIsNavigateBackOpen(false);
 
                     if (
-                      props.activeRoute?.startsWith(
+                      windowProps.activeRoute?.startsWith(
                         RoutePathsType.AccountSettings
                       )
                     ) {
@@ -490,7 +492,7 @@ export function WindowDesktopComponent({
                   styles['navigation-back-center-content-desktop'],
                 ].join(' ')}
               >
-                {props.activeRoute?.startsWith(
+                {windowProps.activeRoute?.startsWith(
                   RoutePathsType.AccountSettings
                 ) && (
                   <>
@@ -502,7 +504,7 @@ export function WindowDesktopComponent({
                     </div>
                   </>
                 )}
-                {props.activeRoute === RoutePathsType.Checkout && (
+                {windowProps.activeRoute === RoutePathsType.Checkout && (
                   <>
                     <Line.ShoppingCart size={24} />
                     <div
@@ -512,7 +514,7 @@ export function WindowDesktopComponent({
                     </div>
                   </>
                 )}
-                {props.activeRoute === RoutePathsType.TermsOfService && (
+                {windowProps.activeRoute === RoutePathsType.TermsOfService && (
                   <>
                     <Line.Gavel size={24} />
                     <div
@@ -522,7 +524,7 @@ export function WindowDesktopComponent({
                     </div>
                   </>
                 )}
-                {props.activeRoute === RoutePathsType.PrivacyPolicy && (
+                {windowProps.activeRoute === RoutePathsType.PrivacyPolicy && (
                   <>
                     <Line.Gavel size={24} />
                     <div
@@ -532,7 +534,7 @@ export function WindowDesktopComponent({
                     </div>
                   </>
                 )}
-                {props.activeRoute?.startsWith(
+                {windowProps.activeRoute?.startsWith(
                   RoutePathsType.OrderConfirmed
                 ) && (
                   <>
@@ -551,7 +553,7 @@ export function WindowDesktopComponent({
                   styles['navigation-back-right-content-desktop'],
                 ].join(' ')}
               >
-                {props.activeRoute?.startsWith(
+                {windowProps.activeRoute?.startsWith(
                   RoutePathsType.AccountSettings
                 ) && (
                   <Button
@@ -595,7 +597,7 @@ export function WindowDesktopComponent({
           },
         }}
         timeout={2500}
-        toasts={props.toast ? [props.toast] : []}
+        toasts={windowProps.toast ? [windowProps.toast] : []}
         transition={'down'}
         align={'right'}
       />

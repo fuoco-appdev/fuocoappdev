@@ -14,6 +14,7 @@ import { RoutePathsType } from '../../route-paths';
 import { useNavigate } from 'react-router-dom';
 
 export function CartItemMobileComponent({
+  storeProps,
   item,
   onRemove,
   vintage,
@@ -24,7 +25,6 @@ export function CartItemMobileComponent({
   incrementItemQuantity,
   decrementItemQuantity,
 }: CartItemResponsiveProps): JSX.Element {
-  const [storeProps] = useObservable(StoreController.model.store);
   const navigate = useNavigate();
   const { t } = useTranslation();
 

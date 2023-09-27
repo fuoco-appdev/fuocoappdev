@@ -42,7 +42,6 @@ export default function StripePayButtonComponent({
 }: StripePayButtonProps): JSX.Element {
   const navigate = useNavigate();
   const stripe = useStripe();
-  const [props] = useObservable(CheckoutController.model.store);
   const elements = useElements();
   const cardRef = useRef<StripeCardNumberElement | null | undefined>(null);
 

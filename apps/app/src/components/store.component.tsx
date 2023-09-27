@@ -28,12 +28,16 @@ import * as core from '../protobuf/core_pb';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import LoadingComponent from './loading.component';
 import { Store } from '@ngneat/elf';
-import { ProductTabs } from '../models/store.model';
+import { ProductTabs, StoreState } from '../models/store.model';
 import { Country, Region, Product, SalesChannel } from '@medusajs/medusa';
 import ProductPreviewComponent from './product-preview.component';
 import ReactCountryFlag from 'react-country-flag';
 import HomeController from '../controllers/home.controller';
-import { InventoryLocation } from '../models/home.model';
+import {
+  HomeLocalState,
+  HomeState,
+  InventoryLocation,
+} from '../models/home.model';
 import { center } from '@turf/turf';
 import { StoreDesktopComponent } from './desktop/store.desktop.component';
 import { StoreMobileComponent } from './mobile/store.mobile.component';
@@ -41,6 +45,9 @@ import { Helmet } from 'react-helmet';
 import ReactDOM from 'react-dom';
 
 export interface StoreResponsiveProps {
+  storeProps: StoreState;
+  homeProps: HomeState;
+  homeLocalProps: HomeLocalState;
   openFilter: boolean;
   countryOptions: OptionProps[];
   regionOptions: OptionProps[];
@@ -57,7 +64,7 @@ export interface StoreResponsiveProps {
 }
 
 export default function StoreComponent(): JSX.Element {
-  const [props] = useObservable(StoreController.model.store);
+  const [storeProps] = useObservable(StoreController.model.store);
   const [homeProps] = useObservable(HomeController.model.store);
   const [homeLocalProps] = useObservable(
     HomeController.model.localStore ?? Store.prototype
@@ -84,15 +91,15 @@ export default function StoreComponent(): JSX.Element {
   };
 
   const onLoad = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
-    if (props.scrollPosition) {
-      e.currentTarget.scrollTop = props.scrollPosition as number;
+    if (storeProps.scrollPosition) {
+      e.currentTarget.scrollTop = storeProps.scrollPosition as number;
       StoreController.updateScrollPosition(undefined);
     }
   };
 
   useEffect(() => {
     const countries: OptionProps[] = [];
-    for (const region of props.regions as Region[]) {
+    for (const region of storeProps.regions as Region[]) {
       for (const country of region.countries as Country[]) {
         const duplicate = countries.filter(
           (value) => value.id === country.iso_2
@@ -122,19 +129,20 @@ export default function StoreComponent(): JSX.Element {
     }
 
     setCountryOptions(countries);
-  }, [props.regions]);
+  }, [storeProps.regions]);
 
   useEffect(() => {
     if (
       !homeProps.inventoryLocations ||
-      !props.selectedRegion ||
+      !storeProps.selectedRegion ||
       !homeProps.selectedInventoryLocation
     ) {
       return;
     }
 
     const inventoryLocationsInRegion = homeProps.inventoryLocations?.filter(
-      (value: InventoryLocation) => value.region === props.selectedRegion.name
+      (value: InventoryLocation) =>
+        value.region === storeProps.selectedRegion.name
     );
 
     const cellars: OptionProps[] = [];
@@ -151,7 +159,7 @@ export default function StoreComponent(): JSX.Element {
     }
 
     setCellarOptions(cellars);
-  }, [homeProps.inventoryLocations, props.selectedRegion]);
+  }, [homeProps.inventoryLocations, storeProps.selectedRegion]);
 
   useEffect(() => {
     if (cellarOptions.length <= 0) {
@@ -162,11 +170,11 @@ export default function StoreComponent(): JSX.Element {
   }, [homeLocalProps.selectedInventoryLocationId, cellarOptions]);
 
   useEffect(() => {
-    if (!props.selectedRegion || countryOptions.length <= 0) {
+    if (!storeProps.selectedRegion || countryOptions.length <= 0) {
       return;
     }
 
-    const region = props.selectedRegion as Region;
+    const region = storeProps.selectedRegion as Region;
     const country = region.countries[0];
     const selectedCountry = countryOptions.find(
       (value) => value.id === country?.iso_2
@@ -174,7 +182,7 @@ export default function StoreComponent(): JSX.Element {
 
     setSelectedCountryId(selectedCountry?.id ?? '');
     setSelectedRegionId('');
-  }, [countryOptions, props.selectedRegion]);
+  }, [countryOptions, storeProps.selectedRegion]);
 
   useEffect(() => {
     if (countryOptions.length <= 0 || selectedCountryId.length <= 0) {
@@ -185,7 +193,7 @@ export default function StoreComponent(): JSX.Element {
     const selectedCountryOption = countryOptions.find(
       (value) => value.id === selectedCountryId
     );
-    for (const region of props.regions as Region[]) {
+    for (const region of storeProps.regions as Region[]) {
       const countries = region.countries as Country[];
       const validCountries = countries.filter(
         (value) => value.iso_2 === selectedCountryOption?.id
@@ -208,12 +216,12 @@ export default function StoreComponent(): JSX.Element {
   }, [selectedCountryId, countryOptions]);
 
   useEffect(() => {
-    if (!props.selectedRegion || regionOptions.length <= 0) {
+    if (!storeProps.selectedRegion || regionOptions.length <= 0) {
       return;
     }
 
-    setSelectedRegionId(props.selectedRegion.id);
-  }, [regionOptions, props.selectedRegion]);
+    setSelectedRegionId(storeProps.selectedRegion.id);
+  }, [regionOptions, storeProps.selectedRegion]);
 
   return (
     <>
@@ -241,6 +249,9 @@ export default function StoreComponent(): JSX.Element {
       </Helmet>
       <ResponsiveDesktop>
         <StoreDesktopComponent
+          storeProps={storeProps}
+          homeProps={homeProps}
+          homeLocalProps={homeLocalProps}
           openFilter={openFilter}
           countryOptions={countryOptions}
           regionOptions={regionOptions}
@@ -258,6 +269,9 @@ export default function StoreComponent(): JSX.Element {
       </ResponsiveDesktop>
       <ResponsiveMobile>
         <StoreMobileComponent
+          storeProps={storeProps}
+          homeProps={homeProps}
+          homeLocalProps={homeLocalProps}
           openFilter={openFilter}
           countryOptions={countryOptions}
           regionOptions={regionOptions}

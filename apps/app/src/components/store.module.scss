@@ -7,9 +7,6 @@
     & .top-bar-container {
         display: flex;
         border-bottom: 1px solid rgba(42, 42, 95, .6);
-        transition-property: all;
-        transition-duration: 75ms;
-        transition-timing-function: $transition-standard-easing;
         background-color: #fff;
         width: 100%;
         
@@ -53,9 +50,6 @@
             overflow-x: auto;
             -ms-overflow-style: none;  /* IE and Edge */
             scrollbar-width: none;  /* Firefox */
-            transition-property: all;
-            transition-duration: 150ms;
-            transition-timing-function: $transition-standard-easing;
         }
     
         & .tab-container::-webkit-scrollbar {
@@ -300,7 +294,7 @@
         gap: $mp-4;
         padding: $mp-4;
         padding-top: calc(157px + 16px);
-        padding-bottom: calc(56px + (56px / 2));
+        padding-bottom: calc(56px * 2);
         height: 100vh;
 
         & .loading-ring-mobile {

@@ -17,12 +17,14 @@ import loadable from '@loadable/component';
 const ReactMarkdown = loadable(
   async () => {
     const reactMarkdown = await import('react-markdown');
-    return (props: any) => <reactMarkdown.default {...props} />;
+    return (productProps: any) => <reactMarkdown.default {...productProps} />;
   },
   { ssr: false }
 );
 
 export function ProductDesktopComponent({
+  productProps,
+  storeProps,
   remarkPlugins,
   description,
   tabs,
@@ -41,13 +43,11 @@ export function ProductDesktopComponent({
   setActiveDetails,
   setDescription,
 }: ProductResponsiveProps): JSX.Element {
-  const [props] = useObservable(ProductController.model.store);
-  const [storeProps] = useObservable(StoreController.model.store);
   const { t } = useTranslation();
 
   useDesktopEffect(() => {
-    setDescription(props.description);
-  }, [props.description]);
+    setDescription(productProps.description);
+  }, [productProps.description]);
 
   return (
     <div className={[styles['root'], styles['root-desktop']].join(' ')}>
@@ -63,13 +63,13 @@ export function ProductDesktopComponent({
             styles['thumbnail-container-desktop'],
           ].join(' ')}
         >
-          {!props.isLoading ? (
+          {!productProps.isLoading ? (
             <img
               className={[
                 styles['thumbnail-image'],
                 styles['thumbnail-image-desktop'],
               ].join(' ')}
-              src={props.thumbnail || '../assets/svg/wine-bottle.svg'}
+              src={productProps.thumbnail || '../assets/svg/wine-bottle.svg'}
             />
           ) : (
             <Skeleton
@@ -101,14 +101,14 @@ export function ProductDesktopComponent({
               styles['title-container-desktop'],
             ].join(' ')}
           >
-            {!props.isLoading ? (
+            {!productProps.isLoading ? (
               <>
                 <div
                   className={[styles['title'], styles['title-desktop']].join(
                     ' '
                   )}
                 >
-                  {props.title}
+                  {productProps.title}
                 </div>
                 <div
                   className={[
@@ -116,7 +116,7 @@ export function ProductDesktopComponent({
                     styles['subtitle-desktop'],
                   ].join(' ')}
                 >
-                  {props.subtitle}
+                  {productProps.subtitle}
                 </div>
               </>
             ) : (
@@ -131,18 +131,18 @@ export function ProductDesktopComponent({
             )}
           </div>
           {/* <div className={styles['like-container-desktop']}>
-                <div className={styles['like-count-desktop']}>{props.likeCount}</div>
+                <div className={styles['like-count-desktop']}>{productProps.likeCount}</div>
                 <Button
                   rippleProps={{
-                    color: !props.isLiked
+                    color: !productProps.isLiked
                       ? 'rgba(233, 33, 66, .35)'
                       : 'rgba(42, 42, 95, .35)',
                   }}
                   rounded={true}
-                  onClick={() => ProductController.updateIsLiked(!props.isLiked)}
+                  onClick={() => ProductController.updateIsLiked(!productProps.isLiked)}
                   type={'text'}
                   icon={
-                    props.isLiked ? (
+                    productProps.isLiked ? (
                       <Line.Favorite size={24} color={'#E92142'} />
                     ) : (
                       <Line.FavoriteBorder size={24} color={'#2A2A5F'} />
@@ -157,7 +157,7 @@ export function ProductDesktopComponent({
             styles['description-container-desktop'],
           ].join(' ')}
         >
-          {!props.isLoading ? (
+          {!productProps.isLoading ? (
             <ReactMarkdown
               remarkPlugins={remarkPlugins}
               children={description}
@@ -183,11 +183,11 @@ export function ProductDesktopComponent({
         ].join(' ')}
       >
         <div className={[styles['price'], styles['price-desktop']].join(' ')}>
-          {!props.isLoading ? (
+          {!productProps.isLoading ? (
             <>
               {storeProps.selectedRegion &&
                 formatAmount({
-                  amount: props.selectedVariant?.calculated_price ?? 0,
+                  amount: productProps.selectedVariant?.calculated_price ?? 0,
                   region: storeProps.selectedRegion,
                   includeTaxes: false,
                 })}
@@ -198,8 +198,8 @@ export function ProductDesktopComponent({
                   styles['inventory-quantity-desktop'],
                 ].join(' ')}
               >
-                ({props.selectedVariant?.inventory_quantity}&nbsp;{t('inStock')}
-                )
+                ({productProps.selectedVariant?.inventory_quantity}&nbsp;
+                {t('inStock')})
               </span>
             </>
           ) : (
@@ -219,9 +219,9 @@ export function ProductDesktopComponent({
             styles['tags-container-desktop'],
           ].join(' ')}
         >
-          {!props.isLoading ? (
+          {!productProps.isLoading ? (
             <>
-              {props.tags.map((value: ProductTag) => (
+              {productProps.tags.map((value: ProductTag) => (
                 <div
                   className={[styles['tag'], styles['tag-desktop']].join(' ')}
                 >
@@ -249,7 +249,7 @@ export function ProductDesktopComponent({
             styles['tab-container-desktop'],
           ].join(' ')}
         >
-          {!props.isLoading ? (
+          {!productProps.isLoading ? (
             <Tabs
               flex={true}
               classNames={{
@@ -275,7 +275,7 @@ export function ProductDesktopComponent({
               styles['options-container-desktop'],
             ].join(' ')}
           >
-            {!props.isLoading ? (
+            {!productProps.isLoading ? (
               <>
                 <div
                   className={[
@@ -536,7 +536,7 @@ export function ProductDesktopComponent({
           </div>
         </div>
 
-        {!props.isLoading ? (
+        {!productProps.isLoading ? (
           <Button
             classNames={{
               container: styles['add-to-cart-button-container'],
@@ -548,16 +548,16 @@ export function ProductDesktopComponent({
               color: 'rgba(233, 33, 66, .35)',
             }}
             icon={
-              !props.selectedVariant?.purchasable ? (
+              !productProps.selectedVariant?.purchasable ? (
                 <Line.ProductionQuantityLimits size={24} />
               ) : (
                 <Line.AddShoppingCart size={24} />
               )
             }
-            disabled={!props.selectedVariant?.purchasable}
+            disabled={!productProps.selectedVariant?.purchasable}
             onClick={() =>
               ProductController.addToCartAsync(
-                props.selectedVariant?.id,
+                productProps.selectedVariant?.id ?? '',
                 1,
                 () =>
                   WindowController.addToast({
@@ -565,7 +565,7 @@ export function ProductDesktopComponent({
                     message: t('addedToCart') ?? '',
                     description:
                       t('addedToCartDescription', {
-                        item: props.title,
+                        item: productProps.title,
                       }) ?? '',
                     type: 'success',
                   }),
@@ -579,8 +579,8 @@ export function ProductDesktopComponent({
               )
             }
           >
-            {!props.selectedVariant?.purchasable && t('outOfStock')}
-            {props.selectedVariant?.purchasable && t('addToCart')}
+            {!productProps.selectedVariant?.purchasable && t('outOfStock')}
+            {productProps.selectedVariant?.purchasable && t('addToCart')}
           </Button>
         ) : (
           <Skeleton
@@ -596,7 +596,7 @@ export function ProductDesktopComponent({
             styles['tab-container-desktop'],
           ].join(' ')}
         >
-          {!props.isLoading ? (
+          {!productProps.isLoading ? (
             <Tabs
               classNames={{
                 tabButton: styles['tab-button'],
@@ -624,7 +624,7 @@ export function ProductDesktopComponent({
               ].join(' ')}
             />
           )}
-          {!props.isLoading ? (
+          {!productProps.isLoading ? (
             <>
               {activeDetails === 'information' && (
                 <div
@@ -653,7 +653,7 @@ export function ProductDesktopComponent({
                         styles['details-item-value-desktop'],
                       ].join(' ')}
                     >
-                      {props.material}
+                      {productProps.material}
                     </div>
                   </div>
                   <div
@@ -676,7 +676,7 @@ export function ProductDesktopComponent({
                         styles['details-item-value-desktop'],
                       ].join(' ')}
                     >
-                      {props.weight}
+                      {productProps.weight}
                     </div>
                   </div>
                   <div
@@ -699,7 +699,7 @@ export function ProductDesktopComponent({
                         styles['details-item-value-desktop'],
                       ].join(' ')}
                     >
-                      {props.countryOrigin}
+                      {productProps.countryOrigin}
                     </div>
                   </div>
                   <div
@@ -722,7 +722,7 @@ export function ProductDesktopComponent({
                         styles['details-item-value-desktop'],
                       ].join(' ')}
                     >
-                      {props.dimensions}
+                      {productProps.dimensions}
                     </div>
                   </div>
                   <div
@@ -745,7 +745,7 @@ export function ProductDesktopComponent({
                         styles['details-item-value-desktop'],
                       ].join(' ')}
                     >
-                      {props.type}
+                      {productProps.type}
                     </div>
                   </div>
                 </div>

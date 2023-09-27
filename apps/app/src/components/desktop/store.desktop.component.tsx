@@ -40,6 +40,9 @@ import {
 } from '@medusajs/medusa/dist/types/pricing';
 
 export function StoreDesktopComponent({
+  storeProps,
+  homeProps,
+  homeLocalProps,
   openFilter,
   countryOptions,
   regionOptions,
@@ -58,10 +61,6 @@ export function StoreDesktopComponent({
   const rootRef = createRef<HTMLDivElement>();
   const sideBarRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
-  const [props] = useObservable(StoreController.model.store);
-  const [homeLocalProps] = useObservable(
-    HomeController.model.localStore ?? Store.prototype
-  );
   const { t, i18n } = useTranslation();
 
   return (
@@ -100,7 +99,7 @@ export function StoreDesktopComponent({
                 ].join(' ')}
               >
                 <Input
-                  value={props.input}
+                  value={storeProps.input}
                   classNames={{
                     container: [
                       styles['search-input-container'],
@@ -133,7 +132,7 @@ export function StoreDesktopComponent({
                 }}
                 removable={true}
                 type={'pills'}
-                activeId={props.selectedTab}
+                activeId={storeProps.selectedTab}
                 onChange={(id: string) =>
                   StoreController.updateSelectedTabAsync(
                     id.length > 0 ? (id as ProductTabs) : undefined
@@ -198,10 +197,11 @@ export function StoreDesktopComponent({
           ref={previewsContainerRef}
           onLoad={onPreviewsLoad}
         >
-          {props.previews.map((preview: PricedProduct, index: number) => (
+          {storeProps.previews.map((preview: PricedProduct, index: number) => (
             <ProductPreviewComponent
               parentRef={rootRef}
               key={index}
+              storeProps={storeProps}
               preview={preview}
               onClick={() => {
                 StoreController.updateScrollPosition(
@@ -220,7 +220,7 @@ export function StoreDesktopComponent({
             style={{
               display:
                 homeLocalProps.selectedInventoryLocationId &&
-                props.hasMorePreviews
+                storeProps.hasMorePreviews
                   ? 'flex'
                   : 'none',
             }}

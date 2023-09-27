@@ -13,6 +13,7 @@ import { SigninResponsiveProps } from '../signin.component';
 import { useDesktopEffect } from '../responsive.component';
 
 export function SigninDesktopComponent({
+  signInProps,
   emailError,
   passwordError,
   setAuthError,
@@ -20,8 +21,6 @@ export function SigninDesktopComponent({
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const { t } = useTranslation();
-  const [props] = useObservable(SigninController.model.store);
-  const location = useLocation();
 
   useDesktopEffect(() => {
     setShow(true);
@@ -45,7 +44,7 @@ export function SigninDesktopComponent({
           (style, item) =>
             item && (
               <animated.div style={style}>
-                {SupabaseService.supabaseClient && (
+                {signInProps.supabaseClient && (
                   <Auth
                     touchScreen={false}
                     classNames={{
@@ -86,8 +85,8 @@ export function SigninDesktopComponent({
                         color: 'rgba(233, 33, 66, .35)',
                       },
                     }}
-                    emailValue={props.email ?? ''}
-                    passwordValue={props.password ?? ''}
+                    emailValue={signInProps.email ?? ''}
+                    passwordValue={signInProps.password ?? ''}
                     defaultIconColor={'#2A2A5F'}
                     litIconColor={'#2A2A5F'}
                     providers={['google']}
@@ -105,7 +104,7 @@ export function SigninDesktopComponent({
                     }}
                     emailErrorMessage={emailError}
                     passwordErrorMessage={passwordError}
-                    supabaseClient={SupabaseService.supabaseClient}
+                    supabaseClient={signInProps.supabaseClient}
                     onEmailChanged={(e) =>
                       SigninController.updateEmail(e.target.value)
                     }

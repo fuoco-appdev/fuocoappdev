@@ -1,10 +1,7 @@
 import { Auth, Typography } from '@fuoco.appdev/core-ui';
-import { useObservable } from '@ngneat/use-observable';
 import styles from '../terms-of-service.module.scss';
-import TermsOfServiceController from '../../controllers/terms-of-service.controller';
 import { TermsOfServiceResponsiveProps } from '../terms-of-service.component';
-import loadable from '@loadable/component';
-import { useLayoutEffect } from 'react';
+import loadable, { LoadableComponent } from '@loadable/component';
 const ReactMarkdown = loadable(
   async () => {
     const reactMarkdown = await import('react-markdown');
@@ -12,12 +9,10 @@ const ReactMarkdown = loadable(
   },
   { ssr: false }
 );
-
 export function TermsOfServiceDesktopComponent({
+  termsOfServiceProps,
   remarkPlugins,
 }: TermsOfServiceResponsiveProps): JSX.Element {
-  const [props] = useObservable(TermsOfServiceController.model.store);
-
   return (
     <div className={[styles['root'], styles['root-desktop']].join(' ')}>
       <div className={[styles['content'], styles['content-desktop']].join(' ')}>
@@ -32,7 +27,7 @@ export function TermsOfServiceDesktopComponent({
             >
               <ReactMarkdown
                 remarkPlugins={remarkPlugins}
-                children={props.markdown}
+                children={termsOfServiceProps.markdown}
               />
             </Typography>
           }
