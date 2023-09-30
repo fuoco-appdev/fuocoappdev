@@ -2,19 +2,32 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { RoutePathsType } from '../route-paths';
 import { useTranslation } from 'react-i18next';
-import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import {
+  ResponsiveDesktop,
+  ResponsiveMobile,
+  ResponsiveTablet,
+} from './responsive.component';
 import { MapRef } from 'react-map-gl';
 import {
   HomeLocalState,
   HomeState,
   InventoryLocation,
 } from '../models/home.model';
-import { HomeDesktopComponent } from './desktop/home.desktop.component';
-import { HomeMobileComponent } from './mobile/home.mobile.component';
 import { Helmet } from 'react-helmet';
 import { useObservable } from '@ngneat/use-observable';
 import HomeController from '../controllers/home.controller';
 import { Store } from '@ngneat/elf';
+import { HomeSuspenseDesktopComponent } from './desktop/suspense/home.suspense.desktop.component';
+import { HomeSuspenseMobileComponent } from './mobile/suspense/home.suspense.mobile.component';
+import React from 'react';
+import { lazy } from '@loadable/component';
+
+const HomeDesktopComponent = lazy(
+  () => import('./desktop/home.desktop.component')
+);
+const HomeMobileComponent = lazy(
+  () => import('./mobile/home.mobile.component')
+);
 
 export interface HomeResponsiveProps {
   homeProps: HomeState;
@@ -69,6 +82,24 @@ export default function HomeComponent(): JSX.Element {
     }
   }, [mapStyleLoaded, i18n.language]);
 
+  const suspenceComponent = (
+    <>
+      <ResponsiveDesktop>
+        <HomeSuspenseDesktopComponent />
+      </ResponsiveDesktop>
+      <ResponsiveTablet>
+        <div />
+      </ResponsiveTablet>
+      <ResponsiveMobile>
+        <HomeSuspenseMobileComponent />
+      </ResponsiveMobile>
+    </>
+  );
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return suspenceComponent;
+  }
+
   return (
     <>
       <Helmet>
@@ -97,26 +128,28 @@ export default function HomeComponent(): JSX.Element {
         <meta property="og:type" content="website" />
         <meta property="og:url" content={window.location.href} />
       </Helmet>
-      <ResponsiveDesktop>
-        <HomeDesktopComponent
-          homeProps={homeProps}
-          homeLocalProps={homeLocalProps}
-          mapRef={mapRef}
-          selectedPoint={selectedPoint}
-          setMapStyleLoaded={setMapStyleLoaded}
-          setSelectedPoint={setSelectedPoint}
-        />
-      </ResponsiveDesktop>
-      <ResponsiveMobile>
-        <HomeMobileComponent
-          homeProps={homeProps}
-          homeLocalProps={homeLocalProps}
-          mapRef={mapRef}
-          selectedPoint={selectedPoint}
-          setMapStyleLoaded={setMapStyleLoaded}
-          setSelectedPoint={setSelectedPoint}
-        />
-      </ResponsiveMobile>
+      <React.Suspense fallback={suspenceComponent}>
+        <ResponsiveDesktop>
+          <HomeDesktopComponent
+            homeProps={homeProps}
+            homeLocalProps={homeLocalProps}
+            mapRef={mapRef}
+            selectedPoint={selectedPoint}
+            setMapStyleLoaded={setMapStyleLoaded}
+            setSelectedPoint={setSelectedPoint}
+          />
+        </ResponsiveDesktop>
+        <ResponsiveMobile>
+          <HomeMobileComponent
+            homeProps={homeProps}
+            homeLocalProps={homeLocalProps}
+            mapRef={mapRef}
+            selectedPoint={selectedPoint}
+            setMapStyleLoaded={setMapStyleLoaded}
+            setSelectedPoint={setSelectedPoint}
+          />
+        </ResponsiveMobile>
+      </React.Suspense>
     </>
   );
 }

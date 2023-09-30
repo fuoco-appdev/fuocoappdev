@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import WindowController from '../controllers/window.controller';
 import AccountController from '../controllers/account.controller';
@@ -13,11 +13,21 @@ import {
 } from './responsive.component';
 import LoadingComponent from './loading.component';
 import { Store } from '@ngneat/elf';
-import { WindowMobileComponent } from './mobile/window.mobile.component';
-import { WindowDesktopComponent } from './desktop/window.desktop.component';
-import { WindowTabletComponent } from './tablet/window.tablet.component';
 import { WindowLocalState, WindowState } from '../models/window.model';
 import { AccountState } from '../models/account.model';
+import { lazy } from '@loadable/component';
+import { WindowSuspenseDesktopComponent } from './desktop/suspense/window.suspense.desktop.component';
+import { WindowSuspenseMobileComponent } from './mobile/suspense/window.suspense.mobile.component';
+
+const WindowDesktopComponent = lazy(
+  () => import('./desktop/window.desktop.component')
+);
+const WindowMobileComponent = lazy(
+  () => import('./mobile/window.mobile.component')
+);
+const WindowTabletComponent = lazy(
+  () => import('./tablet/window.tablet.component')
+);
 
 export interface WindowResponsiveProps {
   windowProps: WindowState;
@@ -78,8 +88,26 @@ export default function WindowComponent(): JSX.Element {
     WindowController.addToast(undefined);
   }, [windowProps.toast]);
 
-  return (
+  const suspenceComponent = (
     <>
+      <ResponsiveDesktop>
+        <WindowSuspenseDesktopComponent />
+      </ResponsiveDesktop>
+      <ResponsiveTablet>
+        <div />
+      </ResponsiveTablet>
+      <ResponsiveMobile>
+        <WindowSuspenseMobileComponent />
+      </ResponsiveMobile>
+    </>
+  );
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return suspenceComponent;
+  }
+
+  return (
+    <React.Suspense fallback={suspenceComponent}>
       <ResponsiveDesktop>
         <WindowDesktopComponent
           windowProps={windowProps}
@@ -113,7 +141,6 @@ export default function WindowComponent(): JSX.Element {
           setIsLanguageOpen={setIsLanguageOpen}
         />
       </ResponsiveMobile>
-      <LoadingComponent isVisible={windowProps.isLoading} />
-    </>
+    </React.Suspense>
   );
 }

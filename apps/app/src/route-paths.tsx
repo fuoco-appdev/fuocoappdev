@@ -1,51 +1,27 @@
 import { RouteObject } from 'react-router-dom';
-import { lazy } from '@loadable/component';
-const AppComponent = lazy(() => import('./components/app.component'));
-const HomeComponent = lazy(() => import('./components/home.component'));
-const SigninComponent = lazy(() => import('./components/signin.component'));
-const SignupComponent = lazy(() => import('./components/signup.component'));
-const ForgotPasswordComponent = lazy(
-  () => import('./components/forgot-password.component')
-);
-const ResetPasswordComponent = lazy(
-  () => import('./components/reset-password.component')
-);
-const TermsOfServiceComponent = lazy(
-  () => import('./components/terms-of-service.component')
-);
-const PrivacyPolicyComponent = lazy(
-  () => import('./components/privacy-policy.component')
-);
-const ProductComponent = lazy(() => import('./components/product.component'));
-const AccountComponent = lazy(() => import('./components/account.component'));
-const StoreComponent = lazy(() => import('./components/store.component'));
-const EventsComponent = lazy(() => import('./components/events.component'));
-const CartComponent = lazy(() => import('./components/cart.component'));
-const NotificationsComponent = lazy(
-  () => import('./components/notifications.component')
-);
-const AccountEventsComponent = lazy(
-  () => import('./components/account-events.component')
-);
-const AccountOrderHistoryComponent = lazy(
-  () => import('./components/account-order-history.component')
-);
-const AccountAddressesComponent = lazy(
-  () => import('./components/account-addresses.component')
-);
-const AccountSettingsComponent = lazy(
-  () => import('./components/account-settings.component')
-);
-const CheckoutComponent = lazy(() => import('./components/checkout.component'));
-const OrderConfirmedComponent = lazy(
-  () => import('./components/order-confirmed.component')
-);
-const AccountEditComponent = lazy(
-  () => import('./components/account-edit.component')
-);
-const AccountSettingsAccountComponent = lazy(
-  () => import('./components/account-settings-account.component')
-);
+import AppComponent from './components/app.component';
+import HomeComponent from './components/home.component';
+import SigninComponent from './components/signin.component';
+import SignupComponent from './components/signup.component';
+import ForgotPasswordComponent from './components/forgot-password.component';
+import ResetPasswordComponent from './components/reset-password.component';
+import TermsOfServiceComponent from './components/terms-of-service.component';
+import PrivacyPolicyComponent from './components/privacy-policy.component';
+import ProductComponent from './components/product.component';
+import AccountComponent from './components/account.component';
+import StoreComponent from './components/store.component';
+import EventsComponent from './components/events.component';
+import CartComponent from './components/cart.component';
+import NotificationsComponent from './components/notifications.component';
+import AccountEventsComponent from './components/account-events.component';
+import AccountOrderHistoryComponent from './components/account-order-history.component';
+import AccountAddressesComponent from './components/account-addresses.component';
+import AccountSettingsComponent from './components/account-settings.component';
+import CheckoutComponent from './components/checkout.component';
+import OrderConfirmedComponent from './components/order-confirmed.component';
+import AccountEditComponent from './components/account-edit.component';
+import AccountSettingsAccountComponent from './components/account-settings-account.component';
+import LoadingComponent from './components/loading.component';
 
 export enum RoutePathsType {
   Default = '/',

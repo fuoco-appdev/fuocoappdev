@@ -26,7 +26,7 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import e from 'express';
 import { WindowResponsiveProps } from '../window.component';
 
-export function WindowTabletComponent({
+export default function WindowTabletComponent({
   openMore,
   isLanguageOpen,
   setOpenMore,
