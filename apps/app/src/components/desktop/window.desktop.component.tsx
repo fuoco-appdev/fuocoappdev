@@ -55,6 +55,11 @@ export function WindowDesktopComponent({
 
   const account = windowProps.account as core.Account;
   const customer = accountProps.customer as Customer;
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return <WindowSuspenseDesktopComponent />;
+  }
+
   return (
     <React.Suspense fallback={<WindowSuspenseDesktopComponent />}>
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>

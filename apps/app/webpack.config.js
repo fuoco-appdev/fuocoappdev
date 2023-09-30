@@ -10,6 +10,8 @@ module.exports = composePlugins(withNx(), withReact(), (config, { options, conte
     plugins: [
       new LoadablePlugin(),
        new webpack.DefinePlugin({
+        'process.env.HOST': JSON.stringify(process.env.HOST),
+        'process.env.DEBUG_SUSPENSE': JSON.stringify(process.env.DEBUG_SUSPENSE || 'false'),
         'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
       })]
   });

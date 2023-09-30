@@ -53,6 +53,11 @@ export function WindowMobileComponent({
 
   const account = windowProps.account as core.Account;
   const customer = accountProps.customer as Customer;
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return <WindowSuspenseMobileComponent />;
+  }
+
   return (
     <React.Suspense fallback={<WindowSuspenseMobileComponent />}>
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
