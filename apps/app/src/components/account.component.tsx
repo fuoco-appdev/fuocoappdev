@@ -13,6 +13,7 @@ import { Helmet } from 'react-helmet';
 import { AccountState } from '../models/account.model';
 import { WindowState } from '../models/window.model';
 import { StoreState } from '../models/store.model';
+import { AuthenticatedComponent } from './authenticated.component';
 
 export interface AccountResponsiveProps {
   windowProps: WindowState;
@@ -62,20 +63,22 @@ export default function AccountComponent(): JSX.Element {
         <meta property="og:type" content="website" />
         <meta property="og:url" content={window.location.href} />
       </Helmet>
-      <ResponsiveDesktop>
-        <AccountDesktopComponent
-          accountProps={accountProps}
-          windowProps={windowProps}
-          storeProps={storeProps}
-        />
-      </ResponsiveDesktop>
-      <ResponsiveMobile>
-        <AccountMobileComponent
-          accountProps={accountProps}
-          windowProps={windowProps}
-          storeProps={storeProps}
-        />
-      </ResponsiveMobile>
+      <AuthenticatedComponent>
+        <ResponsiveDesktop>
+          <AccountDesktopComponent
+            accountProps={accountProps}
+            windowProps={windowProps}
+            storeProps={storeProps}
+          />
+        </ResponsiveDesktop>
+        <ResponsiveMobile>
+          <AccountMobileComponent
+            accountProps={accountProps}
+            windowProps={windowProps}
+            storeProps={storeProps}
+          />
+        </ResponsiveMobile>
+      </AuthenticatedComponent>
     </>
   );
 }

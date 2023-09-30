@@ -18,6 +18,7 @@ import AddressFormComponent from './address-form.component';
 import { AccountAddressesDesktopComponent } from './desktop/account-addresses.desktop.component';
 import { AccountAddressesMobileComponent } from './mobile/account-addresses.mobile.component';
 import { AccountState } from '../models/account.model';
+import { AuthenticatedComponent } from './authenticated.component';
 
 export interface AccountAddressResponsiveProps {
   accountProps: AccountState;
@@ -143,38 +144,40 @@ export default function AccountAddressesComponent(): JSX.Element {
 
   return (
     <>
-      <ResponsiveDesktop>
-        <AccountAddressesDesktopComponent
-          accountProps={accountProps}
-          onAddAddressAsync={onAddAddressAsync}
-          onEditAddressAsync={onEditAddressAsync}
-          onDeleteAddressConfirmedAsync={onDeleteAddressConfirmedAsync}
-          onDeleteAddressCanceledAsync={onDeleteAddressCanceledAsync}
-          onEditAddressButtonClicked={onEditAddressButtonClicked}
-          onDeleteAddressButtonClicked={onDeleteAddressButtonClicked}
-          openAddDropdown={openAddDropdown}
-          openEditDropdown={openEditDropdown}
-          deleteModalVisible={deleteModalVisible}
-          setOpenAddDropdown={setOpenAddDropdown}
-          setOpenEditDropdown={setOpenEditDropdown}
-        />
-      </ResponsiveDesktop>
-      <ResponsiveMobile>
-        <AccountAddressesMobileComponent
-          accountProps={accountProps}
-          onAddAddressAsync={onAddAddressAsync}
-          onEditAddressAsync={onEditAddressAsync}
-          onDeleteAddressConfirmedAsync={onDeleteAddressConfirmedAsync}
-          onDeleteAddressCanceledAsync={onDeleteAddressCanceledAsync}
-          onEditAddressButtonClicked={onEditAddressButtonClicked}
-          onDeleteAddressButtonClicked={onDeleteAddressButtonClicked}
-          openAddDropdown={openAddDropdown}
-          openEditDropdown={openEditDropdown}
-          deleteModalVisible={deleteModalVisible}
-          setOpenAddDropdown={setOpenAddDropdown}
-          setOpenEditDropdown={setOpenEditDropdown}
-        />
-      </ResponsiveMobile>
+      <AuthenticatedComponent>
+        <ResponsiveDesktop>
+          <AccountAddressesDesktopComponent
+            accountProps={accountProps}
+            onAddAddressAsync={onAddAddressAsync}
+            onEditAddressAsync={onEditAddressAsync}
+            onDeleteAddressConfirmedAsync={onDeleteAddressConfirmedAsync}
+            onDeleteAddressCanceledAsync={onDeleteAddressCanceledAsync}
+            onEditAddressButtonClicked={onEditAddressButtonClicked}
+            onDeleteAddressButtonClicked={onDeleteAddressButtonClicked}
+            openAddDropdown={openAddDropdown}
+            openEditDropdown={openEditDropdown}
+            deleteModalVisible={deleteModalVisible}
+            setOpenAddDropdown={setOpenAddDropdown}
+            setOpenEditDropdown={setOpenEditDropdown}
+          />
+        </ResponsiveDesktop>
+        <ResponsiveMobile>
+          <AccountAddressesMobileComponent
+            accountProps={accountProps}
+            onAddAddressAsync={onAddAddressAsync}
+            onEditAddressAsync={onEditAddressAsync}
+            onDeleteAddressConfirmedAsync={onDeleteAddressConfirmedAsync}
+            onDeleteAddressCanceledAsync={onDeleteAddressCanceledAsync}
+            onEditAddressButtonClicked={onEditAddressButtonClicked}
+            onDeleteAddressButtonClicked={onDeleteAddressButtonClicked}
+            openAddDropdown={openAddDropdown}
+            openEditDropdown={openEditDropdown}
+            deleteModalVisible={deleteModalVisible}
+            setOpenAddDropdown={setOpenAddDropdown}
+            setOpenEditDropdown={setOpenEditDropdown}
+          />
+        </ResponsiveMobile>
+      </AuthenticatedComponent>
     </>
   );
 }

@@ -5,6 +5,7 @@ import { Helmet } from 'react-helmet';
 import { useObservable } from '@ngneat/use-observable';
 import WindowController from '../controllers/window.controller';
 import { WindowState } from '../models/window.model';
+import { AuthenticatedComponent } from './authenticated.component';
 
 export interface AccountSettingsResponsiveProps {
   windowProps: WindowState;
@@ -40,12 +41,14 @@ export default function AccountSettingsComponent(): JSX.Element {
         <meta property="og:type" content="website" />
         <meta property="og:url" content={window.location.href} />
       </Helmet>
-      <ResponsiveDesktop>
-        <AccountSettingsDesktopComponent windowProps={windowProps} />
-      </ResponsiveDesktop>
-      <ResponsiveMobile>
-        <AccountSettingsMobileComponent windowProps={windowProps} />
-      </ResponsiveMobile>
+      <AuthenticatedComponent>
+        <ResponsiveDesktop>
+          <AccountSettingsDesktopComponent windowProps={windowProps} />
+        </ResponsiveDesktop>
+        <ResponsiveMobile>
+          <AccountSettingsMobileComponent windowProps={windowProps} />
+        </ResponsiveMobile>
+      </AuthenticatedComponent>
     </>
   );
 }

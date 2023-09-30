@@ -8,6 +8,7 @@ import WindowController from '../controllers/window.controller';
 import AccountController from '../controllers/account.controller';
 import { Store } from '@ngneat/elf';
 import { AccountState } from '../models/account.model';
+import { AuthenticatedComponent } from './authenticated.component';
 
 export interface AccountSettingsAccountResponsiveProps {
   accountProps: AccountState;
@@ -38,34 +39,36 @@ export default function AccountSettingsAccountComponent(): JSX.Element {
 
   return (
     <>
-      <ResponsiveDesktop inheritStyles={false}>
-        <AccountSettingsAccountDesktopComponent
-          accountProps={accountProps}
-          windowLocalProps={windowLocalProps}
-          updatePasswordError={updatePasswordError}
-          setUpdatePasswordError={setUpdatePasswordError}
-          confirmPasswordError={confirmPasswordError}
-          setConfirmPasswordError={setConfirmPasswordError}
-          showDeleteModal={showDeleteModal}
-          setShowDeleteModal={setShowDeleteModal}
-          isLanguageOpen={isLanguageOpen}
-          setIsLanguageOpen={setIsLanguageOpen}
-        />
-      </ResponsiveDesktop>
-      <ResponsiveMobile>
-        <AccountSettingsAccountMobileComponent
-          accountProps={accountProps}
-          windowLocalProps={windowLocalProps}
-          updatePasswordError={updatePasswordError}
-          setUpdatePasswordError={setUpdatePasswordError}
-          confirmPasswordError={confirmPasswordError}
-          setConfirmPasswordError={setConfirmPasswordError}
-          showDeleteModal={showDeleteModal}
-          setShowDeleteModal={setShowDeleteModal}
-          isLanguageOpen={isLanguageOpen}
-          setIsLanguageOpen={setIsLanguageOpen}
-        />
-      </ResponsiveMobile>
+      <AuthenticatedComponent>
+        <ResponsiveDesktop inheritStyles={false}>
+          <AccountSettingsAccountDesktopComponent
+            accountProps={accountProps}
+            windowLocalProps={windowLocalProps}
+            updatePasswordError={updatePasswordError}
+            setUpdatePasswordError={setUpdatePasswordError}
+            confirmPasswordError={confirmPasswordError}
+            setConfirmPasswordError={setConfirmPasswordError}
+            showDeleteModal={showDeleteModal}
+            setShowDeleteModal={setShowDeleteModal}
+            isLanguageOpen={isLanguageOpen}
+            setIsLanguageOpen={setIsLanguageOpen}
+          />
+        </ResponsiveDesktop>
+        <ResponsiveMobile>
+          <AccountSettingsAccountMobileComponent
+            accountProps={accountProps}
+            windowLocalProps={windowLocalProps}
+            updatePasswordError={updatePasswordError}
+            setUpdatePasswordError={setUpdatePasswordError}
+            confirmPasswordError={confirmPasswordError}
+            setConfirmPasswordError={setConfirmPasswordError}
+            showDeleteModal={showDeleteModal}
+            setShowDeleteModal={setShowDeleteModal}
+            isLanguageOpen={isLanguageOpen}
+            setIsLanguageOpen={setIsLanguageOpen}
+          />
+        </ResponsiveMobile>
+      </AuthenticatedComponent>
     </>
   );
 }

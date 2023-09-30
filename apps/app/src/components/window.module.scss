@@ -300,6 +300,13 @@
       padding: 0 $mp-4;
       height: 100%;
 
+      & .skeleton-tabs-desktop {
+        display: flex;
+        flex-direction: column;
+        padding: $mp-4 0;
+        gap: $mp-2;
+      }
+
       & .side-bar-bottom-content-desktop {
         border-right-width: 0px;
         border-left-width: 0px;

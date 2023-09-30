@@ -16,6 +16,7 @@ import { ForgotPasswordDesktopComponent } from './desktop/forgot-password.deskto
 import { useObservable } from '@ngneat/use-observable';
 import ForgotPasswordController from '../controllers/forgot-password.controller';
 import { ForgotPasswordState } from '../models/forgot-password.model';
+import { GuestComponent } from './guest.component';
 
 export interface ForgotPasswordResponsiveProps {
   forgotPasswordProps: ForgotPasswordState;
@@ -50,16 +51,18 @@ export default function ForgotPasswordComponent(): JSX.Element {
         <meta property="og:type" content="website" />
         <meta property="og:url" content={window.location.href} />
       </Helmet>
-      <ResponsiveDesktop>
-        <ForgotPasswordDesktopComponent
-          forgotPasswordProps={forgotPasswordProps}
-        />
-      </ResponsiveDesktop>
-      <ResponsiveMobile>
-        <ForgotPasswordMobileComponent
-          forgotPasswordProps={forgotPasswordProps}
-        />
-      </ResponsiveMobile>
+      <GuestComponent>
+        <ResponsiveDesktop>
+          <ForgotPasswordDesktopComponent
+            forgotPasswordProps={forgotPasswordProps}
+          />
+        </ResponsiveDesktop>
+        <ResponsiveMobile>
+          <ForgotPasswordMobileComponent
+            forgotPasswordProps={forgotPasswordProps}
+          />
+        </ResponsiveMobile>
+      </GuestComponent>
     </>
   );
 }

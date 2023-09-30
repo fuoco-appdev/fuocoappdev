@@ -13,6 +13,7 @@ import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 import LoadingComponent from './loading.component';
 import { Store } from '@ngneat/elf';
 import { Helmet } from 'react-helmet';
+import { AuthenticatedComponent } from './authenticated.component';
 
 function NotificationsDesktopComponent(): JSX.Element {
   const navigate = useNavigate();
@@ -32,12 +33,14 @@ function NotificationsMobileComponent(): JSX.Element {
 export default function NotificationsComponent(): JSX.Element {
   return (
     <>
-      <ResponsiveDesktop>
-        <NotificationsDesktopComponent />
-      </ResponsiveDesktop>
-      <ResponsiveMobile>
-        <NotificationsMobileComponent />
-      </ResponsiveMobile>
+      <AuthenticatedComponent>
+        <ResponsiveDesktop>
+          <NotificationsDesktopComponent />
+        </ResponsiveDesktop>
+        <ResponsiveMobile>
+          <NotificationsMobileComponent />
+        </ResponsiveMobile>
+      </AuthenticatedComponent>
     </>
   );
 }

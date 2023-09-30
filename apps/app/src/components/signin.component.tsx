@@ -16,6 +16,7 @@ import { SigninDesktopComponent } from './desktop/signin.desktop.component';
 import { SigninMobileComponent } from './mobile/signin.mobile.component';
 import { Helmet } from 'react-helmet';
 import { SigninState } from '../models/signin.model';
+import { GuestComponent } from './guest.component';
 
 export interface SigninResponsiveProps {
   signInProps: SigninState;
@@ -95,22 +96,24 @@ export default function SigninComponent(): JSX.Element {
         <meta property="og:type" content="website" />
         <meta property="og:url" content={window.location.href} />
       </Helmet>
-      <ResponsiveDesktop>
-        <SigninDesktopComponent
-          signInProps={signInProps}
-          setAuthError={setAuthError}
-          emailError={emailError}
-          passwordError={passwordError}
-        />
-      </ResponsiveDesktop>
-      <ResponsiveMobile>
-        <SigninMobileComponent
-          signInProps={signInProps}
-          setAuthError={setAuthError}
-          emailError={emailError}
-          passwordError={passwordError}
-        />
-      </ResponsiveMobile>
+      <GuestComponent>
+        <ResponsiveDesktop>
+          <SigninDesktopComponent
+            signInProps={signInProps}
+            setAuthError={setAuthError}
+            emailError={emailError}
+            passwordError={passwordError}
+          />
+        </ResponsiveDesktop>
+        <ResponsiveMobile>
+          <SigninMobileComponent
+            signInProps={signInProps}
+            setAuthError={setAuthError}
+            emailError={emailError}
+            passwordError={passwordError}
+          />
+        </ResponsiveMobile>
+      </GuestComponent>
     </>
   );
 }

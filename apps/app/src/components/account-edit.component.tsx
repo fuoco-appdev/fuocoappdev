@@ -7,6 +7,7 @@ import StoreController from '../controllers/store.controller';
 import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
 import { StoreState } from '../models/store.model';
+import { AuthenticatedComponent } from './authenticated.component';
 
 export interface AccountEditResponsiveProps {
   storeProps: StoreState;
@@ -31,18 +32,20 @@ export default function AccountEditComponent(): JSX.Element {
 
   return (
     <>
-      <ResponsiveDesktop>
-        <AccountEditDesktopComponent
-          storeProps={storeProps}
-          onSaveAsync={onSaveAsync}
-        />
-      </ResponsiveDesktop>
-      <ResponsiveMobile>
-        <AccountEditMobileComponent
-          storeProps={storeProps}
-          onSaveAsync={onSaveAsync}
-        />
-      </ResponsiveMobile>
+      <AuthenticatedComponent>
+        <ResponsiveDesktop>
+          <AccountEditDesktopComponent
+            storeProps={storeProps}
+            onSaveAsync={onSaveAsync}
+          />
+        </ResponsiveDesktop>
+        <ResponsiveMobile>
+          <AccountEditMobileComponent
+            storeProps={storeProps}
+            onSaveAsync={onSaveAsync}
+          />
+        </ResponsiveMobile>
+      </AuthenticatedComponent>
     </>
   );
 }

@@ -5,6 +5,7 @@ import { useEffect, useLayoutEffect, useRef } from 'react';
 import AccountController from '../controllers/account.controller';
 import { useObservable } from '@ngneat/use-observable';
 import { AccountState } from '../models/account.model';
+import { AuthenticatedComponent } from './authenticated.component';
 
 export interface AccountOrderHistoryResponsiveProps {
   accountProps: AccountState;
@@ -37,20 +38,22 @@ export default function AccountOrderHistoryComponent(): JSX.Element {
 
   return (
     <>
-      <ResponsiveDesktop>
-        <AccountOrderHistoryDesktopComponent
-          accountProps={accountProps}
-          onOrdersScroll={onScroll}
-          onOrdersLoad={onLoad}
-        />
-      </ResponsiveDesktop>
-      <ResponsiveMobile>
-        <AccountOrderHistoryMobileComponent
-          accountProps={accountProps}
-          onOrdersScroll={onScroll}
-          onOrdersLoad={onLoad}
-        />
-      </ResponsiveMobile>
+      <AuthenticatedComponent>
+        <ResponsiveDesktop>
+          <AccountOrderHistoryDesktopComponent
+            accountProps={accountProps}
+            onOrdersScroll={onScroll}
+            onOrdersLoad={onLoad}
+          />
+        </ResponsiveDesktop>
+        <ResponsiveMobile>
+          <AccountOrderHistoryMobileComponent
+            accountProps={accountProps}
+            onOrdersScroll={onScroll}
+            onOrdersLoad={onLoad}
+          />
+        </ResponsiveMobile>
+      </AuthenticatedComponent>
     </>
   );
 }
