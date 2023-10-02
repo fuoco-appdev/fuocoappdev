@@ -27,6 +27,10 @@
                     border-color: $brand-900;
                     border-radius: $rounded-full;
                 }
+
+                & .search-input-container-skeleton {
+                    margin-bottom: $mp-4;
+                }
         
                 & .search-input {
                     color: $brand-900;
@@ -50,6 +54,13 @@
             overflow-x: auto;
             -ms-overflow-style: none;  /* IE and Edge */
             scrollbar-width: none;  /* Firefox */
+        }
+
+        & .tab-container-skeleton {
+            display: flex;
+            flex-direction: row;
+            gap: $mp-4;
+            margin-bottom: $mp-4;
         }
     
         & .tab-container::-webkit-scrollbar {
@@ -283,6 +294,10 @@
     
             & .tab-slider-pill-mobile {
             }
+        }
+
+        & .tab-container-skeleton-mobile {
+            padding: 0 $mp-4;
         }
     
         & .tab-container-mobile::-webkit-scrollbar {

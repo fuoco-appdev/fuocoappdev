@@ -39,7 +39,7 @@ import {
   PricedVariant,
 } from '@medusajs/medusa/dist/types/pricing';
 
-export function StoreDesktopComponent({
+export default function StoreDesktopComponent({
   storeProps,
   homeProps,
   homeLocalProps,

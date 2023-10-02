@@ -1,5 +1,6 @@
 import {
   ReactNode,
+  Suspense,
   createRef,
   useEffect,
   useLayoutEffect,
@@ -25,7 +26,11 @@ import SupabaseService from '../services/supabase.service';
 import { useObservable } from '@ngneat/use-observable';
 import { useSpring } from 'react-spring';
 import * as core from '../protobuf/core_pb';
-import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import {
+  ResponsiveDesktop,
+  ResponsiveMobile,
+  ResponsiveTablet,
+} from './responsive.component';
 import LoadingComponent from './loading.component';
 import { Store } from '@ngneat/elf';
 import { ProductTabs, StoreState } from '../models/store.model';
@@ -39,10 +44,19 @@ import {
   InventoryLocation,
 } from '../models/home.model';
 import { center } from '@turf/turf';
-import { StoreDesktopComponent } from './desktop/store.desktop.component';
-import { StoreMobileComponent } from './mobile/store.mobile.component';
 import { Helmet } from 'react-helmet';
 import ReactDOM from 'react-dom';
+import React from 'react';
+import { StoreSuspenseDesktopComponent } from './desktop/suspense/store.suspense.desktop.component';
+import { StoreSuspenseMobileComponent } from './mobile/suspense/store.suspense.mobile.component';
+import { lazy } from '@loadable/component';
+
+const StoreDesktopComponent = lazy(
+  () => import('./desktop/store.desktop.component')
+);
+const StoreMobileComponent = lazy(
+  () => import('./mobile/store.mobile.component')
+);
 
 export interface StoreResponsiveProps {
   storeProps: StoreState;
@@ -223,6 +237,24 @@ export default function StoreComponent(): JSX.Element {
     setSelectedRegionId(storeProps.selectedRegion.id);
   }, [regionOptions, storeProps.selectedRegion]);
 
+  const suspenceComponent = (
+    <>
+      <ResponsiveDesktop>
+        <StoreSuspenseDesktopComponent />
+      </ResponsiveDesktop>
+      <ResponsiveTablet>
+        <div />
+      </ResponsiveTablet>
+      <ResponsiveMobile>
+        <StoreSuspenseMobileComponent />
+      </ResponsiveMobile>
+    </>
+  );
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return suspenceComponent;
+  }
+
   return (
     <>
       <Helmet>
@@ -247,46 +279,48 @@ export default function StoreComponent(): JSX.Element {
         <meta property="og:type" content="website" />
         <meta property="og:url" content={window.location.href} />
       </Helmet>
-      <ResponsiveDesktop>
-        <StoreDesktopComponent
-          storeProps={storeProps}
-          homeProps={homeProps}
-          homeLocalProps={homeLocalProps}
-          openFilter={openFilter}
-          countryOptions={countryOptions}
-          regionOptions={regionOptions}
-          cellarOptions={cellarOptions}
-          selectedCountryId={selectedCountryId}
-          selectedRegionId={selectedRegionId}
-          selectedCellarId={selectedCellarId}
-          setOpenFilter={setOpenFilter}
-          setSelectedCountryId={setSelectedCountryId}
-          setSelectedRegionId={setSelectedRegionId}
-          setSelectedCellarId={setSelectedCellarId}
-          onPreviewsScroll={onScroll}
-          onPreviewsLoad={onLoad}
-        />
-      </ResponsiveDesktop>
-      <ResponsiveMobile>
-        <StoreMobileComponent
-          storeProps={storeProps}
-          homeProps={homeProps}
-          homeLocalProps={homeLocalProps}
-          openFilter={openFilter}
-          countryOptions={countryOptions}
-          regionOptions={regionOptions}
-          cellarOptions={cellarOptions}
-          selectedCountryId={selectedCountryId}
-          selectedRegionId={selectedRegionId}
-          selectedCellarId={selectedCellarId}
-          setOpenFilter={setOpenFilter}
-          setSelectedCountryId={setSelectedCountryId}
-          setSelectedRegionId={setSelectedRegionId}
-          setSelectedCellarId={setSelectedCellarId}
-          onPreviewsScroll={onScroll}
-          onPreviewsLoad={onLoad}
-        />
-      </ResponsiveMobile>
+      <React.Suspense fallback={suspenceComponent}>
+        <ResponsiveDesktop>
+          <StoreDesktopComponent
+            storeProps={storeProps}
+            homeProps={homeProps}
+            homeLocalProps={homeLocalProps}
+            openFilter={openFilter}
+            countryOptions={countryOptions}
+            regionOptions={regionOptions}
+            cellarOptions={cellarOptions}
+            selectedCountryId={selectedCountryId}
+            selectedRegionId={selectedRegionId}
+            selectedCellarId={selectedCellarId}
+            setOpenFilter={setOpenFilter}
+            setSelectedCountryId={setSelectedCountryId}
+            setSelectedRegionId={setSelectedRegionId}
+            setSelectedCellarId={setSelectedCellarId}
+            onPreviewsScroll={onScroll}
+            onPreviewsLoad={onLoad}
+          />
+        </ResponsiveDesktop>
+        <ResponsiveMobile>
+          <StoreMobileComponent
+            storeProps={storeProps}
+            homeProps={homeProps}
+            homeLocalProps={homeLocalProps}
+            openFilter={openFilter}
+            countryOptions={countryOptions}
+            regionOptions={regionOptions}
+            cellarOptions={cellarOptions}
+            selectedCountryId={selectedCountryId}
+            selectedRegionId={selectedRegionId}
+            selectedCellarId={selectedCellarId}
+            setOpenFilter={setOpenFilter}
+            setSelectedCountryId={setSelectedCountryId}
+            setSelectedRegionId={setSelectedRegionId}
+            setSelectedCellarId={setSelectedCellarId}
+            onPreviewsScroll={onScroll}
+            onPreviewsLoad={onLoad}
+          />
+        </ResponsiveMobile>
+      </React.Suspense>
     </>
   );
 }

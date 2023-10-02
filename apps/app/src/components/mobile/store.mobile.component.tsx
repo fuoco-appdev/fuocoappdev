@@ -38,7 +38,7 @@ import {
   PricedVariant,
 } from '@medusajs/medusa/dist/types/pricing';
 
-export function StoreMobileComponent({
+export default function StoreMobileComponent({
   storeProps,
   homeProps,
   homeLocalProps,

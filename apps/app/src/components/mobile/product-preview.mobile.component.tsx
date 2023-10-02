@@ -22,7 +22,7 @@ import CartController from '../../controllers/cart.controller';
 import { formatAmount } from 'medusa-react';
 import { ProductPreviewResponsiveProps } from '../product-preview.component';
 
-export function ProductPreviewMobileComponent({
+export default function ProductPreviewMobileComponent({
   parentRef,
   preview,
   onClick,

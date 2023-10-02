@@ -1,4 +1,4 @@
-import {
+import React, {
   Key,
   LegacyRef,
   MutableRefObject,
@@ -15,7 +15,11 @@ import {
 } from '@medusajs/medusa/dist/types/pricing';
 import { Button, Card, Line } from '@fuoco.appdev/core-ui';
 import { animated, useSpring } from 'react-spring';
-import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import {
+  ResponsiveDesktop,
+  ResponsiveMobile,
+  ResponsiveTablet,
+} from './responsive.component';
 import i18n from '../i18n';
 import ProductController from '../controllers/product.controller';
 import StoreController from '../controllers/store.controller';
@@ -25,9 +29,17 @@ import { useTranslation } from 'react-i18next';
 import CartController from '../controllers/cart.controller';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
-import { ProductPreviewDesktopComponent } from './desktop/product-preview.desktop.component';
-import { ProductPreviewMobileComponent } from './mobile/product-preview.mobile.component';
 import { StoreState } from '../models/store.model';
+import { lazy } from '@loadable/component';
+import { ProductPreviewSuspenseDesktopComponent } from './desktop/suspense/product-preview.suspense.desktop.component';
+import { ProductPreviewSuspenseMobileComponent } from './mobile/suspense/product-preview.suspense.mobile.component';
+
+const ProductPreviewDesktopComponent = lazy(
+  () => import('./desktop/product-preview.desktop.component')
+);
+const ProductPreviewMobileComponent = lazy(
+  () => import('./mobile/product-preview.mobile.component')
+);
 
 export interface ProductPreviewProps {
   storeProps: StoreState;
@@ -119,8 +131,26 @@ export default function ProductPreviewComponent({
     });
   };
 
-  return (
+  const suspenceComponent = (
     <>
+      <ResponsiveDesktop inheritStyles={false}>
+        <ProductPreviewSuspenseDesktopComponent />
+      </ResponsiveDesktop>
+      <ResponsiveTablet inheritStyles={false}>
+        <div />
+      </ResponsiveTablet>
+      <ResponsiveMobile inheritStyles={false}>
+        <ProductPreviewSuspenseMobileComponent />
+      </ResponsiveMobile>
+    </>
+  );
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return suspenceComponent;
+  }
+
+  return (
+    <React.Suspense fallback={suspenceComponent}>
       <ResponsiveDesktop inheritStyles={false}>
         <ProductPreviewDesktopComponent
           storeProps={storeProps}
@@ -151,6 +181,6 @@ export default function ProductPreviewComponent({
           addToCartAsync={addToCartAsync}
         />
       </ResponsiveMobile>
-    </>
+    </React.Suspense>
   );
 }
