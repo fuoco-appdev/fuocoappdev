@@ -4,6 +4,7 @@
   & .content-desktop {
     & .typography-desktop {
       padding: $mp-6;
+      padding-top: calc(56px + 24px);
       padding-bottom: 56px;
     }
   }

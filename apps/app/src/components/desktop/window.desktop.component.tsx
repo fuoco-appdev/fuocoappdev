@@ -42,16 +42,11 @@ export default function WindowDesktopComponent({
   const sideBarRef = useRef<HTMLDivElement | null>(null);
   const navigationBackRef = useRef<HTMLDivElement | null>(null);
   const [isSideBarOpen, setIsSideBarOpen] = useState<boolean>(true);
-  const [isNavigateBackOpen, setIsNavigateBackOpen] = useState<boolean>(true);
   const [date, setDate] = useState<Date | null>(null);
 
   useDesktopEffect(() => {
     setDate(new Date(Date.now()));
   }, []);
-
-  useDesktopEffect(() => {
-    setIsNavigateBackOpen(windowProps.showNavigateBack);
-  }, [windowProps.showNavigateBack]);
 
   const account = windowProps.account as core.Account;
   const customer = accountProps.customer as Customer;
@@ -444,7 +439,7 @@ export default function WindowDesktopComponent({
         >
           <CSSTransition
             nodeRef={navigationBackRef}
-            in={isNavigateBackOpen}
+            in={windowProps.showNavigateBack}
             timeout={0}
             classNames={{
               appear: styles['navigation-back-appear'],
@@ -480,9 +475,9 @@ export default function WindowDesktopComponent({
                   }}
                   rounded={true}
                   size={'tiny'}
-                  disabled={!isNavigateBackOpen}
+                  disabled={!windowProps.showNavigateBack}
                   onClick={() => {
-                    setIsNavigateBackOpen(false);
+                    WindowController.updateShowNavigateBack(false);
 
                     if (
                       windowProps.activeRoute?.startsWith(
