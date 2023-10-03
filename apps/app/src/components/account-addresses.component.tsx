@@ -9,16 +9,28 @@ import SupabaseService from '../services/supabase.service';
 import { useObservable } from '@ngneat/use-observable';
 import { useSpring } from 'react-spring';
 import * as core from '../protobuf/core_pb';
-import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import {
+  ResponsiveDesktop,
+  ResponsiveMobile,
+  ResponsiveTablet,
+} from './responsive.component';
 import LoadingComponent from './loading.component';
 import { Store } from '@ngneat/elf';
 import { Customer, Address } from '@medusajs/medusa';
 import AddressItemComponent from './address-item.component';
 import AddressFormComponent from './address-form.component';
-import { AccountAddressesDesktopComponent } from './desktop/account-addresses.desktop.component';
-import { AccountAddressesMobileComponent } from './mobile/account-addresses.mobile.component';
 import { AccountState } from '../models/account.model';
 import { AuthenticatedComponent } from './authenticated.component';
+import { lazy } from '@loadable/component';
+import { AccountAddressesSuspenseDesktopComponent } from './desktop/suspense/account-addresses.suspense.desktop.component';
+import React from 'react';
+
+const AccountAddressesDesktopComponent = lazy(
+  () => import('./desktop/account-addresses.desktop.component')
+);
+const AccountAddressesMobileComponent = lazy(
+  () => import('./mobile/account-addresses.mobile.component')
+);
 
 export interface AccountAddressResponsiveProps {
   accountProps: AccountState;
@@ -142,8 +154,26 @@ export default function AccountAddressesComponent(): JSX.Element {
     });
   }, [i18n.language]);
 
-  return (
+  const suspenceComponent = (
     <>
+      <ResponsiveDesktop>
+        <AccountAddressesSuspenseDesktopComponent />
+      </ResponsiveDesktop>
+      <ResponsiveTablet>
+        <div />
+      </ResponsiveTablet>
+      <ResponsiveMobile>
+        <div />
+      </ResponsiveMobile>
+    </>
+  );
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return suspenceComponent;
+  }
+
+  return (
+    <React.Suspense fallback={suspenceComponent}>
       <AuthenticatedComponent>
         <ResponsiveDesktop>
           <AccountAddressesDesktopComponent
@@ -178,6 +208,6 @@ export default function AccountAddressesComponent(): JSX.Element {
           />
         </ResponsiveMobile>
       </AuthenticatedComponent>
-    </>
+    </React.Suspense>
   );
 }

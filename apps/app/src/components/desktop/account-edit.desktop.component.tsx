@@ -14,7 +14,7 @@ import { Store } from '@ngneat/elf';
 import AccountProfileFormComponent from '../account-profile-form.component';
 import { AccountEditResponsiveProps } from '../account-edit.component';
 
-export function AccountEditDesktopComponent({
+export default function AccountEditDesktopComponent({
   storeProps,
   onSaveAsync,
 }: AccountEditResponsiveProps): JSX.Element {

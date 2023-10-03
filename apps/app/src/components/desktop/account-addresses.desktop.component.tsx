@@ -16,7 +16,7 @@ import AddressItemComponent from '../address-item.component';
 import AddressFormComponent from '../address-form.component';
 import { AccountAddressResponsiveProps } from '../account-addresses.component';
 
-export function AccountAddressesDesktopComponent({
+export default function AccountAddressesDesktopComponent({
   accountProps,
   onAddAddressAsync,
   onEditAddressAsync,

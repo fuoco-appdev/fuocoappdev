@@ -32,7 +32,7 @@ import AccountEditComponent from '../account-edit.component';
 import { useDesktopEffect } from '../responsive.component';
 import { AccountResponsiveProps } from '../account.component';
 
-export function AccountDesktopComponent({
+export default function AccountDesktopComponent({
   windowProps,
   accountProps,
   storeProps,

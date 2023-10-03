@@ -13,7 +13,7 @@ import { CartItemResponsiveProps } from '../cart-item.component';
 import { RoutePathsType } from '../../route-paths';
 import { useNavigate } from 'react-router-dom';
 
-export function CartItemMobileComponent({
+export default function CartItemMobileComponent({
   storeProps,
   item,
   onRemove,

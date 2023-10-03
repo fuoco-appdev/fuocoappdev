@@ -1,4 +1,8 @@
-import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import {
+  ResponsiveDesktop,
+  ResponsiveMobile,
+  ResponsiveTablet,
+} from './responsive.component';
 import { LineItem, ProductOptionValue } from '@medusajs/medusa';
 import styles from './cart-item.module.scss';
 import { useEffect, useState } from 'react';
@@ -10,9 +14,16 @@ import CartController from '../controllers/cart.controller';
 import { formatAmount } from 'medusa-react';
 import StoreController from '../controllers/store.controller';
 import { useObservable } from '@ngneat/use-observable';
-import { CartItemDesktopComponent } from './desktop/cart-item.desktop.component';
-import { CartItemMobileComponent } from './mobile/cart-item.mobile.component';
 import { StoreState } from '../models/store.model';
+import { lazy } from '@loadable/component';
+import React from 'react';
+
+const CartItemDesktopComponent = lazy(
+  () => import('./desktop/cart-item.desktop.component')
+);
+const CartItemMobileComponent = lazy(
+  () => import('./mobile/cart-item.mobile.component')
+);
 
 export interface CartItemProps {
   storeProps: StoreState;
@@ -73,8 +84,26 @@ export default function CartItemComponent({
     }
   };
 
-  return (
+  const suspenceComponent = (
     <>
+      <ResponsiveDesktop>
+        <div />
+      </ResponsiveDesktop>
+      <ResponsiveTablet>
+        <div />
+      </ResponsiveTablet>
+      <ResponsiveMobile>
+        <div />
+      </ResponsiveMobile>
+    </>
+  );
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return suspenceComponent;
+  }
+
+  return (
+    <React.Suspense fallback={suspenceComponent}>
       <ResponsiveDesktop>
         <CartItemDesktopComponent
           storeProps={storeProps}
@@ -103,6 +132,6 @@ export default function CartItemComponent({
           decrementItemQuantity={decrementItemQuantity}
         />
       </ResponsiveMobile>
-    </>
+    </React.Suspense>
   );
 }

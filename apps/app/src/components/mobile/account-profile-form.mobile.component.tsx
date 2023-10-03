@@ -21,7 +21,7 @@ import StoreController from '../../controllers/store.controller';
 import { CountryDataProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/input-phone-number/country-data';
 import { AccountProfileFormResponsiveProps } from '../account-profile-form.component';
 
-export function AccountProfileFormMobileComponent({
+export default function AccountProfileFormMobileComponent({
   values,
   errors,
   onChangeCallbacks,

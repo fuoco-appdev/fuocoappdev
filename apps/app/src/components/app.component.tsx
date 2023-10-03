@@ -5,7 +5,7 @@ import WindowController from '../controllers/window.controller';
 import AppController from '../controllers/app.controller';
 import styles from './app.module.scss';
 import { lazy } from '@loadable/component';
-const WindowComponent = lazy(() => import('./window.component'));
+import WindowComponent from './window.component';
 
 export default function AppComponent(): JSX.Element {
   const renderCountRef = useRef<number>(0);

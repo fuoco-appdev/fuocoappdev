@@ -1,19 +1,31 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import AccountController from '../controllers/account.controller';
 import WindowController from '../controllers/window.controller';
 import StoreController from '../controllers/store.controller';
 import { useObservable } from '@ngneat/use-observable';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { RoutePathsType } from '../route-paths';
-import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import {
+  ResponsiveDesktop,
+  ResponsiveMobile,
+  ResponsiveTablet,
+} from './responsive.component';
 import { useTranslation } from 'react-i18next';
-import { AccountMobileComponent } from './mobile/account.mobile.component';
-import { AccountDesktopComponent } from './desktop/account.desktop.component';
 import { Helmet } from 'react-helmet';
 import { AccountState } from '../models/account.model';
 import { WindowState } from '../models/window.model';
 import { StoreState } from '../models/store.model';
 import { AuthenticatedComponent } from './authenticated.component';
+import { lazy } from '@loadable/component';
+import { AccountSuspenseDesktopComponent } from './desktop/suspense/account.suspense.desktop.component';
+import { AccountSuspenseMobileComponent } from './mobile/suspense/account.suspense.mobile.component';
+
+const AccountDesktopComponent = lazy(
+  () => import('./desktop/account.desktop.component')
+);
+const AccountMobileComponent = lazy(
+  () => import('./mobile/account.mobile.component')
+);
 
 export interface AccountResponsiveProps {
   windowProps: WindowState;
@@ -34,6 +46,24 @@ export default function AccountComponent(): JSX.Element {
       phoneNumber: t('fieldEmptyError') ?? '',
     });
   }, [i18n.language]);
+
+  const suspenceComponent = (
+    <>
+      <ResponsiveDesktop>
+        <AccountSuspenseDesktopComponent />
+      </ResponsiveDesktop>
+      <ResponsiveTablet>
+        <div />
+      </ResponsiveTablet>
+      <ResponsiveMobile>
+        <AccountSuspenseMobileComponent />
+      </ResponsiveMobile>
+    </>
+  );
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return suspenceComponent;
+  }
 
   return (
     <>
@@ -63,22 +93,24 @@ export default function AccountComponent(): JSX.Element {
         <meta property="og:type" content="website" />
         <meta property="og:url" content={window.location.href} />
       </Helmet>
-      <AuthenticatedComponent>
-        <ResponsiveDesktop>
-          <AccountDesktopComponent
-            accountProps={accountProps}
-            windowProps={windowProps}
-            storeProps={storeProps}
-          />
-        </ResponsiveDesktop>
-        <ResponsiveMobile>
-          <AccountMobileComponent
-            accountProps={accountProps}
-            windowProps={windowProps}
-            storeProps={storeProps}
-          />
-        </ResponsiveMobile>
-      </AuthenticatedComponent>
+      <React.Suspense fallback={suspenceComponent}>
+        <AuthenticatedComponent>
+          <ResponsiveDesktop>
+            <AccountDesktopComponent
+              accountProps={accountProps}
+              windowProps={windowProps}
+              storeProps={storeProps}
+            />
+          </ResponsiveDesktop>
+          <ResponsiveMobile>
+            <AccountMobileComponent
+              accountProps={accountProps}
+              windowProps={windowProps}
+              storeProps={storeProps}
+            />
+          </ResponsiveMobile>
+        </AuthenticatedComponent>
+      </React.Suspense>
     </>
   );
 }

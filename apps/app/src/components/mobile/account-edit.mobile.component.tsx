@@ -15,7 +15,7 @@ import AccountProfileFormComponent from '../account-profile-form.component';
 import WindowController from '../../controllers/window.controller';
 import { AccountEditResponsiveProps } from '../account-edit.component';
 
-export function AccountEditMobileComponent({
+export default function AccountEditMobileComponent({
   storeProps,
   onSaveAsync,
 }: AccountEditResponsiveProps): JSX.Element {

@@ -68,7 +68,7 @@ export function StoreSuspenseDesktopComponent(): JSX.Element {
             ].join(' ')}
           >
             <div>
-              <Skeleton style={{ width: 48, height: 48 }} borderRadius={40} />
+              <Skeleton style={{ width: 48, height: 48 }} borderRadius={48} />
             </div>
           </div>
         </div>

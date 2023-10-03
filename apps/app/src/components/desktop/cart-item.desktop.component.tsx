@@ -13,7 +13,7 @@ import { CartItemResponsiveProps } from '../cart-item.component';
 import { useNavigate } from 'react-router-dom';
 import { RoutePathsType } from '../../route-paths';
 
-export function CartItemDesktopComponent({
+export default function CartItemDesktopComponent({
   storeProps,
   item,
   onRemove,

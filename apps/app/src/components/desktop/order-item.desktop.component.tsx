@@ -22,7 +22,7 @@ import {
   OrderItemResponsiveProps,
 } from '../order-item.component';
 
-export function OrderItemDesktopComponent({
+export default function OrderItemDesktopComponent({
   order,
   fulfillmentStatus,
   getNumberOfItems,

@@ -1,6 +1,8 @@
-import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
-import { AccountEditDesktopComponent } from './desktop/account-edit.desktop.component';
-import { AccountEditMobileComponent } from './mobile/account-edit.mobile.component';
+import {
+  ResponsiveDesktop,
+  ResponsiveMobile,
+  ResponsiveTablet,
+} from './responsive.component';
 import AccountController from '../controllers/account.controller';
 import WindowController from '../controllers/window.controller';
 import StoreController from '../controllers/store.controller';
@@ -8,6 +10,16 @@ import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
 import { StoreState } from '../models/store.model';
 import { AuthenticatedComponent } from './authenticated.component';
+import { lazy } from '@loadable/component';
+import { AccountEditSuspenseDesktopComponent } from './desktop/suspense/account-edit.suspense.desktop.component';
+import React from 'react';
+
+const AccountEditDesktopComponent = lazy(
+  () => import('./desktop/account-edit.desktop.component')
+);
+const AccountEditMobileComponent = lazy(
+  () => import('./mobile/account-edit.mobile.component')
+);
 
 export interface AccountEditResponsiveProps {
   storeProps: StoreState;
@@ -30,8 +42,26 @@ export default function AccountEditComponent(): JSX.Element {
     });
   };
 
-  return (
+  const suspenceComponent = (
     <>
+      <ResponsiveDesktop>
+        <AccountEditSuspenseDesktopComponent />
+      </ResponsiveDesktop>
+      <ResponsiveTablet>
+        <div />
+      </ResponsiveTablet>
+      <ResponsiveMobile>
+        <div />
+      </ResponsiveMobile>
+    </>
+  );
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return suspenceComponent;
+  }
+
+  return (
+    <React.Suspense fallback={suspenceComponent}>
       <AuthenticatedComponent>
         <ResponsiveDesktop>
           <AccountEditDesktopComponent
@@ -46,6 +76,6 @@ export default function AccountEditComponent(): JSX.Element {
           />
         </ResponsiveMobile>
       </AuthenticatedComponent>
-    </>
+    </React.Suspense>
   );
 }

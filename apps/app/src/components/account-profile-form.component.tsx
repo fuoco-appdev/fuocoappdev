@@ -1,11 +1,23 @@
 import { useEffect, ChangeEvent, useState } from 'react';
 import { useObservable } from '@ngneat/use-observable';
-import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import {
+  ResponsiveDesktop,
+  ResponsiveMobile,
+  ResponsiveTablet,
+} from './responsive.component';
 import StoreController from '../controllers/store.controller';
 import { CountryDataProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/input-phone-number/country-data';
-import { AccountProfileFormDesktopComponent } from './desktop/account-profile-form.desktop.component';
-import { AccountProfileFormMobileComponent } from './mobile/account-profile-form.mobile.component';
 import { StoreState } from '../models/store.model';
+import { lazy } from '@loadable/component';
+import { AccountProfileFormSuspenseDesktopComponent } from './desktop/suspense/account-profile-form.suspense.desktop.component';
+import React from 'react';
+
+const AccountProfileFormDesktopComponent = lazy(
+  () => import('./desktop/account-profile-form.desktop.component')
+);
+const AccountProfileFormMobileComponent = lazy(
+  () => import('./mobile/account-profile-form.mobile.component')
+);
 
 export interface ProfileFormOnChangeCallbacks {
   firstName?: (event: ChangeEvent<HTMLInputElement>) => void;
@@ -62,8 +74,26 @@ export default function AccountProfileFormComponent({
     }
   }, [storeProps.selectedRegion]);
 
-  return (
+  const suspenceComponent = (
     <>
+      <ResponsiveDesktop>
+        <AccountProfileFormSuspenseDesktopComponent />
+      </ResponsiveDesktop>
+      <ResponsiveTablet>
+        <div />
+      </ResponsiveTablet>
+      <ResponsiveMobile>
+        <div />
+      </ResponsiveMobile>
+    </>
+  );
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return suspenceComponent;
+  }
+
+  return (
+    <React.Suspense fallback={suspenceComponent}>
       <ResponsiveDesktop>
         <AccountProfileFormDesktopComponent
           storeProps={storeProps}
@@ -82,6 +112,6 @@ export default function AccountProfileFormComponent({
           selectedCountry={selectedCountry}
         />
       </ResponsiveMobile>
-    </>
+    </React.Suspense>
   );
 }

@@ -3,11 +3,22 @@
 .root {    
     min-width: 100%;
     min-height: 100%;
+
+    & .addresses-text-container-skeleton {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        & .addresses-text-skeleton {
+            flex: 1;
+        }
+    }
     
     & .addresses-text-container {
         display: flex;
         flex-direction: row;
         border-bottom: solid 1px $brand-900;
+        align-items: center;
 
         & .addresses-text {
             flex: 1;
@@ -53,6 +64,14 @@
 .root-desktop {  
     padding: $mp-6 0;
 
+    & .addresses-text-container-skeleton-desktop {
+        margin: 0 $mp-6;
+        margin-bottom: $mp-2;
+
+        & .addresses-text-skeleton-desktop {
+        }
+    }
+
     & .addresses-text-container-desktop {
         margin: 0 $mp-6;
         margin-bottom: $mp-2;
@@ -89,7 +108,13 @@
     }
 }
 
-.root-mobile {        
+.root-mobile { 
+    & .addresses-text-container-skeleton-mobile {
+        margin: 0 $mp-4;
+        margin-top: $mp-4;
+        margin-bottom: $mp-2;
+    }
+
     & .addresses-text-container-mobile {
         margin: 0 $mp-4;
         margin-top: $mp-4;

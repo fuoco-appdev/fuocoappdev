@@ -14,7 +14,7 @@ import { Customer, Order } from '@medusajs/medusa';
 import OrderItemComponent from '../order-item.component';
 import { AccountOrderHistoryResponsiveProps } from '../account-order-history.component';
 
-export function AccountOrderHistoryDesktopComponent({
+export default function AccountOrderHistoryDesktopComponent({
   accountProps,
   onOrdersScroll,
   onOrdersLoad,

@@ -7,6 +7,17 @@
     min-width: 100%;
     min-height: 100%;
 
+    & .edit-text-container-skeleton {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        height: 46px;
+
+        & .edit-text-skeleton {
+            flex: 1;
+        }
+    }
+
     & .edit-text-container {
         display: flex;
         flex-direction: row;
@@ -34,6 +45,16 @@
 }
 
 .root-desktop {
+    & .edit-text-container-skeleton-desktop {
+        margin: 0 $mp-6;
+        margin-top: $mp-6;
+        margin-bottom: $mp-2;
+
+        & .edit-text-skeleton-desktop {
+
+        }
+    }
+
     & .edit-text-container-desktop {
         margin: 0 $mp-6;
         margin-top: $mp-6;
@@ -55,6 +76,15 @@
 }
 
 .root-mobile {
+    & .edit-text-container-skeleton-mobile {
+        margin: 0 $mp-4;
+        margin-top: $mp-4;
+        margin-bottom: $mp-2;
+
+        & .edit-text-skeleton-mobile {
+        }
+    }
+
     & .edit-text-container-mobile {
         margin: 0 $mp-4;
         margin-top: $mp-4;

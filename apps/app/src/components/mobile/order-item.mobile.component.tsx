@@ -17,7 +17,7 @@ import {
   OrderItemResponsiveProps,
 } from '../order-item.component';
 
-export function OrderItemMobileComponent({
+export default function OrderItemMobileComponent({
   order,
   fulfillmentStatus,
   getNumberOfItems,

@@ -1,9 +1,21 @@
-import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import {
+  ResponsiveDesktop,
+  ResponsiveMobile,
+  ResponsiveTablet,
+} from './responsive.component';
 import { Order, LineItem } from '@medusajs/medusa';
-import { OrderItemDesktopComponent } from './desktop/order-item.desktop.component';
-import { OrderItemMobileComponent } from './mobile/order-item.mobile.component';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { lazy } from '@loadable/component';
+import { OrderItemSuspenseDesktopComponent } from './desktop/suspense/order-item.suspense.desktop.component';
+import React from 'react';
+
+const OrderItemDesktopComponent = lazy(
+  () => import('./desktop/order-item.desktop.component')
+);
+const OrderItemMobileComponent = lazy(
+  () => import('./mobile/order-item.mobile.component')
+);
 
 export interface OrderItemProps {
   order: Order;
@@ -49,8 +61,26 @@ export default function OrderItemComponent({
       setFulfillmentStatus(t('shipped') ?? '');
   }, [order, i18n.language]);
 
-  return (
+  const suspenceComponent = (
     <>
+      <ResponsiveDesktop>
+        <OrderItemSuspenseDesktopComponent />
+      </ResponsiveDesktop>
+      <ResponsiveTablet>
+        <div />
+      </ResponsiveTablet>
+      <ResponsiveMobile>
+        <div />
+      </ResponsiveMobile>
+    </>
+  );
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return suspenceComponent;
+  }
+
+  return (
+    <React.Suspense fallback={suspenceComponent}>
       <ResponsiveDesktop>
         <OrderItemDesktopComponent
           order={order}
@@ -67,6 +97,6 @@ export default function OrderItemComponent({
           onClick={onClick}
         />
       </ResponsiveMobile>
-    </>
+    </React.Suspense>
   );
 }

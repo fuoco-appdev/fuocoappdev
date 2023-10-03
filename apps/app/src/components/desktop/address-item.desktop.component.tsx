@@ -3,7 +3,7 @@ import { Button, Line, Modal } from '@fuoco.appdev/core-ui';
 import { AddressItemProps } from '../address-item.component';
 import { useTranslation } from 'react-i18next';
 
-export function AddressItemDesktopComponent({
+export default function AddressItemDesktopComponent({
   address,
   onEdit,
   onDelete,

@@ -21,7 +21,7 @@ import { RoutePathsType } from '../../route-paths';
 import AccountController from '../../controllers/account.controller';
 import { AddressItemProps } from '../address-item.component';
 
-export function AddressItemMobileComponent({
+export default function AddressItemMobileComponent({
   address,
   onEdit,
   onDelete,

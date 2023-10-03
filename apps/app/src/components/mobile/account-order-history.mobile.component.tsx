@@ -10,7 +10,7 @@ import { Order } from '@medusajs/medusa';
 import OrderItemComponent from '../order-item.component';
 import { AccountOrderHistoryResponsiveProps } from '../account-order-history.component';
 
-export function AccountOrderHistoryMobileComponent({
+export default function AccountOrderHistoryMobileComponent({
   accountProps,
   onOrdersScroll,
   onOrdersLoad,

@@ -31,7 +31,7 @@ import { useMobileEffect } from '../responsive.component';
 import { AccountResponsiveProps } from '../account.component';
 import StoreController from 'src/controllers/store.controller';
 
-export function AccountMobileComponent({
+export default function AccountMobileComponent({
   windowProps,
   accountProps,
   storeProps,
