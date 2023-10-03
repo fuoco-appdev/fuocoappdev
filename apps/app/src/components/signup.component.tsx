@@ -11,11 +11,22 @@ import { useObservable } from '@ngneat/use-observable';
 import { useTranslation } from 'react-i18next';
 import { AuthError } from '@supabase/supabase-js';
 import { animated, config, useTransition } from 'react-spring';
-import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
-import { SignupDesktopComponent } from './desktop/signup.desktop.component';
-import { SignupMobileComponent } from './mobile/signup.mobile.component';
+import {
+  ResponsiveDesktop,
+  ResponsiveMobile,
+  ResponsiveTablet,
+} from './responsive.component';
 import { GuestComponent } from './guest.component';
 import { Helmet } from 'react-helmet';
+import { lazy } from '@loadable/component';
+import React from 'react';
+
+const SignupDesktopComponent = lazy(
+  () => import('./desktop/signup.desktop.component')
+);
+const SignupMobileComponent = lazy(
+  () => import('./mobile/signup.mobile.component')
+);
 
 export interface SignupProps {}
 
@@ -63,6 +74,24 @@ export default function SignupComponent(): JSX.Element {
     }
   }, [authError]);
 
+  const suspenceComponent = (
+    <>
+      <ResponsiveDesktop>
+        <div />
+      </ResponsiveDesktop>
+      <ResponsiveTablet>
+        <div />
+      </ResponsiveTablet>
+      <ResponsiveMobile>
+        <div />
+      </ResponsiveMobile>
+    </>
+  );
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return suspenceComponent;
+  }
+
   return (
     <>
       <Helmet>
@@ -87,30 +116,32 @@ export default function SignupComponent(): JSX.Element {
         <meta property="og:type" content="website" />
         <meta property="og:url" content={window.location.href} />
       </Helmet>
-      <GuestComponent>
-        <ResponsiveDesktop>
-          <SignupDesktopComponent
-            emailError={emailError}
-            passwordError={passwordError}
-            confirmPasswordError={confirmPasswordError}
-            setAuthError={setAuthError}
-            setEmailError={setEmailError}
-            setPasswordError={setPasswordError}
-            setConfirmPasswordError={setConfirmPasswordError}
-          />
-        </ResponsiveDesktop>
-        <ResponsiveMobile>
-          <SignupMobileComponent
-            emailError={emailError}
-            passwordError={passwordError}
-            confirmPasswordError={confirmPasswordError}
-            setAuthError={setAuthError}
-            setEmailError={setEmailError}
-            setPasswordError={setPasswordError}
-            setConfirmPasswordError={setConfirmPasswordError}
-          />
-        </ResponsiveMobile>
-      </GuestComponent>
+      <React.Suspense fallback={suspenceComponent}>
+        <GuestComponent>
+          <ResponsiveDesktop>
+            <SignupDesktopComponent
+              emailError={emailError}
+              passwordError={passwordError}
+              confirmPasswordError={confirmPasswordError}
+              setAuthError={setAuthError}
+              setEmailError={setEmailError}
+              setPasswordError={setPasswordError}
+              setConfirmPasswordError={setConfirmPasswordError}
+            />
+          </ResponsiveDesktop>
+          <ResponsiveMobile>
+            <SignupMobileComponent
+              emailError={emailError}
+              passwordError={passwordError}
+              confirmPasswordError={confirmPasswordError}
+              setAuthError={setAuthError}
+              setEmailError={setEmailError}
+              setPasswordError={setPasswordError}
+              setConfirmPasswordError={setConfirmPasswordError}
+            />
+          </ResponsiveMobile>
+        </GuestComponent>
+      </React.Suspense>
     </>
   );
 }

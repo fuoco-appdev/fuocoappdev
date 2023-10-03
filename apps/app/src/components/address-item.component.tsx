@@ -7,6 +7,7 @@ import { Address } from '@medusajs/medusa';
 import { lazy } from '@loadable/component';
 import { AddressItemSuspenseDesktopComponent } from './desktop/suspense/address-item.suspense.desktop.component';
 import React from 'react';
+import { AddressItemSuspenseMobileComponent } from './mobile/suspense/address-item.suspense.mobile.component';
 
 const AddressItemDesktopComponent = lazy(
   () => import('./desktop/address-item.desktop.component')
@@ -33,7 +34,7 @@ export default function AddressItemComponent(
         <div />
       </ResponsiveTablet>
       <ResponsiveMobile>
-        <div />
+        <AddressItemSuspenseMobileComponent />
       </ResponsiveMobile>
     </>
   );

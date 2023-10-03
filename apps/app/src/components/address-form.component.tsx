@@ -1,4 +1,8 @@
-import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import {
+  ResponsiveDesktop,
+  ResponsiveMobile,
+  ResponsiveTablet,
+} from './responsive.component';
 import styles from './address-form.module.scss';
 import {
   Button,
@@ -8,15 +12,21 @@ import {
   Listbox,
   OptionProps,
 } from '@fuoco.appdev/core-ui';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useObservable } from '@ngneat/use-observable';
 import { useTranslation } from 'react-i18next';
 import StoreController from '../controllers/store.controller';
 import { Region, Country } from '@medusajs/medusa';
 import ReactCountryFlag from 'react-country-flag';
 import { CountryDataProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/input-phone-number/country-data';
-import { AddressFormDesktopComponent } from './desktop/address-form.desktop.component';
-import { AddressFormMobileComponent } from './mobile/address-form.mobile.component';
+import { lazy } from '@loadable/component';
+
+const AddressFormDesktopComponent = lazy(
+  () => import('./desktop/address-form.desktop.component')
+);
+const AddressFormMobileComponent = lazy(
+  () => import('./mobile/address-form.mobile.component')
+);
 
 export interface AddressFormOnChangeCallbacks {
   email?: (event: ChangeEvent<HTMLInputElement>) => void;
@@ -256,8 +266,26 @@ export default function AddressFormComponent({
     }
   }, [isComplete]);
 
-  return (
+  const suspenceComponent = (
     <>
+      <ResponsiveDesktop>
+        <div />
+      </ResponsiveDesktop>
+      <ResponsiveTablet>
+        <div />
+      </ResponsiveTablet>
+      <ResponsiveMobile>
+        <div />
+      </ResponsiveMobile>
+    </>
+  );
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return suspenceComponent;
+  }
+
+  return (
+    <React.Suspense fallback={suspenceComponent}>
       <ResponsiveDesktop>
         <AddressFormDesktopComponent
           isAuthenticated={isAuthenticated}
@@ -300,6 +328,6 @@ export default function AddressFormComponent({
           setSelectedRegionId={setSelectedRegionId}
         />
       </ResponsiveMobile>
-    </>
+    </React.Suspense>
   );
 }

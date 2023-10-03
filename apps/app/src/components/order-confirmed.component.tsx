@@ -1,6 +1,8 @@
-import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
-import { OrderConfirmedDesktopComponent } from './desktop/order-confirmed.desktop.component';
-import { OrderConfirmedMobileComponent } from './mobile/order-confirmed.mobile.component';
+import {
+  ResponsiveDesktop,
+  ResponsiveMobile,
+  ResponsiveTablet,
+} from './responsive.component';
 import { useParams } from 'react-router-dom';
 import { useObservable } from '@ngneat/use-observable';
 import OrderConfirmedController from '../controllers/order-confirmed.controller';
@@ -10,6 +12,15 @@ import { OptionProps } from '@fuoco.appdev/core-ui';
 import { LineItem, ShippingMethod, ReturnReason } from '@medusajs/medusa';
 import styles from './order-confirmed.module.scss';
 import { StoreState } from '../models/store.model';
+import { lazy } from '@loadable/component';
+import React from 'react';
+
+const OrderConfirmedDesktopComponent = lazy(
+  () => import('./desktop/order-confirmed.desktop.component')
+);
+const OrderConfirmedMobileComponent = lazy(
+  () => import('./mobile/order-confirmed.mobile.component')
+);
 
 export interface OrderConfirmedProps {}
 
@@ -83,8 +94,26 @@ export default function OrderConfirmedComponent(): JSX.Element {
     return formatted.slice(0, 1).toUpperCase() + formatted.slice(1);
   };
 
-  return (
+  const suspenceComponent = (
     <>
+      <ResponsiveDesktop>
+        <div />
+      </ResponsiveDesktop>
+      <ResponsiveTablet>
+        <div />
+      </ResponsiveTablet>
+      <ResponsiveMobile>
+        <div />
+      </ResponsiveMobile>
+    </>
+  );
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return suspenceComponent;
+  }
+
+  return (
+    <React.Suspense fallback={suspenceComponent}>
       <ResponsiveDesktop>
         <OrderConfirmedDesktopComponent
           storeProps={storeProps}
@@ -105,6 +134,6 @@ export default function OrderConfirmedComponent(): JSX.Element {
           formatStatus={formatStatus}
         />
       </ResponsiveMobile>
-    </>
+    </React.Suspense>
   );
 }

@@ -25,7 +25,7 @@ import ReactCountryFlag from 'react-country-flag';
 import { Observable } from 'rxjs';
 import { AccountSettingsAccountResponsiveProps } from '../account-settings-account.component';
 
-export function AccountSettingsAccountDesktopComponent({
+export default function AccountSettingsAccountDesktopComponent({
   accountProps,
   windowLocalProps,
   updatePasswordError,

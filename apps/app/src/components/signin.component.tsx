@@ -9,14 +9,25 @@ import { RoutePathsType } from '../route-paths';
 import { AuthError } from '@supabase/supabase-js';
 import { useState, useEffect } from 'react';
 import { animated, config, useTransition } from 'react-spring';
-import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import {
+  ResponsiveDesktop,
+  ResponsiveMobile,
+  ResponsiveTablet,
+} from './responsive.component';
 import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
-import { SigninDesktopComponent } from './desktop/signin.desktop.component';
-import { SigninMobileComponent } from './mobile/signin.mobile.component';
 import { Helmet } from 'react-helmet';
 import { SigninState } from '../models/signin.model';
 import { GuestComponent } from './guest.component';
+import { lazy } from '@loadable/component';
+import React from 'react';
+
+const SigninDesktopComponent = lazy(
+  () => import('./desktop/signin.desktop.component')
+);
+const SigninMobileComponent = lazy(
+  () => import('./mobile/signin.mobile.component')
+);
 
 export interface SigninResponsiveProps {
   signInProps: SigninState;
@@ -68,6 +79,25 @@ export default function SigninComponent(): JSX.Element {
       setPasswordError('');
     }
   }, [authError, signInProps.email]);
+
+  const suspenceComponent = (
+    <>
+      <ResponsiveDesktop>
+        <div />
+      </ResponsiveDesktop>
+      <ResponsiveTablet>
+        <div />
+      </ResponsiveTablet>
+      <ResponsiveMobile>
+        <div />
+      </ResponsiveMobile>
+    </>
+  );
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return suspenceComponent;
+  }
+
   return (
     <>
       <Helmet>
@@ -96,24 +126,26 @@ export default function SigninComponent(): JSX.Element {
         <meta property="og:type" content="website" />
         <meta property="og:url" content={window.location.href} />
       </Helmet>
-      <GuestComponent>
-        <ResponsiveDesktop>
-          <SigninDesktopComponent
-            signInProps={signInProps}
-            setAuthError={setAuthError}
-            emailError={emailError}
-            passwordError={passwordError}
-          />
-        </ResponsiveDesktop>
-        <ResponsiveMobile>
-          <SigninMobileComponent
-            signInProps={signInProps}
-            setAuthError={setAuthError}
-            emailError={emailError}
-            passwordError={passwordError}
-          />
-        </ResponsiveMobile>
-      </GuestComponent>
+      <React.Suspense fallback={suspenceComponent}>
+        <GuestComponent>
+          <ResponsiveDesktop>
+            <SigninDesktopComponent
+              signInProps={signInProps}
+              setAuthError={setAuthError}
+              emailError={emailError}
+              passwordError={passwordError}
+            />
+          </ResponsiveDesktop>
+          <ResponsiveMobile>
+            <SigninMobileComponent
+              signInProps={signInProps}
+              setAuthError={setAuthError}
+              emailError={emailError}
+              passwordError={passwordError}
+            />
+          </ResponsiveMobile>
+        </GuestComponent>
+      </React.Suspense>
     </>
   );
 }

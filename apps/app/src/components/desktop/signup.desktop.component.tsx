@@ -14,7 +14,7 @@ import { animated, config, useTransition } from 'react-spring';
 import { SignupResponsiveProps } from '../signup.component';
 import { useDesktopEffect } from '../responsive.component';
 
-export function SignupDesktopComponent({
+export default function SignupDesktopComponent({
   emailError,
   passwordError,
   confirmPasswordError,

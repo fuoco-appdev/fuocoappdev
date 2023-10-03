@@ -96,7 +96,7 @@ export default function ProductPreviewMobileComponent({
       clickable={true}
       onClick={() => {
         onClick?.();
-        setTimeout(() => setExpanded(true), 150);
+        setTimeout(() => setExpanded(true), 75);
       }}
     >
       <animated.div

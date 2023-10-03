@@ -42,9 +42,7 @@ export default function WindowMobileComponent({
   );
 
   useMobileEffect(() => {
-    if (windowProps.transitionKeyIndex > 0) {
-      setSwithcBottomBar(true);
-    }
+    setSwithcBottomBar(true);
   }, [windowProps.transitionKeyIndex]);
 
   useMobileEffect(() => {
@@ -132,7 +130,7 @@ export default function WindowMobileComponent({
           exitDone: styles['bottom-bar-exit-done'],
         }}
         timeout={150}
-        onEnter={() => setTimeout(() => setSwithcBottomBar(false), 150)}
+        onEnter={() => setTimeout(() => setSwithcBottomBar(false), 75)}
       >
         <div
           ref={bottomBarRef}
@@ -170,7 +168,7 @@ export default function WindowMobileComponent({
                       if (activeRoute === RoutePathsType.Cart) {
                         navigate(-1);
                       } else {
-                        setTimeout(() => navigate(RoutePathsType.Cart), 150);
+                        setTimeout(() => navigate(RoutePathsType.Cart), 75);
                       }
                     }}
                     type={'primary'}
@@ -522,7 +520,9 @@ export default function WindowMobileComponent({
                           rippleProps={{
                             color: 'rgba(252, 245, 227, .35)',
                           }}
-                          onClick={() => navigate(RoutePathsType.Account)}
+                          onClick={() =>
+                            navigate(RoutePathsType.AccountOrderHistory)
+                          }
                           disabled={
                             windowProps.activeRoute === RoutePathsType.Cart
                           }

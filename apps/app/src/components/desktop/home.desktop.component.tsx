@@ -87,7 +87,7 @@ export default function HomeDesktopComponent({
               }}
               size={'large'}
               onClick={() =>
-                setTimeout(() => navigate(RoutePathsType.Store), 150)
+                setTimeout(() => navigate(RoutePathsType.Store), 75)
               }
             >
               {t('shopNow')}

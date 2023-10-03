@@ -11,6 +11,7 @@ import { StoreState } from '../models/store.model';
 import { lazy } from '@loadable/component';
 import { AccountProfileFormSuspenseDesktopComponent } from './desktop/suspense/account-profile-form.suspense.desktop.component';
 import React from 'react';
+import { AccountProfileFormSuspenseMobileComponent } from './mobile/suspense/account-profile-form.suspense.mobile.component';
 
 const AccountProfileFormDesktopComponent = lazy(
   () => import('./desktop/account-profile-form.desktop.component')
@@ -83,7 +84,7 @@ export default function AccountProfileFormComponent({
         <div />
       </ResponsiveTablet>
       <ResponsiveMobile>
-        <div />
+        <AccountProfileFormSuspenseMobileComponent />
       </ResponsiveMobile>
     </>
   );

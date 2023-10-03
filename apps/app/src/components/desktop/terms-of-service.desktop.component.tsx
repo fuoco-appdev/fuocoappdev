@@ -9,7 +9,7 @@ const ReactMarkdown = loadable(
   },
   { ssr: false }
 );
-export function TermsOfServiceDesktopComponent({
+export default function TermsOfServiceDesktopComponent({
   termsOfServiceProps,
   remarkPlugins,
 }: TermsOfServiceResponsiveProps): JSX.Element {

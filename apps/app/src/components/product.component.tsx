@@ -1,6 +1,10 @@
 import { useObservable } from '@ngneat/use-observable';
 import ProductController from '../controllers/product.controller';
-import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import {
+  ResponsiveDesktop,
+  ResponsiveMobile,
+  ResponsiveTablet,
+} from './responsive.component';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { RouteObject, useParams } from 'react-router-dom';
 import { ProductOptions, ProductState } from '../models/product.model';
@@ -10,23 +14,19 @@ import {
   PricedVariant,
 } from '@medusajs/medusa/dist/types/pricing';
 import { TabProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/tabs/tabs';
-import { ProductDesktopComponent } from './desktop/product.desktop.component';
-import { ProductMobileComponent } from './mobile/product.mobile.component';
 import { Helmet } from 'react-helmet';
 import MedusaService from '../services/medusa.service';
 import StoreController from '../controllers/store.controller';
 import { StoreState } from '../models/store.model';
+import { lazy } from '@loadable/component';
+import React from 'react';
 
-// let product: PricedProduct | undefined = undefined;
-//   if (!StoreController.model.selectedPreview) {
-//     const id = window.location.pathname.split('/').at(-1) ?? '';
-//     product = await MedusaService.requestProductAsync(id);
-//     console.log(product);
-//   }
-//   const component = await import(
-//     './loadable/product-headers.loadable.component'
-//   );
-//   return () => <component.default product={product} />;
+const ProductDesktopComponent = lazy(
+  () => import('./desktop/product.desktop.component')
+);
+const ProductMobileComponent = lazy(
+  () => import('./mobile/product.mobile.component')
+);
 
 export interface ProductProps {
   product?: PricedProduct | undefined;
@@ -193,6 +193,24 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
     }
   }, [productProps.selectedVariant, productProps.metadata]);
 
+  const suspenceComponent = (
+    <>
+      <ResponsiveDesktop>
+        <div />
+      </ResponsiveDesktop>
+      <ResponsiveTablet>
+        <div />
+      </ResponsiveTablet>
+      <ResponsiveMobile>
+        <div />
+      </ResponsiveMobile>
+    </>
+  );
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return suspenceComponent;
+  }
+
   return (
     <>
       <Helmet>
@@ -230,52 +248,54 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
         <meta property="twitter:image" content={productProps.thumbnail} />
         <meta property="twitter:description" content={shortDescription} />
       </Helmet>
-      <ResponsiveDesktop>
-        <ProductDesktopComponent
-          productProps={productProps}
-          storeProps={storeProps}
-          remarkPlugins={remarkPlugins}
-          description={description}
-          tabs={tabs}
-          activeVariantId={activeVariantId}
-          activeDetails={activeDetails}
-          alcohol={alcohol}
-          brand={brand}
-          varietals={varietals}
-          producerBottler={producerBottler}
-          format={format}
-          region={region}
-          residualSugar={residualSugar}
-          type={type}
-          uvc={uvc}
-          vintage={vintage}
-          setActiveDetails={setActiveDetails}
-          setDescription={setDescription}
-        />
-      </ResponsiveDesktop>
-      <ResponsiveMobile>
-        <ProductMobileComponent
-          productProps={productProps}
-          storeProps={storeProps}
-          remarkPlugins={remarkPlugins}
-          description={description}
-          tabs={tabs}
-          activeVariantId={activeVariantId}
-          activeDetails={activeDetails}
-          alcohol={alcohol}
-          brand={brand}
-          varietals={varietals}
-          producerBottler={producerBottler}
-          format={format}
-          region={region}
-          residualSugar={residualSugar}
-          type={type}
-          uvc={uvc}
-          vintage={vintage}
-          setActiveDetails={setActiveDetails}
-          setDescription={setDescription}
-        />
-      </ResponsiveMobile>
+      <React.Suspense fallback={suspenceComponent}>
+        <ResponsiveDesktop>
+          <ProductDesktopComponent
+            productProps={productProps}
+            storeProps={storeProps}
+            remarkPlugins={remarkPlugins}
+            description={description}
+            tabs={tabs}
+            activeVariantId={activeVariantId}
+            activeDetails={activeDetails}
+            alcohol={alcohol}
+            brand={brand}
+            varietals={varietals}
+            producerBottler={producerBottler}
+            format={format}
+            region={region}
+            residualSugar={residualSugar}
+            type={type}
+            uvc={uvc}
+            vintage={vintage}
+            setActiveDetails={setActiveDetails}
+            setDescription={setDescription}
+          />
+        </ResponsiveDesktop>
+        <ResponsiveMobile>
+          <ProductMobileComponent
+            productProps={productProps}
+            storeProps={storeProps}
+            remarkPlugins={remarkPlugins}
+            description={description}
+            tabs={tabs}
+            activeVariantId={activeVariantId}
+            activeDetails={activeDetails}
+            alcohol={alcohol}
+            brand={brand}
+            varietals={varietals}
+            producerBottler={producerBottler}
+            format={format}
+            region={region}
+            residualSugar={residualSugar}
+            type={type}
+            uvc={uvc}
+            vintage={vintage}
+            setActiveDetails={setActiveDetails}
+            setDescription={setDescription}
+          />
+        </ResponsiveMobile>
+      </React.Suspense>
     </>
   );
 }

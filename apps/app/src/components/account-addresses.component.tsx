@@ -24,6 +24,7 @@ import { AuthenticatedComponent } from './authenticated.component';
 import { lazy } from '@loadable/component';
 import { AccountAddressesSuspenseDesktopComponent } from './desktop/suspense/account-addresses.suspense.desktop.component';
 import React from 'react';
+import { AccountAddressesSuspenseMobileComponent } from './mobile/suspense/account-addresses.suspense.mobile.component';
 
 const AccountAddressesDesktopComponent = lazy(
   () => import('./desktop/account-addresses.desktop.component')
@@ -163,7 +164,7 @@ export default function AccountAddressesComponent(): JSX.Element {
         <div />
       </ResponsiveTablet>
       <ResponsiveMobile>
-        <div />
+        <AccountAddressesSuspenseMobileComponent />
       </ResponsiveMobile>
     </>
   );

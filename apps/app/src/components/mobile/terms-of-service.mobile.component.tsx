@@ -14,7 +14,7 @@ const ReactMarkdown = loadable(
   { ssr: false }
 );
 
-export function TermsOfServiceMobileComponent({
+export default function TermsOfServiceMobileComponent({
   termsOfServiceProps,
   remarkPlugins,
 }: TermsOfServiceResponsiveProps): JSX.Element {

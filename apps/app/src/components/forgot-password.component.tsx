@@ -8,15 +8,26 @@ import { RoutePathsType } from '../route-paths';
 import { AuthError } from '@supabase/supabase-js';
 import { useState, useEffect } from 'react';
 import { animated, config, useTransition } from 'react-spring';
-import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import {
+  ResponsiveDesktop,
+  ResponsiveMobile,
+  ResponsiveTablet,
+} from './responsive.component';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet';
-import { ForgotPasswordMobileComponent } from './mobile/forgot-password.mobile.component';
-import { ForgotPasswordDesktopComponent } from './desktop/forgot-password.desktop.component';
 import { useObservable } from '@ngneat/use-observable';
 import ForgotPasswordController from '../controllers/forgot-password.controller';
 import { ForgotPasswordState } from '../models/forgot-password.model';
 import { GuestComponent } from './guest.component';
+import { lazy } from '@loadable/component';
+import React from 'react';
+
+const ForgotPasswordDesktopComponent = lazy(
+  () => import('./desktop/forgot-password.desktop.component')
+);
+const ForgotPasswordMobileComponent = lazy(
+  () => import('./mobile/forgot-password.mobile.component')
+);
 
 export interface ForgotPasswordResponsiveProps {
   forgotPasswordProps: ForgotPasswordState;
@@ -26,6 +37,24 @@ export default function ForgotPasswordComponent(): JSX.Element {
   const [forgotPasswordProps] = useObservable(
     ForgotPasswordController.model.store
   );
+
+  const suspenceComponent = (
+    <>
+      <ResponsiveDesktop>
+        <div />
+      </ResponsiveDesktop>
+      <ResponsiveTablet>
+        <div />
+      </ResponsiveTablet>
+      <ResponsiveMobile>
+        <div />
+      </ResponsiveMobile>
+    </>
+  );
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return suspenceComponent;
+  }
 
   return (
     <>
@@ -51,18 +80,20 @@ export default function ForgotPasswordComponent(): JSX.Element {
         <meta property="og:type" content="website" />
         <meta property="og:url" content={window.location.href} />
       </Helmet>
-      <GuestComponent>
-        <ResponsiveDesktop>
-          <ForgotPasswordDesktopComponent
-            forgotPasswordProps={forgotPasswordProps}
-          />
-        </ResponsiveDesktop>
-        <ResponsiveMobile>
-          <ForgotPasswordMobileComponent
-            forgotPasswordProps={forgotPasswordProps}
-          />
-        </ResponsiveMobile>
-      </GuestComponent>
+      <React.Suspense fallback={suspenceComponent}>
+        <GuestComponent>
+          <ResponsiveDesktop>
+            <ForgotPasswordDesktopComponent
+              forgotPasswordProps={forgotPasswordProps}
+            />
+          </ResponsiveDesktop>
+          <ResponsiveMobile>
+            <ForgotPasswordMobileComponent
+              forgotPasswordProps={forgotPasswordProps}
+            />
+          </ResponsiveMobile>
+        </GuestComponent>
+      </React.Suspense>
     </>
   );
 }

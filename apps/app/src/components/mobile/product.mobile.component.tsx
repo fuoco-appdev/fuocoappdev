@@ -23,7 +23,7 @@ const ReactMarkdown = loadable(
   { ssr: false }
 );
 
-export function ProductMobileComponent({
+export default function ProductMobileComponent({
   productProps,
   storeProps,
   remarkPlugins,

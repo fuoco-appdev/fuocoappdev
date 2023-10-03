@@ -32,7 +32,7 @@ import { CheckoutResponsiveProps } from '../checkout.component';
 import { useNavigate } from 'react-router-dom';
 import { RoutePathsType } from '../../route-paths';
 
-export function CheckoutMobileComponent({
+export default function CheckoutMobileComponent({
   checkoutProps,
   accountProps,
   storeProps,

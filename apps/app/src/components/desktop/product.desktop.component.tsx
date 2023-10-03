@@ -22,7 +22,7 @@ const ReactMarkdown = loadable(
   { ssr: false }
 );
 
-export function ProductDesktopComponent({
+export default function ProductDesktopComponent({
   productProps,
   storeProps,
   remarkPlugins,

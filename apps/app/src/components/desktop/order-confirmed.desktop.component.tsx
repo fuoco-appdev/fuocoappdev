@@ -13,7 +13,7 @@ import { RefundItem } from '../../models/order-confirmed.model';
 import WindowController from '../../controllers/window.controller';
 import { OrderConfirmedResponsiveProps } from '../order-confirmed.component';
 
-export function OrderConfirmedDesktopComponent({
+export default function OrderConfirmedDesktopComponent({
   storeProps,
   quantity,
   openRefund,

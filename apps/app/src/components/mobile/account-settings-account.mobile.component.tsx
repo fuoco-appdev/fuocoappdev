@@ -27,7 +27,7 @@ import { Observable } from 'rxjs';
 import { WindowLocalState } from '../../models';
 import { AccountSettingsAccountResponsiveProps } from '../account-settings-account.component';
 
-export function AccountSettingsAccountMobileComponent({
+export default function AccountSettingsAccountMobileComponent({
   accountProps,
   windowLocalProps,
   updatePasswordError,

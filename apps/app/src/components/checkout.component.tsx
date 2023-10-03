@@ -1,7 +1,11 @@
-import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import {
+  ResponsiveDesktop,
+  ResponsiveMobile,
+  ResponsiveTablet,
+} from './responsive.component';
 import styles from './checkout.module.scss';
 import { useTranslation } from 'react-i18next';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useObservable } from '@ngneat/use-observable';
 import CheckoutController from '../controllers/checkout.controller';
 import { RadioProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/radio/radio';
@@ -29,13 +33,19 @@ import {
   StripeElementsOptions,
 } from '@stripe/stripe-js';
 import SecretsService from '../services/secrets.service';
-import { CheckoutMobileComponent } from './mobile/checkout.mobile.component';
-import { CheckoutDesktopComponent } from './desktop/checkout.desktop.component';
 import { Helmet } from 'react-helmet';
 import { AccountState } from '../models/account.model';
 import { StoreState } from '../models/store.model';
 import { CartState } from '../models/cart.model';
 import { WindowState } from '../models/window.model';
+import { lazy } from '@loadable/component';
+
+const CheckoutDesktopComponent = lazy(
+  () => import('./desktop/checkout.desktop.component')
+);
+const CheckoutMobileComponent = lazy(
+  () => import('./mobile/checkout.mobile.component')
+);
 
 export interface CheckoutResponsiveProps {
   checkoutProps: CheckoutState;
@@ -326,6 +336,24 @@ export default function CheckoutComponent(): JSX.Element {
     setIsAddAddressOpen(false);
   };
 
+  const suspenceComponent = (
+    <>
+      <ResponsiveDesktop>
+        <div />
+      </ResponsiveDesktop>
+      <ResponsiveTablet>
+        <div />
+      </ResponsiveTablet>
+      <ResponsiveMobile>
+        <div />
+      </ResponsiveMobile>
+    </>
+  );
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return suspenceComponent;
+  }
+
   return (
     <>
       <Helmet>
@@ -354,64 +382,66 @@ export default function CheckoutComponent(): JSX.Element {
         <meta property="og:type" content="website" />
         <meta property="og:url" content={window.location.href} />
       </Helmet>
-      <ResponsiveDesktop>
-        <CheckoutDesktopComponent
-          checkoutProps={checkoutProps}
-          accountProps={accountProps}
-          storeProps={storeProps}
-          cartProps={cartProps}
-          windowProps={windowProps}
-          shippingOptions={shippingOptions}
-          providerOptions={providerOptions}
-          shippingAddressOptions={shippingAddressOptions}
-          isAddAddressOpen={isAddAddressOpen}
-          isPayOpen={isPayOpen}
-          stripeOptions={stripeOptions}
-          stripePromise={stripePromise}
-          stripeElementOptions={stripeElementOptions}
-          setIsAddAddressOpen={setIsAddAddressOpen}
-          setIsPayOpen={setIsPayOpen}
-          onContinueToDeliveryFromShippingAddress={
-            onContinueToDeliveryFromShippingAddress
-          }
-          onContinueToBillingFromShippingAddress={
-            onContinueToBillingFromShippingAddress
-          }
-          onContinueToDeliveryFromBillingAddress={
-            onContinueToDeliveryFromBillingAddress
-          }
-          onAddAddressAsync={onAddAddressAsync}
-        />
-      </ResponsiveDesktop>
-      <ResponsiveMobile>
-        <CheckoutMobileComponent
-          checkoutProps={checkoutProps}
-          accountProps={accountProps}
-          storeProps={storeProps}
-          cartProps={cartProps}
-          windowProps={windowProps}
-          shippingOptions={shippingOptions}
-          providerOptions={providerOptions}
-          shippingAddressOptions={shippingAddressOptions}
-          isAddAddressOpen={isAddAddressOpen}
-          isPayOpen={isPayOpen}
-          stripeOptions={stripeOptions}
-          stripePromise={stripePromise}
-          stripeElementOptions={stripeElementOptions}
-          setIsAddAddressOpen={setIsAddAddressOpen}
-          setIsPayOpen={setIsPayOpen}
-          onContinueToDeliveryFromShippingAddress={
-            onContinueToDeliveryFromShippingAddress
-          }
-          onContinueToBillingFromShippingAddress={
-            onContinueToBillingFromShippingAddress
-          }
-          onContinueToDeliveryFromBillingAddress={
-            onContinueToDeliveryFromBillingAddress
-          }
-          onAddAddressAsync={onAddAddressAsync}
-        />
-      </ResponsiveMobile>
+      <React.Suspense fallback={suspenceComponent}>
+        <ResponsiveDesktop>
+          <CheckoutDesktopComponent
+            checkoutProps={checkoutProps}
+            accountProps={accountProps}
+            storeProps={storeProps}
+            cartProps={cartProps}
+            windowProps={windowProps}
+            shippingOptions={shippingOptions}
+            providerOptions={providerOptions}
+            shippingAddressOptions={shippingAddressOptions}
+            isAddAddressOpen={isAddAddressOpen}
+            isPayOpen={isPayOpen}
+            stripeOptions={stripeOptions}
+            stripePromise={stripePromise}
+            stripeElementOptions={stripeElementOptions}
+            setIsAddAddressOpen={setIsAddAddressOpen}
+            setIsPayOpen={setIsPayOpen}
+            onContinueToDeliveryFromShippingAddress={
+              onContinueToDeliveryFromShippingAddress
+            }
+            onContinueToBillingFromShippingAddress={
+              onContinueToBillingFromShippingAddress
+            }
+            onContinueToDeliveryFromBillingAddress={
+              onContinueToDeliveryFromBillingAddress
+            }
+            onAddAddressAsync={onAddAddressAsync}
+          />
+        </ResponsiveDesktop>
+        <ResponsiveMobile>
+          <CheckoutMobileComponent
+            checkoutProps={checkoutProps}
+            accountProps={accountProps}
+            storeProps={storeProps}
+            cartProps={cartProps}
+            windowProps={windowProps}
+            shippingOptions={shippingOptions}
+            providerOptions={providerOptions}
+            shippingAddressOptions={shippingAddressOptions}
+            isAddAddressOpen={isAddAddressOpen}
+            isPayOpen={isPayOpen}
+            stripeOptions={stripeOptions}
+            stripePromise={stripePromise}
+            stripeElementOptions={stripeElementOptions}
+            setIsAddAddressOpen={setIsAddAddressOpen}
+            setIsPayOpen={setIsPayOpen}
+            onContinueToDeliveryFromShippingAddress={
+              onContinueToDeliveryFromShippingAddress
+            }
+            onContinueToBillingFromShippingAddress={
+              onContinueToBillingFromShippingAddress
+            }
+            onContinueToDeliveryFromBillingAddress={
+              onContinueToDeliveryFromBillingAddress
+            }
+            onAddAddressAsync={onAddAddressAsync}
+          />
+        </ResponsiveMobile>
+      </React.Suspense>
     </>
   );
 }

@@ -1,12 +1,23 @@
-import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import {
+  ResponsiveDesktop,
+  ResponsiveMobile,
+  ResponsiveTablet,
+} from './responsive.component';
 import { LineItem, ProductOptionValue } from '@medusajs/medusa';
 import { useEffect, useState } from 'react';
 import { ProductOptions } from '../models/product.model';
-import { ShippingItemDesktopComponent } from './desktop/shipping-item.desktop.component';
-import { ShippingItemMobileComponent } from './mobile/shipping-item.mobile.component';
 import { useObservable } from '@ngneat/use-observable';
 import StoreController from '../controllers/store.controller';
 import { StoreState } from '../models/store.model';
+import { lazy } from '@loadable/component';
+import React from 'react';
+
+const ShippingItemDesktopComponent = lazy(
+  () => import('./desktop/shipping-item.desktop.component')
+);
+const ShippingItemMobileComponent = lazy(
+  () => import('./mobile/shipping-item.mobile.component')
+);
 
 export interface ShippingItemProps {
   storeProps: StoreState;
@@ -46,8 +57,26 @@ export default function ShippingItemComponent({
     setHasReducedPrice((item.discount_total ?? 0) > 0);
   }, [item]);
 
-  return (
+  const suspenceComponent = (
     <>
+      <ResponsiveDesktop>
+        <div />
+      </ResponsiveDesktop>
+      <ResponsiveTablet>
+        <div />
+      </ResponsiveTablet>
+      <ResponsiveMobile>
+        <div />
+      </ResponsiveMobile>
+    </>
+  );
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return suspenceComponent;
+  }
+
+  return (
+    <React.Suspense fallback={suspenceComponent}>
       <ResponsiveDesktop>
         <ShippingItemDesktopComponent
           storeProps={storeProps}
@@ -66,6 +95,6 @@ export default function ShippingItemComponent({
           discountPercentage={discountPercentage}
         />
       </ResponsiveMobile>
-    </>
+    </React.Suspense>
   );
 }

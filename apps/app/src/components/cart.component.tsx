@@ -1,6 +1,8 @@
-import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
-import { CartDesktopComponent } from './desktop/cart.desktop.component';
-import { CartMobileComponent } from './mobile/cart.mobile.component';
+import {
+  ResponsiveDesktop,
+  ResponsiveMobile,
+  ResponsiveTablet,
+} from './responsive.component';
 import { useEffect, useState } from 'react';
 import { TabProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/tabs/tabs';
 import StoreController from '../controllers/store.controller';
@@ -18,6 +20,15 @@ import { Helmet } from 'react-helmet';
 import { CartState } from '../models/cart.model';
 import { StoreState } from '../models/store.model';
 import { WindowState } from '../models/window.model';
+import { lazy } from '@loadable/component';
+import React from 'react';
+
+const CartDesktopComponent = lazy(
+  () => import('./desktop/cart.desktop.component')
+);
+const CartMobileComponent = lazy(
+  () => import('./mobile/cart.mobile.component')
+);
 
 export interface CartResponsiveProps {
   cartProps: CartState;
@@ -57,6 +68,24 @@ export default function CartComponent(): JSX.Element {
     setSalesChannelTabs(tabProps);
   }, [cartLocalProps.cartIds, homeProps.inventoryLocations]);
 
+  const suspenceComponent = (
+    <>
+      <ResponsiveDesktop>
+        <div />
+      </ResponsiveDesktop>
+      <ResponsiveTablet>
+        <div />
+      </ResponsiveTablet>
+      <ResponsiveMobile>
+        <div />
+      </ResponsiveMobile>
+    </>
+  );
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return suspenceComponent;
+  }
+
   return (
     <>
       <Helmet>
@@ -85,26 +114,28 @@ export default function CartComponent(): JSX.Element {
         <meta property="og:type" content="website" />
         <meta property="og:url" content={window.location.href} />
       </Helmet>
-      <ResponsiveDesktop>
-        <CartDesktopComponent
-          cartProps={cartProps}
-          homeProps={homeProps}
-          storeProps={storeProps}
-          windowProps={windowProps}
-          homeLocalProps={homeLocalProps}
-          salesChannelTabs={salesChannelTabs}
-        />
-      </ResponsiveDesktop>
-      <ResponsiveMobile>
-        <CartMobileComponent
-          cartProps={cartProps}
-          homeProps={homeProps}
-          storeProps={storeProps}
-          windowProps={windowProps}
-          homeLocalProps={homeLocalProps}
-          salesChannelTabs={salesChannelTabs}
-        />
-      </ResponsiveMobile>
+      <React.Suspense fallback={suspenceComponent}>
+        <ResponsiveDesktop>
+          <CartDesktopComponent
+            cartProps={cartProps}
+            homeProps={homeProps}
+            storeProps={storeProps}
+            windowProps={windowProps}
+            homeLocalProps={homeLocalProps}
+            salesChannelTabs={salesChannelTabs}
+          />
+        </ResponsiveDesktop>
+        <ResponsiveMobile>
+          <CartMobileComponent
+            cartProps={cartProps}
+            homeProps={homeProps}
+            storeProps={storeProps}
+            windowProps={windowProps}
+            homeLocalProps={homeLocalProps}
+            salesChannelTabs={salesChannelTabs}
+          />
+        </ResponsiveMobile>
+      </React.Suspense>
     </>
   );
 }

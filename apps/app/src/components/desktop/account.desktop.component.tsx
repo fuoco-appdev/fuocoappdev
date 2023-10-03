@@ -71,7 +71,7 @@ export default function AccountDesktopComponent({
                 color: 'rgba(88, 40, 109, .35)',
               }}
               onClick={() =>
-                setTimeout(() => navigate(RoutePathsType.AccountSettings), 150)
+                setTimeout(() => navigate(RoutePathsType.AccountSettings), 75)
               }
               type={'text'}
               rounded={true}

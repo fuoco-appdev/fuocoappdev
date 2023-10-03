@@ -1,7 +1,9 @@
-import { useState } from 'react';
-import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
-import { AccountSettingsAccountDesktopComponent } from './desktop/account-settings-account.desktop.component';
-import { AccountSettingsAccountMobileComponent } from './mobile/account-settings-account.mobile.component';
+import React, { useState } from 'react';
+import {
+  ResponsiveDesktop,
+  ResponsiveMobile,
+  ResponsiveTablet,
+} from './responsive.component';
 import { WindowLocalState } from '../models/window.model';
 import { useObservable } from '@ngneat/use-observable';
 import WindowController from '../controllers/window.controller';
@@ -9,6 +11,14 @@ import AccountController from '../controllers/account.controller';
 import { Store } from '@ngneat/elf';
 import { AccountState } from '../models/account.model';
 import { AuthenticatedComponent } from './authenticated.component';
+import { lazy } from '@loadable/component';
+
+const AccountSettingsAccountDesktopComponent = lazy(
+  () => import('./desktop/account-settings-account.desktop.component')
+);
+const AccountSettingsAccountMobileComponent = lazy(
+  () => import('./mobile/account-settings-account.mobile.component')
+);
 
 export interface AccountSettingsAccountResponsiveProps {
   accountProps: AccountState;
@@ -37,8 +47,26 @@ export default function AccountSettingsAccountComponent(): JSX.Element {
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState<boolean>(false);
 
-  return (
+  const suspenceComponent = (
     <>
+      <ResponsiveDesktop>
+        <div />
+      </ResponsiveDesktop>
+      <ResponsiveTablet>
+        <div />
+      </ResponsiveTablet>
+      <ResponsiveMobile>
+        <div />
+      </ResponsiveMobile>
+    </>
+  );
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return suspenceComponent;
+  }
+
+  return (
+    <React.Suspense fallback={suspenceComponent}>
       <AuthenticatedComponent>
         <ResponsiveDesktop inheritStyles={false}>
           <AccountSettingsAccountDesktopComponent
@@ -69,6 +97,6 @@ export default function AccountSettingsAccountComponent(): JSX.Element {
           />
         </ResponsiveMobile>
       </AuthenticatedComponent>
-    </>
+    </React.Suspense>
   );
 }

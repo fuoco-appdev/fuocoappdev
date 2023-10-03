@@ -12,7 +12,7 @@ import { useObservable } from '@ngneat/use-observable';
 import { SigninResponsiveProps } from '../signin.component';
 import { useMobileEffect } from '../responsive.component';
 
-export function SigninMobileComponent({
+export default function SigninMobileComponent({
   signInProps,
   emailError,
   passwordError,

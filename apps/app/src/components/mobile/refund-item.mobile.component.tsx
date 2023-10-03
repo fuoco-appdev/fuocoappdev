@@ -13,7 +13,7 @@ import {
 import { useObservable } from '@ngneat/use-observable';
 import { RefundItemResponsiveProps } from '../refund-item.component';
 
-export function RefundItemMobileComponent({
+export default function RefundItemMobileComponent({
   item,
   refundItem,
   returnReasonOptions,

@@ -15,7 +15,7 @@ import { RefundItem } from '../../models/order-confirmed.model';
 import WindowController from '../../controllers/window.controller';
 import { OrderConfirmedResponsiveProps } from '../order-confirmed.component';
 
-export function OrderConfirmedMobileComponent({
+export default function OrderConfirmedMobileComponent({
   storeProps,
   quantity,
   openRefund,

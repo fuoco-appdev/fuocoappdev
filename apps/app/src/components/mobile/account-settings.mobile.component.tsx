@@ -14,7 +14,7 @@ import { Store } from '@ngneat/elf';
 import Ripples from 'react-ripples';
 import { AccountSettingsResponsiveProps } from '../account-settings.component';
 
-export function AccountSettingsMobileComponent({
+export default function AccountSettingsMobileComponent({
   windowProps,
 }: AccountSettingsResponsiveProps): JSX.Element {
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ export function AccountSettingsMobileComponent({
         ].join(' ')}
         color={'rgba(42, 42, 95, .35)'}
         onClick={() =>
-          setTimeout(() => navigate(RoutePathsType.AccountSettingsAccount), 150)
+          setTimeout(() => navigate(RoutePathsType.AccountSettingsAccount), 75)
         }
       >
         <div

@@ -12,7 +12,7 @@ import { useObservable } from '@ngneat/use-observable';
 import { SigninResponsiveProps } from '../signin.component';
 import { useDesktopEffect } from '../responsive.component';
 
-export function SigninDesktopComponent({
+export default function SigninDesktopComponent({
   signInProps,
   emailError,
   passwordError,

@@ -12,7 +12,7 @@ import { AuthError } from '@supabase/supabase-js';
 import { RoutePathsType } from '../../route-paths';
 import { ForgotPasswordResponsiveProps } from '../forgot-password.component';
 
-export function ForgotPasswordDesktopComponent({
+export default function ForgotPasswordDesktopComponent({
   forgotPasswordProps,
 }: ForgotPasswordResponsiveProps): JSX.Element {
   const navigate = useNavigate();

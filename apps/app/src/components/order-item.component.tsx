@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { lazy } from '@loadable/component';
 import { OrderItemSuspenseDesktopComponent } from './desktop/suspense/order-item.suspense.desktop.component';
 import React from 'react';
+import { OrderItemSuspenseMobileComponent } from './mobile/suspense/order-item.suspense.mobile.component';
 
 const OrderItemDesktopComponent = lazy(
   () => import('./desktop/order-item.desktop.component')
@@ -70,7 +71,7 @@ export default function OrderItemComponent({
         <div />
       </ResponsiveTablet>
       <ResponsiveMobile>
-        <div />
+        <OrderItemSuspenseMobileComponent />
       </ResponsiveMobile>
     </>
   );

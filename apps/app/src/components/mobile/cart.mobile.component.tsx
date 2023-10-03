@@ -16,7 +16,7 @@ import { CartResponsiveProps } from '../cart.component';
 import HomeController from '../../controllers/home.controller';
 import { Store } from '@ngneat/elf';
 
-export function CartMobileComponent({
+export default function CartMobileComponent({
   cartProps,
   homeLocalProps,
   storeProps,
@@ -162,7 +162,7 @@ export function CartMobileComponent({
                   size={'large'}
                   touchScreen={true}
                   onClick={() =>
-                    setTimeout(() => navigate(RoutePathsType.Home), 150)
+                    setTimeout(() => navigate(RoutePathsType.Home), 75)
                   }
                 >
                   {t('home')}
@@ -197,7 +197,7 @@ export function CartMobileComponent({
                     size={'large'}
                     touchScreen={true}
                     onClick={() =>
-                      setTimeout(() => navigate(RoutePathsType.Store), 150)
+                      setTimeout(() => navigate(RoutePathsType.Store), 75)
                     }
                   >
                     {t('shopNow')}
@@ -466,7 +466,7 @@ export function CartMobileComponent({
           size={'large'}
           icon={<Line.ShoppingCart size={24} />}
           onClick={() =>
-            setTimeout(() => navigate(RoutePathsType.Checkout), 150)
+            setTimeout(() => navigate(RoutePathsType.Checkout), 75)
           }
         >
           {t('goToCheckout')}

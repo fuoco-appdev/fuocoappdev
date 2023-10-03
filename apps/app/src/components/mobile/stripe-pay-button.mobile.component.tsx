@@ -3,7 +3,7 @@ import { Button, Line } from '@fuoco.appdev/core-ui';
 import { useTranslation } from 'react-i18next';
 import { StripePayButtonResponsiveProps } from '../stripe-pay-button.component';
 
-export function StripePayButtonMobileComponent({
+export default function StripePayButtonMobileComponent({
   onPayAsync,
 }: StripePayButtonResponsiveProps): JSX.Element {
   const { t } = useTranslation();

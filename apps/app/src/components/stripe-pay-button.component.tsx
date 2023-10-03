@@ -1,5 +1,9 @@
 import { MutableRefObject, useEffect, useRef } from 'react';
-import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import {
+  ResponsiveDesktop,
+  ResponsiveMobile,
+  ResponsiveTablet,
+} from './responsive.component';
 import {
   Elements,
   useElements,
@@ -16,14 +20,21 @@ import {
   StripeCardNumberElementOptions,
   StripeElementsOptions,
 } from '@stripe/stripe-js';
-import { StripePayButtonMobileComponent } from './mobile/stripe-pay-button.mobile.component';
 import { useNavigate } from 'react-router-dom';
 import { useObservable } from '@ngneat/use-observable';
 import CheckoutController from '../controllers/checkout.controller';
 import { useTranslation } from 'react-i18next';
 import { ProviderType } from '../models/checkout.model';
 import { RoutePathsType } from '../route-paths';
-import { StripePayButtonDesktopComponent } from './desktop/stripe-pay-button.desktop.component';
+import { lazy } from '@loadable/component';
+import React from 'react';
+
+const StripePayButtonDesktopComponent = lazy(
+  () => import('./desktop/stripe-pay-button.desktop.component')
+);
+const StripePayButtonMobileComponent = lazy(
+  () => import('./mobile/stripe-pay-button.mobile.component')
+);
 
 export interface StripePayButtonProps {
   stripeOptions?: StripeElementsOptions;
@@ -64,14 +75,32 @@ export default function StripePayButtonComponent({
     }
   };
 
-  return (
+  const suspenceComponent = (
     <>
+      <ResponsiveDesktop>
+        <div />
+      </ResponsiveDesktop>
+      <ResponsiveTablet>
+        <div />
+      </ResponsiveTablet>
+      <ResponsiveMobile>
+        <div />
+      </ResponsiveMobile>
+    </>
+  );
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return suspenceComponent;
+  }
+
+  return (
+    <React.Suspense fallback={suspenceComponent}>
       <ResponsiveDesktop>
         <StripePayButtonDesktopComponent onPayAsync={onPayAsync} />
       </ResponsiveDesktop>
       <ResponsiveMobile>
         <StripePayButtonMobileComponent onPayAsync={onPayAsync} />
       </ResponsiveMobile>
-    </>
+    </React.Suspense>
   );
 }

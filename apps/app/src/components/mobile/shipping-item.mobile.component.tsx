@@ -6,7 +6,7 @@ import StoreController from '../../controllers/store.controller';
 import { useObservable } from '@ngneat/use-observable';
 import { ShippingItemResponsiveProps } from '../shipping-item.component';
 
-export function ShippingItemMobileComponent({
+export default function ShippingItemMobileComponent({
   storeProps,
   item,
   vintage,

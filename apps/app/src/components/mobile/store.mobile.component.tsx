@@ -254,7 +254,7 @@ export default function StoreMobileComponent({
                 }}
                 size={'large'}
                 onClick={() =>
-                  setTimeout(() => navigate(RoutePathsType.Home), 150)
+                  setTimeout(() => navigate(RoutePathsType.Home), 75)
                 }
               >
                 {t('home')}

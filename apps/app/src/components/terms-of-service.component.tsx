@@ -1,11 +1,22 @@
 import { Helmet } from 'react-helmet';
-import { TermsOfServiceDesktopComponent } from './desktop/terms-of-service.desktop.component';
-import { TermsOfServiceMobileComponent } from './mobile/terms-of-service.mobile.component';
-import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import {
+  ResponsiveDesktop,
+  ResponsiveMobile,
+  ResponsiveTablet,
+} from './responsive.component';
 import { useState, useEffect } from 'react';
 import { TermsOfServiceState } from '../models/terms-of-service.model';
 import { useObservable } from '@ngneat/use-observable';
 import TermsOfServiceController from '../controllers/terms-of-service.controller';
+import { lazy } from '@loadable/component';
+import React from 'react';
+
+const TermsOfServiceDesktopComponent = lazy(
+  () => import('./desktop/terms-of-service.desktop.component')
+);
+const TermsOfServiceMobileComponent = lazy(
+  () => import('./mobile/terms-of-service.mobile.component')
+);
 
 export interface TermsOfServiceResponsiveProps {
   termsOfServiceProps: TermsOfServiceState;
@@ -23,6 +34,24 @@ export default function TermsOfServiceComponent(): JSX.Element {
       setRemarkPlugins([plugin.default]);
     });
   }, []);
+
+  const suspenceComponent = (
+    <>
+      <ResponsiveDesktop>
+        <div />
+      </ResponsiveDesktop>
+      <ResponsiveTablet>
+        <div />
+      </ResponsiveTablet>
+      <ResponsiveMobile>
+        <div />
+      </ResponsiveMobile>
+    </>
+  );
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return suspenceComponent;
+  }
 
   return (
     <>
@@ -52,18 +81,20 @@ export default function TermsOfServiceComponent(): JSX.Element {
         <meta property="og:type" content="website" />
         <meta property="og:url" content={window.location.href} />
       </Helmet>
-      <ResponsiveDesktop>
-        <TermsOfServiceDesktopComponent
-          termsOfServiceProps={termsOfServiceProps}
-          remarkPlugins={remarkPlugins}
-        />
-      </ResponsiveDesktop>
-      <ResponsiveMobile>
-        <TermsOfServiceMobileComponent
-          termsOfServiceProps={termsOfServiceProps}
-          remarkPlugins={remarkPlugins}
-        />
-      </ResponsiveMobile>
+      <React.Suspense fallback={suspenceComponent}>
+        <ResponsiveDesktop>
+          <TermsOfServiceDesktopComponent
+            termsOfServiceProps={termsOfServiceProps}
+            remarkPlugins={remarkPlugins}
+          />
+        </ResponsiveDesktop>
+        <ResponsiveMobile>
+          <TermsOfServiceMobileComponent
+            termsOfServiceProps={termsOfServiceProps}
+            remarkPlugins={remarkPlugins}
+          />
+        </ResponsiveMobile>
+      </React.Suspense>
     </>
   );
 }

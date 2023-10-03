@@ -143,7 +143,7 @@ export default function WindowDesktopComponent({
                 color: 'rgba(252, 245, 227, .35)',
               }}
               onClick={() =>
-                setTimeout(() => navigate(RoutePathsType.Cart), 150)
+                setTimeout(() => navigate(RoutePathsType.Cart), 75)
               }
               type={'text'}
               floatingLabel={t('shoppingCart') ?? ''}
@@ -489,11 +489,11 @@ export default function WindowDesktopComponent({
                         RoutePathsType.AccountSettings
                       )
                     ) {
-                      setTimeout(() => navigate(RoutePathsType.Account), 150);
+                      navigate(RoutePathsType.Account);
                       return;
                     }
 
-                    setTimeout(() => navigate(-1), 150);
+                    navigate(-1);
                   }}
                   type={'text'}
                   icon={<Line.ArrowBack size={24} color={'#2A2A5F'} />}

@@ -14,7 +14,7 @@ import { formatAmount } from 'medusa-react';
 import { CartResponsiveProps } from '../cart.component';
 import { Store } from '@ngneat/elf';
 
-export function CartDesktopComponent({
+export default function CartDesktopComponent({
   cartProps,
   homeLocalProps,
   storeProps,
@@ -168,7 +168,7 @@ export function CartDesktopComponent({
                       }}
                       size={'large'}
                       onClick={() =>
-                        setTimeout(() => navigate(RoutePathsType.Home), 150)
+                        setTimeout(() => navigate(RoutePathsType.Home), 75)
                       }
                     >
                       {t('home')}
@@ -202,7 +202,7 @@ export function CartDesktopComponent({
                         }}
                         size={'large'}
                         onClick={() =>
-                          setTimeout(() => navigate(RoutePathsType.Store), 150)
+                          setTimeout(() => navigate(RoutePathsType.Store), 75)
                         }
                       >
                         {t('shopNow')}
@@ -479,7 +479,7 @@ export function CartDesktopComponent({
               size={'large'}
               icon={<Line.ShoppingCart size={24} />}
               onClick={() =>
-                setTimeout(() => navigate(RoutePathsType.Checkout), 150)
+                setTimeout(() => navigate(RoutePathsType.Checkout), 75)
               }
             >
               {t('goToCheckout')}

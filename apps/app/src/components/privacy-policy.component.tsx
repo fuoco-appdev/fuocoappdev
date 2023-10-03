@@ -1,4 +1,8 @@
-import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import {
+  ResponsiveDesktop,
+  ResponsiveMobile,
+  ResponsiveTablet,
+} from './responsive.component';
 import { PrivacyPolicyDesktopComponent } from './desktop/privacy-policy.desktop.component';
 import { PrivacyPolicyMobileComponent } from './mobile/privacy-policy.mobile.component';
 import { Helmet } from 'react-helmet';
@@ -6,6 +10,7 @@ import { useState, useEffect } from 'react';
 import { useObservable } from '@ngneat/use-observable';
 import PrivacyPolicyController from '../controllers/privacy-policy.controller';
 import { PrivacyPolicyState } from '../models';
+import React from 'react';
 
 export interface PrivacyPolicyResponsiveProps {
   privacyPolicyProps: PrivacyPolicyState;
@@ -23,6 +28,24 @@ export default function PrivacyPolicyComponent(): JSX.Element {
       setRemarkPlugins([plugin.default]);
     });
   }, []);
+
+  const suspenceComponent = (
+    <>
+      <ResponsiveDesktop>
+        <div />
+      </ResponsiveDesktop>
+      <ResponsiveTablet>
+        <div />
+      </ResponsiveTablet>
+      <ResponsiveMobile>
+        <div />
+      </ResponsiveMobile>
+    </>
+  );
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return suspenceComponent;
+  }
 
   return (
     <>
@@ -52,18 +75,20 @@ export default function PrivacyPolicyComponent(): JSX.Element {
         <meta property="og:type" content="website" />
         <meta property="og:url" content={window.location.href} />
       </Helmet>
-      <ResponsiveDesktop>
-        <PrivacyPolicyDesktopComponent
-          privacyPolicyProps={privacyPolicyProps}
-          remarkPlugins={remarkPlugins}
-        />
-      </ResponsiveDesktop>
-      <ResponsiveMobile>
-        <PrivacyPolicyMobileComponent
-          privacyPolicyProps={privacyPolicyProps}
-          remarkPlugins={remarkPlugins}
-        />
-      </ResponsiveMobile>
+      <React.Suspense fallback={suspenceComponent}>
+        <ResponsiveDesktop>
+          <PrivacyPolicyDesktopComponent
+            privacyPolicyProps={privacyPolicyProps}
+            remarkPlugins={remarkPlugins}
+          />
+        </ResponsiveDesktop>
+        <ResponsiveMobile>
+          <PrivacyPolicyMobileComponent
+            privacyPolicyProps={privacyPolicyProps}
+            remarkPlugins={remarkPlugins}
+          />
+        </ResponsiveMobile>
+      </React.Suspense>
     </>
   );
 }

@@ -13,6 +13,7 @@ import { AuthenticatedComponent } from './authenticated.component';
 import { lazy } from '@loadable/component';
 import { AccountEditSuspenseDesktopComponent } from './desktop/suspense/account-edit.suspense.desktop.component';
 import React from 'react';
+import { AccountEditSuspenseMobileComponent } from './mobile/suspense/account-edit.suspense.mobile.component';
 
 const AccountEditDesktopComponent = lazy(
   () => import('./desktop/account-edit.desktop.component')
@@ -51,7 +52,7 @@ export default function AccountEditComponent(): JSX.Element {
         <div />
       </ResponsiveTablet>
       <ResponsiveMobile>
-        <div />
+        <AccountEditSuspenseMobileComponent />
       </ResponsiveMobile>
     </>
   );

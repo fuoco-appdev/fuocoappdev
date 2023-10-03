@@ -14,7 +14,7 @@ import { animated, config, useTransition } from 'react-spring';
 import { SignupResponsiveProps } from '../signup.component';
 import { useMobileEffect } from '../responsive.component';
 
-export function SignupMobileComponent({
+export default function SignupMobileComponent({
   emailError,
   passwordError,
   confirmPasswordError,

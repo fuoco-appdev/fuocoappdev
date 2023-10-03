@@ -211,6 +211,7 @@
     justify-content: center;
     gap: $mp-6;
     padding: $mp-10;
+    padding-top: calc(56px + 40px);
 
     & .left-content-desktop {
         display: flex;

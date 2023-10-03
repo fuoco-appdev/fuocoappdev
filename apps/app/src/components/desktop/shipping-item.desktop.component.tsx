@@ -10,7 +10,7 @@ import { formatAmount } from 'medusa-react';
 import { useObservable } from '@ngneat/use-observable';
 import { ShippingItemResponsiveProps } from '../shipping-item.component';
 
-export function ShippingItemDesktopComponent({
+export default function ShippingItemDesktopComponent({
   storeProps,
   item,
   vintage,

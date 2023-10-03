@@ -11,6 +11,7 @@ import { AuthenticatedComponent } from './authenticated.component';
 import { lazy } from '@loadable/component';
 import { AccountOrderHistorySuspenseDesktopComponent } from './desktop/suspense/account-order-history.suspense.desktop.component';
 import React from 'react';
+import { AccountOrderHistorySuspenseMobileComponent } from './mobile/suspense/account-order-history.suspense.mobile.component';
 
 const AccountOrderHistoryDesktopComponent = lazy(
   () => import('./desktop/account-order-history.desktop.component')
@@ -57,7 +58,7 @@ export default function AccountOrderHistoryComponent(): JSX.Element {
         <div />
       </ResponsiveTablet>
       <ResponsiveMobile>
-        <div />
+        <AccountOrderHistorySuspenseMobileComponent />
       </ResponsiveMobile>
     </>
   );

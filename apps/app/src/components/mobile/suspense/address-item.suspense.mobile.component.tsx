@@ -1,10 +1,10 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import * as React from 'react';
 import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
-import styles from '../../order-item.module.scss';
+import styles from '../../address-item.module.scss';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
-export function OrderItemSuspenseMobileComponent(): JSX.Element {
+export function AddressItemSuspenseMobileComponent(): JSX.Element {
   return (
     <div className={[styles['root'], styles['root-mobile']].join(' ')}>
       <div
@@ -14,20 +14,6 @@ export function OrderItemSuspenseMobileComponent(): JSX.Element {
           className={[styles['details'], styles['details-mobile']].join(' ')}
         >
           <div
-            className={[styles['thumbnail'], styles['thumbnail-mobile']].join(
-              ' '
-            )}
-          >
-            <Skeleton
-              className={[
-                styles['thumbnail-image'],
-                styles['thumbnail-image-mobile'],
-              ].join(' ')}
-              width={56}
-              height={56}
-            />
-          </div>
-          <div
             className={[
               styles['title-container'],
               styles['title-container-mobile'],
@@ -35,17 +21,14 @@ export function OrderItemSuspenseMobileComponent(): JSX.Element {
           >
             <Skeleton
               className={[styles['title'], styles['title-mobile']].join(' ')}
-              width={140}
+              width={200}
               borderRadius={20}
             />
             <Skeleton
-              className={[styles['status'], styles['status-mobile']].join(' ')}
-              width={80}
-              borderRadius={20}
-            />
-            <Skeleton
-              className={[styles['status'], styles['status-mobile']].join(' ')}
-              width={80}
+              className={[styles['subtitle'], styles['subtitle-mobile']].join(
+                ' '
+              )}
+              width={120}
               borderRadius={20}
             />
           </div>
@@ -61,13 +44,12 @@ export function OrderItemSuspenseMobileComponent(): JSX.Element {
                 styles['right-details-content-mobile'],
               ].join(' ')}
             >
-              <Skeleton
-                className={[styles['pricing'], styles['pricing-mobile']].join(
-                  ' '
-                )}
-                width={40}
-                borderRadius={20}
-              />
+              <div>
+                <Skeleton style={{ width: 40, height: 40 }} borderRadius={40} />
+              </div>
+              <div>
+                <Skeleton style={{ width: 40, height: 40 }} borderRadius={40} />
+              </div>
             </div>
           </div>
         </div>

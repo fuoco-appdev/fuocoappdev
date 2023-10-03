@@ -1,4 +1,8 @@
-import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import {
+  ResponsiveDesktop,
+  ResponsiveMobile,
+  ResponsiveTablet,
+} from './responsive.component';
 import { LineItem, ProductOptionValue } from '@medusajs/medusa';
 import styles from './refund-item.module.scss';
 import { useEffect, useState } from 'react';
@@ -11,8 +15,15 @@ import {
   Listbox,
   OptionProps,
 } from '@fuoco.appdev/core-ui';
-import { RefundItemDesktopComponent } from './desktop/refund-item.desktop.component';
-import { RefundItemMobileComponent } from './mobile/refund-item.mobile.component';
+import { lazy } from '@loadable/component';
+import React from 'react';
+
+const RefundItemDesktopComponent = lazy(
+  () => import('./desktop/refund-item.desktop.component')
+);
+const RefundItemMobileComponent = lazy(
+  () => import('./mobile/refund-item.mobile.component')
+);
 
 export interface RefundItemProps {
   item: LineItem;
@@ -81,8 +92,26 @@ export default function RefundItemComponent({
     }
   };
 
-  return (
+  const suspenceComponent = (
     <>
+      <ResponsiveDesktop>
+        <div />
+      </ResponsiveDesktop>
+      <ResponsiveTablet>
+        <div />
+      </ResponsiveTablet>
+      <ResponsiveMobile>
+        <div />
+      </ResponsiveMobile>
+    </>
+  );
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return suspenceComponent;
+  }
+
+  return (
+    <React.Suspense fallback={suspenceComponent}>
       <ResponsiveDesktop>
         <RefundItemDesktopComponent
           item={item}
@@ -105,6 +134,6 @@ export default function RefundItemComponent({
           onChanged={onChanged}
         />
       </ResponsiveMobile>
-    </>
+    </React.Suspense>
   );
 }

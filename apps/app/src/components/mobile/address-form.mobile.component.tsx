@@ -16,7 +16,7 @@ import { CountryDataProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/
 import { AddressFormResponsiveProps } from '../address-form.component';
 import styles from '../address-form.module.scss';
 
-export function AddressFormMobileComponent({
+export default function AddressFormMobileComponent({
   isAuthenticated,
   values,
   errors,

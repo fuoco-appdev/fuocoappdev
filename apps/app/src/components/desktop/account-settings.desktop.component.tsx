@@ -11,7 +11,7 @@ import WindowController from '../../controllers/window.controller';
 import { useDesktopEffect } from '../responsive.component';
 import { AccountSettingsResponsiveProps } from '../account-settings.component';
 
-export function AccountSettingsDesktopComponent({
+export default function AccountSettingsDesktopComponent({
   windowProps,
 }: AccountSettingsResponsiveProps): JSX.Element {
   const navigate = useNavigate();

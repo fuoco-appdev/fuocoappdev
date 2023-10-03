@@ -34,7 +34,7 @@ import { CheckoutResponsiveProps } from '../checkout.component';
 import { RoutePathsType } from '../../route-paths';
 import { useNavigate } from 'react-router-dom';
 
-export function CheckoutDesktopComponent({
+export default function CheckoutDesktopComponent({
   checkoutProps,
   accountProps,
   storeProps,
