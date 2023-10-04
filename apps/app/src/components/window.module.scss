@@ -231,7 +231,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    height: 56px;
+    min-height: 56px;
     width: 100%;
     background-color: $brand-900;
     box-shadow: $shadow-1;
@@ -298,6 +298,8 @@
       border-color: rgba(42, 42, 95, .6);
       border-style: solid;
       padding: 0 $mp-4;
+      width: 88px;
+      min-width: 88px;
       height: 100%;
 
       & .skeleton-tabs-desktop {
@@ -505,58 +507,58 @@
 }
 
 .side-bar-appear {
-  width: 256px;
-  min-width: 256px;
+  width: 256px !important;
+  min-width: 256px !important;
 }
 
 .side-bar-appear-active {
-  width: 256px;
-  min-width: 256px;
+  width: 256px !important;
+  min-width: 256px !important;
 }
 
 .side-bar-appear-done {
-  width: 256px;
-  min-width: 256px;
+  width: 256px !important;
+  min-width: 256px !important;
 }
 
 .side-bar-enter {
-  width: 88px;
-  min-width: 88px;
+  width: 88px !important;
+  min-width: 88px !important;
   transition-duration: 250ms;
   transition-timing-function: $transition-standard-easing;
 }
 
 .side-bar-enter-active {
-  width: 256px;
-  min-width: 256px;
+  width: 256px !important;
+  min-width: 256px !important;
   transition-duration: 250ms;
   transition-timing-function: $transition-standard-easing;
 }
 
 .side-bar-enter-done {
-  width: 256px;
-  min-width: 256px;
+  width: 256px !important;
+  min-width: 256px !important;
   transition-duration: 250ms;
   transition-timing-function: $transition-standard-easing;
 }
 
 .side-bar-exit {
-  width: 256px;
-  min-width: 256px;
+  width: 256px !important;
+  min-width: 256px !important;
   transition-duration: 300ms;
   transition-timing-function: $transition-decelerated-easing;
 }
 
 .side-bar-exit-active {
-  width: 88px;
-  min-width: 88px;
+  width: 88px !important;
+  min-width: 88px !important;
   transition-duration: 300ms;
   transition-timing-function: $transition-decelerated-easing;
 }
 
 .side-bar-exit-done {
-  width: 88px;
-  min-width: 88px;
+  width: 88px !important;
+  min-width: 88px !important;
   transition-duration: 300ms;
   transition-timing-function: $transition-decelerated-easing;
 }

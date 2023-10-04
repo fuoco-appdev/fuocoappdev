@@ -41,7 +41,7 @@ export default function WindowDesktopComponent({
   const navigate = useNavigate();
   const sideBarRef = useRef<HTMLDivElement | null>(null);
   const navigationBackRef = useRef<HTMLDivElement | null>(null);
-  const [isSideBarOpen, setIsSideBarOpen] = useState<boolean>(true);
+  const [isSideBarOpen, setIsSideBarOpen] = useState<boolean>(false);
   const [date, setDate] = useState<Date | null>(null);
 
   useDesktopEffect(() => {
