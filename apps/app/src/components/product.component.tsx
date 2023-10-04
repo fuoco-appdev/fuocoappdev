@@ -19,13 +19,14 @@ import MedusaService from '../services/medusa.service';
 import StoreController from '../controllers/store.controller';
 import { StoreState } from '../models/store.model';
 import { lazy } from '@loadable/component';
+import { timeout } from 'promise-timeout';
 import React from 'react';
 
-const ProductDesktopComponent = lazy(
-  () => import('./desktop/product.desktop.component')
+const ProductDesktopComponent = lazy(() =>
+  timeout(import('./desktop/product.desktop.component'), 150)
 );
-const ProductMobileComponent = lazy(
-  () => import('./mobile/product.mobile.component')
+const ProductMobileComponent = lazy(() =>
+  timeout(import('./mobile/product.mobile.component'), 150)
 );
 
 export interface ProductProps {

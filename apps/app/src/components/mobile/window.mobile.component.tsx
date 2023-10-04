@@ -36,13 +36,13 @@ export default function WindowMobileComponent({
   const { t } = useTranslation();
   const outletRef = useRef<HTMLDivElement | null>(null);
   const bottomBarRef = useRef<HTMLDivElement | null>(null);
-  const [switchBottomBar, setSwithcBottomBar] = useState<boolean>(false);
+  const [switchBottomBar, setSwitchBottomBar] = useState<boolean>(false);
   const [activeRoute, setActiveRoute] = useState<RoutePathsType | undefined>(
     windowProps.activeRoute
   );
 
   useMobileEffect(() => {
-    setSwithcBottomBar(true);
+    setSwitchBottomBar(true);
   }, [windowProps.transitionKeyIndex]);
 
   useMobileEffect(() => {
@@ -130,7 +130,7 @@ export default function WindowMobileComponent({
           exitDone: styles['bottom-bar-exit-done'],
         }}
         timeout={150}
-        onEnter={() => setTimeout(() => setSwithcBottomBar(false), 75)}
+        onEnter={() => setTimeout(() => setSwitchBottomBar(false), 75)}
       >
         <div
           ref={bottomBarRef}
@@ -222,7 +222,7 @@ export default function WindowMobileComponent({
                       color: 'rgba(252, 245, 227, .35)',
                     }}
                     onClick={() => {
-                      setSwithcBottomBar(true);
+                      setSwitchBottomBar(true);
                       navigate(-1);
                     }}
                     type={'text'}

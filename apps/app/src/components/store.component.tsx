@@ -50,6 +50,7 @@ import React from 'react';
 import { StoreSuspenseDesktopComponent } from './desktop/suspense/store.suspense.desktop.component';
 import { StoreSuspenseMobileComponent } from './mobile/suspense/store.suspense.mobile.component';
 import { lazy } from '@loadable/component';
+import { timeout } from 'promise-timeout';
 
 const StoreDesktopComponent = lazy(
   () => import('./desktop/store.desktop.component')

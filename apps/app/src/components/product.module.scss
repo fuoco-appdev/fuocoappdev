@@ -38,6 +38,12 @@
     flex-direction: row;
     justify-content: space-between;
     margin-bottom: $mp-2;
+    -webkit-touch-callout: text; /* iOS Safari */
+    -webkit-user-select: text; /* Safari, Chrome, Opera, Samsung */
+    -khtml-user-select: text; /* Konqueror HTML */
+    -moz-user-select: text; /* Firefox */
+    -ms-user-select: text; /* Edge, IE */
+    user-select: text; /* Modern browsers */
 
     & .title-container {
       width: 100%;
@@ -78,6 +84,12 @@
   & .description-container {
     font-size: $font-size-sm;
     color: $brand-900;
+    -webkit-touch-callout: text; /* iOS Safari */
+    -webkit-user-select: text; /* Safari, Chrome, Opera, Samsung */
+    -khtml-user-select: text; /* Konqueror HTML */
+    -moz-user-select: text; /* Firefox */
+    -ms-user-select: text; /* Edge, IE */
+    user-select: text; /* Modern browsers */
 
     & .skeleton-description {
       font-size: $font-size-sm;
@@ -100,6 +112,12 @@
     font-weight: $font-weight-bold;
     margin-bottom: $mp-2;
     text-transform: uppercase;
+    -webkit-touch-callout: text; /* iOS Safari */
+    -webkit-user-select: text; /* Safari, Chrome, Opera, Samsung */
+    -khtml-user-select: text; /* Konqueror HTML */
+    -moz-user-select: text; /* Firefox */
+    -ms-user-select: text; /* Edge, IE */
+    user-select: text; /* Modern browsers */
 
     & .inventory-quantity {
       font-weight: $font-weight-medium;
@@ -114,6 +132,12 @@
     flex-wrap: wrap;
     margin-bottom: $mp-2;
     gap: $mp-1;
+    -webkit-touch-callout: text; /* iOS Safari */
+    -webkit-user-select: text; /* Safari, Chrome, Opera, Samsung */
+    -khtml-user-select: text; /* Konqueror HTML */
+    -moz-user-select: text; /* Firefox */
+    -ms-user-select: text; /* Edge, IE */
+    user-select: text; /* Modern browsers */
 
     & .tag {
       border-radius: $rounded-full;
@@ -148,6 +172,12 @@
         padding: $mp-4;
         margin-bottom: $mp-2;
         text-align: center;
+        -webkit-touch-callout: text; /* iOS Safari */
+        -webkit-user-select: text; /* Safari, Chrome, Opera, Samsung */
+        -khtml-user-select: text; /* Konqueror HTML */
+        -moz-user-select: text; /* Firefox */
+        -ms-user-select: text; /* Edge, IE */
+        user-select: text; /* Modern browsers */
 
         & .option-title {
           color: $brand-900;
@@ -180,13 +210,19 @@
       flex-wrap: wrap;
       margin-bottom: $mp-2;
       justify-content: space-around;
+      text-align: center;
+      -webkit-touch-callout: text; /* iOS Safari */
+      -webkit-user-select: text; /* Safari, Chrome, Opera, Samsung */
+      -khtml-user-select: text; /* Konqueror HTML */
+      -moz-user-select: text; /* Firefox */
+      -ms-user-select: text; /* Edge, IE */
+      user-select: text; /* Modern browsers */
 
       & .details-item-content {
         display: flex;
         flex-direction: column;
         padding: $mp-4;
         margin-bottom: $mp-2;
-        text-align: center;
 
         & .details-item-title {
           color: $brand-900;
@@ -217,6 +253,13 @@
     & .shipping-returns-container {
       display: flex;
       flex-direction: column;
+      text-align: center;
+      -webkit-touch-callout: text; /* iOS Safari */
+      -webkit-user-select: text; /* Safari, Chrome, Opera, Samsung */
+      -khtml-user-select: text; /* Konqueror HTML */
+      -moz-user-select: text; /* Firefox */
+      -ms-user-select: text; /* Edge, IE */
+      user-select: text; /* Modern browsers */
 
       & .shipping-returns-content {
         margin-bottom: $mp-4;

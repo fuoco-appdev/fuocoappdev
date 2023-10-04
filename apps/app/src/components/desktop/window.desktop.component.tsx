@@ -440,7 +440,7 @@ export default function WindowDesktopComponent({
           <CSSTransition
             nodeRef={navigationBackRef}
             in={windowProps.showNavigateBack}
-            timeout={0}
+            timeout={150}
             classNames={{
               appear: styles['navigation-back-appear'],
               appearActive: styles['navigation-back-appear-active'],
@@ -484,11 +484,11 @@ export default function WindowDesktopComponent({
                         RoutePathsType.AccountSettings
                       )
                     ) {
-                      navigate(RoutePathsType.Account);
+                      setTimeout(() => navigate(RoutePathsType.Account), 150);
                       return;
                     }
 
-                    navigate(-1);
+                    setTimeout(() => navigate(-1), 150);
                   }}
                   type={'text'}
                   icon={<Line.ArrowBack size={24} color={'#2A2A5F'} />}
