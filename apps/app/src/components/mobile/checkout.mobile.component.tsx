@@ -32,6 +32,8 @@ import { CheckoutResponsiveProps } from '../checkout.component';
 import { useNavigate } from 'react-router-dom';
 import { RoutePathsType } from '../../route-paths';
 import { ResponsiveMobile } from '../responsive.component';
+import { loadStripe } from '@stripe/stripe-js';
+import SecretsService from '../../services/secrets.service';
 
 export default function CheckoutMobileComponent({
   checkoutProps,
@@ -45,7 +47,6 @@ export default function CheckoutMobileComponent({
   isAddAddressOpen,
   isPayOpen,
   stripeOptions,
-  stripePromise,
   stripeElementOptions,
   setIsAddAddressOpen,
   setIsPayOpen,
@@ -54,6 +55,7 @@ export default function CheckoutMobileComponent({
   onContinueToDeliveryFromBillingAddress,
   onAddAddressAsync,
 }: CheckoutResponsiveProps): JSX.Element {
+  const stripePromise = loadStripe(SecretsService.stripePublishableKey ?? '');
   const rootRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const { t } = useTranslation();

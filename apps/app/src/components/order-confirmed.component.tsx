@@ -88,10 +88,11 @@ export default function OrderConfirmedComponent(): JSX.Element {
     }
   }, [props.order, props.returnReasons]);
 
-  const formatStatus = (str: string) => {
-    const formatted = str.split('_').join(' ');
-
-    return formatted.slice(0, 1).toUpperCase() + formatted.slice(1);
+  const formatStatus = (str: string | undefined) => {
+    const formatted = str?.split('_').join(' ');
+    return (
+      formatted?.slice(0, 1).toUpperCase() ?? '' + formatted?.slice(1) ?? ''
+    );
   };
 
   const suspenceComponent = (

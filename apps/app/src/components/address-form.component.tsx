@@ -20,6 +20,8 @@ import { Region, Country } from '@medusajs/medusa';
 import ReactCountryFlag from 'react-country-flag';
 import { CountryDataProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/input-phone-number/country-data';
 import { lazy } from '@loadable/component';
+import { AddressFormSuspenseDesktopComponent } from './desktop/suspense/address-form.suspense.desktop.component';
+import { AddressFormSuspenseMobileComponent } from './mobile/suspense/address-form.suspense.mobile.component';
 
 const AddressFormDesktopComponent = lazy(
   () => import('./desktop/address-form.desktop.component')
@@ -268,15 +270,8 @@ export default function AddressFormComponent({
 
   const suspenceComponent = (
     <>
-      <ResponsiveDesktop>
-        <div />
-      </ResponsiveDesktop>
-      <ResponsiveTablet>
-        <div />
-      </ResponsiveTablet>
-      <ResponsiveMobile>
-        <div />
-      </ResponsiveMobile>
+      <AddressFormSuspenseDesktopComponent />
+      <AddressFormSuspenseMobileComponent />
     </>
   );
 

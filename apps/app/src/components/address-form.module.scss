@@ -111,6 +111,15 @@
     color: $brand-900 !important;
 }
 
+.input-root-skeleton {
+    flex: 1;
+    margin-bottom: $mp-2;
+}
+
+.input-form-layout-label-skeleton {
+    margin-bottom: $mp-2;
+}
+
 .input-root {
     flex: 1;
 }

@@ -25,20 +25,19 @@ import { RoutePathsType } from '../route-paths';
 import AccountController from '../controllers/account.controller';
 import WindowController from '../controllers/window.controller';
 import {
-  loadStripe,
-  Stripe,
   StripeCardCvcElementOptions,
   StripeCardExpiryElementOptions,
   StripeCardNumberElementOptions,
   StripeElementsOptions,
 } from '@stripe/stripe-js';
-import SecretsService from '../services/secrets.service';
 import { Helmet } from 'react-helmet';
 import { AccountState } from '../models/account.model';
 import { StoreState } from '../models/store.model';
 import { CartState } from '../models/cart.model';
 import { WindowState } from '../models/window.model';
 import { lazy } from '@loadable/component';
+import { CheckoutSuspenseDesktopComponent } from './desktop/suspense/checkout.suspense.desktop.component';
+import { CheckoutSuspenseMobileComponent } from './mobile/suspense/checkout.suspense.mobile.component';
 
 const CheckoutDesktopComponent = lazy(
   () => import('./desktop/checkout.desktop.component')
@@ -59,7 +58,6 @@ export interface CheckoutResponsiveProps {
   isAddAddressOpen: boolean;
   isPayOpen: boolean;
   stripeOptions: StripeElementsOptions;
-  stripePromise: Promise<Stripe | null>;
   stripeElementOptions:
     | StripeCardNumberElementOptions
     | StripeCardExpiryElementOptions
@@ -89,19 +87,6 @@ export default function CheckoutComponent(): JSX.Element {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const customer = accountProps.customer as Customer;
-  const stripePromise = loadStripe(SecretsService.stripePublishableKey ?? '');
-
-  const stripeElementOptions:
-    | StripeCardNumberElementOptions
-    | StripeCardExpiryElementOptions
-    | StripeCardCvcElementOptions = useMemo(() => {
-    return {
-      classes: {
-        base: styles['stripe-input-base'],
-      },
-      showIcon: true,
-    };
-  }, []);
 
   useEffect(() => {
     if (cartProps.cart && cartProps.cart.items.length <= 0) {
@@ -338,15 +323,8 @@ export default function CheckoutComponent(): JSX.Element {
 
   const suspenceComponent = (
     <>
-      <ResponsiveDesktop>
-        <div />
-      </ResponsiveDesktop>
-      <ResponsiveTablet>
-        <div />
-      </ResponsiveTablet>
-      <ResponsiveMobile>
-        <div />
-      </ResponsiveMobile>
+      <CheckoutSuspenseDesktopComponent />
+      <CheckoutSuspenseMobileComponent />
     </>
   );
 
@@ -354,6 +332,17 @@ export default function CheckoutComponent(): JSX.Element {
     return suspenceComponent;
   }
 
+  const stripeElementOptions:
+    | StripeCardNumberElementOptions
+    | StripeCardExpiryElementOptions
+    | StripeCardCvcElementOptions = useMemo(() => {
+    return {
+      classes: {
+        base: styles['stripe-input-base'],
+      },
+      showIcon: true,
+    };
+  }, []);
   return (
     <>
       <Helmet>
@@ -395,7 +384,6 @@ export default function CheckoutComponent(): JSX.Element {
           isAddAddressOpen={isAddAddressOpen}
           isPayOpen={isPayOpen}
           stripeOptions={stripeOptions}
-          stripePromise={stripePromise}
           stripeElementOptions={stripeElementOptions}
           setIsAddAddressOpen={setIsAddAddressOpen}
           setIsPayOpen={setIsPayOpen}
@@ -422,7 +410,6 @@ export default function CheckoutComponent(): JSX.Element {
           isAddAddressOpen={isAddAddressOpen}
           isPayOpen={isPayOpen}
           stripeOptions={stripeOptions}
-          stripePromise={stripePromise}
           stripeElementOptions={stripeElementOptions}
           setIsAddAddressOpen={setIsAddAddressOpen}
           setIsPayOpen={setIsPayOpen}
