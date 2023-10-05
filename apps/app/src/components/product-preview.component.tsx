@@ -133,13 +133,13 @@ export default function ProductPreviewComponent({
 
   const suspenceComponent = (
     <>
-      <ResponsiveDesktop inheritStyles={false}>
+      <ResponsiveDesktop>
         <ProductPreviewSuspenseDesktopComponent />
       </ResponsiveDesktop>
-      <ResponsiveTablet inheritStyles={false}>
+      <ResponsiveTablet>
         <div />
       </ResponsiveTablet>
-      <ResponsiveMobile inheritStyles={false}>
+      <ResponsiveMobile>
         <ProductPreviewSuspenseMobileComponent />
       </ResponsiveMobile>
     </>
@@ -151,7 +151,7 @@ export default function ProductPreviewComponent({
 
   return (
     <React.Suspense fallback={suspenceComponent}>
-      <ResponsiveDesktop inheritStyles={false}>
+      <ResponsiveDesktop>
         <ProductPreviewDesktopComponent
           storeProps={storeProps}
           parentRef={parentRef}
@@ -166,7 +166,7 @@ export default function ProductPreviewComponent({
           addToCartAsync={addToCartAsync}
         />
       </ResponsiveDesktop>
-      <ResponsiveMobile inheritStyles={false}>
+      <ResponsiveMobile>
         <ProductPreviewMobileComponent
           storeProps={storeProps}
           parentRef={parentRef}

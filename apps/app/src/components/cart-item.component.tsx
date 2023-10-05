@@ -17,6 +17,8 @@ import { useObservable } from '@ngneat/use-observable';
 import { StoreState } from '../models/store.model';
 import { lazy } from '@loadable/component';
 import React from 'react';
+import { CartItemSuspenseDesktopComponent } from './desktop/suspense/cart-item.suspense.desktop.component';
+import { CartItemSuspenseMobileComponent } from './mobile/suspense/cart-item.suspense.mobile.component';
 
 const CartItemDesktopComponent = lazy(
   () => import('./desktop/cart-item.desktop.component')
@@ -87,13 +89,13 @@ export default function CartItemComponent({
   const suspenceComponent = (
     <>
       <ResponsiveDesktop>
-        <div />
+        <CartItemSuspenseDesktopComponent />
       </ResponsiveDesktop>
       <ResponsiveTablet>
         <div />
       </ResponsiveTablet>
       <ResponsiveMobile>
-        <div />
+        <CartItemSuspenseMobileComponent />
       </ResponsiveMobile>
     </>
   );

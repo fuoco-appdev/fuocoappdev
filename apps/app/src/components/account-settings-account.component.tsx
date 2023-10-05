@@ -68,7 +68,7 @@ export default function AccountSettingsAccountComponent(): JSX.Element {
   return (
     <React.Suspense fallback={suspenceComponent}>
       <AuthenticatedComponent>
-        <ResponsiveDesktop inheritStyles={false}>
+        <ResponsiveDesktop>
           <AccountSettingsAccountDesktopComponent
             accountProps={accountProps}
             windowLocalProps={windowLocalProps}

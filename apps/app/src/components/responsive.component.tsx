@@ -2,18 +2,30 @@ import { useEffect } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import styles from './responsive.module.scss';
 
-export interface ResponsiveProps {
-  children: any;
-  inheritStyles?: boolean;
+export function useIsDesktop(): boolean {
+  return useMediaQuery({
+    minWidth: 992,
+  });
+}
+
+export function useIsTablet(): boolean {
+  return useMediaQuery({
+    minWidth: 768,
+    maxWidth: 991,
+  });
+}
+
+export function useIsMobile(): boolean {
+  return useMediaQuery({
+    maxWidth: 767,
+  });
 }
 
 export function useDesktopEffect(
   effect: React.EffectCallback,
   deps?: React.DependencyList | undefined
 ) {
-  const isDesktop = useMediaQuery({
-    minWidth: 992,
-  });
+  const isDesktop = useIsDesktop();
   useEffect(() => {
     if (isDesktop) {
       effect();
@@ -25,10 +37,7 @@ export function useTabletEffect(
   effect: React.EffectCallback,
   deps?: React.DependencyList | undefined
 ) {
-  const isTablet = useMediaQuery({
-    minWidth: 768,
-    maxWidth: 991,
-  });
+  const isTablet = useIsTablet();
   useEffect(() => {
     if (isTablet) {
       effect();
@@ -40,9 +49,7 @@ export function useMobileEffect(
   effect: React.EffectCallback,
   deps?: React.DependencyList | undefined
 ) {
-  const isMobile = useMediaQuery({
-    maxWidth: 767,
-  });
+  const isMobile = useIsMobile();
   useEffect(() => {
     if (isMobile) {
       effect();
@@ -50,50 +57,21 @@ export function useMobileEffect(
   }, [...[isMobile], ...(deps ?? [])]);
 }
 
-export function ResponsiveDesktop({
-  children,
-  inheritStyles = true,
-}: ResponsiveProps) {
-  return (
-    <div
-      className={[
-        styles['desktop-layout'],
-        inheritStyles ? styles['inherit'] : '',
-      ].join(' ')}
-    >
-      {children}
-    </div>
-  );
+export interface ResponsiveProps {
+  children: any;
 }
 
-export function ResponsiveTablet({
-  children,
-  inheritStyles = true,
-}: ResponsiveProps) {
-  return (
-    <div
-      className={[
-        styles['tablet-layout'],
-        inheritStyles ? styles['inherit'] : '',
-      ].join(' ')}
-    >
-      {children}
-    </div>
-  );
+export function ResponsiveDesktop({ children }: ResponsiveProps) {
+  const isDesktop = useIsDesktop();
+  return isDesktop ? children : null;
 }
 
-export function ResponsiveMobile({
-  children,
-  inheritStyles = true,
-}: ResponsiveProps) {
-  return (
-    <div
-      className={[
-        styles['mobile-layout'],
-        inheritStyles ? styles['inherit'] : '',
-      ].join(' ')}
-    >
-      {children}
-    </div>
-  );
+export function ResponsiveTablet({ children }: ResponsiveProps) {
+  const isTablet = useIsTablet();
+  return isTablet ? children : null;
+}
+
+export function ResponsiveMobile({ children }: ResponsiveProps) {
+  const isMobile = useIsMobile();
+  return isMobile ? children : null;
 }

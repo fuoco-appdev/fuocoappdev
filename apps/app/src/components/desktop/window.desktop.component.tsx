@@ -46,6 +46,7 @@ export default function WindowDesktopComponent({
 
   useDesktopEffect(() => {
     setDate(new Date(Date.now()));
+    WindowController.updateShowNavigateBack(true);
   }, []);
 
   const account = windowProps.account as core.Account;

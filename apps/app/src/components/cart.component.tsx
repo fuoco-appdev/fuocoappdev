@@ -22,6 +22,8 @@ import { StoreState } from '../models/store.model';
 import { WindowState } from '../models/window.model';
 import { lazy } from '@loadable/component';
 import React from 'react';
+import { CartSuspenseDesktopComponent } from './desktop/suspense/cart.suspense.desktop.component';
+import { CartSuspenseMobileComponent } from './mobile/suspense/cart.suspense.mobile.component';
 
 const CartDesktopComponent = lazy(
   () => import('./desktop/cart.desktop.component')
@@ -71,13 +73,13 @@ export default function CartComponent(): JSX.Element {
   const suspenceComponent = (
     <>
       <ResponsiveDesktop>
-        <div />
+        <CartSuspenseDesktopComponent />
       </ResponsiveDesktop>
       <ResponsiveTablet>
         <div />
       </ResponsiveTablet>
       <ResponsiveMobile>
-        <div />
+        <CartSuspenseMobileComponent />
       </ResponsiveMobile>
     </>
   );
