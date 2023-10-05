@@ -29,7 +29,7 @@ import Skeleton from 'react-loading-skeleton';
 import AccountOrderHistoryComponent from '../account-order-history.component';
 import AccountAddressesComponent from '../account-addresses.component';
 import AccountEditComponent from '../account-edit.component';
-import { useDesktopEffect } from '../responsive.component';
+import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
 import { AccountResponsiveProps } from '../account.component';
 
 export default function AccountDesktopComponent({
@@ -43,224 +43,230 @@ export default function AccountDesktopComponent({
   const account = accountProps.account as core.Account;
   const customer = accountProps.customer as Customer;
   return (
-    <div className={[styles['root'], styles['root-desktop']].join(' ')}>
-      <div className={[styles['top-bar'], styles['top-bar-desktop']].join(' ')}>
+    <ResponsiveDesktop>
+      <div className={[styles['root'], styles['root-desktop']].join(' ')}>
         <div
-          className={[
-            styles['left-tab-container'],
-            styles['left-tab-container-desktop'],
-          ].join(' ')}
-        ></div>
-        <div
-          className={[
-            styles['right-tab-container'],
-            styles['right-tab-container-desktop'],
-          ].join(' ')}
+          className={[styles['top-bar'], styles['top-bar-desktop']].join(' ')}
         >
           <div
             className={[
-              styles['tab-button-container'],
-              styles['tab-button-container-desktop'],
+              styles['left-tab-container'],
+              styles['left-tab-container-desktop'],
             ].join(' ')}
-          >
-            <Button
-              classNames={{
-                button: styles['button'],
-              }}
-              rippleProps={{
-                color: 'rgba(88, 40, 109, .35)',
-              }}
-              onClick={() =>
-                setTimeout(() => navigate(RoutePathsType.AccountSettings), 75)
-              }
-              type={'text'}
-              rounded={true}
-              floatingLabel={t('settings') ?? ''}
-              size={'tiny'}
-              icon={<Line.Settings size={24} color={'#2A2A5F'} />}
-            />
-          </div>
-        </div>
-      </div>
-      {account?.status === 'Incomplete' && (
-        <div
-          className={[
-            styles['incomplete-profile-container'],
-            styles['incomplete-profile-container-desktop'],
-          ].join(' ')}
-        >
+          ></div>
           <div
             className={[
-              styles['incomplete-content'],
-              styles['incomplete-content-desktop'],
+              styles['right-tab-container'],
+              styles['right-tab-container-desktop'],
             ].join(' ')}
           >
             <div
               className={[
-                styles['complete-profile-title'],
-                styles['complete-profile-title-desktop'],
+                styles['tab-button-container'],
+                styles['tab-button-container-desktop'],
               ].join(' ')}
             >
-              {t('completeProfile')}
-            </div>
-            <div
-              className={[
-                styles['form-container'],
-                styles['form-container-desktop'],
-              ].join(' ')}
-            >
-              <AccountProfileFormComponent
-                storeProps={storeProps}
-                values={accountProps.profileForm}
-                errors={accountProps.profileFormErrors}
-                onChangeCallbacks={{
-                  firstName: (event) =>
-                    AccountController.updateProfile({
-                      firstName: event.target.value,
-                    }),
-                  lastName: (event) =>
-                    AccountController.updateProfile({
-                      lastName: event.target.value,
-                    }),
-                  phoneNumber: (value, event, formattedValue) =>
-                    AccountController.updateProfile({
-                      phoneNumber: value,
-                    }),
-                }}
-              />
-            </div>
-            <div>
               <Button
                 classNames={{
-                  container: [
-                    styles['submit-button-container'],
-                    styles['submit-button-container-desktop'],
-                  ].join(' '),
-                  button: [
-                    styles['submit-button'],
-                    styles['submit-button-desktop'],
-                  ].join(' '),
+                  button: styles['button'],
                 }}
-                block={true}
-                size={'large'}
-                icon={<Line.Done size={24} />}
-                onClick={() => {
-                  AccountController.updateProfileErrors({
-                    firstName: undefined,
-                    lastName: undefined,
-                    phoneNumber: undefined,
-                  });
-                  const errors = AccountController.getProfileFormErrors(
-                    accountProps.profileForm
-                  );
-                  if (errors) {
-                    AccountController.updateProfileErrors(errors);
-                    return;
-                  }
-                  AccountController.completeProfileAsync();
+                rippleProps={{
+                  color: 'rgba(88, 40, 109, .35)',
                 }}
-              >
-                {t('complete')}
-              </Button>
+                onClick={() =>
+                  setTimeout(() => navigate(RoutePathsType.AccountSettings), 75)
+                }
+                type={'text'}
+                rounded={true}
+                floatingLabel={t('settings') ?? ''}
+                size={'tiny'}
+                icon={<Line.Settings size={24} color={'#2A2A5F'} />}
+              />
             </div>
           </div>
         </div>
-      )}
-      {account?.status === 'Complete' && (
-        <>
+        {account?.status === 'Incomplete' && (
           <div
             className={[
-              styles['avatar-container'],
-              styles['avatar-container-desktop'],
+              styles['incomplete-profile-container'],
+              styles['incomplete-profile-container-desktop'],
             ].join(' ')}
           >
-            <Avatar
-              classNames={{
-                button: {
-                  button: [
-                    styles['avatar-button'],
-                    styles['avatar-button-desktop'],
-                  ].join(' '),
-                },
-                cropImage: {
-                  overlay: {
-                    background: [
-                      styles['avatar-overlay-background'],
-                      styles['avatar-overlay-background-desktop'],
+            <div
+              className={[
+                styles['incomplete-content'],
+                styles['incomplete-content-desktop'],
+              ].join(' ')}
+            >
+              <div
+                className={[
+                  styles['complete-profile-title'],
+                  styles['complete-profile-title-desktop'],
+                ].join(' ')}
+              >
+                {t('completeProfile')}
+              </div>
+              <div
+                className={[
+                  styles['form-container'],
+                  styles['form-container-desktop'],
+                ].join(' ')}
+              >
+                <AccountProfileFormComponent
+                  storeProps={storeProps}
+                  values={accountProps.profileForm}
+                  errors={accountProps.profileFormErrors}
+                  onChangeCallbacks={{
+                    firstName: (event) =>
+                      AccountController.updateProfile({
+                        firstName: event.target.value,
+                      }),
+                    lastName: (event) =>
+                      AccountController.updateProfile({
+                        lastName: event.target.value,
+                      }),
+                    phoneNumber: (value, event, formattedValue) =>
+                      AccountController.updateProfile({
+                        phoneNumber: value,
+                      }),
+                  }}
+                />
+              </div>
+              <div>
+                <Button
+                  classNames={{
+                    container: [
+                      styles['submit-button-container'],
+                      styles['submit-button-container-desktop'],
+                    ].join(' '),
+                    button: [
+                      styles['submit-button'],
+                      styles['submit-button-desktop'],
+                    ].join(' '),
+                  }}
+                  block={true}
+                  size={'large'}
+                  icon={<Line.Done size={24} />}
+                  onClick={() => {
+                    AccountController.updateProfileErrors({
+                      firstName: undefined,
+                      lastName: undefined,
+                      phoneNumber: undefined,
+                    });
+                    const errors = AccountController.getProfileFormErrors(
+                      accountProps.profileForm
+                    );
+                    if (errors) {
+                      AccountController.updateProfileErrors(errors);
+                      return;
+                    }
+                    AccountController.completeProfileAsync();
+                  }}
+                >
+                  {t('complete')}
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+        {account?.status === 'Complete' && (
+          <>
+            <div
+              className={[
+                styles['avatar-container'],
+                styles['avatar-container-desktop'],
+              ].join(' ')}
+            >
+              <Avatar
+                classNames={{
+                  button: {
+                    button: [
+                      styles['avatar-button'],
+                      styles['avatar-button-desktop'],
                     ].join(' '),
                   },
-                },
-              }}
-              text={customer?.first_name}
-              src={accountProps.profileUrl}
-              editMode={true}
-              onChange={AccountController.uploadAvatarAsync}
-              size={'large'}
-            />
-          </div>
-          <div
-            className={[styles['username'], styles['username-desktop']].join(
-              ' '
-            )}
-          >
-            {customer ? (
-              `${customer?.first_name} ${customer?.last_name}`
-            ) : (
-              <Skeleton
-                count={1}
-                borderRadius={9999}
-                className={[
-                  styles['skeleton-user'],
-                  styles['skeleton-user-desktop'],
-                ].join(' ')}
+                  cropImage: {
+                    overlay: {
+                      background: [
+                        styles['avatar-overlay-background'],
+                        styles['avatar-overlay-background-desktop'],
+                      ].join(' '),
+                    },
+                  },
+                }}
+                text={customer?.first_name}
+                src={accountProps.profileUrl}
+                editMode={true}
+                onChange={AccountController.uploadAvatarAsync}
+                size={'large'}
               />
-            )}
-          </div>
-          <div
-            className={[styles['content'], styles['content-desktop']].join(' ')}
-          >
+            </div>
             <div
-              className={[
-                styles['left-content'],
-                styles['left-content-desktop'],
-              ].join(' ')}
+              className={[styles['username'], styles['username-desktop']].join(
+                ' '
+              )}
+            >
+              {customer ? (
+                `${customer?.first_name} ${customer?.last_name}`
+              ) : (
+                <Skeleton
+                  count={1}
+                  borderRadius={9999}
+                  className={[
+                    styles['skeleton-user'],
+                    styles['skeleton-user-desktop'],
+                  ].join(' ')}
+                />
+              )}
+            </div>
+            <div
+              className={[styles['content'], styles['content-desktop']].join(
+                ' '
+              )}
             >
               <div
                 className={[
-                  styles['card-container'],
-                  styles['card-container-desktop'],
-                  styles['left-card-container-desktop'],
+                  styles['left-content'],
+                  styles['left-content-desktop'],
                 ].join(' ')}
               >
-                <AccountOrderHistoryComponent />
-              </div>
-            </div>
-            <div
-              className={[
-                styles['right-content'],
-                styles['right-content-desktop'],
-              ].join(' ')}
-            >
-              <div
-                className={[
-                  styles['card-container'],
-                  styles['card-container-desktop'],
-                ].join(' ')}
-              >
-                <AccountAddressesComponent />
+                <div
+                  className={[
+                    styles['card-container'],
+                    styles['card-container-desktop'],
+                    styles['left-card-container-desktop'],
+                  ].join(' ')}
+                >
+                  <AccountOrderHistoryComponent />
+                </div>
               </div>
               <div
                 className={[
-                  styles['card-container'],
-                  styles['card-container-desktop'],
+                  styles['right-content'],
+                  styles['right-content-desktop'],
                 ].join(' ')}
               >
-                <AccountEditComponent />
+                <div
+                  className={[
+                    styles['card-container'],
+                    styles['card-container-desktop'],
+                  ].join(' ')}
+                >
+                  <AccountAddressesComponent />
+                </div>
+                <div
+                  className={[
+                    styles['card-container'],
+                    styles['card-container-desktop'],
+                  ].join(' ')}
+                >
+                  <AccountEditComponent />
+                </div>
               </div>
             </div>
-          </div>
-        </>
-      )}
-    </div>
+          </>
+        )}
+      </div>
+    </ResponsiveDesktop>
   );
 }

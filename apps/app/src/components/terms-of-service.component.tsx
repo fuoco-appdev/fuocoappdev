@@ -82,18 +82,14 @@ export default function TermsOfServiceComponent(): JSX.Element {
         <meta property="og:url" content={window.location.href} />
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
-        <ResponsiveDesktop>
-          <TermsOfServiceDesktopComponent
-            termsOfServiceProps={termsOfServiceProps}
-            remarkPlugins={remarkPlugins}
-          />
-        </ResponsiveDesktop>
-        <ResponsiveMobile>
-          <TermsOfServiceMobileComponent
-            termsOfServiceProps={termsOfServiceProps}
-            remarkPlugins={remarkPlugins}
-          />
-        </ResponsiveMobile>
+        <TermsOfServiceDesktopComponent
+          termsOfServiceProps={termsOfServiceProps}
+          remarkPlugins={remarkPlugins}
+        />
+        <TermsOfServiceMobileComponent
+          termsOfServiceProps={termsOfServiceProps}
+          remarkPlugins={remarkPlugins}
+        />
       </React.Suspense>
     </>
   );

@@ -22,6 +22,7 @@ import CartController from '../../controllers/cart.controller';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
 import { ProductPreviewResponsiveProps } from '../product-preview.component';
+import { ResponsiveDesktop } from '../responsive.component';
 
 export default function ProductPreviewDesktopComponent({
   preview,
@@ -40,146 +41,148 @@ export default function ProductPreviewDesktopComponent({
   };
 
   return (
-    <Card
-      ref={ref}
-      classNames={{
-        container: [styles['root'], styles['root-desktop']].join(' '),
-        card: [styles['card'], styles['card-desktop']].join(' '),
-      }}
-      rippleProps={{
-        color: 'rgba(133, 38, 122, .35)',
-      }}
-      hoverable={true}
-      clickable={true}
-      onClick={() => {
-        onClick?.();
-        setTimeout(() => onRest?.(), 200);
-      }}
-    >
-      <div
-        className={[
-          styles['thumbnail-container'],
-          styles['thumbnail-container-desktop'],
-        ].join(' ')}
+    <ResponsiveDesktop>
+      <Card
+        ref={ref}
+        classNames={{
+          container: [styles['root'], styles['root-desktop']].join(' '),
+          card: [styles['card'], styles['card-desktop']].join(' '),
+        }}
+        rippleProps={{
+          color: 'rgba(133, 38, 122, .35)',
+        }}
+        hoverable={true}
+        clickable={true}
+        onClick={() => {
+          onClick?.();
+          setTimeout(() => onRest?.(), 200);
+        }}
       >
-        <img
-          className={[
-            styles['thumbnail-image'],
-            styles['thumbnail-image-desktop'],
-          ].join(' ')}
-          src={preview.thumbnail || '../assets/svg/wine-bottle.svg'}
-        />
         <div
           className={[
-            styles['thumbnail-content-container'],
-            styles['thumbnail-content-container-desktop'],
+            styles['thumbnail-container'],
+            styles['thumbnail-container-desktop'],
           ].join(' ')}
         >
-          <div
+          <img
             className={[
-              styles['thumbnail-top-content'],
-              styles['thumbnail-top-content-desktop'],
+              styles['thumbnail-image'],
+              styles['thumbnail-image-desktop'],
             ].join(' ')}
-          ></div>
-        </div>
-      </div>
-      <div
-        className={[
-          styles['bottom-content'],
-          styles['bottom-content-desktop'],
-        ].join(' ')}
-      >
-        <div
-          className={[
-            styles['bottom-top-content'],
-            styles['bottom-top-content-desktop'],
-          ].join(' ')}
-        >
+            src={preview.thumbnail || '../assets/svg/wine-bottle.svg'}
+          />
           <div
             className={[
-              styles['product-title-container'],
-              styles['product-title-container-desktop'],
+              styles['thumbnail-content-container'],
+              styles['thumbnail-content-container-desktop'],
             ].join(' ')}
           >
-            <span
+            <div
               className={[
-                styles['product-title'],
-                styles['product-title-desktop'],
+                styles['thumbnail-top-content'],
+                styles['thumbnail-top-content-desktop'],
+              ].join(' ')}
+            ></div>
+          </div>
+        </div>
+        <div
+          className={[
+            styles['bottom-content'],
+            styles['bottom-content-desktop'],
+          ].join(' ')}
+        >
+          <div
+            className={[
+              styles['bottom-top-content'],
+              styles['bottom-top-content-desktop'],
+            ].join(' ')}
+          >
+            <div
+              className={[
+                styles['product-title-container'],
+                styles['product-title-container-desktop'],
               ].join(' ')}
             >
-              {preview.title}
-            </span>
-            {preview.subtitle && (
-              <div
+              <span
                 className={[
-                  styles['product-subtitle'],
-                  styles['product-subtitle-desktop'],
+                  styles['product-title'],
+                  styles['product-title-desktop'],
                 ].join(' ')}
               >
-                {preview.subtitle}
+                {preview.title}
+              </span>
+              {preview.subtitle && (
+                <div
+                  className={[
+                    styles['product-subtitle'],
+                    styles['product-subtitle-desktop'],
+                  ].join(' ')}
+                >
+                  {preview.subtitle}
+                </div>
+              )}
+            </div>
+            {price.length > 0 ? (
+              <span
+                className={[
+                  styles['product-price'],
+                  styles['product-price-desktop'],
+                ].join(' ')}
+              >
+                {price}
+              </span>
+            ) : (
+              <div
+                className={[
+                  styles['product-limit-icon'],
+                  styles['product-limit-icon-desktop'],
+                ].join(' ')}
+              >
+                <Line.ProductionQuantityLimits size={20} />
               </div>
             )}
           </div>
-          {price.length > 0 ? (
-            <span
-              className={[
-                styles['product-price'],
-                styles['product-price-desktop'],
-              ].join(' ')}
-            >
-              {price}
-            </span>
-          ) : (
+          <div
+            className={[
+              styles['product-details-container'],
+              styles['product-details-container-desktop'],
+            ].join(' ')}
+          >
             <div
               className={[
-                styles['product-limit-icon'],
-                styles['product-limit-icon-desktop'],
+                styles['product-description'],
+                styles['product-description-desktop'],
               ].join(' ')}
             >
-              <Line.ProductionQuantityLimits size={20} />
+              {preview.description &&
+                preview.description?.length > 0 &&
+                formatDescription(
+                  `${preview.description?.slice(0, 205)}${
+                    preview.description.length > 205 ? '...' : ''
+                  }`
+                )}
             </div>
-          )}
-        </div>
-        <div
-          className={[
-            styles['product-details-container'],
-            styles['product-details-container-desktop'],
-          ].join(' ')}
-        >
-          <div
-            className={[
-              styles['product-description'],
-              styles['product-description-desktop'],
-            ].join(' ')}
-          >
-            {preview.description &&
-              preview.description?.length > 0 &&
-              formatDescription(
-                `${preview.description?.slice(0, 205)}${
-                  preview.description.length > 205 ? '...' : ''
-                }`
+            <div
+              className={[
+                styles['product-status-actions-container'],
+                styles['product-status-actions-container-desktop'],
+              ].join(' ')}
+            >
+              {selectedVariantId && (
+                <Button
+                  classNames={{ button: styles['floating-button'] }}
+                  rippleProps={{
+                    color: 'rgba(133, 38, 122, .35)',
+                  }}
+                  rounded={true}
+                  onClick={addToCartAsync}
+                  icon={<Line.AddShoppingCart size={24} />}
+                />
               )}
-          </div>
-          <div
-            className={[
-              styles['product-status-actions-container'],
-              styles['product-status-actions-container-desktop'],
-            ].join(' ')}
-          >
-            {selectedVariantId && (
-              <Button
-                classNames={{ button: styles['floating-button'] }}
-                rippleProps={{
-                  color: 'rgba(133, 38, 122, .35)',
-                }}
-                rounded={true}
-                onClick={addToCartAsync}
-                icon={<Line.AddShoppingCart size={24} />}
-              />
-            )}
+            </div>
           </div>
         </div>
-      </div>
-    </Card>
+      </Card>
+    </ResponsiveDesktop>
   );
 }

@@ -12,6 +12,7 @@ import RefundItemComponent from '../refund-item.component';
 import { RefundItem } from '../../models/order-confirmed.model';
 import WindowController from '../../controllers/window.controller';
 import { OrderConfirmedResponsiveProps } from '../order-confirmed.component';
+import { ResponsiveDesktop } from '../responsive.component';
 
 export default function OrderConfirmedDesktopComponent({
   storeProps,
@@ -25,7 +26,8 @@ export default function OrderConfirmedDesktopComponent({
   const [props] = useObservable(OrderConfirmedController.model.store);
 
   return (
-    props.order && (
+    <ResponsiveDesktop>
+      props.order && (
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>
         <div
           className={[
@@ -521,6 +523,7 @@ export default function OrderConfirmedDesktopComponent({
           </div>
         </Modal>
       </div>
-    )
+      )
+    </ResponsiveDesktop>
   );
 }

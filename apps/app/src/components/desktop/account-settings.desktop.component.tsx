@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
 import Ripples from 'react-ripples';
 import WindowController from '../../controllers/window.controller';
-import { useDesktopEffect } from '../responsive.component';
+import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
 import { AccountSettingsResponsiveProps } from '../account-settings.component';
 
 export default function AccountSettingsDesktopComponent({
@@ -25,40 +25,42 @@ export default function AccountSettingsDesktopComponent({
   }, [location.pathname]);
 
   return (
-    <div className={[styles['root'], styles['root-desktop']].join(' ')}>
-      <div
-        className={[styles['side-bar'], styles['side-bar-desktop']].join(' ')}
-      >
-        <Tabs
-          activeId={windowProps.activeRoute}
-          direction={'vertical'}
-          type={'underlined'}
-          onChange={(id) => navigate(id)}
-          classNames={{
-            tabOutline: [styles['tab-outline']].join(' '),
-            tabSlider: styles['tab-slider'],
-            tabIcon: styles['tab-icon'],
-            tabButton: styles['tab-button'],
-            hoveredTabIcon: styles['hovered-tab-icon'],
-            hoveredTabButton: styles['hovered-tab-button'],
-          }}
-          tabs={[
-            {
-              id: RoutePathsType.AccountSettingsAccount,
-              icon: <Line.Person size={24} />,
-              label: t('account') ?? '',
-            },
-          ]}
-        />
+    <ResponsiveDesktop>
+      <div className={[styles['root'], styles['root-desktop']].join(' ')}>
+        <div
+          className={[styles['side-bar'], styles['side-bar-desktop']].join(' ')}
+        >
+          <Tabs
+            activeId={windowProps.activeRoute}
+            direction={'vertical'}
+            type={'underlined'}
+            onChange={(id) => navigate(id)}
+            classNames={{
+              tabOutline: [styles['tab-outline']].join(' '),
+              tabSlider: styles['tab-slider'],
+              tabIcon: styles['tab-icon'],
+              tabButton: styles['tab-button'],
+              hoveredTabIcon: styles['hovered-tab-icon'],
+              hoveredTabButton: styles['hovered-tab-button'],
+            }}
+            tabs={[
+              {
+                id: RoutePathsType.AccountSettingsAccount,
+                icon: <Line.Person size={24} />,
+                label: t('account') ?? '',
+              },
+            ]}
+          />
+        </div>
+        <div
+          className={[
+            styles['outlet-container'],
+            styles['outlet-container-desktop'],
+          ].join(' ')}
+        >
+          <Outlet />
+        </div>
       </div>
-      <div
-        className={[
-          styles['outlet-container'],
-          styles['outlet-container-desktop'],
-        ].join(' ')}
-      >
-        <Outlet />
-      </div>
-    </div>
+    </ResponsiveDesktop>
   );
 }

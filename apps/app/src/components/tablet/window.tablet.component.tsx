@@ -25,6 +25,7 @@ import AccountController from '../../controllers/account.controller';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import e from 'express';
 import { WindowResponsiveProps } from '../window.component';
+import { ResponsiveTablet } from '../responsive.component';
 
 export default function WindowTabletComponent({
   openMore,
@@ -35,13 +36,18 @@ export default function WindowTabletComponent({
   const { t, i18n } = useTranslation();
 
   return (
-    <div className={styles['root-tablet']}>
-      <div className={styles['content-container-tablet']}>
-        <img src={'../assets/svg/logo.svg'} className={styles['logo-tablet']} />
-        <div className={styles['not-supported-text-tablet']}>
-          {t('tabletNotSupported')}
+    <ResponsiveTablet>
+      <div className={styles['root-tablet']}>
+        <div className={styles['content-container-tablet']}>
+          <img
+            src={'../assets/svg/logo.svg'}
+            className={styles['logo-tablet']}
+          />
+          <div className={styles['not-supported-text-tablet']}>
+            {t('tabletNotSupported')}
+          </div>
         </div>
       </div>
-    </div>
+    </ResponsiveTablet>
   );
 }

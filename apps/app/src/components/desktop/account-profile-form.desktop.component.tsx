@@ -2,6 +2,7 @@ import styles from '../account-profile-form.module.scss';
 import { Input, InputPhoneNumber } from '@fuoco.appdev/core-ui';
 import { useTranslation } from 'react-i18next';
 import { AccountProfileFormResponsiveProps } from '../account-profile-form.component';
+import { ResponsiveDesktop } from '../responsive.component';
 
 export default function AccountProfileFormDesktopComponent({
   values,
@@ -12,7 +13,7 @@ export default function AccountProfileFormDesktopComponent({
   const { t, i18n } = useTranslation();
 
   return (
-    <>
+    <ResponsiveDesktop>
       <div
         className={[
           styles['horizontal-input-container'],
@@ -58,6 +59,6 @@ export default function AccountProfileFormDesktopComponent({
         country={selectedCountry}
         onChange={onChangeCallbacks?.phoneNumber}
       />
-    </>
+    </ResponsiveDesktop>
   );
 }

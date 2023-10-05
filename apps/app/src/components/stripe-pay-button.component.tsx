@@ -95,12 +95,8 @@ export default function StripePayButtonComponent({
 
   return (
     <React.Suspense fallback={suspenceComponent}>
-      <ResponsiveDesktop>
-        <StripePayButtonDesktopComponent onPayAsync={onPayAsync} />
-      </ResponsiveDesktop>
-      <ResponsiveMobile>
-        <StripePayButtonMobileComponent onPayAsync={onPayAsync} />
-      </ResponsiveMobile>
+      <StripePayButtonDesktopComponent onPayAsync={onPayAsync} />
+      <StripePayButtonMobileComponent onPayAsync={onPayAsync} />
     </React.Suspense>
   );
 }

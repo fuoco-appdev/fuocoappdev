@@ -112,28 +112,24 @@ export default function RefundItemComponent({
 
   return (
     <React.Suspense fallback={suspenceComponent}>
-      <ResponsiveDesktop>
-        <RefundItemDesktopComponent
-          item={item}
-          refundItem={refundItem}
-          returnReasonOptions={returnReasonOptions}
-          vintage={vintage}
-          incrementItemQuantity={incrementItemQuantity}
-          decrementItemQuantity={decrementItemQuantity}
-          onChanged={onChanged}
-        />
-      </ResponsiveDesktop>
-      <ResponsiveMobile>
-        <RefundItemMobileComponent
-          item={item}
-          refundItem={refundItem}
-          returnReasonOptions={returnReasonOptions}
-          vintage={vintage}
-          incrementItemQuantity={incrementItemQuantity}
-          decrementItemQuantity={decrementItemQuantity}
-          onChanged={onChanged}
-        />
-      </ResponsiveMobile>
+      <RefundItemDesktopComponent
+        item={item}
+        refundItem={refundItem}
+        returnReasonOptions={returnReasonOptions}
+        vintage={vintage}
+        incrementItemQuantity={incrementItemQuantity}
+        decrementItemQuantity={decrementItemQuantity}
+        onChanged={onChanged}
+      />
+      <RefundItemMobileComponent
+        item={item}
+        refundItem={refundItem}
+        returnReasonOptions={returnReasonOptions}
+        vintage={vintage}
+        incrementItemQuantity={incrementItemQuantity}
+        decrementItemQuantity={decrementItemQuantity}
+        onChanged={onChanged}
+      />
     </React.Suspense>
   );
 }

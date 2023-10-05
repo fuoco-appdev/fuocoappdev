@@ -129,26 +129,22 @@ export default function HomeComponent(): JSX.Element {
         <meta property="og:url" content={window.location.href} />
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
-        <ResponsiveDesktop>
-          <HomeDesktopComponent
-            homeProps={homeProps}
-            homeLocalProps={homeLocalProps}
-            mapRef={mapRef}
-            selectedPoint={selectedPoint}
-            setMapStyleLoaded={setMapStyleLoaded}
-            setSelectedPoint={setSelectedPoint}
-          />
-        </ResponsiveDesktop>
-        <ResponsiveMobile>
-          <HomeMobileComponent
-            homeProps={homeProps}
-            homeLocalProps={homeLocalProps}
-            mapRef={mapRef}
-            selectedPoint={selectedPoint}
-            setMapStyleLoaded={setMapStyleLoaded}
-            setSelectedPoint={setSelectedPoint}
-          />
-        </ResponsiveMobile>
+        <HomeDesktopComponent
+          homeProps={homeProps}
+          homeLocalProps={homeLocalProps}
+          mapRef={mapRef}
+          selectedPoint={selectedPoint}
+          setMapStyleLoaded={setMapStyleLoaded}
+          setSelectedPoint={setSelectedPoint}
+        />
+        <HomeMobileComponent
+          homeProps={homeProps}
+          homeLocalProps={homeLocalProps}
+          mapRef={mapRef}
+          selectedPoint={selectedPoint}
+          setMapStyleLoaded={setMapStyleLoaded}
+          setSelectedPoint={setSelectedPoint}
+        />
       </React.Suspense>
     </>
   );

@@ -12,6 +12,7 @@ import { useObservable } from '@ngneat/use-observable';
 import { CartItemResponsiveProps } from '../cart-item.component';
 import { useNavigate } from 'react-router-dom';
 import { RoutePathsType } from '../../route-paths';
+import { ResponsiveDesktop } from '../responsive.component';
 
 export default function CartItemDesktopComponent({
   storeProps,
@@ -29,191 +30,199 @@ export default function CartItemDesktopComponent({
   const { t } = useTranslation();
 
   return (
-    <div
-      key={item.variant_id}
-      className={[styles['container'], styles['container-desktop']].join(' ')}
-    >
-      <div className={[styles['details'], styles['details-desktop']].join(' ')}>
+    <ResponsiveDesktop>
+      <div
+        key={item.variant_id}
+        className={[styles['container'], styles['container-desktop']].join(' ')}
+      >
         <div
-          className={[styles['thumbnail'], styles['thumbnail-desktop']].join(
-            ' '
-          )}
+          className={[styles['details'], styles['details-desktop']].join(' ')}
         >
-          <img
-            className={[
-              styles['thumbnail-image'],
-              styles['thumbnail-image-desktop'],
-            ].join(' ')}
-            src={item.thumbnail || '../assets/svg/wine-bottle.svg'}
-          />
-        </div>
-        <div
-          className={[
-            styles['title-container'],
-            styles['title-container-desktop'],
-          ].join(' ')}
-          onClick={() =>
-            navigate(`${RoutePathsType.Store}/${item.variant.product_id}`)
-          }
-        >
-          <div className={[styles['title'], styles['title-desktop']].join(' ')}>
-            {item.title}
+          <div
+            className={[styles['thumbnail'], styles['thumbnail-desktop']].join(
+              ' '
+            )}
+          >
+            <img
+              className={[
+                styles['thumbnail-image'],
+                styles['thumbnail-image-desktop'],
+              ].join(' ')}
+              src={item.thumbnail || '../assets/svg/wine-bottle.svg'}
+            />
           </div>
           <div
-            className={[styles['variant'], styles['variant-desktop']].join(' ')}
-          >{`${t('vintage')}: ${vintage}`}</div>
-        </div>
-        <div
-          className={[
-            styles['quantity-details-container'],
-            styles['quantity-details-container-desktop'],
-          ].join(' ')}
-        >
+            className={[
+              styles['title-container'],
+              styles['title-container-desktop'],
+            ].join(' ')}
+            onClick={() =>
+              navigate(`${RoutePathsType.Store}/${item.variant.product_id}`)
+            }
+          >
+            <div
+              className={[styles['title'], styles['title-desktop']].join(' ')}
+            >
+              {item.title}
+            </div>
+            <div
+              className={[styles['variant'], styles['variant-desktop']].join(
+                ' '
+              )}
+            >{`${t('vintage')}: ${vintage}`}</div>
+          </div>
           <div
             className={[
-              styles['quantity-container'],
-              styles['quantity-container-desktop'],
+              styles['quantity-details-container'],
+              styles['quantity-details-container-desktop'],
             ].join(' ')}
           >
             <div
               className={[
-                styles['quantity-text'],
-                styles['quantity-text-desktop'],
+                styles['quantity-container'],
+                styles['quantity-container-desktop'],
               ].join(' ')}
             >
-              {t('quantity')}
-            </div>
-            <div
-              className={[
-                styles['quantity-buttons'],
-                styles['quantity-buttons-desktop'],
-              ].join(' ')}
-            >
-              <Button
-                block={true}
-                classNames={{
-                  button: styles['quantity-button'],
-                }}
-                rippleProps={{
-                  color: 'rgba(233, 33, 66, .35)',
-                }}
-                floatingLabel={t('minus') ?? ''}
-                type={'text'}
-                rounded={true}
-                size={'tiny'}
-                icon={<Line.Remove size={18} />}
-                onClick={() => decrementItemQuantity(1)}
-              />
               <div
                 className={[
-                  styles['quantity'],
-                  styles['quantity-desktop'],
+                  styles['quantity-text'],
+                  styles['quantity-text-desktop'],
                 ].join(' ')}
               >
-                {item.quantity}
+                {t('quantity')}
               </div>
-              <Button
-                block={true}
-                classNames={{
-                  button: styles['quantity-button'],
-                }}
-                rippleProps={{
-                  color: 'rgba(233, 33, 66, .35)',
-                }}
-                floatingLabel={t('add') ?? ''}
-                type={'text'}
-                rounded={true}
-                size={'tiny'}
-                icon={<Line.Add size={18} />}
-                onClick={() => incrementItemQuantity(1)}
-              />
+              <div
+                className={[
+                  styles['quantity-buttons'],
+                  styles['quantity-buttons-desktop'],
+                ].join(' ')}
+              >
+                <Button
+                  block={true}
+                  classNames={{
+                    button: styles['quantity-button'],
+                  }}
+                  rippleProps={{
+                    color: 'rgba(233, 33, 66, .35)',
+                  }}
+                  floatingLabel={t('minus') ?? ''}
+                  type={'text'}
+                  rounded={true}
+                  size={'tiny'}
+                  icon={<Line.Remove size={18} />}
+                  onClick={() => decrementItemQuantity(1)}
+                />
+                <div
+                  className={[
+                    styles['quantity'],
+                    styles['quantity-desktop'],
+                  ].join(' ')}
+                >
+                  {item.quantity}
+                </div>
+                <Button
+                  block={true}
+                  classNames={{
+                    button: styles['quantity-button'],
+                  }}
+                  rippleProps={{
+                    color: 'rgba(233, 33, 66, .35)',
+                  }}
+                  floatingLabel={t('add') ?? ''}
+                  type={'text'}
+                  rounded={true}
+                  size={'tiny'}
+                  icon={<Line.Add size={18} />}
+                  onClick={() => incrementItemQuantity(1)}
+                />
+              </div>
             </div>
+          </div>
+          <div
+            className={[
+              styles['remove-container'],
+              styles['remove-container-desktop'],
+            ].join(' ')}
+          >
+            <Button
+              classNames={{
+                button: styles['remove-button'],
+              }}
+              type={'text'}
+              rounded={true}
+              size={'tiny'}
+              icon={<Line.Delete size={24} />}
+              floatingLabel={t('remove') ?? ''}
+              onClick={() => setDeleteModalVisible(true)}
+            />
           </div>
         </div>
         <div
           className={[
-            styles['remove-container'],
-            styles['remove-container-desktop'],
+            styles['pricing-details-container'],
+            styles['pricing-details-container-desktop'],
           ].join(' ')}
         >
-          <Button
-            classNames={{
-              button: styles['remove-button'],
-            }}
-            type={'text'}
-            rounded={true}
-            size={'tiny'}
-            icon={<Line.Delete size={24} />}
-            floatingLabel={t('remove') ?? ''}
-            onClick={() => setDeleteModalVisible(true)}
-          />
+          <div
+            className={[
+              styles['pricing'],
+              styles['pricing-desktop'],
+              hasReducedPrice ? styles['pricing-canceled'] : '',
+            ].join(' ')}
+          >
+            {hasReducedPrice && `${t('original')}:`} &nbsp;
+            {storeProps.selectedRegion &&
+              formatAmount({
+                amount: item.subtotal ?? 0,
+                region: storeProps.selectedRegion,
+                includeTaxes: false,
+              })}
+          </div>
+          {hasReducedPrice && (
+            <>
+              <div
+                className={[
+                  styles['discount-pricing'],
+                  styles['discount-pricing-desktop'],
+                ].join(' ')}
+              >
+                {storeProps.selectedRegion &&
+                  formatAmount({
+                    amount: (item.subtotal ?? 0) - (item.discount_total ?? 0),
+                    region: storeProps.selectedRegion,
+                    includeTaxes: false,
+                  })}
+              </div>
+              <div
+                className={[
+                  styles['discount-percentage'],
+                  styles['discount-percentage-desktop'],
+                ].join(' ')}
+              >
+                -{discountPercentage}%
+              </div>
+            </>
+          )}
         </div>
+        <Modal
+          classNames={{
+            overlay: styles['modal-overlay'],
+            title: styles['modal-title'],
+            description: styles['modal-description'],
+            cancelButton: {
+              button: styles['modal-cancel-button'],
+            },
+            confirmButton: {
+              button: styles['modal-confirm-button'],
+            },
+          }}
+          visible={deleteModalVisible}
+          onConfirm={onRemove}
+          onCancel={() => setDeleteModalVisible(false)}
+          title={t('removeItem') ?? ''}
+          description={t('removeItemDescription', { item: item.title }) ?? ''}
+        />
       </div>
-      <div
-        className={[
-          styles['pricing-details-container'],
-          styles['pricing-details-container-desktop'],
-        ].join(' ')}
-      >
-        <div
-          className={[
-            styles['pricing'],
-            styles['pricing-desktop'],
-            hasReducedPrice ? styles['pricing-canceled'] : '',
-          ].join(' ')}
-        >
-          {hasReducedPrice && `${t('original')}:`} &nbsp;
-          {storeProps.selectedRegion &&
-            formatAmount({
-              amount: item.subtotal ?? 0,
-              region: storeProps.selectedRegion,
-              includeTaxes: false,
-            })}
-        </div>
-        {hasReducedPrice && (
-          <>
-            <div
-              className={[
-                styles['discount-pricing'],
-                styles['discount-pricing-desktop'],
-              ].join(' ')}
-            >
-              {storeProps.selectedRegion &&
-                formatAmount({
-                  amount: (item.subtotal ?? 0) - (item.discount_total ?? 0),
-                  region: storeProps.selectedRegion,
-                  includeTaxes: false,
-                })}
-            </div>
-            <div
-              className={[
-                styles['discount-percentage'],
-                styles['discount-percentage-desktop'],
-              ].join(' ')}
-            >
-              -{discountPercentage}%
-            </div>
-          </>
-        )}
-      </div>
-      <Modal
-        classNames={{
-          overlay: styles['modal-overlay'],
-          title: styles['modal-title'],
-          description: styles['modal-description'],
-          cancelButton: {
-            button: styles['modal-cancel-button'],
-          },
-          confirmButton: {
-            button: styles['modal-confirm-button'],
-          },
-        }}
-        visible={deleteModalVisible}
-        onConfirm={onRemove}
-        onCancel={() => setDeleteModalVisible(false)}
-        title={t('removeItem') ?? ''}
-        description={t('removeItemDescription', { item: item.title }) ?? ''}
-      />
-    </div>
+    </ResponsiveDesktop>
   );
 }

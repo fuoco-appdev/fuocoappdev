@@ -64,18 +64,14 @@ export default function AccountEditComponent(): JSX.Element {
   return (
     <React.Suspense fallback={suspenceComponent}>
       <AuthenticatedComponent>
-        <ResponsiveDesktop>
-          <AccountEditDesktopComponent
-            storeProps={storeProps}
-            onSaveAsync={onSaveAsync}
-          />
-        </ResponsiveDesktop>
-        <ResponsiveMobile>
-          <AccountEditMobileComponent
-            storeProps={storeProps}
-            onSaveAsync={onSaveAsync}
-          />
-        </ResponsiveMobile>
+        <AccountEditDesktopComponent
+          storeProps={storeProps}
+          onSaveAsync={onSaveAsync}
+        />
+        <AccountEditMobileComponent
+          storeProps={storeProps}
+          onSaveAsync={onSaveAsync}
+        />
       </AuthenticatedComponent>
     </React.Suspense>
   );

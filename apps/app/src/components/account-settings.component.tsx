@@ -73,12 +73,8 @@ export default function AccountSettingsComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <AuthenticatedComponent>
-          <ResponsiveDesktop>
-            <AccountSettingsDesktopComponent windowProps={windowProps} />
-          </ResponsiveDesktop>
-          <ResponsiveMobile>
-            <AccountSettingsMobileComponent windowProps={windowProps} />
-          </ResponsiveMobile>
+          <AccountSettingsDesktopComponent windowProps={windowProps} />
+          <AccountSettingsMobileComponent windowProps={windowProps} />
         </AuthenticatedComponent>
       </React.Suspense>
     </>

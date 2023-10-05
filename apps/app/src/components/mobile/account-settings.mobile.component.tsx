@@ -13,6 +13,7 @@ import LoadingComponent from '../loading.component';
 import { Store } from '@ngneat/elf';
 import Ripples from 'react-ripples';
 import { AccountSettingsResponsiveProps } from '../account-settings.component';
+import { ResponsiveMobile } from '../responsive.component';
 
 export default function AccountSettingsMobileComponent({
   windowProps,
@@ -20,66 +21,73 @@ export default function AccountSettingsMobileComponent({
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
 
-  return windowProps.activeRoute === RoutePathsType.AccountSettings ? (
-    <div className={[styles['root'], styles['root-mobile']].join(' ')}>
-      <Ripples
-        className={[
-          styles['setting-button-container'],
-          styles['setting-button-container-mobile'],
-        ].join(' ')}
-        color={'rgba(42, 42, 95, .35)'}
-        onClick={() =>
-          setTimeout(() => navigate(RoutePathsType.AccountSettingsAccount), 75)
-        }
-      >
-        <div
-          className={[
-            styles['setting-button-content'],
-            styles['setting-button-content-mobile'],
-          ].join(' ')}
-        >
+  return (
+    <ResponsiveMobile>
+      {windowProps.activeRoute === RoutePathsType.AccountSettings ? (
+        <div className={[styles['root'], styles['root-mobile']].join(' ')}>
+          <Ripples
+            className={[
+              styles['setting-button-container'],
+              styles['setting-button-container-mobile'],
+            ].join(' ')}
+            color={'rgba(42, 42, 95, .35)'}
+            onClick={() =>
+              setTimeout(
+                () => navigate(RoutePathsType.AccountSettingsAccount),
+                75
+              )
+            }
+          >
+            <div
+              className={[
+                styles['setting-button-content'],
+                styles['setting-button-content-mobile'],
+              ].join(' ')}
+            >
+              <div
+                className={[
+                  styles['setting-icon'],
+                  styles['setting-icon-mobile'],
+                ].join(' ')}
+              >
+                <Line.Person size={24} />
+              </div>
+              <div
+                className={[
+                  styles['setting-text'],
+                  styles['setting-text-mobile'],
+                ].join(' ')}
+              >
+                {t('account')}
+              </div>
+            </div>
+          </Ripples>
           <div
             className={[
-              styles['setting-icon'],
-              styles['setting-icon-mobile'],
+              styles['bottom-content-container'],
+              styles['bottom-content-container-mobile'],
             ].join(' ')}
           >
-            <Line.Person size={24} />
-          </div>
-          <div
-            className={[
-              styles['setting-text'],
-              styles['setting-text-mobile'],
-            ].join(' ')}
-          >
-            {t('account')}
+            <Button
+              block={true}
+              size={'large'}
+              classNames={{
+                container: styles['logout-button-container'],
+                button: styles['logout-button'],
+              }}
+              rippleProps={{
+                color: 'rgba(233, 33, 66, .35)',
+              }}
+              touchScreen={true}
+              onClick={() => AccountController.logoutAsync()}
+            >
+              {t('signOut')}
+            </Button>
           </div>
         </div>
-      </Ripples>
-      <div
-        className={[
-          styles['bottom-content-container'],
-          styles['bottom-content-container-mobile'],
-        ].join(' ')}
-      >
-        <Button
-          block={true}
-          size={'large'}
-          classNames={{
-            container: styles['logout-button-container'],
-            button: styles['logout-button'],
-          }}
-          rippleProps={{
-            color: 'rgba(233, 33, 66, .35)',
-          }}
-          touchScreen={true}
-          onClick={() => AccountController.logoutAsync()}
-        >
-          {t('signOut')}
-        </Button>
-      </div>
-    </div>
-  ) : (
-    <Outlet />
+      ) : (
+        <Outlet />
+      )}
+    </ResponsiveMobile>
   );
 }

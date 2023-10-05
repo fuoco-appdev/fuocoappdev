@@ -20,7 +20,7 @@ import { Customer } from '@medusajs/medusa';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { WindowResponsiveProps } from '../window.component';
 import { useRef, useState } from 'react';
-import { useMobileEffect } from '../responsive.component';
+import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 import { WindowSuspenseMobileComponent } from './suspense/window.suspense.mobile.component';
 
 export default function WindowMobileComponent({
@@ -53,350 +53,358 @@ export default function WindowMobileComponent({
   const customer = accountProps.customer as Customer;
 
   return (
-    <div className={[styles['root'], styles['root-mobile']].join(' ')}>
-      <div className={[styles['content'], styles['content-mobile']].join(' ')}>
-        <TransitionGroup
-          component={null}
-          childFactory={(child) =>
-            React.cloneElement(child, {
-              classNames: {
+    <ResponsiveMobile>
+      <div className={[styles['root'], styles['root-mobile']].join(' ')}>
+        <div
+          className={[styles['content'], styles['content-mobile']].join(' ')}
+        >
+          <TransitionGroup
+            component={null}
+            childFactory={(child) =>
+              React.cloneElement(child, {
+                classNames: {
+                  enter:
+                    windowProps.transitionKeyIndex <
+                    windowProps.prevTransitionKeyIndex
+                      ? styles['left-to-right-enter']
+                      : styles['right-to-left-enter'],
+                  enterActive:
+                    windowProps.transitionKeyIndex <
+                    windowProps.prevTransitionKeyIndex
+                      ? styles['left-to-right-enter-active']
+                      : styles['right-to-left-enter-active'],
+                  exit:
+                    windowProps.transitionKeyIndex <
+                    windowProps.prevTransitionKeyIndex
+                      ? styles['left-to-right-exit']
+                      : styles['right-to-left-exit'],
+                  exitActive:
+                    windowProps.transitionKeyIndex <
+                    windowProps.prevTransitionKeyIndex
+                      ? styles['left-to-right-exit-active']
+                      : styles['right-to-left-exit-active'],
+                },
+                timeout: 250,
+              })
+            }
+          >
+            <CSSTransition
+              key={windowProps.transitionKeyIndex}
+              classNames={{
                 enter:
-                  windowProps.transitionKeyIndex <
+                  windowProps.transitionKeyIndex >
                   windowProps.prevTransitionKeyIndex
                     ? styles['left-to-right-enter']
                     : styles['right-to-left-enter'],
                 enterActive:
-                  windowProps.transitionKeyIndex <
+                  windowProps.transitionKeyIndex >
                   windowProps.prevTransitionKeyIndex
                     ? styles['left-to-right-enter-active']
                     : styles['right-to-left-enter-active'],
                 exit:
-                  windowProps.transitionKeyIndex <
+                  windowProps.transitionKeyIndex >
                   windowProps.prevTransitionKeyIndex
                     ? styles['left-to-right-exit']
                     : styles['right-to-left-exit'],
                 exitActive:
-                  windowProps.transitionKeyIndex <
+                  windowProps.transitionKeyIndex >
                   windowProps.prevTransitionKeyIndex
                     ? styles['left-to-right-exit-active']
                     : styles['right-to-left-exit-active'],
-              },
-              timeout: 250,
-            })
-          }
+              }}
+              timeout={250}
+              unmountOnExit={false}
+            >
+              <div style={{ minWidth: '100%', minHeight: '100%' }}>
+                <Outlet />
+              </div>
+            </CSSTransition>
+          </TransitionGroup>
+        </div>
+        <CSSTransition
+          nodeRef={bottomBarRef}
+          in={switchBottomBar}
+          classNames={{
+            enter: styles['bottom-bar-enter'],
+            enterActive: styles['bottom-bar-enter-active'],
+            enterDone: styles['bottom-bar-enter-done'],
+            exit: styles['bottom-bar-exit'],
+            exitActive: styles['bottom-bar-exit-active'],
+            exitDone: styles['bottom-bar-exit-done'],
+          }}
+          timeout={150}
+          onEnter={() => setTimeout(() => setSwitchBottomBar(false), 75)}
         >
-          <CSSTransition
-            key={windowProps.transitionKeyIndex}
-            classNames={{
-              enter:
-                windowProps.transitionKeyIndex >
-                windowProps.prevTransitionKeyIndex
-                  ? styles['left-to-right-enter']
-                  : styles['right-to-left-enter'],
-              enterActive:
-                windowProps.transitionKeyIndex >
-                windowProps.prevTransitionKeyIndex
-                  ? styles['left-to-right-enter-active']
-                  : styles['right-to-left-enter-active'],
-              exit:
-                windowProps.transitionKeyIndex >
-                windowProps.prevTransitionKeyIndex
-                  ? styles['left-to-right-exit']
-                  : styles['right-to-left-exit'],
-              exitActive:
-                windowProps.transitionKeyIndex >
-                windowProps.prevTransitionKeyIndex
-                  ? styles['left-to-right-exit-active']
-                  : styles['right-to-left-exit-active'],
-            }}
-            timeout={250}
-            unmountOnExit={false}
+          <div
+            ref={bottomBarRef}
+            className={[styles['bottom-bar-container-mobile']].join(' ')}
           >
-            <div style={{ minWidth: '100%', minHeight: '100%' }}>
-              <Outlet />
-            </div>
-          </CSSTransition>
-        </TransitionGroup>
-      </div>
-      <CSSTransition
-        nodeRef={bottomBarRef}
-        in={switchBottomBar}
-        classNames={{
-          enter: styles['bottom-bar-enter'],
-          enterActive: styles['bottom-bar-enter-active'],
-          enterDone: styles['bottom-bar-enter-done'],
-          exit: styles['bottom-bar-exit'],
-          exitActive: styles['bottom-bar-exit-active'],
-          exitDone: styles['bottom-bar-exit-done'],
-        }}
-        timeout={150}
-        onEnter={() => setTimeout(() => setSwitchBottomBar(false), 75)}
-      >
-        <div
-          ref={bottomBarRef}
-          className={[styles['bottom-bar-container-mobile']].join(' ')}
-        >
-          <div className={[styles['bottom-bar-mobile']].join(' ')}>
-            {!windowProps.hideCartButton && (
-              <div
-                className={[
-                  styles['shopping-cart-container'],
-                  styles['shopping-cart-container-mobile'],
-                ].join(' ')}
-              >
+            <div className={[styles['bottom-bar-mobile']].join(' ')}>
+              {!windowProps.hideCartButton && (
                 <div
                   className={[
-                    styles['shopping-cart-container-details'],
-                    styles['shopping-cart-container-details-mobile'],
+                    styles['shopping-cart-container'],
+                    styles['shopping-cart-container-mobile'],
                   ].join(' ')}
                 >
-                  <Button
-                    classNames={{
-                      container: [
-                        styles['shopping-cart-button-container'],
-                        styles['shopping-cart-button-container-mobile'],
-                      ].join(' '),
-                      button: [
-                        styles['shopping-cart-button'],
-                        styles['shopping-cart-button-mobile'],
-                      ].join(' '),
-                    }}
-                    rippleProps={{
-                      color: 'rgba(88, 40, 109, .35)',
-                    }}
-                    onClick={() => {
-                      if (activeRoute === RoutePathsType.Cart) {
-                        navigate(-1);
-                      } else {
-                        setTimeout(() => navigate(RoutePathsType.Cart), 75);
+                  <div
+                    className={[
+                      styles['shopping-cart-container-details'],
+                      styles['shopping-cart-container-details-mobile'],
+                    ].join(' ')}
+                  >
+                    <Button
+                      classNames={{
+                        container: [
+                          styles['shopping-cart-button-container'],
+                          styles['shopping-cart-button-container-mobile'],
+                        ].join(' '),
+                        button: [
+                          styles['shopping-cart-button'],
+                          styles['shopping-cart-button-mobile'],
+                        ].join(' '),
+                      }}
+                      rippleProps={{
+                        color: 'rgba(88, 40, 109, .35)',
+                      }}
+                      onClick={() => {
+                        if (activeRoute === RoutePathsType.Cart) {
+                          navigate(-1);
+                        } else {
+                          setTimeout(() => navigate(RoutePathsType.Cart), 75);
+                        }
+                      }}
+                      type={'primary'}
+                      rounded={true}
+                      size={'small'}
+                      touchScreen={true}
+                      icon={
+                        windowProps.activeRoute !== RoutePathsType.Cart ? (
+                          <Line.ShoppingCart size={22} color={'#2A2A5F'} />
+                        ) : (
+                          <Line.Close size={22} color={'#2A2A5F'} />
+                        )
                       }
-                    }}
-                    type={'primary'}
-                    rounded={true}
-                    size={'small'}
-                    touchScreen={true}
-                    icon={
-                      windowProps.activeRoute !== RoutePathsType.Cart ? (
-                        <Line.ShoppingCart size={22} color={'#2A2A5F'} />
-                      ) : (
-                        <Line.Close size={22} color={'#2A2A5F'} />
-                      )
-                    }
-                  />
-                  {windowProps.activeRoute !== RoutePathsType.Cart &&
-                    windowProps.cartCount > 0 && (
-                      <div
-                        className={[
-                          styles['cart-number-container'],
-                          styles['cart-number-container-mobile'],
-                        ].join(' ')}
-                      >
-                        <span
+                    />
+                    {windowProps.activeRoute !== RoutePathsType.Cart &&
+                      windowProps.cartCount > 0 && (
+                        <div
                           className={[
-                            styles['cart-number'],
-                            styles['cart-number-mobile'],
+                            styles['cart-number-container'],
+                            styles['cart-number-container-mobile'],
                           ].join(' ')}
                         >
-                          {windowProps.cartCount}
-                        </span>
-                      </div>
-                    )}
+                          <span
+                            className={[
+                              styles['cart-number'],
+                              styles['cart-number-mobile'],
+                            ].join(' ')}
+                          >
+                            {windowProps.cartCount}
+                          </span>
+                        </div>
+                      )}
+                  </div>
                 </div>
-              </div>
-            )}
-            {windowProps.showNavigateBack && (
-              <div
-                className={[
-                  styles['navigation-back-container'],
-                  styles['navigation-back-container-mobile'],
-                ].join(' ')}
-              >
+              )}
+              {windowProps.showNavigateBack && (
                 <div
                   className={[
-                    styles['tab-button-container'],
-                    styles['tab-button-container-mobile'],
+                    styles['navigation-back-container'],
+                    styles['navigation-back-container-mobile'],
                   ].join(' ')}
                 >
-                  <Button
-                    rippleProps={{
-                      color: 'rgba(252, 245, 227, .35)',
-                    }}
-                    onClick={() => {
-                      setSwitchBottomBar(true);
-                      navigate(-1);
-                    }}
-                    type={'text'}
-                    rounded={true}
-                    size={'tiny'}
-                    touchScreen={true}
-                    icon={
-                      <Line.ArrowBack
-                        size={24}
-                        color={'rgba(252, 245, 227, 1)'}
+                  <div
+                    className={[
+                      styles['tab-button-container'],
+                      styles['tab-button-container-mobile'],
+                    ].join(' ')}
+                  >
+                    <Button
+                      rippleProps={{
+                        color: 'rgba(252, 245, 227, .35)',
+                      }}
+                      onClick={() => {
+                        setSwitchBottomBar(true);
+                        navigate(-1);
+                      }}
+                      type={'text'}
+                      rounded={true}
+                      size={'tiny'}
+                      touchScreen={true}
+                      icon={
+                        <Line.ArrowBack
+                          size={24}
+                          color={'rgba(252, 245, 227, 1)'}
+                        />
+                      }
+                    />
+                  </div>
+                  {windowProps.hideCartButton && (
+                    <div
+                      className={[
+                        styles['navigation-back-text-container'],
+                        styles['navigation-back-text-container-mobile'],
+                      ].join(' ')}
+                    >
+                      {activeRoute === RoutePathsType.TermsOfService && (
+                        <>
+                          <Line.Gavel size={22} />
+                          <div
+                            className={[styles['navigation-back-title']].join(
+                              ' '
+                            )}
+                          >
+                            {t('termsOfService')}
+                          </div>
+                        </>
+                      )}
+                      {activeRoute === RoutePathsType.PrivacyPolicy && (
+                        <>
+                          <Line.Gavel size={22} />
+                          <div
+                            className={[styles['navigation-back-title']].join(
+                              ' '
+                            )}
+                          >
+                            {t('privacyPolicy')}
+                          </div>
+                        </>
+                      )}
+                      {activeRoute === RoutePathsType.Checkout && (
+                        <>
+                          <Line.ShoppingCart size={22} />
+                          <div
+                            className={[styles['navigation-back-title']].join(
+                              ' '
+                            )}
+                          >
+                            {t('checkout')}
+                          </div>
+                        </>
+                      )}
+                      {activeRoute === RoutePathsType.OrderConfirmedWithId && (
+                        <>
+                          <Line.ShoppingCart size={22} />
+                          <div
+                            className={[styles['navigation-back-title']].join(
+                              ' '
+                            )}
+                          >
+                            {t('orderConfirmed')}
+                          </div>
+                        </>
+                      )}
+                      {activeRoute === RoutePathsType.AccountSettings && (
+                        <>
+                          <Line.Settings size={22} />
+                          <div
+                            className={[styles['navigation-back-title']].join(
+                              ' '
+                            )}
+                          >
+                            {t('settings')}
+                          </div>
+                        </>
+                      )}
+                      {activeRoute ===
+                        RoutePathsType.AccountSettingsAccount && (
+                        <>
+                          <Line.Person size={22} />
+                          <div
+                            className={[styles['navigation-back-title']].join(
+                              ' '
+                            )}
+                          >
+                            {t('account')}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+              {!windowProps.showNavigateBack && (
+                <div
+                  className={[
+                    styles['tab-container'],
+                    styles['tab-container-mobile'],
+                  ].join(' ')}
+                >
+                  <div
+                    className={[
+                      styles['left-tab-container'],
+                      styles['left-tab-container-mobile'],
+                    ].join(' ')}
+                  >
+                    <div
+                      className={[
+                        styles['tab-button-container'],
+                        styles['tab-button-container-mobile'],
+                      ].join(' ')}
+                    >
+                      <Button
+                        rippleProps={{
+                          color: 'rgba(252, 245, 227, .35)',
+                        }}
+                        onClick={() => navigate(RoutePathsType.Home)}
+                        disabled={
+                          windowProps.activeRoute === RoutePathsType.Cart
+                        }
+                        type={'text'}
+                        rounded={true}
+                        size={'tiny'}
+                        touchScreen={true}
+                        icon={
+                          windowProps.activeRoute === RoutePathsType.Home ||
+                          windowProps.activeRoute === RoutePathsType.Default ? (
+                            <Solid.Home
+                              size={24}
+                              color={'rgba(252, 245, 227, 1)'}
+                            />
+                          ) : (
+                            <Line.Home
+                              size={24}
+                              color={'rgba(252, 245, 227, .6)'}
+                            />
+                          )
+                        }
                       />
-                    }
-                  />
-                </div>
-                {windowProps.hideCartButton && (
-                  <div
-                    className={[
-                      styles['navigation-back-text-container'],
-                      styles['navigation-back-text-container-mobile'],
-                    ].join(' ')}
-                  >
-                    {activeRoute === RoutePathsType.TermsOfService && (
-                      <>
-                        <Line.Gavel size={22} />
-                        <div
-                          className={[styles['navigation-back-title']].join(
-                            ' '
-                          )}
-                        >
-                          {t('termsOfService')}
-                        </div>
-                      </>
-                    )}
-                    {activeRoute === RoutePathsType.PrivacyPolicy && (
-                      <>
-                        <Line.Gavel size={22} />
-                        <div
-                          className={[styles['navigation-back-title']].join(
-                            ' '
-                          )}
-                        >
-                          {t('privacyPolicy')}
-                        </div>
-                      </>
-                    )}
-                    {activeRoute === RoutePathsType.Checkout && (
-                      <>
-                        <Line.ShoppingCart size={22} />
-                        <div
-                          className={[styles['navigation-back-title']].join(
-                            ' '
-                          )}
-                        >
-                          {t('checkout')}
-                        </div>
-                      </>
-                    )}
-                    {activeRoute === RoutePathsType.OrderConfirmedWithId && (
-                      <>
-                        <Line.ShoppingCart size={22} />
-                        <div
-                          className={[styles['navigation-back-title']].join(
-                            ' '
-                          )}
-                        >
-                          {t('orderConfirmed')}
-                        </div>
-                      </>
-                    )}
-                    {activeRoute === RoutePathsType.AccountSettings && (
-                      <>
-                        <Line.Settings size={22} />
-                        <div
-                          className={[styles['navigation-back-title']].join(
-                            ' '
-                          )}
-                        >
-                          {t('settings')}
-                        </div>
-                      </>
-                    )}
-                    {activeRoute === RoutePathsType.AccountSettingsAccount && (
-                      <>
-                        <Line.Person size={22} />
-                        <div
-                          className={[styles['navigation-back-title']].join(
-                            ' '
-                          )}
-                        >
-                          {t('account')}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-            {!windowProps.showNavigateBack && (
-              <div
-                className={[
-                  styles['tab-container'],
-                  styles['tab-container-mobile'],
-                ].join(' ')}
-              >
-                <div
-                  className={[
-                    styles['left-tab-container'],
-                    styles['left-tab-container-mobile'],
-                  ].join(' ')}
-                >
-                  <div
-                    className={[
-                      styles['tab-button-container'],
-                      styles['tab-button-container-mobile'],
-                    ].join(' ')}
-                  >
-                    <Button
-                      rippleProps={{
-                        color: 'rgba(252, 245, 227, .35)',
-                      }}
-                      onClick={() => navigate(RoutePathsType.Home)}
-                      disabled={windowProps.activeRoute === RoutePathsType.Cart}
-                      type={'text'}
-                      rounded={true}
-                      size={'tiny'}
-                      touchScreen={true}
-                      icon={
-                        windowProps.activeRoute === RoutePathsType.Home ||
-                        windowProps.activeRoute === RoutePathsType.Default ? (
-                          <Solid.Home
-                            size={24}
-                            color={'rgba(252, 245, 227, 1)'}
-                          />
-                        ) : (
-                          <Line.Home
-                            size={24}
-                            color={'rgba(252, 245, 227, .6)'}
-                          />
-                        )
-                      }
-                    />
-                  </div>
-                  <div
-                    className={[
-                      styles['tab-button-container'],
-                      styles['tab-button-container-mobile'],
-                    ].join(' ')}
-                  >
-                    <Button
-                      rippleProps={{
-                        color: 'rgba(252, 245, 227, .35)',
-                      }}
-                      onClick={() => navigate(RoutePathsType.Store)}
-                      disabled={windowProps.activeRoute === RoutePathsType.Cart}
-                      type={'text'}
-                      rounded={true}
-                      size={'tiny'}
-                      touchScreen={true}
-                      icon={
-                        windowProps.activeRoute === RoutePathsType.Store ? (
-                          <Solid.Store
-                            size={24}
-                            color={'rgba(252, 245, 227, 1)'}
-                          />
-                        ) : (
-                          <Line.Store
-                            size={24}
-                            color={'rgba(252, 245, 227, .6)'}
-                          />
-                        )
-                      }
-                    />
-                  </div>
-                  {/* <div className={styles['tab-button-container']}>
+                    </div>
+                    <div
+                      className={[
+                        styles['tab-button-container'],
+                        styles['tab-button-container-mobile'],
+                      ].join(' ')}
+                    >
+                      <Button
+                        rippleProps={{
+                          color: 'rgba(252, 245, 227, .35)',
+                        }}
+                        onClick={() => navigate(RoutePathsType.Store)}
+                        disabled={
+                          windowProps.activeRoute === RoutePathsType.Cart
+                        }
+                        type={'text'}
+                        rounded={true}
+                        size={'tiny'}
+                        touchScreen={true}
+                        icon={
+                          windowProps.activeRoute === RoutePathsType.Store ? (
+                            <Solid.Store
+                              size={24}
+                              color={'rgba(252, 245, 227, 1)'}
+                            />
+                          ) : (
+                            <Line.Store
+                              size={24}
+                              color={'rgba(252, 245, 227, .6)'}
+                            />
+                          )
+                        }
+                      />
+                    </div>
+                    {/* <div className={styles['tab-button-container']}>
                     <Button
                       rippleProps={{
                         color: 'rgba(252, 245, 227, .35)',
@@ -419,75 +427,76 @@ export default function WindowMobileComponent({
                       }
                     />
                   </div> */}
-                </div>
-                <div
-                  className={[
-                    styles['right-tab-container'],
-                    styles['right-tab-container-mobile'],
-                  ].join(' ')}
-                >
-                  {!windowProps.account && (
-                    <>
-                      <div
-                        className={[
-                          styles['tab-button-container'],
-                          styles['tab-button-container-mobile'],
-                        ].join(' ')}
-                      >
-                        <LanguageSwitch
-                          open={isLanguageOpen}
-                          onOpen={() => setIsLanguageOpen(true)}
-                          onClose={() => setIsLanguageOpen(false)}
-                          touchScreen={true}
-                          supportedLanguages={[
-                            { isoCode: 'en', countryCode: 'GB' },
-                            { isoCode: 'fr', countryCode: 'FR' },
-                          ]}
-                          rippleProps={{
-                            color: 'rgba(252, 245, 227, .35)',
-                          }}
-                          hideText={true}
-                          language={windowLocalProps.languageCode}
-                          onChange={(isoCode, info) =>
-                            WindowController.updateLanguageInfo(isoCode, info)
-                          }
-                        />
-                      </div>
-                      <div
-                        className={[
-                          styles['tab-button-container'],
-                          styles['tab-button-container-mobile'],
-                        ].join(' ')}
-                      >
-                        <Button
-                          rippleProps={{
-                            color: 'rgba(252, 245, 227, .35)',
-                          }}
-                          disabled={
-                            windowProps.activeRoute === RoutePathsType.Cart
-                          }
-                          onClick={() => setOpenMore(true)}
-                          type={'text'}
-                          rounded={true}
-                          size={'tiny'}
-                          touchScreen={true}
-                          icon={
-                            <Line.MoreVert
-                              size={24}
-                              color={
-                                windowProps.activeRoute === RoutePathsType.Cart
-                                  ? 'rgba(252, 245, 227, .6)'
-                                  : 'rgba(252, 245, 227, 1)'
-                              }
-                            />
-                          }
-                        />
-                      </div>
-                    </>
-                  )}
-                  {windowProps.account && (
-                    <>
-                      {/* <div className={styles['tab-button-container']}>
+                  </div>
+                  <div
+                    className={[
+                      styles['right-tab-container'],
+                      styles['right-tab-container-mobile'],
+                    ].join(' ')}
+                  >
+                    {!windowProps.account && (
+                      <>
+                        <div
+                          className={[
+                            styles['tab-button-container'],
+                            styles['tab-button-container-mobile'],
+                          ].join(' ')}
+                        >
+                          <LanguageSwitch
+                            open={isLanguageOpen}
+                            onOpen={() => setIsLanguageOpen(true)}
+                            onClose={() => setIsLanguageOpen(false)}
+                            touchScreen={true}
+                            supportedLanguages={[
+                              { isoCode: 'en', countryCode: 'GB' },
+                              { isoCode: 'fr', countryCode: 'FR' },
+                            ]}
+                            rippleProps={{
+                              color: 'rgba(252, 245, 227, .35)',
+                            }}
+                            hideText={true}
+                            language={windowLocalProps.languageCode}
+                            onChange={(isoCode, info) =>
+                              WindowController.updateLanguageInfo(isoCode, info)
+                            }
+                          />
+                        </div>
+                        <div
+                          className={[
+                            styles['tab-button-container'],
+                            styles['tab-button-container-mobile'],
+                          ].join(' ')}
+                        >
+                          <Button
+                            rippleProps={{
+                              color: 'rgba(252, 245, 227, .35)',
+                            }}
+                            disabled={
+                              windowProps.activeRoute === RoutePathsType.Cart
+                            }
+                            onClick={() => setOpenMore(true)}
+                            type={'text'}
+                            rounded={true}
+                            size={'tiny'}
+                            touchScreen={true}
+                            icon={
+                              <Line.MoreVert
+                                size={24}
+                                color={
+                                  windowProps.activeRoute ===
+                                  RoutePathsType.Cart
+                                    ? 'rgba(252, 245, 227, .6)'
+                                    : 'rgba(252, 245, 227, 1)'
+                                }
+                              />
+                            }
+                          />
+                        </div>
+                      </>
+                    )}
+                    {windowProps.account && (
+                      <>
+                        {/* <div className={styles['tab-button-container']}>
                       <Button
                         rippleProps={{
                           color: 'rgba(252, 245, 227, .35)',
@@ -510,140 +519,143 @@ export default function WindowMobileComponent({
                         }
                       />
                     </div> */}
-                      <div
-                        className={[
-                          styles['tab-button-container'],
-                          styles['tab-button-container-mobile'],
-                        ].join(' ')}
-                      >
-                        <Button
-                          rippleProps={{
-                            color: 'rgba(252, 245, 227, .35)',
-                          }}
-                          onClick={() =>
-                            navigate(RoutePathsType.AccountOrderHistory)
-                          }
-                          disabled={
-                            windowProps.activeRoute === RoutePathsType.Cart
-                          }
-                          type={'text'}
-                          rounded={true}
-                          size={'tiny'}
-                          touchScreen={true}
-                          icon={
-                            account?.status === 'Incomplete' ? (
-                              <Line.AccountCircle
-                                size={24}
-                                color={
-                                  windowProps.activeRoute?.startsWith(
-                                    `${RoutePathsType.Account}/`
-                                  )
-                                    ? 'rgba(252, 245, 227, 1)'
-                                    : 'rgba(252, 245, 227, .6)'
-                                }
-                              />
-                            ) : (
-                              <div
-                                className={
-                                  windowProps.activeRoute?.startsWith(
-                                    `${RoutePathsType.Account}/`
-                                  )
-                                    ? [
-                                        styles['avatar-container-selected'],
-                                        styles[
-                                          'avatar-container-selected-mobile'
-                                        ],
-                                      ].join(' ')
-                                    : undefined
-                                }
-                              >
-                                <Avatar
-                                  classNames={{
-                                    container: [
-                                      styles['avatar-container'],
-                                      styles['avatar-container-mobile'],
-                                    ].join(' '),
-                                  }}
-                                  size={'custom'}
-                                  text={customer?.first_name}
-                                  src={accountProps?.profileUrl}
-                                  touchScreen={true}
+                        <div
+                          className={[
+                            styles['tab-button-container'],
+                            styles['tab-button-container-mobile'],
+                          ].join(' ')}
+                        >
+                          <Button
+                            rippleProps={{
+                              color: 'rgba(252, 245, 227, .35)',
+                            }}
+                            onClick={() =>
+                              navigate(RoutePathsType.AccountOrderHistory)
+                            }
+                            disabled={
+                              windowProps.activeRoute === RoutePathsType.Cart
+                            }
+                            type={'text'}
+                            rounded={true}
+                            size={'tiny'}
+                            touchScreen={true}
+                            icon={
+                              account?.status === 'Incomplete' ? (
+                                <Line.AccountCircle
+                                  size={24}
+                                  color={
+                                    windowProps.activeRoute?.startsWith(
+                                      `${RoutePathsType.Account}/`
+                                    )
+                                      ? 'rgba(252, 245, 227, 1)'
+                                      : 'rgba(252, 245, 227, .6)'
+                                  }
                                 />
-                              </div>
-                            )
-                          }
-                        />
-                      </div>
-                    </>
-                  )}
+                              ) : (
+                                <div
+                                  className={
+                                    windowProps.activeRoute?.startsWith(
+                                      `${RoutePathsType.Account}/`
+                                    )
+                                      ? [
+                                          styles['avatar-container-selected'],
+                                          styles[
+                                            'avatar-container-selected-mobile'
+                                          ],
+                                        ].join(' ')
+                                      : undefined
+                                  }
+                                >
+                                  <Avatar
+                                    classNames={{
+                                      container: [
+                                        styles['avatar-container'],
+                                        styles['avatar-container-mobile'],
+                                      ].join(' '),
+                                    }}
+                                    size={'custom'}
+                                    text={customer?.first_name}
+                                    src={accountProps?.profileUrl}
+                                    touchScreen={true}
+                                  />
+                                </div>
+                              )
+                            }
+                          />
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
-      </CSSTransition>
-      <ToastOverlay
-        classNames={{
-          root: [
-            styles['toast-overlay-root'],
-            styles['toast-overlay-root-mobile'],
-          ].join(' '),
-          overlayContainer: [
-            styles['toast-overlay-container'],
-            styles['toast-overlay-container-mobile'],
-          ].join(' '),
-          toast: {
-            life: [styles['toast-life'], styles['toast-life-mobile']].join(' '),
-          },
-        }}
-        timeout={2500}
-        toasts={windowProps.toast ? [windowProps.toast] : []}
-        transition={'down'}
-        align={'center'}
-        touchScreen={true}
-      />
-      <Dropdown
-        open={openMore}
-        touchScreen={true}
-        onClose={() => setOpenMore(false)}
-      >
-        <Dropdown.Item
-          onClick={() => {
-            navigate(RoutePathsType.Signin);
-            setOpenMore(false);
+        </CSSTransition>
+        <ToastOverlay
+          classNames={{
+            root: [
+              styles['toast-overlay-root'],
+              styles['toast-overlay-root-mobile'],
+            ].join(' '),
+            overlayContainer: [
+              styles['toast-overlay-container'],
+              styles['toast-overlay-container-mobile'],
+            ].join(' '),
+            toast: {
+              life: [styles['toast-life'], styles['toast-life-mobile']].join(
+                ' '
+              ),
+            },
           }}
+          timeout={2500}
+          toasts={windowProps.toast ? [windowProps.toast] : []}
+          transition={'down'}
+          align={'center'}
+          touchScreen={true}
+        />
+        <Dropdown
+          open={openMore}
+          touchScreen={true}
+          onClose={() => setOpenMore(false)}
         >
-          <Dropdown.Icon>
-            <Line.Login size={24} color={'#2A2A5F'} />
-          </Dropdown.Icon>
-          <span
-            className={[
-              styles['dropdown-text'],
-              styles['dropdown-text-mobile'],
-            ].join(' ')}
+          <Dropdown.Item
+            onClick={() => {
+              navigate(RoutePathsType.Signin);
+              setOpenMore(false);
+            }}
           >
-            {t('signin')}
-          </span>
-        </Dropdown.Item>
-        <Dropdown.Item
-          onClick={() => {
-            navigate(RoutePathsType.Signup);
-            setOpenMore(false);
-          }}
-        >
-          <Dropdown.Icon>
-            <Line.PersonAdd size={24} color={'#2A2A5F'} />
-          </Dropdown.Icon>
-          <span
-            className={[
-              styles['dropdown-text'],
-              styles['dropdown-text-mobile'],
-            ].join(' ')}
+            <Dropdown.Icon>
+              <Line.Login size={24} color={'#2A2A5F'} />
+            </Dropdown.Icon>
+            <span
+              className={[
+                styles['dropdown-text'],
+                styles['dropdown-text-mobile'],
+              ].join(' ')}
+            >
+              {t('signin')}
+            </span>
+          </Dropdown.Item>
+          <Dropdown.Item
+            onClick={() => {
+              navigate(RoutePathsType.Signup);
+              setOpenMore(false);
+            }}
           >
-            {t('signup')}
-          </span>
-        </Dropdown.Item>
-      </Dropdown>
-    </div>
+            <Dropdown.Icon>
+              <Line.PersonAdd size={24} color={'#2A2A5F'} />
+            </Dropdown.Icon>
+            <span
+              className={[
+                styles['dropdown-text'],
+                styles['dropdown-text-mobile'],
+              ].join(' ')}
+            >
+              {t('signup')}
+            </span>
+          </Dropdown.Item>
+        </Dropdown>
+      </div>
+    </ResponsiveMobile>
   );
 }

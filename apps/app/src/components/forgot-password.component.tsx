@@ -82,16 +82,12 @@ export default function ForgotPasswordComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <GuestComponent>
-          <ResponsiveDesktop>
-            <ForgotPasswordDesktopComponent
-              forgotPasswordProps={forgotPasswordProps}
-            />
-          </ResponsiveDesktop>
-          <ResponsiveMobile>
-            <ForgotPasswordMobileComponent
-              forgotPasswordProps={forgotPasswordProps}
-            />
-          </ResponsiveMobile>
+          <ForgotPasswordDesktopComponent
+            forgotPasswordProps={forgotPasswordProps}
+          />
+          <ForgotPasswordMobileComponent
+            forgotPasswordProps={forgotPasswordProps}
+          />
         </GuestComponent>
       </React.Suspense>
     </>

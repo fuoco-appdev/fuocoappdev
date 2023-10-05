@@ -128,22 +128,18 @@ export default function SigninComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <GuestComponent>
-          <ResponsiveDesktop>
-            <SigninDesktopComponent
-              signInProps={signInProps}
-              setAuthError={setAuthError}
-              emailError={emailError}
-              passwordError={passwordError}
-            />
-          </ResponsiveDesktop>
-          <ResponsiveMobile>
-            <SigninMobileComponent
-              signInProps={signInProps}
-              setAuthError={setAuthError}
-              emailError={emailError}
-              passwordError={passwordError}
-            />
-          </ResponsiveMobile>
+          <SigninDesktopComponent
+            signInProps={signInProps}
+            setAuthError={setAuthError}
+            emailError={emailError}
+            passwordError={passwordError}
+          />
+          <SigninMobileComponent
+            signInProps={signInProps}
+            setAuthError={setAuthError}
+            emailError={emailError}
+            passwordError={passwordError}
+          />
         </GuestComponent>
       </React.Suspense>
     </>

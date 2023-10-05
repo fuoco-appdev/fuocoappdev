@@ -6,6 +6,7 @@ import TermsOfServiceController from '../../controllers/terms-of-service.control
 import { useNavigate } from 'react-router-dom';
 import { TermsOfServiceResponsiveProps } from '../terms-of-service.component';
 import loadable from '@loadable/component';
+import { ResponsiveMobile } from '../responsive.component';
 const ReactMarkdown = loadable(
   async () => {
     const reactMarkdown = await import('react-markdown');
@@ -19,25 +20,29 @@ export default function TermsOfServiceMobileComponent({
   remarkPlugins,
 }: TermsOfServiceResponsiveProps): JSX.Element {
   return (
-    <div className={[styles['root'], styles['root-mobile']].join(' ')}>
-      <div className={[styles['content'], styles['content-mobile']].join(' ')}>
-        <Auth.TermsOfService
-          termsOfService={
-            <Typography
-              tag="article"
-              className={[
-                styles['typography'],
-                styles['typography-mobile'],
-              ].join(' ')}
-            >
-              <ReactMarkdown
-                remarkPlugins={remarkPlugins}
-                children={termsOfServiceProps.markdown}
-              />
-            </Typography>
-          }
-        />
+    <ResponsiveMobile>
+      <div className={[styles['root'], styles['root-mobile']].join(' ')}>
+        <div
+          className={[styles['content'], styles['content-mobile']].join(' ')}
+        >
+          <Auth.TermsOfService
+            termsOfService={
+              <Typography
+                tag="article"
+                className={[
+                  styles['typography'],
+                  styles['typography-mobile'],
+                ].join(' ')}
+              >
+                <ReactMarkdown
+                  remarkPlugins={remarkPlugins}
+                  children={termsOfServiceProps.markdown}
+                />
+              </Typography>
+            }
+          />
+        </div>
       </div>
-    </div>
+    </ResponsiveMobile>
   );
 }

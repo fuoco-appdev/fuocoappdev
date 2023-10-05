@@ -114,26 +114,22 @@ export default function OrderConfirmedComponent(): JSX.Element {
 
   return (
     <React.Suspense fallback={suspenceComponent}>
-      <ResponsiveDesktop>
-        <OrderConfirmedDesktopComponent
-          storeProps={storeProps}
-          quantity={quantity}
-          openRefund={openRefund}
-          returnReasonOptions={returnReasonOptions}
-          setOpenRefund={setOpenRefund}
-          formatStatus={formatStatus}
-        />
-      </ResponsiveDesktop>
-      <ResponsiveMobile>
-        <OrderConfirmedMobileComponent
-          storeProps={storeProps}
-          quantity={quantity}
-          openRefund={openRefund}
-          returnReasonOptions={returnReasonOptions}
-          setOpenRefund={setOpenRefund}
-          formatStatus={formatStatus}
-        />
-      </ResponsiveMobile>
+      <OrderConfirmedDesktopComponent
+        storeProps={storeProps}
+        quantity={quantity}
+        openRefund={openRefund}
+        returnReasonOptions={returnReasonOptions}
+        setOpenRefund={setOpenRefund}
+        formatStatus={formatStatus}
+      />
+      <OrderConfirmedMobileComponent
+        storeProps={storeProps}
+        quantity={quantity}
+        openRefund={openRefund}
+        returnReasonOptions={returnReasonOptions}
+        setOpenRefund={setOpenRefund}
+        formatStatus={formatStatus}
+      />
     </React.Suspense>
   );
 }

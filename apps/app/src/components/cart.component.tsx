@@ -117,26 +117,22 @@ export default function CartComponent(): JSX.Element {
         <meta property="og:url" content={window.location.href} />
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
-        <ResponsiveDesktop>
-          <CartDesktopComponent
-            cartProps={cartProps}
-            homeProps={homeProps}
-            storeProps={storeProps}
-            windowProps={windowProps}
-            homeLocalProps={homeLocalProps}
-            salesChannelTabs={salesChannelTabs}
-          />
-        </ResponsiveDesktop>
-        <ResponsiveMobile>
-          <CartMobileComponent
-            cartProps={cartProps}
-            homeProps={homeProps}
-            storeProps={storeProps}
-            windowProps={windowProps}
-            homeLocalProps={homeLocalProps}
-            salesChannelTabs={salesChannelTabs}
-          />
-        </ResponsiveMobile>
+        <CartDesktopComponent
+          cartProps={cartProps}
+          homeProps={homeProps}
+          storeProps={storeProps}
+          windowProps={windowProps}
+          homeLocalProps={homeLocalProps}
+          salesChannelTabs={salesChannelTabs}
+        />
+        <CartMobileComponent
+          cartProps={cartProps}
+          homeProps={homeProps}
+          storeProps={storeProps}
+          windowProps={windowProps}
+          homeLocalProps={homeLocalProps}
+          salesChannelTabs={salesChannelTabs}
+        />
       </React.Suspense>
     </>
   );

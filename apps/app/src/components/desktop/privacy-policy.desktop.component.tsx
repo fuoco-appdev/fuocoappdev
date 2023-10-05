@@ -5,6 +5,7 @@ import PrivacyPolicyController from '../../controllers/privacy-policy.controller
 import { lazy } from 'react';
 import { PrivacyPolicyResponsiveProps } from '../privacy-policy.component';
 import loadable from '@loadable/component';
+import { ResponsiveDesktop } from '../responsive.component';
 const ReactMarkdown = loadable(
   async () => {
     const reactMarkdown = await import('react-markdown');
@@ -18,25 +19,29 @@ export function PrivacyPolicyDesktopComponent({
   remarkPlugins,
 }: PrivacyPolicyResponsiveProps): JSX.Element {
   return (
-    <div className={[styles['root'], styles['root-desktop']].join(' ')}>
-      <div className={[styles['content'], styles['content-desktop']].join(' ')}>
-        <Auth.PrivacyPolicy
-          privacyPolicy={
-            <Typography
-              tag="article"
-              className={[
-                styles['typography'],
-                styles['typography-desktop'],
-              ].join(' ')}
-            >
-              <ReactMarkdown
-                remarkPlugins={remarkPlugins}
-                children={privacyPolicyProps.markdown}
-              />
-            </Typography>
-          }
-        />
+    <ResponsiveDesktop>
+      <div className={[styles['root'], styles['root-desktop']].join(' ')}>
+        <div
+          className={[styles['content'], styles['content-desktop']].join(' ')}
+        >
+          <Auth.PrivacyPolicy
+            privacyPolicy={
+              <Typography
+                tag="article"
+                className={[
+                  styles['typography'],
+                  styles['typography-desktop'],
+                ].join(' ')}
+              >
+                <ReactMarkdown
+                  remarkPlugins={remarkPlugins}
+                  children={privacyPolicyProps.markdown}
+                />
+              </Typography>
+            }
+          />
+        </div>
       </div>
-    </div>
+    </ResponsiveDesktop>
   );
 }

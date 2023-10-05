@@ -26,6 +26,7 @@ import ReactCountryFlag from 'react-country-flag';
 import { Observable } from 'rxjs';
 import { WindowLocalState } from '../../models';
 import { AccountSettingsAccountResponsiveProps } from '../account-settings-account.component';
+import { ResponsiveMobile } from '../responsive.component';
 
 export default function AccountSettingsAccountMobileComponent({
   accountProps,
@@ -53,163 +54,165 @@ export default function AccountSettingsAccountMobileComponent({
   const user = accountProps.user as User | null;
   const provider = user?.app_metadata['provider'];
   return (
-    <div className={[styles['root'], styles['root-mobile']].join(' ')}>
-      <Ripples
-        className={[
-          styles['setting-button-container'],
-          styles['setting-button-container-mobile'],
-        ].join(' ')}
-        color={'rgba(42, 42, 95, .35)'}
-        onClick={() => setIsLanguageOpen(true)}
-      >
+    <ResponsiveMobile>
+      <div className={[styles['root'], styles['root-mobile']].join(' ')}>
+        <Ripples
+          className={[
+            styles['setting-button-container'],
+            styles['setting-button-container-mobile'],
+          ].join(' ')}
+          color={'rgba(42, 42, 95, .35)'}
+          onClick={() => setIsLanguageOpen(true)}
+        >
+          <div
+            className={[
+              styles['setting-button-content'],
+              styles['setting-button-content-mobile'],
+            ].join(' ')}
+          >
+            <div
+              className={[
+                styles['setting-icon'],
+                styles['setting-icon-mobile'],
+              ].join(' ')}
+            >
+              <Line.Language size={24} />
+            </div>
+            <div
+              className={[
+                styles['setting-text'],
+                styles['setting-text-mobile'],
+              ].join(' ')}
+            >
+              {t('language')}
+            </div>
+            <div
+              className={[
+                styles['setting-icon-right'],
+                styles['setting-icon-right-mobile'],
+              ].join(' ')}
+            >
+              <ReactCountryFlag
+                countryCode={
+                  windowLocalProps.languageInfo?.info?.countryCode ?? ''
+                }
+                style={{ width: 24 }}
+                svg
+              />
+            </div>
+          </div>
+        </Ripples>
+        <Accordion defaultActiveId={['password-reset']}>
+          {provider === 'email' && (
+            <Accordion.Item
+              id={'password-reset'}
+              label={t('passwordReset')}
+              classNames={accordionItemClassNames}
+              touchScreen={true}
+            >
+              {SupabaseService.supabaseClient && (
+                <Auth.UpdatePassword
+                  supabaseClient={SupabaseService.supabaseClient}
+                  defaultIconColor={'#2A2A5F'}
+                  litIconColor={'#2A2A5F'}
+                  passwordErrorMessage={updatePasswordError}
+                  confirmPasswordErrorMessage={confirmPasswordError}
+                  classNames={{
+                    input: {
+                      formLayout: {
+                        label: styles['auth-input-form-layout-label'],
+                      },
+                      input: styles['auth-input'],
+                      container: styles['auth-input-container'],
+                    },
+                    button: {
+                      button: styles['auth-button'],
+                    },
+                  }}
+                  strings={{
+                    newPassword: t('newPassword') ?? '',
+                    enterYourNewPassword: t('enterYourNewPassword') ?? '',
+                    updatePassword: t('updatePassword') ?? '',
+                    confirmNewPassword: t('confirmPassword') ?? '',
+                  }}
+                  onUpdatePasswordError={(error: AuthError) => {
+                    if (error.status === 422) {
+                      setUpdatePasswordError(t('passwordLengthError') ?? '');
+                    } else if (error.status === 401) {
+                      setConfirmPasswordError(
+                        t('confirmPasswordErrorMessage') ?? ''
+                      );
+                    }
+                  }}
+                  onPasswordUpdated={() => {
+                    WindowController.addToast({
+                      key: `update-password-${Math.random()}`,
+                      message: t('successfullyUpdatedPassword') ?? '',
+                      description:
+                        t('successfullyUpdatedPasswordDescription') ?? '',
+                      type: 'success',
+                    });
+                  }}
+                />
+              )}
+            </Accordion.Item>
+          )}
+        </Accordion>
         <div
           className={[
-            styles['setting-button-content'],
-            styles['setting-button-content-mobile'],
+            styles['bottom-content-container'],
+            styles['bottom-content-container-mobile'],
           ].join(' ')}
         >
-          <div
-            className={[
-              styles['setting-icon'],
-              styles['setting-icon-mobile'],
-            ].join(' ')}
-          >
-            <Line.Language size={24} />
-          </div>
-          <div
-            className={[
-              styles['setting-text'],
-              styles['setting-text-mobile'],
-            ].join(' ')}
-          >
-            {t('language')}
-          </div>
-          <div
-            className={[
-              styles['setting-icon-right'],
-              styles['setting-icon-right-mobile'],
-            ].join(' ')}
-          >
-            <ReactCountryFlag
-              countryCode={
-                windowLocalProps.languageInfo?.info?.countryCode ?? ''
-              }
-              style={{ width: 24 }}
-              svg
-            />
-          </div>
-        </div>
-      </Ripples>
-      <Accordion defaultActiveId={['password-reset']}>
-        {provider === 'email' && (
-          <Accordion.Item
-            id={'password-reset'}
-            label={t('passwordReset')}
-            classNames={accordionItemClassNames}
+          <Button
+            block={true}
+            size={'large'}
+            classNames={{
+              container: styles['delete-button-container'],
+              button: styles['delete-button'],
+            }}
+            rippleProps={{
+              color: 'rgba(133, 38, 122, .35)',
+            }}
             touchScreen={true}
+            onClick={() => setShowDeleteModal(true)}
           >
-            {SupabaseService.supabaseClient && (
-              <Auth.UpdatePassword
-                supabaseClient={SupabaseService.supabaseClient}
-                defaultIconColor={'#2A2A5F'}
-                litIconColor={'#2A2A5F'}
-                passwordErrorMessage={updatePasswordError}
-                confirmPasswordErrorMessage={confirmPasswordError}
-                classNames={{
-                  input: {
-                    formLayout: {
-                      label: styles['auth-input-form-layout-label'],
-                    },
-                    input: styles['auth-input'],
-                    container: styles['auth-input-container'],
-                  },
-                  button: {
-                    button: styles['auth-button'],
-                  },
-                }}
-                strings={{
-                  newPassword: t('newPassword') ?? '',
-                  enterYourNewPassword: t('enterYourNewPassword') ?? '',
-                  updatePassword: t('updatePassword') ?? '',
-                  confirmNewPassword: t('confirmPassword') ?? '',
-                }}
-                onUpdatePasswordError={(error: AuthError) => {
-                  if (error.status === 422) {
-                    setUpdatePasswordError(t('passwordLengthError') ?? '');
-                  } else if (error.status === 401) {
-                    setConfirmPasswordError(
-                      t('confirmPasswordErrorMessage') ?? ''
-                    );
-                  }
-                }}
-                onPasswordUpdated={() => {
-                  WindowController.addToast({
-                    key: `update-password-${Math.random()}`,
-                    message: t('successfullyUpdatedPassword') ?? '',
-                    description:
-                      t('successfullyUpdatedPasswordDescription') ?? '',
-                    type: 'success',
-                  });
-                }}
-              />
-            )}
-          </Accordion.Item>
-        )}
-      </Accordion>
-      <div
-        className={[
-          styles['bottom-content-container'],
-          styles['bottom-content-container-mobile'],
-        ].join(' ')}
-      >
-        <Button
-          block={true}
-          size={'large'}
+            {t('deleteAccount')}
+          </Button>
+        </div>
+        <Modal
+          title={t('deleteYourAccount') ?? ''}
+          description={t('deleteYourAccountDescription') ?? ''}
+          confirmText={t('delete') ?? ''}
+          cancelText={t('cancel') ?? ''}
+          variant={'danger'}
+          size={'small'}
           classNames={{
-            container: styles['delete-button-container'],
-            button: styles['delete-button'],
+            modal: styles['delete-modal'],
           }}
-          rippleProps={{
-            color: 'rgba(133, 38, 122, .35)',
+          visible={showDeleteModal}
+          onCancel={() => setShowDeleteModal(false)}
+          onConfirm={async () => {
+            await AccountController.deleteAsync();
+            setShowDeleteModal(false);
           }}
+        ></Modal>
+        <LanguageSwitch
+          type={'none'}
           touchScreen={true}
-          onClick={() => setShowDeleteModal(true)}
-        >
-          {t('deleteAccount')}
-        </Button>
+          language={windowLocalProps.languageCode}
+          open={isLanguageOpen}
+          supportedLanguages={[
+            { isoCode: 'en', countryCode: 'GB' },
+            { isoCode: 'fr', countryCode: 'FR' },
+          ]}
+          onChange={(code, info) =>
+            AccountController.updateAccountLanguageAsync(code, info)
+          }
+          onOpen={() => setIsLanguageOpen(true)}
+          onClose={() => setIsLanguageOpen(false)}
+        />
       </div>
-      <Modal
-        title={t('deleteYourAccount') ?? ''}
-        description={t('deleteYourAccountDescription') ?? ''}
-        confirmText={t('delete') ?? ''}
-        cancelText={t('cancel') ?? ''}
-        variant={'danger'}
-        size={'small'}
-        classNames={{
-          modal: styles['delete-modal'],
-        }}
-        visible={showDeleteModal}
-        onCancel={() => setShowDeleteModal(false)}
-        onConfirm={async () => {
-          await AccountController.deleteAsync();
-          setShowDeleteModal(false);
-        }}
-      ></Modal>
-      <LanguageSwitch
-        type={'none'}
-        touchScreen={true}
-        language={windowLocalProps.languageCode}
-        open={isLanguageOpen}
-        supportedLanguages={[
-          { isoCode: 'en', countryCode: 'GB' },
-          { isoCode: 'fr', countryCode: 'FR' },
-        ]}
-        onChange={(code, info) =>
-          AccountController.updateAccountLanguageAsync(code, info)
-        }
-        onOpen={() => setIsLanguageOpen(true)}
-        onClose={() => setIsLanguageOpen(false)}
-      />
-    </div>
+    </ResponsiveMobile>
   );
 }

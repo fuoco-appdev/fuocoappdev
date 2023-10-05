@@ -45,12 +45,8 @@ export default function AddressItemComponent(
 
   return (
     <React.Suspense fallback={suspenceComponent}>
-      <ResponsiveDesktop>
-        <AddressItemDesktopComponent {...props} />
-      </ResponsiveDesktop>
-      <ResponsiveMobile>
-        <AddressItemMobileComponent {...props} />
-      </ResponsiveMobile>
+      <AddressItemDesktopComponent {...props} />
+      <AddressItemMobileComponent {...props} />
     </React.Suspense>
   );
 }

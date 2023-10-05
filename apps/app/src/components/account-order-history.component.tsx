@@ -70,20 +70,16 @@ export default function AccountOrderHistoryComponent(): JSX.Element {
   return (
     <React.Suspense fallback={suspenceComponent}>
       <AuthenticatedComponent>
-        <ResponsiveDesktop>
-          <AccountOrderHistoryDesktopComponent
-            accountProps={accountProps}
-            onOrdersScroll={onScroll}
-            onOrdersLoad={onLoad}
-          />
-        </ResponsiveDesktop>
-        <ResponsiveMobile>
-          <AccountOrderHistoryMobileComponent
-            accountProps={accountProps}
-            onOrdersScroll={onScroll}
-            onOrdersLoad={onLoad}
-          />
-        </ResponsiveMobile>
+        <AccountOrderHistoryDesktopComponent
+          accountProps={accountProps}
+          onOrdersScroll={onScroll}
+          onOrdersLoad={onLoad}
+        />
+        <AccountOrderHistoryMobileComponent
+          accountProps={accountProps}
+          onOrdersScroll={onScroll}
+          onOrdersLoad={onLoad}
+        />
       </AuthenticatedComponent>
     </React.Suspense>
   );

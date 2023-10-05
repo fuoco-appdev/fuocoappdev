@@ -95,20 +95,16 @@ export default function AccountComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <AuthenticatedComponent>
-          <ResponsiveDesktop>
-            <AccountDesktopComponent
-              accountProps={accountProps}
-              windowProps={windowProps}
-              storeProps={storeProps}
-            />
-          </ResponsiveDesktop>
-          <ResponsiveMobile>
-            <AccountMobileComponent
-              accountProps={accountProps}
-              windowProps={windowProps}
-              storeProps={storeProps}
-            />
-          </ResponsiveMobile>
+          <AccountDesktopComponent
+            accountProps={accountProps}
+            windowProps={windowProps}
+            storeProps={storeProps}
+          />
+          <AccountMobileComponent
+            accountProps={accountProps}
+            windowProps={windowProps}
+            storeProps={storeProps}
+          />
         </AuthenticatedComponent>
       </React.Suspense>
     </>

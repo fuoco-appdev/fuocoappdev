@@ -10,8 +10,13 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { RoutePathsType } from '../route-paths';
 import ResetPasswordController from '../controllers/reset-password.controller';
 import { useObservable } from '@ngneat/use-observable';
-import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
+import {
+  ResponsiveDesktop,
+  ResponsiveMobile,
+  ResponsiveTablet,
+} from './responsive.component';
 import { useTranslation } from 'react-i18next';
+import React from 'react';
 
 function ResetPasswordDesktopComponent({ children }: any): JSX.Element {
   const [show, setShow] = useState(false);
@@ -104,8 +109,27 @@ export default function ResetPasswordComponent(): JSX.Element {
       supabaseClient={SupabaseService.supabaseClient}
     />
   );
-  return (
+
+  const suspenceComponent = (
     <>
+      <ResponsiveDesktop>
+        <div />
+      </ResponsiveDesktop>
+      <ResponsiveTablet>
+        <div />
+      </ResponsiveTablet>
+      <ResponsiveMobile>
+        <div />
+      </ResponsiveMobile>
+    </>
+  );
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return suspenceComponent;
+  }
+
+  return (
+    <React.Suspense fallback={suspenceComponent}>
       <ResponsiveDesktop>
         <ResetPasswordDesktopComponent>
           {resetPassword}
@@ -116,6 +140,6 @@ export default function ResetPasswordComponent(): JSX.Element {
           {resetPassword}
         </ResetPasswordMobileComponent>
       </ResponsiveMobile>
-    </>
+    </React.Suspense>
   );
 }

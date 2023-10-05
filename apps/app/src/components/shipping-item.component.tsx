@@ -77,24 +77,20 @@ export default function ShippingItemComponent({
 
   return (
     <React.Suspense fallback={suspenceComponent}>
-      <ResponsiveDesktop>
-        <ShippingItemDesktopComponent
-          storeProps={storeProps}
-          item={item}
-          vintage={vintage}
-          hasReducedPrice={hasReducedPrice}
-          discountPercentage={discountPercentage}
-        />
-      </ResponsiveDesktop>
-      <ResponsiveMobile>
-        <ShippingItemMobileComponent
-          storeProps={storeProps}
-          item={item}
-          vintage={vintage}
-          hasReducedPrice={hasReducedPrice}
-          discountPercentage={discountPercentage}
-        />
-      </ResponsiveMobile>
+      <ShippingItemDesktopComponent
+        storeProps={storeProps}
+        item={item}
+        vintage={vintage}
+        hasReducedPrice={hasReducedPrice}
+        discountPercentage={discountPercentage}
+      />
+      <ShippingItemMobileComponent
+        storeProps={storeProps}
+        item={item}
+        vintage={vintage}
+        hasReducedPrice={hasReducedPrice}
+        discountPercentage={discountPercentage}
+      />
     </React.Suspense>
   );
 }

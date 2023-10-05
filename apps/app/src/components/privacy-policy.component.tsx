@@ -76,18 +76,14 @@ export default function PrivacyPolicyComponent(): JSX.Element {
         <meta property="og:url" content={window.location.href} />
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
-        <ResponsiveDesktop>
-          <PrivacyPolicyDesktopComponent
-            privacyPolicyProps={privacyPolicyProps}
-            remarkPlugins={remarkPlugins}
-          />
-        </ResponsiveDesktop>
-        <ResponsiveMobile>
-          <PrivacyPolicyMobileComponent
-            privacyPolicyProps={privacyPolicyProps}
-            remarkPlugins={remarkPlugins}
-          />
-        </ResponsiveMobile>
+        <PrivacyPolicyDesktopComponent
+          privacyPolicyProps={privacyPolicyProps}
+          remarkPlugins={remarkPlugins}
+        />
+        <PrivacyPolicyMobileComponent
+          privacyPolicyProps={privacyPolicyProps}
+          remarkPlugins={remarkPlugins}
+        />
       </React.Suspense>
     </>
   );

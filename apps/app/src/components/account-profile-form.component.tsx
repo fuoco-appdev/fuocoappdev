@@ -95,24 +95,20 @@ export default function AccountProfileFormComponent({
 
   return (
     <React.Suspense fallback={suspenceComponent}>
-      <ResponsiveDesktop>
-        <AccountProfileFormDesktopComponent
-          storeProps={storeProps}
-          values={values}
-          errors={errors}
-          onChangeCallbacks={onChangeCallbacks}
-          selectedCountry={selectedCountry}
-        />
-      </ResponsiveDesktop>
-      <ResponsiveMobile>
-        <AccountProfileFormMobileComponent
-          storeProps={storeProps}
-          values={values}
-          errors={errors}
-          onChangeCallbacks={onChangeCallbacks}
-          selectedCountry={selectedCountry}
-        />
-      </ResponsiveMobile>
+      <AccountProfileFormDesktopComponent
+        storeProps={storeProps}
+        values={values}
+        errors={errors}
+        onChangeCallbacks={onChangeCallbacks}
+        selectedCountry={selectedCountry}
+      />
+      <AccountProfileFormMobileComponent
+        storeProps={storeProps}
+        values={values}
+        errors={errors}
+        onChangeCallbacks={onChangeCallbacks}
+        selectedCountry={selectedCountry}
+      />
     </React.Suspense>
   );
 }

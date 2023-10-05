@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { AuthError } from '@supabase/supabase-js';
 import { animated, config, useTransition } from 'react-spring';
 import { SignupResponsiveProps } from '../signup.component';
-import { useMobileEffect } from '../responsive.component';
+import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 
 export default function SignupMobileComponent({
   emailError,
@@ -44,120 +44,124 @@ export default function SignupMobileComponent({
   });
 
   return (
-    <div className={[styles['root'], styles['root-mobile']].join(' ')}>
-      <div className={[styles['content'], styles['content-mobile']].join(' ')}>
-        {transitions(
-          (style, item) =>
-            item && (
-              <animated.div style={style}>
-                {props.supabaseClient && (
-                  <Auth
-                    classNames={{
-                      socialAuth: {
+    <ResponsiveMobile>
+      <div className={[styles['root'], styles['root-mobile']].join(' ')}>
+        <div
+          className={[styles['content'], styles['content-mobile']].join(' ')}
+        >
+          {transitions(
+            (style, item) =>
+              item && (
+                <animated.div style={style}>
+                  {props.supabaseClient && (
+                    <Auth
+                      classNames={{
+                        socialAuth: {
+                          socialButton: {
+                            button: {
+                              button: styles['social-button'],
+                            },
+                          },
+                          divider: {
+                            divider: styles['social-divider'],
+                            content: styles['social-divider-content'],
+                          },
+                        },
+                        emailAuth: {
+                          input: {
+                            formLayout: {
+                              label: styles['auth-input-form-layout-label'],
+                            },
+                            input: styles['auth-input'],
+                            container: styles['auth-input-container'],
+                          },
+                          checkbox: {
+                            checkbox: styles['auth-checkbox'],
+                            labelContainerLabel:
+                              styles['auth-checkbox-label-container-label'],
+                          },
+                          emailButton: {
+                            button: styles['auth-email-button'],
+                          },
+                        },
+                      }}
+                      rippleProps={{
                         socialButton: {
-                          button: {
-                            button: styles['social-button'],
-                          },
+                          color: 'rgba(133, 38, 122, .35)',
                         },
-                        divider: {
-                          divider: styles['social-divider'],
-                          content: styles['social-divider-content'],
+                        submitButton: {
+                          color: 'rgba(233, 33, 66, .35)',
                         },
-                      },
-                      emailAuth: {
-                        input: {
-                          formLayout: {
-                            label: styles['auth-input-form-layout-label'],
-                          },
-                          input: styles['auth-input'],
-                          container: styles['auth-input-container'],
-                        },
-                        checkbox: {
-                          checkbox: styles['auth-checkbox'],
-                          labelContainerLabel:
-                            styles['auth-checkbox-label-container-label'],
-                        },
-                        emailButton: {
-                          button: styles['auth-email-button'],
-                        },
-                      },
-                    }}
-                    rippleProps={{
-                      socialButton: {
-                        color: 'rgba(133, 38, 122, .35)',
-                      },
-                      submitButton: {
-                        color: 'rgba(233, 33, 66, .35)',
-                      },
-                    }}
-                    defaultIconColor={'#2A2A5F'}
-                    emailValue={props?.email ?? ''}
-                    passwordValue={props?.password ?? ''}
-                    confirmPasswordValue={props?.confirmationPassword ?? ''}
-                    litIconColor={'#2A2A5F'}
-                    providers={['google']}
-                    view={'sign_up'}
-                    socialColors={false}
-                    strings={{
-                      signUpWith: t('signUpWith') ?? '',
-                      orContinueWith: t('orContinueWith') ?? '',
-                      emailAddress: t('emailAddress') ?? '',
-                      password: t('password') ?? '',
-                      confirmPassword: t('confirmPassword') ?? '',
-                      agreeToThe: t('agreeToThe') ?? '',
-                      termsOfService: t('termsOfService') ?? '',
-                      privacyPolicy: t('privacyPolicy') ?? '',
-                      signUp: t('signUp') ?? '',
-                      doYouHaveAnAccount: t('doYouHaveAnAccount') ?? '',
-                    }}
-                    touchScreen={true}
-                    emailErrorMessage={emailError}
-                    passwordErrorMessage={passwordError}
-                    confirmPasswordErrorMessage={confirmPasswordError}
-                    supabaseClient={props.supabaseClient}
-                    onEmailChanged={(e) =>
-                      SignupController.updateEmail(e.target.value)
-                    }
-                    onPasswordChanged={(e) =>
-                      SignupController.updatePassword(e.target.value)
-                    }
-                    onConfirmPasswordChanged={(e) =>
-                      SignupController.updateConfirmationPassword(
-                        e.target.value
-                      )
-                    }
-                    onForgotPasswordRedirect={() =>
-                      navigate(RoutePathsType.ForgotPassword)
-                    }
-                    onTermsOfServiceRedirect={() =>
-                      navigate(RoutePathsType.TermsOfService)
-                    }
-                    onPrivacyPolicyRedirect={() =>
-                      navigate(RoutePathsType.PrivacyPolicy)
-                    }
-                    onSigninRedirect={() => navigate(RoutePathsType.Signin)}
-                    onSignupRedirect={() => {
-                      setEmailError('');
-                      setPasswordError('');
-                      setConfirmPasswordError('');
-                      navigate(RoutePathsType.Signup);
-                    }}
-                    onSignupError={(error: AuthError) => setAuthError(error)}
-                    onEmailConfirmationSent={() => {
-                      WindowController.addToast({
-                        key: 'signup-email-confirmation-sent',
-                        message: t('emailConfirmation') ?? '',
-                        description: t('emailConfirmationDescription') ?? '',
-                        type: 'loading',
-                      });
-                    }}
-                    redirectTo={window.location.origin}
-                  />
-                )}
-              </animated.div>
-            )
-        )}
+                      }}
+                      defaultIconColor={'#2A2A5F'}
+                      emailValue={props?.email ?? ''}
+                      passwordValue={props?.password ?? ''}
+                      confirmPasswordValue={props?.confirmationPassword ?? ''}
+                      litIconColor={'#2A2A5F'}
+                      providers={['google']}
+                      view={'sign_up'}
+                      socialColors={false}
+                      strings={{
+                        signUpWith: t('signUpWith') ?? '',
+                        orContinueWith: t('orContinueWith') ?? '',
+                        emailAddress: t('emailAddress') ?? '',
+                        password: t('password') ?? '',
+                        confirmPassword: t('confirmPassword') ?? '',
+                        agreeToThe: t('agreeToThe') ?? '',
+                        termsOfService: t('termsOfService') ?? '',
+                        privacyPolicy: t('privacyPolicy') ?? '',
+                        signUp: t('signUp') ?? '',
+                        doYouHaveAnAccount: t('doYouHaveAnAccount') ?? '',
+                      }}
+                      touchScreen={true}
+                      emailErrorMessage={emailError}
+                      passwordErrorMessage={passwordError}
+                      confirmPasswordErrorMessage={confirmPasswordError}
+                      supabaseClient={props.supabaseClient}
+                      onEmailChanged={(e) =>
+                        SignupController.updateEmail(e.target.value)
+                      }
+                      onPasswordChanged={(e) =>
+                        SignupController.updatePassword(e.target.value)
+                      }
+                      onConfirmPasswordChanged={(e) =>
+                        SignupController.updateConfirmationPassword(
+                          e.target.value
+                        )
+                      }
+                      onForgotPasswordRedirect={() =>
+                        navigate(RoutePathsType.ForgotPassword)
+                      }
+                      onTermsOfServiceRedirect={() =>
+                        navigate(RoutePathsType.TermsOfService)
+                      }
+                      onPrivacyPolicyRedirect={() =>
+                        navigate(RoutePathsType.PrivacyPolicy)
+                      }
+                      onSigninRedirect={() => navigate(RoutePathsType.Signin)}
+                      onSignupRedirect={() => {
+                        setEmailError('');
+                        setPasswordError('');
+                        setConfirmPasswordError('');
+                        navigate(RoutePathsType.Signup);
+                      }}
+                      onSignupError={(error: AuthError) => setAuthError(error)}
+                      onEmailConfirmationSent={() => {
+                        WindowController.addToast({
+                          key: 'signup-email-confirmation-sent',
+                          message: t('emailConfirmation') ?? '',
+                          description: t('emailConfirmationDescription') ?? '',
+                          type: 'loading',
+                        });
+                      }}
+                      redirectTo={window.location.origin}
+                    />
+                  )}
+                </animated.div>
+              )
+          )}
+        </div>
       </div>
-    </div>
+    </ResponsiveMobile>
   );
 }

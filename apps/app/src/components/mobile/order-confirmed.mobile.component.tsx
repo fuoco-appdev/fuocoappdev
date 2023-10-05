@@ -14,6 +14,7 @@ import RefundItemComponent from '../refund-item.component';
 import { RefundItem } from '../../models/order-confirmed.model';
 import WindowController from '../../controllers/window.controller';
 import { OrderConfirmedResponsiveProps } from '../order-confirmed.component';
+import { ResponsiveMobile } from '../responsive.component';
 
 export default function OrderConfirmedMobileComponent({
   storeProps,
@@ -27,7 +28,8 @@ export default function OrderConfirmedMobileComponent({
   const [props] = useObservable(OrderConfirmedController.model.store);
 
   return (
-    props.order && (
+    <ResponsiveMobile>
+      props.order && (
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
         <div
           className={[
@@ -483,6 +485,7 @@ export default function OrderConfirmedMobileComponent({
           </div>
         </Dropdown>
       </div>
-    )
+      )
+    </ResponsiveMobile>
   );
 }

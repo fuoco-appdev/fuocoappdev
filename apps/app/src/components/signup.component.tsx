@@ -118,28 +118,24 @@ export default function SignupComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <GuestComponent>
-          <ResponsiveDesktop>
-            <SignupDesktopComponent
-              emailError={emailError}
-              passwordError={passwordError}
-              confirmPasswordError={confirmPasswordError}
-              setAuthError={setAuthError}
-              setEmailError={setEmailError}
-              setPasswordError={setPasswordError}
-              setConfirmPasswordError={setConfirmPasswordError}
-            />
-          </ResponsiveDesktop>
-          <ResponsiveMobile>
-            <SignupMobileComponent
-              emailError={emailError}
-              passwordError={passwordError}
-              confirmPasswordError={confirmPasswordError}
-              setAuthError={setAuthError}
-              setEmailError={setEmailError}
-              setPasswordError={setPasswordError}
-              setConfirmPasswordError={setConfirmPasswordError}
-            />
-          </ResponsiveMobile>
+          <SignupDesktopComponent
+            emailError={emailError}
+            passwordError={passwordError}
+            confirmPasswordError={confirmPasswordError}
+            setAuthError={setAuthError}
+            setEmailError={setEmailError}
+            setPasswordError={setPasswordError}
+            setConfirmPasswordError={setConfirmPasswordError}
+          />
+          <SignupMobileComponent
+            emailError={emailError}
+            passwordError={passwordError}
+            confirmPasswordError={confirmPasswordError}
+            setAuthError={setAuthError}
+            setEmailError={setEmailError}
+            setPasswordError={setPasswordError}
+            setConfirmPasswordError={setConfirmPasswordError}
+          />
         </GuestComponent>
       </React.Suspense>
     </>

@@ -14,6 +14,7 @@ import { Store } from '@ngneat/elf';
 import AccountProfileFormComponent from '../account-profile-form.component';
 import WindowController from '../../controllers/window.controller';
 import { AccountEditResponsiveProps } from '../account-edit.component';
+import { ResponsiveMobile } from '../responsive.component';
 
 export default function AccountEditMobileComponent({
   storeProps,
@@ -23,68 +24,70 @@ export default function AccountEditMobileComponent({
   const { t, i18n } = useTranslation();
 
   return (
-    <div className={[styles['root'], styles['root-mobile']].join(' ')}>
-      <div
-        className={[
-          styles['edit-text-container'],
-          styles['edit-text-container-mobile'],
-        ].join(' ')}
-      >
+    <ResponsiveMobile>
+      <div className={[styles['root'], styles['root-mobile']].join(' ')}>
         <div
-          className={[styles['edit-text'], styles['edit-text-mobile']].join(
-            ' '
-          )}
+          className={[
+            styles['edit-text-container'],
+            styles['edit-text-container-mobile'],
+          ].join(' ')}
         >
-          {t('edit')}
+          <div
+            className={[styles['edit-text'], styles['edit-text-mobile']].join(
+              ' '
+            )}
+          >
+            {t('edit')}
+          </div>
+        </div>
+        <div
+          className={[
+            styles['profile-form-container'],
+            styles['profile-form-container-mobile'],
+          ].join(' ')}
+        >
+          <AccountProfileFormComponent
+            storeProps={storeProps}
+            values={props.profileForm}
+            errors={props.profileFormErrors}
+            onChangeCallbacks={{
+              firstName: (event) =>
+                AccountController.updateProfile({
+                  firstName: event.target.value,
+                }),
+              lastName: (event) =>
+                AccountController.updateProfile({
+                  lastName: event.target.value,
+                }),
+              phoneNumber: (value, event, formattedValue) =>
+                AccountController.updateProfile({
+                  phoneNumber: value,
+                }),
+            }}
+          />
+        </div>
+        <div
+          className={[
+            styles['save-button-container'],
+            styles['save-button-container-mobile'],
+          ].join(' ')}
+        >
+          <Button
+            classNames={{
+              button: styles['save-button'],
+            }}
+            rippleProps={{
+              color: 'rgba(233, 33, 66, .35)',
+            }}
+            touchScreen={true}
+            block={true}
+            size={'large'}
+            onClick={onSaveAsync}
+          >
+            {t('save')}
+          </Button>
         </div>
       </div>
-      <div
-        className={[
-          styles['profile-form-container'],
-          styles['profile-form-container-mobile'],
-        ].join(' ')}
-      >
-        <AccountProfileFormComponent
-          storeProps={storeProps}
-          values={props.profileForm}
-          errors={props.profileFormErrors}
-          onChangeCallbacks={{
-            firstName: (event) =>
-              AccountController.updateProfile({
-                firstName: event.target.value,
-              }),
-            lastName: (event) =>
-              AccountController.updateProfile({
-                lastName: event.target.value,
-              }),
-            phoneNumber: (value, event, formattedValue) =>
-              AccountController.updateProfile({
-                phoneNumber: value,
-              }),
-          }}
-        />
-      </div>
-      <div
-        className={[
-          styles['save-button-container'],
-          styles['save-button-container-mobile'],
-        ].join(' ')}
-      >
-        <Button
-          classNames={{
-            button: styles['save-button'],
-          }}
-          rippleProps={{
-            color: 'rgba(233, 33, 66, .35)',
-          }}
-          touchScreen={true}
-          block={true}
-          size={'large'}
-          onClick={onSaveAsync}
-        >
-          {t('save')}
-        </Button>
-      </div>
-    </div>
+    </ResponsiveMobile>
   );
 }

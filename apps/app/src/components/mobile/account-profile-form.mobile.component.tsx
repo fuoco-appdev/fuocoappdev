@@ -20,6 +20,7 @@ import { Store } from '@ngneat/elf';
 import StoreController from '../../controllers/store.controller';
 import { CountryDataProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/input-phone-number/country-data';
 import { AccountProfileFormResponsiveProps } from '../account-profile-form.component';
+import { ResponsiveMobile } from '../responsive.component';
 
 export default function AccountProfileFormMobileComponent({
   values,
@@ -30,7 +31,7 @@ export default function AccountProfileFormMobileComponent({
   const { t, i18n } = useTranslation();
 
   return (
-    <>
+    <ResponsiveMobile>
       <div
         className={[
           styles['horizontal-input-container'],
@@ -76,6 +77,6 @@ export default function AccountProfileFormMobileComponent({
         country={selectedCountry}
         onChange={onChangeCallbacks?.phoneNumber}
       />
-    </>
+    </ResponsiveMobile>
   );
 }

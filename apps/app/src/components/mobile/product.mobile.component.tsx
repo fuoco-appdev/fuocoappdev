@@ -13,7 +13,7 @@ import StoreController from '../../controllers/store.controller';
 import Skeleton from 'react-loading-skeleton';
 import { ProductResponsiveProps } from '../product.component';
 import { useEffect, useState, lazy } from 'react';
-import { useMobileEffect } from '../responsive.component';
+import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 import loadable from '@loadable/component';
 const ReactMarkdown = loadable(
   async () => {
@@ -70,73 +70,76 @@ export default function ProductMobileComponent({
   }, [productProps.description, showMore]);
 
   return (
-    <div className={[styles['root'], styles['root-mobile']].join(' ')}>
-      <div
-        className={[
-          styles['thumbnail-container'],
-          styles['thumbnail-container-mobile'],
-        ].join(' ')}
-      >
-        {!productProps.isLoading ? (
-          <img
-            className={[
-              styles['thumbnail-image'],
-              styles['thumbnail-image-mobile'],
-            ].join(' ')}
-            src={productProps.thumbnail || '../assets/svg/wine-bottle.svg'}
-          />
-        ) : (
-          <Skeleton
-            className={[
-              styles['thumbnail-image-skeleton'],
-              styles['thumbnail-image-skeleton-mobile'],
-            ].join(' ')}
-          />
-        )}
-      </div>
-      <div className={[styles['content'], styles['content-mobile']].join(' ')}>
+    <ResponsiveMobile>
+      <div className={[styles['root'], styles['root-mobile']].join(' ')}>
         <div
           className={[
-            styles['header-container'],
-            styles['header-container-mobile'],
+            styles['thumbnail-container'],
+            styles['thumbnail-container-mobile'],
           ].join(' ')}
+        >
+          {!productProps.isLoading ? (
+            <img
+              className={[
+                styles['thumbnail-image'],
+                styles['thumbnail-image-mobile'],
+              ].join(' ')}
+              src={productProps.thumbnail || '../assets/svg/wine-bottle.svg'}
+            />
+          ) : (
+            <Skeleton
+              className={[
+                styles['thumbnail-image-skeleton'],
+                styles['thumbnail-image-skeleton-mobile'],
+              ].join(' ')}
+            />
+          )}
+        </div>
+        <div
+          className={[styles['content'], styles['content-mobile']].join(' ')}
         >
           <div
             className={[
-              styles['title-container'],
-              styles['title-container-mobile'],
+              styles['header-container'],
+              styles['header-container-mobile'],
             ].join(' ')}
           >
-            {!productProps.isLoading ? (
-              <>
-                <div
-                  className={[styles['title'], styles['title-mobile']].join(
-                    ' '
-                  )}
-                >
-                  {productProps.title}
-                </div>
-                <div
+            <div
+              className={[
+                styles['title-container'],
+                styles['title-container-mobile'],
+              ].join(' ')}
+            >
+              {!productProps.isLoading ? (
+                <>
+                  <div
+                    className={[styles['title'], styles['title-mobile']].join(
+                      ' '
+                    )}
+                  >
+                    {productProps.title}
+                  </div>
+                  <div
+                    className={[
+                      styles['subtitle'],
+                      styles['subtitle-mobile'],
+                    ].join(' ')}
+                  >
+                    {productProps.subtitle}
+                  </div>
+                </>
+              ) : (
+                <Skeleton
+                  count={1}
+                  borderRadius={9999}
                   className={[
-                    styles['subtitle'],
-                    styles['subtitle-mobile'],
+                    styles['title-skeleton'],
+                    styles['title-skeleton-mobile'],
                   ].join(' ')}
-                >
-                  {productProps.subtitle}
-                </div>
-              </>
-            ) : (
-              <Skeleton
-                count={1}
-                borderRadius={9999}
-                className={[
-                  styles['title-skeleton'],
-                  styles['title-skeleton-mobile'],
-                ].join(' ')}
-              />
-            )}
-          </div>
-          {/* <div className={styles['like-container-mobile']}>
+                />
+              )}
+            </div>
+            {/* <div className={styles['like-container-mobile']}>
               <div className={styles['like-count-mobile']}>{productProps.likeCount}</div>
               <Button
                 rippleProps={{
@@ -156,725 +159,726 @@ export default function ProductMobileComponent({
                 }
               />
             </div> */}
-        </div>
-        <div
-          className={[
-            styles['description-container'],
-            styles['description-container-mobile'],
-          ].join(' ')}
-        >
-          {!productProps.isLoading ? (
-            <ReactMarkdown
-              remarkPlugins={remarkPlugins}
-              children={description}
-            />
-          ) : (
-            <Skeleton
-              count={6}
-              borderRadius={9999}
-              className={[
-                styles['skeleton-description'],
-                styles['skeleton-description-mobile'],
-              ].join(' ')}
-            />
-          )}
-          {!productProps.isLoading &&
-            productProps.description &&
-            !disableShowMore && (
-              <div
+          </div>
+          <div
+            className={[
+              styles['description-container'],
+              styles['description-container-mobile'],
+            ].join(' ')}
+          >
+            {!productProps.isLoading ? (
+              <ReactMarkdown
+                remarkPlugins={remarkPlugins}
+                children={description}
+              />
+            ) : (
+              <Skeleton
+                count={6}
+                borderRadius={9999}
                 className={[
-                  styles['show-more-container'],
-                  styles['show-more-container-mobile'],
+                  styles['skeleton-description'],
+                  styles['skeleton-description-mobile'],
                 ].join(' ')}
-              >
-                <Typography.Link
-                  className={[
-                    styles['show-more-link'],
-                    styles['show-more-link-mobile'],
-                  ].join(' ')}
-                  onClick={() => setShowMore(!showMore)}
-                >
-                  {!showMore ? t('showMore') : t('showLess')}
-                </Typography.Link>
-              </div>
+              />
             )}
-        </div>
-        <div className={[styles['price'], styles['price-mobile']].join(' ')}>
-          {!productProps.isLoading ? (
-            <>
-              {storeProps.selectedRegion &&
-                formatAmount({
-                  amount: productProps.selectedVariant?.calculated_price ?? 0,
-                  region: storeProps.selectedRegion,
-                  includeTaxes: false,
-                })}
-              &nbsp;
-              <span
+            {!productProps.isLoading &&
+              productProps.description &&
+              !disableShowMore && (
+                <div
+                  className={[
+                    styles['show-more-container'],
+                    styles['show-more-container-mobile'],
+                  ].join(' ')}
+                >
+                  <Typography.Link
+                    className={[
+                      styles['show-more-link'],
+                      styles['show-more-link-mobile'],
+                    ].join(' ')}
+                    onClick={() => setShowMore(!showMore)}
+                  >
+                    {!showMore ? t('showMore') : t('showLess')}
+                  </Typography.Link>
+                </div>
+              )}
+          </div>
+          <div className={[styles['price'], styles['price-mobile']].join(' ')}>
+            {!productProps.isLoading ? (
+              <>
+                {storeProps.selectedRegion &&
+                  formatAmount({
+                    amount: productProps.selectedVariant?.calculated_price ?? 0,
+                    region: storeProps.selectedRegion,
+                    includeTaxes: false,
+                  })}
+                &nbsp;
+                <span
+                  className={[
+                    styles['inventory-quantity'],
+                    styles['inventory-quantity-mobile'],
+                  ].join(' ')}
+                >
+                  ({productProps.selectedVariant?.inventory_quantity}&nbsp;
+                  {t('inStock')})
+                </span>
+              </>
+            ) : (
+              <Skeleton
                 className={[
                   styles['inventory-quantity'],
                   styles['inventory-quantity-mobile'],
                 ].join(' ')}
-              >
-                ({productProps.selectedVariant?.inventory_quantity}&nbsp;
-                {t('inStock')})
-              </span>
-            </>
-          ) : (
-            <Skeleton
-              className={[
-                styles['inventory-quantity'],
-                styles['inventory-quantity-mobile'],
-              ].join(' ')}
-              borderRadius={9999}
-              count={1}
-            />
-          )}
-        </div>
-        <div
-          className={[
-            styles['tags-container'],
-            styles['tags-container-mobile'],
-          ].join(' ')}
-        >
-          {!productProps.isLoading ? (
-            <>
-              {productProps.tags.map((value: ProductTag) => (
-                <div
-                  className={[styles['tag'], styles['tag-mobile']].join(' ')}
-                >
-                  {value.value}
-                </div>
-              ))}
-            </>
-          ) : (
-            <>
-              {[1, 2, 3, 4].map(() => (
-                <Skeleton
-                  className={[
-                    styles['tag-skeleton'],
-                    styles['tag-skeleton-mobile'],
-                  ].join(' ')}
-                  borderRadius={9999}
-                />
-              ))}
-            </>
-          )}
-        </div>
-        <div
-          className={[
-            styles['tab-container'],
-            styles['tab-container-mobile'],
-          ].join(' ')}
-        >
-          {!productProps.isLoading ? (
-            <Tabs
-              flex={true}
-              classNames={{
-                tabButton: styles['tab-button'],
-                tabOutline: styles['tab-outline'],
-              }}
-              type={'underlined'}
-              tabs={tabs}
-              touchScreen={true}
-              activeId={activeVariantId}
-              onChange={(id) => ProductController.updateSelectedVariant(id)}
-            />
-          ) : (
-            <Skeleton
-              className={[
-                styles['tabs-skeleton'],
-                styles['tabs-skeleton-mobile'],
-              ].join(' ')}
-            />
-          )}
+                borderRadius={9999}
+                count={1}
+              />
+            )}
+          </div>
           <div
             className={[
-              styles['options-container'],
-              styles['options-container-mobile'],
+              styles['tags-container'],
+              styles['tags-container-mobile'],
             ].join(' ')}
           >
             {!productProps.isLoading ? (
               <>
-                <div
-                  className={[
-                    styles['option-content'],
-                    styles['option-content-mobile'],
-                  ].join(' ')}
-                >
+                {productProps.tags.map((value: ProductTag) => (
                   <div
-                    className={[
-                      styles['option-title'],
-                      styles['option-title-mobile'],
-                    ].join(' ')}
+                    className={[styles['tag'], styles['tag-mobile']].join(' ')}
                   >
-                    {t('alcohol')}
+                    {value.value}
                   </div>
-                  <div
-                    className={[
-                      styles['option-value'],
-                      styles['option-value-mobile'],
-                    ].join(' ')}
-                  >
-                    {alcohol}
-                  </div>
-                </div>
-                <div
-                  className={[
-                    styles['option-content'],
-                    styles['option-content-mobile'],
-                  ].join(' ')}
-                >
-                  <div
-                    className={[
-                      styles['option-title'],
-                      styles['option-title-mobile'],
-                    ].join(' ')}
-                  >
-                    {t('brand')}
-                  </div>
-                  <div
-                    className={[
-                      styles['option-value'],
-                      styles['option-value-mobile'],
-                    ].join(' ')}
-                  >
-                    {brand}
-                  </div>
-                </div>
-                <div
-                  className={[
-                    styles['option-content'],
-                    styles['option-content-mobile'],
-                  ].join(' ')}
-                >
-                  <div
-                    className={[
-                      styles['option-title'],
-                      styles['option-title-mobile'],
-                    ].join(' ')}
-                  >
-                    {t('format')}
-                  </div>
-                  <div
-                    className={[
-                      styles['option-value'],
-                      styles['option-value-mobile'],
-                    ].join(' ')}
-                  >
-                    {format}
-                  </div>
-                </div>
-                <div
-                  className={[
-                    styles['option-content'],
-                    styles['option-content-mobile'],
-                  ].join(' ')}
-                >
-                  <div
-                    className={[
-                      styles['option-title'],
-                      styles['option-title-mobile'],
-                    ].join(' ')}
-                  >
-                    {t('producerBottler')}
-                  </div>
-                  <div
-                    className={[
-                      styles['option-value'],
-                      styles['option-value-mobile'],
-                    ].join(' ')}
-                  >
-                    {producerBottler}
-                  </div>
-                </div>
-                <div
-                  className={[
-                    styles['option-content'],
-                    styles['option-content-mobile'],
-                  ].join(' ')}
-                >
-                  <div
-                    className={[
-                      styles['option-title'],
-                      styles['option-title-mobile'],
-                    ].join(' ')}
-                  >
-                    {t('region')}
-                  </div>
-                  <div
-                    className={[
-                      styles['option-value'],
-                      styles['option-value-mobile'],
-                    ].join(' ')}
-                  >
-                    {region}
-                  </div>
-                </div>
-                <div
-                  className={[
-                    styles['option-content'],
-                    styles['option-content-mobile'],
-                  ].join(' ')}
-                >
-                  <div
-                    className={[
-                      styles['option-title'],
-                      styles['option-title-mobile'],
-                    ].join(' ')}
-                  >
-                    {t('residualSugar')}
-                  </div>
-                  <div
-                    className={[
-                      styles['option-value'],
-                      styles['option-value-mobile'],
-                    ].join(' ')}
-                  >
-                    {residualSugar}
-                  </div>
-                </div>
-                <div
-                  className={[
-                    styles['option-content'],
-                    styles['option-content-mobile'],
-                  ].join(' ')}
-                >
-                  <div
-                    className={[
-                      styles['option-title'],
-                      styles['option-title-mobile'],
-                    ].join(' ')}
-                  >
-                    {t('type')}
-                  </div>
-                  <div
-                    className={[
-                      styles['option-value'],
-                      styles['option-value-mobile'],
-                    ].join(' ')}
-                  >
-                    {type}
-                  </div>
-                </div>
-                <div
-                  className={[
-                    styles['option-content'],
-                    styles['option-content-mobile'],
-                  ].join(' ')}
-                >
-                  <div
-                    className={[
-                      styles['option-title'],
-                      styles['option-title-mobile'],
-                    ].join(' ')}
-                  >
-                    {t('uvc')}
-                  </div>
-                  <div
-                    className={[
-                      styles['option-value'],
-                      styles['option-value-mobile'],
-                    ].join(' ')}
-                  >
-                    {uvc}
-                  </div>
-                </div>
-                <div
-                  className={[
-                    styles['option-content'],
-                    styles['option-content-mobile'],
-                  ].join(' ')}
-                >
-                  <div
-                    className={[
-                      styles['option-title'],
-                      styles['option-title-mobile'],
-                    ].join(' ')}
-                  >
-                    {t('varietals')}
-                  </div>
-                  <div
-                    className={[
-                      styles['option-value'],
-                      styles['option-value-mobile'],
-                    ].join(' ')}
-                  >
-                    {varietals}
-                  </div>
-                </div>
-                <div
-                  className={[
-                    styles['option-content'],
-                    styles['option-content-mobile'],
-                  ].join(' ')}
-                >
-                  <div
-                    className={[
-                      styles['option-title'],
-                      styles['option-title-mobile'],
-                    ].join(' ')}
-                  >
-                    {t('vintage')}
-                  </div>
-                  <div
-                    className={[
-                      styles['option-value'],
-                      styles['option-value-mobile'],
-                    ].join(' ')}
-                  >
-                    {vintage}
-                  </div>
-                </div>
+                ))}
               </>
             ) : (
-              [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(() => (
-                <div
-                  className={[
-                    styles['option-content'],
-                    styles['option-content-mobile'],
-                  ].join(' ')}
-                >
+              <>
+                {[1, 2, 3, 4].map(() => (
                   <Skeleton
                     className={[
-                      styles['option-title-skeleton'],
-                      styles['option-title-skeleton-mobile'],
+                      styles['tag-skeleton'],
+                      styles['tag-skeleton-mobile'],
                     ].join(' ')}
                     borderRadius={9999}
                   />
-                  <Skeleton
-                    className={[
-                      styles['option-value-skeleton'],
-                      styles['option-value-skeleton-mobile'],
-                    ].join(' ')}
-                    borderRadius={9999}
-                  />
-                </div>
-              ))
+                ))}
+              </>
             )}
           </div>
-        </div>
-        {!productProps.isLoading ? (
-          <Button
-            classNames={{
-              container: styles['add-to-cart-button-container'],
-              button: styles['add-to-cart-button'],
-            }}
-            block={true}
-            size={'full'}
-            rippleProps={{
-              color: 'rgba(233, 33, 66, .35)',
-            }}
-            icon={
-              !productProps.selectedVariant?.purchasable ? (
-                <Line.ProductionQuantityLimits size={24} />
-              ) : (
-                <Line.AddShoppingCart size={24} />
-              )
-            }
-            disabled={!productProps.selectedVariant?.purchasable}
-            onClick={() =>
-              ProductController.addToCartAsync(
-                productProps.selectedVariant?.id ?? '',
-                1,
-                () =>
-                  WindowController.addToast({
-                    key: `add-to-cart-${Math.random()}`,
-                    message: t('addedToCart') ?? '',
-                    description:
-                      t('addedToCartDescription', {
-                        item: productProps.title,
-                      }) ?? '',
-                    type: 'success',
-                  }),
-                (error) =>
-                  WindowController.addToast({
-                    key: `add-to-cart-${Math.random()}`,
-                    message: error.name,
-                    description: error.message,
-                    type: 'error',
-                  })
-              )
-            }
-          >
-            {!productProps.selectedVariant?.purchasable && t('outOfStock')}
-            {productProps.selectedVariant?.purchasable && t('addToCart')}
-          </Button>
-        ) : (
-          <Skeleton
+          <div
             className={[
-              styles['add-to-cart-button-skeleton'],
-              styles['add-to-cart-button-skeleton-mobile'],
+              styles['tab-container'],
+              styles['tab-container-mobile'],
             ].join(' ')}
-          />
-        )}
-        <div
-          className={[
-            styles['tab-container'],
-            styles['tab-container-mobile'],
-          ].join(' ')}
-        >
-          {!productProps.isLoading ? (
-            <Tabs
-              flex={true}
-              classNames={{
-                tabButton: styles['tab-button'],
-                tabOutline: styles['tab-outline'],
-              }}
-              type={'underlined'}
-              tabs={[
-                {
-                  id: 'information',
-                  label: t('information').toString(),
-                },
-                {
-                  id: 'shipping-and-returns',
-                  label: t('shippingAndReturns').toString(),
-                },
-              ]}
-              touchScreen={true}
-              activeId={activeDetails}
-              onChange={(id: string) => setActiveDetails(id)}
-            />
-          ) : (
-            <Skeleton
+          >
+            {!productProps.isLoading ? (
+              <Tabs
+                flex={true}
+                classNames={{
+                  tabButton: styles['tab-button'],
+                  tabOutline: styles['tab-outline'],
+                }}
+                type={'underlined'}
+                tabs={tabs}
+                touchScreen={true}
+                activeId={activeVariantId}
+                onChange={(id) => ProductController.updateSelectedVariant(id)}
+              />
+            ) : (
+              <Skeleton
+                className={[
+                  styles['tabs-skeleton'],
+                  styles['tabs-skeleton-mobile'],
+                ].join(' ')}
+              />
+            )}
+            <div
               className={[
-                styles['tabs-skeleton'],
-                styles['tabs-skeleton-mobile'],
+                styles['options-container'],
+                styles['options-container-mobile'],
               ].join(' ')}
-            />
-          )}
-          {!productProps.isLoading ? (
-            <>
-              {activeDetails === 'information' && (
-                <div
-                  className={[
-                    styles['details-container'],
-                    styles['details-container-mobile'],
-                  ].join(' ')}
-                >
+            >
+              {!productProps.isLoading ? (
+                <>
                   <div
                     className={[
-                      styles['details-item-content'],
-                      styles['details-item-content-mobile'],
+                      styles['option-content'],
+                      styles['option-content-mobile'],
                     ].join(' ')}
                   >
                     <div
                       className={[
-                        styles['details-item-title'],
-                        styles['details-item-title-mobile'],
+                        styles['option-title'],
+                        styles['option-title-mobile'],
                       ].join(' ')}
                     >
-                      {t('material')}
+                      {t('alcohol')}
                     </div>
                     <div
                       className={[
-                        styles['details-item-value'],
-                        styles['details-item-value-mobile'],
+                        styles['option-value'],
+                        styles['option-value-mobile'],
                       ].join(' ')}
                     >
-                      {productProps.material}
+                      {alcohol}
                     </div>
                   </div>
                   <div
                     className={[
-                      styles['details-item-content'],
-                      styles['details-item-content-mobile'],
+                      styles['option-content'],
+                      styles['option-content-mobile'],
                     ].join(' ')}
                   >
                     <div
                       className={[
-                        styles['details-item-title'],
-                        styles['details-item-title-mobile'],
+                        styles['option-title'],
+                        styles['option-title-mobile'],
                       ].join(' ')}
                     >
-                      {t('weight')}
+                      {t('brand')}
                     </div>
                     <div
                       className={[
-                        styles['details-item-value'],
-                        styles['details-item-value-mobile'],
+                        styles['option-value'],
+                        styles['option-value-mobile'],
                       ].join(' ')}
                     >
-                      {productProps.weight}
+                      {brand}
                     </div>
                   </div>
                   <div
                     className={[
-                      styles['details-item-content'],
-                      styles['details-item-content-mobile'],
+                      styles['option-content'],
+                      styles['option-content-mobile'],
                     ].join(' ')}
                   >
                     <div
                       className={[
-                        styles['details-item-title'],
-                        styles['details-item-title-mobile'],
+                        styles['option-title'],
+                        styles['option-title-mobile'],
                       ].join(' ')}
                     >
-                      {t('countryOfOrigin')}
+                      {t('format')}
                     </div>
                     <div
                       className={[
-                        styles['details-item-value'],
-                        styles['details-item-value-mobile'],
+                        styles['option-value'],
+                        styles['option-value-mobile'],
                       ].join(' ')}
                     >
-                      {productProps.countryOrigin}
+                      {format}
                     </div>
                   </div>
                   <div
                     className={[
-                      styles['details-item-content'],
-                      styles['details-item-content-mobile'],
+                      styles['option-content'],
+                      styles['option-content-mobile'],
                     ].join(' ')}
                   >
                     <div
                       className={[
-                        styles['details-item-title'],
-                        styles['details-item-title-mobile'],
+                        styles['option-title'],
+                        styles['option-title-mobile'],
                       ].join(' ')}
                     >
-                      {t('dimensions')}
+                      {t('producerBottler')}
                     </div>
                     <div
                       className={[
-                        styles['details-item-value'],
-                        styles['details-item-value-mobile'],
+                        styles['option-value'],
+                        styles['option-value-mobile'],
                       ].join(' ')}
                     >
-                      {productProps.dimensions}
+                      {producerBottler}
                     </div>
                   </div>
                   <div
                     className={[
-                      styles['details-item-content'],
-                      styles['details-item-content-mobile'],
+                      styles['option-content'],
+                      styles['option-content-mobile'],
                     ].join(' ')}
                   >
                     <div
                       className={[
-                        styles['details-item-title'],
-                        styles['details-item-title-mobile'],
+                        styles['option-title'],
+                        styles['option-title-mobile'],
+                      ].join(' ')}
+                    >
+                      {t('region')}
+                    </div>
+                    <div
+                      className={[
+                        styles['option-value'],
+                        styles['option-value-mobile'],
+                      ].join(' ')}
+                    >
+                      {region}
+                    </div>
+                  </div>
+                  <div
+                    className={[
+                      styles['option-content'],
+                      styles['option-content-mobile'],
+                    ].join(' ')}
+                  >
+                    <div
+                      className={[
+                        styles['option-title'],
+                        styles['option-title-mobile'],
+                      ].join(' ')}
+                    >
+                      {t('residualSugar')}
+                    </div>
+                    <div
+                      className={[
+                        styles['option-value'],
+                        styles['option-value-mobile'],
+                      ].join(' ')}
+                    >
+                      {residualSugar}
+                    </div>
+                  </div>
+                  <div
+                    className={[
+                      styles['option-content'],
+                      styles['option-content-mobile'],
+                    ].join(' ')}
+                  >
+                    <div
+                      className={[
+                        styles['option-title'],
+                        styles['option-title-mobile'],
                       ].join(' ')}
                     >
                       {t('type')}
                     </div>
                     <div
                       className={[
-                        styles['details-item-value'],
-                        styles['details-item-value-mobile'],
+                        styles['option-value'],
+                        styles['option-value-mobile'],
                       ].join(' ')}
                     >
-                      {productProps.type}
-                    </div>
-                  </div>
-                </div>
-              )}
-              {activeDetails === 'shipping-and-returns' && (
-                <div
-                  className={[
-                    styles['shipping-returns-container'],
-                    styles['shipping-returns-container-mobile'],
-                  ].join(' ')}
-                >
-                  <div
-                    className={[
-                      styles['shipping-returns-content'],
-                      styles['shipping-returns-content-mobile'],
-                    ].join(' ')}
-                  >
-                    <div
-                      className={[
-                        styles['shipping-returns-title-container'],
-                        styles['shipping-returns-title-container-mobile'],
-                      ].join(' ')}
-                    >
-                      <Line.LocalShipping size={16} color={'#2A2A5F'} />
-                      <div
-                        className={[
-                          styles['shipping-returns-title'],
-                          styles['shipping-returns-title-mobile'],
-                        ].join(' ')}
-                      >
-                        {t('fastDelivery')}
-                      </div>
-                    </div>
-                    <div
-                      className={[
-                        styles['shipping-returns-description'],
-                        styles['shipping-returns-description-mobile'],
-                      ].join(' ')}
-                    >
-                      {t('fastDeliveryDescription')}
+                      {type}
                     </div>
                   </div>
                   <div
                     className={[
-                      styles['shipping-returns-content'],
-                      styles['shipping-returns-content-mobile'],
+                      styles['option-content'],
+                      styles['option-content-mobile'],
                     ].join(' ')}
                   >
                     <div
                       className={[
-                        styles['shipping-returns-title-container'],
-                        styles['shipping-returns-title-container-mobile'],
+                        styles['option-title'],
+                        styles['option-title-mobile'],
                       ].join(' ')}
                     >
-                      <Line.Replay size={16} color={'#2A2A5F'} />
-                      <div
-                        className={[
-                          styles['shipping-returns-title'],
-                          styles['shipping-returns-title-mobile'],
-                        ].join(' ')}
-                      >
-                        {t('easyReturns')}
-                      </div>
+                      {t('uvc')}
                     </div>
                     <div
                       className={[
-                        styles['shipping-returns-description'],
-                        styles['shipping-returns-description-mobile'],
+                        styles['option-value'],
+                        styles['option-value-mobile'],
                       ].join(' ')}
                     >
-                      {t('easyReturnsDescription')}
+                      {uvc}
                     </div>
                   </div>
-                </div>
+                  <div
+                    className={[
+                      styles['option-content'],
+                      styles['option-content-mobile'],
+                    ].join(' ')}
+                  >
+                    <div
+                      className={[
+                        styles['option-title'],
+                        styles['option-title-mobile'],
+                      ].join(' ')}
+                    >
+                      {t('varietals')}
+                    </div>
+                    <div
+                      className={[
+                        styles['option-value'],
+                        styles['option-value-mobile'],
+                      ].join(' ')}
+                    >
+                      {varietals}
+                    </div>
+                  </div>
+                  <div
+                    className={[
+                      styles['option-content'],
+                      styles['option-content-mobile'],
+                    ].join(' ')}
+                  >
+                    <div
+                      className={[
+                        styles['option-title'],
+                        styles['option-title-mobile'],
+                      ].join(' ')}
+                    >
+                      {t('vintage')}
+                    </div>
+                    <div
+                      className={[
+                        styles['option-value'],
+                        styles['option-value-mobile'],
+                      ].join(' ')}
+                    >
+                      {vintage}
+                    </div>
+                  </div>
+                </>
+              ) : (
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(() => (
+                  <div
+                    className={[
+                      styles['option-content'],
+                      styles['option-content-mobile'],
+                    ].join(' ')}
+                  >
+                    <Skeleton
+                      className={[
+                        styles['option-title-skeleton'],
+                        styles['option-title-skeleton-mobile'],
+                      ].join(' ')}
+                      borderRadius={9999}
+                    />
+                    <Skeleton
+                      className={[
+                        styles['option-value-skeleton'],
+                        styles['option-value-skeleton-mobile'],
+                      ].join(' ')}
+                      borderRadius={9999}
+                    />
+                  </div>
+                ))
               )}
-            </>
-          ) : (
-            <div
-              className={[
-                styles['details-container'],
-                styles['details-container-desktop'],
-              ].join(' ')}
-            >
-              {[1, 2, 3, 4, 5, 6].map(() => (
-                <div
-                  className={[
-                    styles['details-item-content'],
-                    styles['details-item-content-desktop'],
-                  ].join(' ')}
-                >
-                  <Skeleton
-                    className={[
-                      styles['details-title-skeleton'],
-                      styles['details-title-skeleton-desktop'],
-                    ].join(' ')}
-                    borderRadius={9999}
-                  />
-                  <Skeleton
-                    className={[
-                      styles['details-value-skeleton'],
-                      styles['details-value-skeleton-desktop'],
-                    ].join(' ')}
-                    borderRadius={9999}
-                  />
-                </div>
-              ))}
             </div>
+          </div>
+          {!productProps.isLoading ? (
+            <Button
+              classNames={{
+                container: styles['add-to-cart-button-container'],
+                button: styles['add-to-cart-button'],
+              }}
+              block={true}
+              size={'full'}
+              rippleProps={{
+                color: 'rgba(233, 33, 66, .35)',
+              }}
+              icon={
+                !productProps.selectedVariant?.purchasable ? (
+                  <Line.ProductionQuantityLimits size={24} />
+                ) : (
+                  <Line.AddShoppingCart size={24} />
+                )
+              }
+              disabled={!productProps.selectedVariant?.purchasable}
+              onClick={() =>
+                ProductController.addToCartAsync(
+                  productProps.selectedVariant?.id ?? '',
+                  1,
+                  () =>
+                    WindowController.addToast({
+                      key: `add-to-cart-${Math.random()}`,
+                      message: t('addedToCart') ?? '',
+                      description:
+                        t('addedToCartDescription', {
+                          item: productProps.title,
+                        }) ?? '',
+                      type: 'success',
+                    }),
+                  (error) =>
+                    WindowController.addToast({
+                      key: `add-to-cart-${Math.random()}`,
+                      message: error.name,
+                      description: error.message,
+                      type: 'error',
+                    })
+                )
+              }
+            >
+              {!productProps.selectedVariant?.purchasable && t('outOfStock')}
+              {productProps.selectedVariant?.purchasable && t('addToCart')}
+            </Button>
+          ) : (
+            <Skeleton
+              className={[
+                styles['add-to-cart-button-skeleton'],
+                styles['add-to-cart-button-skeleton-mobile'],
+              ].join(' ')}
+            />
           )}
+          <div
+            className={[
+              styles['tab-container'],
+              styles['tab-container-mobile'],
+            ].join(' ')}
+          >
+            {!productProps.isLoading ? (
+              <Tabs
+                flex={true}
+                classNames={{
+                  tabButton: styles['tab-button'],
+                  tabOutline: styles['tab-outline'],
+                }}
+                type={'underlined'}
+                tabs={[
+                  {
+                    id: 'information',
+                    label: t('information').toString(),
+                  },
+                  {
+                    id: 'shipping-and-returns',
+                    label: t('shippingAndReturns').toString(),
+                  },
+                ]}
+                touchScreen={true}
+                activeId={activeDetails}
+                onChange={(id: string) => setActiveDetails(id)}
+              />
+            ) : (
+              <Skeleton
+                className={[
+                  styles['tabs-skeleton'],
+                  styles['tabs-skeleton-mobile'],
+                ].join(' ')}
+              />
+            )}
+            {!productProps.isLoading ? (
+              <>
+                {activeDetails === 'information' && (
+                  <div
+                    className={[
+                      styles['details-container'],
+                      styles['details-container-mobile'],
+                    ].join(' ')}
+                  >
+                    <div
+                      className={[
+                        styles['details-item-content'],
+                        styles['details-item-content-mobile'],
+                      ].join(' ')}
+                    >
+                      <div
+                        className={[
+                          styles['details-item-title'],
+                          styles['details-item-title-mobile'],
+                        ].join(' ')}
+                      >
+                        {t('material')}
+                      </div>
+                      <div
+                        className={[
+                          styles['details-item-value'],
+                          styles['details-item-value-mobile'],
+                        ].join(' ')}
+                      >
+                        {productProps.material}
+                      </div>
+                    </div>
+                    <div
+                      className={[
+                        styles['details-item-content'],
+                        styles['details-item-content-mobile'],
+                      ].join(' ')}
+                    >
+                      <div
+                        className={[
+                          styles['details-item-title'],
+                          styles['details-item-title-mobile'],
+                        ].join(' ')}
+                      >
+                        {t('weight')}
+                      </div>
+                      <div
+                        className={[
+                          styles['details-item-value'],
+                          styles['details-item-value-mobile'],
+                        ].join(' ')}
+                      >
+                        {productProps.weight}
+                      </div>
+                    </div>
+                    <div
+                      className={[
+                        styles['details-item-content'],
+                        styles['details-item-content-mobile'],
+                      ].join(' ')}
+                    >
+                      <div
+                        className={[
+                          styles['details-item-title'],
+                          styles['details-item-title-mobile'],
+                        ].join(' ')}
+                      >
+                        {t('countryOfOrigin')}
+                      </div>
+                      <div
+                        className={[
+                          styles['details-item-value'],
+                          styles['details-item-value-mobile'],
+                        ].join(' ')}
+                      >
+                        {productProps.countryOrigin}
+                      </div>
+                    </div>
+                    <div
+                      className={[
+                        styles['details-item-content'],
+                        styles['details-item-content-mobile'],
+                      ].join(' ')}
+                    >
+                      <div
+                        className={[
+                          styles['details-item-title'],
+                          styles['details-item-title-mobile'],
+                        ].join(' ')}
+                      >
+                        {t('dimensions')}
+                      </div>
+                      <div
+                        className={[
+                          styles['details-item-value'],
+                          styles['details-item-value-mobile'],
+                        ].join(' ')}
+                      >
+                        {productProps.dimensions}
+                      </div>
+                    </div>
+                    <div
+                      className={[
+                        styles['details-item-content'],
+                        styles['details-item-content-mobile'],
+                      ].join(' ')}
+                    >
+                      <div
+                        className={[
+                          styles['details-item-title'],
+                          styles['details-item-title-mobile'],
+                        ].join(' ')}
+                      >
+                        {t('type')}
+                      </div>
+                      <div
+                        className={[
+                          styles['details-item-value'],
+                          styles['details-item-value-mobile'],
+                        ].join(' ')}
+                      >
+                        {productProps.type}
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {activeDetails === 'shipping-and-returns' && (
+                  <div
+                    className={[
+                      styles['shipping-returns-container'],
+                      styles['shipping-returns-container-mobile'],
+                    ].join(' ')}
+                  >
+                    <div
+                      className={[
+                        styles['shipping-returns-content'],
+                        styles['shipping-returns-content-mobile'],
+                      ].join(' ')}
+                    >
+                      <div
+                        className={[
+                          styles['shipping-returns-title-container'],
+                          styles['shipping-returns-title-container-mobile'],
+                        ].join(' ')}
+                      >
+                        <Line.LocalShipping size={16} color={'#2A2A5F'} />
+                        <div
+                          className={[
+                            styles['shipping-returns-title'],
+                            styles['shipping-returns-title-mobile'],
+                          ].join(' ')}
+                        >
+                          {t('fastDelivery')}
+                        </div>
+                      </div>
+                      <div
+                        className={[
+                          styles['shipping-returns-description'],
+                          styles['shipping-returns-description-mobile'],
+                        ].join(' ')}
+                      >
+                        {t('fastDeliveryDescription')}
+                      </div>
+                    </div>
+                    <div
+                      className={[
+                        styles['shipping-returns-content'],
+                        styles['shipping-returns-content-mobile'],
+                      ].join(' ')}
+                    >
+                      <div
+                        className={[
+                          styles['shipping-returns-title-container'],
+                          styles['shipping-returns-title-container-mobile'],
+                        ].join(' ')}
+                      >
+                        <Line.Replay size={16} color={'#2A2A5F'} />
+                        <div
+                          className={[
+                            styles['shipping-returns-title'],
+                            styles['shipping-returns-title-mobile'],
+                          ].join(' ')}
+                        >
+                          {t('easyReturns')}
+                        </div>
+                      </div>
+                      <div
+                        className={[
+                          styles['shipping-returns-description'],
+                          styles['shipping-returns-description-mobile'],
+                        ].join(' ')}
+                      >
+                        {t('easyReturnsDescription')}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div
+                className={[
+                  styles['details-container'],
+                  styles['details-container-desktop'],
+                ].join(' ')}
+              >
+                {[1, 2, 3, 4, 5, 6].map(() => (
+                  <div
+                    className={[
+                      styles['details-item-content'],
+                      styles['details-item-content-desktop'],
+                    ].join(' ')}
+                  >
+                    <Skeleton
+                      className={[
+                        styles['details-title-skeleton'],
+                        styles['details-title-skeleton-desktop'],
+                      ].join(' ')}
+                      borderRadius={9999}
+                    />
+                    <Skeleton
+                      className={[
+                        styles['details-value-skeleton'],
+                        styles['details-value-skeleton-desktop'],
+                      ].join(' ')}
+                      borderRadius={9999}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </ResponsiveMobile>
   );
 }

@@ -82,22 +82,18 @@ export default function OrderItemComponent({
 
   return (
     <React.Suspense fallback={suspenceComponent}>
-      <ResponsiveDesktop>
-        <OrderItemDesktopComponent
-          order={order}
-          fulfillmentStatus={fulfillmentStatus}
-          getNumberOfItems={getNumberOfItems}
-          onClick={onClick}
-        />
-      </ResponsiveDesktop>
-      <ResponsiveMobile>
-        <OrderItemMobileComponent
-          order={order}
-          fulfillmentStatus={fulfillmentStatus}
-          getNumberOfItems={getNumberOfItems}
-          onClick={onClick}
-        />
-      </ResponsiveMobile>
+      <OrderItemDesktopComponent
+        order={order}
+        fulfillmentStatus={fulfillmentStatus}
+        getNumberOfItems={getNumberOfItems}
+        onClick={onClick}
+      />
+      <OrderItemMobileComponent
+        order={order}
+        fulfillmentStatus={fulfillmentStatus}
+        getNumberOfItems={getNumberOfItems}
+        onClick={onClick}
+      />
     </React.Suspense>
   );
 }

@@ -21,6 +21,7 @@ import CartController from '../../controllers/cart.controller';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
 import { ProductPreviewResponsiveProps } from '../product-preview.component';
+import { ResponsiveMobile } from '../responsive.component';
 
 export default function ProductPreviewMobileComponent({
   parentRef,
@@ -84,116 +85,119 @@ export default function ProductPreviewMobileComponent({
   }, [expanded]);
 
   return (
-    <Card
-      ref={ref}
-      classNames={{
-        container: [styles['root'], styles['root-mobile']].join(' '),
-        card: [styles['card'], styles['card-mobile']].join(' '),
-      }}
-      rippleProps={{
-        color: 'rgba(133, 38, 122, .35)',
-      }}
-      clickable={true}
-      onClick={() => {
-        onClick?.();
-        setTimeout(() => setExpanded(true), 75);
-      }}
-    >
-      <animated.div
-        className={[
-          styles['animated-root'],
-          styles['animated-root-mobile'],
-        ].join(' ')}
-        style={{
-          ...style,
-          position: expanded ? 'fixed' : 'initial',
-          zIndex: expanded ? 1 : 0,
+    <ResponsiveMobile>
+      <Card
+        ref={ref}
+        classNames={{
+          container: [styles['root'], styles['root-mobile']].join(' '),
+          card: [styles['card'], styles['card-mobile']].join(' '),
+        }}
+        rippleProps={{
+          color: 'rgba(133, 38, 122, .35)',
+        }}
+        clickable={true}
+        onClick={() => {
+          onClick?.();
+          setTimeout(() => setExpanded(true), 75);
         }}
       >
-        <div
+        <animated.div
           className={[
-            styles['thumbnail-container'],
-            styles['thumbnail-container-mobile'],
+            styles['animated-root'],
+            styles['animated-root-mobile'],
           ].join(' ')}
-          style={{ height: expanded ? '100%' : 'calc(100% - 38px)' }}
+          style={{
+            ...style,
+            position: expanded ? 'fixed' : 'initial',
+            zIndex: expanded ? 1 : 0,
+          }}
         >
-          <img
-            className={[
-              styles['thumbnail-image'],
-              styles['thumbnail-image-mobile'],
-            ].join(' ')}
-            src={preview.thumbnail || '../assets/svg/wine-bottle.svg'}
-          />
           <div
             className={[
-              styles['thumbnail-content-container'],
-              styles['thumbnail-content-container-mobile'],
+              styles['thumbnail-container'],
+              styles['thumbnail-container-mobile'],
             ].join(' ')}
+            style={{ height: expanded ? '100%' : 'calc(100% - 38px)' }}
           >
+            <img
+              className={[
+                styles['thumbnail-image'],
+                styles['thumbnail-image-mobile'],
+              ].join(' ')}
+              src={preview.thumbnail || '../assets/svg/wine-bottle.svg'}
+            />
             <div
               className={[
-                styles['thumbnail-top-content'],
-                styles['thumbnail-top-content-mobile'],
-              ].join(' ')}
-            ></div>
-            {!expanded && (
-              <div
-                className={[
-                  styles['thumbnail-bottom-content'],
-                  styles['thumbnail-bottom-content-mobile'],
-                ].join(' ')}
-              >
-                {selectedVariantId && (
-                  <Button
-                    classNames={{ button: styles['floating-button'] }}
-                    rippleProps={{
-                      color: 'rgba(133, 38, 122, .35)',
-                    }}
-                    rounded={true}
-                    onClick={addToCartAsync}
-                    icon={<Line.AddShoppingCart size={24} />}
-                  />
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-        {!expanded && (
-          <div
-            className={[styles['bottom-bar'], styles['bottom-bar-mobile']].join(
-              ' '
-            )}
-          >
-            <span
-              className={[
-                styles['product-title'],
-                styles['product-title-mobile'],
+                styles['thumbnail-content-container'],
+                styles['thumbnail-content-container-mobile'],
               ].join(' ')}
             >
-              {preview.title}
-            </span>
-            {price.length > 0 ? (
-              <span
-                className={[
-                  styles['product-price'],
-                  styles['product-price-mobile'],
-                ].join(' ')}
-              >
-                {price}
-              </span>
-            ) : (
               <div
                 className={[
-                  styles['product-limit-icon'],
-                  styles['product-limit-icon-mobile'],
+                  styles['thumbnail-top-content'],
+                  styles['thumbnail-top-content-mobile'],
+                ].join(' ')}
+              ></div>
+              {!expanded && (
+                <div
+                  className={[
+                    styles['thumbnail-bottom-content'],
+                    styles['thumbnail-bottom-content-mobile'],
+                  ].join(' ')}
+                >
+                  {selectedVariantId && (
+                    <Button
+                      classNames={{ button: styles['floating-button'] }}
+                      rippleProps={{
+                        color: 'rgba(133, 38, 122, .35)',
+                      }}
+                      rounded={true}
+                      onClick={addToCartAsync}
+                      icon={<Line.AddShoppingCart size={24} />}
+                    />
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+          {!expanded && (
+            <div
+              className={[
+                styles['bottom-bar'],
+                styles['bottom-bar-mobile'],
+              ].join(' ')}
+            >
+              <span
+                className={[
+                  styles['product-title'],
+                  styles['product-title-mobile'],
                 ].join(' ')}
               >
-                <Line.ProductionQuantityLimits size={20} />
-              </div>
-            )}
-          </div>
-        )}
-      </animated.div>
-    </Card>
+                {preview.title}
+              </span>
+              {price.length > 0 ? (
+                <span
+                  className={[
+                    styles['product-price'],
+                    styles['product-price-mobile'],
+                  ].join(' ')}
+                >
+                  {price}
+                </span>
+              ) : (
+                <div
+                  className={[
+                    styles['product-limit-icon'],
+                    styles['product-limit-icon-mobile'],
+                  ].join(' ')}
+                >
+                  <Line.ProductionQuantityLimits size={20} />
+                </div>
+              )}
+            </div>
+          )}
+        </animated.div>
+      </Card>
+    </ResponsiveMobile>
   );
 }
