@@ -7,7 +7,7 @@ import { ResponsiveSuspenseMobile } from 'src/components/responsive.component';
 
 export function ProductPreviewSuspenseMobileComponent(): JSX.Element {
   return (
-    <ResponsiveSuspenseMobile>
+    <ResponsiveSuspenseMobile inheritStyles={false}>
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
         <div
           className={[

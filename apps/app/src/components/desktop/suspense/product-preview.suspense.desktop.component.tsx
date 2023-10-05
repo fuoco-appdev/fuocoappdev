@@ -7,7 +7,7 @@ import { ResponsiveSuspenseDesktop } from 'src/components/responsive.component';
 
 export function ProductPreviewSuspenseDesktopComponent(): JSX.Element {
   return (
-    <ResponsiveSuspenseDesktop>
+    <ResponsiveSuspenseDesktop inheritStyles={false}>
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>
         <div
           className={[
