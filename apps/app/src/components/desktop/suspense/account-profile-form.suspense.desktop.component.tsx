@@ -3,10 +3,11 @@ import * as React from 'react';
 import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
 import styles from '../../account-profile-form.module.scss';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { ResponsiveSuspenseDesktop } from 'src/components/responsive.component';
 
 export function AccountProfileFormSuspenseDesktopComponent(): JSX.Element {
   return (
-    <>
+    <ResponsiveSuspenseDesktop>
       <div
         className={[
           styles['horizontal-input-container'],
@@ -45,6 +46,6 @@ export function AccountProfileFormSuspenseDesktopComponent(): JSX.Element {
         />
         <Skeleton style={{ width: '100%', height: 44 }} borderRadius={6} />
       </div>
-    </>
+    </ResponsiveSuspenseDesktop>
   );
 }

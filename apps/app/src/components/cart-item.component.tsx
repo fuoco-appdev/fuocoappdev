@@ -88,15 +88,8 @@ export default function CartItemComponent({
 
   const suspenceComponent = (
     <>
-      <ResponsiveDesktop>
-        <CartItemSuspenseDesktopComponent />
-      </ResponsiveDesktop>
-      <ResponsiveTablet>
-        <div />
-      </ResponsiveTablet>
-      <ResponsiveMobile>
-        <CartItemSuspenseMobileComponent />
-      </ResponsiveMobile>
+      <CartItemSuspenseDesktopComponent />
+      <CartItemSuspenseMobileComponent />
     </>
   );
 

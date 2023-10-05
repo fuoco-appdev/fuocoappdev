@@ -6,96 +6,103 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { AccountOrderHistorySuspenseDesktopComponent } from './account-order-history.suspense.desktop.component';
 import { AccountAddressesSuspenseDesktopComponent } from './account-addresses.suspense.desktop.component';
 import { AccountEditSuspenseDesktopComponent } from './account-edit.suspense.desktop.component';
+import { ResponsiveSuspenseDesktop } from 'src/components/responsive.component';
 
 export function AccountSuspenseDesktopComponent(): JSX.Element {
   return (
-    <div className={[styles['root'], styles['root-desktop']].join(' ')}>
-      <div className={[styles['top-bar'], styles['top-bar-desktop']].join(' ')}>
+    <ResponsiveSuspenseDesktop>
+      <div className={[styles['root'], styles['root-desktop']].join(' ')}>
         <div
-          className={[
-            styles['left-tab-container'],
-            styles['left-tab-container-desktop'],
-          ].join(' ')}
-        ></div>
-        <div
-          className={[
-            styles['right-tab-container'],
-            styles['right-tab-container-desktop'],
-          ].join(' ')}
+          className={[styles['top-bar'], styles['top-bar-desktop']].join(' ')}
         >
           <div
             className={[
-              styles['tab-button-container'],
-              styles['tab-button-container-desktop'],
+              styles['left-tab-container'],
+              styles['left-tab-container-desktop'],
             ].join(' ')}
-          >
-            <Skeleton style={{ width: 40, height: 40 }} borderRadius={40} />
-          </div>
-        </div>
-      </div>
-      <div
-        className={[
-          styles['avatar-container'],
-          styles['avatar-container-desktop'],
-        ].join(' ')}
-      >
-        <Skeleton style={{ width: 96, height: 96 }} borderRadius={96} />
-      </div>
-      <div
-        className={[styles['username'], styles['username-desktop']].join(' ')}
-      >
-        <Skeleton
-          count={1}
-          borderRadius={20}
-          height={20}
-          width={120}
-          className={[
-            styles['skeleton-user'],
-            styles['skeleton-user-desktop'],
-          ].join(' ')}
-        />
-      </div>
-      <div className={[styles['content'], styles['content-desktop']].join(' ')}>
-        <div
-          className={[
-            styles['left-content'],
-            styles['left-content-desktop'],
-          ].join(' ')}
-        >
+          ></div>
           <div
             className={[
-              styles['card-container'],
-              styles['card-container-desktop'],
-              styles['left-card-container-desktop'],
+              styles['right-tab-container'],
+              styles['right-tab-container-desktop'],
             ].join(' ')}
           >
-            <AccountOrderHistorySuspenseDesktopComponent />
+            <div
+              className={[
+                styles['tab-button-container'],
+                styles['tab-button-container-desktop'],
+              ].join(' ')}
+            >
+              <Skeleton style={{ width: 40, height: 40 }} borderRadius={40} />
+            </div>
           </div>
         </div>
         <div
           className={[
-            styles['right-content'],
-            styles['right-content-desktop'],
+            styles['avatar-container'],
+            styles['avatar-container-desktop'],
           ].join(' ')}
+        >
+          <Skeleton style={{ width: 96, height: 96 }} borderRadius={96} />
+        </div>
+        <div
+          className={[styles['username'], styles['username-desktop']].join(' ')}
+        >
+          <Skeleton
+            count={1}
+            borderRadius={20}
+            height={20}
+            width={120}
+            className={[
+              styles['skeleton-user'],
+              styles['skeleton-user-desktop'],
+            ].join(' ')}
+          />
+        </div>
+        <div
+          className={[styles['content'], styles['content-desktop']].join(' ')}
         >
           <div
             className={[
-              styles['card-container'],
-              styles['card-container-desktop'],
+              styles['left-content'],
+              styles['left-content-desktop'],
             ].join(' ')}
           >
-            <AccountAddressesSuspenseDesktopComponent />
+            <div
+              className={[
+                styles['card-container'],
+                styles['card-container-desktop'],
+                styles['left-card-container-desktop'],
+              ].join(' ')}
+            >
+              <AccountOrderHistorySuspenseDesktopComponent />
+            </div>
           </div>
           <div
             className={[
-              styles['card-container'],
-              styles['card-container-desktop'],
+              styles['right-content'],
+              styles['right-content-desktop'],
             ].join(' ')}
           >
-            <AccountEditSuspenseDesktopComponent />
+            <div
+              className={[
+                styles['card-container'],
+                styles['card-container-desktop'],
+              ].join(' ')}
+            >
+              <AccountAddressesSuspenseDesktopComponent />
+            </div>
+            <div
+              className={[
+                styles['card-container'],
+                styles['card-container-desktop'],
+              ].join(' ')}
+            >
+              <AccountEditSuspenseDesktopComponent />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </ResponsiveSuspenseDesktop>
   );
 }

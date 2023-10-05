@@ -125,6 +125,7 @@ export async function render(
     {
       bootstrapScripts: ['/main.js'],
       onShellReady: () => {
+        response.setHeader('Content-type', 'text/html');
         pipe(htmlWritable);
       },
     }
@@ -191,4 +192,6 @@ export async function render(
     }
     response.send(indexHtml);
   });
+
+  setTimeout(abort, 10000);
 }

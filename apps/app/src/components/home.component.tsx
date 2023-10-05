@@ -84,15 +84,8 @@ export default function HomeComponent(): JSX.Element {
 
   const suspenceComponent = (
     <>
-      <ResponsiveDesktop>
-        <HomeSuspenseDesktopComponent />
-      </ResponsiveDesktop>
-      <ResponsiveTablet>
-        <div />
-      </ResponsiveTablet>
-      <ResponsiveMobile>
-        <HomeSuspenseMobileComponent />
-      </ResponsiveMobile>
+      <HomeSuspenseDesktopComponent />
+      <HomeSuspenseMobileComponent />
     </>
   );
 

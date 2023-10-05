@@ -240,15 +240,8 @@ export default function StoreComponent(): JSX.Element {
 
   const suspenceComponent = (
     <>
-      <ResponsiveDesktop>
-        <StoreSuspenseDesktopComponent />
-      </ResponsiveDesktop>
-      <ResponsiveTablet>
-        <div />
-      </ResponsiveTablet>
-      <ResponsiveMobile>
-        <StoreSuspenseMobileComponent />
-      </ResponsiveMobile>
+      <StoreSuspenseDesktopComponent />
+      <StoreSuspenseMobileComponent />
     </>
   );
 

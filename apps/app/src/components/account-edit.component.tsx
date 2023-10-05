@@ -45,15 +45,8 @@ export default function AccountEditComponent(): JSX.Element {
 
   const suspenceComponent = (
     <>
-      <ResponsiveDesktop>
-        <AccountEditSuspenseDesktopComponent />
-      </ResponsiveDesktop>
-      <ResponsiveTablet>
-        <div />
-      </ResponsiveTablet>
-      <ResponsiveMobile>
-        <AccountEditSuspenseMobileComponent />
-      </ResponsiveMobile>
+      <AccountEditSuspenseDesktopComponent />
+      <AccountEditSuspenseMobileComponent />
     </>
   );
 

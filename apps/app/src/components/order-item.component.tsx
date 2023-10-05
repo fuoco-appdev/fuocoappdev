@@ -64,15 +64,8 @@ export default function OrderItemComponent({
 
   const suspenceComponent = (
     <>
-      <ResponsiveDesktop>
-        <OrderItemSuspenseDesktopComponent />
-      </ResponsiveDesktop>
-      <ResponsiveTablet>
-        <div />
-      </ResponsiveTablet>
-      <ResponsiveMobile>
-        <OrderItemSuspenseMobileComponent />
-      </ResponsiveMobile>
+      <OrderItemSuspenseDesktopComponent />
+      <OrderItemSuspenseMobileComponent />
     </>
   );
 

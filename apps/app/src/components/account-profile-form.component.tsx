@@ -77,15 +77,8 @@ export default function AccountProfileFormComponent({
 
   const suspenceComponent = (
     <>
-      <ResponsiveDesktop>
-        <AccountProfileFormSuspenseDesktopComponent />
-      </ResponsiveDesktop>
-      <ResponsiveTablet>
-        <div />
-      </ResponsiveTablet>
-      <ResponsiveMobile>
-        <AccountProfileFormSuspenseMobileComponent />
-      </ResponsiveMobile>
+      <AccountProfileFormSuspenseDesktopComponent />
+      <AccountProfileFormSuspenseMobileComponent />
     </>
   );
 

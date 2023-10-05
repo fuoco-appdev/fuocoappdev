@@ -51,15 +51,8 @@ export default function AccountOrderHistoryComponent(): JSX.Element {
 
   const suspenceComponent = (
     <>
-      <ResponsiveDesktop>
-        <AccountOrderHistorySuspenseDesktopComponent />
-      </ResponsiveDesktop>
-      <ResponsiveTablet>
-        <div />
-      </ResponsiveTablet>
-      <ResponsiveMobile>
-        <AccountOrderHistorySuspenseMobileComponent />
-      </ResponsiveMobile>
+      <AccountOrderHistorySuspenseDesktopComponent />
+      <AccountOrderHistorySuspenseMobileComponent />
     </>
   );
 

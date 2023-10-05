@@ -49,15 +49,8 @@ export default function AccountComponent(): JSX.Element {
 
   const suspenceComponent = (
     <>
-      <ResponsiveDesktop>
-        <AccountSuspenseDesktopComponent />
-      </ResponsiveDesktop>
-      <ResponsiveTablet>
-        <div />
-      </ResponsiveTablet>
-      <ResponsiveMobile>
-        <AccountSuspenseMobileComponent />
-      </ResponsiveMobile>
+      <AccountSuspenseDesktopComponent />
+      <AccountSuspenseMobileComponent />
     </>
   );
 

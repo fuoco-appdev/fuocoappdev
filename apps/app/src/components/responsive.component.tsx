@@ -59,6 +59,55 @@ export function useMobileEffect(
 
 export interface ResponsiveProps {
   children: any;
+  inheritStyles?: boolean;
+}
+
+export function ResponsiveSuspenseDesktop({
+  children,
+  inheritStyles = true,
+}: ResponsiveProps) {
+  return (
+    <div
+      className={[
+        styles['desktop-layout'],
+        inheritStyles ? styles['inherit'] : '',
+      ].join(' ')}
+    >
+      {children}
+    </div>
+  );
+}
+
+export function ResponsiveSuspenseTablet({
+  children,
+  inheritStyles = true,
+}: ResponsiveProps) {
+  return (
+    <div
+      className={[
+        styles['tablet-layout'],
+        inheritStyles ? styles['inherit'] : '',
+      ].join(' ')}
+    >
+      {children}
+    </div>
+  );
+}
+
+export function ResponsiveSuspenseMobile({
+  children,
+  inheritStyles = true,
+}: ResponsiveProps) {
+  return (
+    <div
+      className={[
+        styles['mobile-layout'],
+        inheritStyles ? styles['inherit'] : '',
+      ].join(' ')}
+    >
+      {children}
+    </div>
+  );
 }
 
 export function ResponsiveDesktop({ children }: ResponsiveProps) {

@@ -27,15 +27,8 @@ export default function AddressItemComponent(
 ): JSX.Element {
   const suspenceComponent = (
     <>
-      <ResponsiveDesktop>
-        <AddressItemSuspenseDesktopComponent />
-      </ResponsiveDesktop>
-      <ResponsiveTablet>
-        <div />
-      </ResponsiveTablet>
-      <ResponsiveMobile>
-        <AddressItemSuspenseMobileComponent />
-      </ResponsiveMobile>
+      <AddressItemSuspenseDesktopComponent />
+      <AddressItemSuspenseMobileComponent />
     </>
   );
 

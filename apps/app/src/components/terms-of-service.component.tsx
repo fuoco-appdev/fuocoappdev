@@ -2,6 +2,9 @@ import { Helmet } from 'react-helmet';
 import {
   ResponsiveDesktop,
   ResponsiveMobile,
+  ResponsiveSuspenseDesktop,
+  ResponsiveSuspenseMobile,
+  ResponsiveSuspenseTablet,
   ResponsiveTablet,
 } from './responsive.component';
 import { useState, useEffect } from 'react';
@@ -37,15 +40,15 @@ export default function TermsOfServiceComponent(): JSX.Element {
 
   const suspenceComponent = (
     <>
-      <ResponsiveDesktop>
+      <ResponsiveSuspenseDesktop>
         <div />
-      </ResponsiveDesktop>
-      <ResponsiveTablet>
+      </ResponsiveSuspenseDesktop>
+      <ResponsiveSuspenseTablet>
         <div />
-      </ResponsiveTablet>
-      <ResponsiveMobile>
+      </ResponsiveSuspenseTablet>
+      <ResponsiveSuspenseMobile>
         <div />
-      </ResponsiveMobile>
+      </ResponsiveSuspenseMobile>
     </>
   );
 

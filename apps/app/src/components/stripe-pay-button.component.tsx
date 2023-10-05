@@ -2,6 +2,9 @@ import { MutableRefObject, useEffect, useRef } from 'react';
 import {
   ResponsiveDesktop,
   ResponsiveMobile,
+  ResponsiveSuspenseDesktop,
+  ResponsiveSuspenseMobile,
+  ResponsiveSuspenseTablet,
   ResponsiveTablet,
 } from './responsive.component';
 import {
@@ -77,15 +80,15 @@ export default function StripePayButtonComponent({
 
   const suspenceComponent = (
     <>
-      <ResponsiveDesktop>
+      <ResponsiveSuspenseDesktop>
         <div />
-      </ResponsiveDesktop>
-      <ResponsiveTablet>
+      </ResponsiveSuspenseDesktop>
+      <ResponsiveSuspenseTablet>
         <div />
-      </ResponsiveTablet>
-      <ResponsiveMobile>
+      </ResponsiveSuspenseTablet>
+      <ResponsiveSuspenseMobile>
         <div />
-      </ResponsiveMobile>
+      </ResponsiveSuspenseMobile>
     </>
   );
 

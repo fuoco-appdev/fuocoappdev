@@ -88,26 +88,19 @@ export default function WindowComponent(): JSX.Element {
     WindowController.addToast(undefined);
   }, [windowProps.toast]);
 
-  const suspenceComponent = (
+  const suspenseComponent = (
     <>
-      <ResponsiveDesktop>
-        <WindowSuspenseDesktopComponent />
-      </ResponsiveDesktop>
-      <ResponsiveTablet>
-        <div />
-      </ResponsiveTablet>
-      <ResponsiveMobile>
-        <WindowSuspenseMobileComponent />
-      </ResponsiveMobile>
+      <WindowSuspenseDesktopComponent />
+      <WindowSuspenseMobileComponent />
     </>
   );
 
   if (process.env['DEBUG_SUSPENSE'] === 'true') {
-    return suspenceComponent;
+    return suspenseComponent;
   }
 
   return (
-    <React.Suspense fallback={suspenceComponent}>
+    <React.Suspense fallback={suspenseComponent}>
       <WindowDesktopComponent
         windowProps={windowProps}
         windowLocalProps={windowLocalProps}

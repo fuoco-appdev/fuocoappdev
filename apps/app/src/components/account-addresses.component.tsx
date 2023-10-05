@@ -157,15 +157,8 @@ export default function AccountAddressesComponent(): JSX.Element {
 
   const suspenceComponent = (
     <>
-      <ResponsiveDesktop>
-        <AccountAddressesSuspenseDesktopComponent />
-      </ResponsiveDesktop>
-      <ResponsiveTablet>
-        <div />
-      </ResponsiveTablet>
-      <ResponsiveMobile>
-        <AccountAddressesSuspenseMobileComponent />
-      </ResponsiveMobile>
+      <AccountAddressesSuspenseDesktopComponent />
+      <AccountAddressesSuspenseMobileComponent />
     </>
   );
 

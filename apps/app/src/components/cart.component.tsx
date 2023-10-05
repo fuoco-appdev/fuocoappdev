@@ -72,15 +72,8 @@ export default function CartComponent(): JSX.Element {
 
   const suspenceComponent = (
     <>
-      <ResponsiveDesktop>
-        <CartSuspenseDesktopComponent />
-      </ResponsiveDesktop>
-      <ResponsiveTablet>
-        <div />
-      </ResponsiveTablet>
-      <ResponsiveMobile>
-        <CartSuspenseMobileComponent />
-      </ResponsiveMobile>
+      <CartSuspenseDesktopComponent />
+      <CartSuspenseMobileComponent />
     </>
   );
 

@@ -133,15 +133,8 @@ export default function ProductPreviewComponent({
 
   const suspenceComponent = (
     <>
-      <ResponsiveDesktop>
-        <ProductPreviewSuspenseDesktopComponent />
-      </ResponsiveDesktop>
-      <ResponsiveTablet>
-        <div />
-      </ResponsiveTablet>
-      <ResponsiveMobile>
-        <ProductPreviewSuspenseMobileComponent />
-      </ResponsiveMobile>
+      <ProductPreviewSuspenseDesktopComponent />
+      <ProductPreviewSuspenseMobileComponent />
     </>
   );
 
