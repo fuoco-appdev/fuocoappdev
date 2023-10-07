@@ -21,6 +21,8 @@ import { StoreState } from '../models/store.model';
 import { lazy } from '@loadable/component';
 import { timeout } from 'promise-timeout';
 import React from 'react';
+import { ProductSuspenseDesktopComponent } from './desktop/suspense/product.suspense.desktop.component';
+import { ProductSuspenseMobileComponent } from './mobile/suspense/product.suspense.mobile.component';
 
 const ProductDesktopComponent = lazy(() =>
   timeout(import('./desktop/product.desktop.component'), 150)
@@ -196,15 +198,8 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
 
   const suspenceComponent = (
     <>
-      <ResponsiveDesktop>
-        <div />
-      </ResponsiveDesktop>
-      <ResponsiveTablet>
-        <div />
-      </ResponsiveTablet>
-      <ResponsiveMobile>
-        <div />
-      </ResponsiveMobile>
+      <ProductSuspenseDesktopComponent />
+      <ProductSuspenseMobileComponent />
     </>
   );
 

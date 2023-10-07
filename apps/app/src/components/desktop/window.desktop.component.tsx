@@ -46,7 +46,6 @@ export default function WindowDesktopComponent({
 
   useDesktopEffect(() => {
     setDate(new Date(Date.now()));
-    WindowController.updateShowNavigateBack(true);
   }, []);
 
   const account = windowProps.account as core.Account;
@@ -452,7 +451,10 @@ export default function WindowDesktopComponent({
           >
             <CSSTransition
               nodeRef={navigationBackRef}
-              in={windowProps.showNavigateBack}
+              in={
+                windowProps.showNavigateBack &&
+                Boolean(navigationBackRef.current)
+              }
               timeout={150}
               classNames={{
                 appear: styles['navigation-back-appear'],

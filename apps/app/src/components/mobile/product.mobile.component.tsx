@@ -848,27 +848,27 @@ export default function ProductMobileComponent({
               <div
                 className={[
                   styles['details-container'],
-                  styles['details-container-desktop'],
+                  styles['details-container-mobile'],
                 ].join(' ')}
               >
                 {[1, 2, 3, 4, 5, 6].map(() => (
                   <div
                     className={[
                       styles['details-item-content'],
-                      styles['details-item-content-desktop'],
+                      styles['details-item-content-mobile'],
                     ].join(' ')}
                   >
                     <Skeleton
                       className={[
                         styles['details-title-skeleton'],
-                        styles['details-title-skeleton-desktop'],
+                        styles['details-title-skeleton-mobile'],
                       ].join(' ')}
                       borderRadius={9999}
                     />
                     <Skeleton
                       className={[
                         styles['details-value-skeleton'],
-                        styles['details-value-skeleton-desktop'],
+                        styles['details-value-skeleton-mobile'],
                       ].join(' ')}
                       borderRadius={9999}
                     />
