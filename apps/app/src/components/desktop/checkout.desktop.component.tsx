@@ -355,7 +355,7 @@ export default function CheckoutDesktopComponent({
                           CheckoutController.updateBillingAddress({
                             city: event.target.value,
                           }),
-                        country: (index, id) =>
+                        country: (id, value) =>
                           CheckoutController.updateBillingAddress({
                             countryCode: id,
                           }),

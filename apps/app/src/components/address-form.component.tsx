@@ -124,6 +124,7 @@ export default function AddressFormComponent({
 
   useEffect(() => {
     if (countryOptions.length > 0) {
+      console.log(countryOptions);
       const country = countryOptions.find(
         (value) => value.id === selectedCountryId
       );
