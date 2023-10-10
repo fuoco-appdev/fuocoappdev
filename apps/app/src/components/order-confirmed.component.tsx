@@ -82,7 +82,7 @@ export default function OrderConfirmedComponent(): JSX.Element {
       OrderConfirmedController.updateRefundItem(item.id, {
         item_id: item.id,
         quantity: item.quantity,
-        reason_id: props.returnReasons[0].id ?? '',
+        reason_id: props.returnReasons[0]?.id ?? '',
         note: '',
       });
     }
