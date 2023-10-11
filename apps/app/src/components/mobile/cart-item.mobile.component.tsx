@@ -17,6 +17,7 @@ import { ResponsiveMobile } from '../responsive.component';
 export default function CartItemMobileComponent({
   storeProps,
   item,
+  quantity,
   onRemove,
   vintage,
   hasReducedPrice,
@@ -118,7 +119,7 @@ export default function CartItemMobileComponent({
                     styles['quantity-mobile'],
                   ].join(' ')}
                 >
-                  {item.quantity}
+                  {quantity}
                 </div>
                 <Button
                   block={true}

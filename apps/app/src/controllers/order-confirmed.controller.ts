@@ -39,12 +39,7 @@ class OrderConfirmedController extends Controller {
         await this.updateLocalOrderAsync(orderResponse.order);
       }
     } catch (error: any) {
-      WindowController.addToast({
-        key: `retrieve-order-${Math.random()}`,
-        message: error.name,
-        description: error.message,
-        type: 'error',
-      });
+      console.error(error);
     }
   }
 
@@ -73,12 +68,7 @@ class OrderConfirmedController extends Controller {
         items: items,
       });
     } catch (error: any) {
-      WindowController.addToast({
-        key: `return-items-${Math.random()}`,
-        message: error.name,
-        description: error.message,
-        type: 'error',
-      });
+      console.error(error);
     }
   }
 
@@ -112,12 +102,7 @@ class OrderConfirmedController extends Controller {
           );
           product = productResponse?.product;
         } catch (error: any) {
-          WindowController.addToast({
-            key: `retrieve-product-${Math.random()}`,
-            message: error.name,
-            description: error.message,
-            type: 'error',
-          });
+          console.error(error);
         }
       }
 

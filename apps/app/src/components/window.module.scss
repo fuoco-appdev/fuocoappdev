@@ -1,13 +1,18 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
 .root {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   height: 100%;
   width: 100vw;
   min-width: 100%;
   background: #fff;
   overflow: hidden;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   /* Prevent native touch events on Windows */
   -ms-touch-action: none;
 
@@ -33,6 +38,8 @@
   }
 
   & .content {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
     height: 100%;
     width: 100%;
@@ -63,8 +70,12 @@
       border-radius: $rounded-full;
       background-color: $brand-500;
       text-align: center;
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
-      justify-content: center;
+      -webkit-box-pack: center;
+          -ms-flex-pack: center;
+              justify-content: center;
 
       .cart-number {
         font-size: 10px;
@@ -111,9 +122,12 @@
 
   & .bottom-bar-mobile {
     position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
     background-color: $brand-900;
-    box-shadow: $shadow-6;
+    -webkit-box-shadow: $shadow-6;
+            box-shadow: $shadow-6;
     height: 56px;
 
     & .shopping-cart-container-mobile {
@@ -136,7 +150,8 @@
         }
 
         & .shopping-cart-button-container-mobile {
-          box-shadow: $shadow-1;
+          -webkit-box-shadow: $shadow-1;
+                  box-shadow: $shadow-1;
         }
   
         & .shopping-cart-button-mobile {
@@ -146,41 +161,75 @@
     }
 
     & .tab-container {
+      display: -ms-grid;
       display: grid;
+      -ms-grid-columns: 1fr 56px 1fr;
       grid-template-columns: 1fr 56px 1fr;
       width: 100%;
-      align-items: center;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
 
       & .left-tab-container {
-        grid-column-start: 1;
+        -ms-grid-column: 1;
+            grid-column-start: 1;
+        -ms-grid-column-span: 1;
         grid-column-end: 2;
         padding: 0 $mp-2;
+        display: -webkit-box;
+        display: -ms-flexbox;
         display: flex;
-        justify-content: flex-start;
-        flex-direction: row;
+        -webkit-box-pack: start;
+            -ms-flex-pack: start;
+                justify-content: flex-start;
+        -webkit-box-orient: horizontal;
+        -webkit-box-direction: normal;
+            -ms-flex-direction: row;
+                flex-direction: row;
       }
 
       & .right-tab-container {
-        grid-column-start: 3;
+        -ms-grid-column: 3;
+            grid-column-start: 3;
+        -ms-grid-column-span: 1;
         grid-column-end: 4;
         padding: 0 $mp-2;
+        display: -webkit-box;
+        display: -ms-flexbox;
         display: flex;
-        justify-content: flex-end;
-        flex-direction: row;
+        -webkit-box-pack: end;
+            -ms-flex-pack: end;
+                justify-content: flex-end;
+        -webkit-box-orient: horizontal;
+        -webkit-box-direction: normal;
+            -ms-flex-direction: row;
+                flex-direction: row;
       }
     }
 
     & .navigation-back-container {
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
-      flex-direction: row;
-      align-items: center;
+      -webkit-box-orient: horizontal;
+      -webkit-box-direction: normal;
+          -ms-flex-direction: row;
+              flex-direction: row;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
       padding: 0 $mp-2;
       height: 100%;
       width: 100%;
 
       & .navigation-back-text-container {
+        display: -webkit-box;
+        display: -ms-flexbox;
         display: flex;
-        flex-direction: row;
+        -webkit-box-orient: horizontal;
+        -webkit-box-direction: normal;
+            -ms-flex-direction: row;
+                flex-direction: row;
         font-size: $font-size-sm;
         text-transform: capitalize;
         line-height: 24px;
@@ -188,29 +237,51 @@
         font-weight: $font-weight-bold;
         padding-right: 40px;
         width: 100%;
-        flex: 1;
+        -webkit-box-flex: 1;
+            -ms-flex: 1;
+                flex: 1;
         gap: $mp-2;
         text-align: center;
-        justify-content: center;
+        -webkit-box-pack: center;
+            -ms-flex-pack: center;
+                justify-content: center;
       }
     }
   }
 }
 
 .root-tablet {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   background-color: $brand-900;
   height: 100%;
   width: 100%;
 
   & .content-container-tablet {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
 
     & .logo-tablet {
       width: 25%;
@@ -228,28 +299,52 @@
 .root-desktop {
   & .top-bar-desktop {
     position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
     min-height: 56px;
     width: 100%;
     background-color: $brand-900;
-    box-shadow: $shadow-1;
+    -webkit-box-shadow: $shadow-1;
+            box-shadow: $shadow-1;
     padding: 0 $mp-6;
     z-index: 20;
 
     & .top-bar-left-content-desktop {
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
-      justify-content: center;
-      flex-direction: row;
-      align-items: center;
+      -webkit-box-pack: center;
+          -ms-flex-pack: center;
+              justify-content: center;
+      -webkit-box-orient: horizontal;
+      -webkit-box-direction: normal;
+          -ms-flex-direction: row;
+              flex-direction: row;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
       height: 100%;
       gap: $mp-4;
 
       & .logo-container-desktop {
+        display: -webkit-box;
+        display: -ms-flexbox;
         display: flex;
-        flex-direction: row;
-        justify-content: center;
+        -webkit-box-orient: horizontal;
+        -webkit-box-direction: normal;
+            -ms-flex-direction: row;
+                flex-direction: row;
+        -webkit-box-pack: center;
+            -ms-flex-pack: center;
+                justify-content: center;
         height: 28px;
         gap: $mp-3;
 
@@ -261,10 +356,19 @@
     }
 
     & .top-bar-right-content-desktop {
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
-      justify-content: center;
-      flex-direction: row;
-      align-items: center;
+      -webkit-box-pack: center;
+          -ms-flex-pack: center;
+              justify-content: center;
+      -webkit-box-orient: horizontal;
+      -webkit-box-direction: normal;
+          -ms-flex-direction: row;
+              flex-direction: row;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
       height: 100%;
       gap: $mp-4;
 
@@ -285,12 +389,22 @@
   }
 
   & .content-desktop {
-    flex-direction: row;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
 
     & .side-bar-desktop {
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+          -ms-flex-direction: column;
+              flex-direction: column;
+      -webkit-box-pack: justify;
+          -ms-flex-pack: justify;
+              justify-content: space-between;
       border-right-width: 1px;
       border-left-width: 0px;
       border-top-width: 0px;
@@ -303,8 +417,13 @@
       height: 100%;
 
       & .skeleton-tabs-desktop {
+        display: -webkit-box;
+        display: -ms-flexbox;
         display: flex;
-        flex-direction: column;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+            -ms-flex-direction: column;
+                flex-direction: column;
         padding: $mp-4 0;
         gap: $mp-2;
       }
@@ -319,15 +438,26 @@
         padding: $mp-4 0;
 
         & .side-bar-link-container-desktop {
+          display: -webkit-box;
+          display: -ms-flexbox;
           display: flex;
-          flex-direction: row;
-          justify-content: space-between;
+          -webkit-box-orient: horizontal;
+          -webkit-box-direction: normal;
+              -ms-flex-direction: row;
+                  flex-direction: row;
+          -webkit-box-pack: justify;
+              -ms-flex-pack: justify;
+                  justify-content: space-between;
           text-align: center;
         }
 
         & .copyright-text-desktop {
+          display: -webkit-box;
+          display: -ms-flexbox;
           display: flex;
-          justify-content: center;
+          -webkit-box-pack: center;
+              -ms-flex-pack: center;
+                  justify-content: center;
           width: 100%;
           padding: $mp-4;
           font-size: $font-size-xs;
@@ -338,8 +468,13 @@
     }
 
     & .right-content-desktop {
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
-      flex-direction: column;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+          -ms-flex-direction: column;
+              flex-direction: column;
       overflow: hidden;
       /* Prevent native touch events on Windows */
       -ms-touch-action: none;
@@ -362,9 +497,16 @@
       & .navigation-back-container-desktop {
         position: absolute;
         top: -56px;
+        display: -webkit-box;
+        display: -ms-flexbox;
         display: flex;
-        justify-content: space-between;
-        flex-direction: row;
+        -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
+                justify-content: space-between;
+        -webkit-box-orient: horizontal;
+        -webkit-box-direction: normal;
+            -ms-flex-direction: row;
+                flex-direction: row;
         width: -moz-available;          /* WebKit-based browsers will ignore this. */
         width: -webkit-fill-available;  /* Mozilla-based browsers will ignore this. */
         width: stretch;
@@ -381,17 +523,32 @@
         background-color: #fff;
 
         & .navigation-back-left-content-desktop {
+          display: -webkit-box;
+          display: -ms-flexbox;
           display: flex;
-          flex-direction: column;
-          justify-content: center;
+          -webkit-box-orient: vertical;
+          -webkit-box-direction: normal;
+              -ms-flex-direction: column;
+                  flex-direction: column;
+          -webkit-box-pack: center;
+              -ms-flex-pack: center;
+                  justify-content: center;
           height: 100%;
+          width: -webkit-fit-content;
+          width: -moz-fit-content;
           width: fit-content;
         }
 
         & .navigation-back-center-content-desktop {
+          display: -webkit-box;
+          display: -ms-flexbox;
           display: flex;
-          justify-content: center;
-          align-items: center;
+          -webkit-box-pack: center;
+              -ms-flex-pack: center;
+                  justify-content: center;
+          -webkit-box-align: center;
+              -ms-flex-align: center;
+                  align-items: center;
           font-weight: $font-weight-bold;
           color: $brand-900;
           gap: $mp-2;
@@ -399,10 +556,19 @@
         }
 
         & .navigation-back-right-content-desktop {
+          display: -webkit-box;
+          display: -ms-flexbox;
           display: flex;
-          flex-direction: column;
-          justify-content: center;
+          -webkit-box-orient: vertical;
+          -webkit-box-direction: normal;
+              -ms-flex-direction: column;
+                  flex-direction: column;
+          -webkit-box-pack: center;
+              -ms-flex-pack: center;
+                  justify-content: center;
           height: 100%;
+          width: -webkit-fit-content;
+          width: -moz-fit-content;
           width: fit-content;
         }
       }
@@ -415,10 +581,14 @@
 }
 
 .top-bar-button-container {
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
   width: fit-content;
 }
 
 .tab-button-container {
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
   width: fit-content;
   padding-right: $mp-1;
 }
@@ -439,13 +609,21 @@
 }
 
 .tab-outline-open {
-  transition-duration: 250ms !important;
-  transition-timing-function: $transition-decelerated-easing !important;
+  -webkit-transition-duration: 250ms !important;
+       -o-transition-duration: 250ms !important;
+          transition-duration: 250ms !important;
+  -webkit-transition-timing-function: $transition-decelerated-easing !important;
+       -o-transition-timing-function: $transition-decelerated-easing !important;
+          transition-timing-function: $transition-decelerated-easing !important;
 }
 
 .tab-outline-close {
-  transition-duration: 250ms !important;
-  transition-timing-function: $transition-decelerated-easing !important;
+  -webkit-transition-duration: 250ms !important;
+       -o-transition-duration: 250ms !important;
+          transition-duration: 250ms !important;
+  -webkit-transition-timing-function: $transition-decelerated-easing !important;
+       -o-transition-timing-function: $transition-decelerated-easing !important;
+          transition-timing-function: $transition-decelerated-easing !important;
 
 }
 
@@ -471,38 +649,62 @@
 }
 
 .right-to-left-enter {
-  transform: translateX(100%);
+  -webkit-transform: translateX(100%);
+      -ms-transform: translateX(100%);
+          transform: translateX(100%);
 }
 
 .right-to-left-enter-active {
-  transform: translateX(0);
+  -webkit-transform: translateX(0);
+      -ms-transform: translateX(0);
+          transform: translateX(0);
+  -webkit-transition: all 250ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  -o-transition: all 250ms cubic-bezier(0.4, 0.0, 0.2, 1);
   transition: all 250ms cubic-bezier(0.4, 0.0, 0.2, 1);
 }      
 
 .right-to-left-exit {
-  transform: translateX(0);
+  -webkit-transform: translateX(0);
+      -ms-transform: translateX(0);
+          transform: translateX(0);
 }
 
 .right-to-left-exit-active {
-  transform: translateX(-100%);
+  -webkit-transform: translateX(-100%);
+      -ms-transform: translateX(-100%);
+          transform: translateX(-100%);
+  -webkit-transition: all 250ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  -o-transition: all 250ms cubic-bezier(0.4, 0.0, 0.2, 1);
   transition: all 250ms cubic-bezier(0.4, 0.0, 0.2, 1);
 }      
 
 .left-to-right-enter {
-  transform: translateX(-100%);
+  -webkit-transform: translateX(-100%);
+      -ms-transform: translateX(-100%);
+          transform: translateX(-100%);
 }
 
 .left-to-right-enter-active {
-  transform: translateX(0);
+  -webkit-transform: translateX(0);
+      -ms-transform: translateX(0);
+          transform: translateX(0);
+  -webkit-transition: all 250ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  -o-transition: all 250ms cubic-bezier(0.4, 0.0, 0.2, 1);
   transition: all 250ms cubic-bezier(0.4, 0.0, 0.2, 1);
 }      
 
 .left-to-right-exit {
-  transform: translateX(0);
+  -webkit-transform: translateX(0);
+      -ms-transform: translateX(0);
+          transform: translateX(0);
 }
 
 .left-to-right-exit-active {
-  transform: translateX(100%);
+  -webkit-transform: translateX(100%);
+      -ms-transform: translateX(100%);
+          transform: translateX(100%);
+  -webkit-transition: all 250ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  -o-transition: all 250ms cubic-bezier(0.4, 0.0, 0.2, 1);
   transition: all 250ms cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
@@ -524,43 +726,67 @@
 .side-bar-enter {
   width: 88px !important;
   min-width: 88px !important;
-  transition-duration: 250ms;
-  transition-timing-function: $transition-standard-easing;
+  -webkit-transition-duration: 250ms;
+       -o-transition-duration: 250ms;
+          transition-duration: 250ms;
+  -webkit-transition-timing-function: $transition-standard-easing;
+       -o-transition-timing-function: $transition-standard-easing;
+          transition-timing-function: $transition-standard-easing;
 }
 
 .side-bar-enter-active {
   width: 256px !important;
   min-width: 256px !important;
-  transition-duration: 250ms;
-  transition-timing-function: $transition-standard-easing;
+  -webkit-transition-duration: 250ms;
+       -o-transition-duration: 250ms;
+          transition-duration: 250ms;
+  -webkit-transition-timing-function: $transition-standard-easing;
+       -o-transition-timing-function: $transition-standard-easing;
+          transition-timing-function: $transition-standard-easing;
 }
 
 .side-bar-enter-done {
   width: 256px !important;
   min-width: 256px !important;
-  transition-duration: 250ms;
-  transition-timing-function: $transition-standard-easing;
+  -webkit-transition-duration: 250ms;
+       -o-transition-duration: 250ms;
+          transition-duration: 250ms;
+  -webkit-transition-timing-function: $transition-standard-easing;
+       -o-transition-timing-function: $transition-standard-easing;
+          transition-timing-function: $transition-standard-easing;
 }
 
 .side-bar-exit {
   width: 256px !important;
   min-width: 256px !important;
-  transition-duration: 300ms;
-  transition-timing-function: $transition-decelerated-easing;
+  -webkit-transition-duration: 300ms;
+       -o-transition-duration: 300ms;
+          transition-duration: 300ms;
+  -webkit-transition-timing-function: $transition-decelerated-easing;
+       -o-transition-timing-function: $transition-decelerated-easing;
+          transition-timing-function: $transition-decelerated-easing;
 }
 
 .side-bar-exit-active {
   width: 88px !important;
   min-width: 88px !important;
-  transition-duration: 300ms;
-  transition-timing-function: $transition-decelerated-easing;
+  -webkit-transition-duration: 300ms;
+       -o-transition-duration: 300ms;
+          transition-duration: 300ms;
+  -webkit-transition-timing-function: $transition-decelerated-easing;
+       -o-transition-timing-function: $transition-decelerated-easing;
+          transition-timing-function: $transition-decelerated-easing;
 }
 
 .side-bar-exit-done {
   width: 88px !important;
   min-width: 88px !important;
-  transition-duration: 300ms;
-  transition-timing-function: $transition-decelerated-easing;
+  -webkit-transition-duration: 300ms;
+       -o-transition-duration: 300ms;
+          transition-duration: 300ms;
+  -webkit-transition-timing-function: $transition-decelerated-easing;
+       -o-transition-timing-function: $transition-decelerated-easing;
+          transition-timing-function: $transition-decelerated-easing;
 }
 
 .bottom-bar-appear {
@@ -577,44 +803,80 @@
 
 .bottom-bar-enter {
   bottom: 0 !important;
+  -webkit-transition-property: all;
+  -o-transition-property: all;
   transition-property: all;
-  transition-duration: 75ms;
-  transition-timing-function: $transition-standard-easing;
+  -webkit-transition-duration: 75ms;
+       -o-transition-duration: 75ms;
+          transition-duration: 75ms;
+  -webkit-transition-timing-function: $transition-standard-easing;
+       -o-transition-timing-function: $transition-standard-easing;
+          transition-timing-function: $transition-standard-easing;
 }
 
 .bottom-bar-enter-active {
   bottom: calc(-56px * 2) !important;
+  -webkit-transition-property: all;
+  -o-transition-property: all;
   transition-property: all;
-  transition-duration: 75ms;
-  transition-timing-function: $transition-standard-easing;
+  -webkit-transition-duration: 75ms;
+       -o-transition-duration: 75ms;
+          transition-duration: 75ms;
+  -webkit-transition-timing-function: $transition-standard-easing;
+       -o-transition-timing-function: $transition-standard-easing;
+          transition-timing-function: $transition-standard-easing;
 }
 
 .bottom-bar-enter-done {
   bottom: calc(-56px * 2) !important;
+  -webkit-transition-property: all;
+  -o-transition-property: all;
   transition-property: all;
-  transition-duration: 75ms;
-  transition-timing-function: $transition-standard-easing;
+  -webkit-transition-duration: 75ms;
+       -o-transition-duration: 75ms;
+          transition-duration: 75ms;
+  -webkit-transition-timing-function: $transition-standard-easing;
+       -o-transition-timing-function: $transition-standard-easing;
+          transition-timing-function: $transition-standard-easing;
 }
 
 .bottom-bar-exit {
   bottom: calc(-56px * 2) !important;
+  -webkit-transition-property: all;
+  -o-transition-property: all;
   transition-property: all;
-  transition-duration: 150ms;
-  transition-timing-function: $transition-decelerated-easing;
+  -webkit-transition-duration: 150ms;
+       -o-transition-duration: 150ms;
+          transition-duration: 150ms;
+  -webkit-transition-timing-function: $transition-decelerated-easing;
+       -o-transition-timing-function: $transition-decelerated-easing;
+          transition-timing-function: $transition-decelerated-easing;
 }
 
 .bottom-bar-exit-active {
   bottom: 0 !important;
+  -webkit-transition-property: all;
+  -o-transition-property: all;
   transition-property: all;
-  transition-duration: 150ms;
-  transition-timing-function: $transition-decelerated-easing;
+  -webkit-transition-duration: 150ms;
+       -o-transition-duration: 150ms;
+          transition-duration: 150ms;
+  -webkit-transition-timing-function: $transition-decelerated-easing;
+       -o-transition-timing-function: $transition-decelerated-easing;
+          transition-timing-function: $transition-decelerated-easing;
 }
 
 .bottom-bar-exit-done {
   bottom: 0 !important;
+  -webkit-transition-property: all;
+  -o-transition-property: all;
   transition-property: all;
-  transition-duration: 150ms;
-  transition-timing-function: $transition-decelerated-easing;
+  -webkit-transition-duration: 150ms;
+       -o-transition-duration: 150ms;
+          transition-duration: 150ms;
+  -webkit-transition-timing-function: $transition-decelerated-easing;
+       -o-transition-timing-function: $transition-decelerated-easing;
+          transition-timing-function: $transition-decelerated-easing;
 }
 
 .navigation-back-appear {
@@ -631,38 +893,62 @@
 
 .navigation-back-enter {
   top: -56px !important;
-  transition-duration: 75ms;
-  transition-timing-function: $transition-standard-easing;
+  -webkit-transition-duration: 75ms;
+       -o-transition-duration: 75ms;
+          transition-duration: 75ms;
+  -webkit-transition-timing-function: $transition-standard-easing;
+       -o-transition-timing-function: $transition-standard-easing;
+          transition-timing-function: $transition-standard-easing;
 }
 
 .navigation-back-enter-active {
   top: 56px !important;
-  transition-duration: 75ms;
-  transition-timing-function: $transition-standard-easing;
+  -webkit-transition-duration: 75ms;
+       -o-transition-duration: 75ms;
+          transition-duration: 75ms;
+  -webkit-transition-timing-function: $transition-standard-easing;
+       -o-transition-timing-function: $transition-standard-easing;
+          transition-timing-function: $transition-standard-easing;
 }
 
 .navigation-back-enter-done {
   top: 56px !important;
-  transition-duration: 75ms;
-  transition-timing-function: $transition-standard-easing;
+  -webkit-transition-duration: 75ms;
+       -o-transition-duration: 75ms;
+          transition-duration: 75ms;
+  -webkit-transition-timing-function: $transition-standard-easing;
+       -o-transition-timing-function: $transition-standard-easing;
+          transition-timing-function: $transition-standard-easing;
 }
 
 .navigation-back-exit {
   top: 56px !important;
-  transition-duration: 150ms;
-  transition-timing-function: $transition-decelerated-easing;
+  -webkit-transition-duration: 150ms;
+       -o-transition-duration: 150ms;
+          transition-duration: 150ms;
+  -webkit-transition-timing-function: $transition-decelerated-easing;
+       -o-transition-timing-function: $transition-decelerated-easing;
+          transition-timing-function: $transition-decelerated-easing;
 }
 
 .navigation-back-exit-active {
   top: -56px !important;
-  transition-duration: 150ms;
-  transition-timing-function: $transition-decelerated-easing;
+  -webkit-transition-duration: 150ms;
+       -o-transition-duration: 150ms;
+          transition-duration: 150ms;
+  -webkit-transition-timing-function: $transition-decelerated-easing;
+       -o-transition-timing-function: $transition-decelerated-easing;
+          transition-timing-function: $transition-decelerated-easing;
 }
 
 .navigation-back-exit-done {
   top: -56px !important;
-  transition-duration: 150ms;
-  transition-timing-function: $transition-decelerated-easing;
+  -webkit-transition-duration: 150ms;
+       -o-transition-duration: 150ms;
+          transition-duration: 150ms;
+  -webkit-transition-timing-function: $transition-decelerated-easing;
+       -o-transition-timing-function: $transition-decelerated-easing;
+          transition-timing-function: $transition-decelerated-easing;
 }
 
 .button {

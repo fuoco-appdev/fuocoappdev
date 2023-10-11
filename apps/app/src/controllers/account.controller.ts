@@ -214,12 +214,7 @@ class AccountController extends Controller {
         languageCode: WindowController.model.languageInfo?.isoCode,
       });
     } catch (error: any) {
-      WindowController.addToast({
-        key: `complete-customer-${Math.random()}`,
-        message: error.name,
-        description: error.message,
-        type: 'error',
-      });
+      console.error(error);
     }
   }
 
@@ -236,12 +231,7 @@ class AccountController extends Controller {
       });
       this._model.customer = customerResponse?.customer as Customer;
     } catch (error: any) {
-      WindowController.addToast({
-        key: `update-customer-${Math.random()}`,
-        message: error.name,
-        description: error.message,
-        type: 'error',
-      });
+      console.error(error);
     }
   }
 
@@ -324,12 +314,7 @@ class AccountController extends Controller {
       await MedusaService.medusa?.auth.deleteSession();
       await SupabaseService.signoutAsync();
     } catch (error: any) {
-      WindowController.addToast({
-        key: `logout-${Math.random()}`,
-        message: error.name,
-        description: error.message,
-        type: 'error',
-      });
+      console.error(error);
     }
   }
 
@@ -339,12 +324,7 @@ class AccountController extends Controller {
       AccountService.clearActiveAccount();
       SupabaseService.clear();
     } catch (error: any) {
-      WindowController.addToast({
-        key: `delete-${Math.random()}`,
-        message: error.name,
-        description: error.message,
-        type: 'error',
-      });
+      console.error(error);
     }
   }
 
@@ -440,12 +420,7 @@ class AccountController extends Controller {
 
       this._model.user = value;
     } catch (error: any) {
-      WindowController.addToast({
-        key: `request-customer-${Math.random()}`,
-        message: error.name,
-        description: error.message,
-        type: 'error',
-      });
+      console.error(error);
     }
   }
 }

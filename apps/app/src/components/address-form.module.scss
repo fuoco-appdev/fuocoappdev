@@ -1,18 +1,32 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
 .horizontal-input-container {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-direction: row;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
     gap: $mp-2;
 }
 
 .completed-container {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-direction: row;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
 
     & .completed-details-container {
+        display: -webkit-box;
+        display: -ms-flexbox;
         display: flex;
-        flex: 1;
+        -webkit-box-flex: 1;
+            -ms-flex: 1;
+                flex: 1;
         color: $brand-900;
 
         & .completed-details {
@@ -36,18 +50,32 @@
 }
 
 .horizontal-input-container-desktop {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-direction: row;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
     gap: $mp-2;
 }
 
 .completed-container-desktop {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-direction: row;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
 
     & .completed-details-container-desktop {
+        display: -webkit-box;
+        display: -ms-flexbox;
         display: flex;
-        flex: 1;
+        -webkit-box-flex: 1;
+            -ms-flex: 1;
+                flex: 1;
         color: $brand-900;
 
         & .completed-details-desktop {
@@ -71,18 +99,32 @@
 }
 
 .horizontal-input-container-desktop {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-direction: row;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
     gap: $mp-2;
 }
 
 .completed-container-mobile {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-direction: row;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
 
     & .completed-details-container-mobile {
+        display: -webkit-box;
+        display: -ms-flexbox;
         display: flex;
-        flex: 1;
+        -webkit-box-flex: 1;
+            -ms-flex: 1;
+                flex: 1;
         color: $brand-900;
 
         & .completed-details-mobile {
@@ -112,7 +154,9 @@
 }
 
 .input-root-skeleton {
-    flex: 1;
+    -webkit-box-flex: 1;
+        -ms-flex: 1;
+            flex: 1;
     margin-bottom: $mp-2;
 }
 
@@ -121,7 +165,9 @@
 }
 
 .input-root {
-    flex: 1;
+    -webkit-box-flex: 1;
+        -ms-flex: 1;
+            flex: 1;
 }
 
 .input-form-layout-label {

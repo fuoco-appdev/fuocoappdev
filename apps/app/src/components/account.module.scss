@@ -1,8 +1,13 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
 .root {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   width: 100%;
   min-width: 100%;
   min-height: 100%;
@@ -11,7 +16,9 @@
     height: 56px;
     min-height: 56px;
     width: 100%;
-    align-items: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
     background-color: transparent !important;
 
     & .left-tab-container {
@@ -24,8 +31,13 @@
   }
 
   & .incomplete-profile-container {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-direction: column;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
 
     & .complete-profile-title {
       margin: $mp-4 0;
@@ -38,14 +50,23 @@
   
     & .form-container {
       padding: $mp-4 0;
-      flex: 1;
+      -webkit-box-flex: 1;
+          -ms-flex: 1;
+              flex: 1;
     }
   }
 
   & .avatar-container {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-direction: row;
-    justify-content: center;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
   }
 
   & .username {
@@ -66,14 +87,21 @@
   }
 
   & .tabs-container-skeleton {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-direction: row;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
     gap: $mp-2;
     padding: 0 $mp-4;
   }
 
   & .outlet-container {
-    flex: 1;
+    -webkit-box-flex: 1;
+        -ms-flex: 1;
+            flex: 1;
     height: 100%;
     overflow-y: auto;
   }
@@ -85,9 +113,16 @@
   overflow-y: auto;
 
   & .top-bar-desktop {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
     padding: 0 $mp-4;
     margin-bottom: $mp-4;
 
@@ -101,14 +136,25 @@
   }
 
   & .incomplete-profile-container-desktop {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
     width: 100%;
     height: 100%;
 
     & .incomplete-content-desktop {
+      height: -webkit-fit-content;
+      height: -moz-fit-content;
       height: fit-content;
       width: 500px;
       padding: $mp-6;
@@ -134,8 +180,12 @@
   }
 
   & .content-desktop {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    justify-content: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
     padding: $mp-6 0;
     height: 100%;
     width: 100%;
@@ -152,14 +202,24 @@
     }
 
     & .left-content-desktop {
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
-      flex-direction: column;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+          -ms-flex-direction: column;
+              flex-direction: column;
       gap: $mp-6;
     }
 
     & .right-content-desktop {
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
-      flex-direction: column;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+          -ms-flex-direction: column;
+              flex-direction: column;
       gap: $mp-6;
     }
   }
@@ -184,24 +244,44 @@
 .root-mobile {
 
   & .top-bar-mobile {
+    display: -ms-grid;
     display: grid;
+    -ms-grid-columns: 1fr 1fr;
     grid-template-columns: 1fr 1fr;
 
     & .left-tab-container-mobile {
       padding: 0 $mp-2;
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
-      justify-content: flex-start;
-      flex-direction: row;
-      grid-column-start: 1;
+      -webkit-box-pack: start;
+          -ms-flex-pack: start;
+              justify-content: flex-start;
+      -webkit-box-orient: horizontal;
+      -webkit-box-direction: normal;
+          -ms-flex-direction: row;
+              flex-direction: row;
+      -ms-grid-column: 1;
+          grid-column-start: 1;
+      -ms-grid-column-span: 1;
       grid-column-end: 2;
     }
 
     & .right-tab-container-mobile {
       padding: 0 $mp-2;
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
-      justify-content: flex-end;
-      flex-direction: row;
-      grid-column-start: 2;
+      -webkit-box-pack: end;
+          -ms-flex-pack: end;
+              justify-content: flex-end;
+      -webkit-box-orient: horizontal;
+      -webkit-box-direction: normal;
+          -ms-flex-direction: row;
+              flex-direction: row;
+      -ms-grid-column: 2;
+          grid-column-start: 2;
+      -ms-grid-column-span: 1;
       grid-column-end: 3;
     }
   }
@@ -245,6 +325,8 @@
 }
 
 .tab-button-container {
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
   width: fit-content;
   padding-right: $mp-1;
 }
@@ -263,7 +345,8 @@
 
 .avatar-overlay-background {
   background-color: #fff !important;
-  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+          backdrop-filter: none !important;
 }
 
 .button {
@@ -283,7 +366,9 @@
 }
 
 .tab-button-skeleton {
-  flex: 1;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
 }
 
 .tab-outline {
@@ -291,37 +376,61 @@
 }
 
 .right-to-left-enter {
-  transform: translateX(100%);
+  -webkit-transform: translateX(100%);
+      -ms-transform: translateX(100%);
+          transform: translateX(100%);
 }
 
 .right-to-left-enter-active {
-  transform: translateX(0);
+  -webkit-transform: translateX(0);
+      -ms-transform: translateX(0);
+          transform: translateX(0);
+  -webkit-transition:all 250ms $transition-standard-easing;
+  -o-transition:all 250ms $transition-standard-easing;
   transition:all 250ms $transition-standard-easing;
 }      
 
 .right-to-left-exit {
-  transform: translateX(0);
+  -webkit-transform: translateX(0);
+      -ms-transform: translateX(0);
+          transform: translateX(0);
 }
 
 .right-to-left-exit-active {
-  transform: translateX(-100%);
+  -webkit-transform: translateX(-100%);
+      -ms-transform: translateX(-100%);
+          transform: translateX(-100%);
+  -webkit-transition:all 250ms $transition-standard-easing;
+  -o-transition:all 250ms $transition-standard-easing;
   transition:all 250ms $transition-standard-easing;
 }      
 
 .left-to-right-enter {
-  transform: translateX(-100%);
+  -webkit-transform: translateX(-100%);
+      -ms-transform: translateX(-100%);
+          transform: translateX(-100%);
 }
 
 .left-to-right-enter-active {
-  transform: translateX(0);
+  -webkit-transform: translateX(0);
+      -ms-transform: translateX(0);
+          transform: translateX(0);
+  -webkit-transition:all 250ms $transition-standard-easing;
+  -o-transition:all 250ms $transition-standard-easing;
   transition:all 250ms $transition-standard-easing;
 }      
 
 .left-to-right-exit {
-  transform: translateX(0);
+  -webkit-transform: translateX(0);
+      -ms-transform: translateX(0);
+          transform: translateX(0);
 }
 
 .left-to-right-exit-active {
-  transform: translateX(100%);
+  -webkit-transform: translateX(100%);
+      -ms-transform: translateX(100%);
+          transform: translateX(100%);
+  -webkit-transition:all 250ms $transition-standard-easing;
+  -o-transition:all 250ms $transition-standard-easing;
   transition:all 250ms $transition-standard-easing;
 }      

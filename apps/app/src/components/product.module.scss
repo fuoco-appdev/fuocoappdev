@@ -7,8 +7,12 @@
 
   & .thumbnail-container {
     position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    justify-content: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
     background-color: $gray-100;
     padding: 0 $mp-2;
     height: 382px;
@@ -34,13 +38,19 @@
   }
 
   & .header-container {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
     margin-bottom: $mp-2;
     -webkit-touch-callout: text; /* iOS Safari */
-    -webkit-user-select: text; /* Safari, Chrome, Opera, Samsung */
-    -khtml-user-select: text; /* Konqueror HTML */
+    -webkit-user-select: text; /* Safari, Chrome, Opera, Samsung */ /* Konqueror HTML */
     -moz-user-select: text; /* Firefox */
     -ms-user-select: text; /* Edge, IE */
     user-select: text; /* Modern browsers */
@@ -68,9 +78,17 @@
     }
 
     & .like-container {
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
-      justify-content: center;
-      align-items: center;
+      -webkit-box-pack: center;
+          -ms-flex-pack: center;
+              justify-content: center;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+      height: -webkit-fit-content;
+      height: -moz-fit-content;
       height: fit-content;
 
       & .like-count {
@@ -85,8 +103,7 @@
     font-size: $font-size-sm;
     color: $brand-900;
     -webkit-touch-callout: text; /* iOS Safari */
-    -webkit-user-select: text; /* Safari, Chrome, Opera, Samsung */
-    -khtml-user-select: text; /* Konqueror HTML */
+    -webkit-user-select: text; /* Safari, Chrome, Opera, Samsung */ /* Konqueror HTML */
     -moz-user-select: text; /* Firefox */
     -ms-user-select: text; /* Edge, IE */
     user-select: text; /* Modern browsers */
@@ -113,8 +130,7 @@
     margin-bottom: $mp-2;
     text-transform: uppercase;
     -webkit-touch-callout: text; /* iOS Safari */
-    -webkit-user-select: text; /* Safari, Chrome, Opera, Samsung */
-    -khtml-user-select: text; /* Konqueror HTML */
+    -webkit-user-select: text; /* Safari, Chrome, Opera, Samsung */ /* Konqueror HTML */
     -moz-user-select: text; /* Firefox */
     -ms-user-select: text; /* Edge, IE */
     user-select: text; /* Modern browsers */
@@ -128,13 +144,15 @@
   }
 
   & .tags-container {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
     margin-bottom: $mp-2;
     gap: $mp-1;
     -webkit-touch-callout: text; /* iOS Safari */
-    -webkit-user-select: text; /* Safari, Chrome, Opera, Samsung */
-    -khtml-user-select: text; /* Konqueror HTML */
+    -webkit-user-select: text; /* Safari, Chrome, Opera, Samsung */ /* Konqueror HTML */
     -moz-user-select: text; /* Firefox */
     -ms-user-select: text; /* Edge, IE */
     user-select: text; /* Modern browsers */
@@ -161,20 +179,28 @@
     }
 
     & .options-container {
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
-      flex-wrap: wrap;
+      -ms-flex-wrap: wrap;
+          flex-wrap: wrap;
       margin-bottom: $mp-2;
-      justify-content: space-around;
+      -ms-flex-pack: distribute;
+          justify-content: space-around;
 
       & .option-content {
+        display: -webkit-box;
+        display: -ms-flexbox;
         display: flex;
-        flex-direction: column;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+            -ms-flex-direction: column;
+                flex-direction: column;
         padding: $mp-4;
         margin-bottom: $mp-2;
         text-align: center;
         -webkit-touch-callout: text; /* iOS Safari */
-        -webkit-user-select: text; /* Safari, Chrome, Opera, Samsung */
-        -khtml-user-select: text; /* Konqueror HTML */
+        -webkit-user-select: text; /* Safari, Chrome, Opera, Samsung */ /* Konqueror HTML */
         -moz-user-select: text; /* Firefox */
         -ms-user-select: text; /* Edge, IE */
         user-select: text; /* Modern browsers */
@@ -206,21 +232,29 @@
     }
 
     & .details-container {
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
-      flex-wrap: wrap;
+      -ms-flex-wrap: wrap;
+          flex-wrap: wrap;
       margin-bottom: $mp-2;
-      justify-content: space-around;
+      -ms-flex-pack: distribute;
+          justify-content: space-around;
       text-align: center;
       -webkit-touch-callout: text; /* iOS Safari */
-      -webkit-user-select: text; /* Safari, Chrome, Opera, Samsung */
-      -khtml-user-select: text; /* Konqueror HTML */
+      -webkit-user-select: text; /* Safari, Chrome, Opera, Samsung */ /* Konqueror HTML */
       -moz-user-select: text; /* Firefox */
       -ms-user-select: text; /* Edge, IE */
       user-select: text; /* Modern browsers */
 
       & .details-item-content {
+        display: -webkit-box;
+        display: -ms-flexbox;
         display: flex;
-        flex-direction: column;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+            -ms-flex-direction: column;
+                flex-direction: column;
         padding: $mp-4;
         margin-bottom: $mp-2;
 
@@ -251,12 +285,16 @@
     }
 
     & .shipping-returns-container {
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
-      flex-direction: column;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+          -ms-flex-direction: column;
+              flex-direction: column;
       text-align: center;
       -webkit-touch-callout: text; /* iOS Safari */
-      -webkit-user-select: text; /* Safari, Chrome, Opera, Samsung */
-      -khtml-user-select: text; /* Konqueror HTML */
+      -webkit-user-select: text; /* Safari, Chrome, Opera, Samsung */ /* Konqueror HTML */
       -moz-user-select: text; /* Firefox */
       -ms-user-select: text; /* Edge, IE */
       user-select: text; /* Modern browsers */
@@ -265,8 +303,13 @@
         margin-bottom: $mp-4;
 
         & .shipping-returns-title-container {
+          display: -webkit-box;
+          display: -ms-flexbox;
           display: flex;
-          flex-direction: row;
+          -webkit-box-orient: horizontal;
+          -webkit-box-direction: normal;
+              -ms-flex-direction: row;
+                  flex-direction: row;
           margin-bottom: $mp-1;
 
           & .shipping-returns-title {
@@ -305,9 +348,16 @@
 }
 
 .root-desktop {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: row;
-  justify-content: center;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
   gap: $mp-6;
   padding: $mp-6;
   height: 100%;
@@ -318,18 +368,26 @@
   }
 
   & .content-container-desktop {
+    width: -webkit-fit-content;
+    width: -moz-fit-content;
     width: fit-content;
   }
 
   & .middle-content-desktop {
     max-width: 30vw;
-    flex: 1;
+    -webkit-box-flex: 1;
+        -ms-flex: 1;
+            flex: 1;
   }
 
   & .right-content-desktop {
     max-width: 432px;
+    height: -webkit-fit-content;
+    height: -moz-fit-content;
     height: fit-content;
-    flex: 1;
+    -webkit-box-flex: 1;
+        -ms-flex: 1;
+            flex: 1;
     border: 1px solid rgba(42, 42, 95, .6);
     border-radius: 6px;
     padding: $mp-6;

@@ -26,6 +26,7 @@ class StoreController extends Controller {
   private _timerId: NodeJS.Timeout | number | undefined;
   private _productsIndex: Index<Record<string, any>> | undefined;
   private _selectedInventoryLocationSubscription: Subscription | undefined;
+  private _limit: number;
 
   constructor() {
     super();
@@ -34,6 +35,7 @@ class StoreController extends Controller {
     this.onSelectedInventoryLocationChangedAsync =
       this.onSelectedInventoryLocationChangedAsync.bind(this);
     this.onAuthStateChanged = this.onAuthStateChanged.bind(this);
+    this._limit = 20;
   }
 
   public get model(): StoreModel {
@@ -77,9 +79,8 @@ class StoreController extends Controller {
     this._model.selectedTab = value;
     this._model.pagination = 1;
     this._model.previews = [];
-    const limit = 10;
-    const offset = limit * (this._model.pagination - 1);
-    await this.searchAsync(this._model.input, offset, limit);
+    const offset = this._limit * (this._model.pagination - 1);
+    await this.searchAsync(this._model.input, offset, this._limit);
   }
 
   public async onNextScrollAsync(): Promise<void> {
@@ -93,9 +94,8 @@ class StoreController extends Controller {
 
     this._model.pagination = this._model.pagination + 1;
 
-    const limit = 10;
-    const offset = limit * (this._model.pagination - 1);
-    await this.searchAsync(this._model.input, offset, limit);
+    const offset = this._limit * (this._model.pagination - 1);
+    await this.searchAsync(this._model.input, offset, this._limit);
   }
 
   public async searchAsync(
