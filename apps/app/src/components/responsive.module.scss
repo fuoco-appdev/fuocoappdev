@@ -1,33 +1,45 @@
 @media screen and (max-width: 767px) {
     .desktop-layout {
         position: absolute;
-        transform: scale(0);
+        -webkit-transform: scale(0);
+            -ms-transform: scale(0);
+                transform: scale(0);
     }
     .tablet-layout {
         position: absolute;
-        transform: scale(0);
+        -webkit-transform: scale(0);
+            -ms-transform: scale(0);
+                transform: scale(0);
     }
 }
 
 @media screen and (min-width: 768px) and (max-width: 991px) {
     .mobile-layout {
         position: absolute;
-        transform: scale(0);
+        -webkit-transform: scale(0);
+            -ms-transform: scale(0);
+                transform: scale(0);
     }
     .desktop-layout {
         position: absolute;
-        transform: scale(0);
+        -webkit-transform: scale(0);
+            -ms-transform: scale(0);
+                transform: scale(0);
     }
 }
   
 @media screen and (min-width: 992px) {
     .tablet-layout {
         position: absolute;
-        transform: scale(0);
+        -webkit-transform: scale(0);
+            -ms-transform: scale(0);
+                transform: scale(0);
     }
     .mobile-layout {
         position: absolute;
-        transform: scale(0);
+        -webkit-transform: scale(0);
+            -ms-transform: scale(0);
+                transform: scale(0);
     }
 }
 

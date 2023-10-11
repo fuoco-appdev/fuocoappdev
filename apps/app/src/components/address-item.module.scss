@@ -6,6 +6,8 @@
         width: 100%;
         
         & .details-desktop {
+            display: -webkit-box;
+            display: -ms-flexbox;
             display: flex;
             margin-bottom: $mp-1;
         
@@ -24,14 +26,28 @@
             }
         
             & .right-details-container-desktop {
+                display: -webkit-box;
+                display: -ms-flexbox;
                 display: flex;
-                flex-direction: row;
-                justify-content: right;
-                flex: 1;
+                -webkit-box-orient: horizontal;
+                -webkit-box-direction: normal;
+                    -ms-flex-direction: row;
+                        flex-direction: row;
+                -webkit-box-pack: right;
+                    -ms-flex-pack: right;
+                        justify-content: right;
+                -webkit-box-flex: 1;
+                    -ms-flex: 1;
+                        flex: 1;
 
                 & .right-details-content-desktop {
+                    display: -webkit-box;
+                    display: -ms-flexbox;
                     display: flex;
-                    flex-direction: row;
+                    -webkit-box-orient: horizontal;
+                    -webkit-box-direction: normal;
+                        -ms-flex-direction: row;
+                            flex-direction: row;
                     gap: $mp-2;
                 }
             
@@ -46,6 +62,8 @@
         width: 100%;
         
         & .details-mobile {
+            display: -webkit-box;
+            display: -ms-flexbox;
             display: flex;
             margin-bottom: $mp-1;
         
@@ -64,14 +82,28 @@
             }
         
             & .right-details-container-mobile {
+                display: -webkit-box;
+                display: -ms-flexbox;
                 display: flex;
-                flex-direction: row;
-                justify-content: right;
-                flex: 1;
+                -webkit-box-orient: horizontal;
+                -webkit-box-direction: normal;
+                    -ms-flex-direction: row;
+                        flex-direction: row;
+                -webkit-box-pack: right;
+                    -ms-flex-pack: right;
+                        justify-content: right;
+                -webkit-box-flex: 1;
+                    -ms-flex: 1;
+                        flex: 1;
 
                 & .right-details-content-mobile {
+                    display: -webkit-box;
+                    display: -ms-flexbox;
                     display: flex;
-                    flex-direction: row;
+                    -webkit-box-orient: horizontal;
+                    -webkit-box-direction: normal;
+                        -ms-flex-direction: row;
+                            flex-direction: row;
                 }
             
                 }

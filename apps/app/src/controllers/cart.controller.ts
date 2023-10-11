@@ -82,12 +82,7 @@ class CartController extends Controller {
         await this.updateLocalCartAsync(cartResponse.cart);
       }
     } catch (error: any) {
-      WindowController.addToast({
-        key: `remove-discount-code-${Math.random()}`,
-        message: error.name,
-        description: error.message,
-        type: 'error',
-      });
+      console.error(error);
     }
   }
 
@@ -109,12 +104,7 @@ class CartController extends Controller {
         await this.updateLocalCartAsync(cartResponse.cart);
       }
     } catch (error: any) {
-      WindowController.addToast({
-        key: `update-cart-${Math.random()}`,
-        message: error.name,
-        description: error.message,
-        type: 'error',
-      });
+      console.error(error);
     }
   }
 
@@ -136,12 +126,7 @@ class CartController extends Controller {
 
       return completeCartResponse?.data;
     } catch (error: any) {
-      WindowController.addToast({
-        key: `complete-cart-${Math.random()}`,
-        message: error.name,
-        description: error.message,
-        type: 'error',
-      });
+      console.error(error);
       return null;
     }
   }
@@ -168,12 +153,7 @@ class CartController extends Controller {
         await this.updateLocalCartAsync(cartResponse.cart);
       }
     } catch (error: any) {
-      WindowController.addToast({
-        key: `remove-line-item-${Math.random()}`,
-        message: error.name,
-        description: error.message,
-        type: 'error',
-      });
+      console.error(error);
     }
   }
 
@@ -280,12 +260,7 @@ class CartController extends Controller {
 
       return cartResponse?.cart;
     } catch (error: any) {
-      WindowController.addToast({
-        key: `create-cart-${Math.random()}`,
-        message: error.name,
-        description: error.message,
-        type: 'error',
-      });
+      console.error(error);
       return null;
     }
   }
@@ -309,12 +284,7 @@ class CartController extends Controller {
           await this.updateLocalCartAsync(cartResponse.cart);
         }
       } catch (error: any) {
-        WindowController.addToast({
-          key: `retrieve-cart-${Math.random()}`,
-          message: error.name,
-          description: error.message,
-          type: 'error',
-        });
+        console.error(error);
       }
     }
   }

@@ -988,7 +988,7 @@ export default function CheckoutDesktopComponent({
               styles['modal-overlay'],
               styles['modal-overlay-desktop'],
             ].join(' '),
-
+            modal: [styles['modal'], styles['modal-desktop']].join(' '),
             title: [styles['modal-title'], styles['modal-title-desktop']].join(
               ' '
             ),

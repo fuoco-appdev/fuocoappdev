@@ -88,12 +88,7 @@ class AppController extends Controller {
       MedusaService.intializeMedusa(secrets.medusaPublicKey);
       DeepLService.initializeDeepL(secrets.deeplAuthKey);
     } catch (error: any) {
-      WindowController.addToast({
-        key: `secrets-${Math.random()}`,
-        message: error.name,
-        description: error.message,
-        type: 'error',
-      });
+      console.error(error);
     }
   }
 }

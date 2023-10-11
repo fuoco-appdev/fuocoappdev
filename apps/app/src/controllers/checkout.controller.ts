@@ -156,12 +156,7 @@ class CheckoutController extends Controller {
 
       this._model.selectedShippingOptionId = value;
     } catch (error: any) {
-      WindowController.addToast({
-        key: `add-shipping-address-${Math.random()}`,
-        message: error.name,
-        description: error.message,
-        type: 'error',
-      });
+      console.error(error);
     }
   }
 
@@ -233,12 +228,7 @@ class CheckoutController extends Controller {
 
       this._model.selectedProviderId = value;
     } catch (error: any) {
-      WindowController.addToast({
-        key: `set-payment-session-${Math.random()}`,
-        message: error.name,
-        description: error.message,
-        type: 'error',
-      });
+      console.error(error);
     }
   }
 
@@ -295,12 +285,7 @@ class CheckoutController extends Controller {
         await CartController.updateLocalCartAsync(cartResponse.cart);
       }
     } catch (error: any) {
-      WindowController.addToast({
-        key: `update-cart-${Math.random()}`,
-        message: error.name,
-        description: error.message,
-        type: 'error',
-      });
+      console.error(error);
     }
   }
 
@@ -379,12 +364,7 @@ class CheckoutController extends Controller {
       }
     } catch (error: any) {
       this._model.isPaymentLoading = false;
-      WindowController.addToast({
-        key: `pay-${Math.random()}`,
-        message: error.name,
-        description: error.message,
-        type: 'error',
-      });
+      console.error(error);
 
       return undefined;
     }
@@ -512,12 +492,7 @@ class CheckoutController extends Controller {
           );
         }
       } catch (error: any) {
-        WindowController.addToast({
-          key: `list-shipping-options-${Math.random()}`,
-          message: error.name,
-          description: error.message,
-          type: 'error',
-        });
+        console.error(error);
       }
     }
 
@@ -544,12 +519,7 @@ class CheckoutController extends Controller {
           await CartController.updateLocalCartAsync(cartResponse.cart);
         }
       } catch (error: any) {
-        WindowController.addToast({
-          key: `create-payment-sessions-${Math.random()}`,
-          message: error.name,
-          description: error.message,
-          type: 'error',
-        });
+        console.error(error);
       }
     }
 
@@ -564,12 +534,7 @@ class CheckoutController extends Controller {
           await CartController.updateLocalCartAsync(cartResponse.cart);
         }
       } catch (error: any) {
-        WindowController.addToast({
-          key: `refresh-payment-session-${Math.random()}`,
-          message: error.name,
-          description: error.message,
-          type: 'error',
-        });
+        console.error(error);
       }
     }
   }
