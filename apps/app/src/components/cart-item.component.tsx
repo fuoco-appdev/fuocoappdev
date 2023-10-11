@@ -35,6 +35,7 @@ export interface CartItemProps {
 }
 
 export interface CartItemResponsiveProps extends CartItemProps {
+  quantity: number;
   vintage: string;
   hasReducedPrice: boolean;
   deleteModalVisible: boolean;
@@ -51,6 +52,7 @@ export default function CartItemComponent({
   onRemove,
 }: CartItemProps): JSX.Element {
   const [vintage, setVintage] = useState<string>('');
+  const [quantity, setQuantity] = useState<number>(item.quantity);
   const [hasReducedPrice, setHasReducedPrice] = useState<boolean>(
     (item.discount_total ?? 0) > 0
   );
@@ -75,14 +77,18 @@ export default function CartItemComponent({
   }, [item]);
 
   const incrementItemQuantity = (value: number): void => {
-    if (item.quantity < item.variant.inventory_quantity) {
-      onQuantityChanged?.(item.quantity + 1);
+    if (quantity < item.variant.inventory_quantity) {
+      const count = quantity + value;
+      setQuantity(count);
+      onQuantityChanged?.(count);
     }
   };
 
   const decrementItemQuantity = (value: number): void => {
-    if (item.quantity > 1) {
-      onQuantityChanged?.(item.quantity - 1);
+    if (quantity > 1) {
+      const count = quantity - value;
+      setQuantity(count);
+      onQuantityChanged?.(count);
     }
   };
 
@@ -102,6 +108,7 @@ export default function CartItemComponent({
       <CartItemDesktopComponent
         storeProps={storeProps}
         item={item}
+        quantity={quantity}
         onRemove={onRemove}
         vintage={vintage}
         hasReducedPrice={hasReducedPrice}
@@ -114,6 +121,7 @@ export default function CartItemComponent({
       <CartItemMobileComponent
         storeProps={storeProps}
         item={item}
+        quantity={quantity}
         onRemove={onRemove}
         vintage={vintage}
         hasReducedPrice={hasReducedPrice}

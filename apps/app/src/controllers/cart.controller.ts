@@ -21,6 +21,7 @@ import { InventoryLocation } from '../models/home.model';
 
 class CartController extends Controller {
   private readonly _model: CartModel;
+  private _timerId: NodeJS.Timeout | number | undefined;
   private _selectedInventoryLocationSubscription: Subscription | undefined;
 
   constructor() {
@@ -180,25 +181,23 @@ class CartController extends Controller {
     quantity: number,
     item: LineItem
   ): Promise<void> {
-    try {
-      const cartResponse = await MedusaService.medusa?.carts.lineItems.update(
-        item.cart_id,
-        item.id,
-        {
-          quantity: quantity,
+    clearTimeout(this._timerId as number | undefined);
+    this._timerId = setTimeout(async () => {
+      try {
+        const cartResponse = await MedusaService.medusa?.carts.lineItems.update(
+          item.cart_id,
+          item.id,
+          {
+            quantity: quantity,
+          }
+        );
+        if (cartResponse?.cart) {
+          await this.updateLocalCartAsync(cartResponse.cart);
         }
-      );
-      if (cartResponse?.cart) {
-        await this.updateLocalCartAsync(cartResponse.cart);
+      } catch (error: any) {
+        console.error(error);
       }
-    } catch (error: any) {
-      WindowController.addToast({
-        key: `update-line-item-quantity-${Math.random()}`,
-        message: error.name,
-        description: error.message,
-        type: 'error',
-      });
-    }
+    }, 750);
   }
 
   public async updateLocalCartAsync(
@@ -227,12 +226,7 @@ class CartController extends Controller {
           });
           product = productResponse?.products[0];
         } catch (error: any) {
-          WindowController.addToast({
-            key: `retrieve-product-${Math.random()}`,
-            message: error.name,
-            description: error.message,
-            type: 'error',
-          });
+          console.error(error);
         }
       }
 

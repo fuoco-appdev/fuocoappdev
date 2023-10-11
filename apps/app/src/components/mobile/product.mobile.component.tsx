@@ -589,13 +589,7 @@ export default function ProductMobileComponent({
                         }) ?? '',
                       type: 'success',
                     }),
-                  (error) =>
-                    WindowController.addToast({
-                      key: `add-to-cart-${Math.random()}`,
-                      message: error.name,
-                      description: error.message,
-                      type: 'error',
-                    })
+                  (error) => console.error(error)
                 )
               }
             >

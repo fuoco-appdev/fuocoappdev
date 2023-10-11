@@ -17,6 +17,7 @@ import { ResponsiveDesktop } from '../responsive.component';
 export default function CartItemDesktopComponent({
   storeProps,
   item,
+  quantity,
   onRemove,
   vintage,
   hasReducedPrice,
@@ -118,7 +119,7 @@ export default function CartItemDesktopComponent({
                     styles['quantity-desktop'],
                   ].join(' ')}
                 >
-                  {item.quantity}
+                  {quantity}
                 </div>
                 <Button
                   block={true}
