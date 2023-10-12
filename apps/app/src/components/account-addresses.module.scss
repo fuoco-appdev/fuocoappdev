@@ -178,6 +178,11 @@
     z-index: 24;
 }
 
+.modal {
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
 .modal-text-desktop {
     padding: $mp-6 !important;
     max-width: 30vw;

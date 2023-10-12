@@ -60,9 +60,12 @@ export default function StoreDesktopComponent({
 }: StoreResponsiveProps): JSX.Element {
   const previewsContainerRef = createRef<HTMLDivElement>();
   const rootRef = createRef<HTMLDivElement>();
+  const topBarRef = useRef<HTMLDivElement | null>(null);
   const sideBarRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
+  let prevPreviewScrollTop = 0;
+  let yPosition = 0;
 
   return (
     <ResponsiveDesktop>
@@ -77,6 +80,7 @@ export default function StoreDesktopComponent({
           ].join(' ')}
         >
           <div
+            ref={topBarRef}
             className={[
               styles['top-bar-container'],
               styles['top-bar-container-desktop'],
@@ -195,7 +199,28 @@ export default function StoreDesktopComponent({
               styles['scroll-container'],
               styles['scroll-container-desktop'],
             ].join(' ')}
-            onScroll={onPreviewsScroll}
+            onScroll={(e) => {
+              onPreviewsScroll(e);
+              const elementHeight = topBarRef.current?.clientHeight ?? 0;
+              const scrollTop = e.currentTarget.scrollTop;
+              if (prevPreviewScrollTop > scrollTop) {
+                yPosition += prevPreviewScrollTop - scrollTop;
+                if (yPosition >= 0) {
+                  yPosition = 0;
+                }
+
+                topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
+              } else {
+                yPosition -= scrollTop - prevPreviewScrollTop;
+                if (yPosition <= -elementHeight) {
+                  yPosition = -elementHeight;
+                }
+
+                topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
+              }
+
+              prevPreviewScrollTop = e.currentTarget.scrollTop;
+            }}
             ref={previewsContainerRef}
             onLoad={onPreviewsLoad}
           >

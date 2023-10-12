@@ -5,12 +5,16 @@
     min-width: 100%;
 
     & .top-bar-container {
+        position: absolute;
+        z-index: 1;
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;
         border-bottom: 1px solid rgba(42, 42, 95, .6);
         background-color: #fff;
-        width: 100%;
+        width: -moz-available;          /* WebKit-based browsers will ignore this. */
+        width: -webkit-fill-available;  /* Mozilla-based browsers will ignore this. */
+        width: stretch;
         
         & .search-container {
             display: -webkit-box;
@@ -186,6 +190,7 @@
     height: 100%;
 
     & .left-content-desktop {
+        position: relative;
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;
@@ -310,6 +315,7 @@
                     justify-content: center;
             gap: $mp-6;
             padding: $mp-6;
+            padding-top: calc(157px + 16px);
             height: 100%;
 
             & .loading-ring-desktop {
@@ -358,8 +364,6 @@
 
 .root-mobile {
     & .top-bar-container-mobile {
-        position: absolute;
-        z-index: 1;
         -webkit-box-orient: vertical;
         -webkit-box-direction: normal;
             -ms-flex-direction: column;
