@@ -23,6 +23,8 @@ import { timeout } from 'promise-timeout';
 import React from 'react';
 import { ProductSuspenseDesktopComponent } from './desktop/suspense/product.suspense.desktop.component';
 import { ProductSuspenseMobileComponent } from './mobile/suspense/product.suspense.mobile.component';
+import WindowController from '../controllers/window.controller';
+import { useTranslation } from 'react-i18next';
 
 const ProductDesktopComponent = lazy(() =>
   timeout(import('./desktop/product.desktop.component'), 150)
@@ -57,6 +59,7 @@ export interface ProductResponsiveProps {
   setActiveDetails: (value: string | undefined) => void;
   setDescription: (value: string) => void;
   setQuantity: (value: number) => void;
+  onAddToCart: () => void;
 }
 
 function ProductComponent({ product }: ProductProps): JSX.Element {
@@ -83,6 +86,7 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
   const [vintage, setVintage] = useState<string | undefined>('');
   const [remarkPlugins, setRemarkPlugins] = useState<any[]>([]);
   const [quantity, setQuantity] = useState<number>(1);
+  const { t } = useTranslation();
 
   const formatName = (title: string, subtitle?: string | null) => {
     let name = productProps.title;
@@ -97,6 +101,24 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
     const cleanDescription = description.trim();
     const descriptionWithoutTitles = cleanDescription.replace(regex, '');
     return descriptionWithoutTitles.trim();
+  };
+
+  const onAddToCart = () => {
+    ProductController.addToCartAsync(
+      productProps.selectedVariant?.id ?? '',
+      quantity,
+      () =>
+        WindowController.addToast({
+          key: `add-to-cart-${Math.random()}`,
+          message: t('addedToCart') ?? '',
+          description:
+            t('addedToCartDescription', {
+              item: productProps.title,
+            }) ?? '',
+          type: 'success',
+        }),
+      (error) => console.error(error)
+    );
   };
 
   const [fullName, setFullName] = useState<string>(
@@ -270,6 +292,7 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
           setActiveDetails={setActiveDetails}
           setDescription={setDescription}
           setQuantity={setQuantity}
+          onAddToCart={onAddToCart}
         />
         <ProductMobileComponent
           productProps={productProps}
@@ -293,6 +316,7 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
           setActiveDetails={setActiveDetails}
           setDescription={setDescription}
           setQuantity={setQuantity}
+          onAddToCart={onAddToCart}
         />
       </React.Suspense>
     </>

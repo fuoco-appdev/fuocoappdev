@@ -45,6 +45,7 @@ export default function ProductMobileComponent({
   setActiveDetails,
   setDescription,
   setQuantity,
+  onAddToCart,
 }: ProductResponsiveProps): JSX.Element {
   const { t } = useTranslation();
   const [showMore, setShowMore] = useState<boolean>(false);
@@ -611,23 +612,7 @@ export default function ProductMobileComponent({
                 )
               }
               disabled={!productProps.selectedVariant?.purchasable}
-              onClick={() =>
-                ProductController.addToCartAsync(
-                  productProps.selectedVariant?.id ?? '',
-                  quantity,
-                  () =>
-                    WindowController.addToast({
-                      key: `add-to-cart-${Math.random()}`,
-                      message: t('addedToCart') ?? '',
-                      description:
-                        t('addedToCartDescription', {
-                          item: productProps.title,
-                        }) ?? '',
-                      type: 'success',
-                    }),
-                  (error) => console.error(error)
-                )
-              }
+              onClick={onAddToCart}
             >
               {!productProps.selectedVariant?.purchasable && t('outOfStock')}
               {productProps.selectedVariant?.purchasable && t('addToCart')}

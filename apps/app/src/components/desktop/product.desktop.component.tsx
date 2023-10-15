@@ -6,7 +6,6 @@ import ProductController from '../../controllers/product.controller';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ProductTag } from '@medusajs/medusa';
-import WindowController from '../../controllers/window.controller';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
 import StoreController from '../../controllers/store.controller';
@@ -44,6 +43,7 @@ export default function ProductDesktopComponent({
   setActiveDetails,
   setDescription,
   setQuantity,
+  onAddToCart,
 }: ProductResponsiveProps): JSX.Element {
   const { t } = useTranslation();
 
@@ -590,23 +590,7 @@ export default function ProductDesktopComponent({
                 )
               }
               disabled={!productProps.selectedVariant?.purchasable}
-              onClick={() =>
-                ProductController.addToCartAsync(
-                  productProps.selectedVariant?.id ?? '',
-                  quantity,
-                  () =>
-                    WindowController.addToast({
-                      key: `add-to-cart-${Math.random()}`,
-                      message: t('addedToCart') ?? '',
-                      description:
-                        t('addedToCartDescription', {
-                          item: productProps.title,
-                        }) ?? '',
-                      type: 'success',
-                    }),
-                  (error) => console.error(error)
-                )
-              }
+              onClick={onAddToCart}
             >
               {!productProps.selectedVariant?.purchasable && t('outOfStock')}
               {productProps.selectedVariant?.purchasable && t('addToCart')}
