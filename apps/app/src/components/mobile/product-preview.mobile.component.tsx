@@ -30,7 +30,7 @@ export default function ProductPreviewMobileComponent({
   onRest,
   price,
   selectedVariantId,
-  addToCartAsync,
+  onAddToCart,
 }: ProductPreviewResponsiveProps): JSX.Element {
   const [expanded, setExpanded] = useState<boolean>(false);
   const ref = useRef<HTMLDivElement | null>(null);
@@ -152,7 +152,7 @@ export default function ProductPreviewMobileComponent({
                         color: 'rgba(133, 38, 122, .35)',
                       }}
                       rounded={true}
-                      onClick={addToCartAsync}
+                      onClick={onAddToCart}
                       icon={<Line.AddShoppingCart size={24} />}
                     />
                   )}

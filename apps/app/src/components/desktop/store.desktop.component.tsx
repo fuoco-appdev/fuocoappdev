@@ -18,6 +18,7 @@ import {
   Tabs,
   Listbox,
   OptionProps,
+  Modal,
 } from '@fuoco.appdev/core-ui';
 import { RoutePathsType } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
@@ -38,25 +39,32 @@ import {
   PricedProduct,
   PricedVariant,
 } from '@medusajs/medusa/dist/types/pricing';
+import { formatAmount } from 'medusa-react';
 import { ResponsiveDesktop } from '../responsive.component';
+import CartVariantItemComponent from '../cart-variant-item.component';
 
 export default function StoreDesktopComponent({
   storeProps,
   homeProps,
   homeLocalProps,
   openFilter,
+  openCartVariants,
   countryOptions,
   regionOptions,
   cellarOptions,
+  variantQuantities,
   selectedCountryId,
   selectedRegionId,
   selectedCellarId,
   setOpenFilter,
+  setOpenCartVariants,
   setSelectedCountryId,
   setSelectedRegionId,
   setSelectedCellarId,
+  setVariantQuantities,
   onPreviewsScroll,
   onPreviewsLoad,
+  onAddToCart,
 }: StoreResponsiveProps): JSX.Element {
   const previewsContainerRef = createRef<HTMLDivElement>();
   const rootRef = createRef<HTMLDivElement>();
@@ -240,6 +248,10 @@ export default function StoreDesktopComponent({
                   onRest={() => {
                     navigate(`${RoutePathsType.Store}/${preview.id}`);
                   }}
+                  onAddToCart={() => {
+                    StoreController.updateSelectedPreview(preview);
+                    setOpenCartVariants(true);
+                  }}
                 />
               )
             )}
@@ -414,6 +426,89 @@ export default function StoreDesktopComponent({
           </div>
         </CSSTransition>
       </div>
+      <Modal
+        classNames={{
+          overlay: [
+            styles['modal-overlay'],
+            styles['modal-overlay-desktop'],
+          ].join(' '),
+          modal: [styles['modal'], styles['modal-desktop']].join(' '),
+          text: [styles['modal-text'], styles['modal-text-desktop']].join(' '),
+          title: [styles['modal-title'], styles['modal-title-desktop']].join(
+            ' '
+          ),
+          description: [
+            styles['modal-description'],
+            styles['modal-description-desktop'],
+          ].join(' '),
+          footerButtonContainer: [
+            styles['modal-footer-button-container'],
+            styles['modal-footer-button-container-desktop'],
+            styles['modal-address-footer-button-container-desktop'],
+          ].join(' '),
+          cancelButton: {
+            button: [
+              styles['modal-cancel-button'],
+              styles['modal-cancel-button-desktop'],
+            ].join(' '),
+          },
+          confirmButton: {
+            button: [
+              styles['modal-confirm-button'],
+              styles['modal-confirm-button-desktop'],
+            ].join(' '),
+          },
+        }}
+        title={t('addVariant') ?? ''}
+        visible={openCartVariants}
+        onCancel={() => setOpenCartVariants(false)}
+        hideFooter={true}
+      >
+        <div
+          className={[
+            styles['add-variants-container'],
+            styles['add-variants-container-desktop'],
+          ].join(' ')}
+        >
+          {storeProps.selectedPreview?.variants.map((variant) => {
+            return (
+              <CartVariantItemComponent
+                key={variant.id}
+                variant={variant}
+                storeProps={storeProps}
+                variantQuantities={variantQuantities}
+                setVariantQuantities={setVariantQuantities}
+              />
+            );
+          })}
+          <Button
+            classNames={{
+              container: [
+                styles['add-to-cart-button-container'],
+                styles['add-to-cart-button-container-desktop'],
+              ].join(' '),
+              button: [
+                styles['add-to-cart-button'],
+                styles['add-to-cart-button-desktop'],
+              ].join(' '),
+            }}
+            block={true}
+            size={'full'}
+            rippleProps={{
+              color: 'rgba(233, 33, 66, .35)',
+            }}
+            icon={<Line.AddShoppingCart size={24} />}
+            disabled={
+              Object.values(variantQuantities).reduce((current, next) => {
+                return current + next;
+              }, 0) <= 0
+            }
+            onClick={onAddToCart}
+          >
+            {t('addToCart')}
+          </Button>
+        </div>
+      </Modal>
     </ResponsiveDesktop>
   );
 }

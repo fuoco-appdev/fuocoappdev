@@ -1,4 +1,4 @@
-import { Typography, Button, Tabs } from '@fuoco.appdev/core-ui';
+import { Typography, Button, Tabs, InputNumber } from '@fuoco.appdev/core-ui';
 import { Line } from '@fuoco.appdev/core-ui';
 import { useObservable } from '@ngneat/use-observable';
 import styles from '../product.module.scss';
@@ -40,8 +40,10 @@ export default function ProductDesktopComponent({
   type,
   uvc,
   vintage,
+  quantity,
   setActiveDetails,
   setDescription,
+  setQuantity,
 }: ProductResponsiveProps): JSX.Element {
   const { t } = useTranslation();
 
@@ -536,7 +538,39 @@ export default function ProductDesktopComponent({
               )}
             </div>
           </div>
-
+          {!productProps.isLoading ? (
+            <InputNumber
+              label={t('quantity') ?? ''}
+              classNames={{
+                formLayout: { label: styles['input-form-layout-label'] },
+                input: styles['input'],
+                container: styles['input-container'],
+                button: {
+                  button: [
+                    styles['input-button'],
+                    styles['input-button-desktop'],
+                  ].join(' '),
+                },
+              }}
+              iconColor={'#2A2A5F'}
+              value={quantity.toString()}
+              min={1}
+              max={productProps.selectedVariant?.inventory_quantity ?? 0}
+              onChange={(e) => {
+                setQuantity(parseInt(e.currentTarget.value));
+              }}
+            />
+          ) : (
+            <div className={styles['input-root-skeleton']}>
+              <Skeleton
+                className={styles['input-form-layout-label-skeleton']}
+                height={20}
+                width={120}
+                borderRadius={20}
+              />
+              <Skeleton style={{ height: 44 }} borderRadius={6} />
+            </div>
+          )}
           {!productProps.isLoading ? (
             <Button
               classNames={{
@@ -559,7 +593,7 @@ export default function ProductDesktopComponent({
               onClick={() =>
                 ProductController.addToCartAsync(
                   productProps.selectedVariant?.id ?? '',
-                  1,
+                  quantity,
                   () =>
                     WindowController.addToast({
                       key: `add-to-cart-${Math.random()}`,

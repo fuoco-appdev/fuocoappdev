@@ -38,24 +38,30 @@ import {
   PricedVariant,
 } from '@medusajs/medusa/dist/types/pricing';
 import { ResponsiveMobile } from '../responsive.component';
+import CartVariantItemComponent from '../cart-variant-item.component';
 
 export default function StoreMobileComponent({
   storeProps,
   homeProps,
   homeLocalProps,
   openFilter,
+  openCartVariants,
   countryOptions,
   regionOptions,
   cellarOptions,
+  variantQuantities,
   selectedCountryId,
   selectedRegionId,
   selectedCellarId,
   setOpenFilter,
+  setOpenCartVariants,
+  setVariantQuantities,
   setSelectedCountryId,
   setSelectedRegionId,
   setSelectedCellarId,
   onPreviewsScroll,
   onPreviewsLoad,
+  onAddToCart,
 }: StoreResponsiveProps): JSX.Element {
   const previewsContainerRef = createRef<HTMLDivElement>();
   const rootRef = createRef<HTMLDivElement>();
@@ -213,6 +219,10 @@ export default function StoreMobileComponent({
               onRest={() => {
                 navigate(`${RoutePathsType.Store}/${preview.id}`);
               }}
+              onAddToCart={() => {
+                StoreController.updateSelectedPreview(preview);
+                setOpenCartVariants(true);
+              }}
             />
           ))}
           <img
@@ -230,13 +240,13 @@ export default function StoreMobileComponent({
             <div
               className={[
                 styles['no-inventory-location-container'],
-                styles['no-inventory-location-container-desktop'],
+                styles['no-inventory-location-container-mobile'],
               ].join(' ')}
             >
               <div
                 className={[
                   styles['no-items-text'],
-                  styles['no-items-text-desktop'],
+                  styles['no-items-text-mobile'],
                 ].join(' ')}
               >
                 {t('chooseASalesChannel')}
@@ -244,7 +254,7 @@ export default function StoreMobileComponent({
               <div
                 className={[
                   styles['no-items-container'],
-                  styles['no-items-container-desktop'],
+                  styles['no-items-container-mobile'],
                 ].join(' ')}
               >
                 <Button
@@ -350,6 +360,56 @@ export default function StoreMobileComponent({
               }}
             >
               {t('apply')}
+            </Button>
+          </div>
+        </Dropdown>
+        <Dropdown
+          open={openCartVariants}
+          touchScreen={true}
+          onClose={() => setOpenCartVariants(false)}
+        >
+          <div
+            className={[
+              styles['add-variants-container'],
+              styles['add-variants-container-mobile'],
+            ].join(' ')}
+          >
+            {storeProps.selectedPreview?.variants.map((variant) => {
+              return (
+                <CartVariantItemComponent
+                  key={variant.id}
+                  variant={variant}
+                  storeProps={storeProps}
+                  variantQuantities={variantQuantities}
+                  setVariantQuantities={setVariantQuantities}
+                />
+              );
+            })}
+            <Button
+              classNames={{
+                container: [
+                  styles['add-to-cart-button-container'],
+                  styles['add-to-cart-button-container-mobile'],
+                ].join(' '),
+                button: [
+                  styles['add-to-cart-button'],
+                  styles['add-to-cart-button-mobile'],
+                ].join(' '),
+              }}
+              block={true}
+              size={'full'}
+              rippleProps={{
+                color: 'rgba(233, 33, 66, .35)',
+              }}
+              icon={<Line.AddShoppingCart size={24} />}
+              disabled={
+                Object.values(variantQuantities).reduce((current, next) => {
+                  return current + next;
+                }, 0) <= 0
+              }
+              onClick={onAddToCart}
+            >
+              {t('addToCart')}
             </Button>
           </div>
         </Dropdown>

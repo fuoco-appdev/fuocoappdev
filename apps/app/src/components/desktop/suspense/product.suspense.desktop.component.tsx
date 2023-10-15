@@ -178,6 +178,12 @@ export function ProductSuspenseDesktopComponent(): JSX.Element {
               styles['add-to-cart-button-skeleton-desktop'],
             ].join(' ')}
           />
+          <Skeleton
+            className={[
+              styles['add-to-cart-button-skeleton'],
+              styles['add-to-cart-button-skeleton-desktop'],
+            ].join(' ')}
+          />
           <div
             className={[
               styles['tab-container'],

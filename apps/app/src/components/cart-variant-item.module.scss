@@ -1,0 +1,138 @@
+@import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
+
+.variant-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: $mp-4;
+
+    & .variant-content {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: $mp-4;
+        gap: $mp-4;
+
+        & .variant-details {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: $mp-4;
+
+            & .variant-thumbnail-container {
+                position: relative;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 38px;
+                height: 38px;
+                background-color: $gray-100;
+
+                & .variant-thumbnail {
+                    position: absolute;
+                    padding: $mp-1 0;
+                    max-height: 100%;
+                    width: auto;
+                }
+            }
+
+            & .variant-title {
+                    color: $brand-900;
+            }
+
+            & .variant-value {
+                    color: $brand-900;
+            }
+
+            & .variant-price {
+                    color: $brand-900;
+            }
+        }
+
+        & .variant-checkbox-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-width: 24px;
+                min-height: 24px;
+                border-radius: 24px;
+                border-color: $brand-900;
+                border-style: solid;
+                color: #fff;
+        }
+    }
+}
+
+.variant-container-desktop {
+    & .variant-content-desktop {
+        & .variant-details-desktop {
+            & .variant-thumbnail-container-desktop {
+                & .variant-thumbnail-desktop {
+
+                }
+            }
+
+            & .variant-title-desktop {
+
+            }
+
+            & .variant-value-desktop {
+
+            }
+
+            & .variant-price-desktop {
+
+            }
+        }
+
+        & .variant-checkbox-container-desktop {
+
+        }
+    }
+}
+
+.variant-container-mobile {
+    padding: 0 $mp-4;
+
+    & .variant-content-mobile {
+        & .variant-details-mobile {
+            & .variant-thumbnail-container-mobile {
+                & .variant-thumbnail-mobile {
+
+                }
+            }
+
+            & .variant-title-mobile {
+
+            }
+
+            & .variant-value-mobile {
+
+            }
+
+            & .variant-price-mobile {
+
+            }
+        }
+
+        & .variant-checkbox-container-mobile {
+
+        }
+    }
+}
+
+.input-form-layout-label {
+    color: $brand-900 !important;
+}
+      
+.input {
+    color: $brand-900 !important;
+}
+      
+.input-container {
+    border-color: $brand-900 !important;
+}
+
+.input-button-desktop:hover {
+    background-color: rgba(42, 42, 95, .15) !important;
+}

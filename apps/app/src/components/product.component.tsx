@@ -53,8 +53,10 @@ export interface ProductResponsiveProps {
   type: string | undefined;
   uvc: string | undefined;
   vintage: string | undefined;
+  quantity: number;
   setActiveDetails: (value: string | undefined) => void;
   setDescription: (value: string) => void;
+  setQuantity: (value: number) => void;
 }
 
 function ProductComponent({ product }: ProductProps): JSX.Element {
@@ -80,6 +82,7 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
   const [uvc, setUVC] = useState<string | undefined>('');
   const [vintage, setVintage] = useState<string | undefined>('');
   const [remarkPlugins, setRemarkPlugins] = useState<any[]>([]);
+  const [quantity, setQuantity] = useState<number>(1);
 
   const formatName = (title: string, subtitle?: string | null) => {
     let name = productProps.title;
@@ -263,8 +266,10 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
           type={type}
           uvc={uvc}
           vintage={vintage}
+          quantity={quantity}
           setActiveDetails={setActiveDetails}
           setDescription={setDescription}
+          setQuantity={setQuantity}
         />
         <ProductMobileComponent
           productProps={productProps}
@@ -284,8 +289,10 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
           type={type}
           uvc={uvc}
           vintage={vintage}
+          quantity={quantity}
           setActiveDetails={setActiveDetails}
           setDescription={setDescription}
+          setQuantity={setQuantity}
         />
       </React.Suspense>
     </>

@@ -157,6 +157,12 @@ export function ProductSuspenseMobileComponent(): JSX.Element {
               styles['add-to-cart-button-skeleton-mobile'],
             ].join(' ')}
           />
+          <Skeleton
+            className={[
+              styles['add-to-cart-button-skeleton'],
+              styles['add-to-cart-button-skeleton-mobile'],
+            ].join(' ')}
+          />
           <div
             className={[
               styles['tab-container'],

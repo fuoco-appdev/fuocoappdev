@@ -315,7 +315,7 @@
                     justify-content: center;
             gap: $mp-6;
             padding: $mp-6;
-            padding-top: calc(157px + 16px);
+            padding-top: calc(157px + 24px);
             height: 100%;
 
             & .loading-ring-desktop {
@@ -358,6 +358,12 @@
         }
 
         & .apply-button-desktop {
+        }
+    }
+
+    & .add-variants-container-desktop {
+        & .variant-container-desktop {
+
         }
     }
 }
@@ -616,4 +622,69 @@
     -webkit-transition-timing-function: $transition-decelerated-easing;
          -o-transition-timing-function: $transition-decelerated-easing;
             transition-timing-function: $transition-decelerated-easing;
+}
+
+.add-variants-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-overlay {
+    z-index: 24;
+}
+
+.modal {
+    max-height: 90vh;
+    min-width: 25vw;
+    overflow-y: auto;
+}
+
+.modal-text-desktop {
+    padding: $mp-8 !important;
+}
+
+.modal-title {
+    color: $brand-900 !important;
+}
+
+.modal-description {
+    color: $brand-900 !important;
+}
+
+.modal-footer-button-container-desktop {
+    padding-left: $mp-6 !important;
+    padding-right: $mp-6 !important;
+    height: 100%;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+}
+
+.modal-address-footer-button-container-desktop {
+    border-top: 1px solid rgba(42, 42, 95, .6);
+}
+
+.modal-cancel-button {
+    background-color: transparent !important;
+    border: 1px solid $brand-900 !important;
+    padding-left: $mp-4 !important;
+    padding-right: $mp-4 !important;
+}
+
+.modal-confirm-button {
+    background-color: $brand-700 !important;
+    padding-left: $mp-4 !important;
+    padding-right: $mp-4 !important;
+}
+
+.add-to-cart-button-container-mobile {
+    padding: 0 $mp-4;
+}
+
+.add-to-cart-button {
+    background-color: $brand-700;
+}
+
+.add-to-cart-button:hover {
+    background-color: $brand-700;
 }

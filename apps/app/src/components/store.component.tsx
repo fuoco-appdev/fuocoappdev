@@ -51,6 +51,9 @@ import { StoreSuspenseDesktopComponent } from './desktop/suspense/store.suspense
 import { StoreSuspenseMobileComponent } from './mobile/suspense/store.suspense.mobile.component';
 import { lazy } from '@loadable/component';
 import { timeout } from 'promise-timeout';
+import { PricedVariant } from '@medusajs/medusa/dist/types/pricing';
+import ProductController from '../controllers/product.controller';
+import WindowController from '../controllers/window.controller';
 
 const StoreDesktopComponent = lazy(
   () => import('./desktop/store.desktop.component')
@@ -64,18 +67,23 @@ export interface StoreResponsiveProps {
   homeProps: HomeState;
   homeLocalProps: HomeLocalState;
   openFilter: boolean;
+  openCartVariants: boolean;
   countryOptions: OptionProps[];
   regionOptions: OptionProps[];
   cellarOptions: OptionProps[];
   selectedCountryId: string;
   selectedRegionId: string;
   selectedCellarId: string;
+  variantQuantities: Record<string, number>;
   setOpenFilter: (value: boolean) => void;
+  setOpenCartVariants: (value: boolean) => void;
   setSelectedCountryId: (value: string) => void;
   setSelectedRegionId: (value: string) => void;
   setSelectedCellarId: (value: string) => void;
+  setVariantQuantities: (value: Record<string, number>) => void;
   onPreviewsScroll: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
   onPreviewsLoad: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
+  onAddToCart: () => void;
 }
 
 export default function StoreComponent(): JSX.Element {
@@ -85,12 +93,17 @@ export default function StoreComponent(): JSX.Element {
     HomeController.model.localStore ?? Store.prototype
   );
   const [openFilter, setOpenFilter] = useState<boolean>(false);
+  const [openCartVariants, setOpenCartVariants] = useState<boolean>(false);
   const [countryOptions, setCountryOptions] = useState<OptionProps[]>([]);
   const [regionOptions, setRegionOptions] = useState<OptionProps[]>([]);
   const [cellarOptions, setCellarOptions] = useState<OptionProps[]>([]);
   const [selectedCountryId, setSelectedCountryId] = useState<string>('');
   const [selectedRegionId, setSelectedRegionId] = useState<string>('');
   const [selectedCellarId, setSelectedCellarId] = useState<string>('');
+  const [variantQuantities, setVariantQuantities] = useState<
+    Record<string, number>
+  >({});
+  const { t, i18n } = useTranslation();
 
   const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const scrollTop = e.currentTarget?.scrollTop ?? 0;
@@ -110,6 +123,30 @@ export default function StoreComponent(): JSX.Element {
       e.currentTarget.scrollTop = storeProps.scrollPosition as number;
       StoreController.updateScrollPosition(undefined);
     }
+  };
+
+  const onAddToCart = () => {
+    for (const id in variantQuantities) {
+      const quantity = variantQuantities[id];
+      ProductController.addToCartAsync(
+        id,
+        quantity,
+        () =>
+          WindowController.addToast({
+            key: `add-to-cart-${Math.random()}`,
+            message: t('addedToCart') ?? '',
+            description:
+              t('addedToCartDescription', {
+                item: storeProps.selectedPreview?.title,
+              }) ?? '',
+            type: 'success',
+          }),
+        (error) => console.error(error)
+      );
+    }
+
+    setOpenCartVariants(false);
+    setVariantQuantities({});
   };
 
   useEffect(() => {
@@ -238,6 +275,22 @@ export default function StoreComponent(): JSX.Element {
     setSelectedRegionId(storeProps.selectedRegion.id);
   }, [regionOptions, storeProps.selectedRegion]);
 
+  useEffect(() => {
+    if (!storeProps.selectedPreview) {
+      return;
+    }
+
+    const quantities: Record<string, number> = {};
+    for (const variant of storeProps.selectedPreview?.variants) {
+      if (variant?.id) {
+        continue;
+      }
+      quantities[variant?.id] = 0;
+    }
+
+    setVariantQuantities(quantities);
+  }, [storeProps.selectedPreview]);
+
   const suspenceComponent = (
     <>
       <StoreSuspenseDesktopComponent />
@@ -279,36 +332,46 @@ export default function StoreComponent(): JSX.Element {
           homeProps={homeProps}
           homeLocalProps={homeLocalProps}
           openFilter={openFilter}
+          openCartVariants={openCartVariants}
           countryOptions={countryOptions}
           regionOptions={regionOptions}
           cellarOptions={cellarOptions}
+          variantQuantities={variantQuantities}
           selectedCountryId={selectedCountryId}
           selectedRegionId={selectedRegionId}
           selectedCellarId={selectedCellarId}
           setOpenFilter={setOpenFilter}
+          setOpenCartVariants={setOpenCartVariants}
           setSelectedCountryId={setSelectedCountryId}
           setSelectedRegionId={setSelectedRegionId}
           setSelectedCellarId={setSelectedCellarId}
+          setVariantQuantities={setVariantQuantities}
           onPreviewsScroll={onScroll}
           onPreviewsLoad={onLoad}
+          onAddToCart={onAddToCart}
         />
         <StoreMobileComponent
           storeProps={storeProps}
           homeProps={homeProps}
           homeLocalProps={homeLocalProps}
           openFilter={openFilter}
+          openCartVariants={openCartVariants}
           countryOptions={countryOptions}
           regionOptions={regionOptions}
           cellarOptions={cellarOptions}
+          variantQuantities={variantQuantities}
           selectedCountryId={selectedCountryId}
           selectedRegionId={selectedRegionId}
           selectedCellarId={selectedCellarId}
           setOpenFilter={setOpenFilter}
+          setOpenCartVariants={setOpenCartVariants}
           setSelectedCountryId={setSelectedCountryId}
           setSelectedRegionId={setSelectedRegionId}
           setSelectedCellarId={setSelectedCellarId}
+          setVariantQuantities={setVariantQuantities}
           onPreviewsScroll={onScroll}
           onPreviewsLoad={onLoad}
+          onAddToCart={onAddToCart}
         />
       </React.Suspense>
     </>

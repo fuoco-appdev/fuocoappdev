@@ -29,7 +29,7 @@ export default function ProductPreviewDesktopComponent({
   onClick,
   price,
   selectedVariantId,
-  addToCartAsync,
+  onAddToCart,
   onRest,
 }: ProductPreviewResponsiveProps): JSX.Element {
   const ref = useRef<HTMLDivElement | null>(null);
@@ -175,7 +175,7 @@ export default function ProductPreviewDesktopComponent({
                     color: 'rgba(133, 38, 122, .35)',
                   }}
                   rounded={true}
-                  onClick={addToCartAsync}
+                  onClick={onAddToCart}
                   icon={<Line.AddShoppingCart size={24} />}
                 />
               )}

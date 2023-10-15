@@ -481,16 +481,6 @@ class CheckoutController extends Controller {
           (current, next) => (current.amount ?? 0) - (next.amount ?? 0)
         );
         this._model.shippingOptions = shippingOptionsFromRegion ?? [];
-
-        const shippingMethods: ShippingMethod[] = value?.shipping_methods;
-        if (shippingMethods && shippingMethods.length > 0) {
-          this._model.selectedShippingOptionId =
-            shippingMethods[0].shipping_option_id;
-        } else {
-          await this.updateSelectedShippingOptionIdAsync(
-            shippingOptionsFromRegion?.[0].id ?? ''
-          );
-        }
       } catch (error: any) {
         console.error(error);
       }

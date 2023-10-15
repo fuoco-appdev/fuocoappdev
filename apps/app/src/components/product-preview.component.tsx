@@ -47,6 +47,7 @@ export interface ProductPreviewProps {
   preview: PricedProduct;
   onClick?: () => void;
   onRest?: () => void;
+  onAddToCart?: () => void;
 }
 
 export interface ProductPreviewResponsiveProps extends ProductPreviewProps {
@@ -55,7 +56,6 @@ export interface ProductPreviewResponsiveProps extends ProductPreviewProps {
   setPrice: (value: string) => void;
   setSelectedVariantId: (value: string | undefined) => void;
   formatPrice: (price: MoneyAmount) => string;
-  addToCartAsync: () => void;
 }
 
 export default function ProductPreviewComponent({
@@ -64,6 +64,7 @@ export default function ProductPreviewComponent({
   preview,
   onClick,
   onRest,
+  onAddToCart,
 }: ProductPreviewProps): JSX.Element {
   const [price, setPrice] = useState<string>('');
   const [addedToCartCount, setAddedToCartCount] = useState<number>(0);
@@ -112,25 +113,6 @@ export default function ProductPreviewComponent({
     }
   }, [preview, addedToCartCount, storeProps.selectedRegion]);
 
-  const addToCartAsync = async () => {
-    if (!selectedVariantId) {
-      return;
-    }
-
-    ProductController.addToCartAsync(selectedVariantId, 1, () => {
-      WindowController.addToast({
-        key: `add-to-cart-${Math.random()}`,
-        message: t('addedToCart') ?? '',
-        description:
-          t('addedToCartDescription', {
-            item: preview.title,
-          }) ?? '',
-        type: 'success',
-      });
-      setAddedToCartCount(addedToCartCount + 1);
-    });
-  };
-
   const suspenceComponent = (
     <>
       <ProductPreviewSuspenseDesktopComponent />
@@ -155,7 +137,7 @@ export default function ProductPreviewComponent({
         setPrice={setPrice}
         setSelectedVariantId={setSelectedVariantId}
         formatPrice={formatPrice}
-        addToCartAsync={addToCartAsync}
+        onAddToCart={onAddToCart}
       />
       <ProductPreviewMobileComponent
         storeProps={storeProps}
@@ -168,7 +150,7 @@ export default function ProductPreviewComponent({
         setPrice={setPrice}
         setSelectedVariantId={setSelectedVariantId}
         formatPrice={formatPrice}
-        addToCartAsync={addToCartAsync}
+        onAddToCart={onAddToCart}
       />
     </React.Suspense>
   );
