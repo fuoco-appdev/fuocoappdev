@@ -15,8 +15,10 @@ import { RefundItem } from '../../models/order-confirmed.model';
 import WindowController from '../../controllers/window.controller';
 import { OrderConfirmedResponsiveProps } from '../order-confirmed.component';
 import { ResponsiveMobile } from '../responsive.component';
+import { OrderConfirmedSuspenseMobileComponent } from './suspense/order-confirmed.suspense.mobile.component';
 
 export default function OrderConfirmedMobileComponent({
+  orderConfirmedProps,
   storeProps,
   quantity,
   openRefund,
@@ -25,11 +27,14 @@ export default function OrderConfirmedMobileComponent({
   formatStatus,
 }: OrderConfirmedResponsiveProps): JSX.Element {
   const { t } = useTranslation();
-  const [props] = useObservable(OrderConfirmedController.model.store);
+
+  const order = orderConfirmedProps.order;
+  if (!order) {
+    return <OrderConfirmedSuspenseMobileComponent />;
+  }
 
   return (
     <ResponsiveMobile>
-      props.order && (
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
         <div
           className={[
@@ -45,7 +50,7 @@ export default function OrderConfirmedMobileComponent({
             styles['order-number-text-mobile'],
           ].join(' ')}
         >
-          {`#${props.order?.display_id}`}
+          {`#${orderConfirmedProps.order?.display_id}`}
         </div>
         <div
           className={[
@@ -53,7 +58,7 @@ export default function OrderConfirmedMobileComponent({
             styles['order-id-text-mobile'],
           ].join(' ')}
         >
-          {props.order?.id}
+          {orderConfirmedProps.order?.id}
         </div>
         <div
           className={[
@@ -72,7 +77,7 @@ export default function OrderConfirmedMobileComponent({
                 ' '
               )}
             >
-              {new Date(props.order?.created_at).toDateString()}
+              {new Date(order.created_at ?? Date.now()).toDateString()}
             </div>
             <div
               className={[
@@ -100,8 +105,8 @@ export default function OrderConfirmedMobileComponent({
             styles['shipping-items-mobile'],
           ].join(' ')}
         >
-          {props.order?.items
-            .sort((current: LineItem, next: LineItem) => {
+          {order.items
+            ?.sort((current: LineItem, next: LineItem) => {
               return (
                 new Date(current.created_at).valueOf() -
                 new Date(next.created_at).valueOf()
@@ -150,7 +155,7 @@ export default function OrderConfirmedMobileComponent({
               styles['detail-text-mobile'],
             ].join(' ')}
           >
-            {formatStatus(props.order?.fulfillment_status)}
+            {formatStatus(order?.fulfillment_status ?? '')}
           </div>
         </div>
         <div
@@ -168,7 +173,7 @@ export default function OrderConfirmedMobileComponent({
             {t('payment')}
           </div>
           <div className={styles['detail-text']}>
-            {formatStatus(props.order?.payment_status)}
+            {formatStatus(order?.payment_status ?? '')}
           </div>
         </div>
         <div
@@ -205,29 +210,29 @@ export default function OrderConfirmedMobileComponent({
               styles['detail-text'],
               styles['detail-text-mobile'],
             ].join(' ')}
-          >{`${props.order?.shipping_address.first_name} ${props.order?.shipping_address.last_name}`}</div>
+          >{`${order?.shipping_address?.first_name} ${order?.shipping_address?.last_name}`}</div>
           <div
             className={[
               styles['detail-text'],
               styles['detail-text-mobile'],
             ].join(' ')}
-          >{`${props.order?.shipping_address.address_1}${
-            props.order?.shipping_address.address_2 &&
-            ', ' + props.order?.shipping_address.address_2
+          >{`${order?.shipping_address?.address_1}${
+            order?.shipping_address?.address_2 &&
+            ', ' + order?.shipping_address.address_2
           }`}</div>
           <div
             className={[
               styles['detail-text'],
               styles['detail-text-mobile'],
             ].join(' ')}
-          >{`${props.order?.shipping_address.city}, ${props.order?.shipping_address.province} ${props.order?.shipping_address.postal_code}`}</div>
+          >{`${order?.shipping_address?.city}, ${order?.shipping_address?.province} ${order?.shipping_address?.postal_code}`}</div>
           <div
             className={[
               styles['detail-text'],
               styles['detail-text-mobile'],
             ].join(' ')}
           >
-            {props.order?.shipping_address.country_code?.toUpperCase()}
+            {order?.shipping_address?.country_code?.toUpperCase()}
           </div>
         </div>
         <div
@@ -244,19 +249,17 @@ export default function OrderConfirmedMobileComponent({
           >
             {t('deliveryMethod')}
           </div>
-          {props.order?.shipping_methods.map((value: ShippingMethod) => {
-            return (
-              <div
-                className={[
-                  styles['detail-text'],
-                  styles['detail-text-mobile'],
-                ].join(' ')}
-                key={value.id}
-              >
-                {value.shipping_option.name}
-              </div>
-            );
-          })}
+          {order?.shipping_methods && order?.shipping_methods?.length > 0 && (
+            <div
+              className={[
+                styles['detail-text'],
+                styles['detail-text-mobile'],
+              ].join(' ')}
+              key={order?.shipping_methods[0].id}
+            >
+              {order?.shipping_methods[0].shipping_option.name}
+            </div>
+          )}
         </div>
         <div
           className={[
@@ -307,7 +310,7 @@ export default function OrderConfirmedMobileComponent({
               >
                 {storeProps.selectedRegion &&
                   formatAmount({
-                    amount: props.order?.subtotal ?? 0,
+                    amount: orderConfirmedProps.order?.subtotal ?? 0,
                     region: storeProps.selectedRegion,
                     includeTaxes: false,
                   })}
@@ -335,7 +338,7 @@ export default function OrderConfirmedMobileComponent({
               >
                 {storeProps.selectedRegion &&
                   formatAmount({
-                    amount: -props.order?.discount_total ?? 0,
+                    amount: -(order?.discount_total ?? 0),
                     region: storeProps.selectedRegion,
                     includeTaxes: false,
                   })}
@@ -363,7 +366,7 @@ export default function OrderConfirmedMobileComponent({
               >
                 {storeProps.selectedRegion &&
                   formatAmount({
-                    amount: props.order?.shipping_total ?? 0,
+                    amount: orderConfirmedProps.order?.shipping_total ?? 0,
                     region: storeProps.selectedRegion,
                     includeTaxes: false,
                   })}
@@ -391,7 +394,7 @@ export default function OrderConfirmedMobileComponent({
               >
                 {storeProps.selectedRegion &&
                   formatAmount({
-                    amount: props.order?.tax_total ?? 0,
+                    amount: orderConfirmedProps.order?.tax_total ?? 0,
                     region: storeProps.selectedRegion,
                     includeTaxes: false,
                   })}
@@ -419,7 +422,7 @@ export default function OrderConfirmedMobileComponent({
               >
                 {storeProps.selectedRegion &&
                   formatAmount({
-                    amount: props.order?.total ?? 0,
+                    amount: orderConfirmedProps.order?.total ?? 0,
                     region: storeProps.selectedRegion,
                     includeTaxes: true,
                   })}
@@ -438,10 +441,10 @@ export default function OrderConfirmedMobileComponent({
               styles['refund-items-container-mobile'],
             ].join(' ')}
           >
-            {props.order?.items.map((item: LineItem) => (
+            {order?.items?.map((item: LineItem) => (
               <RefundItemComponent
                 item={item}
-                refundItem={props.refundItems[item.id]}
+                refundItem={orderConfirmedProps.refundItems[item.id]}
                 returnReasonOptions={returnReasonOptions}
                 onChanged={(value) =>
                   OrderConfirmedController.updateRefundItem(item.id, value)
@@ -465,9 +468,9 @@ export default function OrderConfirmedMobileComponent({
                 color: 'rgba(233, 33, 66, .35)',
               }}
               disabled={
-                Object.values(props.refundItems as RefundItem[]).find(
-                  (value: RefundItem) => value.quantity > 0
-                ) === undefined
+                Object.values(
+                  orderConfirmedProps.refundItems ?? ([] as RefundItem[])
+                ).find((value: RefundItem) => value.quantity > 0) === undefined
               }
               onClick={async () => {
                 await OrderConfirmedController.createReturnAsync();
@@ -485,7 +488,6 @@ export default function OrderConfirmedMobileComponent({
           </div>
         </Dropdown>
       </div>
-      )
     </ResponsiveMobile>
   );
 }

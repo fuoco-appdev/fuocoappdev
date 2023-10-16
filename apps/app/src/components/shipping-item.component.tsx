@@ -11,6 +11,8 @@ import StoreController from '../controllers/store.controller';
 import { StoreState } from '../models/store.model';
 import { lazy } from '@loadable/component';
 import React from 'react';
+import { ShippingItemSuspenseDesktopComponent } from './desktop/suspense/shipping-item.suspense.desktop.component';
+import { ShippingItemSuspenseMobileComponent } from './mobile/suspense/shipping-item.suspense.mobile.component';
 
 const ShippingItemDesktopComponent = lazy(
   () => import('./desktop/shipping-item.desktop.component')
@@ -59,15 +61,8 @@ export default function ShippingItemComponent({
 
   const suspenceComponent = (
     <>
-      <ResponsiveDesktop>
-        <div />
-      </ResponsiveDesktop>
-      <ResponsiveTablet>
-        <div />
-      </ResponsiveTablet>
-      <ResponsiveMobile>
-        <div />
-      </ResponsiveMobile>
+      <ShippingItemSuspenseDesktopComponent />
+      <ShippingItemSuspenseMobileComponent />
     </>
   );
 

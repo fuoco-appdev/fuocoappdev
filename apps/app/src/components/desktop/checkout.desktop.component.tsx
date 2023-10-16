@@ -971,6 +971,7 @@ export default function CheckoutDesktopComponent({
                 disabled={
                   !checkoutProps.shippingFormComplete ||
                   !checkoutProps.billingFormComplete ||
+                  !checkoutProps.selectedShippingOptionId ||
                   !checkoutProps.isLegalAge
                 }
                 size={'large'}
@@ -1099,7 +1100,7 @@ export default function CheckoutDesktopComponent({
               styles['modal-overlay'],
               styles['modal-overlay-desktop'],
             ].join(' '),
-
+            modal: [styles['modal'], styles['modal-desktop']].join(' '),
             title: [styles['modal-title'], styles['modal-title-desktop']].join(
               ' '
             ),

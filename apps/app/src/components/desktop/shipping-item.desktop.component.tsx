@@ -23,7 +23,6 @@ export default function ShippingItemDesktopComponent({
   return (
     <ResponsiveDesktop>
       <div
-        key={item.variant_id}
         className={[styles['container'], styles['container-desktop']].join(' ')}
       >
         <div

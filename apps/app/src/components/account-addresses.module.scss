@@ -104,7 +104,6 @@
     }
 
     & .add-address-container-desktop {
-        padding: $mp-6;
         height: 100%;
         overflow-y: auto;
 
@@ -115,7 +114,6 @@
     }
 
     & .edit-address-container-desktop {
-        padding: $mp-6;
         height: 100%;
         overflow-y: auto;
 
@@ -183,8 +181,12 @@
     overflow-y: auto;
 }
 
+.modal-desktop {
+    padding: $mp-8;
+}
+
 .modal-text-desktop {
-    padding: $mp-6 !important;
+    padding-bottom: $mp-6 !important;
     max-width: 30vw;
 }
 
@@ -197,8 +199,6 @@
 }
 
 .modal-footer-button-container-desktop {
-    padding-left: $mp-6 !important;
-    padding-right: $mp-6 !important;
     height: 100%;
     -webkit-box-align: center;
         -ms-flex-align: center;

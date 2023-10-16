@@ -950,6 +950,7 @@ export default function CheckoutMobileComponent({
               disabled={
                 !checkoutProps.shippingFormComplete ||
                 !checkoutProps.billingFormComplete ||
+                !checkoutProps.selectedShippingOptionId ||
                 !checkoutProps.isLegalAge
               }
               size={'large'}

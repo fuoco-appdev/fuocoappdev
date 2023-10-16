@@ -444,8 +444,6 @@
     }
 
     & .add-address-container-desktop {
-        padding: $mp-6;
-
         & .add-address-button-container-desktop {
             & .add-address-button-desktop {
             }
@@ -453,7 +451,6 @@
     }
 
     & .pay-container-desktop {
-        padding: $mp-6;
         min-width: 500px;
 
         & .add-address-button-container-desktop {
@@ -727,8 +724,9 @@
     z-index: 24;
 }
 
-.modal {
-    max-height: 90vh;
+.modal-desktop {
+    max-height: 95vh;
+    padding: $mp-8;
     overflow-y: auto;
 }
 

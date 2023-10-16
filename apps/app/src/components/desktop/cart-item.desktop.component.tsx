@@ -208,7 +208,10 @@ export default function CartItemDesktopComponent({
         <Modal
           classNames={{
             overlay: styles['modal-overlay'],
+            modal: [styles['modal'], styles['modal-desktop']].join(' '),
+            text: styles['modal-text'],
             title: styles['modal-title'],
+            footerButtonContainer: styles['modal-footer-container'],
             description: styles['modal-description'],
             cancelButton: {
               button: styles['modal-cancel-button'],

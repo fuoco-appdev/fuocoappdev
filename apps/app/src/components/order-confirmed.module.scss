@@ -85,6 +85,18 @@
         width: 100%;
         margin-bottom: $mp-4;
 
+        & .header-container-skeleton {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-align: center;
+                -ms-flex-align: center;
+                    align-items: center;
+            width: 100%;
+            margin-bottom: $mp-4;
+            line-height: 42px;
+        }
+
         & .header-container {
             display: -webkit-box;
             display: -ms-flexbox;
@@ -114,6 +126,7 @@
         & .detail-text {
             font-size: $font-size-sm;
             color: $brand-900;
+            text-transform: capitalize;
         }
 
         & .pricing-container {    
@@ -197,11 +210,11 @@
         -webkit-box-direction: normal;
             -ms-flex-direction: column;
                 flex-direction: column;
-        padding: $mp-4;
+        padding: $mp-4 0;
     }
 
     & .request-refund-button-container {
-        padding: $mp-4;
+        padding: $mp-4 0;
     }
 }
 
@@ -379,6 +392,10 @@
 
 .modal-overlay {
     z-index: 24;
+}
+
+.modal-desktop {
+    padding: $mp-8;
 }
 
 .modal-container {

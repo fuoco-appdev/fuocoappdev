@@ -13,8 +13,10 @@ import { RefundItem } from '../../models/order-confirmed.model';
 import WindowController from '../../controllers/window.controller';
 import { OrderConfirmedResponsiveProps } from '../order-confirmed.component';
 import { ResponsiveDesktop } from '../responsive.component';
+import { OrderConfirmedSuspenseDesktopComponent } from './suspense/order-confirmed.suspense.desktop.component';
 
 export default function OrderConfirmedDesktopComponent({
+  orderConfirmedProps,
   storeProps,
   quantity,
   openRefund,
@@ -23,11 +25,14 @@ export default function OrderConfirmedDesktopComponent({
   formatStatus,
 }: OrderConfirmedResponsiveProps): JSX.Element {
   const { t } = useTranslation();
-  const [props] = useObservable(OrderConfirmedController.model.store);
+
+  const order = orderConfirmedProps.order;
+  if (!order) {
+    return <OrderConfirmedSuspenseDesktopComponent />;
+  }
 
   return (
     <ResponsiveDesktop>
-      props.order && (
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>
         <div
           className={[
@@ -55,7 +60,7 @@ export default function OrderConfirmedDesktopComponent({
                 styles['order-number-text-desktop'],
               ].join(' ')}
             >
-              {`#${props.order?.display_id}`}
+              {`#${order?.display_id}`}
             </div>
             <div
               className={[
@@ -63,7 +68,7 @@ export default function OrderConfirmedDesktopComponent({
                 styles['order-id-text-desktop'],
               ].join(' ')}
             >
-              {props.order?.id}
+              {order?.id}
             </div>
             <div
               className={[
@@ -83,7 +88,7 @@ export default function OrderConfirmedDesktopComponent({
                     styles['date-text-desktop'],
                   ].join(' ')}
                 >
-                  {new Date(props.order?.created_at).toDateString()}
+                  {new Date(order?.created_at ?? Date.now()).toDateString()}
                 </div>
                 <div
                   className={[
@@ -112,8 +117,8 @@ export default function OrderConfirmedDesktopComponent({
                 styles['shipping-items-desktop'],
               ].join(' ')}
             >
-              {props.order?.items
-                .sort((current: LineItem, next: LineItem) => {
+              {order?.items
+                ?.sort((current: LineItem, next: LineItem) => {
                   return (
                     new Date(current.created_at).valueOf() -
                     new Date(next.created_at).valueOf()
@@ -176,7 +181,7 @@ export default function OrderConfirmedDesktopComponent({
                   styles['detail-text-desktop'],
                 ].join(' ')}
               >
-                {formatStatus(props.order?.fulfillment_status)}
+                {formatStatus(order?.fulfillment_status ?? '')}
               </div>
             </div>
             <div
@@ -194,7 +199,7 @@ export default function OrderConfirmedDesktopComponent({
                 {t('payment')}
               </div>
               <div className={styles['detail-text']}>
-                {formatStatus(props.order?.payment_status)}
+                {formatStatus(order?.payment_status ?? '')}
               </div>
             </div>
             <div
@@ -231,29 +236,29 @@ export default function OrderConfirmedDesktopComponent({
                   styles['detail-text'],
                   styles['detail-text-desktop'],
                 ].join(' ')}
-              >{`${props.order?.shipping_address.first_name} ${props.order?.shipping_address.last_name}`}</div>
+              >{`${order?.shipping_address?.first_name} ${order?.shipping_address?.last_name}`}</div>
               <div
                 className={[
                   styles['detail-text'],
                   styles['detail-text-desktop'],
                 ].join(' ')}
-              >{`${props.order?.shipping_address.address_1}${
-                props.order?.shipping_address.address_2 &&
-                ', ' + props.order?.shipping_address.address_2
+              >{`${order?.shipping_address?.address_1}${
+                order?.shipping_address?.address_2 &&
+                ', ' + order?.shipping_address.address_2
               }`}</div>
               <div
                 className={[
                   styles['detail-text'],
                   styles['detail-text-desktop'],
                 ].join(' ')}
-              >{`${props.order?.shipping_address.city}, ${props.order?.shipping_address.province} ${props.order?.shipping_address.postal_code}`}</div>
+              >{`${order?.shipping_address?.city}, ${order?.shipping_address?.province} ${order?.shipping_address?.postal_code}`}</div>
               <div
                 className={[
                   styles['detail-text'],
                   styles['detail-text-desktop'],
                 ].join(' ')}
               >
-                {props.order?.shipping_address.country_code?.toUpperCase()}
+                {order?.shipping_address?.country_code?.toUpperCase()}
               </div>
             </div>
             <div
@@ -270,19 +275,18 @@ export default function OrderConfirmedDesktopComponent({
               >
                 {t('deliveryMethod')}
               </div>
-              {props.order?.shipping_methods.map((value: ShippingMethod) => {
-                return (
+              {order?.shipping_methods &&
+                order?.shipping_methods?.length > 0 && (
                   <div
                     className={[
                       styles['detail-text'],
                       styles['detail-text-desktop'],
                     ].join(' ')}
-                    key={value.id}
+                    key={order?.shipping_methods[0].id}
                   >
-                    {value.shipping_option.name}
+                    {order?.shipping_methods[0].shipping_option.name}
                   </div>
-                );
-              })}
+                )}
             </div>
           </div>
           <div
@@ -340,7 +344,7 @@ export default function OrderConfirmedDesktopComponent({
                   >
                     {storeProps.selectedRegion &&
                       formatAmount({
-                        amount: props.order?.subtotal ?? 0,
+                        amount: order?.subtotal ?? 0,
                         region: storeProps.selectedRegion,
                         includeTaxes: false,
                       })}
@@ -368,7 +372,7 @@ export default function OrderConfirmedDesktopComponent({
                   >
                     {storeProps.selectedRegion &&
                       formatAmount({
-                        amount: -props.order?.discount_total ?? 0,
+                        amount: -(order?.discount_total ?? 0),
                         region: storeProps.selectedRegion,
                         includeTaxes: false,
                       })}
@@ -396,7 +400,7 @@ export default function OrderConfirmedDesktopComponent({
                   >
                     {storeProps.selectedRegion &&
                       formatAmount({
-                        amount: props.order?.shipping_total ?? 0,
+                        amount: order?.shipping_total ?? 0,
                         region: storeProps.selectedRegion,
                         includeTaxes: false,
                       })}
@@ -424,7 +428,7 @@ export default function OrderConfirmedDesktopComponent({
                   >
                     {storeProps.selectedRegion &&
                       formatAmount({
-                        amount: props.order?.tax_total ?? 0,
+                        amount: order?.tax_total ?? 0,
                         region: storeProps.selectedRegion,
                         includeTaxes: false,
                       })}
@@ -452,7 +456,7 @@ export default function OrderConfirmedDesktopComponent({
                   >
                     {storeProps.selectedRegion &&
                       formatAmount({
-                        amount: props.order?.total ?? 0,
+                        amount: order?.total ?? 0,
                         region: storeProps.selectedRegion,
                         includeTaxes: true,
                       })}
@@ -465,6 +469,7 @@ export default function OrderConfirmedDesktopComponent({
         <Modal
           classNames={{
             overlay: styles['modal-overlay'],
+            modal: [styles['modal'], styles['modal-desktop']].join(' '),
           }}
           visible={openRefund}
           hideFooter={true}
@@ -476,10 +481,10 @@ export default function OrderConfirmedDesktopComponent({
               styles['refund-items-container-desktop'],
             ].join(' ')}
           >
-            {props.order?.items.map((item: LineItem) => (
+            {order?.items?.map((item: LineItem) => (
               <RefundItemComponent
                 item={item}
-                refundItem={props.refundItems[item.id]}
+                refundItem={orderConfirmedProps.refundItems[item.id]}
                 returnReasonOptions={returnReasonOptions}
                 onChanged={(value) =>
                   OrderConfirmedController.updateRefundItem(item.id, value)
@@ -503,9 +508,9 @@ export default function OrderConfirmedDesktopComponent({
                 color: 'rgba(233, 33, 66, .35)',
               }}
               disabled={
-                Object.values(props.refundItems as RefundItem[]).find(
-                  (value: RefundItem) => value.quantity > 0
-                ) === undefined
+                Object.values(
+                  orderConfirmedProps.refundItems ?? ([] as RefundItem[])
+                ).find((value: RefundItem) => value.quantity > 0) === undefined
               }
               onClick={async () => {
                 await OrderConfirmedController.createReturnAsync();
@@ -523,7 +528,6 @@ export default function OrderConfirmedDesktopComponent({
           </div>
         </Modal>
       </div>
-      )
     </ResponsiveDesktop>
   );
 }

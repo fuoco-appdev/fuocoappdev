@@ -295,12 +295,25 @@
     z-index: 24;
 }
 
+.modal-desktop {
+    padding: $mp-8;
+}
+
 .modal-title {
     color: $brand-900 !important;
 }
 
+.modal-text {
+    padding: 0 !important;
+    padding-bottom: $mp-4 !important;
+}
+
 .modal-description {
     color: $brand-900 !important;
+}
+
+.modal-footer-container {
+    padding: 0 !important;
 }
 
 .modal-cancel-button {

@@ -14,6 +14,10 @@ import styles from './order-confirmed.module.scss';
 import { StoreState } from '../models/store.model';
 import { lazy } from '@loadable/component';
 import React from 'react';
+import { OrderConfirmedSuspenseDesktopComponent } from './desktop/suspense/order-confirmed.suspense.desktop.component';
+import { OrderConfirmedSuspenseMobileComponent } from './mobile/suspense/order-confirmed.suspense.mobile.component';
+import { Helmet } from 'react-helmet';
+import { OrderConfirmedState } from 'src/models/order-confirmed.model';
 
 const OrderConfirmedDesktopComponent = lazy(
   () => import('./desktop/order-confirmed.desktop.component')
@@ -25,6 +29,7 @@ const OrderConfirmedMobileComponent = lazy(
 export interface OrderConfirmedProps {}
 
 export interface OrderConfirmedResponsiveProps {
+  orderConfirmedProps: OrderConfirmedState;
   storeProps: StoreState;
   quantity: number;
   openRefund: boolean;
@@ -35,7 +40,9 @@ export interface OrderConfirmedResponsiveProps {
 
 export default function OrderConfirmedComponent(): JSX.Element {
   const { id } = useParams();
-  const [props] = useObservable(OrderConfirmedController.model.store);
+  const [orderConfirmedProps] = useObservable(
+    OrderConfirmedController.model.store
+  );
   const [storeProps] = useObservable(StoreController.model.store);
   const [quantity, setQuantity] = useState<number>(0);
   const [openRefund, setOpenRefund] = useState<boolean>(false);
@@ -53,7 +60,7 @@ export default function OrderConfirmedComponent(): JSX.Element {
 
   useEffect(() => {
     const options = [];
-    for (const returnReason of props.returnReasons as ReturnReason[]) {
+    for (const returnReason of orderConfirmedProps.returnReasons as ReturnReason[]) {
       options.push({
         id: returnReason.id,
         value: returnReason.label,
@@ -64,48 +71,39 @@ export default function OrderConfirmedComponent(): JSX.Element {
     }
 
     setReturnReasonOptions(options);
-  }, [props.returnReasons]);
+  }, [orderConfirmedProps.returnReasons]);
 
   useEffect(() => {
-    if (!props.order || !props.returnReasons) {
+    if (!orderConfirmedProps.order || !orderConfirmedProps.returnReasons) {
       return;
     }
 
     setQuantity(
-      props.order.items.reduce(
+      orderConfirmedProps.order.items.reduce(
         (current: number, next: LineItem) => current + next.quantity,
         0
       )
     );
 
-    for (const item of props.order.items as LineItem[]) {
+    for (const item of orderConfirmedProps.order.items as LineItem[]) {
       OrderConfirmedController.updateRefundItem(item.id, {
         item_id: item.id,
         quantity: item.quantity,
-        reason_id: props.returnReasons[0]?.id ?? '',
+        reason_id: orderConfirmedProps.returnReasons[0]?.id ?? '',
         note: '',
       });
     }
-  }, [props.order, props.returnReasons]);
+  }, [orderConfirmedProps.order, orderConfirmedProps.returnReasons]);
 
   const formatStatus = (str: string | undefined) => {
     const formatted = str?.split('_').join(' ');
-    return (
-      formatted?.slice(0, 1).toUpperCase() ?? '' + formatted?.slice(1) ?? ''
-    );
+    return formatted?.toLowerCase() ?? '';
   };
 
   const suspenceComponent = (
     <>
-      <ResponsiveDesktop>
-        <div />
-      </ResponsiveDesktop>
-      <ResponsiveTablet>
-        <div />
-      </ResponsiveTablet>
-      <ResponsiveMobile>
-        <div />
-      </ResponsiveMobile>
+      <OrderConfirmedSuspenseDesktopComponent />
+      <OrderConfirmedSuspenseMobileComponent />
     </>
   );
 
@@ -114,23 +112,53 @@ export default function OrderConfirmedComponent(): JSX.Element {
   }
 
   return (
-    <React.Suspense fallback={suspenceComponent}>
-      <OrderConfirmedDesktopComponent
-        storeProps={storeProps}
-        quantity={quantity}
-        openRefund={openRefund}
-        returnReasonOptions={returnReasonOptions}
-        setOpenRefund={setOpenRefund}
-        formatStatus={formatStatus}
-      />
-      <OrderConfirmedMobileComponent
-        storeProps={storeProps}
-        quantity={quantity}
-        openRefund={openRefund}
-        returnReasonOptions={returnReasonOptions}
-        setOpenRefund={setOpenRefund}
-        formatStatus={formatStatus}
-      />
-    </React.Suspense>
+    <>
+      <Helmet>
+        <title>Cruthology</title>
+        <link rel="canonical" href={window.location.href} />
+        <meta name="title" content={'Home | Cruthology'} />
+        <meta
+          name="description"
+          content={
+            'Elevate your wine journey with Cruthology and join a community of enthusiasts who appreciate the artistry and craftsmanship behind every bottle. Welcome to the intersection of wine, culture, and luxury.'
+          }
+        />
+        <meta
+          property="og:image"
+          content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
+        />
+        <meta property="og:title" content={'Cruthology'} />
+        <meta
+          property="og:description"
+          content={
+            'Elevate your wine journey with Cruthology and join a community of enthusiasts who appreciate the artistry and craftsmanship behind every bottle. Welcome to the intersection of wine, culture, and luxury.'
+          }
+        />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={window.location.href} />
+      </Helmet>
+      <React.Suspense fallback={suspenceComponent}>
+        <OrderConfirmedDesktopComponent
+          orderConfirmedProps={orderConfirmedProps}
+          storeProps={storeProps}
+          quantity={quantity}
+          openRefund={openRefund}
+          returnReasonOptions={returnReasonOptions}
+          setOpenRefund={setOpenRefund}
+          formatStatus={formatStatus}
+        />
+        <OrderConfirmedMobileComponent
+          orderConfirmedProps={orderConfirmedProps}
+          storeProps={storeProps}
+          quantity={quantity}
+          openRefund={openRefund}
+          returnReasonOptions={returnReasonOptions}
+          setOpenRefund={setOpenRefund}
+          formatStatus={formatStatus}
+        />
+      </React.Suspense>
+    </>
   );
 }
