@@ -4,6 +4,7 @@ import { Model } from '../model';
 import { RoutePathsType } from '../route-paths';
 import * as core from '../protobuf/core_pb';
 import { ToastProps, LanguageInfo } from '@fuoco.appdev/core-ui';
+import { InventoryLocation } from './home.model';
 
 export interface WindowState {
   account: core.Account | null;
@@ -19,6 +20,7 @@ export interface WindowState {
   loadedLocationPath: string | undefined;
   prevTransitionKeyIndex: number;
   transitionKeyIndex: number;
+  queryInventoryLocation: InventoryLocation | undefined;
 }
 
 export interface WindowLocalState {
@@ -45,6 +47,7 @@ export class WindowModel extends Model {
           loadedLocationPath: undefined,
           prevTransitionKeyIndex: 0,
           transitionKeyIndex: 0,
+          queryInventoryLocation: undefined,
         })
       ),
       undefined,
@@ -267,6 +270,19 @@ export class WindowModel extends Model {
       this.store?.update((state) => ({
         ...state,
         transitionKeyIndex: value,
+      }));
+    }
+  }
+
+  public get queryInventoryLocation(): InventoryLocation | undefined {
+    return this.store?.getValue().queryInventoryLocation;
+  }
+
+  public set queryInventoryLocation(value: InventoryLocation | undefined) {
+    if (this.queryInventoryLocation !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        queryInventoryLocation: value,
       }));
     }
   }

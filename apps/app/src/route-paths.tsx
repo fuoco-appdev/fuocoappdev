@@ -1,4 +1,4 @@
-import { RouteObject } from 'react-router-dom';
+import { RouteObject, useLocation } from 'react-router-dom';
 import AppComponent from './components/app.component';
 import HomeComponent from './components/home.component';
 import SigninComponent from './components/signin.component';
@@ -22,6 +22,7 @@ import OrderConfirmedComponent from './components/order-confirmed.component';
 import AccountEditComponent from './components/account-edit.component';
 import AccountSettingsAccountComponent from './components/account-settings-account.component';
 import LoadingComponent from './components/loading.component';
+import React from 'react';
 
 export enum RoutePathsType {
   Default = '/',
@@ -162,4 +163,10 @@ export function updateRoutes(
   }
 
   return routePaths;
+}
+
+export function useQuery() {
+  const { search } = useLocation();
+
+  return React.useMemo(() => new URLSearchParams(search), [search]);
 }

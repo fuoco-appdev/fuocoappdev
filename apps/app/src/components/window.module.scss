@@ -580,6 +580,54 @@
   }
 }
 
+.modal-overlay {
+  z-index: 24;
+}
+
+.modal_desktop {
+  max-height: 95vh;
+  max-width: 25vw;
+  padding: $mp-8 !important;
+  overflow-y: auto;
+}
+
+.modal-text-desktop {
+  padding: 0 !important;
+}
+
+.modal-title {
+  color: $brand-900 !important;
+}
+
+.modal-description {
+  color: $brand-900 !important;
+}
+
+.modal-footer-button-container-desktop {
+  height: 100%;
+  padding: 0 !important;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.modal-address-footer-button-container-desktop {
+
+}
+
+.modal-cancel-button {
+  background-color: transparent !important;
+  border: 1px solid $brand-900 !important;
+  padding-left: $mp-4 !important;
+  padding-right: $mp-4 !important;
+}
+
+.modal-confirm-button {
+  background-color: $brand-700 !important;
+  padding-left: $mp-4 !important;
+  padding-right: $mp-4 !important;
+}
+
 .top-bar-button-container {
   width: -webkit-fit-content;
   width: -moz-fit-content;

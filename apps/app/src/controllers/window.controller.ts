@@ -15,10 +15,12 @@ import { Cart } from '@medusajs/medusa';
 import { select } from '@ngneat/elf';
 import SecretsService from '../services/secrets.service';
 import BucketService from '../services/bucket.service';
-import MedusaService from '../services/medusa.service';
+import HomeController from './home.controller';
+import { HomeState, InventoryLocation } from 'src/models/home.model';
 
 class WindowController extends Controller {
   private readonly _model: WindowModel;
+  private _inventoryLocationsSubscription: Subscription | undefined;
   private _scrollRef: HTMLDivElement | null;
   private _accountSubscription: Subscription | undefined;
   private _cartSubscription: Subscription | undefined;
@@ -106,6 +108,26 @@ class WindowController extends Controller {
 
   public updateShowNavigateBack(value: boolean): void {
     this._model.showNavigateBack = value;
+  }
+
+  public updateQueryInventoryLocation(id: string | undefined) {
+    if (!id) {
+      this._model.queryInventoryLocation = undefined;
+      return;
+    }
+
+    this._inventoryLocationsSubscription?.unsubscribe();
+    this._inventoryLocationsSubscription = HomeController.model.store
+      .pipe(select((model: HomeState) => model.inventoryLocations))
+      .subscribe({
+        next: (value: InventoryLocation[]) => {
+          const inventoryLocation = value.find((location) => location.id == id);
+          if (inventoryLocation) {
+            this._model.queryInventoryLocation = inventoryLocation;
+            this._inventoryLocationsSubscription?.unsubscribe();
+          }
+        },
+      });
   }
 
   public updateOnLocationChanged(location: RouterLocation): void {

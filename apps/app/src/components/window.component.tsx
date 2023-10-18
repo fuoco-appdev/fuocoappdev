@@ -16,8 +16,10 @@ import { Store } from '@ngneat/elf';
 import { WindowLocalState, WindowState } from '../models/window.model';
 import { AccountState } from '../models/account.model';
 import { lazy } from '@loadable/component';
+import { useQuery } from '../route-paths';
 import { WindowSuspenseDesktopComponent } from './desktop/suspense/window.suspense.desktop.component';
 import { WindowSuspenseMobileComponent } from './mobile/suspense/window.suspense.mobile.component';
+import HomeController from 'src/controllers/home.controller';
 
 const WindowDesktopComponent = lazy(
   () => import('./desktop/window.desktop.component')
@@ -37,12 +39,18 @@ export interface WindowResponsiveProps {
   isLanguageOpen: boolean;
   setOpenMore: (value: boolean) => void;
   setIsLanguageOpen: (value: boolean) => void;
+  onSelectLocation: () => void;
+  onCancelLocation: () => void;
 }
 
 export default function WindowComponent(): JSX.Element {
   const location = useLocation();
+  const query = useQuery();
   const navigate = useNavigate();
   const [windowProps] = useObservable(WindowController.model.store);
+  const [homeLocalProps] = useObservable(
+    HomeController.model.localStore ?? Store.prototype
+  );
   const [accountProps] = useObservable(AccountController.model.store);
   const isMounted = useRef<boolean>(false);
   const { i18n } = useTranslation();
@@ -52,10 +60,30 @@ export default function WindowComponent(): JSX.Element {
     WindowController.model.localStore ?? Store.prototype
   );
 
+  const onCancelLocation = () => {
+    query.delete('sales_location');
+    WindowController.updateQueryInventoryLocation(undefined);
+  };
+
+  const onSelectLocation = () => {
+    HomeController.updateSelectedInventoryLocationId(
+      windowProps.queryInventoryLocation.id
+    );
+    onCancelLocation();
+  };
+
   useEffect(() => {
     if (!isMounted.current) {
       WindowController.updateIsLoading(true);
       isMounted.current = true;
+    }
+
+    const salesLocationId = query.get('sales_location');
+    if (
+      salesLocationId &&
+      salesLocationId !== homeLocalProps.selectedInventoryLocationId
+    ) {
+      WindowController.updateQueryInventoryLocation(salesLocationId);
     }
   }, []);
 
@@ -109,6 +137,8 @@ export default function WindowComponent(): JSX.Element {
         isLanguageOpen={isLanguageOpen}
         setOpenMore={setOpenMore}
         setIsLanguageOpen={setIsLanguageOpen}
+        onSelectLocation={onSelectLocation}
+        onCancelLocation={onCancelLocation}
       />
       <WindowTabletComponent
         windowProps={windowProps}
@@ -118,6 +148,8 @@ export default function WindowComponent(): JSX.Element {
         isLanguageOpen={isLanguageOpen}
         setOpenMore={setOpenMore}
         setIsLanguageOpen={setIsLanguageOpen}
+        onSelectLocation={onSelectLocation}
+        onCancelLocation={onCancelLocation}
       />
       <WindowMobileComponent
         windowProps={windowProps}
@@ -127,6 +159,8 @@ export default function WindowComponent(): JSX.Element {
         isLanguageOpen={isLanguageOpen}
         setOpenMore={setOpenMore}
         setIsLanguageOpen={setIsLanguageOpen}
+        onSelectLocation={onSelectLocation}
+        onCancelLocation={onCancelLocation}
       />
     </React.Suspense>
   );

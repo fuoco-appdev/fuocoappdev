@@ -54,8 +54,21 @@ class HomeController extends Controller {
     const selectedInventoryLocation = this._model.inventoryLocations.find(
       (location) => location.id == value
     );
+
     this._model.selectedInventoryLocationId = value;
     this._model.selectedInventoryLocation = selectedInventoryLocation;
+  }
+
+  public isInventoryLocationIdValid(value: string): boolean {
+    const inventoryLocation = this._model.inventoryLocations.find(
+      (location) => location.id == value
+    );
+
+    return inventoryLocation !== undefined;
+  }
+
+  public isInventoryLocationIdSelected(value: string): boolean {
+    return this._model.selectedInventoryLocationId === value;
   }
 
   private async initializeAsync(renderCount: number): Promise<void> {

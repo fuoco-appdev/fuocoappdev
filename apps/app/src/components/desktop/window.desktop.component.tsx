@@ -10,6 +10,7 @@ import {
   Dropdown,
   LanguageSwitch,
   Line,
+  Modal,
   Solid,
   Tabs,
   ToastOverlay,
@@ -36,6 +37,8 @@ export default function WindowDesktopComponent({
   isLanguageOpen,
   setOpenMore,
   setIsLanguageOpen,
+  onSelectLocation,
+  onCancelLocation,
 }: WindowResponsiveProps): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -600,6 +603,53 @@ export default function WindowDesktopComponent({
             <Outlet />
           </div>
         </div>
+        <Modal
+          classNames={{
+            overlay: [
+              styles['modal-overlay'],
+              styles['modal-overlay-desktop'],
+            ].join(' '),
+            modal: [styles['modal'], styles['modal-desktop']].join(' '),
+            text: [styles['modal-text'], styles['modal-text-desktop']].join(
+              ' '
+            ),
+            title: [styles['modal-title'], styles['modal-title-desktop']].join(
+              ' '
+            ),
+            description: [
+              styles['modal-description'],
+              styles['modal-description-desktop'],
+            ].join(' '),
+            footerButtonContainer: [
+              styles['modal-footer-button-container'],
+              styles['modal-footer-button-container-desktop'],
+              styles['modal-address-footer-button-container-desktop'],
+            ].join(' '),
+            cancelButton: {
+              button: [
+                styles['modal-cancel-button'],
+                styles['modal-cancel-button-desktop'],
+              ].join(' '),
+            },
+            confirmButton: {
+              button: [
+                styles['modal-confirm-button'],
+                styles['modal-confirm-button-desktop'],
+              ].join(' '),
+            },
+          }}
+          title={t('selectLocation') ?? ''}
+          description={
+            t('selectLocationDescription', {
+              address: `${windowProps.queryInventoryLocation?.company}, ${windowProps.queryInventoryLocation?.placeName}`,
+            }) ?? ''
+          }
+          confirmText={t('select') ?? ''}
+          cancelText={t('cancel') ?? ''}
+          visible={windowProps.queryInventoryLocation !== undefined}
+          onConfirm={onSelectLocation}
+          onCancel={onCancelLocation}
+        />
         <ToastOverlay
           classNames={{
             root: [

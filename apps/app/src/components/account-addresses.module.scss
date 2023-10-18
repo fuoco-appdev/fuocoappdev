@@ -177,7 +177,7 @@
 }
 
 .modal {
-    max-height: 90vh;
+    max-height: 95vh;
     overflow-y: auto;
 }
 
@@ -186,6 +186,7 @@
 }
 
 .modal-text-desktop {
+    padding: 0 !important;
     padding-bottom: $mp-6 !important;
     max-width: 30vw;
 }
