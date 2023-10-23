@@ -93,6 +93,26 @@ export default function AccountMobileComponent({
                   color: 'rgba(88, 40, 109, .35)',
                 }}
                 onClick={() =>
+                  setTimeout(() => navigate(RoutePathsType.Help), 150)
+                }
+                type={'text'}
+                rounded={true}
+                size={'tiny'}
+                touchScreen={true}
+                icon={<Line.HelpOutline size={24} color={'#2A2A5F'} />}
+              />
+            </div>
+            <div
+              className={[
+                styles['tab-button-container'],
+                styles['tab-button-container-mobile'],
+              ].join(' ')}
+            >
+              <Button
+                rippleProps={{
+                  color: 'rgba(88, 40, 109, .35)',
+                }}
+                onClick={() =>
                   setTimeout(
                     () => navigate(RoutePathsType.AccountSettings),
                     150

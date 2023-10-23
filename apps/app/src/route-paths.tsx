@@ -23,6 +23,7 @@ import AccountEditComponent from './components/account-edit.component';
 import AccountSettingsAccountComponent from './components/account-settings-account.component';
 import LoadingComponent from './components/loading.component';
 import React from 'react';
+import HelpComponent from './components/help.component';
 
 export enum RoutePathsType {
   Default = '/',
@@ -32,6 +33,7 @@ export enum RoutePathsType {
   ForgotPassword = '/forgot-password',
   TermsOfService = '/terms-of-service',
   PrivacyPolicy = '/privacy-policy',
+  Help = '/help',
   ResetPassword = '/reset-password',
   Store = '/store',
   StoreWithId = '/store/:id',
@@ -86,6 +88,10 @@ export const getRoutePaths = (): RouteObject[] => [
       {
         path: RoutePathsType.ResetPassword,
         element: <ResetPasswordComponent />,
+      },
+      {
+        path: RoutePathsType.Help,
+        element: <HelpComponent />,
       },
       {
         path: RoutePathsType.Store,

@@ -17,6 +17,7 @@ import OrderConfirmedController from '../controllers/order-confirmed.controller'
 import NotificationsController from '../controllers/notifications.controller';
 import TermsOfServiceController from '../controllers/terms-of-service.controller';
 import PrivacyPolicyController from '../controllers/privacy-policy.controller';
+import HelpController from '../controllers/help.controller';
 import LoadingController from '../controllers/loading.controller';
 import ResetPasswordController from '../controllers/reset-password.controller';
 import AccountController from '../controllers/account.controller';
@@ -43,6 +44,7 @@ class AppController extends Controller {
     ForgotPasswordController.dispose(renderCount);
     TermsOfServiceController.dispose(renderCount);
     PrivacyPolicyController.dispose(renderCount);
+    HelpController.dispose(renderCount);
     ResetPasswordController.dispose(renderCount);
     AccountController.dispose(renderCount);
     LoadingController.dispose(renderCount);
@@ -68,6 +70,7 @@ class AppController extends Controller {
     ForgotPasswordController.initialize(renderCount);
     TermsOfServiceController.initialize(renderCount);
     PrivacyPolicyController.initialize(renderCount);
+    HelpController.initialize(renderCount);
     ResetPasswordController.initialize(renderCount);
     AccountController.initialize(renderCount);
     HomeController.initialize(renderCount);

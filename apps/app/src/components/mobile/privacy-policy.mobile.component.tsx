@@ -13,7 +13,7 @@ const ReactMarkdown = loadable(
   { ssr: false }
 );
 
-export function PrivacyPolicyMobileComponent({
+export default function PrivacyPolicyMobileComponent({
   privacyPolicyProps,
   remarkPlugins,
 }: PrivacyPolicyResponsiveProps): JSX.Element {

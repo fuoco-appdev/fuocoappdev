@@ -129,6 +129,33 @@ export default function WindowDesktopComponent({
             )}
             <div
               className={[
+                styles['top-bar-button-container'],
+                styles['top-bar-button-container-desktop'],
+              ].join(' ')}
+            >
+              <Button
+                rippleProps={{
+                  color: 'rgba(252, 245, 227, .35)',
+                }}
+                onClick={() => navigate(RoutePathsType.Help)}
+                type={'text'}
+                floatingLabel={t('help') ?? ''}
+                rounded={true}
+                size={'tiny'}
+                icon={
+                  windowProps.activeRoute !== RoutePathsType.Help ? (
+                    <Line.HelpOutline
+                      size={24}
+                      color={'rgba(252, 245, 227, .8)'}
+                    />
+                  ) : (
+                    <Solid.Help size={24} color={'rgba(252, 245, 227, 1)'} />
+                  )
+                }
+              />
+            </div>
+            <div
+              className={[
                 styles['shopping-cart-container-details'],
                 styles['shopping-cart-container-details-desktop'],
               ].join(' ')}

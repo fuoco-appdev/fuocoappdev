@@ -15,5 +15,8 @@
   "s3": {
     "url": "https://nyc3.digitaloceanspaces.com",
     "bucket_name": "medusa"
+  },
+  "discord": {
+    "url": "https://discord.gg/ZcR7Zn6b"
   }
 }

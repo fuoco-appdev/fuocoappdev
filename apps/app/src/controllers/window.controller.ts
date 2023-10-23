@@ -193,6 +193,11 @@ class WindowController extends Controller {
       this._model.activeRoute = RoutePathsType.PrivacyPolicy;
       this._model.showNavigateBack = true;
       this._model.hideCartButton = true;
+    } else if (location.pathname === RoutePathsType.Help) {
+      this._model.transitionKeyIndex = 1;
+      this._model.activeRoute = RoutePathsType.Help;
+      this._model.showNavigateBack = true;
+      this._model.hideCartButton = true;
     } else if (location.pathname === RoutePathsType.Account) {
       this._model.transitionKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.Account;

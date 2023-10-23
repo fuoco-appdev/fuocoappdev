@@ -250,6 +250,18 @@ export default function WindowMobileComponent({
                         styles['navigation-back-text-container-mobile'],
                       ].join(' ')}
                     >
+                      {activeRoute === RoutePathsType.Help && (
+                        <>
+                          <Line.HelpOutline size={22} />
+                          <div
+                            className={[styles['navigation-back-title']].join(
+                              ' '
+                            )}
+                          >
+                            {t('help')}
+                          </div>
+                        </>
+                      )}
                       {activeRoute === RoutePathsType.TermsOfService && (
                         <>
                           <Line.Gavel size={22} />
@@ -666,6 +678,24 @@ export default function WindowMobileComponent({
           touchScreen={true}
           onClose={() => setOpenMore(false)}
         >
+          <Dropdown.Item
+            onClick={() => {
+              navigate(RoutePathsType.Help);
+              setOpenMore(false);
+            }}
+          >
+            <Dropdown.Icon>
+              <Line.HelpOutline size={24} color={'#2A2A5F'} />
+            </Dropdown.Icon>
+            <span
+              className={[
+                styles['dropdown-text'],
+                styles['dropdown-text-mobile'],
+              ].join(' ')}
+            >
+              {t('help')}
+            </span>
+          </Dropdown.Item>
           <Dropdown.Item
             onClick={() => {
               navigate(RoutePathsType.Signin);

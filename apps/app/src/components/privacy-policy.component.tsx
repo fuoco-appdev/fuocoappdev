@@ -3,14 +3,20 @@ import {
   ResponsiveMobile,
   ResponsiveTablet,
 } from './responsive.component';
-import { PrivacyPolicyDesktopComponent } from './desktop/privacy-policy.desktop.component';
-import { PrivacyPolicyMobileComponent } from './mobile/privacy-policy.mobile.component';
 import { Helmet } from 'react-helmet';
 import { useState, useEffect } from 'react';
 import { useObservable } from '@ngneat/use-observable';
 import PrivacyPolicyController from '../controllers/privacy-policy.controller';
 import { PrivacyPolicyState } from '../models';
+import { lazy } from '@loadable/component';
 import React from 'react';
+
+const PrivacyPolicyDesktopComponent = lazy(
+  () => import('./desktop/privacy-policy.desktop.component')
+);
+const PrivacyPolicyMobileComponent = lazy(
+  () => import('./mobile/privacy-policy.mobile.component')
+);
 
 export interface PrivacyPolicyResponsiveProps {
   privacyPolicyProps: PrivacyPolicyState;

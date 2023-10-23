@@ -252,5 +252,7 @@
   "filter": "Filtre",
   "isLegalAgeDescription": "Je certifie que j'ai l'âge légal pour consommer de l'alcool dans ma juridiction.",
   "selectLocation": "Sélectionner un lieu ?",
-  "selectLocationDescription": "Sales location \"{{address, string}}\" will be selected. This will change the current store inventory."
+  "selectLocationDescription": "Le lieu de vente \"{{address, string}}\" sera sélectionné. Cela modifiera l'inventaire actuel du magasin.",
+  "help": "Aide",
+  "joinUsOnDiscord": "Rejoignez-nous sur Discord"
 }

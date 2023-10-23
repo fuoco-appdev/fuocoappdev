@@ -75,6 +75,14 @@ export function WindowSuspenseDesktopComponent(): JSX.Element {
             >
               <Skeleton style={{ width: 40, height: 40 }} borderRadius={40} />
             </div>
+            <div
+              className={[
+                styles['top-bar-button-container'],
+                styles['top-bar-button-container-desktop'],
+              ].join(' ')}
+            >
+              <Skeleton style={{ width: 40, height: 40 }} borderRadius={40} />
+            </div>
           </div>
         </div>
         <div

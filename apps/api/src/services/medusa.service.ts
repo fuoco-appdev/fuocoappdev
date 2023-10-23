@@ -40,7 +40,7 @@ class MedusaService {
         `${this._url}/admin/customers/${account.customer_id}`,
         {
           headers: {
-            Authorization: `Bearer ${this._token}`,
+            'x-medusa-access-token': this._token,
           },
         }
       );
@@ -56,7 +56,7 @@ class MedusaService {
         `${this._url}/admin/customers?${fetchParams}`,
         {
           headers: {
-            Authorization: `Bearer ${this._token}`,
+            'x-medusa-access-token': this._token,
           },
         }
       );
@@ -78,7 +78,7 @@ class MedusaService {
         },
         {
           headers: {
-            Authorization: `Bearer ${this._token}`,
+            'x-medusa-access-token': this._token,
           },
         }
       );
@@ -121,7 +121,7 @@ class MedusaService {
         },
         {
           headers: {
-            Authorization: `Bearer ${this._token}`,
+            'x-medusa-access-token': this._token,
           },
         }
       );
@@ -146,7 +146,7 @@ class MedusaService {
       },
       {
         headers: {
-          Authorization: `Bearer ${this._token}`,
+          'x-medusa-access-token': this._token,
         },
       }
     );
@@ -167,7 +167,7 @@ class MedusaService {
       `${this._url}/admin/stock-locations?${params}`,
       {
         headers: {
-          Authorization: `Bearer ${this._token}`,
+          'x-medusa-access-token': this._token,
         },
       }
     );
@@ -278,7 +278,7 @@ class MedusaService {
       `${this._url}/admin/products/${productId}`,
       {
         headers: {
-          Authorization: `Bearer ${this._token}`,
+          'x-medusa-access-token': this._token,
         },
       }
     );
@@ -304,7 +304,7 @@ class MedusaService {
       `${this._url}/admin/orders?${params}`,
       {
         headers: {
-          Authorization: `Bearer ${this._token}`,
+          'x-medusa-access-token': this._token,
         },
       }
     );
@@ -325,7 +325,7 @@ class MedusaService {
       `${this._url}/admin/customers?${params}`,
       {
         headers: {
-          Authorization: `Bearer ${this._token}`,
+          'x-medusa-access-token': this._token,
         },
       }
     );

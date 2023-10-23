@@ -4,3 +4,4 @@ export * from './window.model';
 export * from './terms-of-service.model';
 export * from './privacy-policy.model';
 export * from './reset-password.model';
+export * from './help.model';

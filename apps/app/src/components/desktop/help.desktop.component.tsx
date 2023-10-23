@@ -1,11 +1,14 @@
 import { Auth, Typography, Button, Line } from '@fuoco.appdev/core-ui';
 import { useObservable } from '@ngneat/use-observable';
-import styles from '../privacy-policy.module.scss';
-import PrivacyPolicyController from '../../controllers/privacy-policy.controller';
+import styles from '../help.module.scss';
 import { lazy } from 'react';
-import { PrivacyPolicyResponsiveProps } from '../privacy-policy.component';
+import { HelpResponsiveProps } from '../help.component';
 import loadable from '@loadable/component';
 import { ResponsiveDesktop } from '../responsive.component';
+import { useTranslation } from 'react-i18next';
+import ConfigService from '../../services/config.service';
+import { DiscordIcon } from '../help.component';
+
 const ReactMarkdown = loadable(
   async () => {
     const reactMarkdown = await import('react-markdown');
@@ -14,10 +17,12 @@ const ReactMarkdown = loadable(
   { ssr: false }
 );
 
-export default function PrivacyPolicyDesktopComponent({
-  privacyPolicyProps,
+export default function HelpDesktopComponent({
+  helpProps,
   remarkPlugins,
-}: PrivacyPolicyResponsiveProps): JSX.Element {
+}: HelpResponsiveProps): JSX.Element {
+  const { t, i18n } = useTranslation();
+
   return (
     <ResponsiveDesktop>
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>
@@ -35,11 +40,36 @@ export default function PrivacyPolicyDesktopComponent({
               >
                 <ReactMarkdown
                   remarkPlugins={remarkPlugins}
-                  children={privacyPolicyProps.markdown}
+                  children={helpProps.markdown}
                 />
               </Typography>
             }
           />
+          <div
+            className={[
+              styles['button-container'],
+              styles['button-container-desktop'],
+            ].join(' ')}
+          >
+            <Button
+              classNames={{
+                button: styles['outline-button'],
+              }}
+              rippleProps={{
+                color: 'rgba(133, 38, 122, .35)',
+              }}
+              size={'large'}
+              icon={<DiscordIcon />}
+              onClick={() =>
+                setTimeout(
+                  () => window.location.replace(ConfigService.discord.url),
+                  250
+                )
+              }
+            >
+              {t('joinUsOnDiscord')}
+            </Button>
+          </div>
         </div>
       </div>
     </ResponsiveDesktop>
