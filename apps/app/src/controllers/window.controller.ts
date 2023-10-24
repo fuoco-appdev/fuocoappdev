@@ -194,8 +194,13 @@ class WindowController extends Controller {
       this._model.showNavigateBack = true;
       this._model.hideCartButton = true;
     } else if (location.pathname === RoutePathsType.Help) {
-      this._model.transitionKeyIndex = 1;
+      this._model.transitionKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.Help;
+      this._model.showNavigateBack = false;
+      this._model.hideCartButton = false;
+    } else if (location.pathname === RoutePathsType.AccountHelp) {
+      this._model.transitionKeyIndex = 1;
+      this._model.activeRoute = RoutePathsType.AccountHelp;
       this._model.showNavigateBack = true;
       this._model.hideCartButton = true;
     } else if (location.pathname === RoutePathsType.Account) {

@@ -93,7 +93,7 @@ export default function AccountMobileComponent({
                   color: 'rgba(88, 40, 109, .35)',
                 }}
                 onClick={() =>
-                  setTimeout(() => navigate(RoutePathsType.Help), 150)
+                  setTimeout(() => navigate(RoutePathsType.AccountHelp), 150)
                 }
                 type={'text'}
                 rounded={true}

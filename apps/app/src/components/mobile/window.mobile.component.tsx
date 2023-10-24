@@ -250,7 +250,7 @@ export default function WindowMobileComponent({
                         styles['navigation-back-text-container-mobile'],
                       ].join(' ')}
                     >
-                      {activeRoute === RoutePathsType.Help && (
+                      {activeRoute === RoutePathsType.AccountHelp && (
                         <>
                           <Line.HelpOutline size={22} />
                           <div

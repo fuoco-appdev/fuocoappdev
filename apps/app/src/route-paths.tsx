@@ -46,6 +46,7 @@ export enum RoutePathsType {
   AccountOrderHistory = '/account/order-history',
   AccountAddresses = '/account/addresses',
   AccountEdit = '/account/edit',
+  AccountHelp = '/account/help',
   AccountSettings = '/account/settings',
   AccountSettingsAccount = '/account/settings/account',
   OrderConfirmed = '/order/confirmed',
@@ -138,6 +139,10 @@ export const getRoutePaths = (): RouteObject[] => [
             element: <AccountEditComponent />,
           },
         ],
+      },
+      {
+        path: RoutePathsType.AccountHelp,
+        element: <HelpComponent />,
       },
       {
         path: RoutePathsType.AccountSettings,
