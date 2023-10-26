@@ -473,7 +473,6 @@ class CheckoutController extends Controller {
       try {
         const shippingOptionsResponse =
           await MedusaService.medusa?.shippingOptions.list();
-        console.log(shippingOptionsResponse);
         const shippingOptionsFromRegion =
           shippingOptionsResponse?.shipping_options.filter(
             (option) => option.region_id === value?.region_id

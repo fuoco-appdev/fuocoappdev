@@ -45,22 +45,22 @@ export default function AccountMobileComponent({
     }
   }, [windowProps.activeRoute]);
 
-  // useMobileEffect(() => {
-  //   const loadedLocation = windowProps.loadedLocationPath as string | undefined;
-  //   if (loadedLocation && loadedLocation !== RoutePathsType.Account) {
-  //     if (
-  //       loadedLocation.startsWith(RoutePathsType.Account) &&
-  //       !loadedLocation.startsWith(RoutePathsType.AccountSettings)
-  //     ) {
-  //       AccountController.updateActiveTabId(loadedLocation);
-  //     }
-  //     WindowController.updateLoadedLocationPath(undefined);
-  //   } else {
-  //     if (!loadedLocation?.startsWith(RoutePathsType.AccountSettings)) {
-  //       navigate(accountProps.activeTabId);
-  //     }
-  //   }
-  // }, [windowProps.loadedLocationPath]);
+  useMobileEffect(() => {
+    const loadedLocation = windowProps.loadedLocationPath as string | undefined;
+    if (loadedLocation && loadedLocation !== RoutePathsType.Account) {
+      if (
+        loadedLocation.startsWith(RoutePathsType.Account) &&
+        !loadedLocation.startsWith(RoutePathsType.AccountSettings)
+      ) {
+        AccountController.updateActiveTabId(loadedLocation);
+      }
+      WindowController.updateLoadedLocationPath(undefined);
+    } else {
+      if (!loadedLocation?.startsWith(RoutePathsType.AccountSettings)) {
+        navigate(accountProps.activeTabId);
+      }
+    }
+  }, [windowProps.loadedLocationPath]);
 
   const account = accountProps.account as core.Account;
   const customer = accountProps.customer as Customer;

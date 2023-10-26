@@ -822,7 +822,7 @@
     z-index: 24;
 }
 
-.modal {
+.modal-desktop {
     max-height: 95vh;
     min-width: 25vw;
     overflow-y: auto;
@@ -830,6 +830,16 @@
 
 .modal-text-desktop {
     padding: $mp-8 !important;
+}
+
+.modal-tablet {
+    max-height: 95vh;
+    min-width: 50vw;
+    overflow-y: auto;
+}
+
+.modal-text-tablet {
+    padding: $mp-6 !important;
 }
 
 .modal-title {
@@ -850,6 +860,19 @@
 }
 
 .modal-address-footer-button-container-desktop {
+    border-top: 1px solid rgba(42, 42, 95, .6);
+}
+
+.modal-footer-button-container-tablet {
+    padding-left: $mp-6 !important;
+    padding-right: $mp-6 !important;
+    height: 100%;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+}
+
+.modal-address-footer-button-container-tablet {
     border-top: 1px solid rgba(42, 42, 95, .6);
 }
 

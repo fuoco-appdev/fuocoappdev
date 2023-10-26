@@ -840,13 +840,14 @@
 
 .modal-tablet {
     max-height: 95vh;
+    min-width: 60vw;
     padding: $mp-6;
     overflow-y: auto;
 }
 
 .modal-text-tablet {
     padding: $mp-6 !important;
-    max-width: 30vw;
+    max-width: 60vw;
 }
 
 .modal-title {
