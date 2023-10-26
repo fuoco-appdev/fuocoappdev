@@ -226,10 +226,14 @@ class CartController extends Controller {
       }
     }
 
-    this._model.cart = {
+    const cart = {
       ...value,
       items: items,
     };
+
+    if (JSON.stringify(cart) !== JSON.stringify(this._model.cart)) {
+      this._model.cart = cart;
+    }
   }
 
   private async createCartAsync(

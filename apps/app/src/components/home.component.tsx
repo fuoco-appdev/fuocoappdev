@@ -21,9 +21,13 @@ import { HomeSuspenseDesktopComponent } from './desktop/suspense/home.suspense.d
 import { HomeSuspenseMobileComponent } from './mobile/suspense/home.suspense.mobile.component';
 import React from 'react';
 import { lazy } from '@loadable/component';
+import { HomeSuspenseTabletComponent } from './tablet/suspense/home.suspense.tablet.component';
 
 const HomeDesktopComponent = lazy(
   () => import('./desktop/home.desktop.component')
+);
+const HomeTabletComponent = lazy(
+  () => import('./tablet/home.tablet.component')
 );
 const HomeMobileComponent = lazy(
   () => import('./mobile/home.mobile.component')
@@ -85,6 +89,7 @@ export default function HomeComponent(): JSX.Element {
   const suspenceComponent = (
     <>
       <HomeSuspenseDesktopComponent />
+      <HomeSuspenseTabletComponent />
       <HomeSuspenseMobileComponent />
     </>
   );
@@ -123,6 +128,14 @@ export default function HomeComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <HomeDesktopComponent
+          homeProps={homeProps}
+          homeLocalProps={homeLocalProps}
+          mapRef={mapRef}
+          selectedPoint={selectedPoint}
+          setMapStyleLoaded={setMapStyleLoaded}
+          setSelectedPoint={setSelectedPoint}
+        />
+        <HomeTabletComponent
           homeProps={homeProps}
           homeLocalProps={homeLocalProps}
           mapRef={mapRef}

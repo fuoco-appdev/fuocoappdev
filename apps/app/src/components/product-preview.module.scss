@@ -352,6 +352,52 @@
   }
 }
 
+.root-tablet {
+  width: calc(25vw - ($mp-2 * 3)) !important;
+  height: 200px;
+
+    & .thumbnail-container-tablet {
+      max-height: 382px;
+
+      & .thumbnail-image-tablet {
+
+      }
+
+      & .thumbnail-content-container-tablet {
+
+        & .thumbnail-top-content-tablet {
+
+        }
+  
+        & .thumbnail-bottom-content-tablet {
+        }
+      }
+    }
+
+    & .bottom-bar-tablet {
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        background-color: #fff;
+
+      & .product-title-tablet {
+        font-size: $font-size-xs;
+        line-height: 32px;
+        font-weight: $font-weight-bold;
+      }
+
+      & .product-price-tablet {
+        font-size: $font-size-xs;
+        line-height: 32px;
+        font-weight: $font-weight-bold;
+      }
+
+      & .product-limit-icon-tablet {
+      }
+    }
+}
+
+
 .root-mobile {
   width: calc(50vw - ($mp-2 * 3)) !important;
   height: 200px;

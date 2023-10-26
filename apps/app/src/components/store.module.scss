@@ -368,6 +368,195 @@
     }
 }
 
+.root-tablet {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    height: 100%;
+
+    & .left-content-tablet {
+        position: relative;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+            -ms-flex-direction: column;
+                flex-direction: column;
+        height: 100%;
+        -webkit-box-flex: 1;
+            -ms-flex: 1;
+                flex: 1;
+
+        & .top-bar-container-tablet {
+            padding-top: $mp-4;
+            -webkit-box-orient: horizontal;
+            -webkit-box-direction: normal;
+                -ms-flex-direction: row;
+                    flex-direction: row;
+
+            & .top-bar-left-content-tablet {
+                display: -webkit-box;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-orient: vertical;
+                -webkit-box-direction: normal;
+                    -ms-flex-direction: column;
+                        flex-direction: column;
+                -webkit-box-flex: 1;
+                    -ms-flex: 1;
+                        flex: 1;
+                -webkit-box-align: center;
+                    -ms-flex-align: center;
+                        align-items: center;
+            }
+
+            & .top-bar-right-content-tablet {
+                padding-right: $mp-4;
+            }
+                    
+            & .search-container-tablet {
+                display: -webkit-box;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-orient: horizontal;
+                -webkit-box-direction: normal;
+                    -ms-flex-direction: row;
+                        flex-direction: row;
+                -webkit-box-pack: center;
+                    -ms-flex-pack: center;
+                        justify-content: center;
+                padding-left: $mp-4;
+                padding-right: $mp-4;
+
+                & .search-input-root-tablet {
+                    max-width: 456px;
+
+                    & .search-input-container-tablet {
+
+                    }
+            
+                    & .search-input-tablet {
+
+                    }
+
+                    & .search-input-tablet::-webkit-input-placeholder {
+
+                    }
+
+                    & .search-input-tablet::-moz-placeholder {
+
+                    }
+
+                    & .search-input-tablet:-ms-input-placeholder {
+
+                    }
+
+                    & .search-input-tablet::-ms-input-placeholder {
+
+                    }
+
+                    & .search-input-tablet::placeholder {
+
+                    }
+
+                    & .search-input-tablet:-ms-input-placeholder {
+
+                    }
+
+                    & .search-input-tablet::-ms-input-placeholder {
+                    }
+                }
+            
+                & .filter-button-tablet {
+
+                }
+            }
+        
+            & .tab-container-tablet { 
+                width: -webkit-fit-content; 
+                width: -moz-fit-content; 
+                width: fit-content;
+
+                & .tab-button-tablet {
+
+                }
+        
+                & .hovered-tab-button-tablet {
+                }
+        
+                & .tab-slider-pill-tablet {
+                }
+            }
+        
+            & .tab-container-tablet::-webkit-scrollbar {
+
+            }
+        }
+
+        & .scroll-container-tablet {
+            -webkit-box-pack: center;
+                -ms-flex-pack: center;
+                    justify-content: center;
+            gap: $mp-6;
+            padding: $mp-6;
+            padding-top: calc(157px + 24px);
+            height: 100%;
+
+            & .loading-ring-tablet {
+
+            }
+
+            & .wine-previews-container-tablet {
+
+            }
+        }
+    }
+
+    & .filter-content-tablet {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+            -ms-flex-direction: column;
+                flex-direction: column;
+        -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
+                justify-content: space-between;
+        width: 0px;
+        border-left: 1px solid rgba(42, 42, 95, .6);
+
+        & .filter-top-container-tablet {
+            padding: $mp-4;
+
+            & .filter-title-tablet {
+                line-height: 56px;
+                font-weight: $font-weight-bold;
+                font-size: $font-size-lg;
+                color: $brand-900;
+            }
+        }
+
+        & .apply-button-container-tablet {
+            padding: $mp-4;
+        }
+
+        & .apply-button-tablet {
+        }
+    }
+
+    & .add-variants-container-tablet {
+        & .variant-container-tablet {
+
+        }
+    }
+}
+
 .root-mobile {
     & .top-bar-container-mobile {
         -webkit-box-orient: vertical;

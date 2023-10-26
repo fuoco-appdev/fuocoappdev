@@ -61,7 +61,7 @@ class StoreController extends Controller {
     this._model.hasMorePreviews = true;
     clearTimeout(this._timerId as number | undefined);
     this._timerId = setTimeout(() => {
-      this.searchAsync(value);
+      this.searchAsync(value, 0, this._limit);
     }, 750);
   }
 
@@ -243,7 +243,7 @@ class StoreController extends Controller {
       (value) => value.name === inventoryLocation.region
     );
     await this.updateRegionAsync(region);
-    await this.searchAsync(this._model.input);
+    await this.searchAsync(this._model.input, 0, this._limit);
   }
 
   private async updateRegionAsync(region: Region | undefined): Promise<void> {
@@ -255,7 +255,7 @@ class StoreController extends Controller {
     session: Session | null
   ): Promise<void> {
     if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
-      this.searchAsync(this._model.input);
+      this.searchAsync(this._model.input, 0, this._limit);
     }
   }
 }

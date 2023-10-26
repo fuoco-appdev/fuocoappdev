@@ -112,6 +112,39 @@
     }
 }
 
+.root-tablet {
+    gap: $mp-4;
+    padding: $mp-4;
+
+    & .content-container-tablet {
+        & .background-image-tablet {
+
+        }
+
+        & .background-filter-tablet {
+
+        }
+
+        & .content-tablet {
+            & .logo-tablet {
+
+            }
+
+            & .logo-text-tabet {
+
+            }
+
+            & .call-to-action-text-tablet {
+
+            }
+        }
+    }
+
+    & .map-container-tablet {
+
+    }
+}
+
 .root-mobile {
     gap: $mp-2;
     padding: $mp-2;

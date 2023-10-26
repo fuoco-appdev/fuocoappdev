@@ -54,9 +54,13 @@ import { timeout } from 'promise-timeout';
 import { PricedVariant } from '@medusajs/medusa/dist/types/pricing';
 import ProductController from '../controllers/product.controller';
 import WindowController from '../controllers/window.controller';
+import { StoreSuspenseTabletComponent } from './tablet/suspense/store.suspense.tablet.component';
 
 const StoreDesktopComponent = lazy(
   () => import('./desktop/store.desktop.component')
+);
+const StoreTabletComponent = lazy(
+  () => import('./tablet/store.tablet.component')
 );
 const StoreMobileComponent = lazy(
   () => import('./mobile/store.mobile.component')
@@ -307,6 +311,7 @@ export default function StoreComponent(): JSX.Element {
   const suspenceComponent = (
     <>
       <StoreSuspenseDesktopComponent />
+      <StoreSuspenseTabletComponent />
       <StoreSuspenseMobileComponent />
     </>
   );
@@ -341,6 +346,29 @@ export default function StoreComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <StoreDesktopComponent
+          storeProps={storeProps}
+          homeProps={homeProps}
+          homeLocalProps={homeLocalProps}
+          openFilter={openFilter}
+          openCartVariants={openCartVariants}
+          countryOptions={countryOptions}
+          regionOptions={regionOptions}
+          cellarOptions={cellarOptions}
+          variantQuantities={variantQuantities}
+          selectedCountryId={selectedCountryId}
+          selectedRegionId={selectedRegionId}
+          selectedCellarId={selectedCellarId}
+          setOpenFilter={setOpenFilter}
+          setOpenCartVariants={setOpenCartVariants}
+          setSelectedCountryId={setSelectedCountryId}
+          setSelectedRegionId={setSelectedRegionId}
+          setSelectedCellarId={setSelectedCellarId}
+          setVariantQuantities={setVariantQuantities}
+          onPreviewsScroll={onScroll}
+          onPreviewsLoad={onLoad}
+          onAddToCart={onAddToCart}
+        />
+        <StoreTabletComponent
           storeProps={storeProps}
           homeProps={homeProps}
           homeLocalProps={homeLocalProps}

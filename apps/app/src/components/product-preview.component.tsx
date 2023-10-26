@@ -33,9 +33,13 @@ import { StoreState } from '../models/store.model';
 import { lazy } from '@loadable/component';
 import { ProductPreviewSuspenseDesktopComponent } from './desktop/suspense/product-preview.suspense.desktop.component';
 import { ProductPreviewSuspenseMobileComponent } from './mobile/suspense/product-preview.suspense.mobile.component';
+import { ProductPreviewSuspenseTabletComponent } from './tablet/suspense/product-preview.suspense.tablet.component';
 
 const ProductPreviewDesktopComponent = lazy(
   () => import('./desktop/product-preview.desktop.component')
+);
+const ProductPreviewTabletComponent = lazy(
+  () => import('./tablet/product-preview.tablet.component')
 );
 const ProductPreviewMobileComponent = lazy(
   () => import('./mobile/product-preview.mobile.component')
@@ -116,6 +120,7 @@ export default function ProductPreviewComponent({
   const suspenceComponent = (
     <>
       <ProductPreviewSuspenseDesktopComponent />
+      <ProductPreviewSuspenseTabletComponent />
       <ProductPreviewSuspenseMobileComponent />
     </>
   );
@@ -127,6 +132,19 @@ export default function ProductPreviewComponent({
   return (
     <React.Suspense fallback={suspenceComponent}>
       <ProductPreviewDesktopComponent
+        storeProps={storeProps}
+        parentRef={parentRef}
+        preview={preview}
+        onClick={onClick}
+        onRest={onRest}
+        price={price}
+        selectedVariantId={selectedVariantId}
+        setPrice={setPrice}
+        setSelectedVariantId={setSelectedVariantId}
+        formatPrice={formatPrice}
+        onAddToCart={onAddToCart}
+      />
+      <ProductPreviewTabletComponent
         storeProps={storeProps}
         parentRef={parentRef}
         preview={preview}

@@ -20,15 +20,16 @@ import { useQuery } from '../route-paths';
 import { WindowSuspenseDesktopComponent } from './desktop/suspense/window.suspense.desktop.component';
 import { WindowSuspenseMobileComponent } from './mobile/suspense/window.suspense.mobile.component';
 import HomeController from 'src/controllers/home.controller';
+import { WindowSuspenseTabletComponent } from './tablet/suspense/window.suspense.tablet.component';
 
 const WindowDesktopComponent = lazy(
   () => import('./desktop/window.desktop.component')
 );
-const WindowMobileComponent = lazy(
-  () => import('./mobile/window.mobile.component')
-);
 const WindowTabletComponent = lazy(
   () => import('./tablet/window.tablet.component')
+);
+const WindowMobileComponent = lazy(
+  () => import('./mobile/window.mobile.component')
 );
 
 export interface WindowResponsiveProps {
@@ -119,6 +120,7 @@ export default function WindowComponent(): JSX.Element {
   const suspenseComponent = (
     <>
       <WindowSuspenseDesktopComponent />
+      <WindowSuspenseTabletComponent />
       <WindowSuspenseMobileComponent />
     </>
   );

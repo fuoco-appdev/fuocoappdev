@@ -440,7 +440,10 @@ class CheckoutController extends Controller {
   }
 
   private async onCartChangedAsync(value: Cart | undefined): Promise<void> {
-    if (!value) {
+    if (
+      !value ||
+      JSON.stringify(CartController.model.cart) === JSON.stringify(value)
+    ) {
       return;
     }
 

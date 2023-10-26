@@ -9,7 +9,21 @@
 
     & .button-container-desktop {
       padding: 0 $mp-8;
-      padding-bottom: calc(56px);
+      padding-bottom: 56px;
+    }
+  }
+}
+
+.root-tablet {
+  & .content-tablet {
+    & .typography-tablet {
+      padding: $mp-8;
+      max-width: 75%;
+    }
+
+    & .button-container-tablet {
+      padding: 0 $mp-8;
+      padding-bottom: 56px;
     }
   }
 }

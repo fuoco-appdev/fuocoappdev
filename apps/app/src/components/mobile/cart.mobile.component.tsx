@@ -459,6 +459,7 @@ export default function CartMobileComponent({
           ].join(' ')}
         >
           <Button
+            touchScreen={true}
             classNames={{
               button: styles['checkout-button'],
             }}
