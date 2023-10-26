@@ -23,6 +23,9 @@ import { CartItemSuspenseMobileComponent } from './mobile/suspense/cart-item.sus
 const CartItemDesktopComponent = lazy(
   () => import('./desktop/cart-item.desktop.component')
 );
+const CartItemTabletComponent = lazy(
+  () => import('./tablet/cart-item.tablet.component')
+);
 const CartItemMobileComponent = lazy(
   () => import('./mobile/cart-item.mobile.component')
 );
@@ -106,6 +109,19 @@ export default function CartItemComponent({
   return (
     <React.Suspense fallback={suspenceComponent}>
       <CartItemDesktopComponent
+        storeProps={storeProps}
+        item={item}
+        quantity={quantity}
+        onRemove={onRemove}
+        vintage={vintage}
+        hasReducedPrice={hasReducedPrice}
+        setDeleteModalVisible={setDeleteModalVisible}
+        deleteModalVisible={deleteModalVisible}
+        discountPercentage={discountPercentage}
+        incrementItemQuantity={incrementItemQuantity}
+        decrementItemQuantity={decrementItemQuantity}
+      />
+      <CartItemTabletComponent
         storeProps={storeProps}
         item={item}
         quantity={quantity}

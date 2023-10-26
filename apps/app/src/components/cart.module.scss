@@ -393,6 +393,31 @@
 }
 
 .root-tablet {
+    & .content-tablet {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+            -ms-flex-direction: column;
+                flex-direction: column;
+        -webkit-box-pack: center;
+            -ms-flex-pack: center;
+                justify-content: center;
+        gap: $mp-6;
+        align-items: center;
+
+        & .card-container-tablet {
+            padding: $mp-6;
+            min-width: 500px;
+            border: 1px solid rgba(42, 42, 95, .6);
+            border-radius: 6px;
+            height: -webkit-fit-content;
+            height: -moz-fit-content;
+            height: fit-content;
+        }
+    }
+    
     & .account-container-tablet {
         & .already-have-an-account-title-tablet {
 

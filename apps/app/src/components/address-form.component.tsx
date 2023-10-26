@@ -22,9 +22,13 @@ import { CountryDataProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/
 import { lazy } from '@loadable/component';
 import { AddressFormSuspenseDesktopComponent } from './desktop/suspense/address-form.suspense.desktop.component';
 import { AddressFormSuspenseMobileComponent } from './mobile/suspense/address-form.suspense.mobile.component';
+import { AddressFormSuspenseTabletComponent } from './tablet/suspense/address-form.suspense.tablet.component';
 
 const AddressFormDesktopComponent = lazy(
   () => import('./desktop/address-form.desktop.component')
+);
+const AddressFormTabletComponent = lazy(
+  () => import('./tablet/address-form.tablet.component')
 );
 const AddressFormMobileComponent = lazy(
   () => import('./mobile/address-form.mobile.component')
@@ -124,7 +128,6 @@ export default function AddressFormComponent({
 
   useEffect(() => {
     if (countryOptions.length > 0) {
-      console.log(countryOptions);
       const country = countryOptions.find(
         (value) => value.id === selectedCountryId
       );
@@ -272,6 +275,7 @@ export default function AddressFormComponent({
   const suspenceComponent = (
     <>
       <AddressFormSuspenseDesktopComponent />
+      <AddressFormSuspenseTabletComponent />
       <AddressFormSuspenseMobileComponent />
     </>
   );
@@ -283,6 +287,25 @@ export default function AddressFormComponent({
   return (
     <React.Suspense fallback={suspenceComponent}>
       <AddressFormDesktopComponent
+        isAuthenticated={isAuthenticated}
+        values={values}
+        errors={errors}
+        onChangeCallbacks={onChangeCallbacks}
+        isComplete={isComplete}
+        onEdit={onEdit}
+        countryOptions={countryOptions}
+        regionOptions={regionOptions}
+        selectedCountryId={selectedCountryId}
+        selectedRegionId={selectedRegionId}
+        fullName={fullName}
+        location={location}
+        company={company}
+        phoneNumber={phoneNumber}
+        email={email}
+        setSelectedCountryId={setSelectedCountryId}
+        setSelectedRegionId={setSelectedRegionId}
+      />
+      <AddressFormTabletComponent
         isAuthenticated={isAuthenticated}
         values={values}
         errors={errors}

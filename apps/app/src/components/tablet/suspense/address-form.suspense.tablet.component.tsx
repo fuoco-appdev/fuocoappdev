@@ -3,11 +3,11 @@ import * as React from 'react';
 import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
 import styles from '../../address-form.module.scss';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { ResponsiveSuspenseDesktop } from '../../responsive.component';
+import { ResponsiveSuspenseTablet } from '../../responsive.component';
 
-export function AddressFormSuspenseDesktopComponent(): JSX.Element {
+export function AddressFormSuspenseTabletComponent(): JSX.Element {
   return (
-    <ResponsiveSuspenseDesktop>
+    <ResponsiveSuspenseTablet>
       <div className={styles['input-root-skeleton']}>
         <Skeleton
           className={styles['input-form-layout-label-skeleton']}
@@ -121,6 +121,6 @@ export function AddressFormSuspenseDesktopComponent(): JSX.Element {
         />
         <Skeleton style={{ height: 44 }} borderRadius={6} />
       </div>
-    </ResponsiveSuspenseDesktop>
+    </ResponsiveSuspenseTablet>
   );
 }

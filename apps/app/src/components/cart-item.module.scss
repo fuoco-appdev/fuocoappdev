@@ -223,6 +223,57 @@
     }
 }
 
+.container-tablet {
+    & .details-tablet {
+        & .thumbnail-tablet {
+            & .thumbnail-image-tablet {
+            }
+        }
+
+        & .title-container-tablet {
+            & .title-tablet {
+
+            }
+
+            & .variant-tablet {
+            }
+        }
+
+        & .quantity-details-container-tablet {
+            & .quantity-container-tablet {
+                & .quantity-text-tablet {
+                }
+
+                & .quantity-buttons-tablet {
+                    & .quantity-button-tablet {
+                    }
+    
+                    & .quantity-tablet {
+                    }
+                }
+            }
+        }
+
+        & .remove-container-tablet {
+
+        }
+    }
+
+    & .pricing-details-container-tablet {
+        & .pricing-tablet {
+        }
+
+        & .pricing-canceled-tablet {
+        }
+
+        & .discount-pricing-tablet {
+        }
+
+        & .discount-percentage-tablet {
+        }
+    }
+}
+
 .container-mobile {
     & .details-mobile {
         & .thumbnail-mobile {
@@ -297,6 +348,10 @@
 
 .modal-desktop {
     padding: $mp-8;
+}
+
+.modal-tablet {
+    padding: $mp-6;
 }
 
 .modal-title {

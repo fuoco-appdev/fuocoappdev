@@ -20,7 +20,6 @@ import ConfigService from '../../services/config.service';
 import { InventoryLocation } from '../../models/home.model';
 import { HomeResponsiveProps } from '../home.component';
 import HomeController from '../../controllers/home.controller';
-import { HomeSuspenseTabletComponent } from './suspense/home.suspense.tablet.component';
 import { ResponsiveTablet } from '../responsive.component';
 
 export default function HomeTabletComponent({

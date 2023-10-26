@@ -440,10 +440,7 @@ class CheckoutController extends Controller {
   }
 
   private async onCartChangedAsync(value: Cart | undefined): Promise<void> {
-    if (
-      !value ||
-      JSON.stringify(CartController.model.cart) === JSON.stringify(value)
-    ) {
+    if (!value) {
       return;
     }
 
@@ -472,10 +469,11 @@ class CheckoutController extends Controller {
       }
     }
 
-    if (value?.region_id) {
+    if (value?.region_id && this._model.shippingOptions.length <= 0) {
       try {
         const shippingOptionsResponse =
           await MedusaService.medusa?.shippingOptions.list();
+        console.log(shippingOptionsResponse);
         const shippingOptionsFromRegion =
           shippingOptionsResponse?.shipping_options.filter(
             (option) => option.region_id === value?.region_id
@@ -504,7 +502,7 @@ class CheckoutController extends Controller {
   }
 
   private async initializePaymentSessionAsync(cart: Cart): Promise<void> {
-    if (cart?.id && !cart.payment_sessions?.length && cart?.items?.length) {
+    if (cart?.id && cart.payment_sessions?.length <= 0 && cart?.items?.length) {
       try {
         const cartResponse =
           await MedusaService.medusa?.carts.createPaymentSessions(cart.id);
