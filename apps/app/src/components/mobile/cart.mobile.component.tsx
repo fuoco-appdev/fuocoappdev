@@ -2,7 +2,14 @@ import { useEffect, useLayoutEffect, useRef } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import CartController from '../../controllers/cart.controller';
 import styles from '../cart.module.scss';
-import { Button, Input, Line, Solid, Tabs } from '@fuoco.appdev/core-ui';
+import {
+  Button,
+  Dropdown,
+  Input,
+  Line,
+  Solid,
+  Tabs,
+} from '@fuoco.appdev/core-ui';
 import { RoutePathsType } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
@@ -16,13 +23,22 @@ import { CartResponsiveProps } from '../cart.component';
 import HomeController from '../../controllers/home.controller';
 import { Store } from '@ngneat/elf';
 import { ResponsiveMobile } from '../responsive.component';
+import CartVariantItemComponent from '../cart-variant-item.component';
+import { MedusaProductTypeNames } from '../../types/medusa.type';
 
 export default function CartMobileComponent({
   cartProps,
+  homeProps,
   homeLocalProps,
   storeProps,
   windowProps,
   salesChannelTabs,
+  foodVariantQuantities,
+  isFoodRequirementOpen,
+  setIsFoodRequirementOpen,
+  setFoodVariantQuantities,
+  onCheckout,
+  onAddFoodToCart,
 }: CartResponsiveProps): JSX.Element {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
@@ -470,14 +486,84 @@ export default function CartMobileComponent({
             disabled={!cartProps.cart || cartProps.cart?.items?.length <= 0}
             size={'large'}
             icon={<Line.ShoppingCart size={24} />}
-            onClick={() =>
-              setTimeout(() => navigate(RoutePathsType.Checkout), 75)
-            }
+            onClick={onCheckout}
           >
             {t('goToCheckout')}
           </Button>
         </div>
       </div>
+      <Dropdown
+        open={isFoodRequirementOpen}
+        touchScreen={true}
+        onClose={() => setIsFoodRequirementOpen(false)}
+      >
+        <div
+          className={[
+            styles['dropdown-title'],
+            styles['dropdown-title-mobile'],
+          ].join(' ')}
+        >
+          {t('foodRequirement') ?? ''}
+        </div>
+        <div
+          className={[
+            styles['dropdown-description'],
+            styles['dropdown-description-mobile'],
+          ].join(' ')}
+        >
+          {t('foodRequirementDescription', {
+            region: homeProps?.selectedInventoryLocation?.region,
+          }) ?? ''}
+        </div>
+        <div
+          className={[
+            styles['add-variants-container'],
+            styles['add-variants-container-mobile'],
+          ].join(' ')}
+        >
+          {cartProps.requiredFoodProducts.map((product) => {
+            return product?.variants.map((variant) => {
+              return (
+                <CartVariantItemComponent
+                  productType={MedusaProductTypeNames.RequiredFood}
+                  key={variant.id}
+                  product={product}
+                  variant={variant}
+                  storeProps={storeProps}
+                  variantQuantities={foodVariantQuantities}
+                  setVariantQuantities={setFoodVariantQuantities}
+                />
+              );
+            });
+          })}
+          <Button
+            classNames={{
+              container: [
+                styles['add-to-cart-button-container'],
+                styles['add-to-cart-button-container-mobile'],
+              ].join(' '),
+              button: [
+                styles['add-to-cart-button'],
+                styles['add-to-cart-button-mobile'],
+              ].join(' '),
+            }}
+            block={true}
+            size={'full'}
+            rippleProps={{
+              color: 'rgba(233, 33, 66, .35)',
+            }}
+            icon={<Line.AddShoppingCart size={24} />}
+            disabled={
+              Object.values(foodVariantQuantities).reduce((current, next) => {
+                return current + next;
+              }, 0) <= 0
+            }
+            onClick={onAddFoodToCart}
+          >
+            {t('addToCart')}
+          </Button>
+        </div>
+      </Dropdown>
     </ResponsiveMobile>
   );
 }

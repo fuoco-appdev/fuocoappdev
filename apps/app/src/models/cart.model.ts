@@ -2,9 +2,12 @@ import { createStore, withProps } from '@ngneat/elf';
 import { Model } from '../model';
 import e from 'express';
 import { Cart } from '@medusajs/medusa';
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 
 export interface CartState {
   cart: Omit<Cart, 'refundable_amount' | 'refunded_total'> | undefined;
+  requiredFoodProducts: PricedProduct[];
+  isFoodInCartRequired: boolean;
   discountCode: string;
 }
 
@@ -19,6 +22,8 @@ export class CartModel extends Model {
         { name: 'cart' },
         withProps<CartState>({
           cart: undefined,
+          requiredFoodProducts: [],
+          isFoodInCartRequired: false,
           discountCode: '',
         })
       ),
@@ -43,6 +48,32 @@ export class CartModel extends Model {
   ) {
     if (JSON.stringify(this.cart) !== JSON.stringify(value)) {
       this.store?.update((state) => ({ ...state, cart: value }));
+    }
+  }
+
+  public get requiredFoodProducts(): PricedProduct[] {
+    return this.store?.getValue().requiredFoodProducts;
+  }
+
+  public set requiredFoodProducts(value: PricedProduct[]) {
+    if (JSON.stringify(this.requiredFoodProducts) !== JSON.stringify(value)) {
+      this.store?.update((state) => ({
+        ...state,
+        requiredFoodProducts: value,
+      }));
+    }
+  }
+
+  public get isFoodInCartRequired(): boolean {
+    return this.store?.getValue().isFoodInCartRequired;
+  }
+
+  public set isFoodInCartRequired(value: boolean) {
+    if (this.isFoodInCartRequired !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        isFoodInCartRequired: value,
+      }));
     }
   }
 

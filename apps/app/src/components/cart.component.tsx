@@ -10,6 +10,7 @@ import { useObservable } from '@ngneat/use-observable';
 import CartController from '../controllers/cart.controller';
 import HomeController from '../controllers/home.controller';
 import WindowController from '../controllers/window.controller';
+import ProductController from '../controllers/product.controller';
 import { Store } from '@ngneat/elf';
 import {
   HomeLocalState,
@@ -25,6 +26,13 @@ import React from 'react';
 import { CartSuspenseDesktopComponent } from './desktop/suspense/cart.suspense.desktop.component';
 import { CartSuspenseMobileComponent } from './mobile/suspense/cart.suspense.mobile.component';
 import { CartSuspenseTabletComponent } from './tablet/suspense/cart.suspense.tablet.component';
+import { RoutePathsType } from '../route-paths';
+import { useNavigate } from 'react-router-dom';
+import {
+  PricedProduct,
+  PricedVariant,
+} from '@medusajs/medusa/dist/types/pricing';
+import { useTranslation } from 'react-i18next';
 
 const CartDesktopComponent = lazy(
   () => import('./desktop/cart.desktop.component')
@@ -43,9 +51,16 @@ export interface CartResponsiveProps {
   windowProps: WindowState;
   homeLocalProps: HomeLocalState;
   salesChannelTabs: TabProps[];
+  isFoodRequirementOpen: boolean;
+  foodVariantQuantities: Record<string, number>;
+  setIsFoodRequirementOpen: (value: boolean) => void;
+  setFoodVariantQuantities: (value: Record<string, number>) => void;
+  onCheckout: () => void;
+  onAddFoodToCart: () => void;
 }
 
 export default function CartComponent(): JSX.Element {
+  const navigate = useNavigate();
   const [cartProps] = useObservable(CartController.model.store);
   const [homeProps] = useObservable(HomeController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
@@ -57,6 +72,35 @@ export default function CartComponent(): JSX.Element {
     HomeController.model.localStore ?? Store.prototype
   );
   const [salesChannelTabs, setSalesChannelTabs] = useState<TabProps[]>([]);
+  const [isFoodRequirementOpen, setIsFoodRequirementOpen] =
+    useState<boolean>(false);
+  const [foodVariantQuantities, setFoodVariantQuantities] = useState<
+    Record<string, number>
+  >({});
+  const { t, i18n } = useTranslation();
+
+  const onAddFoodToCart = () => {
+    for (const id in foodVariantQuantities) {
+      const quantity = foodVariantQuantities[id];
+      ProductController.addToCartAsync(
+        id,
+        quantity,
+        () => {},
+        (error) => console.error(error)
+      );
+    }
+
+    setIsFoodRequirementOpen(false);
+  };
+
+  const onCheckout = () => {
+    if (!CartController.isFoodRequirementInCart()) {
+      setIsFoodRequirementOpen(true);
+      return;
+    }
+
+    setTimeout(() => navigate(RoutePathsType.Checkout), 75);
+  };
 
   useEffect(() => {
     const tabProps: TabProps[] = [];
@@ -73,6 +117,20 @@ export default function CartComponent(): JSX.Element {
 
     setSalesChannelTabs(tabProps);
   }, [cartLocalProps.cartIds, homeProps.inventoryLocations]);
+
+  useEffect(() => {
+    const quantities: Record<string, number> = {};
+    for (const product of cartProps.requiredFoodProducts as PricedProduct[]) {
+      for (const variant of product?.variants) {
+        if (!variant?.id) {
+          continue;
+        }
+        quantities[variant?.id] = 0;
+      }
+    }
+
+    setFoodVariantQuantities(quantities);
+  }, [cartProps.requiredFoodProducts]);
 
   const suspenceComponent = (
     <>
@@ -122,6 +180,12 @@ export default function CartComponent(): JSX.Element {
           windowProps={windowProps}
           homeLocalProps={homeLocalProps}
           salesChannelTabs={salesChannelTabs}
+          foodVariantQuantities={foodVariantQuantities}
+          setFoodVariantQuantities={setFoodVariantQuantities}
+          isFoodRequirementOpen={isFoodRequirementOpen}
+          setIsFoodRequirementOpen={setIsFoodRequirementOpen}
+          onCheckout={onCheckout}
+          onAddFoodToCart={onAddFoodToCart}
         />
         <CartTabletComponent
           cartProps={cartProps}
@@ -130,6 +194,12 @@ export default function CartComponent(): JSX.Element {
           windowProps={windowProps}
           homeLocalProps={homeLocalProps}
           salesChannelTabs={salesChannelTabs}
+          foodVariantQuantities={foodVariantQuantities}
+          setFoodVariantQuantities={setFoodVariantQuantities}
+          isFoodRequirementOpen={isFoodRequirementOpen}
+          setIsFoodRequirementOpen={setIsFoodRequirementOpen}
+          onCheckout={onCheckout}
+          onAddFoodToCart={onAddFoodToCart}
         />
         <CartMobileComponent
           cartProps={cartProps}
@@ -138,6 +208,12 @@ export default function CartComponent(): JSX.Element {
           windowProps={windowProps}
           homeLocalProps={homeLocalProps}
           salesChannelTabs={salesChannelTabs}
+          foodVariantQuantities={foodVariantQuantities}
+          setFoodVariantQuantities={setFoodVariantQuantities}
+          isFoodRequirementOpen={isFoodRequirementOpen}
+          setIsFoodRequirementOpen={setIsFoodRequirementOpen}
+          onCheckout={onCheckout}
+          onAddFoodToCart={onAddFoodToCart}
         />
       </React.Suspense>
     </>

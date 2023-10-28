@@ -42,6 +42,7 @@ import {
 import { formatAmount } from 'medusa-react';
 import { ResponsiveDesktop, ResponsiveTablet } from '../responsive.component';
 import CartVariantItemComponent from '../cart-variant-item.component';
+import { MedusaProductTypeNames } from 'src/types/medusa.type';
 
 export default function StoreTabletComponent({
   storeProps,
@@ -476,7 +477,9 @@ export default function StoreTabletComponent({
           {storeProps.selectedPreview?.variants.map((variant) => {
             return (
               <CartVariantItemComponent
+                productType={MedusaProductTypeNames.Wine}
                 key={variant.id}
+                product={storeProps.selectedPreview}
                 variant={variant}
                 storeProps={storeProps}
                 variantQuantities={variantQuantities}

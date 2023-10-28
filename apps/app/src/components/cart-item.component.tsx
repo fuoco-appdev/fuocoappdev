@@ -19,6 +19,8 @@ import { lazy } from '@loadable/component';
 import React from 'react';
 import { CartItemSuspenseDesktopComponent } from './desktop/suspense/cart-item.suspense.desktop.component';
 import { CartItemSuspenseMobileComponent } from './mobile/suspense/cart-item.suspense.mobile.component';
+import { CartItemSuspenseTabletComponent } from './tablet/suspense/cart-item.suspense.tablet.component';
+import { MedusaProductTypeNames } from 'src/types/medusa.type';
 
 const CartItemDesktopComponent = lazy(
   () => import('./desktop/cart-item.desktop.component')
@@ -38,8 +40,10 @@ export interface CartItemProps {
 }
 
 export interface CartItemResponsiveProps extends CartItemProps {
+  productType: MedusaProductTypeNames | undefined;
   quantity: number;
   vintage: string;
+  type: string;
   hasReducedPrice: boolean;
   deleteModalVisible: boolean;
   discountPercentage: string;
@@ -54,7 +58,11 @@ export default function CartItemComponent({
   onQuantityChanged,
   onRemove,
 }: CartItemProps): JSX.Element {
+  const [productType, setProductType] = useState<
+    MedusaProductTypeNames | undefined
+  >();
   const [vintage, setVintage] = useState<string>('');
+  const [type, setType] = useState<string>('');
   const [quantity, setQuantity] = useState<number>(item.quantity);
   const [hasReducedPrice, setHasReducedPrice] = useState<boolean>(
     (item.discount_total ?? 0) > 0
@@ -71,6 +79,14 @@ export default function CartItemComponent({
     );
     setVintage(vintageValue?.value ?? '');
 
+    const typeOption = item.variant.product.options.find(
+      (value) => value.title === ProductOptions.Type
+    );
+    const typeValue = item.variant.options?.find(
+      (value: ProductOptionValue) => value.option_id === typeOption?.id
+    );
+    setType(typeValue?.value ?? '');
+
     const subtotal = item?.subtotal ?? 0;
     const difference = subtotal - (item?.discount_total ?? 0);
     const percentage = (difference / subtotal) * 100;
@@ -78,6 +94,13 @@ export default function CartItemComponent({
 
     setHasReducedPrice((item.discount_total ?? 0) > 0);
   }, [item]);
+
+  useEffect(() => {
+    const type = storeProps.productTypes.find(
+      (value) => value.id === item.variant.product.type_id
+    );
+    setProductType(type?.value as MedusaProductTypeNames);
+  }, [storeProps.productTypes, item]);
 
   const incrementItemQuantity = (value: number): void => {
     if (quantity < item.variant.inventory_quantity) {
@@ -98,6 +121,7 @@ export default function CartItemComponent({
   const suspenceComponent = (
     <>
       <CartItemSuspenseDesktopComponent />
+      <CartItemSuspenseTabletComponent />
       <CartItemSuspenseMobileComponent />
     </>
   );
@@ -111,9 +135,11 @@ export default function CartItemComponent({
       <CartItemDesktopComponent
         storeProps={storeProps}
         item={item}
+        productType={productType}
         quantity={quantity}
         onRemove={onRemove}
         vintage={vintage}
+        type={type}
         hasReducedPrice={hasReducedPrice}
         setDeleteModalVisible={setDeleteModalVisible}
         deleteModalVisible={deleteModalVisible}
@@ -124,9 +150,11 @@ export default function CartItemComponent({
       <CartItemTabletComponent
         storeProps={storeProps}
         item={item}
+        productType={productType}
         quantity={quantity}
         onRemove={onRemove}
         vintage={vintage}
+        type={type}
         hasReducedPrice={hasReducedPrice}
         setDeleteModalVisible={setDeleteModalVisible}
         deleteModalVisible={deleteModalVisible}
@@ -137,9 +165,11 @@ export default function CartItemComponent({
       <CartItemMobileComponent
         storeProps={storeProps}
         item={item}
+        productType={productType}
         quantity={quantity}
         onRemove={onRemove}
         vintage={vintage}
+        type={type}
         hasReducedPrice={hasReducedPrice}
         setDeleteModalVisible={setDeleteModalVisible}
         deleteModalVisible={deleteModalVisible}

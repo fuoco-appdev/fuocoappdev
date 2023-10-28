@@ -210,6 +210,7 @@ class StoreController extends Controller {
 
   private async intializeAsync(renderCount: number): Promise<void> {
     if (renderCount <= 1) {
+      await this.requestProductTypesAsync();
       await this.requestRegionsAsync();
     }
 
@@ -218,6 +219,11 @@ class StoreController extends Controller {
       .subscribe({
         next: this.onSelectedInventoryLocationChangedAsync,
       });
+  }
+
+  private async requestProductTypesAsync(): Promise<void> {
+    const response = await MedusaService.medusa?.productTypes.list();
+    this._model.productTypes = response?.product_types ?? [];
   }
 
   private async requestRegionsAsync(): Promise<void> {

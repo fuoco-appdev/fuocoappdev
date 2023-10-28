@@ -393,6 +393,9 @@
 }
 
 .root-tablet {
+    height: 100%;
+    padding: $mp-10;
+
     & .content-tablet {
         display: -webkit-box;
         display: -ms-flexbox;
@@ -641,4 +644,108 @@
 
 .tab-slider-pill {
     background-color: $brand-900 !important;
+}
+
+.add-variants-container {
+    display: flex;
+    flex-direction: column;
+    padding-top: $mp-4;
+}
+
+.modal-overlay {
+    z-index: 24;
+}
+
+.modal-desktop {
+    max-height: 95vh;
+    width: 25vw;
+    overflow-y: auto;
+    padding: $mp-8 !important;
+}
+
+.modal-text-desktop {
+    padding: $mp-8 !important;
+}
+
+.modal-tablet {
+    max-height: 95vh;
+    width: 50vw;
+    overflow-y: auto;
+    padding: $mp-6 !important;
+}
+
+.modal-text-tablet {
+    padding: $mp-6 !important;
+}
+
+.modal-title {
+    color: $brand-900 !important;
+}
+
+.modal-description {
+    color: $brand-900 !important;
+}
+
+.modal-footer-button-container-desktop {
+    padding-left: $mp-6 !important;
+    padding-right: $mp-6 !important;
+    height: 100%;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+}
+
+.modal-address-footer-button-container-desktop {
+    border-top: 1px solid rgba(42, 42, 95, .6);
+}
+
+.modal-footer-button-container-tablet {
+    padding-left: $mp-6 !important;
+    padding-right: $mp-6 !important;
+    height: 100%;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+}
+
+.modal-address-footer-button-container-tablet {
+    border-top: 1px solid rgba(42, 42, 95, .6);
+}
+
+.modal-cancel-button {
+    background-color: transparent !important;
+    border: 1px solid $brand-900 !important;
+    padding-left: $mp-4 !important;
+    padding-right: $mp-4 !important;
+}
+
+.modal-confirm-button {
+    background-color: $brand-700 !important;
+    padding-left: $mp-4 !important;
+    padding-right: $mp-4 !important;
+}
+
+.dropdown-title {
+    color: $brand-900;
+    font-weight: $font-weight-bold;
+    font-size: $font-size-base;
+    padding: 0 $mp-4;
+}
+
+.dropdown-description {
+    color: $brand-900;
+    font-size: $font-size-base;
+    padding: $mp-4;
+}
+
+.add-to-cart-button-container-mobile {
+    padding: $mp-4;
+}
+
+.add-to-cart-button {
+    background-color: $brand-700;
+}
+
+.add-to-cart-button:hover {
+    background-color: $brand-700;
 }

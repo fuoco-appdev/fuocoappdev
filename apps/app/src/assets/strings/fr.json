@@ -254,5 +254,7 @@
   "selectLocation": "Sélectionner un lieu ?",
   "selectLocationDescription": "Le lieu de vente \"{{address, string}}\" sera sélectionné. Cela modifiera l'inventaire actuel du magasin.",
   "help": "Aide",
-  "joinUsOnDiscord": "Rejoignez-nous sur Discord"
+  "joinUsOnDiscord": "Rejoignez-nous sur Discord",
+  "foodRequirement": "Besoins alimentaires",
+  "foodRequirementDescription": "Dans {{region, string}}, la loi impose d'avoir de la nourriture dans son panier lorsqu'on achète de l'alcool en ligne. Veuillez inclure un produit alimentaire dans votre panier pour passer à la caisse."
 }

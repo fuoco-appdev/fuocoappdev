@@ -254,5 +254,7 @@
   "selectLocation": "Select location?",
   "selectLocationDescription": "Sales location \"{{address, string}}\" will be selected. This will change the current store inventory.",
   "help": "Help",
-  "joinUsOnDiscord": "Join Us On Discord"
+  "joinUsOnDiscord": "Join Us On Discord",
+  "foodRequirement": "Food requirement",
+  "foodRequirementDescription": "In {{region, string}}, it is a legal requirement to have food in your cart when making an online purchase of alcohol. Kindly include a food item in your cart to continue to the checkout."
 }

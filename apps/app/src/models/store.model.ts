@@ -1,6 +1,6 @@
 import { createStore, withProps } from '@ngneat/elf';
 import { Model } from '../model';
-import { Product, Region, SalesChannel } from '@medusajs/medusa';
+import { Product, Region, SalesChannel, ProductType } from '@medusajs/medusa';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 
 export enum ProductTabs {
@@ -23,6 +23,7 @@ export interface StoreState {
   scrollPosition: number | undefined;
   topBarYPostion: number;
   isLoading: boolean;
+  productTypes: ProductType[];
 }
 
 export class StoreModel extends Model {
@@ -43,6 +44,7 @@ export class StoreModel extends Model {
           topBarYPostion: 0,
           scrollPosition: undefined,
           isLoading: false,
+          productTypes: [],
         })
       )
     );
@@ -178,6 +180,19 @@ export class StoreModel extends Model {
       this.store.update((state) => ({
         ...state,
         isLoading: value,
+      }));
+    }
+  }
+
+  public get productTypes(): ProductType[] {
+    return this.store.getValue().productTypes;
+  }
+
+  public set productTypes(value: ProductType[]) {
+    if (JSON.stringify(this.productTypes) !== JSON.stringify(value)) {
+      this.store.update((state) => ({
+        ...state,
+        productTypes: value,
       }));
     }
   }

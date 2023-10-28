@@ -13,13 +13,16 @@ import { CartItemResponsiveProps } from '../cart-item.component';
 import { RoutePathsType } from '../../route-paths';
 import { useNavigate } from 'react-router-dom';
 import { ResponsiveMobile } from '../responsive.component';
+import { MedusaProductTypeNames } from '../../types/medusa.type';
 
 export default function CartItemMobileComponent({
   storeProps,
   item,
+  productType,
   quantity,
   onRemove,
   vintage,
+  type,
   hasReducedPrice,
   deleteModalVisible,
   discountPercentage,
@@ -44,13 +47,34 @@ export default function CartItemMobileComponent({
               ' '
             )}
           >
-            <img
-              className={[
-                styles['thumbnail-image'],
-                styles['thumbnail-image-mobile'],
-              ].join(' ')}
-              src={item.thumbnail || '../assets/svg/wine-bottle.svg'}
-            />
+            {!item?.thumbnail &&
+              productType === MedusaProductTypeNames.Wine && (
+                <img
+                  className={[
+                    styles['thumbnail-image'],
+                    styles['thumbnail-image-mobile'],
+                  ].join(' ')}
+                  src={'../../assets/svg/wine-bottle.svg'}
+                />
+              )}
+            {!item?.thumbnail &&
+              productType === MedusaProductTypeNames.RequiredFood && (
+                <Line.RestaurantMenu
+                  className={[
+                    styles['thumbnail-image'],
+                    styles['thumbnail-image-mobile'],
+                  ].join(' ')}
+                />
+              )}
+            {item?.thumbnail && (
+              <img
+                className={[
+                  styles['thumbnail-image'],
+                  styles['thumbnail-image-mobile'],
+                ].join(' ')}
+                src={item.thumbnail}
+              />
+            )}
           </div>
           <div
             className={[
@@ -66,11 +90,20 @@ export default function CartItemMobileComponent({
             >
               {item.title}
             </div>
-            <div
-              className={[styles['variant'], styles['variant-mobile']].join(
-                ' '
-              )}
-            >{`${t('vintage')}: ${vintage}`}</div>
+            {productType === MedusaProductTypeNames.Wine && (
+              <div
+                className={[styles['variant'], styles['variant-mobile']].join(
+                  ' '
+                )}
+              >{`${t('vintage')}: ${vintage}`}</div>
+            )}
+            {productType === MedusaProductTypeNames.RequiredFood && (
+              <div
+                className={[styles['variant'], styles['variant-mobile']].join(
+                  ' '
+                )}
+              >{`${t('type')}: ${type}`}</div>
+            )}
           </div>
           <div
             className={[

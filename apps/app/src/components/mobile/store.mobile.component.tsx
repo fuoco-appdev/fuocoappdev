@@ -39,6 +39,7 @@ import {
 } from '@medusajs/medusa/dist/types/pricing';
 import { ResponsiveMobile } from '../responsive.component';
 import CartVariantItemComponent from '../cart-variant-item.component';
+import { MedusaProductTypeNames } from 'src/types/medusa.type';
 
 export default function StoreMobileComponent({
   storeProps,
@@ -377,7 +378,9 @@ export default function StoreMobileComponent({
             {storeProps.selectedPreview?.variants.map((variant) => {
               return (
                 <CartVariantItemComponent
+                  productType={MedusaProductTypeNames.Wine}
                   key={variant.id}
+                  product={storeProps.selectedPreview}
                   variant={variant}
                   storeProps={storeProps}
                   variantQuantities={variantQuantities}

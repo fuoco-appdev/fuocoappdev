@@ -38,6 +38,7 @@ import { WindowState } from '../models/window.model';
 import { lazy } from '@loadable/component';
 import { CheckoutSuspenseDesktopComponent } from './desktop/suspense/checkout.suspense.desktop.component';
 import { CheckoutSuspenseMobileComponent } from './mobile/suspense/checkout.suspense.mobile.component';
+import { CheckoutSuspenseTabletComponent } from './tablet/suspense/checkout.suspense.tablet.component';
 
 const CheckoutDesktopComponent = lazy(
   () => import('./desktop/checkout.desktop.component')
@@ -92,8 +93,12 @@ export default function CheckoutComponent(): JSX.Element {
   const customer = accountProps.customer as Customer;
 
   useEffect(() => {
-    if (cartProps.cart && cartProps.cart.items.length <= 0) {
-      navigate(RoutePathsType.Store);
+    if (
+      (cartProps.cart && cartProps.cart.items.length <= 0) ||
+      (cartProps.isFoodInCartRequired &&
+        !CartController.isFoodRequirementInCart())
+    ) {
+      navigate(RoutePathsType.Cart);
     }
   }, [cartProps.cart]);
 
@@ -327,6 +332,7 @@ export default function CheckoutComponent(): JSX.Element {
   const suspenceComponent = (
     <>
       <CheckoutSuspenseDesktopComponent />
+      <CheckoutSuspenseTabletComponent />
       <CheckoutSuspenseMobileComponent />
     </>
   );

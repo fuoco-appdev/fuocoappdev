@@ -13,13 +13,16 @@ import { CartItemResponsiveProps } from '../cart-item.component';
 import { useNavigate } from 'react-router-dom';
 import { RoutePathsType } from '../../route-paths';
 import { ResponsiveDesktop } from '../responsive.component';
+import { MedusaProductTypeNames } from '../../types/medusa.type';
 
 export default function CartItemDesktopComponent({
   storeProps,
   item,
+  productType,
   quantity,
   onRemove,
   vintage,
+  type,
   hasReducedPrice,
   deleteModalVisible,
   discountPercentage,
@@ -44,13 +47,34 @@ export default function CartItemDesktopComponent({
               ' '
             )}
           >
-            <img
-              className={[
-                styles['thumbnail-image'],
-                styles['thumbnail-image-desktop'],
-              ].join(' ')}
-              src={item.thumbnail || '../assets/svg/wine-bottle.svg'}
-            />
+            {!item?.thumbnail &&
+              productType === MedusaProductTypeNames.Wine && (
+                <img
+                  className={[
+                    styles['thumbnail-image'],
+                    styles['thumbnail-image-desktop'],
+                  ].join(' ')}
+                  src={'../../assets/svg/wine-bottle.svg'}
+                />
+              )}
+            {!item?.thumbnail &&
+              productType === MedusaProductTypeNames.RequiredFood && (
+                <Line.RestaurantMenu
+                  className={[
+                    styles['thumbnail-image'],
+                    styles['thumbnail-image-desktop'],
+                  ].join(' ')}
+                />
+              )}
+            {item?.thumbnail && (
+              <img
+                className={[
+                  styles['thumbnail-image'],
+                  styles['thumbnail-image-desktop'],
+                ].join(' ')}
+                src={item.thumbnail}
+              />
+            )}
           </div>
           <div
             className={[
@@ -66,11 +90,20 @@ export default function CartItemDesktopComponent({
             >
               {item.title}
             </div>
-            <div
-              className={[styles['variant'], styles['variant-desktop']].join(
-                ' '
-              )}
-            >{`${t('vintage')}: ${vintage}`}</div>
+            {productType === MedusaProductTypeNames.Wine && (
+              <div
+                className={[styles['variant'], styles['variant-desktop']].join(
+                  ' '
+                )}
+              >{`${t('vintage')}: ${vintage}`}</div>
+            )}
+            {productType === MedusaProductTypeNames.RequiredFood && (
+              <div
+                className={[styles['variant'], styles['variant-desktop']].join(
+                  ' '
+                )}
+              >{`${t('type')}: ${type}`}</div>
+            )}
           </div>
           <div
             className={[

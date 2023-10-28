@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useRef } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import CartController from '../../controllers/cart.controller';
 import styles from '../cart.module.scss';
-import { Button, Input, Line, Solid, Tabs } from '@fuoco.appdev/core-ui';
+import { Button, Input, Line, Modal, Solid, Tabs } from '@fuoco.appdev/core-ui';
 import { RoutePathsType } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
@@ -16,13 +16,22 @@ import { CartResponsiveProps } from '../cart.component';
 import HomeController from '../../controllers/home.controller';
 import { Store } from '@ngneat/elf';
 import { ResponsiveMobile, ResponsiveTablet } from '../responsive.component';
+import CartVariantItemComponent from '../cart-variant-item.component';
+import { MedusaProductTypeNames } from 'src/types/medusa.type';
 
 export default function CartTabletComponent({
   cartProps,
+  homeProps,
   homeLocalProps,
   storeProps,
   windowProps,
   salesChannelTabs,
+  foodVariantQuantities,
+  isFoodRequirementOpen,
+  setIsFoodRequirementOpen,
+  setFoodVariantQuantities,
+  onCheckout,
+  onAddFoodToCart,
 }: CartResponsiveProps): JSX.Element {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
@@ -489,9 +498,7 @@ export default function CartTabletComponent({
                 disabled={!cartProps.cart || cartProps.cart?.items?.length <= 0}
                 size={'large'}
                 icon={<Line.ShoppingCart size={24} />}
-                onClick={() =>
-                  setTimeout(() => navigate(RoutePathsType.Checkout), 75)
-                }
+                onClick={onCheckout}
               >
                 {t('goToCheckout')}
               </Button>
@@ -499,6 +506,97 @@ export default function CartTabletComponent({
           </div>
         </div>
       </div>
+      <Modal
+        classNames={{
+          overlay: [
+            styles['modal-overlay'],
+            styles['modal-overlay-tablet'],
+          ].join(' '),
+          modal: [styles['modal'], styles['modal-tablet']].join(' '),
+          title: [styles['modal-title'], styles['modal-title-tablet']].join(
+            ' '
+          ),
+          description: [
+            styles['modal-description'],
+            styles['modal-description-tablet'],
+          ].join(' '),
+          footerButtonContainer: [
+            styles['modal-footer-button-container'],
+            styles['modal-footer-button-container-tablet'],
+            styles['modal-address-footer-button-container-tablet'],
+          ].join(' '),
+          cancelButton: {
+            button: [
+              styles['modal-cancel-button'],
+              styles['modal-cancel-button-tablet'],
+            ].join(' '),
+          },
+          confirmButton: {
+            button: [
+              styles['modal-confirm-button'],
+              styles['modal-confirm-button-tablet'],
+            ].join(' '),
+          },
+        }}
+        hideFooter={true}
+        title={t('foodRequirement') ?? ''}
+        description={
+          t('foodRequirementDescription', {
+            region: homeProps?.selectedInventoryLocation?.region,
+          }) ?? ''
+        }
+        visible={isFoodRequirementOpen}
+        onCancel={() => setIsFoodRequirementOpen(false)}
+      >
+        <div
+          className={[
+            styles['add-variants-container'],
+            styles['add-variants-container-tablet'],
+          ].join(' ')}
+        >
+          {cartProps.requiredFoodProducts.map((product) => {
+            return product?.variants.map((variant) => {
+              return (
+                <CartVariantItemComponent
+                  productType={MedusaProductTypeNames.RequiredFood}
+                  key={variant.id}
+                  product={product}
+                  variant={variant}
+                  storeProps={storeProps}
+                  variantQuantities={foodVariantQuantities}
+                  setVariantQuantities={setFoodVariantQuantities}
+                />
+              );
+            });
+          })}
+          <Button
+            classNames={{
+              container: [
+                styles['add-to-cart-button-container'],
+                styles['add-to-cart-button-container-tablet'],
+              ].join(' '),
+              button: [
+                styles['add-to-cart-button'],
+                styles['add-to-cart-button-tablet'],
+              ].join(' '),
+            }}
+            block={true}
+            size={'full'}
+            rippleProps={{
+              color: 'rgba(233, 33, 66, .35)',
+            }}
+            icon={<Line.AddShoppingCart size={24} />}
+            disabled={
+              Object.values(foodVariantQuantities).reduce((current, next) => {
+                return current + next;
+              }, 0) <= 0
+            }
+            onClick={onAddFoodToCart}
+          >
+            {t('addToCart')}
+          </Button>
+        </div>
+      </Modal>
     </ResponsiveTablet>
   );
 }

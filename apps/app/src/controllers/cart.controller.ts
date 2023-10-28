@@ -18,6 +18,8 @@ import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import WindowController from './window.controller';
 import HomeController from './home.controller';
 import { InventoryLocation } from '../models/home.model';
+import { MedusaRegionMetadata } from '../types/medusa.type';
+import { MedusaProductTypeNames } from '../types/medusa.type';
 
 class CartController extends Controller {
   private readonly _model: CartModel;
@@ -236,6 +238,19 @@ class CartController extends Controller {
     }
   }
 
+  public isFoodRequirementInCart(): boolean {
+    if (!this._model.isFoodInCartRequired) {
+      return true;
+    }
+
+    const hasFoodRequirement = this._model.cart?.items.some((cartItem) => {
+      return this._model.requiredFoodProducts.find(
+        (food) => cartItem.variant.product_id === food.id
+      );
+    });
+    return hasFoodRequirement ?? false;
+  }
+
   private async createCartAsync(
     regionId: string,
     selectedInventoryLocation: InventoryLocation | undefined
@@ -276,6 +291,27 @@ class CartController extends Controller {
       (region) => region.name === value?.region
     );
     const cartId = value?.id ? this._model.cartIds[value.id] : undefined;
+    const metadata = region?.metadata as MedusaRegionMetadata | undefined;
+    this._model.isFoodInCartRequired =
+      Boolean(metadata?.is_food_in_cart_required) ?? false;
+
+    try {
+      const requiredFoodType = StoreController.model.productTypes.find(
+        (value) => value.value === MedusaProductTypeNames.RequiredFood
+      );
+      const requiredFoodProductsResponse =
+        await MedusaService.medusa?.products.list({
+          type_id: [requiredFoodType?.id ?? ''],
+          sales_channel_id: value?.salesChannels.map(
+            (value) => value.id
+          ) as string[],
+          region_id: region?.id,
+        });
+      this._model.requiredFoodProducts =
+        requiredFoodProductsResponse?.products ?? [];
+    } catch (error: any) {
+      console.error(error);
+    }
 
     if (value && !cartId && region?.id) {
       await this.createCartAsync(region.id, value);

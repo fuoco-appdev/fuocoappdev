@@ -14,12 +14,16 @@ import { RoutePathsType } from '../../route-paths';
 import { useNavigate } from 'react-router-dom';
 import { ResponsiveMobile } from '../responsive.component';
 import { CartVariantItemResponsiveProps } from '../cart-variant-item.component';
+import { MedusaProductTypeNames } from '../../types/medusa.type';
 
 export default function CartItemMobileComponent({
+  productType,
+  product,
   variant,
   storeProps,
   variantQuantities,
   setVariantQuantities,
+  onQuantitiesChanged,
 }: CartVariantItemResponsiveProps): JSX.Element {
   const { t, i18n } = useTranslation();
 
@@ -49,16 +53,34 @@ export default function CartItemMobileComponent({
                 styles['variant-thumbnail-container-mobile'],
               ].join(' ')}
             >
-              <img
-                className={[
-                  styles['variant-thumbnail'],
-                  styles['variant-thumbnail-mobile'],
-                ].join(' ')}
-                src={
-                  storeProps.selectedPreview?.thumbnail ??
-                  '../../assets/svg/wine-bottle.svg'
-                }
-              />
+              {!product?.thumbnail &&
+                productType === MedusaProductTypeNames.Wine && (
+                  <img
+                    className={[
+                      styles['variant-thumbnail'],
+                      styles['variant-thumbnail-desktop'],
+                    ].join(' ')}
+                    src={'../../assets/svg/wine-bottle.svg'}
+                  />
+                )}
+              {!product?.thumbnail &&
+                productType === MedusaProductTypeNames.RequiredFood && (
+                  <Line.RestaurantMenu
+                    className={[
+                      styles['variant-thumbnail'],
+                      styles['variant-thumbnail-desktop'],
+                    ].join(' ')}
+                  />
+                )}
+              {product?.thumbnail && (
+                <img
+                  className={[
+                    styles['variant-thumbnail'],
+                    styles['variant-thumbnail-desktop'],
+                  ].join(' ')}
+                  src={product?.thumbnail ?? '../../assets/svg/wine-bottle.svg'}
+                />
+              )}
             </div>
             <div
               className={[
@@ -66,7 +88,7 @@ export default function CartItemMobileComponent({
                 styles['variant-title-mobile'],
               ].join(' ')}
             >
-              {storeProps.selectedPreview?.title}
+              {product?.title}
             </div>
             <div
               className={[
@@ -128,13 +150,7 @@ export default function CartItemMobileComponent({
           value={variant?.id && variantQuantities[variant?.id]?.toString()}
           min={0}
           max={variant?.inventory_quantity ?? 0}
-          onChange={(e) => {
-            const quantities = { ...variantQuantities };
-            if (variant?.id) {
-              quantities[variant?.id] = Number(e.currentTarget.value);
-            }
-            setVariantQuantities(quantities);
-          }}
+          onChange={onQuantitiesChanged}
         />
       </div>
     </ResponsiveMobile>
