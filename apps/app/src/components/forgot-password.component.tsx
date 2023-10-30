@@ -25,6 +25,9 @@ import React from 'react';
 const ForgotPasswordDesktopComponent = lazy(
   () => import('./desktop/forgot-password.desktop.component')
 );
+const ForgotPasswordTabletComponent = lazy(
+  () => import('./tablet/forgot-password.tablet.component')
+);
 const ForgotPasswordMobileComponent = lazy(
   () => import('./mobile/forgot-password.mobile.component')
 );
@@ -83,6 +86,9 @@ export default function ForgotPasswordComponent(): JSX.Element {
       <React.Suspense fallback={suspenceComponent}>
         <GuestComponent>
           <ForgotPasswordDesktopComponent
+            forgotPasswordProps={forgotPasswordProps}
+          />
+          <ForgotPasswordTabletComponent
             forgotPasswordProps={forgotPasswordProps}
           />
           <ForgotPasswordMobileComponent

@@ -10,6 +10,16 @@
   }
 }
 
+.root-tablet {
+  & .content-tablet {
+    & .typography-tablet {
+      padding: $mp-8;
+      padding-top: calc(56px + 24px);
+      padding-bottom: 56px;
+    }
+  }
+}
+
 .root-mobile {
   & .content-mobile {
     & .typography-mobile {
