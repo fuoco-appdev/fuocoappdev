@@ -105,6 +105,20 @@ export default function CheckoutComponent(): JSX.Element {
   useEffect(() => {
     const radioOptions: RadioProps[] = [];
     for (const option of checkoutProps.shippingOptions as PricedShippingOption[]) {
+      const minRequirement = option.requirements?.find(
+        (value) => value.type === 'min_subtotal'
+      );
+      const maxRequirement = option.requirements?.find(
+        (value) => value.type === 'max_subtotal'
+      );
+      if (minRequirement && cartProps.cart.subtotal < minRequirement?.amount) {
+        continue;
+      }
+
+      if (maxRequirement && cartProps.cart.subtotal > maxRequirement?.amount) {
+        continue;
+      }
+
       let description = '';
       if (option.name === ShippingType.Standard) {
         description = t('standardShippingDescription');
@@ -130,7 +144,7 @@ export default function CheckoutComponent(): JSX.Element {
       });
     }
     setShippingOptions(radioOptions);
-  }, [checkoutProps.shippingOptions]);
+  }, [checkoutProps.shippingOptions, cartProps.cart]);
 
   useEffect(() => {
     if (!cartProps.cart) {

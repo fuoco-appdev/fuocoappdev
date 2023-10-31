@@ -67,11 +67,11 @@ class AppController extends Controller {
     LoadingController.initialize(renderCount);
     SigninController.initialize(renderCount);
     SignupController.initialize(renderCount);
+    ResetPasswordController.initialize(renderCount);
     ForgotPasswordController.initialize(renderCount);
     TermsOfServiceController.initialize(renderCount);
     PrivacyPolicyController.initialize(renderCount);
     HelpController.initialize(renderCount);
-    ResetPasswordController.initialize(renderCount);
     AccountController.initialize(renderCount);
     HomeController.initialize(renderCount);
     StoreController.initialize(renderCount);

@@ -13,114 +13,69 @@ import { useObservable } from '@ngneat/use-observable';
 import {
   ResponsiveDesktop,
   ResponsiveMobile,
+  ResponsiveSuspenseDesktop,
+  ResponsiveSuspenseMobile,
+  ResponsiveSuspenseTablet,
   ResponsiveTablet,
 } from './responsive.component';
 import { useTranslation } from 'react-i18next';
+import { Helmet } from 'react-helmet';
 import React from 'react';
+import { ResetPasswordState } from '../models';
+import { lazy } from '@loadable/component';
 
-function ResetPasswordDesktopComponent({ children }: any): JSX.Element {
-  const [show, setShow] = useState(false);
-
-  useEffect(() => {
-    setShow(true);
-
-    return () => {
-      setShow(false);
-    };
-  }, []);
-
-  const transitions = useTransition(show, {
-    from: { opacity: 0, y: 5 },
-    enter: { opacity: 1, y: 0 },
-    leave: { opacity: 0, y: 5 },
-    config: config.gentle,
-  });
-
-  return (
-    <div className={[styles['root'], styles['root-desktop']].join(' ')}>
-      <div className={[styles['content'], styles['content-desktop']].join(' ')}>
-        {transitions(
-          (style, item) =>
-            item && <animated.div style={style}>{children}</animated.div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function ResetPasswordMobileComponent({ children }: any): JSX.Element {
-  const [show, setShow] = useState(false);
-
-  useEffect(() => {
-    setShow(true);
-
-    return () => {
-      setShow(false);
-    };
-  }, []);
-
-  const transitions = useTransition(show, {
-    from: { opacity: 0, y: 5 },
-    enter: { opacity: 1, y: 0 },
-    leave: { opacity: 0, y: 5 },
-    config: config.gentle,
-  });
-
-  return (
-    <div className={[styles['root'], styles['root-mobile']].join(' ')}>
-      <div className={[styles['content'], styles['content-mobile']].join(' ')}>
-        {transitions(
-          (style, item) =>
-            item && <animated.div style={style}>{children}</animated.div>
-        )}
-      </div>
-    </div>
-  );
-}
+const ResetPasswordDesktopComponent = lazy(
+  () => import('./desktop/reset-password.desktop.component')
+);
+const ResetPasswordTabletComponent = lazy(
+  () => import('./tablet/reset-password.tablet.component')
+);
+const ResetPasswordMobileComponent = lazy(
+  () => import('./mobile/reset-password.mobile.component')
+);
 
 export interface ResetPasswordProps {}
 
-export default function ResetPasswordComponent(): JSX.Element {
-  const [error, setError] = useState<AuthError | null>(null);
-  const navigate = useNavigate();
-  const { t, i18n } = useTranslation();
+export interface ResetPasswordResponsiveProps {
+  resetPasswordProps: ResetPasswordState;
+  passwordError: string;
+  confirmPasswordError: string;
+  setAuthError: (error: AuthError | null) => void;
+}
 
-  const resetPassword = SupabaseService.supabaseClient && (
-    <Auth.ResetPassword
-      passwordErrorMessage={error ? error.message : undefined}
-      strings={{
-        emailAddress: t('emailAddress') ?? '',
-        yourEmailAddress: t('yourEmailAddress') ?? '',
-        sendResetPasswordInstructions: t('sendResetPasswordInstructions') ?? '',
-        goBackToSignIn: t('goBackToSignIn') ?? '',
-      }}
-      onPasswordUpdated={() => {
-        WindowController.addToast({
-          key: `password-updated`,
-          message: t('passwordUpdated') ?? '',
-          description: t('passwordUpdatedDescription') ?? '',
-          type: 'success',
-          closable: true,
-        });
-        setError(null);
-        navigate(RoutePathsType.Account);
-      }}
-      onResetPasswordError={(error: AuthError) => setError(error)}
-      supabaseClient={SupabaseService.supabaseClient}
-    />
+export default function ResetPasswordComponent(): JSX.Element {
+  const [authError, setAuthError] = useState<AuthError | null>(null);
+  const [passwordError, setPasswordError] = useState<string>('');
+  const [confirmPasswordError, setConfirmPasswordError] = useState<string>('');
+  const [resetPasswordProps] = useObservable(
+    ResetPasswordController.model.store
   );
+
+  useEffect(() => {
+    if (authError) {
+      WindowController.addToast({
+        key: `reset-password-${Math.random()}`,
+        message: authError?.name,
+        description: authError?.message,
+        type: 'error',
+      });
+    } else {
+      setPasswordError('');
+      setConfirmPasswordError('');
+    }
+  }, [authError, resetPasswordProps.password]);
 
   const suspenceComponent = (
     <>
-      <ResponsiveDesktop>
+      <ResponsiveSuspenseDesktop>
         <div />
-      </ResponsiveDesktop>
-      <ResponsiveTablet>
+      </ResponsiveSuspenseDesktop>
+      <ResponsiveSuspenseTablet>
         <div />
-      </ResponsiveTablet>
-      <ResponsiveMobile>
+      </ResponsiveSuspenseTablet>
+      <ResponsiveSuspenseMobile>
         <div />
-      </ResponsiveMobile>
+      </ResponsiveSuspenseMobile>
     </>
   );
 
@@ -129,17 +84,53 @@ export default function ResetPasswordComponent(): JSX.Element {
   }
 
   return (
-    <React.Suspense fallback={suspenceComponent}>
-      <ResponsiveDesktop>
-        <ResetPasswordDesktopComponent>
-          {resetPassword}
-        </ResetPasswordDesktopComponent>
-      </ResponsiveDesktop>
-      <ResponsiveMobile>
-        <ResetPasswordMobileComponent>
-          {resetPassword}
-        </ResetPasswordMobileComponent>
-      </ResponsiveMobile>
-    </React.Suspense>
+    <>
+      <Helmet>
+        <title>Reset Password | Cruthology</title>
+        <link rel="canonical" href={window.location.href} />
+        <meta name="title" content={'Reset Password | Cruthology'} />
+        <meta
+          name="description"
+          content={
+            'Reset your Cruthology password to continue your journey through the world of exceptional wines, gourmet experiences, and exclusive cultural events. Your palate is in for a treat!'
+          }
+        />
+        <meta
+          property="og:image"
+          content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
+        />
+        <meta property="og:title" content={'Reset Password | Cruthology'} />
+        <meta
+          property="og:description"
+          content={
+            'Reset your Cruthology password to continue your journey through the world of exceptional wines, gourmet experiences, and exclusive cultural events. Your palate is in for a treat!'
+          }
+        />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={window.location.href} />
+      </Helmet>
+      <React.Suspense fallback={suspenceComponent}>
+        <ResetPasswordDesktopComponent
+          resetPasswordProps={resetPasswordProps}
+          passwordError={passwordError}
+          confirmPasswordError={confirmPasswordError}
+          setAuthError={setAuthError}
+        />
+        <ResetPasswordTabletComponent
+          resetPasswordProps={resetPasswordProps}
+          passwordError={passwordError}
+          confirmPasswordError={confirmPasswordError}
+          setAuthError={setAuthError}
+        />
+        <ResetPasswordMobileComponent
+          resetPasswordProps={resetPasswordProps}
+          passwordError={passwordError}
+          confirmPasswordError={confirmPasswordError}
+          setAuthError={setAuthError}
+        />
+      </React.Suspense>
+    </>
   );
 }
