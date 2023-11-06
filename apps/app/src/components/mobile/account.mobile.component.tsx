@@ -35,6 +35,7 @@ export default function AccountMobileComponent({
   windowProps,
   accountProps,
   storeProps,
+  onCompleteProfile,
 }: AccountResponsiveProps): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -183,21 +184,7 @@ export default function AccountMobileComponent({
                 block={true}
                 size={'large'}
                 icon={<Line.Done size={24} />}
-                onClick={() => {
-                  AccountController.updateProfileErrors({
-                    firstName: undefined,
-                    lastName: undefined,
-                    phoneNumber: undefined,
-                  });
-                  const errors = AccountController.getProfileFormErrors(
-                    accountProps.profileForm
-                  );
-                  if (errors) {
-                    AccountController.updateProfileErrors(errors);
-                    return;
-                  }
-                  AccountController.completeProfileAsync();
-                }}
+                onClick={onCompleteProfile}
               >
                 {t('complete')}
               </Button>

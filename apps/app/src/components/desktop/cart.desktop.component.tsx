@@ -16,6 +16,7 @@ import { Store } from '@ngneat/elf';
 import { ResponsiveDesktop } from '../responsive.component';
 import CartVariantItemComponent from '../cart-variant-item.component';
 import { MedusaProductTypeNames } from 'src/types/medusa.type';
+import { createPortal } from 'react-dom';
 
 export default function CartDesktopComponent({
   cartProps,
@@ -499,97 +500,100 @@ export default function CartDesktopComponent({
           </div>
         </div>
       </div>
-      <Modal
-        classNames={{
-          overlay: [
-            styles['modal-overlay'],
-            styles['modal-overlay-desktop'],
-          ].join(' '),
-          modal: [styles['modal'], styles['modal-desktop']].join(' '),
-          title: [styles['modal-title'], styles['modal-title-desktop']].join(
-            ' '
-          ),
-          description: [
-            styles['modal-description'],
-            styles['modal-description-desktop'],
-          ].join(' '),
-          footerButtonContainer: [
-            styles['modal-footer-button-container'],
-            styles['modal-footer-button-container-desktop'],
-            styles['modal-address-footer-button-container-desktop'],
-          ].join(' '),
-          cancelButton: {
-            button: [
-              styles['modal-cancel-button'],
-              styles['modal-cancel-button-desktop'],
+      {createPortal(
+        <Modal
+          classNames={{
+            overlay: [
+              styles['modal-overlay'],
+              styles['modal-overlay-desktop'],
             ].join(' '),
-          },
-          confirmButton: {
-            button: [
-              styles['modal-confirm-button'],
-              styles['modal-confirm-button-desktop'],
+            modal: [styles['modal'], styles['modal-desktop']].join(' '),
+            title: [styles['modal-title'], styles['modal-title-desktop']].join(
+              ' '
+            ),
+            description: [
+              styles['modal-description'],
+              styles['modal-description-desktop'],
             ].join(' '),
-          },
-        }}
-        hideFooter={true}
-        title={t('foodRequirement') ?? ''}
-        description={
-          t('foodRequirementDescription', {
-            region: homeProps?.selectedInventoryLocation?.region,
-          }) ?? ''
-        }
-        visible={isFoodRequirementOpen}
-        onCancel={() => setIsFoodRequirementOpen(false)}
-      >
-        <div
-          className={[
-            styles['add-variants-container'],
-            styles['add-variants-container-desktop'],
-          ].join(' ')}
-        >
-          {cartProps.requiredFoodProducts.map((product) => {
-            return product?.variants.map((variant) => {
-              return (
-                <CartVariantItemComponent
-                  productType={MedusaProductTypeNames.RequiredFood}
-                  key={variant.id}
-                  product={product}
-                  variant={variant}
-                  storeProps={storeProps}
-                  variantQuantities={foodVariantQuantities}
-                  setVariantQuantities={setFoodVariantQuantities}
-                />
-              );
-            });
-          })}
-          <Button
-            classNames={{
-              container: [
-                styles['add-to-cart-button-container'],
-                styles['add-to-cart-button-container-desktop'],
-              ].join(' '),
+            footerButtonContainer: [
+              styles['modal-footer-button-container'],
+              styles['modal-footer-button-container-desktop'],
+              styles['modal-address-footer-button-container-desktop'],
+            ].join(' '),
+            cancelButton: {
               button: [
-                styles['add-to-cart-button'],
-                styles['add-to-cart-button-desktop'],
+                styles['modal-cancel-button'],
+                styles['modal-cancel-button-desktop'],
               ].join(' '),
-            }}
-            block={true}
-            size={'full'}
-            rippleProps={{
-              color: 'rgba(233, 33, 66, .35)',
-            }}
-            icon={<Line.AddShoppingCart size={24} />}
-            disabled={
-              Object.values(foodVariantQuantities).reduce((current, next) => {
-                return current + next;
-              }, 0) <= 0
-            }
-            onClick={onAddFoodToCart}
+            },
+            confirmButton: {
+              button: [
+                styles['modal-confirm-button'],
+                styles['modal-confirm-button-desktop'],
+              ].join(' '),
+            },
+          }}
+          hideFooter={true}
+          title={t('foodRequirement') ?? ''}
+          description={
+            t('foodRequirementDescription', {
+              region: homeProps?.selectedInventoryLocation?.region,
+            }) ?? ''
+          }
+          visible={isFoodRequirementOpen}
+          onCancel={() => setIsFoodRequirementOpen(false)}
+        >
+          <div
+            className={[
+              styles['add-variants-container'],
+              styles['add-variants-container-desktop'],
+            ].join(' ')}
           >
-            {t('addToCart')}
-          </Button>
-        </div>
-      </Modal>
+            {cartProps.requiredFoodProducts.map((product) => {
+              return product?.variants.map((variant) => {
+                return (
+                  <CartVariantItemComponent
+                    productType={MedusaProductTypeNames.RequiredFood}
+                    key={variant.id}
+                    product={product}
+                    variant={variant}
+                    storeProps={storeProps}
+                    variantQuantities={foodVariantQuantities}
+                    setVariantQuantities={setFoodVariantQuantities}
+                  />
+                );
+              });
+            })}
+            <Button
+              classNames={{
+                container: [
+                  styles['add-to-cart-button-container'],
+                  styles['add-to-cart-button-container-desktop'],
+                ].join(' '),
+                button: [
+                  styles['add-to-cart-button'],
+                  styles['add-to-cart-button-desktop'],
+                ].join(' '),
+              }}
+              block={true}
+              size={'full'}
+              rippleProps={{
+                color: 'rgba(233, 33, 66, .35)',
+              }}
+              icon={<Line.AddShoppingCart size={24} />}
+              disabled={
+                Object.values(foodVariantQuantities).reduce((current, next) => {
+                  return current + next;
+                }, 0) <= 0
+              }
+              onClick={onAddFoodToCart}
+            >
+              {t('addToCart')}
+            </Button>
+          </div>
+        </Modal>,
+        document.body
+      )}
     </ResponsiveDesktop>
   );
 }

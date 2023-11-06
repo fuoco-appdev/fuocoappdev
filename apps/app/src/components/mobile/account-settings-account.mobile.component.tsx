@@ -27,6 +27,7 @@ import { Observable } from 'rxjs';
 import { WindowLocalState } from '../../models';
 import { AccountSettingsAccountResponsiveProps } from '../account-settings-account.component';
 import { ResponsiveMobile } from '../responsive.component';
+import { createPortal } from 'react-dom';
 
 export default function AccountSettingsAccountMobileComponent({
   accountProps,
@@ -180,38 +181,43 @@ export default function AccountSettingsAccountMobileComponent({
             {t('deleteAccount')}
           </Button>
         </div>
-        <Modal
-          title={t('deleteYourAccount') ?? ''}
-          description={t('deleteYourAccountDescription') ?? ''}
-          confirmText={t('delete') ?? ''}
-          cancelText={t('cancel') ?? ''}
-          variant={'danger'}
-          size={'small'}
-          classNames={{
-            modal: styles['delete-modal'],
-          }}
-          visible={showDeleteModal}
-          onCancel={() => setShowDeleteModal(false)}
-          onConfirm={async () => {
-            await AccountController.deleteAsync();
-            setShowDeleteModal(false);
-          }}
-        ></Modal>
-        <LanguageSwitch
-          type={'none'}
-          touchScreen={true}
-          language={windowLocalProps.languageCode}
-          open={isLanguageOpen}
-          supportedLanguages={[
-            { isoCode: 'en', countryCode: 'GB' },
-            { isoCode: 'fr', countryCode: 'FR' },
-          ]}
-          onChange={(code, info) =>
-            AccountController.updateAccountLanguageAsync(code, info)
-          }
-          onOpen={() => setIsLanguageOpen(true)}
-          onClose={() => setIsLanguageOpen(false)}
-        />
+        {createPortal(
+          <>
+            <Modal
+              title={t('deleteYourAccount') ?? ''}
+              description={t('deleteYourAccountDescription') ?? ''}
+              confirmText={t('delete') ?? ''}
+              cancelText={t('cancel') ?? ''}
+              variant={'danger'}
+              size={'small'}
+              classNames={{
+                modal: styles['delete-modal'],
+              }}
+              visible={showDeleteModal}
+              onCancel={() => setShowDeleteModal(false)}
+              onConfirm={async () => {
+                await AccountController.deleteAsync();
+                setShowDeleteModal(false);
+              }}
+            ></Modal>
+            <LanguageSwitch
+              type={'none'}
+              touchScreen={true}
+              language={windowLocalProps.languageCode}
+              open={isLanguageOpen}
+              supportedLanguages={[
+                { isoCode: 'en', countryCode: 'GB' },
+                { isoCode: 'fr', countryCode: 'FR' },
+              ]}
+              onChange={(code, info) =>
+                AccountController.updateAccountLanguageAsync(code, info)
+              }
+              onOpen={() => setIsLanguageOpen(true)}
+              onClose={() => setIsLanguageOpen(false)}
+            />
+          </>,
+          document.body
+        )}
       </div>
     </ResponsiveMobile>
   );

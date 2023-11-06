@@ -202,17 +202,6 @@
         }
     }
 
-    & .refund-items-container {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-orient: vertical;
-        -webkit-box-direction: normal;
-            -ms-flex-direction: column;
-                flex-direction: column;
-        padding: $mp-4 0;
-    }
-
     & .request-refund-button-container {
         padding: $mp-4 0;
     }
@@ -322,10 +311,6 @@
         }
     }
 
-    & .refund-items-container-desktop {
-        width: 500px;
-    }
-
     & .request-refund-button-container-desktop {
     }
 }
@@ -383,9 +368,6 @@
         }
     }
 
-    & .refund-items-container-mobile {
-    }
-
     & .request-refund-button-container-mobile {
     }
 }
@@ -436,4 +418,22 @@
     -ms-text-size-adjust: none;
     -o-text-size-adjust: none;
     text-size-adjust: none;
+}
+
+.refund-items-container {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    padding: $mp-4 0;
+}
+
+.refund-items-container-desktop {
+    width: 500px;
+}
+
+.refund-items-container-mobile {
 }

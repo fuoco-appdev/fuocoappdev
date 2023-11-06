@@ -34,6 +34,7 @@ import { RoutePathsType } from '../../route-paths';
 import { ResponsiveMobile } from '../responsive.component';
 import { loadStripe } from '@stripe/stripe-js';
 import SecretsService from '../../services/secrets.service';
+import { createPortal } from 'react-dom';
 
 export default function CheckoutMobileComponent({
   checkoutProps,
@@ -961,185 +962,190 @@ export default function CheckoutMobileComponent({
             </Button>
           </div>
         </div>
-        <Dropdown
-          open={isAddAddressOpen}
-          touchScreen={true}
-          onClose={() => setIsAddAddressOpen(false)}
-        >
-          <div
-            className={[
-              styles['add-address-container'],
-              styles['add-address-container-mobile'],
-            ].join(' ')}
-          >
-            <AddressFormComponent
-              isAuthenticated={true}
-              values={checkoutProps.addShippingForm}
-              errors={checkoutProps.addShippingFormErrors}
-              onChangeCallbacks={{
-                firstName: (event) =>
-                  CheckoutController.updateAddShippingAddress({
-                    firstName: event.target.value,
-                  }),
-                lastName: (event) =>
-                  CheckoutController.updateAddShippingAddress({
-                    lastName: event.target.value,
-                  }),
-                company: (event) =>
-                  CheckoutController.updateAddShippingAddress({
-                    company: event.target.value,
-                  }),
-                address: (event) =>
-                  CheckoutController.updateAddShippingAddress({
-                    address: event.target.value,
-                  }),
-                apartments: (event) =>
-                  CheckoutController.updateAddShippingAddress({
-                    apartments: event.target.value,
-                  }),
-                postalCode: (event) =>
-                  CheckoutController.updateAddShippingAddress({
-                    postalCode: event.target.value,
-                  }),
-                city: (event) =>
-                  CheckoutController.updateAddShippingAddress({
-                    city: event.target.value,
-                  }),
-                country: (id, value) =>
-                  CheckoutController.updateAddShippingAddress({
-                    countryCode: id,
-                  }),
-                region: (id, value) =>
-                  CheckoutController.updateAddShippingAddress({
-                    region: value,
-                  }),
-                phoneNumber: (value, event, formattedValue) =>
-                  CheckoutController.updateAddShippingAddress({
-                    phoneNumber: value,
-                  }),
-              }}
-            />
-            <div
-              className={[
-                styles['add-address-button-container'],
-                styles['add-address-button-container-mobile'],
-              ].join(' ')}
+        {createPortal(
+          <>
+            <Dropdown
+              open={isAddAddressOpen}
+              touchScreen={true}
+              onClose={() => setIsAddAddressOpen(false)}
             >
-              <Button
-                classNames={{
-                  button: styles['add-address-button'],
-                }}
-                rippleProps={{
-                  color: 'rgba(233, 33, 66, .35)',
-                }}
-                touchScreen={true}
-                block={true}
-                size={'large'}
-                onClick={onAddAddressAsync}
+              <div
+                className={[
+                  styles['add-address-container'],
+                  styles['add-address-container-mobile'],
+                ].join(' ')}
               >
-                {t('addAddress')}
-              </Button>
-            </div>
-          </div>
-        </Dropdown>
-        <Dropdown
-          open={isPayOpen}
-          touchScreen={true}
-          onClose={() => setIsPayOpen(false)}
-        >
-          <div
-            className={[
-              styles['pay-container'],
-              styles['pay-container-mobile'],
-            ].join(' ')}
-          >
-            {checkoutProps.selectedProviderId === ProviderType.Manual && (
-              <>
+                <AddressFormComponent
+                  isAuthenticated={true}
+                  values={checkoutProps.addShippingForm}
+                  errors={checkoutProps.addShippingFormErrors}
+                  onChangeCallbacks={{
+                    firstName: (event) =>
+                      CheckoutController.updateAddShippingAddress({
+                        firstName: event.target.value,
+                      }),
+                    lastName: (event) =>
+                      CheckoutController.updateAddShippingAddress({
+                        lastName: event.target.value,
+                      }),
+                    company: (event) =>
+                      CheckoutController.updateAddShippingAddress({
+                        company: event.target.value,
+                      }),
+                    address: (event) =>
+                      CheckoutController.updateAddShippingAddress({
+                        address: event.target.value,
+                      }),
+                    apartments: (event) =>
+                      CheckoutController.updateAddShippingAddress({
+                        apartments: event.target.value,
+                      }),
+                    postalCode: (event) =>
+                      CheckoutController.updateAddShippingAddress({
+                        postalCode: event.target.value,
+                      }),
+                    city: (event) =>
+                      CheckoutController.updateAddShippingAddress({
+                        city: event.target.value,
+                      }),
+                    country: (id, value) =>
+                      CheckoutController.updateAddShippingAddress({
+                        countryCode: id,
+                      }),
+                    region: (id, value) =>
+                      CheckoutController.updateAddShippingAddress({
+                        region: value,
+                      }),
+                    phoneNumber: (value, event, formattedValue) =>
+                      CheckoutController.updateAddShippingAddress({
+                        phoneNumber: value,
+                      }),
+                  }}
+                />
                 <div
                   className={[
-                    styles['manual-provider-text'],
-                    styles['manual-provider-text-mobile'],
+                    styles['add-address-button-container'],
+                    styles['add-address-button-container-mobile'],
                   ].join(' ')}
                 >
-                  {t('manualProviderDescription')}
-                </div>
-                <Button
-                  classNames={{
-                    button: styles['pay-button'],
-                  }}
-                  rippleProps={{
-                    color: 'rgba(233, 33, 66, .35)',
-                  }}
-                  block={true}
-                  size={'large'}
-                  icon={<Line.Lock size={24} />}
-                  onClick={async () => {
-                    setIsPayOpen(false);
-                    const id =
-                      await CheckoutController.proceedToManualPaymentAsync();
-                    navigate(`${RoutePathsType.OrderConfirmed}/${id}`);
-                  }}
-                >
-                  {t('pay')}
-                </Button>
-              </>
-            )}
-            {checkoutProps.selectedProviderId === ProviderType.Stripe && (
-              <Elements stripe={stripePromise} options={stripeOptions}>
-                <FormLayout
-                  label={t('creditCardNumber') ?? ''}
-                  error={''}
-                  classNames={{
-                    label: styles['input-form-layout-label'],
-                  }}
-                >
-                  <CardNumberElement options={stripeElementOptions} />
-                </FormLayout>
-                <div className={styles['horizontal-input-container']}>
-                  <FormLayout
-                    label={t('expirationDate') ?? ''}
-                    error={''}
+                  <Button
                     classNames={{
-                      root: styles['input-form-root'],
-                      label: styles['input-form-layout-label'],
+                      button: styles['add-address-button'],
                     }}
-                  >
-                    <CardExpiryElement options={stripeElementOptions} />
-                  </FormLayout>
-                  <FormLayout
-                    label={t('cvc') ?? ''}
-                    error={''}
-                    classNames={{
-                      root: styles['input-form-root'],
-                      label: styles['input-form-layout-label'],
+                    rippleProps={{
+                      color: 'rgba(233, 33, 66, .35)',
                     }}
+                    touchScreen={true}
+                    block={true}
+                    size={'large'}
+                    onClick={onAddAddressAsync}
                   >
-                    <CardCvcElement options={stripeElementOptions} />
-                  </FormLayout>
+                    {t('addAddress')}
+                  </Button>
                 </div>
-                <StripePayButtonComponent
-                  stripeOptions={stripeOptions}
-                  onPaymentClick={() => setIsPayOpen(false)}
+              </div>
+            </Dropdown>
+            <Dropdown
+              open={isPayOpen}
+              touchScreen={true}
+              onClose={() => setIsPayOpen(false)}
+            >
+              <div
+                className={[
+                  styles['pay-container'],
+                  styles['pay-container-mobile'],
+                ].join(' ')}
+              >
+                {checkoutProps.selectedProviderId === ProviderType.Manual && (
+                  <>
+                    <div
+                      className={[
+                        styles['manual-provider-text'],
+                        styles['manual-provider-text-mobile'],
+                      ].join(' ')}
+                    >
+                      {t('manualProviderDescription')}
+                    </div>
+                    <Button
+                      classNames={{
+                        button: styles['pay-button'],
+                      }}
+                      rippleProps={{
+                        color: 'rgba(233, 33, 66, .35)',
+                      }}
+                      block={true}
+                      size={'large'}
+                      icon={<Line.Lock size={24} />}
+                      onClick={async () => {
+                        setIsPayOpen(false);
+                        const id =
+                          await CheckoutController.proceedToManualPaymentAsync();
+                        navigate(`${RoutePathsType.OrderConfirmed}/${id}`);
+                      }}
+                    >
+                      {t('pay')}
+                    </Button>
+                  </>
+                )}
+                {checkoutProps.selectedProviderId === ProviderType.Stripe && (
+                  <Elements stripe={stripePromise} options={stripeOptions}>
+                    <FormLayout
+                      label={t('creditCardNumber') ?? ''}
+                      error={''}
+                      classNames={{
+                        label: styles['input-form-layout-label'],
+                      }}
+                    >
+                      <CardNumberElement options={stripeElementOptions} />
+                    </FormLayout>
+                    <div className={styles['horizontal-input-container']}>
+                      <FormLayout
+                        label={t('expirationDate') ?? ''}
+                        error={''}
+                        classNames={{
+                          root: styles['input-form-root'],
+                          label: styles['input-form-layout-label'],
+                        }}
+                      >
+                        <CardExpiryElement options={stripeElementOptions} />
+                      </FormLayout>
+                      <FormLayout
+                        label={t('cvc') ?? ''}
+                        error={''}
+                        classNames={{
+                          root: styles['input-form-root'],
+                          label: styles['input-form-layout-label'],
+                        }}
+                      >
+                        <CardCvcElement options={stripeElementOptions} />
+                      </FormLayout>
+                    </div>
+                    <StripePayButtonComponent
+                      stripeOptions={stripeOptions}
+                      onPaymentClick={() => setIsPayOpen(false)}
+                    />
+                  </Elements>
+                )}
+              </div>
+            </Dropdown>
+            {checkoutProps.isPaymentLoading && (
+              <div
+                className={[
+                  styles['loading-container'],
+                  styles['loading-container-mobile'],
+                ].join(' ')}
+              >
+                <img
+                  src={'../assets/svg/ring-resize-light.svg'}
+                  className={[
+                    styles['loading-ring'],
+                    styles['loading-ring-mobile'],
+                  ].join(' ')}
                 />
-              </Elements>
+              </div>
             )}
-          </div>
-        </Dropdown>
-        {checkoutProps.isPaymentLoading && (
-          <div
-            className={[
-              styles['loading-container'],
-              styles['loading-container-mobile'],
-            ].join(' ')}
-          >
-            <img
-              src={'../assets/svg/ring-resize-light.svg'}
-              className={[
-                styles['loading-ring'],
-                styles['loading-ring-mobile'],
-              ].join(' ')}
-            />
-          </div>
+          </>,
+          document.body
         )}
       </div>
     </ResponsiveMobile>

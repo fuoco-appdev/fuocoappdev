@@ -36,6 +36,7 @@ import { useNavigate } from 'react-router-dom';
 import { ResponsiveDesktop } from '../responsive.component';
 import SecretsService from '../../services/secrets.service';
 import { loadStripe } from '@stripe/stripe-js';
+import { createPortal } from 'react-dom';
 
 export default function CheckoutDesktopComponent({
   checkoutProps,
@@ -983,246 +984,253 @@ export default function CheckoutDesktopComponent({
             </div>
           </div>
         </div>
-        <Modal
-          classNames={{
-            overlay: [
-              styles['modal-overlay'],
-              styles['modal-overlay-desktop'],
-            ].join(' '),
-            modal: [styles['modal'], styles['modal-desktop']].join(' '),
-            title: [styles['modal-title'], styles['modal-title-desktop']].join(
-              ' '
-            ),
-            description: [
-              styles['modal-description'],
-              styles['modal-description-desktop'],
-            ].join(' '),
-            footerButtonContainer: [
-              styles['modal-footer-button-container'],
-              styles['modal-footer-button-container-desktop'],
-              styles['modal-address-footer-button-container-desktop'],
-            ].join(' '),
-            cancelButton: {
-              button: [
-                styles['modal-cancel-button'],
-                styles['modal-cancel-button-desktop'],
-              ].join(' '),
-            },
-            confirmButton: {
-              button: [
-                styles['modal-confirm-button'],
-                styles['modal-confirm-button-desktop'],
-              ].join(' '),
-            },
-          }}
-          hideFooter={true}
-          visible={isAddAddressOpen}
-          onCancel={() => setIsAddAddressOpen(false)}
-        >
-          <div
-            className={[
-              styles['add-address-container'],
-              styles['add-address-container-desktop'],
-            ].join(' ')}
-          >
-            <AddressFormComponent
-              isAuthenticated={true}
-              values={checkoutProps.addShippingForm}
-              errors={checkoutProps.addShippingFormErrors}
-              onChangeCallbacks={{
-                firstName: (event) =>
-                  CheckoutController.updateAddShippingAddress({
-                    firstName: event.target.value,
-                  }),
-                lastName: (event) =>
-                  CheckoutController.updateAddShippingAddress({
-                    lastName: event.target.value,
-                  }),
-                company: (event) =>
-                  CheckoutController.updateAddShippingAddress({
-                    company: event.target.value,
-                  }),
-                address: (event) =>
-                  CheckoutController.updateAddShippingAddress({
-                    address: event.target.value,
-                  }),
-                apartments: (event) =>
-                  CheckoutController.updateAddShippingAddress({
-                    apartments: event.target.value,
-                  }),
-                postalCode: (event) =>
-                  CheckoutController.updateAddShippingAddress({
-                    postalCode: event.target.value,
-                  }),
-                city: (event) =>
-                  CheckoutController.updateAddShippingAddress({
-                    city: event.target.value,
-                  }),
-                country: (id, value) =>
-                  CheckoutController.updateAddShippingAddress({
-                    countryCode: id,
-                  }),
-                region: (id, value) =>
-                  CheckoutController.updateAddShippingAddress({
-                    region: value,
-                  }),
-                phoneNumber: (value, event, formattedValue) =>
-                  CheckoutController.updateAddShippingAddress({
-                    phoneNumber: value,
-                  }),
+        {createPortal(
+          <>
+            <Modal
+              classNames={{
+                overlay: [
+                  styles['modal-overlay'],
+                  styles['modal-overlay-desktop'],
+                ].join(' '),
+                modal: [styles['modal'], styles['modal-desktop']].join(' '),
+                title: [
+                  styles['modal-title'],
+                  styles['modal-title-desktop'],
+                ].join(' '),
+                description: [
+                  styles['modal-description'],
+                  styles['modal-description-desktop'],
+                ].join(' '),
+                footerButtonContainer: [
+                  styles['modal-footer-button-container'],
+                  styles['modal-footer-button-container-desktop'],
+                  styles['modal-address-footer-button-container-desktop'],
+                ].join(' '),
+                cancelButton: {
+                  button: [
+                    styles['modal-cancel-button'],
+                    styles['modal-cancel-button-desktop'],
+                  ].join(' '),
+                },
+                confirmButton: {
+                  button: [
+                    styles['modal-confirm-button'],
+                    styles['modal-confirm-button-desktop'],
+                  ].join(' '),
+                },
               }}
-            />
-            <div
-              className={[
-                styles['add-address-button-container'],
-                styles['add-address-button-container-desktop'],
-              ].join(' ')}
+              hideFooter={true}
+              visible={isAddAddressOpen}
+              onCancel={() => setIsAddAddressOpen(false)}
             >
-              <Button
-                classNames={{
-                  button: styles['add-address-button'],
-                }}
-                rippleProps={{
-                  color: 'rgba(233, 33, 66, .35)',
-                }}
-                block={true}
-                size={'large'}
-                onClick={onAddAddressAsync}
+              <div
+                className={[
+                  styles['add-address-container'],
+                  styles['add-address-container-desktop'],
+                ].join(' ')}
               >
-                {t('addAddress')}
-              </Button>
-            </div>
-          </div>
-        </Modal>
-        <Modal
-          classNames={{
-            overlay: [
-              styles['modal-overlay'],
-              styles['modal-overlay-desktop'],
-            ].join(' '),
-            modal: [styles['modal'], styles['modal-desktop']].join(' '),
-            title: [styles['modal-title'], styles['modal-title-desktop']].join(
-              ' '
-            ),
-            description: [
-              styles['modal-description'],
-              styles['modal-description-desktop'],
-            ].join(' '),
-            footerButtonContainer: [
-              styles['modal-footer-button-container'],
-              styles['modal-footer-button-container-desktop'],
-              styles['modal-address-footer-button-container-desktop'],
-            ].join(' '),
-            cancelButton: {
-              button: [
-                styles['modal-cancel-button'],
-                styles['modal-cancel-button-desktop'],
-              ].join(' '),
-            },
-            confirmButton: {
-              button: [
-                styles['modal-confirm-button'],
-                styles['modal-confirm-button-desktop'],
-              ].join(' '),
-            },
-          }}
-          visible={isPayOpen}
-          onCancel={() => setIsPayOpen(false)}
-          hideFooter={true}
-        >
-          <div
-            className={[
-              styles['pay-container'],
-              styles['pay-container-desktop'],
-            ].join(' ')}
-          >
-            {checkoutProps.selectedProviderId === ProviderType.Manual && (
-              <>
+                <AddressFormComponent
+                  isAuthenticated={true}
+                  values={checkoutProps.addShippingForm}
+                  errors={checkoutProps.addShippingFormErrors}
+                  onChangeCallbacks={{
+                    firstName: (event) =>
+                      CheckoutController.updateAddShippingAddress({
+                        firstName: event.target.value,
+                      }),
+                    lastName: (event) =>
+                      CheckoutController.updateAddShippingAddress({
+                        lastName: event.target.value,
+                      }),
+                    company: (event) =>
+                      CheckoutController.updateAddShippingAddress({
+                        company: event.target.value,
+                      }),
+                    address: (event) =>
+                      CheckoutController.updateAddShippingAddress({
+                        address: event.target.value,
+                      }),
+                    apartments: (event) =>
+                      CheckoutController.updateAddShippingAddress({
+                        apartments: event.target.value,
+                      }),
+                    postalCode: (event) =>
+                      CheckoutController.updateAddShippingAddress({
+                        postalCode: event.target.value,
+                      }),
+                    city: (event) =>
+                      CheckoutController.updateAddShippingAddress({
+                        city: event.target.value,
+                      }),
+                    country: (id, value) =>
+                      CheckoutController.updateAddShippingAddress({
+                        countryCode: id,
+                      }),
+                    region: (id, value) =>
+                      CheckoutController.updateAddShippingAddress({
+                        region: value,
+                      }),
+                    phoneNumber: (value, event, formattedValue) =>
+                      CheckoutController.updateAddShippingAddress({
+                        phoneNumber: value,
+                      }),
+                  }}
+                />
                 <div
                   className={[
-                    styles['manual-provider-text'],
-                    styles['manual-provider-text-desktop'],
+                    styles['add-address-button-container'],
+                    styles['add-address-button-container-desktop'],
                   ].join(' ')}
                 >
-                  {t('manualProviderDescription')}
-                </div>
-                <Button
-                  classNames={{
-                    button: styles['pay-button'],
-                  }}
-                  rippleProps={{
-                    color: 'rgba(233, 33, 66, .35)',
-                  }}
-                  block={true}
-                  size={'large'}
-                  icon={<Line.Lock size={24} />}
-                  onClick={async () => {
-                    setIsPayOpen(false);
-                    const id =
-                      await CheckoutController.proceedToManualPaymentAsync();
-                    navigate(`${RoutePathsType.OrderConfirmed}/${id}`);
-                  }}
-                >
-                  {t('pay')}
-                </Button>
-              </>
-            )}
-            {checkoutProps.selectedProviderId === ProviderType.Stripe && (
-              <Elements stripe={stripePromise} options={stripeOptions}>
-                <FormLayout
-                  label={t('creditCardNumber') ?? ''}
-                  error={''}
-                  classNames={{
-                    label: styles['input-form-layout-label'],
-                  }}
-                >
-                  <CardNumberElement options={stripeElementOptions} />
-                </FormLayout>
-                <div className={styles['horizontal-input-container']}>
-                  <FormLayout
-                    label={t('expirationDate') ?? ''}
-                    error={''}
+                  <Button
                     classNames={{
-                      root: styles['input-form-root'],
-                      label: styles['input-form-layout-label'],
+                      button: styles['add-address-button'],
                     }}
-                  >
-                    <CardExpiryElement options={stripeElementOptions} />
-                  </FormLayout>
-                  <FormLayout
-                    label={t('cvc') ?? ''}
-                    error={''}
-                    classNames={{
-                      root: styles['input-form-root'],
-                      label: styles['input-form-layout-label'],
+                    rippleProps={{
+                      color: 'rgba(233, 33, 66, .35)',
                     }}
+                    block={true}
+                    size={'large'}
+                    onClick={onAddAddressAsync}
                   >
-                    <CardCvcElement options={stripeElementOptions} />
-                  </FormLayout>
+                    {t('addAddress')}
+                  </Button>
                 </div>
-                <StripePayButtonComponent
-                  stripeOptions={stripeOptions}
-                  onPaymentClick={() => setIsPayOpen(false)}
+              </div>
+            </Modal>
+            <Modal
+              classNames={{
+                overlay: [
+                  styles['modal-overlay'],
+                  styles['modal-overlay-desktop'],
+                ].join(' '),
+                modal: [styles['modal'], styles['modal-desktop']].join(' '),
+                title: [
+                  styles['modal-title'],
+                  styles['modal-title-desktop'],
+                ].join(' '),
+                description: [
+                  styles['modal-description'],
+                  styles['modal-description-desktop'],
+                ].join(' '),
+                footerButtonContainer: [
+                  styles['modal-footer-button-container'],
+                  styles['modal-footer-button-container-desktop'],
+                  styles['modal-address-footer-button-container-desktop'],
+                ].join(' '),
+                cancelButton: {
+                  button: [
+                    styles['modal-cancel-button'],
+                    styles['modal-cancel-button-desktop'],
+                  ].join(' '),
+                },
+                confirmButton: {
+                  button: [
+                    styles['modal-confirm-button'],
+                    styles['modal-confirm-button-desktop'],
+                  ].join(' '),
+                },
+              }}
+              visible={isPayOpen}
+              onCancel={() => setIsPayOpen(false)}
+              hideFooter={true}
+            >
+              <div
+                className={[
+                  styles['pay-container'],
+                  styles['pay-container-desktop'],
+                ].join(' ')}
+              >
+                {checkoutProps.selectedProviderId === ProviderType.Manual && (
+                  <>
+                    <div
+                      className={[
+                        styles['manual-provider-text'],
+                        styles['manual-provider-text-desktop'],
+                      ].join(' ')}
+                    >
+                      {t('manualProviderDescription')}
+                    </div>
+                    <Button
+                      classNames={{
+                        button: styles['pay-button'],
+                      }}
+                      rippleProps={{
+                        color: 'rgba(233, 33, 66, .35)',
+                      }}
+                      block={true}
+                      size={'large'}
+                      icon={<Line.Lock size={24} />}
+                      onClick={async () => {
+                        setIsPayOpen(false);
+                        const id =
+                          await CheckoutController.proceedToManualPaymentAsync();
+                        navigate(`${RoutePathsType.OrderConfirmed}/${id}`);
+                      }}
+                    >
+                      {t('pay')}
+                    </Button>
+                  </>
+                )}
+                {checkoutProps.selectedProviderId === ProviderType.Stripe && (
+                  <Elements stripe={stripePromise} options={stripeOptions}>
+                    <FormLayout
+                      label={t('creditCardNumber') ?? ''}
+                      error={''}
+                      classNames={{
+                        label: styles['input-form-layout-label'],
+                      }}
+                    >
+                      <CardNumberElement options={stripeElementOptions} />
+                    </FormLayout>
+                    <div className={styles['horizontal-input-container']}>
+                      <FormLayout
+                        label={t('expirationDate') ?? ''}
+                        error={''}
+                        classNames={{
+                          root: styles['input-form-root'],
+                          label: styles['input-form-layout-label'],
+                        }}
+                      >
+                        <CardExpiryElement options={stripeElementOptions} />
+                      </FormLayout>
+                      <FormLayout
+                        label={t('cvc') ?? ''}
+                        error={''}
+                        classNames={{
+                          root: styles['input-form-root'],
+                          label: styles['input-form-layout-label'],
+                        }}
+                      >
+                        <CardCvcElement options={stripeElementOptions} />
+                      </FormLayout>
+                    </div>
+                    <StripePayButtonComponent
+                      stripeOptions={stripeOptions}
+                      onPaymentClick={() => setIsPayOpen(false)}
+                    />
+                  </Elements>
+                )}
+              </div>
+            </Modal>
+            {checkoutProps.isPaymentLoading && (
+              <div
+                className={[
+                  styles['loading-container'],
+                  styles['loading-container-desktop'],
+                ].join(' ')}
+              >
+                <img
+                  src={'../assets/svg/ring-resize-light.svg'}
+                  className={[
+                    styles['loading-ring'],
+                    styles['loading-ring-desktop'],
+                  ].join(' ')}
                 />
-              </Elements>
+              </div>
             )}
-          </div>
-        </Modal>
-        {checkoutProps.isPaymentLoading && (
-          <div
-            className={[
-              styles['loading-container'],
-              styles['loading-container-desktop'],
-            ].join(' ')}
-          >
-            <img
-              src={'../assets/svg/ring-resize-light.svg'}
-              className={[
-                styles['loading-ring'],
-                styles['loading-ring-desktop'],
-              ].join(' ')}
-            />
-          </div>
+          </>,
+          document.body
         )}
       </div>
     </ResponsiveDesktop>

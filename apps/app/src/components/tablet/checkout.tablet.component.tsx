@@ -36,6 +36,7 @@ import { useNavigate } from 'react-router-dom';
 import { ResponsiveDesktop, ResponsiveTablet } from '../responsive.component';
 import SecretsService from '../../services/secrets.service';
 import { loadStripe } from '@stripe/stripe-js';
+import { createPortal } from 'react-dom';
 
 export default function CheckoutTabletComponent({
   checkoutProps,
@@ -960,246 +961,253 @@ export default function CheckoutTabletComponent({
             </Button>
           </div>
         </div>
-        <Modal
-          classNames={{
-            overlay: [
-              styles['modal-overlay'],
-              styles['modal-overlay-tablet'],
-            ].join(' '),
-            modal: [styles['modal'], styles['modal-tablet']].join(' '),
-            title: [styles['modal-title'], styles['modal-title-tablet']].join(
-              ' '
-            ),
-            description: [
-              styles['modal-description'],
-              styles['modal-description-tablet'],
-            ].join(' '),
-            footerButtonContainer: [
-              styles['modal-footer-button-container'],
-              styles['modal-footer-button-container-tablet'],
-              styles['modal-address-footer-button-container-tablet'],
-            ].join(' '),
-            cancelButton: {
-              button: [
-                styles['modal-cancel-button'],
-                styles['modal-cancel-button-tablet'],
-              ].join(' '),
-            },
-            confirmButton: {
-              button: [
-                styles['modal-confirm-button'],
-                styles['modal-confirm-button-tablet'],
-              ].join(' '),
-            },
-          }}
-          hideFooter={true}
-          visible={isAddAddressOpen}
-          onCancel={() => setIsAddAddressOpen(false)}
-        >
-          <div
-            className={[
-              styles['add-address-container'],
-              styles['add-address-container-tablet'],
-            ].join(' ')}
-          >
-            <AddressFormComponent
-              isAuthenticated={true}
-              values={checkoutProps.addShippingForm}
-              errors={checkoutProps.addShippingFormErrors}
-              onChangeCallbacks={{
-                firstName: (event) =>
-                  CheckoutController.updateAddShippingAddress({
-                    firstName: event.target.value,
-                  }),
-                lastName: (event) =>
-                  CheckoutController.updateAddShippingAddress({
-                    lastName: event.target.value,
-                  }),
-                company: (event) =>
-                  CheckoutController.updateAddShippingAddress({
-                    company: event.target.value,
-                  }),
-                address: (event) =>
-                  CheckoutController.updateAddShippingAddress({
-                    address: event.target.value,
-                  }),
-                apartments: (event) =>
-                  CheckoutController.updateAddShippingAddress({
-                    apartments: event.target.value,
-                  }),
-                postalCode: (event) =>
-                  CheckoutController.updateAddShippingAddress({
-                    postalCode: event.target.value,
-                  }),
-                city: (event) =>
-                  CheckoutController.updateAddShippingAddress({
-                    city: event.target.value,
-                  }),
-                country: (id, value) =>
-                  CheckoutController.updateAddShippingAddress({
-                    countryCode: id,
-                  }),
-                region: (id, value) =>
-                  CheckoutController.updateAddShippingAddress({
-                    region: value,
-                  }),
-                phoneNumber: (value, event, formattedValue) =>
-                  CheckoutController.updateAddShippingAddress({
-                    phoneNumber: value,
-                  }),
+        {createPortal(
+          <>
+            <Modal
+              classNames={{
+                overlay: [
+                  styles['modal-overlay'],
+                  styles['modal-overlay-tablet'],
+                ].join(' '),
+                modal: [styles['modal'], styles['modal-tablet']].join(' '),
+                title: [
+                  styles['modal-title'],
+                  styles['modal-title-tablet'],
+                ].join(' '),
+                description: [
+                  styles['modal-description'],
+                  styles['modal-description-tablet'],
+                ].join(' '),
+                footerButtonContainer: [
+                  styles['modal-footer-button-container'],
+                  styles['modal-footer-button-container-tablet'],
+                  styles['modal-address-footer-button-container-tablet'],
+                ].join(' '),
+                cancelButton: {
+                  button: [
+                    styles['modal-cancel-button'],
+                    styles['modal-cancel-button-tablet'],
+                  ].join(' '),
+                },
+                confirmButton: {
+                  button: [
+                    styles['modal-confirm-button'],
+                    styles['modal-confirm-button-tablet'],
+                  ].join(' '),
+                },
               }}
-            />
-            <div
-              className={[
-                styles['add-address-button-container'],
-                styles['add-address-button-container-tablet'],
-              ].join(' ')}
+              hideFooter={true}
+              visible={isAddAddressOpen}
+              onCancel={() => setIsAddAddressOpen(false)}
             >
-              <Button
-                classNames={{
-                  button: styles['add-address-button'],
-                }}
-                rippleProps={{
-                  color: 'rgba(233, 33, 66, .35)',
-                }}
-                block={true}
-                size={'large'}
-                onClick={onAddAddressAsync}
+              <div
+                className={[
+                  styles['add-address-container'],
+                  styles['add-address-container-tablet'],
+                ].join(' ')}
               >
-                {t('addAddress')}
-              </Button>
-            </div>
-          </div>
-        </Modal>
-        <Modal
-          classNames={{
-            overlay: [
-              styles['modal-overlay'],
-              styles['modal-overlay-tablet'],
-            ].join(' '),
-            modal: [styles['modal'], styles['modal-tablet']].join(' '),
-            title: [styles['modal-title'], styles['modal-title-tablet']].join(
-              ' '
-            ),
-            description: [
-              styles['modal-description'],
-              styles['modal-description-tablet'],
-            ].join(' '),
-            footerButtonContainer: [
-              styles['modal-footer-button-container'],
-              styles['modal-footer-button-container-tablet'],
-              styles['modal-address-footer-button-container-tablet'],
-            ].join(' '),
-            cancelButton: {
-              button: [
-                styles['modal-cancel-button'],
-                styles['modal-cancel-button-tablet'],
-              ].join(' '),
-            },
-            confirmButton: {
-              button: [
-                styles['modal-confirm-button'],
-                styles['modal-confirm-button-tablet'],
-              ].join(' '),
-            },
-          }}
-          visible={isPayOpen}
-          onCancel={() => setIsPayOpen(false)}
-          hideFooter={true}
-        >
-          <div
-            className={[
-              styles['pay-container'],
-              styles['pay-container-tablet'],
-            ].join(' ')}
-          >
-            {checkoutProps.selectedProviderId === ProviderType.Manual && (
-              <>
+                <AddressFormComponent
+                  isAuthenticated={true}
+                  values={checkoutProps.addShippingForm}
+                  errors={checkoutProps.addShippingFormErrors}
+                  onChangeCallbacks={{
+                    firstName: (event) =>
+                      CheckoutController.updateAddShippingAddress({
+                        firstName: event.target.value,
+                      }),
+                    lastName: (event) =>
+                      CheckoutController.updateAddShippingAddress({
+                        lastName: event.target.value,
+                      }),
+                    company: (event) =>
+                      CheckoutController.updateAddShippingAddress({
+                        company: event.target.value,
+                      }),
+                    address: (event) =>
+                      CheckoutController.updateAddShippingAddress({
+                        address: event.target.value,
+                      }),
+                    apartments: (event) =>
+                      CheckoutController.updateAddShippingAddress({
+                        apartments: event.target.value,
+                      }),
+                    postalCode: (event) =>
+                      CheckoutController.updateAddShippingAddress({
+                        postalCode: event.target.value,
+                      }),
+                    city: (event) =>
+                      CheckoutController.updateAddShippingAddress({
+                        city: event.target.value,
+                      }),
+                    country: (id, value) =>
+                      CheckoutController.updateAddShippingAddress({
+                        countryCode: id,
+                      }),
+                    region: (id, value) =>
+                      CheckoutController.updateAddShippingAddress({
+                        region: value,
+                      }),
+                    phoneNumber: (value, event, formattedValue) =>
+                      CheckoutController.updateAddShippingAddress({
+                        phoneNumber: value,
+                      }),
+                  }}
+                />
                 <div
                   className={[
-                    styles['manual-provider-text'],
-                    styles['manual-provider-text-tablet'],
+                    styles['add-address-button-container'],
+                    styles['add-address-button-container-tablet'],
                   ].join(' ')}
                 >
-                  {t('manualProviderDescription')}
-                </div>
-                <Button
-                  classNames={{
-                    button: styles['pay-button'],
-                  }}
-                  rippleProps={{
-                    color: 'rgba(233, 33, 66, .35)',
-                  }}
-                  block={true}
-                  size={'large'}
-                  icon={<Line.Lock size={24} />}
-                  onClick={async () => {
-                    setIsPayOpen(false);
-                    const id =
-                      await CheckoutController.proceedToManualPaymentAsync();
-                    navigate(`${RoutePathsType.OrderConfirmed}/${id}`);
-                  }}
-                >
-                  {t('pay')}
-                </Button>
-              </>
-            )}
-            {checkoutProps.selectedProviderId === ProviderType.Stripe && (
-              <Elements stripe={stripePromise} options={stripeOptions}>
-                <FormLayout
-                  label={t('creditCardNumber') ?? ''}
-                  error={''}
-                  classNames={{
-                    label: styles['input-form-layout-label'],
-                  }}
-                >
-                  <CardNumberElement options={stripeElementOptions} />
-                </FormLayout>
-                <div className={styles['horizontal-input-container']}>
-                  <FormLayout
-                    label={t('expirationDate') ?? ''}
-                    error={''}
+                  <Button
                     classNames={{
-                      root: styles['input-form-root'],
-                      label: styles['input-form-layout-label'],
+                      button: styles['add-address-button'],
                     }}
-                  >
-                    <CardExpiryElement options={stripeElementOptions} />
-                  </FormLayout>
-                  <FormLayout
-                    label={t('cvc') ?? ''}
-                    error={''}
-                    classNames={{
-                      root: styles['input-form-root'],
-                      label: styles['input-form-layout-label'],
+                    rippleProps={{
+                      color: 'rgba(233, 33, 66, .35)',
                     }}
+                    block={true}
+                    size={'large'}
+                    onClick={onAddAddressAsync}
                   >
-                    <CardCvcElement options={stripeElementOptions} />
-                  </FormLayout>
+                    {t('addAddress')}
+                  </Button>
                 </div>
-                <StripePayButtonComponent
-                  stripeOptions={stripeOptions}
-                  onPaymentClick={() => setIsPayOpen(false)}
+              </div>
+            </Modal>
+            <Modal
+              classNames={{
+                overlay: [
+                  styles['modal-overlay'],
+                  styles['modal-overlay-tablet'],
+                ].join(' '),
+                modal: [styles['modal'], styles['modal-tablet']].join(' '),
+                title: [
+                  styles['modal-title'],
+                  styles['modal-title-tablet'],
+                ].join(' '),
+                description: [
+                  styles['modal-description'],
+                  styles['modal-description-tablet'],
+                ].join(' '),
+                footerButtonContainer: [
+                  styles['modal-footer-button-container'],
+                  styles['modal-footer-button-container-tablet'],
+                  styles['modal-address-footer-button-container-tablet'],
+                ].join(' '),
+                cancelButton: {
+                  button: [
+                    styles['modal-cancel-button'],
+                    styles['modal-cancel-button-tablet'],
+                  ].join(' '),
+                },
+                confirmButton: {
+                  button: [
+                    styles['modal-confirm-button'],
+                    styles['modal-confirm-button-tablet'],
+                  ].join(' '),
+                },
+              }}
+              visible={isPayOpen}
+              onCancel={() => setIsPayOpen(false)}
+              hideFooter={true}
+            >
+              <div
+                className={[
+                  styles['pay-container'],
+                  styles['pay-container-tablet'],
+                ].join(' ')}
+              >
+                {checkoutProps.selectedProviderId === ProviderType.Manual && (
+                  <>
+                    <div
+                      className={[
+                        styles['manual-provider-text'],
+                        styles['manual-provider-text-tablet'],
+                      ].join(' ')}
+                    >
+                      {t('manualProviderDescription')}
+                    </div>
+                    <Button
+                      classNames={{
+                        button: styles['pay-button'],
+                      }}
+                      rippleProps={{
+                        color: 'rgba(233, 33, 66, .35)',
+                      }}
+                      block={true}
+                      size={'large'}
+                      icon={<Line.Lock size={24} />}
+                      onClick={async () => {
+                        setIsPayOpen(false);
+                        const id =
+                          await CheckoutController.proceedToManualPaymentAsync();
+                        navigate(`${RoutePathsType.OrderConfirmed}/${id}`);
+                      }}
+                    >
+                      {t('pay')}
+                    </Button>
+                  </>
+                )}
+                {checkoutProps.selectedProviderId === ProviderType.Stripe && (
+                  <Elements stripe={stripePromise} options={stripeOptions}>
+                    <FormLayout
+                      label={t('creditCardNumber') ?? ''}
+                      error={''}
+                      classNames={{
+                        label: styles['input-form-layout-label'],
+                      }}
+                    >
+                      <CardNumberElement options={stripeElementOptions} />
+                    </FormLayout>
+                    <div className={styles['horizontal-input-container']}>
+                      <FormLayout
+                        label={t('expirationDate') ?? ''}
+                        error={''}
+                        classNames={{
+                          root: styles['input-form-root'],
+                          label: styles['input-form-layout-label'],
+                        }}
+                      >
+                        <CardExpiryElement options={stripeElementOptions} />
+                      </FormLayout>
+                      <FormLayout
+                        label={t('cvc') ?? ''}
+                        error={''}
+                        classNames={{
+                          root: styles['input-form-root'],
+                          label: styles['input-form-layout-label'],
+                        }}
+                      >
+                        <CardCvcElement options={stripeElementOptions} />
+                      </FormLayout>
+                    </div>
+                    <StripePayButtonComponent
+                      stripeOptions={stripeOptions}
+                      onPaymentClick={() => setIsPayOpen(false)}
+                    />
+                  </Elements>
+                )}
+              </div>
+            </Modal>
+            {checkoutProps.isPaymentLoading && (
+              <div
+                className={[
+                  styles['loading-container'],
+                  styles['loading-container-tablet'],
+                ].join(' ')}
+              >
+                <img
+                  src={'../assets/svg/ring-resize-light.svg'}
+                  className={[
+                    styles['loading-ring'],
+                    styles['loading-ring-tablet'],
+                  ].join(' ')}
                 />
-              </Elements>
+              </div>
             )}
-          </div>
-        </Modal>
-        {checkoutProps.isPaymentLoading && (
-          <div
-            className={[
-              styles['loading-container'],
-              styles['loading-container-tablet'],
-            ].join(' ')}
-          >
-            <img
-              src={'../assets/svg/ring-resize-light.svg'}
-              className={[
-                styles['loading-ring'],
-                styles['loading-ring-tablet'],
-              ].join(' ')}
-            />
-          </div>
+          </>,
+          document.body
         )}
       </div>
     </ResponsiveTablet>

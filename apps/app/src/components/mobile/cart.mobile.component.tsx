@@ -25,6 +25,7 @@ import { Store } from '@ngneat/elf';
 import { ResponsiveMobile } from '../responsive.component';
 import CartVariantItemComponent from '../cart-variant-item.component';
 import { MedusaProductTypeNames } from '../../types/medusa.type';
+import { createPortal } from 'react-dom';
 
 export default function CartMobileComponent({
   cartProps,
@@ -492,78 +493,81 @@ export default function CartMobileComponent({
           </Button>
         </div>
       </div>
-      <Dropdown
-        open={isFoodRequirementOpen}
-        touchScreen={true}
-        onClose={() => setIsFoodRequirementOpen(false)}
-      >
-        <div
-          className={[
-            styles['dropdown-title'],
-            styles['dropdown-title-mobile'],
-          ].join(' ')}
+      {createPortal(
+        <Dropdown
+          open={isFoodRequirementOpen}
+          touchScreen={true}
+          onClose={() => setIsFoodRequirementOpen(false)}
         >
-          {t('foodRequirement') ?? ''}
-        </div>
-        <div
-          className={[
-            styles['dropdown-description'],
-            styles['dropdown-description-mobile'],
-          ].join(' ')}
-        >
-          {t('foodRequirementDescription', {
-            region: homeProps?.selectedInventoryLocation?.region,
-          }) ?? ''}
-        </div>
-        <div
-          className={[
-            styles['add-variants-container'],
-            styles['add-variants-container-mobile'],
-          ].join(' ')}
-        >
-          {cartProps.requiredFoodProducts.map((product) => {
-            return product?.variants.map((variant) => {
-              return (
-                <CartVariantItemComponent
-                  productType={MedusaProductTypeNames.RequiredFood}
-                  key={variant.id}
-                  product={product}
-                  variant={variant}
-                  storeProps={storeProps}
-                  variantQuantities={foodVariantQuantities}
-                  setVariantQuantities={setFoodVariantQuantities}
-                />
-              );
-            });
-          })}
-          <Button
-            classNames={{
-              container: [
-                styles['add-to-cart-button-container'],
-                styles['add-to-cart-button-container-mobile'],
-              ].join(' '),
-              button: [
-                styles['add-to-cart-button'],
-                styles['add-to-cart-button-mobile'],
-              ].join(' '),
-            }}
-            block={true}
-            size={'full'}
-            rippleProps={{
-              color: 'rgba(233, 33, 66, .35)',
-            }}
-            icon={<Line.AddShoppingCart size={24} />}
-            disabled={
-              Object.values(foodVariantQuantities).reduce((current, next) => {
-                return current + next;
-              }, 0) <= 0
-            }
-            onClick={onAddFoodToCart}
+          <div
+            className={[
+              styles['dropdown-title'],
+              styles['dropdown-title-mobile'],
+            ].join(' ')}
           >
-            {t('addToCart')}
-          </Button>
-        </div>
-      </Dropdown>
+            {t('foodRequirement') ?? ''}
+          </div>
+          <div
+            className={[
+              styles['dropdown-description'],
+              styles['dropdown-description-mobile'],
+            ].join(' ')}
+          >
+            {t('foodRequirementDescription', {
+              region: homeProps?.selectedInventoryLocation?.region,
+            }) ?? ''}
+          </div>
+          <div
+            className={[
+              styles['add-variants-container'],
+              styles['add-variants-container-mobile'],
+            ].join(' ')}
+          >
+            {cartProps.requiredFoodProducts.map((product) => {
+              return product?.variants.map((variant) => {
+                return (
+                  <CartVariantItemComponent
+                    productType={MedusaProductTypeNames.RequiredFood}
+                    key={variant.id}
+                    product={product}
+                    variant={variant}
+                    storeProps={storeProps}
+                    variantQuantities={foodVariantQuantities}
+                    setVariantQuantities={setFoodVariantQuantities}
+                  />
+                );
+              });
+            })}
+            <Button
+              classNames={{
+                container: [
+                  styles['add-to-cart-button-container'],
+                  styles['add-to-cart-button-container-mobile'],
+                ].join(' '),
+                button: [
+                  styles['add-to-cart-button'],
+                  styles['add-to-cart-button-mobile'],
+                ].join(' '),
+              }}
+              block={true}
+              size={'full'}
+              rippleProps={{
+                color: 'rgba(233, 33, 66, .35)',
+              }}
+              icon={<Line.AddShoppingCart size={24} />}
+              disabled={
+                Object.values(foodVariantQuantities).reduce((current, next) => {
+                  return current + next;
+                }, 0) <= 0
+              }
+              onClick={onAddFoodToCart}
+            >
+              {t('addToCart')}
+            </Button>
+          </div>
+        </Dropdown>,
+        document.body
+      )}
     </ResponsiveMobile>
   );
 }

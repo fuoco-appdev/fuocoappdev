@@ -40,6 +40,7 @@ import {
 import { ResponsiveMobile } from '../responsive.component';
 import CartVariantItemComponent from '../cart-variant-item.component';
 import { MedusaProductTypeNames } from 'src/types/medusa.type';
+import ReactDOM, { createPortal } from 'react-dom';
 
 export default function StoreMobileComponent({
   storeProps,
@@ -276,146 +277,157 @@ export default function StoreMobileComponent({
             </div>
           )}
         </div>
-        <Dropdown
-          open={openFilter}
-          touchScreen={true}
-          onClose={() => setOpenFilter(false)}
-        >
-          <div
-            className={[
-              styles['filter-content'],
-              styles['filter-content-mobile'],
-            ].join(' ')}
-          >
-            <Listbox
-              classNames={{
-                formLayout: {
-                  label: styles['listbox-form-layout-label'],
-                },
-                listbox: styles['listbox'],
-                chevron: styles['listbox-chevron'],
-                label: styles['listbox-label'],
-              }}
+        {createPortal(
+          <>
+            <Dropdown
+              open={openFilter}
               touchScreen={true}
-              label={t('country') ?? ''}
-              options={countryOptions}
-              selectedId={selectedCountryId}
-              onChange={(index: number, id: string) => setSelectedCountryId(id)}
-            />
-            <Listbox
-              classNames={{
-                formLayout: {
-                  label: styles['listbox-form-layout-label'],
-                },
-                listbox: styles['listbox'],
-                chevron: styles['listbox-chevron'],
-                label: styles['listbox-label'],
-              }}
-              touchScreen={true}
-              label={t('region') ?? ''}
-              options={regionOptions}
-              selectedId={selectedRegionId}
-              onChange={(index: number, id: string) => setSelectedRegionId(id)}
-            />
-            <Listbox
-              classNames={{
-                formLayout: {
-                  label: styles['listbox-form-layout-label'],
-                },
-                listbox: styles['listbox'],
-                chevron: styles['listbox-chevron'],
-                label: styles['listbox-label'],
-              }}
-              touchScreen={true}
-              label={t('cellar') ?? ''}
-              options={cellarOptions}
-              selectedId={selectedCellarId}
-              onChange={(index: number, id: string) => setSelectedCellarId(id)}
-            />
-            <Button
-              classNames={{
-                container: [
-                  styles['apply-button-container'],
-                  styles['apply-button-container-mobile'],
-                ].join(' '),
-                button: styles['apply-button'],
-              }}
-              rippleProps={{
-                color: 'rgba(233, 33, 66, .35)',
-              }}
-              block={true}
-              size={'large'}
-              onClick={() => {
-                if (
-                  selectedRegionId.length <= 0 ||
-                  selectedCellarId.length <= 0
-                ) {
-                  return;
-                }
-
-                StoreController.applyFilterAsync(
-                  selectedRegionId,
-                  selectedCellarId
-                );
-                setTimeout(() => setOpenFilter(false), 250);
-              }}
+              onClose={() => setOpenFilter(false)}
             >
-              {t('apply')}
-            </Button>
-          </div>
-        </Dropdown>
-        <Dropdown
-          open={openCartVariants}
-          touchScreen={true}
-          onClose={() => setOpenCartVariants(false)}
-        >
-          <div
-            className={[
-              styles['add-variants-container'],
-              styles['add-variants-container-mobile'],
-            ].join(' ')}
-          >
-            {storeProps.selectedPreview?.variants.map((variant) => {
-              return (
-                <CartVariantItemComponent
-                  productType={MedusaProductTypeNames.Wine}
-                  key={variant.id}
-                  product={storeProps.selectedPreview}
-                  variant={variant}
-                  storeProps={storeProps}
-                  variantQuantities={variantQuantities}
-                  setVariantQuantities={setVariantQuantities}
+              <div
+                className={[
+                  styles['filter-content'],
+                  styles['filter-content-mobile'],
+                ].join(' ')}
+              >
+                <Listbox
+                  classNames={{
+                    formLayout: {
+                      label: styles['listbox-form-layout-label'],
+                    },
+                    listbox: styles['listbox'],
+                    chevron: styles['listbox-chevron'],
+                    label: styles['listbox-label'],
+                  }}
+                  touchScreen={true}
+                  label={t('country') ?? ''}
+                  options={countryOptions}
+                  selectedId={selectedCountryId}
+                  onChange={(index: number, id: string) =>
+                    setSelectedCountryId(id)
+                  }
                 />
-              );
-            })}
-            <Button
-              classNames={{
-                container: [
-                  styles['add-to-cart-button-container'],
-                  styles['add-to-cart-button-container-mobile'],
-                ].join(' '),
-                button: [
-                  styles['add-to-cart-button'],
-                  styles['add-to-cart-button-mobile'],
-                ].join(' '),
-              }}
-              block={true}
-              size={'full'}
-              rippleProps={{
-                color: 'rgba(233, 33, 66, .35)',
-              }}
-              icon={<Line.AddShoppingCart size={24} />}
-              disabled={
-                Object.values(variantQuantities).reduce((current, next) => {
-                  return current + next;
-                }, 0) <= 0
-              }
-              onClick={onAddToCart}
+                <Listbox
+                  classNames={{
+                    formLayout: {
+                      label: styles['listbox-form-layout-label'],
+                    },
+                    listbox: styles['listbox'],
+                    chevron: styles['listbox-chevron'],
+                    label: styles['listbox-label'],
+                  }}
+                  touchScreen={true}
+                  label={t('region') ?? ''}
+                  options={regionOptions}
+                  selectedId={selectedRegionId}
+                  onChange={(index: number, id: string) =>
+                    setSelectedRegionId(id)
+                  }
+                />
+                <Listbox
+                  classNames={{
+                    formLayout: {
+                      label: styles['listbox-form-layout-label'],
+                    },
+                    listbox: styles['listbox'],
+                    chevron: styles['listbox-chevron'],
+                    label: styles['listbox-label'],
+                  }}
+                  touchScreen={true}
+                  label={t('cellar') ?? ''}
+                  options={cellarOptions}
+                  selectedId={selectedCellarId}
+                  onChange={(index: number, id: string) =>
+                    setSelectedCellarId(id)
+                  }
+                />
+                <Button
+                  classNames={{
+                    container: [
+                      styles['apply-button-container'],
+                      styles['apply-button-container-mobile'],
+                    ].join(' '),
+                    button: styles['apply-button'],
+                  }}
+                  rippleProps={{
+                    color: 'rgba(233, 33, 66, .35)',
+                  }}
+                  block={true}
+                  size={'large'}
+                  onClick={() => {
+                    if (
+                      selectedRegionId.length <= 0 ||
+                      selectedCellarId.length <= 0
+                    ) {
+                      return;
+                    }
+
+                    StoreController.applyFilterAsync(
+                      selectedRegionId,
+                      selectedCellarId
+                    );
+                    setTimeout(() => setOpenFilter(false), 250);
+                  }}
+                >
+                  {t('apply')}
+                </Button>
+              </div>
+            </Dropdown>
+            <Dropdown
+              open={openCartVariants}
+              touchScreen={true}
+              onClose={() => setOpenCartVariants(false)}
             >
-              {t('addToCart')}
-            </Button>
-          </div>
-        </Dropdown>
+              <div
+                className={[
+                  styles['add-variants-container'],
+                  styles['add-variants-container-mobile'],
+                ].join(' ')}
+              >
+                {storeProps.selectedPreview?.variants.map((variant) => {
+                  return (
+                    <CartVariantItemComponent
+                      productType={MedusaProductTypeNames.Wine}
+                      key={variant.id}
+                      product={storeProps.selectedPreview}
+                      variant={variant}
+                      storeProps={storeProps}
+                      variantQuantities={variantQuantities}
+                      setVariantQuantities={setVariantQuantities}
+                    />
+                  );
+                })}
+                <Button
+                  classNames={{
+                    container: [
+                      styles['add-to-cart-button-container'],
+                      styles['add-to-cart-button-container-mobile'],
+                    ].join(' '),
+                    button: [
+                      styles['add-to-cart-button'],
+                      styles['add-to-cart-button-mobile'],
+                    ].join(' '),
+                  }}
+                  block={true}
+                  size={'full'}
+                  rippleProps={{
+                    color: 'rgba(233, 33, 66, .35)',
+                  }}
+                  icon={<Line.AddShoppingCart size={24} />}
+                  disabled={
+                    Object.values(variantQuantities).reduce((current, next) => {
+                      return current + next;
+                    }, 0) <= 0
+                  }
+                  onClick={onAddToCart}
+                >
+                  {t('addToCart')}
+                </Button>
+              </div>
+            </Dropdown>
+          </>,
+          document.body
+        )}
       </div>
     </ResponsiveMobile>
   );

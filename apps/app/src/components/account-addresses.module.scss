@@ -55,28 +55,6 @@
             margin: $mp-10;
         }
     }
-
-    & .add-address-container {
-        & .add-address-button-container {
-            width: 100%;
-            padding-top: $mp-4;
-
-            & .add-address-button {
-                background-color: $brand-700;
-            }
-        }
-    }
-
-    & .edit-address-container {
-        & .edit-address-button-container {
-            width: 100%;
-            padding-top: $mp-4;
-
-            & .edit-address-button {
-                background-color: $brand-700;
-            }
-        }
-    }
 }
 
 .root-desktop {  
@@ -102,26 +80,6 @@
         & .no-addresses-text-desktop {
         }
     }
-
-    & .add-address-container-desktop {
-        height: 100%;
-        overflow-y: auto;
-
-        & .add-address-button-container-desktop {
-            & .add-address-button-desktop {
-            }
-        }
-    }
-
-    & .edit-address-container-desktop {
-        height: 100%;
-        overflow-y: auto;
-
-        & .edit-address-button-container-desktop {
-            & .edit-address-button-desktop {
-            }
-        }
-    }
 }
 
 .root-mobile { 
@@ -142,24 +100,6 @@
 
     & .address-list-container-mobile {
         & .no-addresses-text-mobile {
-        }
-    }
-
-    & .add-address-container-mobile {
-        padding: $mp-4;
-
-        & .add-address-button-container-mobile {
-            & .add-address-button-mobile {
-            }
-        }
-    }
-
-    & .edit-address-container-mobile {
-        padding: $mp-4;
-
-        & .edit-address-button-container-mobile {
-            & .edit-address-button-mobile {
-            }
         }
     }
 }
@@ -221,4 +161,64 @@
     background-color: $brand-700 !important;
     padding-left: $mp-4 !important;
     padding-right: $mp-4 !important;
+}
+
+.add-address-container {
+    & .add-address-button-container {
+        width: 100%;
+        padding-top: $mp-4;
+
+        & .add-address-button {
+            background-color: $brand-700;
+        }
+    }
+}
+
+.add-address-container-desktop {
+    height: 100%;
+    overflow-y: auto;
+
+    & .add-address-button-container-desktop {
+        & .add-address-button-desktop {
+        }
+    }
+}
+
+.add-address-container-mobile {
+    padding: $mp-4;
+
+    & .add-address-button-container-mobile {
+        & .add-address-button-mobile {
+        }
+    }
+}
+
+.edit-address-container {
+    & .edit-address-button-container {
+        width: 100%;
+        padding-top: $mp-4;
+
+        & .edit-address-button {
+            background-color: $brand-700;
+        }
+    }
+}
+
+.edit-address-container-desktop {
+    height: 100%;
+    overflow-y: auto;
+
+    & .edit-address-button-container-desktop {
+        & .edit-address-button-desktop {
+        }
+    }
+}
+
+.edit-address-container-mobile {
+    padding: $mp-4;
+
+    & .edit-address-button-container-mobile {
+        & .edit-address-button-mobile {
+        }
+    }
 }

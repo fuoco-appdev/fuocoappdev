@@ -25,6 +25,7 @@ import ReactCountryFlag from 'react-country-flag';
 import { Observable } from 'rxjs';
 import { AccountSettingsAccountResponsiveProps } from '../account-settings-account.component';
 import { ResponsiveDesktop } from '../responsive.component';
+import { createPortal } from 'react-dom';
 
 export default function AccountSettingsAccountDesktopComponent({
   accountProps,
@@ -179,23 +180,26 @@ export default function AccountSettingsAccountDesktopComponent({
             {t('deleteAccount')}
           </Button>
         </div>
-        <Modal
-          title={t('deleteYourAccount') ?? ''}
-          description={t('deleteYourAccountDescription') ?? ''}
-          confirmText={t('delete') ?? ''}
-          cancelText={t('cancel') ?? ''}
-          variant={'danger'}
-          size={'small'}
-          classNames={{
-            modal: styles['delete-modal'],
-          }}
-          visible={showDeleteModal}
-          onCancel={() => setShowDeleteModal(false)}
-          onConfirm={async () => {
-            await AccountController.deleteAsync();
-            setShowDeleteModal(false);
-          }}
-        ></Modal>
+        {createPortal(
+          <Modal
+            title={t('deleteYourAccount') ?? ''}
+            description={t('deleteYourAccountDescription') ?? ''}
+            confirmText={t('delete') ?? ''}
+            cancelText={t('cancel') ?? ''}
+            variant={'danger'}
+            size={'small'}
+            classNames={{
+              modal: styles['delete-modal'],
+            }}
+            visible={showDeleteModal}
+            onCancel={() => setShowDeleteModal(false)}
+            onConfirm={async () => {
+              await AccountController.deleteAsync();
+              setShowDeleteModal(false);
+            }}
+          ></Modal>,
+          document.body
+        )}
       </div>
     </ResponsiveDesktop>
   );

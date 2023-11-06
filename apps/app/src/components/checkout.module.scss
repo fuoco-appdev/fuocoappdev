@@ -252,28 +252,6 @@
         }
     }
 
-    & .add-address-container {
-        & .add-address-button-container {
-            width: 100%;
-            padding-top: $mp-4;
-
-            & .add-address-button {
-                background-color: $brand-700;
-            }
-        }
-    }
-
-    & .pay-container {
-        & .add-address-button-container {
-            width: 100%;
-            padding-top: $mp-4;
-
-            & .add-address-button {
-                background-color: $brand-700;
-            }
-        }
-    }
-
     & .loading-container {
         position: fixed;
         display: -webkit-box;
@@ -442,22 +420,6 @@
         }
     }
 
-    & .add-address-container-desktop {
-        & .add-address-button-container-desktop {
-            & .add-address-button-desktop {
-            }
-        }
-    }
-
-    & .pay-container-desktop {
-        min-width: 500px;
-
-        & .add-address-button-container-desktop {
-            & .add-address-button-desktop {
-            }
-        }
-    }
-
     & .loading-container-desktop {
         & .loading-ring-desktop {
 
@@ -544,24 +506,6 @@
         }
     }
 
-    & .add-address-container-tablet {
-        padding: $mp-4;
-
-        & .add-address-button-container-tablet {
-            & .add-address-button-tablet {
-            }
-        }
-    }
-
-    & .pay-container-tablet {
-        padding: $mp-4;
-
-        & .add-address-button-container-tablet {
-            & .add-address-button-tablet {
-            }
-        }
-    }
-
     & .loading-container-tablet {
         & .loading-ring-tablet {
 
@@ -639,24 +583,6 @@
 
         & .pay-button-container-mobile {
             padding: 0 $mp-4;
-        }
-    }
-
-    & .add-address-container-mobile {
-        padding: $mp-4;
-
-        & .add-address-button-container-mobile {
-            & .add-address-button-mobile {
-            }
-        }
-    }
-
-    & .pay-container-mobile {
-        padding: $mp-4;
-
-        & .add-address-button-container-mobile {
-            & .add-address-button-mobile {
-            }
         }
     }
 
@@ -895,4 +821,78 @@
     background-color: $brand-700 !important;
     padding-left: $mp-4 !important;
     padding-right: $mp-4 !important;
+}
+
+.add-address-container {
+    & .add-address-button-container {
+        width: 100%;
+        padding-top: $mp-4;
+
+        & .add-address-button {
+            background-color: $brand-700;
+        }
+    }
+}
+
+.add-address-container-desktop {
+    & .add-address-button-container-desktop {
+        & .add-address-button-desktop {
+        }
+    }
+}
+
+.add-address-container-tablet {
+    padding: $mp-4;
+
+    & .add-address-button-container-tablet {
+        & .add-address-button-tablet {
+        }
+    }
+}
+
+.add-address-container-mobile {
+    padding: $mp-4;
+
+    & .add-address-button-container-mobile {
+        & .add-address-button-mobile {
+        }
+    }
+}
+
+.pay-container {
+    & .add-address-button-container {
+        width: 100%;
+        padding-top: $mp-4;
+
+        & .add-address-button {
+            background-color: $brand-700;
+        }
+    }
+}
+
+.pay-container-desktop {
+    min-width: 500px;
+
+    & .add-address-button-container-desktop {
+        & .add-address-button-desktop {
+        }
+    }
+}
+
+.pay-container-tablet {
+    padding: $mp-4;
+
+    & .add-address-button-container-tablet {
+        & .add-address-button-tablet {
+        }
+    }
+}
+
+.pay-container-mobile {
+    padding: $mp-4;
+
+    & .add-address-button-container-mobile {
+        & .add-address-button-mobile {
+        }
+    }
 }

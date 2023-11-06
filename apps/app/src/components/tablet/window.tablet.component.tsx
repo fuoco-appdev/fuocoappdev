@@ -31,6 +31,7 @@ import {
   useDesktopEffect,
 } from '../responsive.component';
 import LoadingComponent from '../loading.component';
+import { createPortal } from 'react-dom';
 
 export default function WindowTabletComponent({
   windowProps,
@@ -629,77 +630,86 @@ export default function WindowTabletComponent({
             <Outlet />
           </div>
         </div>
-        <Modal
-          classNames={{
-            overlay: [
-              styles['modal-overlay'],
-              styles['modal-overlay-tablet'],
-            ].join(' '),
-            modal: [styles['modal'], styles['modal-tablet']].join(' '),
-            text: [styles['modal-text'], styles['modal-text-tablet']].join(' '),
-            title: [styles['modal-title'], styles['modal-title-tablet']].join(
-              ' '
-            ),
-            description: [
-              styles['modal-description'],
-              styles['modal-description-tablet'],
-            ].join(' '),
-            footerButtonContainer: [
-              styles['modal-footer-button-container'],
-              styles['modal-footer-button-container-tablet'],
-              styles['modal-address-footer-button-container-tablet'],
-            ].join(' '),
-            cancelButton: {
-              button: [
-                styles['modal-cancel-button'],
-                styles['modal-cancel-button-tablet'],
-              ].join(' '),
-            },
-            confirmButton: {
-              button: [
-                styles['modal-confirm-button'],
-                styles['modal-confirm-button-tablet'],
-              ].join(' '),
-            },
-          }}
-          title={t('selectLocation') ?? ''}
-          description={
-            t('selectLocationDescription', {
-              address: `${windowProps.queryInventoryLocation?.company}, ${windowProps.queryInventoryLocation?.placeName}`,
-            }) ?? ''
-          }
-          confirmText={t('select') ?? ''}
-          cancelText={t('cancel') ?? ''}
-          visible={windowProps.queryInventoryLocation !== undefined}
-          onConfirm={onSelectLocation}
-          onCancel={onCancelLocation}
-        />
-        <ToastOverlay
-          touchScreen={true}
-          classNames={{
-            root: [
-              styles['toast-overlay-root'],
-              styles['toast-overlay-root-tablet'],
-            ].join(' '),
-            overlayContainer: [
-              styles['toast-overlay-container'],
-              styles['toast-overlay-container-tablet'],
-            ].join(' '),
-            toast: {
-              container: [
-                styles['toast-container'],
-                styles['toast-container-tablet'],
-              ].join(' '),
-              life: [styles['toast-life'], styles['toast-life-tablet']].join(
-                ' '
-              ),
-            },
-          }}
-          timeout={2500}
-          toasts={windowProps.toast ? [windowProps.toast] : []}
-          transition={'down'}
-          align={'right'}
-        />
+        {createPortal(
+          <>
+            <Modal
+              classNames={{
+                overlay: [
+                  styles['modal-overlay'],
+                  styles['modal-overlay-tablet'],
+                ].join(' '),
+                modal: [styles['modal'], styles['modal-tablet']].join(' '),
+                text: [styles['modal-text'], styles['modal-text-tablet']].join(
+                  ' '
+                ),
+                title: [
+                  styles['modal-title'],
+                  styles['modal-title-tablet'],
+                ].join(' '),
+                description: [
+                  styles['modal-description'],
+                  styles['modal-description-tablet'],
+                ].join(' '),
+                footerButtonContainer: [
+                  styles['modal-footer-button-container'],
+                  styles['modal-footer-button-container-tablet'],
+                  styles['modal-address-footer-button-container-tablet'],
+                ].join(' '),
+                cancelButton: {
+                  button: [
+                    styles['modal-cancel-button'],
+                    styles['modal-cancel-button-tablet'],
+                  ].join(' '),
+                },
+                confirmButton: {
+                  button: [
+                    styles['modal-confirm-button'],
+                    styles['modal-confirm-button-tablet'],
+                  ].join(' '),
+                },
+              }}
+              title={t('selectLocation') ?? ''}
+              description={
+                t('selectLocationDescription', {
+                  address: `${windowProps.queryInventoryLocation?.company}, ${windowProps.queryInventoryLocation?.placeName}`,
+                }) ?? ''
+              }
+              confirmText={t('select') ?? ''}
+              cancelText={t('cancel') ?? ''}
+              visible={windowProps.queryInventoryLocation !== undefined}
+              onConfirm={onSelectLocation}
+              onCancel={onCancelLocation}
+            />
+            <ToastOverlay
+              touchScreen={true}
+              classNames={{
+                root: [
+                  styles['toast-overlay-root'],
+                  styles['toast-overlay-root-tablet'],
+                ].join(' '),
+                overlayContainer: [
+                  styles['toast-overlay-container'],
+                  styles['toast-overlay-container-tablet'],
+                ].join(' '),
+                toast: {
+                  container: [
+                    styles['toast-container'],
+                    styles['toast-container-tablet'],
+                  ].join(' '),
+                  life: [
+                    styles['toast-life'],
+                    styles['toast-life-tablet'],
+                  ].join(' '),
+                },
+              }}
+              timeout={2500}
+              toasts={windowProps.toast ? [windowProps.toast] : []}
+              transition={'down'}
+              align={'right'}
+            />
+          </>,
+          document.body
+        )}
       </div>
     </ResponsiveTablet>
   );

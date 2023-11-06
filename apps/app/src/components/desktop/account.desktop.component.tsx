@@ -36,6 +36,7 @@ export default function AccountDesktopComponent({
   windowProps,
   accountProps,
   storeProps,
+  onCompleteProfile,
 }: AccountResponsiveProps): JSX.Element {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
@@ -147,21 +148,7 @@ export default function AccountDesktopComponent({
                   block={true}
                   size={'large'}
                   icon={<Line.Done size={24} />}
-                  onClick={() => {
-                    AccountController.updateProfileErrors({
-                      firstName: undefined,
-                      lastName: undefined,
-                      phoneNumber: undefined,
-                    });
-                    const errors = AccountController.getProfileFormErrors(
-                      accountProps.profileForm
-                    );
-                    if (errors) {
-                      AccountController.updateProfileErrors(errors);
-                      return;
-                    }
-                    AccountController.completeProfileAsync();
-                  }}
+                  onClick={onCompleteProfile}
                 >
                   {t('complete')}
                 </Button>

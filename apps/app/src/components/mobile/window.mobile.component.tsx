@@ -23,6 +23,7 @@ import { WindowResponsiveProps } from '../window.component';
 import { useRef, useState } from 'react';
 import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 import { WindowSuspenseMobileComponent } from './suspense/window.suspense.mobile.component';
+import { createPortal } from 'react-dom';
 
 export default function WindowMobileComponent({
   windowProps,
@@ -606,51 +607,6 @@ export default function WindowMobileComponent({
             </div>
           </div>
         </CSSTransition>
-        <Modal
-          classNames={{
-            overlay: [
-              styles['modal-overlay'],
-              styles['modal-overlay-mobile'],
-            ].join(' '),
-            modal: [styles['modal'], styles['modal-mobile']].join(' '),
-            text: [styles['modal-text'], styles['modal-text-mobile']].join(' '),
-            title: [styles['modal-title'], styles['modal-title-mobile']].join(
-              ' '
-            ),
-            description: [
-              styles['modal-description'],
-              styles['modal-description-mobile'],
-            ].join(' '),
-            footerButtonContainer: [
-              styles['modal-footer-button-container'],
-              styles['modal-footer-button-container-mobile'],
-              styles['modal-address-footer-button-container-mobile'],
-            ].join(' '),
-            cancelButton: {
-              button: [
-                styles['modal-cancel-button'],
-                styles['modal-cancel-button-mobile'],
-              ].join(' '),
-            },
-            confirmButton: {
-              button: [
-                styles['modal-confirm-button'],
-                styles['modal-confirm-button-mobile'],
-              ].join(' '),
-            },
-          }}
-          title={t('selectLocation') ?? ''}
-          description={
-            t('selectLocationDescription', {
-              address: `${windowProps.queryInventoryLocation?.company}, ${windowProps.queryInventoryLocation?.placeName}`,
-            }) ?? ''
-          }
-          confirmText={t('select') ?? ''}
-          cancelText={t('cancel') ?? ''}
-          visible={windowProps.queryInventoryLocation !== undefined}
-          onConfirm={onSelectLocation}
-          onCancel={onCancelLocation}
-        />
         <ToastOverlay
           classNames={{
             root: [
@@ -673,66 +629,119 @@ export default function WindowMobileComponent({
           align={'center'}
           touchScreen={true}
         />
-        <Dropdown
-          open={openMore}
-          touchScreen={true}
-          onClose={() => setOpenMore(false)}
-        >
-          <Dropdown.Item
-            onClick={() => {
-              navigate(RoutePathsType.Help);
-              setOpenMore(false);
-            }}
-          >
-            <Dropdown.Icon>
-              <Line.HelpOutline size={24} color={'#2A2A5F'} />
-            </Dropdown.Icon>
-            <span
-              className={[
-                styles['dropdown-text'],
-                styles['dropdown-text-mobile'],
-              ].join(' ')}
+        {createPortal(
+          <>
+            <Modal
+              classNames={{
+                overlay: [
+                  styles['modal-overlay'],
+                  styles['modal-overlay-mobile'],
+                ].join(' '),
+                modal: [styles['modal'], styles['modal-mobile']].join(' '),
+                text: [styles['modal-text'], styles['modal-text-mobile']].join(
+                  ' '
+                ),
+                title: [
+                  styles['modal-title'],
+                  styles['modal-title-mobile'],
+                ].join(' '),
+                description: [
+                  styles['modal-description'],
+                  styles['modal-description-mobile'],
+                ].join(' '),
+                footerButtonContainer: [
+                  styles['modal-footer-button-container'],
+                  styles['modal-footer-button-container-mobile'],
+                  styles['modal-address-footer-button-container-mobile'],
+                ].join(' '),
+                cancelButton: {
+                  button: [
+                    styles['modal-cancel-button'],
+                    styles['modal-cancel-button-mobile'],
+                  ].join(' '),
+                },
+                confirmButton: {
+                  button: [
+                    styles['modal-confirm-button'],
+                    styles['modal-confirm-button-mobile'],
+                  ].join(' '),
+                },
+              }}
+              title={t('selectLocation') ?? ''}
+              description={
+                t('selectLocationDescription', {
+                  address: `${windowProps.queryInventoryLocation?.company}, ${windowProps.queryInventoryLocation?.placeName}`,
+                }) ?? ''
+              }
+              confirmText={t('select') ?? ''}
+              cancelText={t('cancel') ?? ''}
+              visible={windowProps.queryInventoryLocation !== undefined}
+              onConfirm={onSelectLocation}
+              onCancel={onCancelLocation}
+            />
+            <Dropdown
+              open={openMore}
+              touchScreen={true}
+              onClose={() => setOpenMore(false)}
             >
-              {t('help')}
-            </span>
-          </Dropdown.Item>
-          <Dropdown.Item
-            onClick={() => {
-              navigate(RoutePathsType.Signin);
-              setOpenMore(false);
-            }}
-          >
-            <Dropdown.Icon>
-              <Line.Login size={24} color={'#2A2A5F'} />
-            </Dropdown.Icon>
-            <span
-              className={[
-                styles['dropdown-text'],
-                styles['dropdown-text-mobile'],
-              ].join(' ')}
-            >
-              {t('signin')}
-            </span>
-          </Dropdown.Item>
-          <Dropdown.Item
-            onClick={() => {
-              navigate(RoutePathsType.Signup);
-              setOpenMore(false);
-            }}
-          >
-            <Dropdown.Icon>
-              <Line.PersonAdd size={24} color={'#2A2A5F'} />
-            </Dropdown.Icon>
-            <span
-              className={[
-                styles['dropdown-text'],
-                styles['dropdown-text-mobile'],
-              ].join(' ')}
-            >
-              {t('signup')}
-            </span>
-          </Dropdown.Item>
-        </Dropdown>
+              <Dropdown.Item
+                onClick={() => {
+                  navigate(RoutePathsType.Help);
+                  setOpenMore(false);
+                }}
+              >
+                <Dropdown.Icon>
+                  <Line.HelpOutline size={24} color={'#2A2A5F'} />
+                </Dropdown.Icon>
+                <span
+                  className={[
+                    styles['dropdown-text'],
+                    styles['dropdown-text-mobile'],
+                  ].join(' ')}
+                >
+                  {t('help')}
+                </span>
+              </Dropdown.Item>
+              <Dropdown.Item
+                onClick={() => {
+                  navigate(RoutePathsType.Signin);
+                  setOpenMore(false);
+                }}
+              >
+                <Dropdown.Icon>
+                  <Line.Login size={24} color={'#2A2A5F'} />
+                </Dropdown.Icon>
+                <span
+                  className={[
+                    styles['dropdown-text'],
+                    styles['dropdown-text-mobile'],
+                  ].join(' ')}
+                >
+                  {t('signin')}
+                </span>
+              </Dropdown.Item>
+              <Dropdown.Item
+                onClick={() => {
+                  navigate(RoutePathsType.Signup);
+                  setOpenMore(false);
+                }}
+              >
+                <Dropdown.Icon>
+                  <Line.PersonAdd size={24} color={'#2A2A5F'} />
+                </Dropdown.Icon>
+                <span
+                  className={[
+                    styles['dropdown-text'],
+                    styles['dropdown-text-mobile'],
+                  ].join(' ')}
+                >
+                  {t('signup')}
+                </span>
+              </Dropdown.Item>
+            </Dropdown>
+          </>,
+          document.body
+        )}
       </div>
     </ResponsiveMobile>
   );

@@ -31,6 +31,7 @@ export interface AccountResponsiveProps {
   windowProps: WindowState;
   accountProps: AccountState;
   storeProps: StoreState;
+  onCompleteProfile: () => void;
 }
 
 export default function AccountComponent(): JSX.Element {
@@ -38,6 +39,22 @@ export default function AccountComponent(): JSX.Element {
   const [accountProps] = useObservable(AccountController.model.store);
   const [windowProps] = useObservable(WindowController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
+
+  const onCompleteProfile = () => {
+    AccountController.updateProfileErrors({
+      firstName: undefined,
+      lastName: undefined,
+      phoneNumber: undefined,
+    });
+    const errors = AccountController.getProfileFormErrors(
+      AccountController.model.profileForm
+    );
+    if (errors) {
+      AccountController.updateProfileErrors(errors);
+      return;
+    }
+    AccountController.completeProfileAsync();
+  };
 
   useEffect(() => {
     AccountController.updateErrorStrings({
@@ -92,11 +109,13 @@ export default function AccountComponent(): JSX.Element {
             accountProps={accountProps}
             windowProps={windowProps}
             storeProps={storeProps}
+            onCompleteProfile={onCompleteProfile}
           />
           <AccountMobileComponent
             accountProps={accountProps}
             windowProps={windowProps}
             storeProps={storeProps}
+            onCompleteProfile={onCompleteProfile}
           />
         </AuthenticatedComponent>
       </React.Suspense>
