@@ -103,7 +103,7 @@ class MedusaService extends Service {
     return JSON.parse(customerResponse.data);
   }
 
-  public async requestCreateCustomerAsync(props: {
+  public async requestUpdateCustomerAsync(props: {
     email?: string;
     first_name?: string;
     last_name?: string;
@@ -112,7 +112,6 @@ class MedusaService extends Service {
   }): Promise<Customer | undefined> {
     const session = await SupabaseService.requestSessionAsync();
     const customerRequest = new core.CustomerRequest({
-      email: props.email,
       firstName: props.first_name,
       lastName: props.last_name,
       phone: props.phone,
@@ -120,7 +119,7 @@ class MedusaService extends Service {
     });
     const response = await axios({
       method: 'post',
-      url: `${this.endpointUrl}/medusa/customer/create`,
+      url: `${this.endpointUrl}/medusa/customer/update`,
       headers: {
         ...this.headers,
         'Session-Token': `${session?.access_token}`,

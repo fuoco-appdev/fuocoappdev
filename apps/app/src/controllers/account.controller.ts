@@ -197,7 +197,8 @@ class AccountController extends Controller {
     }
 
     try {
-      this._model.customer = await MedusaService.requestCreateCustomerAsync({
+      this._model.isCreateCustomerLoading = true;
+      this._model.customer = await MedusaService.requestUpdateCustomerAsync({
         email: SupabaseService.user.email,
         first_name: this._model.profileForm.firstName ?? '',
         last_name: this._model.profileForm.lastName ?? '',
@@ -205,6 +206,7 @@ class AccountController extends Controller {
       });
 
       if (!this._model.customer) {
+        this._model.isCreateCustomerLoading = false;
         throw new Error('No customer created');
       }
 
@@ -213,7 +215,9 @@ class AccountController extends Controller {
         status: 'Complete',
         languageCode: WindowController.model.languageInfo?.isoCode,
       });
+      this._model.isCreateCustomerLoading = false;
     } catch (error: any) {
+      this._model.isCreateCustomerLoading = false;
       console.error(error);
     }
   }

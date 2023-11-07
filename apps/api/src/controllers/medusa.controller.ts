@@ -59,7 +59,7 @@ export class MedusaController {
     context.response.body = response.serializeBinary();
   }
 
-  @Post('/customer/create')
+  @Post('/customer/update')
   @Guard(AuthGuard)
   @ContentType('application/x-protobuf')
   public async createCustomerAsync(
@@ -73,7 +73,7 @@ export class MedusaController {
     const body = await context.request.body({ type: 'reader' });
     const requestValue = await readAll(body.value);
     const customerRequest = CustomerRequest.deserializeBinary(requestValue);
-    const response = await MedusaService.createCustomerAsync(
+    const response = await MedusaService.updateCustomerAsync(
       token,
       customerRequest
     );

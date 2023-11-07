@@ -91,7 +91,7 @@ class MedusaService {
     return customer;
   }
 
-  public async createCustomerAsync(
+  public async updateCustomerAsync(
     sessionToken: string,
     request: InstanceType<typeof CustomerRequest>
   ): Promise<InstanceType<typeof CustomerResponse>> {
@@ -104,39 +104,38 @@ class MedusaService {
     const customer = new CustomerResponse();
     const existingCustomers = await this.findCustomersAsync(email);
     if (existingCustomers.length > 0) {
-      const firstCustomer = existingCustomers[0];
-      const updateParams = new URLSearchParams({
-        expand: 'shipping_addresses',
-      }).toString();
+      for (const existingCustomer of existingCustomers) {
+        const updateParams = new URLSearchParams({
+          expand: 'shipping_addresses',
+        }).toString();
 
-      const updateCustomerResponse = await axiod.post(
-        `${this._url}/admin/customers/${firstCustomer.id}?${updateParams}`,
-        {
-          ...(email && { email: email }),
-          ...(firstName && { first_name: firstName }),
-          ...(lastName && { last_name: lastName }),
-          ...(phone && { phone: phone }),
-          ...(metadata && { metadata: metadata }),
-          password: sessionToken,
-        },
-        {
-          headers: {
-            'x-medusa-access-token': this._token,
+        const updateCustomerResponse = await axiod.post(
+          `${this._url}/admin/customers/${existingCustomer.id}?${updateParams}`,
+          {
+            ...(email && { email: email }),
+            ...(firstName && { first_name: firstName }),
+            ...(lastName && { last_name: lastName }),
+            ...(phone && { phone: phone }),
+            ...(metadata && { metadata: metadata }),
+            password: sessionToken,
           },
-        }
-      );
+          {
+            headers: {
+              'x-medusa-access-token': this._token,
+            },
+          }
+        );
 
-      const updatedCustomerData = updateCustomerResponse.data['customer'];
-      customer.setData(JSON.stringify(updatedCustomerData));
-      customer.setPassword(sessionToken);
+        const updatedCustomerData = updateCustomerResponse.data['customer'];
+        customer.setData(JSON.stringify(updatedCustomerData));
+        customer.setPassword(sessionToken);
+      }
+
       return customer;
     }
 
-    const params = new URLSearchParams({
-      expand: 'shipping_addresses',
-    }).toString();
     const customerResponse = await axiod.post(
-      `${this._url}/admin/customers?${params}`,
+      `${this._url}/admin/customers`,
       {
         ...(email && { email: email, password: sessionToken }),
         ...(firstName && { first_name: firstName }),

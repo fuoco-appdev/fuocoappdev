@@ -31,11 +31,12 @@ export interface AccountState {
   selectedAddress: Address | undefined;
   editShippingForm: AddressFormValues;
   editShippingFormErrors: AddressFormErrors;
+  areOrdersLoading: boolean;
   activeTabId: string;
   prevTabIndex: number;
   activeTabIndex: number;
-  areOrdersLoading: boolean;
   ordersScrollPosition: number | undefined;
+  isCreateCustomerLoading: boolean;
 }
 
 export class AccountModel extends Model {
@@ -88,12 +89,13 @@ export class AccountModel extends Model {
             region: '',
             phoneNumber: '',
           },
+          areOrdersLoading: false,
           editShippingFormErrors: {},
           activeTabId: '/account/order-history',
           prevTabIndex: 0,
           activeTabIndex: 0,
-          areOrdersLoading: false,
           ordersScrollPosition: undefined,
+          isCreateCustomerLoading: false,
         })
       )
     );
@@ -339,6 +341,19 @@ export class AccountModel extends Model {
       this.store.update((state) => ({
         ...state,
         ordersScrollPosition: value,
+      }));
+    }
+  }
+
+  public get isCreateCustomerLoading(): boolean {
+    return this.store?.getValue().isCreateCustomerLoading;
+  }
+
+  public set isCreateCustomerLoading(value: boolean) {
+    if (this.isCreateCustomerLoading !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        isCreateCustomerLoading: value,
       }));
     }
   }

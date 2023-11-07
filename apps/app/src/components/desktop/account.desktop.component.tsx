@@ -31,6 +31,7 @@ import AccountAddressesComponent from '../account-addresses.component';
 import AccountEditComponent from '../account-edit.component';
 import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
 import { AccountResponsiveProps } from '../account.component';
+import { createPortal } from 'react-dom';
 
 export default function AccountDesktopComponent({
   windowProps,
@@ -252,6 +253,25 @@ export default function AccountDesktopComponent({
               </div>
             </div>
           </>
+        )}
+        {createPortal(
+          accountProps.isCreateCustomerLoading && (
+            <div
+              className={[
+                styles['loading-container'],
+                styles['loading-container-desktop'],
+              ].join(' ')}
+            >
+              <img
+                src={'../assets/svg/ring-resize-light.svg'}
+                className={[
+                  styles['loading-ring'],
+                  styles['loading-ring-desktop'],
+                ].join(' ')}
+              />
+            </div>
+          ),
+          document.body
         )}
       </div>
     </ResponsiveDesktop>
