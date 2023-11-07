@@ -30,6 +30,7 @@ import Skeleton from 'react-loading-skeleton';
 import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 import { AccountResponsiveProps } from '../account.component';
 import StoreController from 'src/controllers/store.controller';
+import { createPortal } from 'react-dom';
 
 export default function AccountMobileComponent({
   windowProps,
@@ -345,6 +346,25 @@ export default function AccountMobileComponent({
               </TransitionGroup>
             </div>
           </>
+        )}
+        {createPortal(
+          accountProps.isCreateCustomerLoading && (
+            <div
+              className={[
+                styles['loading-container'],
+                styles['loading-container-mobile'],
+              ].join(' ')}
+            >
+              <img
+                src={'../assets/svg/ring-resize-light.svg'}
+                className={[
+                  styles['loading-ring'],
+                  styles['loading-ring-mobile'],
+                ].join(' ')}
+              />
+            </div>
+          ),
+          document.body
         )}
       </div>
     </ResponsiveMobile>
