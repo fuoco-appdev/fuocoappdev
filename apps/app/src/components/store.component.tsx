@@ -55,6 +55,7 @@ import { PricedVariant } from '@medusajs/medusa/dist/types/pricing';
 import ProductController from '../controllers/product.controller';
 import WindowController from '../controllers/window.controller';
 import { StoreSuspenseTabletComponent } from './tablet/suspense/store.suspense.tablet.component';
+import { useQuery } from '../route-paths';
 
 const StoreDesktopComponent = lazy(
   () => import('./desktop/store.desktop.component')
@@ -108,6 +109,7 @@ export default function StoreComponent(): JSX.Element {
     Record<string, number>
   >({});
   const { t, i18n } = useTranslation();
+  const query = useQuery();
 
   const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const scrollTop = e.currentTarget?.scrollTop ?? 0;
@@ -152,6 +154,13 @@ export default function StoreComponent(): JSX.Element {
     setOpenCartVariants(false);
     setVariantQuantities({});
   };
+
+  useEffect(() => {
+    const search = query.get('search');
+    if (search && search !== storeProps.input) {
+      StoreController.updateInput(search);
+    }
+  }, []);
 
   useEffect(() => {
     const countries: OptionProps[] = [];
