@@ -179,6 +179,7 @@ export default function StoreMobileComponent({
             styles['scroll-container'],
             styles['scroll-container-mobile'],
           ].join(' ')}
+          style={{ height: window.innerHeight }}
           onScroll={(e) => {
             onPreviewsScroll(e);
             const elementHeight = topBarRef.current?.clientHeight ?? 0;

@@ -34,7 +34,7 @@ class MedusaService {
     supabaseId: string
   ): Promise<InstanceType<typeof CustomerResponse>> {
     const account = await AccountService.findAsync(supabaseId);
-    let customerData: any | undefined;
+    let customerDataList: any[];
     if (account && account?.customer_id) {
       const customerResponse = await axiod.get(
         `${this._url}/admin/customers/${account.customer_id}`,
@@ -44,7 +44,8 @@ class MedusaService {
           },
         }
       );
-      customerData = customerResponse?.data['customer'];
+      const customer = customerResponse?.data['customer'];
+      customerDataList = [customer];
     } else {
       const supabaseUser = await SupabaseService.client.auth.admin.getUserById(
         supabaseId
@@ -60,38 +61,41 @@ class MedusaService {
           },
         }
       );
-      const customerListData = customerResponse?.data['customers'] ?? [];
-      if (customerListData.length) {
-        customerData = customerListData[0];
-      }
+      customerDataList = customerResponse?.data['customers'] ?? [];
     }
 
     const customer = new CustomerResponse();
-    if (customerData) {
-      const updateParams = new URLSearchParams({
-        expand: 'shipping_addresses',
-      }).toString();
-      const updateCustomerResponse = await axiod.post(
-        `${this._url}/admin/customers/${customerData.id}?${updateParams}`,
-        {
-          password: sessionToken,
-        },
-        {
-          headers: {
-            'x-medusa-access-token': this._token,
-          },
-        }
-      );
+    if (customerDataList.length > 0) {
+      for (const customerData of customerDataList) {
+        const updateParams = new URLSearchParams({
+          expand: 'shipping_addresses',
+        }).toString();
+        try {
+          const updateCustomerResponse = await axiod.post(
+            `${this._url}/admin/customers/${customerData.id}?${updateParams}`,
+            {
+              password: sessionToken,
+            },
+            {
+              headers: {
+                'x-medusa-access-token': this._token,
+              },
+            }
+          );
 
-      const updatedCustomerData = updateCustomerResponse.data['customer'];
-      customer.setData(JSON.stringify(updatedCustomerData));
-      customer.setPassword(sessionToken);
+          const updatedCustomerData = updateCustomerResponse.data['customer'];
+          customer.setData(JSON.stringify(updatedCustomerData));
+          customer.setPassword(sessionToken);
+        } catch (error: any) {
+          console.error(error);
+        }
+      }
     }
 
     return customer;
   }
 
-  public async updateCustomerAsync(
+  public async updateCustomerAccountAsync(
     sessionToken: string,
     request: InstanceType<typeof CustomerRequest>
   ): Promise<InstanceType<typeof CustomerResponse>> {
@@ -105,50 +109,61 @@ class MedusaService {
     const existingCustomers = await this.findCustomersAsync(email);
     if (existingCustomers.length > 0) {
       for (const existingCustomer of existingCustomers) {
+        if (!existingCustomer.has_account) {
+          continue;
+        }
+
         const updateParams = new URLSearchParams({
           expand: 'shipping_addresses',
         }).toString();
 
-        const updateCustomerResponse = await axiod.post(
-          `${this._url}/admin/customers/${existingCustomer.id}?${updateParams}`,
-          {
-            ...(email && { email: email }),
-            ...(firstName && { first_name: firstName }),
-            ...(lastName && { last_name: lastName }),
-            ...(phone && { phone: phone }),
-            ...(metadata && { metadata: metadata }),
-            password: sessionToken,
-          },
-          {
-            headers: {
-              'x-medusa-access-token': this._token,
+        try {
+          const updateCustomerResponse = await axiod.post(
+            `${this._url}/admin/customers/${existingCustomer.id}?${updateParams}`,
+            {
+              ...(email && { email: email }),
+              ...(firstName && { first_name: firstName }),
+              ...(lastName && { last_name: lastName }),
+              ...(phone && { phone: phone }),
+              ...(metadata && { metadata: metadata }),
+              password: sessionToken,
             },
-          }
-        );
-
-        const updatedCustomerData = updateCustomerResponse.data['customer'];
-        customer.setData(JSON.stringify(updatedCustomerData));
-        customer.setPassword(sessionToken);
+            {
+              headers: {
+                'x-medusa-access-token': this._token,
+              },
+            }
+          );
+          const updatedCustomerData = updateCustomerResponse.data['customer'];
+          customer.setData(JSON.stringify(updatedCustomerData));
+          customer.setPassword(sessionToken);
+        } catch (error: any) {
+          console.error(error);
+        }
       }
 
       return customer;
     }
 
-    const customerResponse = await axiod.post(
-      `${this._url}/admin/customers`,
-      {
-        ...(email && { email: email, password: sessionToken }),
-        ...(firstName && { first_name: firstName }),
-        ...(lastName && { last_name: lastName }),
-        ...(phone && { phone: phone }),
-        ...(metadata && { metadata: metadata }),
-      },
-      {
-        headers: {
-          'x-medusa-access-token': this._token,
+    try {
+      const customerResponse = await axiod.post(
+        `${this._url}/admin/customers`,
+        {
+          ...(email && { email: email, password: sessionToken }),
+          ...(firstName && { first_name: firstName }),
+          ...(lastName && { last_name: lastName }),
+          ...(phone && { phone: phone }),
+          ...(metadata && { metadata: metadata }),
         },
-      }
-    );
+        {
+          headers: {
+            'x-medusa-access-token': this._token,
+          },
+        }
+      );
+    } catch (error: any) {
+      console.error(error);
+    }
 
     const data = customerResponse.data['customer'];
     customer.setData(JSON.stringify(data));

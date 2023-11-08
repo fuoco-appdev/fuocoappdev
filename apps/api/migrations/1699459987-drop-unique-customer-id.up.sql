@@ -1,0 +1,1 @@
+ALTER TABLE IF EXISTS public.account DROP CONSTRAINT IF EXISTS account_user_id_key;

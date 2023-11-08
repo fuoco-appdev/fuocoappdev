@@ -9,6 +9,7 @@ import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 
 class MedusaService extends Service {
   private _medusa: Medusa | undefined;
+  private _accessToken: string | undefined;
 
   constructor() {
     super();
@@ -24,6 +25,7 @@ class MedusaService extends Service {
       apiKey: publicKey,
       maxRetries: 3,
     });
+    this._accessToken = undefined;
   }
 
   public async requestProductAsync(
@@ -64,7 +66,7 @@ class MedusaService extends Service {
     return productCountResponse.count;
   }
 
-  public async requestCustomerAsync(
+  public async requestCustomerAccountAsync(
     supabaseId: string
   ): Promise<Customer | undefined> {
     const session = await SupabaseService.requestSessionAsync();
@@ -86,24 +88,28 @@ class MedusaService extends Service {
       return undefined;
     }
 
-    try {
-      await this.medusa?.auth.getSession();
-    } catch (error: any) {
-      if (customerResponse.password.length > 0) {
-        const authResponse = await this.medusa?.auth.authenticate({
-          email: session?.user.email ?? '',
-          password: customerResponse.password,
-        });
-        if (!authResponse?.customer) {
-          return undefined;
+    const customerData = JSON.parse(customerResponse.data);
+    if (customerData.has_account) {
+      try {
+        if (customerResponse.password.length > 0 && session?.user.email) {
+          const authResponse = await this.medusa?.auth.getToken({
+            email: session?.user.email,
+            password: customerResponse.password,
+          });
+          this._accessToken = authResponse?.access_token;
         }
+      } catch (error: any) {
+        console.error(error);
+        return undefined;
       }
+
+      return customerData;
     }
 
-    return JSON.parse(customerResponse.data);
+    return undefined;
   }
 
-  public async requestUpdateCustomerAsync(props: {
+  public async requestUpdateCustomerAccountAsync(props: {
     email?: string;
     first_name?: string;
     last_name?: string;
@@ -119,7 +125,7 @@ class MedusaService extends Service {
     });
     const response = await axios({
       method: 'post',
-      url: `${this.endpointUrl}/medusa/customer/update`,
+      url: `${this.endpointUrl}/medusa/customer/update-account`,
       headers: {
         ...this.headers,
         'Session-Token': `${session?.access_token}`,
@@ -136,17 +142,16 @@ class MedusaService extends Service {
     }
 
     try {
-      await this.medusa?.auth.getSession();
-    } catch (error: any) {
       if (customerResponse.password.length > 0 && props.email) {
-        const authResponse = await this.medusa?.auth.authenticate({
+        const authResponse = await this.medusa?.auth.getToken({
           email: props.email,
           password: customerResponse.password,
         });
-        if (!authResponse?.customer) {
-          return undefined;
-        }
+        this._accessToken = authResponse?.access_token;
       }
+    } catch (error: any) {
+      console.error(error);
+      return undefined;
     }
 
     return JSON.parse(customerResponse.data);
@@ -207,6 +212,12 @@ class MedusaService extends Service {
 
     const ordersResponse = core.OrdersResponse.fromBinary(arrayBuffer);
     return ordersResponse.data && JSON.parse(ordersResponse.data);
+  }
+
+  public async deleteSessionAsync(): Promise<void> {
+    await this._medusa?.auth.deleteSession({
+      Authorization: `Bearer ${this._accessToken}`,
+    });
   }
 }
 

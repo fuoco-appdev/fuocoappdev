@@ -59,7 +59,7 @@ export class AccountModel extends Model {
           username: '',
           orders: [],
           orderPagination: 1,
-          hasMoreOrders: true,
+          hasMoreOrders: false,
           shippingForm: {
             email: '',
             firstName: '',

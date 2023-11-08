@@ -198,12 +198,13 @@ class AccountController extends Controller {
 
     try {
       this._model.isCreateCustomerLoading = true;
-      this._model.customer = await MedusaService.requestUpdateCustomerAsync({
-        email: SupabaseService.user.email,
-        first_name: this._model.profileForm.firstName ?? '',
-        last_name: this._model.profileForm.lastName ?? '',
-        phone: this._model.profileForm.phoneNumber,
-      });
+      this._model.customer =
+        await MedusaService.requestUpdateCustomerAccountAsync({
+          email: SupabaseService.user.email,
+          first_name: this._model.profileForm.firstName ?? '',
+          last_name: this._model.profileForm.lastName ?? '',
+          phone: this._model.profileForm.phoneNumber,
+        });
 
       if (!this._model.customer) {
         this._model.isCreateCustomerLoading = false;
@@ -315,7 +316,7 @@ class AccountController extends Controller {
 
   public async logoutAsync(): Promise<void> {
     try {
-      await MedusaService.medusa?.auth.deleteSession();
+      await MedusaService.deleteSessionAsync();
       await SupabaseService.signoutAsync();
     } catch (error: any) {
       console.error(error);
@@ -410,9 +411,16 @@ class AccountController extends Controller {
     }
 
     try {
-      this._model.customer = await MedusaService.requestCustomerAsync(
+      this._model.customer = await MedusaService.requestCustomerAccountAsync(
         value?.id ?? ''
       );
+
+      if (!this._model.customer) {
+        this._model.account = await AccountService.requestUpdateActiveAsync({
+          status: 'Incomplete',
+        });
+        return;
+      }
 
       this._model.profileForm = {
         firstName: this._model.customer?.first_name,

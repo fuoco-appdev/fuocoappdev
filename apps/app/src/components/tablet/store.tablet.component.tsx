@@ -210,6 +210,7 @@ export default function StoreTabletComponent({
               styles['scroll-container'],
               styles['scroll-container-tablet'],
             ].join(' ')}
+            style={{ height: window.innerHeight }}
             onScroll={(e) => {
               onPreviewsScroll(e);
               const elementHeight = topBarRef.current?.clientHeight ?? 0;

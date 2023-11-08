@@ -209,6 +209,7 @@ export default function StoreDesktopComponent({
               styles['scroll-container'],
               styles['scroll-container-desktop'],
             ].join(' ')}
+            style={{ height: window.innerHeight }}
             onScroll={(e) => {
               onPreviewsScroll(e);
               const elementHeight = topBarRef.current?.clientHeight ?? 0;
