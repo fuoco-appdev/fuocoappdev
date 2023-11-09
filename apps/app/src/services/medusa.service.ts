@@ -118,6 +118,7 @@ class MedusaService extends Service {
   }): Promise<Customer | undefined> {
     const session = await SupabaseService.requestSessionAsync();
     const customerRequest = new core.CustomerRequest({
+      email: props.email,
       firstName: props.first_name,
       lastName: props.last_name,
       phone: props.phone,

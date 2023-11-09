@@ -121,7 +121,6 @@ class MedusaService {
           const updateCustomerResponse = await axiod.post(
             `${this._url}/admin/customers/${existingCustomer.id}?${updateParams}`,
             {
-              ...(email && { email: email }),
               ...(firstName && { first_name: firstName }),
               ...(lastName && { last_name: lastName }),
               ...(phone && { phone: phone }),
