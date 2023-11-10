@@ -256,5 +256,9 @@
   "help": "Aide",
   "joinUsOnDiscord": "Rejoignez-nous sur Discord",
   "foodRequirement": "Besoins alimentaires",
-  "foodRequirementDescription": "Dans {{region, string}}, la loi impose d'avoir de la nourriture dans son panier lorsqu'on achète de l'alcool en ligne. Veuillez inclure un produit alimentaire dans votre panier pour passer à la caisse."
+  "foodRequirementDescription": "Dans {{region, string}}, la loi impose d'avoir de la nourriture dans son panier lorsqu'on achète de l'alcool en ligne. Veuillez inclure un produit alimentaire dans votre panier pour passer à la caisse.",
+  "permissions": "Permissions",
+  "continue": "Continuer",
+  "accessLocation": "Lieu d'accès",
+  "accessLocationDescription": "Activer l'accès à la localisation pour le choix d'une région."
 }

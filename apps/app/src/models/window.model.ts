@@ -16,7 +16,6 @@ export interface WindowState {
   toast: ToastProps | undefined;
   showNavigateBack: boolean;
   hideCartButton: boolean;
-  currentPosition: GeolocationPosition | undefined;
   loadedLocationPath: string | undefined;
   prevTransitionKeyIndex: number;
   transitionKeyIndex: number;
@@ -43,7 +42,6 @@ export class WindowModel extends Model {
           toast: undefined,
           showNavigateBack: false,
           hideCartButton: false,
-          currentPosition: undefined,
           loadedLocationPath: undefined,
           prevTransitionKeyIndex: 0,
           transitionKeyIndex: 0,
@@ -231,19 +229,6 @@ export class WindowModel extends Model {
       this.localStore?.update((state) => ({
         ...state,
         languageInfo: value,
-      }));
-    }
-  }
-
-  public get currentPosition(): GeolocationPosition {
-    return this.localStore?.getValue().currentPosition;
-  }
-
-  public set currentPosition(value: GeolocationPosition) {
-    if (JSON.stringify(this.currentPosition) !== JSON.stringify(value)) {
-      this.store?.update((state) => ({
-        ...state,
-        currentPosition: value,
       }));
     }
   }

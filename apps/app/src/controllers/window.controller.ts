@@ -98,10 +98,6 @@ class WindowController extends Controller {
     this._model.languageCode = code;
   }
 
-  public updateCurrentPosition(value: GeolocationPosition): void {
-    this._model.currentPosition = value;
-  }
-
   public updateLoadedLocationPath(value: string | undefined): void {
     this._model.loadedLocationPath = value;
   }

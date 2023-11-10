@@ -1,0 +1,205 @@
+@import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
+
+.root {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  width: 100%;
+  min-width: 100%;
+  min-height: 100%;
+
+  & .permissions-container {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+
+    & .permissions-title {
+      margin: $mp-4 0;
+      font-size: 14pt;
+      font-weight: $font-weight-bold;
+      line-height: 42pt;
+      color: $brand-900;
+      border-bottom: 1px solid $brand-900;
+    }
+  
+    & .form-container {
+        padding: $mp-4 0;
+        -webkit-box-flex: 1;
+        -ms-flex: 1;
+        flex: 1;
+
+        & .permission-checkbox-container {
+            display: flex;
+            flex-direction: column;
+            gap: $mp-4;
+
+            & .permission-checkbox-title-container {
+                display: flex;
+                flex-direction: row;
+                gap: $mp-2;
+
+                & .permission-checkbox-title {
+                    font-size: 12pt;
+                    line-height: 24px;
+                    font-weight: $font-weight-bold;
+                    color: $brand-900;
+                }
+            }
+
+        }
+    }
+  }
+}
+
+.root-desktop {
+  height: 100%;
+  min-height: 100%;
+  overflow-y: auto;
+
+  & .permissions-container-desktop {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    width: 100%;
+    height: 100%;
+
+    & .permissions-content-desktop {
+      height: -webkit-fit-content;
+      height: -moz-fit-content;
+      height: fit-content;
+      width: 500px;
+      padding: $mp-6;
+      border: 1px solid rgba(42, 42, 95, .6);
+      border-radius: 6px;
+    }
+
+    & .permissions-title-desktop {
+
+    }
+  
+    & .form-container-desktop {
+
+    }
+  }
+
+  & .submit-button-container-desktop {
+    margin-bottom: $mp-4;
+  }
+}
+
+.root-tablet {
+    height: 100%;
+    min-height: 100%;
+    overflow-y: auto;
+  
+    & .permissions-container-tablet {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+          -ms-flex-direction: column;
+              flex-direction: column;
+      -webkit-box-pack: center;
+          -ms-flex-pack: center;
+              justify-content: center;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+      width: 100%;
+      height: 100%;
+  
+      & .permissions-content-tablet {
+        height: -webkit-fit-content;
+        height: -moz-fit-content;
+        height: fit-content;
+        width: 500px;
+        padding: $mp-6;
+        border: 1px solid rgba(42, 42, 95, .6);
+        border-radius: 6px;
+      }
+  
+      & .permissions-title-tablet {
+  
+      }
+    
+      & .form-container-tablet {
+  
+      }
+    }
+  
+    & .submit-button-container-tablet {
+      margin-bottom: $mp-4;
+    }
+  }
+
+.root-mobile {
+  & .permissions-container-mobile {
+    height: 100%;
+    flex: 1;
+    padding: 0 $mp-4;
+  }
+
+  & .permissions-content-mobile {
+    height: 100%;
+    flex: 1;
+  }
+
+  & .permissions-title-mobile {
+
+  }
+
+  & .form-container-mobile {
+
+  }
+
+  & .submit-button-container-mobile {
+    margin-bottom: $mp-10;
+  }
+}
+
+.submit-button-container {
+    margin-top: $mp-4;
+}
+  
+.submit-button {
+    background-color: $brand-700 !important;
+}
+
+.button {
+  color: $brand-900 !important;
+}
+
+.button:hover {
+  background-color: rgba(42, 42, 95, .15) !important;
+}
+
+.checkbox {
+    border-color: $brand-900 !important;
+}
+  
+.checkbox-label-container-label {
+    color: $brand-900 !important;
+}
+
+.checkbox-description-label {
+    color: $brand-900 !important;
+}

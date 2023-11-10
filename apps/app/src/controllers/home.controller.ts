@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
 import { select } from '@ngneat/elf';
 import SecretsService from '../services/secrets.service';
 import { PublicSecrets } from '../protobuf/core_pb';
+import PermissionsController from './permissions.controller';
 
 class HomeController extends Controller {
   private readonly _model: HomeModel;
@@ -78,7 +79,7 @@ class HomeController extends Controller {
 
       this._model.wineCount = await this.requestWineCountAsync();
     }
-    this._currentPositionSubscription = WindowController.model.store
+    this._currentPositionSubscription = PermissionsController.model.store
       .pipe(select((model) => model.currentPosition))
       .subscribe({
         next: (value) =>
@@ -91,15 +92,16 @@ class HomeController extends Controller {
         next: (id: string | undefined) => {
           if (!id) {
             this._currentPositionSubscription?.unsubscribe();
-            this._currentPositionSubscription = WindowController.model.store
-              .pipe(select((model) => model.currentPosition))
-              .subscribe({
-                next: (value) =>
-                  this.onCurrentPositionChanged(
-                    value,
-                    this._model.inventoryLocations
-                  ),
-              });
+            this._currentPositionSubscription =
+              PermissionsController.model.store
+                .pipe(select((model) => model.currentPosition))
+                .subscribe({
+                  next: (value) =>
+                    this.onCurrentPositionChanged(
+                      value,
+                      this._model.inventoryLocations
+                    ),
+                });
             return;
           }
 

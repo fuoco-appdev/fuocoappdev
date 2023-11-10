@@ -37,12 +37,14 @@ export default function WindowTabletComponent({
   windowProps,
   windowLocalProps,
   accountProps,
+  permissionsProps,
   openMore,
   isLanguageOpen,
   setOpenMore,
   setIsLanguageOpen,
   onSelectLocation,
   onCancelLocation,
+  onSidebarTabsChanged,
 }: WindowResponsiveProps): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -142,6 +144,7 @@ export default function WindowTabletComponent({
                   color: 'rgba(252, 245, 227, .35)',
                 }}
                 onClick={() => navigate(RoutePathsType.Help)}
+                disabled={!permissionsProps.arePermissionsActive}
                 type={'text'}
                 rounded={true}
                 size={'tiny'}
@@ -177,6 +180,7 @@ export default function WindowTabletComponent({
                 onClick={() =>
                   setTimeout(() => navigate(RoutePathsType.Cart), 75)
                 }
+                disabled={!permissionsProps.arePermissionsActive}
                 type={'text'}
                 rounded={true}
                 size={'tiny'}
@@ -227,6 +231,7 @@ export default function WindowTabletComponent({
                       color: 'rgba(252, 245, 227, .35)',
                     }}
                     onClick={() => navigate(RoutePathsType.Signup)}
+                    disabled={!permissionsProps.arePermissionsActive}
                     type={'text'}
                     rounded={true}
                     size={'tiny'}
@@ -257,6 +262,7 @@ export default function WindowTabletComponent({
                       color: 'rgba(252, 245, 227, .35)',
                     }}
                     onClick={() => navigate(RoutePathsType.Signin)}
+                    disabled={!permissionsProps.arePermissionsActive}
                     type={'text'}
                     rounded={true}
                     size={'tiny'}
@@ -314,6 +320,7 @@ export default function WindowTabletComponent({
                       color: 'rgba(252, 245, 227, .35)',
                     }}
                     onClick={() => navigate(RoutePathsType.Account)}
+                    disabled={!permissionsProps.arePermissionsActive}
                     type={'text'}
                     rounded={true}
                     size={'tiny'}
@@ -392,7 +399,7 @@ export default function WindowTabletComponent({
                 activeId={windowProps.activeRoute}
                 direction={'vertical'}
                 type={'underlined'}
-                onChange={(id: string) => navigate(id)}
+                onChange={onSidebarTabsChanged}
                 classNames={{
                   tabOutline: [
                     styles['tab-outline'],

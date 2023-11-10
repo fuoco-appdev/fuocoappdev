@@ -19,8 +19,10 @@ import { lazy } from '@loadable/component';
 import { useQuery } from '../route-paths';
 import { WindowSuspenseDesktopComponent } from './desktop/suspense/window.suspense.desktop.component';
 import { WindowSuspenseMobileComponent } from './mobile/suspense/window.suspense.mobile.component';
-import HomeController from 'src/controllers/home.controller';
+import HomeController from '../controllers/home.controller';
 import { WindowSuspenseTabletComponent } from './tablet/suspense/window.suspense.tablet.component';
+import PermissionsController from '../controllers/permissions.controller';
+import { PermissionsState } from '../models/permissions.model';
 
 const WindowDesktopComponent = lazy(
   () => import('./desktop/window.desktop.component')
@@ -36,12 +38,14 @@ export interface WindowResponsiveProps {
   windowProps: WindowState;
   windowLocalProps: WindowLocalState;
   accountProps: AccountState;
+  permissionsProps: PermissionsState;
   openMore: boolean;
   isLanguageOpen: boolean;
   setOpenMore: (value: boolean) => void;
   setIsLanguageOpen: (value: boolean) => void;
   onSelectLocation: () => void;
   onCancelLocation: () => void;
+  onSidebarTabsChanged: (id: string) => void;
 }
 
 export default function WindowComponent(): JSX.Element {
@@ -53,6 +57,7 @@ export default function WindowComponent(): JSX.Element {
     HomeController.model.localStore ?? Store.prototype
   );
   const [accountProps] = useObservable(AccountController.model.store);
+  const [permissionsProps] = useObservable(PermissionsController.model.store);
   const isMounted = useRef<boolean>(false);
   const { i18n } = useTranslation();
   const [openMore, setOpenMore] = useState<boolean>(false);
@@ -71,6 +76,14 @@ export default function WindowComponent(): JSX.Element {
       windowProps.queryInventoryLocation.id
     );
     onCancelLocation();
+  };
+
+  const onSidebarTabsChanged = (id: string) => {
+    if (!permissionsProps.arePermissionsActive) {
+      return;
+    }
+
+    navigate(id);
   };
 
   useEffect(() => {
@@ -103,19 +116,22 @@ export default function WindowComponent(): JSX.Element {
   }, [windowProps.authState]);
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => WindowController.updateCurrentPosition(position),
-      (error) => console.error(error)
-    );
-  }, []);
-
-  useEffect(() => {
     i18n.changeLanguage(windowLocalProps.languageInfo?.isoCode);
   }, [windowLocalProps.languageInfo]);
 
   useEffect(() => {
     WindowController.addToast(undefined);
   }, [windowProps.toast]);
+
+  useEffect(() => {
+    if (permissionsProps.arePermissionsActive === undefined) {
+      return;
+    }
+
+    if (!permissionsProps.arePermissionsActive) {
+      navigate(RoutePathsType.Permissions);
+    }
+  }, [permissionsProps.arePermissionsActive]);
 
   const suspenseComponent = (
     <>
@@ -135,34 +151,40 @@ export default function WindowComponent(): JSX.Element {
         windowProps={windowProps}
         windowLocalProps={windowLocalProps}
         accountProps={accountProps}
+        permissionsProps={permissionsProps}
         openMore={openMore}
         isLanguageOpen={isLanguageOpen}
         setOpenMore={setOpenMore}
         setIsLanguageOpen={setIsLanguageOpen}
         onSelectLocation={onSelectLocation}
         onCancelLocation={onCancelLocation}
+        onSidebarTabsChanged={onSidebarTabsChanged}
       />
       <WindowTabletComponent
         windowProps={windowProps}
         windowLocalProps={windowLocalProps}
         accountProps={accountProps}
+        permissionsProps={permissionsProps}
         openMore={openMore}
         isLanguageOpen={isLanguageOpen}
         setOpenMore={setOpenMore}
         setIsLanguageOpen={setIsLanguageOpen}
         onSelectLocation={onSelectLocation}
         onCancelLocation={onCancelLocation}
+        onSidebarTabsChanged={onSidebarTabsChanged}
       />
       <WindowMobileComponent
         windowProps={windowProps}
         windowLocalProps={windowLocalProps}
         accountProps={accountProps}
+        permissionsProps={permissionsProps}
         openMore={openMore}
         isLanguageOpen={isLanguageOpen}
         setOpenMore={setOpenMore}
         setIsLanguageOpen={setIsLanguageOpen}
         onSelectLocation={onSelectLocation}
         onCancelLocation={onCancelLocation}
+        onSidebarTabsChanged={onSidebarTabsChanged}
       />
     </React.Suspense>
   );

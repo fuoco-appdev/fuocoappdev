@@ -7,6 +7,7 @@ import ForgotPasswordComponent from './components/forgot-password.component';
 import ResetPasswordComponent from './components/reset-password.component';
 import TermsOfServiceComponent from './components/terms-of-service.component';
 import PrivacyPolicyComponent from './components/privacy-policy.component';
+import PermissionsComponent from './components/permissions.component';
 import ProductComponent from './components/product.component';
 import AccountComponent from './components/account.component';
 import StoreComponent from './components/store.component';
@@ -33,6 +34,7 @@ export enum RoutePathsType {
   ForgotPassword = '/forgot-password',
   TermsOfService = '/terms-of-service',
   PrivacyPolicy = '/privacy-policy',
+  Permissions = '/permissions',
   Help = '/help',
   ResetPassword = '/reset-password',
   Store = '/store',
@@ -85,6 +87,10 @@ export const getRoutePaths = (): RouteObject[] => [
       {
         path: RoutePathsType.PrivacyPolicy,
         element: <PrivacyPolicyComponent />,
+      },
+      {
+        path: RoutePathsType.Permissions,
+        element: <PermissionsComponent />,
       },
       {
         path: RoutePathsType.ResetPassword,

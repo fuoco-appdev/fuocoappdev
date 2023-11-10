@@ -256,5 +256,9 @@
   "help": "Help",
   "joinUsOnDiscord": "Join Us On Discord",
   "foodRequirement": "Food requirement",
-  "foodRequirementDescription": "In {{region, string}}, it is a legal requirement to have food in your cart when making an online purchase of alcohol. Kindly include a food item in your cart to continue to the checkout."
+  "foodRequirementDescription": "In {{region, string}}, it is a legal requirement to have food in your cart when making an online purchase of alcohol. Kindly include a food item in your cart to continue to the checkout.",
+  "permissions": "Permissions",
+  "continue": "Continue",
+  "accessLocation": "Access location",
+  "accessLocationDescription": "Enable location access for choosing a region."
 }
