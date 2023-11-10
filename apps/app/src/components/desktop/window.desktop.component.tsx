@@ -140,7 +140,6 @@ export default function WindowDesktopComponent({
                   color: 'rgba(252, 245, 227, .35)',
                 }}
                 onClick={() => navigate(RoutePathsType.Help)}
-                disabled={!permissionsProps.arePermissionsActive}
                 type={'text'}
                 floatingLabel={t('help') ?? ''}
                 rounded={true}
@@ -179,7 +178,6 @@ export default function WindowDesktopComponent({
                 type={'text'}
                 floatingLabel={t('shoppingCart') ?? ''}
                 rounded={true}
-                disabled={!permissionsProps.arePermissionsActive}
                 size={'tiny'}
                 icon={
                   windowProps.activeRoute !== RoutePathsType.Cart &&
@@ -230,7 +228,6 @@ export default function WindowDesktopComponent({
                     type={'text'}
                     floatingLabel={t('signup') ?? ''}
                     rounded={true}
-                    disabled={!permissionsProps.arePermissionsActive}
                     size={'tiny'}
                     icon={
                       windowProps.activeRoute !== RoutePathsType.Signup ? (
@@ -261,7 +258,6 @@ export default function WindowDesktopComponent({
                     type={'text'}
                     floatingLabel={t('signin') ?? ''}
                     rounded={true}
-                    disabled={!permissionsProps.arePermissionsActive}
                     size={'tiny'}
                     icon={
                       windowProps.activeRoute !== RoutePathsType.Signin ? (
@@ -321,7 +317,6 @@ export default function WindowDesktopComponent({
                         ? `${customer?.first_name} ${customer?.last_name}`
                         : t('profile') ?? undefined
                     }
-                    disabled={!permissionsProps.arePermissionsActive}
                     type={'text'}
                     rounded={true}
                     size={'tiny'}

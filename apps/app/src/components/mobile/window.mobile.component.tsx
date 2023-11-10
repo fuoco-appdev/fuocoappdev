@@ -179,7 +179,6 @@ export default function WindowMobileComponent({
                           setTimeout(() => navigate(RoutePathsType.Cart), 75);
                         }
                       }}
-                      disabled={!permissionsProps.arePermissionsActive}
                       type={'primary'}
                       rounded={true}
                       size={'small'}
@@ -367,8 +366,7 @@ export default function WindowMobileComponent({
                         }}
                         onClick={() => navigate(RoutePathsType.Home)}
                         disabled={
-                          windowProps.activeRoute === RoutePathsType.Cart ||
-                          !permissionsProps.arePermissionsActive
+                          windowProps.activeRoute === RoutePathsType.Cart
                         }
                         type={'text'}
                         rounded={true}
@@ -402,8 +400,7 @@ export default function WindowMobileComponent({
                         }}
                         onClick={() => navigate(RoutePathsType.Store)}
                         disabled={
-                          windowProps.activeRoute === RoutePathsType.Cart ||
-                          !permissionsProps.arePermissionsActive
+                          windowProps.activeRoute === RoutePathsType.Cart
                         }
                         type={'text'}
                         rounded={true}
@@ -492,8 +489,7 @@ export default function WindowMobileComponent({
                               color: 'rgba(252, 245, 227, .35)',
                             }}
                             disabled={
-                              windowProps.activeRoute === RoutePathsType.Cart ||
-                              !permissionsProps.arePermissionsActive
+                              windowProps.activeRoute === RoutePathsType.Cart
                             }
                             onClick={() => setOpenMore(true)}
                             type={'text'}
@@ -554,8 +550,7 @@ export default function WindowMobileComponent({
                               navigate(RoutePathsType.AccountOrderHistory)
                             }
                             disabled={
-                              windowProps.activeRoute === RoutePathsType.Cart ||
-                              !permissionsProps.arePermissionsActive
+                              windowProps.activeRoute === RoutePathsType.Cart
                             }
                             type={'text'}
                             rounded={true}

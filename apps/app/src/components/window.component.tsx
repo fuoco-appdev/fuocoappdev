@@ -79,10 +79,6 @@ export default function WindowComponent(): JSX.Element {
   };
 
   const onSidebarTabsChanged = (id: string) => {
-    if (!permissionsProps.arePermissionsActive) {
-      return;
-    }
-
     navigate(id);
   };
 
