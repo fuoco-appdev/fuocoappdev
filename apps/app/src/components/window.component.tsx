@@ -61,6 +61,8 @@ export default function WindowComponent(): JSX.Element {
   const isMounted = useRef<boolean>(false);
   const { i18n } = useTranslation();
   const [openMore, setOpenMore] = useState<boolean>(false);
+  const [hidePermissionsQuery, setHidePermissionsQuery] =
+    useState<boolean>(true);
   const [isLanguageOpen, setIsLanguageOpen] = useState<boolean>(false);
   const [windowLocalProps] = useObservable(
     WindowController.model.localStore ?? Store.prototype
@@ -95,6 +97,9 @@ export default function WindowComponent(): JSX.Element {
     ) {
       WindowController.updateQueryInventoryLocation(salesLocationId);
     }
+
+    const hidePermissions = query.get('hide_permissions');
+    setHidePermissionsQuery(Boolean(hidePermissions));
   }, []);
 
   useEffect(() => {
@@ -120,6 +125,10 @@ export default function WindowComponent(): JSX.Element {
   }, [windowProps.toast]);
 
   useEffect(() => {
+    if (hidePermissionsQuery) {
+      return;
+    }
+
     if (permissionsProps.arePermissionsActive === undefined) {
       return;
     }
@@ -127,7 +136,7 @@ export default function WindowComponent(): JSX.Element {
     if (!permissionsProps.arePermissionsActive) {
       navigate(RoutePathsType.Permissions);
     }
-  }, [permissionsProps.arePermissionsActive]);
+  }, [permissionsProps.arePermissionsActive, hidePermissionsQuery]);
 
   const suspenseComponent = (
     <>

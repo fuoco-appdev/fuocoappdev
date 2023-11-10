@@ -25,7 +25,7 @@ import { HomeSuspenseTabletComponent } from './tablet/suspense/home.suspense.tab
 import { PermissionsState } from '../models/permissions.model';
 import PermissionsController from '../controllers/permissions.controller';
 import { WindowState } from '../models/window.model';
-import WindowController from 'src/controllers/window.controller';
+import WindowController from '../controllers/window.controller';
 
 const PermissionsDesktopComponent = lazy(
   () => import('./desktop/permissions.desktop.component')
