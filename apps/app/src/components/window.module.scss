@@ -847,11 +847,12 @@
 
 .modal-overlay {
   z-index: 24;
+  background-color: rgba(42, 42, 95, .15);
 }
 
 .modal_desktop {
   max-height: 95vh;
-  max-width: 25vw;
+  max-width: 500px;
   padding: $mp-8 !important;
   overflow-y: auto;
 }
@@ -903,6 +904,10 @@
   background-color: $brand-700 !important;
   padding-left: $mp-4 !important;
   padding-right: $mp-4 !important;
+}
+
+.dropdown-touchscreen-overlay {
+  background-color: rgba(42, 42, 95, .15) !important;
 }
 
 .top-bar-button-container {

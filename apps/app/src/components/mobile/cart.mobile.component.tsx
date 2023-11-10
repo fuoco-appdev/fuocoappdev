@@ -495,6 +495,9 @@ export default function CartMobileComponent({
       </div>
       {createPortal(
         <Dropdown
+          classNames={{
+            touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
+          }}
           open={isFoodRequirementOpen}
           touchScreen={true}
           onClose={() => setIsFoodRequirementOpen(false)}

@@ -681,6 +681,9 @@ export default function WindowMobileComponent({
               onCancel={onCancelLocation}
             />
             <Dropdown
+              classNames={{
+                touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
+              }}
               open={openMore}
               touchScreen={true}
               onClose={() => setOpenMore(false)}

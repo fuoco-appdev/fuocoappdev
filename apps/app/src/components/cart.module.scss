@@ -654,11 +654,12 @@
 
 .modal-overlay {
     z-index: 24;
+    background-color: rgba(42, 42, 95, .15);
 }
 
 .modal-desktop {
     max-height: 95vh;
-    width: 25vw;
+    width: 500px;
     overflow-y: auto;
     padding: $mp-8 !important;
 }
@@ -669,7 +670,7 @@
 
 .modal-tablet {
     max-height: 95vh;
-    width: 50vw;
+    width: 500px;
     overflow-y: auto;
     padding: $mp-6 !important;
 }
@@ -723,6 +724,10 @@
     background-color: $brand-700 !important;
     padding-left: $mp-4 !important;
     padding-right: $mp-4 !important;
+}
+
+.dropdown-touchscreen-overlay {
+    background-color: rgba(42, 42, 95, .15) !important;
 }
 
 .dropdown-title {

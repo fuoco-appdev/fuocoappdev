@@ -374,6 +374,7 @@
 
 .modal-overlay {
     z-index: 24;
+    background-color: rgba(42, 42, 95, .15);
 }
 
 .modal-desktop {
@@ -382,6 +383,10 @@
 
 .modal-container {
     height: 100%;
+}
+
+.dropdown-touchscreen-overlay {
+    background-color: rgba(42, 42, 95, .15) !important;
 }
 
 .button {

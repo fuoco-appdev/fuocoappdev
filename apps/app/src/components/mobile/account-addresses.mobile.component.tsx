@@ -95,6 +95,9 @@ export default function AccountAddressesMobileComponent({
         {createPortal(
           <>
             <Dropdown
+              classNames={{
+                touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
+              }}
               open={openAddDropdown}
               touchScreen={true}
               onClose={() => setOpenAddDropdown(false)}
@@ -179,6 +182,9 @@ export default function AccountAddressesMobileComponent({
               </div>
             </Dropdown>
             <Dropdown
+              classNames={{
+                touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
+              }}
               open={openEditDropdown}
               touchScreen={true}
               onClose={() => setOpenEditDropdown(false)}

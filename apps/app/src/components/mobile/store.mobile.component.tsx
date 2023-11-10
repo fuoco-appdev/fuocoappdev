@@ -281,6 +281,9 @@ export default function StoreMobileComponent({
         {createPortal(
           <>
             <Dropdown
+              classNames={{
+                touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
+              }}
               open={openFilter}
               touchScreen={true}
               onClose={() => setOpenFilter(false)}
@@ -375,6 +378,9 @@ export default function StoreMobileComponent({
               </div>
             </Dropdown>
             <Dropdown
+              classNames={{
+                touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
+              }}
               open={openCartVariants}
               touchScreen={true}
               onClose={() => setOpenCartVariants(false)}
