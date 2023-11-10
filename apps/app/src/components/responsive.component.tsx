@@ -1,24 +1,33 @@
 import { useEffect } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import styles from './responsive.module.scss';
+import {
+  isBrowser,
+  isMobile,
+  isTablet,
+  isIOS,
+  isAndroid,
+} from 'react-device-detect';
 
 export function useIsDesktop(): boolean {
-  return useMediaQuery({
+  const query = useMediaQuery({
     minWidth: 992,
   });
+  return query && isBrowser;
 }
 
 export function useIsTablet(): boolean {
-  return useMediaQuery({
+  const query = useMediaQuery({
     minWidth: 768,
-    maxWidth: 991,
   });
+  return query && (isIOS || isAndroid);
 }
 
 export function useIsMobile(): boolean {
-  return useMediaQuery({
+  const query = useMediaQuery({
     maxWidth: 767,
   });
+  return query && (isIOS || isAndroid);
 }
 
 export function useDesktopEffect(

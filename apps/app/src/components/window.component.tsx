@@ -62,7 +62,7 @@ export default function WindowComponent(): JSX.Element {
   const { i18n } = useTranslation();
   const [openMore, setOpenMore] = useState<boolean>(false);
   const [hidePermissionsQuery, setHidePermissionsQuery] =
-    useState<boolean>(true);
+    useState<boolean>(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState<boolean>(false);
   const [windowLocalProps] = useObservable(
     WindowController.model.localStore ?? Store.prototype

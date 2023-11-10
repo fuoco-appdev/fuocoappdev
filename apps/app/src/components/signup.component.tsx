@@ -64,12 +64,7 @@ export default function SignupComponent(): JSX.Element {
         type: 'error',
       });
     } else if (authError?.status && authError?.status > 400) {
-      WindowController.addToast({
-        key: `signup-${Math.random()}`,
-        message: authError?.name,
-        description: authError?.message,
-        type: 'error',
-      });
+      console.error(authError);
     } else {
       setEmailError('');
       setPasswordError('');

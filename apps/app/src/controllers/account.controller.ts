@@ -415,13 +415,6 @@ class AccountController extends Controller {
         value?.id ?? ''
       );
 
-      if (!this._model.customer) {
-        this._model.account = await AccountService.requestUpdateActiveAsync({
-          status: 'Incomplete',
-        });
-        return;
-      }
-
       this._model.profileForm = {
         firstName: this._model.customer?.first_name,
         lastName: this._model.customer?.last_name,
