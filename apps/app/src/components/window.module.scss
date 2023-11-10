@@ -447,6 +447,7 @@
     }
 
     & .right-content-desktop {
+      position: relative;
       display: -webkit-box;
       display: -ms-flexbox;
       display: flex;
@@ -731,6 +732,7 @@
     }
 
     & .right-content-tablet {
+      position: relative;
       display: -webkit-box;
       display: -ms-flexbox;
       display: flex;
@@ -1203,15 +1205,15 @@
 }
 
 .navigation-back-appear {
-  top: 56px !important;
+  top: 0 !important;
 }
 
 .navigation-back-appear-active {
-  top: 56px !important;
+  top: 0 !important;
 }
 
 .navigation-back-appear-done {
-  top: 56px !important;
+  top: 0 !important;
 }
 
 .navigation-back-enter {
@@ -1225,7 +1227,7 @@
 }
 
 .navigation-back-enter-active {
-  top: 56px !important;
+  top: 0 !important;
   -webkit-transition-duration: 75ms;
        -o-transition-duration: 75ms;
           transition-duration: 75ms;
@@ -1235,7 +1237,7 @@
 }
 
 .navigation-back-enter-done {
-  top: 56px !important;
+  top: 0 !important;
   -webkit-transition-duration: 75ms;
        -o-transition-duration: 75ms;
           transition-duration: 75ms;
@@ -1245,7 +1247,7 @@
 }
 
 .navigation-back-exit {
-  top: 56px !important;
+  top: 0 !important;
   -webkit-transition-duration: 150ms;
        -o-transition-duration: 150ms;
           transition-duration: 150ms;
