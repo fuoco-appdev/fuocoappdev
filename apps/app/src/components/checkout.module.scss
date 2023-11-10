@@ -711,6 +711,7 @@
 
 .modal-overlay {
     z-index: 24;
+    background-color: rgba(42, 42, 95, .15);
 }
 
 .modal-desktop {
@@ -721,19 +722,18 @@
 
 .modal-text-desktop {
     padding: $mp-6 !important;
-    max-width: 30vw;
+    max-width: 500px;
 }
 
 .modal-tablet {
     max-height: 95vh;
-    min-width: 60vw;
     padding: $mp-6;
     overflow-y: auto;
 }
 
 .modal-text-tablet {
     padding: $mp-6 !important;
-    max-width: 60vw;
+    max-width: 500px;
 }
 
 .modal-title {

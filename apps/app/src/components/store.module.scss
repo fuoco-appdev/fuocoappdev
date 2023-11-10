@@ -6,7 +6,7 @@
 
     & .top-bar-container {
         position: absolute;
-        z-index: 1;
+        z-index: 6;
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;
@@ -721,11 +721,12 @@
 
 .modal-overlay {
     z-index: 24;
+    background-color: rgba(42, 42, 95, .15);
 }
 
 .modal-desktop {
     max-height: 95vh;
-    min-width: 25vw;
+    min-width: 500px;
     overflow-y: auto;
 }
 
@@ -735,7 +736,7 @@
 
 .modal-tablet {
     max-height: 95vh;
-    min-width: 50vw;
+    min-width: 500px;
     overflow-y: auto;
 }
 

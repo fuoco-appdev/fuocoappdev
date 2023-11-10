@@ -845,11 +845,12 @@
 
 .modal-overlay {
   z-index: 24;
+  background-color: rgba(42, 42, 95, .15);
 }
 
 .modal_desktop {
   max-height: 95vh;
-  max-width: 25vw;
+  max-width: 500px;
   padding: $mp-8 !important;
   overflow-y: auto;
 }
