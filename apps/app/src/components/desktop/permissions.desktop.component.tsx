@@ -122,7 +122,6 @@ export default function PermissionsDesktopComponent({
                     styles['submit-button-desktop'],
                   ].join(' '),
                 }}
-                disabled={!permissionsProps.accessLocation}
                 block={true}
                 size={'large'}
                 onClick={onContinueAsync}

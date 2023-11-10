@@ -126,7 +126,6 @@ export default function PermissionsTabletComponent({
                     styles['submit-button-tablet'],
                   ].join(' '),
                 }}
-                disabled={!permissionsProps.accessLocation}
                 block={true}
                 size={'large'}
                 onClick={onContinueAsync}

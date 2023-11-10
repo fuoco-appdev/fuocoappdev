@@ -127,7 +127,6 @@ export default function PermissionsMobileComponent({
                   styles['submit-button-mobile'],
                 ].join(' '),
               }}
-              disabled={!permissionsProps.accessLocation}
               block={true}
               touchScreen={true}
               size={'large'}
