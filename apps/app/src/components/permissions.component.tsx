@@ -61,10 +61,6 @@ export default function PermissionsComponent(): JSX.Element {
   };
 
   const onContinueAsync = async () => {
-    if (!(await PermissionsController.checkPermissionsAsync())) {
-      return;
-    }
-
     if (windowProps.loadedLocationPath !== RoutePathsType.Permissions) {
       navigate(windowProps.loadedLocationPath ?? RoutePathsType.Home);
     } else {
