@@ -726,6 +726,10 @@
     padding-right: $mp-4 !important;
 }
 
+.dropdown-touchscreen-overlay {
+    background-color: rgba(42, 42, 95, .15) !important;
+}
+
 .dropdown-title {
     color: $brand-900;
     font-weight: $font-weight-bold;

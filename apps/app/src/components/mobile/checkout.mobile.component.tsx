@@ -965,6 +965,9 @@ export default function CheckoutMobileComponent({
         {createPortal(
           <>
             <Dropdown
+              classNames={{
+                touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
+              }}
               open={isAddAddressOpen}
               touchScreen={true}
               onClose={() => setIsAddAddressOpen(false)}
@@ -1046,6 +1049,9 @@ export default function CheckoutMobileComponent({
               </div>
             </Dropdown>
             <Dropdown
+              classNames={{
+                touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
+              }}
               open={isPayOpen}
               touchScreen={true}
               onClose={() => setIsPayOpen(false)}

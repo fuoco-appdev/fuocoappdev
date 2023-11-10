@@ -904,6 +904,10 @@
   padding-right: $mp-4 !important;
 }
 
+.dropdown-touchscreen-overlay {
+  background-color: rgba(42, 42, 95, .15) !important;
+}
+
 .top-bar-button-container {
   width: -webkit-fit-content;
   width: -moz-fit-content;

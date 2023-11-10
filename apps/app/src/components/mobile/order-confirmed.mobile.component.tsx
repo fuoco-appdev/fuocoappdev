@@ -431,6 +431,9 @@ export default function OrderConfirmedMobileComponent({
           </div>
         </div>
         <Dropdown
+          classNames={{
+            touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
+          }}
           open={openRefund}
           touchScreen={true}
           onClose={() => setOpenRefund(false)}

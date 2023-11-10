@@ -385,6 +385,10 @@
     height: 100%;
 }
 
+.dropdown-touchscreen-overlay {
+    background-color: rgba(42, 42, 95, .15) !important;
+}
+
 .button {
     background-color: transparent !important;
     color: $brand-900 !important;

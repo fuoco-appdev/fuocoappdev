@@ -164,6 +164,10 @@
     padding-right: $mp-4 !important;
 }
 
+.dropdown-touchscreen-overlay {
+    background-color: rgba(42, 42, 95, .15) !important;
+}
+
 .add-address-container {
     & .add-address-button-container {
         width: 100%;
