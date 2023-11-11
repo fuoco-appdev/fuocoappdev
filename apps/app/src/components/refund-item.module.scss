@@ -172,6 +172,50 @@
     }
 }
 
+.container-tablet {
+    & .details-tablet {
+        & .thumbnail-tablet {
+            & .thumbnail-image-tablet {
+
+            }
+        }
+
+        & .title-container-tablet {
+            & .title-tablet {
+
+            }
+
+            & .variant-tablet {
+
+            }
+        }
+
+        & .quantity-details-container-tablet {
+            & .quantity-container-tablet {
+                & .quantity-text-tablet {
+                }
+
+                & .quantity-buttons-tablet {
+                    & .quantity-button-tablet {
+    
+                    }
+    
+                    & .quantity-tablet {
+                    }
+                }
+            }
+        }
+    }
+
+    & .input-container-tablet {
+        & .reason-container-tablet {
+        }
+    
+        & .note-container-tablet {
+        }
+    }
+}
+
 .container-mobile {
     & .details-mobile {
         & .thumbnail-mobile {

@@ -21,6 +21,9 @@ import React from 'react';
 const RefundItemDesktopComponent = lazy(
   () => import('./desktop/refund-item.desktop.component')
 );
+const RefundItemTabletComponent = lazy(
+  () => import('./tablet/refund-item.tablet.component')
+);
 const RefundItemMobileComponent = lazy(
   () => import('./mobile/refund-item.mobile.component')
 );
@@ -113,6 +116,15 @@ export default function RefundItemComponent({
   return (
     <React.Suspense fallback={suspenceComponent}>
       <RefundItemDesktopComponent
+        item={item}
+        refundItem={refundItem}
+        returnReasonOptions={returnReasonOptions}
+        vintage={vintage}
+        incrementItemQuantity={incrementItemQuantity}
+        decrementItemQuantity={decrementItemQuantity}
+        onChanged={onChanged}
+      />
+      <RefundItemTabletComponent
         item={item}
         refundItem={refundItem}
         returnReasonOptions={returnReasonOptions}

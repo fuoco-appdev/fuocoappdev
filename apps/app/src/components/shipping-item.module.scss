@@ -202,6 +202,52 @@
     }
 }
 
+.container-tablet {
+    & .details-tablet {
+        & .thumbnail-tablet {
+            & .thumbnail-image-tablet {
+            }
+        }
+
+        & .title-container-tablet {
+            & .title-tablet {
+            }
+
+            & .variant-tablet {
+            }
+        }
+
+        & .quantity-details-container-tablet {
+            & .quantity-container-tablet {
+                & .quantity-text-tablet {
+                }
+
+                & .quantity-buttons-tablet {    
+                    & .quantity-tablet {
+                    }
+                }
+            }
+        }
+    }
+
+    & .pricing-details-container-tablet {
+        & .pricing-tablet {
+        }
+
+        & .pricing-canceled-tablet {
+
+        }
+
+        & .discount-pricing-tablet {
+
+        }
+
+        & .discount-percentage-tablet {
+
+        }
+    }
+}
+
 .container-mobile {
     & .details-mobile {
         & .thumbnail-mobile {

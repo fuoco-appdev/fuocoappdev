@@ -18,9 +18,13 @@ import { OrderConfirmedSuspenseDesktopComponent } from './desktop/suspense/order
 import { OrderConfirmedSuspenseMobileComponent } from './mobile/suspense/order-confirmed.suspense.mobile.component';
 import { Helmet } from 'react-helmet';
 import { OrderConfirmedState } from 'src/models/order-confirmed.model';
+import { OrderConfirmedSuspenseTabletComponent } from './tablet/suspense/order-confirmed.suspense.tablet.component';
 
 const OrderConfirmedDesktopComponent = lazy(
   () => import('./desktop/order-confirmed.desktop.component')
+);
+const OrderConfirmedTabletComponent = lazy(
+  () => import('./tablet/order-confirmed.tablet.component')
 );
 const OrderConfirmedMobileComponent = lazy(
   () => import('./mobile/order-confirmed.mobile.component')
@@ -103,6 +107,7 @@ export default function OrderConfirmedComponent(): JSX.Element {
   const suspenceComponent = (
     <>
       <OrderConfirmedSuspenseDesktopComponent />
+      <OrderConfirmedSuspenseTabletComponent />
       <OrderConfirmedSuspenseMobileComponent />
     </>
   );
@@ -141,6 +146,15 @@ export default function OrderConfirmedComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <OrderConfirmedDesktopComponent
+          orderConfirmedProps={orderConfirmedProps}
+          storeProps={storeProps}
+          quantity={quantity}
+          openRefund={openRefund}
+          returnReasonOptions={returnReasonOptions}
+          setOpenRefund={setOpenRefund}
+          formatStatus={formatStatus}
+        />
+        <OrderConfirmedTabletComponent
           orderConfirmedProps={orderConfirmedProps}
           storeProps={storeProps}
           quantity={quantity}
