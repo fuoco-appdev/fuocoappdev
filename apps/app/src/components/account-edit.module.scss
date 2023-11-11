@@ -105,6 +105,42 @@
     }
 }
 
+.root-tablet {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 $mp-6;
+
+    & .edit-text-container-skeleton-tablet {
+        width: 100%;
+        margin-top: $mp-4;
+        margin-bottom: $mp-2;
+
+        & .edit-text-skeleton-tablet {
+        }
+    }
+
+    & .edit-text-container-tablet {
+        width: 100%;
+        margin-top: $mp-4;
+        margin-bottom: $mp-2;
+
+        & .edit-text-tablet {
+        }
+    }
+
+    & .profile-form-container-tablet {
+        padding: $mp-4;
+        min-width: 500px;
+    }
+
+    & .save-button-container-tablet {
+        padding: 0 $mp-4;
+        margin-bottom: $mp-10;
+        min-width: 500px;
+    }
+}
+
 .root-mobile {
     & .edit-text-container-skeleton-mobile {
         margin: 0 $mp-4;

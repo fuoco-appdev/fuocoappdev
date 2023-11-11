@@ -20,14 +20,65 @@ import { Store } from '@ngneat/elf';
 import StoreController from '../../controllers/store.controller';
 import { CountryDataProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/input-phone-number/country-data';
 import { AccountProfileFormResponsiveProps } from '../account-profile-form.component';
+import { ResponsiveMobile, ResponsiveTablet } from '../responsive.component';
 
-export function AccountProfileFormTabletComponent({
+export default function AccountProfileFormTabletComponent({
   values,
   errors,
   onChangeCallbacks,
+  selectedCountry,
 }: AccountProfileFormResponsiveProps): JSX.Element {
-  const navigate = useNavigate();
   const { t, i18n } = useTranslation();
 
-  return <></>;
+  return (
+    <ResponsiveTablet>
+      <div
+        className={[
+          styles['horizontal-input-container'],
+          styles['horizontal-input-container-tablet'],
+        ].join(' ')}
+      >
+        <Input
+          classNames={{
+            root: styles['input-root'],
+            formLayout: { label: styles['input-form-layout-label'] },
+            input: styles['input'],
+            container: styles['input-container'],
+          }}
+          label={t('firstName') ?? ''}
+          value={values?.firstName}
+          error={errors?.firstName}
+          onChange={onChangeCallbacks?.firstName}
+        />
+        <Input
+          classNames={{
+            root: styles['input-root'],
+            formLayout: { label: styles['input-form-layout-label'] },
+            input: styles['input'],
+            container: styles['input-container'],
+          }}
+          label={t('lastName') ?? ''}
+          value={values?.lastName}
+          error={errors?.lastName}
+          onChange={onChangeCallbacks?.lastName}
+        />
+      </div>
+      <InputPhoneNumber
+        defaultValue={values?.phoneNumber}
+        classNames={{
+          formLayout: { label: styles['input-form-layout-label'] },
+          inputPhoneNumber: styles['input'],
+          inputContainer: styles['input-container'],
+          countryName: styles['option-name'],
+          dropdown: styles['input-phone-number-dropdown'],
+        }}
+        iconColor={'#2A2A5F'}
+        label={t('phoneNumber') ?? ''}
+        error={errors?.phoneNumber}
+        touchScreen={false}
+        country={selectedCountry}
+        onChange={onChangeCallbacks?.phoneNumber}
+      />
+    </ResponsiveTablet>
+  );
 }

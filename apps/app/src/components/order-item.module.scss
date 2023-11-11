@@ -140,6 +140,44 @@
     }
 }
 
+.root-tablet {
+    & .ripples-tablet {
+        
+    }
+
+    & .container-tablet {   
+        padding: $mp-2 0;
+
+        & .details-tablet {       
+            & .thumbnail-tablet {        
+                & .thumbnail-image-tablet {
+                }
+            }
+    
+            & .title-container-tablet {
+                & .title-tablet {
+                }
+    
+                & .status-tablet {
+                }
+            }
+    
+            & .right-details-container-tablet {
+                & .right-details-content-tablet {
+                    & .pricing-tablet {
+                    }
+                }
+        
+            }
+    
+            & .remove-container-tablet {
+                & .remove-button-tablet {
+                }
+            }
+        }
+    }
+}
+
 .root-mobile {
     & .ripples-mobile {
         

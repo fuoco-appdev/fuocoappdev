@@ -75,7 +75,7 @@ export function ResponsiveSuspenseDesktop({
   children,
   inheritStyles = true,
 }: ResponsiveProps) {
-  return (
+  return isBrowser ? (
     <div
       className={[
         styles['desktop-layout'],
@@ -84,30 +84,25 @@ export function ResponsiveSuspenseDesktop({
     >
       {children}
     </div>
-  );
+  ) : null;
 }
 
 export function ResponsiveSuspenseTablet({
   children,
   inheritStyles = true,
 }: ResponsiveProps) {
-  return (
-    <div
-      className={[
-        styles['tablet-layout'],
-        inheritStyles ? styles['inherit'] : '',
-      ].join(' ')}
-    >
+  return isTablet && (isIOS || isAndroid) ? (
+    <div className={[inheritStyles ? styles['inherit'] : ''].join(' ')}>
       {children}
     </div>
-  );
+  ) : null;
 }
 
 export function ResponsiveSuspenseMobile({
   children,
   inheritStyles = true,
 }: ResponsiveProps) {
-  return (
+  return isMobile && (isIOS || isAndroid) ? (
     <div
       className={[
         styles['mobile-layout'],
@@ -116,7 +111,7 @@ export function ResponsiveSuspenseMobile({
     >
       {children}
     </div>
-  );
+  ) : null;
 }
 
 export function ResponsiveDesktop({ children }: ResponsiveProps) {

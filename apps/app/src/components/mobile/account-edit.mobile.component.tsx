@@ -18,9 +18,9 @@ import { ResponsiveMobile } from '../responsive.component';
 
 export default function AccountEditMobileComponent({
   storeProps,
+  accountProps,
   onSaveAsync,
 }: AccountEditResponsiveProps): JSX.Element {
-  const [props] = useObservable(AccountController.model.store);
   const { t, i18n } = useTranslation();
 
   return (
@@ -48,8 +48,8 @@ export default function AccountEditMobileComponent({
         >
           <AccountProfileFormComponent
             storeProps={storeProps}
-            values={props.profileForm}
-            errors={props.profileFormErrors}
+            values={accountProps.profileForm}
+            errors={accountProps.profileFormErrors}
             onChangeCallbacks={{
               firstName: (event) =>
                 AccountController.updateProfile({

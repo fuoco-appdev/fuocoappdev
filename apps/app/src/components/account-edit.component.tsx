@@ -14,9 +14,14 @@ import { lazy } from '@loadable/component';
 import { AccountEditSuspenseDesktopComponent } from './desktop/suspense/account-edit.suspense.desktop.component';
 import React from 'react';
 import { AccountEditSuspenseMobileComponent } from './mobile/suspense/account-edit.suspense.mobile.component';
+import { AccountState } from '../models/account.model';
+import { AccountEditSuspenseTabletComponent } from './tablet/suspense/account-edit.suspense.tablet.component';
 
 const AccountEditDesktopComponent = lazy(
   () => import('./desktop/account-edit.desktop.component')
+);
+const AccountEditTabletComponent = lazy(
+  () => import('./tablet/account-edit.tablet.component')
 );
 const AccountEditMobileComponent = lazy(
   () => import('./mobile/account-edit.mobile.component')
@@ -24,12 +29,14 @@ const AccountEditMobileComponent = lazy(
 
 export interface AccountEditResponsiveProps {
   storeProps: StoreState;
+  accountProps: AccountState;
   onSaveAsync: () => void;
 }
 
 export default function AccountEditComponent(): JSX.Element {
   const { t, i18n } = useTranslation();
   const [storeProps] = useObservable(StoreController.model.store);
+  const [accountProps] = useObservable(AccountController.model.store);
 
   const onSaveAsync = async () => {
     await AccountController.updateCustomerAsync(
@@ -46,6 +53,7 @@ export default function AccountEditComponent(): JSX.Element {
   const suspenceComponent = (
     <>
       <AccountEditSuspenseDesktopComponent />
+      <AccountEditSuspenseTabletComponent />
       <AccountEditSuspenseMobileComponent />
     </>
   );
@@ -59,10 +67,17 @@ export default function AccountEditComponent(): JSX.Element {
       <AuthenticatedComponent>
         <AccountEditDesktopComponent
           storeProps={storeProps}
+          accountProps={accountProps}
+          onSaveAsync={onSaveAsync}
+        />
+        <AccountEditTabletComponent
+          storeProps={storeProps}
+          accountProps={accountProps}
           onSaveAsync={onSaveAsync}
         />
         <AccountEditMobileComponent
           storeProps={storeProps}
+          accountProps={accountProps}
           onSaveAsync={onSaveAsync}
         />
       </AuthenticatedComponent>

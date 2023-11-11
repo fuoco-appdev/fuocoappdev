@@ -17,9 +17,9 @@ import { ResponsiveDesktop } from '../responsive.component';
 
 export default function AccountEditDesktopComponent({
   storeProps,
+  accountProps,
   onSaveAsync,
 }: AccountEditResponsiveProps): JSX.Element {
-  const [props] = useObservable(AccountController.model.store);
   const { t, i18n } = useTranslation();
 
   return (
@@ -47,8 +47,8 @@ export default function AccountEditDesktopComponent({
         >
           <AccountProfileFormComponent
             storeProps={storeProps}
-            values={props.profileForm}
-            errors={props.profileFormErrors}
+            values={accountProps.profileForm}
+            errors={accountProps.profileFormErrors}
             onChangeCallbacks={{
               firstName: (event) =>
                 AccountController.updateProfile({

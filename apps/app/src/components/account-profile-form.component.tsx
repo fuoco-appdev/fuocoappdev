@@ -16,6 +16,9 @@ import { AccountProfileFormSuspenseMobileComponent } from './mobile/suspense/acc
 const AccountProfileFormDesktopComponent = lazy(
   () => import('./desktop/account-profile-form.desktop.component')
 );
+const AccountProfileFormTabletComponent = lazy(
+  () => import('./tablet/account-profile-form.tablet.component')
+);
 const AccountProfileFormMobileComponent = lazy(
   () => import('./mobile/account-profile-form.mobile.component')
 );
@@ -89,6 +92,13 @@ export default function AccountProfileFormComponent({
   return (
     <React.Suspense fallback={suspenceComponent}>
       <AccountProfileFormDesktopComponent
+        storeProps={storeProps}
+        values={values}
+        errors={errors}
+        onChangeCallbacks={onChangeCallbacks}
+        selectedCountry={selectedCountry}
+      />
+      <AccountProfileFormTabletComponent
         storeProps={storeProps}
         values={values}
         errors={errors}

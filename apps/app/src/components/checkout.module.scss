@@ -716,6 +716,7 @@
 
 .modal-desktop {
     max-height: 95vh;
+    min-width: 500px;
     padding: $mp-8;
     overflow-y: auto;
 }
@@ -727,6 +728,7 @@
 
 .modal-tablet {
     max-height: 95vh;
+    min-width: 500px;
     padding: $mp-6;
     overflow-y: auto;
 }

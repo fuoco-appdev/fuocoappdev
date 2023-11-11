@@ -93,6 +93,28 @@
     }
 }
 
+.root-tablet {
+    padding: 0 $mp-6;
+
+    & .order-history-text-desktop {
+        margin: 0 $mp-6;
+        margin-bottom: $mp-2;
+    }
+
+    & .no-order-history-text-desktop {
+    }
+
+    & .shop-button-container-desktop {
+    }
+
+    & .scroll-desktop {
+        padding: $mp-6 0;
+
+        & .loading-ring-desktop {
+        }
+    }
+}
+
 .root-mobile {
     & .order-history-text-mobile {
         margin: 0 $mp-4;
