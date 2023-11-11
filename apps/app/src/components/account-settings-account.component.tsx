@@ -16,6 +16,9 @@ import { lazy } from '@loadable/component';
 const AccountSettingsAccountDesktopComponent = lazy(
   () => import('./desktop/account-settings-account.desktop.component')
 );
+const AccountSettingsAccountTabletComponent = lazy(
+  () => import('./tablet/account-settings-account.tablet.component')
+);
 const AccountSettingsAccountMobileComponent = lazy(
   () => import('./mobile/account-settings-account.mobile.component')
 );
@@ -69,6 +72,18 @@ export default function AccountSettingsAccountComponent(): JSX.Element {
     <React.Suspense fallback={suspenceComponent}>
       <AuthenticatedComponent>
         <AccountSettingsAccountDesktopComponent
+          accountProps={accountProps}
+          windowLocalProps={windowLocalProps}
+          updatePasswordError={updatePasswordError}
+          setUpdatePasswordError={setUpdatePasswordError}
+          confirmPasswordError={confirmPasswordError}
+          setConfirmPasswordError={setConfirmPasswordError}
+          showDeleteModal={showDeleteModal}
+          setShowDeleteModal={setShowDeleteModal}
+          isLanguageOpen={isLanguageOpen}
+          setIsLanguageOpen={setIsLanguageOpen}
+        />
+        <AccountSettingsAccountTabletComponent
           accountProps={accountProps}
           windowLocalProps={windowLocalProps}
           updatePasswordError={updatePasswordError}

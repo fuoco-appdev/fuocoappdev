@@ -57,108 +57,115 @@ export default function AccountSettingsAccountDesktopComponent({
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>
         <div
           className={[
-            styles['setting-button-content'],
-            styles['setting-button-content-desktop'],
+            styles['setting-container'],
+            styles['setting-container-desktop'],
           ].join(' ')}
         >
           <div
             className={[
-              styles['setting-icon'],
-              styles['setting-icon-desktop'],
+              styles['setting-button-content'],
+              styles['setting-button-content-desktop'],
             ].join(' ')}
           >
-            <Line.Language size={24} />
-          </div>
-          <div
-            className={[
-              styles['setting-text'],
-              styles['setting-text-desktop'],
-            ].join(' ')}
-          >
-            {t('language')}
-          </div>
-          <div
-            className={[
-              styles['setting-icon-right'],
-              styles['setting-icon-right-desktop'],
-            ].join(' ')}
-          >
-            <LanguageSwitch
-              type={'button'}
-              classNames={{
-                button: {
-                  button: styles['button'],
-                },
-              }}
-              language={windowLocalProps.languageCode}
-              open={isLanguageOpen}
-              supportedLanguages={[
-                { isoCode: 'en', countryCode: 'GB' },
-                { isoCode: 'fr', countryCode: 'FR' },
-              ]}
-              onChange={(code, info) =>
-                AccountController.updateAccountLanguageAsync(code, info)
-              }
-              onOpen={() => setIsLanguageOpen(true)}
-              onClose={() => setIsLanguageOpen(false)}
-            />
-          </div>
-        </div>
-        <Accordion defaultActiveId={['password-reset']}>
-          {provider === 'email' && (
-            <Accordion.Item
-              id={'password-reset'}
-              label={t('passwordReset')}
-              classNames={accordionItemClassNames}
+            <div
+              className={[
+                styles['setting-icon'],
+                styles['setting-icon-desktop'],
+              ].join(' ')}
             >
-              {SupabaseService.supabaseClient && (
-                <Auth.UpdatePassword
-                  supabaseClient={SupabaseService.supabaseClient}
-                  defaultIconColor={'#2A2A5F'}
-                  litIconColor={'#2A2A5F'}
-                  passwordErrorMessage={updatePasswordError}
-                  confirmPasswordErrorMessage={confirmPasswordError}
-                  classNames={{
-                    input: {
-                      formLayout: {
-                        label: styles['auth-input-form-layout-label'],
+              <Line.Language size={24} />
+            </div>
+            <div
+              className={[
+                styles['setting-text'],
+                styles['setting-text-desktop'],
+              ].join(' ')}
+            >
+              {t('language')}
+            </div>
+            <div
+              className={[
+                styles['setting-icon-right'],
+                styles['setting-icon-right-desktop'],
+              ].join(' ')}
+            >
+              <LanguageSwitch
+                type={'button'}
+                classNames={{
+                  button: {
+                    button: styles['button'],
+                  },
+                }}
+                language={windowLocalProps.languageCode}
+                open={isLanguageOpen}
+                supportedLanguages={[
+                  { isoCode: 'en', countryCode: 'GB' },
+                  { isoCode: 'fr', countryCode: 'FR' },
+                ]}
+                onChange={(code, info) =>
+                  AccountController.updateAccountLanguageAsync(code, info)
+                }
+                onOpen={() => setIsLanguageOpen(true)}
+                onClose={() => setIsLanguageOpen(false)}
+              />
+            </div>
+          </div>
+          <Accordion defaultActiveId={['password-reset']}>
+            {provider === 'email' && (
+              <Accordion.Item
+                id={'password-reset'}
+                label={t('passwordReset')}
+                classNames={accordionItemClassNames}
+              >
+                {SupabaseService.supabaseClient && (
+                  <Auth.UpdatePassword
+                    supabaseClient={SupabaseService.supabaseClient}
+                    defaultIconColor={'#2A2A5F'}
+                    litIconColor={'#2A2A5F'}
+                    passwordErrorMessage={updatePasswordError}
+                    confirmPasswordErrorMessage={confirmPasswordError}
+                    classNames={{
+                      input: {
+                        formLayout: {
+                          label: styles['auth-input-form-layout-label'],
+                        },
+                        input: styles['auth-input'],
+                        container: styles['auth-input-container'],
                       },
-                      input: styles['auth-input'],
-                      container: styles['auth-input-container'],
-                    },
-                    button: {
-                      button: styles['auth-button'],
-                    },
-                  }}
-                  strings={{
-                    newPassword: t('newPassword') ?? '',
-                    enterYourNewPassword: t('enterYourNewPassword') ?? '',
-                    updatePassword: t('updatePassword') ?? '',
-                    confirmNewPassword: t('confirmPassword') ?? '',
-                  }}
-                  onUpdatePasswordError={(error: AuthError) => {
-                    if (error.status === 422) {
-                      setUpdatePasswordError(t('passwordLengthError') ?? '');
-                    } else if (error.status === 401) {
-                      setConfirmPasswordError(
-                        t('confirmPasswordErrorMessage') ?? ''
-                      );
-                    }
-                  }}
-                  onPasswordUpdated={() => {
-                    WindowController.addToast({
-                      key: `update-password-${Math.random()}`,
-                      message: t('successfullyUpdatedPassword') ?? '',
-                      description:
-                        t('successfullyUpdatedPasswordDescription') ?? '',
-                      type: 'success',
-                    });
-                  }}
-                />
-              )}
-            </Accordion.Item>
-          )}
-        </Accordion>
+                      button: {
+                        button: styles['auth-button'],
+                      },
+                    }}
+                    strings={{
+                      newPassword: t('newPassword') ?? '',
+                      enterYourNewPassword: t('enterYourNewPassword') ?? '',
+                      updatePassword: t('updatePassword') ?? '',
+                      confirmNewPassword: t('confirmPassword') ?? '',
+                    }}
+                    onUpdatePasswordError={(error: AuthError) => {
+                      if (error.status === 422) {
+                        setUpdatePasswordError(t('passwordLengthError') ?? '');
+                      } else if (error.status === 401) {
+                        setConfirmPasswordError(
+                          t('confirmPasswordErrorMessage') ?? ''
+                        );
+                      }
+                    }}
+                    onPasswordUpdated={() => {
+                      WindowController.addToast({
+                        key: `update-password-${Math.random()}`,
+                        message: t('successfullyUpdatedPassword') ?? '',
+                        description:
+                          t('successfullyUpdatedPasswordDescription') ?? '',
+                        type: 'success',
+                      });
+                    }}
+                  />
+                )}
+              </Accordion.Item>
+            )}
+          </Accordion>
+        </div>
         <div
           className={[
             styles['bottom-content-container'],

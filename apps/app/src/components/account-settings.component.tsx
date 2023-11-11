@@ -14,6 +14,9 @@ import React from 'react';
 const AccountSettingsDesktopComponent = lazy(
   () => import('./desktop/account-settings.desktop.component')
 );
+const AccountSettingsTabletComponent = lazy(
+  () => import('./tablet/account-settings.tablet.component')
+);
 const AccountSettingsMobileComponent = lazy(
   () => import('./mobile/account-settings.mobile.component')
 );
@@ -74,6 +77,7 @@ export default function AccountSettingsComponent(): JSX.Element {
       <React.Suspense fallback={suspenceComponent}>
         <AuthenticatedComponent>
           <AccountSettingsDesktopComponent windowProps={windowProps} />
+          <AccountSettingsTabletComponent windowProps={windowProps} />
           <AccountSettingsMobileComponent windowProps={windowProps} />
         </AuthenticatedComponent>
       </React.Suspense>
