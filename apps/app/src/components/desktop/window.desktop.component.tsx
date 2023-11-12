@@ -34,6 +34,7 @@ export default function WindowDesktopComponent({
   windowLocalProps,
   accountProps,
   permissionsProps,
+  homeProps,
   openMore,
   isLanguageOpen,
   setOpenMore,
@@ -547,6 +548,28 @@ export default function WindowDesktopComponent({
                     styles['navigation-back-center-content-desktop'],
                   ].join(' ')}
                 >
+                  {windowProps.activeRoute?.startsWith(
+                    `${RoutePathsType.Store}/`
+                  ) && (
+                    <>
+                      <Avatar
+                        classNames={{
+                          container: [
+                            styles['avatar-container'],
+                            styles['avatar-container-desktop'],
+                          ].join(' '),
+                        }}
+                        size={'custom'}
+                        text={homeProps.selectedInventoryLocation?.company}
+                        src={''}
+                      />
+                      <div
+                        className={[styles['navigation-back-title']].join(' ')}
+                      >
+                        {homeProps.selectedInventoryLocation?.company}
+                      </div>
+                    </>
+                  )}
                   {windowProps.activeRoute?.startsWith(
                     RoutePathsType.AccountSettings
                   ) && (

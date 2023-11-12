@@ -38,6 +38,7 @@ export default function WindowTabletComponent({
   windowLocalProps,
   accountProps,
   permissionsProps,
+  homeProps,
   openMore,
   isLanguageOpen,
   setOpenMore,
@@ -547,6 +548,28 @@ export default function WindowTabletComponent({
                     styles['navigation-back-center-content-tablet'],
                   ].join(' ')}
                 >
+                  {windowProps.activeRoute?.startsWith(
+                    `${RoutePathsType.Store}/`
+                  ) && (
+                    <>
+                      <Avatar
+                        classNames={{
+                          container: [
+                            styles['avatar-container'],
+                            styles['avatar-container-tablet'],
+                          ].join(' '),
+                        }}
+                        size={'custom'}
+                        text={homeProps.selectedInventoryLocation?.company}
+                        src={''}
+                      />
+                      <div
+                        className={[styles['navigation-back-title']].join(' ')}
+                      >
+                        {homeProps.selectedInventoryLocation?.company}
+                      </div>
+                    </>
+                  )}
                   {windowProps.activeRoute?.startsWith(
                     RoutePathsType.AccountSettings
                   ) && (

@@ -23,6 +23,7 @@ import HomeController from '../controllers/home.controller';
 import { WindowSuspenseTabletComponent } from './tablet/suspense/window.suspense.tablet.component';
 import PermissionsController from '../controllers/permissions.controller';
 import { PermissionsState } from '../models/permissions.model';
+import { HomeState } from '../models/home.model';
 
 const WindowDesktopComponent = lazy(
   () => import('./desktop/window.desktop.component')
@@ -39,6 +40,7 @@ export interface WindowResponsiveProps {
   windowLocalProps: WindowLocalState;
   accountProps: AccountState;
   permissionsProps: PermissionsState;
+  homeProps: HomeState;
   openMore: boolean;
   isLanguageOpen: boolean;
   setOpenMore: (value: boolean) => void;
@@ -58,6 +60,7 @@ export default function WindowComponent(): JSX.Element {
   );
   const [accountProps] = useObservable(AccountController.model.store);
   const [permissionsProps] = useObservable(PermissionsController.model.store);
+  const [homeProps] = useObservable(HomeController.model.store);
   const isMounted = useRef<boolean>(false);
   const { i18n } = useTranslation();
   const [openMore, setOpenMore] = useState<boolean>(false);
@@ -157,6 +160,7 @@ export default function WindowComponent(): JSX.Element {
         windowLocalProps={windowLocalProps}
         accountProps={accountProps}
         permissionsProps={permissionsProps}
+        homeProps={homeProps}
         openMore={openMore}
         isLanguageOpen={isLanguageOpen}
         setOpenMore={setOpenMore}
@@ -170,6 +174,7 @@ export default function WindowComponent(): JSX.Element {
         windowLocalProps={windowLocalProps}
         accountProps={accountProps}
         permissionsProps={permissionsProps}
+        homeProps={homeProps}
         openMore={openMore}
         isLanguageOpen={isLanguageOpen}
         setOpenMore={setOpenMore}
@@ -183,6 +188,7 @@ export default function WindowComponent(): JSX.Element {
         windowLocalProps={windowLocalProps}
         accountProps={accountProps}
         permissionsProps={permissionsProps}
+        homeProps={homeProps}
         openMore={openMore}
         isLanguageOpen={isLanguageOpen}
         setOpenMore={setOpenMore}

@@ -143,7 +143,7 @@ class WindowController extends Controller {
       this._model.transitionKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.StoreWithId;
       this._model.showNavigateBack = true;
-      this._model.hideCartButton = false;
+      this._model.hideCartButton = true;
     } else if (location.pathname === RoutePathsType.Events) {
       this._model.transitionKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.Events;

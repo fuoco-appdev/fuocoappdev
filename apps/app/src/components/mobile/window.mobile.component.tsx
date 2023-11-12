@@ -30,6 +30,7 @@ export default function WindowMobileComponent({
   windowLocalProps,
   accountProps,
   permissionsProps,
+  homeProps,
   openMore,
   isLanguageOpen,
   setOpenMore,
@@ -252,6 +253,29 @@ export default function WindowMobileComponent({
                         styles['navigation-back-text-container-mobile'],
                       ].join(' ')}
                     >
+                      {activeRoute?.startsWith(`${RoutePathsType.Store}/`) && (
+                        <>
+                          <Avatar
+                            classNames={{
+                              container: [
+                                styles['avatar-container'],
+                                styles['avatar-container-mobile'],
+                              ].join(' '),
+                            }}
+                            size={'custom'}
+                            text={homeProps.selectedInventoryLocation?.company}
+                            src={''}
+                            touchScreen={true}
+                          />
+                          <div
+                            className={[styles['navigation-back-title']].join(
+                              ' '
+                            )}
+                          >
+                            {homeProps.selectedInventoryLocation?.company}
+                          </div>
+                        </>
+                      )}
                       {activeRoute === RoutePathsType.AccountHelp && (
                         <>
                           <Line.HelpOutline size={22} />

@@ -25,9 +25,13 @@ import { ProductSuspenseDesktopComponent } from './desktop/suspense/product.susp
 import { ProductSuspenseMobileComponent } from './mobile/suspense/product.suspense.mobile.component';
 import WindowController from '../controllers/window.controller';
 import { useTranslation } from 'react-i18next';
+import { ProductSuspenseTabletComponent } from './tablet/suspense/product.suspense.tablet.component';
 
 const ProductDesktopComponent = lazy(() =>
   timeout(import('./desktop/product.desktop.component'), 150)
+);
+const ProductTabletComponent = lazy(() =>
+  timeout(import('./tablet/product.tablet.component'), 150)
 );
 const ProductMobileComponent = lazy(() =>
   timeout(import('./mobile/product.mobile.component'), 150)
@@ -224,6 +228,7 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
   const suspenceComponent = (
     <>
       <ProductSuspenseDesktopComponent />
+      <ProductSuspenseTabletComponent />
       <ProductSuspenseMobileComponent />
     </>
   );
@@ -271,6 +276,30 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <ProductDesktopComponent
+          productProps={productProps}
+          storeProps={storeProps}
+          remarkPlugins={remarkPlugins}
+          description={description}
+          tabs={tabs}
+          activeVariantId={activeVariantId}
+          activeDetails={activeDetails}
+          alcohol={alcohol}
+          brand={brand}
+          varietals={varietals}
+          producerBottler={producerBottler}
+          format={format}
+          region={region}
+          residualSugar={residualSugar}
+          type={type}
+          uvc={uvc}
+          vintage={vintage}
+          quantity={quantity}
+          setActiveDetails={setActiveDetails}
+          setDescription={setDescription}
+          setQuantity={setQuantity}
+          onAddToCart={onAddToCart}
+        />
+        <ProductTabletComponent
           productProps={productProps}
           storeProps={storeProps}
           remarkPlugins={remarkPlugins}
