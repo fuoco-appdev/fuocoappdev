@@ -263,7 +263,9 @@ export default function WindowMobileComponent({
                               ].join(' '),
                             }}
                             size={'custom'}
-                            text={homeProps.selectedInventoryLocation?.company}
+                            text={
+                              homeProps.selectedInventoryLocation?.company ?? ''
+                            }
                             src={''}
                             touchScreen={true}
                           />
@@ -272,7 +274,7 @@ export default function WindowMobileComponent({
                               ' '
                             )}
                           >
-                            {homeProps.selectedInventoryLocation?.company}
+                            {homeProps.selectedInventoryLocation?.company ?? ''}
                           </div>
                         </>
                       )}

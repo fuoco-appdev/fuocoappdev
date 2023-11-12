@@ -560,13 +560,15 @@ export default function WindowDesktopComponent({
                           ].join(' '),
                         }}
                         size={'custom'}
-                        text={homeProps.selectedInventoryLocation?.company}
+                        text={
+                          homeProps.selectedInventoryLocation?.company ?? ''
+                        }
                         src={''}
                       />
                       <div
                         className={[styles['navigation-back-title']].join(' ')}
                       >
-                        {homeProps.selectedInventoryLocation?.company}
+                        {homeProps.selectedInventoryLocation?.company ?? ''}
                       </div>
                     </>
                   )}
