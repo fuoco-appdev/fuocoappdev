@@ -46,6 +46,7 @@ export default function WindowTabletComponent({
   onSelectLocation,
   onCancelLocation,
   onSidebarTabsChanged,
+  onNavigateBack,
 }: WindowResponsiveProps): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -524,20 +525,7 @@ export default function WindowTabletComponent({
                     rounded={true}
                     size={'tiny'}
                     disabled={!windowProps.showNavigateBack}
-                    onClick={() => {
-                      WindowController.updateShowNavigateBack(false);
-
-                      if (
-                        windowProps.activeRoute?.startsWith(
-                          RoutePathsType.AccountSettings
-                        )
-                      ) {
-                        setTimeout(() => navigate(RoutePathsType.Account), 150);
-                        return;
-                      }
-
-                      setTimeout(() => navigate(-1), 150);
-                    }}
+                    onClick={onNavigateBack}
                     type={'text'}
                     icon={<Line.ArrowBack size={24} color={'#2A2A5F'} />}
                   />

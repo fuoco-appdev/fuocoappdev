@@ -37,6 +37,7 @@ export default function WindowMobileComponent({
   setIsLanguageOpen,
   onSelectLocation,
   onCancelLocation,
+  onNavigateBack,
 }: WindowResponsiveProps): JSX.Element {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -232,7 +233,7 @@ export default function WindowMobileComponent({
                       }}
                       onClick={() => {
                         setSwitchBottomBar(true);
-                        navigate(-1);
+                        onNavigateBack();
                       }}
                       type={'text'}
                       rounded={true}

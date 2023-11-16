@@ -48,6 +48,7 @@ export interface WindowResponsiveProps {
   onSelectLocation: () => void;
   onCancelLocation: () => void;
   onSidebarTabsChanged: (id: string) => void;
+  onNavigateBack: () => void;
 }
 
 export default function WindowComponent(): JSX.Element {
@@ -83,6 +84,22 @@ export default function WindowComponent(): JSX.Element {
 
   const onSidebarTabsChanged = (id: string) => {
     navigate(id);
+  };
+
+  const onNavigateBack = () => {
+    WindowController.updateShowNavigateBack(false);
+
+    if (windowProps.activeRoute?.startsWith(RoutePathsType.AccountSettings)) {
+      setTimeout(() => navigate(RoutePathsType.Account), 150);
+      return;
+    }
+
+    if (windowProps.activeRoute?.startsWith(`${RoutePathsType.Store}/`)) {
+      setTimeout(() => navigate(RoutePathsType.Store), 150);
+      return;
+    }
+
+    setTimeout(() => navigate(-1), 150);
   };
 
   useEffect(() => {
@@ -159,6 +176,7 @@ export default function WindowComponent(): JSX.Element {
         onSelectLocation={onSelectLocation}
         onCancelLocation={onCancelLocation}
         onSidebarTabsChanged={onSidebarTabsChanged}
+        onNavigateBack={onNavigateBack}
       />
       <WindowTabletComponent
         windowProps={windowProps}
@@ -173,6 +191,7 @@ export default function WindowComponent(): JSX.Element {
         onSelectLocation={onSelectLocation}
         onCancelLocation={onCancelLocation}
         onSidebarTabsChanged={onSidebarTabsChanged}
+        onNavigateBack={onNavigateBack}
       />
       <WindowMobileComponent
         windowProps={windowProps}
@@ -187,6 +206,7 @@ export default function WindowComponent(): JSX.Element {
         onSelectLocation={onSelectLocation}
         onCancelLocation={onCancelLocation}
         onSidebarTabsChanged={onSidebarTabsChanged}
+        onNavigateBack={onNavigateBack}
       />
     </React.Suspense>
   );
