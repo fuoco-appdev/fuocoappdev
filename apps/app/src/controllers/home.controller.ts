@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { ViewState } from 'react-map-gl';
 import { Controller } from '../controller';
-import { HomeModel, InventoryLocation } from '../models/home.model';
+import { HomeModel, HomeState, InventoryLocation } from '../models/home.model';
 import MedusaService from '../services/medusa.service';
 import mapboxgl from 'mapbox-gl';
 import { point, featureCollection, nearestPoint, helpers } from '@turf/turf';
@@ -70,6 +70,28 @@ class HomeController extends Controller {
 
   public isInventoryLocationIdSelected(value: string): boolean {
     return this._model.selectedInventoryLocationId === value;
+  }
+
+  public async getDefaultInventoryLocationAsync(): Promise<
+    InventoryLocation | undefined
+  > {
+    return new Promise<InventoryLocation | undefined>((resolve, reject) => {
+      const subscription = this._model.store
+        .pipe(select((model: HomeState) => model.inventoryLocations))
+        .subscribe({
+          next: (value: InventoryLocation[]) => {
+            if (value.length <= 0) {
+              resolve(undefined);
+              subscription.unsubscribe();
+              return;
+            }
+
+            resolve(value[0]);
+            subscription.unsubscribe();
+          },
+          error: (error: any) => reject(error),
+        });
+    });
   }
 
   private async initializeAsync(renderCount: number): Promise<void> {

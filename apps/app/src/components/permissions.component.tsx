@@ -61,6 +61,13 @@ export default function PermissionsComponent(): JSX.Element {
   };
 
   const onContinueAsync = async () => {
+    if (!HomeController.model.selectedInventoryLocation) {
+      const defaultInventoryLocation =
+        await HomeController.getDefaultInventoryLocationAsync();
+      WindowController.updateQueryInventoryLocation(
+        defaultInventoryLocation?.id
+      );
+    }
     if (windowProps.loadedLocationPath !== RoutePathsType.Permissions) {
       navigate(windowProps.loadedLocationPath ?? RoutePathsType.Home);
     } else {
