@@ -61,6 +61,14 @@ export default function PermissionsComponent(): JSX.Element {
   };
 
   const onContinueAsync = async () => {
+    if (windowProps.loadedLocationPath !== RoutePathsType.Permissions) {
+      navigate(windowProps.loadedLocationPath ?? RoutePathsType.Home);
+    } else {
+      navigate(RoutePathsType.Home);
+    }
+  };
+
+  const updateDefaultInventoryLocationAsync = async () => {
     if (!HomeController.model.selectedInventoryLocation) {
       const defaultInventoryLocation =
         await HomeController.getDefaultInventoryLocationAsync();
@@ -68,12 +76,13 @@ export default function PermissionsComponent(): JSX.Element {
         defaultInventoryLocation?.id
       );
     }
-    if (windowProps.loadedLocationPath !== RoutePathsType.Permissions) {
-      navigate(windowProps.loadedLocationPath ?? RoutePathsType.Home);
-    } else {
-      navigate(RoutePathsType.Home);
-    }
   };
+
+  useLayoutEffect(() => {
+    return () => {
+      updateDefaultInventoryLocationAsync();
+    };
+  }, []);
 
   const suspenceComponent = (
     <>
