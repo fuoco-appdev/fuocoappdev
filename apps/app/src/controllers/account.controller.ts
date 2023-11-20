@@ -416,20 +416,20 @@ class AccountController extends Controller {
       return;
     }
 
-    this._selectedInventoryLocationIdSubscription?.unsubscribe();
-    this._selectedInventoryLocationIdSubscription =
-      HomeController.model?.localStore
-        ?.pipe(
-          select((model: HomeLocalState) => model.selectedInventoryLocationId)
-        )
-        .subscribe({
-          next: this.onSelectedInventoryLocationIdChangedAsync,
-        });
-
     try {
       this._model.customer = await MedusaService.requestCustomerAccountAsync(
         value?.id ?? ''
       );
+
+      this._selectedInventoryLocationIdSubscription?.unsubscribe();
+      this._selectedInventoryLocationIdSubscription =
+        HomeController.model?.localStore
+          ?.pipe(
+            select((model: HomeLocalState) => model.selectedInventoryLocationId)
+          )
+          .subscribe({
+            next: this.onSelectedInventoryLocationIdChangedAsync,
+          });
 
       this._model.profileForm = {
         firstName: this._model.customer?.first_name,
@@ -464,8 +464,12 @@ class AccountController extends Controller {
       this._model.customerGroup = await MedusaService.requestCustomerGroupAsync(
         id
       );
+      this._model.customerGroup =
+        await MedusaService.requestAddCustomerToGroupAsync({
+          customerGroupId: this._model.customerGroup?.id ?? '',
+          customerId: this._model.customer?.id ?? '',
+        });
       this._model.isCreateCustomerLoading = false;
-      console.log(this._model.customerGroup);
     } catch (error: any) {
       console.error(error);
     }

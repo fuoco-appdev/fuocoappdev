@@ -4,6 +4,7 @@ import {
   CustomerRequest,
   OrdersRequest,
   ProductCountRequest,
+  AddCustomerToGroupRequest,
 } from '../protobuf/core_pb.js';
 import { Controller, Post, Guard, ContentType } from '../index.ts';
 import { readAll } from 'https://deno.land/std@0.105.0/io/util.ts';

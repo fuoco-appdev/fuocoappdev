@@ -178,6 +178,68 @@ class MedusaService {
     const customerGroupId = request.getCustomerGroupId();
     const customerId = request.getCustomerId();
     const customerGroup = new CustomerGroupResponse();
+
+    const customerGroupCustomers = await SupabaseService.client
+      .from('customer_group_customers')
+      .select()
+      .match({ customer_id: customerId });
+
+    if (customerGroupCustomers.error) {
+      console.error(customerGroupCustomers.error);
+      return customerGroup;
+    }
+
+    for (const group of customerGroupCustomers.data) {
+      if (customerGroupId === group.customer_group_id) {
+        continue;
+      }
+
+      try {
+        const customerGroupResponse = await axiod.delete(
+          `${this._url}/admin/customer-groups/${group.customer_group_id}/customers/batch`,
+          {
+            customer_ids: [
+              {
+                id: customerId,
+              },
+            ],
+          },
+          {
+            headers: {
+              'x-medusa-access-token': this._token,
+            },
+          }
+        );
+      } catch (error: any) {
+        console.error(error);
+      }
+    }
+
+    try {
+      const customerGroupResponse = await axiod.post(
+        `${this._url}/admin/customer-groups/${customerGroupId}/customers/batch`,
+        {
+          customer_ids: [
+            {
+              id: customerId,
+            },
+          ],
+        },
+        {
+          headers: {
+            'x-medusa-access-token': this._token,
+          },
+        }
+      );
+
+      const customerGroupData = customerGroupResponse.data
+        ? customerGroupResponse.data['customer_group']
+        : '';
+      customerGroup.setData(JSON.stringify(customerGroupData));
+    } catch (error: any) {
+      console.error(error);
+    }
+
     return customerGroup;
   }
 

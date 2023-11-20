@@ -185,6 +185,38 @@ class MedusaService extends Service {
     return customerGroupData;
   }
 
+  public async requestAddCustomerToGroupAsync(props: {
+    customerGroupId: string;
+    customerId: string;
+  }): Promise<CustomerGroup | undefined> {
+    const session = await SupabaseService.requestSessionAsync();
+    const addCustomerToGroupRequest = new core.AddCustomerToGroupRequest({
+      customerGroupId: props.customerGroupId,
+      customerId: props.customerId,
+    });
+    const response = await axios({
+      method: 'post',
+      url: `${this.endpointUrl}/medusa/customer-group/add-customer`,
+      headers: {
+        ...this.headers,
+        'Session-Token': `${session?.access_token}`,
+      },
+      data: addCustomerToGroupRequest.toBinary(),
+      responseType: 'arraybuffer',
+    });
+    const arrayBuffer = new Uint8Array(response.data);
+    this.assertResponse(arrayBuffer);
+
+    const customerGroupResponse =
+      core.CustomerGroupResponse.fromBinary(arrayBuffer);
+    if (customerGroupResponse.data.length <= 0) {
+      return undefined;
+    }
+
+    const customerGroupData = JSON.parse(customerGroupResponse.data);
+    return customerGroupData;
+  }
+
   public async requestStockLocationsAsync(): Promise<any[]> {
     const response = await axios({
       method: 'post',
