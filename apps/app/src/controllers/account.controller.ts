@@ -24,11 +24,14 @@ import {
 import { RoutePathsType } from '../route-paths';
 import { LanguageInfo } from '@fuoco.appdev/core-ui';
 import { select } from '@ngneat/elf';
+import HomeController from './home.controller';
+import { HomeLocalState } from 'src/models/home.model';
 
 class AccountController extends Controller {
   private readonly _model: AccountModel;
   private _activeAccountSubscription: Subscription | undefined;
   private _userSubscription: Subscription | undefined;
+  private _selectedInventoryLocationIdSubscription: Subscription | undefined;
 
   constructor() {
     super();
@@ -38,6 +41,8 @@ class AccountController extends Controller {
       this.onActiveAccountChangedAsync.bind(this);
     this.onActiveUserChangedAsync = this.onActiveUserChangedAsync.bind(this);
     this.uploadAvatarAsync = this.uploadAvatarAsync.bind(this);
+    this.onSelectedInventoryLocationIdChangedAsync =
+      this.onSelectedInventoryLocationIdChangedAsync.bind(this);
   }
 
   public get model(): AccountModel {
@@ -55,6 +60,7 @@ class AccountController extends Controller {
   }
 
   public override dispose(renderCount: number): void {
+    this._selectedInventoryLocationIdSubscription?.unsubscribe();
     this._activeAccountSubscription?.unsubscribe();
     this._userSubscription?.unsubscribe();
   }
@@ -410,6 +416,16 @@ class AccountController extends Controller {
       return;
     }
 
+    this._selectedInventoryLocationIdSubscription?.unsubscribe();
+    this._selectedInventoryLocationIdSubscription =
+      HomeController.model?.localStore
+        ?.pipe(
+          select((model: HomeLocalState) => model.selectedInventoryLocationId)
+        )
+        .subscribe({
+          next: this.onSelectedInventoryLocationIdChangedAsync,
+        });
+
     try {
       this._model.customer = await MedusaService.requestCustomerAccountAsync(
         value?.id ?? ''
@@ -424,6 +440,32 @@ class AccountController extends Controller {
       await this.requestOrdersAsync();
 
       this._model.user = value;
+    } catch (error: any) {
+      console.error(error);
+    }
+  }
+
+  private async onSelectedInventoryLocationIdChangedAsync(
+    id: string | undefined
+  ): Promise<void> {
+    if (!id || this._model.isCreateCustomerLoading) {
+      return;
+    }
+
+    if (
+      this._model.customerGroup &&
+      this._model.customerGroup.metadata['sales_location_id'] === id
+    ) {
+      return;
+    }
+
+    try {
+      this._model.isCustomerGroupLoading = true;
+      this._model.customerGroup = await MedusaService.requestCustomerGroupAsync(
+        id
+      );
+      this._model.isCreateCustomerLoading = false;
+      console.log(this._model.customerGroup);
     } catch (error: any) {
       console.error(error);
     }

@@ -1,5 +1,5 @@
 import Medusa from '@medusajs/medusa-js';
-import { Customer, Order } from '@medusajs/medusa';
+import { Customer, Order, CustomerGroup } from '@medusajs/medusa';
 import ConfigService from './config.service';
 import axios, { AxiosError } from 'axios';
 import { Service } from '../service';
@@ -156,6 +156,33 @@ class MedusaService extends Service {
     }
 
     return JSON.parse(customerResponse.data);
+  }
+
+  public async requestCustomerGroupAsync(
+    salesLocationId: string
+  ): Promise<CustomerGroup | undefined> {
+    const session = await SupabaseService.requestSessionAsync();
+    const response = await axios({
+      method: 'post',
+      url: `${this.endpointUrl}/medusa/customer-group/${salesLocationId}`,
+      headers: {
+        ...this.headers,
+        'Session-Token': `${session?.access_token}`,
+      },
+      data: '',
+      responseType: 'arraybuffer',
+    });
+    const arrayBuffer = new Uint8Array(response.data);
+    this.assertResponse(arrayBuffer);
+
+    const customerGroupResponse =
+      core.CustomerGroupResponse.fromBinary(arrayBuffer);
+    if (customerGroupResponse.data.length <= 0) {
+      return undefined;
+    }
+
+    const customerGroupData = JSON.parse(customerGroupResponse.data);
+    return customerGroupData;
   }
 
   public async requestStockLocationsAsync(): Promise<any[]> {

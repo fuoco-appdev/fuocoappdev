@@ -33,6 +33,15 @@ message CustomerResponse {
     string password = 2;
 }
 
+message AddCustomerToGroupRequest {
+    string customer_group_id = 1;
+    string customer_id = 2;
+}
+
+message CustomerGroupResponse {
+    string data = 1;
+}
+
 message OrdersRequest {
     int32 offset = 1;
     int32 limit = 2;

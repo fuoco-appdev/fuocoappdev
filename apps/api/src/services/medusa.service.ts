@@ -3,6 +3,8 @@ import {
   StockLocationsResponse,
   CustomerResponse,
   CustomerRequest,
+  AddCustomerToGroupRequest,
+  CustomerGroupResponse,
   OrdersResponse,
   OrdersRequest,
   ProductCountResponse,
@@ -168,6 +170,36 @@ class MedusaService {
     customer.setData(JSON.stringify(data));
     customer.setPassword(sessionToken);
     return customer;
+  }
+
+  public async addCustomerToGroupAsync(
+    request: InstanceType<typeof AddCustomerToGroupRequest>
+  ): Promise<InstanceType<typeof CustomerGroupResponse>> {
+    const customerGroupId = request.getCustomerGroupId();
+    const customerId = request.getCustomerId();
+    const customerGroup = new CustomerGroupResponse();
+    return customerGroup;
+  }
+
+  public async findCustomerGroupAsync(
+    salesLocationId: string
+  ): Promise<InstanceType<typeof CustomerGroupResponse>> {
+    const customerGroup = new CustomerGroupResponse();
+    const { data, error } = await SupabaseService.client
+      .from('customer_group')
+      .select()
+      .contains('metadata', {
+        sales_location_id: salesLocationId,
+      });
+
+    if (error) {
+      console.error(error);
+      return customerGroup;
+    }
+
+    const customerGroupData = data.length > 0 ? data[0] : '';
+    customerGroup.setData(JSON.stringify(customerGroupData));
+    return customerGroup;
   }
 
   public async getStockLocationsAsync(): Promise<

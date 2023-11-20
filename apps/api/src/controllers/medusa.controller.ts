@@ -81,6 +81,45 @@ export class MedusaController {
     context.response.body = response.serializeBinary();
   }
 
+  @Post('/customer-group/add-customer')
+  @Guard(AuthGuard)
+  @ContentType('application/x-protobuf')
+  public async addCustomerToGroupAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >
+  ): Promise<void> {
+    const body = await context.request.body({ type: 'reader' });
+    const requestValue = await readAll(body.value);
+    const addCustomerToGroupRequest =
+      AddCustomerToGroupRequest.deserializeBinary(requestValue);
+    const response = await MedusaService.addCustomerToGroupAsync(
+      addCustomerToGroupRequest
+    );
+    context.response.type = 'application/x-protobuf';
+    context.response.body = response.serializeBinary();
+  }
+
+  @Post('/customer-group/:salesLocationId')
+  @Guard(AuthGuard)
+  @ContentType('application/x-protobuf')
+  public async getCustomerGroupAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >
+  ): Promise<void> {
+    const paramsSalesLocationId = context.params['salesLocationId'];
+    const response = await MedusaService.findCustomerGroupAsync(
+      paramsSalesLocationId
+    );
+    context.response.type = 'application/x-protobuf';
+    context.response.body = response.serializeBinary();
+  }
+
   @Post('/customer/:supabaseId')
   @Guard(AuthGuard)
   @ContentType('application/x-protobuf')

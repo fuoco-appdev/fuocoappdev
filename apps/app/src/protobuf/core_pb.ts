@@ -235,6 +235,86 @@ export class CustomerResponse extends Message<CustomerResponse> {
 }
 
 /**
+ * @generated from message core.AddCustomerToGroupRequest
+ */
+export class AddCustomerToGroupRequest extends Message<AddCustomerToGroupRequest> {
+  /**
+   * @generated from field: string customer_group_id = 1;
+   */
+  customerGroupId = "";
+
+  /**
+   * @generated from field: string customer_id = 2;
+   */
+  customerId = "";
+
+  constructor(data?: PartialMessage<AddCustomerToGroupRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.AddCustomerToGroupRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "customer_group_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "customer_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AddCustomerToGroupRequest {
+    return new AddCustomerToGroupRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AddCustomerToGroupRequest {
+    return new AddCustomerToGroupRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AddCustomerToGroupRequest {
+    return new AddCustomerToGroupRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AddCustomerToGroupRequest | PlainMessage<AddCustomerToGroupRequest> | undefined, b: AddCustomerToGroupRequest | PlainMessage<AddCustomerToGroupRequest> | undefined): boolean {
+    return proto3.util.equals(AddCustomerToGroupRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message core.CustomerGroupResponse
+ */
+export class CustomerGroupResponse extends Message<CustomerGroupResponse> {
+  /**
+   * @generated from field: string data = 1;
+   */
+  data = "";
+
+  constructor(data?: PartialMessage<CustomerGroupResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.CustomerGroupResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "data", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CustomerGroupResponse {
+    return new CustomerGroupResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CustomerGroupResponse {
+    return new CustomerGroupResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CustomerGroupResponse {
+    return new CustomerGroupResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: CustomerGroupResponse | PlainMessage<CustomerGroupResponse> | undefined, b: CustomerGroupResponse | PlainMessage<CustomerGroupResponse> | undefined): boolean {
+    return proto3.util.equals(CustomerGroupResponse, a, b);
+  }
+}
+
+/**
  * @generated from message core.OrdersRequest
  */
 export class OrdersRequest extends Message<OrdersRequest> {

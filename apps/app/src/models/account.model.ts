@@ -1,7 +1,7 @@
 import { createStore, withProps } from '@ngneat/elf';
 import { Model } from '../model';
 import * as core from '../protobuf/core_pb';
-import { Customer, Order, Address } from '@medusajs/medusa';
+import { Customer, Order, Address, CustomerGroup } from '@medusajs/medusa';
 import {
   ProfileFormErrors,
   ProfileFormValues,
@@ -17,6 +17,8 @@ export interface AccountState {
   user: User | null;
   account: core.Account | undefined;
   customer: Customer | undefined;
+  customerGroup: CustomerGroup | undefined;
+  isCustomerGroupLoading: boolean;
   profileForm: ProfileFormValues;
   profileFormErrors: ProfileFormErrors;
   errorStrings: ProfileFormErrors;
@@ -48,6 +50,8 @@ export class AccountModel extends Model {
           user: null,
           account: undefined,
           customer: undefined,
+          customerGroup: undefined,
+          isCustomerGroupLoading: false,
           profileForm: {
             firstName: '',
             lastName: '',
@@ -158,6 +162,29 @@ export class AccountModel extends Model {
   public set customer(value: Customer | undefined) {
     if (JSON.stringify(this.customer) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, customer: value }));
+    }
+  }
+
+  public get customerGroup(): CustomerGroup | undefined {
+    return this.store.getValue().customerGroup;
+  }
+
+  public set customerGroup(value: CustomerGroup | undefined) {
+    if (JSON.stringify(this.customerGroup) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, customerGroup: value }));
+    }
+  }
+
+  public get isCustomerGroupLoading(): boolean {
+    return this.store.getValue().isCustomerGroupLoading;
+  }
+
+  public set isCustomerGroupLoading(value: boolean) {
+    if (this.isCustomerGroupLoading !== value) {
+      this.store.update((state) => ({
+        ...state,
+        isCustomerGroupLoading: value,
+      }));
     }
   }
 

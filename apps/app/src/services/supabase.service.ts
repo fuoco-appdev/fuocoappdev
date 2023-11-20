@@ -79,7 +79,8 @@ class SupabaseService {
       }
 
       if (
-        JSON.stringify(this.user) !== JSON.stringify(userResponse?.data.user)
+        this.user?.id !== userResponse?.data.user.id &&
+        this.user?.updated_at !== userResponse?.data.user.updated_at
       ) {
         this._userBehaviorSubject.next(userResponse?.data.user ?? null);
       }
@@ -128,7 +129,12 @@ class SupabaseService {
       }
 
       this._sessionBehaviorSubject.next(session);
-      this._userBehaviorSubject.next(session.user);
+      if (
+        this.user?.id !== session.user.id &&
+        this.user?.updated_at !== session.user.updated_at
+      ) {
+        this._userBehaviorSubject.next(session.user);
+      }
     } else if (event === 'SIGNED_OUT') {
       this.clear();
     } else {
