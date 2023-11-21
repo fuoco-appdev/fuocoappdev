@@ -4,6 +4,7 @@ import WindowController from '../../controllers/window.controller';
 import styles from '../window.module.scss';
 import {
   Avatar,
+  BannerOverlay,
   Button,
   Dropdown,
   LanguageSwitch,
@@ -773,6 +774,12 @@ export default function WindowMobileComponent({
           </>,
           document.body
         )}
+        <BannerOverlay
+          touchScreen={true}
+          transition={'up'}
+          align={'center'}
+          banners={windowProps.banner ? [windowProps.banner] : []}
+        />
       </div>
     </ResponsiveMobile>
   );

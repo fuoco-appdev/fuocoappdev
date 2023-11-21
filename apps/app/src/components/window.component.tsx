@@ -24,6 +24,8 @@ import { WindowSuspenseTabletComponent } from './tablet/suspense/window.suspense
 import PermissionsController from '../controllers/permissions.controller';
 import { PermissionsState } from '../models/permissions.model';
 import { HomeState } from '../models/home.model';
+import { PriceList } from '@medusajs/medusa';
+import { Line } from '@fuoco.appdev/core-ui';
 
 const WindowDesktopComponent = lazy(
   () => import('./desktop/window.desktop.component')
@@ -63,7 +65,7 @@ export default function WindowComponent(): JSX.Element {
   const [permissionsProps] = useObservable(PermissionsController.model.store);
   const [homeProps] = useObservable(HomeController.model.store);
   const isMounted = useRef<boolean>(false);
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const [openMore, setOpenMore] = useState<boolean>(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState<boolean>(false);
   const [windowLocalProps] = useObservable(
@@ -138,6 +140,33 @@ export default function WindowComponent(): JSX.Element {
   useEffect(() => {
     WindowController.addToast(undefined);
   }, [windowProps.toast]);
+
+  useEffect(() => {
+    WindowController.addBanner(undefined);
+  }, [windowProps.banner]);
+
+  useEffect(() => {
+    for (const priceList of windowProps.priceLists as PriceList[]) {
+      const date = new Date(priceList.ends_at?.toString() ?? '');
+      setTimeout(
+        () =>
+          WindowController.addBanner({
+            key: `${priceList.id}-${Math.random()}`,
+            title: priceList.name,
+            subtitle: homeProps.selectedInventoryLocation?.company,
+            description: priceList.description,
+            footerText:
+              t('priceListEndsOn', {
+                date: `${date.toLocaleDateString(
+                  i18n.language
+                )} ${date.toLocaleTimeString(i18n.language)}`,
+              }) ?? '',
+            icon: <Line.Sell size={40} color={'#2A2A5F'} />,
+          }),
+        500
+      );
+    }
+  }, [windowProps.priceLists]);
 
   useEffect(() => {
     if (permissionsProps.arePermissionsActive === undefined) {

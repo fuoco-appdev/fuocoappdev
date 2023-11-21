@@ -27,7 +27,8 @@ import { ResponsiveDesktop } from '../responsive.component';
 export default function ProductPreviewDesktopComponent({
   preview,
   onClick,
-  price,
+  originalPrice,
+  calculatedPrice,
   selectedVariantId,
   onAddToCart,
   onRest,
@@ -82,7 +83,18 @@ export default function ProductPreviewDesktopComponent({
                 styles['thumbnail-top-content'],
                 styles['thumbnail-top-content-desktop'],
               ].join(' ')}
-            ></div>
+            >
+              {originalPrice !== calculatedPrice && (
+                <div
+                  className={[
+                    styles['calculated-price'],
+                    styles['calculated-price-desktop'],
+                  ].join(' ')}
+                >
+                  {calculatedPrice}
+                </div>
+              )}
+            </div>
           </div>
         </div>
         <div
@@ -122,14 +134,16 @@ export default function ProductPreviewDesktopComponent({
                 </div>
               )}
             </div>
-            {price.length > 0 ? (
+            {originalPrice.length > 0 ? (
               <span
                 className={[
                   styles['product-price'],
                   styles['product-price-desktop'],
+                  originalPrice !== calculatedPrice &&
+                    styles['product-price-crossed'],
                 ].join(' ')}
               >
-                {price}
+                {originalPrice}
               </span>
             ) : (
               <div

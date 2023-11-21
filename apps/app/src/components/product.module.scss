@@ -123,6 +123,9 @@
   }
 
   & .price {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     font-size: 14pt;
     color: $brand-900;
     font-weight: $font-weight-bold;
@@ -133,6 +136,20 @@
     -moz-user-select: text; /* Firefox */
     -ms-user-select: text; /* Edge, IE */
     user-select: text; /* Modern browsers */
+
+    & .calculated-price {
+      padding: $mp-1 $mp-4;
+      font-size: 12pt;
+      font-weight: $font-weight-bold;
+      background-color: $brand-500;
+      color: #fff;
+      border-radius: 999px;
+      width: fit-content;
+    }
+
+    & .original-price-crossed {
+      text-decoration: line-through;
+    }
 
     & .inventory-quantity {
       font-weight: $font-weight-medium;

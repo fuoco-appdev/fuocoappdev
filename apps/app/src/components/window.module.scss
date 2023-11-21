@@ -1309,3 +1309,15 @@
 .toast-life {
   background-image: $gray-100;
 }
+
+.banner-overlay-root-desktop {
+  height: calc(100% - 24px);
+}
+
+.banner-overlay-root-mobile {
+  padding-top: calc(100% - 24px);
+}
+
+.banner-overlay-root-tablet {
+  height: calc(100% - 24px);
+}

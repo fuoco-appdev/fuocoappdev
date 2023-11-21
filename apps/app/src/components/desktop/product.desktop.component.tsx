@@ -51,6 +51,7 @@ export default function ProductDesktopComponent({
     setDescription(productProps.description);
   }, [productProps.description]);
 
+  const selectedVariant = productProps.selectedVariant;
   return (
     <ResponsiveDesktop>
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>
@@ -188,12 +189,39 @@ export default function ProductDesktopComponent({
           <div className={[styles['price'], styles['price-desktop']].join(' ')}>
             {!productProps.isLoading ? (
               <>
-                {storeProps.selectedRegion &&
-                  formatAmount({
-                    amount: productProps.selectedVariant?.calculated_price ?? 0,
-                    region: storeProps.selectedRegion,
-                    includeTaxes: false,
-                  })}
+                {selectedVariant?.original_price !==
+                  selectedVariant?.calculated_price && (
+                  <div
+                    className={[
+                      styles['calculated-price'],
+                      styles['calculated-price-desktop'],
+                    ].join(' ')}
+                  >
+                    {storeProps.selectedRegion &&
+                      formatAmount({
+                        amount: selectedVariant?.calculated_price ?? 0,
+                        region: storeProps.selectedRegion,
+                        includeTaxes: false,
+                      })}
+                  </div>
+                )}
+                &nbsp;
+                <div
+                  className={[
+                    styles['original-price'],
+                    styles['original-price-desktop'],
+                    selectedVariant?.original_price !==
+                      selectedVariant?.calculated_price &&
+                      styles['original-price-crossed'],
+                  ].join(' ')}
+                >
+                  {storeProps.selectedRegion &&
+                    formatAmount({
+                      amount: selectedVariant?.original_price ?? 0,
+                      region: storeProps.selectedRegion,
+                      includeTaxes: false,
+                    })}
+                </div>
                 &nbsp;
                 <span
                   className={[

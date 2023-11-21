@@ -6,6 +6,8 @@ import styles from '../window.module.scss';
 import {
   Alert,
   Avatar,
+  Banner,
+  BannerOverlay,
   Button,
   Dropdown,
   LanguageSwitch,
@@ -716,6 +718,17 @@ export default function WindowDesktopComponent({
           toasts={windowProps.toast ? [windowProps.toast] : []}
           transition={'down'}
           align={'right'}
+        />
+        <BannerOverlay
+          classNames={{
+            root: [
+              styles['banner-overlay-root'],
+              styles['banner-overlay-root-desktop'],
+            ].join(' '),
+          }}
+          transition={'up'}
+          align={'right'}
+          banners={windowProps.banner ? [windowProps.banner] : []}
         />
       </div>
     </ResponsiveDesktop>

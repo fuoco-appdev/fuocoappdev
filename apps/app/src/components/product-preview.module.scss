@@ -47,7 +47,15 @@
         width: 100%;
 
         & .thumbnail-top-content {
+          z-index: 1;
 
+          & .calculated-price {
+            font-weight: $font-weight-bold;
+            background-color: $brand-500;
+            color: #fff;
+            border-radius: 999px;
+            width: fit-content;
+          }
         }
   
         & .thumbnail-bottom-content {
@@ -111,6 +119,10 @@
       color: $brand-900;
     }
 
+    & .product-price-crossed {
+      text-decoration: line-through;
+    }
+
     & .product-limit-icon {
       display: -webkit-box;
       display: -ms-flexbox;
@@ -161,7 +173,12 @@
     & .thumbnail-content-container-desktop {
 
       & .thumbnail-top-content-desktop {
+        padding: $mp-2;
 
+        & .calculated-price-desktop {
+          font-size: $font-size-sm;
+          padding: $mp-1 $mp-4;
+        }
       }
 
       & .thumbnail-bottom-content-desktop {
@@ -367,6 +384,10 @@
 
         & .thumbnail-top-content-tablet {
 
+          & .calculated-price-tablet {
+            font-size: $font-size-xs;
+            padding: $mp-1 $mp-2;
+          }
         }
   
         & .thumbnail-bottom-content-tablet {
@@ -413,6 +434,10 @@
 
         & .thumbnail-top-content-mobile {
 
+          & .calculated-price-mobile {
+            font-size: $font-size-xs;
+            padding: $mp-1 $mp-2;
+          }
         }
   
         & .thumbnail-bottom-content-mobile {

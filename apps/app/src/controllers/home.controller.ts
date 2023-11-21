@@ -39,9 +39,9 @@ class HomeController extends Controller {
   }
 
   public onMapMove(state: ViewState): void {
-    this._model.longitude = state.longitude;
-    this._model.latitude = state.latitude;
-    this._model.zoom = state.zoom;
+    // this._model.longitude = state.longitude;
+    // this._model.latitude = state.latitude;
+    // this._model.zoom = state.zoom;
   }
 
   public updateSelectedInventoryLocation(
@@ -133,8 +133,6 @@ class HomeController extends Controller {
           if (inventoryLocation) {
             this._model.selectedInventoryLocationId = inventoryLocation.id;
             this._model.selectedInventoryLocation = inventoryLocation;
-            this._model.longitude = inventoryLocation.coordinates.lng;
-            this._model.latitude = inventoryLocation.coordinates.lat;
           }
         },
       });
@@ -200,8 +198,6 @@ class HomeController extends Controller {
       if (inventoryLocation) {
         this._model.selectedInventoryLocationId = inventoryLocation.id;
         this._model.selectedInventoryLocation = inventoryLocation;
-        this._model.longitude = inventoryLocation.coordinates.lng;
-        this._model.latitude = inventoryLocation.coordinates.lat;
       }
     }
   }

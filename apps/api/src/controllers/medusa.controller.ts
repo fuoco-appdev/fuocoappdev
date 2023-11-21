@@ -5,6 +5,7 @@ import {
   OrdersRequest,
   ProductCountRequest,
   AddCustomerToGroupRequest,
+  PriceListsRequest,
 } from '../protobuf/core_pb.js';
 import { Controller, Post, Guard, ContentType } from '../index.ts';
 import { readAll } from 'https://deno.land/std@0.105.0/io/util.ts';
@@ -117,6 +118,24 @@ export class MedusaController {
     const response = await MedusaService.findCustomerGroupAsync(
       paramsSalesLocationId
     );
+    context.response.type = 'application/x-protobuf';
+    context.response.body = response.serializeBinary();
+  }
+
+  @Post('/price-lists')
+  @Guard(AuthGuard)
+  @ContentType('application/x-protobuf')
+  public async getPriceListsAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >
+  ): Promise<void> {
+    const body = await context.request.body({ type: 'reader' });
+    const requestValue = await readAll(body.value);
+    const priceListsRequest = PriceListsRequest.deserializeBinary(requestValue);
+    const response = await MedusaService.getPriceListsAsync(priceListsRequest);
     context.response.type = 'application/x-protobuf';
     context.response.body = response.serializeBinary();
   }

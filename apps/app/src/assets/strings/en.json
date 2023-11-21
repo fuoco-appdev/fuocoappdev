@@ -260,5 +260,6 @@
   "permissions": "Permissions",
   "continue": "Continue",
   "accessLocation": "Access location",
-  "accessLocationDescription": "Enable location access for choosing a region."
+  "accessLocationDescription": "Enable location access for choosing a region.",
+  "priceListEndsOn": "Ends on {{date, string}}"
 }

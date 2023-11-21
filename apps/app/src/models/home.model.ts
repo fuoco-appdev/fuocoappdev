@@ -20,9 +20,6 @@ export interface HomeState {
 }
 
 export interface HomeLocalState {
-  longitude: number;
-  latitude: number;
-  zoom: number;
   selectedInventoryLocationId: string | undefined;
 }
 
@@ -42,43 +39,10 @@ export class HomeModel extends Model {
       createStore(
         { name: 'home-local' },
         withProps<HomeLocalState>({
-          latitude: 46.1185,
-          longitude: -74.5962,
-          zoom: 13,
           selectedInventoryLocationId: undefined,
         })
       )
     );
-  }
-
-  public get latitude(): number {
-    return this.localStore?.getValue().latitude;
-  }
-
-  public set latitude(value: number) {
-    if (this.latitude !== value) {
-      this.localStore?.update((state) => ({ ...state, latitude: value }));
-    }
-  }
-
-  public get longitude(): number {
-    return this.localStore?.getValue().longitude;
-  }
-
-  public set longitude(value: number) {
-    if (this.longitude !== value) {
-      this.localStore?.update((state) => ({ ...state, longitude: value }));
-    }
-  }
-
-  public get zoom(): number {
-    return this.localStore?.getValue().zoom;
-  }
-
-  public set zoom(value: number) {
-    if (this.zoom !== value) {
-      this.localStore?.update((state) => ({ ...state, zoom: value }));
-    }
   }
 
   public get selectedInventoryLocationId(): string | undefined {

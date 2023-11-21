@@ -55,9 +55,11 @@ export interface ProductPreviewProps {
 }
 
 export interface ProductPreviewResponsiveProps extends ProductPreviewProps {
-  price: string;
+  originalPrice: string;
+  calculatedPrice: string;
   selectedVariantId: string | undefined;
-  setPrice: (value: string) => void;
+  setOriginalPrice: (value: string) => void;
+  setCalculatedPrice: (value: string) => void;
   setSelectedVariantId: (value: string | undefined) => void;
   formatPrice: (price: MoneyAmount) => string;
 }
@@ -70,7 +72,8 @@ export default function ProductPreviewComponent({
   onRest,
   onAddToCart,
 }: ProductPreviewProps): JSX.Element {
-  const [price, setPrice] = useState<string>('');
+  const [originalPrice, setOriginalPrice] = useState<string>('');
+  const [calculatedPrice, setCalculatedPrice] = useState<string>('');
   const [addedToCartCount, setAddedToCartCount] = useState<number>(0);
   const [selectedVariantId, setSelectedVariantId] = useState<
     string | undefined
@@ -103,7 +106,14 @@ export default function ProductPreviewComponent({
         ProductController.getCheapestPrice(purchasableVariants);
       if (cheapestVariant && storeProps.selectedRegion) {
         setSelectedVariantId(cheapestVariant.id);
-        setPrice(
+        setOriginalPrice(
+          formatAmount({
+            amount: cheapestVariant.original_price ?? 0,
+            region: storeProps.selectedRegion,
+            includeTaxes: false,
+          })
+        );
+        setCalculatedPrice(
           formatAmount({
             amount: cheapestVariant.calculated_price ?? 0,
             region: storeProps.selectedRegion,
@@ -113,7 +123,8 @@ export default function ProductPreviewComponent({
       }
     } else {
       setSelectedVariantId(undefined);
-      setPrice('');
+      setOriginalPrice('');
+      setCalculatedPrice('');
     }
   }, [preview, addedToCartCount, storeProps.selectedRegion]);
 
@@ -137,9 +148,11 @@ export default function ProductPreviewComponent({
         preview={preview}
         onClick={onClick}
         onRest={onRest}
-        price={price}
+        originalPrice={originalPrice}
+        calculatedPrice={calculatedPrice}
         selectedVariantId={selectedVariantId}
-        setPrice={setPrice}
+        setOriginalPrice={setOriginalPrice}
+        setCalculatedPrice={setCalculatedPrice}
         setSelectedVariantId={setSelectedVariantId}
         formatPrice={formatPrice}
         onAddToCart={onAddToCart}
@@ -150,9 +163,11 @@ export default function ProductPreviewComponent({
         preview={preview}
         onClick={onClick}
         onRest={onRest}
-        price={price}
+        originalPrice={originalPrice}
+        calculatedPrice={calculatedPrice}
         selectedVariantId={selectedVariantId}
-        setPrice={setPrice}
+        setOriginalPrice={setOriginalPrice}
+        setCalculatedPrice={setCalculatedPrice}
         setSelectedVariantId={setSelectedVariantId}
         formatPrice={formatPrice}
         onAddToCart={onAddToCart}
@@ -163,9 +178,11 @@ export default function ProductPreviewComponent({
         preview={preview}
         onClick={onClick}
         onRest={onRest}
-        price={price}
+        originalPrice={originalPrice}
+        calculatedPrice={calculatedPrice}
         selectedVariantId={selectedVariantId}
-        setPrice={setPrice}
+        setOriginalPrice={setOriginalPrice}
+        setCalculatedPrice={setCalculatedPrice}
         setSelectedVariantId={setSelectedVariantId}
         formatPrice={formatPrice}
         onAddToCart={onAddToCart}

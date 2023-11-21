@@ -1,5 +1,5 @@
 import Medusa from '@medusajs/medusa-js';
-import { Customer, Order, CustomerGroup } from '@medusajs/medusa';
+import { Customer, Order, CustomerGroup, PriceList } from '@medusajs/medusa';
 import ConfigService from './config.service';
 import axios, { AxiosError } from 'axios';
 import { Service } from '../service';
@@ -215,6 +215,46 @@ class MedusaService extends Service {
 
     const customerGroupData = JSON.parse(customerGroupResponse.data);
     return customerGroupData;
+  }
+
+  public async requestGetPriceListsAsync(props: {
+    customerGroups: string[];
+    offset?: number;
+    limit?: number;
+    status?: string[];
+    type?: string[];
+  }): Promise<PriceList[]> {
+    const session = await SupabaseService.requestSessionAsync();
+    const priceListsRequest = new core.PriceListsRequest({
+      offset: props.offset,
+      limit: props.limit,
+      status: props.status,
+      customerGroups: props.customerGroups,
+      type: props.type,
+    });
+    const response = await axios({
+      method: 'post',
+      url: `${this.endpointUrl}/medusa/price-lists`,
+      headers: {
+        ...this.headers,
+        'Session-Token': `${session?.access_token}`,
+      },
+      data: priceListsRequest.toBinary(),
+      responseType: 'arraybuffer',
+    });
+    const arrayBuffer = new Uint8Array(response.data);
+    this.assertResponse(arrayBuffer);
+
+    const priceListsResponse = core.PriceListsResponse.fromBinary(arrayBuffer);
+    const priceListsData =
+      priceListsResponse.data.length > 0
+        ? JSON.parse(priceListsResponse.data)
+        : {};
+    if (Object.keys(priceListsData).length > 0) {
+      return priceListsData?.['price_lists'] ?? [];
+    }
+
+    return [];
   }
 
   public async requestStockLocationsAsync(): Promise<any[]> {

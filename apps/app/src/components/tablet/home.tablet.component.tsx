@@ -109,9 +109,9 @@ export default function HomeTabletComponent({
               mapboxAccessToken={homeProps.accessToken}
               ref={mapRef}
               initialViewState={{
-                longitude: homeLocalProps.longitude,
-                latitude: homeLocalProps.latitude,
-                zoom: homeLocalProps.zoom,
+                longitude: -74.5962,
+                latitude: 46.1185,
+                zoom: 13,
               }}
               mapStyle={ConfigService.mapbox.style_url}
               onMove={(e) => HomeController.onMapMove(e.viewState)}

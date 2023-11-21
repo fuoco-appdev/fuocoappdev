@@ -6,6 +6,7 @@ import styles from '../window.module.scss';
 import {
   Alert,
   Avatar,
+  BannerOverlay,
   Button,
   Dropdown,
   LanguageSwitch,
@@ -725,6 +726,17 @@ export default function WindowTabletComponent({
           </>,
           document.body
         )}
+        <BannerOverlay
+          classNames={{
+            root: [
+              styles['banner-overlay-root'],
+              styles['banner-overlay-root-tablet'],
+            ].join(' '),
+          }}
+          transition={'up'}
+          align={'right'}
+          banners={windowProps.banner ? [windowProps.banner] : []}
+        />
       </div>
     </ResponsiveTablet>
   );

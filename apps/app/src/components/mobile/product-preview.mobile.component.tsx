@@ -28,7 +28,8 @@ export default function ProductPreviewMobileComponent({
   preview,
   onClick,
   onRest,
-  price,
+  originalPrice,
+  calculatedPrice,
   selectedVariantId,
   onAddToCart,
 }: ProductPreviewResponsiveProps): JSX.Element {
@@ -137,7 +138,18 @@ export default function ProductPreviewMobileComponent({
                   styles['thumbnail-top-content'],
                   styles['thumbnail-top-content-mobile'],
                 ].join(' ')}
-              ></div>
+              >
+                {originalPrice !== calculatedPrice && (
+                  <div
+                    className={[
+                      styles['calculated-price'],
+                      styles['calculated-price-mobile'],
+                    ].join(' ')}
+                  >
+                    {calculatedPrice}
+                  </div>
+                )}
+              </div>
               {!expanded && (
                 <div
                   className={[
@@ -175,14 +187,16 @@ export default function ProductPreviewMobileComponent({
               >
                 {preview.title}
               </span>
-              {price.length > 0 ? (
+              {originalPrice.length > 0 ? (
                 <span
                   className={[
                     styles['product-price'],
                     styles['product-price-mobile'],
+                    originalPrice !== calculatedPrice &&
+                      styles['product-price-crossed'],
                   ].join(' ')}
                 >
-                  {price}
+                  {originalPrice}
                 </span>
               ) : (
                 <div

@@ -3,8 +3,9 @@ import { AuthChangeEvent } from '@supabase/supabase-js';
 import { Model } from '../model';
 import { RoutePathsType } from '../route-paths';
 import * as core from '../protobuf/core_pb';
-import { ToastProps, LanguageInfo } from '@fuoco.appdev/core-ui';
+import { ToastProps, LanguageInfo, BannerProps } from '@fuoco.appdev/core-ui';
 import { InventoryLocation } from './home.model';
+import { PriceList } from '@medusajs/medusa';
 
 export interface WindowState {
   account: core.Account | null;
@@ -14,12 +15,14 @@ export interface WindowState {
   authState: AuthChangeEvent | undefined;
   isLoading: boolean;
   toast: ToastProps | undefined;
+  banner: BannerProps | undefined;
   showNavigateBack: boolean;
   hideCartButton: boolean;
   loadedLocationPath: string | undefined;
   prevTransitionKeyIndex: number;
   transitionKeyIndex: number;
   queryInventoryLocation: InventoryLocation | undefined;
+  priceLists: PriceList[];
 }
 
 export interface WindowLocalState {
@@ -40,12 +43,14 @@ export class WindowModel extends Model {
           authState: undefined,
           isLoading: false,
           toast: undefined,
+          banner: undefined,
           showNavigateBack: false,
           hideCartButton: false,
           loadedLocationPath: undefined,
           prevTransitionKeyIndex: 0,
           transitionKeyIndex: 0,
           queryInventoryLocation: undefined,
+          priceLists: [],
         })
       ),
       undefined,
@@ -156,10 +161,23 @@ export class WindowModel extends Model {
   }
 
   public set toast(value: ToastProps | undefined) {
-    if (this.toast !== value) {
+    if (JSON.stringify(this.toast) !== JSON.stringify(value)) {
       this.store.update((state) => ({
         ...state,
         toast: value,
+      }));
+    }
+  }
+
+  public get banner(): BannerProps | undefined {
+    return this.store.getValue().banner;
+  }
+
+  public set banner(value: BannerProps | undefined) {
+    if (JSON.stringify(this.banner) !== JSON.stringify(value)) {
+      this.store.update((state) => ({
+        ...state,
+        banner: value,
       }));
     }
   }
@@ -268,6 +286,19 @@ export class WindowModel extends Model {
       this.store?.update((state) => ({
         ...state,
         queryInventoryLocation: value,
+      }));
+    }
+  }
+
+  public get priceLists(): PriceList[] {
+    return this.store?.getValue().priceLists;
+  }
+
+  public set priceLists(value: PriceList[]) {
+    if (JSON.stringify(this.priceLists) !== JSON.stringify(value)) {
+      this.store?.update((state) => ({
+        ...state,
+        priceLists: value,
       }));
     }
   }

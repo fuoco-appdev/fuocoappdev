@@ -72,6 +72,7 @@ export default function ProductMobileComponent({
     }
   }, [productProps.description, showMore]);
 
+  const selectedVariant = productProps.selectedVariant;
   return (
     <ResponsiveMobile>
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
@@ -208,12 +209,39 @@ export default function ProductMobileComponent({
           <div className={[styles['price'], styles['price-mobile']].join(' ')}>
             {!productProps.isLoading ? (
               <>
-                {storeProps.selectedRegion &&
-                  formatAmount({
-                    amount: productProps.selectedVariant?.calculated_price ?? 0,
-                    region: storeProps.selectedRegion,
-                    includeTaxes: false,
-                  })}
+                {selectedVariant?.original_price !==
+                  selectedVariant?.calculated_price && (
+                  <div
+                    className={[
+                      styles['calculated-price'],
+                      styles['calculated-price-mobile'],
+                    ].join(' ')}
+                  >
+                    {storeProps.selectedRegion &&
+                      formatAmount({
+                        amount: selectedVariant?.calculated_price ?? 0,
+                        region: storeProps.selectedRegion,
+                        includeTaxes: false,
+                      })}
+                  </div>
+                )}
+                &nbsp;
+                <div
+                  className={[
+                    styles['original-price'],
+                    styles['original-price-mobile'],
+                    selectedVariant?.original_price !==
+                      selectedVariant?.calculated_price &&
+                      styles['original-price-crossed'],
+                  ].join(' ')}
+                >
+                  {storeProps.selectedRegion &&
+                    formatAmount({
+                      amount: selectedVariant?.original_price ?? 0,
+                      region: storeProps.selectedRegion,
+                      includeTaxes: false,
+                    })}
+                </div>
                 &nbsp;
                 <span
                   className={[

@@ -10,16 +10,23 @@ import HomeController from './home.controller';
 import MedusaService from '../services/medusa.service';
 import i18n from '../i18n';
 import CartController from './cart.controller';
-import { LineItem, Region, SalesChannel } from '@medusajs/medusa';
+import {
+  LineItem,
+  Region,
+  SalesChannel,
+  CustomerGroup,
+} from '@medusajs/medusa';
 import {
   PricedProduct,
   PricedVariant,
 } from '@medusajs/medusa/dist/types/pricing';
+import AccountController from './account.controller';
 
 class ProductController extends Controller {
   private readonly _model: ProductModel;
   private _selectedPreviewSubscription: Subscription | undefined;
   private _selectedSalesChannelSubscription: Subscription | undefined;
+  private _customerGroupSubscription: Subscription | undefined;
   private _selectedRegionSubscription: Subscription | undefined;
   private _productIdSubscription: Subscription | undefined;
 
@@ -79,22 +86,30 @@ class ProductController extends Controller {
             return;
           }
 
-          this._selectedRegionSubscription?.unsubscribe();
-          this._selectedRegionSubscription = StoreController.model.store
-            .pipe(select((model) => model.selectedRegion))
+          this._customerGroupSubscription?.unsubscribe();
+          this._customerGroupSubscription = AccountController.model.store
+            .pipe(select((model) => model.customerGroup))
             .subscribe({
-              next: (region: Region | undefined) => {
-                const channel = StoreController.model.selectedSalesChannel;
-                if (!id || !channel) {
-                  return;
-                }
+              next: (customerGroup: CustomerGroup | undefined) => {
+                this._selectedRegionSubscription?.unsubscribe();
+                this._selectedRegionSubscription = StoreController.model.store
+                  .pipe(select((model) => model.selectedRegion))
+                  .subscribe({
+                    next: (region: Region | undefined) => {
+                      const channel =
+                        StoreController.model.selectedSalesChannel;
+                      if (!id || !channel) {
+                        return;
+                      }
 
-                this.resetDetails();
-                this.requestProductWithChannelAsync(
-                  id,
-                  channel?.id ?? '',
-                  region?.id ?? ''
-                );
+                      this.resetDetails();
+                      this.requestProductWithChannelAsync(
+                        id,
+                        channel?.id ?? '',
+                        region?.id ?? ''
+                      );
+                    },
+                  });
               },
             });
         },
@@ -102,6 +117,7 @@ class ProductController extends Controller {
   }
 
   public override dispose(renderCount: number): void {
+    this._customerGroupSubscription?.unsubscribe();
     this._productIdSubscription?.unsubscribe();
     this._selectedPreviewSubscription?.unsubscribe();
     this._selectedRegionSubscription?.unsubscribe();

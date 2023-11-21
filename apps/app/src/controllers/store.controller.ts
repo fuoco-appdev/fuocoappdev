@@ -15,17 +15,21 @@ import {
   Product,
   ProductOptionValue,
   SalesChannel,
+  CustomerGroup,
 } from '@medusajs/medusa';
 import { ProductOptions } from '../models/product.model';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import SupabaseService from '../services/supabase.service';
+import { AccountState } from '../models/account.model';
+import AccountController from './account.controller';
 
 class StoreController extends Controller {
   private readonly _model: StoreModel;
   private _timerId: NodeJS.Timeout | number | undefined;
   private _productsIndex: Index<Record<string, any>> | undefined;
   private _selectedInventoryLocationSubscription: Subscription | undefined;
+  private _customerGroupSubscription: Subscription | undefined;
   private _limit: number;
 
   constructor() {
@@ -45,12 +49,22 @@ class StoreController extends Controller {
   public override initialize(renderCount: number): void {
     this._productsIndex = MeiliSearchService.client?.index('products');
     this.intializeAsync(renderCount);
+
+    this._customerGroupSubscription = AccountController.model.store
+      .pipe(select((model: AccountState) => model.customerGroup))
+      .subscribe({
+        next: (customerGroup: CustomerGroup | undefined) => {
+          this.searchAsync(this._model.input, 0, this._limit);
+        },
+      });
+
     SupabaseService.supabaseClient?.auth.onAuthStateChange(
       this.onAuthStateChanged
     );
   }
 
   public override dispose(renderCount: number): void {
+    this._customerGroupSubscription?.unsubscribe();
     this._selectedInventoryLocationSubscription?.unsubscribe();
   }
 

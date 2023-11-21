@@ -10,6 +10,8 @@ import {
   ProductCountResponse,
   ProductCountRequest,
   ProductResponse,
+  PriceListsRequest,
+  PriceListsResponse,
 } from '../protobuf/core_pb.js';
 import 'https://deno.land/x/dotenv@v3.2.0/load.ts';
 import MapboxService, { GeocodingFeature } from './mapbox.service.ts';
@@ -262,6 +264,54 @@ class MedusaService {
     const customerGroupData = data.length > 0 ? data[0] : '';
     customerGroup.setData(JSON.stringify(customerGroupData));
     return customerGroup;
+  }
+
+  public async getPriceListsAsync(
+    request: InstanceType<typeof PriceListsRequest>
+  ): Promise<InstanceType<typeof PriceListsResponse>> {
+    const offset = request.getOffset() ?? 0;
+    const limit = request.getLimit() ?? 10;
+    const status = request.getStatusList();
+    const customerGroups = request.getCustomerGroupsList() ?? [];
+    const type = request.getTypeList();
+
+    const priceListsResponse = new PriceListsResponse();
+    if (customerGroups.length <= 0) {
+      return priceListsResponse;
+    }
+
+    const priceListCustomerGroups = await SupabaseService.client
+      .from('price_list_customer_groups')
+      .select()
+      .in('customer_group_id', customerGroups);
+
+    if (priceListCustomerGroups.error) {
+      console.error(priceListCustomerGroups.error);
+      return priceListsResponse;
+    }
+
+    const customerGroupPriceLists = priceListCustomerGroups.data.map(
+      (value) => value.price_list_id
+    );
+    const priceLists = await SupabaseService.client
+      .from('price_list')
+      .select()
+      .limit(limit)
+      .range(offset, offset + limit)
+      .in('id', customerGroupPriceLists)
+      .in('status', status.length > 0 ? status : ['active'])
+      .in('type', type.length > 0 ? type : ['sale']);
+
+    if (priceLists.error) {
+      console.error(priceLists.error);
+      return priceListsResponse;
+    }
+
+    priceListsResponse.setData(
+      JSON.stringify({ price_lists: priceLists.data })
+    );
+
+    return priceListsResponse;
   }
 
   public async getStockLocationsAsync(): Promise<

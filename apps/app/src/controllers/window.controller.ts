@@ -8,21 +8,26 @@ import { RoutePathsType } from '../route-paths';
 import SupabaseService from '../services/supabase.service';
 import { Location as RouterLocation } from 'react-router-dom';
 import * as core from '../protobuf/core_pb';
-import { ToastProps, LanguageInfo } from '@fuoco.appdev/core-ui';
+import { ToastProps, LanguageInfo, BannerProps } from '@fuoco.appdev/core-ui';
 import AccountService from '../services/account.service';
 import CartController from './cart.controller';
-import { Cart } from '@medusajs/medusa';
+import { Cart, CustomerGroup, Customer } from '@medusajs/medusa';
 import { select } from '@ngneat/elf';
 import SecretsService from '../services/secrets.service';
 import BucketService from '../services/bucket.service';
 import HomeController from './home.controller';
 import { HomeState, InventoryLocation } from 'src/models/home.model';
+import AccountController from './account.controller';
+import { AccountState } from '../models/account.model';
+import MedusaService from '../services/medusa.service';
 
 class WindowController extends Controller {
   private readonly _model: WindowModel;
   private _inventoryLocationsSubscription: Subscription | undefined;
+  private _customerGroupSubscription: Subscription | undefined;
   private _scrollRef: HTMLDivElement | null;
   private _accountSubscription: Subscription | undefined;
+  private _customerSubscription: Subscription | undefined;
   private _cartSubscription: Subscription | undefined;
   private _sessionSubscription: Subscription | undefined;
 
@@ -36,6 +41,9 @@ class WindowController extends Controller {
     this.onCartChanged = this.onCartChanged.bind(this);
     this.onActiveAccountChanged = this.onActiveAccountChanged.bind(this);
     this.onSessionChangedAsync = this.onSessionChangedAsync.bind(this);
+    this.onCustomerChanged = this.onCustomerChanged.bind(this);
+    this.onCustomerGroupChangedAsync =
+      this.onCustomerGroupChangedAsync.bind(this);
   }
 
   public get model(): WindowModel {
@@ -66,12 +74,20 @@ class WindowController extends Controller {
       next: this.onSessionChangedAsync,
     });
 
+    this._customerSubscription = AccountController.model.store
+      .pipe(select((model) => model.customer))
+      .subscribe({
+        next: this.onCustomerChanged,
+      });
+
     SupabaseService.supabaseClient?.auth.onAuthStateChange(
       this.onAuthStateChanged
     );
   }
 
   public override dispose(renderCount: number): void {
+    this._customerSubscription?.unsubscribe();
+    this._customerGroupSubscription?.unsubscribe();
     this._sessionSubscription?.unsubscribe();
     this._accountSubscription?.unsubscribe();
     this._cartSubscription?.unsubscribe();
@@ -87,6 +103,10 @@ class WindowController extends Controller {
 
   public addToast(toast: ToastProps | undefined): void {
     this._model.toast = toast;
+  }
+
+  public addBanner(banner: BannerProps | undefined): void {
+    this._model.banner = banner;
   }
 
   public updateLanguageCode(code: string): void {
@@ -298,12 +318,7 @@ class WindowController extends Controller {
       try {
         return await AccountService.requestCreateAsync(session);
       } catch (error: any) {
-        this.addToast({
-          key: `active-account-${Math.random()}`,
-          message: error.name,
-          description: error.message,
-          type: 'error',
-        });
+        console.error(error);
         return null;
       }
     }
@@ -324,6 +339,33 @@ class WindowController extends Controller {
         type: 'error',
       });
     }
+  }
+
+  private onCustomerChanged(customer: Customer | undefined): void {
+    if (!customer) {
+      return;
+    }
+
+    this._customerGroupSubscription?.unsubscribe();
+    this._customerGroupSubscription = AccountController.model.store
+      .pipe(select((model: AccountState) => model.customerGroup))
+      .subscribe({
+        next: this.onCustomerGroupChangedAsync,
+      });
+  }
+
+  private async onCustomerGroupChangedAsync(
+    customerGroup: CustomerGroup | undefined
+  ): Promise<void> {
+    if (!customerGroup) {
+      this._model.priceLists = [];
+      return;
+    }
+
+    this._model.priceLists = await MedusaService.requestGetPriceListsAsync({
+      status: ['active'],
+      customerGroups: [customerGroup?.id ?? ''],
+    });
   }
 }
 

@@ -27,7 +27,8 @@ import { ResponsiveDesktop, ResponsiveTablet } from '../responsive.component';
 export default function ProductPreviewTabletComponent({
   preview,
   onClick,
-  price,
+  originalPrice,
+  calculatedPrice,
   selectedVariantId,
   onAddToCart,
   onRest,
@@ -82,7 +83,18 @@ export default function ProductPreviewTabletComponent({
                 styles['thumbnail-top-content'],
                 styles['thumbnail-top-content-tablet'],
               ].join(' ')}
-            ></div>
+            >
+              {originalPrice !== calculatedPrice && (
+                <div
+                  className={[
+                    styles['calculated-price'],
+                    styles['calculated-price-tablet'],
+                  ].join(' ')}
+                >
+                  {calculatedPrice}
+                </div>
+              )}
+            </div>
             <div
               className={[
                 styles['thumbnail-bottom-content'],
@@ -116,14 +128,16 @@ export default function ProductPreviewTabletComponent({
           >
             {preview.title}
           </span>
-          {price.length > 0 ? (
+          {originalPrice.length > 0 ? (
             <span
               className={[
                 styles['product-price'],
                 styles['product-price-tablet'],
+                originalPrice !== calculatedPrice &&
+                  styles['product-price-crossed'],
               ].join(' ')}
             >
-              {price}
+              {originalPrice}
             </span>
           ) : (
             <div
