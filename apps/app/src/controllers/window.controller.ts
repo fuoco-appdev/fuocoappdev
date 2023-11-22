@@ -30,6 +30,7 @@ class WindowController extends Controller {
   private _customerSubscription: Subscription | undefined;
   private _cartSubscription: Subscription | undefined;
   private _sessionSubscription: Subscription | undefined;
+  private _medusaAccessTokenSubscription: Subscription | undefined;
 
   constructor() {
     super();
@@ -61,31 +62,19 @@ class WindowController extends Controller {
   }
 
   public override initialize(renderCount: number): void {
-    this._cartSubscription = CartController.model.store
-      .pipe(select((model) => model.cart))
-      .subscribe({ next: this.onCartChanged });
-
-    this._accountSubscription =
-      AccountService.activeAccountObservable.subscribe({
-        next: this.onActiveAccountChanged,
+    this._medusaAccessTokenSubscription =
+      MedusaService.accessTokenObservable.subscribe({
+        next: (value: string | undefined) => {
+          if (!value) {
+            this.resetMedusaModel();
+            this.initializeAsync(renderCount);
+          }
+        },
       });
-
-    this._sessionSubscription = SupabaseService.sessionObservable.subscribe({
-      next: this.onSessionChangedAsync,
-    });
-
-    this._customerSubscription = AccountController.model.store
-      .pipe(select((model) => model.customer))
-      .subscribe({
-        next: this.onCustomerChanged,
-      });
-
-    SupabaseService.supabaseClient?.auth.onAuthStateChange(
-      this.onAuthStateChanged
-    );
   }
 
   public override dispose(renderCount: number): void {
+    this._medusaAccessTokenSubscription?.unsubscribe();
     this._customerSubscription?.unsubscribe();
     this._customerGroupSubscription?.unsubscribe();
     this._sessionSubscription?.unsubscribe();
@@ -261,18 +250,58 @@ class WindowController extends Controller {
     }
   }
 
+  private resetMedusaModel(): void {
+    this._model.cartCount = 0;
+    this._model.toast = undefined;
+    this._model.banner = undefined;
+    this._model.queryInventoryLocation = undefined;
+    this._model.priceLists = [];
+  }
+
+  private async initializeAsync(renderCount: number): Promise<void> {
+    this._cartSubscription?.unsubscribe();
+    this._cartSubscription = CartController.model.store
+      .pipe(select((model) => model.cart))
+      .subscribe({ next: this.onCartChanged });
+
+    this._accountSubscription?.unsubscribe();
+    this._accountSubscription =
+      AccountService.activeAccountObservable.subscribe({
+        next: this.onActiveAccountChanged,
+      });
+
+    this._sessionSubscription?.unsubscribe();
+    this._sessionSubscription = SupabaseService.sessionObservable.subscribe({
+      next: this.onSessionChangedAsync,
+    });
+
+    this._customerSubscription?.unsubscribe();
+    this._customerSubscription = AccountController.model.store
+      .pipe(select((model) => model.customer))
+      .subscribe({
+        next: this.onCustomerChanged,
+      });
+
+    SupabaseService.supabaseClient?.auth.onAuthStateChange(
+      this.onAuthStateChanged
+    );
+  }
+
   private onCartChanged(
     value: Omit<Cart, 'refundable_amount' | 'refunded_total'> | undefined
   ): void {
     this._model.cartCount = value?.items.length ?? 0;
   }
 
-  private async onAuthStateChanged(
+  private onAuthStateChanged(
     event: AuthChangeEvent,
     session: Session | null
-  ): Promise<void> {
+  ): void {
     if (event === 'SIGNED_IN') {
       this._model.isLoading = true;
+    } else if (event === 'SIGNED_OUT') {
+      this._model.priceLists = [];
+      this._model.account = null;
     }
 
     this._model.authState = event;
@@ -342,7 +371,7 @@ class WindowController extends Controller {
   }
 
   private onCustomerChanged(customer: Customer | undefined): void {
-    if (!customer) {
+    if (!customer || !MedusaService.accessToken) {
       return;
     }
 

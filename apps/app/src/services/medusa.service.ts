@@ -6,17 +6,33 @@ import { Service } from '../service';
 import SupabaseService from './supabase.service';
 import * as core from '../protobuf/core_pb';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+import { BehaviorSubject, Observable } from 'rxjs';
+import Cookies from 'js-cookie';
 
 class MedusaService extends Service {
   private _medusa: Medusa | undefined;
   private _accessToken: string | undefined;
+  private _accessTokenBehaviorSubject: BehaviorSubject<string | undefined>;
 
   constructor() {
     super();
+
+    this._accessTokenBehaviorSubject = new BehaviorSubject<string | undefined>(
+      undefined
+    );
+    this._accessToken = undefined;
   }
 
   public get medusa(): Medusa | undefined {
     return this._medusa;
+  }
+
+  public get accessToken(): string | undefined {
+    return this._accessTokenBehaviorSubject.getValue();
+  }
+
+  public get accessTokenObservable(): Observable<string | undefined> {
+    return this._accessTokenBehaviorSubject.asObservable();
   }
 
   public intializeMedusa(publicKey: string): void {
@@ -25,7 +41,6 @@ class MedusaService extends Service {
       apiKey: publicKey,
       maxRetries: 3,
     });
-    this._accessToken = undefined;
   }
 
   public async requestProductAsync(
@@ -97,6 +112,7 @@ class MedusaService extends Service {
             password: customerResponse.password,
           });
           this._accessToken = authResponse?.access_token;
+          this._accessTokenBehaviorSubject.next(this._accessToken);
         }
       } catch (error: any) {
         console.error(error);
@@ -149,6 +165,7 @@ class MedusaService extends Service {
           password: customerResponse.password,
         });
         this._accessToken = authResponse?.access_token;
+        this._accessTokenBehaviorSubject.next(this._accessToken);
       }
     } catch (error: any) {
       console.error(error);
@@ -202,6 +219,39 @@ class MedusaService extends Service {
         'Session-Token': `${session?.access_token}`,
       },
       data: addCustomerToGroupRequest.toBinary(),
+      responseType: 'arraybuffer',
+    });
+    const arrayBuffer = new Uint8Array(response.data);
+    this.assertResponse(arrayBuffer);
+
+    const customerGroupResponse =
+      core.CustomerGroupResponse.fromBinary(arrayBuffer);
+    if (customerGroupResponse.data.length <= 0) {
+      return undefined;
+    }
+
+    const customerGroupData = JSON.parse(customerGroupResponse.data);
+    return customerGroupData;
+  }
+
+  public async requestRemoveCustomerFromGroupAsync(props: {
+    customerGroupId: string;
+    customerId: string;
+  }): Promise<CustomerGroup | undefined> {
+    const session = await SupabaseService.requestSessionAsync();
+    const removeCustomerFromGroupRequest =
+      new core.RemoveCustomerFromGroupRequest({
+        customerGroupId: props.customerGroupId,
+        customerId: props.customerId,
+      });
+    const response = await axios({
+      method: 'post',
+      url: `${this.endpointUrl}/medusa/customer-group/remove-customer`,
+      headers: {
+        ...this.headers,
+        'Session-Token': `${session?.access_token}`,
+      },
+      data: removeCustomerFromGroupRequest.toBinary(),
       responseType: 'arraybuffer',
     });
     const arrayBuffer = new Uint8Array(response.data);
@@ -315,9 +365,13 @@ class MedusaService extends Service {
   }
 
   public async deleteSessionAsync(): Promise<void> {
-    await this._medusa?.auth.deleteSession({
-      Authorization: `Bearer ${this._accessToken}`,
-    });
+    try {
+      await this._medusa?.auth.deleteSession();
+      this._accessTokenBehaviorSubject.next(undefined);
+      window.location.reload();
+    } catch (error: any) {
+      console.error(error);
+    }
   }
 }
 

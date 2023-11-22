@@ -17,6 +17,7 @@ class HomeController extends Controller {
   private _selectedInventoryLocationIdSubscription: Subscription | undefined;
   private _currentPositionSubscription: Subscription | undefined;
   private _publicSecretsSubscription: Subscription | undefined;
+  private _medusaAccessTokenSubscription: Subscription | undefined;
 
   constructor() {
     super();
@@ -29,10 +30,19 @@ class HomeController extends Controller {
   }
 
   public override initialize(renderCount: number): void {
-    this.initializeAsync(renderCount);
+    this._medusaAccessTokenSubscription =
+      MedusaService.accessTokenObservable.subscribe({
+        next: (value: string | undefined) => {
+          if (!value) {
+            this.resetMedusaModel();
+            this.initializeAsync(renderCount);
+          }
+        },
+      });
   }
 
   public override dispose(renderCount: number): void {
+    this._medusaAccessTokenSubscription?.unsubscribe();
     this._publicSecretsSubscription?.unsubscribe();
     this._currentPositionSubscription?.unsubscribe();
     this._selectedInventoryLocationIdSubscription?.unsubscribe();
@@ -94,13 +104,20 @@ class HomeController extends Controller {
     });
   }
 
-  private async initializeAsync(renderCount: number): Promise<void> {
-    if (renderCount <= 1) {
-      this._model.inventoryLocations =
-        await this.requestInventoryLocationsAsync();
+  private resetMedusaModel(): void {
+    this._model.inventoryLocations = [];
+    this._model.selectedInventoryLocation = undefined;
+    this._model.wineCount = 0;
+    this._model.accessToken = undefined;
+  }
 
-      this._model.wineCount = await this.requestWineCountAsync();
-    }
+  private async initializeAsync(renderCount: number): Promise<void> {
+    this._model.inventoryLocations =
+      await this.requestInventoryLocationsAsync();
+
+    this._model.wineCount = await this.requestWineCountAsync();
+
+    this._currentPositionSubscription?.unsubscribe();
     this._currentPositionSubscription = PermissionsController.model.store
       .pipe(select((model) => model.currentPosition))
       .subscribe({
@@ -108,6 +125,7 @@ class HomeController extends Controller {
           this.onCurrentPositionChanged(value, this._model.inventoryLocations),
       });
 
+    this._selectedInventoryLocationIdSubscription?.unsubscribe();
     this._selectedInventoryLocationIdSubscription = this._model.localStore
       ?.pipe(select((model) => model.selectedInventoryLocationId))
       .subscribe({
@@ -137,6 +155,7 @@ class HomeController extends Controller {
         },
       });
 
+    this._publicSecretsSubscription?.unsubscribe();
     this._publicSecretsSubscription =
       SecretsService.publicSecretsObservable.subscribe(
         (value: PublicSecrets | null) => {

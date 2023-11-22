@@ -278,6 +278,49 @@ export class AddCustomerToGroupRequest extends Message<AddCustomerToGroupRequest
 }
 
 /**
+ * @generated from message core.RemoveCustomerFromGroupRequest
+ */
+export class RemoveCustomerFromGroupRequest extends Message<RemoveCustomerFromGroupRequest> {
+  /**
+   * @generated from field: string customer_group_id = 1;
+   */
+  customerGroupId = "";
+
+  /**
+   * @generated from field: string customer_id = 2;
+   */
+  customerId = "";
+
+  constructor(data?: PartialMessage<RemoveCustomerFromGroupRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.RemoveCustomerFromGroupRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "customer_group_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "customer_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RemoveCustomerFromGroupRequest {
+    return new RemoveCustomerFromGroupRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): RemoveCustomerFromGroupRequest {
+    return new RemoveCustomerFromGroupRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RemoveCustomerFromGroupRequest {
+    return new RemoveCustomerFromGroupRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: RemoveCustomerFromGroupRequest | PlainMessage<RemoveCustomerFromGroupRequest> | undefined, b: RemoveCustomerFromGroupRequest | PlainMessage<RemoveCustomerFromGroupRequest> | undefined): boolean {
+    return proto3.util.equals(RemoveCustomerFromGroupRequest, a, b);
+  }
+}
+
+/**
  * @generated from message core.CustomerGroupResponse
  */
 export class CustomerGroupResponse extends Message<CustomerGroupResponse> {

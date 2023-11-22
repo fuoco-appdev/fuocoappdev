@@ -4,6 +4,7 @@ import {
   CustomerResponse,
   CustomerRequest,
   AddCustomerToGroupRequest,
+  RemoveCustomerFromGroupRequest,
   CustomerGroupResponse,
   OrdersResponse,
   OrdersRequest,
@@ -242,6 +243,37 @@ class MedusaService {
       console.error(error);
     }
 
+    return customerGroup;
+  }
+
+  public async removeCustomerFromGroupAsync(
+    request: InstanceType<typeof RemoveCustomerFromGroupRequest>
+  ): Promise<InstanceType<typeof CustomerGroupResponse>> {
+    const customerGroupId = request.getCustomerGroupId();
+    const customerId = request.getCustomerId();
+    const customerGroup = new CustomerGroupResponse();
+
+    try {
+      const customerGroupResponse = await axiod.delete(
+        `${this._url}/admin/customer-groups/${customerGroupId}/customers/batch`,
+        {
+          customer_ids: [
+            {
+              id: customerId,
+            },
+          ],
+        },
+        {
+          headers: {
+            'x-medusa-access-token': this._token,
+          },
+        }
+      );
+    } catch (error: any) {
+      console.error(error);
+    }
+
+    customerGroup.setData('');
     return customerGroup;
   }
 

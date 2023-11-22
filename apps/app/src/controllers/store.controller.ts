@@ -30,6 +30,7 @@ class StoreController extends Controller {
   private _productsIndex: Index<Record<string, any>> | undefined;
   private _selectedInventoryLocationSubscription: Subscription | undefined;
   private _customerGroupSubscription: Subscription | undefined;
+  private _medusaAccessTokenSubscription: Subscription | undefined;
   private _limit: number;
 
   constructor() {
@@ -38,7 +39,6 @@ class StoreController extends Controller {
     this._model = new StoreModel();
     this.onSelectedInventoryLocationChangedAsync =
       this.onSelectedInventoryLocationChangedAsync.bind(this);
-    this.onAuthStateChanged = this.onAuthStateChanged.bind(this);
     this._limit = 20;
   }
 
@@ -48,22 +48,20 @@ class StoreController extends Controller {
 
   public override initialize(renderCount: number): void {
     this._productsIndex = MeiliSearchService.client?.index('products');
-    this.intializeAsync(renderCount);
 
-    this._customerGroupSubscription = AccountController.model.store
-      .pipe(select((model: AccountState) => model.customerGroup))
-      .subscribe({
-        next: (customerGroup: CustomerGroup | undefined) => {
-          this.searchAsync(this._model.input, 0, this._limit);
+    this._medusaAccessTokenSubscription =
+      MedusaService.accessTokenObservable.subscribe({
+        next: (value: string | undefined) => {
+          if (!value) {
+            this.resetMedusaModel();
+            this.initializeAsync(renderCount);
+          }
         },
       });
-
-    SupabaseService.supabaseClient?.auth.onAuthStateChange(
-      this.onAuthStateChanged
-    );
   }
 
   public override dispose(renderCount: number): void {
+    this._medusaAccessTokenSubscription?.unsubscribe();
     this._customerGroupSubscription?.unsubscribe();
     this._selectedInventoryLocationSubscription?.unsubscribe();
   }
@@ -117,11 +115,11 @@ class StoreController extends Controller {
     offset: number = 0,
     limit: number = 10
   ): Promise<void> {
-    if (
-      this._model.isLoading ||
-      !this._model.selectedRegion ||
-      !this._model.selectedSalesChannel
-    ) {
+    if (this._model.isLoading || !this._model.selectedRegion) {
+      return;
+    }
+
+    if (!this._model.selectedSalesChannel) {
       return;
     }
 
@@ -168,7 +166,7 @@ class StoreController extends Controller {
     const { cart } = CartController.model;
     const productsResponse = await MedusaService.medusa?.products.list({
       id: productIds,
-      sales_channel_id: [this._model.selectedSalesChannel.id ?? ''],
+      sales_channel_id: [this._model.selectedSalesChannel?.id ?? ''],
       ...(selectedRegion && {
         region_id: selectedRegion.id,
         currency_code: selectedRegion.currency_code,
@@ -212,7 +210,7 @@ class StoreController extends Controller {
     cellarId: string
   ): Promise<void> {
     const region = this._model.regions.find((value) => value.id === regionId);
-    await this.updateRegionAsync(region);
+    this.updateRegion(region);
 
     const inventoryLocation = HomeController.model.inventoryLocations.find(
       (value) => value.id === cellarId
@@ -222,12 +220,33 @@ class StoreController extends Controller {
     }
   }
 
-  private async intializeAsync(renderCount: number): Promise<void> {
-    if (renderCount <= 1) {
-      await this.requestProductTypesAsync();
-      await this.requestRegionsAsync();
-    }
+  private resetMedusaModel(): void {
+    this._model.previews = [];
+    this._model.selectedPreview = undefined;
+    this._model.regions = [];
+    this._model.selectedRegion = undefined;
+    this._model.selectedSalesChannel = undefined;
+    this._model.pagination = 1;
+    this._model.hasMorePreviews = true;
+    this._model.scrollPosition = undefined;
+    this._model.isLoading = false;
+    this._model.productTypes = [];
+  }
 
+  private async initializeAsync(renderCount: number): Promise<void> {
+    await this.requestProductTypesAsync();
+    await this.requestRegionsAsync();
+
+    this._customerGroupSubscription?.unsubscribe();
+    this._customerGroupSubscription = AccountController.model.store
+      .pipe(select((model: AccountState) => model.customerGroup))
+      .subscribe({
+        next: (customerGroup: CustomerGroup | undefined) => {
+          this.searchAsync(this._model.input, 0, this._limit);
+        },
+      });
+
+    this._selectedInventoryLocationSubscription?.unsubscribe();
     this._selectedInventoryLocationSubscription = HomeController.model.store
       .pipe(select((model) => model.selectedInventoryLocation))
       .subscribe({
@@ -262,21 +281,13 @@ class StoreController extends Controller {
     const region = this._model.regions.find(
       (value) => value.name === inventoryLocation.region
     );
-    await this.updateRegionAsync(region);
-    await this.searchAsync(this._model.input, 0, this._limit);
+
+    this.updateRegion(region);
+    this.searchAsync(this._model.input, 0, this._limit);
   }
 
-  private async updateRegionAsync(region: Region | undefined): Promise<void> {
+  private updateRegion(region: Region | undefined): void {
     this._model.selectedRegion = region;
-  }
-
-  private async onAuthStateChanged(
-    event: AuthChangeEvent,
-    session: Session | null
-  ): Promise<void> {
-    if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
-      this.searchAsync(this._model.input, 0, this._limit);
-    }
   }
 }
 

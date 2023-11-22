@@ -12,6 +12,7 @@ import {
   Order,
   Swap,
   SalesChannel,
+  CustomerGroup,
 } from '@medusajs/medusa';
 import MedusaService from '../services/medusa.service';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
@@ -25,6 +26,7 @@ class CartController extends Controller {
   private readonly _model: CartModel;
   private _timerId: NodeJS.Timeout | number | undefined;
   private _selectedInventoryLocationSubscription: Subscription | undefined;
+  private _medusaAccessTokenSubscription: Subscription | undefined;
 
   constructor() {
     super();
@@ -39,14 +41,19 @@ class CartController extends Controller {
   }
 
   public override initialize(renderCount: number): void {
-    this._selectedInventoryLocationSubscription = HomeController.model.store
-      .pipe(select((model) => model.selectedInventoryLocation))
-      .subscribe({
-        next: this.onSelectedInventoryLocationChangedAsync,
+    this._medusaAccessTokenSubscription =
+      MedusaService.accessTokenObservable.subscribe({
+        next: (value: string | undefined) => {
+          if (!value) {
+            this.resetMedusaModel();
+            this.initializeAsync(renderCount);
+          }
+        },
       });
   }
 
   public override dispose(renderCount: number): void {
+    this._medusaAccessTokenSubscription?.unsubscribe();
     this._selectedInventoryLocationSubscription?.unsubscribe();
   }
 
@@ -249,6 +256,21 @@ class CartController extends Controller {
       );
     });
     return hasFoodRequirement ?? false;
+  }
+
+  private resetMedusaModel(): void {
+    this._model.requiredFoodProducts = [];
+    this._model.isFoodInCartRequired = false;
+    this._model.discountCode = '';
+  }
+
+  private async initializeAsync(renderCount: number): Promise<void> {
+    this._selectedInventoryLocationSubscription?.unsubscribe();
+    this._selectedInventoryLocationSubscription = HomeController.model.store
+      .pipe(select((model) => model.selectedInventoryLocation))
+      .subscribe({
+        next: this.onSelectedInventoryLocationChangedAsync,
+      });
   }
 
   private async createCartAsync(

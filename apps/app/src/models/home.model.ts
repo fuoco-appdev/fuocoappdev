@@ -93,11 +93,11 @@ export class HomeModel extends Model {
     }
   }
 
-  public get accessToken(): string {
+  public get accessToken(): string | undefined {
     return this.store?.getValue().accessToken;
   }
 
-  public set accessToken(value: string) {
+  public set accessToken(value: string | undefined) {
     if (this.accessToken !== value) {
       this.store?.update((state) => ({ ...state, accessToken: value }));
     }

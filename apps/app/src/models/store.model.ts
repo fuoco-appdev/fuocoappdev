@@ -21,7 +21,6 @@ export interface StoreState {
   pagination: number;
   hasMorePreviews: boolean;
   scrollPosition: number | undefined;
-  topBarYPostion: number;
   isLoading: boolean;
   productTypes: ProductType[];
 }
@@ -41,7 +40,6 @@ export class StoreModel extends Model {
           selectedSalesChannel: undefined,
           pagination: 1,
           hasMorePreviews: true,
-          topBarYPostion: 0,
           scrollPosition: undefined,
           isLoading: false,
           productTypes: [],

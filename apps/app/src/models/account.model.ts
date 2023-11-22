@@ -105,11 +105,11 @@ export class AccountModel extends Model {
     );
   }
 
-  public get user(): User | undefined {
+  public get user(): User | null {
     return this.store.getValue().user;
   }
 
-  public set user(value: User | undefined) {
+  public set user(value: User | null) {
     if (JSON.stringify(this.user) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, user: value }));
     }

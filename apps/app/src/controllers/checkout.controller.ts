@@ -33,6 +33,7 @@ class CheckoutController extends Controller {
   private _cartSubscription: Subscription | undefined;
   private _customerSubscription: Subscription | undefined;
   private _shippingFormSubscription: Subscription | undefined;
+  private _medusaAccessTokenSubscription: Subscription | undefined;
 
   constructor() {
     super();
@@ -49,20 +50,40 @@ class CheckoutController extends Controller {
   }
 
   public override initialize(renderCount: number): void {
-    this.initializeAsync(renderCount);
+    this._medusaAccessTokenSubscription =
+      MedusaService.accessTokenObservable.subscribe({
+        next: (value: string | undefined) => {
+          if (!value) {
+            this.resetMedusaModel();
+            this.initializeAsync(renderCount);
+          }
+        },
+      });
+  }
 
+  public override dispose(renderCount: number): void {
+    this._medusaAccessTokenSubscription?.unsubscribe();
+    this._shippingFormSubscription?.unsubscribe();
+    this._customerSubscription?.unsubscribe();
+    this._cartSubscription?.unsubscribe();
+  }
+
+  public async initializeAsync(renderCount: number): Promise<void> {
+    this._cartSubscription?.unsubscribe();
     this._cartSubscription = CartController.model.store
       .pipe(select((model) => model.cart))
       .subscribe({
         next: this.onCartChangedAsync,
       });
 
+    this._customerSubscription?.unsubscribe();
     this._customerSubscription = AccountController.model.store
       .pipe(select((model) => model.customer))
       .subscribe({
         next: this.onCustomerChangedAsync,
       });
 
+    this._shippingFormSubscription?.unsubscribe();
     this._shippingFormSubscription = this._model.store
       .pipe(select((model) => model.shippingForm))
       .subscribe({ next: this.onShippingFormChanged });
@@ -70,18 +91,6 @@ class CheckoutController extends Controller {
     SupabaseService.supabaseClient?.auth.onAuthStateChange(
       this.onAuthStateChanged
     );
-  }
-
-  public override dispose(renderCount: number): void {
-    this._shippingFormSubscription?.unsubscribe();
-    this._customerSubscription?.unsubscribe();
-    this._cartSubscription?.unsubscribe();
-  }
-
-  public async initializeAsync(renderCount: number): Promise<void> {
-    if (renderCount > 1) {
-      return;
-    }
   }
 
   public updateShippingAddress(value: AddressFormValues): void {
@@ -420,6 +429,63 @@ class CheckoutController extends Controller {
       return errors;
     }
     return undefined;
+  }
+
+  private resetMedusaModel(): void {
+    this._model.shippingForm = {
+      email: '',
+      firstName: '',
+      lastName: '',
+      company: '',
+      address: '',
+      apartments: '',
+      postalCode: '',
+      city: '',
+      countryCode: '',
+      region: '',
+      phoneNumber: '',
+    };
+    this._model.shippingFormErrors = {};
+    this._model.shippingFormComplete = false;
+    this._model.selectedShippingAddressOptionId = '';
+    this._model.billingForm = {
+      email: '',
+      firstName: '',
+      lastName: '',
+      company: '',
+      address: '',
+      apartments: '',
+      postalCode: '',
+      city: '',
+      countryCode: '',
+      region: '',
+      phoneNumber: '',
+    };
+    this._model.billingFormErrors = {};
+    this._model.billingFormComplete = false;
+    this._model.addShippingForm = {
+      email: '',
+      firstName: '',
+      lastName: '',
+      company: '',
+      address: '',
+      apartments: '',
+      postalCode: '',
+      city: '',
+      countryCode: '',
+      region: '',
+      phoneNumber: '',
+    };
+    this._model.addShippingFormErrors = {};
+    this._model.errorStrings = {};
+    this._model.sameAsBillingAddress = true;
+    this._model.shippingOptions = [];
+    this._model.selectedShippingOptionId = undefined;
+    this._model.giftCardCode = '';
+    this._model.discountCode = '';
+    this._model.selectedProviderId = undefined;
+    this._model.isPaymentLoading = false;
+    this._model.isLegalAge = false;
   }
 
   private async getCompleteCartIdAsync(): Promise<string | undefined> {

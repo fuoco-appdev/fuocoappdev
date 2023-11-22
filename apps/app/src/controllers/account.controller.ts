@@ -16,7 +16,7 @@ import {
 } from '../components/account-profile-form.component';
 import { v4 as uuidv4 } from 'uuid';
 import mime from 'mime';
-import { User } from '@supabase/supabase-js';
+import { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
 import {
   AddressFormErrors,
   AddressFormValues,
@@ -25,18 +25,21 @@ import { RoutePathsType } from '../route-paths';
 import { LanguageInfo } from '@fuoco.appdev/core-ui';
 import { select } from '@ngneat/elf';
 import HomeController from './home.controller';
-import { HomeLocalState } from 'src/models/home.model';
+import { HomeLocalState } from '../models/home.model';
+import Cookies from 'js-cookie';
 
 class AccountController extends Controller {
   private readonly _model: AccountModel;
   private _activeAccountSubscription: Subscription | undefined;
   private _userSubscription: Subscription | undefined;
   private _selectedInventoryLocationIdSubscription: Subscription | undefined;
+  private _medusaAccessTokenSubscription: Subscription | undefined;
 
   constructor() {
     super();
 
     this._model = new AccountModel();
+    this.onAuthStateChangedAsync = this.onAuthStateChangedAsync.bind(this);
     this.onActiveAccountChangedAsync =
       this.onActiveAccountChangedAsync.bind(this);
     this.onActiveUserChangedAsync = this.onActiveUserChangedAsync.bind(this);
@@ -50,16 +53,19 @@ class AccountController extends Controller {
   }
 
   public override initialize(renderCount: number): void {
-    this._activeAccountSubscription =
-      AccountService.activeAccountObservable.subscribe({
-        next: this.onActiveAccountChangedAsync,
+    this._medusaAccessTokenSubscription =
+      MedusaService.accessTokenObservable.subscribe({
+        next: (value: string | undefined) => {
+          if (!value) {
+            this.resetMedusaModel();
+            this.initializeAsync(renderCount);
+          }
+        },
       });
-    this._userSubscription = SupabaseService.userObservable.subscribe({
-      next: this.onActiveUserChangedAsync,
-    });
   }
 
   public override dispose(renderCount: number): void {
+    this._medusaAccessTokenSubscription?.unsubscribe();
     this._selectedInventoryLocationIdSubscription?.unsubscribe();
     this._activeAccountSubscription?.unsubscribe();
     this._userSubscription?.unsubscribe();
@@ -322,7 +328,6 @@ class AccountController extends Controller {
 
   public async logoutAsync(): Promise<void> {
     try {
-      await MedusaService.deleteSessionAsync();
       await SupabaseService.signoutAsync();
     } catch (error: any) {
       console.error(error);
@@ -389,6 +394,79 @@ class AccountController extends Controller {
     this._model.areOrdersLoading = false;
   }
 
+  private resetMedusaModel(): void {
+    this._model.user = null;
+    this._model.account = undefined;
+    this._model.customer = undefined;
+    this._model.customerGroup = undefined;
+    this._model.isCustomerGroupLoading = false;
+    this._model.profileForm = {
+      firstName: '',
+      lastName: '',
+      phoneNumber: '',
+    };
+    this._model.profileFormErrors = {};
+    this._model.errorStrings = {};
+    this._model.profileUrl = undefined;
+    this._model.username = '';
+    this._model.orders = [];
+    this._model.orderPagination = 1;
+    this._model.hasMoreOrders = false;
+    this._model.shippingForm = {
+      email: '',
+      firstName: '',
+      lastName: '',
+      company: '',
+      address: '',
+      apartments: '',
+      postalCode: '',
+      city: '',
+      countryCode: '',
+      region: '',
+      phoneNumber: '',
+    };
+    this._model.shippingFormErrors = {};
+    this._model.addressErrorStrings = {};
+    this._model.selectedAddress = undefined;
+    this._model.editShippingForm = {
+      email: '',
+      firstName: '',
+      lastName: '',
+      company: '',
+      address: '',
+      apartments: '',
+      postalCode: '',
+      city: '',
+      countryCode: '',
+      region: '',
+      phoneNumber: '',
+    };
+    this._model.areOrdersLoading = false;
+    this._model.editShippingFormErrors = {};
+    this._model.activeTabId = '/account/order-history';
+    this._model.prevTabIndex = 0;
+    this._model.activeTabIndex = 0;
+    this._model.ordersScrollPosition = undefined;
+    this._model.isCreateCustomerLoading = false;
+  }
+
+  private async initializeAsync(renderCount: number): Promise<void> {
+    this._activeAccountSubscription?.unsubscribe();
+    this._activeAccountSubscription =
+      AccountService.activeAccountObservable.subscribe({
+        next: this.onActiveAccountChangedAsync,
+      });
+
+    this._userSubscription?.unsubscribe();
+    this._userSubscription = SupabaseService.userObservable.subscribe({
+      next: this.onActiveUserChangedAsync,
+    });
+
+    SupabaseService.supabaseClient?.auth.onAuthStateChange(
+      this.onAuthStateChangedAsync
+    );
+  }
+
   private async onActiveAccountChangedAsync(
     value: core.Account | null
   ): Promise<void> {
@@ -448,7 +526,11 @@ class AccountController extends Controller {
   private async onSelectedInventoryLocationIdChangedAsync(
     id: string | undefined
   ): Promise<void> {
-    if (!id || this._model.isCreateCustomerLoading) {
+    if (
+      !MedusaService.accessToken ||
+      !id ||
+      this._model.isCreateCustomerLoading
+    ) {
       return;
     }
 
@@ -472,6 +554,15 @@ class AccountController extends Controller {
       this._model.isCreateCustomerLoading = false;
     } catch (error: any) {
       console.error(error);
+    }
+  }
+
+  private async onAuthStateChangedAsync(
+    event: AuthChangeEvent,
+    session: Session | null
+  ): Promise<void> {
+    if (event === 'SIGNED_OUT') {
+      await MedusaService.deleteSessionAsync();
     }
   }
 }

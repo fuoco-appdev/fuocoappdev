@@ -38,6 +38,11 @@ message AddCustomerToGroupRequest {
     string customer_id = 2;
 }
 
+message RemoveCustomerFromGroupRequest {
+    string customer_group_id = 1;
+    string customer_id = 2;
+}
+
 message CustomerGroupResponse {
     string data = 1;
 }
