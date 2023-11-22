@@ -527,7 +527,18 @@ export default function WindowDesktopComponent({
                     rounded={true}
                     size={'tiny'}
                     disabled={!windowProps.showNavigateBack}
-                    onClick={onNavigateBack}
+                    onClick={() => {
+                      if (
+                        windowProps.activeRoute?.startsWith(
+                          RoutePathsType.AccountSettings
+                        )
+                      ) {
+                        setTimeout(() => navigate(RoutePathsType.Account), 150);
+                        return;
+                      }
+
+                      onNavigateBack();
+                    }}
                     type={'text'}
                     icon={<Line.ArrowBack size={24} color={'#2A2A5F'} />}
                   />

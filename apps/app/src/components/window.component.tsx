@@ -89,13 +89,6 @@ export default function WindowComponent(): JSX.Element {
   };
 
   const onNavigateBack = () => {
-    WindowController.updateShowNavigateBack(false);
-
-    if (windowProps.activeRoute?.startsWith(RoutePathsType.AccountSettings)) {
-      setTimeout(() => navigate(RoutePathsType.Account), 150);
-      return;
-    }
-
     if (windowProps.activeRoute?.startsWith(`${RoutePathsType.Store}/`)) {
       setTimeout(() => navigate(RoutePathsType.Store), 150);
       return;

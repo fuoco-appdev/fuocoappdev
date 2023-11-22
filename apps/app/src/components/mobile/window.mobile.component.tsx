@@ -51,7 +51,7 @@ export default function WindowMobileComponent({
 
   useMobileEffect(() => {
     setSwitchBottomBar(true);
-  }, [windowProps.transitionKeyIndex]);
+  }, [windowProps.transitionKeyIndex, windowProps.scaleKeyIndex]);
 
   useMobileEffect(() => {
     setTimeout(() => setActiveRoute(windowProps.activeRoute), 75);
@@ -233,7 +233,6 @@ export default function WindowMobileComponent({
                         color: 'rgba(252, 245, 227, .35)',
                       }}
                       onClick={() => {
-                        setSwitchBottomBar(true);
                         onNavigateBack();
                       }}
                       type={'text'}

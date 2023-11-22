@@ -57,10 +57,6 @@ export default function AccountMobileComponent({
         AccountController.updateActiveTabId(loadedLocation);
       }
       WindowController.updateLoadedLocationPath(undefined);
-    } else {
-      if (!loadedLocation?.startsWith(RoutePathsType.AccountSettings)) {
-        navigate(accountProps.activeTabId);
-      }
     }
   }, [windowProps.loadedLocationPath]);
 

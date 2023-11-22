@@ -21,6 +21,7 @@ export interface WindowState {
   loadedLocationPath: string | undefined;
   prevTransitionKeyIndex: number;
   transitionKeyIndex: number;
+  scaleKeyIndex: number;
   queryInventoryLocation: InventoryLocation | undefined;
   priceLists: PriceList[];
 }
@@ -49,6 +50,7 @@ export class WindowModel extends Model {
           loadedLocationPath: undefined,
           prevTransitionKeyIndex: 0,
           transitionKeyIndex: 0,
+          scaleKeyIndex: 0,
           queryInventoryLocation: undefined,
           priceLists: [],
         })
@@ -273,6 +275,19 @@ export class WindowModel extends Model {
       this.store?.update((state) => ({
         ...state,
         transitionKeyIndex: value,
+      }));
+    }
+  }
+
+  public get scaleKeyIndex(): number {
+    return this.store?.getValue().scaleKeyIndex;
+  }
+
+  public set scaleKeyIndex(value: number) {
+    if (this.scaleKeyIndex !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        scaleKeyIndex: value,
       }));
     }
   }
