@@ -319,9 +319,11 @@ class WindowController extends Controller {
   ): void {
     if (event === 'SIGNED_IN') {
       this._model.isLoading = true;
+      this._model.isAuthenticated = true;
     } else if (event === 'SIGNED_OUT') {
       this._model.priceLists = [];
       this._model.account = null;
+      this._model.isAuthenticated = false;
     }
 
     this._model.authState = event;
@@ -330,7 +332,7 @@ class WindowController extends Controller {
   private async onSessionChangedAsync(value: Session | null): Promise<void> {
     if (!value) {
       AccountService.clearActiveAccount();
-      this._model.isAuthenticated = false;
+      this._model.isAuthenticated = undefined;
       this._model.isLoading = false;
       return;
     }
@@ -343,7 +345,7 @@ class WindowController extends Controller {
     } else {
       AccountService.clearActiveAccount();
       SecretsService.clearPrivateSecrets();
-      this._model.isAuthenticated = false;
+      this._model.isAuthenticated = undefined;
     }
 
     this._model.isLoading = false;

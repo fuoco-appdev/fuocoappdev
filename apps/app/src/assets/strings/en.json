@@ -152,7 +152,7 @@
   "addedToCartDescription": "The item {{item, string}} has been added to you cart",
   "quantityLimit": "Quantity limit",
   "alreadyHaveAnAccount": "Already have an account?",
-  "alreadyHaveAnAccountDescription": "Sign in for a better experience.",
+  "alreadyHaveAnAccountDescription": "Sign in to access improved pricing offers.",
   "shoppingCart": "Shopping cart",
   "quantity": "Quantity",
   "removeItem": "Remove item?",
@@ -261,5 +261,7 @@
   "continue": "Continue",
   "accessLocation": "Access location",
   "accessLocationDescription": "Enable location access for choosing a region.",
-  "priceListEndsOn": "Ends on {{date, string}}"
+  "priceListEndsOn": "Ends on {{date, string}}",
+  "priceDeals": "Price Deals",
+  "priceDealsCallToAction": "Unlock exclusive discounts and promotions now by signing up on the platform."
 }

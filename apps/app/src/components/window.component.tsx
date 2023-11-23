@@ -162,6 +162,17 @@ export default function WindowComponent(): JSX.Element {
   }, [windowProps.priceLists]);
 
   useEffect(() => {
+    if (windowProps.authState === 'INITIAL_SESSION') {
+      WindowController.addBanner({
+        key: `signup-${Math.random()}`,
+        title: t('priceDeals') ?? '',
+        description: t('priceDealsCallToAction') ?? '',
+        icon: <Line.Sell size={40} color={'#2A2A5F'} />,
+      });
+    }
+  }, [windowProps.authState]);
+
+  useEffect(() => {
     if (permissionsProps.arePermissionsActive === undefined) {
       return;
     }
