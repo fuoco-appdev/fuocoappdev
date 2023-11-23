@@ -324,6 +324,10 @@ class WindowController extends Controller {
       this._model.priceLists = [];
       this._model.account = null;
       this._model.isAuthenticated = false;
+    } else if (event === 'INITIAL_SESSION' && !session) {
+      this._model.isAuthenticated = false;
+    } else if (event === 'INITIAL_SESSION' && session) {
+      this._model.isAuthenticated = true;
     }
 
     this._model.authState = event;
