@@ -2,6 +2,7 @@ import { createStore, withProps } from '@ngneat/elf';
 import { Model } from '../model';
 import { Product, Region, SalesChannel, ProductType } from '@medusajs/medusa';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+import { ProductLikesMetadataResponse } from 'src/protobuf/core_pb';
 
 export enum ProductTabs {
   White = 'White',
@@ -12,8 +13,10 @@ export enum ProductTabs {
 
 export interface StoreState {
   previews: PricedProduct[];
+  productLikes: ProductLikesMetadataResponse[];
   input: string;
   selectedPreview: PricedProduct | undefined;
+  selectedProductLikes: ProductLikesMetadataResponse | undefined;
   regions: Region[];
   selectedRegion: Region | undefined;
   selectedTab: ProductTabs | undefined;
@@ -32,8 +35,10 @@ export class StoreModel extends Model {
         { name: 'store' },
         withProps<StoreState>({
           previews: [],
+          productLikes: [],
           input: '',
           selectedPreview: undefined,
+          selectedProductLikes: undefined,
           regions: [],
           selectedRegion: undefined,
           selectedTab: undefined,
@@ -58,6 +63,16 @@ export class StoreModel extends Model {
     }
   }
 
+  public get productLikes(): ProductLikesMetadataResponse[] {
+    return this.store.getValue().productLikes;
+  }
+
+  public set productLikes(value: ProductLikesMetadataResponse[]) {
+    if (JSON.stringify(this.productLikes) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, productLikes: value }));
+    }
+  }
+
   public get input(): string {
     return this.store.getValue().input;
   }
@@ -75,6 +90,18 @@ export class StoreModel extends Model {
   public set selectedPreview(value: PricedProduct | undefined) {
     if (JSON.stringify(this.selectedPreview) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, selectedPreview: value }));
+    }
+  }
+
+  public get selectedProductLikes(): ProductLikesMetadataResponse | undefined {
+    return this.store.getValue().selectedProductLikes;
+  }
+
+  public set selectedProductLikes(
+    value: ProductLikesMetadataResponse | undefined
+  ) {
+    if (JSON.stringify(this.selectedProductLikes) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, selectedProductLikes: value }));
     }
   }
 

@@ -21,12 +21,17 @@ import {
   PricedVariant,
 } from '@medusajs/medusa/dist/types/pricing';
 import AccountController from './account.controller';
+import ProductLikesService from '../services/product-likes.service';
+import { Account, ProductLikesMetadataResponse } from '../protobuf/core_pb';
+import { AccountState } from '../models/account.model';
 
 class ProductController extends Controller {
   private readonly _model: ProductModel;
   private _selectedPreviewSubscription: Subscription | undefined;
+  private _selectedProductLikesSubscription: Subscription | undefined;
   private _selectedSalesChannelSubscription: Subscription | undefined;
   private _customerGroupSubscription: Subscription | undefined;
+  private _accountSubscription: Subscription | undefined;
   private _selectedRegionSubscription: Subscription | undefined;
   private _productIdSubscription: Subscription | undefined;
   private _medusaAccessTokenSubscription: Subscription | undefined;
@@ -57,11 +62,37 @@ class ProductController extends Controller {
 
   public override dispose(renderCount: number): void {
     this._medusaAccessTokenSubscription?.unsubscribe();
+    this._accountSubscription?.unsubscribe();
     this._customerGroupSubscription?.unsubscribe();
     this._productIdSubscription?.unsubscribe();
+    this._selectedProductLikesSubscription?.unsubscribe();
     this._selectedPreviewSubscription?.unsubscribe();
     this._selectedRegionSubscription?.unsubscribe();
     this._selectedSalesChannelSubscription?.unsubscribe();
+  }
+
+  public async requestProductLike(
+    isLiked: boolean,
+    productId: string
+  ): Promise<void> {
+    try {
+      if (isLiked) {
+        const metadata = await ProductLikesService.requestAddAsync({
+          accountId: AccountController.model.account?.id ?? '',
+          productId: productId,
+        });
+        StoreController.updateProductLikesMetadata(productId, metadata);
+        return;
+      }
+
+      const metadata = await ProductLikesService.requestRemoveAsync({
+        accountId: AccountController.model.account?.id ?? '',
+        productId: productId,
+      });
+      StoreController.updateProductLikesMetadata(productId, metadata);
+    } catch (error: any) {
+      console.error(error);
+    }
   }
 
   public async requestProductAsync(
@@ -133,10 +164,6 @@ class ProductController extends Controller {
     this._model.productId = value;
   }
 
-  public updateIsLiked(value: boolean): void {
-    this._model.isLiked = value;
-  }
-
   public updateSelectedVariant(id: string): void {
     const variant = this._model.variants.find((value) => value.id === id);
     this._model.selectedVariant = variant;
@@ -205,6 +232,15 @@ class ProductController extends Controller {
         },
       });
 
+    this._selectedProductLikesSubscription?.unsubscribe();
+    this._selectedProductLikesSubscription = StoreController.model.store
+      .pipe(select((model: StoreState) => model.selectedProductLikes))
+      .subscribe({
+        next: (likesMedata: ProductLikesMetadataResponse | undefined) => {
+          this._model.likesMetadata = likesMedata;
+        },
+      });
+
     this._selectedRegionSubscription?.unsubscribe();
     this._selectedRegionSubscription = StoreController.model.store
       .pipe(select((model) => model.selectedRegion))
@@ -224,37 +260,68 @@ class ProductController extends Controller {
         },
       });
 
-    this._productIdSubscription?.unsubscribe();
-    this._productIdSubscription = this._model.store
-      .pipe(select((model) => model.productId))
+    this._accountSubscription?.unsubscribe();
+    this._accountSubscription = AccountController.model.store
+      .pipe(select((model: AccountState) => model.account))
       .subscribe({
-        next: (id: string | undefined) => {
-          if (StoreController.model.selectedPreview) {
-            return;
-          }
-
-          this._customerGroupSubscription?.unsubscribe();
-          this._customerGroupSubscription = AccountController.model.store
-            .pipe(select((model) => model.customerGroup))
+        next: (account: Account | undefined) => {
+          this._productIdSubscription?.unsubscribe();
+          this._productIdSubscription = this._model.store
+            .pipe(select((model) => model.productId))
             .subscribe({
-              next: (customerGroup: CustomerGroup | undefined) => {
-                this._selectedRegionSubscription?.unsubscribe();
-                this._selectedRegionSubscription = StoreController.model.store
-                  .pipe(select((model) => model.selectedRegion))
-                  .subscribe({
-                    next: (region: Region | undefined) => {
-                      const channel =
-                        StoreController.model.selectedSalesChannel;
-                      if (!id || !channel) {
-                        return;
-                      }
+              next: async (id: string | undefined) => {
+                if (!id) {
+                  return;
+                }
 
-                      this.resetDetails();
-                      this.requestProductWithChannelAsync(
-                        id,
-                        channel?.id ?? '',
-                        region?.id ?? ''
-                      );
+                if (StoreController.model.selectedProductLikes) {
+                  return;
+                }
+
+                try {
+                  const productLikesResponse =
+                    await ProductLikesService.requestMetadataAsync({
+                      accountId: account?.id ?? '',
+                      productIds: [id],
+                    });
+
+                  if (productLikesResponse.metadata.length > 0) {
+                    this._model.likesMetadata =
+                      productLikesResponse.metadata[0];
+                  }
+                } catch (error: any) {
+                  console.error(error);
+                }
+
+                if (StoreController.model.selectedPreview) {
+                  return;
+                }
+
+                this._customerGroupSubscription?.unsubscribe();
+                this._customerGroupSubscription = AccountController.model.store
+                  .pipe(select((model) => model.customerGroup))
+                  .subscribe({
+                    next: (customerGroup: CustomerGroup | undefined) => {
+                      this._selectedRegionSubscription?.unsubscribe();
+                      this._selectedRegionSubscription =
+                        StoreController.model.store
+                          .pipe(select((model) => model.selectedRegion))
+                          .subscribe({
+                            next: (region: Region | undefined) => {
+                              const channel =
+                                StoreController.model.selectedSalesChannel;
+                              if (!id || !channel) {
+                                return;
+                              }
+
+                              this.resetDetails();
+                              this.requestProductWithChannelAsync(
+                                id,
+                                channel?.id ?? '',
+                                region?.id ?? ''
+                              );
+                            },
+                          });
                     },
                   });
               },
@@ -267,8 +334,6 @@ class ProductController extends Controller {
     this._model.thumbnail = '';
     this._model.title = '';
     this._model.subtitle = '';
-    this._model.isLiked = false;
-    this._model.likeCount = 0;
     this._model.description = new Array(355).join(' ');
     this._model.tags = [];
     this._model.options = [];

@@ -34,6 +34,10 @@ import { lazy } from '@loadable/component';
 import { ProductPreviewSuspenseDesktopComponent } from './desktop/suspense/product-preview.suspense.desktop.component';
 import { ProductPreviewSuspenseMobileComponent } from './mobile/suspense/product-preview.suspense.mobile.component';
 import { ProductPreviewSuspenseTabletComponent } from './tablet/suspense/product-preview.suspense.tablet.component';
+import { WindowState } from '../models';
+import { ProductLikesMetadataResponse } from '../protobuf/core_pb';
+import AccountController from '../controllers/account.controller';
+import { AccountState } from '../models/account.model';
 
 const ProductPreviewDesktopComponent = lazy(
   () => import('./desktop/product-preview.desktop.component')
@@ -46,9 +50,11 @@ const ProductPreviewMobileComponent = lazy(
 );
 
 export interface ProductPreviewProps {
-  storeProps: StoreState;
+  accountProps: AccountState;
   parentRef: MutableRefObject<HTMLDivElement | null>;
   preview: PricedProduct;
+  likesMetadata: ProductLikesMetadataResponse;
+  storeProps?: StoreState;
   onClick?: () => void;
   onRest?: () => void;
   onAddToCart?: () => void;
@@ -58,16 +64,23 @@ export interface ProductPreviewResponsiveProps extends ProductPreviewProps {
   originalPrice: string;
   calculatedPrice: string;
   selectedVariantId: string | undefined;
+  likeCount: number;
+  isLiked: boolean;
   setOriginalPrice: (value: string) => void;
   setCalculatedPrice: (value: string) => void;
   setSelectedVariantId: (value: string | undefined) => void;
+  setLikeCount: (value: number) => void;
   formatPrice: (price: MoneyAmount) => string;
+  onLikeChanged: (isLiked: boolean) => void;
+  formatNumberCompact: (value: number) => string;
 }
 
 export default function ProductPreviewComponent({
   storeProps,
+  accountProps,
   parentRef,
   preview,
+  likesMetadata,
   onClick,
   onRest,
   onAddToCart,
@@ -75,10 +88,12 @@ export default function ProductPreviewComponent({
   const [originalPrice, setOriginalPrice] = useState<string>('');
   const [calculatedPrice, setCalculatedPrice] = useState<string>('');
   const [addedToCartCount, setAddedToCartCount] = useState<number>(0);
+  const [isLiked, setIsLiked] = useState<boolean>(false);
+  const [likeCount, setLikeCount] = useState<number>(0);
   const [selectedVariantId, setSelectedVariantId] = useState<
     string | undefined
   >(undefined);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const formatPrice = (price: MoneyAmount): string => {
     if (!price.amount) {
@@ -96,6 +111,28 @@ export default function ProductPreviewComponent({
     }).format(Number(value));
   };
 
+  const formatNumberCompact = (value: number): string => {
+    const formatter = Intl.NumberFormat(i18n.language, { notation: 'compact' });
+    return formatter.format(value);
+  };
+
+  const onLikeChanged = (isLiked: boolean) => {
+    setIsLiked(isLiked);
+
+    if (isLiked) {
+      setLikeCount(likeCount + 1);
+    } else {
+      setLikeCount(likeCount - 1);
+    }
+
+    ProductController.requestProductLike(isLiked, preview.id ?? '');
+  };
+
+  useEffect(() => {
+    setIsLiked(Boolean(likesMetadata.didAccountLike));
+    setLikeCount(likesMetadata.totalLikeCount ?? 0);
+  }, [likesMetadata, accountProps.account]);
+
   useEffect(() => {
     const purchasableVariants = preview.variants.filter(
       (value) => value.purchasable === true
@@ -104,7 +141,7 @@ export default function ProductPreviewComponent({
     if (purchasableVariants.length > 0) {
       const cheapestVariant =
         ProductController.getCheapestPrice(purchasableVariants);
-      if (cheapestVariant && storeProps.selectedRegion) {
+      if (cheapestVariant && storeProps?.selectedRegion) {
         setSelectedVariantId(cheapestVariant.id);
         setOriginalPrice(
           formatAmount({
@@ -126,7 +163,7 @@ export default function ProductPreviewComponent({
       setOriginalPrice('');
       setCalculatedPrice('');
     }
-  }, [preview, addedToCartCount, storeProps.selectedRegion]);
+  }, [preview, addedToCartCount, storeProps?.selectedRegion]);
 
   const suspenceComponent = (
     <>
@@ -143,7 +180,8 @@ export default function ProductPreviewComponent({
   return (
     <React.Suspense fallback={suspenceComponent}>
       <ProductPreviewDesktopComponent
-        storeProps={storeProps}
+        accountProps={accountProps}
+        likesMetadata={likesMetadata}
         parentRef={parentRef}
         preview={preview}
         onClick={onClick}
@@ -151,14 +189,20 @@ export default function ProductPreviewComponent({
         originalPrice={originalPrice}
         calculatedPrice={calculatedPrice}
         selectedVariantId={selectedVariantId}
+        likeCount={likeCount}
+        isLiked={isLiked}
         setOriginalPrice={setOriginalPrice}
         setCalculatedPrice={setCalculatedPrice}
         setSelectedVariantId={setSelectedVariantId}
+        setLikeCount={setLikeCount}
         formatPrice={formatPrice}
         onAddToCart={onAddToCart}
+        onLikeChanged={onLikeChanged}
+        formatNumberCompact={formatNumberCompact}
       />
       <ProductPreviewTabletComponent
-        storeProps={storeProps}
+        accountProps={accountProps}
+        likesMetadata={likesMetadata}
         parentRef={parentRef}
         preview={preview}
         onClick={onClick}
@@ -166,14 +210,20 @@ export default function ProductPreviewComponent({
         originalPrice={originalPrice}
         calculatedPrice={calculatedPrice}
         selectedVariantId={selectedVariantId}
+        likeCount={likeCount}
+        isLiked={isLiked}
         setOriginalPrice={setOriginalPrice}
         setCalculatedPrice={setCalculatedPrice}
         setSelectedVariantId={setSelectedVariantId}
+        setLikeCount={setLikeCount}
         formatPrice={formatPrice}
         onAddToCart={onAddToCart}
+        onLikeChanged={onLikeChanged}
+        formatNumberCompact={formatNumberCompact}
       />
       <ProductPreviewMobileComponent
-        storeProps={storeProps}
+        accountProps={accountProps}
+        likesMetadata={likesMetadata}
         parentRef={parentRef}
         preview={preview}
         onClick={onClick}
@@ -181,11 +231,16 @@ export default function ProductPreviewComponent({
         originalPrice={originalPrice}
         calculatedPrice={calculatedPrice}
         selectedVariantId={selectedVariantId}
+        likeCount={likeCount}
+        isLiked={isLiked}
         setOriginalPrice={setOriginalPrice}
         setCalculatedPrice={setCalculatedPrice}
         setSelectedVariantId={setSelectedVariantId}
+        setLikeCount={setLikeCount}
         formatPrice={formatPrice}
         onAddToCart={onAddToCart}
+        onLikeChanged={onLikeChanged}
+        formatNumberCompact={formatNumberCompact}
       />
     </React.Suspense>
   );

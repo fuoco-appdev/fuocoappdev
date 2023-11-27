@@ -445,9 +445,9 @@ class MedusaService {
     }
 
     const typeData = productTypeResponse.data[0];
-    const { data, error } = await SupabaseService.client
+    const { error, count } = await SupabaseService.client
       .from('product')
-      .select()
+      .select('*', { count: 'exact' })
       .match({ type_id: typeData['id'] });
 
     if (error) {
@@ -456,7 +456,7 @@ class MedusaService {
       return response;
     }
 
-    response.setCount(data.length);
+    response.setCount(count);
     return response;
   }
 

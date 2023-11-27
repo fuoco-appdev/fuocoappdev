@@ -56,6 +56,9 @@ import ProductController from '../controllers/product.controller';
 import WindowController from '../controllers/window.controller';
 import { StoreSuspenseTabletComponent } from './tablet/suspense/store.suspense.tablet.component';
 import { useQuery } from '../route-paths';
+import { WindowState } from '../models';
+import AccountController from '../controllers/account.controller';
+import { AccountState } from '../models/account.model';
 
 const StoreDesktopComponent = lazy(
   () => import('./desktop/store.desktop.component')
@@ -68,8 +71,10 @@ const StoreMobileComponent = lazy(
 );
 
 export interface StoreResponsiveProps {
+  windowProps: WindowState;
   storeProps: StoreState;
   homeProps: HomeState;
+  accountProps: AccountState;
   homeLocalProps: HomeLocalState;
   openFilter: boolean;
   openCartVariants: boolean;
@@ -92,8 +97,10 @@ export interface StoreResponsiveProps {
 }
 
 export default function StoreComponent(): JSX.Element {
+  const [windowProps] = useObservable(WindowController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
   const [homeProps] = useObservable(HomeController.model.store);
+  const [accountProps] = useObservable(AccountController.model.store);
   const [homeLocalProps] = useObservable(
     HomeController.model.localStore ?? Store.prototype
   );
@@ -355,8 +362,10 @@ export default function StoreComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <StoreDesktopComponent
+          windowProps={windowProps}
           storeProps={storeProps}
           homeProps={homeProps}
+          accountProps={accountProps}
           homeLocalProps={homeLocalProps}
           openFilter={openFilter}
           openCartVariants={openCartVariants}
@@ -378,7 +387,9 @@ export default function StoreComponent(): JSX.Element {
           onAddToCart={onAddToCart}
         />
         <StoreTabletComponent
+          windowProps={windowProps}
           storeProps={storeProps}
+          accountProps={accountProps}
           homeProps={homeProps}
           homeLocalProps={homeLocalProps}
           openFilter={openFilter}
@@ -401,7 +412,9 @@ export default function StoreComponent(): JSX.Element {
           onAddToCart={onAddToCart}
         />
         <StoreMobileComponent
+          windowProps={windowProps}
           storeProps={storeProps}
+          accountProps={accountProps}
           homeProps={homeProps}
           homeLocalProps={homeLocalProps}
           openFilter={openFilter}

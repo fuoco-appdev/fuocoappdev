@@ -61,26 +61,26 @@ export function ProductSuspenseTabletComponent(): JSX.Element {
                 ].join(' ')}
               />
             </div>
-            {/* <div className={styles['like-container-tablet']}>
-                <div className={styles['like-count-tablet']}>{productProps.likeCount}</div>
-                <Button
-                  rippleProps={{
-                    color: !productProps.isLiked
-                      ? 'rgba(233, 33, 66, .35)'
-                      : 'rgba(42, 42, 95, .35)',
-                  }}
-                  rounded={true}
-                  onClick={() => ProductController.updateIsLiked(!productProps.isLiked)}
-                  type={'text'}
-                  icon={
-                    productProps.isLiked ? (
-                      <Line.Favorite size={24} color={'#E92142'} />
-                    ) : (
-                      <Line.FavoriteBorder size={24} color={'#2A2A5F'} />
-                    )
-                  }
-                />
-              </div> */}
+            <div
+              className={[
+                styles['like-container'],
+                styles['like-container-tablet'],
+              ].join(' ')}
+            >
+              <Skeleton
+                className={[
+                  styles['like-button-skeleton'],
+                  styles['like-button-skeleton-tablet'],
+                ].join(' ')}
+              />
+              <Skeleton
+                borderRadius={9999}
+                className={[
+                  styles['like-count-skeleton'],
+                  styles['like-count-skeleton-tablet'],
+                ].join(' ')}
+              />
+            </div>
           </div>
           <div
             className={[

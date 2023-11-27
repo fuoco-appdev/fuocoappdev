@@ -793,3 +793,255 @@ export class Accounts extends Message<Accounts> {
   }
 }
 
+/**
+ * @generated from message core.ProductLikesMetadataRequest
+ */
+export class ProductLikesMetadataRequest extends Message<ProductLikesMetadataRequest> {
+  /**
+   * @generated from field: string account_id = 1;
+   */
+  accountId = "";
+
+  /**
+   * @generated from field: repeated string product_ids = 2;
+   */
+  productIds: string[] = [];
+
+  constructor(data?: PartialMessage<ProductLikesMetadataRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.ProductLikesMetadataRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "product_ids", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ProductLikesMetadataRequest {
+    return new ProductLikesMetadataRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ProductLikesMetadataRequest {
+    return new ProductLikesMetadataRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ProductLikesMetadataRequest {
+    return new ProductLikesMetadataRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ProductLikesMetadataRequest | PlainMessage<ProductLikesMetadataRequest> | undefined, b: ProductLikesMetadataRequest | PlainMessage<ProductLikesMetadataRequest> | undefined): boolean {
+    return proto3.util.equals(ProductLikesMetadataRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message core.ProductLikesMetadataResponse
+ */
+export class ProductLikesMetadataResponse extends Message<ProductLikesMetadataResponse> {
+  /**
+   * @generated from field: string product_id = 1;
+   */
+  productId = "";
+
+  /**
+   * @generated from field: int32 total_like_count = 2;
+   */
+  totalLikeCount = 0;
+
+  /**
+   * @generated from field: bool did_account_like = 3;
+   */
+  didAccountLike = false;
+
+  constructor(data?: PartialMessage<ProductLikesMetadataResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.ProductLikesMetadataResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "product_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "total_like_count", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 3, name: "did_account_like", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ProductLikesMetadataResponse {
+    return new ProductLikesMetadataResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ProductLikesMetadataResponse {
+    return new ProductLikesMetadataResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ProductLikesMetadataResponse {
+    return new ProductLikesMetadataResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ProductLikesMetadataResponse | PlainMessage<ProductLikesMetadataResponse> | undefined, b: ProductLikesMetadataResponse | PlainMessage<ProductLikesMetadataResponse> | undefined): boolean {
+    return proto3.util.equals(ProductLikesMetadataResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message core.ProductLikesMetadatasResponse
+ */
+export class ProductLikesMetadatasResponse extends Message<ProductLikesMetadatasResponse> {
+  /**
+   * @generated from field: repeated core.ProductLikesMetadataResponse metadata = 1;
+   */
+  metadata: ProductLikesMetadataResponse[] = [];
+
+  constructor(data?: PartialMessage<ProductLikesMetadatasResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.ProductLikesMetadatasResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "metadata", kind: "message", T: ProductLikesMetadataResponse, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ProductLikesMetadatasResponse {
+    return new ProductLikesMetadatasResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ProductLikesMetadatasResponse {
+    return new ProductLikesMetadatasResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ProductLikesMetadatasResponse {
+    return new ProductLikesMetadatasResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ProductLikesMetadatasResponse | PlainMessage<ProductLikesMetadatasResponse> | undefined, b: ProductLikesMetadatasResponse | PlainMessage<ProductLikesMetadatasResponse> | undefined): boolean {
+    return proto3.util.equals(ProductLikesMetadatasResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message core.ProductLikeRequest
+ */
+export class ProductLikeRequest extends Message<ProductLikeRequest> {
+  /**
+   * @generated from field: string product_id = 1;
+   */
+  productId = "";
+
+  /**
+   * @generated from field: string account_id = 2;
+   */
+  accountId = "";
+
+  constructor(data?: PartialMessage<ProductLikeRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.ProductLikeRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "product_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ProductLikeRequest {
+    return new ProductLikeRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ProductLikeRequest {
+    return new ProductLikeRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ProductLikeRequest {
+    return new ProductLikeRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ProductLikeRequest | PlainMessage<ProductLikeRequest> | undefined, b: ProductLikeRequest | PlainMessage<ProductLikeRequest> | undefined): boolean {
+    return proto3.util.equals(ProductLikeRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message core.ProductLikeResponse
+ */
+export class ProductLikeResponse extends Message<ProductLikeResponse> {
+  /**
+   * @generated from field: string product_id = 1;
+   */
+  productId = "";
+
+  /**
+   * @generated from field: string account_id = 2;
+   */
+  accountId = "";
+
+  constructor(data?: PartialMessage<ProductLikeResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.ProductLikeResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "product_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ProductLikeResponse {
+    return new ProductLikeResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ProductLikeResponse {
+    return new ProductLikeResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ProductLikeResponse {
+    return new ProductLikeResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ProductLikeResponse | PlainMessage<ProductLikeResponse> | undefined, b: ProductLikeResponse | PlainMessage<ProductLikeResponse> | undefined): boolean {
+    return proto3.util.equals(ProductLikeResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message core.ProductLikesResponse
+ */
+export class ProductLikesResponse extends Message<ProductLikesResponse> {
+  /**
+   * @generated from field: repeated core.ProductLikeResponse likes = 1;
+   */
+  likes: ProductLikeResponse[] = [];
+
+  constructor(data?: PartialMessage<ProductLikesResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.ProductLikesResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "likes", kind: "message", T: ProductLikeResponse, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ProductLikesResponse {
+    return new ProductLikesResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ProductLikesResponse {
+    return new ProductLikesResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ProductLikesResponse {
+    return new ProductLikesResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ProductLikesResponse | PlainMessage<ProductLikesResponse> | undefined, b: ProductLikesResponse | PlainMessage<ProductLikesResponse> | undefined): boolean {
+    return proto3.util.equals(ProductLikesResponse, a, b);
+  }
+}
+

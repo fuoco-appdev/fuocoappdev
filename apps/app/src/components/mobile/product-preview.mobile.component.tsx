@@ -24,6 +24,7 @@ import { ProductPreviewResponsiveProps } from '../product-preview.component';
 import { ResponsiveMobile } from '../responsive.component';
 
 export default function ProductPreviewMobileComponent({
+  accountProps,
   parentRef,
   preview,
   onClick,
@@ -31,7 +32,11 @@ export default function ProductPreviewMobileComponent({
   originalPrice,
   calculatedPrice,
   selectedVariantId,
+  likeCount,
+  isLiked,
   onAddToCart,
+  onLikeChanged,
+  formatNumberCompact,
 }: ProductPreviewResponsiveProps): JSX.Element {
   const [expanded, setExpanded] = useState<boolean>(false);
   const ref = useRef<HTMLDivElement | null>(null);
@@ -139,16 +144,71 @@ export default function ProductPreviewMobileComponent({
                   styles['thumbnail-top-content-mobile'],
                 ].join(' ')}
               >
-                {originalPrice !== calculatedPrice && (
+                <div
+                  className={[
+                    styles['label-container'],
+                    styles['label-container-mobile'],
+                  ].join(' ')}
+                >
+                  {originalPrice !== calculatedPrice && (
+                    <div
+                      className={[
+                        styles['calculated-price'],
+                        styles['calculated-price-mobile'],
+                      ].join(' ')}
+                    >
+                      {calculatedPrice}
+                    </div>
+                  )}
+                </div>
+                <div
+                  className={[
+                    styles['status-content-container'],
+                    styles['status-content-container-mobile'],
+                  ].join(' ')}
+                >
                   <div
                     className={[
-                      styles['calculated-price'],
-                      styles['calculated-price-mobile'],
+                      styles['like-status-container'],
+                      styles['like-status-container-mobile'],
                     ].join(' ')}
                   >
-                    {calculatedPrice}
+                    <Button
+                      classNames={{
+                        container: styles['like-button-container'],
+                        button: styles['like-button'],
+                      }}
+                      rippleProps={{
+                        color: !isLiked
+                          ? 'rgba(233, 33, 66, .35)'
+                          : 'rgba(42, 42, 95, .35)',
+                      }}
+                      disabled={
+                        !accountProps.account ||
+                        accountProps.account.status === 'Incomplete'
+                      }
+                      touchScreen={true}
+                      rounded={true}
+                      onClick={() => onLikeChanged(!isLiked)}
+                      type={'text'}
+                      icon={
+                        isLiked ? (
+                          <Line.Favorite size={24} color={'#E92142'} />
+                        ) : (
+                          <Line.FavoriteBorder size={24} color={'#2A2A5F'} />
+                        )
+                      }
+                    />
+                    <div
+                      className={[
+                        styles['like-status-count'],
+                        styles['like-status-count-mobile'],
+                      ].join(' ')}
+                    >
+                      {formatNumberCompact(likeCount)}
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
               {!expanded && (
                 <div

@@ -1,5 +1,6 @@
 import { createStore, withProps } from '@ngneat/elf';
 import { Model } from '../model';
+import { ProductLikesMetadataResponse } from '../protobuf/core_pb';
 import { ProductTag, ProductOption, MoneyAmount } from '@medusajs/medusa';
 import { PricedVariant } from '@medusajs/medusa/dist/types/pricing';
 
@@ -23,8 +24,6 @@ export interface ProductState {
   thumbnail: string;
   title: string;
   subtitle: string;
-  isLiked: boolean;
-  likeCount: number;
   description: string;
   tags: ProductTag[];
   options: ProductOption[];
@@ -36,6 +35,7 @@ export interface ProductState {
   countryOrigin: string;
   dimensions: string;
   type: string;
+  likesMetadata: ProductLikesMetadataResponse | undefined;
 }
 
 export class ProductModel extends Model {
@@ -49,8 +49,6 @@ export class ProductModel extends Model {
           thumbnail: '',
           title: '',
           subtitle: '',
-          isLiked: false,
-          likeCount: 0,
           description: new Array(355).join(' '),
           tags: [],
           options: [],
@@ -62,6 +60,7 @@ export class ProductModel extends Model {
           countryOrigin: '-',
           dimensions: '-',
           type: '-',
+          likesMetadata: undefined,
         })
       )
     );
@@ -114,26 +113,6 @@ export class ProductModel extends Model {
   public set subtitle(value: string) {
     if (this.subtitle !== value) {
       this.store.update((state) => ({ ...state, subtitle: value }));
-    }
-  }
-
-  public get isLiked(): boolean {
-    return this.store.getValue().isLiked;
-  }
-
-  public set isLiked(value: boolean) {
-    if (this.isLiked !== value) {
-      this.store.update((state) => ({ ...state, isLiked: value }));
-    }
-  }
-
-  public get likeCount(): number {
-    return this.store.getValue().likeCount;
-  }
-
-  public set likeCount(value: number) {
-    if (this.likeCount !== value) {
-      this.store.update((state) => ({ ...state, likeCount: value }));
     }
   }
 
@@ -244,6 +223,16 @@ export class ProductModel extends Model {
   public set type(value: string) {
     if (this.type !== value) {
       this.store.update((state) => ({ ...state, type: value }));
+    }
+  }
+
+  public get likesMetadata(): ProductLikesMetadataResponse | undefined {
+    return this.store.getValue().likesMetadata;
+  }
+
+  public set likesMetadata(value: ProductLikesMetadataResponse | undefined) {
+    if (JSON.stringify(this.likesMetadata) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, likesMetadata: value }));
     }
   }
 }

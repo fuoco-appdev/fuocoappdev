@@ -77,23 +77,31 @@
     }
 
     & .like-container {
-      display: -webkit-box;
-      display: -ms-flexbox;
       display: flex;
-      -webkit-box-pack: center;
-          -ms-flex-pack: center;
-              justify-content: center;
-      -webkit-box-align: center;
-          -ms-flex-align: center;
-              align-items: center;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       height: -webkit-fit-content;
       height: -moz-fit-content;
       height: fit-content;
+      color: $brand-900;
+
+      & .like-button-skeleton {
+        height: 46px;
+        width: 46px;
+        border-radius: 46px;
+      }
+
+      & .like-count-skeleton {
+        height: 12px;
+        width: 24px;
+      }
 
       & .like-count {
-        font-size: $font-size-sm;
+        color: $brand-900;
         font-weight: $font-weight-bold;
-        margin-right: $mp-1;
+        font-size: $font-size-xs;
+        line-height: 12px;
       }
     }
   }

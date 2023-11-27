@@ -23,6 +23,8 @@ import { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import SupabaseService from '../services/supabase.service';
 import { AccountState } from '../models/account.model';
 import AccountController from './account.controller';
+import ProductLikesService from 'src/services/product-likes.service';
+import { ProductLikesMetadataResponse } from 'src/protobuf/core_pb';
 
 class StoreController extends Controller {
   private readonly _model: StoreModel;
@@ -79,6 +81,12 @@ class StoreController extends Controller {
 
   public updateSelectedPreview(value: PricedProduct): void {
     this._model.selectedPreview = value;
+  }
+
+  public updateSelectedProductLikes(
+    value: ProductLikesMetadataResponse | undefined
+  ): void {
+    this._model.selectedProductLikes = value;
   }
 
   public updateScrollPosition(value: number | undefined) {
@@ -162,6 +170,26 @@ class StoreController extends Controller {
 
     const hitsOrder = hits.map((value) => value.id);
     const productIds: string[] = hits.map((value: Product) => value.id);
+
+    try {
+      const productLikesResponse =
+        await ProductLikesService.requestMetadataAsync({
+          accountId: AccountController.model.account?.id ?? '',
+          productIds: productIds,
+        });
+
+      if (offset > 0) {
+        const productLikes = this._model.productLikes;
+        this._model.productLikes = productLikes.concat(
+          productLikesResponse.metadata
+        );
+      } else {
+        this._model.productLikes = productLikesResponse.metadata;
+      }
+    } catch (error: any) {
+      console.error(error);
+    }
+
     const { selectedRegion } = this._model;
     const { cart } = CartController.model;
     const productsResponse = await MedusaService.medusa?.products.list({
@@ -218,6 +246,18 @@ class StoreController extends Controller {
     if (inventoryLocation) {
       HomeController.updateSelectedInventoryLocation(inventoryLocation);
     }
+  }
+
+  public updateProductLikesMetadata(
+    id: string,
+    metadata: ProductLikesMetadataResponse
+  ): void {
+    const metadataIndex = this._model.productLikes.findIndex(
+      (value) => value.productId === id
+    );
+    const productLikes = [...this._model.productLikes];
+    productLikes[metadataIndex] = metadata;
+    this._model.productLikes = productLikes;
   }
 
   private resetMedusaModel(): void {

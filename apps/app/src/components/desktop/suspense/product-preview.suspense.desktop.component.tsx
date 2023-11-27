@@ -99,6 +99,33 @@ export function ProductPreviewSuspenseDesktopComponent(): JSX.Element {
                 styles['product-status-actions-container-desktop'],
               ].join(' ')}
             >
+              <div
+                className={[
+                  styles['status-content-container'],
+                  styles['status-content-container-desktop'],
+                ].join(' ')}
+              >
+                <div
+                  className={[
+                    styles['like-status-container'],
+                    styles['like-status-container-desktop'],
+                  ].join(' ')}
+                >
+                  <Skeleton
+                    className={[
+                      styles['like-status-button-skeleton'],
+                      styles['like-status-button-skeleton-desktop'],
+                    ].join(' ')}
+                  />
+                  <Skeleton
+                    borderRadius={9999}
+                    className={[
+                      styles['like-status-count-skeleton'],
+                      styles['like-status-count-skeleton-desktop'],
+                    ].join(' ')}
+                  />
+                </div>
+              </div>
               <Skeleton width={56} height={56} borderRadius={56} />
             </div>
           </div>

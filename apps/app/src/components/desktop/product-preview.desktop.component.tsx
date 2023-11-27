@@ -10,7 +10,7 @@ import {
 } from 'react';
 import styles from '../product-preview.module.scss';
 import { MoneyAmount, Product, LineItem } from '@medusajs/medusa';
-import { Button, Card, Line } from '@fuoco.appdev/core-ui';
+import { Button, Card, Line, Solid } from '@fuoco.appdev/core-ui';
 import { animated, useSpring } from 'react-spring';
 import i18n from '../../i18n';
 import ProductController from '../../controllers/product.controller';
@@ -26,12 +26,17 @@ import { ResponsiveDesktop } from '../responsive.component';
 
 export default function ProductPreviewDesktopComponent({
   preview,
+  accountProps,
   onClick,
   originalPrice,
   calculatedPrice,
   selectedVariantId,
+  isLiked,
+  likeCount,
   onAddToCart,
   onRest,
+  onLikeChanged,
+  formatNumberCompact,
 }: ProductPreviewResponsiveProps): JSX.Element {
   const ref = useRef<HTMLDivElement | null>(null);
   const formatDescription = (description: string): string => {
@@ -182,6 +187,53 @@ export default function ProductPreviewDesktopComponent({
                 styles['product-status-actions-container-desktop'],
               ].join(' ')}
             >
+              <div
+                className={[
+                  styles['status-content-container'],
+                  styles['status-content-container-desktop'],
+                ].join(' ')}
+              >
+                <div
+                  className={[
+                    styles['like-status-container'],
+                    styles['like-status-container-desktop'],
+                  ].join(' ')}
+                >
+                  <Button
+                    classNames={{
+                      container: styles['like-button-container'],
+                      button: styles['like-button'],
+                    }}
+                    rippleProps={{
+                      color: !isLiked
+                        ? 'rgba(233, 33, 66, .35)'
+                        : 'rgba(42, 42, 95, .35)',
+                    }}
+                    disabled={
+                      !accountProps.account ||
+                      accountProps.account.status === 'Incomplete'
+                    }
+                    rounded={true}
+                    onClick={() => onLikeChanged(!isLiked)}
+                    type={'text'}
+                    icon={
+                      isLiked ? (
+                        <Line.Favorite size={24} color={'#E92142'} />
+                      ) : (
+                        <Line.FavoriteBorder size={24} color={'#2A2A5F'} />
+                      )
+                    }
+                  />
+                  <div
+                    className={[
+                      styles['like-status-count'],
+                      styles['like-status-count-desktop'],
+                    ].join(' ')}
+                  >
+                    {formatNumberCompact(likeCount)}
+                  </div>
+                </div>
+              </div>
               {selectedVariantId && (
                 <Button
                   classNames={{ button: styles['floating-button'] }}

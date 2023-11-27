@@ -33,7 +33,41 @@ export function ProductPreviewSuspenseMobileComponent(): JSX.Element {
                 styles['thumbnail-top-content'],
                 styles['thumbnail-top-content-mobile'],
               ].join(' ')}
-            ></div>
+            >
+              <div
+                className={[
+                  styles['label-container'],
+                  styles['label-container-mobile'],
+                ].join(' ')}
+              ></div>
+              <div
+                className={[
+                  styles['status-content-container'],
+                  styles['status-content-container--mobile'],
+                ].join(' ')}
+              >
+                <div
+                  className={[
+                    styles['like-status-container'],
+                    styles['like-status-container--mobile'],
+                  ].join(' ')}
+                >
+                  <Skeleton
+                    className={[
+                      styles['like-status-button-skeleton'],
+                      styles['like-status-button-skeleton--mobile'],
+                    ].join(' ')}
+                  />
+                  <Skeleton
+                    borderRadius={9999}
+                    className={[
+                      styles['like-status-count-skeleton'],
+                      styles['like-status-count-skeleton--mobile'],
+                    ].join(' ')}
+                  />
+                </div>
+              </div>
+            </div>
             <div
               className={[
                 styles['thumbnail-bottom-content'],

@@ -26,12 +26,17 @@ import { ResponsiveDesktop, ResponsiveTablet } from '../responsive.component';
 
 export default function ProductPreviewTabletComponent({
   preview,
+  accountProps,
   onClick,
   originalPrice,
   calculatedPrice,
   selectedVariantId,
+  isLiked,
+  likeCount,
   onAddToCart,
   onRest,
+  onLikeChanged,
+  formatNumberCompact,
 }: ProductPreviewResponsiveProps): JSX.Element {
   const ref = useRef<HTMLDivElement | null>(null);
   const formatDescription = (description: string): string => {
@@ -52,6 +57,7 @@ export default function ProductPreviewTabletComponent({
         rippleProps={{
           color: 'rgba(133, 38, 122, .35)',
         }}
+        hoverable={true}
         clickable={true}
         onClick={() => {
           onClick?.();
@@ -63,7 +69,6 @@ export default function ProductPreviewTabletComponent({
             styles['thumbnail-container'],
             styles['thumbnail-container-tablet'],
           ].join(' ')}
-          style={{ height: 'calc(100% - 38px)' }}
         >
           <img
             className={[
@@ -95,12 +100,140 @@ export default function ProductPreviewTabletComponent({
                 </div>
               )}
             </div>
+          </div>
+        </div>
+        <div
+          className={[
+            styles['bottom-content'],
+            styles['bottom-content-tablet'],
+          ].join(' ')}
+        >
+          <div
+            className={[
+              styles['bottom-top-content'],
+              styles['bottom-top-content-tablet'],
+            ].join(' ')}
+          >
             <div
               className={[
-                styles['thumbnail-bottom-content'],
-                styles['thumbnail-bottom-content-tablet'],
+                styles['product-title-container'],
+                styles['product-title-container-tablet'],
               ].join(' ')}
             >
+              <span
+                className={[
+                  styles['product-title'],
+                  styles['product-title-tablet'],
+                ].join(' ')}
+              >
+                {preview.title}
+              </span>
+              {preview.subtitle && (
+                <div
+                  className={[
+                    styles['product-subtitle'],
+                    styles['product-subtitle-tablet'],
+                  ].join(' ')}
+                >
+                  {preview.subtitle}
+                </div>
+              )}
+            </div>
+            {originalPrice.length > 0 ? (
+              <span
+                className={[
+                  styles['product-price'],
+                  styles['product-price-tablet'],
+                  originalPrice !== calculatedPrice &&
+                    styles['product-price-crossed'],
+                ].join(' ')}
+              >
+                {originalPrice}
+              </span>
+            ) : (
+              <div
+                className={[
+                  styles['product-limit-icon'],
+                  styles['product-limit-icon-tablet'],
+                ].join(' ')}
+              >
+                <Line.ProductionQuantityLimits size={20} />
+              </div>
+            )}
+          </div>
+          <div
+            className={[
+              styles['product-details-container'],
+              styles['product-details-container-tablet'],
+            ].join(' ')}
+          >
+            <div
+              className={[
+                styles['product-description'],
+                styles['product-description-tablet'],
+              ].join(' ')}
+            >
+              {preview.description &&
+                preview.description?.length > 0 &&
+                formatDescription(
+                  `${preview.description?.slice(0, 205)}${
+                    preview.description.length > 205 ? '...' : ''
+                  }`
+                )}
+            </div>
+            <div
+              className={[
+                styles['product-status-actions-container'],
+                styles['product-status-actions-container-tablet'],
+              ].join(' ')}
+            >
+              <div
+                className={[
+                  styles['status-content-container'],
+                  styles['status-content-container-tablet'],
+                ].join(' ')}
+              >
+                <div
+                  className={[
+                    styles['like-status-container'],
+                    styles['like-status-container-tablet'],
+                  ].join(' ')}
+                >
+                  <Button
+                    classNames={{
+                      container: styles['like-button-container'],
+                      button: styles['like-button'],
+                    }}
+                    rippleProps={{
+                      color: !isLiked
+                        ? 'rgba(233, 33, 66, .35)'
+                        : 'rgba(42, 42, 95, .35)',
+                    }}
+                    disabled={
+                      !accountProps.account ||
+                      accountProps.account.status === 'Incomplete'
+                    }
+                    rounded={true}
+                    onClick={() => onLikeChanged(!isLiked)}
+                    type={'text'}
+                    icon={
+                      isLiked ? (
+                        <Line.Favorite size={24} color={'#E92142'} />
+                      ) : (
+                        <Line.FavoriteBorder size={24} color={'#2A2A5F'} />
+                      )
+                    }
+                  />
+                  <div
+                    className={[
+                      styles['like-status-count'],
+                      styles['like-status-count-tablet'],
+                    ].join(' ')}
+                  >
+                    {formatNumberCompact(likeCount)}
+                  </div>
+                </div>
+              </div>
               {selectedVariantId && (
                 <Button
                   classNames={{ button: styles['floating-button'] }}
@@ -114,41 +247,6 @@ export default function ProductPreviewTabletComponent({
               )}
             </div>
           </div>
-        </div>
-        <div
-          className={[styles['bottom-bar'], styles['bottom-bar-tablet']].join(
-            ' '
-          )}
-        >
-          <span
-            className={[
-              styles['product-title'],
-              styles['product-title-tablet'],
-            ].join(' ')}
-          >
-            {preview.title}
-          </span>
-          {originalPrice.length > 0 ? (
-            <span
-              className={[
-                styles['product-price'],
-                styles['product-price-tablet'],
-                originalPrice !== calculatedPrice &&
-                  styles['product-price-crossed'],
-              ].join(' ')}
-            >
-              {originalPrice}
-            </span>
-          ) : (
-            <div
-              className={[
-                styles['product-limit-icon'],
-                styles['product-limit-icon-tablet'],
-              ].join(' ')}
-            >
-              <Line.ProductionQuantityLimits size={20} />
-            </div>
-          )}
         </div>
       </Card>
     </ResponsiveTablet>

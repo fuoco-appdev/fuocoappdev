@@ -26,6 +26,8 @@ import { ProductSuspenseMobileComponent } from './mobile/suspense/product.suspen
 import WindowController from '../controllers/window.controller';
 import { useTranslation } from 'react-i18next';
 import { ProductSuspenseTabletComponent } from './tablet/suspense/product.suspense.tablet.component';
+import AccountController from '../controllers/account.controller';
+import { AccountState } from '../models/account.model';
 
 const ProductDesktopComponent = lazy(() =>
   timeout(import('./desktop/product.desktop.component'), 150)
@@ -44,6 +46,7 @@ export interface ProductProps {
 export interface ProductResponsiveProps {
   productProps: ProductState;
   storeProps: StoreState;
+  accountProps: AccountState;
   remarkPlugins: any[];
   description: string;
   tabs: TabProps[];
@@ -60,15 +63,20 @@ export interface ProductResponsiveProps {
   uvc: string | undefined;
   vintage: string | undefined;
   quantity: number;
+  isLiked: boolean;
+  likeCount: number;
   setActiveDetails: (value: string | undefined) => void;
   setDescription: (value: string) => void;
   setQuantity: (value: number) => void;
   onAddToCart: () => void;
+  onLikeChanged: (isLiked: boolean) => void;
+  formatNumberCompact: (value: number) => string;
 }
 
 function ProductComponent({ product }: ProductProps): JSX.Element {
   const [productProps] = useObservable(ProductController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
+  const [accountProps] = useObservable(AccountController.model.store);
   const { id } = useParams();
   const [description, setDescription] = useState<string>('');
   const [tabs, setTabs] = useState<TabProps[]>([]);
@@ -90,7 +98,9 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
   const [vintage, setVintage] = useState<string | undefined>('');
   const [remarkPlugins, setRemarkPlugins] = useState<any[]>([]);
   const [quantity, setQuantity] = useState<number>(1);
-  const { t } = useTranslation();
+  const [isLiked, setIsLiked] = useState<boolean>(false);
+  const [likeCount, setLikeCount] = useState<number>(0);
+  const { t, i18n } = useTranslation();
 
   const formatName = (title: string, subtitle?: string | null) => {
     let name = productProps.title;
@@ -123,6 +133,23 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
         }),
       (error) => console.error(error)
     );
+  };
+
+  const onLikeChanged = (isLiked: boolean) => {
+    setIsLiked(isLiked);
+
+    if (isLiked) {
+      setLikeCount(likeCount + 1);
+    } else {
+      setLikeCount(likeCount - 1);
+    }
+
+    ProductController.requestProductLike(isLiked, id ?? '');
+  };
+
+  const formatNumberCompact = (value: number): string => {
+    const formatter = Intl.NumberFormat(i18n.language, { notation: 'compact' });
+    return formatter.format(value);
   };
 
   const [fullName, setFullName] = useState<string>(
@@ -175,6 +202,11 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
   useEffect(() => {
     setActiveVariantId(productProps.selectedVariant?.id);
   }, [productProps.selectedVariant]);
+
+  useEffect(() => {
+    setIsLiked(Boolean(productProps.likesMetadata?.didAccountLike));
+    setLikeCount(productProps.likesMetadata?.totalLikeCount ?? 0);
+  }, [productProps.likesMetadata, accountProps.account]);
 
   useEffect(() => {
     const alcoholOption = ProductController.model.options.find(
@@ -278,6 +310,7 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
         <ProductDesktopComponent
           productProps={productProps}
           storeProps={storeProps}
+          accountProps={accountProps}
           remarkPlugins={remarkPlugins}
           description={description}
           tabs={tabs}
@@ -294,14 +327,19 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
           uvc={uvc}
           vintage={vintage}
           quantity={quantity}
+          isLiked={isLiked}
+          likeCount={likeCount}
           setActiveDetails={setActiveDetails}
           setDescription={setDescription}
           setQuantity={setQuantity}
           onAddToCart={onAddToCart}
+          onLikeChanged={onLikeChanged}
+          formatNumberCompact={formatNumberCompact}
         />
         <ProductTabletComponent
           productProps={productProps}
           storeProps={storeProps}
+          accountProps={accountProps}
           remarkPlugins={remarkPlugins}
           description={description}
           tabs={tabs}
@@ -318,14 +356,19 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
           uvc={uvc}
           vintage={vintage}
           quantity={quantity}
+          isLiked={isLiked}
+          likeCount={likeCount}
           setActiveDetails={setActiveDetails}
           setDescription={setDescription}
           setQuantity={setQuantity}
           onAddToCart={onAddToCart}
+          onLikeChanged={onLikeChanged}
+          formatNumberCompact={formatNumberCompact}
         />
         <ProductMobileComponent
           productProps={productProps}
           storeProps={storeProps}
+          accountProps={accountProps}
           remarkPlugins={remarkPlugins}
           description={description}
           tabs={tabs}
@@ -342,10 +385,14 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
           uvc={uvc}
           vintage={vintage}
           quantity={quantity}
+          isLiked={isLiked}
+          likeCount={likeCount}
           setActiveDetails={setActiveDetails}
           setDescription={setDescription}
           setQuantity={setQuantity}
           onAddToCart={onAddToCart}
+          onLikeChanged={onLikeChanged}
+          formatNumberCompact={formatNumberCompact}
         />
       </React.Suspense>
     </>

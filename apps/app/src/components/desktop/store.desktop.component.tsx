@@ -46,7 +46,9 @@ import { MedusaProductTypeNames } from 'src/types/medusa.type';
 import { createPortal } from 'react-dom';
 
 export default function StoreDesktopComponent({
+  windowProps,
   storeProps,
+  accountProps,
   homeProps,
   homeLocalProps,
   openFilter,
@@ -236,27 +238,43 @@ export default function StoreDesktopComponent({
             onLoad={onPreviewsLoad}
           >
             {storeProps.previews.map(
-              (preview: PricedProduct, index: number) => (
-                <ProductPreviewComponent
-                  parentRef={rootRef}
-                  key={index}
-                  storeProps={storeProps}
-                  preview={preview}
-                  onClick={() => {
-                    StoreController.updateScrollPosition(
-                      previewsContainerRef.current?.scrollTop ?? 0
-                    );
-                    StoreController.updateSelectedPreview(preview);
-                  }}
-                  onRest={() => {
-                    navigate(`${RoutePathsType.Store}/${preview.id}`);
-                  }}
-                  onAddToCart={() => {
-                    StoreController.updateSelectedPreview(preview);
-                    setOpenCartVariants(true);
-                  }}
-                />
-              )
+              (preview: PricedProduct, index: number) => {
+                const productLikesMetadata = storeProps.productLikes.find(
+                  (value) => value.productId === preview.id
+                );
+                return (
+                  <ProductPreviewComponent
+                    parentRef={rootRef}
+                    key={index}
+                    storeProps={storeProps}
+                    accountProps={accountProps}
+                    preview={preview}
+                    likesMetadata={
+                      productLikesMetadata ??
+                      core.ProductLikesMetadataResponse.prototype
+                    }
+                    onClick={() => {
+                      StoreController.updateScrollPosition(
+                        previewsContainerRef.current?.scrollTop ?? 0
+                      );
+                      StoreController.updateSelectedPreview(preview);
+                      StoreController.updateSelectedProductLikes(
+                        productLikesMetadata
+                      );
+                    }}
+                    onRest={() => {
+                      navigate(`${RoutePathsType.Store}/${preview.id}`);
+                    }}
+                    onAddToCart={() => {
+                      StoreController.updateSelectedPreview(preview);
+                      StoreController.updateSelectedProductLikes(
+                        productLikesMetadata
+                      );
+                      setOpenCartVariants(true);
+                    }}
+                  />
+                );
+              }
             )}
             <img
               src={'../assets/svg/ring-resize-dark.svg'}

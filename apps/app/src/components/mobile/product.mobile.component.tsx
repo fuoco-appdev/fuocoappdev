@@ -26,6 +26,7 @@ const ReactMarkdown = loadable(
 export default function ProductMobileComponent({
   productProps,
   storeProps,
+  accountProps,
   remarkPlugins,
   description,
   tabs,
@@ -42,10 +43,14 @@ export default function ProductMobileComponent({
   uvc,
   vintage,
   quantity,
+  isLiked,
+  likeCount,
   setActiveDetails,
   setDescription,
   setQuantity,
   onAddToCart,
+  onLikeChanged,
+  formatNumberCompact,
 }: ProductResponsiveProps): JSX.Element {
   const { t } = useTranslation();
   const [showMore, setShowMore] = useState<boolean>(false);
@@ -143,26 +148,63 @@ export default function ProductMobileComponent({
                 />
               )}
             </div>
-            {/* <div className={styles['like-container-mobile']}>
-              <div className={styles['like-count-mobile']}>{productProps.likeCount}</div>
-              <Button
-                rippleProps={{
-                  color: !productProps.isLiked
-                    ? 'rgba(233, 33, 66, .35)'
-                    : 'rgba(42, 42, 95, .35)',
-                }}
-                rounded={true}
-                onClick={() => ProductController.updateIsLiked(!productProps.isLiked)}
-                type={'text'}
-                icon={
-                  productProps.isLiked ? (
-                    <Line.Favorite size={24} color={'#E92142'} />
-                  ) : (
-                    <Line.FavoriteBorder size={24} color={'#2A2A5F'} />
-                  )
-                }
-              />
-            </div> */}
+            <div
+              className={[
+                styles['like-container'],
+                styles['like-container-mobile'],
+              ].join(' ')}
+            >
+              {!productProps.isLoading ? (
+                <>
+                  <Button
+                    rippleProps={{
+                      color: !isLiked
+                        ? 'rgba(233, 33, 66, .35)'
+                        : 'rgba(42, 42, 95, .35)',
+                    }}
+                    rounded={true}
+                    touchScreen={true}
+                    disabled={
+                      !accountProps.account ||
+                      accountProps.account.status === 'Incomplete'
+                    }
+                    onClick={() => onLikeChanged(!isLiked)}
+                    type={'text'}
+                    icon={
+                      isLiked ? (
+                        <Line.Favorite size={24} color={'#E92142'} />
+                      ) : (
+                        <Line.FavoriteBorder size={24} color={'#2A2A5F'} />
+                      )
+                    }
+                  />
+                  <div
+                    className={[
+                      styles['like-count'],
+                      styles['like-count-mobile'],
+                    ].join(' ')}
+                  >
+                    {formatNumberCompact(likeCount)}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Skeleton
+                    className={[
+                      styles['like-button-skeleton'],
+                      styles['like-button-skeleton-mobile'],
+                    ].join(' ')}
+                  />
+                  <Skeleton
+                    borderRadius={9999}
+                    className={[
+                      styles['like-count-skeleton'],
+                      styles['like-count-skeleton-mobile'],
+                    ].join(' ')}
+                  />
+                </>
+              )}
+            </div>
           </div>
           <div
             className={[
