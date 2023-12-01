@@ -43,7 +43,7 @@ export default function AccountMobileComponent({
 
   useMobileEffect(() => {
     if (windowProps.activeRoute === RoutePathsType.Account) {
-      navigate(RoutePathsType.AccountOrderHistory);
+      navigate(RoutePathsType.AccountLikes);
     }
   }, [windowProps.activeRoute]);
 
@@ -250,6 +250,7 @@ export default function AccountMobileComponent({
                 touchScreen={true}
                 activeId={accountProps.activeTabId}
                 classNames={{
+                  nav: [styles['tab-nav'], styles['tab-nav-mobile']].join(' '),
                   tabButton: [
                     styles['tab-button'],
                     styles['tab-button-mobile'],
@@ -266,16 +267,16 @@ export default function AccountMobileComponent({
                 type={'underlined'}
                 tabs={[
                   {
+                    id: RoutePathsType.AccountLikes,
+                    icon: <Line.FavoriteBorder size={24} />,
+                  },
+                  {
                     id: RoutePathsType.AccountOrderHistory,
                     icon: <Line.History size={24} />,
                   },
                   {
                     id: RoutePathsType.AccountAddresses,
                     icon: <Line.LocationOn size={24} />,
-                  },
-                  {
-                    id: RoutePathsType.AccountEdit,
-                    icon: <Line.Edit size={24} />,
                   },
                 ]}
               />

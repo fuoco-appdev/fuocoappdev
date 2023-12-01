@@ -5,7 +5,7 @@ import styles from '../../account.module.scss';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { AccountOrderHistorySuspenseDesktopComponent } from './account-order-history.suspense.desktop.component';
 import { AccountAddressesSuspenseDesktopComponent } from './account-addresses.suspense.desktop.component';
-import { AccountEditSuspenseDesktopComponent } from './account-edit.suspense.desktop.component';
+import { AccountLikesSuspenseDesktopComponent } from './account-likes.suspense.desktop.component';
 import { ResponsiveSuspenseDesktop } from 'src/components/responsive.component';
 
 export function AccountSuspenseDesktopComponent(): JSX.Element {
@@ -98,7 +98,7 @@ export function AccountSuspenseDesktopComponent(): JSX.Element {
                 styles['card-container-desktop'],
               ].join(' ')}
             >
-              <AccountEditSuspenseDesktopComponent />
+              <AccountLikesSuspenseDesktopComponent />
             </div>
           </div>
         </div>

@@ -1,15 +1,15 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import * as React from 'react';
 import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
-import styles from '../../account-edit.module.scss';
+import styles from '../../account-likes.module.scss';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { AccountProfileFormSuspenseTabletComponent } from './account-profile-form.suspense.tablet.component';
 import {
   ResponsiveSuspenseMobile,
   ResponsiveSuspenseTablet,
-} from '../../../components/responsive.component';
+} from '../../responsive.component';
 
-export function AccountEditSuspenseTabletComponent(): JSX.Element {
+export function AccountLikesSuspenseTabletComponent(): JSX.Element {
   return (
     <ResponsiveSuspenseTablet>
       <div className={[styles['root'], styles['root-tablet']].join(' ')}>

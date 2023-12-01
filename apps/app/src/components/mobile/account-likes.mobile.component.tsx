@@ -1,0 +1,221 @@
+import { createRef, useEffect, useLayoutEffect, useRef } from 'react';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import AccountController from '../../controllers/account.controller';
+import styles from '../account-likes.module.scss';
+import { Alert, Button, Dropdown, Line } from '@fuoco.appdev/core-ui';
+import { RoutePathsType } from '../../route-paths';
+import { useTranslation } from 'react-i18next';
+import SupabaseService from '../../services/supabase.service';
+import { useObservable } from '@ngneat/use-observable';
+import { useSpring } from 'react-spring';
+import * as core from '../../protobuf/core_pb';
+import LoadingComponent from '../loading.component';
+import { Store } from '@ngneat/elf';
+import AccountProfileFormComponent from '../account-profile-form.component';
+import WindowController from '../../controllers/window.controller';
+import { AccountLikesResponsiveProps } from '../account-likes.component';
+import { ResponsiveMobile } from '../responsive.component';
+import ProductPreviewComponent from '../product-preview.component';
+import {
+  PricedProduct,
+  PricedVariant,
+} from '@medusajs/medusa/dist/types/pricing';
+import { createPortal } from 'react-dom';
+import CartVariantItemComponent from '../cart-variant-item.component';
+import { MedusaProductTypeNames } from '../../types/medusa.type';
+
+export default function AccountLikesMobileComponent({
+  storeProps,
+  accountProps,
+  openCartVariants,
+  variantQuantities,
+  setOpenCartVariants,
+  setVariantQuantities,
+  onScroll,
+  onLoad,
+  onAddToCart,
+}: AccountLikesResponsiveProps): JSX.Element {
+  const { t, i18n } = useTranslation();
+  const previewsContainerRef = createRef<HTMLDivElement>();
+  const rootRef = createRef<HTMLDivElement>();
+  const navigate = useNavigate();
+
+  return (
+    <ResponsiveMobile>
+      <div
+        ref={rootRef}
+        className={[styles['root'], styles['root-mobile']].join(' ')}
+      >
+        <div
+          className={[
+            styles['likes-text-container'],
+            styles['likes-text-container-mobile'],
+          ].join(' ')}
+        >
+          <div
+            className={[styles['likes-text'], styles['likes-text-mobile']].join(
+              ' '
+            )}
+          >
+            {t('likes')}
+          </div>
+        </div>
+        <div
+          className={[
+            styles['scroll-container'],
+            styles['scroll-container-mobile'],
+          ].join(' ')}
+          style={{ height: window.innerHeight }}
+          onScroll={onScroll}
+          onLoad={onLoad}
+          ref={previewsContainerRef}
+        >
+          {accountProps.likedProducts.map(
+            (product: PricedProduct, index: number) => {
+              const productLikesMetadata =
+                accountProps.productLikesMetadata.find(
+                  (value) => value.productId === product.id
+                );
+              return (
+                <ProductPreviewComponent
+                  parentRef={rootRef}
+                  key={index}
+                  storeProps={storeProps}
+                  accountProps={accountProps}
+                  preview={product}
+                  likesMetadata={
+                    productLikesMetadata ??
+                    core.ProductLikesMetadataResponse.prototype
+                  }
+                  onClick={() => {
+                    AccountController.updateLikesScrollPosition(
+                      previewsContainerRef.current?.scrollTop ?? 0
+                    );
+                    AccountController.updateSelectedLikedProduct(product);
+                  }}
+                  onRest={() => {
+                    navigate(`${RoutePathsType.Store}/${product.id}`);
+                  }}
+                  onAddToCart={() => {
+                    AccountController.updateSelectedLikedProduct(product);
+                    setOpenCartVariants(true);
+                  }}
+                />
+              );
+            }
+          )}
+          <img
+            src={'../assets/svg/ring-resize-dark.svg'}
+            className={styles['loading-ring']}
+            style={{
+              display:
+                accountProps.areLikedProductsLoading ||
+                accountProps.hasMoreLikes
+                  ? 'flex'
+                  : 'none',
+            }}
+          />
+          {!accountProps.hasMoreLikes &&
+            accountProps.likedProducts.length <= 0 && (
+              <div
+                className={[
+                  styles['no-liked-products-container'],
+                  styles['no-liked-products-container-mobile'],
+                ].join(' ')}
+              >
+                <div
+                  className={[
+                    styles['no-items-text'],
+                    styles['no-items-text-mobile'],
+                  ].join(' ')}
+                >
+                  {t('noLikedProducts')}
+                </div>
+                <div
+                  className={[
+                    styles['no-items-container'],
+                    styles['no-items-container-mobile'],
+                  ].join(' ')}
+                >
+                  <Button
+                    classNames={{
+                      button: styles['outline-button'],
+                    }}
+                    rippleProps={{
+                      color: 'rgba(133, 38, 122, .35)',
+                    }}
+                    size={'large'}
+                    onClick={() =>
+                      setTimeout(() => navigate(RoutePathsType.Store), 75)
+                    }
+                  >
+                    {t('store')}
+                  </Button>
+                </div>
+              </div>
+            )}
+        </div>
+      </div>
+      {createPortal(
+        <>
+          <Dropdown
+            classNames={{
+              touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
+            }}
+            open={openCartVariants}
+            touchScreen={true}
+            onClose={() => setOpenCartVariants(false)}
+          >
+            <div
+              className={[
+                styles['add-variants-container'],
+                styles['add-variants-container-mobile'],
+              ].join(' ')}
+            >
+              {accountProps.selectedLikedProduct?.variants.map((variant) => {
+                return (
+                  <CartVariantItemComponent
+                    productType={MedusaProductTypeNames.Wine}
+                    key={variant.id}
+                    product={accountProps.selectedLikedProduct}
+                    variant={variant}
+                    storeProps={storeProps}
+                    variantQuantities={variantQuantities}
+                    setVariantQuantities={setVariantQuantities}
+                  />
+                );
+              })}
+              <Button
+                classNames={{
+                  container: [
+                    styles['add-to-cart-button-container'],
+                    styles['add-to-cart-button-container-mobile'],
+                  ].join(' '),
+                  button: [
+                    styles['add-to-cart-button'],
+                    styles['add-to-cart-button-mobile'],
+                  ].join(' '),
+                }}
+                block={true}
+                size={'full'}
+                rippleProps={{
+                  color: 'rgba(233, 33, 66, .35)',
+                }}
+                icon={<Line.AddShoppingCart size={24} />}
+                disabled={
+                  Object.values(variantQuantities).reduce((current, next) => {
+                    return current + next;
+                  }, 0) <= 0
+                }
+                onClick={onAddToCart}
+              >
+                {t('addToCart')}
+              </Button>
+            </div>
+          </Dropdown>
+        </>,
+        document.body
+      )}
+    </ResponsiveMobile>
+  );
+}

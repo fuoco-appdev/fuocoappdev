@@ -14,23 +14,37 @@
     min-height: 100%;
     overflow-y: auto;
 
-    & .order-history-text {
-        color: $brand-900;
-        font-weight: $font-weight-bold;
-        line-height: 46px;
-        font-size: $font-size-lg;
-        border-bottom: solid 1px $brand-900;
-    }
-
-    & .order-history-text-skeleton {
+    & .order-history-text-container {
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;
-        height: 46px;
-        padding: 0 $mp-4;
+        -webkit-box-orient: horizontal;
+        -webkit-box-direction: normal;
+            -ms-flex-direction: row;
+                flex-direction: row;
+        border-bottom: solid 1px $brand-900;
         -webkit-box-align: center;
             -ms-flex-align: center;
                 align-items: center;
+
+        & .order-history-text {
+            color: $brand-900;
+            font-weight: $font-weight-bold;
+            line-height: 46px;
+            font-size: $font-size-lg;
+            padding: 0 $mp-4;
+        }
+    
+        & .order-history-text-skeleton {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            height: 46px;
+            padding: 0 $mp-4;
+            -webkit-box-align: center;
+                -ms-flex-align: center;
+                    align-items: center;
+        }
     }
 
     & .no-order-history-text {
@@ -65,6 +79,7 @@
             -ms-flex-direction: column;
                 flex-direction: column;
         scroll-behavior: smooth;
+        padding: 0 $mp-6;
         
         & .loading-ring {
             width: 100%;
@@ -74,9 +89,12 @@
 }
 
 .root-desktop {
-    & .order-history-text-desktop {
-        margin: 0 $mp-6;
+    & .order-history-text-container-desktop {
         margin-bottom: $mp-2;
+
+        & .order-history-text-desktop {
+    
+        }
     }
 
     & .no-order-history-text-desktop {
@@ -86,39 +104,38 @@
     }
 
     & .scroll-desktop {
-        padding: $mp-6 0;
-
         & .loading-ring-desktop {
         }
     }
 }
 
 .root-tablet {
-    padding: 0 $mp-6;
-
-    & .order-history-text-desktop {
-        margin: 0 $mp-6;
+    & .order-history-text-container-tablet {
         margin-bottom: $mp-2;
+
+        & .order-history-text-tablet {
+    
+        }
     }
 
-    & .no-order-history-text-desktop {
+    & .no-order-history-text-tablet {
     }
 
-    & .shop-button-container-desktop {
+    & .shop-button-container-tablet {
     }
 
-    & .scroll-desktop {
-        padding: $mp-6 0;
-
-        & .loading-ring-desktop {
+    & .scroll-tablet {
+        & .loading-ring-tablet {
         }
     }
 }
 
 .root-mobile {
-    & .order-history-text-mobile {
-        margin: 0 $mp-4;
+    & .order-history-text-container-mobile {
         margin-bottom: $mp-2;
+
+        & .order-history-text-mobile {
+        }
     }
 
     & .no-order-history-text-mobile {

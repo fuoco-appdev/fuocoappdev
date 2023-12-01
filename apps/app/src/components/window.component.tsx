@@ -89,7 +89,11 @@ export default function WindowComponent(): JSX.Element {
   };
 
   const onNavigateBack = () => {
-    if (windowProps.activeRoute?.startsWith(`${RoutePathsType.Store}/`)) {
+    const doesAnyHistoryEntryExist = location.key !== 'default';
+    if (
+      !doesAnyHistoryEntryExist &&
+      windowProps.activeRoute?.startsWith(`${RoutePathsType.Store}/`)
+    ) {
       setTimeout(() => navigate(RoutePathsType.Store), 150);
       return;
     }

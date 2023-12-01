@@ -28,8 +28,10 @@ import { WindowLocalState } from '../../models';
 import { AccountSettingsAccountResponsiveProps } from '../account-settings-account.component';
 import { ResponsiveMobile } from '../responsive.component';
 import { createPortal } from 'react-dom';
+import AccountProfileFormComponent from '../account-profile-form.component';
 
 export default function AccountSettingsAccountMobileComponent({
+  storeProps,
   accountProps,
   windowLocalProps,
   updatePasswordError,
@@ -40,11 +42,15 @@ export default function AccountSettingsAccountMobileComponent({
   setShowDeleteModal,
   isLanguageOpen,
   setIsLanguageOpen,
+  onGeneralInformationSaveAsync,
 }: AccountSettingsAccountResponsiveProps): JSX.Element {
   const { t, i18n } = useTranslation();
 
   const accordionItemClassNames: AccordionItemClasses = {
-    topBar: styles['accordion-top-bar'],
+    topBar: [
+      styles['accordion-top-bar'],
+      styles['accordion-top-bar-mobile'],
+    ].join(' '),
     panel: styles['accordion-panel'],
     topBarLabel: styles['accordion-top-bar-label'],
     button: {
@@ -109,7 +115,65 @@ export default function AccountSettingsAccountMobileComponent({
               </div>
             </div>
           </Ripples>
-          <Accordion defaultActiveId={['password-reset']}>
+          <Accordion
+            defaultActiveId={['general-information', 'password-reset']}
+          >
+            <Accordion.Item
+              key={'general-information'}
+              id={'general-information'}
+              label={t('generalInformation')}
+              classNames={accordionItemClassNames}
+              touchScreen={true}
+            >
+              <>
+                <div
+                  className={[
+                    styles['profile-form-container'],
+                    styles['profile-form-container-mobile'],
+                  ].join(' ')}
+                >
+                  <AccountProfileFormComponent
+                    storeProps={storeProps}
+                    values={accountProps.profileForm}
+                    errors={accountProps.profileFormErrors}
+                    onChangeCallbacks={{
+                      firstName: (event) =>
+                        AccountController.updateProfile({
+                          firstName: event.target.value,
+                        }),
+                      lastName: (event) =>
+                        AccountController.updateProfile({
+                          lastName: event.target.value,
+                        }),
+                      phoneNumber: (value, event, formattedValue) =>
+                        AccountController.updateProfile({
+                          phoneNumber: value,
+                        }),
+                    }}
+                  />
+                </div>
+                <div
+                  className={[
+                    styles['save-button-container'],
+                    styles['save-button-container-mobile'],
+                  ].join(' ')}
+                >
+                  <Button
+                    classNames={{
+                      button: styles['save-button'],
+                    }}
+                    rippleProps={{
+                      color: 'rgba(233, 33, 66, .35)',
+                    }}
+                    block={true}
+                    size={'large'}
+                    onClick={onGeneralInformationSaveAsync}
+                  >
+                    {t('save')}
+                  </Button>
+                </div>
+              </>
+            </Accordion.Item>
             {provider === 'email' && (
               <Accordion.Item
                 id={'password-reset'}

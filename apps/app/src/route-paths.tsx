@@ -20,7 +20,7 @@ import AccountAddressesComponent from './components/account-addresses.component'
 import AccountSettingsComponent from './components/account-settings.component';
 import CheckoutComponent from './components/checkout.component';
 import OrderConfirmedComponent from './components/order-confirmed.component';
-import AccountEditComponent from './components/account-edit.component';
+import AccountEditComponent from './components/account-likes.component';
 import AccountSettingsAccountComponent from './components/account-settings-account.component';
 import LoadingComponent from './components/loading.component';
 import React from 'react';
@@ -47,7 +47,7 @@ export enum RoutePathsType {
   AccountEvents = '/account/events',
   AccountOrderHistory = '/account/order-history',
   AccountAddresses = '/account/addresses',
-  AccountEdit = '/account/edit',
+  AccountLikes = '/account/likes',
   AccountHelp = '/account/help',
   AccountSettings = '/account/settings',
   AccountSettingsAccount = '/account/settings/account',
@@ -133,16 +133,16 @@ export const getRoutePaths = (): RouteObject[] => [
         element: <AccountComponent />,
         children: [
           {
+            path: RoutePathsType.AccountLikes,
+            element: <AccountEditComponent />,
+          },
+          {
             path: RoutePathsType.AccountOrderHistory,
             element: <AccountOrderHistoryComponent />,
           },
           {
             path: RoutePathsType.AccountAddresses,
             element: <AccountAddressesComponent />,
-          },
-          {
-            path: RoutePathsType.AccountEdit,
-            element: <AccountEditComponent />,
           },
         ],
       },

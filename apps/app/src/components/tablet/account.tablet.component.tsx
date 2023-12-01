@@ -28,7 +28,7 @@ import { Customer } from '@medusajs/medusa';
 import Skeleton from 'react-loading-skeleton';
 import AccountOrderHistoryComponent from '../account-order-history.component';
 import AccountAddressesComponent from '../account-addresses.component';
-import AccountEditComponent from '../account-edit.component';
+import AccountEditComponent from '../account-likes.component';
 import {
   ResponsiveDesktop,
   ResponsiveTablet,
@@ -50,7 +50,7 @@ export default function AccountTabletComponent({
 
   useTabletEffect(() => {
     if (windowProps.activeRoute === RoutePathsType.Account) {
-      navigate(RoutePathsType.AccountOrderHistory);
+      navigate(RoutePathsType.AccountLikes);
     }
   }, []);
 
@@ -106,7 +106,10 @@ export default function AccountTabletComponent({
                   color: 'rgba(88, 40, 109, .35)',
                 }}
                 onClick={() =>
-                  setTimeout(() => navigate(RoutePathsType.AccountSettings), 75)
+                  setTimeout(
+                    () => navigate(RoutePathsType.AccountSettingsAccount),
+                    75
+                  )
                 }
                 type={'text'}
                 rounded={true}
@@ -267,16 +270,16 @@ export default function AccountTabletComponent({
                 type={'underlined'}
                 tabs={[
                   {
+                    id: RoutePathsType.AccountLikes,
+                    icon: <Line.FavoriteBorder size={24} />,
+                  },
+                  {
                     id: RoutePathsType.AccountOrderHistory,
                     icon: <Line.History size={24} />,
                   },
                   {
                     id: RoutePathsType.AccountAddresses,
                     icon: <Line.LocationOn size={24} />,
-                  },
-                  {
-                    id: RoutePathsType.AccountEdit,
-                    icon: <Line.Edit size={24} />,
                   },
                 ]}
               />

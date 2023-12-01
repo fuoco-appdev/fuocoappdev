@@ -8,10 +8,13 @@ import { WindowLocalState } from '../models/window.model';
 import { useObservable } from '@ngneat/use-observable';
 import WindowController from '../controllers/window.controller';
 import AccountController from '../controllers/account.controller';
+import StoreController from '../controllers/store.controller';
 import { Store } from '@ngneat/elf';
 import { AccountState } from '../models/account.model';
 import { AuthenticatedComponent } from './authenticated.component';
 import { lazy } from '@loadable/component';
+import { StoreState } from '../models/store.model';
+import { useTranslation } from 'react-i18next';
 
 const AccountSettingsAccountDesktopComponent = lazy(
   () => import('./desktop/account-settings-account.desktop.component')
@@ -25,6 +28,7 @@ const AccountSettingsAccountMobileComponent = lazy(
 
 export interface AccountSettingsAccountResponsiveProps {
   accountProps: AccountState;
+  storeProps: StoreState;
   windowLocalProps: WindowLocalState;
   updatePasswordError: string | undefined;
   setUpdatePasswordError: (value: string | undefined) => void;
@@ -34,6 +38,7 @@ export interface AccountSettingsAccountResponsiveProps {
   setShowDeleteModal: (value: boolean) => void;
   isLanguageOpen: boolean;
   setIsLanguageOpen: (value: boolean) => void;
+  onGeneralInformationSaveAsync: () => void;
 }
 
 export default function AccountSettingsAccountComponent(): JSX.Element {
@@ -41,6 +46,7 @@ export default function AccountSettingsAccountComponent(): JSX.Element {
     WindowController.model.localStore ?? Store.prototype
   );
   const [accountProps] = useObservable(AccountController.model.store);
+  const [storeProps] = useObservable(StoreController.model.store);
   const [updatePasswordError, setUpdatePasswordError] = useState<
     string | undefined
   >(undefined);
@@ -49,6 +55,19 @@ export default function AccountSettingsAccountComponent(): JSX.Element {
   >(undefined);
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState<boolean>(false);
+  const { t, i18n } = useTranslation();
+
+  const onGeneralInformationSaveAsync = async () => {
+    await AccountController.updateCustomerAsync(
+      AccountController.model.profileForm
+    );
+    WindowController.addToast({
+      key: `update-customer-${Math.random()}`,
+      message: t('successfullyUpdatedUser') ?? '',
+      description: t('successfullyUpdatedUserDescription') ?? '',
+      type: 'success',
+    });
+  };
 
   const suspenceComponent = (
     <>
@@ -73,6 +92,7 @@ export default function AccountSettingsAccountComponent(): JSX.Element {
       <AuthenticatedComponent>
         <AccountSettingsAccountDesktopComponent
           accountProps={accountProps}
+          storeProps={storeProps}
           windowLocalProps={windowLocalProps}
           updatePasswordError={updatePasswordError}
           setUpdatePasswordError={setUpdatePasswordError}
@@ -82,9 +102,11 @@ export default function AccountSettingsAccountComponent(): JSX.Element {
           setShowDeleteModal={setShowDeleteModal}
           isLanguageOpen={isLanguageOpen}
           setIsLanguageOpen={setIsLanguageOpen}
+          onGeneralInformationSaveAsync={onGeneralInformationSaveAsync}
         />
         <AccountSettingsAccountTabletComponent
           accountProps={accountProps}
+          storeProps={storeProps}
           windowLocalProps={windowLocalProps}
           updatePasswordError={updatePasswordError}
           setUpdatePasswordError={setUpdatePasswordError}
@@ -94,9 +116,11 @@ export default function AccountSettingsAccountComponent(): JSX.Element {
           setShowDeleteModal={setShowDeleteModal}
           isLanguageOpen={isLanguageOpen}
           setIsLanguageOpen={setIsLanguageOpen}
+          onGeneralInformationSaveAsync={onGeneralInformationSaveAsync}
         />
         <AccountSettingsAccountMobileComponent
           accountProps={accountProps}
+          storeProps={storeProps}
           windowLocalProps={windowLocalProps}
           updatePasswordError={updatePasswordError}
           setUpdatePasswordError={setUpdatePasswordError}
@@ -106,6 +130,7 @@ export default function AccountSettingsAccountComponent(): JSX.Element {
           setShowDeleteModal={setShowDeleteModal}
           isLanguageOpen={isLanguageOpen}
           setIsLanguageOpen={setIsLanguageOpen}
+          onGeneralInformationSaveAsync={onGeneralInformationSaveAsync}
         />
       </AuthenticatedComponent>
     </React.Suspense>

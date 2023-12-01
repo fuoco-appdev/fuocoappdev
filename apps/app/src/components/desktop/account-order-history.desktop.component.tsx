@@ -33,10 +33,10 @@ export default function AccountOrderHistoryDesktopComponent({
         className={[styles['root'], styles['root-desktop']].join(' ')}
       >
         <div
-          ref={ordersContainerRef}
-          onScroll={onOrdersScroll}
-          onLoad={onOrdersLoad}
-          className={[styles['scroll'], styles['scroll-desktop']].join(' ')}
+          className={[
+            styles['order-history-text-container'],
+            styles['order-history-text-container-desktop'],
+          ].join(' ')}
         >
           <div
             className={[
@@ -46,6 +46,13 @@ export default function AccountOrderHistoryDesktopComponent({
           >
             {t('orderHistory')}
           </div>
+        </div>
+        <div
+          ref={ordersContainerRef}
+          onScroll={onOrdersScroll}
+          onLoad={onOrdersLoad}
+          className={[styles['scroll'], styles['scroll-desktop']].join(' ')}
+        >
           {orders.length > 0 &&
             orders
               .sort((current: Order, next: Order) => {

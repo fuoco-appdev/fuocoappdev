@@ -23,12 +23,6 @@ export default function AccountSettingsTabletComponent({
   const location = useLocation();
   const { t, i18n } = useTranslation();
 
-  useTabletEffect(() => {
-    if (location.pathname === RoutePathsType.AccountSettings) {
-      navigate(RoutePathsType.AccountSettingsAccount);
-    }
-  }, [location.pathname]);
-
   return (
     <ResponsiveTablet>
       <div className={[styles['root'], styles['root-tablet']].join(' ')}>

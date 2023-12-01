@@ -8,6 +8,7 @@ import * as core from '../protobuf/core_pb';
 import SupabaseService from '../services/supabase.service';
 import BucketService from '../services/bucket.service';
 import MedusaService from '../services/medusa.service';
+import ProductLikesService from '../services/product-likes.service';
 import { StorePostCustomersReq, Customer, Address } from '@medusajs/medusa';
 import WindowController from './window.controller';
 import {
@@ -27,6 +28,10 @@ import { select } from '@ngneat/elf';
 import HomeController from './home.controller';
 import { HomeLocalState } from '../models/home.model';
 import Cookies from 'js-cookie';
+import { ProductLikesMetadataResponse } from '../protobuf/core_pb';
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+import StoreController from './store.controller';
+import CartController from './cart.controller';
 
 class AccountController extends Controller {
   private readonly _model: AccountModel;
@@ -83,6 +88,18 @@ class AccountController extends Controller {
     await this.requestOrdersAsync(offset, limit);
   }
 
+  public async onNextLikedProductScrollAsync(): Promise<void> {
+    if (this._model.areLikedProductsLoading) {
+      return;
+    }
+
+    this._model.likedProductPagination = this._model.likedProductPagination + 1;
+
+    const limit = 10;
+    const offset = limit * (this._model.likedProductPagination - 1);
+    await this.requestLikedProductsAsync(offset, limit);
+  }
+
   public updateProfile(value: ProfileFormValues): void {
     this._model.profileForm = { ...this._model.profileForm, ...value };
   }
@@ -127,13 +144,13 @@ class AccountController extends Controller {
     this._model.activeTabId = value;
 
     switch (value) {
-      case RoutePathsType.AccountOrderHistory:
+      case RoutePathsType.AccountLikes:
         this._model.activeTabIndex = 1;
         break;
-      case RoutePathsType.AccountAddresses:
+      case RoutePathsType.AccountOrderHistory:
         this._model.activeTabIndex = 2;
         break;
-      case RoutePathsType.AccountEdit:
+      case RoutePathsType.AccountAddresses:
         this._model.activeTabIndex = 3;
         break;
       default:
@@ -143,6 +160,20 @@ class AccountController extends Controller {
 
   public updateOrdersScrollPosition(value: number | undefined) {
     this._model.ordersScrollPosition = value;
+  }
+
+  public updateLikesScrollPosition(value: number | undefined) {
+    this._model.likesScrollPosition = value;
+  }
+
+  public updateSelectedLikedProduct(value: PricedProduct | undefined): void {
+    this._model.selectedLikedProduct = value;
+  }
+
+  public updateSelectedProductLikes(
+    value: ProductLikesMetadataResponse | undefined
+  ): void {
+    this._model.selectedProductLikes = value;
   }
 
   public getAddressFormErrors(
@@ -394,6 +425,99 @@ class AccountController extends Controller {
     this._model.areOrdersLoading = false;
   }
 
+  private async requestLikedProductsAsync(
+    offset: number = 0,
+    limit: number = 10
+  ): Promise<void> {
+    if (this._model.areLikedProductsLoading || !this._model.account) {
+      return;
+    }
+
+    this._model.areLikedProductsLoading = true;
+
+    let productIds: string[] = [];
+    try {
+      const productLikesMetadataResponse =
+        await ProductLikesService.requestAccountLikesMetadataAsync({
+          accountId: this._model.account.id,
+          offset: offset,
+          limit: limit,
+        });
+
+      if (
+        !productLikesMetadataResponse.metadata ||
+        productLikesMetadataResponse.metadata.length <= 0
+      ) {
+        this._model.hasMoreLikes = false;
+        this._model.areLikedProductsLoading = false;
+        return;
+      }
+
+      if (productLikesMetadataResponse.metadata.length < limit) {
+        this._model.hasMoreLikes = false;
+      } else {
+        this._model.hasMoreLikes = true;
+      }
+
+      if (offset > 0) {
+        const productLikesMetadata = this._model.productLikesMetadata;
+        this._model.productLikesMetadata = productLikesMetadata.concat(
+          productLikesMetadataResponse.metadata
+        );
+      } else {
+        this._model.productLikesMetadata =
+          productLikesMetadataResponse.metadata;
+      }
+
+      productIds = productLikesMetadataResponse.metadata.map(
+        (value) => value.productId
+      );
+    } catch (error: any) {
+      console.error(error);
+    }
+
+    const { selectedRegion, selectedSalesChannel } = StoreController.model;
+    const { cart } = CartController.model;
+    const productsResponse = await MedusaService.medusa?.products.list({
+      id: productIds,
+      sales_channel_id: [selectedSalesChannel?.id ?? ''],
+      ...(selectedRegion && {
+        region_id: selectedRegion.id,
+        currency_code: selectedRegion.currency_code,
+      }),
+      ...(cart && { cart_id: cart.id }),
+    });
+    const products = productsResponse?.products ?? [];
+    products.sort((a, b) => {
+      const currentId = a['id'] ?? '';
+      const nextId = b['id'] ?? '';
+
+      if (productIds.indexOf(currentId) > productIds.indexOf(nextId)) {
+        return 1;
+      } else {
+        return -1;
+      }
+    });
+    for (let i = 0; i < products.length; i++) {
+      for (const variant of products[i].variants) {
+        const price = variant.prices?.find(
+          (value) => value.region_id === selectedRegion?.id
+        );
+        if (!price) {
+          products.splice(i, 1);
+        }
+      }
+    }
+
+    if (offset > 0) {
+      this._model.likedProducts = this._model.likedProducts.concat(products);
+    } else {
+      this._model.likedProducts = products;
+    }
+
+    this._model.areLikedProductsLoading = false;
+  }
+
   private resetMedusaModel(): void {
     this._model.user = null;
     this._model.account = undefined;
@@ -443,7 +567,7 @@ class AccountController extends Controller {
     };
     this._model.areOrdersLoading = false;
     this._model.editShippingFormErrors = {};
-    this._model.activeTabId = '/account/order-history';
+    this._model.activeTabId = RoutePathsType.AccountLikes;
     this._model.prevTabIndex = 0;
     this._model.activeTabIndex = 0;
     this._model.ordersScrollPosition = undefined;
@@ -515,6 +639,7 @@ class AccountController extends Controller {
         phoneNumber: this._model.customer?.phone,
       };
 
+      await this.requestLikedProductsAsync();
       await this.requestOrdersAsync();
 
       this._model.user = value;

@@ -53,15 +53,16 @@ export default function AccountAddressesDesktopComponent({
           >
             {t('addresses')}
           </div>
-          <div>
+          <div
+            className={[
+              styles['addresses-add-button-container'],
+              styles['addresses-add-button-container-desktop'],
+            ].join(' ')}
+          >
             <Button
-              classNames={{
-                button: styles['button'],
-              }}
               rounded={true}
               icon={<Line.Add size={24} color={'#2A2A5F'} />}
               type={'text'}
-              floatingLabel={t('addAddress') ?? ''}
               rippleProps={{
                 color: 'rgba(42, 42, 95, .35)',
               }}

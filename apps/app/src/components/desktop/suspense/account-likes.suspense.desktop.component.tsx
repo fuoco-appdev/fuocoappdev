@@ -1,13 +1,13 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import * as React from 'react';
 import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
-import styles from '../../account-edit.module.scss';
+import styles from '../../account-likes.module.scss';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { AddressItemSuspenseDesktopComponent } from './address-item.suspense.desktop.component';
 import { AccountProfileFormSuspenseDesktopComponent } from './account-profile-form.suspense.desktop.component';
 import { ResponsiveSuspenseDesktop } from 'src/components/responsive.component';
 
-export function AccountEditSuspenseDesktopComponent(): JSX.Element {
+export function AccountLikesSuspenseDesktopComponent(): JSX.Element {
   return (
     <ResponsiveSuspenseDesktop>
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>

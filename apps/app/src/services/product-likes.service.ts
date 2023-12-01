@@ -38,6 +38,36 @@ class ProductLikesService extends Service {
     return productLikesMetadatasResponse;
   }
 
+  public async requestAccountLikesMetadataAsync(props: {
+    accountId: string;
+    offset?: number;
+    limit?: number;
+  }): Promise<core.ProductLikesMetadatasResponse> {
+    const accountProductLikesMetadataRequest =
+      new core.AccountProductLikesMetadataRequest({
+        accountId: props.accountId,
+        offset: props.offset,
+        limit: props.limit,
+      });
+
+    const response = await axios({
+      method: 'post',
+      url: `${this.endpointUrl}/product-likes/account-metadata`,
+      headers: {
+        ...this.headers,
+      },
+      data: accountProductLikesMetadataRequest.toBinary(),
+      responseType: 'arraybuffer',
+    });
+
+    const arrayBuffer = new Uint8Array(response.data);
+    this.assertResponse(arrayBuffer);
+
+    const productLikesMetadatasResponse =
+      core.ProductLikesMetadatasResponse.fromBinary(arrayBuffer);
+    return productLikesMetadatasResponse;
+  }
+
   public async requestAddAsync(props: {
     productId: string;
     accountId: string;

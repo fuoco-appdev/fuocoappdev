@@ -1,12 +1,12 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import * as React from 'react';
 import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
-import styles from '../../account-edit.module.scss';
+import styles from '../../account-likes.module.scss';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { AccountProfileFormSuspenseMobileComponent } from './account-profile-form.suspense.mobile.component';
 import { ResponsiveSuspenseMobile } from 'src/components/responsive.component';
 
-export function AccountEditSuspenseMobileComponent(): JSX.Element {
+export function AccountLikesSuspenseMobileComponent(): JSX.Element {
   return (
     <ResponsiveSuspenseMobile>
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>

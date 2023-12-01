@@ -28,10 +28,11 @@ import { Customer } from '@medusajs/medusa';
 import Skeleton from 'react-loading-skeleton';
 import AccountOrderHistoryComponent from '../account-order-history.component';
 import AccountAddressesComponent from '../account-addresses.component';
-import AccountEditComponent from '../account-edit.component';
+import AccountEditComponent from '../account-likes.component';
 import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
 import { AccountResponsiveProps } from '../account.component';
 import { createPortal } from 'react-dom';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 export default function AccountDesktopComponent({
   windowProps,
@@ -41,6 +42,29 @@ export default function AccountDesktopComponent({
 }: AccountResponsiveProps): JSX.Element {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
+
+  useDesktopEffect(() => {
+    if (windowProps.activeRoute === RoutePathsType.Account) {
+      navigate(RoutePathsType.AccountLikes);
+    }
+  }, []);
+
+  useDesktopEffect(() => {
+    const loadedLocation = windowProps.loadedLocationPath as string | undefined;
+    if (loadedLocation && loadedLocation !== RoutePathsType.Account) {
+      if (
+        loadedLocation.startsWith(RoutePathsType.Account) &&
+        !loadedLocation.startsWith(RoutePathsType.AccountSettings)
+      ) {
+        AccountController.updateActiveTabId(loadedLocation);
+      }
+      WindowController.updateLoadedLocationPath(undefined);
+    } else {
+      if (!loadedLocation?.startsWith(RoutePathsType.AccountSettings)) {
+        navigate(accountProps.activeTabId);
+      }
+    }
+  }, [windowProps.loadedLocationPath]);
 
   const account = accountProps.account as core.Account;
   const customer = accountProps.customer as Customer;
@@ -69,6 +93,7 @@ export default function AccountDesktopComponent({
               ].join(' ')}
             >
               <Button
+                touchScreen={true}
                 classNames={{
                   button: styles['button'],
                 }}
@@ -76,7 +101,10 @@ export default function AccountDesktopComponent({
                   color: 'rgba(88, 40, 109, .35)',
                 }}
                 onClick={() =>
-                  setTimeout(() => navigate(RoutePathsType.AccountSettings), 75)
+                  setTimeout(
+                    () => navigate(RoutePathsType.AccountSettingsAccount),
+                    75
+                  )
                 }
                 type={'text'}
                 rounded={true}
@@ -136,6 +164,7 @@ export default function AccountDesktopComponent({
               </div>
               <div>
                 <Button
+                  touchScreen={true}
                   classNames={{
                     container: [
                       styles['submit-button-container'],
@@ -166,6 +195,7 @@ export default function AccountDesktopComponent({
               ].join(' ')}
             >
               <Avatar
+                touchScreen={true}
                 classNames={{
                   button: {
                     button: [
@@ -208,49 +238,107 @@ export default function AccountDesktopComponent({
               )}
             </div>
             <div
-              className={[styles['content'], styles['content-desktop']].join(
-                ' '
-              )}
+              className={[
+                styles['tabs-container'],
+                styles['tabs-container-desktop'],
+              ].join(' ')}
             >
-              <div
-                className={[
-                  styles['left-content'],
-                  styles['left-content-desktop'],
-                ].join(' ')}
+              <Tabs
+                flex={true}
+                touchScreen={true}
+                activeId={accountProps.activeTabId}
+                classNames={{
+                  nav: [styles['tab-nav'], styles['tab-nav-desktop']].join(' '),
+                  tabButton: [
+                    styles['tab-button'],
+                    styles['tab-button-desktop'],
+                  ].join(''),
+                  tabOutline: [
+                    styles['tab-outline'],
+                    styles['tab-outline-desktop'],
+                  ].join(' '),
+                }}
+                onChange={(id) => {
+                  AccountController.updateActiveTabId(id);
+                  navigate(id);
+                }}
+                type={'underlined'}
+                tabs={[
+                  {
+                    id: RoutePathsType.AccountLikes,
+                    icon: <Line.FavoriteBorder size={24} />,
+                  },
+                  {
+                    id: RoutePathsType.AccountOrderHistory,
+                    icon: <Line.History size={24} />,
+                  },
+                  {
+                    id: RoutePathsType.AccountAddresses,
+                    icon: <Line.LocationOn size={24} />,
+                  },
+                ]}
+              />
+            </div>
+            <div
+              className={[
+                styles['outlet-container'],
+                styles['outlet-container-desktop'],
+              ].join(' ')}
+            >
+              <TransitionGroup
+                component={null}
+                childFactory={(child) =>
+                  React.cloneElement(child, {
+                    classNames: {
+                      enter:
+                        accountProps.activeTabIndex > accountProps.prevTabIndex
+                          ? styles['left-to-right-enter']
+                          : styles['right-to-left-enter'],
+                      enterActive:
+                        accountProps.activeTabIndex > accountProps.prevTabIndex
+                          ? styles['left-to-right-enter-active']
+                          : styles['right-to-left-enter-active'],
+                      exit:
+                        accountProps.activeTabIndex > accountProps.prevTabIndex
+                          ? styles['left-to-right-exit']
+                          : styles['right-to-left-exit'],
+                      exitActive:
+                        accountProps.activeTabIndex > accountProps.prevTabIndex
+                          ? styles['left-to-right-exit-active']
+                          : styles['right-to-left-exit-active'],
+                    },
+                    timeout: 250,
+                  })
+                }
               >
-                <div
-                  className={[
-                    styles['card-container'],
-                    styles['card-container-desktop'],
-                    styles['left-card-container-desktop'],
-                  ].join(' ')}
+                <CSSTransition
+                  key={accountProps.activeTabIndex}
+                  classNames={{
+                    enter:
+                      accountProps.activeTabIndex < accountProps.prevTabIndex
+                        ? styles['left-to-right-enter']
+                        : styles['right-to-left-enter'],
+                    enterActive:
+                      accountProps.activeTabIndex < accountProps.prevTabIndex
+                        ? styles['left-to-right-enter-active']
+                        : styles['right-to-left-enter-active'],
+                    exit:
+                      accountProps.activeTabIndex < accountProps.prevTabIndex
+                        ? styles['left-to-right-exit']
+                        : styles['right-to-left-exit'],
+                    exitActive:
+                      accountProps.activeTabIndex < accountProps.prevTabIndex
+                        ? styles['left-to-right-exit-active']
+                        : styles['right-to-left-exit-active'],
+                  }}
+                  timeout={250}
+                  unmountOnExit={false}
                 >
-                  <AccountOrderHistoryComponent />
-                </div>
-              </div>
-              <div
-                className={[
-                  styles['right-content'],
-                  styles['right-content-desktop'],
-                ].join(' ')}
-              >
-                <div
-                  className={[
-                    styles['card-container'],
-                    styles['card-container-desktop'],
-                  ].join(' ')}
-                >
-                  <AccountAddressesComponent />
-                </div>
-                <div
-                  className={[
-                    styles['card-container'],
-                    styles['card-container-desktop'],
-                  ].join(' ')}
-                >
-                  <AccountEditComponent />
-                </div>
-              </div>
+                  <div style={{ minWidth: '100%', minHeight: '100%' }}>
+                    <Outlet />
+                  </div>
+                </CSSTransition>
+              </TransitionGroup>
             </div>
           </>
         )}

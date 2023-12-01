@@ -29,10 +29,10 @@ export default function AccountOrderHistoryTabletComponent({
         className={[styles['root'], styles['root-tablet']].join(' ')}
       >
         <div
-          ref={ordersContainerRef}
-          onScroll={onOrdersScroll}
-          onLoad={onOrdersLoad}
-          className={[styles['scroll'], styles['scroll-tablet']].join(' ')}
+          className={[
+            styles['order-history-text-container'],
+            styles['order-history-text-container-tablet'],
+          ].join(' ')}
         >
           <div
             className={[
@@ -42,6 +42,13 @@ export default function AccountOrderHistoryTabletComponent({
           >
             {t('orderHistory')}
           </div>
+        </div>
+        <div
+          ref={ordersContainerRef}
+          onScroll={onOrdersScroll}
+          onLoad={onOrdersLoad}
+          className={[styles['scroll'], styles['scroll-tablet']].join(' ')}
+        >
           {orders.length > 0 &&
             orders
               .sort((current: Order, next: Order) => {
@@ -93,6 +100,7 @@ export default function AccountOrderHistoryTabletComponent({
                 ].join(' ')}
               >
                 <Button
+                  touchScreen={true}
                   classNames={{
                     button: [
                       styles['shop-button'],

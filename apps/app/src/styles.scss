@@ -96,6 +96,27 @@
 :root {
   // Mobile
   @media screen and (max-width: 767px) {
+    /* ===== Scrollbar CSS ===== */
+    /* Firefox */
+    * {
+      scrollbar-width: 0px;
+      scrollbar-color: $brand-500 rgba(255, 255, 255, 0);
+    }
+
+    /* Chrome, Edge, and Safari */
+    *::-webkit-scrollbar {
+      width: 0px;
+    }
+
+    *::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0);
+    }
+
+    *::-webkit-scrollbar-thumb {
+      background-color: $gray-100;
+      border-radius: $rounded-full;
+      border: 0px solid transparent;
+    }
   }
 
   // Tablet

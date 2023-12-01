@@ -45,6 +45,10 @@
             line-height: 46px;
             font-size: $font-size-lg;
         }
+
+        & .addresses-add-button-container {
+
+        }
     }
 
     & .address-list-container {
@@ -58,21 +62,21 @@
 }
 
 .root-desktop {  
-    padding: $mp-6 0;
-
     & .addresses-text-container-skeleton-desktop {
         margin: 0 $mp-6;
+        margin-top: $mp-4;
         margin-bottom: $mp-2;
-
-        & .addresses-text-skeleton-desktop {
-        }
     }
 
     & .addresses-text-container-desktop {
-        margin: 0 $mp-6;
         margin-bottom: $mp-2;
 
         & .addresses-text-desktop {
+            padding: 0 $mp-6;
+        }
+
+        & .addresses-add-button-container-desktop {
+            padding: 0 $mp-6;
         }
     }
 
@@ -90,11 +94,14 @@
     }
 
     & .addresses-text-container-tablet {
-        margin: 0 $mp-6;
-        margin-top: $mp-4;
         margin-bottom: $mp-2;
 
         & .addresses-text-tablet {
+            padding: 0 $mp-6;
+        }
+
+        & .addresses-add-button-container-tablet {
+            padding: 0 $mp-6;
         }
     }
 
@@ -112,11 +119,14 @@
     }
 
     & .addresses-text-container-mobile {
-        margin: 0 $mp-4;
-        margin-top: $mp-4;
         margin-bottom: $mp-2;
-
+        
         & .addresses-text-mobile {
+            padding: 0 $mp-4;
+        }
+
+        & .addresses-add-button-container-mobile {
+            padding: 0 $mp-4;
         }
     }
 

@@ -223,6 +223,7 @@
   "requiresAction": "Nécessite une action",
   "returned": "Renvoyé",
   "shipped": "Expédié",
+  "likes": "Goûts",
   "orderHistory": "Historique des commandes",
   "addresses": "Adresses",
   "addAddress": "Ajouter une adresse",
@@ -263,5 +264,7 @@
   "accessLocationDescription": "Activer l'accès à la localisation pour le choix d'une région.",
   "priceListEndsOn": "Se termine le {{date, string}}",
   "priceDeals": "Offres De Prix",
-  "priceDealsCallToAction": "Débloquez des remises et des promotions exclusives en vous inscrivant sur la plateforme."
+  "priceDealsCallToAction": "Débloquez des remises et des promotions exclusives en vous inscrivant sur la plateforme.",
+  "generalInformation": "Informations générales",
+  "noLikedProducts": "Vous n'avez pas de produits aimés."
 }

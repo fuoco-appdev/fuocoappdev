@@ -574,7 +574,7 @@ export default function WindowMobileComponent({
                               color: 'rgba(252, 245, 227, .35)',
                             }}
                             onClick={() =>
-                              navigate(RoutePathsType.AccountOrderHistory)
+                              navigate(RoutePathsType.AccountLikes)
                             }
                             disabled={
                               windowProps.activeRoute === RoutePathsType.Cart

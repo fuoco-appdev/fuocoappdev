@@ -53,7 +53,12 @@ export default function AccountAddressesMobileComponent({
           >
             {t('addresses')}
           </div>
-          <div>
+          <div
+            className={[
+              styles['addresses-add-button-container'],
+              styles['addresses-add-button-container-mobile'],
+            ].join(' ')}
+          >
             <Button
               rounded={true}
               icon={<Line.Add size={24} color={'#2A2A5F'} />}

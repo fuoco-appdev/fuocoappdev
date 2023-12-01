@@ -36,11 +36,18 @@ export default function AccountOrderHistoryMobileComponent({
         >
           <div
             className={[
-              styles['order-history-text'],
-              styles['order-history-text-mobile'],
+              styles['order-history-text-container'],
+              styles['order-history-text-container-mobile'],
             ].join(' ')}
           >
-            {t('orderHistory')}
+            <div
+              className={[
+                styles['order-history-text'],
+                styles['order-history-text-mobile'],
+              ].join(' ')}
+            >
+              {t('orderHistory')}
+            </div>
           </div>
           {orders.length > 0 &&
             orders
@@ -93,6 +100,7 @@ export default function AccountOrderHistoryMobileComponent({
                 ].join(' ')}
               >
                 <Button
+                  touchScreen={true}
                   classNames={{
                     button: [
                       styles['shop-button'],

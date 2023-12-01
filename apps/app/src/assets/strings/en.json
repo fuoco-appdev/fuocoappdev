@@ -223,6 +223,7 @@
   "requiresAction": "Requires action",
   "returned": "Returned",
   "shipped": "Shipped",
+  "likes": "Likes",
   "orderHistory": "Order history",
   "addresses": "Addresses",
   "addAddress": "Add address",
@@ -263,5 +264,7 @@
   "accessLocationDescription": "Enable location access for choosing a region.",
   "priceListEndsOn": "Ends on {{date, string}}",
   "priceDeals": "Price Deals",
-  "priceDealsCallToAction": "Unlock exclusive discounts and promotions now by signing up on the platform."
+  "priceDealsCallToAction": "Unlock exclusive discounts and promotions now by signing up on the platform.",
+  "generalInformation": "General information",
+  "noLikedProducts": "You have no liked products."
 }

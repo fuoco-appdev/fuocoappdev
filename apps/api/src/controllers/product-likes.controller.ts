@@ -5,6 +5,7 @@ import {
   Account,
   ProductLikeRequest,
   ProductLikesMetadataRequest,
+  AccountProductLikesMetadataRequest,
 } from '../protobuf/core_pb.js';
 import * as HttpError from 'https://deno.land/x/http_errors@3.0.0/mod.ts';
 import { readAll } from 'https://deno.land/std@0.105.0/io/util.ts';
@@ -70,6 +71,29 @@ export class ProductLikesController {
     const metadataRequest =
       ProductLikesMetadataRequest.deserializeBinary(requestValue);
     const response = await ProductLikesService.getMetadataAsync(
+      metadataRequest
+    );
+    if (!response) {
+      throw HttpError.createError(409, `Cannot find metadata`);
+    }
+    context.response.type = 'application/x-protobuf';
+    context.response.body = response.serializeBinary();
+  }
+
+  @Post('/account-metadata')
+  @ContentType('application/x-protobuf')
+  public async getAccountMetadataAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >
+  ): Promise<void> {
+    const body = await context.request.body({ type: 'reader' });
+    const requestValue = await readAll(body.value);
+    const metadataRequest =
+      AccountProductLikesMetadataRequest.deserializeBinary(requestValue);
+    const response = await ProductLikesService.getAccountMetadataAsync(
       metadataRequest
     );
     if (!response) {

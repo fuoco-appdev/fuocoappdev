@@ -12,6 +12,8 @@ import {
 } from '../components/address-form.component';
 import { RoutePathsType } from '../route-paths';
 import { User } from '@supabase/supabase-js';
+import { ProductLikesMetadataResponse } from '../protobuf/core_pb';
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 
 export interface AccountState {
   user: User | null;
@@ -39,6 +41,14 @@ export interface AccountState {
   activeTabIndex: number;
   ordersScrollPosition: number | undefined;
   isCreateCustomerLoading: boolean;
+  hasMoreLikes: boolean;
+  likesScrollPosition: number | undefined;
+  likedProducts: PricedProduct[];
+  productLikesMetadata: ProductLikesMetadataResponse[];
+  likedProductPagination: number;
+  areLikedProductsLoading: boolean;
+  selectedLikedProduct: PricedProduct | undefined;
+  selectedProductLikes: ProductLikesMetadataResponse | undefined;
 }
 
 export class AccountModel extends Model {
@@ -93,13 +103,21 @@ export class AccountModel extends Model {
             region: '',
             phoneNumber: '',
           },
-          areOrdersLoading: false,
+          areOrdersLoading: true,
           editShippingFormErrors: {},
-          activeTabId: '/account/order-history',
+          activeTabId: '/account/likes',
           prevTabIndex: 0,
           activeTabIndex: 0,
           ordersScrollPosition: undefined,
           isCreateCustomerLoading: false,
+          hasMoreLikes: true,
+          likesScrollPosition: undefined,
+          likedProducts: [],
+          productLikesMetadata: [],
+          likedProductPagination: 0,
+          areLikedProductsLoading: false,
+          selectedLikedProduct: undefined,
+          selectedProductLikes: undefined,
         })
       )
     );
@@ -382,6 +400,97 @@ export class AccountModel extends Model {
         ...state,
         isCreateCustomerLoading: value,
       }));
+    }
+  }
+
+  public get hasMoreLikes(): boolean {
+    return this.store?.getValue().hasMoreLikes;
+  }
+
+  public set hasMoreLikes(value: boolean) {
+    if (this.hasMoreLikes !== value) {
+      this.store?.update((state) => ({ ...state, hasMoreLikes: value }));
+    }
+  }
+
+  public get likesScrollPosition(): number | undefined {
+    return this.store?.getValue().likesScrollPosition;
+  }
+
+  public set likesScrollPosition(value: number | undefined) {
+    if (this.likesScrollPosition !== value) {
+      this.store?.update((state) => ({ ...state, likesScrollPosition: value }));
+    }
+  }
+
+  public get likedProducts(): PricedProduct[] {
+    return this.store?.getValue().likedProducts;
+  }
+
+  public set likedProducts(value: PricedProduct[]) {
+    if (JSON.stringify(this.likedProducts) !== JSON.stringify(value)) {
+      this.store?.update((state) => ({ ...state, likedProducts: value }));
+    }
+  }
+
+  public get productLikesMetadata(): ProductLikesMetadataResponse[] {
+    return this.store?.getValue().productLikesMetadata;
+  }
+
+  public set productLikesMetadata(value: ProductLikesMetadataResponse[]) {
+    if (JSON.stringify(this.productLikesMetadata) !== JSON.stringify(value)) {
+      this.store?.update((state) => ({
+        ...state,
+        productLikesMetadata: value,
+      }));
+    }
+  }
+
+  public get likedProductPagination(): number {
+    return this.store?.getValue().likedProductPagination;
+  }
+
+  public set likedProductPagination(value: number) {
+    if (this.likedProductPagination !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        likedProductPagination: value,
+      }));
+    }
+  }
+
+  public get areLikedProductsLoading(): boolean {
+    return this.store?.getValue().areLikedProductsLoading;
+  }
+
+  public set areLikedProductsLoading(value: boolean) {
+    if (this.areLikedProductsLoading !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        areLikedProductsLoading: value,
+      }));
+    }
+  }
+
+  public get selectedLikedProduct(): PricedProduct | undefined {
+    return this.store.getValue().selectedLikedProduct;
+  }
+
+  public set selectedLikedProduct(value: PricedProduct | undefined) {
+    if (JSON.stringify(this.selectedLikedProduct) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, selectedLikedProduct: value }));
+    }
+  }
+
+  public get selectedProductLikes(): ProductLikesMetadataResponse | undefined {
+    return this.store.getValue().selectedProductLikes;
+  }
+
+  public set selectedProductLikes(
+    value: ProductLikesMetadataResponse | undefined
+  ) {
+    if (JSON.stringify(this.selectedProductLikes) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, selectedProductLikes: value }));
     }
   }
 }

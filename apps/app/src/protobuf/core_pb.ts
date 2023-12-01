@@ -837,6 +837,55 @@ export class ProductLikesMetadataRequest extends Message<ProductLikesMetadataReq
 }
 
 /**
+ * @generated from message core.AccountProductLikesMetadataRequest
+ */
+export class AccountProductLikesMetadataRequest extends Message<AccountProductLikesMetadataRequest> {
+  /**
+   * @generated from field: string account_id = 1;
+   */
+  accountId = "";
+
+  /**
+   * @generated from field: int32 offset = 2;
+   */
+  offset = 0;
+
+  /**
+   * @generated from field: int32 limit = 3;
+   */
+  limit = 0;
+
+  constructor(data?: PartialMessage<AccountProductLikesMetadataRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.AccountProductLikesMetadataRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "offset", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 3, name: "limit", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountProductLikesMetadataRequest {
+    return new AccountProductLikesMetadataRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AccountProductLikesMetadataRequest {
+    return new AccountProductLikesMetadataRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AccountProductLikesMetadataRequest {
+    return new AccountProductLikesMetadataRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AccountProductLikesMetadataRequest | PlainMessage<AccountProductLikesMetadataRequest> | undefined, b: AccountProductLikesMetadataRequest | PlainMessage<AccountProductLikesMetadataRequest> | undefined): boolean {
+    return proto3.util.equals(AccountProductLikesMetadataRequest, a, b);
+  }
+}
+
+/**
  * @generated from message core.ProductLikesMetadataResponse
  */
 export class ProductLikesMetadataResponse extends Message<ProductLikesMetadataResponse> {

@@ -18,12 +18,6 @@ export default function AccountSettingsDesktopComponent({
   const location = useLocation();
   const { t, i18n } = useTranslation();
 
-  useDesktopEffect(() => {
-    if (location.pathname === RoutePathsType.AccountSettings) {
-      navigate(RoutePathsType.AccountSettingsAccount);
-    }
-  }, [location.pathname]);
-
   return (
     <ResponsiveDesktop>
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>

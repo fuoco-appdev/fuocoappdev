@@ -240,10 +240,10 @@ class WindowController extends Controller {
       this._model.activeRoute = RoutePathsType.AccountAddresses;
       this._model.showNavigateBack = false;
       this._model.hideCartButton = false;
-    } else if (location.pathname === RoutePathsType.AccountEdit) {
+    } else if (location.pathname === RoutePathsType.AccountLikes) {
       this._model.transitionKeyIndex = 0;
       this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.AccountEdit;
+      this._model.activeRoute = RoutePathsType.AccountLikes;
       this._model.showNavigateBack = false;
       this._model.hideCartButton = false;
     } else if (location.pathname === RoutePathsType.AccountSettings) {

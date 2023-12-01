@@ -29,7 +29,7 @@ import { Customer } from '@medusajs/medusa';
 import Skeleton from 'react-loading-skeleton';
 import AccountOrderHistoryComponent from '../account-order-history.component';
 import AccountAddressesComponent from '../account-addresses.component';
-import AccountEditComponent from '../account-edit.component';
+import AccountEditComponent from '../account-likes.component';
 import {
   ResponsiveDesktop,
   ResponsiveMobile,
