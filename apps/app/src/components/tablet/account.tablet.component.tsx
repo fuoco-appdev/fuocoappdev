@@ -1,4 +1,10 @@
-import React, { createRef, useEffect, useLayoutEffect, useState } from 'react';
+import React, {
+  createRef,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   Typography,
   Button,
@@ -48,8 +54,11 @@ export default function AccountTabletComponent({
   onScrollLoad,
 }: AccountResponsiveProps): JSX.Element {
   const scrollContainerRef = createRef<HTMLDivElement>();
+  const topBarRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
+  let prevPreviewScrollTop = 0;
+  let yPosition = 0;
 
   useTabletEffect(() => {
     if (windowProps.activeRoute === RoutePathsType.Account) {
@@ -80,6 +89,7 @@ export default function AccountTabletComponent({
     <ResponsiveTablet>
       <div className={[styles['root'], styles['root-tablet']].join(' ')}>
         <div
+          ref={topBarRef}
           className={[styles['top-bar'], styles['top-bar-tablet']].join(' ')}
         >
           <div
@@ -129,7 +139,28 @@ export default function AccountTabletComponent({
             styles['scroll-container-tablet'],
           ].join(' ')}
           style={{ height: window.innerHeight }}
-          onScroll={onScroll}
+          onScroll={(e) => {
+            onScroll(e);
+            const elementHeight = topBarRef.current?.clientHeight ?? 0;
+            const scrollTop = e.currentTarget.scrollTop;
+            if (prevPreviewScrollTop > scrollTop) {
+              yPosition += prevPreviewScrollTop - scrollTop;
+              if (yPosition >= 0) {
+                yPosition = 0;
+              }
+
+              topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
+            } else {
+              yPosition -= scrollTop - prevPreviewScrollTop;
+              if (yPosition <= -elementHeight) {
+                yPosition = -elementHeight;
+              }
+
+              topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
+            }
+
+            prevPreviewScrollTop = e.currentTarget.scrollTop;
+          }}
           onLoad={onScrollLoad}
           ref={scrollContainerRef}
         >
