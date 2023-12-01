@@ -114,7 +114,7 @@ export class AccountModel extends Model {
           likesScrollPosition: undefined,
           likedProducts: [],
           productLikesMetadata: [],
-          likedProductPagination: 0,
+          likedProductPagination: 1,
           areLikedProductsLoading: false,
           selectedLikedProduct: undefined,
           selectedProductLikes: undefined,

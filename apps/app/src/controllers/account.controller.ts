@@ -94,6 +94,7 @@ class AccountController extends Controller {
     }
 
     this._model.likedProductPagination = this._model.likedProductPagination + 1;
+    console.log(this._model.likedProductPagination);
 
     const limit = 10;
     const offset = limit * (this._model.likedProductPagination - 1);

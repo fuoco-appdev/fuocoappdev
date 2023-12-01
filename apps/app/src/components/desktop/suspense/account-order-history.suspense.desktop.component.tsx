@@ -19,9 +19,16 @@ export function AccountOrderHistorySuspenseDesktopComponent(): JSX.Element {
           >
             <Skeleton count={1} borderRadius={20} height={20} width={120} />
           </div>
-          {[1, 2, 3, 4, 5].map(() => (
-            <OrderItemSuspenseDesktopComponent />
-          ))}
+          <div
+            className={[
+              styles['items-container'],
+              styles['items-container-desktop'],
+            ].join(' ')}
+          >
+            {[1, 2, 3, 4, 5].map(() => (
+              <OrderItemSuspenseDesktopComponent />
+            ))}
+          </div>
         </div>
       </div>
     </ResponsiveSuspenseDesktop>

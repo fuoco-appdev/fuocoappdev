@@ -39,8 +39,6 @@ export interface AccountLikesResponsiveProps {
   variantQuantities: Record<string, number>;
   setOpenCartVariants: (value: boolean) => void;
   setVariantQuantities: (value: Record<string, number>) => void;
-  onScroll: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
-  onLoad: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
   onAddToCart: () => void;
 }
 
@@ -52,26 +50,6 @@ export default function AccountLikesComponent(): JSX.Element {
   const [variantQuantities, setVariantQuantities] = useState<
     Record<string, number>
   >({});
-
-  const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    const scrollTop = e.currentTarget?.scrollTop ?? 0;
-    const scrollHeight = e.currentTarget?.scrollHeight ?? 0;
-    const clientHeight = e.currentTarget?.clientHeight ?? 0;
-    const scrollOffset = scrollHeight - scrollTop - clientHeight;
-
-    if (scrollOffset > 16 || !AccountController.model.hasMoreLikes) {
-      return;
-    }
-
-    AccountController.onNextLikedProductScrollAsync();
-  };
-
-  const onLoad = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
-    if (accountProps.likesScrollPosition) {
-      e.currentTarget.scrollTop = accountProps.likesScrollPosition as number;
-      AccountController.updateLikesScrollPosition(undefined);
-    }
-  };
 
   const onAddToCart = () => {
     for (const id in variantQuantities) {
@@ -149,8 +127,6 @@ export default function AccountLikesComponent(): JSX.Element {
           variantQuantities={variantQuantities}
           setOpenCartVariants={setOpenCartVariants}
           setVariantQuantities={setVariantQuantities}
-          onScroll={onScroll}
-          onLoad={onLoad}
           onAddToCart={onAddToCart}
         />
         <AccountLikesTabletComponent
@@ -160,8 +136,6 @@ export default function AccountLikesComponent(): JSX.Element {
           variantQuantities={variantQuantities}
           setOpenCartVariants={setOpenCartVariants}
           setVariantQuantities={setVariantQuantities}
-          onScroll={onScroll}
-          onLoad={onLoad}
           onAddToCart={onAddToCart}
         />
         <AccountLikesMobileComponent
@@ -171,8 +145,6 @@ export default function AccountLikesComponent(): JSX.Element {
           variantQuantities={variantQuantities}
           setOpenCartVariants={setOpenCartVariants}
           setVariantQuantities={setVariantQuantities}
-          onScroll={onScroll}
-          onLoad={onLoad}
           onAddToCart={onAddToCart}
         />
       </AuthenticatedComponent>

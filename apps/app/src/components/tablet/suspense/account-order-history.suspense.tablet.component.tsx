@@ -22,9 +22,16 @@ export function AccountOrderHistorySuspenseTabletComponent(): JSX.Element {
           >
             <Skeleton count={1} borderRadius={20} height={20} width={120} />
           </div>
-          {[1, 2, 3, 4, 5].map(() => (
-            <OrderItemSuspenseTabletComponent />
-          ))}
+          <div
+            className={[
+              styles['items-container'],
+              styles['items-container-tablet'],
+            ].join(' ')}
+          >
+            {[1, 2, 3, 4, 5].map(() => (
+              <OrderItemSuspenseTabletComponent />
+            ))}
+          </div>
         </div>
       </div>
     </ResponsiveSuspenseTablet>

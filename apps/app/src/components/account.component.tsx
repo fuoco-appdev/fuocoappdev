@@ -3,7 +3,7 @@ import AccountController from '../controllers/account.controller';
 import WindowController from '../controllers/window.controller';
 import StoreController from '../controllers/store.controller';
 import { useObservable } from '@ngneat/use-observable';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useOutletContext } from 'react-router-dom';
 import { RoutePathsType } from '../route-paths';
 import {
   ResponsiveDesktop,
@@ -31,11 +31,21 @@ const AccountMobileComponent = lazy(
   () => import('./mobile/account.mobile.component')
 );
 
+export type AccountOutletContextType = {
+  scrollContainerRef: React.RefObject<HTMLDivElement>;
+};
+
+export function useAccountOutletContext() {
+  return useOutletContext<AccountOutletContextType>();
+}
+
 export interface AccountResponsiveProps {
   windowProps: WindowState;
   accountProps: AccountState;
   storeProps: StoreState;
   onCompleteProfile: () => void;
+  onScroll: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
+  onScrollLoad: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
 }
 
 export default function AccountComponent(): JSX.Element {
@@ -43,6 +53,56 @@ export default function AccountComponent(): JSX.Element {
   const [accountProps] = useObservable(AccountController.model.store);
   const [windowProps] = useObservable(WindowController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
+  const scrollOffsetTriggerGap = 16;
+
+  const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    const scrollTop = e.currentTarget?.scrollTop ?? 0;
+    const scrollHeight = e.currentTarget?.scrollHeight ?? 0;
+    const clientHeight = e.currentTarget?.clientHeight ?? 0;
+    const scrollOffset = scrollHeight - scrollTop - clientHeight;
+
+    if (AccountController.model.activeTabId === RoutePathsType.AccountLikes) {
+      if (
+        scrollOffset > scrollOffsetTriggerGap ||
+        !AccountController.model.hasMoreLikes
+      ) {
+        return;
+      }
+
+      AccountController.onNextLikedProductScrollAsync();
+    }
+
+    if (
+      AccountController.model.activeTabId === RoutePathsType.AccountOrderHistory
+    ) {
+      if (
+        scrollOffset > scrollOffsetTriggerGap ||
+        !AccountController.model.hasMoreOrders
+      ) {
+        return;
+      }
+
+      AccountController.onNextOrderScrollAsync();
+    }
+  };
+
+  const onScrollLoad = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
+    if (AccountController.model.activeTabId === RoutePathsType.AccountLikes) {
+      if (accountProps.likesScrollPosition) {
+        e.currentTarget.scrollTop = accountProps.likesScrollPosition as number;
+        AccountController.updateLikesScrollPosition(undefined);
+      }
+    }
+
+    if (
+      AccountController.model.activeTabId === RoutePathsType.AccountOrderHistory
+    ) {
+      if (accountProps.scrollPosition) {
+        e.currentTarget.scrollTop = accountProps.scrollPosition as number;
+        AccountController.updateOrdersScrollPosition(undefined);
+      }
+    }
+  };
 
   const onCompleteProfile = () => {
     AccountController.updateProfileErrors({
@@ -115,18 +175,24 @@ export default function AccountComponent(): JSX.Element {
             windowProps={windowProps}
             storeProps={storeProps}
             onCompleteProfile={onCompleteProfile}
+            onScroll={onScroll}
+            onScrollLoad={onScrollLoad}
           />
           <AccountTabletComponent
             accountProps={accountProps}
             windowProps={windowProps}
             storeProps={storeProps}
             onCompleteProfile={onCompleteProfile}
+            onScroll={onScroll}
+            onScrollLoad={onScrollLoad}
           />
           <AccountMobileComponent
             accountProps={accountProps}
             windowProps={windowProps}
             storeProps={storeProps}
             onCompleteProfile={onCompleteProfile}
+            onScroll={onScroll}
+            onScrollLoad={onScrollLoad}
           />
         </AuthenticatedComponent>
       </React.Suspense>

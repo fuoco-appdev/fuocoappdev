@@ -23,6 +23,7 @@ import {
 import { createPortal } from 'react-dom';
 import CartVariantItemComponent from '../cart-variant-item.component';
 import { MedusaProductTypeNames } from '../../types/medusa.type';
+import { useAccountOutletContext } from '../account.component';
 
 export default function AccountLikesMobileComponent({
   storeProps,
@@ -31,14 +32,12 @@ export default function AccountLikesMobileComponent({
   variantQuantities,
   setOpenCartVariants,
   setVariantQuantities,
-  onScroll,
-  onLoad,
   onAddToCart,
 }: AccountLikesResponsiveProps): JSX.Element {
   const { t, i18n } = useTranslation();
-  const previewsContainerRef = createRef<HTMLDivElement>();
   const rootRef = createRef<HTMLDivElement>();
   const navigate = useNavigate();
+  const { scrollContainerRef } = useAccountOutletContext();
 
   return (
     <ResponsiveMobile>
@@ -62,13 +61,9 @@ export default function AccountLikesMobileComponent({
         </div>
         <div
           className={[
-            styles['scroll-container'],
-            styles['scroll-container-mobile'],
+            styles['items-container'],
+            styles['items-container-mobile'],
           ].join(' ')}
-          style={{ height: window.innerHeight }}
-          onScroll={onScroll}
-          onLoad={onLoad}
-          ref={previewsContainerRef}
         >
           {accountProps.likedProducts.map(
             (product: PricedProduct, index: number) => {
@@ -89,7 +84,7 @@ export default function AccountLikesMobileComponent({
                   }
                   onClick={() => {
                     AccountController.updateLikesScrollPosition(
-                      previewsContainerRef.current?.scrollTop ?? 0
+                      scrollContainerRef.current?.scrollTop ?? 0
                     );
                     AccountController.updateSelectedLikedProduct(product);
                   }}

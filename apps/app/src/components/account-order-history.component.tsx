@@ -26,32 +26,10 @@ const AccountOrderHistoryMobileComponent = lazy(
 
 export interface AccountOrderHistoryResponsiveProps {
   accountProps: AccountState;
-  onOrdersScroll: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
-  onOrdersLoad: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
 }
 
 export default function AccountOrderHistoryComponent(): JSX.Element {
   const [accountProps] = useObservable(AccountController.model.store);
-
-  const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    const scrollTop = e.currentTarget?.scrollTop ?? 0;
-    const scrollHeight = e.currentTarget?.scrollHeight ?? 0;
-    const clientHeight = e.currentTarget?.clientHeight ?? 0;
-    const scrollOffset = scrollHeight - scrollTop - clientHeight;
-
-    if (scrollOffset > 16 || !AccountController.model.hasMoreOrders) {
-      return;
-    }
-
-    AccountController.onNextOrderScrollAsync();
-  };
-
-  const onLoad = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
-    if (accountProps.scrollPosition) {
-      e.currentTarget.scrollTop = accountProps.scrollPosition as number;
-      AccountController.updateOrdersScrollPosition(undefined);
-    }
-  };
 
   const suspenceComponent = (
     <>
@@ -68,21 +46,9 @@ export default function AccountOrderHistoryComponent(): JSX.Element {
   return (
     <React.Suspense fallback={suspenceComponent}>
       <AuthenticatedComponent>
-        <AccountOrderHistoryDesktopComponent
-          accountProps={accountProps}
-          onOrdersScroll={onScroll}
-          onOrdersLoad={onLoad}
-        />
-        <AccountOrderHistoryTabletComponent
-          accountProps={accountProps}
-          onOrdersScroll={onScroll}
-          onOrdersLoad={onLoad}
-        />
-        <AccountOrderHistoryMobileComponent
-          accountProps={accountProps}
-          onOrdersScroll={onScroll}
-          onOrdersLoad={onLoad}
-        />
+        <AccountOrderHistoryDesktopComponent accountProps={accountProps} />
+        <AccountOrderHistoryTabletComponent accountProps={accountProps} />
+        <AccountOrderHistoryMobileComponent accountProps={accountProps} />
       </AuthenticatedComponent>
     </React.Suspense>
   );

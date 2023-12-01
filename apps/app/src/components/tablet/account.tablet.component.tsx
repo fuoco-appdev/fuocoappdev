@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { createRef, useEffect, useLayoutEffect, useState } from 'react';
 import {
   Typography,
   Button,
@@ -44,7 +44,10 @@ export default function AccountTabletComponent({
   accountProps,
   storeProps,
   onCompleteProfile,
+  onScroll,
+  onScrollLoad,
 }: AccountResponsiveProps): JSX.Element {
+  const scrollContainerRef = createRef<HTMLDivElement>();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
 
@@ -120,233 +123,250 @@ export default function AccountTabletComponent({
             </div>
           </div>
         </div>
-        {account?.status === 'Incomplete' && (
-          <div
-            className={[
-              styles['incomplete-profile-container'],
-              styles['incomplete-profile-container-tablet'],
-            ].join(' ')}
-          >
+        <div
+          className={[
+            styles['scroll-container'],
+            styles['scroll-container-tablet'],
+          ].join(' ')}
+          style={{ height: window.innerHeight }}
+          onScroll={onScroll}
+          onLoad={onScrollLoad}
+          ref={scrollContainerRef}
+        >
+          {account?.status === 'Incomplete' && (
             <div
               className={[
-                styles['incomplete-content'],
-                styles['incomplete-content-tablet'],
+                styles['incomplete-profile-container'],
+                styles['incomplete-profile-container-tablet'],
               ].join(' ')}
             >
               <div
                 className={[
-                  styles['complete-profile-title'],
-                  styles['complete-profile-title-tablet'],
+                  styles['incomplete-content'],
+                  styles['incomplete-content-tablet'],
                 ].join(' ')}
               >
-                {t('completeProfile')}
+                <div
+                  className={[
+                    styles['complete-profile-title'],
+                    styles['complete-profile-title-tablet'],
+                  ].join(' ')}
+                >
+                  {t('completeProfile')}
+                </div>
+                <div
+                  className={[
+                    styles['form-container'],
+                    styles['form-container-tablet'],
+                  ].join(' ')}
+                >
+                  <AccountProfileFormComponent
+                    storeProps={storeProps}
+                    values={accountProps.profileForm}
+                    errors={accountProps.profileFormErrors}
+                    onChangeCallbacks={{
+                      firstName: (event) =>
+                        AccountController.updateProfile({
+                          firstName: event.target.value,
+                        }),
+                      lastName: (event) =>
+                        AccountController.updateProfile({
+                          lastName: event.target.value,
+                        }),
+                      phoneNumber: (value, event, formattedValue) =>
+                        AccountController.updateProfile({
+                          phoneNumber: value,
+                        }),
+                    }}
+                  />
+                </div>
+                <div>
+                  <Button
+                    touchScreen={true}
+                    classNames={{
+                      container: [
+                        styles['submit-button-container'],
+                        styles['submit-button-container-tablet'],
+                      ].join(' '),
+                      button: [
+                        styles['submit-button'],
+                        styles['submit-button-tablet'],
+                      ].join(' '),
+                    }}
+                    block={true}
+                    size={'large'}
+                    icon={<Line.Done size={24} />}
+                    onClick={onCompleteProfile}
+                  >
+                    {t('complete')}
+                  </Button>
+                </div>
               </div>
+            </div>
+          )}
+          {account?.status === 'Complete' && (
+            <>
               <div
                 className={[
-                  styles['form-container'],
-                  styles['form-container-tablet'],
+                  styles['avatar-container'],
+                  styles['avatar-container-tablet'],
                 ].join(' ')}
               >
-                <AccountProfileFormComponent
-                  storeProps={storeProps}
-                  values={accountProps.profileForm}
-                  errors={accountProps.profileFormErrors}
-                  onChangeCallbacks={{
-                    firstName: (event) =>
-                      AccountController.updateProfile({
-                        firstName: event.target.value,
-                      }),
-                    lastName: (event) =>
-                      AccountController.updateProfile({
-                        lastName: event.target.value,
-                      }),
-                    phoneNumber: (value, event, formattedValue) =>
-                      AccountController.updateProfile({
-                        phoneNumber: value,
-                      }),
-                  }}
-                />
-              </div>
-              <div>
-                <Button
+                <Avatar
                   touchScreen={true}
                   classNames={{
-                    container: [
-                      styles['submit-button-container'],
-                      styles['submit-button-container-tablet'],
-                    ].join(' '),
-                    button: [
-                      styles['submit-button'],
-                      styles['submit-button-tablet'],
-                    ].join(' '),
-                  }}
-                  block={true}
-                  size={'large'}
-                  icon={<Line.Done size={24} />}
-                  onClick={onCompleteProfile}
-                >
-                  {t('complete')}
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-        {account?.status === 'Complete' && (
-          <>
-            <div
-              className={[
-                styles['avatar-container'],
-                styles['avatar-container-tablet'],
-              ].join(' ')}
-            >
-              <Avatar
-                touchScreen={true}
-                classNames={{
-                  button: {
-                    button: [
-                      styles['avatar-button'],
-                      styles['avatar-button-tablet'],
-                    ].join(' '),
-                  },
-                  cropImage: {
-                    overlay: {
-                      background: [
-                        styles['avatar-overlay-background'],
-                        styles['avatar-overlay-background-tablet'],
+                    button: {
+                      button: [
+                        styles['avatar-button'],
+                        styles['avatar-button-tablet'],
                       ].join(' '),
                     },
-                  },
-                }}
-                text={customer?.first_name}
-                src={accountProps.profileUrl}
-                editMode={true}
-                onChange={AccountController.uploadAvatarAsync}
-                size={'large'}
-              />
-            </div>
-            <div
-              className={[styles['username'], styles['username-tablet']].join(
-                ' '
-              )}
-            >
-              {customer ? (
-                `${customer?.first_name} ${customer?.last_name}`
-              ) : (
-                <Skeleton
-                  count={1}
-                  borderRadius={9999}
-                  className={[
-                    styles['skeleton-user'],
-                    styles['skeleton-user-tablet'],
-                  ].join(' ')}
+                    cropImage: {
+                      overlay: {
+                        background: [
+                          styles['avatar-overlay-background'],
+                          styles['avatar-overlay-background-tablet'],
+                        ].join(' '),
+                      },
+                    },
+                  }}
+                  text={customer?.first_name}
+                  src={accountProps.profileUrl}
+                  editMode={true}
+                  onChange={AccountController.uploadAvatarAsync}
+                  size={'large'}
                 />
-              )}
-            </div>
-            <div
-              className={[
-                styles['tabs-container'],
-                styles['tabs-container-tablet'],
-              ].join(' ')}
-            >
-              <Tabs
-                flex={true}
-                touchScreen={true}
-                activeId={accountProps.activeTabId}
-                classNames={{
-                  nav: [styles['tab-nav'], styles['tab-nav-tablet']].join(' '),
-                  tabButton: [
-                    styles['tab-button'],
-                    styles['tab-button-tablet'],
-                  ].join(''),
-                  tabOutline: [
-                    styles['tab-outline'],
-                    styles['tab-outline-tablet'],
-                  ].join(' '),
-                }}
-                onChange={(id) => {
-                  AccountController.updateActiveTabId(id);
-                  navigate(id);
-                }}
-                type={'underlined'}
-                tabs={[
-                  {
-                    id: RoutePathsType.AccountLikes,
-                    icon: <Line.FavoriteBorder size={24} />,
-                  },
-                  {
-                    id: RoutePathsType.AccountOrderHistory,
-                    icon: <Line.History size={24} />,
-                  },
-                  {
-                    id: RoutePathsType.AccountAddresses,
-                    icon: <Line.LocationOn size={24} />,
-                  },
-                ]}
-              />
-            </div>
-            <div
-              className={[
-                styles['outlet-container'],
-                styles['outlet-container-tablet'],
-              ].join(' ')}
-            >
-              <TransitionGroup
-                component={null}
-                childFactory={(child) =>
-                  React.cloneElement(child, {
-                    classNames: {
+              </div>
+              <div
+                className={[styles['username'], styles['username-tablet']].join(
+                  ' '
+                )}
+              >
+                {customer ? (
+                  `${customer?.first_name} ${customer?.last_name}`
+                ) : (
+                  <Skeleton
+                    count={1}
+                    borderRadius={9999}
+                    className={[
+                      styles['skeleton-user'],
+                      styles['skeleton-user-tablet'],
+                    ].join(' ')}
+                  />
+                )}
+              </div>
+              <div
+                className={[
+                  styles['tabs-container'],
+                  styles['tabs-container-tablet'],
+                ].join(' ')}
+              >
+                <Tabs
+                  flex={true}
+                  touchScreen={true}
+                  activeId={accountProps.activeTabId}
+                  classNames={{
+                    nav: [styles['tab-nav'], styles['tab-nav-tablet']].join(
+                      ' '
+                    ),
+                    tabButton: [
+                      styles['tab-button'],
+                      styles['tab-button-tablet'],
+                    ].join(''),
+                    tabOutline: [
+                      styles['tab-outline'],
+                      styles['tab-outline-tablet'],
+                    ].join(' '),
+                  }}
+                  onChange={(id) => {
+                    AccountController.updateActiveTabId(id);
+                    navigate(id);
+                  }}
+                  type={'underlined'}
+                  tabs={[
+                    {
+                      id: RoutePathsType.AccountLikes,
+                      icon: <Line.FavoriteBorder size={24} />,
+                    },
+                    {
+                      id: RoutePathsType.AccountOrderHistory,
+                      icon: <Line.History size={24} />,
+                    },
+                    {
+                      id: RoutePathsType.AccountAddresses,
+                      icon: <Line.LocationOn size={24} />,
+                    },
+                  ]}
+                />
+              </div>
+              <div
+                className={[
+                  styles['outlet-container'],
+                  styles['outlet-container-tablet'],
+                ].join(' ')}
+              >
+                <TransitionGroup
+                  component={null}
+                  childFactory={(child) =>
+                    React.cloneElement(child, {
+                      classNames: {
+                        enter:
+                          accountProps.activeTabIndex >
+                          accountProps.prevTabIndex
+                            ? styles['left-to-right-enter']
+                            : styles['right-to-left-enter'],
+                        enterActive:
+                          accountProps.activeTabIndex >
+                          accountProps.prevTabIndex
+                            ? styles['left-to-right-enter-active']
+                            : styles['right-to-left-enter-active'],
+                        exit:
+                          accountProps.activeTabIndex >
+                          accountProps.prevTabIndex
+                            ? styles['left-to-right-exit']
+                            : styles['right-to-left-exit'],
+                        exitActive:
+                          accountProps.activeTabIndex >
+                          accountProps.prevTabIndex
+                            ? styles['left-to-right-exit-active']
+                            : styles['right-to-left-exit-active'],
+                      },
+                      timeout: 250,
+                    })
+                  }
+                >
+                  <CSSTransition
+                    key={accountProps.activeTabIndex}
+                    classNames={{
                       enter:
-                        accountProps.activeTabIndex > accountProps.prevTabIndex
+                        accountProps.activeTabIndex < accountProps.prevTabIndex
                           ? styles['left-to-right-enter']
                           : styles['right-to-left-enter'],
                       enterActive:
-                        accountProps.activeTabIndex > accountProps.prevTabIndex
+                        accountProps.activeTabIndex < accountProps.prevTabIndex
                           ? styles['left-to-right-enter-active']
                           : styles['right-to-left-enter-active'],
                       exit:
-                        accountProps.activeTabIndex > accountProps.prevTabIndex
+                        accountProps.activeTabIndex < accountProps.prevTabIndex
                           ? styles['left-to-right-exit']
                           : styles['right-to-left-exit'],
                       exitActive:
-                        accountProps.activeTabIndex > accountProps.prevTabIndex
+                        accountProps.activeTabIndex < accountProps.prevTabIndex
                           ? styles['left-to-right-exit-active']
                           : styles['right-to-left-exit-active'],
-                    },
-                    timeout: 250,
-                  })
-                }
-              >
-                <CSSTransition
-                  key={accountProps.activeTabIndex}
-                  classNames={{
-                    enter:
-                      accountProps.activeTabIndex < accountProps.prevTabIndex
-                        ? styles['left-to-right-enter']
-                        : styles['right-to-left-enter'],
-                    enterActive:
-                      accountProps.activeTabIndex < accountProps.prevTabIndex
-                        ? styles['left-to-right-enter-active']
-                        : styles['right-to-left-enter-active'],
-                    exit:
-                      accountProps.activeTabIndex < accountProps.prevTabIndex
-                        ? styles['left-to-right-exit']
-                        : styles['right-to-left-exit'],
-                    exitActive:
-                      accountProps.activeTabIndex < accountProps.prevTabIndex
-                        ? styles['left-to-right-exit-active']
-                        : styles['right-to-left-exit-active'],
-                  }}
-                  timeout={250}
-                  unmountOnExit={false}
-                >
-                  <div style={{ minWidth: '100%', minHeight: '100%' }}>
-                    <Outlet />
-                  </div>
-                </CSSTransition>
-              </TransitionGroup>
-            </div>
-          </>
-        )}
+                    }}
+                    timeout={250}
+                    unmountOnExit={false}
+                  >
+                    <div style={{ minWidth: '100%', minHeight: '100%' }}>
+                      <Outlet context={{ scrollContainerRef }} />
+                    </div>
+                  </CSSTransition>
+                </TransitionGroup>
+              </div>
+            </>
+          )}
+        </div>
         {createPortal(
           accountProps.isCreateCustomerLoading && (
             <div

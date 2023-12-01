@@ -10,16 +10,15 @@ import { Order } from '@medusajs/medusa';
 import OrderItemComponent from '../order-item.component';
 import { AccountOrderHistoryResponsiveProps } from '../account-order-history.component';
 import { ResponsiveMobile } from '../responsive.component';
+import { useAccountOutletContext } from '../account.component';
 
 export default function AccountOrderHistoryMobileComponent({
   accountProps,
-  onOrdersScroll,
-  onOrdersLoad,
 }: AccountOrderHistoryResponsiveProps): JSX.Element {
-  const ordersContainerRef = createRef<HTMLDivElement>();
   const rootRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
+  const { scrollContainerRef } = useAccountOutletContext();
 
   const orders = accountProps.orders as Order[];
   return (
@@ -29,10 +28,10 @@ export default function AccountOrderHistoryMobileComponent({
         className={[styles['root'], styles['root-mobile']].join(' ')}
       >
         <div
-          ref={ordersContainerRef}
-          onScroll={onOrdersScroll}
-          onLoad={onOrdersLoad}
-          className={[styles['scroll'], styles['scroll-mobile']].join(' ')}
+          className={[
+            styles['items-container'],
+            styles['items-container-mobile'],
+          ].join(' ')}
         >
           <div
             className={[
@@ -63,7 +62,7 @@ export default function AccountOrderHistoryMobileComponent({
                   order={order}
                   onClick={() => {
                     AccountController.updateOrdersScrollPosition(
-                      ordersContainerRef.current?.scrollTop
+                      scrollContainerRef.current?.scrollTop
                     );
                     setTimeout(
                       () =>
