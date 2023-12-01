@@ -214,7 +214,7 @@ export default function ProductPreviewDesktopComponent({
                       accountProps.account.status === 'Incomplete'
                     }
                     rounded={true}
-                    onClick={() => onLikeChanged(!isLiked)}
+                    onClick={() => onLikeChanged?.(!isLiked)}
                     type={'text'}
                     icon={
                       isLiked ? (

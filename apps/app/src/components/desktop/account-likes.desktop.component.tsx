@@ -1,6 +1,7 @@
 import { createRef, useEffect, useLayoutEffect, useRef } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import AccountController from '../../controllers/account.controller';
+import ProductController from '../../controllers/product.controller';
 import styles from '../account-likes.module.scss';
 import { Alert, Button, Line, Modal } from '@fuoco.appdev/core-ui';
 import { RoutePathsType } from '../../route-paths';
@@ -94,6 +95,12 @@ export default function AccountLikesDesktopComponent({
                   onAddToCart={() => {
                     AccountController.updateSelectedLikedProduct(product);
                     setOpenCartVariants(true);
+                  }}
+                  onLikeChanged={(isLiked: boolean) => {
+                    ProductController.requestProductLike(
+                      isLiked,
+                      product.id ?? ''
+                    );
                   }}
                 />
               );

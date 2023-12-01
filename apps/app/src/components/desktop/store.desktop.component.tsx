@@ -44,6 +44,7 @@ import { ResponsiveDesktop } from '../responsive.component';
 import CartVariantItemComponent from '../cart-variant-item.component';
 import { MedusaProductTypeNames } from 'src/types/medusa.type';
 import { createPortal } from 'react-dom';
+import ProductController from '../../controllers/product.controller';
 
 export default function StoreDesktopComponent({
   windowProps,
@@ -271,6 +272,12 @@ export default function StoreDesktopComponent({
                         productLikesMetadata
                       );
                       setOpenCartVariants(true);
+                    }}
+                    onLikeChanged={(isLiked: boolean) => {
+                      ProductController.requestProductLike(
+                        isLiked,
+                        preview.id ?? ''
+                      );
                     }}
                   />
                 );

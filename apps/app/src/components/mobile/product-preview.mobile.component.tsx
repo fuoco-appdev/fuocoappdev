@@ -189,7 +189,7 @@ export default function ProductPreviewMobileComponent({
                       }
                       touchScreen={true}
                       rounded={true}
-                      onClick={() => onLikeChanged(!isLiked)}
+                      onClick={() => onLikeChanged?.(!isLiked)}
                       type={'text'}
                       icon={
                         isLiked ? (

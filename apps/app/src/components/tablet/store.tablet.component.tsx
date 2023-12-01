@@ -32,6 +32,7 @@ import { Country, Region, Product, SalesChannel } from '@medusajs/medusa';
 import ProductPreviewComponent from '../product-preview.component';
 import ReactCountryFlag from 'react-country-flag';
 import HomeController from '../../controllers/home.controller';
+import ProductController from '../../controllers/product.controller';
 import { InventoryLocation } from '../../models/home.model';
 import { StoreResponsiveProps } from '../store.component';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
@@ -266,6 +267,12 @@ export default function StoreTabletComponent({
                     onAddToCart={() => {
                       StoreController.updateSelectedPreview(preview);
                       setOpenCartVariants(true);
+                    }}
+                    onLikeChanged={(isLiked: boolean) => {
+                      ProductController.requestProductLike(
+                        isLiked,
+                        preview.id ?? ''
+                      );
                     }}
                   />
                 );

@@ -82,6 +82,7 @@ class ProductController extends Controller {
           productId: productId,
         });
         StoreController.updateProductLikesMetadata(productId, metadata);
+        AccountController.updateProductLikesMetadata(productId, metadata);
         return;
       }
 
@@ -90,6 +91,7 @@ class ProductController extends Controller {
         productId: productId,
       });
       StoreController.updateProductLikesMetadata(productId, metadata);
+      AccountController.updateProductLikesMetadata(productId, metadata);
     } catch (error: any) {
       console.error(error);
     }

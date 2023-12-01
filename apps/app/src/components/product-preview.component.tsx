@@ -58,6 +58,7 @@ export interface ProductPreviewProps {
   onClick?: () => void;
   onRest?: () => void;
   onAddToCart?: () => void;
+  onLikeChanged?: (isLiked: boolean) => void;
 }
 
 export interface ProductPreviewResponsiveProps extends ProductPreviewProps {
@@ -71,7 +72,6 @@ export interface ProductPreviewResponsiveProps extends ProductPreviewProps {
   setSelectedVariantId: (value: string | undefined) => void;
   setLikeCount: (value: number) => void;
   formatPrice: (price: MoneyAmount) => string;
-  onLikeChanged: (isLiked: boolean) => void;
   formatNumberCompact: (value: number) => string;
 }
 
@@ -84,6 +84,7 @@ export default function ProductPreviewComponent({
   onClick,
   onRest,
   onAddToCart,
+  onLikeChanged,
 }: ProductPreviewProps): JSX.Element {
   const [originalPrice, setOriginalPrice] = useState<string>('');
   const [calculatedPrice, setCalculatedPrice] = useState<string>('');
@@ -116,7 +117,7 @@ export default function ProductPreviewComponent({
     return formatter.format(value);
   };
 
-  const onLikeChanged = (isLiked: boolean) => {
+  const onLikeChangedOverride = (isLiked: boolean) => {
     setIsLiked(isLiked);
 
     if (isLiked) {
@@ -125,7 +126,7 @@ export default function ProductPreviewComponent({
       setLikeCount(likeCount - 1);
     }
 
-    ProductController.requestProductLike(isLiked, preview.id ?? '');
+    onLikeChanged?.(isLiked);
   };
 
   useEffect(() => {
@@ -197,7 +198,7 @@ export default function ProductPreviewComponent({
         setLikeCount={setLikeCount}
         formatPrice={formatPrice}
         onAddToCart={onAddToCart}
-        onLikeChanged={onLikeChanged}
+        onLikeChanged={onLikeChangedOverride}
         formatNumberCompact={formatNumberCompact}
       />
       <ProductPreviewTabletComponent
@@ -218,7 +219,7 @@ export default function ProductPreviewComponent({
         setLikeCount={setLikeCount}
         formatPrice={formatPrice}
         onAddToCart={onAddToCart}
-        onLikeChanged={onLikeChanged}
+        onLikeChanged={onLikeChangedOverride}
         formatNumberCompact={formatNumberCompact}
       />
       <ProductPreviewMobileComponent
@@ -239,7 +240,7 @@ export default function ProductPreviewComponent({
         setLikeCount={setLikeCount}
         formatPrice={formatPrice}
         onAddToCart={onAddToCart}
-        onLikeChanged={onLikeChanged}
+        onLikeChanged={onLikeChangedOverride}
         formatNumberCompact={formatNumberCompact}
       />
     </React.Suspense>

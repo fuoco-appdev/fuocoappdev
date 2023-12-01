@@ -41,6 +41,7 @@ import { ResponsiveMobile } from '../responsive.component';
 import CartVariantItemComponent from '../cart-variant-item.component';
 import { MedusaProductTypeNames } from 'src/types/medusa.type';
 import ReactDOM, { createPortal } from 'react-dom';
+import ProductController from '../../controllers/product.controller';
 
 export default function StoreMobileComponent({
   windowProps,
@@ -236,6 +237,12 @@ export default function StoreMobileComponent({
                 onAddToCart={() => {
                   StoreController.updateSelectedPreview(preview);
                   setOpenCartVariants(true);
+                }}
+                onLikeChanged={(isLiked: boolean) => {
+                  ProductController.requestProductLike(
+                    isLiked,
+                    preview.id ?? ''
+                  );
                 }}
               />
             );

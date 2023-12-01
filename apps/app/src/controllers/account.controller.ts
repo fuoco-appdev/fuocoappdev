@@ -35,6 +35,7 @@ import CartController from './cart.controller';
 
 class AccountController extends Controller {
   private readonly _model: AccountModel;
+  private readonly _limit: number;
   private _activeAccountSubscription: Subscription | undefined;
   private _userSubscription: Subscription | undefined;
   private _selectedInventoryLocationIdSubscription: Subscription | undefined;
@@ -44,6 +45,7 @@ class AccountController extends Controller {
     super();
 
     this._model = new AccountModel();
+    this._limit = 10;
     this.onAuthStateChangedAsync = this.onAuthStateChangedAsync.bind(this);
     this.onActiveAccountChangedAsync =
       this.onActiveAccountChangedAsync.bind(this);
@@ -83,9 +85,8 @@ class AccountController extends Controller {
 
     this._model.orderPagination = this._model.orderPagination + 1;
 
-    const limit = 10;
-    const offset = limit * (this._model.orderPagination - 1);
-    await this.requestOrdersAsync(offset, limit);
+    const offset = this._limit * (this._model.orderPagination - 1);
+    await this.requestOrdersAsync(offset, this._limit);
   }
 
   public async onNextLikedProductScrollAsync(): Promise<void> {
@@ -94,11 +95,8 @@ class AccountController extends Controller {
     }
 
     this._model.likedProductPagination = this._model.likedProductPagination + 1;
-    console.log(this._model.likedProductPagination);
-
-    const limit = 10;
-    const offset = limit * (this._model.likedProductPagination - 1);
-    await this.requestLikedProductsAsync(offset, limit);
+    const offset = this._limit * (this._model.likedProductPagination - 1);
+    await this.requestLikedProductsAsync(offset, this._limit);
   }
 
   public updateProfile(value: ProfileFormValues): void {
@@ -388,6 +386,22 @@ class AccountController extends Controller {
     }
   }
 
+  public updateProductLikesMetadata(
+    id: string,
+    metadata: ProductLikesMetadataResponse
+  ): void {
+    const metadataIndex = this._model.productLikesMetadata.findIndex(
+      (value) => value.productId === id
+    );
+    let productLikesMetadata = [...this._model.productLikesMetadata];
+    if (!metadata.didAccountLike) {
+      productLikesMetadata.splice(metadataIndex, 1);
+    }
+
+    this._model.productLikesMetadata = productLikesMetadata;
+    this.requestLikedProductsAsync(0, this._limit);
+  }
+
   private async requestOrdersAsync(
     offset: number = 0,
     limit: number = 10
@@ -475,6 +489,14 @@ class AccountController extends Controller {
       );
     } catch (error: any) {
       console.error(error);
+    }
+
+    if (productIds.length <= 0) {
+      this._model.areLikedProductsLoading = false;
+      this._model.hasMoreLikes = false;
+      this._model.productLikesMetadata = [];
+      this._model.likedProducts = [];
+      return;
     }
 
     const { selectedRegion, selectedSalesChannel } = StoreController.model;
