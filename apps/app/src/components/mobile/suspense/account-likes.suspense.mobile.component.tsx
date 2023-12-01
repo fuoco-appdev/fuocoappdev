@@ -5,6 +5,7 @@ import styles from '../../account-likes.module.scss';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { AccountProfileFormSuspenseMobileComponent } from './account-profile-form.suspense.mobile.component';
 import { ResponsiveSuspenseMobile } from 'src/components/responsive.component';
+import { ProductPreviewSuspenseMobileComponent } from './product-preview.suspense.mobile.component';
 
 export function AccountLikesSuspenseMobileComponent(): JSX.Element {
   return (
@@ -12,14 +13,14 @@ export function AccountLikesSuspenseMobileComponent(): JSX.Element {
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
         <div
           className={[
-            styles['edit-text-container-skeleton'],
-            styles['edit-text-container-skeleton-mobile'],
+            styles['likes-text-container-skeleton'],
+            styles['likes-text-container-skeleton-mobile'],
           ].join(' ')}
         >
           <div
             className={[
-              styles['edit-text-skeleton'],
-              styles['edit-text-skeleton-mobile'],
+              styles['likes-text-skeleton'],
+              styles['likes-text-skeleton-mobile'],
             ].join(' ')}
           >
             <Skeleton count={1} borderRadius={20} height={20} width={120} />
@@ -27,19 +28,13 @@ export function AccountLikesSuspenseMobileComponent(): JSX.Element {
         </div>
         <div
           className={[
-            styles['profile-form-container'],
-            styles['profile-form-container-mobile'],
+            styles['items-container'],
+            styles['items-container-mobile'],
           ].join(' ')}
         >
-          <AccountProfileFormSuspenseMobileComponent />
-        </div>
-        <div
-          className={[
-            styles['save-button-container'],
-            styles['save-button-container-mobile'],
-          ].join(' ')}
-        >
-          <Skeleton style={{ width: '100%', height: 48 }} borderRadius={6} />
+          {[1, 2, 3, 4, 5, 6, 7, 8].map(() => (
+            <ProductPreviewSuspenseMobileComponent />
+          ))}
         </div>
       </div>
     </ResponsiveSuspenseMobile>

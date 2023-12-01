@@ -6,6 +6,7 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { AddressItemSuspenseDesktopComponent } from './address-item.suspense.desktop.component';
 import { AccountProfileFormSuspenseDesktopComponent } from './account-profile-form.suspense.desktop.component';
 import { ResponsiveSuspenseDesktop } from 'src/components/responsive.component';
+import { ProductPreviewSuspenseDesktopComponent } from './product-preview.suspense.desktop.component';
 
 export function AccountLikesSuspenseDesktopComponent(): JSX.Element {
   return (
@@ -13,14 +14,14 @@ export function AccountLikesSuspenseDesktopComponent(): JSX.Element {
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>
         <div
           className={[
-            styles['edit-text-container-skeleton'],
-            styles['edit-text-container-skeleton-desktop'],
+            styles['likes-text-container-skeleton'],
+            styles['likes-text-container-skeleton-desktop'],
           ].join(' ')}
         >
           <div
             className={[
-              styles['edit-text-skeleton'],
-              styles['edit-text-skeleton-desktop'],
+              styles['likes-text-skeleton'],
+              styles['likes-text-skeleton-desktop'],
             ].join(' ')}
           >
             <Skeleton count={1} borderRadius={20} height={20} width={120} />
@@ -28,19 +29,13 @@ export function AccountLikesSuspenseDesktopComponent(): JSX.Element {
         </div>
         <div
           className={[
-            styles['profile-form-container'],
-            styles['profile-form-container-desktop'],
+            styles['items-container'],
+            styles['items-container-desktop'],
           ].join(' ')}
         >
-          <AccountProfileFormSuspenseDesktopComponent />
-        </div>
-        <div
-          className={[
-            styles['save-button-container'],
-            styles['save-button-container-desktop'],
-          ].join(' ')}
-        >
-          <Skeleton style={{ width: '100%', height: 48 }} borderRadius={6} />
+          {[1, 2, 3, 4, 5, 6, 7, 8].map(() => (
+            <ProductPreviewSuspenseDesktopComponent />
+          ))}
         </div>
       </div>
     </ResponsiveSuspenseDesktop>

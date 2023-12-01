@@ -8,6 +8,7 @@ import {
   ResponsiveSuspenseMobile,
   ResponsiveSuspenseTablet,
 } from '../../responsive.component';
+import { ProductPreviewSuspenseTabletComponent } from './product-preview.suspense.tablet.component';
 
 export function AccountLikesSuspenseTabletComponent(): JSX.Element {
   return (
@@ -15,14 +16,14 @@ export function AccountLikesSuspenseTabletComponent(): JSX.Element {
       <div className={[styles['root'], styles['root-tablet']].join(' ')}>
         <div
           className={[
-            styles['edit-text-container-skeleton'],
-            styles['edit-text-container-skeleton-tablet'],
+            styles['likes-text-container-skeleton'],
+            styles['likes-text-container-skeleton-tablet'],
           ].join(' ')}
         >
           <div
             className={[
-              styles['edit-text-skeleton'],
-              styles['edit-text-skeleton-tablet'],
+              styles['likes-text-skeleton'],
+              styles['likes-text-skeleton-tablet'],
             ].join(' ')}
           >
             <Skeleton count={1} borderRadius={20} height={20} width={120} />
@@ -30,19 +31,13 @@ export function AccountLikesSuspenseTabletComponent(): JSX.Element {
         </div>
         <div
           className={[
-            styles['profile-form-container'],
-            styles['profile-form-container-tablet'],
+            styles['items-container'],
+            styles['items-container-tablet'],
           ].join(' ')}
         >
-          <AccountProfileFormSuspenseTabletComponent />
-        </div>
-        <div
-          className={[
-            styles['save-button-container'],
-            styles['save-button-container-tablet'],
-          ].join(' ')}
-        >
-          <Skeleton style={{ width: '100%', height: 48 }} borderRadius={6} />
+          {[1, 2, 3, 4, 5, 6, 7, 8].map(() => (
+            <ProductPreviewSuspenseTabletComponent />
+          ))}
         </div>
       </div>
     </ResponsiveSuspenseTablet>

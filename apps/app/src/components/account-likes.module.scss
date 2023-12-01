@@ -125,15 +125,21 @@
     flex-direction: column;
     align-items: center;
 
+    & .likes-text-container-skeleton-desktop {
+        margin-bottom: $mp-6;
+        width: 100%;
+
+        & .likes-text-skeleton-desktop {
+            padding: 0 $mp-6;
+        }
+    }
+
     & .likes-text-container-desktop {
         margin-bottom: $mp-6;
         width: 100%;
 
         & .likes-text-desktop {
             padding: 0 $mp-6;
-        }
-            
-        & .likes-text-skeleton-desktop {
         }
     }
 
@@ -159,6 +165,15 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    & .likes-text-container-skeleton-tablet {
+        margin-bottom: $mp-4;
+        width: 100%;
+
+        & .likes-text-skeleton-tablet {
+            padding: 0 $mp-4;
+        }
+    }
 
     & .likes-text-container-tablet {
         margin-bottom: $mp-4;
@@ -191,6 +206,14 @@
 }
 
 .root-mobile {
+    & .likes-text-container-skeleton-mobile {
+        margin-bottom: $mp-4;
+
+        & .likes-text-skeleton-mobile {
+            padding: 0 $mp-4;
+        }
+    }
+
     & .likes-text-container-mobile {
         margin-bottom: $mp-4;
 
