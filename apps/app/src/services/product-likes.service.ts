@@ -71,7 +71,7 @@ class ProductLikesService extends Service {
   public async requestAddAsync(props: {
     productId: string;
     accountId: string;
-  }): Promise<core.ProductLikesMetadataResponse> {
+  }): Promise<core.ProductLikesMetadataResponse | null> {
     const session = await SupabaseService.requestSessionAsync();
     const productLikeRequest = new core.ProductLikeRequest({
       productId: props.productId,
@@ -97,17 +97,13 @@ class ProductLikesService extends Service {
       return productLikesMetadatasResponse.metadata[0];
     }
 
-    return new core.ProductLikesMetadataResponse({
-      productId: props.productId,
-      totalLikeCount: 0,
-      didAccountLike: false,
-    });
+    return null;
   }
 
   public async requestRemoveAsync(props: {
     productId: string;
     accountId: string;
-  }): Promise<core.ProductLikesMetadataResponse> {
+  }): Promise<core.ProductLikesMetadataResponse | null> {
     const session = await SupabaseService.requestSessionAsync();
     const productLikeRequest = new core.ProductLikeRequest({
       productId: props.productId,
@@ -133,11 +129,7 @@ class ProductLikesService extends Service {
       return productLikesMetadatasResponse.metadata[0];
     }
 
-    return new core.ProductLikesMetadataResponse({
-      productId: props.productId,
-      totalLikeCount: 0,
-      didAccountLike: false,
-    });
+    return null;
   }
 }
 

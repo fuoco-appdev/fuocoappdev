@@ -20,7 +20,12 @@ import { AccountState } from '../models/account.model';
 import { AccountLikesSuspenseTabletComponent } from './tablet/suspense/account-likes.suspense.tablet.component';
 import { Store } from '@ngneat/elf';
 import { HomeLocalState } from '../models/home.model';
-import { PricedVariant } from '@medusajs/medusa/dist/types/pricing';
+import {
+  PricedVariant,
+  PricedProduct,
+} from '@medusajs/medusa/dist/types/pricing';
+import { useNavigate } from 'react-router-dom';
+import { RoutePathsType } from '../route-paths';
 
 const AccountLikesDesktopComponent = lazy(
   () => import('./desktop/account-likes.desktop.component')
@@ -40,16 +45,45 @@ export interface AccountLikesResponsiveProps {
   setOpenCartVariants: (value: boolean) => void;
   setVariantQuantities: (value: Record<string, number>) => void;
   onAddToCart: () => void;
+  onProductPreviewClick: (scrollTop: number, product: PricedProduct) => void;
+  onProductPreviewRest: (product: PricedProduct) => void;
+  onProductPreviewAddToCart: (product: PricedProduct) => void;
+  onProductPreviewLikeChanged: (
+    isLiked: boolean,
+    product: PricedProduct
+  ) => void;
 }
 
 export default function AccountLikesComponent(): JSX.Element {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const [storeProps] = useObservable(StoreController.model.store);
   const [accountProps] = useObservable(AccountController.model.store);
   const [openCartVariants, setOpenCartVariants] = useState<boolean>(false);
   const [variantQuantities, setVariantQuantities] = useState<
     Record<string, number>
   >({});
+
+  const onProductPreviewClick = (scrollTop: number, product: PricedProduct) => {
+    AccountController.updateLikesScrollPosition(scrollTop);
+    AccountController.updateSelectedLikedProduct(product);
+  };
+
+  const onProductPreviewRest = (product: PricedProduct) => {
+    navigate(`${RoutePathsType.Store}/${product.id}`);
+  };
+
+  const onProductPreviewAddToCart = (product: PricedProduct) => {
+    AccountController.updateSelectedLikedProduct(product);
+    setOpenCartVariants(true);
+  };
+
+  const onProductPreviewLikeChanged = (
+    isLiked: boolean,
+    product: PricedProduct
+  ) => {
+    ProductController.requestProductLike(isLiked, product.id ?? '');
+  };
 
   const onAddToCart = () => {
     for (const id in variantQuantities) {
@@ -128,6 +162,10 @@ export default function AccountLikesComponent(): JSX.Element {
           setOpenCartVariants={setOpenCartVariants}
           setVariantQuantities={setVariantQuantities}
           onAddToCart={onAddToCart}
+          onProductPreviewClick={onProductPreviewClick}
+          onProductPreviewRest={onProductPreviewRest}
+          onProductPreviewAddToCart={onProductPreviewAddToCart}
+          onProductPreviewLikeChanged={onProductPreviewLikeChanged}
         />
         <AccountLikesTabletComponent
           storeProps={storeProps}
@@ -137,6 +175,10 @@ export default function AccountLikesComponent(): JSX.Element {
           setOpenCartVariants={setOpenCartVariants}
           setVariantQuantities={setVariantQuantities}
           onAddToCart={onAddToCart}
+          onProductPreviewClick={onProductPreviewClick}
+          onProductPreviewRest={onProductPreviewRest}
+          onProductPreviewAddToCart={onProductPreviewAddToCart}
+          onProductPreviewLikeChanged={onProductPreviewLikeChanged}
         />
         <AccountLikesMobileComponent
           storeProps={storeProps}
@@ -146,6 +188,10 @@ export default function AccountLikesComponent(): JSX.Element {
           setOpenCartVariants={setOpenCartVariants}
           setVariantQuantities={setVariantQuantities}
           onAddToCart={onAddToCart}
+          onProductPreviewClick={onProductPreviewClick}
+          onProductPreviewRest={onProductPreviewRest}
+          onProductPreviewAddToCart={onProductPreviewAddToCart}
+          onProductPreviewLikeChanged={onProductPreviewLikeChanged}
         />
       </AuthenticatedComponent>
     </React.Suspense>

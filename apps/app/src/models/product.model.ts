@@ -35,7 +35,7 @@ export interface ProductState {
   countryOrigin: string;
   dimensions: string;
   type: string;
-  likesMetadata: ProductLikesMetadataResponse | undefined;
+  likesMetadata: ProductLikesMetadataResponse | null;
 }
 
 export class ProductModel extends Model {
@@ -60,7 +60,7 @@ export class ProductModel extends Model {
           countryOrigin: '-',
           dimensions: '-',
           type: '-',
-          likesMetadata: undefined,
+          likesMetadata: null,
         })
       )
     );
@@ -226,11 +226,11 @@ export class ProductModel extends Model {
     }
   }
 
-  public get likesMetadata(): ProductLikesMetadataResponse | undefined {
+  public get likesMetadata(): ProductLikesMetadataResponse | null {
     return this.store.getValue().likesMetadata;
   }
 
-  public set likesMetadata(value: ProductLikesMetadataResponse | undefined) {
+  public set likesMetadata(value: ProductLikesMetadataResponse | null) {
     if (JSON.stringify(this.likesMetadata) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, likesMetadata: value }));
     }

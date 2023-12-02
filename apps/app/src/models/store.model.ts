@@ -16,7 +16,7 @@ export interface StoreState {
   productLikesMetadata: ProductLikesMetadataResponse[];
   input: string;
   selectedPreview: PricedProduct | undefined;
-  selectedProductLikesMetadata: ProductLikesMetadataResponse | undefined;
+  selectedProductLikesMetadata: ProductLikesMetadataResponse | null;
   regions: Region[];
   selectedRegion: Region | undefined;
   selectedTab: ProductTabs | undefined;
@@ -38,7 +38,7 @@ export class StoreModel extends Model {
           productLikesMetadata: [],
           input: '',
           selectedPreview: undefined,
-          selectedProductLikesMetadata: undefined,
+          selectedProductLikesMetadata: null,
           regions: [],
           selectedRegion: undefined,
           selectedTab: undefined,
@@ -93,14 +93,12 @@ export class StoreModel extends Model {
     }
   }
 
-  public get selectedProductLikesMetadata():
-    | ProductLikesMetadataResponse
-    | undefined {
+  public get selectedProductLikesMetadata(): ProductLikesMetadataResponse | null {
     return this.store.getValue().selectedProductLikesMetadata;
   }
 
   public set selectedProductLikesMetadata(
-    value: ProductLikesMetadataResponse | undefined
+    value: ProductLikesMetadataResponse | null
   ) {
     if (
       JSON.stringify(this.selectedProductLikesMetadata) !==

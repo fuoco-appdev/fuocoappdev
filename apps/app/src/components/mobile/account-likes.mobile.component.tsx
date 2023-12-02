@@ -34,6 +34,10 @@ export default function AccountLikesMobileComponent({
   setOpenCartVariants,
   setVariantQuantities,
   onAddToCart,
+  onProductPreviewClick,
+  onProductPreviewRest,
+  onProductPreviewAddToCart,
+  onProductPreviewLikeChanged,
 }: AccountLikesResponsiveProps): JSX.Element {
   const { t, i18n } = useTranslation();
   const rootRef = createRef<HTMLDivElement>();
@@ -83,25 +87,17 @@ export default function AccountLikesMobileComponent({
                     productLikesMetadata ??
                     core.ProductLikesMetadataResponse.prototype
                   }
-                  onClick={() => {
-                    AccountController.updateLikesScrollPosition(
-                      scrollContainerRef.current?.scrollTop ?? 0
-                    );
-                    AccountController.updateSelectedLikedProduct(product);
-                  }}
-                  onRest={() => {
-                    navigate(`${RoutePathsType.Store}/${product.id}`);
-                  }}
-                  onAddToCart={() => {
-                    AccountController.updateSelectedLikedProduct(product);
-                    setOpenCartVariants(true);
-                  }}
-                  onLikeChanged={(isLiked: boolean) => {
-                    ProductController.requestProductLike(
-                      isLiked,
-                      product.id ?? ''
-                    );
-                  }}
+                  onClick={() =>
+                    onProductPreviewClick(
+                      scrollContainerRef.current?.scrollTop ?? 0,
+                      product
+                    )
+                  }
+                  onRest={() => onProductPreviewRest(product)}
+                  onAddToCart={() => onProductPreviewAddToCart(product)}
+                  onLikeChanged={(isLiked: boolean) =>
+                    onProductPreviewLikeChanged(isLiked, product)
+                  }
                 />
               );
             }

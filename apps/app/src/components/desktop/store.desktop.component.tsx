@@ -243,7 +243,7 @@ export default function StoreDesktopComponent({
                 const productLikesMetadata =
                   storeProps.productLikesMetadata.find(
                     (value) => value.productId === preview.id
-                  );
+                  ) ?? null;
                 return (
                   <ProductPreviewComponent
                     parentRef={rootRef}

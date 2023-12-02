@@ -84,7 +84,7 @@ class StoreController extends Controller {
   }
 
   public updateSelectedProductLikesMetadata(
-    value: ProductLikesMetadataResponse | undefined
+    value: ProductLikesMetadataResponse | null
   ): void {
     this._model.selectedProductLikesMetadata = value;
   }

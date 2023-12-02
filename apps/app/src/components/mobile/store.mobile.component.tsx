@@ -211,9 +211,10 @@ export default function StoreMobileComponent({
           }}
         >
           {storeProps.previews.map((preview: PricedProduct, index: number) => {
-            const productLikesMetadata = storeProps.productLikesMetadata.find(
-              (value) => value.productId === preview.id
-            );
+            const productLikesMetadata =
+              storeProps.productLikesMetadata.find(
+                (value) => value.productId === preview.id
+              ) ?? null;
             return (
               <ProductPreviewComponent
                 parentRef={rootRef}

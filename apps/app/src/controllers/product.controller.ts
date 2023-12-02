@@ -81,6 +81,9 @@ class ProductController extends Controller {
           accountId: AccountController.model.account?.id ?? '',
           productId: productId,
         });
+        if (!metadata) {
+          return;
+        }
         StoreController.updateProductLikesMetadata(productId, metadata);
         AccountController.updateProductLikesMetadata(productId, metadata);
         return;
@@ -90,6 +93,9 @@ class ProductController extends Controller {
         accountId: AccountController.model.account?.id ?? '',
         productId: productId,
       });
+      if (!metadata) {
+        return;
+      }
       StoreController.updateProductLikesMetadata(productId, metadata);
       AccountController.updateProductLikesMetadata(productId, metadata);
     } catch (error: any) {
@@ -238,7 +244,7 @@ class ProductController extends Controller {
     this._selectedProductLikesSubscription = StoreController.model.store
       .pipe(select((model: StoreState) => model.selectedProductLikesMetadata))
       .subscribe({
-        next: (likesMedata: ProductLikesMetadataResponse | undefined) => {
+        next: (likesMedata: ProductLikesMetadataResponse | null) => {
           this._model.likesMetadata = likesMedata;
         },
       });

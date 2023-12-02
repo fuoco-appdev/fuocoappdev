@@ -130,9 +130,16 @@ export default function ProductPreviewComponent({
   };
 
   useEffect(() => {
+    if (likesMetadata.totalLikeCount !== undefined) {
+      setLikeCount(likesMetadata.totalLikeCount);
+    }
+
     setIsLiked(Boolean(likesMetadata.didAccountLike));
-    setLikeCount(likesMetadata.totalLikeCount ?? 0);
   }, [likesMetadata, accountProps.account]);
+
+  useEffect(() => {
+    console.log(likeCount);
+  }, [likeCount]);
 
   useEffect(() => {
     const purchasableVariants = preview.variants.filter(
