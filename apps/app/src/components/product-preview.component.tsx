@@ -138,10 +138,6 @@ export default function ProductPreviewComponent({
   }, [likesMetadata, accountProps.account]);
 
   useEffect(() => {
-    console.log(likeCount);
-  }, [likeCount]);
-
-  useEffect(() => {
     const purchasableVariants = preview.variants.filter(
       (value) => value.purchasable === true
     );
