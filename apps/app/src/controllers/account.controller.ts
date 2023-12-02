@@ -394,6 +394,8 @@ class AccountController extends Controller {
       (value) => value.productId === id
     );
     let productLikesMetadata = [...this._model.productLikesMetadata];
+    productLikesMetadata[metadataIndex] = metadata;
+
     if (!metadata.didAccountLike) {
       productLikesMetadata.splice(metadataIndex, 1);
     }

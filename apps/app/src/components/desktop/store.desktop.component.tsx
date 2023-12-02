@@ -240,9 +240,10 @@ export default function StoreDesktopComponent({
           >
             {storeProps.previews.map(
               (preview: PricedProduct, index: number) => {
-                const productLikesMetadata = storeProps.productLikes.find(
-                  (value) => value.productId === preview.id
-                );
+                const productLikesMetadata =
+                  storeProps.productLikesMetadata.find(
+                    (value) => value.productId === preview.id
+                  );
                 return (
                   <ProductPreviewComponent
                     parentRef={rootRef}
@@ -259,7 +260,7 @@ export default function StoreDesktopComponent({
                         previewsContainerRef.current?.scrollTop ?? 0
                       );
                       StoreController.updateSelectedPreview(preview);
-                      StoreController.updateSelectedProductLikes(
+                      StoreController.updateSelectedProductLikesMetadata(
                         productLikesMetadata
                       );
                     }}
@@ -268,7 +269,7 @@ export default function StoreDesktopComponent({
                     }}
                     onAddToCart={() => {
                       StoreController.updateSelectedPreview(preview);
-                      StoreController.updateSelectedProductLikes(
+                      StoreController.updateSelectedProductLikesMetadata(
                         productLikesMetadata
                       );
                       setOpenCartVariants(true);

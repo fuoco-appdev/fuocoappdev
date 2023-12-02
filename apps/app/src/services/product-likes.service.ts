@@ -121,6 +121,7 @@ class ProductLikesService extends Service {
         'Session-Token': `${session?.access_token}`,
       },
       data: productLikeRequest.toBinary(),
+      responseType: 'arraybuffer',
     });
 
     const arrayBuffer = new Uint8Array(response.data);

@@ -236,7 +236,7 @@ class ProductController extends Controller {
 
     this._selectedProductLikesSubscription?.unsubscribe();
     this._selectedProductLikesSubscription = StoreController.model.store
-      .pipe(select((model: StoreState) => model.selectedProductLikes))
+      .pipe(select((model: StoreState) => model.selectedProductLikesMetadata))
       .subscribe({
         next: (likesMedata: ProductLikesMetadataResponse | undefined) => {
           this._model.likesMetadata = likesMedata;
@@ -276,7 +276,7 @@ class ProductController extends Controller {
                   return;
                 }
 
-                if (StoreController.model.selectedProductLikes) {
+                if (StoreController.model.selectedProductLikesMetadata) {
                   return;
                 }
 

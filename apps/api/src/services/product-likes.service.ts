@@ -57,6 +57,10 @@ export class ProductLikesService {
       return null;
     }
 
+    if (accountProductIds.length <= 0) {
+      return null;
+    }
+
     const metadatasResponse = await this.findMetadataAsync(
       accountId,
       accountProductIds,
@@ -202,7 +206,7 @@ export class ProductLikesService {
               console.error(didAccountLikeData.error);
             } else {
               metadataResponse.setDidAccountLike(
-                didAccountLikeData.data.length > 0
+                didAccountLikeData.data.length > 0 ?? false
               );
             }
           } catch (error: any) {
@@ -210,7 +214,7 @@ export class ProductLikesService {
           }
         }
       } else {
-        metadataResponse.setDidAccountLike(didAccountLike);
+        metadataResponse.setDidAccountLike(didAccountLike ?? false);
       }
 
       metadataResponse.setProductId(id);

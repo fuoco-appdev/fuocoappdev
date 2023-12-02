@@ -211,7 +211,7 @@ export default function StoreMobileComponent({
           }}
         >
           {storeProps.previews.map((preview: PricedProduct, index: number) => {
-            const productLikesMetadata = storeProps.productLikes.find(
+            const productLikesMetadata = storeProps.productLikesMetadata.find(
               (value) => value.productId === preview.id
             );
             return (
@@ -230,12 +230,18 @@ export default function StoreMobileComponent({
                     previewsContainerRef.current?.scrollTop ?? 0
                   );
                   StoreController.updateSelectedPreview(preview);
+                  StoreController.updateSelectedProductLikesMetadata(
+                    productLikesMetadata
+                  );
                 }}
                 onRest={() => {
                   navigate(`${RoutePathsType.Store}/${preview.id}`);
                 }}
                 onAddToCart={() => {
                   StoreController.updateSelectedPreview(preview);
+                  StoreController.updateSelectedProductLikesMetadata(
+                    productLikesMetadata
+                  );
                   setOpenCartVariants(true);
                 }}
                 onLikeChanged={(isLiked: boolean) => {

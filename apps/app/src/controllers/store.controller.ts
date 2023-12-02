@@ -23,8 +23,8 @@ import { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import SupabaseService from '../services/supabase.service';
 import { AccountState } from '../models/account.model';
 import AccountController from './account.controller';
-import ProductLikesService from 'src/services/product-likes.service';
-import { ProductLikesMetadataResponse } from 'src/protobuf/core_pb';
+import ProductLikesService from '../services/product-likes.service';
+import { ProductLikesMetadataResponse } from '../protobuf/core_pb';
 
 class StoreController extends Controller {
   private readonly _model: StoreModel;
@@ -83,10 +83,10 @@ class StoreController extends Controller {
     this._model.selectedPreview = value;
   }
 
-  public updateSelectedProductLikes(
+  public updateSelectedProductLikesMetadata(
     value: ProductLikesMetadataResponse | undefined
   ): void {
-    this._model.selectedProductLikes = value;
+    this._model.selectedProductLikesMetadata = value;
   }
 
   public updateScrollPosition(value: number | undefined) {
@@ -179,12 +179,12 @@ class StoreController extends Controller {
         });
 
       if (offset > 0) {
-        const productLikes = this._model.productLikes;
-        this._model.productLikes = productLikes.concat(
+        const productLikesMetadata = this._model.productLikesMetadata;
+        this._model.productLikesMetadata = productLikesMetadata.concat(
           productLikesResponse.metadata
         );
       } else {
-        this._model.productLikes = productLikesResponse.metadata;
+        this._model.productLikesMetadata = productLikesResponse.metadata;
       }
     } catch (error: any) {
       console.error(error);
@@ -252,12 +252,12 @@ class StoreController extends Controller {
     id: string,
     metadata: ProductLikesMetadataResponse
   ): void {
-    const metadataIndex = this._model.productLikes.findIndex(
+    const metadataIndex = this._model.productLikesMetadata.findIndex(
       (value) => value.productId === id
     );
-    const productLikes = [...this._model.productLikes];
-    productLikes[metadataIndex] = metadata;
-    this._model.productLikes = productLikes;
+    const productLikesMetadata = [...this._model.productLikesMetadata];
+    productLikesMetadata[metadataIndex] = metadata;
+    this._model.productLikesMetadata = productLikesMetadata;
   }
 
   private resetMedusaModel(): void {
