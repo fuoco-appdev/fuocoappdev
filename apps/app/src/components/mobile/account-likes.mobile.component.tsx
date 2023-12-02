@@ -73,7 +73,7 @@ export default function AccountLikesMobileComponent({
           {accountProps.likedProducts.map(
             (product: PricedProduct, index: number) => {
               const productLikesMetadata =
-                accountProps.productLikesMetadata.find(
+                accountProps.productLikesMetadata?.find(
                   (value) => value.productId === product.id
                 );
               return (

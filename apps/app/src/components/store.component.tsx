@@ -51,7 +51,10 @@ import { StoreSuspenseDesktopComponent } from './desktop/suspense/store.suspense
 import { StoreSuspenseMobileComponent } from './mobile/suspense/store.suspense.mobile.component';
 import { lazy } from '@loadable/component';
 import { timeout } from 'promise-timeout';
-import { PricedVariant } from '@medusajs/medusa/dist/types/pricing';
+import {
+  PricedVariant,
+  PricedProduct,
+} from '@medusajs/medusa/dist/types/pricing';
 import ProductController from '../controllers/product.controller';
 import WindowController from '../controllers/window.controller';
 import { StoreSuspenseTabletComponent } from './tablet/suspense/store.suspense.tablet.component';
@@ -94,9 +97,24 @@ export interface StoreResponsiveProps {
   onPreviewsScroll: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
   onPreviewsLoad: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
   onAddToCart: () => void;
+  onProductPreviewClick: (
+    scrollTop: number,
+    product: PricedProduct,
+    productLikesMetadata: core.ProductLikesMetadataResponse | null
+  ) => void;
+  onProductPreviewRest: (product: PricedProduct) => void;
+  onProductPreviewAddToCart: (
+    product: PricedProduct,
+    productLikesMetadata: core.ProductLikesMetadataResponse | null
+  ) => void;
+  onProductPreviewLikeChanged: (
+    isLiked: boolean,
+    product: PricedProduct
+  ) => void;
 }
 
 export default function StoreComponent(): JSX.Element {
+  const navigate = useNavigate();
   const [windowProps] = useObservable(WindowController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
   const [homeProps] = useObservable(HomeController.model.store);
@@ -136,6 +154,36 @@ export default function StoreComponent(): JSX.Element {
       e.currentTarget.scrollTop = storeProps.scrollPosition as number;
       StoreController.updateScrollPosition(undefined);
     }
+  };
+
+  const onProductPreviewClick = (
+    scrollTop: number,
+    product: PricedProduct,
+    productLikesMetadata: core.ProductLikesMetadataResponse | null
+  ) => {
+    StoreController.updateScrollPosition(scrollTop);
+    StoreController.updateSelectedPreview(product);
+    StoreController.updateSelectedProductLikesMetadata(productLikesMetadata);
+  };
+
+  const onProductPreviewRest = (product: PricedProduct) => {
+    navigate(`${RoutePathsType.Store}/${product.id}`);
+  };
+
+  const onProductPreviewAddToCart = (
+    product: PricedProduct,
+    productLikesMetadata: core.ProductLikesMetadataResponse | null
+  ) => {
+    StoreController.updateSelectedPreview(product);
+    StoreController.updateSelectedProductLikesMetadata(productLikesMetadata);
+    setOpenCartVariants(true);
+  };
+
+  const onProductPreviewLikeChanged = (
+    isLiked: boolean,
+    product: PricedProduct
+  ) => {
+    ProductController.requestProductLike(isLiked, product.id ?? '');
   };
 
   const onAddToCart = () => {
@@ -385,6 +433,10 @@ export default function StoreComponent(): JSX.Element {
           onPreviewsScroll={onScroll}
           onPreviewsLoad={onLoad}
           onAddToCart={onAddToCart}
+          onProductPreviewAddToCart={onProductPreviewAddToCart}
+          onProductPreviewClick={onProductPreviewClick}
+          onProductPreviewLikeChanged={onProductPreviewLikeChanged}
+          onProductPreviewRest={onProductPreviewRest}
         />
         <StoreTabletComponent
           windowProps={windowProps}
@@ -410,6 +462,10 @@ export default function StoreComponent(): JSX.Element {
           onPreviewsScroll={onScroll}
           onPreviewsLoad={onLoad}
           onAddToCart={onAddToCart}
+          onProductPreviewAddToCart={onProductPreviewAddToCart}
+          onProductPreviewClick={onProductPreviewClick}
+          onProductPreviewLikeChanged={onProductPreviewLikeChanged}
+          onProductPreviewRest={onProductPreviewRest}
         />
         <StoreMobileComponent
           windowProps={windowProps}
@@ -435,6 +491,10 @@ export default function StoreComponent(): JSX.Element {
           onPreviewsScroll={onScroll}
           onPreviewsLoad={onLoad}
           onAddToCart={onAddToCart}
+          onProductPreviewAddToCart={onProductPreviewAddToCart}
+          onProductPreviewClick={onProductPreviewClick}
+          onProductPreviewLikeChanged={onProductPreviewLikeChanged}
+          onProductPreviewRest={onProductPreviewRest}
         />
       </React.Suspense>
     </>

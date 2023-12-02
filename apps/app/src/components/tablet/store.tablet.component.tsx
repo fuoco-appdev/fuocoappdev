@@ -70,6 +70,10 @@ export default function StoreTabletComponent({
   onPreviewsScroll,
   onPreviewsLoad,
   onAddToCart,
+  onProductPreviewAddToCart,
+  onProductPreviewClick,
+  onProductPreviewLikeChanged,
+  onProductPreviewRest,
 }: StoreResponsiveProps): JSX.Element {
   const previewsContainerRef = createRef<HTMLDivElement>();
   const rootRef = createRef<HTMLDivElement>();
@@ -242,7 +246,7 @@ export default function StoreTabletComponent({
             {storeProps.previews.map(
               (preview: PricedProduct, index: number) => {
                 const productLikesMetadata =
-                  storeProps.productLikesMetadata.find(
+                  storeProps.productLikesMetadata?.find(
                     (value) => value.productId === preview.id
                   ) ?? null;
                 return (
@@ -256,31 +260,20 @@ export default function StoreTabletComponent({
                       productLikesMetadata ??
                       core.ProductLikesMetadataResponse.prototype
                     }
-                    onClick={() => {
-                      StoreController.updateScrollPosition(
-                        previewsContainerRef.current?.scrollTop ?? 0
-                      );
-                      StoreController.updateSelectedPreview(preview);
-                      StoreController.updateSelectedProductLikesMetadata(
+                    onClick={() =>
+                      onProductPreviewClick(
+                        previewsContainerRef.current?.scrollTop ?? 0,
+                        preview,
                         productLikesMetadata
-                      );
-                    }}
-                    onRest={() => {
-                      navigate(`${RoutePathsType.Store}/${preview.id}`);
-                    }}
-                    onAddToCart={() => {
-                      StoreController.updateSelectedPreview(preview);
-                      StoreController.updateSelectedProductLikesMetadata(
-                        productLikesMetadata
-                      );
-                      setOpenCartVariants(true);
-                    }}
-                    onLikeChanged={(isLiked: boolean) => {
-                      ProductController.requestProductLike(
-                        isLiked,
-                        preview.id ?? ''
-                      );
-                    }}
+                      )
+                    }
+                    onRest={() => onProductPreviewRest(preview)}
+                    onAddToCart={() =>
+                      onProductPreviewAddToCart(preview, productLikesMetadata)
+                    }
+                    onLikeChanged={(isLiked: boolean) =>
+                      onProductPreviewLikeChanged(isLiked, preview)
+                    }
                   />
                 );
               }
