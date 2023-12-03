@@ -477,6 +477,7 @@
     }
 
     & .request-refund-button-container-mobile {
+        padding: $mp-4;
     }
 }
 
@@ -545,7 +546,7 @@
     -webkit-box-direction: normal;
         -ms-flex-direction: column;
             flex-direction: column;
-    padding: $mp-4 0;
+    padding: $mp-4;
 }
 
 .refund-items-container-desktop {

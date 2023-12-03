@@ -50,6 +50,7 @@ export interface AccountResponsiveProps {
 
 export default function AccountComponent(): JSX.Element {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const [accountProps] = useObservable(AccountController.model.store);
   const [windowProps] = useObservable(WindowController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
@@ -127,6 +128,29 @@ export default function AccountComponent(): JSX.Element {
       phoneNumber: t('fieldEmptyError') ?? '',
     });
   }, [i18n.language]);
+
+  useEffect(() => {
+    if (windowProps.activeRoute === RoutePathsType.Account) {
+      navigate(RoutePathsType.AccountLikes);
+    }
+  }, []);
+
+  useEffect(() => {
+    const loadedLocation = windowProps.loadedLocationPath as string | undefined;
+    if (loadedLocation && loadedLocation !== RoutePathsType.Account) {
+      if (
+        loadedLocation.startsWith(RoutePathsType.Account) &&
+        !loadedLocation.startsWith(RoutePathsType.AccountSettings)
+      ) {
+        AccountController.updateActiveTabId(loadedLocation);
+      }
+      WindowController.updateLoadedLocationPath(undefined);
+    } else {
+      if (!loadedLocation?.startsWith(RoutePathsType.AccountSettings)) {
+        navigate(accountProps.activeTabId);
+      }
+    }
+  }, [windowProps.loadedLocationPath]);
 
   const suspenceComponent = (
     <>

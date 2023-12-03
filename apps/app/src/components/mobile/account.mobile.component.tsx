@@ -53,25 +53,6 @@ export default function AccountMobileComponent({
   let prevPreviewScrollTop = 0;
   let yPosition = 0;
 
-  useMobileEffect(() => {
-    if (windowProps.activeRoute === RoutePathsType.Account) {
-      navigate(RoutePathsType.AccountLikes);
-    }
-  }, [windowProps.activeRoute]);
-
-  useMobileEffect(() => {
-    const loadedLocation = windowProps.loadedLocationPath as string | undefined;
-    if (loadedLocation && loadedLocation !== RoutePathsType.Account) {
-      if (
-        loadedLocation.startsWith(RoutePathsType.Account) &&
-        !loadedLocation.startsWith(RoutePathsType.AccountSettings)
-      ) {
-        AccountController.updateActiveTabId(loadedLocation);
-      }
-      WindowController.updateLoadedLocationPath(undefined);
-    }
-  }, [windowProps.loadedLocationPath]);
-
   const account = accountProps.account as core.Account;
   const customer = accountProps.customer as Customer;
   return (
