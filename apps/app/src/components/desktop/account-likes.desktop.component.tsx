@@ -75,7 +75,7 @@ export default function AccountLikesDesktopComponent({
               const productLikesMetadata =
                 accountProps.productLikesMetadata?.find(
                   (value) => value.productId === product.id
-                );
+                ) ?? null;
               return (
                 <ProductPreviewComponent
                   parentRef={rootRef}
@@ -90,7 +90,8 @@ export default function AccountLikesDesktopComponent({
                   onClick={() =>
                     onProductPreviewClick(
                       scrollContainerRef.current?.scrollTop ?? 0,
-                      product
+                      product,
+                      productLikesMetadata
                     )
                   }
                   onRest={() => onProductPreviewRest(product)}

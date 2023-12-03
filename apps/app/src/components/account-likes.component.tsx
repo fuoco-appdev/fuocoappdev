@@ -26,6 +26,7 @@ import {
 } from '@medusajs/medusa/dist/types/pricing';
 import { useNavigate } from 'react-router-dom';
 import { RoutePathsType } from '../route-paths';
+import * as core from '../protobuf/core_pb';
 
 const AccountLikesDesktopComponent = lazy(
   () => import('./desktop/account-likes.desktop.component')
@@ -45,7 +46,11 @@ export interface AccountLikesResponsiveProps {
   setOpenCartVariants: (value: boolean) => void;
   setVariantQuantities: (value: Record<string, number>) => void;
   onAddToCart: () => void;
-  onProductPreviewClick: (scrollTop: number, product: PricedProduct) => void;
+  onProductPreviewClick: (
+    scrollTop: number,
+    product: PricedProduct,
+    productLikesMetadata: core.ProductLikesMetadataResponse | null
+  ) => void;
   onProductPreviewRest: (product: PricedProduct) => void;
   onProductPreviewAddToCart: (product: PricedProduct) => void;
   onProductPreviewLikeChanged: (
@@ -64,9 +69,15 @@ export default function AccountLikesComponent(): JSX.Element {
     Record<string, number>
   >({});
 
-  const onProductPreviewClick = (scrollTop: number, product: PricedProduct) => {
+  const onProductPreviewClick = (
+    scrollTop: number,
+    product: PricedProduct,
+    productLikesMetadata: core.ProductLikesMetadataResponse | null
+  ) => {
     AccountController.updateLikesScrollPosition(scrollTop);
     AccountController.updateSelectedLikedProduct(product);
+    StoreController.updateSelectedPreview(product);
+    StoreController.updateSelectedProductLikesMetadata(productLikesMetadata);
   };
 
   const onProductPreviewRest = (product: PricedProduct) => {
