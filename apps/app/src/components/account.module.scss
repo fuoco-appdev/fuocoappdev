@@ -560,12 +560,30 @@
 
 .avatar-button {
   background-color: $brand-700 !important;
+  width: 38px;
 }
 
 .avatar-overlay-background {
   background-color: #fff !important;
   -webkit-backdrop-filter: none !important;
           backdrop-filter: none !important;
+}
+
+.avatar-top-bar {
+  background-color: #fff !important;
+}
+
+.avatar-top-bar-title {
+  color: $brand-900 !important;
+}
+
+.avatar-close-button {
+  color: $brand-900 !important;
+}
+
+.avatar-save-button {
+  color: #fff !important;
+  background-color: $brand-700 !important;
 }
 
 .button {

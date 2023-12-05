@@ -54,7 +54,7 @@ export function AccountSuspenseMobileComponent(): JSX.Element {
               styles['avatar-container-mobile'],
             ].join(' ')}
           >
-            <Skeleton style={{ width: 96, height: 96 }} borderRadius={96} />
+            <Skeleton style={{ width: 72, height: 72 }} borderRadius={72} />
           </div>
           <div
             className={[styles['username'], styles['username-mobile']].join(

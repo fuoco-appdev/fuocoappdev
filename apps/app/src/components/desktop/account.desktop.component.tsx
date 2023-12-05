@@ -216,7 +216,6 @@ export default function AccountDesktopComponent({
                 ].join(' ')}
               >
                 <Avatar
-                  touchScreen={true}
                   classNames={{
                     button: {
                       button: [
@@ -231,13 +230,16 @@ export default function AccountDesktopComponent({
                           styles['avatar-overlay-background-desktop'],
                         ].join(' '),
                       },
+                      saveButton: {
+                        button: [styles['avatar-save-button']].join(' '),
+                      },
                     },
                   }}
                   text={customer?.first_name}
                   src={accountProps.profileUrl}
                   editMode={true}
                   onChange={AccountController.uploadAvatarAsync}
-                  size={'large'}
+                  size={'medium'}
                 />
               </div>
               <div

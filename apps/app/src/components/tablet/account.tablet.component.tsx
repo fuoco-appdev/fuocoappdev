@@ -242,7 +242,7 @@ export default function AccountTabletComponent({
                   src={accountProps.profileUrl}
                   editMode={true}
                   onChange={AccountController.uploadAvatarAsync}
-                  size={'large'}
+                  size={'medium'}
                 />
               </div>
               <div

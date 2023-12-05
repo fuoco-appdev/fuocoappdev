@@ -236,13 +236,21 @@ export default function AccountMobileComponent({
                           styles['avatar-overlay-background-mobile'],
                         ].join(' '),
                       },
+                      topBar: [styles['avatar-top-bar']].join(' '),
+                      topBarTitle: [styles['avatar-top-bar-title']].join(' '),
+                      closeButton: {
+                        button: [styles['avatar-close-button']].join(' '),
+                      },
+                      saveButton: {
+                        button: [styles['avatar-save-button']].join(' '),
+                      },
                     },
                   }}
                   text={customer?.first_name}
                   src={accountProps.profileUrl}
                   editMode={true}
                   onChange={AccountController.uploadAvatarAsync}
-                  size={'large'}
+                  size={'medium'}
                   touchScreen={true}
                 />
               </div>
