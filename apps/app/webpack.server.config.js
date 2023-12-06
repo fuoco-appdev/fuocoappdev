@@ -168,6 +168,7 @@ module.exports = composePlugins(withNx(), (config, { options, context }) => {
     output: {
       filename: '[name].js',
       globalObject: 'this',
+      libraryTarget: 'commonjs2',
     },
     externals: ["react-helmet"],
     resolve: {
