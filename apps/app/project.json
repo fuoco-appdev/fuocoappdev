@@ -32,6 +32,7 @@
           "node_modules/react-loading-skeleton/dist/skeleton.css",
           "apps/app/src/styles.scss"
         ],
+        "memoryLimit": 4096,
         "isolatedConfig": true,
         "webpackConfig": "apps/app/webpack.config.js"
       },
@@ -77,6 +78,7 @@
           "apps/app/src/styles.scss"
         ],
         "scripts": [],
+        "memoryLimit": 4096,
         "isolatedConfig": true,
         "webpackConfig": "apps/app/webpack.server.config.js"
       },
