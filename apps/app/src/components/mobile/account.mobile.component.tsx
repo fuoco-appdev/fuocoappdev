@@ -231,9 +231,6 @@ export default function AccountMobileComponent({
                     },
                     cropImage: {
                       overlay: {
-                        animatedContent: [
-                          styles['avatar-overlay-animated-content'],
-                        ].join(' '),
                         background: [
                           styles['avatar-overlay-background'],
                           styles['avatar-overlay-background-mobile'],
