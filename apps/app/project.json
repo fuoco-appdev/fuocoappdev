@@ -32,7 +32,6 @@
           "node_modules/react-loading-skeleton/dist/skeleton.css",
           "apps/app/src/styles.scss"
         ],
-        "memoryLimit": 4096,
         "isolatedConfig": true,
         "webpackConfig": "apps/app/webpack.config.js"
       },
@@ -54,7 +53,8 @@
           "sourceMap": false,
           "namedChunks": false,
           "extractLicenses": true,
-          "vendorChunk": false
+          "vendorChunk": false,
+          "memoryLimit": 4096
         }
       }
     },
@@ -78,7 +78,6 @@
           "apps/app/src/styles.scss"
         ],
         "scripts": [],
-        "memoryLimit": 4096,
         "isolatedConfig": true,
         "webpackConfig": "apps/app/webpack.server.config.js"
       },
@@ -102,7 +101,8 @@
           "namedChunks": false,
           "extractLicenses": true,
           "vendorChunk": false,
-          "extractCss": true
+          "extractCss": true,
+          "memoryLimit": 4096
         }
       }
     },
