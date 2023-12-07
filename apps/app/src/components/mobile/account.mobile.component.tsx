@@ -250,7 +250,7 @@ export default function AccountMobileComponent({
                   src={accountProps.profileUrl}
                   editMode={true}
                   onChange={AccountController.uploadAvatarAsync}
-                  size={'medium'}
+                  size={'large'}
                   touchScreen={true}
                 />
               </div>
