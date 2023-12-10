@@ -1,7 +1,7 @@
 import { Controller, Post, Guard, ContentType } from '../index.ts';
 import * as Oak from 'https://deno.land/x/oak@v11.1.0/mod.ts';
 import { AuthGuard } from '../guards/index.ts';
-import { Account } from '../protobuf/core_pb.js';
+import { Account, AccountExistsRequest } from '../protobuf/core_pb.js';
 import * as HttpError from 'https://deno.land/x/http_errors@3.0.0/mod.ts';
 import { readAll } from 'https://deno.land/std@0.105.0/io/util.ts';
 import SupabaseService from '../services/supabase.service.ts';
@@ -37,6 +37,25 @@ export class AccountController {
     }
 
     const response = AccountService.assignAndGetAccountProtocol(data);
+    context.response.type = 'application/x-protobuf';
+    context.response.body = response.serializeBinary();
+  }
+
+  @Post('/exists')
+  @Guard(AuthGuard)
+  @ContentType('application/x-protobuf')
+  public async checkAccountExistsAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >
+  ): Promise<void> {
+    const body = await context.request.body({ type: 'reader' });
+    const requestValue = await readAll(body.value);
+    const accountExists = AccountExistsRequest.deserializeBinary(requestValue);
+    const response = await AccountService.checkExistsAsync(accountExists);
+
     context.response.type = 'application/x-protobuf';
     context.response.body = response.serializeBinary();
   }

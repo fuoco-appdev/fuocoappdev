@@ -1,5 +1,10 @@
 import SupabaseService from './supabase.service.ts';
-import { Account, Accounts } from '../protobuf/core_pb.js';
+import {
+  Account,
+  Accounts,
+  AccountExistsRequest,
+  AccountExistsResponse,
+} from '../protobuf/core_pb.js';
 
 export interface AccountProps {
   id?: string;
@@ -9,6 +14,7 @@ export interface AccountProps {
   status?: string;
   updated_at?: string;
   language_code?: string;
+  username?: string;
 }
 
 export class AccountService {
@@ -59,6 +65,26 @@ export class AccountService {
     return data.length > 0 ? data[0] : null;
   }
 
+  public async checkExistsAsync(
+    request: InstanceType<typeof AccountExistsRequest>
+  ): Promise<AccountProps | null> {
+    const username = request.getUsername();
+    const response = new AccountExistsResponse();
+
+    const { data, error } = await SupabaseService.client
+      .from('account')
+      .select()
+      .eq('username', username);
+
+    if (error) {
+      console.error(error);
+      return null;
+    }
+
+    response.setExists(data.length > 0);
+    return response;
+  }
+
   public async updateAsync(
     supabaseId: string,
     account: InstanceType<typeof Account>
@@ -67,12 +93,14 @@ export class AccountService {
     const profileUrl = account.getProfileUrl();
     const status = account.getStatus();
     const languageCode = account.getLanguageCode();
+    const username = account.getUsername();
 
     const accountData = this.assignAndGetAccountData({
       customerId,
       profileUrl,
       status,
       languageCode,
+      username,
     });
     const { data, error } = await SupabaseService.client
       .from('account')
@@ -149,6 +177,7 @@ export class AccountService {
     props.status && account.setStatus(props.status);
     props.updated_at && account.setUpdateAt(props.updated_at);
     props.language_code && account.setLanguageCode(props.language_code);
+    props.username && account.setUsername(props.username);
 
     return account;
   }
@@ -160,6 +189,7 @@ export class AccountService {
     profileUrl?: string;
     status?: string;
     languageCode?: string;
+    username?: string;
   }) {
     const date = new Date(Date.now());
     return {
@@ -168,6 +198,7 @@ export class AccountService {
       ...(props.profileUrl && { profile_url: props.profileUrl }),
       ...(props.status && { status: props.status }),
       ...(props.languageCode && { language_code: props.languageCode }),
+      ...(props.username && { username: props.username }),
       updated_at: date.toUTCString(),
     };
   }

@@ -128,11 +128,38 @@ class AccountService extends Service {
     return accountResponse;
   }
 
+  public async requestExistsAsync(
+    username: string
+  ): Promise<core.AccountExistsResponse> {
+    const session = await SupabaseService.requestSessionAsync();
+    const request = new core.AccountExistsRequest({
+      username: username,
+    });
+    const response = await axios({
+      method: 'post',
+      url: `${this.endpointUrl}/account/exists`,
+      headers: {
+        ...this.headers,
+        'Session-Token': `${session?.access_token}`,
+      },
+      data: request.toBinary(),
+      responseType: 'arraybuffer',
+    });
+
+    const arrayBuffer = new Uint8Array(response.data);
+    this.assertResponse(arrayBuffer);
+
+    const accountExistsResponse =
+      core.AccountExistsResponse.fromBinary(arrayBuffer);
+    return accountExistsResponse;
+  }
+
   public async requestUpdateActiveAsync(props: {
     customerId?: string;
     profileUrl?: string;
     status?: 'Incomplete' | 'Complete';
     languageCode?: string;
+    username?: string;
   }): Promise<core.Account> {
     const supabaseUser = await SupabaseService.requestUserAsync();
     if (!supabaseUser) {
@@ -151,6 +178,7 @@ class AccountService extends Service {
       profileUrl?: string;
       status?: 'Incomplete' | 'Complete';
       languageCode?: string;
+      username?: string;
     }
   ): Promise<core.Account> {
     const session = await SupabaseService.requestSessionAsync();
@@ -159,6 +187,7 @@ class AccountService extends Service {
       profileUrl: props.profileUrl,
       status: props.status,
       languageCode: props.languageCode,
+      username: props.username,
     });
     const response = await axios({
       method: 'post',

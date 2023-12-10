@@ -722,6 +722,11 @@ export class Account extends Message<Account> {
    */
   languageCode = "";
 
+  /**
+   * @generated from field: string username = 8;
+   */
+  username = "";
+
   constructor(data?: PartialMessage<Account>) {
     super();
     proto3.util.initPartial(data, this);
@@ -737,6 +742,7 @@ export class Account extends Message<Account> {
     { no: 5, name: "status", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 6, name: "update_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 7, name: "language_code", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 8, name: "username", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Account {
@@ -790,6 +796,80 @@ export class Accounts extends Message<Accounts> {
 
   static equals(a: Accounts | PlainMessage<Accounts> | undefined, b: Accounts | PlainMessage<Accounts> | undefined): boolean {
     return proto3.util.equals(Accounts, a, b);
+  }
+}
+
+/**
+ * @generated from message core.AccountExistsRequest
+ */
+export class AccountExistsRequest extends Message<AccountExistsRequest> {
+  /**
+   * @generated from field: string username = 1;
+   */
+  username = "";
+
+  constructor(data?: PartialMessage<AccountExistsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.AccountExistsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "username", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountExistsRequest {
+    return new AccountExistsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AccountExistsRequest {
+    return new AccountExistsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AccountExistsRequest {
+    return new AccountExistsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AccountExistsRequest | PlainMessage<AccountExistsRequest> | undefined, b: AccountExistsRequest | PlainMessage<AccountExistsRequest> | undefined): boolean {
+    return proto3.util.equals(AccountExistsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message core.AccountExistsResponse
+ */
+export class AccountExistsResponse extends Message<AccountExistsResponse> {
+  /**
+   * @generated from field: bool exists = 1;
+   */
+  exists = false;
+
+  constructor(data?: PartialMessage<AccountExistsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.AccountExistsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "exists", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountExistsResponse {
+    return new AccountExistsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AccountExistsResponse {
+    return new AccountExistsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AccountExistsResponse {
+    return new AccountExistsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AccountExistsResponse | PlainMessage<AccountExistsResponse> | undefined, b: AccountExistsResponse | PlainMessage<AccountExistsResponse> | undefined): boolean {
+    return proto3.util.equals(AccountExistsResponse, a, b);
   }
 }
 

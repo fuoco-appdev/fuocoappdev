@@ -212,6 +212,10 @@ class ProductController extends Controller {
   public getCheapestPrice(
     variants: PricedVariant[]
   ): Partial<PricedVariant> | undefined {
+    if (variants.length <= 0) {
+      return undefined;
+    }
+
     const cheapestVariant = variants?.reduce(
       (current: PricedVariant, next: PricedVariant) => {
         return (current?.calculated_price ?? 0) < (next?.calculated_price ?? 0)

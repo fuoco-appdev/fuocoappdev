@@ -26,6 +26,7 @@ const AccountProfileFormMobileComponent = lazy(
 export interface ProfileFormOnChangeCallbacks {
   firstName?: (event: ChangeEvent<HTMLInputElement>) => void;
   lastName?: (event: ChangeEvent<HTMLInputElement>) => void;
+  username?: (event: ChangeEvent<HTMLInputElement>) => void;
   phoneNumber?: (
     value: string,
     data: {} | CountryDataProps,
@@ -39,12 +40,14 @@ export interface ProfileFormOnChangeCallbacks {
 export interface ProfileFormErrors {
   firstName?: string;
   lastName?: string;
+  username?: string;
   phoneNumber?: string;
 }
 
 export interface ProfileFormValues {
   firstName?: string;
   lastName?: string;
+  username?: string;
   phoneNumber?: string;
 }
 

@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Subscription } from 'rxjs';
 import { Controller } from '../controller';
-import { AccountModel } from '../models/account.model';
+import { AccountModel, ProfileFormErrorStrings } from '../models/account.model';
 import AccountService from '../services/account.service';
 import * as core from '../protobuf/core_pb';
 import SupabaseService from '../services/supabase.service';
@@ -36,6 +36,7 @@ import CartController from './cart.controller';
 class AccountController extends Controller {
   private readonly _model: AccountModel;
   private readonly _limit: number;
+  private _usernameTimerId: NodeJS.Timeout | number | undefined;
   private _activeAccountSubscription: Subscription | undefined;
   private _userSubscription: Subscription | undefined;
   private _selectedInventoryLocationIdSubscription: Subscription | undefined;
@@ -72,6 +73,7 @@ class AccountController extends Controller {
   }
 
   public override dispose(renderCount: number): void {
+    clearTimeout(this._usernameTimerId as number | undefined);
     this._medusaAccessTokenSubscription?.unsubscribe();
     this._selectedInventoryLocationIdSubscription?.unsubscribe();
     this._activeAccountSubscription?.unsubscribe();
@@ -107,7 +109,7 @@ class AccountController extends Controller {
     this._model.profileFormErrors = value;
   }
 
-  public updateErrorStrings(value: ProfileFormErrors): void {
+  public updateErrorStrings(value: ProfileFormErrorStrings): void {
     this._model.errorStrings = value;
   }
 
@@ -175,6 +177,26 @@ class AccountController extends Controller {
     this._model.selectedProductLikes = value;
   }
 
+  public checkIfUsernameExists(value: string): void {
+    clearTimeout(this._usernameTimerId as number | undefined);
+    this._usernameTimerId = setTimeout(() => {
+      const promise = new Promise<void>(async (resolve, reject) => {
+        try {
+          this._model.profileFormErrors = await this.getUsernameErrorsAsync(
+            value,
+            this._model.profileFormErrors,
+            true
+          );
+          resolve();
+        } catch (error: any) {
+          console.error(error);
+          reject(error);
+        }
+      });
+      promise.then();
+    }, 750);
+  }
+
   public getAddressFormErrors(
     form: AddressFormValues
   ): AddressFormErrors | undefined {
@@ -210,21 +232,28 @@ class AccountController extends Controller {
     return undefined;
   }
 
-  public getProfileFormErrors(
-    form: ProfileFormValues
-  ): ProfileFormErrors | undefined {
-    const errors: ProfileFormErrors = {};
+  public async getProfileFormErrorsAsync(
+    form: ProfileFormValues,
+    strict: boolean = false
+  ): Promise<ProfileFormErrors | undefined> {
+    let errors: ProfileFormErrors = {};
+
+    errors = await this.getUsernameErrorsAsync(
+      form.username ?? '',
+      errors,
+      strict
+    );
 
     if (!form.firstName || form.firstName?.length <= 0) {
-      errors.firstName = this._model.errorStrings.firstName;
+      errors.firstName = this._model.errorStrings.empty;
     }
 
     if (!form.lastName || form.lastName?.length <= 0) {
-      errors.lastName = this._model.errorStrings.lastName;
+      errors.lastName = this._model.errorStrings.empty;
     }
 
     if (!form.phoneNumber || form.phoneNumber?.length <= 0) {
-      errors.phoneNumber = this._model.errorStrings.phoneNumber;
+      errors.phoneNumber = this._model.errorStrings.empty;
     }
 
     if (Object.keys(errors).length > 0) {
@@ -234,6 +263,15 @@ class AccountController extends Controller {
   }
 
   public async completeProfileAsync(): Promise<void> {
+    const errors = await this.getProfileFormErrorsAsync(
+      this._model.profileForm,
+      true
+    );
+    if (errors) {
+      this._model.profileFormErrors = errors;
+      return;
+    }
+
     if (!SupabaseService.user) {
       return;
     }
@@ -257,6 +295,7 @@ class AccountController extends Controller {
         customerId: this._model.customer?.id,
         status: 'Complete',
         languageCode: WindowController.model.languageInfo?.isoCode,
+        username: this._model.profileForm.username ?? '',
       });
       this._model.isCreateCustomerLoading = false;
     } catch (error: any) {
@@ -265,9 +304,19 @@ class AccountController extends Controller {
     }
   }
 
-  public async updateCustomerAsync(form: ProfileFormValues): Promise<void> {
-    if (!this._model.customer) {
-      return;
+  public async updateGeneralInfoAsync(
+    form: ProfileFormValues
+  ): Promise<boolean> {
+    if (!this._model.customer || !this._model.account) {
+      return false;
+    }
+
+    this._model.isUpdateGeneralInfoLoading = true;
+    const errors = await this.getProfileFormErrorsAsync(form, true);
+    if (errors) {
+      this.updateProfileErrors(errors);
+      this._model.isUpdateGeneralInfoLoading = false;
+      return false;
     }
 
     try {
@@ -277,9 +326,17 @@ class AccountController extends Controller {
         phone: form.phoneNumber,
       });
       this._model.customer = customerResponse?.customer as Customer;
+
+      this._model.account = await AccountService.requestUpdateActiveAsync({
+        username: this._model.profileForm.username ?? '',
+      });
     } catch (error: any) {
       console.error(error);
     }
+
+    this._model.isUpdateGeneralInfoLoading = false;
+
+    return true;
   }
 
   public async uploadAvatarAsync(index: number, blob: Blob): Promise<void> {
@@ -404,6 +461,33 @@ class AccountController extends Controller {
     this.requestLikedProductsAsync(0, this._limit);
   }
 
+  private async getUsernameErrorsAsync(
+    username: string,
+    errors: ProfileFormErrors,
+    strict: boolean = false
+  ): Promise<ProfileFormErrors> {
+    let errorsCopy = { ...errors };
+    if (!username || username?.length <= 0) {
+      errorsCopy.username = this._model.errorStrings?.empty;
+      return errorsCopy;
+    }
+
+    if (username.indexOf(' ') !== -1) {
+      errorsCopy.username = this._model.errorStrings?.spaces;
+      return errorsCopy;
+    }
+
+    if (strict) {
+      const exists = await this.requestDoesUsernameExistAsync(username);
+      if (exists) {
+        errorsCopy.username = this._model.errorStrings?.exists;
+        return errorsCopy;
+      }
+    }
+
+    return errorsCopy;
+  }
+
   private async requestOrdersAsync(
     offset: number = 0,
     limit: number = 10
@@ -440,6 +524,17 @@ class AccountController extends Controller {
 
     this._model.orders = this._model.orders.concat(orders);
     this._model.areOrdersLoading = false;
+  }
+
+  private async requestDoesUsernameExistAsync(
+    username: string
+  ): Promise<boolean> {
+    if (!this._model.account) {
+      return false;
+    }
+
+    const response = await AccountService.requestExistsAsync(username);
+    return response.exists;
   }
 
   private async requestLikedProductsAsync(
@@ -597,6 +692,7 @@ class AccountController extends Controller {
     this._model.activeTabIndex = 0;
     this._model.ordersScrollPosition = undefined;
     this._model.isCreateCustomerLoading = false;
+    this._model.isUpdateGeneralInfoLoading = false;
   }
 
   private async initializeAsync(renderCount: number): Promise<void> {
@@ -619,33 +715,16 @@ class AccountController extends Controller {
   private async onActiveAccountChangedAsync(
     value: core.Account | null
   ): Promise<void> {
-    if (!value) {
-      return;
-    }
-
-    this._model.account = value;
     if (
-      value?.languageCode &&
-      value?.languageCode !== WindowController.model.languageCode
+      !value ||
+      JSON.stringify(this._model.account) === JSON.stringify(value)
     ) {
-      WindowController.updateLanguageCode(value.languageCode);
-    }
-    if (value.profileUrl && value.profileUrl.length > 0) {
-      this._model.profileUrl = await BucketService.getPublicUrlAsync(
-        core.StorageFolderType.Avatars,
-        value.profileUrl
-      );
-    }
-  }
-
-  private async onActiveUserChangedAsync(value: User | null): Promise<void> {
-    if (!value) {
       return;
     }
 
     try {
       this._model.customer = await MedusaService.requestCustomerAccountAsync(
-        value?.id ?? ''
+        value.supabaseId ?? ''
       );
 
       this._selectedInventoryLocationIdSubscription?.unsubscribe();
@@ -657,20 +736,63 @@ class AccountController extends Controller {
           .subscribe({
             next: this.onSelectedInventoryLocationIdChangedAsync,
           });
-
-      this._model.profileForm = {
-        firstName: this._model.customer?.first_name,
-        lastName: this._model.customer?.last_name,
-        phoneNumber: this._model.customer?.phone,
-      };
-
-      await this.requestLikedProductsAsync();
-      await this.requestOrdersAsync();
-
-      this._model.user = value;
     } catch (error: any) {
       console.error(error);
     }
+
+    if (
+      value?.languageCode &&
+      value?.languageCode !== WindowController.model.languageCode
+    ) {
+      WindowController.updateLanguageCode(value.languageCode);
+    }
+    if (value.profileUrl && value.profileUrl.length > 0) {
+      try {
+        this._model.profileUrl = await BucketService.getPublicUrlAsync(
+          core.StorageFolderType.Avatars,
+          value.profileUrl
+        );
+      } catch (error: any) {
+        console.error(error);
+      }
+    }
+
+    this._model.profileForm = {
+      firstName: this._model.customer?.first_name,
+      lastName: this._model.customer?.last_name,
+      phoneNumber: this._model.customer?.phone,
+      username: value?.username,
+    };
+
+    const errors = await this.getProfileFormErrorsAsync(
+      this._model.profileForm
+    );
+    if (errors && this._model.account?.status === 'Complete') {
+      try {
+        this._model.account = await AccountService.requestUpdateActiveAsync({
+          status: 'Incomplete',
+        });
+      } catch (error: any) {
+        console.error(error);
+      }
+    } else {
+      this._model.account = value;
+    }
+
+    try {
+      await this.requestLikedProductsAsync();
+      await this.requestOrdersAsync();
+    } catch (error: any) {
+      console.error(error);
+    }
+  }
+
+  private async onActiveUserChangedAsync(value: User | null): Promise<void> {
+    if (!value || JSON.stringify(this._model.user) === JSON.stringify(value)) {
+      return;
+    }
+
+    this._model.user = value;
   }
 
   private async onSelectedInventoryLocationIdChangedAsync(

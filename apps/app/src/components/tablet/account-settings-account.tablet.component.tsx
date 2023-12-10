@@ -146,6 +146,10 @@ export default function AccountSettingsAccountTabletComponent({
                         AccountController.updateProfile({
                           lastName: event.target.value,
                         }),
+                      username: (event) =>
+                        AccountController.updateProfile({
+                          username: event.target.value,
+                        }),
                       phoneNumber: (value, event, formattedValue) =>
                         AccountController.updateProfile({
                           phoneNumber: value,
@@ -169,6 +173,16 @@ export default function AccountSettingsAccountTabletComponent({
                     block={true}
                     size={'large'}
                     onClick={onGeneralInformationSaveAsync}
+                    loading={accountProps.isUpdateGeneralInfoLoading}
+                    loadingComponent={
+                      <img
+                        src={'../assets/svg/ring-resize-light.svg'}
+                        className={[
+                          styles['loading-ring'],
+                          styles['loading-ring-tablet'],
+                        ].join(' ')}
+                      />
+                    }
                   >
                     {t('save')}
                   </Button>

@@ -58,9 +58,13 @@ export default function AccountSettingsAccountComponent(): JSX.Element {
   const { t, i18n } = useTranslation();
 
   const onGeneralInformationSaveAsync = async () => {
-    await AccountController.updateCustomerAsync(
+    const updated = await AccountController.updateGeneralInfoAsync(
       AccountController.model.profileForm
     );
+    if (!updated) {
+      return;
+    }
+
     WindowController.addToast({
       key: `update-customer-${Math.random()}`,
       message: t('successfullyUpdatedUser') ?? '',

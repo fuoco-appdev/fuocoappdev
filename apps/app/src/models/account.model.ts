@@ -15,6 +15,12 @@ import { User } from '@supabase/supabase-js';
 import { ProductLikesMetadataResponse } from '../protobuf/core_pb';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 
+export interface ProfileFormErrorStrings {
+  empty?: string;
+  exists?: string;
+  spaces?: string;
+}
+
 export interface AccountState {
   user: User | null;
   account: core.Account | undefined;
@@ -23,7 +29,7 @@ export interface AccountState {
   isCustomerGroupLoading: boolean;
   profileForm: ProfileFormValues;
   profileFormErrors: ProfileFormErrors;
-  errorStrings: ProfileFormErrors;
+  errorStrings: ProfileFormErrorStrings;
   profileUrl: string | undefined;
   username: string;
   orders: Order[];
@@ -41,6 +47,7 @@ export interface AccountState {
   activeTabIndex: number;
   ordersScrollPosition: number | undefined;
   isCreateCustomerLoading: boolean;
+  isUpdateGeneralInfoLoading: boolean;
   hasMoreLikes: boolean;
   likesScrollPosition: number | undefined;
   likedProducts: PricedProduct[];
@@ -73,7 +80,7 @@ export class AccountModel extends Model {
           username: '',
           orders: [],
           orderPagination: 1,
-          hasMoreOrders: false,
+          hasMoreOrders: true,
           shippingForm: {
             email: '',
             firstName: '',
@@ -110,6 +117,7 @@ export class AccountModel extends Model {
           activeTabIndex: 0,
           ordersScrollPosition: undefined,
           isCreateCustomerLoading: false,
+          isUpdateGeneralInfoLoading: false,
           hasMoreLikes: true,
           likesScrollPosition: undefined,
           likedProducts: [],
@@ -153,11 +161,11 @@ export class AccountModel extends Model {
     }
   }
 
-  public get errorStrings(): ProfileFormErrors {
+  public get errorStrings(): ProfileFormErrorStrings {
     return this.store.getValue().errorStrings;
   }
 
-  public set errorStrings(value: ProfileFormErrors) {
+  public set errorStrings(value: ProfileFormErrorStrings) {
     if (JSON.stringify(this.errorStrings) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, errorStrings: value }));
     }
@@ -202,6 +210,19 @@ export class AccountModel extends Model {
       this.store.update((state) => ({
         ...state,
         isCustomerGroupLoading: value,
+      }));
+    }
+  }
+
+  public get isUpdateGeneralInfoLoading(): boolean {
+    return this.store.getValue().isUpdateGeneralInfoLoading;
+  }
+
+  public set isUpdateGeneralInfoLoading(value: boolean) {
+    if (this.isUpdateGeneralInfoLoading !== value) {
+      this.store.update((state) => ({
+        ...state,
+        isUpdateGeneralInfoLoading: value,
       }));
     }
   }

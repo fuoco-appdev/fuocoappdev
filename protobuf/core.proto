@@ -92,10 +92,19 @@ message Account {
     string status = 5;
     string update_at = 6;
     string language_code = 7;
+    string username = 8;
 }
 
 message Accounts {
     repeated core.Account accounts = 1;
+}
+
+message AccountExistsRequest {
+    string username = 1;
+}
+
+message AccountExistsResponse {
+    bool exists = 1;
 }
 
 message ProductLikesMetadataRequest {

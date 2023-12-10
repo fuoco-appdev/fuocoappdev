@@ -43,6 +43,7 @@ export interface AccountResponsiveProps {
   windowProps: WindowState;
   accountProps: AccountState;
   storeProps: StoreState;
+  onUsernameChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onCompleteProfile: () => void;
   onScroll: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
   onScrollLoad: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
@@ -105,13 +106,18 @@ export default function AccountComponent(): JSX.Element {
     }
   };
 
-  const onCompleteProfile = () => {
+  const onUsernameChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+    AccountController.checkIfUsernameExists(event.target.value);
+  };
+
+  const onCompleteProfile = async () => {
     AccountController.updateProfileErrors({
       firstName: undefined,
       lastName: undefined,
+      username: undefined,
       phoneNumber: undefined,
     });
-    const errors = AccountController.getProfileFormErrors(
+    const errors = await AccountController.getProfileFormErrorsAsync(
       AccountController.model.profileForm
     );
     if (errors) {
@@ -123,9 +129,9 @@ export default function AccountComponent(): JSX.Element {
 
   useEffect(() => {
     AccountController.updateErrorStrings({
-      firstName: t('fieldEmptyError') ?? '',
-      lastName: t('fieldEmptyError') ?? '',
-      phoneNumber: t('fieldEmptyError') ?? '',
+      empty: t('fieldEmptyError') ?? '',
+      exists: t('fieldExistsError') ?? '',
+      spaces: t('fieldSpacesError') ?? '',
     });
   }, [i18n.language]);
 
@@ -198,6 +204,7 @@ export default function AccountComponent(): JSX.Element {
             accountProps={accountProps}
             windowProps={windowProps}
             storeProps={storeProps}
+            onUsernameChanged={onUsernameChanged}
             onCompleteProfile={onCompleteProfile}
             onScroll={onScroll}
             onScrollLoad={onScrollLoad}
@@ -206,6 +213,7 @@ export default function AccountComponent(): JSX.Element {
             accountProps={accountProps}
             windowProps={windowProps}
             storeProps={storeProps}
+            onUsernameChanged={onUsernameChanged}
             onCompleteProfile={onCompleteProfile}
             onScroll={onScroll}
             onScrollLoad={onScrollLoad}
@@ -214,6 +222,7 @@ export default function AccountComponent(): JSX.Element {
             accountProps={accountProps}
             windowProps={windowProps}
             storeProps={storeProps}
+            onUsernameChanged={onUsernameChanged}
             onCompleteProfile={onCompleteProfile}
             onScroll={onScroll}
             onScrollLoad={onScrollLoad}

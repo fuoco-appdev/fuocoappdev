@@ -114,7 +114,7 @@ export default function AccountLikesTabletComponent({
                   : 'none',
             }}
           />
-          {!accountProps.hasMoreLikes &&
+          {!accountProps.areLikedProductsLoading &&
             accountProps.likedProducts.length <= 0 && (
               <div
                 className={[

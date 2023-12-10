@@ -49,6 +49,7 @@ export default function AccountTabletComponent({
   windowProps,
   accountProps,
   storeProps,
+  onUsernameChanged,
   onCompleteProfile,
   onScroll,
   onScrollLoad,
@@ -74,7 +75,22 @@ export default function AccountTabletComponent({
               styles['left-tab-container'],
               styles['left-tab-container-tablet'],
             ].join(' ')}
-          ></div>
+          >
+            <div
+              className={[
+                styles['username-container'],
+                styles['username-container-tablet'],
+              ].join(' ')}
+            >
+              <div
+                className={[styles['username'], styles['username-tablet']].join(
+                  ' '
+                )}
+              >
+                {accountProps.account?.username}
+              </div>
+            </div>
+          </div>
           <div
             className={[
               styles['right-tab-container'],
@@ -181,6 +197,12 @@ export default function AccountTabletComponent({
                         AccountController.updateProfile({
                           lastName: event.target.value,
                         }),
+                      username: (event) => {
+                        AccountController.updateProfile({
+                          username: event.target.value,
+                        });
+                        onUsernameChanged(event);
+                      },
                       phoneNumber: (value, event, formattedValue) =>
                         AccountController.updateProfile({
                           phoneNumber: value,
@@ -205,6 +227,16 @@ export default function AccountTabletComponent({
                     size={'large'}
                     icon={<Line.Done size={24} />}
                     onClick={onCompleteProfile}
+                    loading={accountProps.isCreateCustomerLoading}
+                    loadingComponent={
+                      <img
+                        src={'../assets/svg/ring-resize-light.svg'}
+                        className={[
+                          styles['loading-ring'],
+                          styles['loading-ring-tablet'],
+                        ].join(' ')}
+                      />
+                    }
                   >
                     {t('complete')}
                   </Button>
@@ -256,6 +288,7 @@ export default function AccountTabletComponent({
                   <Skeleton
                     count={1}
                     borderRadius={9999}
+                    width={120}
                     className={[
                       styles['skeleton-user'],
                       styles['skeleton-user-tablet'],
@@ -375,25 +408,6 @@ export default function AccountTabletComponent({
             </>
           )}
         </div>
-        {createPortal(
-          accountProps.isCreateCustomerLoading && (
-            <div
-              className={[
-                styles['loading-container'],
-                styles['loading-container-tablet'],
-              ].join(' ')}
-            >
-              <img
-                src={'../assets/svg/ring-resize-light.svg'}
-                className={[
-                  styles['loading-ring'],
-                  styles['loading-ring-tablet'],
-                ].join(' ')}
-              />
-            </div>
-          ),
-          document.body
-        )}
       </div>
     </ResponsiveTablet>
   );

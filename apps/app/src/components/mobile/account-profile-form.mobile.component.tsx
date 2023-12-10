@@ -61,6 +61,17 @@ export default function AccountProfileFormMobileComponent({
           onChange={onChangeCallbacks?.lastName}
         />
       </div>
+      <Input
+        classNames={{
+          formLayout: { label: styles['input-form-layout-label'] },
+          input: styles['input'],
+          container: styles['input-container'],
+        }}
+        label={t('username') ?? ''}
+        value={values?.username}
+        error={errors?.lastName}
+        onChange={onChangeCallbacks?.username}
+      />
       <InputPhoneNumber
         defaultValue={values?.phoneNumber}
         classNames={{

@@ -20,7 +20,31 @@ export function AccountSuspenseTabletComponent(): JSX.Element {
               styles['left-tab-container'],
               styles['left-tab-container-tablet'],
             ].join(' ')}
-          ></div>
+          >
+            <div
+              className={[
+                styles['username-container'],
+                styles['username-container-tablet'],
+              ].join(' ')}
+            >
+              <div
+                className={[styles['username'], styles['username-tablet']].join(
+                  ' '
+                )}
+              >
+                <Skeleton
+                  count={1}
+                  borderRadius={20}
+                  height={20}
+                  width={80}
+                  className={[
+                    styles['skeleton-user'],
+                    styles['skeleton-user-tablet'],
+                  ].join(' ')}
+                />
+              </div>
+            </div>
+          </div>
           <div
             className={[
               styles['right-tab-container'],
@@ -57,7 +81,7 @@ export function AccountSuspenseTabletComponent(): JSX.Element {
               styles['avatar-container-tablet'],
             ].join(' ')}
           >
-            <Skeleton style={{ width: 72, height: 72 }} borderRadius={72} />
+            <Skeleton style={{ width: 96, height: 96 }} borderRadius={96} />
           </div>
           <div
             className={[styles['username'], styles['username-tablet']].join(

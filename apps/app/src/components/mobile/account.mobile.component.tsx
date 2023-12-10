@@ -42,6 +42,7 @@ export default function AccountMobileComponent({
   windowProps,
   accountProps,
   storeProps,
+  onUsernameChanged,
   onCompleteProfile,
   onScroll,
   onScrollLoad,
@@ -67,7 +68,22 @@ export default function AccountMobileComponent({
               styles['left-tab-container'],
               styles['left-tab-container-mobile'],
             ].join(' ')}
-          ></div>
+          >
+            <div
+              className={[
+                styles['username-container'],
+                styles['username-container-mobile'],
+              ].join(' ')}
+            >
+              <div
+                className={[styles['username'], styles['username-mobile']].join(
+                  ' '
+                )}
+              >
+                {accountProps.account?.username}
+              </div>
+            </div>
+          </div>
           <div
             className={[
               styles['right-tab-container'],
@@ -184,6 +200,12 @@ export default function AccountMobileComponent({
                       AccountController.updateProfile({
                         lastName: event.target.value,
                       }),
+                    username: (event) => {
+                      AccountController.updateProfile({
+                        username: event.target.value,
+                      });
+                      onUsernameChanged(event);
+                    },
                     phoneNumber: (value, event, formattedValue) =>
                       AccountController.updateProfile({
                         phoneNumber: value,
@@ -207,6 +229,16 @@ export default function AccountMobileComponent({
                   size={'large'}
                   icon={<Line.Done size={24} />}
                   onClick={onCompleteProfile}
+                  loading={accountProps.isCreateCustomerLoading}
+                  loadingComponent={
+                    <img
+                      src={'../assets/svg/ring-resize-light.svg'}
+                      className={[
+                        styles['loading-ring'],
+                        styles['loading-ring-mobile'],
+                      ].join(' ')}
+                    />
+                  }
                 >
                   {t('complete')}
                 </Button>
@@ -265,6 +297,7 @@ export default function AccountMobileComponent({
                   <Skeleton
                     count={1}
                     borderRadius={9999}
+                    width={120}
                     className={[
                       styles['skeleton-user'],
                       styles['skeleton-user-mobile'],
@@ -384,25 +417,6 @@ export default function AccountMobileComponent({
             </>
           )}
         </div>
-        {createPortal(
-          accountProps.isCreateCustomerLoading && (
-            <div
-              className={[
-                styles['loading-container'],
-                styles['loading-container-mobile'],
-              ].join(' ')}
-            >
-              <img
-                src={'../assets/svg/ring-resize-light.svg'}
-                className={[
-                  styles['loading-ring'],
-                  styles['loading-ring-mobile'],
-                ].join(' ')}
-              />
-            </div>
-          ),
-          document.body
-        )}
       </div>
     </ResponsiveMobile>
   );

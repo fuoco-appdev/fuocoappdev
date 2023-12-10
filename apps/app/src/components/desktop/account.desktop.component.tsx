@@ -44,6 +44,7 @@ export default function AccountDesktopComponent({
   windowProps,
   accountProps,
   storeProps,
+  onUsernameChanged,
   onCompleteProfile,
   onScroll,
   onScrollLoad,
@@ -69,7 +70,23 @@ export default function AccountDesktopComponent({
               styles['left-tab-container'],
               styles['left-tab-container-desktop'],
             ].join(' ')}
-          ></div>
+          >
+            <div
+              className={[
+                styles['username-container'],
+                styles['username-container-desktop'],
+              ].join(' ')}
+            >
+              <div
+                className={[
+                  styles['username'],
+                  styles['username-desktop'],
+                ].join(' ')}
+              >
+                {accountProps.account?.username}
+              </div>
+            </div>
+          </div>
           <div
             className={[
               styles['right-tab-container'],
@@ -176,6 +193,12 @@ export default function AccountDesktopComponent({
                         AccountController.updateProfile({
                           lastName: event.target.value,
                         }),
+                      username: (event) => {
+                        AccountController.updateProfile({
+                          username: event.target.value,
+                        });
+                        onUsernameChanged(event);
+                      },
                       phoneNumber: (value, event, formattedValue) =>
                         AccountController.updateProfile({
                           phoneNumber: value,
@@ -200,6 +223,16 @@ export default function AccountDesktopComponent({
                     size={'large'}
                     icon={<Line.Done size={24} />}
                     onClick={onCompleteProfile}
+                    loading={accountProps.isCreateCustomerLoading}
+                    loadingComponent={
+                      <img
+                        src={'../assets/svg/ring-resize-light.svg'}
+                        className={[
+                          styles['loading-ring'],
+                          styles['loading-ring-desktop'],
+                        ].join(' ')}
+                      />
+                    }
                   >
                     {t('complete')}
                   </Button>
@@ -254,6 +287,7 @@ export default function AccountDesktopComponent({
                   <Skeleton
                     count={1}
                     borderRadius={9999}
+                    width={120}
                     className={[
                       styles['skeleton-user'],
                       styles['skeleton-user-desktop'],
@@ -373,25 +407,6 @@ export default function AccountDesktopComponent({
             </>
           )}
         </div>
-        {createPortal(
-          accountProps.isCreateCustomerLoading && (
-            <div
-              className={[
-                styles['loading-container'],
-                styles['loading-container-desktop'],
-              ].join(' ')}
-            >
-              <img
-                src={'../assets/svg/ring-resize-light.svg'}
-                className={[
-                  styles['loading-ring'],
-                  styles['loading-ring-desktop'],
-                ].join(' ')}
-              />
-            </div>
-          ),
-          document.body
-        )}
       </div>
     </ResponsiveDesktop>
   );

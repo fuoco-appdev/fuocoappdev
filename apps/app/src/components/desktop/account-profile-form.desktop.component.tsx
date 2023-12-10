@@ -45,6 +45,18 @@ export default function AccountProfileFormDesktopComponent({
           onChange={onChangeCallbacks?.lastName}
         />
       </div>
+      <Input
+        classNames={{
+          root: styles['input-root'],
+          formLayout: { label: styles['input-form-layout-label'] },
+          input: styles['input'],
+          container: styles['input-container'],
+        }}
+        label={t('username') ?? ''}
+        value={values?.username}
+        error={errors?.username}
+        onChange={onChangeCallbacks?.username}
+      />
       <InputPhoneNumber
         defaultValue={values?.phoneNumber}
         classNames={{
