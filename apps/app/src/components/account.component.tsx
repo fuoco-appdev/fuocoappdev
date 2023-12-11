@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import AccountController from '../controllers/account.controller';
 import WindowController from '../controllers/window.controller';
 import StoreController from '../controllers/store.controller';
@@ -43,10 +43,13 @@ export interface AccountResponsiveProps {
   windowProps: WindowState;
   accountProps: AccountState;
   storeProps: StoreState;
+  isCropImageModalVisible: boolean;
+  setIsCropImageModalVisible: (value: boolean) => void;
   onUsernameChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onCompleteProfile: () => void;
   onScroll: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
   onScrollLoad: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
+  onAvatarChanged: (index: number, blob: Blob) => void;
 }
 
 export default function AccountComponent(): JSX.Element {
@@ -55,6 +58,8 @@ export default function AccountComponent(): JSX.Element {
   const [accountProps] = useObservable(AccountController.model.store);
   const [windowProps] = useObservable(WindowController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
+  const [isCropImageModalVisible, setIsCropImageModalVisible] =
+    useState<boolean>(false);
   const scrollOffsetTriggerGap = 16;
 
   const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
@@ -125,6 +130,11 @@ export default function AccountComponent(): JSX.Element {
       return;
     }
     AccountController.completeProfileAsync();
+  };
+
+  const onAvatarChanged = async (index: number, blob: Blob) => {
+    await AccountController.uploadAvatarAsync(index, blob);
+    setIsCropImageModalVisible(false);
   };
 
   useEffect(() => {
@@ -204,28 +214,37 @@ export default function AccountComponent(): JSX.Element {
             accountProps={accountProps}
             windowProps={windowProps}
             storeProps={storeProps}
+            isCropImageModalVisible={isCropImageModalVisible}
+            setIsCropImageModalVisible={setIsCropImageModalVisible}
             onUsernameChanged={onUsernameChanged}
             onCompleteProfile={onCompleteProfile}
             onScroll={onScroll}
             onScrollLoad={onScrollLoad}
+            onAvatarChanged={onAvatarChanged}
           />
           <AccountTabletComponent
             accountProps={accountProps}
             windowProps={windowProps}
             storeProps={storeProps}
+            isCropImageModalVisible={isCropImageModalVisible}
+            setIsCropImageModalVisible={setIsCropImageModalVisible}
             onUsernameChanged={onUsernameChanged}
             onCompleteProfile={onCompleteProfile}
             onScroll={onScroll}
             onScrollLoad={onScrollLoad}
+            onAvatarChanged={onAvatarChanged}
           />
           <AccountMobileComponent
             accountProps={accountProps}
             windowProps={windowProps}
             storeProps={storeProps}
+            isCropImageModalVisible={isCropImageModalVisible}
+            setIsCropImageModalVisible={setIsCropImageModalVisible}
             onUsernameChanged={onUsernameChanged}
             onCompleteProfile={onCompleteProfile}
             onScroll={onScroll}
             onScrollLoad={onScrollLoad}
+            onAvatarChanged={onAvatarChanged}
           />
         </AuthenticatedComponent>
       </React.Suspense>

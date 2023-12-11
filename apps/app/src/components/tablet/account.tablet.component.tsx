@@ -49,10 +49,13 @@ export default function AccountTabletComponent({
   windowProps,
   accountProps,
   storeProps,
+  isCropImageModalVisible,
+  setIsCropImageModalVisible,
   onUsernameChanged,
   onCompleteProfile,
   onScroll,
   onScrollLoad,
+  onAvatarChanged,
 }: AccountResponsiveProps): JSX.Element {
   const scrollContainerRef = createRef<HTMLDivElement>();
   const topBarRef = useRef<HTMLDivElement | null>(null);
@@ -253,7 +256,6 @@ export default function AccountTabletComponent({
                 ].join(' ')}
               >
                 <Avatar
-                  touchScreen={true}
                   classNames={{
                     button: {
                       button: [
@@ -268,13 +270,31 @@ export default function AccountTabletComponent({
                           styles['avatar-overlay-background-tablet'],
                         ].join(' '),
                       },
+                      saveButton: {
+                        button: [styles['avatar-save-button']].join(' '),
+                      },
                     },
                   }}
                   text={customer?.first_name}
                   src={accountProps.profileUrl}
                   editMode={true}
-                  onChange={AccountController.uploadAvatarAsync}
+                  onChange={onAvatarChanged}
+                  loading={accountProps.isAvatarUploadLoading}
+                  loadingComponent={
+                    <img
+                      src={'../assets/svg/ring-resize-light.svg'}
+                      className={[
+                        styles['loading-ring'],
+                        styles['loading-ring-desktop'],
+                      ].join(' ')}
+                    />
+                  }
+                  onLoading={(value) =>
+                    AccountController.updateIsAvatarUploadLoading(value)
+                  }
                   size={'large'}
+                  isModalVisible={isCropImageModalVisible}
+                  onModalVisible={(value) => setIsCropImageModalVisible(value)}
                 />
               </div>
               <div

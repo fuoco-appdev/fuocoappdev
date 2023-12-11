@@ -56,6 +56,7 @@ export interface AccountState {
   areLikedProductsLoading: boolean;
   selectedLikedProduct: PricedProduct | undefined;
   selectedProductLikes: ProductLikesMetadataResponse | undefined;
+  isAvatarUploadLoading: boolean;
 }
 
 export class AccountModel extends Model {
@@ -126,6 +127,7 @@ export class AccountModel extends Model {
           areLikedProductsLoading: false,
           selectedLikedProduct: undefined,
           selectedProductLikes: undefined,
+          isAvatarUploadLoading: false,
         })
       )
     );
@@ -512,6 +514,19 @@ export class AccountModel extends Model {
   ) {
     if (JSON.stringify(this.selectedProductLikes) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, selectedProductLikes: value }));
+    }
+  }
+
+  public get isAvatarUploadLoading(): boolean {
+    return this.store?.getValue().isAvatarUploadLoading;
+  }
+
+  public set isAvatarUploadLoading(value: boolean) {
+    if (this.isAvatarUploadLoading !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        isAvatarUploadLoading: value,
+      }));
     }
   }
 }

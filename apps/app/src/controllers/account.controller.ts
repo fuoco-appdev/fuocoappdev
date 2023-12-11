@@ -177,6 +177,10 @@ class AccountController extends Controller {
     this._model.selectedProductLikes = value;
   }
 
+  public updateIsAvatarUploadLoading(value: boolean): void {
+    this._model.isAvatarUploadLoading = value;
+  }
+
   public checkIfUsernameExists(value: string): void {
     clearTimeout(this._usernameTimerId as number | undefined);
     this._usernameTimerId = setTimeout(() => {
@@ -340,22 +344,30 @@ class AccountController extends Controller {
   }
 
   public async uploadAvatarAsync(index: number, blob: Blob): Promise<void> {
-    const extension = mime.getExtension(blob.type);
-    const newFile = `public/${uuidv4()}.${extension}`;
-    if (this._model.account?.profileUrl) {
-      await BucketService.removeAsync(
+    this._model.isAvatarUploadLoading = true;
+
+    try {
+      const extension = mime.getExtension(blob.type);
+      const newFile = `public/${uuidv4()}.${extension}`;
+      if (this._model.account?.profileUrl) {
+        await BucketService.removeAsync(
+          core.StorageFolderType.Avatars,
+          this._model.account?.profileUrl
+        );
+      }
+      await BucketService.uploadPublicAsync(
         core.StorageFolderType.Avatars,
-        this._model.account?.profileUrl
+        newFile,
+        blob
       );
+      this._model.account = await AccountService.requestUpdateActiveAsync({
+        profileUrl: newFile,
+      });
+    } catch (error: any) {
+      console.error(error);
     }
-    await BucketService.uploadPublicAsync(
-      core.StorageFolderType.Avatars,
-      newFile,
-      blob
-    );
-    this._model.account = await AccountService.requestUpdateActiveAsync({
-      profileUrl: newFile,
-    });
+
+    this._model.isAvatarUploadLoading = false;
   }
 
   public async addAddressAsync(addressForm: AddressFormValues): Promise<void> {
