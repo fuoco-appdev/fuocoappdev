@@ -44,7 +44,7 @@ export class ProductLikesService {
         .select('')
         .limit(limit)
         .range(offset, offset + limit)
-        .match({ account_id: accountId });
+        .eq('account_id', accountId);
 
       if (accountProductLikesData.error) {
         console.error(accountProductLikesData.error);
@@ -179,7 +179,7 @@ export class ProductLikesService {
         const totalLikesData = await SupabaseService.client
           .from('product_likes')
           .select('', { count: 'exact' })
-          .match({ product_id: id });
+          .eq('product_id', id);
 
         if (totalLikesData.error) {
           console.error(totalLikesData.error);
@@ -198,10 +198,8 @@ export class ProductLikesService {
             const didAccountLikeData = await SupabaseService.client
               .from('product_likes')
               .select()
-              .match({
-                product_id: id,
-                account_id: accountId,
-              });
+              .eq('product_id', id)
+              .eq('account_id', accountId);
             if (didAccountLikeData.error) {
               console.error(didAccountLikeData.error);
             } else {

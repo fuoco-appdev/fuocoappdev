@@ -89,7 +89,7 @@ export default function AccountLikesTabletComponent({
                   }
                   onClick={() =>
                     onProductPreviewClick(
-                      scrollContainerRef.current?.scrollTop ?? 0,
+                      scrollContainerRef?.current?.scrollTop ?? 0,
                       product,
                       productLikesMetadata
                     )
