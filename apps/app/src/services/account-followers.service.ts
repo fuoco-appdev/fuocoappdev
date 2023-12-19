@@ -150,6 +150,35 @@ class AccountFollowersService extends Service {
 
     return accountFollowerResponse;
   }
+
+  public async requestConfirmAsync(props: {
+    accountId: string;
+    followerId: string;
+  }): Promise<core.AccountFollowerResponse | null> {
+    const session = await SupabaseService.requestSessionAsync();
+    const accountFollowerRequest = new core.AccountFollowerRequest({
+      accountId: props.accountId,
+      followerId: props.followerId,
+    });
+    const response = await axios({
+      method: 'post',
+      url: `${this.endpointUrl}/account-followers/confirm`,
+      headers: {
+        ...this.headers,
+        'Session-Token': `${session?.access_token}`,
+      },
+      data: accountFollowerRequest.toBinary(),
+      responseType: 'arraybuffer',
+    });
+
+    const arrayBuffer = new Uint8Array(response.data);
+    this.assertResponse(arrayBuffer);
+
+    const accountFollowerResponse =
+      core.AccountFollowerResponse.fromBinary(arrayBuffer);
+
+    return accountFollowerResponse;
+  }
 }
 
 export default new AccountFollowersService();

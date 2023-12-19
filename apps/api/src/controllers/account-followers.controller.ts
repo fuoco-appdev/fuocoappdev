@@ -56,6 +56,28 @@ export class AccountFollowersController {
     context.response.body = response.serializeBinary();
   }
 
+  @Post('/confirm')
+  @Guard(AuthGuard)
+  @ContentType('application/x-protobuf')
+  public async confirmAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >
+  ): Promise<void> {
+    const body = await context.request.body({ type: 'reader' });
+    const requestValue = await readAll(body.value);
+    const follower = AccountFollowerRequest.deserializeBinary(requestValue);
+    const response = await AccountFollowersService.confirmAsync(follower);
+    if (!response) {
+      throw HttpError.createError(409, `Cannot confirm follower`);
+    }
+
+    context.response.type = 'application/x-protobuf';
+    context.response.body = response.serializeBinary();
+  }
+
   @Post('/count-metadata/:id')
   @ContentType('application/x-protobuf')
   public async getAccountMetadataAsync(

@@ -52,6 +52,8 @@ export interface AccountFollowItemProps {
   onFollow?: () => void;
   onUnfollow?: () => void;
   onRequested?: () => void;
+  onConfirm?: () => void;
+  onRemove?: () => void;
 }
 
 export interface AccountFollowItemResponsiveProps
@@ -70,6 +72,8 @@ export default function AccountFollowItemComponent({
   onFollow,
   onUnfollow,
   onRequested,
+  onConfirm,
+  onRemove,
 }: AccountFollowItemProps): JSX.Element {
   const [profileUrl, setProfileUrl] = useState<string | undefined>(undefined);
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
@@ -114,6 +118,18 @@ export default function AccountFollowItemComponent({
     }, 150);
   };
 
+  const onConfirmOverride = () => {
+    setTimeout(() => {
+      onConfirm?.();
+    }, 150);
+  };
+
+  const onRemoveOverride = () => {
+    setTimeout(() => {
+      onRemove?.();
+    }, 150);
+  };
+
   const suspenceComponent = (
     <>
       <AccountFollowItemSuspenseDesktopComponent />
@@ -140,6 +156,8 @@ export default function AccountFollowItemComponent({
         onFollow={onFollowOverride}
         onUnfollow={onUnfollowOverride}
         onRequested={onRequestedOverride}
+        onConfirm={onConfirmOverride}
+        onRemove={onRemoveOverride}
       />
       <AccountFollowItemTabletComponent
         account={account}
@@ -153,6 +171,8 @@ export default function AccountFollowItemComponent({
         onFollow={onFollowOverride}
         onUnfollow={onUnfollowOverride}
         onRequested={onRequestedOverride}
+        onConfirm={onConfirmOverride}
+        onRemove={onRemoveOverride}
       />
       <AccountFollowItemMobileComponent
         account={account}
@@ -166,6 +186,8 @@ export default function AccountFollowItemComponent({
         onFollow={onFollowOverride}
         onUnfollow={onUnfollowOverride}
         onRequested={onRequestedOverride}
+        onConfirm={onConfirmOverride}
+        onRemove={onRemoveOverride}
       />
     </React.Suspense>
   );

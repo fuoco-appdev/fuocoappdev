@@ -11,6 +11,7 @@ export default function AccountFollowItemDesktopComponent({
   account,
   follower,
   customer,
+  isRequest,
   isFollowing,
   isAccepted,
   profileUrl,
@@ -18,6 +19,8 @@ export default function AccountFollowItemDesktopComponent({
   onFollow,
   onUnfollow,
   onRequested,
+  onConfirm,
+  onRemove,
 }: AccountFollowItemResponsiveProps): JSX.Element {
   const { t, i18n } = useTranslation();
 
@@ -69,56 +72,104 @@ export default function AccountFollowItemDesktopComponent({
             )}
           </div>
         </div>
-        {!isFollowing && (
-          <Button
-            classNames={{
-              button: [
-                styles['primary-button'],
-                styles['primary-button-desktop'],
-              ].join(' '),
-            }}
-            rippleProps={{
-              color: 'rgba(42, 42, 95, .35)',
-            }}
-            size={'medium'}
-            type={'primary'}
-            onClick={onFollow}
-          >
-            {t('follow')}
-          </Button>
+        {!isRequest && (
+          <>
+            {!isFollowing && (
+              <Button
+                classNames={{
+                  button: [
+                    styles['primary-button'],
+                    styles['primary-button-desktop'],
+                  ].join(' '),
+                }}
+                rippleProps={{
+                  color: 'rgba(42, 42, 95, .35)',
+                }}
+                size={'medium'}
+                type={'primary'}
+                onClick={onFollow}
+              >
+                {t('follow')}
+              </Button>
+            )}
+            {isFollowing && !isAccepted && (
+              <Button
+                classNames={{
+                  button: [
+                    styles['secondary-button'],
+                    styles['secondary-button-desktop'],
+                  ].join(' '),
+                }}
+                rippleProps={{
+                  color: 'rgba(42, 42, 95, .35)',
+                }}
+                size={'medium'}
+                type={'secondary'}
+                onClick={onRequested}
+              >
+                {t('requested')}
+              </Button>
+            )}
+            {isFollowing && isAccepted && (
+              <Button
+                classNames={{
+                  button: [
+                    styles['secondary-button'],
+                    styles['secondary-button-desktop'],
+                  ].join(' '),
+                }}
+                rippleProps={{
+                  color: 'rgba(42, 42, 95, .35)',
+                }}
+                size={'medium'}
+                type={'secondary'}
+                onClick={onUnfollow}
+              >
+                {t('following')}
+              </Button>
+            )}
+          </>
         )}
-        {isFollowing && !isAccepted && (
-          <Button
-            classNames={{
-              button: [
-                styles['secondary-button'],
-                styles['secondary-button-desktop'],
-              ].join(' '),
-            }}
-            rippleProps={{
-              color: 'rgba(42, 42, 95, .35)',
-            }}
-            size={'medium'}
-            type={'secondary'}
-            onClick={onRequested}
+        {isRequest && (
+          <div
+            className={[
+              styles['request-button-container'],
+              styles['request-button-container-desktop'],
+            ].join(' ')}
           >
-            {t('requested')}
-          </Button>
-        )}
-        {isFollowing && isAccepted && (
-          <Button
-            classNames={{
-              button: [styles['button'], styles['button-desktop']].join(' '),
-            }}
-            rippleProps={{
-              color: 'rgba(42, 42, 95, .35)',
-            }}
-            size={'medium'}
-            type={'primary'}
-            onClick={onUnfollow}
-          >
-            {t('following')}
-          </Button>
+            <Button
+              classNames={{
+                button: [
+                  styles['primary-button'],
+                  styles['primary-button-desktop'],
+                ].join(' '),
+              }}
+              rippleProps={{
+                color: 'rgba(42, 42, 95, .35)',
+              }}
+              size={'medium'}
+              type={'primary'}
+              onClick={onConfirm}
+            >
+              {t('confirm')}
+            </Button>
+            <Button
+              classNames={{
+                button: [
+                  styles['secondary-button'],
+                  styles['secondary-button-desktop'],
+                ].join(' '),
+              }}
+              rippleProps={{
+                color: 'rgba(42, 42, 95, .35)',
+              }}
+              size={'medium'}
+              type={'secondary'}
+              onClick={onRemove}
+            >
+              {t('remove')}
+            </Button>
+          </div>
         )}
       </div>
     </ResponsiveDesktop>

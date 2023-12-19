@@ -64,7 +64,12 @@ export default function AccountAddFriendsDesktopComponent({
           </div>
         </div>
         {accountProps.followRequestAccounts.length > 0 && (
-          <>
+          <div
+            className={[
+              styles['follower-request-items-container'],
+              styles['follower-request-items-container-desktop'],
+            ].join(' ')}
+          >
             <div
               className={[styles['title'], styles['title-desktop']].join(' ')}
             >
@@ -89,11 +94,24 @@ export default function AccountAddFriendsDesktopComponent({
                   customer={customerRequest}
                   isRequest={true}
                   onClick={() => {}}
+                  onConfirm={() =>
+                    AccountController.confirmFollowRequestAsync(
+                      accountFollowerRequest?.accountId ?? '',
+                      accountFollowerRequest?.followerId ?? ''
+                    )
+                  }
+                  onRemove={() =>
+                    AccountController.removeFollowRequestAsync(
+                      accountFollowerRequest?.accountId ?? '',
+                      accountFollowerRequest?.followerId ?? ''
+                    )
+                  }
                 />
               );
             })}
-          </>
+          </div>
         )}
+
         <div className={[styles['title'], styles['title-desktop']].join(' ')}>
           {t('results')}
         </div>

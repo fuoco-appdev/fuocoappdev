@@ -121,6 +121,49 @@ export class AccountFollowersService {
     return response;
   }
 
+  public async confirmAsync(
+    request: InstanceType<typeof AccountFollowerRequest>
+  ): Promise<AccountFollowerResponse | null> {
+    const accountId = request.getAccountId();
+    const followerId = request.getFollowerId();
+    const response = new AccountFollowerResponse();
+
+    if (!accountId || accountId.length <= 0) {
+      console.error('Account id cannot be undefined');
+      return null;
+    }
+
+    if (!followerId || followerId.length <= 0) {
+      console.error('Follower id cannot be undefined');
+      return null;
+    }
+
+    const { data, error } = await SupabaseService.client
+      .from('account_followers')
+      .update({ accepted: true })
+      .eq('account_id', accountId)
+      .eq('follower_id', followerId)
+      .select();
+
+    if (error) {
+      console.error(error);
+      return null;
+    }
+
+    const accountFollowerData = data.length > 0 ? data[0] : null;
+    if (!accountFollowerData) {
+      return null;
+    }
+
+    response.setAccountId(accountFollowerData.account_id);
+    response.setFollowerId(accountFollowerData.follower_id);
+    response.setIsFollowing(accountFollowerData.is_following);
+    response.setAccepted(accountFollowerData.accepted);
+    response.setCreatedAt(accountFollowerData.created_at);
+    response.setUpdatedAt(accountFollowerData.updated_at);
+    return response;
+  }
+
   //   private async findCountMetadataAsync(
   //     accountId: string
   //   ): Promise<AccountFollowerCountMetadataResponse | null> {

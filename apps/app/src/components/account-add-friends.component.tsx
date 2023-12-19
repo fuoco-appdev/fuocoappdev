@@ -56,8 +56,7 @@ export default function AccountAddFriendsComponent(): JSX.Element {
   };
 
   useEffect(() => {
-    AccountController.loadFollowRequestAccounts();
-    AccountController.loadAddFriendAccounts();
+    AccountController.loadFollowRequestsAndFriendsAccounts();
   }, []);
 
   const suspenceComponent = (

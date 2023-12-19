@@ -32,6 +32,12 @@
             }
         }
     }
+
+    & .request-button-container {
+        display: flex;
+        flex-direction: row;
+        gap: $mp-2;
+    }
 }
 
 .root:hover {

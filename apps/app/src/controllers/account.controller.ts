@@ -122,7 +122,7 @@ class AccountController extends Controller {
       });
   }
 
-  public loadFollowRequestAccounts(): void {
+  public loadFollowRequestsAndFriendsAccounts(): void {
     if (this._model.followRequestAccounts.length > 0) {
       return;
     }
@@ -136,30 +136,12 @@ class AccountController extends Controller {
             return;
           }
 
-          this.requestFollowerRequestsAsync(account.id, 0, 100);
-        },
-      });
-  }
-
-  public loadAddFriendAccounts(): void {
-    if (this._model.addFriendAccounts.length > 0) {
-      return;
-    }
-
-    this._accountSubscription?.unsubscribe();
-    this._accountSubscription = this._model.store
-      .pipe(select((model) => model.account))
-      .subscribe({
-        next: (account: core.AccountResponse | null) => {
-          if (!account) {
-            return;
-          }
-
-          this.addFriendsSearchAsync(
+          await this.addFriendsSearchAsync(
             this._model.addFriendsInput,
             0,
             this._limit
           );
+          await this.requestFollowerRequestsAsync(account.id, 0, 100);
         },
       });
   }
@@ -295,6 +277,65 @@ class AccountController extends Controller {
 
   public updateAddFriendsScrollPosition(value: number | undefined): void {
     this._model.addFriendsScrollPosition = value;
+  }
+
+  public async confirmFollowRequestAsync(
+    accountId: string,
+    followerId: string
+  ): Promise<void> {
+    try {
+      const followerRequestResponse =
+        await AccountFollowersService.requestConfirmAsync({
+          accountId: accountId,
+          followerId: followerId,
+        });
+
+      if (followerRequestResponse) {
+        const followRequestAccountFollowers = {
+          ...this._model.followRequestAccountFollowers,
+        };
+        followRequestAccountFollowers[accountId] = followerRequestResponse;
+        this._model.followRequestAccountFollowers =
+          followRequestAccountFollowers;
+
+        const index = this._model.followRequestAccounts.findIndex(
+          (value) => value.id === accountId
+        );
+        const followRequestAccounts = this._model.followRequestAccounts;
+        followRequestAccounts.splice(index, 1);
+        this._model.followRequestAccounts = followRequestAccounts;
+      }
+    } catch (error: any) {
+      console.error(error);
+    }
+  }
+
+  public async removeFollowRequestAsync(
+    accountId: string,
+    followerId: string
+  ): Promise<void> {
+    try {
+      const follower = await AccountFollowersService.requestRemoveAsync({
+        accountId: accountId,
+        followerId: followerId,
+      });
+      if (follower) {
+        const accountFollowers = {
+          ...this._model.followRequestAccountFollowers,
+        };
+        accountFollowers[follower.accountId] = follower;
+        this._model.followRequestAccountFollowers = accountFollowers;
+
+        const index = this._model.followRequestAccounts.findIndex(
+          (value) => value.id === accountId
+        );
+        const followRequestAccounts = this._model.followRequestAccounts;
+        followRequestAccounts.splice(index, 1);
+        this._model.followRequestAccounts = followRequestAccounts;
+      }
+    } catch (error: any) {
+      console.error(error);
+    }
   }
 
   public async requestFollowerRequestsAsync(
