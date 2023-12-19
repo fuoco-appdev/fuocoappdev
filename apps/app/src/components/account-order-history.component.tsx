@@ -31,6 +31,10 @@ export interface AccountOrderHistoryResponsiveProps {
 export default function AccountOrderHistoryComponent(): JSX.Element {
   const [accountProps] = useObservable(AccountController.model.store);
 
+  useEffect(() => {
+    AccountController.loadOrders();
+  }, []);
+
   const suspenceComponent = (
     <>
       <AccountOrderHistorySuspenseDesktopComponent />

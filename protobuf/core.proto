@@ -20,7 +20,7 @@ message PrivateSecrets {
     string s3_secret_access_key = 2;
 }
 
-message CustomerRequest {
+message UpdateCustomerRequest {
     string email = 1;
     string first_name = 2;
     string last_name = 3;
@@ -28,9 +28,31 @@ message CustomerRequest {
     string metadata = 5;
 }
 
-message CustomerResponse {
+message UpdateCustomerResponse {
     string data = 1;
     string password = 2;
+}
+
+message CustomersRequest {
+    repeated string customer_ids = 1;
+}
+
+message CustomerResponse {
+    string id = 1;
+    string email = 2;
+    string first_name = 3;
+    string last_name = 4;
+    string billing_address_id = 5;
+    string phone = 6;
+    bool has_account = 7;
+    string created_at = 8;
+    string updated_at = 9;
+    string deleted_at = 10;
+    string metadata = 11;
+}
+
+message CustomersResponse {
+    repeated core.CustomerResponse customers = 1;
 }
 
 message AddCustomerToGroupRequest {
@@ -84,7 +106,17 @@ message StockLocationsResponse {
     repeated string locations = 1;
 }
 
-message Account {
+message AccountRequest {
+    string id = 1;
+    string customer_id = 2;
+    string supabase_id = 3;
+    string profile_url = 4;
+    string status = 5;
+    string language_code = 7;
+    string username = 8;
+}
+
+message AccountResponse {
     string id = 1;
     string customer_id = 2;
     string supabase_id = 3;
@@ -95,8 +127,12 @@ message Account {
     string username = 8;
 }
 
-message Accounts {
-    repeated core.Account accounts = 1;
+message AccountsRequest {
+    repeated string account_ids = 1;
+}
+
+message AccountsResponse {
+    repeated core.AccountResponse accounts = 1;
 }
 
 message AccountExistsRequest {
@@ -105,6 +141,13 @@ message AccountExistsRequest {
 
 message AccountExistsResponse {
     bool exists = 1;
+}
+
+message AccountLikeRequest {
+    string query_username = 1;
+    string account_id = 2;
+    int32 offset = 3;
+    int32 limit = 4;
 }
 
 message ProductLikesMetadataRequest {
@@ -140,4 +183,38 @@ message ProductLikeResponse {
 
 message ProductLikesResponse {
     repeated core.ProductLikeResponse likes = 1;
+}
+
+message AccountFollowerRequest {
+    string account_id = 1;
+    string follower_id = 2;
+}
+
+message AccountFollowerRequestsRequest {
+    string account_id = 1;
+    int32 offset = 2;
+    int32 limit = 3;
+}
+
+message AccountFollowerResponse {
+    string account_id = 1;
+    string follower_id = 2;
+    bool is_following = 3;
+    bool accepted = 4;
+    string created_at = 5;
+    string updated_at = 6;
+}
+
+message AccountFollowerCountMetadataResponse {
+    int32 followers_count = 1;
+    int32 following_count = 2;
+}
+
+message AccountFollowersRequest {
+    string account_id = 1;
+    repeated string other_account_ids = 2;
+}
+
+message AccountFollowersResponse {
+    repeated AccountFollowerResponse followers = 1;
 }

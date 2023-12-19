@@ -64,6 +64,14 @@ export function AccountSuspenseMobileComponent(): JSX.Element {
             >
               <Skeleton style={{ width: 40, height: 40 }} borderRadius={40} />
             </div>
+            <div
+              className={[
+                styles['tab-button-container'],
+                styles['tab-button-container-mobile'],
+              ].join(' ')}
+            >
+              <Skeleton style={{ width: 40, height: 40 }} borderRadius={40} />
+            </div>
           </div>
         </div>
         <div

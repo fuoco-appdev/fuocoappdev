@@ -1,7 +1,12 @@
 import { Controller, Post, Guard, ContentType } from '../index.ts';
 import * as Oak from 'https://deno.land/x/oak@v11.1.0/mod.ts';
 import { AuthGuard } from '../guards/index.ts';
-import { Account, AccountExistsRequest } from '../protobuf/core_pb.js';
+import {
+  AccountRequest,
+  AccountsRequest,
+  AccountExistsRequest,
+  AccountLikeRequest,
+} from '../protobuf/core_pb.js';
 import * as HttpError from 'https://deno.land/x/http_errors@3.0.0/mod.ts';
 import { readAll } from 'https://deno.land/std@0.105.0/io/util.ts';
 import SupabaseService from '../services/supabase.service.ts';
@@ -27,11 +32,8 @@ export class AccountController {
 
     const body = await context.request.body({ type: 'reader' });
     const requestValue = await readAll(body.value);
-    const account = Account.deserializeBinary(requestValue);
-    const data = await AccountService.createAsync(
-      supabaseUser.data.user.id,
-      account
-    );
+    const request = AccountRequest.deserializeBinary(requestValue);
+    const data = await AccountService.createAsync(request);
     if (!data) {
       throw HttpError.createError(409, `Cannot create account`);
     }
@@ -60,44 +62,45 @@ export class AccountController {
     context.response.body = response.serializeBinary();
   }
 
-  @Post('/all')
+  @Post('/accounts')
   @Guard(AuthGuard)
   @ContentType('application/x-protobuf')
-  public async getAllAccountsAsync(
+  public async getAccountsAsync(
     context: Oak.RouterContext<
       string,
       Oak.RouteParams<string>,
       Record<string, any>
     >
   ): Promise<void> {
-    const data = await AccountService.findAllAsync();
-    if (!data) {
-      throw HttpError.createError(404, `No accounts were found`);
-    }
-
-    const accounts = AccountService.assignAndGetAccountsProtocol(data);
+    const body = await context.request.body({ type: 'reader' });
+    const requestValue = await readAll(body.value);
+    const request = AccountsRequest.deserializeBinary(requestValue);
+    const response = await AccountService.findAccountsAsync(request);
     context.response.type = 'application/x-protobuf';
-    context.response.body = accounts.serializeBinary();
+    context.response.body = response.serializeBinary();
   }
 
-  @Post('/public/all')
+  @Post('/like')
   @Guard(AuthGuard)
   @ContentType('application/x-protobuf')
-  public async getAllPublicAccountsAsync(
+  public async getLikeAsync(
     context: Oak.RouterContext<
       string,
       Oak.RouteParams<string>,
       Record<string, any>
     >
   ): Promise<void> {
-    const data = await AccountService.findAllPublicAsync();
-    if (!data) {
+    const body = await context.request.body({ type: 'reader' });
+    const requestValue = await readAll(body.value);
+    const accountLikeRequest =
+      AccountLikeRequest.deserializeBinary(requestValue);
+    const response = await AccountService.findLikeAsync(accountLikeRequest);
+    if (!response) {
       throw HttpError.createError(404, `No accounts were found`);
     }
 
-    const accounts = AccountService.assignAndGetAccountsProtocol(data);
     context.response.type = 'application/x-protobuf';
-    context.response.body = accounts.serializeBinary();
+    context.response.body = response.serializeBinary();
   }
 
   @Post('/update/:id')
@@ -113,8 +116,8 @@ export class AccountController {
     const paramsId = context.params['id'];
     const body = await context.request.body({ type: 'reader' });
     const requestValue = await readAll(body.value);
-    const account = Account.deserializeBinary(requestValue);
-    const data = await AccountService.updateAsync(paramsId, account);
+    const request = AccountRequest.deserializeBinary(requestValue);
+    const data = await AccountService.updateAsync(paramsId, request);
     if (!data) {
       throw HttpError.createError(404, `Account data not found`);
     }

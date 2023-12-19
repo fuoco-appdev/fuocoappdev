@@ -253,7 +253,7 @@ export default function StoreMobileComponent({
             style={{
               display:
                 homeLocalProps.selectedInventoryLocationId &&
-                storeProps.hasMorePreviews
+                (storeProps.hasMorePreviews || storeProps.isLoading)
                   ? 'flex'
                   : 'none',
             }}

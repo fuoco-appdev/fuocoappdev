@@ -121,6 +121,10 @@ export default function AccountLikesComponent(): JSX.Element {
   };
 
   useEffect(() => {
+    AccountController.loadLikedProducts();
+  }, []);
+
+  useEffect(() => {
     if (!accountProps.selectedLikedProduct) {
       return;
     }

@@ -98,7 +98,8 @@ class MedusaService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const customerResponse = core.CustomerResponse.fromBinary(arrayBuffer);
+    const customerResponse =
+      core.UpdateCustomerResponse.fromBinary(arrayBuffer);
     if (customerResponse.data.length <= 0) {
       return undefined;
     }
@@ -125,6 +126,34 @@ class MedusaService extends Service {
     return undefined;
   }
 
+  public async requestCustomersAsync(props: {
+    customerIds: string[];
+  }): Promise<core.CustomerResponse[] | undefined> {
+    const session = await SupabaseService.requestSessionAsync();
+    const request = new core.CustomersRequest({
+      customerIds: props.customerIds,
+    });
+    const response = await axios({
+      method: 'post',
+      url: `${this.endpointUrl}/medusa/customers`,
+      headers: {
+        ...this.headers,
+        'Session-Token': `${session?.access_token}`,
+      },
+      data: request.toBinary(),
+      responseType: 'arraybuffer',
+    });
+    const arrayBuffer = new Uint8Array(response.data);
+    this.assertResponse(arrayBuffer);
+
+    const customersResponse = core.CustomersResponse.fromBinary(arrayBuffer);
+    if (customersResponse.customers.length <= 0) {
+      return undefined;
+    }
+
+    return customersResponse.customers;
+  }
+
   public async requestUpdateCustomerAccountAsync(props: {
     email?: string;
     first_name?: string;
@@ -133,7 +162,7 @@ class MedusaService extends Service {
     metadata?: string;
   }): Promise<Customer | undefined> {
     const session = await SupabaseService.requestSessionAsync();
-    const customerRequest = new core.CustomerRequest({
+    const customerRequest = new core.UpdateCustomerRequest({
       email: props.email,
       firstName: props.first_name,
       lastName: props.last_name,
@@ -153,7 +182,8 @@ class MedusaService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const customerResponse = core.CustomerResponse.fromBinary(arrayBuffer);
+    const customerResponse =
+      core.UpdateCustomerResponse.fromBinary(arrayBuffer);
     if (customerResponse.data.length <= 0) {
       return undefined;
     }

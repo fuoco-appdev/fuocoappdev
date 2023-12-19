@@ -116,6 +116,7 @@
   "emptyInMyAppsDescription": "After we discuss your goals, your app will show up here.",
   "settingsSaved": "Settings saved",
   "settings": "Settings",
+  "addFriends": "Add Friends",
   "savedDescription": "Your changes have been successfully saved",
   "search": "Search",
   "showMore": "Show more",
@@ -269,5 +270,11 @@
   "priceDeals": "Price Deals",
   "priceDealsCallToAction": "Unlock exclusive discounts and promotions now by signing up on the platform.",
   "generalInformation": "General information",
-  "noLikedProducts": "You have no liked products."
+  "noLikedProducts": "You have no liked products.",
+  "noFriendsFound": "No friends with username '{{username, string}}' have been found.",
+  "follow": "Follow",
+  "requested": "Requested",
+  "following": "Following",
+  "results": "Results",
+  "followerRequests": "Follower requests"
 }

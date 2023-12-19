@@ -22,7 +22,10 @@ import {
 } from '@medusajs/medusa/dist/types/pricing';
 import AccountController from './account.controller';
 import ProductLikesService from '../services/product-likes.service';
-import { Account, ProductLikesMetadataResponse } from '../protobuf/core_pb';
+import {
+  AccountResponse,
+  ProductLikesMetadataResponse,
+} from '../protobuf/core_pb';
 import { AccountState } from '../models/account.model';
 
 class ProductController extends Controller {
@@ -276,7 +279,7 @@ class ProductController extends Controller {
     this._accountSubscription = AccountController.model.store
       .pipe(select((model: AccountState) => model.account))
       .subscribe({
-        next: (account: Account | undefined) => {
+        next: (account: AccountResponse | undefined) => {
           this._productIdSubscription?.unsubscribe();
           this._productIdSubscription = this._model.store
             .pipe(select((model) => model.productId))

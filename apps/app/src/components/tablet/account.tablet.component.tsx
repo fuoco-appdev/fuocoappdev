@@ -64,7 +64,7 @@ export default function AccountTabletComponent({
   let prevPreviewScrollTop = 0;
   let yPosition = 0;
 
-  const account = accountProps.account as core.Account;
+  const account = accountProps.account as core.AccountResponse;
   const customer = accountProps.customer as Customer;
   return (
     <ResponsiveTablet>
@@ -100,6 +100,35 @@ export default function AccountTabletComponent({
               styles['right-tab-container-tablet'],
             ].join(' ')}
           >
+            {account?.status === 'Complete' && (
+              <div
+                className={[
+                  styles['tab-button-container'],
+                  styles['tab-button-container-tablet'],
+                ].join(' ')}
+              >
+                <Button
+                  touchScreen={true}
+                  classNames={{
+                    button: styles['button'],
+                  }}
+                  rippleProps={{
+                    color: 'rgba(88, 40, 109, .35)',
+                  }}
+                  onClick={() =>
+                    setTimeout(
+                      () => navigate(RoutePathsType.AccountAddFriends),
+                      75
+                    )
+                  }
+                  type={'text'}
+                  rounded={true}
+                  floatingLabel={t('addFriends') ?? ''}
+                  size={'tiny'}
+                  icon={<Line.PersonAddAlt1 size={24} color={'#2A2A5F'} />}
+                />
+              </div>
+            )}
             <div
               className={[
                 styles['tab-button-container'],

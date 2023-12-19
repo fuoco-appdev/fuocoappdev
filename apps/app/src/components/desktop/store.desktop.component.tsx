@@ -283,7 +283,7 @@ export default function StoreDesktopComponent({
               style={{
                 display:
                   homeLocalProps.selectedInventoryLocationId &&
-                  storeProps.hasMorePreviews
+                  (storeProps.hasMorePreviews || storeProps.isLoading)
                     ? 'flex'
                     : 'none',
               }}

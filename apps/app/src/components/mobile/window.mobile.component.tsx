@@ -57,7 +57,7 @@ export default function WindowMobileComponent({
     setTimeout(() => setActiveRoute(windowProps.activeRoute), 75);
   }, [windowProps.activeRoute]);
 
-  const account = windowProps.account as core.Account;
+  const account = windowProps.account as core.AccountResponse;
   const customer = accountProps.customer as Customer;
 
   return (
@@ -336,6 +336,18 @@ export default function WindowMobileComponent({
                             )}
                           >
                             {t('orderConfirmed')}
+                          </div>
+                        </>
+                      )}
+                      {activeRoute === RoutePathsType.AccountAddFriends && (
+                        <>
+                          <Line.PersonAddAlt1 size={22} />
+                          <div
+                            className={[styles['navigation-back-title']].join(
+                              ' '
+                            )}
+                          >
+                            {t('addFriends')}
                           </div>
                         </>
                       )}

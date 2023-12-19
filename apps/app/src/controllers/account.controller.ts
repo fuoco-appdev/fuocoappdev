@@ -32,15 +32,18 @@ import { ProductLikesMetadataResponse } from '../protobuf/core_pb';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import StoreController from './store.controller';
 import CartController from './cart.controller';
+import AccountFollowersService from '../services/account-followers.service';
 
 class AccountController extends Controller {
   private readonly _model: AccountModel;
   private readonly _limit: number;
   private _usernameTimerId: NodeJS.Timeout | number | undefined;
+  private _addFriendsTimerId: NodeJS.Timeout | number | undefined;
   private _activeAccountSubscription: Subscription | undefined;
   private _userSubscription: Subscription | undefined;
   private _selectedInventoryLocationIdSubscription: Subscription | undefined;
   private _medusaAccessTokenSubscription: Subscription | undefined;
+  private _accountSubscription: Subscription | undefined;
 
   constructor() {
     super();
@@ -74,10 +77,91 @@ class AccountController extends Controller {
 
   public override dispose(renderCount: number): void {
     clearTimeout(this._usernameTimerId as number | undefined);
+    this._accountSubscription?.unsubscribe();
     this._medusaAccessTokenSubscription?.unsubscribe();
     this._selectedInventoryLocationIdSubscription?.unsubscribe();
     this._activeAccountSubscription?.unsubscribe();
     this._userSubscription?.unsubscribe();
+  }
+
+  public loadLikedProducts(): void {
+    if (this._model.likedProducts.length > 0) {
+      return;
+    }
+
+    this._accountSubscription?.unsubscribe();
+    this._accountSubscription = this._model.store
+      .pipe(select((model) => model.account))
+      .subscribe({
+        next: (account: core.AccountResponse | null) => {
+          if (!account) {
+            return;
+          }
+
+          this.requestLikedProductsAsync();
+        },
+      });
+  }
+
+  public loadOrders(): void {
+    if (this._model.orders.length > 0) {
+      return;
+    }
+
+    this._accountSubscription?.unsubscribe();
+    this._accountSubscription = this._model.store
+      .pipe(select((model) => model.account))
+      .subscribe({
+        next: (account: core.AccountResponse | null) => {
+          if (!account) {
+            return;
+          }
+
+          this.requestOrdersAsync();
+        },
+      });
+  }
+
+  public loadFollowRequestAccounts(): void {
+    if (this._model.followRequestAccounts.length > 0) {
+      return;
+    }
+
+    this._accountSubscription?.unsubscribe();
+    this._accountSubscription = this._model.store
+      .pipe(select((model) => model.account))
+      .subscribe({
+        next: async (account: core.AccountResponse | null) => {
+          if (!account) {
+            return;
+          }
+
+          this.requestFollowerRequestsAsync(account.id, 0, 100);
+        },
+      });
+  }
+
+  public loadAddFriendAccounts(): void {
+    if (this._model.addFriendAccounts.length > 0) {
+      return;
+    }
+
+    this._accountSubscription?.unsubscribe();
+    this._accountSubscription = this._model.store
+      .pipe(select((model) => model.account))
+      .subscribe({
+        next: (account: core.AccountResponse | null) => {
+          if (!account) {
+            return;
+          }
+
+          this.addFriendsSearchAsync(
+            this._model.addFriendsInput,
+            0,
+            this._limit
+          );
+        },
+      });
   }
 
   public async onNextOrderScrollAsync(): Promise<void> {
@@ -99,6 +183,20 @@ class AccountController extends Controller {
     this._model.likedProductPagination = this._model.likedProductPagination + 1;
     const offset = this._limit * (this._model.likedProductPagination - 1);
     await this.requestLikedProductsAsync(offset, this._limit);
+  }
+
+  public async onNextAddFriendsScrollAsync(): Promise<void> {
+    if (this._model.areAddFriendsLoading) {
+      return;
+    }
+
+    this._model.addFriendsPagination = this._model.addFriendsPagination + 1;
+    const offset = this._limit * (this._model.addFriendsPagination - 1);
+    await this.addFriendsSearchAsync(
+      this._model.addFriendsInput,
+      offset,
+      this._limit
+    );
   }
 
   public updateProfile(value: ProfileFormValues): void {
@@ -142,17 +240,19 @@ class AccountController extends Controller {
 
   public updateActiveTabId(value: string): void {
     this._model.prevTabIndex = this._model.activeTabIndex;
-    this._model.activeTabId = value;
 
     switch (value) {
       case RoutePathsType.AccountLikes:
         this._model.activeTabIndex = 1;
+        this._model.activeTabId = value;
         break;
       case RoutePathsType.AccountOrderHistory:
         this._model.activeTabIndex = 2;
+        this._model.activeTabId = value;
         break;
       case RoutePathsType.AccountAddresses:
         this._model.activeTabIndex = 3;
+        this._model.activeTabId = value;
         break;
       default:
         break;
@@ -179,6 +279,194 @@ class AccountController extends Controller {
 
   public updateIsAvatarUploadLoading(value: boolean): void {
     this._model.isAvatarUploadLoading = value;
+  }
+
+  public updateAddFriendsInput(value: string): void {
+    this._model.addFriendsInput = value;
+    this._model.addFriendsPagination = 1;
+    this._model.addFriendAccounts = [];
+    this._model.hasMoreAddFriends = true;
+
+    clearTimeout(this._addFriendsTimerId as number | undefined);
+    this._addFriendsTimerId = setTimeout(() => {
+      this.addFriendsSearchAsync(value, 0, this._limit);
+    }, 750);
+  }
+
+  public updateAddFriendsScrollPosition(value: number | undefined): void {
+    this._model.addFriendsScrollPosition = value;
+  }
+
+  public async requestFollowerRequestsAsync(
+    accountId: string,
+    offset: number = 0,
+    limit: number = 10,
+    force: boolean = false
+  ): Promise<void> {
+    if (!force && this._model.areFollowRequestAccountsLoading) {
+      return;
+    }
+
+    try {
+      const requestedFollowersResponse =
+        await AccountFollowersService.requestFollowerRequestsAsync({
+          accountId: accountId,
+          limit: this._limit,
+          offset: 0,
+        });
+
+      if (
+        !requestedFollowersResponse?.followers ||
+        requestedFollowersResponse.followers.length <= 0
+      ) {
+        this._model.areFollowRequestAccountsLoading = false;
+        return;
+      }
+
+      const followRequestAccountFollowers = {
+        ...this._model.followRequestAccountFollowers,
+      };
+      for (const follower of requestedFollowersResponse.followers) {
+        followRequestAccountFollowers[follower.accountId] = follower;
+      }
+      this._model.followRequestAccountFollowers = followRequestAccountFollowers;
+    } catch (error: any) {
+      console.error(error);
+    }
+
+    try {
+      const accountIds = Object.values(
+        this._model.followRequestAccountFollowers
+      ).map((value) => value.accountId);
+      const accountsResponse = await AccountService.requestAccountsAsync(
+        accountIds
+      );
+      if (!accountsResponse.accounts || accountsResponse.accounts.length <= 0) {
+        this._model.areFollowRequestAccountsLoading = false;
+        return;
+      }
+
+      if (offset > 0) {
+        const followRequestAccounts = this._model.followRequestAccounts;
+        this._model.followRequestAccounts = followRequestAccounts.concat(
+          accountsResponse.accounts
+        );
+      } else {
+        this._model.followRequestAccounts = accountsResponse.accounts;
+      }
+    } catch (error: any) {
+      console.error(error);
+    }
+
+    try {
+      const customerIds = this._model.followRequestAccounts.map(
+        (value) => value.customerId
+      );
+      const customersResponse = await MedusaService.requestCustomersAsync({
+        customerIds: customerIds,
+      });
+      if (customersResponse) {
+        const followRequestCustomers = {
+          ...this._model.followRequestCustomers,
+        };
+        for (const customer of customersResponse) {
+          followRequestCustomers[customer.id] = customer;
+        }
+
+        this._model.followRequestCustomers = followRequestCustomers;
+      }
+    } catch (error: any) {
+      console.error(error);
+    }
+
+    this._model.areFollowRequestAccountsLoading = false;
+  }
+
+  public async addFriendsSearchAsync(
+    query: string,
+    offset: number = 0,
+    limit: number = 10,
+    force: boolean = false
+  ): Promise<void> {
+    if (!force && this._model.areAddFriendsLoading) {
+      return;
+    }
+
+    this._model.areAddFriendsLoading = true;
+
+    try {
+      const accountsResponse = await AccountService.requestLikeAsync({
+        queryUsername: query,
+        accountId: this._model.account?.id ?? '',
+        offset: offset,
+        limit: limit,
+      });
+
+      if (!accountsResponse.accounts || accountsResponse.accounts.length <= 0) {
+        this._model.hasMoreAddFriends = false;
+        this._model.areAddFriendsLoading = false;
+        return;
+      }
+
+      if (accountsResponse.accounts.length < limit) {
+        this._model.hasMoreAddFriends = false;
+      } else {
+        this._model.hasMoreAddFriends = true;
+      }
+
+      if (offset > 0) {
+        const addFriendsAccount = this._model.addFriendAccounts;
+        this._model.addFriendAccounts = addFriendsAccount.concat(
+          accountsResponse.accounts
+        );
+      } else {
+        this._model.addFriendAccounts = accountsResponse.accounts;
+      }
+    } catch (error: any) {
+      console.error(error);
+    }
+
+    try {
+      const otherAccountIds = this._model.addFriendAccounts.map(
+        (value) => value.id
+      );
+      const followerResponse =
+        await AccountFollowersService.requestFollowersAsync({
+          accountId: this._model.account?.id ?? '',
+          otherAccountIds: otherAccountIds,
+        });
+
+      const addFriendsAccountFollowers = {
+        ...this._model.addFriendAccountFollowers,
+      };
+      for (const follower of followerResponse?.followers ?? []) {
+        addFriendsAccountFollowers[follower.followerId] = follower;
+        this._model.addFriendAccountFollowers = addFriendsAccountFollowers;
+      }
+    } catch (error: any) {
+      console.error(error);
+    }
+
+    try {
+      const customerIds = this._model.addFriendAccounts.map(
+        (value) => value.customerId
+      );
+      const customersResponse = await MedusaService.requestCustomersAsync({
+        customerIds: customerIds,
+      });
+      if (customersResponse) {
+        const addFriendCustomers = { ...this._model.addFriendCustomers };
+        for (const customer of customersResponse) {
+          addFriendCustomers[customer.id] = customer;
+        }
+
+        this._model.addFriendCustomers = addFriendCustomers;
+      }
+    } catch (error: any) {
+      console.error(error);
+    }
+
+    this._model.areAddFriendsLoading = false;
   }
 
   public checkIfUsernameExists(value: string): void {
@@ -459,18 +747,55 @@ class AccountController extends Controller {
     id: string,
     metadata: ProductLikesMetadataResponse
   ): void {
-    const metadataIndex = this._model.productLikesMetadata.findIndex(
-      (value) => value.productId === id
-    );
-    let productLikesMetadata = [...this._model.productLikesMetadata];
-    productLikesMetadata[metadataIndex] = metadata;
+    let productLikesMetadata = { ...this._model.productLikesMetadata };
+    productLikesMetadata[id] = metadata;
 
     if (!metadata.didAccountLike) {
-      productLikesMetadata.splice(metadataIndex, 1);
+      delete productLikesMetadata[id];
     }
 
     this._model.productLikesMetadata = productLikesMetadata;
     this.requestLikedProductsAsync(0, this._limit);
+  }
+
+  public async requestFollowAsync(id: string): Promise<void> {
+    if (!this._model.account) {
+      return;
+    }
+
+    try {
+      const follower = await AccountFollowersService.requestAddAsync({
+        accountId: this._model.account.id,
+        followerId: id,
+      });
+      if (follower) {
+        const accountFollowers = { ...this._model.addFriendAccountFollowers };
+        accountFollowers[follower.followerId] = follower;
+        this._model.addFriendAccountFollowers = accountFollowers;
+      }
+    } catch (error: any) {
+      console.error(error);
+    }
+  }
+
+  public async requestUnfollowAsync(id: string): Promise<void> {
+    if (!this._model.account) {
+      return;
+    }
+
+    try {
+      const follower = await AccountFollowersService.requestRemoveAsync({
+        accountId: this._model.account.id,
+        followerId: id,
+      });
+      if (follower) {
+        const accountFollowers = { ...this._model.addFriendAccountFollowers };
+        accountFollowers[follower.followerId] = follower;
+        this._model.addFriendAccountFollowers = accountFollowers;
+      }
+    } catch (error: any) {
+      console.error(error);
+    }
   }
 
   private async getUsernameErrorsAsync(
@@ -510,31 +835,38 @@ class AccountController extends Controller {
 
     this._model.areOrdersLoading = true;
 
-    const orders = await MedusaService.requestOrdersAsync(
-      this._model.customer.id,
-      {
-        offset: offset,
-        limit: limit,
-      }
-    );
+    try {
+      const orders = await MedusaService.requestOrdersAsync(
+        this._model.customer.id,
+        {
+          offset: offset,
+          limit: limit,
+        }
+      );
 
-    if (!orders || orders.length <= 0) {
+      if (!orders || orders.length <= 0) {
+        this._model.hasMoreOrders = false;
+        this._model.areOrdersLoading = false;
+        return;
+      }
+
+      if (orders.length < limit) {
+        this._model.hasMoreOrders = false;
+      } else {
+        this._model.hasMoreOrders = true;
+      }
+
+      if (offset <= 0) {
+        this._model.orders = [];
+      }
+
+      this._model.orders = this._model.orders.concat(orders);
+    } catch (error: any) {
+      console.error(error);
       this._model.hasMoreOrders = false;
       this._model.areOrdersLoading = false;
-      return;
     }
 
-    if (orders.length < limit) {
-      this._model.hasMoreOrders = false;
-    } else {
-      this._model.hasMoreOrders = true;
-    }
-
-    if (offset <= 0) {
-      this._model.orders = [];
-    }
-
-    this._model.orders = this._model.orders.concat(orders);
     this._model.areOrdersLoading = false;
   }
 
@@ -583,68 +915,72 @@ class AccountController extends Controller {
         this._model.hasMoreLikes = true;
       }
 
-      if (offset > 0) {
-        const productLikesMetadata = this._model.productLikesMetadata;
-        this._model.productLikesMetadata = productLikesMetadata.concat(
-          productLikesMetadataResponse.metadata
-        );
-      } else {
-        this._model.productLikesMetadata =
-          productLikesMetadataResponse.metadata;
+      const productLikesMetadata = { ...this._model.productLikesMetadata };
+      for (const metadata of productLikesMetadataResponse.metadata) {
+        productLikesMetadata[metadata.productId] = metadata;
       }
+      this._model.productLikesMetadata = productLikesMetadata;
 
       productIds = productLikesMetadataResponse.metadata.map(
         (value) => value.productId
       );
     } catch (error: any) {
       console.error(error);
+      this._model.areLikedProductsLoading = false;
+      this._model.hasMoreLikes = false;
     }
 
     if (productIds.length <= 0) {
       this._model.areLikedProductsLoading = false;
       this._model.hasMoreLikes = false;
-      this._model.productLikesMetadata = [];
+      this._model.productLikesMetadata = {};
       this._model.likedProducts = [];
       return;
     }
 
-    const { selectedRegion, selectedSalesChannel } = StoreController.model;
-    const { cart } = CartController.model;
-    const productsResponse = await MedusaService.medusa?.products.list({
-      id: productIds,
-      sales_channel_id: [selectedSalesChannel?.id ?? ''],
-      ...(selectedRegion && {
-        region_id: selectedRegion.id,
-        currency_code: selectedRegion.currency_code,
-      }),
-      ...(cart && { cart_id: cart.id }),
-    });
-    const products = productsResponse?.products ?? [];
-    products.sort((a, b) => {
-      const currentId = a['id'] ?? '';
-      const nextId = b['id'] ?? '';
+    try {
+      const { selectedRegion, selectedSalesChannel } = StoreController.model;
+      const { cart } = CartController.model;
+      const productsResponse = await MedusaService.medusa?.products.list({
+        id: productIds,
+        sales_channel_id: [selectedSalesChannel?.id ?? ''],
+        ...(selectedRegion && {
+          region_id: selectedRegion.id,
+          currency_code: selectedRegion.currency_code,
+        }),
+        ...(cart && { cart_id: cart.id }),
+      });
+      const products = productsResponse?.products ?? [];
+      products.sort((a, b) => {
+        const currentId = a['id'] ?? '';
+        const nextId = b['id'] ?? '';
 
-      if (productIds.indexOf(currentId) > productIds.indexOf(nextId)) {
-        return 1;
-      } else {
-        return -1;
-      }
-    });
-    for (let i = 0; i < products.length; i++) {
-      for (const variant of products[i].variants) {
-        const price = variant.prices?.find(
-          (value) => value.region_id === selectedRegion?.id
-        );
-        if (!price) {
-          products.splice(i, 1);
+        if (productIds.indexOf(currentId) > productIds.indexOf(nextId)) {
+          return 1;
+        } else {
+          return -1;
+        }
+      });
+      for (let i = 0; i < products.length; i++) {
+        for (const variant of products[i].variants) {
+          const price = variant.prices?.find(
+            (value) => value.region_id === selectedRegion?.id
+          );
+          if (!price) {
+            products.splice(i, 1);
+          }
         }
       }
-    }
 
-    if (offset > 0) {
-      this._model.likedProducts = this._model.likedProducts.concat(products);
-    } else {
-      this._model.likedProducts = products;
+      if (offset > 0) {
+        this._model.likedProducts = this._model.likedProducts.concat(products);
+      } else {
+        this._model.likedProducts = products;
+      }
+    } catch (error: any) {
+      console.error(error);
+      this._model.areLikedProductsLoading = false;
+      this._model.hasMoreLikes = false;
     }
 
     this._model.areLikedProductsLoading = false;
@@ -705,6 +1041,14 @@ class AccountController extends Controller {
     this._model.ordersScrollPosition = undefined;
     this._model.isCreateCustomerLoading = false;
     this._model.isUpdateGeneralInfoLoading = false;
+    this._model.addFriendAccounts = [];
+    this._model.addFriendsInput = '';
+    this._model.addFriendsPagination = 1;
+    this._model.addFriendsScrollPosition = undefined;
+    this._model.addFriendAccountFollowers = {};
+    this._model.followRequestAccounts = [];
+    this._model.followRequestAccountFollowers = {};
+    this._model.followRequestCustomers = {};
   }
 
   private async initializeAsync(renderCount: number): Promise<void> {
@@ -725,7 +1069,7 @@ class AccountController extends Controller {
   }
 
   private async onActiveAccountChangedAsync(
-    value: core.Account | null
+    value: core.AccountResponse | null
   ): Promise<void> {
     if (
       !value ||
@@ -789,13 +1133,6 @@ class AccountController extends Controller {
       }
     } else {
       this._model.account = value;
-    }
-
-    try {
-      await this.requestLikedProductsAsync();
-      await this.requestOrdersAsync();
-    } catch (error: any) {
-      console.error(error);
     }
   }
 

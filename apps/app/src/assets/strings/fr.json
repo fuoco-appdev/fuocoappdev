@@ -116,6 +116,7 @@
   "emptyInMyAppsDescription": "Après avoir discuté de vos objectifs, votre application apparaîtra ici.",
   "settingsSaved": "Paramètres enregistrés",
   "settings": "Paramètres",
+  "addFriends": "Ajouter des amis",
   "savedDescription": "Vos modifications ont été enregistrées avec succès",
   "search": "Rechercher",
   "showMore": "Voir plus",
@@ -269,5 +270,11 @@
   "priceDeals": "Offres De Prix",
   "priceDealsCallToAction": "Débloquez des remises et des promotions exclusives en vous inscrivant sur la plateforme.",
   "generalInformation": "Informations générales",
-  "noLikedProducts": "Vous n'avez pas de produits aimés."
+  "noLikedProducts": "Vous n'avez pas de produits aimés.",
+  "noFriendsFound": "Aucun ami avec le nom d'utilisateur '{{username, string}}' n'a été trouvé.",
+  "follow": "Suivre",
+  "requested": "Demandé",
+  "following": "Suivant",
+  "results": "Résultats",
+  "followerRequests": "Demandes de followers"
 }

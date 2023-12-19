@@ -1,7 +1,8 @@
 import { AuthGuard } from '../guards/auth.guard.ts';
 import * as Oak from 'https://deno.land/x/oak@v11.1.0/mod.ts';
 import {
-  CustomerRequest,
+  UpdateCustomerRequest,
+  CustomersRequest,
   OrdersRequest,
   ProductCountRequest,
   AddCustomerToGroupRequest,
@@ -75,10 +76,11 @@ export class MedusaController {
     const token = context.request.headers.get('session-token') ?? '';
     const body = await context.request.body({ type: 'reader' });
     const requestValue = await readAll(body.value);
-    const customerRequest = CustomerRequest.deserializeBinary(requestValue);
+    const updateCustomerRequest =
+      UpdateCustomerRequest.deserializeBinary(requestValue);
     const response = await MedusaService.updateCustomerAccountAsync(
       token,
-      customerRequest
+      updateCustomerRequest
     );
     context.response.type = 'application/x-protobuf';
     context.response.body = response.serializeBinary();
@@ -158,6 +160,24 @@ export class MedusaController {
     const requestValue = await readAll(body.value);
     const priceListsRequest = PriceListsRequest.deserializeBinary(requestValue);
     const response = await MedusaService.getPriceListsAsync(priceListsRequest);
+    context.response.type = 'application/x-protobuf';
+    context.response.body = response.serializeBinary();
+  }
+
+  @Post('/customers')
+  @Guard(AuthGuard)
+  @ContentType('application/x-protobuf')
+  public async getCustomersAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >
+  ): Promise<void> {
+    const body = await context.request.body({ type: 'reader' });
+    const requestValue = await readAll(body.value);
+    const customersRequest = CustomersRequest.deserializeBinary(requestValue);
+    const response = await MedusaService.getCustomersAsync(customersRequest);
     context.response.type = 'application/x-protobuf';
     context.response.body = response.serializeBinary();
   }

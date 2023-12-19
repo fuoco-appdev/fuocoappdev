@@ -17,6 +17,7 @@ import NotificationsComponent from './components/notifications.component';
 import AccountEventsComponent from './components/account-events.component';
 import AccountOrderHistoryComponent from './components/account-order-history.component';
 import AccountAddressesComponent from './components/account-addresses.component';
+import AccountAddFriendsComponent from './components/account-add-friends.component';
 import AccountSettingsComponent from './components/account-settings.component';
 import CheckoutComponent from './components/checkout.component';
 import OrderConfirmedComponent from './components/order-confirmed.component';
@@ -49,6 +50,7 @@ export enum RoutePathsType {
   AccountAddresses = '/account/addresses',
   AccountLikes = '/account/likes',
   AccountHelp = '/account/help',
+  AccountAddFriends = '/account/add-friends',
   AccountSettings = '/account/settings',
   AccountSettingsAccount = '/account/settings/account',
   OrderConfirmed = '/order/confirmed',
@@ -149,6 +151,10 @@ export const getRoutePaths = (): RouteObject[] => [
       {
         path: RoutePathsType.AccountHelp,
         element: <HelpComponent />,
+      },
+      {
+        path: RoutePathsType.AccountAddFriends,
+        element: <AccountAddFriendsComponent />,
       },
       {
         path: RoutePathsType.AccountSettings,

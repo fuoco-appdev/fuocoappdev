@@ -80,7 +80,12 @@ export default function AccountOrderHistoryMobileComponent({
               styles['loading-ring'],
               styles['loading-ring-mobile'],
             ].join(' ')}
-            style={{ display: accountProps.hasMoreOrders ? 'flex' : 'none' }}
+            style={{
+              display:
+                accountProps.hasMoreOrders || accountProps.areOrdersLoading
+                  ? 'flex'
+                  : 'none',
+            }}
           />
           {!accountProps.areOrdersLoading && orders.length <= 0 && (
             <>

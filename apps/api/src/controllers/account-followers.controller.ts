@@ -2,22 +2,21 @@ import { Controller, Post, Guard, ContentType } from '../index.ts';
 import * as Oak from 'https://deno.land/x/oak@v11.1.0/mod.ts';
 import { AuthGuard } from '../guards/index.ts';
 import {
-  AccountResponse,
-  ProductLikeRequest,
-  ProductLikesMetadataRequest,
-  AccountProductLikesMetadataRequest,
+  AccountFollowersRequest,
+  AccountFollowerRequest,
+  AccountFollowerRequestsRequest,
 } from '../protobuf/core_pb.js';
 import * as HttpError from 'https://deno.land/x/http_errors@3.0.0/mod.ts';
 import { readAll } from 'https://deno.land/std@0.105.0/io/util.ts';
 import SupabaseService from '../services/supabase.service.ts';
-import ProductLikesService from '../services/product-likes.service.ts';
+import AccountFollowersService from '../services/account-followers.service.ts';
 
-@Controller('/product-likes')
-export class ProductLikesController {
+@Controller('/account-followers')
+export class AccountFollowersController {
   @Post('/add')
   @Guard(AuthGuard)
   @ContentType('application/x-protobuf')
-  public async addLikeAsync(
+  public async addAsync(
     context: Oak.RouterContext<
       string,
       Oak.RouteParams<string>,
@@ -26,10 +25,10 @@ export class ProductLikesController {
   ): Promise<void> {
     const body = await context.request.body({ type: 'reader' });
     const requestValue = await readAll(body.value);
-    const productLike = ProductLikeRequest.deserializeBinary(requestValue);
-    const response = await ProductLikesService.upsertAsync(productLike);
+    const follower = AccountFollowerRequest.deserializeBinary(requestValue);
+    const response = await AccountFollowersService.upsertAsync(follower);
     if (!response) {
-      throw HttpError.createError(409, `Cannot add product like`);
+      throw HttpError.createError(409, `Cannot add follower`);
     }
     context.response.type = 'application/x-protobuf';
     context.response.body = response.serializeBinary();
@@ -38,7 +37,7 @@ export class ProductLikesController {
   @Post('/remove')
   @Guard(AuthGuard)
   @ContentType('application/x-protobuf')
-  public async removeLikeAsync(
+  public async removeAsync(
     context: Oak.RouterContext<
       string,
       Oak.RouteParams<string>,
@@ -47,40 +46,17 @@ export class ProductLikesController {
   ): Promise<void> {
     const body = await context.request.body({ type: 'reader' });
     const requestValue = await readAll(body.value);
-    const productLike = ProductLikeRequest.deserializeBinary(requestValue);
-    const response = await ProductLikesService.deleteAsync(productLike);
+    const follower = AccountFollowerRequest.deserializeBinary(requestValue);
+    const response = await AccountFollowersService.deleteAsync(follower);
     if (!response) {
-      throw HttpError.createError(409, `Cannot remove product like`);
+      throw HttpError.createError(409, `Cannot remove follower`);
     }
 
     context.response.type = 'application/x-protobuf';
     context.response.body = response.serializeBinary();
   }
 
-  @Post('/metadata')
-  @ContentType('application/x-protobuf')
-  public async getMetadataAsync(
-    context: Oak.RouterContext<
-      string,
-      Oak.RouteParams<string>,
-      Record<string, any>
-    >
-  ): Promise<void> {
-    const body = await context.request.body({ type: 'reader' });
-    const requestValue = await readAll(body.value);
-    const metadataRequest =
-      ProductLikesMetadataRequest.deserializeBinary(requestValue);
-    const response = await ProductLikesService.getMetadataAsync(
-      metadataRequest
-    );
-    if (!response) {
-      throw HttpError.createError(409, `Cannot find metadata`);
-    }
-    context.response.type = 'application/x-protobuf';
-    context.response.body = response.serializeBinary();
-  }
-
-  @Post('/account-metadata')
+  @Post('/count-metadata/:id')
   @ContentType('application/x-protobuf')
   public async getAccountMetadataAsync(
     context: Oak.RouterContext<
@@ -89,15 +65,58 @@ export class ProductLikesController {
       Record<string, any>
     >
   ): Promise<void> {
+    const paramsId = context.params['id'];
+    // const response = await AccountFollowersService.getCountMetadataAsync(
+    //   paramsId
+    // );
+    // if (!response) {
+    //   throw HttpError.createError(409, `Cannot find metadata`);
+    // }
+    // context.response.type = 'application/x-protobuf';
+    // context.response.body = response.serializeBinary();
+  }
+
+  @Post('/requests')
+  @ContentType('application/x-protobuf')
+  public async getRequestsAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >
+  ): Promise<void> {
     const body = await context.request.body({ type: 'reader' });
     const requestValue = await readAll(body.value);
-    const metadataRequest =
-      AccountProductLikesMetadataRequest.deserializeBinary(requestValue);
-    const response = await ProductLikesService.getAccountMetadataAsync(
-      metadataRequest
+    const followerRequestsRequest =
+      AccountFollowerRequestsRequest.deserializeBinary(requestValue);
+    const response = await AccountFollowersService.getRequestsAsync(
+      followerRequestsRequest
     );
     if (!response) {
-      throw HttpError.createError(409, `Cannot find metadata`);
+      throw HttpError.createError(409, `Cannot find followers`);
+    }
+    context.response.type = 'application/x-protobuf';
+    context.response.body = response.serializeBinary();
+  }
+
+  @Post('/followers')
+  @ContentType('application/x-protobuf')
+  public async getFollowersAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >
+  ): Promise<void> {
+    const body = await context.request.body({ type: 'reader' });
+    const requestValue = await readAll(body.value);
+    const followersRequest =
+      AccountFollowersRequest.deserializeBinary(requestValue);
+    const response = await AccountFollowersService.getFollowersAsync(
+      followersRequest
+    );
+    if (!response) {
+      throw HttpError.createError(409, `Cannot find followers`);
     }
     context.response.type = 'application/x-protobuf';
     context.response.body = response.serializeBinary();

@@ -1,8 +1,11 @@
 import axiod from 'https://deno.land/x/axiod@0.26.2/mod.ts';
 import {
   StockLocationsResponse,
+  UpdateCustomerResponse,
+  CustomersRequest,
+  CustomersResponse,
   CustomerResponse,
-  CustomerRequest,
+  UpdateCustomerRequest,
   AddCustomerToGroupRequest,
   RemoveCustomerFromGroupRequest,
   CustomerGroupResponse,
@@ -37,7 +40,7 @@ class MedusaService {
   public async getCustomerAsync(
     sessionToken: string,
     supabaseId: string
-  ): Promise<InstanceType<typeof CustomerResponse>> {
+  ): Promise<InstanceType<typeof UpdateCustomerResponse>> {
     const account = await AccountService.findAsync(supabaseId);
     let customerDataList: any[];
     if (account && account?.customer_id) {
@@ -69,7 +72,7 @@ class MedusaService {
       customerDataList = customerResponse?.data['customers'] ?? [];
     }
 
-    const customer = new CustomerResponse();
+    const updateCustomer = new UpdateCustomerResponse();
     if (customerDataList.length > 0) {
       for (const customerData of customerDataList) {
         const updateParams = new URLSearchParams({
@@ -89,28 +92,69 @@ class MedusaService {
           );
 
           const updatedCustomerData = updateCustomerResponse.data['customer'];
-          customer.setData(JSON.stringify(updatedCustomerData));
-          customer.setPassword(sessionToken);
+          updateCustomer.setData(JSON.stringify(updatedCustomerData));
+          updateCustomer.setPassword(sessionToken);
         } catch (error: any) {
           console.error(error);
         }
       }
     }
 
-    return customer;
+    return updateCustomer;
+  }
+
+  public async getCustomersAsync(
+    request: InstanceType<typeof CustomersRequest>
+  ): Promise<InstanceType<typeof CustomersResponse>> {
+    const customerIds = request.getCustomerIdsList();
+    const response = new CustomersResponse();
+    const formattedIds = customerIds.toString();
+    const customersResponse = await SupabaseService.client
+      .from('customer')
+      .select()
+      .filter('id', 'in', `(${formattedIds})`);
+
+    if (customersResponse.error) {
+      console.error(customersResponse.error);
+      return response;
+    }
+
+    for (const customer of customersResponse.data) {
+      const customerResponse = new CustomerResponse();
+      customer?.id && customerResponse.setId(customer.id);
+      customer?.email && customerResponse.setEmail(customer.email);
+      customer?.first_name &&
+        customerResponse.setFirstName(customer.first_name);
+      customer?.last_name && customerResponse.setLastName(customer.last_name);
+      customer?.billing_address_id &&
+        customerResponse.setBillingAddressId(customer.billing_address_id);
+      customer?.phone && customerResponse.setPhone(customer.phone);
+      customer?.has_account &&
+        customerResponse.setHasAccount(customer.has_account);
+      customer?.created_at &&
+        customerResponse.setCreatedAt(customer.created_at);
+      customer?.updated_at &&
+        customerResponse.setUpdatedAt(customer.updated_at);
+      customer?.deleted_at &&
+        customerResponse.setDeletedAt(customer.deleted_at);
+      customer?.metadata && customerResponse.setMetadata(customer.metadata);
+      response.addCustomers(customerResponse);
+    }
+
+    return response;
   }
 
   public async updateCustomerAccountAsync(
     sessionToken: string,
-    request: InstanceType<typeof CustomerRequest>
-  ): Promise<InstanceType<typeof CustomerResponse>> {
+    request: InstanceType<typeof UpdateCustomerRequest>
+  ): Promise<InstanceType<typeof UpdateCustomerResponse>> {
     const email = request.getEmail();
     const firstName = request.getFirstName();
     const lastName = request.getLastName();
     const phone = request.getPhone();
     const metadata = request.getMetadata();
 
-    const customer = new CustomerResponse();
+    const updateCustomer = new UpdateCustomerResponse();
     const existingCustomers = await this.findCustomersAsync(email);
     if (existingCustomers.length > 0) {
       for (const existingCustomer of existingCustomers) {
@@ -139,14 +183,14 @@ class MedusaService {
             }
           );
           const updatedCustomerData = updateCustomerResponse.data['customer'];
-          customer.setData(JSON.stringify(updatedCustomerData));
-          customer.setPassword(sessionToken);
+          updateCustomer.setData(JSON.stringify(updatedCustomerData));
+          updateCustomer.setPassword(sessionToken);
         } catch (error: any) {
           console.error(error);
         }
       }
 
-      return customer;
+      return updateCustomer;
     }
 
     try {
@@ -170,9 +214,9 @@ class MedusaService {
     }
 
     const data = customerResponse.data['customer'];
-    customer.setData(JSON.stringify(data));
-    customer.setPassword(sessionToken);
-    return customer;
+    updateCustomer.setData(JSON.stringify(data));
+    updateCustomer.setPassword(sessionToken);
+    return updateCustomer;
   }
 
   public async addCustomerToGroupAsync(

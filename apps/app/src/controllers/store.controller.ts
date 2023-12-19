@@ -24,13 +24,17 @@ import SupabaseService from '../services/supabase.service';
 import { AccountState } from '../models/account.model';
 import AccountController from './account.controller';
 import ProductLikesService from '../services/product-likes.service';
-import { ProductLikesMetadataResponse } from '../protobuf/core_pb';
+import {
+  ProductLikesMetadataResponse,
+  AccountResponse,
+} from '../protobuf/core_pb';
 
 class StoreController extends Controller {
   private readonly _model: StoreModel;
   private _timerId: NodeJS.Timeout | number | undefined;
   private _productsIndex: Index<Record<string, any>> | undefined;
   private _selectedInventoryLocationSubscription: Subscription | undefined;
+  private _accountSubscription: Subscription | undefined;
   private _customerGroupSubscription: Subscription | undefined;
   private _medusaAccessTokenSubscription: Subscription | undefined;
   private _limit: number;
@@ -63,6 +67,7 @@ class StoreController extends Controller {
   }
 
   public override dispose(renderCount: number): void {
+    this._accountSubscription?.unsubscribe();
     this._medusaAccessTokenSubscription?.unsubscribe();
     this._customerGroupSubscription?.unsubscribe();
     this._selectedInventoryLocationSubscription?.unsubscribe();
@@ -100,7 +105,7 @@ class StoreController extends Controller {
     this._model.pagination = 1;
     this._model.previews = [];
     const offset = this._limit * (this._model.pagination - 1);
-    await this.searchAsync(this._model.input, offset, this._limit);
+    await this.searchAsync(this._model.input, offset, this._limit, true);
   }
 
   public async onNextScrollAsync(): Promise<void> {
@@ -121,9 +126,10 @@ class StoreController extends Controller {
   public async searchAsync(
     query: string,
     offset: number = 0,
-    limit: number = 10
+    limit: number = 10,
+    force: boolean = false
   ): Promise<void> {
-    if (this._model.isLoading || !this._model.selectedRegion) {
+    if (!force && (this._model.isLoading || !this._model.selectedRegion)) {
       return;
     }
 
@@ -286,6 +292,15 @@ class StoreController extends Controller {
         },
       });
 
+    this._accountSubscription?.unsubscribe();
+    this._accountSubscription = AccountController.model.store
+      .pipe(select((model: AccountState) => model.account))
+      .subscribe({
+        next: (value: AccountResponse | undefined) => {
+          this.searchAsync(this._model.input, 0, this._limit, true);
+        },
+      });
+
     this._selectedInventoryLocationSubscription?.unsubscribe();
     this._selectedInventoryLocationSubscription = HomeController.model.store
       .pipe(select((model) => model.selectedInventoryLocation))
@@ -323,7 +338,6 @@ class StoreController extends Controller {
     );
 
     this.updateRegion(region);
-    this.searchAsync(this._model.input, 0, this._limit);
   }
 
   private updateRegion(region: Region | undefined): void {

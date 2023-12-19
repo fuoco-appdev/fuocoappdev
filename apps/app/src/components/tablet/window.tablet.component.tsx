@@ -60,7 +60,7 @@ export default function WindowTabletComponent({
     setDate(new Date(Date.now()));
   }, []);
 
-  const account = windowProps.account as core.Account;
+  const account = windowProps.account as core.AccountResponse;
   const customer = accountProps.customer as Customer;
   return (
     <ResponsiveTablet>
@@ -558,6 +558,17 @@ export default function WindowTabletComponent({
                         className={[styles['navigation-back-title']].join(' ')}
                       >
                         {homeProps.selectedInventoryLocation?.company ?? ''}
+                      </div>
+                    </>
+                  )}
+                  {windowProps.activeRoute ===
+                    RoutePathsType.AccountAddFriends && (
+                    <>
+                      <Line.PersonAddAlt1 size={24} />
+                      <div
+                        className={[styles['navigation-back-title']].join(' ')}
+                      >
+                        {t('addFriends')}
                       </div>
                     </>
                   )}

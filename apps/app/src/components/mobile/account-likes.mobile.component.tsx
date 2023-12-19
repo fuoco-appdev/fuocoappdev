@@ -72,10 +72,11 @@ export default function AccountLikesMobileComponent({
         >
           {accountProps.likedProducts.map(
             (product: PricedProduct, index: number) => {
-              const productLikesMetadata =
-                accountProps.productLikesMetadata?.find(
-                  (value) => value.productId === product.id
-                ) ?? null;
+              const productLikesMetadata = Object.keys(
+                accountProps.productLikesMetadata
+              ).includes(product.id ?? '')
+                ? accountProps.productLikesMetadata[product.id ?? '']
+                : null;
               return (
                 <ProductPreviewComponent
                   parentRef={rootRef}

@@ -23,7 +23,7 @@ export interface ProfileFormErrorStrings {
 
 export interface AccountState {
   user: User | null;
-  account: core.Account | undefined;
+  account: core.AccountResponse | undefined;
   customer: Customer | undefined;
   customerGroup: CustomerGroup | undefined;
   isCustomerGroupLoading: boolean;
@@ -51,12 +51,24 @@ export interface AccountState {
   hasMoreLikes: boolean;
   likesScrollPosition: number | undefined;
   likedProducts: PricedProduct[];
-  productLikesMetadata: ProductLikesMetadataResponse[];
+  productLikesMetadata: Record<string, ProductLikesMetadataResponse>;
   likedProductPagination: number;
   areLikedProductsLoading: boolean;
   selectedLikedProduct: PricedProduct | undefined;
   selectedProductLikes: ProductLikesMetadataResponse | undefined;
   isAvatarUploadLoading: boolean;
+  addFriendsInput: string;
+  addFriendsPagination: number;
+  hasMoreAddFriends: boolean;
+  areAddFriendsLoading: boolean;
+  addFriendAccounts: core.AccountResponse[];
+  addFriendCustomers: Record<string, core.CustomerResponse>;
+  addFriendsScrollPosition: number | undefined;
+  addFriendAccountFollowers: Record<string, core.AccountFollowerResponse>;
+  areFollowRequestAccountsLoading: boolean;
+  followRequestAccounts: core.AccountResponse[];
+  followRequestCustomers: Record<string, core.CustomerResponse>;
+  followRequestAccountFollowers: Record<string, core.AccountFollowerResponse>;
 }
 
 export class AccountModel extends Model {
@@ -122,12 +134,24 @@ export class AccountModel extends Model {
           hasMoreLikes: true,
           likesScrollPosition: undefined,
           likedProducts: [],
-          productLikesMetadata: [],
+          productLikesMetadata: {},
           likedProductPagination: 1,
           areLikedProductsLoading: false,
           selectedLikedProduct: undefined,
           selectedProductLikes: undefined,
           isAvatarUploadLoading: false,
+          addFriendsInput: '',
+          addFriendsPagination: 1,
+          hasMoreAddFriends: true,
+          areAddFriendsLoading: false,
+          addFriendAccounts: [],
+          addFriendCustomers: {},
+          addFriendsScrollPosition: undefined,
+          addFriendAccountFollowers: {},
+          areFollowRequestAccountsLoading: false,
+          followRequestAccounts: [],
+          followRequestCustomers: {},
+          followRequestAccountFollowers: {},
         })
       )
     );
@@ -229,11 +253,11 @@ export class AccountModel extends Model {
     }
   }
 
-  public get account(): core.Account | undefined {
+  public get account(): core.AccountResponse | undefined {
     return this.store.getValue().account;
   }
 
-  public set account(value: core.Account | undefined) {
+  public set account(value: core.AccountResponse | undefined) {
     if (JSON.stringify(this.account) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, account: value }));
     }
@@ -456,11 +480,16 @@ export class AccountModel extends Model {
     }
   }
 
-  public get productLikesMetadata(): ProductLikesMetadataResponse[] {
+  public get productLikesMetadata(): Record<
+    string,
+    ProductLikesMetadataResponse
+  > {
     return this.store?.getValue().productLikesMetadata;
   }
 
-  public set productLikesMetadata(value: ProductLikesMetadataResponse[]) {
+  public set productLikesMetadata(
+    value: Record<string, ProductLikesMetadataResponse>
+  ) {
     if (JSON.stringify(this.productLikesMetadata) !== JSON.stringify(value)) {
       this.store?.update((state) => ({
         ...state,
@@ -526,6 +555,176 @@ export class AccountModel extends Model {
       this.store?.update((state) => ({
         ...state,
         isAvatarUploadLoading: value,
+      }));
+    }
+  }
+
+  public get addFriendsInput(): string {
+    return this.store?.getValue().addFriendsInput;
+  }
+
+  public set addFriendsInput(value: string) {
+    if (this.addFriendsInput !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        addFriendsInput: value,
+      }));
+    }
+  }
+
+  public get addFriendsPagination(): number {
+    return this.store.getValue().addFriendsPagination;
+  }
+
+  public set addFriendsPagination(value: number) {
+    if (this.addFriendsPagination !== value) {
+      this.store.update((state) => ({
+        ...state,
+        addFriendsPagination: value,
+      }));
+    }
+  }
+
+  public get hasMoreAddFriends(): boolean {
+    return this.store?.getValue().hasMoreAddFriends;
+  }
+
+  public set hasMoreAddFriends(value: boolean) {
+    if (this.hasMoreAddFriends !== value) {
+      this.store?.update((state) => ({ ...state, hasMoreAddFriends: value }));
+    }
+  }
+
+  public get areAddFriendsLoading(): boolean {
+    return this.store?.getValue().areAddFriendsLoading;
+  }
+
+  public set areAddFriendsLoading(value: boolean) {
+    if (this.areAddFriendsLoading !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        areAddFriendsLoading: value,
+      }));
+    }
+  }
+
+  public get addFriendAccounts(): core.AccountResponse[] {
+    return this.store?.getValue().addFriendAccounts;
+  }
+
+  public set addFriendAccounts(value: core.AccountResponse[]) {
+    if (JSON.stringify(this.addFriendAccounts) !== JSON.stringify(value)) {
+      this.store?.update((state) => ({
+        ...state,
+        addFriendAccounts: value,
+      }));
+    }
+  }
+
+  public get addFriendCustomers(): Record<string, core.CustomerResponse> {
+    return this.store?.getValue().addFriendCustomers;
+  }
+
+  public set addFriendCustomers(value: Record<string, core.CustomerResponse>) {
+    if (JSON.stringify(this.addFriendCustomers) !== JSON.stringify(value)) {
+      this.store?.update((state) => ({
+        ...state,
+        addFriendCustomers: value,
+      }));
+    }
+  }
+
+  public get addFriendsScrollPosition(): number | undefined {
+    return this.store.getValue().addFriendsScrollPosition;
+  }
+
+  public set addFriendsScrollPosition(value: number | undefined) {
+    if (this.addFriendsScrollPosition !== value) {
+      this.store.update((state) => ({
+        ...state,
+        addFriendsScrollPosition: value,
+      }));
+    }
+  }
+
+  public get addFriendAccountFollowers(): Record<
+    string,
+    core.AccountFollowerResponse
+  > {
+    return this.store.getValue().addFriendAccountFollowers;
+  }
+
+  public set addFriendAccountFollowers(
+    value: Record<string, core.AccountFollowerResponse>
+  ) {
+    if (
+      JSON.stringify(this.addFriendAccountFollowers) !== JSON.stringify(value)
+    ) {
+      this.store.update((state) => ({
+        ...state,
+        addFriendAccountFollowers: value,
+      }));
+    }
+  }
+
+  public get areFollowRequestAccountsLoading(): boolean {
+    return this.store?.getValue().areFollowRequestAccountsLoading;
+  }
+
+  public set areFollowRequestAccountsLoading(value: boolean) {
+    if (this.areFollowRequestAccountsLoading !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        areFollowRequestAccountsLoading: value,
+      }));
+    }
+  }
+
+  public get followRequestAccounts(): core.AccountResponse[] {
+    return this.store?.getValue().followRequestAccounts;
+  }
+
+  public set followRequestAccounts(value: core.AccountResponse[]) {
+    if (JSON.stringify(this.followRequestAccounts) !== JSON.stringify(value)) {
+      this.store?.update((state) => ({
+        ...state,
+        followRequestAccounts: value,
+      }));
+    }
+  }
+
+  public get followRequestCustomers(): Record<string, core.CustomerResponse> {
+    return this.store?.getValue().followRequestCustomers;
+  }
+
+  public set followRequestCustomers(
+    value: Record<string, core.CustomerResponse>
+  ) {
+    if (JSON.stringify(this.followRequestCustomers) !== JSON.stringify(value)) {
+      this.store?.update((state) => ({
+        ...state,
+        followRequestCustomers: value,
+      }));
+    }
+  }
+
+  public get followRequestAccountFollowers(): Record<
+    string,
+    core.AccountFollowerResponse
+  > {
+    return this.store.getValue().followRequestAccountFollowers;
+  }
+
+  public set followRequestAccountFollowers(
+    value: Record<string, core.AccountFollowerResponse>
+  ) {
+    if (
+      JSON.stringify(this.followRequestAccountFollowers) !==
+      JSON.stringify(value)
+    ) {
+      this.store.update((state) => ({
+        ...state,
+        followRequestAccountFollowers: value,
       }));
     }
   }

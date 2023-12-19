@@ -8,7 +8,7 @@ import { InventoryLocation } from './home.model';
 import { PriceList } from '@medusajs/medusa';
 
 export interface WindowState {
-  account: core.Account | null;
+  account: core.AccountResponse | null;
   isAuthenticated: boolean | undefined;
   activeRoute: RoutePathsType | undefined;
   cartCount: number;
@@ -66,11 +66,11 @@ export class WindowModel extends Model {
     );
   }
 
-  public get account(): core.Account | null {
+  public get account(): core.AccountResponse | null {
     return this.store.getValue().account;
   }
 
-  public set account(value: core.Account | null) {
+  public set account(value: core.AccountResponse | null) {
     if (JSON.stringify(this.account) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, account: value }));
     }

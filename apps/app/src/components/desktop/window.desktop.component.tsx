@@ -57,7 +57,7 @@ export default function WindowDesktopComponent({
     setDate(new Date(Date.now()));
   }, []);
 
-  const account = windowProps.account as core.Account;
+  const account = windowProps.account as core.AccountResponse;
   const customer = accountProps.customer as Customer;
   return (
     <ResponsiveDesktop>
@@ -582,6 +582,17 @@ export default function WindowDesktopComponent({
                         className={[styles['navigation-back-title']].join(' ')}
                       >
                         {t('settings')}
+                      </div>
+                    </>
+                  )}
+                  {windowProps.activeRoute ===
+                    RoutePathsType.AccountAddFriends && (
+                    <>
+                      <Line.PersonAddAlt1 size={24} />
+                      <div
+                        className={[styles['navigation-back-title']].join(' ')}
+                      >
+                        {t('addFriends')}
                       </div>
                     </>
                   )}

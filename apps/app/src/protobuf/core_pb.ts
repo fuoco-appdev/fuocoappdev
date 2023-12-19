@@ -131,9 +131,9 @@ export class PrivateSecrets extends Message<PrivateSecrets> {
 }
 
 /**
- * @generated from message core.CustomerRequest
+ * @generated from message core.UpdateCustomerRequest
  */
-export class CustomerRequest extends Message<CustomerRequest> {
+export class UpdateCustomerRequest extends Message<UpdateCustomerRequest> {
   /**
    * @generated from field: string email = 1;
    */
@@ -159,13 +159,13 @@ export class CustomerRequest extends Message<CustomerRequest> {
    */
   metadata = "";
 
-  constructor(data?: PartialMessage<CustomerRequest>) {
+  constructor(data?: PartialMessage<UpdateCustomerRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime = proto3;
-  static readonly typeName = "core.CustomerRequest";
+  static readonly typeName = "core.UpdateCustomerRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "email", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "first_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
@@ -174,27 +174,27 @@ export class CustomerRequest extends Message<CustomerRequest> {
     { no: 5, name: "metadata", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CustomerRequest {
-    return new CustomerRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateCustomerRequest {
+    return new UpdateCustomerRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CustomerRequest {
-    return new CustomerRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateCustomerRequest {
+    return new UpdateCustomerRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CustomerRequest {
-    return new CustomerRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateCustomerRequest {
+    return new UpdateCustomerRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: CustomerRequest | PlainMessage<CustomerRequest> | undefined, b: CustomerRequest | PlainMessage<CustomerRequest> | undefined): boolean {
-    return proto3.util.equals(CustomerRequest, a, b);
+  static equals(a: UpdateCustomerRequest | PlainMessage<UpdateCustomerRequest> | undefined, b: UpdateCustomerRequest | PlainMessage<UpdateCustomerRequest> | undefined): boolean {
+    return proto3.util.equals(UpdateCustomerRequest, a, b);
   }
 }
 
 /**
- * @generated from message core.CustomerResponse
+ * @generated from message core.UpdateCustomerResponse
  */
-export class CustomerResponse extends Message<CustomerResponse> {
+export class UpdateCustomerResponse extends Message<UpdateCustomerResponse> {
   /**
    * @generated from field: string data = 1;
    */
@@ -205,6 +205,131 @@ export class CustomerResponse extends Message<CustomerResponse> {
    */
   password = "";
 
+  constructor(data?: PartialMessage<UpdateCustomerResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.UpdateCustomerResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "data", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "password", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateCustomerResponse {
+    return new UpdateCustomerResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateCustomerResponse {
+    return new UpdateCustomerResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateCustomerResponse {
+    return new UpdateCustomerResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdateCustomerResponse | PlainMessage<UpdateCustomerResponse> | undefined, b: UpdateCustomerResponse | PlainMessage<UpdateCustomerResponse> | undefined): boolean {
+    return proto3.util.equals(UpdateCustomerResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message core.CustomersRequest
+ */
+export class CustomersRequest extends Message<CustomersRequest> {
+  /**
+   * @generated from field: repeated string customer_ids = 1;
+   */
+  customerIds: string[] = [];
+
+  constructor(data?: PartialMessage<CustomersRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.CustomersRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "customer_ids", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CustomersRequest {
+    return new CustomersRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CustomersRequest {
+    return new CustomersRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CustomersRequest {
+    return new CustomersRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: CustomersRequest | PlainMessage<CustomersRequest> | undefined, b: CustomersRequest | PlainMessage<CustomersRequest> | undefined): boolean {
+    return proto3.util.equals(CustomersRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message core.CustomerResponse
+ */
+export class CustomerResponse extends Message<CustomerResponse> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: string email = 2;
+   */
+  email = "";
+
+  /**
+   * @generated from field: string first_name = 3;
+   */
+  firstName = "";
+
+  /**
+   * @generated from field: string last_name = 4;
+   */
+  lastName = "";
+
+  /**
+   * @generated from field: string billing_address_id = 5;
+   */
+  billingAddressId = "";
+
+  /**
+   * @generated from field: string phone = 6;
+   */
+  phone = "";
+
+  /**
+   * @generated from field: bool has_account = 7;
+   */
+  hasAccount = false;
+
+  /**
+   * @generated from field: string created_at = 8;
+   */
+  createdAt = "";
+
+  /**
+   * @generated from field: string updated_at = 9;
+   */
+  updatedAt = "";
+
+  /**
+   * @generated from field: string deleted_at = 10;
+   */
+  deletedAt = "";
+
+  /**
+   * @generated from field: string metadata = 11;
+   */
+  metadata = "";
+
   constructor(data?: PartialMessage<CustomerResponse>) {
     super();
     proto3.util.initPartial(data, this);
@@ -213,8 +338,17 @@ export class CustomerResponse extends Message<CustomerResponse> {
   static readonly runtime = proto3;
   static readonly typeName = "core.CustomerResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "data", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "password", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "email", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "first_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "last_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "billing_address_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "phone", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 7, name: "has_account", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 8, name: "created_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 9, name: "updated_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 10, name: "deleted_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 11, name: "metadata", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CustomerResponse {
@@ -231,6 +365,43 @@ export class CustomerResponse extends Message<CustomerResponse> {
 
   static equals(a: CustomerResponse | PlainMessage<CustomerResponse> | undefined, b: CustomerResponse | PlainMessage<CustomerResponse> | undefined): boolean {
     return proto3.util.equals(CustomerResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message core.CustomersResponse
+ */
+export class CustomersResponse extends Message<CustomersResponse> {
+  /**
+   * @generated from field: repeated core.CustomerResponse customers = 1;
+   */
+  customers: CustomerResponse[] = [];
+
+  constructor(data?: PartialMessage<CustomersResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.CustomersResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "customers", kind: "message", T: CustomerResponse, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CustomersResponse {
+    return new CustomersResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CustomersResponse {
+    return new CustomersResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CustomersResponse {
+    return new CustomersResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: CustomersResponse | PlainMessage<CustomersResponse> | undefined, b: CustomersResponse | PlainMessage<CustomersResponse> | undefined): boolean {
+    return proto3.util.equals(CustomersResponse, a, b);
   }
 }
 
@@ -684,9 +855,82 @@ export class StockLocationsResponse extends Message<StockLocationsResponse> {
 }
 
 /**
- * @generated from message core.Account
+ * @generated from message core.AccountRequest
  */
-export class Account extends Message<Account> {
+export class AccountRequest extends Message<AccountRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: string customer_id = 2;
+   */
+  customerId = "";
+
+  /**
+   * @generated from field: string supabase_id = 3;
+   */
+  supabaseId = "";
+
+  /**
+   * @generated from field: string profile_url = 4;
+   */
+  profileUrl = "";
+
+  /**
+   * @generated from field: string status = 5;
+   */
+  status = "";
+
+  /**
+   * @generated from field: string language_code = 7;
+   */
+  languageCode = "";
+
+  /**
+   * @generated from field: string username = 8;
+   */
+  username = "";
+
+  constructor(data?: PartialMessage<AccountRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.AccountRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "customer_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "supabase_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "profile_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "status", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 7, name: "language_code", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 8, name: "username", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountRequest {
+    return new AccountRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AccountRequest {
+    return new AccountRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AccountRequest {
+    return new AccountRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AccountRequest | PlainMessage<AccountRequest> | undefined, b: AccountRequest | PlainMessage<AccountRequest> | undefined): boolean {
+    return proto3.util.equals(AccountRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message core.AccountResponse
+ */
+export class AccountResponse extends Message<AccountResponse> {
   /**
    * @generated from field: string id = 1;
    */
@@ -727,13 +971,13 @@ export class Account extends Message<Account> {
    */
   username = "";
 
-  constructor(data?: PartialMessage<Account>) {
+  constructor(data?: PartialMessage<AccountResponse>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime = proto3;
-  static readonly typeName = "core.Account";
+  static readonly typeName = "core.AccountResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "customer_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
@@ -745,57 +989,94 @@ export class Account extends Message<Account> {
     { no: 8, name: "username", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Account {
-    return new Account().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountResponse {
+    return new AccountResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Account {
-    return new Account().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AccountResponse {
+    return new AccountResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Account {
-    return new Account().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AccountResponse {
+    return new AccountResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: Account | PlainMessage<Account> | undefined, b: Account | PlainMessage<Account> | undefined): boolean {
-    return proto3.util.equals(Account, a, b);
+  static equals(a: AccountResponse | PlainMessage<AccountResponse> | undefined, b: AccountResponse | PlainMessage<AccountResponse> | undefined): boolean {
+    return proto3.util.equals(AccountResponse, a, b);
   }
 }
 
 /**
- * @generated from message core.Accounts
+ * @generated from message core.AccountsRequest
  */
-export class Accounts extends Message<Accounts> {
+export class AccountsRequest extends Message<AccountsRequest> {
   /**
-   * @generated from field: repeated core.Account accounts = 1;
+   * @generated from field: repeated string account_ids = 1;
    */
-  accounts: Account[] = [];
+  accountIds: string[] = [];
 
-  constructor(data?: PartialMessage<Accounts>) {
+  constructor(data?: PartialMessage<AccountsRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime = proto3;
-  static readonly typeName = "core.Accounts";
+  static readonly typeName = "core.AccountsRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "accounts", kind: "message", T: Account, repeated: true },
+    { no: 1, name: "account_ids", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Accounts {
-    return new Accounts().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountsRequest {
+    return new AccountsRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Accounts {
-    return new Accounts().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AccountsRequest {
+    return new AccountsRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Accounts {
-    return new Accounts().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AccountsRequest {
+    return new AccountsRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: Accounts | PlainMessage<Accounts> | undefined, b: Accounts | PlainMessage<Accounts> | undefined): boolean {
-    return proto3.util.equals(Accounts, a, b);
+  static equals(a: AccountsRequest | PlainMessage<AccountsRequest> | undefined, b: AccountsRequest | PlainMessage<AccountsRequest> | undefined): boolean {
+    return proto3.util.equals(AccountsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message core.AccountsResponse
+ */
+export class AccountsResponse extends Message<AccountsResponse> {
+  /**
+   * @generated from field: repeated core.AccountResponse accounts = 1;
+   */
+  accounts: AccountResponse[] = [];
+
+  constructor(data?: PartialMessage<AccountsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.AccountsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "accounts", kind: "message", T: AccountResponse, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountsResponse {
+    return new AccountsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AccountsResponse {
+    return new AccountsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AccountsResponse {
+    return new AccountsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AccountsResponse | PlainMessage<AccountsResponse> | undefined, b: AccountsResponse | PlainMessage<AccountsResponse> | undefined): boolean {
+    return proto3.util.equals(AccountsResponse, a, b);
   }
 }
 
@@ -870,6 +1151,61 @@ export class AccountExistsResponse extends Message<AccountExistsResponse> {
 
   static equals(a: AccountExistsResponse | PlainMessage<AccountExistsResponse> | undefined, b: AccountExistsResponse | PlainMessage<AccountExistsResponse> | undefined): boolean {
     return proto3.util.equals(AccountExistsResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message core.AccountLikeRequest
+ */
+export class AccountLikeRequest extends Message<AccountLikeRequest> {
+  /**
+   * @generated from field: string query_username = 1;
+   */
+  queryUsername = "";
+
+  /**
+   * @generated from field: string account_id = 2;
+   */
+  accountId = "";
+
+  /**
+   * @generated from field: int32 offset = 3;
+   */
+  offset = 0;
+
+  /**
+   * @generated from field: int32 limit = 4;
+   */
+  limit = 0;
+
+  constructor(data?: PartialMessage<AccountLikeRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.AccountLikeRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "query_username", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "offset", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 4, name: "limit", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountLikeRequest {
+    return new AccountLikeRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AccountLikeRequest {
+    return new AccountLikeRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AccountLikeRequest {
+    return new AccountLikeRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AccountLikeRequest | PlainMessage<AccountLikeRequest> | undefined, b: AccountLikeRequest | PlainMessage<AccountLikeRequest> | undefined): boolean {
+    return proto3.util.equals(AccountLikeRequest, a, b);
   }
 }
 
@@ -1171,6 +1507,288 @@ export class ProductLikesResponse extends Message<ProductLikesResponse> {
 
   static equals(a: ProductLikesResponse | PlainMessage<ProductLikesResponse> | undefined, b: ProductLikesResponse | PlainMessage<ProductLikesResponse> | undefined): boolean {
     return proto3.util.equals(ProductLikesResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message core.AccountFollowerRequest
+ */
+export class AccountFollowerRequest extends Message<AccountFollowerRequest> {
+  /**
+   * @generated from field: string account_id = 1;
+   */
+  accountId = "";
+
+  /**
+   * @generated from field: string follower_id = 2;
+   */
+  followerId = "";
+
+  constructor(data?: PartialMessage<AccountFollowerRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.AccountFollowerRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "follower_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountFollowerRequest {
+    return new AccountFollowerRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AccountFollowerRequest {
+    return new AccountFollowerRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AccountFollowerRequest {
+    return new AccountFollowerRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AccountFollowerRequest | PlainMessage<AccountFollowerRequest> | undefined, b: AccountFollowerRequest | PlainMessage<AccountFollowerRequest> | undefined): boolean {
+    return proto3.util.equals(AccountFollowerRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message core.AccountFollowerRequestsRequest
+ */
+export class AccountFollowerRequestsRequest extends Message<AccountFollowerRequestsRequest> {
+  /**
+   * @generated from field: string account_id = 1;
+   */
+  accountId = "";
+
+  /**
+   * @generated from field: int32 offset = 2;
+   */
+  offset = 0;
+
+  /**
+   * @generated from field: int32 limit = 3;
+   */
+  limit = 0;
+
+  constructor(data?: PartialMessage<AccountFollowerRequestsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.AccountFollowerRequestsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "offset", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 3, name: "limit", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountFollowerRequestsRequest {
+    return new AccountFollowerRequestsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AccountFollowerRequestsRequest {
+    return new AccountFollowerRequestsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AccountFollowerRequestsRequest {
+    return new AccountFollowerRequestsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AccountFollowerRequestsRequest | PlainMessage<AccountFollowerRequestsRequest> | undefined, b: AccountFollowerRequestsRequest | PlainMessage<AccountFollowerRequestsRequest> | undefined): boolean {
+    return proto3.util.equals(AccountFollowerRequestsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message core.AccountFollowerResponse
+ */
+export class AccountFollowerResponse extends Message<AccountFollowerResponse> {
+  /**
+   * @generated from field: string account_id = 1;
+   */
+  accountId = "";
+
+  /**
+   * @generated from field: string follower_id = 2;
+   */
+  followerId = "";
+
+  /**
+   * @generated from field: bool is_following = 3;
+   */
+  isFollowing = false;
+
+  /**
+   * @generated from field: bool accepted = 4;
+   */
+  accepted = false;
+
+  /**
+   * @generated from field: string created_at = 5;
+   */
+  createdAt = "";
+
+  /**
+   * @generated from field: string updated_at = 6;
+   */
+  updatedAt = "";
+
+  constructor(data?: PartialMessage<AccountFollowerResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.AccountFollowerResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "follower_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "is_following", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 4, name: "accepted", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 5, name: "created_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "updated_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountFollowerResponse {
+    return new AccountFollowerResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AccountFollowerResponse {
+    return new AccountFollowerResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AccountFollowerResponse {
+    return new AccountFollowerResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AccountFollowerResponse | PlainMessage<AccountFollowerResponse> | undefined, b: AccountFollowerResponse | PlainMessage<AccountFollowerResponse> | undefined): boolean {
+    return proto3.util.equals(AccountFollowerResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message core.AccountFollowerCountMetadataResponse
+ */
+export class AccountFollowerCountMetadataResponse extends Message<AccountFollowerCountMetadataResponse> {
+  /**
+   * @generated from field: int32 followers_count = 1;
+   */
+  followersCount = 0;
+
+  /**
+   * @generated from field: int32 following_count = 2;
+   */
+  followingCount = 0;
+
+  constructor(data?: PartialMessage<AccountFollowerCountMetadataResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.AccountFollowerCountMetadataResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "followers_count", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 2, name: "following_count", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountFollowerCountMetadataResponse {
+    return new AccountFollowerCountMetadataResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AccountFollowerCountMetadataResponse {
+    return new AccountFollowerCountMetadataResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AccountFollowerCountMetadataResponse {
+    return new AccountFollowerCountMetadataResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AccountFollowerCountMetadataResponse | PlainMessage<AccountFollowerCountMetadataResponse> | undefined, b: AccountFollowerCountMetadataResponse | PlainMessage<AccountFollowerCountMetadataResponse> | undefined): boolean {
+    return proto3.util.equals(AccountFollowerCountMetadataResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message core.AccountFollowersRequest
+ */
+export class AccountFollowersRequest extends Message<AccountFollowersRequest> {
+  /**
+   * @generated from field: string account_id = 1;
+   */
+  accountId = "";
+
+  /**
+   * @generated from field: repeated string other_account_ids = 2;
+   */
+  otherAccountIds: string[] = [];
+
+  constructor(data?: PartialMessage<AccountFollowersRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.AccountFollowersRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "other_account_ids", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountFollowersRequest {
+    return new AccountFollowersRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AccountFollowersRequest {
+    return new AccountFollowersRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AccountFollowersRequest {
+    return new AccountFollowersRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AccountFollowersRequest | PlainMessage<AccountFollowersRequest> | undefined, b: AccountFollowersRequest | PlainMessage<AccountFollowersRequest> | undefined): boolean {
+    return proto3.util.equals(AccountFollowersRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message core.AccountFollowersResponse
+ */
+export class AccountFollowersResponse extends Message<AccountFollowersResponse> {
+  /**
+   * @generated from field: repeated core.AccountFollowerResponse followers = 1;
+   */
+  followers: AccountFollowerResponse[] = [];
+
+  constructor(data?: PartialMessage<AccountFollowersResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.AccountFollowersResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "followers", kind: "message", T: AccountFollowerResponse, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountFollowersResponse {
+    return new AccountFollowersResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AccountFollowersResponse {
+    return new AccountFollowersResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AccountFollowersResponse {
+    return new AccountFollowersResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AccountFollowersResponse | PlainMessage<AccountFollowersResponse> | undefined, b: AccountFollowersResponse | PlainMessage<AccountFollowersResponse> | undefined): boolean {
+    return proto3.util.equals(AccountFollowersResponse, a, b);
   }
 }
 

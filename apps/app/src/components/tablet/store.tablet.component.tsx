@@ -284,7 +284,7 @@ export default function StoreTabletComponent({
               style={{
                 display:
                   homeLocalProps.selectedInventoryLocationId &&
-                  storeProps.hasMorePreviews
+                  (storeProps.hasMorePreviews || storeProps.isLoading)
                     ? 'flex'
                     : 'none',
               }}

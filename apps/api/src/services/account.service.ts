@@ -1,9 +1,12 @@
 import SupabaseService from './supabase.service.ts';
 import {
-  Account,
-  Accounts,
+  AccountRequest,
+  AccountResponse,
+  AccountsRequest,
+  AccountsResponse,
   AccountExistsRequest,
   AccountExistsResponse,
+  AccountLikeRequest,
 } from '../protobuf/core_pb.js';
 
 export interface AccountProps {
@@ -33,9 +36,9 @@ export class AccountService {
   }
 
   public async createAsync(
-    supabaseId: string,
-    account: InstanceType<typeof Account>
+    request: InstanceType<typeof AccountRequest>
   ): Promise<AccountProps | null> {
+    const supabaseId = request.getSupabaseId();
     const existingAccount = await this.findAsync(supabaseId);
     if (existingAccount) {
       return null;
@@ -87,13 +90,13 @@ export class AccountService {
 
   public async updateAsync(
     supabaseId: string,
-    account: InstanceType<typeof Account>
+    request: InstanceType<typeof AccountRequest>
   ): Promise<AccountProps | null> {
-    const customerId = account.getCustomerId();
-    const profileUrl = account.getProfileUrl();
-    const status = account.getStatus();
-    const languageCode = account.getLanguageCode();
-    const username = account.getUsername();
+    const customerId = request.getCustomerId();
+    const profileUrl = request.getProfileUrl();
+    const status = request.getStatus();
+    const languageCode = request.getLanguageCode();
+    const username = request.getUsername();
 
     const accountData = this.assignAndGetAccountData({
       customerId,
@@ -116,30 +119,27 @@ export class AccountService {
     return data.length > 0 ? data[0] : null;
   }
 
-  public async findAllAsync(): Promise<AccountProps[] | null> {
+  public async findAccountsAsync(
+    request: InstanceType<typeof AccountsRequest>
+  ): Promise<AccountsResponse | null> {
+    const response = new AccountsResponse();
+    const formattedIds = request.getAccountIdsList().toString();
     const { data, error } = await SupabaseService.client
       .from('account')
-      .select();
+      .select()
+      .filter('id', 'in', `(${formattedIds})`);
 
     if (error) {
       console.error(error);
       return null;
     }
 
-    return data;
-  }
-
-  public async findAllPublicAsync(): Promise<AccountProps[] | null> {
-    const { data, error } = await SupabaseService.client
-      .from('account')
-      .select('id, location');
-
-    if (error) {
-      console.error(error);
-      return null;
+    for (const account of data) {
+      const accountResponse = this.assignAndGetAccountProtocol(account);
+      response.addAccounts(accountResponse);
     }
 
-    return data;
+    return response;
   }
 
   public async deleteAsync(supabaseId: string): Promise<void> {
@@ -153,22 +153,48 @@ export class AccountService {
     }
   }
 
-  public assignAndGetAccountsProtocol(
-    props: AccountProps[]
-  ): InstanceType<typeof Accounts> {
-    const accounts = new Accounts();
-    for (const accountData of props) {
-      const account = this.assignAndGetAccountProtocol(accountData);
-      accounts.getAccountsList().push(account);
+  public async findLikeAsync(
+    request: InstanceType<typeof AccountLikeRequest>
+  ): Promise<AccountsResponse | null> {
+    const queryUsername = request.getQueryUsername();
+    const accountId = request.getAccountId();
+    const offset = request.getOffset();
+    const limit = request.getLimit();
+
+    const { data, error } = await SupabaseService.client
+      .from('account')
+      .select()
+      .not('id', 'in', `(${accountId})`)
+      .not('status', 'in', '(Incomplete)')
+      .limit(limit)
+      .range(offset, offset + limit)
+      .ilike('username', `%${queryUsername}%`);
+
+    if (error) {
+      console.error(error);
+      return null;
     }
 
-    return accounts;
+    const response = this.assignAndGetAccountsProtocol(data);
+    return response;
+  }
+
+  public assignAndGetAccountsProtocol(
+    props: AccountProps[]
+  ): InstanceType<typeof AccountsResponse> {
+    const accountsResponse = new AccountsResponse();
+    for (const accountData of props) {
+      const account = this.assignAndGetAccountProtocol(accountData);
+      accountsResponse.getAccountsList().push(account);
+    }
+
+    return accountsResponse;
   }
 
   public assignAndGetAccountProtocol(
     props: AccountProps
-  ): InstanceType<typeof Account> {
-    const account = new Account();
+  ): InstanceType<typeof AccountResponse> {
+    const account = new AccountResponse();
 
     props.id && account.setId(props.id);
     props.customer_id && account.setCustomerId(props.customer_id);

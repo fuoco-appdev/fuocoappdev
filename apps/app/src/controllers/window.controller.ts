@@ -246,6 +246,12 @@ class WindowController extends Controller {
       this._model.activeRoute = RoutePathsType.AccountLikes;
       this._model.showNavigateBack = false;
       this._model.hideCartButton = false;
+    } else if (location.pathname === RoutePathsType.AccountAddFriends) {
+      this._model.transitionKeyIndex = 1;
+      this._model.scaleKeyIndex = 0;
+      this._model.activeRoute = RoutePathsType.AccountAddFriends;
+      this._model.showNavigateBack = true;
+      this._model.hideCartButton = true;
     } else if (location.pathname === RoutePathsType.AccountSettings) {
       this._model.transitionKeyIndex = 1;
       this._model.scaleKeyIndex = 0;
@@ -355,13 +361,13 @@ class WindowController extends Controller {
     this._model.isLoading = false;
   }
 
-  private onActiveAccountChanged(value: core.Account | null): void {
+  private onActiveAccountChanged(value: core.AccountResponse | null): void {
     this._model.account = value;
   }
 
   private async requestActiveAccountAsync(
     session: Session
-  ): Promise<core.Account | null> {
+  ): Promise<core.AccountResponse | null> {
     try {
       return await AccountService.requestActiveAsync(session);
     } catch (error: any) {

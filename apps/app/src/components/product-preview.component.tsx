@@ -134,7 +134,7 @@ export default function ProductPreviewComponent({
       setLikeCount(likesMetadata.totalLikeCount);
     }
 
-    setIsLiked(Boolean(likesMetadata.didAccountLike));
+    setIsLiked(likesMetadata.didAccountLike);
   }, [likesMetadata, accountProps.account]);
 
   useEffect(() => {

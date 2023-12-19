@@ -1,0 +1,79 @@
+@import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
+
+.ripples {
+    width: 100%;
+}
+
+.root {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+
+    & .left-content {
+        display: flex;
+        flex-direction: row;
+        gap: $mp-4;
+        align-items: center;
+
+        & .user-info-container {
+            display: flex;
+            flex-direction: column;
+
+            & .username {
+                color: $brand-900;
+                font-weight: $font-weight-bold;
+                font-size: $font-size-lg;
+            }
+
+            & .full-name {
+                color: $brand-900;
+                font-size: $font-size-sm;
+            }
+        }
+    }
+}
+
+.root:hover {
+    cursor: pointer;
+
+    & .left-content {
+        & .user-info-container {
+            & .username {
+                color: $brand-700;
+            }
+
+            & .full-name {
+                color: $brand-700;
+            }
+        }
+       
+    }
+}
+
+.root-desktop {
+    padding: $mp-4 $mp-6;
+}
+
+.root-mobile {
+
+}
+
+.root-tablet {
+
+}
+
+.avatar-container {
+    width: 40px;
+    height: 40px;
+}
+
+.primary-button {
+    background-color: $brand-700 !important;
+}
+
+.secondary-button {
+    background-color: $gray-100 !important;
+    color: $brand-900 !important;
+    border: 1px solid $brand-900 !important;
+}

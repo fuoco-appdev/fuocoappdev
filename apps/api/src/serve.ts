@@ -4,6 +4,7 @@ import {
   MedusaController,
   SecretsController,
   ProductLikesController,
+  AccountFollowersController,
 } from './controllers/index.ts';
 
 const app = Core.registerApp([
@@ -11,5 +12,6 @@ const app = Core.registerApp([
   new MedusaController(),
   new SecretsController(),
   new ProductLikesController(),
+  new AccountFollowersController(),
 ]);
 app.listen({ port: 8001 });
