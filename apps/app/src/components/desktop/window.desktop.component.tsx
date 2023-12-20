@@ -573,6 +573,30 @@ export default function WindowDesktopComponent({
                       </div>
                     </>
                   )}
+                  {WindowController.isLocationAccountWithId(
+                    windowProps.activeRoute ?? ''
+                  ) && (
+                    <>
+                      <Avatar
+                        classNames={{
+                          container: [
+                            styles['avatar-container'],
+                            styles['avatar-container-desktop'],
+                          ].join(' '),
+                        }}
+                        size={'custom'}
+                        text={
+                          homeProps.selectedInventoryLocation?.company ?? ''
+                        }
+                        src={''}
+                      />
+                      <div
+                        className={[styles['navigation-back-title']].join(' ')}
+                      >
+                        {homeProps.selectedInventoryLocation?.company ?? ''}
+                      </div>
+                    </>
+                  )}
                   {windowProps.activeRoute?.startsWith(
                     RoutePathsType.AccountSettings
                   ) && (

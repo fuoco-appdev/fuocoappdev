@@ -252,6 +252,12 @@ class WindowController extends Controller {
       this._model.activeRoute = RoutePathsType.AccountAddFriends;
       this._model.showNavigateBack = true;
       this._model.hideCartButton = true;
+    } else if (this.isLocationAccountWithId(location.pathname)) {
+      this._model.transitionKeyIndex = 1;
+      this._model.scaleKeyIndex = 0;
+      this._model.activeRoute = RoutePathsType.AccountWithId;
+      this._model.showNavigateBack = true;
+      this._model.hideCartButton = true;
     } else if (location.pathname === RoutePathsType.AccountSettings) {
       this._model.transitionKeyIndex = 1;
       this._model.scaleKeyIndex = 0;
@@ -274,6 +280,24 @@ class WindowController extends Controller {
     } else {
       this._model.showNavigateBack = false;
     }
+  }
+
+  public isLocationAccountWithId(pathname: string): boolean {
+    const splittedPath = pathname.split('/').filter((value) => value !== '');
+    if (splittedPath.length < 2) {
+      return false;
+    }
+
+    if (
+      splittedPath[0] === RoutePathsType.Account.replace('/', '') &&
+      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
+        splittedPath[1]
+      )
+    ) {
+      return true;
+    }
+
+    return false;
   }
 
   private resetMedusaModel(): void {

@@ -156,6 +156,7 @@ export default function AccountComponent(): JSX.Element {
     if (loadedLocation && loadedLocation !== RoutePathsType.Account) {
       if (
         loadedLocation.startsWith(RoutePathsType.Account) &&
+        !WindowController.isLocationAccountWithId(loadedLocation) &&
         !loadedLocation.startsWith(RoutePathsType.AccountSettings)
       ) {
         AccountController.updateActiveTabId(loadedLocation);

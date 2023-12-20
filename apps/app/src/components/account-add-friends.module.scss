@@ -78,7 +78,6 @@
         color: $brand-900;
         font-size: $font-size-sm;
         font-weight: $font-weight-bold;
-        padding: $mp-4 $mp-6;
     }
 
     & .follower-request-items-container {
@@ -91,14 +90,8 @@
 
     & .result-items-container {
         width: 100%;
-        display: -webkit-box;
-        display: -ms-flexbox;
         display: flex;
-        -ms-flex-wrap: wrap;
-            flex-wrap: wrap;
-        -ms-flex-line-pack: start;
-            align-content: flex-start;
-        height: 100%;
+        flex-direction: column;
         overflow-y: auto;
         scroll-behavior: smooth;
 
@@ -152,5 +145,67 @@
         & .search-input-root-desktop {
             max-width: 556px;
         }
+    }
+
+    & .title-desktop {
+        padding: $mp-4 $mp-6;
+    }
+}
+
+.root-tablet {
+    height: 100%;
+    min-height: 100%;
+    padding-top: calc(56px + 24px);
+
+    & .search-container-tablet {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: horizontal;
+        -webkit-box-direction: normal;
+            -ms-flex-direction: row;
+                flex-direction: row;
+        -webkit-box-pack: center;
+            -ms-flex-pack: center;
+                justify-content: center;
+        padding-left: $mp-4;
+        padding-right: $mp-4;
+
+        & .search-input-root-tablet {
+            max-width: 556px;
+        }
+    }
+
+    & .title-tablet {
+        padding: $mp-4 $mp-6;
+    }
+}
+
+.root-mobile {
+    height: 100%;
+    min-height: 100%;
+    padding-top: $mp-4;
+
+    & .search-container-mobile {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: horizontal;
+        -webkit-box-direction: normal;
+            -ms-flex-direction: row;
+                flex-direction: row;
+        -webkit-box-pack: center;
+            -ms-flex-pack: center;
+                justify-content: center;
+        padding-left: $mp-4;
+        padding-right: $mp-4;
+
+        & .search-input-root-mobile {
+        
+        }
+    }
+
+    & .title-mobile {
+        padding: $mp-4;
     }
 }

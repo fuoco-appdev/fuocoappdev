@@ -93,6 +93,12 @@ export default function AccountFollowItemComponent({
     setIsAccepted(follower?.accepted ?? false);
   }, [follower]);
 
+  const onClickOverride = () => {
+    setTimeout(() => {
+      onClick();
+    }, 150);
+  };
+
   const onFollowOverride = () => {
     setTimeout(() => {
       onFollow?.();
@@ -152,7 +158,7 @@ export default function AccountFollowItemComponent({
         isFollowing={isFollowing}
         isAccepted={isAccepted}
         profileUrl={profileUrl}
-        onClick={onClick}
+        onClick={onClickOverride}
         onFollow={onFollowOverride}
         onUnfollow={onUnfollowOverride}
         onRequested={onRequestedOverride}
@@ -167,7 +173,7 @@ export default function AccountFollowItemComponent({
         isFollowing={isFollowing}
         isAccepted={isAccepted}
         profileUrl={profileUrl}
-        onClick={onClick}
+        onClick={onClickOverride}
         onFollow={onFollowOverride}
         onUnfollow={onUnfollowOverride}
         onRequested={onRequestedOverride}
@@ -182,7 +188,7 @@ export default function AccountFollowItemComponent({
         isFollowing={isFollowing}
         isAccepted={isAccepted}
         profileUrl={profileUrl}
-        onClick={onClick}
+        onClick={onClickOverride}
         onFollow={onFollowOverride}
         onUnfollow={onUnfollowOverride}
         onRequested={onRequestedOverride}

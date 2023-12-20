@@ -63,54 +63,57 @@ export default function AccountAddFriendsDesktopComponent({
             />
           </div>
         </div>
-        {accountProps.followRequestAccounts.length > 0 && (
-          <div
-            className={[
-              styles['follower-request-items-container'],
-              styles['follower-request-items-container-desktop'],
-            ].join(' ')}
-          >
+        {accountProps.followRequestAccounts.length > 0 &&
+          accountProps.addFriendsInput.length <= 0 && (
             <div
-              className={[styles['title'], styles['title-desktop']].join(' ')}
+              className={[
+                styles['follower-request-items-container'],
+                styles['follower-request-items-container-desktop'],
+              ].join(' ')}
             >
-              {t('followerRequests')}
+              <div
+                className={[styles['title'], styles['title-desktop']].join(' ')}
+              >
+                {t('followerRequests')}
+              </div>
+              {accountProps.followRequestAccounts.map((value) => {
+                const accountFollowerRequest = Object.keys(
+                  accountProps.followRequestAccountFollowers
+                ).includes(value.id)
+                  ? accountProps.followRequestAccountFollowers[value.id]
+                  : null;
+                const customerRequest = Object.keys(
+                  accountProps.followRequestCustomers
+                ).includes(value.customerId)
+                  ? accountProps.followRequestCustomers[value.customerId]
+                  : null;
+                return (
+                  <AccountFollowItemComponent
+                    key={value.id}
+                    account={value}
+                    follower={accountFollowerRequest}
+                    customer={customerRequest}
+                    isRequest={true}
+                    onClick={() =>
+                      navigate(`${RoutePathsType.Account}/${value.id}`)
+                    }
+                    onConfirm={() =>
+                      AccountController.confirmFollowRequestAsync(
+                        accountFollowerRequest?.accountId ?? '',
+                        accountFollowerRequest?.followerId ?? ''
+                      )
+                    }
+                    onRemove={() =>
+                      AccountController.removeFollowRequestAsync(
+                        accountFollowerRequest?.accountId ?? '',
+                        accountFollowerRequest?.followerId ?? ''
+                      )
+                    }
+                  />
+                );
+              })}
             </div>
-            {accountProps.followRequestAccounts.map((value) => {
-              const accountFollowerRequest = Object.keys(
-                accountProps.followRequestAccountFollowers
-              ).includes(value.id)
-                ? accountProps.followRequestAccountFollowers[value.id]
-                : null;
-              const customerRequest = Object.keys(
-                accountProps.followRequestCustomers
-              ).includes(value.customerId)
-                ? accountProps.followRequestCustomers[value.customerId]
-                : null;
-              return (
-                <AccountFollowItemComponent
-                  key={value.id}
-                  account={value}
-                  follower={accountFollowerRequest}
-                  customer={customerRequest}
-                  isRequest={true}
-                  onClick={() => {}}
-                  onConfirm={() =>
-                    AccountController.confirmFollowRequestAsync(
-                      accountFollowerRequest?.accountId ?? '',
-                      accountFollowerRequest?.followerId ?? ''
-                    )
-                  }
-                  onRemove={() =>
-                    AccountController.removeFollowRequestAsync(
-                      accountFollowerRequest?.accountId ?? '',
-                      accountFollowerRequest?.followerId ?? ''
-                    )
-                  }
-                />
-              );
-            })}
-          </div>
-        )}
+          )}
 
         <div className={[styles['title'], styles['title-desktop']].join(' ')}>
           {t('results')}
@@ -139,7 +142,9 @@ export default function AccountAddFriendsDesktopComponent({
                 follower={accountFollower}
                 customer={customer}
                 isRequest={false}
-                onClick={() => {}}
+                onClick={() =>
+                  navigate(`${RoutePathsType.Account}/${value.id}`)
+                }
                 onFollow={() => AccountController.requestFollowAsync(value.id)}
                 onRequested={() =>
                   AccountController.requestUnfollowAsync(value.id)

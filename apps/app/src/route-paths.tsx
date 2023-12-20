@@ -26,6 +26,7 @@ import AccountSettingsAccountComponent from './components/account-settings-accou
 import LoadingComponent from './components/loading.component';
 import React from 'react';
 import HelpComponent from './components/help.component';
+import AccountPublicComponent from './components/account-public.component';
 
 export enum RoutePathsType {
   Default = '/',
@@ -45,6 +46,7 @@ export enum RoutePathsType {
   Cart = '/cart',
   Checkout = '/checkout',
   Account = '/account',
+  AccountWithId = '/account/:id',
   AccountEvents = '/account/events',
   AccountOrderHistory = '/account/order-history',
   AccountAddresses = '/account/addresses',
@@ -147,6 +149,11 @@ export const getRoutePaths = (): RouteObject[] => [
             element: <AccountAddressesComponent />,
           },
         ],
+      },
+      {
+        path: RoutePathsType.AccountWithId,
+        element: <AccountPublicComponent />,
+        children: [],
       },
       {
         path: RoutePathsType.AccountHelp,
