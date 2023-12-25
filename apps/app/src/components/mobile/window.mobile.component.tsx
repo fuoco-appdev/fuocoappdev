@@ -30,6 +30,7 @@ export default function WindowMobileComponent({
   windowProps,
   windowLocalProps,
   accountProps,
+  accountPublicProps,
   permissionsProps,
   homeProps,
   openMore,
@@ -350,6 +351,18 @@ export default function WindowMobileComponent({
                             {t('addFriends')}
                           </div>
                         </>
+                      )}
+                      {WindowController.isLocationAccountWithId(
+                        location.pathname ?? ''
+                      ) && (
+                        <div
+                          className={[styles['navigation-back-title']].join(
+                            ' '
+                          )}
+                          style={{ textTransform: 'lowercase' }}
+                        >
+                          {accountPublicProps.account?.username ?? ''}
+                        </div>
                       )}
                       {activeRoute === RoutePathsType.AccountSettings && (
                         <>

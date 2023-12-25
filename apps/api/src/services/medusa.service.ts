@@ -5,6 +5,7 @@ import {
   CustomersRequest,
   CustomersResponse,
   CustomerResponse,
+  CustomerMetadataResponse,
   UpdateCustomerRequest,
   AddCustomerToGroupRequest,
   RemoveCustomerFromGroupRequest,
@@ -35,6 +36,34 @@ class MedusaService {
     if (!this._token) {
       throw new Error("MEDUSA_API_TOKEN doesn't exist");
     }
+  }
+
+  public async getCustomerMetadataAsync(
+    customerId: string
+  ): Promise<InstanceType<typeof CustomerMetadataResponse>> {
+    const response = new CustomerMetadataResponse();
+    const customerResponse = await SupabaseService.client
+      .from('customer')
+      .select()
+      .eq('id', customerId);
+
+    if (customerResponse.error) {
+      console.error(customerResponse.error);
+      return response;
+    }
+
+    const data = customerResponse.data.length > 0 && customerResponse.data[0];
+    if (data) {
+      response.setId(data.id);
+      response.setFirstName(data.first_name);
+      response.setLastName(data.last_name);
+      response.setHasAccount(data.has_account);
+      response.setCreatedAt(data.created_at);
+      response.setUpdatedAt(data.updated_at);
+      response.setDeletedAt(data.deleted_at);
+    }
+
+    return response;
   }
 
   public async getCustomerAsync(

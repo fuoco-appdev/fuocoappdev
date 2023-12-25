@@ -272,6 +272,7 @@
   "priceDealsCallToAction": "Unlock exclusive discounts and promotions now by signing up on the platform.",
   "generalInformation": "General information",
   "noLikedProducts": "You have no liked products.",
+  "userNoLikedProducts": "{{username, string}} has no liked products.",
   "noFriendsFound": "No friends with username '{{username, string}}' have been found.",
   "follow": "Follow",
   "requested": "Requested",

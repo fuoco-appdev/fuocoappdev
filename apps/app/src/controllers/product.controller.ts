@@ -21,6 +21,7 @@ import {
   PricedVariant,
 } from '@medusajs/medusa/dist/types/pricing';
 import AccountController from './account.controller';
+import AccountPublicController from './account-public.controller';
 import ProductLikesService from '../services/product-likes.service';
 import {
   AccountResponse,
@@ -89,6 +90,7 @@ class ProductController extends Controller {
         }
         StoreController.updateProductLikesMetadata(productId, metadata);
         AccountController.updateProductLikesMetadata(productId, metadata);
+        AccountPublicController.updateProductLikesMetadata(productId, metadata);
         return;
       }
 
@@ -101,6 +103,7 @@ class ProductController extends Controller {
       }
       StoreController.updateProductLikesMetadata(productId, metadata);
       AccountController.updateProductLikesMetadata(productId, metadata);
+      AccountPublicController.updateProductLikesMetadata(productId, metadata);
     } catch (error: any) {
       console.error(error);
     }

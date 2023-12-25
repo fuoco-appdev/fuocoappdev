@@ -35,10 +35,10 @@ class MedusaService extends Service {
     return this._accessTokenBehaviorSubject.asObservable();
   }
 
-  public intializeMedusa(publicKey: string): void {
+  public intializeMedusa(): void {
     this._medusa = new Medusa({
       baseUrl: ConfigService.medusa.url,
-      apiKey: publicKey,
+      apiKey: process.env['MEDUSA_PUBLIC_KEY'] ?? '',
       maxRetries: 3,
     });
   }
@@ -79,6 +79,30 @@ class MedusaService extends Service {
     const productCountResponse =
       core.ProductCountResponse.fromBinary(arrayBuffer);
     return productCountResponse.count;
+  }
+
+  public async requestCustomerMetadataAsync(
+    customerId: string
+  ): Promise<core.CustomerMetadataResponse | undefined> {
+    const response = await axios({
+      method: 'post',
+      url: `${this.endpointUrl}/medusa/customer/metadata/${customerId}`,
+      headers: {
+        ...this.headers,
+      },
+      data: '',
+      responseType: 'arraybuffer',
+    });
+    const arrayBuffer = new Uint8Array(response.data);
+    this.assertResponse(arrayBuffer);
+
+    const customerMetadataResponse =
+      core.CustomerMetadataResponse.fromBinary(arrayBuffer);
+    if (!customerMetadataResponse) {
+      return undefined;
+    }
+
+    return customerMetadataResponse;
   }
 
   public async requestCustomerAccountAsync(

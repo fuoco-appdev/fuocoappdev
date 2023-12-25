@@ -2,18 +2,29 @@ import SupabaseService from './supabase.service';
 import ConfigService from './config.service';
 import * as core from '../protobuf/core_pb';
 import AWS, { Config } from 'aws-sdk';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 class BucketService {
   private _s3: AWS.S3 | undefined;
+  private _s3BehaviorSubject: BehaviorSubject<AWS.S3 | undefined>;
 
-  constructor() {}
+  constructor() {
+    this._s3BehaviorSubject = new BehaviorSubject<AWS.S3 | undefined>(
+      undefined
+    );
+  }
 
-  public initializeS3(accessKeyId: string, secretAccessKey: string): void {
+  public get s3Observable(): Observable<AWS.S3 | undefined> {
+    return this._s3BehaviorSubject.asObservable();
+  }
+
+  public initializeS3(): void {
     AWS.config.update({
-      accessKeyId: accessKeyId,
-      secretAccessKey: secretAccessKey,
+      accessKeyId: process.env['S3_ACCESS_KEY_ID'],
+      secretAccessKey: process.env['S3_SECRET_ACCESS_KEY'],
     });
     this._s3 = new AWS.S3({ endpoint: ConfigService.s3.url });
+    this._s3BehaviorSubject.next(this._s3);
   }
 
   public async getPublicUrlAsync(

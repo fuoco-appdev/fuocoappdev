@@ -44,6 +44,7 @@ class AccountController extends Controller {
   private _selectedInventoryLocationIdSubscription: Subscription | undefined;
   private _medusaAccessTokenSubscription: Subscription | undefined;
   private _accountSubscription: Subscription | undefined;
+  private _s3Subscription: Subscription | undefined;
 
   constructor() {
     super();
@@ -77,6 +78,7 @@ class AccountController extends Controller {
 
   public override dispose(renderCount: number): void {
     clearTimeout(this._usernameTimerId as number | undefined);
+    this._s3Subscription?.unsubscribe();
     this._accountSubscription?.unsubscribe();
     this._medusaAccessTokenSubscription?.unsubscribe();
     this._selectedInventoryLocationIdSubscription?.unsubscribe();
@@ -766,7 +768,6 @@ class AccountController extends Controller {
     try {
       await AccountService.requestActiveDeleteAsync();
       AccountService.clearActiveAccount();
-      SupabaseService.clear();
     } catch (error: any) {
       console.error(error);
     }
@@ -1143,16 +1144,24 @@ class AccountController extends Controller {
     ) {
       WindowController.updateLanguageCode(value.languageCode);
     }
-    if (value.profileUrl && value.profileUrl.length > 0) {
-      try {
-        this._model.profileUrl = await BucketService.getPublicUrlAsync(
-          core.StorageFolderType.Avatars,
-          value.profileUrl
-        );
-      } catch (error: any) {
-        console.error(error);
+
+    this._s3Subscription?.unsubscribe();
+    this._s3Subscription = BucketService.s3Observable.subscribe(async (s3) => {
+      if (!s3) {
+        return;
       }
-    }
+
+      if (value?.profileUrl && value.profileUrl.length > 0) {
+        try {
+          this._model.profileUrl = await BucketService.getPublicUrlAsync(
+            core.StorageFolderType.Avatars,
+            value.profileUrl
+          );
+        } catch (error: any) {
+          console.error(error);
+        }
+      }
+    });
 
     this._model.profileForm = {
       firstName: this._model.customer?.first_name,

@@ -34,6 +34,7 @@ import { WindowSuspenseDesktopComponent } from './suspense/window.suspense.deskt
 export default function WindowDesktopComponent({
   windowProps,
   windowLocalProps,
+  accountPublicProps,
   accountProps,
   permissionsProps,
   homeProps,
@@ -574,28 +575,14 @@ export default function WindowDesktopComponent({
                     </>
                   )}
                   {WindowController.isLocationAccountWithId(
-                    windowProps.activeRoute ?? ''
+                    location.pathname ?? ''
                   ) && (
-                    <>
-                      <Avatar
-                        classNames={{
-                          container: [
-                            styles['avatar-container'],
-                            styles['avatar-container-desktop'],
-                          ].join(' '),
-                        }}
-                        size={'custom'}
-                        text={
-                          homeProps.selectedInventoryLocation?.company ?? ''
-                        }
-                        src={''}
-                      />
-                      <div
-                        className={[styles['navigation-back-title']].join(' ')}
-                      >
-                        {homeProps.selectedInventoryLocation?.company ?? ''}
-                      </div>
-                    </>
+                    <div
+                      className={[styles['navigation-back-title']].join(' ')}
+                      style={{ textTransform: 'lowercase' }}
+                    >
+                      {accountPublicProps.account?.username ?? ''}
+                    </div>
                   )}
                   {windowProps.activeRoute?.startsWith(
                     RoutePathsType.AccountSettings

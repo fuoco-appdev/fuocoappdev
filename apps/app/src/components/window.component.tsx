@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import WindowController from '../controllers/window.controller';
 import AccountController from '../controllers/account.controller';
+import AccountPublicController from '../controllers/account-public.controller';
 import styles from './window.module.scss';
 import { RoutePathsType } from '../route-paths';
 import { useTranslation } from 'react-i18next';
@@ -26,6 +27,7 @@ import { PermissionsState } from '../models/permissions.model';
 import { HomeState } from '../models/home.model';
 import { PriceList } from '@medusajs/medusa';
 import { Line } from '@fuoco.appdev/core-ui';
+import { AccountPublicState } from '../models/account-public.model';
 
 const WindowDesktopComponent = lazy(
   () => import('./desktop/window.desktop.component')
@@ -40,6 +42,7 @@ const WindowMobileComponent = lazy(
 export interface WindowResponsiveProps {
   windowProps: WindowState;
   windowLocalProps: WindowLocalState;
+  accountPublicProps: AccountPublicState;
   accountProps: AccountState;
   permissionsProps: PermissionsState;
   homeProps: HomeState;
@@ -60,6 +63,9 @@ export default function WindowComponent(): JSX.Element {
   const [windowProps] = useObservable(WindowController.model.store);
   const [homeLocalProps] = useObservable(
     HomeController.model.localStore ?? Store.prototype
+  );
+  const [accountPublicProps] = useObservable(
+    AccountPublicController.model.store
   );
   const [accountProps] = useObservable(AccountController.model.store);
   const [permissionsProps] = useObservable(PermissionsController.model.store);
@@ -95,6 +101,14 @@ export default function WindowComponent(): JSX.Element {
       windowProps.activeRoute?.startsWith(`${RoutePathsType.Store}/`)
     ) {
       setTimeout(() => navigate(RoutePathsType.Store), 150);
+      return;
+    }
+
+    if (
+      windowProps.loadedLocationPath &&
+      WindowController.isLocationAccountWithId(windowProps.loadedLocationPath)
+    ) {
+      setTimeout(() => navigate(RoutePathsType.Account), 150);
       return;
     }
 
@@ -205,6 +219,7 @@ export default function WindowComponent(): JSX.Element {
       <WindowDesktopComponent
         windowProps={windowProps}
         windowLocalProps={windowLocalProps}
+        accountPublicProps={accountPublicProps}
         accountProps={accountProps}
         permissionsProps={permissionsProps}
         homeProps={homeProps}
@@ -220,6 +235,7 @@ export default function WindowComponent(): JSX.Element {
       <WindowTabletComponent
         windowProps={windowProps}
         windowLocalProps={windowLocalProps}
+        accountPublicProps={accountPublicProps}
         accountProps={accountProps}
         permissionsProps={permissionsProps}
         homeProps={homeProps}
@@ -235,6 +251,7 @@ export default function WindowComponent(): JSX.Element {
       <WindowMobileComponent
         windowProps={windowProps}
         windowLocalProps={windowLocalProps}
+        accountPublicProps={accountPublicProps}
         accountProps={accountProps}
         permissionsProps={permissionsProps}
         homeProps={homeProps}

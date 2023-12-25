@@ -15,7 +15,6 @@ import { useObservable } from '@ngneat/use-observable';
 import { useSpring } from 'react-spring';
 import * as core from '../../protobuf/core_pb';
 import Map, { MapRef, Marker, Popup } from 'react-map-gl';
-import SecretsService from '../../services/secrets.service';
 import ConfigService from '../../services/config.service';
 import { InventoryLocation } from '../../models/home.model';
 import { HomeResponsiveProps } from '../home.component';
@@ -103,116 +102,113 @@ export default function HomeTabletComponent({
             styles['map-container-tablet'],
           ].join(' ')}
         >
-          {homeProps.accessToken && (
-            <Map
-              style={{ borderRadius: 6, minWidth: '100%' }}
-              mapboxAccessToken={homeProps.accessToken}
-              ref={mapRef}
-              initialViewState={{
-                longitude: -74.5962,
-                latitude: 46.1185,
-                zoom: 13,
-              }}
-              mapStyle={ConfigService.mapbox.style_url}
-              onMove={(e) => HomeController.onMapMove(e.viewState)}
-              onLoad={(e) => setMapStyleLoaded(e.target ? true : false)}
-            >
-              {homeProps.inventoryLocations?.map(
-                (point: InventoryLocation, index: number) => (
-                  <Marker
-                    key={`marker-${index}`}
-                    latitude={point.coordinates.lat}
-                    longitude={point.coordinates.lng}
-                    anchor={'bottom'}
-                    onClick={(e) => {
-                      e.originalEvent.stopPropagation();
-                      setSelectedPoint(point);
-                    }}
-                  >
-                    <img
-                      src={
-                        homeProps.selectedInventoryLocation?.placeName !==
-                        point.placeName
-                          ? '../assets/svg/cruthology-pin.svg'
-                          : '../assets/svg/cruthology-selected-pin.svg'
-                      }
-                      className={[
-                        styles['marker'],
-                        styles['marker-tablet'],
-                      ].join(' ')}
-                    />
-                  </Marker>
-                )
-              )}
-              {selectedPoint && (
-                <Popup
-                  anchor={'top'}
-                  onClose={() => setSelectedPoint(null)}
-                  latitude={selectedPoint.coordinates.lat}
-                  longitude={selectedPoint.coordinates.lng}
+          <Map
+            style={{ borderRadius: 6, minWidth: '100%' }}
+            mapboxAccessToken={process.env['MAPBOX_ACCESS_TOKEN']}
+            ref={mapRef}
+            initialViewState={{
+              longitude: -74.5962,
+              latitude: 46.1185,
+              zoom: 13,
+            }}
+            mapStyle={ConfigService.mapbox.style_url}
+            onMove={(e) => HomeController.onMapMove(e.viewState)}
+            onLoad={(e) => setMapStyleLoaded(e.target ? true : false)}
+          >
+            {homeProps.inventoryLocations?.map(
+              (point: InventoryLocation, index: number) => (
+                <Marker
+                  key={`marker-${index}`}
+                  latitude={point.coordinates.lat}
+                  longitude={point.coordinates.lng}
+                  anchor={'bottom'}
+                  onClick={(e) => {
+                    e.originalEvent.stopPropagation();
+                    setSelectedPoint(point);
+                  }}
+                >
+                  <img
+                    src={
+                      homeProps.selectedInventoryLocation?.placeName !==
+                      point.placeName
+                        ? '../assets/svg/cruthology-pin.svg'
+                        : '../assets/svg/cruthology-selected-pin.svg'
+                    }
+                    className={[styles['marker'], styles['marker-tablet']].join(
+                      ' '
+                    )}
+                  />
+                </Marker>
+              )
+            )}
+            {selectedPoint && (
+              <Popup
+                anchor={'top'}
+                onClose={() => setSelectedPoint(null)}
+                latitude={selectedPoint.coordinates.lat}
+                longitude={selectedPoint.coordinates.lng}
+              >
+                <div
+                  className={[
+                    styles['marker-popup'],
+                    styles['marker-popup-tablet'],
+                  ].join(' ')}
                 >
                   <div
                     className={[
-                      styles['marker-popup'],
-                      styles['marker-popup-tablet'],
+                      styles['company'],
+                      styles['company-tablet'],
                     ].join(' ')}
                   >
-                    <div
-                      className={[
-                        styles['company'],
-                        styles['company-tablet'],
-                      ].join(' ')}
-                    >
-                      {selectedPoint.company}
-                    </div>
-                    <div
-                      className={[
-                        styles['address'],
-                        styles['address-tablet'],
-                      ].join(' ')}
-                    >
-                      {selectedPoint.placeName}
-                    </div>
-                    <div
-                      className={[
-                        styles['select-button-container'],
-                        styles['select-button-container-tablet'],
-                      ].join(' ')}
-                    >
-                      <div>
-                        <Button
-                          touchScreen={true}
-                          classNames={{
-                            button: styles['select-button'],
-                          }}
-                          rippleProps={{
-                            color: 'rgba(133, 38, 122, .35)',
-                          }}
-                          block={false}
-                          size={'tiny'}
-                          disabled={
-                            selectedPoint?.placeName ===
-                            homeProps.selectedInventoryLocation?.placeName
-                          }
-                          type={'text'}
-                          onClick={() =>
-                            HomeController.updateSelectedInventoryLocation(
-                              selectedPoint
-                            )
-                          }
-                        >
-                          {selectedPoint?.placeName !==
+                    {selectedPoint.company}
+                  </div>
+                  <div
+                    className={[
+                      styles['address'],
+                      styles['address-tablet'],
+                    ].join(' ')}
+                  >
+                    {selectedPoint.placeName}
+                  </div>
+                  <div
+                    className={[
+                      styles['select-button-container'],
+                      styles['select-button-container-tablet'],
+                    ].join(' ')}
+                  >
+                    <div>
+                      <Button
+                        touchScreen={true}
+                        classNames={{
+                          button: styles['select-button'],
+                        }}
+                        rippleProps={{
+                          color: 'rgba(133, 38, 122, .35)',
+                        }}
+                        block={false}
+                        size={'tiny'}
+                        disabled={
+                          selectedPoint?.placeName ===
                           homeProps.selectedInventoryLocation?.placeName
-                            ? t('select')
-                            : t('selected')}
-                        </Button>
-                      </div>
+                        }
+                        type={'text'}
+                        onClick={() =>
+                          HomeController.updateSelectedInventoryLocation(
+                            selectedPoint
+                          )
+                        }
+                      >
+                        {selectedPoint?.placeName !==
+                        homeProps.selectedInventoryLocation?.placeName
+                          ? t('select')
+                          : t('selected')}
+                      </Button>
                     </div>
                   </div>
-                </Popup>
-              )}
-            </Map>
-          )}
+                </div>
+              </Popup>
+            )}
+          </Map>
         </div>
       </div>
     </ResponsiveTablet>

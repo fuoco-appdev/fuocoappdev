@@ -34,7 +34,6 @@ import { CheckoutResponsiveProps } from '../checkout.component';
 import { RoutePathsType } from '../../route-paths';
 import { useNavigate } from 'react-router-dom';
 import { ResponsiveDesktop } from '../responsive.component';
-import SecretsService from '../../services/secrets.service';
 import { loadStripe } from '@stripe/stripe-js';
 import { createPortal } from 'react-dom';
 
@@ -58,7 +57,7 @@ export default function CheckoutDesktopComponent({
   onContinueToDeliveryFromBillingAddress,
   onAddAddressAsync,
 }: CheckoutResponsiveProps): JSX.Element {
-  const stripePromise = loadStripe(SecretsService.stripePublishableKey ?? '');
+  const stripePromise = loadStripe(process.env['STRIPE_PUBLISHABLE_KEY'] ?? '');
   const rootRef = useRef<HTMLDivElement | null>(null);
   const { t } = useTranslation();
   const navigate = useNavigate();

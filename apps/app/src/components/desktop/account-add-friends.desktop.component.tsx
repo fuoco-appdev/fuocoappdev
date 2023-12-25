@@ -95,7 +95,7 @@ export default function AccountAddFriendsDesktopComponent({
                     customer={customerRequest}
                     isRequest={true}
                     onClick={() =>
-                      navigate(`${RoutePathsType.Account}/${value.id}`)
+                      navigate(`${RoutePathsType.Account}/${value.id}/likes`)
                     }
                     onConfirm={() =>
                       AccountController.confirmFollowRequestAsync(
@@ -143,7 +143,7 @@ export default function AccountAddFriendsDesktopComponent({
                 customer={customer}
                 isRequest={false}
                 onClick={() =>
-                  navigate(`${RoutePathsType.Account}/${value.id}`)
+                  navigate(`${RoutePathsType.Account}/${value.id}/likes`)
                 }
                 onFollow={() => AccountController.requestFollowAsync(value.id)}
                 onRequested={() =>

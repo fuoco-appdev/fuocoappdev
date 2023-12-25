@@ -272,6 +272,79 @@ export class CustomersRequest extends Message<CustomersRequest> {
 }
 
 /**
+ * @generated from message core.CustomerMetadataResponse
+ */
+export class CustomerMetadataResponse extends Message<CustomerMetadataResponse> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: string first_name = 2;
+   */
+  firstName = "";
+
+  /**
+   * @generated from field: string last_name = 3;
+   */
+  lastName = "";
+
+  /**
+   * @generated from field: bool has_account = 4;
+   */
+  hasAccount = false;
+
+  /**
+   * @generated from field: string created_at = 5;
+   */
+  createdAt = "";
+
+  /**
+   * @generated from field: string updated_at = 6;
+   */
+  updatedAt = "";
+
+  /**
+   * @generated from field: string deleted_at = 7;
+   */
+  deletedAt = "";
+
+  constructor(data?: PartialMessage<CustomerMetadataResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.CustomerMetadataResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "first_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "last_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "has_account", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 5, name: "created_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "updated_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 7, name: "deleted_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CustomerMetadataResponse {
+    return new CustomerMetadataResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CustomerMetadataResponse {
+    return new CustomerMetadataResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CustomerMetadataResponse {
+    return new CustomerMetadataResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: CustomerMetadataResponse | PlainMessage<CustomerMetadataResponse> | undefined, b: CustomerMetadataResponse | PlainMessage<CustomerMetadataResponse> | undefined): boolean {
+    return proto3.util.equals(CustomerMetadataResponse, a, b);
+  }
+}
+
+/**
  * @generated from message core.CustomerResponse
  */
 export class CustomerResponse extends Message<CustomerResponse> {

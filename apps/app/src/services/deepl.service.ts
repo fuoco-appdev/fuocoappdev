@@ -10,8 +10,8 @@ class DeepLService {
 
   constructor() {}
 
-  public initializeDeepL(authKey: string): void {
-    this._authKey = authKey;
+  public initializeDeepL(): void {
+    this._authKey = process.env['DEEPL_AUTH_KEY'];
   }
 
   public async translateAsync(

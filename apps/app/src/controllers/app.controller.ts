@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Controller } from '../controller';
-import SecretsService from '../services/secrets.service';
 import BucketService from '../services/bucket.service';
 import MedusaService from '../services/medusa.service';
 import WindowController from '../controllers/window.controller';
@@ -21,6 +20,7 @@ import PermissionsController from './permissions.controller';
 import HelpController from '../controllers/help.controller';
 import LoadingController from '../controllers/loading.controller';
 import ResetPasswordController from '../controllers/reset-password.controller';
+import AccountPublicController from '../controllers/account-public.controller';
 import AccountController from '../controllers/account.controller';
 import ProductController from '../controllers/product.controller';
 import SupabaseService from '../services/supabase.service';
@@ -37,8 +37,6 @@ class AppController extends Controller {
   }
 
   public override dispose(renderCount: number): void {
-    SecretsService.clearPublicSecrets();
-
     WindowController.dispose(renderCount);
     SigninController.dispose(renderCount);
     SignupController.dispose(renderCount);
@@ -48,6 +46,7 @@ class AppController extends Controller {
     PermissionsController.dispose(renderCount);
     HelpController.dispose(renderCount);
     ResetPasswordController.dispose(renderCount);
+    AccountPublicController.dispose(renderCount);
     AccountController.dispose(renderCount);
     LoadingController.dispose(renderCount);
     HomeController.dispose(renderCount);
@@ -63,7 +62,7 @@ class AppController extends Controller {
   public async initializeAsync(renderCount: number): Promise<void> {
     this.dispose(renderCount);
 
-    await this.requestPublicSecretsAsync();
+    this.initializeServices();
 
     WindowController.initialize(renderCount);
     LoadingController.initialize(renderCount);
@@ -75,6 +74,7 @@ class AppController extends Controller {
     PrivacyPolicyController.initialize(renderCount);
     PermissionsController.initialize(renderCount);
     HelpController.initialize(renderCount);
+    AccountPublicController.initialize(renderCount);
     AccountController.initialize(renderCount);
     HomeController.initialize(renderCount);
     StoreController.initialize(renderCount);
@@ -86,13 +86,13 @@ class AppController extends Controller {
     ProductController.initialize(renderCount);
   }
 
-  private async requestPublicSecretsAsync(): Promise<void> {
+  private initializeServices(): void {
     try {
-      const secrets = await SecretsService.requestPublicAsync();
-      SupabaseService.initializeSupabase(secrets.supabaseAnonKey);
-      MeilisearchService.initializeMeiliSearch(secrets.meilisearchPublicKey);
-      MedusaService.intializeMedusa(secrets.medusaPublicKey);
-      DeepLService.initializeDeepL(secrets.deeplAuthKey);
+      SupabaseService.initializeSupabase();
+      MeilisearchService.initializeMeiliSearch();
+      MedusaService.intializeMedusa();
+      DeepLService.initializeDeepL();
+      BucketService.initializeS3();
     } catch (error: any) {
       console.error(error);
     }

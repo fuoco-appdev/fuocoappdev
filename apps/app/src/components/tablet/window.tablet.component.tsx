@@ -38,6 +38,7 @@ export default function WindowTabletComponent({
   windowProps,
   windowLocalProps,
   accountProps,
+  accountPublicProps,
   permissionsProps,
   homeProps,
   openMore,
@@ -571,6 +572,16 @@ export default function WindowTabletComponent({
                         {t('addFriends')}
                       </div>
                     </>
+                  )}
+                  {WindowController.isLocationAccountWithId(
+                    location.pathname ?? ''
+                  ) && (
+                    <div
+                      className={[styles['navigation-back-title']].join(' ')}
+                      style={{ textTransform: 'lowercase' }}
+                    >
+                      {accountPublicProps.account?.username ?? ''}
+                    </div>
                   )}
                   {windowProps.activeRoute?.startsWith(
                     RoutePathsType.AccountSettings

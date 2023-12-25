@@ -13,7 +13,6 @@ import AccountService from '../services/account.service';
 import CartController from './cart.controller';
 import { Cart, CustomerGroup, Customer } from '@medusajs/medusa';
 import { select } from '@ngneat/elf';
-import SecretsService from '../services/secrets.service';
 import BucketService from '../services/bucket.service';
 import HomeController from './home.controller';
 import { HomeState, InventoryLocation } from 'src/models/home.model';
@@ -253,9 +252,20 @@ class WindowController extends Controller {
       this._model.showNavigateBack = true;
       this._model.hideCartButton = true;
     } else if (this.isLocationAccountWithId(location.pathname)) {
-      this._model.transitionKeyIndex = 1;
+      this._model.transitionKeyIndex = 2;
       this._model.scaleKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.AccountWithId;
+      this._model.showNavigateBack = true;
+      this._model.hideCartButton = true;
+    } else if (
+      this.isLocationAccountWithId(
+        location.pathname,
+        RoutePathsType.AccountWithIdLikes
+      )
+    ) {
+      this._model.transitionKeyIndex = 2;
+      this._model.scaleKeyIndex = 0;
+      this._model.activeRoute = RoutePathsType.AccountWithIdLikes;
       this._model.showNavigateBack = true;
       this._model.hideCartButton = true;
     } else if (location.pathname === RoutePathsType.AccountSettings) {
@@ -282,18 +292,26 @@ class WindowController extends Controller {
     }
   }
 
-  public isLocationAccountWithId(pathname: string): boolean {
+  public isLocationAccountWithId(
+    pathname: string,
+    childPath?: RoutePathsType
+  ): boolean {
     const splittedPath = pathname.split('/').filter((value) => value !== '');
     if (splittedPath.length < 2) {
       return false;
     }
 
+    const childPathFormatted = childPath?.split('/').slice(-1) ?? [];
     if (
       splittedPath[0] === RoutePathsType.Account.replace('/', '') &&
       /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
         splittedPath[1]
       )
     ) {
+      if (childPath && splittedPath[2] !== childPathFormatted?.[0]) {
+        return false;
+      }
+
       return true;
     }
 
@@ -373,12 +391,9 @@ class WindowController extends Controller {
 
     const account = await this.requestActiveAccountAsync(value);
     if (account) {
-      await this.requestPrivateSecretsAsync(value);
-
       this._model.isAuthenticated = true;
     } else {
       AccountService.clearActiveAccount();
-      SecretsService.clearPrivateSecrets();
       this._model.isAuthenticated = undefined;
     }
 
@@ -406,23 +421,6 @@ class WindowController extends Controller {
         console.error(error);
         return null;
       }
-    }
-  }
-
-  private async requestPrivateSecretsAsync(session: Session): Promise<void> {
-    try {
-      const secrets = await SecretsService.requestPrivateAsync(session);
-      BucketService.initializeS3(
-        secrets.s3AccessKeyId,
-        secrets.s3SecretAccessKey
-      );
-    } catch (error: any) {
-      this.addToast({
-        key: `secrets-${Math.random()}`,
-        message: error.name,
-        description: error.message,
-        type: 'error',
-      });
     }
   }
 

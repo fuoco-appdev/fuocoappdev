@@ -33,7 +33,6 @@ import { useNavigate } from 'react-router-dom';
 import { RoutePathsType } from '../../route-paths';
 import { ResponsiveMobile } from '../responsive.component';
 import { loadStripe } from '@stripe/stripe-js';
-import SecretsService from '../../services/secrets.service';
 import { createPortal } from 'react-dom';
 
 export default function CheckoutMobileComponent({
@@ -56,7 +55,7 @@ export default function CheckoutMobileComponent({
   onContinueToDeliveryFromBillingAddress,
   onAddAddressAsync,
 }: CheckoutResponsiveProps): JSX.Element {
-  const stripePromise = loadStripe(SecretsService.stripePublishableKey ?? '');
+  const stripePromise = loadStripe(process.env['STRIPE_PUBLISHABLE_KEY'] ?? '');
   const rootRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const { t } = useTranslation();

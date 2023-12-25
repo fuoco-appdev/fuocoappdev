@@ -10,10 +10,10 @@ class MeiliSearchService {
     return this._client;
   }
 
-  public initializeMeiliSearch(publicKey: string): void {
+  public initializeMeiliSearch(): void {
     this._client = new MeiliSearch({
       host: ConfigService.meilisearch.url,
-      apiKey: publicKey,
+      apiKey: process.env['MEILISEARCH_PUBLIC_KEY'] ?? '',
     });
   }
 }

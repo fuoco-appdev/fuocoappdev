@@ -8,7 +8,6 @@ import { point, featureCollection, nearestPoint, helpers } from '@turf/turf';
 import WindowController from './window.controller';
 import { Subscription } from 'rxjs';
 import { select } from '@ngneat/elf';
-import SecretsService from '../services/secrets.service';
 import { PublicSecrets } from '../protobuf/core_pb';
 import PermissionsController from './permissions.controller';
 
@@ -108,7 +107,6 @@ class HomeController extends Controller {
     this._model.inventoryLocations = [];
     this._model.selectedInventoryLocation = undefined;
     this._model.wineCount = 0;
-    this._model.accessToken = undefined;
   }
 
   private async initializeAsync(renderCount: number): Promise<void> {
@@ -154,18 +152,6 @@ class HomeController extends Controller {
           }
         },
       });
-
-    this._publicSecretsSubscription?.unsubscribe();
-    this._publicSecretsSubscription =
-      SecretsService.publicSecretsObservable.subscribe(
-        (value: PublicSecrets | null) => {
-          if (!value) {
-            return;
-          }
-
-          this._model.accessToken = value.mapboxAccessToken;
-        }
-      );
   }
 
   private async requestWineCountAsync(): Promise<number> {

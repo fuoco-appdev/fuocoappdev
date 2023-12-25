@@ -27,6 +27,7 @@ import LoadingComponent from './components/loading.component';
 import React from 'react';
 import HelpComponent from './components/help.component';
 import AccountPublicComponent from './components/account-public.component';
+import AccountPublicLikesComponent from './components/account-public-likes.component';
 
 export enum RoutePathsType {
   Default = '/',
@@ -47,6 +48,7 @@ export enum RoutePathsType {
   Checkout = '/checkout',
   Account = '/account',
   AccountWithId = '/account/:id',
+  AccountWithIdLikes = '/account/:id/likes',
   AccountEvents = '/account/events',
   AccountOrderHistory = '/account/order-history',
   AccountAddresses = '/account/addresses',
@@ -153,7 +155,12 @@ export const getRoutePaths = (): RouteObject[] => [
       {
         path: RoutePathsType.AccountWithId,
         element: <AccountPublicComponent />,
-        children: [],
+        children: [
+          {
+            path: RoutePathsType.AccountWithIdLikes,
+            element: <AccountPublicLikesComponent />,
+          },
+        ],
       },
       {
         path: RoutePathsType.AccountHelp,

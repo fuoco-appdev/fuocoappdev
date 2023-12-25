@@ -57,18 +57,14 @@ class SupabaseService {
     return this._anonKey;
   }
 
-  public initializeSupabase(anonKey: string): void {
-    this._supabaseClient = createClient(ConfigService.supabase.url, anonKey);
+  public initializeSupabase(): void {
+    this._anonKey = process.env['SUPABASE_ANON_KEY'] ?? '';
+    this._supabaseClient = createClient(
+      ConfigService.supabase.url,
+      this._anonKey
+    );
     this._supabaseClientBehaviorSubject.next(this._supabaseClient);
-
-    this._anonKey = anonKey;
     this._supabaseClient.auth.onAuthStateChange(this.onAuthStateChanged);
-  }
-
-  public clear(): void {
-    this._anonKey = undefined;
-    this._sessionBehaviorSubject.next(null);
-    this._userBehaviorSubject.next(null);
   }
 
   public async requestUserAsync(): Promise<User | null> {
@@ -110,8 +106,6 @@ class SupabaseService {
     if (response?.error) {
       throw response?.error;
     }
-
-    this.clear();
   }
 
   private async onAuthStateChanged(
@@ -124,7 +118,6 @@ class SupabaseService {
       event === 'TOKEN_REFRESHED'
     ) {
       if (!session) {
-        this.clear();
         return;
       }
 
@@ -135,10 +128,6 @@ class SupabaseService {
       ) {
         this._userBehaviorSubject.next(session.user);
       }
-    } else if (event === 'SIGNED_OUT') {
-      this.clear();
-    } else {
-      this.clear();
     }
   }
 }

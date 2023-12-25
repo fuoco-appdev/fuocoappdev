@@ -14,6 +14,23 @@ import AccountService from '../services/account.service.ts';
 
 @Controller('/account')
 export class AccountController {
+  @Post('/accounts')
+  @ContentType('application/x-protobuf')
+  public async getAccountsAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >
+  ): Promise<void> {
+    const body = await context.request.body({ type: 'reader' });
+    const requestValue = await readAll(body.value);
+    const request = AccountsRequest.deserializeBinary(requestValue);
+    const response = await AccountService.findAccountsAsync(request);
+    context.response.type = 'application/x-protobuf';
+    context.response.body = response.serializeBinary();
+  }
+
   @Post('/create')
   @Guard(AuthGuard)
   @ContentType('application/x-protobuf')
@@ -58,24 +75,6 @@ export class AccountController {
     const accountExists = AccountExistsRequest.deserializeBinary(requestValue);
     const response = await AccountService.checkExistsAsync(accountExists);
 
-    context.response.type = 'application/x-protobuf';
-    context.response.body = response.serializeBinary();
-  }
-
-  @Post('/accounts')
-  @Guard(AuthGuard)
-  @ContentType('application/x-protobuf')
-  public async getAccountsAsync(
-    context: Oak.RouterContext<
-      string,
-      Oak.RouteParams<string>,
-      Record<string, any>
-    >
-  ): Promise<void> {
-    const body = await context.request.body({ type: 'reader' });
-    const requestValue = await readAll(body.value);
-    const request = AccountsRequest.deserializeBinary(requestValue);
-    const response = await AccountService.findAccountsAsync(request);
     context.response.type = 'application/x-protobuf';
     context.response.body = response.serializeBinary();
   }

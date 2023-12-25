@@ -272,6 +272,7 @@
   "priceDealsCallToAction": "Débloquez des remises et des promotions exclusives en vous inscrivant sur la plateforme.",
   "generalInformation": "Informations générales",
   "noLikedProducts": "Vous n'avez pas de produits aimés.",
+  "userNoLikedProducts": "{{username, string}} n'a pas de produits aimés.",
   "noFriendsFound": "Aucun ami avec le nom d'utilisateur '{{username, string}}' n'a été trouvé.",
   "follow": "Suivre",
   "requested": "Demandé",
