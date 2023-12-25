@@ -40,7 +40,7 @@ export default function AccountFollowItemMobileComponent({
                 ].join(' '),
               }}
               size={'custom'}
-              text={account.username}
+              text={customer?.firstName}
               src={profileUrl}
             />
             <div

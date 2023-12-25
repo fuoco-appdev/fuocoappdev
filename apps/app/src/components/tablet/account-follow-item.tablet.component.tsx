@@ -41,7 +41,7 @@ export default function AccountFollowItemTabletComponent({
               ].join(' '),
             }}
             size={'custom'}
-            text={account.username}
+            text={customer?.firstName}
             src={profileUrl}
           />
           <div

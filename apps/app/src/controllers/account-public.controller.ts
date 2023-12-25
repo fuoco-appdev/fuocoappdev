@@ -345,7 +345,17 @@ class AccountPublicController extends Controller {
                   await MedusaService.requestCustomerMetadataAsync(
                     this._model.account?.customerId ?? ''
                   );
+              } catch (error: any) {
+                console.error(error);
+              }
+
+              try {
                 await this.initializeS3BucketAsync(this._model.account);
+              } catch (error: any) {
+                console.error(error);
+              }
+
+              try {
                 await this.initializeAccountAsync(this._model.account);
               } catch (error: any) {
                 console.error(error);
