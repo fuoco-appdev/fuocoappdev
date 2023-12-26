@@ -1,6 +1,7 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
 .root {
+  position: relative;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
