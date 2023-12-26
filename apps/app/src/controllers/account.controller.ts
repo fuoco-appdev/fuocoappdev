@@ -856,7 +856,7 @@ class AccountController extends Controller {
       return errorsCopy;
     }
 
-    if (strict) {
+    if (strict && this._model.account?.username !== username) {
       const exists = await this.requestDoesUsernameExistAsync(username);
       if (exists) {
         errorsCopy.username = this._model.errorStrings?.exists;

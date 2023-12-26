@@ -20,28 +20,36 @@ export function AccountPublicSuspenseTabletComponent(): JSX.Element {
         >
           <div
             className={[
-              styles['avatar-container'],
-              styles['avatar-container-tablet'],
+              styles['top-content'],
+              styles['top-content-tablet'],
             ].join(' ')}
           >
-            <Skeleton style={{ width: 96, height: 96 }} borderRadius={96} />
-          </div>
-          <div
-            className={[styles['username'], styles['username-tablet']].join(
-              ' '
-            )}
-          >
-            <Skeleton
-              count={1}
-              borderRadius={20}
-              height={20}
-              width={120}
+            <div
               className={[
-                styles['skeleton-user'],
-                styles['skeleton-user-tablet'],
+                styles['avatar-container'],
+                styles['avatar-container-tablet'],
               ].join(' ')}
-            />
+            >
+              <Skeleton style={{ width: 96, height: 96 }} borderRadius={96} />
+            </div>
+            <div
+              className={[styles['username'], styles['username-tablet']].join(
+                ' '
+              )}
+            >
+              <Skeleton
+                count={1}
+                borderRadius={20}
+                height={20}
+                width={120}
+                className={[
+                  styles['skeleton-user'],
+                  styles['skeleton-user-tablet'],
+                ].join(' ')}
+              />
+            </div>
           </div>
+
           <div
             className={[
               styles['tabs-container-skeleton'],

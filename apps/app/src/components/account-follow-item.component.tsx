@@ -80,6 +80,10 @@ export default function AccountFollowItemComponent({
   const [isAccepted, setIsAccepted] = useState<boolean>(false);
 
   useEffect(() => {
+    if (!account.profileUrl) {
+      return;
+    }
+
     BucketService.getPublicUrlAsync(
       StorageFolderType.Avatars,
       account.profileUrl

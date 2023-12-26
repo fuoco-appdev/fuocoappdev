@@ -340,27 +340,32 @@ class AccountPublicController extends Controller {
             ]);
             if (accountsResponse.accounts.length > 0) {
               this._model.account = accountsResponse.accounts[0];
-              try {
-                this._model.customerMetadata =
-                  await MedusaService.requestCustomerMetadataAsync(
-                    this._model.account?.customerId ?? ''
-                  );
-              } catch (error: any) {
-                console.error(error);
-              }
-
-              try {
-                await this.initializeS3BucketAsync(this._model.account);
-              } catch (error: any) {
-                console.error(error);
-              }
-
-              try {
-                await this.initializeAccountAsync(this._model.account);
-              } catch (error: any) {
-                console.error(error);
-              }
             }
+          } catch (error: any) {
+            console.error(error);
+          }
+
+          if (!this._model.account) {
+            return;
+          }
+
+          try {
+            await this.initializeAccountAsync(this._model.account);
+          } catch (error: any) {
+            console.error(error);
+          }
+
+          try {
+            this._model.customerMetadata =
+              await MedusaService.requestCustomerMetadataAsync(
+                this._model.account?.customerId ?? ''
+              );
+          } catch (error: any) {
+            console.error(error);
+          }
+
+          try {
+            await this.initializeS3BucketAsync(this._model.account);
           } catch (error: any) {
             console.error(error);
           }

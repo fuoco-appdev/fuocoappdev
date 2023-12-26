@@ -24,7 +24,7 @@ import {
 import { createPortal } from 'react-dom';
 import CartVariantItemComponent from '../cart-variant-item.component';
 import { MedusaProductTypeNames } from '../../types/medusa.type';
-import { useAccountOutletContext } from '../account.component';
+import { useAccountPublicOutletContext } from '../account-public.component';
 import { AccountPublicLikesResponsiveProps } from '../account-public-likes.component';
 
 export default function AccountLikesTabletComponent({
@@ -44,7 +44,7 @@ export default function AccountLikesTabletComponent({
   const { t, i18n } = useTranslation();
   const rootRef = createRef<HTMLDivElement>();
   const navigate = useNavigate();
-  const { scrollContainerRef } = useAccountOutletContext();
+  const { scrollContainerRef } = useAccountPublicOutletContext();
 
   return (
     <ResponsiveTablet>
