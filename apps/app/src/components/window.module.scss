@@ -1308,13 +1308,16 @@
 }
 
 .banner-overlay-root-desktop {
-  height: calc(100% - 24px);
+  height: 100% !important;
+  padding-bottom: $mp-6 !important;
 }
 
 .banner-overlay-root-mobile {
-  padding-top: calc(100% - 24px);
+  height: 100% !important;
+  padding-bottom: calc(56px + 16px) !important;
 }
 
 .banner-overlay-root-tablet {
-  height: calc(100% - 24px);
+  height: 100% !important;
+  padding-bottom: $mp-6 !important;
 }

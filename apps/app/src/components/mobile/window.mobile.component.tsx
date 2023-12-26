@@ -799,6 +799,12 @@ export default function WindowMobileComponent({
           document.body
         )}
         <BannerOverlay
+          classNames={{
+            root: [
+              styles['banner-overlay-root'],
+              styles['banner-overlay-root-mobile'],
+            ].join(' '),
+          }}
           touchScreen={true}
           transition={'up'}
           align={'center'}
