@@ -177,6 +177,7 @@ export default function AccountMobileComponent({
             onScroll(e);
             const elementHeight = topBarRef.current?.clientHeight ?? 0;
             const scrollTop = e.currentTarget.scrollTop;
+            console.log(scrollTop);
             if (prevPreviewScrollTop > scrollTop) {
               yPosition += prevPreviewScrollTop - scrollTop;
               if (yPosition >= 0) {

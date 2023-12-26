@@ -42,8 +42,8 @@ export class ProductLikesService {
       const accountProductLikesData = await SupabaseService.client
         .from('product_likes')
         .select('')
-        .limit(limit)
         .range(offset, offset + limit)
+        .limit(limit)
         .eq('account_id', accountId);
 
       if (accountProductLikesData.error) {
@@ -54,10 +54,6 @@ export class ProductLikesService {
       accountProductIds = data.map((value) => value.product_id);
     } catch (error: any) {
       console.error(error);
-      return null;
-    }
-
-    if (accountProductIds.length <= 0) {
       return null;
     }
 
@@ -169,8 +165,7 @@ export class ProductLikesService {
     const metadatasResponse = new ProductLikesMetadatasResponse();
 
     if (productIds.length <= 0) {
-      console.error('Product ids cannot be empty');
-      return null;
+      return metadatasResponse;
     }
 
     for (const id of productIds) {
