@@ -1,0 +1,1 @@
+ALTER TABLE IF EXISTS public.account_followers DROP CONSTRAINT IF EXISTS account_followers_pkey;
