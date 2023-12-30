@@ -214,6 +214,20 @@ export default function AccountComponent(): JSX.Element {
     }
   }, [windowProps.loadedLocationPath]);
 
+  useEffect(() => {
+    if (AccountController.model.activeTabId === location.pathname) {
+      return;
+    }
+
+    if (location.pathname === RoutePathsType.AccountLikes) {
+      AccountController.updateActiveTabId(RoutePathsType.AccountLikes);
+    } else if (location.pathname === RoutePathsType.AccountOrderHistory) {
+      AccountController.updateActiveTabId(RoutePathsType.AccountOrderHistory);
+    } else if (location.pathname === RoutePathsType.AccountAddresses) {
+      AccountController.updateActiveTabId(RoutePathsType.AccountAddresses);
+    }
+  }, [location.pathname]);
+
   const suspenceComponent = (
     <>
       <AccountSuspenseDesktopComponent />
