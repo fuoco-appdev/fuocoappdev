@@ -1584,6 +1584,43 @@ export class ProductLikesResponse extends Message<ProductLikesResponse> {
 }
 
 /**
+ * @generated from message core.ProductLikeCountMetadataResponse
+ */
+export class ProductLikeCountMetadataResponse extends Message<ProductLikeCountMetadataResponse> {
+  /**
+   * @generated from field: int32 like_count = 1;
+   */
+  likeCount = 0;
+
+  constructor(data?: PartialMessage<ProductLikeCountMetadataResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.ProductLikeCountMetadataResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "like_count", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ProductLikeCountMetadataResponse {
+    return new ProductLikeCountMetadataResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ProductLikeCountMetadataResponse {
+    return new ProductLikeCountMetadataResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ProductLikeCountMetadataResponse {
+    return new ProductLikeCountMetadataResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ProductLikeCountMetadataResponse | PlainMessage<ProductLikeCountMetadataResponse> | undefined, b: ProductLikeCountMetadataResponse | PlainMessage<ProductLikeCountMetadataResponse> | undefined): boolean {
+    return proto3.util.equals(ProductLikeCountMetadataResponse, a, b);
+  }
+}
+
+/**
  * @generated from message core.AccountFollowerRequest
  */
 export class AccountFollowerRequest extends Message<AccountFollowerRequest> {

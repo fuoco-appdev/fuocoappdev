@@ -11,6 +11,27 @@ class ProductLikesService extends Service {
     super();
   }
 
+  public async requestCountMetadataAsync(
+    accountId: string
+  ): Promise<core.ProductLikeCountMetadataResponse> {
+    const response = await axios({
+      method: 'post',
+      url: `${this.endpointUrl}/product-likes/count-metadata/${accountId}`,
+      headers: {
+        ...this.headers,
+      },
+      data: '',
+      responseType: 'arraybuffer',
+    });
+
+    const arrayBuffer = new Uint8Array(response.data);
+    this.assertResponse(arrayBuffer);
+
+    const productLikeCountMetadataResponse =
+      core.ProductLikeCountMetadataResponse.fromBinary(arrayBuffer);
+    return productLikeCountMetadataResponse;
+  }
+
   public async requestMetadataAsync(props: {
     accountId: string;
     productIds: string[];

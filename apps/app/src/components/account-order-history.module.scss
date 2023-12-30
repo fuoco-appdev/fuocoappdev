@@ -32,7 +32,6 @@
             font-weight: $font-weight-bold;
             line-height: 46px;
             font-size: $font-size-lg;
-            padding: 0 $mp-4;
         }
     
         & .order-history-text-skeleton {
@@ -40,7 +39,6 @@
             display: -ms-flexbox;
             display: flex;
             height: 46px;
-            padding: 0 $mp-4;
             -webkit-box-align: center;
                 -ms-flex-align: center;
                     align-items: center;
@@ -88,11 +86,15 @@
 }
 
 .root-desktop {
+    & .order-history-text-skeleton-desktop {
+        padding: 0 $mp-6;
+    }
+
     & .order-history-text-container-desktop {
         margin-bottom: $mp-2;
 
         & .order-history-text-desktop {
-    
+            padding: 0 $mp-6;
         }
     }
 
@@ -109,11 +111,15 @@
 }
 
 .root-tablet {
+    & .order-history-text-skeleton-tablet {
+        padding: 0 $mp-6;
+    }
+
     & .order-history-text-container-tablet {
         margin-bottom: $mp-2;
 
         & .order-history-text-tablet {
-    
+            padding: 0 $mp-6;
         }
     }
 
@@ -130,10 +136,15 @@
 }
 
 .root-mobile {
+    & .order-history-text-skeleton-mobile {
+        padding: 0 $mp-6;
+    }
+
     & .order-history-text-container-mobile {
         margin-bottom: $mp-2;
 
         & .order-history-text-mobile {
+            padding: 0 $mp-4;
         }
     }
 

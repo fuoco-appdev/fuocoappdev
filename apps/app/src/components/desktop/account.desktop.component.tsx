@@ -45,12 +45,18 @@ export default function AccountDesktopComponent({
   accountProps,
   storeProps,
   isCropImageModalVisible,
+  likeCount,
+  followerCount,
+  followingCount,
   setIsCropImageModalVisible,
   onUsernameChanged,
   onCompleteProfile,
   onScroll,
   onScrollLoad,
   onAvatarChanged,
+  onLikesClick,
+  onFollowersClick,
+  onFollowingClick,
 }: AccountResponsiveProps): JSX.Element {
   const scrollContainerRef = createRef<HTMLDivElement>();
   const topBarRef = useRef<HTMLDivElement | null>(null);
@@ -274,71 +280,254 @@ export default function AccountDesktopComponent({
             <>
               <div
                 className={[
-                  styles['avatar-container'],
-                  styles['avatar-container-desktop'],
+                  styles['top-content'],
+                  styles['top-content-desktop'],
                 ].join(' ')}
               >
-                <Avatar
-                  classNames={{
-                    button: {
-                      button: [
-                        styles['avatar-button'],
-                        styles['avatar-button-desktop'],
-                      ].join(' '),
-                    },
-                    cropImage: {
-                      overlay: {
-                        background: [
-                          styles['avatar-overlay-background'],
-                          styles['avatar-overlay-background-desktop'],
-                        ].join(' '),
-                      },
-                      saveButton: {
-                        button: [styles['avatar-save-button']].join(' '),
-                      },
-                    },
-                  }}
-                  text={customer?.first_name}
-                  src={accountProps.profileUrl}
-                  editMode={true}
-                  onChange={onAvatarChanged}
-                  loading={accountProps.isAvatarUploadLoading}
-                  loadingComponent={
-                    <img
-                      src={'../assets/svg/ring-resize-light.svg'}
+                <div
+                  className={[
+                    styles['status-container'],
+                    styles['status-container-desktop'],
+                  ].join(' ')}
+                >
+                  <div
+                    className={[
+                      styles['avatar-content'],
+                      styles['avatar-content-desktop'],
+                    ].join(' ')}
+                  >
+                    <div
                       className={[
-                        styles['loading-ring'],
-                        styles['loading-ring-desktop'],
+                        styles['avatar-container'],
+                        styles['avatar-container-desktop'],
+                      ].join(' ')}
+                    >
+                      <Avatar
+                        classNames={{
+                          button: {
+                            button: [
+                              styles['avatar-button'],
+                              styles['avatar-button-desktop'],
+                            ].join(' '),
+                          },
+                          cropImage: {
+                            overlay: {
+                              background: [
+                                styles['avatar-overlay-background'],
+                                styles['avatar-overlay-background-desktop'],
+                              ].join(' '),
+                            },
+                            saveButton: {
+                              button: [styles['avatar-save-button']].join(' '),
+                            },
+                          },
+                        }}
+                        text={customer?.first_name}
+                        src={accountProps.profileUrl}
+                        editMode={true}
+                        onChange={onAvatarChanged}
+                        loading={accountProps.isAvatarUploadLoading}
+                        loadingComponent={
+                          <img
+                            src={'../assets/svg/ring-resize-light.svg'}
+                            className={[
+                              styles['loading-ring'],
+                              styles['loading-ring-desktop'],
+                            ].join(' ')}
+                          />
+                        }
+                        onLoading={(value) =>
+                          AccountController.updateIsAvatarUploadLoading(value)
+                        }
+                        size={'large'}
+                        isModalVisible={isCropImageModalVisible}
+                        onModalVisible={(value) =>
+                          setIsCropImageModalVisible(value)
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div
+                    className={[
+                      styles['followers-status-container'],
+                      styles['followers-status-container-desktop'],
+                    ].join(' ')}
+                  >
+                    {likeCount !== undefined && (
+                      <div
+                        className={[
+                          styles['followers-status-item'],
+                          styles['followers-status-item-desktop'],
+                        ].join(' ')}
+                        onClick={onLikesClick}
+                      >
+                        <div
+                          className={[
+                            styles['followers-status-value'],
+                            styles['followers-status-value-desktop'],
+                          ].join(' ')}
+                        >
+                          {likeCount}
+                        </div>
+                        <div
+                          className={[
+                            styles['followers-status-name'],
+                            styles['followers-status-name-desktop'],
+                          ].join(' ')}
+                        >
+                          {t('likes')}
+                        </div>
+                      </div>
+                    )}
+                    {likeCount === undefined && (
+                      <div
+                        className={[
+                          styles['followers-status-item'],
+                          styles['followers-status-item-desktop'],
+                        ].join(' ')}
+                      >
+                        <div
+                          className={[
+                            styles['followers-status-value'],
+                            styles['followers-status-value-desktop'],
+                          ].join(' ')}
+                        >
+                          <Skeleton width={30} height={19} borderRadius={19} />
+                        </div>
+                        <div
+                          className={[
+                            styles['followers-status-name'],
+                            styles['followers-status-name-desktop'],
+                          ].join(' ')}
+                        >
+                          <Skeleton width={60} height={19} borderRadius={19} />
+                        </div>
+                      </div>
+                    )}
+                    {followerCount !== undefined && (
+                      <div
+                        className={[
+                          styles['followers-status-item'],
+                          styles['followers-status-item-desktop'],
+                        ].join(' ')}
+                        onClick={onFollowersClick}
+                      >
+                        <div
+                          className={[
+                            styles['followers-status-value'],
+                            styles['followers-status-value-desktop'],
+                          ].join(' ')}
+                        >
+                          {followerCount}
+                        </div>
+                        <div
+                          className={[
+                            styles['followers-status-name'],
+                            styles['followers-status-name-desktop'],
+                          ].join(' ')}
+                        >
+                          {t('followers')}
+                        </div>
+                      </div>
+                    )}
+                    {followerCount === undefined && (
+                      <div
+                        className={[
+                          styles['followers-status-item'],
+                          styles['followers-status-item-desktop'],
+                        ].join(' ')}
+                      >
+                        <div
+                          className={[
+                            styles['followers-status-value'],
+                            styles['followers-status-value-desktop'],
+                          ].join(' ')}
+                        >
+                          <Skeleton width={30} height={19} borderRadius={19} />
+                        </div>
+                        <div
+                          className={[
+                            styles['followers-status-name'],
+                            styles['followers-status-name-desktop'],
+                          ].join(' ')}
+                        >
+                          <Skeleton width={60} height={19} borderRadius={19} />
+                        </div>
+                      </div>
+                    )}
+                    {followingCount !== undefined && (
+                      <div
+                        className={[
+                          styles['followers-status-item'],
+                          styles['followers-status-item-desktop'],
+                        ].join(' ')}
+                        onClick={onFollowingClick}
+                      >
+                        <div
+                          className={[
+                            styles['followers-status-value'],
+                            styles['followers-status-value-desktop'],
+                          ].join(' ')}
+                        >
+                          {followingCount}
+                        </div>
+                        <div
+                          className={[
+                            styles['followers-status-name'],
+                            styles['followers-status-name-desktop'],
+                          ].join(' ')}
+                        >
+                          {t('following')}
+                        </div>
+                      </div>
+                    )}
+                    {followingCount === undefined && (
+                      <div
+                        className={[
+                          styles['followers-status-item'],
+                          styles['followers-status-item-desktop'],
+                        ].join(' ')}
+                      >
+                        <div
+                          className={[
+                            styles['followers-status-value'],
+                            styles['followers-status-value-desktop'],
+                          ].join(' ')}
+                        >
+                          <Skeleton width={30} height={19} borderRadius={19} />
+                        </div>
+                        <div
+                          className={[
+                            styles['followers-status-name'],
+                            styles['followers-status-name-desktop'],
+                          ].join(' ')}
+                        >
+                          <Skeleton width={60} height={19} borderRadius={19} />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div
+                  className={[
+                    styles['username'],
+                    styles['username-desktop'],
+                  ].join(' ')}
+                >
+                  {customer ? (
+                    `${customer?.first_name} ${customer?.last_name}`
+                  ) : (
+                    <Skeleton
+                      count={1}
+                      borderRadius={9999}
+                      width={120}
+                      className={[
+                        styles['skeleton-user'],
+                        styles['skeleton-user-desktop'],
                       ].join(' ')}
                     />
-                  }
-                  onLoading={(value) =>
-                    AccountController.updateIsAvatarUploadLoading(value)
-                  }
-                  size={'large'}
-                  isModalVisible={isCropImageModalVisible}
-                  onModalVisible={(value) => setIsCropImageModalVisible(value)}
-                />
-              </div>
-              <div
-                className={[
-                  styles['username'],
-                  styles['username-desktop'],
-                ].join(' ')}
-              >
-                {customer ? (
-                  `${customer?.first_name} ${customer?.last_name}`
-                ) : (
-                  <Skeleton
-                    count={1}
-                    borderRadius={9999}
-                    width={120}
-                    className={[
-                      styles['skeleton-user'],
-                      styles['skeleton-user-desktop'],
-                    ].join(' ')}
-                  />
-                )}
+                  )}
+                </div>
               </div>
               <div
                 className={[

@@ -41,7 +41,7 @@ export default function AccountLikesDesktopComponent({
   const { t, i18n } = useTranslation();
   const rootRef = createRef<HTMLDivElement>();
   const navigate = useNavigate();
-  const { scrollContainerRef } = useAccountOutletContext();
+  const context = useAccountOutletContext();
 
   return (
     <ResponsiveDesktop>
@@ -90,7 +90,7 @@ export default function AccountLikesDesktopComponent({
                   }
                   onClick={() =>
                     onProductPreviewClick(
-                      scrollContainerRef?.current?.scrollTop ?? 0,
+                      context?.scrollContainerRef?.current?.scrollTop ?? 0,
                       product,
                       productLikesMetadata
                     )

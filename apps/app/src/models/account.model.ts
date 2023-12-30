@@ -69,6 +69,9 @@ export interface AccountState {
   followRequestAccounts: core.AccountResponse[];
   followRequestCustomers: Record<string, core.CustomerResponse>;
   followRequestAccountFollowers: Record<string, core.AccountFollowerResponse>;
+  likeCount: number | undefined;
+  followerCount: number | undefined;
+  followingCount: number | undefined;
 }
 
 export class AccountModel extends Model {
@@ -152,6 +155,9 @@ export class AccountModel extends Model {
           followRequestAccounts: [],
           followRequestCustomers: {},
           followRequestAccountFollowers: {},
+          likeCount: undefined,
+          followerCount: undefined,
+          followingCount: undefined,
         })
       )
     );
@@ -725,6 +731,45 @@ export class AccountModel extends Model {
       this.store.update((state) => ({
         ...state,
         followRequestAccountFollowers: value,
+      }));
+    }
+  }
+
+  public get likeCount(): number | undefined {
+    return this.store.getValue().likeCount;
+  }
+
+  public set likeCount(value: number | undefined) {
+    if (this.likeCount !== value) {
+      this.store.update((state) => ({
+        ...state,
+        likeCount: value,
+      }));
+    }
+  }
+
+  public get followerCount(): number | undefined {
+    return this.store.getValue().followerCount;
+  }
+
+  public set followerCount(value: number | undefined) {
+    if (this.followerCount !== value) {
+      this.store.update((state) => ({
+        ...state,
+        followerCount: value,
+      }));
+    }
+  }
+
+  public get followingCount(): number | undefined {
+    return this.store.getValue().followingCount;
+  }
+
+  public set followingCount(value: number | undefined) {
+    if (this.followingCount !== value) {
+      this.store.update((state) => ({
+        ...state,
+        followingCount: value,
       }));
     }
   }

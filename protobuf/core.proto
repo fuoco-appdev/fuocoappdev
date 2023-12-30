@@ -195,6 +195,10 @@ message ProductLikesResponse {
     repeated core.ProductLikeResponse likes = 1;
 }
 
+message ProductLikeCountMetadataResponse {
+    int32 like_count = 1;
+}
+
 message AccountFollowerRequest {
     string account_id = 1;
     string follower_id = 2;

@@ -277,6 +277,7 @@
   "follow": "Follow",
   "requested": "Requested",
   "following": "Following",
+  "followers": "Followers",
   "results": "Results",
   "followerRequests": "Follower requests"
 }

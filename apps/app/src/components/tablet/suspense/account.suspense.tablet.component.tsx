@@ -77,27 +77,127 @@ export function AccountSuspenseTabletComponent(): JSX.Element {
         >
           <div
             className={[
-              styles['avatar-container'],
-              styles['avatar-container-tablet'],
+              styles['top-content'],
+              styles['top-content-tablet'],
             ].join(' ')}
           >
-            <Skeleton style={{ width: 96, height: 96 }} borderRadius={96} />
-          </div>
-          <div
-            className={[styles['username'], styles['username-tablet']].join(
-              ' '
-            )}
-          >
-            <Skeleton
-              count={1}
-              borderRadius={20}
-              height={20}
-              width={120}
+            <div
               className={[
-                styles['skeleton-user'],
-                styles['skeleton-user-tablet'],
+                styles['status-container'],
+                styles['status-container-tablet'],
               ].join(' ')}
-            />
+            >
+              <div
+                className={[
+                  styles['avatar-content'],
+                  styles['avatar-content-tablet'],
+                ].join(' ')}
+              >
+                <div
+                  className={[
+                    styles['avatar-container'],
+                    styles['avatar-container-tablet'],
+                  ].join(' ')}
+                >
+                  <Skeleton
+                    style={{ width: 96, height: 96 }}
+                    borderRadius={96}
+                  />
+                </div>
+              </div>
+              <div
+                className={[
+                  styles['followers-status-container'],
+                  styles['followers-status-container-tablet'],
+                ].join(' ')}
+              >
+                <div
+                  className={[
+                    styles['followers-status-item'],
+                    styles['followers-status-item-tablet'],
+                  ].join(' ')}
+                >
+                  <div
+                    className={[
+                      styles['followers-status-value'],
+                      styles['followers-status-value-tablet'],
+                    ].join(' ')}
+                  >
+                    <Skeleton width={30} height={19} borderRadius={19} />
+                  </div>
+                  <div
+                    className={[
+                      styles['followers-status-name'],
+                      styles['followers-status-name-tablet'],
+                    ].join(' ')}
+                  >
+                    <Skeleton width={60} height={19} borderRadius={19} />
+                  </div>
+                </div>
+                <div
+                  className={[
+                    styles['followers-status-item'],
+                    styles['followers-status-item-tablet'],
+                  ].join(' ')}
+                >
+                  <div
+                    className={[
+                      styles['followers-status-value'],
+                      styles['followers-status-value-tablet'],
+                    ].join(' ')}
+                  >
+                    <Skeleton width={30} height={19} borderRadius={19} />
+                  </div>
+                  <div
+                    className={[
+                      styles['followers-status-name'],
+                      styles['followers-status-name-tablet'],
+                    ].join(' ')}
+                  >
+                    <Skeleton width={60} height={19} borderRadius={19} />
+                  </div>
+                </div>
+                <div
+                  className={[
+                    styles['followers-status-item'],
+                    styles['followers-status-item-tablet'],
+                  ].join(' ')}
+                >
+                  <div
+                    className={[
+                      styles['followers-status-value'],
+                      styles['followers-status-value-tablet'],
+                    ].join(' ')}
+                  >
+                    <Skeleton width={30} height={19} borderRadius={19} />
+                  </div>
+                  <div
+                    className={[
+                      styles['followers-status-name'],
+                      styles['followers-status-name-tablet'],
+                    ].join(' ')}
+                  >
+                    <Skeleton width={60} height={19} borderRadius={19} />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              className={[styles['username'], styles['username-tablet']].join(
+                ' '
+              )}
+            >
+              <Skeleton
+                count={1}
+                borderRadius={20}
+                height={20}
+                width={120}
+                className={[
+                  styles['skeleton-user'],
+                  styles['skeleton-user-tablet'],
+                ].join(' ')}
+              />
+            </div>
           </div>
           <div
             className={[

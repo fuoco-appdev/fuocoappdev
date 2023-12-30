@@ -4,6 +4,7 @@ import {
   AccountProductLikesMetadataRequest,
   ProductLikesMetadataResponse,
   ProductLikesMetadatasResponse,
+  ProductLikeCountMetadataResponse,
   ProductLikeRequest,
   ProductLikeResponse,
   ProductLikesResponse,
@@ -15,6 +16,13 @@ export interface ProductLikesProps {
 }
 
 export class ProductLikesService {
+  public async getCountMetadataAsync(
+    accountId: string
+  ): Promise<ProductLikeCountMetadataResponse | null> {
+    const metadataResponse = await this.findCountMetadataAsync(accountId);
+    return metadataResponse;
+  }
+
   public async getMetadataAsync(
     request: InstanceType<typeof ProductLikesMetadataRequest>
   ): Promise<ProductLikesMetadatasResponse | null> {
@@ -155,6 +163,34 @@ export class ProductLikesService {
       productId,
     ]);
     return metadatasResponse;
+  }
+
+  private async findCountMetadataAsync(
+    accountId: string
+  ): Promise<ProductLikeCountMetadataResponse | null> {
+    const metadataResponse = new ProductLikeCountMetadataResponse();
+
+    if (accountId.length <= 0) {
+      console.error('Account id cannot be empty');
+      return null;
+    }
+
+    try {
+      const likesData = await SupabaseService.client
+        .from('product_likes')
+        .select('', { count: 'exact' })
+        .eq('account_id', accountId);
+
+      if (likesData.error) {
+        console.error(likesData.error);
+      } else {
+        metadataResponse.setLikeCount(likesData.count);
+      }
+    } catch (error: any) {
+      console.error(error);
+    }
+
+    return metadataResponse;
   }
 
   private async findMetadataAsync(

@@ -102,4 +102,24 @@ export class ProductLikesController {
     context.response.type = 'application/x-protobuf';
     context.response.body = response.serializeBinary();
   }
+
+  @Post('/count-metadata/:accountId')
+  @ContentType('application/x-protobuf')
+  public async getCountMetadataAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >
+  ): Promise<void> {
+    const paramsAccountId = context.params['accountId'];
+    const response = await ProductLikesService.getCountMetadataAsync(
+      paramsAccountId
+    );
+    if (!response) {
+      throw HttpError.createError(409, `Cannot find metadata`);
+    }
+    context.response.type = 'application/x-protobuf';
+    context.response.body = response.serializeBinary();
+  }
 }

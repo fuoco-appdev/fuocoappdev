@@ -44,7 +44,7 @@ export default function AccountLikesTabletComponent({
   const { t, i18n } = useTranslation();
   const rootRef = createRef<HTMLDivElement>();
   const navigate = useNavigate();
-  const { scrollContainerRef } = useAccountPublicOutletContext();
+  const context = useAccountPublicOutletContext();
 
   return (
     <ResponsiveTablet>
@@ -92,7 +92,7 @@ export default function AccountLikesTabletComponent({
                   }
                   onClick={() =>
                     onProductPreviewClick(
-                      scrollContainerRef?.current?.scrollTop ?? 0,
+                      context?.scrollContainerRef?.current?.scrollTop ?? 0,
                       product,
                       productLikesMetadata
                     )

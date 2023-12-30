@@ -1028,6 +1028,31 @@ class AccountController extends Controller {
     this._model.areLikedProductsLoading = false;
   }
 
+  private async requestLikeCountAsync(accountId: string): Promise<void> {
+    try {
+      const response = await ProductLikesService.requestCountMetadataAsync(
+        accountId
+      );
+      this._model.likeCount = response.likeCount;
+    } catch (error: any) {
+      console.error(error);
+    }
+  }
+
+  private async requestFollowerCountMetadataAsync(
+    accountId: string
+  ): Promise<void> {
+    try {
+      const response = await AccountFollowersService.requestCountMetadataAsync(
+        accountId
+      );
+      this._model.followerCount = response.followersCount;
+      this._model.followingCount = response.followingCount;
+    } catch (error: any) {
+      console.error(error);
+    }
+  }
+
   private resetMedusaModel(): void {
     this._model.user = null;
     this._model.account = undefined;
@@ -1091,6 +1116,9 @@ class AccountController extends Controller {
     this._model.followRequestAccounts = [];
     this._model.followRequestAccountFollowers = {};
     this._model.followRequestCustomers = {};
+    this._model.likeCount = undefined;
+    this._model.followerCount = undefined;
+    this._model.followingCount = undefined;
   }
 
   private async initializeAsync(renderCount: number): Promise<void> {
@@ -1137,6 +1165,9 @@ class AccountController extends Controller {
     } catch (error: any) {
       console.error(error);
     }
+
+    this.requestFollowerCountMetadataAsync(value.id);
+    this.requestLikeCountAsync(value.id);
 
     if (
       value?.languageCode &&

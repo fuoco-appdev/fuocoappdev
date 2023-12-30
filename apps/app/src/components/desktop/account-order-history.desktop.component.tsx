@@ -22,7 +22,7 @@ export default function AccountOrderHistoryDesktopComponent({
   const rootRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
-  const { scrollContainerRef } = useAccountOutletContext();
+  const context = useAccountOutletContext();
 
   const orders = accountProps.orders as Order[];
   return (
@@ -66,7 +66,7 @@ export default function AccountOrderHistoryDesktopComponent({
                   order={order}
                   onClick={() => {
                     AccountController.updateOrdersScrollPosition(
-                      scrollContainerRef.current?.scrollTop
+                      context?.scrollContainerRef?.current?.scrollTop
                     );
                     setTimeout(
                       () =>

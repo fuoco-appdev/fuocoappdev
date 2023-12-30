@@ -16,7 +16,7 @@ class AccountFollowersService extends Service {
   ): Promise<core.AccountFollowerCountMetadataResponse> {
     const response = await axios({
       method: 'post',
-      url: `${this.endpointUrl}/account-followers/metadata/${accountId}`,
+      url: `${this.endpointUrl}/account-followers/count-metadata/${accountId}`,
       headers: {
         ...this.headers,
       },

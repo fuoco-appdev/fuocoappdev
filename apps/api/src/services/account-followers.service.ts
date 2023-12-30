@@ -15,12 +15,12 @@ export interface AccountFollowersProps {
 }
 
 export class AccountFollowersService {
-  //   public async getCountMetadataAsync(
-  //     accountId: string
-  //   ): Promise<AccountFollowerCountMetadataResponse | null> {
-  //     const metadataResponse = await this.findCountMetadataAsync(accountId);
-  //     return metadataResponse;
-  //   }
+  public async getCountMetadataAsync(
+    accountId: string
+  ): Promise<AccountFollowerCountMetadataResponse | null> {
+    const metadataResponse = await this.findCountMetadataAsync(accountId);
+    return metadataResponse;
+  }
 
   public async getFollowersAsync(
     request: InstanceType<typeof AccountFollowersRequest>
@@ -164,49 +164,50 @@ export class AccountFollowersService {
     return response;
   }
 
-  //   private async findCountMetadataAsync(
-  //     accountId: string
-  //   ): Promise<AccountFollowerCountMetadataResponse | null> {
-  //     const metadataResponse = new AccountFollowerCountMetadataResponse();
+  private async findCountMetadataAsync(
+    accountId: string
+  ): Promise<AccountFollowerCountMetadataResponse | null> {
+    const metadataResponse = new AccountFollowerCountMetadataResponse();
 
-  //     if (accountId.length <= 0) {
-  //       console.error('Account ids cannot be empty');
-  //       return null;
-  //     }
+    if (accountId.length <= 0) {
+      console.error('Account id cannot be empty');
+      return null;
+    }
 
-  //     try {
-  //       const followingData = await SupabaseService.client
-  //         .from('account_followers')
-  //         .select('', { count: 'exact' })
-  //         .eq('account_id', id);
+    try {
+      const followingData = await SupabaseService.client
+        .from('account_followers')
+        .select('', { count: 'exact' })
+        .not('accepted', 'in', '(false)')
+        .eq('account_id', accountId);
 
-  //       if (followingData.error) {
-  //         console.error(followingData.error);
-  //       } else {
-  //         metadataResponse.setFollowingCount(followingData.count);
-  //       }
-  //     } catch (error: any) {
-  //       console.error(error);
-  //     }
+      if (followingData.error) {
+        console.error(followingData.error);
+      } else {
+        metadataResponse.setFollowingCount(followingData.count);
+      }
+    } catch (error: any) {
+      console.error(error);
+    }
 
-  //     try {
-  //       const followersData = await SupabaseService.client
-  //         .from('account_followers')
-  //         .select('', { count: 'exact' })
-  //         .not('accepted', 'in', '(false)')
-  //         .eq('follower_id', id);
+    try {
+      const followersData = await SupabaseService.client
+        .from('account_followers')
+        .select('', { count: 'exact' })
+        .not('accepted', 'in', '(false)')
+        .eq('follower_id', accountId);
 
-  //       if (followersData.error) {
-  //         console.error(followersData.error);
-  //       } else {
-  //         metadataResponse.setFollowersCount(followersData.count);
-  //       }
-  //     } catch (error: any) {
-  //       console.error(error);
-  //     }
+      if (followersData.error) {
+        console.error(followersData.error);
+      } else {
+        metadataResponse.setFollowersCount(followersData.count);
+      }
+    } catch (error: any) {
+      console.error(error);
+    }
 
-  //     return metadataResponse;
-  //   }
+    return metadataResponse;
+  }
 
   private async findFollowersAsync(
     request: InstanceType<typeof AccountFollowersRequest>

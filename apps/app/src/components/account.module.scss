@@ -45,9 +45,91 @@
   }
 
   & .scroll-container {
+    flex-direction: column;
     height: 100%;
     overflow-y: auto;
     scroll-behavior: smooth;
+
+    & .top-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      & .status-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        & .avatar-content {
+          display: flex;
+          flex-direction: column;
+          
+          & .avatar-container {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-orient: horizontal;
+            -webkit-box-direction: normal;
+                -ms-flex-direction: row;
+                    flex-direction: row;
+            -webkit-box-pack: center;
+                -ms-flex-pack: center;
+                    justify-content: center;
+          }
+        }
+
+        & .followers-status-container {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+
+          & .followers-status-item {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+
+            & .followers-status-value {
+              color: $brand-900;
+              font-weight: $font-weight-bold;
+              font-size: $font-size-sm;
+            }
+
+            & .followers-status-name {
+              color: $brand-900;
+              font-size: $font-size-sm;
+            }
+          }
+
+          & .followers-status-item:hover {
+            & .followers-status-value {
+              color: $brand-700;
+              cursor: pointer;
+            }
+
+            & .followers-status-name {
+              color: $brand-700;
+              cursor: pointer;
+            }
+          }
+        }
+      }
+
+      & .username {
+        color: $brand-900;
+        font-weight: $font-weight-bold;
+        font-size: $font-size-lg;
+        margin: $mp-2 0;
+      }
+    }
 
     & .incomplete-profile-container {
       display: -webkit-box;
@@ -73,32 +155,6 @@
             -ms-flex: 1;
                 flex: 1;
       }
-    }
-  
-    & .avatar-container {
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-box-orient: horizontal;
-      -webkit-box-direction: normal;
-          -ms-flex-direction: row;
-              flex-direction: row;
-      -webkit-box-pack: center;
-          -ms-flex-pack: center;
-              justify-content: center;
-    }
-  
-    & .username {
-      color: $brand-900;
-      font-weight: $font-weight-bold;
-      font-size: $font-size-lg;
-      width: 100%;
-      text-align: center;
-      margin: $mp-2 0;
-    }
-  
-    & .skeleton-user {
-      max-width: 30%;
     }
   
     & .tabs-container {
@@ -168,6 +224,33 @@
   & .scroll-container-desktop {
     padding-top: calc(56px + 24px);
 
+    & .top-content-desktop {
+      min-width: 345px;
+
+      & .status-container-desktop {
+        min-width: 345px;
+        gap: $mp-10;
+
+        & .avatar-content-desktop {
+          & .avatar-container-desktop {
+    
+          }
+        }
+  
+        & .followers-status-container-desktop {
+          gap: $mp-6;
+        }
+      }
+
+      & .username-desktop {
+        min-width: 345px;
+      }
+
+      & .skeleton-user-desktop {
+  
+      }  
+    }
+
     & .incomplete-profile-container-desktop {
       display: -webkit-box;
       display: -ms-flexbox;
@@ -202,14 +285,6 @@
       & .form-container-desktop {
   
       }
-    }
-  
-    & .avatar-container-desktop {
-  
-    }
-  
-    & .username-desktop {
-  
     }
   
     & .content-desktop {
@@ -256,11 +331,7 @@
         gap: $mp-6;
       }
     }
-  
-    & .skeleton-user-desktop {
-  
-    }
-  
+
     & .tabs-container-desktop {
       display: flex;
       flex-direction: row;
@@ -335,6 +406,29 @@
   & .scroll-container-tablet {
     padding-top: calc(56px + 16px);
 
+    & .top-content-tablet {
+      min-width: 345px;
+
+      & .status-container-tablet {
+        min-width: 345px;
+        gap: $mp-10;
+
+        & .avatar-content-tablet {
+          & .avatar-container-tablet {
+    
+          }
+        }
+  
+        & .followers-status-container-tablet {
+          gap: $mp-6;
+        }
+      }
+
+      & .username-tablet {
+        min-width: 345px;
+      }
+    }
+
     & .incomplete-profile-container-tablet {
       display: -webkit-box;
       display: -ms-flexbox;
@@ -369,14 +463,6 @@
       & .form-container-tablet {
   
       }
-    }
-  
-    & .avatar-container-tablet {
-  
-    }
-  
-    & .username-tablet {
-  
     }
   
     & .content-tablet {
@@ -517,13 +603,28 @@
   
       }
     }
-  
-    & .avatar-container-mobile {
-  
-    }
-  
-    & .username-mobile {
-  
+
+    & .top-content-mobile {
+      justify-content: space-between;
+      padding: 0 $mp-4;
+
+      & .status-container-mobile {
+        & .avatar-content-mobile {
+          & .avatar-container-mobile {
+      
+          }
+        }
+    
+        & .followers-status-container-mobile {
+          gap: $mp-6;
+          padding: 0 $mp-6;
+        }
+      }  
+
+      & .username-mobile {
+        width: 100%;
+        padding: 0 $mp-4;
+      }
     }
   
     & .skeleton-user-mobile {

@@ -42,7 +42,7 @@ const AccountPublicMobileComponent = lazy(
 );
 
 export type AccountPublicOutletContextType = {
-  scrollContainerRef: React.RefObject<HTMLDivElement>;
+  scrollContainerRef: React.RefObject<HTMLDivElement> | undefined;
 };
 
 export function useAccountPublicOutletContext() {

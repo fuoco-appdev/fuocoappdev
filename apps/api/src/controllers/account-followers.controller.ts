@@ -78,26 +78,6 @@ export class AccountFollowersController {
     context.response.body = response.serializeBinary();
   }
 
-  @Post('/count-metadata/:id')
-  @ContentType('application/x-protobuf')
-  public async getAccountMetadataAsync(
-    context: Oak.RouterContext<
-      string,
-      Oak.RouteParams<string>,
-      Record<string, any>
-    >
-  ): Promise<void> {
-    const paramsId = context.params['id'];
-    // const response = await AccountFollowersService.getCountMetadataAsync(
-    //   paramsId
-    // );
-    // if (!response) {
-    //   throw HttpError.createError(409, `Cannot find metadata`);
-    // }
-    // context.response.type = 'application/x-protobuf';
-    // context.response.body = response.serializeBinary();
-  }
-
   @Post('/requests')
   @ContentType('application/x-protobuf')
   public async getRequestsAsync(
@@ -139,6 +119,26 @@ export class AccountFollowersController {
     );
     if (!response) {
       throw HttpError.createError(409, `Cannot find followers`);
+    }
+    context.response.type = 'application/x-protobuf';
+    context.response.body = response.serializeBinary();
+  }
+
+  @Post('/count-metadata/:accountId')
+  @ContentType('application/x-protobuf')
+  public async getCountMetadataAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >
+  ): Promise<void> {
+    const paramsAccountId = context.params['accountId'];
+    const response = await AccountFollowersService.getCountMetadataAsync(
+      paramsAccountId
+    );
+    if (!response) {
+      throw HttpError.createError(409, `Cannot find metadata`);
     }
     context.response.type = 'application/x-protobuf';
     context.response.body = response.serializeBinary();

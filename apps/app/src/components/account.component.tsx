@@ -32,7 +32,7 @@ const AccountMobileComponent = lazy(
 );
 
 export type AccountOutletContextType = {
-  scrollContainerRef: React.RefObject<HTMLDivElement>;
+  scrollContainerRef: React.RefObject<HTMLDivElement> | undefined;
 };
 
 export function useAccountOutletContext() {
@@ -44,12 +44,18 @@ export interface AccountResponsiveProps {
   accountProps: AccountState;
   storeProps: StoreState;
   isCropImageModalVisible: boolean;
+  likeCount: string | undefined;
+  followerCount: string | undefined;
+  followingCount: string | undefined;
   setIsCropImageModalVisible: (value: boolean) => void;
   onUsernameChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onCompleteProfile: () => void;
   onScroll: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
   onScrollLoad: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
   onAvatarChanged: (index: number, blob: Blob) => void;
+  onLikesClick: () => void;
+  onFollowersClick: () => void;
+  onFollowingClick: () => void;
 }
 
 export default function AccountComponent(): JSX.Element {
@@ -60,6 +66,13 @@ export default function AccountComponent(): JSX.Element {
   const [storeProps] = useObservable(StoreController.model.store);
   const [isCropImageModalVisible, setIsCropImageModalVisible] =
     useState<boolean>(false);
+  const [likeCount, setLikeCount] = useState<string | undefined>(undefined);
+  const [followerCount, setFollowerCount] = useState<string | undefined>(
+    undefined
+  );
+  const [followingCount, setFollowingCount] = useState<string | undefined>(
+    undefined
+  );
   const scrollOffsetTriggerGap = 16;
 
   const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
@@ -137,6 +150,14 @@ export default function AccountComponent(): JSX.Element {
     setIsCropImageModalVisible(false);
   };
 
+  const onLikesClick = () => {
+    navigate(RoutePathsType.AccountLikes);
+  };
+
+  const onFollowersClick = () => {};
+
+  const onFollowingClick = () => {};
+
   useEffect(() => {
     AccountController.updateErrorStrings({
       empty: t('fieldEmptyError') ?? '',
@@ -150,6 +171,30 @@ export default function AccountComponent(): JSX.Element {
       navigate(RoutePathsType.AccountLikes);
     }
   }, []);
+
+  useEffect(() => {
+    if (accountProps.likeCount !== undefined) {
+      setLikeCount(
+        new Intl.NumberFormat(i18n.language).format(accountProps.likeCount)
+      );
+    }
+
+    if (accountProps.followerCount !== undefined) {
+      setFollowerCount(
+        new Intl.NumberFormat(i18n.language).format(accountProps.followerCount)
+      );
+    }
+
+    if (accountProps.followingCount !== undefined) {
+      setFollowingCount(
+        new Intl.NumberFormat(i18n.language).format(accountProps.followingCount)
+      );
+    }
+  }, [
+    accountProps.likeCount,
+    accountProps.followerCount,
+    accountProps.followingCount,
+  ]);
 
   useEffect(() => {
     const loadedLocation = windowProps.loadedLocationPath as string | undefined;
@@ -216,36 +261,54 @@ export default function AccountComponent(): JSX.Element {
             windowProps={windowProps}
             storeProps={storeProps}
             isCropImageModalVisible={isCropImageModalVisible}
+            likeCount={likeCount}
+            followerCount={followerCount}
+            followingCount={followingCount}
             setIsCropImageModalVisible={setIsCropImageModalVisible}
             onUsernameChanged={onUsernameChanged}
             onCompleteProfile={onCompleteProfile}
             onScroll={onScroll}
             onScrollLoad={onScrollLoad}
             onAvatarChanged={onAvatarChanged}
+            onLikesClick={onLikesClick}
+            onFollowersClick={onFollowersClick}
+            onFollowingClick={onFollowingClick}
           />
           <AccountTabletComponent
             accountProps={accountProps}
             windowProps={windowProps}
             storeProps={storeProps}
             isCropImageModalVisible={isCropImageModalVisible}
+            likeCount={likeCount}
+            followerCount={followerCount}
+            followingCount={followingCount}
             setIsCropImageModalVisible={setIsCropImageModalVisible}
             onUsernameChanged={onUsernameChanged}
             onCompleteProfile={onCompleteProfile}
             onScroll={onScroll}
             onScrollLoad={onScrollLoad}
             onAvatarChanged={onAvatarChanged}
+            onLikesClick={onLikesClick}
+            onFollowersClick={onFollowersClick}
+            onFollowingClick={onFollowingClick}
           />
           <AccountMobileComponent
             accountProps={accountProps}
             windowProps={windowProps}
             storeProps={storeProps}
             isCropImageModalVisible={isCropImageModalVisible}
+            likeCount={likeCount}
+            followerCount={followerCount}
+            followingCount={followingCount}
             setIsCropImageModalVisible={setIsCropImageModalVisible}
             onUsernameChanged={onUsernameChanged}
             onCompleteProfile={onCompleteProfile}
             onScroll={onScroll}
             onScrollLoad={onScrollLoad}
             onAvatarChanged={onAvatarChanged}
+            onLikesClick={onLikesClick}
+            onFollowersClick={onFollowersClick}
+            onFollowingClick={onFollowingClick}
           />
         </AuthenticatedComponent>
       </React.Suspense>
