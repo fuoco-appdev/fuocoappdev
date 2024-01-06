@@ -20,7 +20,7 @@ export interface AccountPublicState {
   account: core.AccountResponse | undefined;
   customerMetadata: core.CustomerMetadataResponse | undefined;
   accountFollower: core.AccountFollowerResponse | undefined;
-  showFollowButton: boolean;
+  showFollowButton: boolean | undefined;
   profileUrl: string | undefined;
   username: string;
   activeTabId: string;
@@ -34,6 +34,28 @@ export interface AccountPublicState {
   areLikedProductsLoading: boolean;
   selectedLikedProduct: PricedProduct | undefined;
   selectedProductLikes: ProductLikesMetadataResponse | undefined;
+  activeStatusTabId: string;
+  prevStatusTabIndex: number;
+  activeStatusTabIndex: number;
+  followersInput: string;
+  followersPagination: number;
+  hasMoreFollowers: boolean;
+  areFollowersLoading: boolean;
+  followerAccounts: core.AccountResponse[];
+  followerCustomers: Record<string, core.CustomerResponse>;
+  followerScrollPosition: number | undefined;
+  followerAccountFollowers: Record<string, core.AccountFollowerResponse>;
+  followingInput: string;
+  followingPagination: number;
+  hasMoreFollowing: boolean;
+  areFollowingLoading: boolean;
+  followingAccounts: core.AccountResponse[];
+  followingCustomers: Record<string, core.CustomerResponse>;
+  followingScrollPosition: number | undefined;
+  followingAccountFollowers: Record<string, core.AccountFollowerResponse>;
+  likeCount: number | undefined;
+  followerCount: number | undefined;
+  followingCount: number | undefined;
 }
 
 export class AccountPublicModel extends Model {
@@ -46,10 +68,10 @@ export class AccountPublicModel extends Model {
           account: undefined,
           customerMetadata: undefined,
           accountFollower: undefined,
-          showFollowButton: false,
+          showFollowButton: undefined,
           profileUrl: undefined,
           username: '',
-          activeTabId: '/account/likes',
+          activeTabId: '/account/:id/likes',
           prevTabIndex: 0,
           activeTabIndex: 0,
           hasMoreLikes: true,
@@ -60,6 +82,28 @@ export class AccountPublicModel extends Model {
           areLikedProductsLoading: false,
           selectedLikedProduct: undefined,
           selectedProductLikes: undefined,
+          activeStatusTabId: '/account/status/:id/followers',
+          prevStatusTabIndex: 0,
+          activeStatusTabIndex: 0,
+          followersInput: '',
+          followersPagination: 1,
+          hasMoreFollowers: true,
+          areFollowersLoading: false,
+          followerAccounts: [],
+          followerCustomers: {},
+          followerScrollPosition: undefined,
+          followerAccountFollowers: {},
+          followingInput: '',
+          followingPagination: 1,
+          hasMoreFollowing: true,
+          areFollowingLoading: false,
+          followingAccounts: [],
+          followingCustomers: {},
+          followingScrollPosition: undefined,
+          followingAccountFollowers: {},
+          likeCount: undefined,
+          followerCount: undefined,
+          followingCount: undefined,
         })
       )
     );
@@ -107,11 +151,11 @@ export class AccountPublicModel extends Model {
     }
   }
 
-  public get showFollowButton(): boolean {
+  public get showFollowButton(): boolean | undefined {
     return this.store.getValue().showFollowButton;
   }
 
-  public set showFollowButton(value: boolean) {
+  public set showFollowButton(value: boolean | undefined) {
     if (this.showFollowButton !== value) {
       this.store.update((state) => ({ ...state, showFollowButton: value }));
     }
@@ -269,6 +313,300 @@ export class AccountPublicModel extends Model {
   ) {
     if (JSON.stringify(this.selectedProductLikes) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, selectedProductLikes: value }));
+    }
+  }
+
+  public get activeStatusTabId(): string {
+    return this.store.getValue().activeStatusTabId;
+  }
+
+  public set activeStatusTabId(value: string) {
+    if (this.activeStatusTabId !== value) {
+      this.store.update((state) => ({
+        ...state,
+        activeStatusTabId: value,
+      }));
+    }
+  }
+
+  public get prevStatusTabIndex(): number {
+    return this.store.getValue().prevStatusTabIndex;
+  }
+
+  public set prevStatusTabIndex(value: number) {
+    if (this.prevStatusTabIndex !== value) {
+      this.store.update((state) => ({
+        ...state,
+        prevStatusTabIndex: value,
+      }));
+    }
+  }
+
+  public get activeStatusTabIndex(): number {
+    return this.store.getValue().activeStatusTabIndex;
+  }
+
+  public set activeStatusTabIndex(value: number) {
+    if (this.activeStatusTabIndex !== value) {
+      this.store.update((state) => ({
+        ...state,
+        activeStatusTabIndex: value,
+      }));
+    }
+  }
+
+  public get followingInput(): string {
+    return this.store?.getValue().followingInput;
+  }
+
+  public set followingInput(value: string) {
+    if (this.followingInput !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        followingInput: value,
+      }));
+    }
+  }
+
+  public get followingPagination(): number {
+    return this.store.getValue().followingPagination;
+  }
+
+  public set followingPagination(value: number) {
+    if (this.followingPagination !== value) {
+      this.store.update((state) => ({
+        ...state,
+        followingPagination: value,
+      }));
+    }
+  }
+
+  public get hasMoreFollowing(): boolean {
+    return this.store?.getValue().hasMoreFollowing;
+  }
+
+  public set hasMoreFollowing(value: boolean) {
+    if (this.hasMoreFollowing !== value) {
+      this.store?.update((state) => ({ ...state, hasMoreFollowing: value }));
+    }
+  }
+
+  public get areFollowingLoading(): boolean {
+    return this.store?.getValue().areFollowingLoading;
+  }
+
+  public set areFollowingLoading(value: boolean) {
+    if (this.areFollowingLoading !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        areFollowingLoading: value,
+      }));
+    }
+  }
+
+  public get followingAccounts(): core.AccountResponse[] {
+    return this.store?.getValue().followingAccounts;
+  }
+
+  public set followingAccounts(value: core.AccountResponse[]) {
+    if (JSON.stringify(this.followingAccounts) !== JSON.stringify(value)) {
+      this.store?.update((state) => ({
+        ...state,
+        followingAccounts: value,
+      }));
+    }
+  }
+
+  public get followingCustomers(): Record<string, core.CustomerResponse> {
+    return this.store?.getValue().followingCustomers;
+  }
+
+  public set followingCustomers(value: Record<string, core.CustomerResponse>) {
+    if (JSON.stringify(this.followingCustomers) !== JSON.stringify(value)) {
+      this.store?.update((state) => ({
+        ...state,
+        followingCustomers: value,
+      }));
+    }
+  }
+
+  public get followingScrollPosition(): number | undefined {
+    return this.store.getValue().followingScrollPosition;
+  }
+
+  public set followingScrollPosition(value: number | undefined) {
+    if (this.followingScrollPosition !== value) {
+      this.store.update((state) => ({
+        ...state,
+        followingScrollPosition: value,
+      }));
+    }
+  }
+
+  public get followingAccountFollowers(): Record<
+    string,
+    core.AccountFollowerResponse
+  > {
+    return this.store.getValue().followingAccountFollowers;
+  }
+
+  public set followingAccountFollowers(
+    value: Record<string, core.AccountFollowerResponse>
+  ) {
+    if (
+      JSON.stringify(this.followingAccountFollowers) !== JSON.stringify(value)
+    ) {
+      this.store.update((state) => ({
+        ...state,
+        followingAccountFollowers: value,
+      }));
+    }
+  }
+
+  public get followersInput(): string {
+    return this.store?.getValue().followersInput;
+  }
+
+  public set followersInput(value: string) {
+    if (this.followersInput !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        followersInput: value,
+      }));
+    }
+  }
+
+  public get followersPagination(): number {
+    return this.store.getValue().followersPagination;
+  }
+
+  public set followersPagination(value: number) {
+    if (this.followersPagination !== value) {
+      this.store.update((state) => ({
+        ...state,
+        followersPagination: value,
+      }));
+    }
+  }
+
+  public get hasMoreFollowers(): boolean {
+    return this.store?.getValue().hasMoreFollowers;
+  }
+
+  public set hasMoreFollowers(value: boolean) {
+    if (this.hasMoreFollowers !== value) {
+      this.store?.update((state) => ({ ...state, hasMoreFollowers: value }));
+    }
+  }
+
+  public get areFollowersLoading(): boolean {
+    return this.store?.getValue().areFollowersLoading;
+  }
+
+  public set areFollowersLoading(value: boolean) {
+    if (this.areFollowersLoading !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        areFollowersLoading: value,
+      }));
+    }
+  }
+
+  public get followerAccounts(): core.AccountResponse[] {
+    return this.store?.getValue().followerAccounts;
+  }
+
+  public set followerAccounts(value: core.AccountResponse[]) {
+    if (JSON.stringify(this.followerAccounts) !== JSON.stringify(value)) {
+      this.store?.update((state) => ({
+        ...state,
+        followerAccounts: value,
+      }));
+    }
+  }
+
+  public get followerCustomers(): Record<string, core.CustomerResponse> {
+    return this.store?.getValue().followerCustomers;
+  }
+
+  public set followerCustomers(value: Record<string, core.CustomerResponse>) {
+    if (JSON.stringify(this.followerCustomers) !== JSON.stringify(value)) {
+      this.store?.update((state) => ({
+        ...state,
+        followerCustomers: value,
+      }));
+    }
+  }
+
+  public get followerScrollPosition(): number | undefined {
+    return this.store.getValue().followerScrollPosition;
+  }
+
+  public set followerScrollPosition(value: number | undefined) {
+    if (this.followerScrollPosition !== value) {
+      this.store.update((state) => ({
+        ...state,
+        followerScrollPosition: value,
+      }));
+    }
+  }
+
+  public get followerAccountFollowers(): Record<
+    string,
+    core.AccountFollowerResponse
+  > {
+    return this.store.getValue().followerAccountFollowers;
+  }
+
+  public set followerAccountFollowers(
+    value: Record<string, core.AccountFollowerResponse>
+  ) {
+    if (
+      JSON.stringify(this.followerAccountFollowers) !== JSON.stringify(value)
+    ) {
+      this.store.update((state) => ({
+        ...state,
+        followerAccountFollowers: value,
+      }));
+    }
+  }
+
+  public get likeCount(): number | undefined {
+    return this.store.getValue().likeCount;
+  }
+
+  public set likeCount(value: number | undefined) {
+    if (this.likeCount !== value) {
+      this.store.update((state) => ({
+        ...state,
+        likeCount: value,
+      }));
+    }
+  }
+
+  public get followerCount(): number | undefined {
+    return this.store.getValue().followerCount;
+  }
+
+  public set followerCount(value: number | undefined) {
+    if (this.followerCount !== value) {
+      this.store.update((state) => ({
+        ...state,
+        followerCount: value,
+      }));
+    }
+  }
+
+  public get followingCount(): number | undefined {
+    return this.store.getValue().followingCount;
+  }
+
+  public set followingCount(value: number | undefined) {
+    if (this.followingCount !== value) {
+      this.store.update((state) => ({
+        ...state,
+        followingCount: value,
+      }));
     }
   }
 }

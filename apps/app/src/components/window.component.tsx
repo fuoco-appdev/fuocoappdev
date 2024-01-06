@@ -112,6 +112,22 @@ export default function WindowComponent(): JSX.Element {
       return;
     }
 
+    if (WindowController.isLocationAccountStatusWithId(location.pathname)) {
+      if (accountProps.account?.id === accountPublicProps.account?.id) {
+        setTimeout(() => navigate(RoutePathsType.Account), 150);
+        return;
+      } else {
+        setTimeout(
+          () =>
+            navigate(
+              `${RoutePathsType.Account}/${accountPublicProps.account?.id}/likes`
+            ),
+          150
+        );
+        return;
+      }
+    }
+
     setTimeout(() => navigate(-1), 150);
   };
 

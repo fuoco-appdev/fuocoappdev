@@ -438,7 +438,7 @@ class AccountController extends Controller {
     this._model.areAddFriendsLoading = true;
 
     try {
-      const accountsResponse = await AccountService.requestLikeAsync({
+      const accountsResponse = await AccountService.requestSearchAsync({
         queryUsername: query,
         accountId: this._model.account?.id ?? '',
         offset: offset,

@@ -6,6 +6,7 @@ import { ResponsiveDesktop } from '../responsive.component';
 import { AccountFollowItemResponsiveProps } from '../account-follow-item.component';
 import { useState } from 'react';
 import Ripples from 'react-ripples';
+import AccountController from '../../controllers/account.controller';
 
 export default function AccountFollowItemDesktopComponent({
   account,
@@ -72,7 +73,7 @@ export default function AccountFollowItemDesktopComponent({
             )}
           </div>
         </div>
-        {!isRequest && (
+        {AccountController.model.account?.id !== account.id && !isRequest && (
           <>
             {!isFollowing && (
               <Button
@@ -130,7 +131,7 @@ export default function AccountFollowItemDesktopComponent({
             )}
           </>
         )}
-        {isRequest && (
+        {AccountController.model.account?.id !== account.id && isRequest && (
           <div
             className={[
               styles['request-button-container'],

@@ -60,11 +60,8 @@ export default function AccountPublicTabletComponent({
   onUnfollow,
 }: AccountPublicResponsiveProps): JSX.Element {
   const scrollContainerRef = createRef<HTMLDivElement>();
-  const topBarRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
-  let prevPreviewScrollTop = 0;
-  let yPosition = 0;
 
   return (
     <ResponsiveTablet>
@@ -75,28 +72,7 @@ export default function AccountPublicTabletComponent({
             styles['scroll-container-tablet'],
           ].join(' ')}
           style={{ height: window.innerHeight }}
-          onScroll={(e) => {
-            onScroll(e);
-            const elementHeight = topBarRef.current?.clientHeight ?? 0;
-            const scrollTop = e.currentTarget.scrollTop;
-            if (prevPreviewScrollTop > scrollTop) {
-              yPosition += prevPreviewScrollTop - scrollTop;
-              if (yPosition >= 0) {
-                yPosition = 0;
-              }
-
-              topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
-            } else {
-              yPosition -= scrollTop - prevPreviewScrollTop;
-              if (yPosition <= -elementHeight) {
-                yPosition = -elementHeight;
-              }
-
-              topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
-            }
-
-            prevPreviewScrollTop = e.currentTarget.scrollTop;
-          }}
+          onScroll={onScroll}
           onLoad={onScrollLoad}
           ref={scrollContainerRef}
         >
@@ -223,6 +199,14 @@ export default function AccountPublicTabletComponent({
                         {t('following')}
                       </Button>
                     )}
+                  {accountPublicProps.showFollowButton === undefined && (
+                    <Skeleton
+                      count={1}
+                      borderRadius={6}
+                      height={38}
+                      width={120}
+                    />
+                  )}
                 </div>
               </div>
               <div
@@ -250,7 +234,7 @@ export default function AccountPublicTabletComponent({
                   }}
                   onChange={(id) => {
                     AccountPublicController.updateActiveTabId(id);
-                    navigate(id);
+                    navigate(`${RoutePathsType.Account}/${id}/likes`);
                   }}
                   type={'underlined'}
                   tabs={[

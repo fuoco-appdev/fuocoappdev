@@ -364,6 +364,18 @@ export default function WindowMobileComponent({
                           {accountPublicProps.account?.username ?? ''}
                         </div>
                       )}
+                      {WindowController.isLocationAccountStatusWithId(
+                        location.pathname ?? ''
+                      ) && (
+                        <div
+                          className={[styles['navigation-back-title']].join(
+                            ' '
+                          )}
+                          style={{ textTransform: 'lowercase' }}
+                        >
+                          {accountPublicProps.account?.username ?? ''}
+                        </div>
+                      )}
                       {activeRoute === RoutePathsType.AccountSettings && (
                         <>
                           <Line.Settings size={22} />

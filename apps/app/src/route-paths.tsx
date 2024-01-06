@@ -28,6 +28,9 @@ import React from 'react';
 import HelpComponent from './components/help.component';
 import AccountPublicComponent from './components/account-public.component';
 import AccountPublicLikesComponent from './components/account-public-likes.component';
+import AccountPublicStatusComponent from './components/account-public-status.component';
+import AccountPublicFollowersComponent from './components/account-public-followers.component';
+import AccountPublicFollowingComponent from './components/account-public-following.component';
 
 export enum RoutePathsType {
   Default = '/',
@@ -49,6 +52,10 @@ export enum RoutePathsType {
   Account = '/account',
   AccountWithId = '/account/:id',
   AccountWithIdLikes = '/account/:id/likes',
+  AccountStatus = '/account/status',
+  AccountStatusWithId = '/account/status/:id',
+  AccountStatusWithIdFollowers = '/account/status/:id/followers',
+  AccountStatusWithIdFollowing = '/account/status/:id/following',
   AccountEvents = '/account/events',
   AccountOrderHistory = '/account/order-history',
   AccountAddresses = '/account/addresses',
@@ -159,6 +166,20 @@ export const getRoutePaths = (): RouteObject[] => [
           {
             path: RoutePathsType.AccountWithIdLikes,
             element: <AccountPublicLikesComponent />,
+          },
+        ],
+      },
+      {
+        path: RoutePathsType.AccountStatusWithId,
+        element: <AccountPublicStatusComponent />,
+        children: [
+          {
+            path: RoutePathsType.AccountStatusWithIdFollowers,
+            element: <AccountPublicFollowersComponent />,
+          },
+          {
+            path: RoutePathsType.AccountStatusWithIdFollowing,
+            element: <AccountPublicFollowingComponent />,
           },
         ],
       },

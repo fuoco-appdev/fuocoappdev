@@ -23,11 +23,104 @@ export function AccountPublicSuspenseMobileComponent(): JSX.Element {
           >
             <div
               className={[
-                styles['avatar-container'],
-                styles['avatar-container-mobile'],
+                styles['status-container'],
+                styles['status-container-mobile'],
               ].join(' ')}
             >
-              <Skeleton style={{ width: 96, height: 96 }} borderRadius={96} />
+              <div
+                className={[
+                  styles['avatar-content'],
+                  styles['avatar-content-mobile'],
+                ].join(' ')}
+              >
+                <div
+                  className={[
+                    styles['avatar-container'],
+                    styles['avatar-container-mobile'],
+                  ].join(' ')}
+                >
+                  <Skeleton
+                    style={{ width: 96, height: 96 }}
+                    borderRadius={96}
+                  />
+                </div>
+              </div>
+              <div
+                className={[
+                  styles['followers-status-container'],
+                  styles['followers-status-container-mobile'],
+                ].join(' ')}
+              >
+                <div
+                  className={[
+                    styles['followers-status-item'],
+                    styles['followers-status-item-mobile'],
+                  ].join(' ')}
+                >
+                  <div
+                    className={[
+                      styles['followers-status-value'],
+                      styles['followers-status-value-mobile'],
+                    ].join(' ')}
+                  >
+                    <Skeleton width={16} height={19} borderRadius={19} />
+                  </div>
+                  <div
+                    className={[
+                      styles['followers-status-name'],
+                      styles['followers-status-name-mobile'],
+                    ].join(' ')}
+                  >
+                    <Skeleton width={50} height={19} borderRadius={19} />
+                  </div>
+                </div>
+                <div
+                  className={[
+                    styles['followers-status-item'],
+                    styles['followers-status-item-mobile'],
+                  ].join(' ')}
+                >
+                  <div
+                    className={[
+                      styles['followers-status-value'],
+                      styles['followers-status-value-mobile'],
+                    ].join(' ')}
+                  >
+                    <Skeleton width={16} height={19} borderRadius={19} />
+                  </div>
+                  <div
+                    className={[
+                      styles['followers-status-name'],
+                      styles['followers-status-name-mobile'],
+                    ].join(' ')}
+                  >
+                    <Skeleton width={50} height={19} borderRadius={19} />
+                  </div>
+                </div>
+                <div
+                  className={[
+                    styles['followers-status-item'],
+                    styles['followers-status-item-mobile'],
+                  ].join(' ')}
+                >
+                  <div
+                    className={[
+                      styles['followers-status-value'],
+                      styles['followers-status-value-mobile'],
+                    ].join(' ')}
+                  >
+                    <Skeleton width={16} height={19} borderRadius={19} />
+                  </div>
+                  <div
+                    className={[
+                      styles['followers-status-name'],
+                      styles['followers-status-name-mobile'],
+                    ].join(' ')}
+                  >
+                    <Skeleton width={50} height={19} borderRadius={19} />
+                  </div>
+                </div>
+              </div>
             </div>
             <div
               className={[styles['username'], styles['username-mobile']].join(
@@ -45,8 +138,15 @@ export function AccountPublicSuspenseMobileComponent(): JSX.Element {
                 ].join(' ')}
               />
             </div>
+            <div
+              className={[
+                styles['follow-button-container'],
+                styles['follow-button-container-mobile'],
+              ].join(' ')}
+            >
+              <Skeleton count={1} borderRadius={6} height={34} width={104} />
+            </div>
           </div>
-
           <div
             className={[
               styles['tabs-container-skeleton'],

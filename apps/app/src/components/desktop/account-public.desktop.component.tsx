@@ -48,18 +48,21 @@ export default function AccountPublicDesktopComponent({
   storeProps,
   isFollowing,
   isAccepted,
+  likeCount,
+  followerCount,
+  followingCount,
   onScroll,
   onScrollLoad,
   onFollow,
   onRequested,
   onUnfollow,
+  onLikesClick,
+  onFollowersClick,
+  onFollowingClick,
 }: AccountPublicResponsiveProps): JSX.Element {
   const scrollContainerRef = createRef<HTMLDivElement>();
-  const topBarRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
-  let prevPreviewScrollTop = 0;
-  let yPosition = 0;
 
   return (
     <ResponsiveDesktop>
@@ -70,28 +73,7 @@ export default function AccountPublicDesktopComponent({
             styles['scroll-container-desktop'],
           ].join(' ')}
           style={{ height: window.innerHeight }}
-          onScroll={(e) => {
-            onScroll(e);
-            const elementHeight = topBarRef.current?.clientHeight ?? 0;
-            const scrollTop = e.currentTarget.scrollTop;
-            if (prevPreviewScrollTop > scrollTop) {
-              yPosition += prevPreviewScrollTop - scrollTop;
-              if (yPosition >= 0) {
-                yPosition = 0;
-              }
-
-              topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
-            } else {
-              yPosition -= scrollTop - prevPreviewScrollTop;
-              if (yPosition <= -elementHeight) {
-                yPosition = -elementHeight;
-              }
-
-              topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
-            }
-
-            prevPreviewScrollTop = e.currentTarget.scrollTop;
-          }}
+          onScroll={onScroll}
           onLoad={onScrollLoad}
           ref={scrollContainerRef}
         >
@@ -105,34 +87,208 @@ export default function AccountPublicDesktopComponent({
               >
                 <div
                   className={[
-                    styles['avatar-container'],
-                    styles['avatar-container-desktop'],
+                    styles['status-container'],
+                    styles['status-container-desktop'],
                   ].join(' ')}
                 >
-                  <Avatar
-                    classNames={{
-                      button: {
-                        button: [
-                          styles['avatar-button'],
-                          styles['avatar-button-desktop'],
-                        ].join(' '),
-                      },
-                      cropImage: {
-                        overlay: {
-                          background: [
-                            styles['avatar-overlay-background'],
-                            styles['avatar-overlay-background-desktop'],
-                          ].join(' '),
-                        },
-                        saveButton: {
-                          button: [styles['avatar-save-button']].join(' '),
-                        },
-                      },
-                    }}
-                    text={accountPublicProps.customerMetadata?.firstName}
-                    src={accountPublicProps.profileUrl}
-                    size={'large'}
-                  />
+                  <div
+                    className={[
+                      styles['avatar-content'],
+                      styles['avatar-content-desktop'],
+                    ].join(' ')}
+                  >
+                    <div
+                      className={[
+                        styles['avatar-container'],
+                        styles['avatar-container-desktop'],
+                      ].join(' ')}
+                    >
+                      <Avatar
+                        classNames={{
+                          button: {
+                            button: [
+                              styles['avatar-button'],
+                              styles['avatar-button-desktop'],
+                            ].join(' '),
+                          },
+                          cropImage: {
+                            overlay: {
+                              background: [
+                                styles['avatar-overlay-background'],
+                                styles['avatar-overlay-background-desktop'],
+                              ].join(' '),
+                            },
+                            saveButton: {
+                              button: [styles['avatar-save-button']].join(' '),
+                            },
+                          },
+                        }}
+                        text={accountPublicProps.customerMetadata?.firstName}
+                        src={accountPublicProps.profileUrl}
+                        size={'large'}
+                      />
+                    </div>
+                  </div>
+                  <div
+                    className={[
+                      styles['followers-status-container'],
+                      styles['followers-status-container-desktop'],
+                    ].join(' ')}
+                  >
+                    {likeCount !== undefined && (
+                      <div
+                        className={[
+                          styles['followers-status-item'],
+                          styles['followers-status-item-desktop'],
+                        ].join(' ')}
+                        onClick={onLikesClick}
+                      >
+                        <div
+                          className={[
+                            styles['followers-status-value'],
+                            styles['followers-status-value-desktop'],
+                          ].join(' ')}
+                        >
+                          {likeCount}
+                        </div>
+                        <div
+                          className={[
+                            styles['followers-status-name'],
+                            styles['followers-status-name-desktop'],
+                          ].join(' ')}
+                        >
+                          {t('likes')}
+                        </div>
+                      </div>
+                    )}
+                    {likeCount === undefined && (
+                      <div
+                        className={[
+                          styles['followers-status-item'],
+                          styles['followers-status-item-desktop'],
+                        ].join(' ')}
+                      >
+                        <div
+                          className={[
+                            styles['followers-status-value'],
+                            styles['followers-status-value-desktop'],
+                          ].join(' ')}
+                        >
+                          <Skeleton width={30} height={19} borderRadius={19} />
+                        </div>
+                        <div
+                          className={[
+                            styles['followers-status-name'],
+                            styles['followers-status-name-desktop'],
+                          ].join(' ')}
+                        >
+                          <Skeleton width={60} height={19} borderRadius={19} />
+                        </div>
+                      </div>
+                    )}
+                    {followerCount !== undefined && (
+                      <div
+                        className={[
+                          styles['followers-status-item'],
+                          styles['followers-status-item-desktop'],
+                        ].join(' ')}
+                        onClick={onFollowersClick}
+                      >
+                        <div
+                          className={[
+                            styles['followers-status-value'],
+                            styles['followers-status-value-desktop'],
+                          ].join(' ')}
+                        >
+                          {followerCount}
+                        </div>
+                        <div
+                          className={[
+                            styles['followers-status-name'],
+                            styles['followers-status-name-desktop'],
+                          ].join(' ')}
+                        >
+                          {t('followers')}
+                        </div>
+                      </div>
+                    )}
+                    {followerCount === undefined && (
+                      <div
+                        className={[
+                          styles['followers-status-item'],
+                          styles['followers-status-item-desktop'],
+                        ].join(' ')}
+                      >
+                        <div
+                          className={[
+                            styles['followers-status-value'],
+                            styles['followers-status-value-desktop'],
+                          ].join(' ')}
+                        >
+                          <Skeleton width={30} height={19} borderRadius={19} />
+                        </div>
+                        <div
+                          className={[
+                            styles['followers-status-name'],
+                            styles['followers-status-name-desktop'],
+                          ].join(' ')}
+                        >
+                          <Skeleton width={60} height={19} borderRadius={19} />
+                        </div>
+                      </div>
+                    )}
+                    {followingCount !== undefined && (
+                      <div
+                        className={[
+                          styles['followers-status-item'],
+                          styles['followers-status-item-desktop'],
+                        ].join(' ')}
+                        onClick={onFollowingClick}
+                      >
+                        <div
+                          className={[
+                            styles['followers-status-value'],
+                            styles['followers-status-value-desktop'],
+                          ].join(' ')}
+                        >
+                          {followingCount}
+                        </div>
+                        <div
+                          className={[
+                            styles['followers-status-name'],
+                            styles['followers-status-name-desktop'],
+                          ].join(' ')}
+                        >
+                          {t('following')}
+                        </div>
+                      </div>
+                    )}
+                    {followingCount === undefined && (
+                      <div
+                        className={[
+                          styles['followers-status-item'],
+                          styles['followers-status-item-desktop'],
+                        ].join(' ')}
+                      >
+                        <div
+                          className={[
+                            styles['followers-status-value'],
+                            styles['followers-status-value-desktop'],
+                          ].join(' ')}
+                        >
+                          <Skeleton width={30} height={19} borderRadius={19} />
+                        </div>
+                        <div
+                          className={[
+                            styles['followers-status-name'],
+                            styles['followers-status-name-desktop'],
+                          ].join(' ')}
+                        >
+                          <Skeleton width={60} height={19} borderRadius={19} />
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div
                   className={[
@@ -218,6 +374,14 @@ export default function AccountPublicDesktopComponent({
                         {t('following')}
                       </Button>
                     )}
+                  {accountPublicProps.showFollowButton === undefined && (
+                    <Skeleton
+                      count={1}
+                      borderRadius={6}
+                      height={38}
+                      width={120}
+                    />
+                  )}
                 </div>
               </div>
               <div
@@ -245,12 +409,12 @@ export default function AccountPublicDesktopComponent({
                   }}
                   onChange={(id) => {
                     AccountPublicController.updateActiveTabId(id);
-                    navigate(id);
+                    navigate(`${RoutePathsType.Account}/${id}/likes`);
                   }}
                   type={'underlined'}
                   tabs={[
                     {
-                      id: RoutePathsType.AccountLikes,
+                      id: RoutePathsType.AccountWithIdLikes,
                       icon: <Line.FavoriteBorder size={24} />,
                     },
                   ]}

@@ -179,6 +179,64 @@ export class AccountService {
     return response;
   }
 
+  public async findFollowersLikeAsync(
+    request: InstanceType<typeof AccountLikeRequest>
+  ): Promise<AccountsResponse | null> {
+    const queryUsername = request.getQueryUsername();
+    const accountId = request.getAccountId();
+    const offset = request.getOffset();
+    const limit = request.getLimit();
+
+    const accountsData = await SupabaseService.client
+      .from('account')
+      .select('*, account_followers!account_followers_account_id_fkey!inner(*)')
+      .filter('account_followers.follower_id', 'eq', accountId)
+      .not('account_followers.accepted', 'in', '(false)')
+      .not('id', 'in', `(${accountId})`)
+      .not('status', 'in', '(Incomplete)')
+      .limit(limit)
+      .range(offset, offset + limit)
+      .ilike('username', `%${queryUsername}%`);
+
+    if (accountsData.error) {
+      console.error(accountsData.error);
+      return null;
+    }
+
+    const response = this.assignAndGetAccountsProtocol(accountsData.data);
+    return response;
+  }
+
+  public async findFollowingLikeAsync(
+    request: InstanceType<typeof AccountLikeRequest>
+  ): Promise<AccountsResponse | null> {
+    const queryUsername = request.getQueryUsername();
+    const accountId = request.getAccountId();
+    const offset = request.getOffset();
+    const limit = request.getLimit();
+
+    const accountsData = await SupabaseService.client
+      .from('account')
+      .select(
+        '*, account_followers!account_followers_follower_id_fkey!inner(*)'
+      )
+      .filter('account_followers.account_id', 'eq', accountId)
+      .not('account_followers.accepted', 'in', '(false)')
+      .not('id', 'in', `(${accountId})`)
+      .not('status', 'in', '(Incomplete)')
+      .limit(limit)
+      .range(offset, offset + limit)
+      .ilike('username', `%${queryUsername}%`);
+
+    if (accountsData.error) {
+      console.error(accountsData.error);
+      return null;
+    }
+
+    const response = this.assignAndGetAccountsProtocol(accountsData.data);
+    return response;
+  }
+
   public assignAndGetAccountsProtocol(
     props: AccountProps[]
   ): InstanceType<typeof AccountsResponse> {

@@ -4,6 +4,7 @@ import { AddressItemProps } from '../address-item.component';
 import { useTranslation } from 'react-i18next';
 import { ResponsiveDesktop, ResponsiveTablet } from '../responsive.component';
 import { AccountFollowItemResponsiveProps } from '../account-follow-item.component';
+import AccountController from '../../controllers/account.controller';
 
 export default function AccountFollowItemTabletComponent({
   account,
@@ -69,7 +70,7 @@ export default function AccountFollowItemTabletComponent({
             )}
           </div>
         </div>
-        {!isRequest && (
+        {AccountController.model.account?.id !== account.id && !isRequest && (
           <>
             {!isFollowing && (
               <Button
@@ -127,7 +128,7 @@ export default function AccountFollowItemTabletComponent({
             )}
           </>
         )}
-        {isRequest && (
+        {AccountController.model.account?.id !== account.id && isRequest && (
           <div
             className={[
               styles['request-button-container'],

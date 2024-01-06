@@ -268,6 +268,34 @@ class WindowController extends Controller {
       this._model.activeRoute = RoutePathsType.AccountWithIdLikes;
       this._model.showNavigateBack = true;
       this._model.hideCartButton = true;
+    } else if (this.isLocationAccountStatusWithId(location.pathname)) {
+      this._model.transitionKeyIndex = 1;
+      this._model.scaleKeyIndex = 0;
+      this._model.activeRoute = RoutePathsType.AccountStatusWithId;
+      this._model.showNavigateBack = true;
+      this._model.hideCartButton = true;
+    } else if (
+      this.isLocationAccountStatusWithId(
+        location.pathname,
+        RoutePathsType.AccountStatusWithIdFollowers
+      )
+    ) {
+      this._model.transitionKeyIndex = 1;
+      this._model.scaleKeyIndex = 0;
+      this._model.activeRoute = RoutePathsType.AccountStatusWithIdFollowers;
+      this._model.showNavigateBack = true;
+      this._model.hideCartButton = true;
+    } else if (
+      this.isLocationAccountStatusWithId(
+        location.pathname,
+        RoutePathsType.AccountStatusWithIdFollowing
+      )
+    ) {
+      this._model.transitionKeyIndex = 1;
+      this._model.scaleKeyIndex = 0;
+      this._model.activeRoute = RoutePathsType.AccountStatusWithIdFollowing;
+      this._model.showNavigateBack = true;
+      this._model.hideCartButton = true;
     } else if (location.pathname === RoutePathsType.AccountSettings) {
       this._model.transitionKeyIndex = 1;
       this._model.scaleKeyIndex = 0;
@@ -309,6 +337,33 @@ class WindowController extends Controller {
       )
     ) {
       if (childPath && splittedPath[2] !== childPathFormatted?.[0]) {
+        return false;
+      }
+
+      return true;
+    }
+
+    return false;
+  }
+
+  public isLocationAccountStatusWithId(
+    pathname: string,
+    childPath?: RoutePathsType
+  ): boolean {
+    const splittedPath = pathname.split('/').filter((value) => value !== '');
+    if (splittedPath.length < 3) {
+      return false;
+    }
+
+    const childPathFormatted = childPath?.split('/').slice(-1) ?? [];
+    if (
+      `${splittedPath[0]}/${splittedPath[1]}` ===
+        RoutePathsType.AccountStatus.replace('/', '') &&
+      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
+        splittedPath[2]
+      )
+    ) {
+      if (childPath && splittedPath[3] !== childPathFormatted?.[0]) {
         return false;
       }
 

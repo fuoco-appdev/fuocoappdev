@@ -45,6 +45,14 @@ export function AccountPublicSuspenseDesktopComponent(): JSX.Element {
                 ].join(' ')}
               />
             </div>
+            <div
+              className={[
+                styles['follow-button-container'],
+                styles['follow-button-container-desktop'],
+              ].join(' ')}
+            >
+              <Skeleton count={1} borderRadius={6} height={38} width={120} />
+            </div>
           </div>
           <div
             className={[

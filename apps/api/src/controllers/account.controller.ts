@@ -79,10 +79,10 @@ export class AccountController {
     context.response.body = response.serializeBinary();
   }
 
-  @Post('/like')
+  @Post('/search')
   @Guard(AuthGuard)
   @ContentType('application/x-protobuf')
-  public async getLikeAsync(
+  public async getSearchAsync(
     context: Oak.RouterContext<
       string,
       Oak.RouteParams<string>,
@@ -94,6 +94,56 @@ export class AccountController {
     const accountLikeRequest =
       AccountLikeRequest.deserializeBinary(requestValue);
     const response = await AccountService.findLikeAsync(accountLikeRequest);
+    if (!response) {
+      throw HttpError.createError(404, `No accounts were found`);
+    }
+
+    context.response.type = 'application/x-protobuf';
+    context.response.body = response.serializeBinary();
+  }
+
+  @Post('/followers/search')
+  @Guard(AuthGuard)
+  @ContentType('application/x-protobuf')
+  public async getFollowersSearchAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >
+  ): Promise<void> {
+    const body = await context.request.body({ type: 'reader' });
+    const requestValue = await readAll(body.value);
+    const accountLikeRequest =
+      AccountLikeRequest.deserializeBinary(requestValue);
+    const response = await AccountService.findFollowersLikeAsync(
+      accountLikeRequest
+    );
+    if (!response) {
+      throw HttpError.createError(404, `No accounts were found`);
+    }
+
+    context.response.type = 'application/x-protobuf';
+    context.response.body = response.serializeBinary();
+  }
+
+  @Post('/following/search')
+  @Guard(AuthGuard)
+  @ContentType('application/x-protobuf')
+  public async getFollowingSearchAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >
+  ): Promise<void> {
+    const body = await context.request.body({ type: 'reader' });
+    const requestValue = await readAll(body.value);
+    const accountLikeRequest =
+      AccountLikeRequest.deserializeBinary(requestValue);
+    const response = await AccountService.findFollowingLikeAsync(
+      accountLikeRequest
+    );
     if (!response) {
       throw HttpError.createError(404, `No accounts were found`);
     }

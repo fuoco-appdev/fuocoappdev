@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { ResponsiveDesktop, ResponsiveMobile } from '../responsive.component';
 import { AccountFollowItemResponsiveProps } from '../account-follow-item.component';
 import Ripples from 'react-ripples';
+import AccountController from '../../controllers/account.controller';
 
 export default function AccountFollowItemMobileComponent({
   account,
@@ -68,7 +69,7 @@ export default function AccountFollowItemMobileComponent({
               )}
             </div>
           </div>
-          {!isRequest && (
+          {AccountController.model.account?.id !== account.id && !isRequest && (
             <>
               {!isFollowing && (
                 <Button
@@ -126,7 +127,7 @@ export default function AccountFollowItemMobileComponent({
               )}
             </>
           )}
-          {isRequest && (
+          {AccountController.model.account?.id !== account.id && isRequest && (
             <div
               className={[
                 styles['request-button-container'],

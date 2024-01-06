@@ -274,6 +274,8 @@
   "noLikedProducts": "Vous n'avez pas de produits aimés.",
   "userNoLikedProducts": "{{username, string}} n'a pas de produits aimés.",
   "noFriendsFound": "Aucun ami avec le nom d'utilisateur '{{username, string}}' n'a été trouvé.",
+  "noFollowersFound": "Pas de followers avec le nom d'utilisateur '{{username, string}}' n'a été trouvé.",
+  "noFollowingFound": "Pas de following avec le nom d'utilisateur '{{username, string}}' n'a été trouvé.",
   "follow": "Suivre",
   "requested": "Demandé",
   "following": "Suivant",

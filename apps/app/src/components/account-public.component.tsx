@@ -55,11 +55,17 @@ export interface AccountPublicResponsiveProps {
   storeProps: StoreState;
   isFollowing: boolean;
   isAccepted: boolean;
+  likeCount: string | undefined;
+  followerCount: string | undefined;
+  followingCount: string | undefined;
   onScroll: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
   onScrollLoad: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
   onFollow: () => void;
   onUnfollow: () => void;
   onRequested: () => void;
+  onLikesClick: () => void;
+  onFollowersClick: () => void;
+  onFollowingClick: () => void;
 }
 
 export default function AccountPublicComponent(): JSX.Element {
@@ -73,6 +79,13 @@ export default function AccountPublicComponent(): JSX.Element {
   const [storeProps] = useObservable(StoreController.model.store);
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const [isAccepted, setIsAccepted] = useState<boolean>(false);
+  const [likeCount, setLikeCount] = useState<string | undefined>(undefined);
+  const [followerCount, setFollowerCount] = useState<string | undefined>(
+    undefined
+  );
+  const [followingCount, setFollowingCount] = useState<string | undefined>(
+    undefined
+  );
   const scrollOffsetTriggerGap = 16;
 
   const onFollow = () => {
@@ -97,10 +110,35 @@ export default function AccountPublicComponent(): JSX.Element {
     }, 150);
   };
 
-  useEffect(() => {
-    setIsFollowing(accountPublicProps.accountFollower?.isFollowing ?? false);
-    setIsAccepted(accountPublicProps.accountFollower?.accepted ?? false);
-  }, [accountPublicProps.accountFollower]);
+  const onLikesClick = () => {
+    if (!accountPublicProps.account) {
+      return;
+    }
+
+    navigate(
+      `${RoutePathsType.Account}/${accountPublicProps.account?.id}/likes`
+    );
+  };
+
+  const onFollowersClick = () => {
+    if (!accountPublicProps.account) {
+      return;
+    }
+
+    navigate(
+      `${RoutePathsType.AccountStatus}/${accountPublicProps.account?.id}/followers`
+    );
+  };
+
+  const onFollowingClick = () => {
+    if (!accountPublicProps.account) {
+      return;
+    }
+
+    navigate(
+      `${RoutePathsType.AccountStatus}/${accountPublicProps.account?.id}/following`
+    );
+  };
 
   const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const scrollTop = e.currentTarget?.scrollTop ?? 0;
@@ -137,6 +175,54 @@ export default function AccountPublicComponent(): JSX.Element {
   useEffect(() => {
     AccountPublicController.updateAccountId(id);
   }, []);
+
+  useEffect(() => {
+    setIsFollowing(accountPublicProps.accountFollower?.isFollowing ?? false);
+    setIsAccepted(accountPublicProps.accountFollower?.accepted ?? false);
+  }, [accountPublicProps.accountFollower]);
+
+  useEffect(() => {
+    if (accountPublicProps.likeCount !== undefined) {
+      setLikeCount(
+        new Intl.NumberFormat(i18n.language).format(
+          accountPublicProps.likeCount
+        )
+      );
+    }
+
+    if (accountPublicProps.followerCount !== undefined) {
+      setFollowerCount(
+        new Intl.NumberFormat(i18n.language).format(
+          accountPublicProps.followerCount
+        )
+      );
+    }
+
+    if (accountPublicProps.followingCount !== undefined) {
+      setFollowingCount(
+        new Intl.NumberFormat(i18n.language).format(
+          accountPublicProps.followingCount
+        )
+      );
+    }
+  }, [
+    accountPublicProps.likeCount,
+    accountPublicProps.followerCount,
+    accountPublicProps.followingCount,
+  ]);
+
+  useEffect(() => {
+    if (
+      WindowController.isLocationAccountWithId(
+        location.pathname,
+        RoutePathsType.AccountWithIdLikes
+      )
+    ) {
+      AccountPublicController.updateActiveTabId(
+        RoutePathsType.AccountWithIdLikes
+      );
+    }
+  }, [location.pathname]);
 
   const suspenceComponent = (
     <>
@@ -185,11 +271,17 @@ export default function AccountPublicComponent(): JSX.Element {
           storeProps={storeProps}
           isFollowing={isFollowing}
           isAccepted={isAccepted}
+          likeCount={likeCount}
+          followerCount={followerCount}
+          followingCount={followingCount}
           onScroll={onScroll}
           onScrollLoad={onScrollLoad}
           onFollow={onFollow}
           onUnfollow={onUnfollow}
           onRequested={onRequested}
+          onLikesClick={onLikesClick}
+          onFollowersClick={onFollowersClick}
+          onFollowingClick={onFollowingClick}
         />
         <AccountPublicTabletComponent
           accountPublicProps={accountPublicProps}
@@ -197,11 +289,17 @@ export default function AccountPublicComponent(): JSX.Element {
           storeProps={storeProps}
           isFollowing={isFollowing}
           isAccepted={isAccepted}
+          likeCount={likeCount}
+          followerCount={followerCount}
+          followingCount={followingCount}
           onScroll={onScroll}
           onScrollLoad={onScrollLoad}
           onFollow={onFollow}
           onUnfollow={onUnfollow}
           onRequested={onRequested}
+          onLikesClick={onLikesClick}
+          onFollowersClick={onFollowersClick}
+          onFollowingClick={onFollowingClick}
         />
         <AccountPublicMobileComponent
           accountPublicProps={accountPublicProps}
@@ -209,11 +307,17 @@ export default function AccountPublicComponent(): JSX.Element {
           storeProps={storeProps}
           isFollowing={isFollowing}
           isAccepted={isAccepted}
+          likeCount={likeCount}
+          followerCount={followerCount}
+          followingCount={followingCount}
           onScroll={onScroll}
           onScrollLoad={onScrollLoad}
           onFollow={onFollow}
           onUnfollow={onUnfollow}
           onRequested={onRequested}
+          onLikesClick={onLikesClick}
+          onFollowersClick={onFollowersClick}
+          onFollowingClick={onFollowingClick}
         />
       </React.Suspense>
     </>

@@ -90,9 +90,7 @@ export default function AccountComponent(): JSX.Element {
       }
 
       AccountController.onNextLikedProductScrollAsync();
-    }
-
-    if (
+    } else if (
       AccountController.model.activeTabId === RoutePathsType.AccountOrderHistory
     ) {
       if (
@@ -108,17 +106,17 @@ export default function AccountComponent(): JSX.Element {
 
   const onScrollLoad = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
     if (AccountController.model.activeTabId === RoutePathsType.AccountLikes) {
-      if (accountProps.likesScrollPosition) {
-        e.currentTarget.scrollTop = accountProps.likesScrollPosition as number;
+      if (AccountController.model.likesScrollPosition) {
+        e.currentTarget.scrollTop = AccountController.model
+          .likesScrollPosition as number;
         AccountController.updateLikesScrollPosition(undefined);
       }
-    }
-
-    if (
+    } else if (
       AccountController.model.activeTabId === RoutePathsType.AccountOrderHistory
     ) {
-      if (accountProps.scrollPosition) {
-        e.currentTarget.scrollTop = accountProps.scrollPosition as number;
+      if (AccountController.model.ordersScrollPosition) {
+        e.currentTarget.scrollTop = AccountController.model
+          .ordersScrollPosition as number;
         AccountController.updateOrdersScrollPosition(undefined);
       }
     }
@@ -154,9 +152,17 @@ export default function AccountComponent(): JSX.Element {
     navigate(RoutePathsType.AccountLikes);
   };
 
-  const onFollowersClick = () => {};
+  const onFollowersClick = () => {
+    navigate(
+      `${RoutePathsType.AccountStatus}/${accountProps.account?.id}/followers`
+    );
+  };
 
-  const onFollowingClick = () => {};
+  const onFollowingClick = () => {
+    navigate(
+      `${RoutePathsType.AccountStatus}/${accountProps.account?.id}/following`
+    );
+  };
 
   useEffect(() => {
     AccountController.updateErrorStrings({

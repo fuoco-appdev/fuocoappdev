@@ -224,7 +224,7 @@ class AccountService extends Service {
     }
   }
 
-  public async requestLikeAsync(props: {
+  public async requestSearchAsync(props: {
     queryUsername: string;
     accountId: string;
     offset?: number;
@@ -239,7 +239,7 @@ class AccountService extends Service {
     });
     const response = await axios({
       method: 'post',
-      url: `${this.endpointUrl}/account/like`,
+      url: `${this.endpointUrl}/account/search`,
       headers: {
         ...this.headers,
         'Session-Token': `${session?.access_token}`,
@@ -253,6 +253,68 @@ class AccountService extends Service {
 
     const accountsResponse = core.AccountsResponse.fromBinary(arrayBuffer);
     this._accountsBehaviorSubject.next(accountsResponse.accounts);
+    return accountsResponse;
+  }
+
+  public async requestFollowersSearchAsync(props: {
+    queryUsername: string;
+    accountId: string;
+    offset?: number;
+    limit?: number;
+  }): Promise<core.AccountsResponse> {
+    const session = await SupabaseService.requestSessionAsync();
+    const request = new core.AccountLikeRequest({
+      queryUsername: props.queryUsername,
+      accountId: props.accountId,
+      offset: props.offset,
+      limit: props.limit,
+    });
+    const response = await axios({
+      method: 'post',
+      url: `${this.endpointUrl}/account/followers/search`,
+      headers: {
+        ...this.headers,
+        'Session-Token': `${session?.access_token}`,
+      },
+      data: request.toBinary(),
+      responseType: 'arraybuffer',
+    });
+
+    const arrayBuffer = new Uint8Array(response.data);
+    this.assertResponse(arrayBuffer);
+
+    const accountsResponse = core.AccountsResponse.fromBinary(arrayBuffer);
+    return accountsResponse;
+  }
+
+  public async requestFollowingSearchAsync(props: {
+    queryUsername: string;
+    accountId: string;
+    offset?: number;
+    limit?: number;
+  }): Promise<core.AccountsResponse> {
+    const session = await SupabaseService.requestSessionAsync();
+    const request = new core.AccountLikeRequest({
+      queryUsername: props.queryUsername,
+      accountId: props.accountId,
+      offset: props.offset,
+      limit: props.limit,
+    });
+    const response = await axios({
+      method: 'post',
+      url: `${this.endpointUrl}/account/following/search`,
+      headers: {
+        ...this.headers,
+        'Session-Token': `${session?.access_token}`,
+      },
+      data: request.toBinary(),
+      responseType: 'arraybuffer',
+    });
+
+    const arrayBuffer = new Uint8Array(response.data);
+    this.assertResponse(arrayBuffer);
+
+    const accountsResponse = core.AccountsResponse.fromBinary(arrayBuffer);
     return accountsResponse;
   }
 }

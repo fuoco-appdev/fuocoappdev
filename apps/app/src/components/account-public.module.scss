@@ -14,36 +14,88 @@
   min-height: 100%;
 
   & .scroll-container {
-    display: flex;
     flex-direction: column;
     height: 100%;
-    width: 100%;
     overflow-y: auto;
     scroll-behavior: smooth;
 
     & .top-content {
       display: flex;
       flex-direction: column;
-    
-      & .avatar-container {
-        display: -webkit-box;
-        display: -ms-flexbox;
+      align-items: center;
+
+      & .status-container {
         display: flex;
-        -webkit-box-orient: horizontal;
-        -webkit-box-direction: normal;
-            -ms-flex-direction: row;
-                flex-direction: row;
-        -webkit-box-pack: center;
-            -ms-flex-pack: center;
-                justify-content: center;
+        flex-direction: row;
+        justify-content: space-between;
+
+        & .avatar-content {
+          display: flex;
+          flex-direction: column;
+
+          & .avatar-container {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-orient: horizontal;
+            -webkit-box-direction: normal;
+                -ms-flex-direction: row;
+                    flex-direction: row;
+            -webkit-box-pack: center;
+                -ms-flex-pack: center;
+                    justify-content: center;
+          }
+        }
+
+        & .followers-status-container {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+
+          & .followers-status-item {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+
+            & .followers-status-value {
+              color: $brand-900;
+              font-weight: $font-weight-bold;
+              font-size: $font-size-sm;
+            }
+
+            & .followers-status-name {
+              color: $brand-900;
+              font-size: $font-size-sm;
+            }
+          }
+
+          & .followers-status-item:hover {
+            & .followers-status-value {
+              color: $brand-700;
+              cursor: pointer;
+            }
+
+            & .followers-status-name {
+              color: $brand-700;
+              cursor: pointer;
+            }
+          }
+        }
       }
     
       & .username {
         color: $brand-900;
         font-weight: $font-weight-bold;
         font-size: $font-size-lg;
-        width: 100%;
-        text-align: center;
         margin: $mp-2 0;
       }
     
@@ -54,7 +106,6 @@
       & .follow-button-container {
         display: flex;
         flex-direction: row;
-        justify-content: center;
       }
     }
   
@@ -124,15 +175,33 @@
     }
 
     & .top-content-desktop {
-      min-width: 360px;
-      padding-bottom: $mp-6;
+      min-width: 345px;
 
-      & .avatar-container-desktop {
+      & .status-container-desktop {
+        min-width: 345px;
+        gap: $mp-10;
+
+        & .avatar-content-desktop {
+          & .avatar-container-desktop {
+    
+          }
+        }
   
+        & .followers-status-container-desktop {
+          gap: $mp-6;
+        }
       }
-    
+
       & .username-desktop {
-    
+        min-width: 345px;
+      }
+
+      & .skeleton-user-desktop {
+  
+      }  
+
+      & .follow-button-container-desktop {
+        min-width: 345px;
       }
     }
   
@@ -295,12 +364,31 @@
       }
     }
   
-    & .avatar-container-tablet {
+    & .top-content-tablet {
+      min-width: 345px;
+
+      & .status-container-tablet {
+        min-width: 345px;
+        gap: $mp-10;
+
+        & .avatar-content-tablet {
+          & .avatar-container-tablet {
+    
+          }
+        }
   
-    }
-  
-    & .username-tablet {
-  
+        & .followers-status-container-tablet {
+          gap: $mp-6;
+        }
+      }
+
+      & .username-tablet {
+        min-width: 345px;
+      }
+
+      & .follow-button-container-tablet {
+        min-width: 345px;
+      }
     }
   
     & .content-tablet {
@@ -398,16 +486,30 @@
       }
     }
   
-    & .avatar-container-mobile {
-  
-    }
-  
-    & .username-mobile {
-  
-    }
-  
-    & .skeleton-user-mobile {
-  
+    & .top-content-mobile {
+      justify-content: space-between;
+      padding: 0 $mp-4;
+
+      & .status-container-mobile {
+        & .avatar-content-mobile {
+          & .avatar-container-mobile {
+      
+          }
+        }
+    
+        & .followers-status-container-mobile {
+          gap: $mp-6;
+          padding: 0 $mp-6;
+        }
+      }  
+
+      & .username-mobile {
+        width: 100%;
+      }
+
+      & .follow-button-container-mobile {
+        width: 100%;
+      }
     }
   
     & .tabs-container-mobile {
