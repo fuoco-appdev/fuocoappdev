@@ -32,6 +32,7 @@ import { AccountFollowItemSuspenseDesktopComponent } from './desktop/suspense/ac
 import { AccountFollowItemSuspenseTabletComponent } from './tablet/suspense/account-follow-item.suspense.tablet.component';
 import { AccountFollowItemSuspenseMobileComponent } from './mobile/suspense/account-follow-item.suspense.mobile.component';
 import BucketService from '../services/bucket.service';
+import { AccountState } from '../models/account.model';
 
 const AccountFollowItemDesktopComponent = lazy(
   () => import('./desktop/account-follow-item.desktop.component')
@@ -44,6 +45,7 @@ const AccountFollowItemMobileComponent = lazy(
 );
 
 export interface AccountFollowItemProps {
+  accountProps: AccountState;
   account: AccountResponse;
   follower: AccountFollowerResponse | null;
   customer: CustomerResponse | null;
@@ -64,6 +66,7 @@ export interface AccountFollowItemResponsiveProps
 }
 
 export default function AccountFollowItemComponent({
+  accountProps,
   account,
   follower,
   customer,
@@ -155,6 +158,7 @@ export default function AccountFollowItemComponent({
   return (
     <React.Suspense fallback={suspenceComponent}>
       <AccountFollowItemDesktopComponent
+        accountProps={accountProps}
         account={account}
         follower={follower}
         customer={customer}
@@ -170,6 +174,7 @@ export default function AccountFollowItemComponent({
         onRemove={onRemoveOverride}
       />
       <AccountFollowItemTabletComponent
+        accountProps={accountProps}
         account={account}
         follower={follower}
         customer={customer}
@@ -185,6 +190,7 @@ export default function AccountFollowItemComponent({
         onRemove={onRemoveOverride}
       />
       <AccountFollowItemMobileComponent
+        accountProps={accountProps}
         account={account}
         follower={follower}
         customer={customer}

@@ -27,6 +27,7 @@ const AccountPublicFollowersMobileComponent = lazy(
 
 export interface AccountPublicFollowersResponsiveProps {
   accountPublicProps: AccountPublicState;
+  accountProps: AccountState;
   onItemClick: (followerId: string) => void;
 }
 
@@ -35,6 +36,7 @@ export default function AccountPublicFollowersComponent(): JSX.Element {
   const [accountPublicProps] = useObservable(
     AccountPublicController.model.store
   );
+  const [accountProps] = useObservable(AccountController.model.store);
 
   const onItemClick = (followerId: string) => {
     if (AccountController.model.account?.id !== followerId) {
@@ -91,14 +93,17 @@ export default function AccountPublicFollowersComponent(): JSX.Element {
       <React.Suspense fallback={suspenceComponent}>
         <AccountPublicFollowersDesktopComponent
           accountPublicProps={accountPublicProps}
+          accountProps={accountProps}
           onItemClick={onItemClick}
         />
         <AccountPublicFollowersTabletComponent
           accountPublicProps={accountPublicProps}
+          accountProps={accountProps}
           onItemClick={onItemClick}
         />
         <AccountPublicFollowersMobileComponent
           accountPublicProps={accountPublicProps}
+          accountProps={accountProps}
           onItemClick={onItemClick}
         />
       </React.Suspense>

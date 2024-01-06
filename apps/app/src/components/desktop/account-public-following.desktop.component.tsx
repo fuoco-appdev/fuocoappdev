@@ -18,6 +18,7 @@ import { AccountPublicFollowingResponsiveProps } from '../account-public-followi
 
 export default function AccountPublicFollowingDesktopComponent({
   accountPublicProps,
+  accountProps,
   onItemClick,
 }: AccountPublicFollowingResponsiveProps): JSX.Element {
   const navigate = useNavigate();
@@ -79,6 +80,7 @@ export default function AccountPublicFollowingDesktopComponent({
             return (
               <AccountFollowItemComponent
                 key={value.id}
+                accountProps={accountProps}
                 account={value}
                 follower={accountFollower}
                 customer={customer}

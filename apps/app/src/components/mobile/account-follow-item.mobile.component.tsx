@@ -8,6 +8,7 @@ import Ripples from 'react-ripples';
 import AccountController from '../../controllers/account.controller';
 
 export default function AccountFollowItemMobileComponent({
+  accountProps,
   account,
   follower,
   customer,
@@ -69,7 +70,7 @@ export default function AccountFollowItemMobileComponent({
               )}
             </div>
           </div>
-          {AccountController.model.account?.id !== account.id && !isRequest && (
+          {accountProps.account?.id !== account.id && !isRequest && (
             <>
               {!isFollowing && (
                 <Button
@@ -127,7 +128,7 @@ export default function AccountFollowItemMobileComponent({
               )}
             </>
           )}
-          {AccountController.model.account?.id !== account.id && isRequest && (
+          {accountProps.account?.id !== account.id && isRequest && (
             <div
               className={[
                 styles['request-button-container'],

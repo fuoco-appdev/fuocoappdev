@@ -7,6 +7,7 @@ import { AccountFollowItemResponsiveProps } from '../account-follow-item.compone
 import AccountController from '../../controllers/account.controller';
 
 export default function AccountFollowItemTabletComponent({
+  accountProps,
   account,
   follower,
   customer,
@@ -70,7 +71,7 @@ export default function AccountFollowItemTabletComponent({
             )}
           </div>
         </div>
-        {AccountController.model.account?.id !== account.id && !isRequest && (
+        {accountProps.account?.id !== account.id && !isRequest && (
           <>
             {!isFollowing && (
               <Button
@@ -128,7 +129,7 @@ export default function AccountFollowItemTabletComponent({
             )}
           </>
         )}
-        {AccountController.model.account?.id !== account.id && isRequest && (
+        {accountProps.account?.id !== account.id && isRequest && (
           <div
             className={[
               styles['request-button-container'],
