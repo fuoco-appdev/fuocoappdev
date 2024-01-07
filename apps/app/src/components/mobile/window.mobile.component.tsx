@@ -627,6 +627,9 @@ export default function WindowMobileComponent({
                                   color={
                                     windowProps.activeRoute?.startsWith(
                                       `${RoutePathsType.Account}/`
+                                    ) &&
+                                    !WindowController.isLocationAccountWithId(
+                                      location.pathname
                                     )
                                       ? 'rgba(252, 245, 227, 1)'
                                       : 'rgba(252, 245, 227, .6)'
@@ -637,6 +640,9 @@ export default function WindowMobileComponent({
                                   className={
                                     windowProps.activeRoute?.startsWith(
                                       `${RoutePathsType.Account}/`
+                                    ) &&
+                                    !WindowController.isLocationAccountWithId(
+                                      location.pathname
                                     )
                                       ? [
                                           styles['avatar-container-selected'],

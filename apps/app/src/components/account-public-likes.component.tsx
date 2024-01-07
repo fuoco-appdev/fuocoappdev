@@ -22,7 +22,7 @@ import {
   PricedVariant,
   PricedProduct,
 } from '@medusajs/medusa/dist/types/pricing';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { RoutePathsType } from '../route-paths';
 import * as core from '../protobuf/core_pb';
 import { AccountPublicLikesSuspenseDesktopComponent } from './desktop/suspense/account-public-likes.suspense.desktop.component';
@@ -64,6 +64,7 @@ export interface AccountPublicLikesResponsiveProps {
 
 export default function AccountPublicLikesComponent(): JSX.Element {
   const { t, i18n } = useTranslation();
+  const { id } = useParams();
   const navigate = useNavigate();
   const [storeProps] = useObservable(StoreController.model.store);
   const [accountProps] = useObservable(AccountController.model.store);
@@ -127,8 +128,12 @@ export default function AccountPublicLikesComponent(): JSX.Element {
   };
 
   useEffect(() => {
-    AccountPublicController.loadLikedProducts();
-  }, []);
+    if (!id) {
+      return;
+    }
+
+    AccountPublicController.loadLikedProductsAsync(id);
+  }, [id]);
 
   useEffect(() => {
     if (!accountPublicProps.selectedLikedProduct) {

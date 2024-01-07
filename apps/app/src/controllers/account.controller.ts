@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Subscription } from 'rxjs';
+import { Subscription, filter, firstValueFrom, take } from 'rxjs';
 import { Controller } from '../controller';
 import { AccountModel, ProfileFormErrorStrings } from '../models/account.model';
 import AccountService from '../services/account.service';
@@ -45,7 +45,6 @@ class AccountController extends Controller {
   private _medusaAccessTokenSubscription: Subscription | undefined;
   private _accountSubscription: Subscription | undefined;
   private _loadedAccountSubscription: Subscription | undefined;
-  private _s3Subscription: Subscription | undefined;
 
   constructor() {
     super();
@@ -78,8 +77,8 @@ class AccountController extends Controller {
   }
 
   public override dispose(renderCount: number): void {
+    clearTimeout(this._addFriendsTimerId as number | undefined);
     clearTimeout(this._usernameTimerId as number | undefined);
-    this._s3Subscription?.unsubscribe();
     this._loadedAccountSubscription?.unsubscribe();
     this._accountSubscription?.unsubscribe();
     this._medusaAccessTokenSubscription?.unsubscribe();
@@ -357,8 +356,8 @@ class AccountController extends Controller {
       const requestedFollowersResponse =
         await AccountFollowersService.requestFollowerRequestsAsync({
           accountId: accountId,
-          limit: this._limit,
-          offset: 0,
+          limit: limit,
+          offset: offset,
         });
 
       if (
@@ -1179,12 +1178,13 @@ class AccountController extends Controller {
       WindowController.updateLanguageCode(value.languageCode);
     }
 
-    this._s3Subscription?.unsubscribe();
-    this._s3Subscription = BucketService.s3Observable.subscribe(async (s3) => {
-      if (!s3) {
-        return;
-      }
-
+    const s3 = await firstValueFrom(
+      BucketService.s3Observable.pipe(
+        filter((value) => value !== undefined),
+        take(1)
+      )
+    );
+    if (s3) {
       if (value?.profileUrl && value.profileUrl.length > 0) {
         try {
           this._model.profileUrl = await BucketService.getPublicUrlAsync(
@@ -1195,7 +1195,7 @@ class AccountController extends Controller {
           console.error(error);
         }
       }
-    });
+    }
 
     this._model.profileForm = {
       firstName: this._model.customer?.first_name,

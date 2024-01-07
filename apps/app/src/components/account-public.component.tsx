@@ -174,6 +174,7 @@ export default function AccountPublicComponent(): JSX.Element {
 
   useEffect(() => {
     if (!id) {
+      navigate(-1);
       return;
     }
 

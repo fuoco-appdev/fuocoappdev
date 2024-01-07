@@ -610,6 +610,8 @@
       padding: 0 $mp-4;
 
       & .status-container-mobile {
+        width: 100%;
+
         & .avatar-content-mobile {
           & .avatar-container-mobile {
       
@@ -619,6 +621,7 @@
         & .followers-status-container-mobile {
           gap: $mp-6;
           padding: 0 $mp-6;
+          width: 100%;
         }
       }  
 
