@@ -44,6 +44,7 @@ class AccountController extends Controller {
   private _selectedInventoryLocationIdSubscription: Subscription | undefined;
   private _medusaAccessTokenSubscription: Subscription | undefined;
   private _accountSubscription: Subscription | undefined;
+  private _loadedAccountSubscription: Subscription | undefined;
   private _s3Subscription: Subscription | undefined;
 
   constructor() {
@@ -79,6 +80,7 @@ class AccountController extends Controller {
   public override dispose(renderCount: number): void {
     clearTimeout(this._usernameTimerId as number | undefined);
     this._s3Subscription?.unsubscribe();
+    this._loadedAccountSubscription?.unsubscribe();
     this._accountSubscription?.unsubscribe();
     this._medusaAccessTokenSubscription?.unsubscribe();
     this._selectedInventoryLocationIdSubscription?.unsubscribe();
@@ -91,8 +93,8 @@ class AccountController extends Controller {
       return;
     }
 
-    this._accountSubscription?.unsubscribe();
-    this._accountSubscription = this._model.store
+    this._loadedAccountSubscription?.unsubscribe();
+    this._loadedAccountSubscription = this._model.store
       .pipe(select((model) => model.account))
       .subscribe({
         next: (account: core.AccountResponse | null) => {
@@ -110,8 +112,8 @@ class AccountController extends Controller {
       return;
     }
 
-    this._accountSubscription?.unsubscribe();
-    this._accountSubscription = this._model.store
+    this._loadedAccountSubscription?.unsubscribe();
+    this._loadedAccountSubscription = this._model.store
       .pipe(select((model) => model.account))
       .subscribe({
         next: (account: core.AccountResponse | null) => {
@@ -129,8 +131,8 @@ class AccountController extends Controller {
       return;
     }
 
-    this._accountSubscription?.unsubscribe();
-    this._accountSubscription = this._model.store
+    this._loadedAccountSubscription?.unsubscribe();
+    this._loadedAccountSubscription = this._model.store
       .pipe(select((model) => model.account))
       .subscribe({
         next: async (account: core.AccountResponse | null) => {

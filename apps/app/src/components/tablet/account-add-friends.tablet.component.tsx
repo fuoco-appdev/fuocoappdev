@@ -88,6 +88,7 @@ export default function AccountAddFriendsTabletComponent({
                 return (
                   <AccountFollowItemComponent
                     key={value.id}
+                    accountProps={accountProps}
                     account={value}
                     follower={accountFollowerRequest}
                     customer={customerRequest}
@@ -136,6 +137,7 @@ export default function AccountAddFriendsTabletComponent({
             return (
               <AccountFollowItemComponent
                 key={value.id}
+                accountProps={accountProps}
                 account={value}
                 follower={accountFollower}
                 customer={customer}

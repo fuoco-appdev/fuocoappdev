@@ -45,6 +45,7 @@ class AccountPublicController extends Controller {
   private _cartSubscription: Subscription | undefined;
   private _medusaAccessTokenSubscription: Subscription | undefined;
   private _publicAccountIdSubscription: Subscription | undefined;
+  private _loadedPublicAccountSubscription: Subscription | undefined;
   private _publicAccountSubscription: Subscription | undefined;
   private _accountSubscription: Subscription | undefined;
   private _s3Subscription: Subscription | undefined;
@@ -75,6 +76,7 @@ class AccountPublicController extends Controller {
   public override dispose(renderCount: number): void {
     clearTimeout(this._usernameTimerId as number | undefined);
     this._s3Subscription?.unsubscribe();
+    this._loadedPublicAccountSubscription?.unsubscribe();
     this._publicAccountIdSubscription?.unsubscribe();
     this._accountSubscription?.unsubscribe();
     this._publicAccountSubscription?.unsubscribe();
@@ -96,8 +98,8 @@ class AccountPublicController extends Controller {
             return;
           }
 
-          this._publicAccountSubscription?.unsubscribe();
-          this._publicAccountSubscription = this._model.store
+          this._loadedPublicAccountSubscription?.unsubscribe();
+          this._loadedPublicAccountSubscription = this._model.store
             .pipe(select((model) => model.account))
             .subscribe({
               next: async (publicAccount: core.AccountResponse | null) => {
@@ -122,8 +124,8 @@ class AccountPublicController extends Controller {
     this._model.followerAccountFollowers = {};
     this._model.followerCustomers = {};
 
-    this._publicAccountSubscription?.unsubscribe();
-    this._publicAccountSubscription = this._model.store
+    this._loadedPublicAccountSubscription?.unsubscribe();
+    this._loadedPublicAccountSubscription = this._model.store
       .pipe(select((model) => model.account))
       .subscribe({
         next: async (publicAccount: core.AccountResponse | null) => {
@@ -147,8 +149,8 @@ class AccountPublicController extends Controller {
     this._model.followingAccountFollowers = {};
     this._model.followingCustomers = {};
 
-    this._publicAccountSubscription?.unsubscribe();
-    this._publicAccountSubscription = this._model.store
+    this._loadedPublicAccountSubscription?.unsubscribe();
+    this._loadedPublicAccountSubscription = this._model.store
       .pipe(select((model) => model.account))
       .subscribe({
         next: async (publicAccount: core.AccountResponse | null) => {
