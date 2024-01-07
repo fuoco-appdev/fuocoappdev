@@ -173,6 +173,7 @@ export default function AccountPublicComponent(): JSX.Element {
   };
 
   useEffect(() => {
+    AccountPublicController.resetMedusaModel();
     AccountPublicController.updateAccountId(id);
   }, []);
 

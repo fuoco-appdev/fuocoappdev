@@ -168,10 +168,7 @@ class AccountPublicController extends Controller {
   }
 
   public updateAccountId(id: string | undefined): void {
-    if (this._model.accountId !== id) {
-      this.resetMedusaModel();
-      this._model.accountId = id;
-    }
+    this._model.accountId = id;
   }
 
   public updateFollowersInput(value: string): void {
@@ -491,6 +488,37 @@ class AccountPublicController extends Controller {
     this._model.areFollowingLoading = false;
   }
 
+  public resetMedusaModel(): void {
+    this._model.account = undefined;
+    this._model.customerMetadata = undefined;
+    this._model.accountFollower = undefined;
+    this._model.showFollowButton = undefined;
+    this._model.profileUrl = undefined;
+    this._model.username = '';
+    this._model.activeTabId = RoutePathsType.AccountLikes;
+    this._model.prevTabIndex = 0;
+    this._model.activeTabIndex = 0;
+    this._model.likedProducts = [];
+    this._model.likesScrollPosition = 0;
+    this._model.likedProductPagination = 1;
+    this._model.productLikesMetadata = {};
+    this._model.followersInput = '';
+    this._model.followerAccounts = [];
+    this._model.followerScrollPosition = 0;
+    this._model.followersPagination = 1;
+    this._model.followerAccountFollowers = {};
+    this._model.followerCustomers = {};
+    this._model.followingInput = '';
+    this._model.followingAccounts = [];
+    this._model.followingScrollPosition = 0;
+    this._model.followingPagination = 1;
+    this._model.followingAccountFollowers = {};
+    this._model.followingCustomers = {};
+    this._model.likeCount = undefined;
+    this._model.followerCount = undefined;
+    this._model.followingCount = undefined;
+  }
+
   private async requestLikedProductsAsync(
     publicAccount: core.AccountResponse | undefined,
     account: core.AccountResponse | undefined,
@@ -616,37 +644,6 @@ class AccountPublicController extends Controller {
     this._model.areLikedProductsLoading = false;
   }
 
-  private resetMedusaModel(): void {
-    this._model.account = undefined;
-    this._model.customerMetadata = undefined;
-    this._model.accountFollower = undefined;
-    this._model.showFollowButton = undefined;
-    this._model.profileUrl = undefined;
-    this._model.username = '';
-    this._model.activeTabId = RoutePathsType.AccountLikes;
-    this._model.prevTabIndex = 0;
-    this._model.activeTabIndex = 0;
-    this._model.likedProducts = [];
-    this._model.likesScrollPosition = 0;
-    this._model.likedProductPagination = 1;
-    this._model.productLikesMetadata = {};
-    this._model.followersInput = '';
-    this._model.followerAccounts = [];
-    this._model.followerScrollPosition = 0;
-    this._model.followersPagination = 1;
-    this._model.followerAccountFollowers = {};
-    this._model.followerCustomers = {};
-    this._model.followingInput = '';
-    this._model.followingAccounts = [];
-    this._model.followingScrollPosition = 0;
-    this._model.followingPagination = 1;
-    this._model.followingAccountFollowers = {};
-    this._model.followingCustomers = {};
-    this._model.likeCount = undefined;
-    this._model.followerCount = undefined;
-    this._model.followingCount = undefined;
-  }
-
   private async initializeAsync(renderCount: number): Promise<void> {
     this._publicAccountIdSubscription?.unsubscribe();
     this._publicAccountIdSubscription = this._model.store
@@ -672,11 +669,7 @@ class AccountPublicController extends Controller {
             return;
           }
 
-          try {
-            await this.initializeAccountAsync(this._model.account);
-          } catch (error: any) {
-            console.error(error);
-          }
+          await this.initializeAccountAsync(this._model.account);
 
           try {
             this._model.customerMetadata =
@@ -687,12 +680,7 @@ class AccountPublicController extends Controller {
             console.error(error);
           }
 
-          try {
-            await this.initializeS3BucketAsync(this._model.account);
-          } catch (error: any) {
-            console.error(error);
-          }
-
+          await this.initializeS3BucketAsync(this._model.account);
           this.requestFollowerCountMetadataAsync(id);
           this.requestLikeCountAsync(id);
         },

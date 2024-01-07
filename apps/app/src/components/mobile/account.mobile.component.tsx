@@ -415,7 +415,7 @@ export default function AccountMobileComponent({
                             styles['followers-status-name-mobile'],
                           ].join(' ')}
                         >
-                          <Skeleton width={80} height={19} borderRadius={19} />
+                          <Skeleton width={55} height={19} borderRadius={19} />
                         </div>
                       </div>
                     )}
@@ -466,7 +466,7 @@ export default function AccountMobileComponent({
                             styles['followers-status-name-mobile'],
                           ].join(' ')}
                         >
-                          <Skeleton width={80} height={19} borderRadius={19} />
+                          <Skeleton width={55} height={19} borderRadius={19} />
                         </div>
                       </div>
                     )}
@@ -517,7 +517,7 @@ export default function AccountMobileComponent({
                             styles['followers-status-name-mobile'],
                           ].join(' ')}
                         >
-                          <Skeleton width={80} height={19} borderRadius={19} />
+                          <Skeleton width={55} height={19} borderRadius={19} />
                         </div>
                       </div>
                     )}

@@ -136,7 +136,7 @@ export function AccountSuspenseMobileComponent(): JSX.Element {
                       styles['followers-status-name-mobile'],
                     ].join(' ')}
                   >
-                    <Skeleton width={60} height={19} borderRadius={19} />
+                    <Skeleton width={55} height={19} borderRadius={19} />
                   </div>
                 </div>
                 <div
@@ -159,7 +159,7 @@ export function AccountSuspenseMobileComponent(): JSX.Element {
                       styles['followers-status-name-mobile'],
                     ].join(' ')}
                   >
-                    <Skeleton width={60} height={19} borderRadius={19} />
+                    <Skeleton width={55} height={19} borderRadius={19} />
                   </div>
                 </div>
                 <div
@@ -182,7 +182,7 @@ export function AccountSuspenseMobileComponent(): JSX.Element {
                       styles['followers-status-name-mobile'],
                     ].join(' ')}
                   >
-                    <Skeleton width={60} height={19} borderRadius={19} />
+                    <Skeleton width={55} height={19} borderRadius={19} />
                   </div>
                 </div>
               </div>

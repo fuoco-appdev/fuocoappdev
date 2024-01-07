@@ -406,7 +406,7 @@ export default function AccountTabletComponent({
                             styles['followers-status-name-tablet'],
                           ].join(' ')}
                         >
-                          <Skeleton width={60} height={19} borderRadius={19} />
+                          <Skeleton width={55} height={19} borderRadius={19} />
                         </div>
                       </div>
                     )}
@@ -457,7 +457,7 @@ export default function AccountTabletComponent({
                             styles['followers-status-name-tablet'],
                           ].join(' ')}
                         >
-                          <Skeleton width={60} height={19} borderRadius={19} />
+                          <Skeleton width={55} height={19} borderRadius={19} />
                         </div>
                       </div>
                     )}
@@ -508,7 +508,7 @@ export default function AccountTabletComponent({
                             styles['followers-status-name-tablet'],
                           ].join(' ')}
                         >
-                          <Skeleton width={60} height={19} borderRadius={19} />
+                          <Skeleton width={55} height={19} borderRadius={19} />
                         </div>
                       </div>
                     )}

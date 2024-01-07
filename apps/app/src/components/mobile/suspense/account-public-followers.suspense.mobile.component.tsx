@@ -31,7 +31,6 @@ export function AccountPublicFollowersSuspenseMobileComponent(): JSX.Element {
                 styles['search-input-container-skeleton-mobile'],
               ].join(' ')}
               height={46}
-              width={556}
               borderRadius={46}
             />
           </div>

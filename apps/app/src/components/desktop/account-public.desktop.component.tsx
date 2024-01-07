@@ -182,7 +182,7 @@ export default function AccountPublicDesktopComponent({
                             styles['followers-status-name-desktop'],
                           ].join(' ')}
                         >
-                          <Skeleton width={60} height={19} borderRadius={19} />
+                          <Skeleton width={55} height={19} borderRadius={19} />
                         </div>
                       </div>
                     )}
@@ -233,7 +233,7 @@ export default function AccountPublicDesktopComponent({
                             styles['followers-status-name-desktop'],
                           ].join(' ')}
                         >
-                          <Skeleton width={60} height={19} borderRadius={19} />
+                          <Skeleton width={55} height={19} borderRadius={19} />
                         </div>
                       </div>
                     )}
@@ -284,7 +284,7 @@ export default function AccountPublicDesktopComponent({
                             styles['followers-status-name-desktop'],
                           ].join(' ')}
                         >
-                          <Skeleton width={60} height={19} borderRadius={19} />
+                          <Skeleton width={55} height={19} borderRadius={19} />
                         </div>
                       </div>
                     )}

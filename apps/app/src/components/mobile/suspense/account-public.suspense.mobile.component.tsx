@@ -63,7 +63,7 @@ export function AccountPublicSuspenseMobileComponent(): JSX.Element {
                       styles['followers-status-value-mobile'],
                     ].join(' ')}
                   >
-                    <Skeleton width={16} height={19} borderRadius={19} />
+                    <Skeleton width={30} height={19} borderRadius={19} />
                   </div>
                   <div
                     className={[
@@ -71,7 +71,7 @@ export function AccountPublicSuspenseMobileComponent(): JSX.Element {
                       styles['followers-status-name-mobile'],
                     ].join(' ')}
                   >
-                    <Skeleton width={50} height={19} borderRadius={19} />
+                    <Skeleton width={55} height={19} borderRadius={19} />
                   </div>
                 </div>
                 <div
@@ -86,7 +86,7 @@ export function AccountPublicSuspenseMobileComponent(): JSX.Element {
                       styles['followers-status-value-mobile'],
                     ].join(' ')}
                   >
-                    <Skeleton width={16} height={19} borderRadius={19} />
+                    <Skeleton width={30} height={19} borderRadius={19} />
                   </div>
                   <div
                     className={[
@@ -94,7 +94,7 @@ export function AccountPublicSuspenseMobileComponent(): JSX.Element {
                       styles['followers-status-name-mobile'],
                     ].join(' ')}
                   >
-                    <Skeleton width={50} height={19} borderRadius={19} />
+                    <Skeleton width={55} height={19} borderRadius={19} />
                   </div>
                 </div>
                 <div
@@ -109,7 +109,7 @@ export function AccountPublicSuspenseMobileComponent(): JSX.Element {
                       styles['followers-status-value-mobile'],
                     ].join(' ')}
                   >
-                    <Skeleton width={16} height={19} borderRadius={19} />
+                    <Skeleton width={30} height={19} borderRadius={19} />
                   </div>
                   <div
                     className={[
@@ -117,7 +117,7 @@ export function AccountPublicSuspenseMobileComponent(): JSX.Element {
                       styles['followers-status-name-mobile'],
                     ].join(' ')}
                   >
-                    <Skeleton width={50} height={19} borderRadius={19} />
+                    <Skeleton width={55} height={19} borderRadius={19} />
                   </div>
                 </div>
               </div>

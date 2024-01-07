@@ -23,11 +23,104 @@ export function AccountPublicSuspenseDesktopComponent(): JSX.Element {
           >
             <div
               className={[
-                styles['avatar-container'],
-                styles['avatar-container-desktop'],
+                styles['status-container'],
+                styles['status-container-desktop'],
               ].join(' ')}
             >
-              <Skeleton style={{ width: 96, height: 96 }} borderRadius={96} />
+              <div
+                className={[
+                  styles['avatar-content'],
+                  styles['avatar-content-desktop'],
+                ].join(' ')}
+              >
+                <div
+                  className={[
+                    styles['avatar-container'],
+                    styles['avatar-container-desktop'],
+                  ].join(' ')}
+                >
+                  <Skeleton
+                    style={{ width: 96, height: 96 }}
+                    borderRadius={96}
+                  />
+                </div>
+              </div>
+              <div
+                className={[
+                  styles['followers-status-container'],
+                  styles['followers-status-container-desktop'],
+                ].join(' ')}
+              >
+                <div
+                  className={[
+                    styles['followers-status-item'],
+                    styles['followers-status-item-desktop'],
+                  ].join(' ')}
+                >
+                  <div
+                    className={[
+                      styles['followers-status-value'],
+                      styles['followers-status-value-desktop'],
+                    ].join(' ')}
+                  >
+                    <Skeleton width={30} height={19} borderRadius={19} />
+                  </div>
+                  <div
+                    className={[
+                      styles['followers-status-name'],
+                      styles['followers-status-name-desktop'],
+                    ].join(' ')}
+                  >
+                    <Skeleton width={55} height={19} borderRadius={19} />
+                  </div>
+                </div>
+                <div
+                  className={[
+                    styles['followers-status-item'],
+                    styles['followers-status-item-desktop'],
+                  ].join(' ')}
+                >
+                  <div
+                    className={[
+                      styles['followers-status-value'],
+                      styles['followers-status-value-desktop'],
+                    ].join(' ')}
+                  >
+                    <Skeleton width={30} height={19} borderRadius={19} />
+                  </div>
+                  <div
+                    className={[
+                      styles['followers-status-name'],
+                      styles['followers-status-name-desktop'],
+                    ].join(' ')}
+                  >
+                    <Skeleton width={55} height={19} borderRadius={19} />
+                  </div>
+                </div>
+                <div
+                  className={[
+                    styles['followers-status-item'],
+                    styles['followers-status-item-desktop'],
+                  ].join(' ')}
+                >
+                  <div
+                    className={[
+                      styles['followers-status-value'],
+                      styles['followers-status-value-desktop'],
+                    ].join(' ')}
+                  >
+                    <Skeleton width={30} height={19} borderRadius={19} />
+                  </div>
+                  <div
+                    className={[
+                      styles['followers-status-name'],
+                      styles['followers-status-name-desktop'],
+                    ].join(' ')}
+                  >
+                    <Skeleton width={55} height={19} borderRadius={19} />
+                  </div>
+                </div>
+              </div>
             </div>
             <div
               className={[styles['username'], styles['username-desktop']].join(
