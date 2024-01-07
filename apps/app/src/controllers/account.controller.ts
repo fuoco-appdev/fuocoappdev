@@ -143,9 +143,10 @@ class AccountController extends Controller {
           await this.addFriendsSearchAsync(
             this._model.addFriendsInput,
             0,
-            this._limit
+            this._limit,
+            true
           );
-          await this.requestFollowerRequestsAsync(account.id, 0, 100);
+          await this.requestFollowerRequestsAsync(account.id, 0, 100, true);
         },
       });
   }

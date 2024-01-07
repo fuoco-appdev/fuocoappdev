@@ -101,8 +101,12 @@ export default function AccountFollowersFollowingComponent(): JSX.Element {
   };
 
   useEffect(() => {
+    if (!id) {
+      return;
+    }
+
     AccountPublicController.updateAccountId(id);
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     if (

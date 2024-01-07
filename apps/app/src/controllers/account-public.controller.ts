@@ -136,7 +136,8 @@ class AccountPublicController extends Controller {
           await this.followersSearchAsync(
             this._model.followersInput,
             0,
-            this._limit
+            this._limit,
+            true
           );
         },
       });
@@ -161,7 +162,8 @@ class AccountPublicController extends Controller {
           await this.followingSearchAsync(
             this._model.followingInput,
             0,
-            this._limit
+            this._limit,
+            true
           );
         },
       });

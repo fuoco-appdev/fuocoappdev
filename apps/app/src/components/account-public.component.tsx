@@ -173,9 +173,12 @@ export default function AccountPublicComponent(): JSX.Element {
   };
 
   useEffect(() => {
-    AccountPublicController.resetMedusaModel();
+    if (!id) {
+      return;
+    }
+
     AccountPublicController.updateAccountId(id);
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     setIsFollowing(accountPublicProps.accountFollower?.isFollowing ?? false);
