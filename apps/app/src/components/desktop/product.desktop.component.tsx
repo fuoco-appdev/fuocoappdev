@@ -53,8 +53,8 @@ export default function ProductDesktopComponent({
   const { t } = useTranslation();
 
   useDesktopEffect(() => {
-    setDescription(productProps.description);
-  }, [productProps.description]);
+    setDescription(productProps.product?.description ?? '');
+  }, [productProps.product]);
 
   const selectedVariant = productProps.selectedVariant;
   return (
@@ -78,7 +78,10 @@ export default function ProductDesktopComponent({
                   styles['thumbnail-image'],
                   styles['thumbnail-image-desktop'],
                 ].join(' ')}
-                src={productProps.thumbnail || '../assets/svg/wine-bottle.svg'}
+                src={
+                  productProps.product?.thumbnail ??
+                  '../assets/svg/wine-bottle.svg'
+                }
               />
             ) : (
               <Skeleton
@@ -117,7 +120,7 @@ export default function ProductDesktopComponent({
                       ' '
                     )}
                   >
-                    {productProps.title}
+                    {productProps.product?.title}
                   </div>
                   <div
                     className={[
@@ -125,7 +128,7 @@ export default function ProductDesktopComponent({
                       styles['subtitle-desktop'],
                     ].join(' ')}
                   >
-                    {productProps.subtitle}
+                    {productProps.product?.subtitle}
                   </div>
                 </>
               ) : (
@@ -293,7 +296,7 @@ export default function ProductDesktopComponent({
           >
             {!productProps.isLoading ? (
               <>
-                {productProps.tags.map((value: ProductTag) => (
+                {productProps.product?.tags?.map((value: ProductTag) => (
                   <div
                     className={[styles['tag'], styles['tag-desktop']].join(' ')}
                   >
@@ -735,7 +738,7 @@ export default function ProductDesktopComponent({
                           styles['details-item-value-desktop'],
                         ].join(' ')}
                       >
-                        {productProps.material}
+                        {productProps.product?.material ?? '-'}
                       </div>
                     </div>
                     <div
@@ -758,7 +761,10 @@ export default function ProductDesktopComponent({
                           styles['details-item-value-desktop'],
                         ].join(' ')}
                       >
-                        {productProps.weight}
+                        {productProps.product?.weight &&
+                        productProps.product.weight > 0
+                          ? `${productProps.product.weight} g`
+                          : '-'}
                       </div>
                     </div>
                     <div
@@ -781,7 +787,7 @@ export default function ProductDesktopComponent({
                           styles['details-item-value-desktop'],
                         ].join(' ')}
                       >
-                        {productProps.countryOrigin}
+                        {productProps.product?.origin_country ?? '-'}
                       </div>
                     </div>
                     <div
@@ -804,7 +810,11 @@ export default function ProductDesktopComponent({
                           styles['details-item-value-desktop'],
                         ].join(' ')}
                       >
-                        {productProps.dimensions}
+                        {productProps.product?.length &&
+                        productProps.product.width &&
+                        productProps.product.height
+                          ? `${productProps.product.length}L x ${productProps.product.width}W x ${productProps.product.height}H`
+                          : '-'}
                       </div>
                     </div>
                     <div
@@ -827,7 +837,7 @@ export default function ProductDesktopComponent({
                           styles['details-item-value-desktop'],
                         ].join(' ')}
                       >
-                        {productProps.type}
+                        {productProps.product?.type?.value ?? '-'}
                       </div>
                     </div>
                   </div>

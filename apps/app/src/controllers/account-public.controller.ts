@@ -113,8 +113,7 @@ class AccountPublicController extends Controller {
               id,
               account?.id,
               0,
-              this._limit,
-              true
+              this._limit
             );
           }
         },
@@ -140,12 +139,7 @@ class AccountPublicController extends Controller {
       return;
     }
 
-    await this.followersSearchAsync(
-      this._model.followersInput,
-      0,
-      this._limit,
-      true
-    );
+    await this.followersSearchAsync(this._model.followersInput, 0, this._limit);
   }
 
   public async loadFollowingAsync(): Promise<void> {
@@ -167,12 +161,7 @@ class AccountPublicController extends Controller {
       return;
     }
 
-    await this.followingSearchAsync(
-      this._model.followingInput,
-      0,
-      this._limit,
-      true
-    );
+    await this.followingSearchAsync(this._model.followingInput, 0, this._limit);
   }
 
   public updateAccountId(id: string | undefined): void {

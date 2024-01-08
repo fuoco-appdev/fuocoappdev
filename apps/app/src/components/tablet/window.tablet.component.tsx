@@ -330,6 +330,9 @@ export default function WindowTabletComponent({
                           color={
                             windowProps.activeRoute?.startsWith(
                               RoutePathsType.Account
+                            ) &&
+                            !WindowController.isLocationAccountWithId(
+                              location.pathname
                             )
                               ? 'rgba(252, 245, 227, 1)'
                               : 'rgba(252, 245, 227, .8)'
@@ -340,6 +343,9 @@ export default function WindowTabletComponent({
                           className={
                             windowProps.activeRoute?.startsWith(
                               RoutePathsType.Account
+                            ) &&
+                            !WindowController.isLocationAccountWithId(
+                              location.pathname
                             )
                               ? [
                                   styles['avatar-container-selected'],

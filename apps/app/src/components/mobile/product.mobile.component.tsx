@@ -57,14 +57,21 @@ export default function ProductMobileComponent({
   const [disableShowMore, setDisableShowMore] = useState<boolean>(false);
 
   useMobileEffect(() => {
-    if (productProps.description.length < 356) {
+    if (!productProps.product?.description) {
+      return;
+    }
+
+    if (productProps.product.description.length < 356) {
       setDisableShowMore(true);
-      setDescription(productProps.description);
+      setDescription(productProps.product.description);
     } else {
       setDisableShowMore(false);
       if (!showMore) {
         let index = 355;
-        let shortDescription = productProps.description.substring(0, index);
+        let shortDescription = productProps.product.description.substring(
+          0,
+          index
+        );
         if (shortDescription.endsWith('.')) {
           shortDescription += '..';
         } else {
@@ -72,10 +79,10 @@ export default function ProductMobileComponent({
         }
         setDescription(shortDescription);
       } else {
-        setDescription(productProps.description);
+        setDescription(productProps.product.description);
       }
     }
-  }, [productProps.description, showMore]);
+  }, [productProps.product?.description, showMore]);
 
   const selectedVariant = productProps.selectedVariant;
   return (
@@ -93,7 +100,10 @@ export default function ProductMobileComponent({
                 styles['thumbnail-image'],
                 styles['thumbnail-image-mobile'],
               ].join(' ')}
-              src={productProps.thumbnail || '../assets/svg/wine-bottle.svg'}
+              src={
+                productProps.product?.thumbnail ??
+                '../assets/svg/wine-bottle.svg'
+              }
             />
           ) : (
             <Skeleton
@@ -126,7 +136,7 @@ export default function ProductMobileComponent({
                       ' '
                     )}
                   >
-                    {productProps.title}
+                    {productProps.product?.title ?? ''}
                   </div>
                   <div
                     className={[
@@ -134,7 +144,7 @@ export default function ProductMobileComponent({
                       styles['subtitle-mobile'],
                     ].join(' ')}
                   >
-                    {productProps.subtitle}
+                    {productProps.product?.subtitle ?? ''}
                   </div>
                 </>
               ) : (
@@ -228,7 +238,7 @@ export default function ProductMobileComponent({
               />
             )}
             {!productProps.isLoading &&
-              productProps.description &&
+              productProps.product?.description &&
               !disableShowMore && (
                 <div
                   className={[
@@ -314,7 +324,7 @@ export default function ProductMobileComponent({
           >
             {!productProps.isLoading ? (
               <>
-                {productProps.tags.map((value: ProductTag) => (
+                {productProps.product?.tags?.map((value: ProductTag) => (
                   <div
                     className={[styles['tag'], styles['tag-mobile']].join(' ')}
                   >
@@ -760,7 +770,7 @@ export default function ProductMobileComponent({
                           styles['details-item-value-mobile'],
                         ].join(' ')}
                       >
-                        {productProps.material}
+                        {productProps.product?.material ?? '-'}
                       </div>
                     </div>
                     <div
@@ -783,7 +793,10 @@ export default function ProductMobileComponent({
                           styles['details-item-value-mobile'],
                         ].join(' ')}
                       >
-                        {productProps.weight}
+                        {productProps.product?.weight &&
+                        productProps.product.weight > 0
+                          ? `${productProps.product.weight} g`
+                          : '-'}
                       </div>
                     </div>
                     <div
@@ -806,7 +819,7 @@ export default function ProductMobileComponent({
                           styles['details-item-value-mobile'],
                         ].join(' ')}
                       >
-                        {productProps.countryOrigin}
+                        {productProps.product?.origin_country ?? '-'}
                       </div>
                     </div>
                     <div
@@ -829,7 +842,11 @@ export default function ProductMobileComponent({
                           styles['details-item-value-mobile'],
                         ].join(' ')}
                       >
-                        {productProps.dimensions}
+                        {productProps.product?.length &&
+                        productProps.product.width &&
+                        productProps.product.height
+                          ? `${productProps.product.length}L x ${productProps.product.width}W x ${productProps.product.height}H`
+                          : '-'}
                       </div>
                     </div>
                     <div
@@ -852,7 +869,7 @@ export default function ProductMobileComponent({
                           styles['details-item-value-mobile'],
                         ].join(' ')}
                       >
-                        {productProps.type}
+                        {productProps.product?.type?.value ?? '-'}
                       </div>
                     </div>
                   </div>

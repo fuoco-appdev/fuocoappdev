@@ -103,9 +103,9 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
   const { t, i18n } = useTranslation();
 
   const formatName = (title: string, subtitle?: string | null) => {
-    let name = productProps.title;
-    if (subtitle && subtitle?.length > 0) {
-      name += `, ${productProps.subtitle}`;
+    let name = title;
+    if (subtitle && subtitle.length > 0) {
+      name += `, ${subtitle}`;
     }
     return name;
   };
@@ -127,7 +127,7 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
           message: t('addedToCart') ?? '',
           description:
             t('addedToCartDescription', {
-              item: productProps.title,
+              item: productProps.product?.title,
             }) ?? '',
           type: 'success',
         }),
@@ -156,20 +156,31 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
     formatName(product?.title ?? '', product?.subtitle) ?? ''
   );
   const [shortDescription, setShortDescription] = useState<string>(
-    formatDescription(`${productProps.description?.slice(0, 205)}...`)
+    formatDescription(`${productProps.product?.description?.slice(0, 205)}...`)
   );
 
   useEffect(() => {
-    const formattedName = formatName(productProps.title, productProps.subtitle);
+    if (!productProps.product) {
+      return;
+    }
+
+    const formattedName = formatName(
+      productProps.product.title,
+      productProps.product.subtitle
+    );
     setFullName(formattedName);
-  }, [productProps.title, productProps.subtitle]);
+  }, [productProps.product]);
 
   useEffect(() => {
+    if (!productProps.product) {
+      return;
+    }
+
     const formattedDescription = formatDescription(
-      `${productProps.description?.slice(0, 205)}...`
+      `${productProps.product.description?.slice(0, 205)}...`
     );
     setShortDescription(formattedDescription);
-  }, [productProps.description]);
+  }, [productProps.product]);
 
   useEffect(() => {
     import('remark-gfm').then((plugin) => {
@@ -180,8 +191,12 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
   }, []);
 
   useEffect(() => {
+    if (!productProps.product) {
+      return;
+    }
+
     let tabProps: TabProps[] = [];
-    const vintageOption = productProps.options.find(
+    const vintageOption = productProps.product.options.find(
       (value: ProductOption) => value.title === ProductOptions.Vintage
     );
     if (vintageOption) {
@@ -197,7 +212,7 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
       });
       setTabs(tabProps);
     }
-  }, [productProps.options]);
+  }, [productProps.product]);
 
   useEffect(() => {
     setActiveVariantId(productProps.selectedVariant?.id);
@@ -209,53 +224,62 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
   }, [productProps.likesMetadata, accountProps.account]);
 
   useEffect(() => {
-    const alcoholOption = ProductController.model.options.find(
+    if (
+      !ProductController.model.product ||
+      !ProductController.model.product.options
+    ) {
+      return;
+    }
+
+    const alcoholOption = ProductController.model.product.options.find(
       (value) => value.title === ProductOptions.Alcohol
     );
-    const formatOption = ProductController.model.options.find(
+    const formatOption = ProductController.model.product.options.find(
       (value) => value.title === ProductOptions.Format
     );
-    const residualSugarOption = ProductController.model.options.find(
+    const residualSugarOption = ProductController.model.product.options.find(
       (value) => value.title === ProductOptions.ResidualSugar
     );
-    const uvcOption = ProductController.model.options.find(
+    const uvcOption = ProductController.model.product.options.find(
       (value) => value.title === ProductOptions.UVC
     );
-    const vintageOption = ProductController.model.options.find(
+    const vintageOption = ProductController.model.product.options.find(
       (value) => value.title === ProductOptions.Vintage
     );
 
-    if (productProps.selectedVariant?.options) {
-      const variant = productProps.selectedVariant as PricedVariant;
-      const alcoholValue = variant.options?.find(
+    const variant = productProps.selectedVariant as PricedVariant;
+    if (variant && variant?.options) {
+      const alcoholValue = variant.options.find(
         (value: ProductOptionValue) => value.option_id === alcoholOption?.id
       );
-      const formatValue = variant.options?.find(
+      const formatValue = variant.options.find(
         (value: ProductOptionValue) => value.option_id === formatOption?.id
       );
-      const residualSugarValue = variant.options?.find(
+      const residualSugarValue = variant.options.find(
         (value: ProductOptionValue) =>
           value.option_id === residualSugarOption?.id
       );
-      const uvcValue = variant.options?.find(
+      const uvcValue = variant.options.find(
         (value: ProductOptionValue) => value.option_id === uvcOption?.id
       );
-      const vintageValue = variant.options?.find(
+      const vintageValue = variant.options.find(
         (value: ProductOptionValue) => value.option_id === vintageOption?.id
       );
 
-      setBrand(productProps.metadata?.['brand'] as string);
-      setRegion(productProps.metadata?.['region'] as string);
-      setVarietals(productProps.metadata?.['varietals'] as string);
-      setProducerBottler(productProps.metadata?.['producer_bottler'] as string);
-      setType(productProps.metadata?.['type'] as string);
+      setBrand(productProps.product?.metadata?.['brand'] as string);
+      setRegion(productProps.product?.metadata?.['region'] as string);
+      setVarietals(productProps.product?.metadata?.['varietals'] as string);
+      setProducerBottler(
+        productProps.product?.metadata?.['producer_bottler'] as string
+      );
+      setType(productProps.product?.metadata?.['type'] as string);
       setAlcohol(alcoholValue?.value);
       setFormat(formatValue?.value);
       setResidualSugar(residualSugarValue?.value);
       setUVC(uvcValue?.value);
       setVintage(vintageValue?.value);
     }
-  }, [productProps.selectedVariant, productProps.metadata]);
+  }, [productProps.selectedVariant, productProps.product]);
 
   const suspenceComponent = (
     <>
@@ -283,8 +307,11 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
           }
         />
         <meta name="description" content={shortDescription} />
-        <meta property="og:image" content={productProps.thumbnail} />
-        <meta property="og:image:secure_url" content={productProps.thumbnail} />
+        <meta property="og:image" content={productProps.product?.thumbnail} />
+        <meta
+          property="og:image:secure_url"
+          content={productProps.product?.thumbnail}
+        />
         <meta
           property="og:title"
           content={
@@ -303,7 +330,10 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
             fullName.length > 0 ? `${fullName} | Cruthology` : 'Cruthology'
           }
         />
-        <meta property="twitter:image" content={productProps.thumbnail} />
+        <meta
+          property="twitter:image"
+          content={productProps.product?.thumbnail}
+        />
         <meta property="twitter:description" content={shortDescription} />
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
@@ -406,7 +436,7 @@ ProductComponent.getServerSidePropsAsync = async (
 ): Promise<ProductProps> => {
   const id = request.url.split('/').at(-1) ?? '';
   const product = await MedusaService.requestProductAsync(id);
-  ProductController.updateDetails(product);
+  ProductController.updateProduct(product);
   return Promise.resolve({
     product: product,
   });

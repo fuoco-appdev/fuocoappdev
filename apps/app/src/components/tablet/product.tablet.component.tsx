@@ -58,8 +58,8 @@ export default function ProductTabletComponent({
   const { t } = useTranslation();
 
   useTabletEffect(() => {
-    setDescription(productProps.description);
-  }, [productProps.description]);
+    setDescription(productProps.product?.description ?? '');
+  }, [productProps.product]);
 
   const selectedVariant = productProps.selectedVariant;
   return (
@@ -83,7 +83,10 @@ export default function ProductTabletComponent({
                   styles['thumbnail-image'],
                   styles['thumbnail-image-tablet'],
                 ].join(' ')}
-                src={productProps.thumbnail || '../assets/svg/wine-bottle.svg'}
+                src={
+                  productProps.product?.thumbnail ??
+                  '../assets/svg/wine-bottle.svg'
+                }
               />
             ) : (
               <Skeleton
@@ -122,7 +125,7 @@ export default function ProductTabletComponent({
                       ' '
                     )}
                   >
-                    {productProps.title}
+                    {productProps.product?.title}
                   </div>
                   <div
                     className={[
@@ -130,7 +133,7 @@ export default function ProductTabletComponent({
                       styles['subtitle-tablet'],
                     ].join(' ')}
                   >
-                    {productProps.subtitle}
+                    {productProps.product?.subtitle}
                   </div>
                 </>
               ) : (
@@ -299,7 +302,7 @@ export default function ProductTabletComponent({
           >
             {!productProps.isLoading ? (
               <>
-                {productProps.tags.map((value: ProductTag) => (
+                {productProps.product?.tags?.map((value: ProductTag) => (
                   <div
                     className={[styles['tag'], styles['tag-tablet']].join(' ')}
                   >
@@ -741,7 +744,7 @@ export default function ProductTabletComponent({
                           styles['details-item-value-tablet'],
                         ].join(' ')}
                       >
-                        {productProps.material}
+                        {productProps.product?.material ?? '-'}
                       </div>
                     </div>
                     <div
@@ -764,7 +767,10 @@ export default function ProductTabletComponent({
                           styles['details-item-value-tablet'],
                         ].join(' ')}
                       >
-                        {productProps.weight}
+                        {productProps.product?.weight &&
+                        productProps.product.weight > 0
+                          ? `${productProps.product.weight} g`
+                          : '-'}
                       </div>
                     </div>
                     <div
@@ -787,7 +793,7 @@ export default function ProductTabletComponent({
                           styles['details-item-value-tablet'],
                         ].join(' ')}
                       >
-                        {productProps.countryOrigin}
+                        {productProps.product?.origin_country ?? '-'}
                       </div>
                     </div>
                     <div
@@ -810,7 +816,11 @@ export default function ProductTabletComponent({
                           styles['details-item-value-tablet'],
                         ].join(' ')}
                       >
-                        {productProps.dimensions}
+                        {productProps.product?.length &&
+                        productProps.product.width &&
+                        productProps.product.height
+                          ? `${productProps.product.length}L x ${productProps.product.width}W x ${productProps.product.height}H`
+                          : '-'}
                       </div>
                     </div>
                     <div
@@ -833,7 +843,7 @@ export default function ProductTabletComponent({
                           styles['details-item-value-tablet'],
                         ].join(' ')}
                       >
-                        {productProps.type}
+                        {productProps.product?.type?.value ?? '-'}
                       </div>
                     </div>
                   </div>

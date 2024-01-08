@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Subscription } from 'rxjs';
+import { Subscription, filter, firstValueFrom, take } from 'rxjs';
 import { Controller } from '../controller';
 import { Product, MoneyAmount } from '@medusajs/medusa';
 import { ProductModel } from '../models/product.model';
@@ -37,7 +37,6 @@ class ProductController extends Controller {
   private _customerGroupSubscription: Subscription | undefined;
   private _accountSubscription: Subscription | undefined;
   private _selectedRegionSubscription: Subscription | undefined;
-  private _productIdSubscription: Subscription | undefined;
   private _medusaAccessTokenSubscription: Subscription | undefined;
 
   constructor() {
@@ -68,7 +67,6 @@ class ProductController extends Controller {
     this._medusaAccessTokenSubscription?.unsubscribe();
     this._accountSubscription?.unsubscribe();
     this._customerGroupSubscription?.unsubscribe();
-    this._productIdSubscription?.unsubscribe();
     this._selectedProductLikesSubscription?.unsubscribe();
     this._selectedPreviewSubscription?.unsubscribe();
     this._selectedRegionSubscription?.unsubscribe();
@@ -132,54 +130,30 @@ class ProductController extends Controller {
       ...(cart && { cart_id: cart.id }),
     });
     const product = productResponse?.products[0];
-    this.updateDetails(product);
-    const selectedVariant = this.getCheapestPrice(this._model.variants);
+    this._model.product = product;
+    const selectedVariant = this.getCheapestPrice(
+      this._model.product?.variants ?? []
+    );
     this.updateSelectedVariant(selectedVariant?.id ?? '');
     this._model.isLoading = false;
-  }
-
-  public updateDetails(product: PricedProduct | undefined): void {
-    this._model.thumbnail = product?.thumbnail ?? '';
-    this._model.title = product?.title ?? '';
-    this._model.subtitle = product?.subtitle ?? '';
-    this._model.description = product?.description ?? '';
-    this._model.tags = product?.tags ?? [];
-    this._model.options = product?.options ?? [];
-    this._model.metadata = product?.metadata ?? {};
-    this._model.material = product?.material ?? '-';
-    this._model.weight =
-      product?.weight && product.weight > 0 ? `${product.weight} g` : '-';
-    this._model.countryOrigin = product?.origin_country ?? '-';
-    this._model.dimensions =
-      product?.length && product.width && product.height
-        ? `${product.length}L x ${product.width}W x ${product.height}H`
-        : '-';
-    this._model.type = product?.type ? product.type.value : '-';
-    this._model.variants = product?.variants ?? [];
-  }
-
-  public resetDetails(): void {
-    this._model.thumbnail = '';
-    this._model.title = '';
-    this._model.subtitle = '';
-    this._model.description = '';
-    this._model.tags = [];
-    this._model.options = [];
-    this._model.variants = [];
-    this._model.metadata = {};
-    this._model.material = '-';
-    this._model.weight = '-';
-    this._model.countryOrigin = '-';
-    this._model.dimensions = '-';
-    this._model.type = '-';
   }
 
   public updateProductId(value: string | undefined): void {
     this._model.productId = value;
   }
 
+  public updateProduct(value: PricedProduct | undefined): void {
+    this._model.product = value;
+  }
+
   public updateSelectedVariant(id: string): void {
-    const variant = this._model.variants.find((value) => value.id === id);
+    if (!this._model.product) {
+      return;
+    }
+
+    const variant = this._model.product.variants.find(
+      (value) => value.id === id
+    );
     this._model.selectedVariant = variant;
   }
 
@@ -243,8 +217,10 @@ class ProductController extends Controller {
           }
 
           this._model.isLoading = true;
-          this.updateDetails(product);
-          const selectedVariant = this.getCheapestPrice(this._model.variants);
+          this._model.product = product;
+          const selectedVariant = this.getCheapestPrice(
+            this._model.product.variants
+          );
           this.updateSelectedVariant(selectedVariant?.id ?? '');
           this._model.isLoading = false;
         },
@@ -268,13 +244,15 @@ class ProductController extends Controller {
             return;
           }
 
-          const channel = StoreController.model.selectedSalesChannel;
-          this.resetDetails();
-          this.requestProductWithChannelAsync(
-            this._model.productId ?? '',
-            channel?.id ?? '',
-            region?.id ?? ''
-          );
+          if (this._model.productId !== this._model.product?.id) {
+            const channel = StoreController.model.selectedSalesChannel;
+            this._model.product = undefined;
+            this.requestProductWithChannelAsync(
+              this._model.productId ?? '',
+              channel?.id ?? '',
+              region?.id ?? ''
+            );
+          }
         },
       });
 
@@ -282,66 +260,64 @@ class ProductController extends Controller {
     this._accountSubscription = AccountController.model.store
       .pipe(select((model: AccountState) => model.account))
       .subscribe({
-        next: (account: AccountResponse | undefined) => {
-          this._productIdSubscription?.unsubscribe();
-          this._productIdSubscription = this._model.store
-            .pipe(select((model) => model.productId))
+        next: async (account: AccountResponse | undefined) => {
+          const productId = await firstValueFrom(
+            this._model.store.pipe(
+              select((model) => model.productId),
+              filter((value) => value !== undefined),
+              take(1)
+            )
+          );
+          if (!productId) {
+            return;
+          }
+
+          if (StoreController.model.selectedProductLikesMetadata) {
+            return;
+          }
+
+          try {
+            const productLikesResponse =
+              await ProductLikesService.requestMetadataAsync({
+                accountId: account?.id ?? '',
+                productIds: [productId],
+              });
+
+            if (productLikesResponse.metadata.length > 0) {
+              this._model.likesMetadata = productLikesResponse.metadata[0];
+            }
+          } catch (error: any) {
+            console.error(error);
+          }
+
+          if (StoreController.model.selectedPreview) {
+            return;
+          }
+
+          this._customerGroupSubscription?.unsubscribe();
+          this._customerGroupSubscription = AccountController.model.store
+            .pipe(select((model) => model.customerGroup))
             .subscribe({
-              next: async (id: string | undefined) => {
-                if (!id) {
+              next: async (customerGroup: CustomerGroup | undefined) => {
+                const selectedRegion = await firstValueFrom(
+                  StoreController.model.store.pipe(
+                    select((model) => model.selectedRegion),
+                    filter((value) => value !== undefined),
+                    take(1)
+                  )
+                );
+                const channel = StoreController.model.selectedSalesChannel;
+                if (!productId || !channel) {
                   return;
                 }
 
-                if (StoreController.model.selectedProductLikesMetadata) {
-                  return;
+                if (this._model.productId !== this._model.product?.id) {
+                  this.requestProductWithChannelAsync(
+                    productId,
+                    channel?.id ?? '',
+                    selectedRegion?.id ?? ''
+                  );
                 }
-
-                try {
-                  const productLikesResponse =
-                    await ProductLikesService.requestMetadataAsync({
-                      accountId: account?.id ?? '',
-                      productIds: [id],
-                    });
-
-                  if (productLikesResponse.metadata.length > 0) {
-                    this._model.likesMetadata =
-                      productLikesResponse.metadata[0];
-                  }
-                } catch (error: any) {
-                  console.error(error);
-                }
-
-                if (StoreController.model.selectedPreview) {
-                  return;
-                }
-
-                this._customerGroupSubscription?.unsubscribe();
-                this._customerGroupSubscription = AccountController.model.store
-                  .pipe(select((model) => model.customerGroup))
-                  .subscribe({
-                    next: (customerGroup: CustomerGroup | undefined) => {
-                      this._selectedRegionSubscription?.unsubscribe();
-                      this._selectedRegionSubscription =
-                        StoreController.model.store
-                          .pipe(select((model) => model.selectedRegion))
-                          .subscribe({
-                            next: (region: Region | undefined) => {
-                              const channel =
-                                StoreController.model.selectedSalesChannel;
-                              if (!id || !channel) {
-                                return;
-                              }
-
-                              this.resetDetails();
-                              this.requestProductWithChannelAsync(
-                                id,
-                                channel?.id ?? '',
-                                region?.id ?? ''
-                              );
-                            },
-                          });
-                    },
-                  });
               },
             });
         },
@@ -349,19 +325,8 @@ class ProductController extends Controller {
   }
 
   private resetMedusaModel(): void {
-    this._model.thumbnail = '';
-    this._model.title = '';
-    this._model.subtitle = '';
-    this._model.description = new Array(355).join(' ');
-    this._model.tags = [];
-    this._model.options = [];
-    this._model.variants = [];
-    this._model.metadata = {};
-    this._model.material = '-';
-    this._model.weight = '-';
-    this._model.countryOrigin = '-';
-    this._model.dimensions = '-';
-    this._model.type = '-';
+    this._model.product = undefined;
+    this._model.selectedVariant = undefined;
   }
 }
 
