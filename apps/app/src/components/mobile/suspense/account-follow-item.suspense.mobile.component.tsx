@@ -43,10 +43,9 @@ export function AccountFollowItemSuspenseMobileComponent(): JSX.Element {
               borderRadius={16}
               height={16}
               width={120}
-              className={[
-                styles['skeleton-user'],
-                styles['skeleton-user-mobile'],
-              ].join(' ')}
+              className={[styles['full-name'], styles['full-name-mobile']].join(
+                ' '
+              )}
             />
           </div>
         </div>

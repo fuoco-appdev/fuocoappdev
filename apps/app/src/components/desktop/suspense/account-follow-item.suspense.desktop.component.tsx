@@ -44,8 +44,8 @@ export function AccountFollowItemSuspenseDesktopComponent(): JSX.Element {
               height={16}
               width={120}
               className={[
-                styles['skeleton-user'],
-                styles['skeleton-user-desktop'],
+                styles['full-name'],
+                styles['full-name-desktop'],
               ].join(' ')}
             />
           </div>

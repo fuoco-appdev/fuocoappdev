@@ -46,10 +46,9 @@ export function AccountFollowItemSuspenseTabletComponent(): JSX.Element {
               borderRadius={16}
               height={16}
               width={120}
-              className={[
-                styles['skeleton-user'],
-                styles['skeleton-user-tablet'],
-              ].join(' ')}
+              className={[styles['full-name'], styles['full-name-tablet']].join(
+                ' '
+              )}
             />
           </div>
         </div>

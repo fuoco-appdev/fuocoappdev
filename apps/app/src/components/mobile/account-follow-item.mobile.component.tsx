@@ -6,6 +6,7 @@ import { ResponsiveDesktop, ResponsiveMobile } from '../responsive.component';
 import { AccountFollowItemResponsiveProps } from '../account-follow-item.component';
 import Ripples from 'react-ripples';
 import AccountController from '../../controllers/account.controller';
+import Skeleton from 'react-loading-skeleton';
 
 export default function AccountFollowItemMobileComponent({
   accountProps,
@@ -56,7 +57,19 @@ export default function AccountFollowItemMobileComponent({
                   ' '
                 )}
               >
-                {account.username}
+                {account.username && account.username}
+                {!account.username && (
+                  <Skeleton
+                    count={1}
+                    borderRadius={20}
+                    height={20}
+                    width={80}
+                    className={[
+                      styles['skeleton-user'],
+                      styles['skeleton-user-mobile'],
+                    ].join(' ')}
+                  />
+                )}
               </div>
               {customer && (
                 <div
@@ -67,6 +80,18 @@ export default function AccountFollowItemMobileComponent({
                 >
                   {`${customer?.firstName} ${customer?.lastName}`}
                 </div>
+              )}
+              {!customer && (
+                <Skeleton
+                  count={1}
+                  borderRadius={16}
+                  height={16}
+                  width={120}
+                  className={[
+                    styles['full-name'],
+                    styles['full-name-mobile'],
+                  ].join(' ')}
+                />
               )}
             </div>
           </div>

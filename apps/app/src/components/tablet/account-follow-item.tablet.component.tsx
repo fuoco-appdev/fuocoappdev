@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { ResponsiveDesktop, ResponsiveTablet } from '../responsive.component';
 import { AccountFollowItemResponsiveProps } from '../account-follow-item.component';
 import AccountController from '../../controllers/account.controller';
+import Skeleton from 'react-loading-skeleton';
 
 export default function AccountFollowItemTabletComponent({
   accountProps,
@@ -57,7 +58,19 @@ export default function AccountFollowItemTabletComponent({
                 ' '
               )}
             >
-              {account.username}
+              {account.username && account.username}
+              {!account.username && (
+                <Skeleton
+                  count={1}
+                  borderRadius={20}
+                  height={20}
+                  width={80}
+                  className={[
+                    styles['skeleton-user'],
+                    styles['skeleton-user-tablet'],
+                  ].join(' ')}
+                />
+              )}
             </div>
             {customer && (
               <div
@@ -68,6 +81,18 @@ export default function AccountFollowItemTabletComponent({
               >
                 {`${customer?.firstName} ${customer?.lastName}`}
               </div>
+            )}
+            {!customer && (
+              <Skeleton
+                count={1}
+                borderRadius={16}
+                height={16}
+                width={120}
+                className={[
+                  styles['full-name'],
+                  styles['full-name-tablet'],
+                ].join(' ')}
+              />
             )}
           </div>
         </div>

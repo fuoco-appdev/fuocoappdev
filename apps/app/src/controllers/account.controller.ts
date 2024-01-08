@@ -283,6 +283,14 @@ class AccountController extends Controller {
     this._model.addFriendsScrollPosition = value;
   }
 
+  public incrementLikeCount(): void {
+    this._model.likeCount = (this._model.likeCount ?? 0) + 1;
+  }
+
+  public decrementLikeCount(): void {
+    this._model.likeCount = (this._model.likeCount ?? 0) - 1;
+  }
+
   public async confirmFollowRequestAsync(
     accountId: string,
     followerId: string

@@ -3,7 +3,7 @@ import { Index } from 'meilisearch';
 import { Controller } from '../controller';
 import { StoreModel, ProductTabs } from '../models/store.model';
 import MeiliSearchService from '../services/meilisearch.service';
-import { Subscription } from 'rxjs';
+import { Subscription, filter, firstValueFrom, take } from 'rxjs';
 import HomeController from './home.controller';
 import { select } from '@ngneat/elf';
 import { InventoryLocation } from '../models/home.model';
@@ -71,6 +71,19 @@ class StoreController extends Controller {
     this._medusaAccessTokenSubscription?.unsubscribe();
     this._customerGroupSubscription?.unsubscribe();
     this._selectedInventoryLocationSubscription?.unsubscribe();
+  }
+
+  public async loadProductsAsync(): Promise<void> {
+    const region = await firstValueFrom(
+      this._model.store.pipe(
+        select((model) => model.selectedRegion),
+        filter((value) => value !== undefined),
+        take(1)
+      )
+    );
+    if (region) {
+      await this.searchAsync(this._model.input, 0, this._limit);
+    }
   }
 
   public updateInput(value: string): void {
@@ -288,6 +301,10 @@ class StoreController extends Controller {
       .pipe(select((model: AccountState) => model.customerGroup))
       .subscribe({
         next: (customerGroup: CustomerGroup | undefined) => {
+          if (!customerGroup) {
+            return;
+          }
+
           this.searchAsync(this._model.input, 0, this._limit);
         },
       });
@@ -297,7 +314,11 @@ class StoreController extends Controller {
       .pipe(select((model: AccountState) => model.account))
       .subscribe({
         next: (value: AccountResponse | undefined) => {
-          this.searchAsync(this._model.input, 0, this._limit, true);
+          if (!value) {
+            return;
+          }
+
+          this.searchAsync(this._model.input, 0, this._limit);
         },
       });
 

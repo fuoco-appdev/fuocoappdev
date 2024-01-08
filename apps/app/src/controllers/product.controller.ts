@@ -88,6 +88,7 @@ class ProductController extends Controller {
         }
         StoreController.updateProductLikesMetadata(productId, metadata);
         AccountController.updateProductLikesMetadata(productId, metadata);
+        AccountController.incrementLikeCount();
         AccountPublicController.updateProductLikesMetadata(productId, metadata);
         return;
       }
@@ -101,6 +102,7 @@ class ProductController extends Controller {
       }
       StoreController.updateProductLikesMetadata(productId, metadata);
       AccountController.updateProductLikesMetadata(productId, metadata);
+      AccountController.decrementLikeCount();
       AccountPublicController.updateProductLikesMetadata(productId, metadata);
     } catch (error: any) {
       console.error(error);

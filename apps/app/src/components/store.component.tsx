@@ -215,6 +215,8 @@ export default function StoreComponent(): JSX.Element {
     if (search && search !== storeProps.input) {
       StoreController.updateInput(search);
     }
+
+    StoreController.loadProductsAsync();
   }, []);
 
   useEffect(() => {

@@ -7,6 +7,7 @@ import { AccountFollowItemResponsiveProps } from '../account-follow-item.compone
 import { useState } from 'react';
 import Ripples from 'react-ripples';
 import AccountController from '../../controllers/account.controller';
+import Skeleton from 'react-loading-skeleton';
 
 export default function AccountFollowItemDesktopComponent({
   accountProps,
@@ -60,7 +61,19 @@ export default function AccountFollowItemDesktopComponent({
                 ' '
               )}
             >
-              {account.username}
+              {account.username && account.username}
+              {!account.username && (
+                <Skeleton
+                  count={1}
+                  borderRadius={20}
+                  height={20}
+                  width={80}
+                  className={[
+                    styles['skeleton-user'],
+                    styles['skeleton-user-desktop'],
+                  ].join(' ')}
+                />
+              )}
             </div>
             {customer && (
               <div
@@ -71,6 +84,18 @@ export default function AccountFollowItemDesktopComponent({
               >
                 {`${customer?.firstName} ${customer?.lastName}`}
               </div>
+            )}
+            {!customer && (
+              <Skeleton
+                count={1}
+                borderRadius={16}
+                height={16}
+                width={120}
+                className={[
+                  styles['full-name'],
+                  styles['full-name-desktop'],
+                ].join(' ')}
+              />
             )}
           </div>
         </div>
