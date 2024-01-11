@@ -131,8 +131,8 @@ export default function HomeTabletComponent({
                     src={
                       homeProps.selectedInventoryLocation?.placeName !==
                       point.placeName
-                        ? '../assets/svg/cruthology-pin.svg'
-                        : '../assets/svg/cruthology-selected-pin.svg'
+                        ? '../assets/images/unselected-cellar.png'
+                        : '../assets/images/selected-cellar.png'
                     }
                     className={[styles['marker'], styles['marker-tablet']].join(
                       ' '
