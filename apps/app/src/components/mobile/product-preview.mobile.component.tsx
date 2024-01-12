@@ -24,9 +24,13 @@ import { ProductPreviewResponsiveProps } from '../product-preview.component';
 import { ResponsiveMobile } from '../responsive.component';
 
 export default function ProductPreviewMobileComponent({
+  thumbnail,
+  title,
+  subtitle,
+  description,
+  pricedProduct,
   accountProps,
   parentRef,
-  preview,
   onClick,
   onRest,
   originalPrice,
@@ -130,7 +134,7 @@ export default function ProductPreviewMobileComponent({
                 styles['thumbnail-image'],
                 styles['thumbnail-image-mobile'],
               ].join(' ')}
-              src={preview.thumbnail || '../assets/svg/wine-bottle.svg'}
+              src={thumbnail || '../assets/svg/wine-bottle.svg'}
             />
             <div
               className={[
@@ -245,7 +249,7 @@ export default function ProductPreviewMobileComponent({
                   styles['product-title-mobile'],
                 ].join(' ')}
               >
-                {preview.title}
+                {title}
               </span>
               {originalPrice.length > 0 ? (
                 <span

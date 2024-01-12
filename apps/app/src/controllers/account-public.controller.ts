@@ -372,8 +372,9 @@ class AccountPublicController extends Controller {
       };
       for (const follower of followerResponse?.followers ?? []) {
         followerAccountFollowers[follower.followerId] = follower;
-        this._model.followerAccountFollowers = followerAccountFollowers;
       }
+
+      this._model.followerAccountFollowers = followerAccountFollowers;
     } catch (error: any) {
       console.error(error);
     }

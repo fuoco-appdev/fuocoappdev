@@ -39,66 +39,6 @@ export default function ExploreMobileComponent({
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
         <div
           className={[
-            styles['content-container'],
-            styles['content-container-mobile'],
-          ].join(' ')}
-        >
-          <img
-            src={'../assets/images/vineyard1.png'}
-            className={[
-              styles['background-image'],
-              styles['background-image-mobile'],
-            ].join(' ')}
-          />
-          <div
-            className={[
-              styles['background-filter'],
-              styles['background-filter-mobile'],
-            ].join(' ')}
-          />
-          <div
-            className={[styles['content'], styles['content-mobile']].join(' ')}
-          >
-            <img
-              src={'../assets/svg/logo.svg'}
-              className={[styles['logo'], styles['logo-mobile']].join(' ')}
-            />
-            <img
-              src={'../assets/svg/logo-text.svg'}
-              className={[styles['logo-text'], styles['logo-text-mobile']].join(
-                ' '
-              )}
-            />
-            <div
-              className={[
-                styles['call-to-action-text'],
-                styles['call-to-action-text-mobile'],
-              ].join(' ')}
-            >
-              {t('utilizeSearchEngineDescription', {
-                product_count: exploreProps.wineCount,
-              })}
-            </div>
-            <div>
-              <Button
-                classNames={{
-                  button: styles['shop-now-button'],
-                }}
-                rippleProps={{
-                  color: 'rgba(252, 245, 227, .35)',
-                }}
-                size={'large'}
-                onClick={() =>
-                  setTimeout(() => navigate(RoutePathsType.Store), 75)
-                }
-              >
-                {t('shopNow')}
-              </Button>
-            </div>
-          </div>
-        </div>
-        <div
-          className={[
             styles['map-container'],
             styles['map-container-mobile'],
           ].join(' ')}

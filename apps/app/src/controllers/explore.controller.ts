@@ -14,18 +14,24 @@ import { Subscription } from 'rxjs';
 import { select } from '@ngneat/elf';
 import { PublicSecrets } from '../protobuf/core_pb';
 import PermissionsController from './permissions.controller';
+import { Index } from 'meilisearch';
+import MeiliSearchService from '../services/meilisearch.service';
+import { StockLocation } from '@medusajs/stock-location/dist/models';
 
 class ExploreController extends Controller {
   private readonly _model: ExploreModel;
+  private _stockLocationsIndex: Index<Record<string, any>> | undefined;
   private _selectedInventoryLocationIdSubscription: Subscription | undefined;
   private _currentPositionSubscription: Subscription | undefined;
   private _publicSecretsSubscription: Subscription | undefined;
   private _medusaAccessTokenSubscription: Subscription | undefined;
+  private _limit: number;
 
   constructor() {
     super();
 
     this._model = new ExploreModel();
+    this._limit = 20;
   }
 
   public get model(): ExploreModel {
@@ -33,6 +39,9 @@ class ExploreController extends Controller {
   }
 
   public override initialize(renderCount: number): void {
+    this._stockLocationsIndex =
+      MeiliSearchService.client?.index('stock_locations');
+
     this._medusaAccessTokenSubscription =
       MedusaService.accessTokenObservable.subscribe({
         next: (value: string | undefined) => {
@@ -52,9 +61,34 @@ class ExploreController extends Controller {
   }
 
   public onMapMove(state: ViewState): void {
-    // this._model.longitude = state.longitude;
-    // this._model.latitude = state.latitude;
-    // this._model.zoom = state.zoom;
+    this._model.longitude = state.longitude;
+    this._model.latitude = state.latitude;
+    this._model.zoom = state.zoom;
+  }
+
+  public async onNextScrollAsync(): Promise<void> {
+    if (this._model.areSearchedStockLocationsLoading) {
+      return;
+    }
+
+    this._model.searchedStockLocationsPagination =
+      this._model.searchedStockLocationsPagination + 1;
+    const offset =
+      this._limit * (this._model.searchedStockLocationsPagination - 1);
+    await this.searchStockLocationsAsync(
+      this._model.input,
+      offset,
+      this._limit
+    );
+  }
+
+  public updateInput(value: string): void {
+    this._model.input = value;
+  }
+
+  public updateCoordinates(value: mapboxgl.LngLat | undefined): void {
+    this._model.longitude = value?.lng ?? 0;
+    this._model.latitude = value?.lat ?? 0;
   }
 
   public updateSelectedInventoryLocation(
@@ -62,6 +96,7 @@ class ExploreController extends Controller {
   ): void {
     this._model.selectedInventoryLocationId = value?.id;
     this._model.selectedInventoryLocation = value;
+    this.updateCoordinates(value?.coordinates);
   }
 
   public updateSelectedInventoryLocationId(value: string | undefined): void {
@@ -69,8 +104,11 @@ class ExploreController extends Controller {
       (location) => location.id == value
     );
 
-    this._model.selectedInventoryLocationId = value;
-    this._model.selectedInventoryLocation = selectedInventoryLocation;
+    this.updateSelectedInventoryLocation(selectedInventoryLocation);
+  }
+
+  public updateSearchedStockLocationScrollPosition(value: number | undefined) {
+    this._model.searchedStockLocationScrollPosition = value;
   }
 
   public isInventoryLocationIdValid(value: string): boolean {
@@ -105,6 +143,51 @@ class ExploreController extends Controller {
           error: (error: any) => reject(error),
         });
     });
+  }
+
+  public async searchStockLocationsAsync(
+    query: string,
+    offset: number = 0,
+    limit: number = 10,
+    force: boolean = false
+  ): Promise<void> {
+    if (!force && this._model.areSearchedStockLocationsLoading) {
+      return;
+    }
+
+    this._model.areSearchedStockLocationsLoading = true;
+
+    const result = await this._stockLocationsIndex?.search(query, {
+      offset: offset,
+      limit: limit,
+    });
+
+    let hits = result?.hits as StockLocation[];
+    if (hits.length <= 0 && offset <= 0) {
+      this._model.searchedStockLocations = [];
+    }
+
+    if (hits.length < limit && this._model.hasMoreSearchedStockLocations) {
+      this._model.hasMoreSearchedStockLocations = false;
+    }
+
+    if (hits.length <= 0) {
+      this._model.areSearchedStockLocationsLoading = false;
+      return;
+    }
+
+    if (hits.length >= limit && !this._model.hasMoreSearchedStockLocations) {
+      this._model.hasMoreSearchedStockLocations = true;
+    }
+
+    if (offset > 0) {
+      const stockLocations = this._model.searchedStockLocations;
+      this._model.searchedStockLocations = stockLocations.concat(hits);
+    } else {
+      this._model.searchedStockLocations = hits;
+    }
+
+    this._model.areSearchedStockLocationsLoading = false;
   }
 
   private resetMedusaModel(): void {
@@ -151,9 +234,10 @@ class ExploreController extends Controller {
             (value) => value.id === id
           );
           if (inventoryLocation) {
-            this._model.selectedInventoryLocationId = inventoryLocation.id;
-            this._model.selectedInventoryLocation = inventoryLocation;
+            this.updateSelectedInventoryLocation(inventoryLocation);
           }
+
+          this._model.isSelectedInventoryLocationLoaded = true;
         },
       });
   }
@@ -205,8 +289,7 @@ class ExploreController extends Controller {
         (value) => value.coordinates.distanceTo(point) === 0
       );
       if (inventoryLocation) {
-        this._model.selectedInventoryLocationId = inventoryLocation.id;
-        this._model.selectedInventoryLocation = inventoryLocation;
+        this.updateSelectedInventoryLocation(inventoryLocation);
       }
     }
   }

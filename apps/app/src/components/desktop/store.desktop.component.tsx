@@ -242,41 +242,56 @@ export default function StoreDesktopComponent({
             ref={previewsContainerRef}
             onLoad={onPreviewsLoad}
           >
-            {storeProps.previews.map(
-              (preview: PricedProduct, index: number) => {
-                const productLikesMetadata =
-                  storeProps.productLikesMetadata?.find(
-                    (value) => value.productId === preview.id
-                  ) ?? null;
-                return (
-                  <ProductPreviewComponent
-                    parentRef={rootRef}
-                    key={index}
-                    storeProps={storeProps}
-                    accountProps={accountProps}
-                    preview={preview}
-                    likesMetadata={
-                      productLikesMetadata ??
-                      core.ProductLikesMetadataResponse.prototype
-                    }
-                    onClick={() =>
-                      onProductPreviewClick(
-                        previewsContainerRef.current?.scrollTop ?? 0,
-                        preview,
-                        productLikesMetadata
-                      )
-                    }
-                    onRest={() => onProductPreviewRest(preview)}
-                    onAddToCart={() =>
-                      onProductPreviewAddToCart(preview, productLikesMetadata)
-                    }
-                    onLikeChanged={(isLiked: boolean) =>
-                      onProductPreviewLikeChanged(isLiked, preview)
-                    }
-                  />
-                );
-              }
-            )}
+            {storeProps.products.map((product: Product, index: number) => {
+              const pricedProduct = Object.keys(
+                storeProps.pricedProducts
+              ).includes(product.id ?? '')
+                ? storeProps.pricedProducts[product.id ?? '']
+                : null;
+              const productLikesMetadata =
+                storeProps.productLikesMetadata?.find(
+                  (value) => value.productId === product.id
+                ) ?? null;
+              return (
+                <ProductPreviewComponent
+                  parentRef={rootRef}
+                  key={index}
+                  storeProps={storeProps}
+                  accountProps={accountProps}
+                  thumbnail={product.thumbnail ?? undefined}
+                  title={product.title ?? undefined}
+                  subtitle={product.subtitle ?? undefined}
+                  description={product.description ?? undefined}
+                  pricedProduct={pricedProduct}
+                  likesMetadata={
+                    productLikesMetadata ??
+                    core.ProductLikesMetadataResponse.prototype
+                  }
+                  onClick={() =>
+                    pricedProduct &&
+                    onProductPreviewClick(
+                      previewsContainerRef.current?.scrollTop ?? 0,
+                      pricedProduct,
+                      productLikesMetadata
+                    )
+                  }
+                  onRest={() =>
+                    pricedProduct && onProductPreviewRest(pricedProduct)
+                  }
+                  onAddToCart={() =>
+                    pricedProduct &&
+                    onProductPreviewAddToCart(
+                      pricedProduct,
+                      productLikesMetadata
+                    )
+                  }
+                  onLikeChanged={(isLiked: boolean) =>
+                    pricedProduct &&
+                    onProductPreviewLikeChanged(isLiked, pricedProduct)
+                  }
+                />
+              );
+            })}
             <img
               src={'../assets/svg/ring-resize-dark.svg'}
               className={styles['loading-ring']}
@@ -495,12 +510,12 @@ export default function StoreDesktopComponent({
               styles['add-variants-container-desktop'],
             ].join(' ')}
           >
-            {storeProps.selectedPreview?.variants.map((variant) => {
+            {storeProps.selectedPricedProduct?.variants.map((variant) => {
               return (
                 <CartVariantItemComponent
                   productType={MedusaProductTypeNames.Wine}
                   key={variant.id}
-                  product={storeProps.selectedPreview}
+                  product={storeProps.selectedPricedProduct}
                   variant={variant}
                   storeProps={storeProps}
                   variantQuantities={variantQuantities}

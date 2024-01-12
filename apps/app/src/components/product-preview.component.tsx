@@ -52,8 +52,12 @@ const ProductPreviewMobileComponent = lazy(
 export interface ProductPreviewProps {
   accountProps: AccountState;
   parentRef: MutableRefObject<HTMLDivElement | null>;
-  preview: PricedProduct;
+  pricedProduct: PricedProduct | null;
   likesMetadata: ProductLikesMetadataResponse;
+  thumbnail?: string;
+  title?: string;
+  subtitle?: string;
+  description?: string;
   storeProps?: StoreState;
   onClick?: () => void;
   onRest?: () => void;
@@ -79,7 +83,11 @@ export default function ProductPreviewComponent({
   storeProps,
   accountProps,
   parentRef,
-  preview,
+  thumbnail,
+  title,
+  subtitle,
+  description,
+  pricedProduct,
   likesMetadata,
   onClick,
   onRest,
@@ -138,11 +146,11 @@ export default function ProductPreviewComponent({
   }, [likesMetadata, accountProps.account]);
 
   useEffect(() => {
-    const purchasableVariants = preview.variants.filter(
+    const purchasableVariants = pricedProduct?.variants.filter(
       (value) => value.purchasable === true
     );
 
-    if (purchasableVariants.length > 0) {
+    if (purchasableVariants && purchasableVariants.length > 0) {
       const cheapestVariant =
         ProductController.getCheapestPrice(purchasableVariants);
       if (cheapestVariant && storeProps?.selectedRegion) {
@@ -167,7 +175,7 @@ export default function ProductPreviewComponent({
       setOriginalPrice('');
       setCalculatedPrice('');
     }
-  }, [preview, addedToCartCount, storeProps?.selectedRegion]);
+  }, [pricedProduct, addedToCartCount, storeProps?.selectedRegion]);
 
   const suspenceComponent = (
     <>
@@ -187,7 +195,11 @@ export default function ProductPreviewComponent({
         accountProps={accountProps}
         likesMetadata={likesMetadata}
         parentRef={parentRef}
-        preview={preview}
+        thumbnail={thumbnail}
+        title={title}
+        subtitle={subtitle}
+        description={description}
+        pricedProduct={pricedProduct}
         onClick={onClick}
         onRest={onRest}
         originalPrice={originalPrice}
@@ -208,7 +220,11 @@ export default function ProductPreviewComponent({
         accountProps={accountProps}
         likesMetadata={likesMetadata}
         parentRef={parentRef}
-        preview={preview}
+        thumbnail={thumbnail}
+        title={title}
+        subtitle={subtitle}
+        description={description}
+        pricedProduct={pricedProduct}
         onClick={onClick}
         onRest={onRest}
         originalPrice={originalPrice}
@@ -229,7 +245,11 @@ export default function ProductPreviewComponent({
         accountProps={accountProps}
         likesMetadata={likesMetadata}
         parentRef={parentRef}
-        preview={preview}
+        thumbnail={thumbnail}
+        title={title}
+        subtitle={subtitle}
+        description={description}
+        pricedProduct={pricedProduct}
         onClick={onClick}
         onRest={onRest}
         originalPrice={originalPrice}

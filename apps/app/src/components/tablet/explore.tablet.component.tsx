@@ -37,67 +37,6 @@ export default function ExploreTabletComponent({
       <div className={[styles['root'], styles['root-tablet']].join(' ')}>
         <div
           className={[
-            styles['content-container'],
-            styles['content-container-tablet'],
-          ].join(' ')}
-        >
-          <img
-            src={'../assets/images/vineyard1.png'}
-            className={[
-              styles['background-image'],
-              styles['background-image-tablet'],
-            ].join(' ')}
-          />
-          <div
-            className={[
-              styles['background-filter'],
-              styles['background-filter-tablet'],
-            ].join(' ')}
-          />
-          <div
-            className={[styles['content'], styles['content-tablet']].join(' ')}
-          >
-            <img
-              src={'../assets/svg/logo.svg'}
-              className={[styles['logo'], styles['logo-tablet']].join(' ')}
-            />
-            <img
-              src={'../assets/svg/logo-text.svg'}
-              className={[styles['logo-text'], styles['logo-text-tablet']].join(
-                ' '
-              )}
-            />
-            <div
-              className={[
-                styles['call-to-action-text'],
-                styles['call-to-action-text-tablet'],
-              ].join(' ')}
-            >
-              {t('utilizeSearchEngineDescription', {
-                product_count: exploreProps.wineCount,
-              })}
-            </div>
-            <div>
-              <Button
-                touchScreen={true}
-                classNames={{
-                  button: styles['shop-now-button'],
-                }}
-                rippleProps={{
-                  color: 'rgba(252, 245, 227, .35)',
-                }}
-                size={'large'}
-                onClick={() =>
-                  setTimeout(() => navigate(RoutePathsType.Store), 75)
-                }
-              >
-                {t('shopNow')}
-              </Button>
-            </div>
-          </div>
-        </div>
-        <div
-          className={[
             styles['map-container'],
             styles['map-container-tablet'],
           ].join(' ')}

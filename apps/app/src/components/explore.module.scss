@@ -1,107 +1,296 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
 .root {
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
+    flex-direction: row;
     width: 100%;
     height: 100%;
 
-    & .content-container {
+    & .search-container {
         position: relative;
-        height: 50%;
-        border-radius: 6px;
+        display: flex;
+        flex-direction: column;
 
-        & .background-image {
+        & .top-bar-container {
             position: absolute;
-            -o-object-fit: cover;
-               object-fit: cover;
-            width: 100%;
-            height: 100%;
-            border-radius: 6px;
-        }
-
-        & .background-filter {
-            position: absolute;
-            height: 100%;
-            width: 100%;
-            background-color: rgba(42, 42, 95, .45);
-            border-radius: 6px;
-        }
-
-        & .content {
+            z-index: 6;
             display: -webkit-box;
             display: -ms-flexbox;
             display: flex;
-            -webkit-box-orient: vertical;
-            -webkit-box-direction: normal;
-                -ms-flex-direction: column;
-                    flex-direction: column;
-            -webkit-box-pack: center;
-                -ms-flex-pack: center;
-                    justify-content: center;
-            -webkit-box-align: center;
-                -ms-flex-align: center;
-                    align-items: center;
-            height: 100%;
-            border-radius: 6px;
-
-            & .logo {
-                height: 96px;
-                width: 96px;
-                z-index: 1;
+            border-bottom: 1px solid rgba(42, 42, 95, .6);
+            background-color: #fff;
+            width: -moz-available;          /* WebKit-based browsers will ignore this. */
+            width: -webkit-fill-available;  /* Mozilla-based browsers will ignore this. */
+            width: stretch;
+            
+            & .search-container {
+                display: -webkit-box;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-orient: horizontal;
+                -webkit-box-direction: normal;
+                    -ms-flex-direction: row;
+                        flex-direction: row;
+                width: 100%;
+                height: -webkit-fit-content;
+                height: -moz-fit-content;
+                height: fit-content;
+                border-color: transparent !important;
+            
+                & .search-input-root {
+                    display: -webkit-box;
+                    display: -ms-flexbox;
+                    display: flex;
+                    -webkit-box-orient: vertical;
+                    -webkit-box-direction: normal;
+                        -ms-flex-direction: column;
+                            flex-direction: column;
+                    -webkit-box-flex: 1;
+                        -ms-flex: 1;
+                            flex: 1;
+                    
+                    & .search-input-container {
+                        background-color: transparent;
+                        border-color: $brand-900;
+                        border-radius: $rounded-full;
+                    }
+    
+                    & .search-input-container-skeleton {
+                        margin-bottom: $mp-4;
+                    }
+            
+                    & .search-input {
+                        color: $brand-900;
+                    }
+    
+                    & .search-input::-webkit-input-placeholder {
+                        color: $brand-900;
+                    }
+    
+                    & .search-input::-moz-placeholder {
+                        color: $brand-900;
+                    }
+    
+                    & .search-input:-ms-input-placeholder {
+                        color: $brand-900;
+                    }
+    
+                    & .search-input::-ms-input-placeholder {
+                        color: $brand-900;
+                    }
+    
+                    & .search-input::placeholder {
+                        color: $brand-900;
+                    }
+    
+                    & .search-input:-ms-input-placeholder {
+                        color: $brand-900;
+                    }
+    
+                    & .search-input::-ms-input-placeholder {
+                        color: $brand-900;
+                    }
+                }
+            }
+        
+            & .tab-container {
+                overflow-x: auto;
+                -ms-overflow-style: none;  /* IE and Edge */
+                scrollbar-width: none;  /* Firefox */
+            }
+    
+            & .tab-container-skeleton {
+                display: -webkit-box;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-orient: horizontal;
+                -webkit-box-direction: normal;
+                    -ms-flex-direction: row;
+                        flex-direction: row;
+                gap: $mp-4;
                 margin-bottom: $mp-4;
             }
-
-            & .logo-text {
-                height: 20px;
-                z-index: 1;
+        
+            & .tab-container::-webkit-scrollbar {
+                display: none;
             }
+        }
 
-            & .call-to-action-text {
-                color: $brand-100;
-                font-size: $font-size-base;
-                z-index: 1;
-                padding: $mp-4;
-                text-align: center;
+        & .scroll-container {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: wrap;
+                flex-wrap: wrap;
+            -ms-flex-line-pack: start;
+                align-content: flex-start;
+            height: 100%;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            padding-top: calc(79px + 16px);
+    
+            & .loading-ring {
+                width: 100%;
+                height: 24px;
+            }
+    
+            & .no-searched-stock-locations-container {
+                display: -webkit-box;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-orient: vertical;
+                -webkit-box-direction: normal;
+                    -ms-flex-direction: column;
+                        flex-direction: column;
+                -webkit-box-pack: center;
+                    -ms-flex-pack: center;
+                        justify-content: center;
+                width: 100%;
+    
+                & .no-items-text {
+                    margin-top: $mp-4;
+                    color: $brand-900;
+                    font-size: $font-size-sm;
+                    text-align: center;
+                }
+            
+                & .no-items-container {
+                    display: -webkit-box;
+                    display: -ms-flexbox;
+                    display: flex;
+                    -webkit-box-orient: horizontal;
+                    -webkit-box-direction: normal;
+                        -ms-flex-direction: row;
+                            flex-direction: row;
+                    -webkit-box-pack: center;
+                        -ms-flex-pack: center;
+                            justify-content: center;
+                    margin-top: $mp-8;
+                    margin-bottom: $mp-4;
+                }
             }
         }
     }
 
     & .map-container {
-        height: 50%;
+        height: 100%;
         width: 100%;
-        border-radius: 6px;
     }
 }
 
 .root-desktop {
-    gap: $mp-4;
-    padding: $mp-4;
+    & .search-container-desktop {
+        width: 380px;
+        height: 100%;
+        border-right-width: 1px;
+        border-left-width: 0px;
+        border-top-width: 0px;
+        border-bottom-width: 0px;
+        border-color: rgba(42, 42, 95, .6);
+        border-style: solid;
 
-    & .content-container-desktop {
-        & .background-image-desktop {
+        & .top-bar-container-desktop {
+            padding-top: $mp-4;
+            -webkit-box-orient: horizontal;
+            -webkit-box-direction: normal;
+                -ms-flex-direction: row;
+                    flex-direction: row;
 
-        }
-
-        & .background-filter-desktop {
-
-        }
-
-        & .content-desktop {
-            & .logo-desktop {
-
+            & .top-bar-left-content-desktop {
+                display: -webkit-box;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-orient: vertical;
+                -webkit-box-direction: normal;
+                    -ms-flex-direction: column;
+                        flex-direction: column;
+                -webkit-box-flex: 1;
+                    -ms-flex: 1;
+                        flex: 1;
+                -webkit-box-align: center;
+                    -ms-flex-align: center;
+                        align-items: center;
             }
 
-            & .logo-text-desktop {
-
+            & .top-bar-right-content-desktop {
+                padding-right: $mp-4;
             }
+                    
+            & .search-container-desktop {
+                display: -webkit-box;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-orient: horizontal;
+                -webkit-box-direction: normal;
+                    -ms-flex-direction: row;
+                        flex-direction: row;
+                -webkit-box-pack: center;
+                    -ms-flex-pack: center;
+                        justify-content: center;
+                padding-left: $mp-4;
+                padding-right: $mp-4;
 
-            & .call-to-action-text-desktop {
+                & .search-input-root-desktop {
+                    max-width: 556px;
+
+                    & .search-input-container-desktop {
+
+                    }
+            
+                    & .search-input-desktop {
+
+                    }
+
+                    & .search-input-desktop::-webkit-input-placeholder {
+
+                    }
+
+                    & .search-input-desktop::-moz-placeholder {
+
+                    }
+
+                    & .search-input-desktop:-ms-input-placeholder {
+
+                    }
+
+                    & .search-input-desktop::-ms-input-placeholder {
+
+                    }
+
+                    & .search-input-desktop::placeholder {
+
+                    }
+
+                    & .search-input-desktop:-ms-input-placeholder {
+
+                    }
+
+                    & .search-input-desktop::-ms-input-placeholder {
+                    }
+                }
+            
+                & .filter-button-desktop {
+
+                }
+            }
+        
+            & .tab-container-desktop { 
+                width: -webkit-fit-content; 
+                width: -moz-fit-content; 
+                width: fit-content;
+
+                & .tab-button-desktop {
+
+                }
+        
+                & .hovered-tab-button-desktop {
+                }
+        
+                & .tab-slider-pill-desktop {
+                }
+            }
+        
+            & .tab-container-desktop::-webkit-scrollbar {
 
             }
         }
@@ -113,28 +302,109 @@
 }
 
 .root-tablet {
-    gap: $mp-4;
-    padding: $mp-4;
+    & .search-container-tablet {
+        & .top-bar-container-tablet {
+            padding-top: $mp-4;
+            -webkit-box-orient: horizontal;
+            -webkit-box-direction: normal;
+                -ms-flex-direction: row;
+                    flex-direction: row;
 
-    & .content-container-tablet {
-        & .background-image-tablet {
-
-        }
-
-        & .background-filter-tablet {
-
-        }
-
-        & .content-tablet {
-            & .logo-tablet {
-
+            & .top-bar-left-content-tablet {
+                display: -webkit-box;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-orient: vertical;
+                -webkit-box-direction: normal;
+                    -ms-flex-direction: column;
+                        flex-direction: column;
+                -webkit-box-flex: 1;
+                    -ms-flex: 1;
+                        flex: 1;
+                -webkit-box-align: center;
+                    -ms-flex-align: center;
+                        align-items: center;
             }
 
-            & .logo-text-tabet {
-
+            & .top-bar-right-content-tablet {
+                padding-right: $mp-4;
             }
+                    
+            & .search-container-tablet {
+                display: -webkit-box;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-orient: horizontal;
+                -webkit-box-direction: normal;
+                    -ms-flex-direction: row;
+                        flex-direction: row;
+                -webkit-box-pack: center;
+                    -ms-flex-pack: center;
+                        justify-content: center;
+                padding-left: $mp-4;
+                padding-right: $mp-4;
 
-            & .call-to-action-text-tablet {
+                & .search-input-root-tablet {
+                    max-width: 456px;
+
+                    & .search-input-container-tablet {
+
+                    }
+            
+                    & .search-input-tablet {
+
+                    }
+
+                    & .search-input-tablet::-webkit-input-placeholder {
+
+                    }
+
+                    & .search-input-tablet::-moz-placeholder {
+
+                    }
+
+                    & .search-input-tablet:-ms-input-placeholder {
+
+                    }
+
+                    & .search-input-tablet::-ms-input-placeholder {
+
+                    }
+
+                    & .search-input-tablet::placeholder {
+
+                    }
+
+                    & .search-input-tablet:-ms-input-placeholder {
+
+                    }
+
+                    & .search-input-tablet::-ms-input-placeholder {
+                    }
+                }
+            
+                & .filter-button-tablet {
+
+                }
+            }
+        
+            & .tab-container-tablet { 
+                width: -webkit-fit-content; 
+                width: -moz-fit-content; 
+                width: fit-content;
+
+                & .tab-button-tablet {
+
+                }
+        
+                & .hovered-tab-button-tablet {
+                }
+        
+                & .tab-slider-pill-tablet {
+                }
+            }
+        
+            & .tab-container-tablet::-webkit-scrollbar {
 
             }
         }
@@ -146,28 +416,81 @@
 }
 
 .root-mobile {
-    gap: $mp-2;
-    padding: $mp-2;
+    & .search-container-mobile {
+        & .top-bar-container-mobile {
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+                -ms-flex-direction: column;
+                    flex-direction: column;
 
-    & .content-container-mobile {
-        & .background-image-mobile {
+            & .search-container-mobile {  
+                padding-left: $mp-4;
+                padding-right: $mp-4;
+                padding-top: $mp-4;
 
-        }
+                & .search-input-root-mobile {
+                    padding-right: $mp-4;
 
-        & .background-filter-mobile {
+                    & .search-input-container-mobile {
 
-        }
+                    }
+            
+                    & .search-input-mobile {
 
-        & .content-mobile {
-            & .logo-mobile {
+                    }
 
+                    & .search-input-mobile::-webkit-input-placeholder {
+
+                    }
+
+                    & .search-input-mobile::-moz-placeholder {
+
+                    }
+
+                    & .search-input-mobile:-ms-input-placeholder {
+
+                    }
+
+                    & .search-input-mobile::-ms-input-placeholder {
+
+                    }
+
+                    & .search-input-mobile::placeholder {
+
+                    }
+
+                    & .search-input-mobile:-ms-input-placeholder {
+
+                    }
+
+                    & .search-input-mobile::-ms-input-placeholder {
+                    }
+                }
+            
+                & .filter-button-mobile {
+
+                }
+            }
+        
+            & .tab-container-mobile { 
+                padding: 0 $mp-4;
+
+                & .tab-button-mobile {
+
+                }
+        
+                & .hovered-tab-button-mobile {
+                }
+        
+                & .tab-slider-pill-mobile {
+                }
             }
 
-            & .logo-text-mobile {
-
+            & .tab-container-skeleton-mobile {
+                padding: 0 $mp-4;
             }
-
-            & .call-to-action-text-mobile {
+        
+            & .tab-container-mobile::-webkit-scrollbar {
 
             }
         }

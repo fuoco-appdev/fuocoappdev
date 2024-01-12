@@ -12,10 +12,11 @@ export enum ProductTabs {
 }
 
 export interface StoreState {
-  previews: PricedProduct[];
+  products: Product[];
+  pricedProducts: Record<string, PricedProduct>;
   productLikesMetadata: ProductLikesMetadataResponse[];
   input: string;
-  selectedPreview: PricedProduct | undefined;
+  selectedPricedProduct: PricedProduct | undefined;
   selectedProductLikesMetadata: ProductLikesMetadataResponse | null;
   regions: Region[];
   selectedRegion: Region | undefined;
@@ -34,10 +35,11 @@ export class StoreModel extends Model {
       createStore(
         { name: 'store' },
         withProps<StoreState>({
-          previews: [],
+          products: [],
+          pricedProducts: {},
           productLikesMetadata: [],
           input: '',
-          selectedPreview: undefined,
+          selectedPricedProduct: undefined,
           selectedProductLikesMetadata: null,
           regions: [],
           selectedRegion: undefined,
@@ -53,13 +55,23 @@ export class StoreModel extends Model {
     );
   }
 
-  public get previews(): PricedProduct[] {
-    return this.store.getValue().previews;
+  public get products(): Product[] {
+    return this.store.getValue().products;
   }
 
-  public set previews(value: PricedProduct[]) {
-    if (JSON.stringify(this.previews) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, previews: value }));
+  public set products(value: Product[]) {
+    if (JSON.stringify(this.products) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, products: value }));
+    }
+  }
+
+  public get pricedProducts(): Record<string, PricedProduct> {
+    return this.store.getValue().pricedProducts;
+  }
+
+  public set pricedProducts(value: Record<string, PricedProduct>) {
+    if (JSON.stringify(this.pricedProducts) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, pricedProducts: value }));
     }
   }
 
@@ -83,13 +95,16 @@ export class StoreModel extends Model {
     }
   }
 
-  public get selectedPreview(): PricedProduct | undefined {
-    return this.store.getValue().selectedPreview;
+  public get selectedPricedProduct(): PricedProduct | undefined {
+    return this.store.getValue().selectedPricedProduct;
   }
 
-  public set selectedPreview(value: PricedProduct | undefined) {
-    if (JSON.stringify(this.selectedPreview) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, selectedPreview: value }));
+  public set selectedPricedProduct(value: PricedProduct | undefined) {
+    if (JSON.stringify(this.selectedPricedProduct) !== JSON.stringify(value)) {
+      this.store.update((state) => ({
+        ...state,
+        selectedPricedProduct: value,
+      }));
     }
   }
 

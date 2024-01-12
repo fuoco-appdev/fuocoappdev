@@ -162,7 +162,7 @@ export default function StoreComponent(): JSX.Element {
     productLikesMetadata: core.ProductLikesMetadataResponse | null
   ) => {
     StoreController.updateScrollPosition(scrollTop);
-    StoreController.updateSelectedPreview(product);
+    StoreController.updateSelectedPricedProduct(product);
     StoreController.updateSelectedProductLikesMetadata(productLikesMetadata);
   };
 
@@ -174,7 +174,7 @@ export default function StoreComponent(): JSX.Element {
     product: PricedProduct,
     productLikesMetadata: core.ProductLikesMetadataResponse | null
   ) => {
-    StoreController.updateSelectedPreview(product);
+    StoreController.updateSelectedPricedProduct(product);
     StoreController.updateSelectedProductLikesMetadata(productLikesMetadata);
     setOpenCartVariants(true);
   };

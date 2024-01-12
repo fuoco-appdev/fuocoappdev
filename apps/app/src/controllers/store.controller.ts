@@ -89,7 +89,8 @@ class StoreController extends Controller {
   public updateInput(value: string): void {
     this._model.input = value;
     this._model.pagination = 1;
-    this._model.previews = [];
+    this._model.products = [];
+    this._model.pricedProducts = {};
     this._model.hasMorePreviews = true;
     clearTimeout(this._timerId as number | undefined);
     this._timerId = setTimeout(() => {
@@ -97,8 +98,8 @@ class StoreController extends Controller {
     }, 750);
   }
 
-  public updateSelectedPreview(value: PricedProduct): void {
-    this._model.selectedPreview = value;
+  public updateSelectedPricedProduct(value: PricedProduct): void {
+    this._model.selectedPricedProduct = value;
   }
 
   public updateSelectedProductLikesMetadata(
@@ -116,7 +117,8 @@ class StoreController extends Controller {
   ): Promise<void> {
     this._model.selectedTab = value;
     this._model.pagination = 1;
-    this._model.previews = [];
+    this._model.products = [];
+    this._model.pricedProducts = {};
     const offset = this._limit * (this._model.pagination - 1);
     await this.searchAsync(this._model.input, offset, this._limit, true);
   }
@@ -171,7 +173,7 @@ class StoreController extends Controller {
 
     let hits = result?.hits as Product[];
     if (hits.length <= 0 && offset <= 0) {
-      this._model.previews = [];
+      this._model.products = [];
     }
 
     if (hits.length < limit && this._model.hasMorePreviews) {
@@ -186,6 +188,15 @@ class StoreController extends Controller {
     if (hits.length >= limit && !this._model.hasMorePreviews) {
       this._model.hasMorePreviews = true;
     }
+
+    if (offset > 0) {
+      const products = this._model.products;
+      this._model.products = products.concat(hits);
+    } else {
+      this._model.products = hits;
+    }
+
+    this._model.isLoading = false;
 
     const hitsOrder = hits.map((value) => value.id);
     const productIds: string[] = hits.map((value: Product) => value.id);
@@ -242,14 +253,17 @@ class StoreController extends Controller {
       }
     }
 
-    if (offset > 0) {
-      const previews = this._model.previews;
-      this._model.previews = previews.concat(products);
-    } else {
-      this._model.previews = products;
+    const pricedProducts = {
+      ...this._model.pricedProducts,
+    };
+    for (const pricedProduct of products ?? []) {
+      if (!pricedProduct.id) {
+        continue;
+      }
+      pricedProducts[pricedProduct.id] = pricedProduct;
     }
 
-    this._model.isLoading = false;
+    this._model.pricedProducts = pricedProducts;
   }
 
   public async applyFilterAsync(
@@ -280,8 +294,9 @@ class StoreController extends Controller {
   }
 
   private resetMedusaModel(): void {
-    this._model.previews = [];
-    this._model.selectedPreview = undefined;
+    this._model.products = [];
+    this._model.pricedProducts = {};
+    this._model.selectedPricedProduct = undefined;
     this._model.regions = [];
     this._model.selectedRegion = undefined;
     this._model.selectedSalesChannel = undefined;

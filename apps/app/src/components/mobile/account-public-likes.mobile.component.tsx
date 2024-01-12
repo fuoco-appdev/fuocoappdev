@@ -85,7 +85,11 @@ export default function AccountPublicLikesMobileComponent({
                   key={index}
                   storeProps={storeProps}
                   accountProps={accountProps}
-                  preview={product}
+                  thumbnail={product.thumbnail ?? undefined}
+                  title={product.title ?? undefined}
+                  subtitle={product.subtitle ?? undefined}
+                  description={product.description ?? undefined}
+                  pricedProduct={product}
                   likesMetadata={
                     productLikesMetadata ??
                     core.ProductLikesMetadataResponse.prototype

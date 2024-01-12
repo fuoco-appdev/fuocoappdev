@@ -2,6 +2,7 @@ import { createStore, withProps } from '@ngneat/elf';
 import { Model } from '../model';
 import mapboxgl from 'mapbox-gl';
 import { SalesChannel } from '@medusajs/medusa';
+import { StockLocation } from '@medusajs/stock-location/dist/models';
 
 export interface InventoryLocation {
   id: string;
@@ -13,9 +14,19 @@ export interface InventoryLocation {
 }
 
 export interface ExploreState {
+  input: string;
   inventoryLocations: InventoryLocation[];
+  searchedStockLocations: StockLocation[];
+  searchedStockLocationsPagination: number;
+  hasMoreSearchedStockLocations: boolean;
+  searchedStockLocationScrollPosition: number | undefined;
+  areSearchedStockLocationsLoading: boolean;
   selectedInventoryLocation: InventoryLocation | undefined;
   wineCount: number;
+  isSelectedInventoryLocationLoaded: boolean;
+  longitude: number | undefined;
+  latitude: number | undefined;
+  zoom: number | undefined;
 }
 
 export interface ExploreLocalState {
@@ -28,9 +39,19 @@ export class ExploreModel extends Model {
       createStore(
         { name: 'explore' },
         withProps<ExploreState>({
+          input: '',
           inventoryLocations: [],
+          searchedStockLocations: [],
+          searchedStockLocationsPagination: 1,
+          hasMoreSearchedStockLocations: true,
+          searchedStockLocationScrollPosition: 0,
           selectedInventoryLocation: undefined,
+          areSearchedStockLocationsLoading: false,
           wineCount: 0,
+          isSelectedInventoryLocationLoaded: false,
+          longitude: undefined,
+          latitude: undefined,
+          zoom: undefined,
         })
       ),
       undefined,
@@ -52,6 +73,72 @@ export class ExploreModel extends Model {
       this.localStore?.update((state) => ({
         ...state,
         selectedInventoryLocationId: value,
+      }));
+    }
+  }
+
+  public get searchedStockLocations(): StockLocation[] {
+    return this.store.getValue().searchedStockLocations;
+  }
+
+  public set searchedStockLocations(value: StockLocation[]) {
+    if (JSON.stringify(this.searchedStockLocations) !== JSON.stringify(value)) {
+      this.store.update((state) => ({
+        ...state,
+        searchedStockLocations: value,
+      }));
+    }
+  }
+
+  public get searchedStockLocationsPagination(): number {
+    return this.store.getValue().searchedStockLocationsPagination;
+  }
+
+  public set searchedStockLocationsPagination(value: number) {
+    if (this.searchedStockLocationsPagination !== value) {
+      this.searchedStockLocationsPagination = value;
+    }
+  }
+
+  public get hasMoreSearchedStockLocations(): boolean {
+    return this.store.getValue().hasMoreSearchedStockLocations;
+  }
+
+  public set hasMoreSearchedStockLocations(value: boolean) {
+    if (this.hasMoreSearchedStockLocations !== value) {
+      this.hasMoreSearchedStockLocations = value;
+    }
+  }
+
+  public get searchedStockLocationScrollPosition(): number | undefined {
+    return this.store.getValue().searchedStockLocationScrollPosition;
+  }
+
+  public set searchedStockLocationScrollPosition(value: number | undefined) {
+    if (this.searchedStockLocationScrollPosition !== value) {
+      this.searchedStockLocationScrollPosition = value;
+    }
+  }
+
+  public get areSearchedStockLocationsLoading(): boolean {
+    return this.store.getValue().areSearchedStockLocationsLoading;
+  }
+
+  public set areSearchedStockLocationsLoading(value: boolean) {
+    if (this.areSearchedStockLocationsLoading !== value) {
+      this.areSearchedStockLocationsLoading = value;
+    }
+  }
+
+  public get input(): string {
+    return this.store.getValue().input;
+  }
+
+  public set input(value: string) {
+    if (this.input !== value) {
+      this.store.update((state) => ({
+        ...state,
+        input: value,
       }));
     }
   }
@@ -88,6 +175,49 @@ export class ExploreModel extends Model {
         ...state,
         selectedInventoryLocation: value,
       }));
+    }
+  }
+
+  public get isSelectedInventoryLocationLoaded(): boolean {
+    return this.store?.getValue().isSelectedInventoryLocationLoaded;
+  }
+
+  public set isSelectedInventoryLocationLoaded(value: boolean) {
+    if (this.isSelectedInventoryLocationLoaded !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        isSelectedInventoryLocationLoaded: value,
+      }));
+    }
+  }
+
+  public get longitude(): number | undefined {
+    return this.store.getValue().longitude;
+  }
+
+  public set longitude(value: number | undefined) {
+    if (this.longitude !== value) {
+      this.store.update((state) => ({ ...state, longitude: value }));
+    }
+  }
+
+  public get latitude(): number | undefined {
+    return this.store.getValue().latitude;
+  }
+
+  public set latitude(value: number | undefined) {
+    if (this.latitude !== value) {
+      this.store.update((state) => ({ ...state, latitude: value }));
+    }
+  }
+
+  public get zoom(): number | undefined {
+    return this.store.getValue().zoom;
+  }
+
+  public set zoom(value: number | undefined) {
+    if (this.zoom !== value) {
+      this.store.update((state) => ({ ...state, zoom: value }));
     }
   }
 }

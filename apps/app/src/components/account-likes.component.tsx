@@ -76,7 +76,7 @@ export default function AccountLikesComponent(): JSX.Element {
   ) => {
     AccountController.updateLikesScrollPosition(scrollTop);
     AccountController.updateSelectedLikedProduct(product);
-    StoreController.updateSelectedPreview(product);
+    StoreController.updateSelectedPricedProduct(product);
     StoreController.updateSelectedProductLikesMetadata(productLikesMetadata);
   };
 

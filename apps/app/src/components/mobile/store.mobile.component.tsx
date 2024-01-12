@@ -214,10 +214,15 @@ export default function StoreMobileComponent({
             onPreviewsLoad(e);
           }}
         >
-          {storeProps.previews.map((preview: PricedProduct, index: number) => {
+          {storeProps.products.map((product: Product, index: number) => {
+            const pricedProduct = Object.keys(
+              storeProps.pricedProducts
+            ).includes(product.id ?? '')
+              ? storeProps.pricedProducts[product.id ?? '']
+              : null;
             const productLikesMetadata =
               storeProps.productLikesMetadata?.find(
-                (value) => value.productId === preview.id
+                (value) => value.productId === product.id
               ) ?? null;
             return (
               <ProductPreviewComponent
@@ -225,24 +230,33 @@ export default function StoreMobileComponent({
                 key={index}
                 storeProps={storeProps}
                 accountProps={accountProps}
-                preview={preview}
+                thumbnail={product.thumbnail ?? undefined}
+                title={product.title ?? undefined}
+                subtitle={product.subtitle ?? undefined}
+                description={product.description ?? undefined}
+                pricedProduct={pricedProduct}
                 likesMetadata={
                   productLikesMetadata ??
                   core.ProductLikesMetadataResponse.prototype
                 }
                 onClick={() =>
+                  pricedProduct &&
                   onProductPreviewClick(
                     previewsContainerRef.current?.scrollTop ?? 0,
-                    preview,
+                    pricedProduct,
                     productLikesMetadata
                   )
                 }
-                onRest={() => onProductPreviewRest(preview)}
+                onRest={() =>
+                  pricedProduct && onProductPreviewRest(pricedProduct)
+                }
                 onAddToCart={() =>
-                  onProductPreviewAddToCart(preview, productLikesMetadata)
+                  pricedProduct &&
+                  onProductPreviewAddToCart(pricedProduct, productLikesMetadata)
                 }
                 onLikeChanged={(isLiked: boolean) =>
-                  onProductPreviewLikeChanged(isLiked, preview)
+                  pricedProduct &&
+                  onProductPreviewLikeChanged(isLiked, pricedProduct)
                 }
               />
             );
@@ -410,12 +424,12 @@ export default function StoreMobileComponent({
                   styles['add-variants-container-mobile'],
                 ].join(' ')}
               >
-                {storeProps.selectedPreview?.variants.map((variant) => {
+                {storeProps.selectedPricedProduct?.variants.map((variant) => {
                   return (
                     <CartVariantItemComponent
                       productType={MedusaProductTypeNames.Wine}
                       key={variant.id}
-                      product={storeProps.selectedPreview}
+                      product={storeProps.selectedPricedProduct}
                       variant={variant}
                       storeProps={storeProps}
                       variantQuantities={variantQuantities}

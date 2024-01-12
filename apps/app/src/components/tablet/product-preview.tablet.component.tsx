@@ -25,7 +25,11 @@ import { ProductPreviewResponsiveProps } from '../product-preview.component';
 import { ResponsiveDesktop, ResponsiveTablet } from '../responsive.component';
 
 export default function ProductPreviewTabletComponent({
-  preview,
+  thumbnail,
+  title,
+  subtitle,
+  description,
+  pricedProduct,
   accountProps,
   onClick,
   originalPrice,
@@ -75,7 +79,7 @@ export default function ProductPreviewTabletComponent({
               styles['thumbnail-image'],
               styles['thumbnail-image-tablet'],
             ].join(' ')}
-            src={preview.thumbnail || '../assets/svg/wine-bottle.svg'}
+            src={thumbnail || '../assets/svg/wine-bottle.svg'}
           />
           <div
             className={[
@@ -126,16 +130,16 @@ export default function ProductPreviewTabletComponent({
                   styles['product-title-tablet'],
                 ].join(' ')}
               >
-                {preview.title}
+                {title}
               </span>
-              {preview.subtitle && (
+              {subtitle && (
                 <div
                   className={[
                     styles['product-subtitle'],
                     styles['product-subtitle-tablet'],
                   ].join(' ')}
                 >
-                  {preview.subtitle}
+                  {subtitle}
                 </div>
               )}
             </div>
@@ -173,11 +177,11 @@ export default function ProductPreviewTabletComponent({
                 styles['product-description-tablet'],
               ].join(' ')}
             >
-              {preview.description &&
-                preview.description?.length > 0 &&
+              {description &&
+                description?.length > 0 &&
                 formatDescription(
-                  `${preview.description?.slice(0, 205)}${
-                    preview.description.length > 205 ? '...' : ''
+                  `${description?.slice(0, 205)}${
+                    description.length > 205 ? '...' : ''
                   }`
                 )}
             </div>

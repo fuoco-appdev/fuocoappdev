@@ -31,7 +31,7 @@ import { AccountState } from '../models/account.model';
 
 class ProductController extends Controller {
   private readonly _model: ProductModel;
-  private _selectedPreviewSubscription: Subscription | undefined;
+  private _selectedPricedProductSubscription: Subscription | undefined;
   private _selectedProductLikesSubscription: Subscription | undefined;
   private _selectedSalesChannelSubscription: Subscription | undefined;
   private _customerGroupSubscription: Subscription | undefined;
@@ -68,7 +68,7 @@ class ProductController extends Controller {
     this._accountSubscription?.unsubscribe();
     this._customerGroupSubscription?.unsubscribe();
     this._selectedProductLikesSubscription?.unsubscribe();
-    this._selectedPreviewSubscription?.unsubscribe();
+    this._selectedPricedProductSubscription?.unsubscribe();
     this._selectedRegionSubscription?.unsubscribe();
     this._selectedSalesChannelSubscription?.unsubscribe();
   }
@@ -209,9 +209,9 @@ class ProductController extends Controller {
   }
 
   private async initializeAsync(renderCount: number): Promise<void> {
-    this._selectedPreviewSubscription?.unsubscribe();
-    this._selectedPreviewSubscription = StoreController.model.store
-      .pipe(select((model: StoreState) => model.selectedPreview))
+    this._selectedPricedProductSubscription?.unsubscribe();
+    this._selectedPricedProductSubscription = StoreController.model.store
+      .pipe(select((model: StoreState) => model.selectedPricedProduct))
       .subscribe({
         next: (product: PricedProduct | undefined) => {
           if (!product) {
@@ -242,7 +242,7 @@ class ProductController extends Controller {
       .pipe(select((model) => model.selectedRegion))
       .subscribe({
         next: (region: Region | undefined) => {
-          if (StoreController.model.selectedPreview) {
+          if (StoreController.model.selectedPricedProduct) {
             return;
           }
 
@@ -292,7 +292,7 @@ class ProductController extends Controller {
             console.error(error);
           }
 
-          if (StoreController.model.selectedPreview) {
+          if (StoreController.model.selectedPricedProduct) {
             return;
           }
 
