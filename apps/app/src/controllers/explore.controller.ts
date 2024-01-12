@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { ViewState } from 'react-map-gl';
 import { Controller } from '../controller';
-import { HomeModel, HomeState, InventoryLocation } from '../models/home.model';
+import {
+  ExploreModel,
+  ExploreState,
+  InventoryLocation,
+} from '../models/explore.model';
 import MedusaService from '../services/medusa.service';
 import mapboxgl from 'mapbox-gl';
 import { point, featureCollection, nearestPoint, helpers } from '@turf/turf';
@@ -11,8 +15,8 @@ import { select } from '@ngneat/elf';
 import { PublicSecrets } from '../protobuf/core_pb';
 import PermissionsController from './permissions.controller';
 
-class HomeController extends Controller {
-  private readonly _model: HomeModel;
+class ExploreController extends Controller {
+  private readonly _model: ExploreModel;
   private _selectedInventoryLocationIdSubscription: Subscription | undefined;
   private _currentPositionSubscription: Subscription | undefined;
   private _publicSecretsSubscription: Subscription | undefined;
@@ -21,10 +25,10 @@ class HomeController extends Controller {
   constructor() {
     super();
 
-    this._model = new HomeModel();
+    this._model = new ExploreModel();
   }
 
-  public get model(): HomeModel {
+  public get model(): ExploreModel {
     return this._model;
   }
 
@@ -86,7 +90,7 @@ class HomeController extends Controller {
   > {
     return new Promise<InventoryLocation | undefined>((resolve, reject) => {
       const subscription = this._model.store
-        .pipe(select((model: HomeState) => model.inventoryLocations))
+        .pipe(select((model: ExploreState) => model.inventoryLocations))
         .subscribe({
           next: (value: InventoryLocation[]) => {
             if (value.length <= 0) {
@@ -240,4 +244,4 @@ class HomeController extends Controller {
   }
 }
 
-export default new HomeController();
+export default new ExploreController();

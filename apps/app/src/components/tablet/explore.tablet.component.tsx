@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import styles from '../home.module.scss';
+import styles from '../explore.module.scss';
 import { Alert, Button } from '@fuoco.appdev/core-ui';
 import { RoutePathsType } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
@@ -16,19 +16,19 @@ import { useSpring } from 'react-spring';
 import * as core from '../../protobuf/core_pb';
 import Map, { MapRef, Marker, Popup } from 'react-map-gl';
 import ConfigService from '../../services/config.service';
-import { InventoryLocation } from '../../models/home.model';
-import { HomeResponsiveProps } from '../home.component';
-import HomeController from '../../controllers/home.controller';
+import { InventoryLocation } from '../../models/explore.model';
+import { ExploreResponsiveProps } from '../explore.component';
+import ExploreController from '../../controllers/explore.controller';
 import { ResponsiveTablet } from '../responsive.component';
 
-export default function HomeTabletComponent({
-  homeProps,
-  homeLocalProps,
+export default function ExploreTabletComponent({
+  exploreProps,
+  exploreLocalProps,
   mapRef,
   selectedPoint,
   setMapStyleLoaded,
   setSelectedPoint,
-}: HomeResponsiveProps): JSX.Element {
+}: ExploreResponsiveProps): JSX.Element {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -74,7 +74,7 @@ export default function HomeTabletComponent({
               ].join(' ')}
             >
               {t('utilizeSearchEngineDescription', {
-                product_count: homeProps.wineCount,
+                product_count: exploreProps.wineCount,
               })}
             </div>
             <div>
@@ -112,10 +112,10 @@ export default function HomeTabletComponent({
               zoom: 13,
             }}
             mapStyle={ConfigService.mapbox.style_url}
-            onMove={(e) => HomeController.onMapMove(e.viewState)}
+            onMove={(e) => ExploreController.onMapMove(e.viewState)}
             onLoad={(e) => setMapStyleLoaded(e.target ? true : false)}
           >
-            {homeProps.inventoryLocations?.map(
+            {exploreProps.inventoryLocations?.map(
               (point: InventoryLocation, index: number) => (
                 <Marker
                   key={`marker-${index}`}
@@ -129,7 +129,7 @@ export default function HomeTabletComponent({
                 >
                   <img
                     src={
-                      homeProps.selectedInventoryLocation?.placeName !==
+                      exploreProps.selectedInventoryLocation?.placeName !==
                       point.placeName
                         ? '../assets/images/unselected-cellar.png'
                         : '../assets/images/selected-cellar.png'
@@ -189,17 +189,17 @@ export default function HomeTabletComponent({
                         size={'tiny'}
                         disabled={
                           selectedPoint?.placeName ===
-                          homeProps.selectedInventoryLocation?.placeName
+                          exploreProps.selectedInventoryLocation?.placeName
                         }
                         type={'text'}
                         onClick={() =>
-                          HomeController.updateSelectedInventoryLocation(
+                          ExploreController.updateSelectedInventoryLocation(
                             selectedPoint
                           )
                         }
                       >
                         {selectedPoint?.placeName !==
-                        homeProps.selectedInventoryLocation?.placeName
+                        exploreProps.selectedInventoryLocation?.placeName
                           ? t('select')
                           : t('selected')}
                       </Button>

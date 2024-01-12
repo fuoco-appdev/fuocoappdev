@@ -30,8 +30,8 @@ import {
 import { RoutePathsType } from '../route-paths';
 import { LanguageInfo } from '@fuoco.appdev/core-ui';
 import { select } from '@ngneat/elf';
-import HomeController from './home.controller';
-import { HomeLocalState } from '../models/home.model';
+import ExploreController from './explore.controller';
+import { ExploreLocalState } from '../models/explore.model';
 import Cookies from 'js-cookie';
 import { ProductLikesMetadataResponse } from '../protobuf/core_pb';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';

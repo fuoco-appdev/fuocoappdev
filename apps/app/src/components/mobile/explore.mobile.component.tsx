@@ -6,7 +6,8 @@ import React, {
   useState,
 } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import styles from '../home.module.scss';
+import ExploreController from '../../controllers/explore.controller';
+import styles from '../explore.module.scss';
 import { Alert, Button } from '@fuoco.appdev/core-ui';
 import { RoutePathsType } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
@@ -14,69 +15,68 @@ import SupabaseService from '../../services/supabase.service';
 import { useObservable } from '@ngneat/use-observable';
 import { useSpring } from 'react-spring';
 import * as core from '../../protobuf/core_pb';
+import { Store } from '@ngneat/elf';
 import Map, { MapRef, Marker, Popup } from 'react-map-gl';
 import ConfigService from '../../services/config.service';
-import { InventoryLocation } from '../../models/home.model';
-import { HomeResponsiveProps } from '../home.component';
-import HomeController from '../../controllers/home.controller';
-import { HomeSuspenseDesktopComponent } from './suspense/home.suspense.desktop.component';
-import { ResponsiveDesktop } from '../responsive.component';
+import { InventoryLocation } from '../../models/explore.model';
+import { ExploreResponsiveProps } from '../explore.component';
+import { ExploreSuspenseMobileComponent } from './suspense/explore.suspense.mobile.component';
+import { ResponsiveMobile } from '../responsive.component';
 
-export default function HomeDesktopComponent({
-  homeProps,
-  homeLocalProps,
+export default function ExploreMobileComponent({
+  exploreProps,
+  exploreLocalProps,
   mapRef,
   selectedPoint,
   setMapStyleLoaded,
   setSelectedPoint,
-}: HomeResponsiveProps): JSX.Element {
+}: ExploreResponsiveProps): JSX.Element {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
   return (
-    <ResponsiveDesktop>
-      <div className={[styles['root'], styles['root-desktop']].join(' ')}>
+    <ResponsiveMobile>
+      <div className={[styles['root'], styles['root-mobile']].join(' ')}>
         <div
           className={[
             styles['content-container'],
-            styles['content-container-desktop'],
+            styles['content-container-mobile'],
           ].join(' ')}
         >
           <img
             src={'../assets/images/vineyard1.png'}
             className={[
               styles['background-image'],
-              styles['background-image-desktop'],
+              styles['background-image-mobile'],
             ].join(' ')}
           />
           <div
             className={[
               styles['background-filter'],
-              styles['background-filter-desktop'],
+              styles['background-filter-mobile'],
             ].join(' ')}
           />
           <div
-            className={[styles['content'], styles['content-desktop']].join(' ')}
+            className={[styles['content'], styles['content-mobile']].join(' ')}
           >
             <img
               src={'../assets/svg/logo.svg'}
-              className={[styles['logo'], styles['logo-desktop']].join(' ')}
+              className={[styles['logo'], styles['logo-mobile']].join(' ')}
             />
             <img
               src={'../assets/svg/logo-text.svg'}
-              className={[
-                styles['logo-text'],
-                styles['logo-text-desktop'],
-              ].join(' ')}
+              className={[styles['logo-text'], styles['logo-text-mobile']].join(
+                ' '
+              )}
             />
             <div
               className={[
                 styles['call-to-action-text'],
-                styles['call-to-action-text-desktop'],
+                styles['call-to-action-text-mobile'],
               ].join(' ')}
             >
               {t('utilizeSearchEngineDescription', {
-                product_count: homeProps.wineCount,
+                product_count: exploreProps.wineCount,
               })}
             </div>
             <div>
@@ -100,7 +100,7 @@ export default function HomeDesktopComponent({
         <div
           className={[
             styles['map-container'],
-            styles['map-container-desktop'],
+            styles['map-container-mobile'],
           ].join(' ')}
         >
           <Map
@@ -113,10 +113,10 @@ export default function HomeDesktopComponent({
               zoom: 13,
             }}
             mapStyle={ConfigService.mapbox.style_url}
-            onMove={(e) => HomeController.onMapMove(e.viewState)}
+            onMove={(e) => ExploreController.onMapMove(e.viewState)}
             onLoad={(e) => setMapStyleLoaded(e.target ? true : false)}
           >
-            {homeProps.inventoryLocations?.map(
+            {exploreProps.inventoryLocations?.map(
               (point: InventoryLocation, index: number) => (
                 <Marker
                   key={`marker-${index}`}
@@ -130,15 +130,14 @@ export default function HomeDesktopComponent({
                 >
                   <img
                     src={
-                      homeProps.selectedInventoryLocation?.placeName !==
+                      exploreProps.selectedInventoryLocation?.placeName !==
                       point.placeName
                         ? '../assets/images/unselected-cellar.png'
                         : '../assets/images/selected-cellar.png'
                     }
-                    className={[
-                      styles['marker'],
-                      styles['marker-desktop'],
-                    ].join(' ')}
+                    className={[styles['marker'], styles['marker-mobile']].join(
+                      ' '
+                    )}
                   />
                 </Marker>
               )
@@ -153,13 +152,13 @@ export default function HomeDesktopComponent({
                 <div
                   className={[
                     styles['marker-popup'],
-                    styles['marker-popup-desktop'],
+                    styles['marker-popup-mobile'],
                   ].join(' ')}
                 >
                   <div
                     className={[
                       styles['company'],
-                      styles['company-desktop'],
+                      styles['company-mobile'],
                     ].join(' ')}
                   >
                     {selectedPoint.company}
@@ -167,7 +166,7 @@ export default function HomeDesktopComponent({
                   <div
                     className={[
                       styles['address'],
-                      styles['address-desktop'],
+                      styles['address-mobile'],
                     ].join(' ')}
                   >
                     {selectedPoint.placeName}
@@ -175,7 +174,7 @@ export default function HomeDesktopComponent({
                   <div
                     className={[
                       styles['select-button-container'],
-                      styles['select-button-container-desktop'],
+                      styles['select-button-container-mobile'],
                     ].join(' ')}
                   >
                     <div>
@@ -190,17 +189,17 @@ export default function HomeDesktopComponent({
                         size={'tiny'}
                         disabled={
                           selectedPoint?.placeName ===
-                          homeProps.selectedInventoryLocation?.placeName
+                          exploreProps.selectedInventoryLocation?.placeName
                         }
                         type={'text'}
                         onClick={() =>
-                          HomeController.updateSelectedInventoryLocation(
+                          ExploreController.updateSelectedInventoryLocation(
                             selectedPoint
                           )
                         }
                       >
                         {selectedPoint?.placeName !==
-                        homeProps.selectedInventoryLocation?.placeName
+                        exploreProps.selectedInventoryLocation?.placeName
                           ? t('select')
                           : t('selected')}
                       </Button>
@@ -212,6 +211,6 @@ export default function HomeDesktopComponent({
           </Map>
         </div>
       </div>
-    </ResponsiveDesktop>
+    </ResponsiveMobile>
   );
 }

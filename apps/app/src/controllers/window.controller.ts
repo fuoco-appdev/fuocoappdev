@@ -14,8 +14,8 @@ import CartController from './cart.controller';
 import { Cart, CustomerGroup, Customer } from '@medusajs/medusa';
 import { select } from '@ngneat/elf';
 import BucketService from '../services/bucket.service';
-import HomeController from './home.controller';
-import { HomeState, InventoryLocation } from 'src/models/home.model';
+import ExploreController from './explore.controller';
+import { ExploreState, InventoryLocation } from 'src/models/explore.model';
 import AccountController from './account.controller';
 import { AccountState } from '../models/account.model';
 import MedusaService from '../services/medusa.service';
@@ -121,8 +121,8 @@ class WindowController extends Controller {
     }
 
     this._inventoryLocationsSubscription?.unsubscribe();
-    this._inventoryLocationsSubscription = HomeController.model.store
-      .pipe(select((model: HomeState) => model.inventoryLocations))
+    this._inventoryLocationsSubscription = ExploreController.model.store
+      .pipe(select((model: ExploreState) => model.inventoryLocations))
       .subscribe({
         next: (value: InventoryLocation[]) => {
           const inventoryLocation = value.find((location) => location.id == id);
@@ -137,10 +137,10 @@ class WindowController extends Controller {
   public updateOnLocationChanged(location: RouterLocation): void {
     this._model.prevTransitionKeyIndex = this._model.transitionKeyIndex;
 
-    if (location.pathname === RoutePathsType.Home) {
+    if (location.pathname === RoutePathsType.Explore) {
       this._model.transitionKeyIndex = 0;
       this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.Home;
+      this._model.activeRoute = RoutePathsType.Explore;
       this._model.showNavigateBack = false;
       this._model.hideCartButton = false;
     } else if (location.pathname === RoutePathsType.Store) {

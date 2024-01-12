@@ -20,11 +20,11 @@ import { lazy } from '@loadable/component';
 import { useQuery } from '../route-paths';
 import { WindowSuspenseDesktopComponent } from './desktop/suspense/window.suspense.desktop.component';
 import { WindowSuspenseMobileComponent } from './mobile/suspense/window.suspense.mobile.component';
-import HomeController from '../controllers/home.controller';
+import ExploreController from '../controllers/explore.controller';
 import { WindowSuspenseTabletComponent } from './tablet/suspense/window.suspense.tablet.component';
 import PermissionsController from '../controllers/permissions.controller';
 import { PermissionsState } from '../models/permissions.model';
-import { HomeState } from '../models/home.model';
+import { ExploreState } from '../models/explore.model';
 import { PriceList } from '@medusajs/medusa';
 import { Line } from '@fuoco.appdev/core-ui';
 import { AccountPublicState } from '../models/account-public.model';
@@ -45,7 +45,7 @@ export interface WindowResponsiveProps {
   accountPublicProps: AccountPublicState;
   accountProps: AccountState;
   permissionsProps: PermissionsState;
-  homeProps: HomeState;
+  exploreProps: ExploreState;
   openMore: boolean;
   isLanguageOpen: boolean;
   setOpenMore: (value: boolean) => void;
@@ -61,15 +61,15 @@ export default function WindowComponent(): JSX.Element {
   const query = useQuery();
   const navigate = useNavigate();
   const [windowProps] = useObservable(WindowController.model.store);
-  const [homeLocalProps] = useObservable(
-    HomeController.model.localStore ?? Store.prototype
+  const [exploreLocalProps] = useObservable(
+    ExploreController.model.localStore ?? Store.prototype
   );
   const [accountPublicProps] = useObservable(
     AccountPublicController.model.store
   );
   const [accountProps] = useObservable(AccountController.model.store);
   const [permissionsProps] = useObservable(PermissionsController.model.store);
-  const [homeProps] = useObservable(HomeController.model.store);
+  const [exploreProps] = useObservable(ExploreController.model.store);
   const isMounted = useRef<boolean>(false);
   const { i18n, t } = useTranslation();
   const [openMore, setOpenMore] = useState<boolean>(false);
@@ -84,7 +84,7 @@ export default function WindowComponent(): JSX.Element {
   };
 
   const onSelectLocation = () => {
-    HomeController.updateSelectedInventoryLocationId(
+    ExploreController.updateSelectedInventoryLocationId(
       windowProps.queryInventoryLocation.id
     );
     onCancelLocation();
@@ -140,7 +140,7 @@ export default function WindowComponent(): JSX.Element {
     const salesLocationId = query.get('sales_location');
     if (
       salesLocationId &&
-      salesLocationId !== homeLocalProps.selectedInventoryLocationId
+      salesLocationId !== exploreLocalProps.selectedInventoryLocationId
     ) {
       WindowController.updateQueryInventoryLocation(salesLocationId);
     }
@@ -180,7 +180,7 @@ export default function WindowComponent(): JSX.Element {
           WindowController.addBanner({
             key: `${priceList.id}-${Math.random()}`,
             title: priceList.name,
-            subtitle: homeProps.selectedInventoryLocation?.company,
+            subtitle: exploreProps.selectedInventoryLocation?.company,
             description: priceList.description,
             footerText:
               t('priceListEndsOn', {
@@ -238,7 +238,7 @@ export default function WindowComponent(): JSX.Element {
         accountPublicProps={accountPublicProps}
         accountProps={accountProps}
         permissionsProps={permissionsProps}
-        homeProps={homeProps}
+        exploreProps={exploreProps}
         openMore={openMore}
         isLanguageOpen={isLanguageOpen}
         setOpenMore={setOpenMore}
@@ -254,7 +254,7 @@ export default function WindowComponent(): JSX.Element {
         accountPublicProps={accountPublicProps}
         accountProps={accountProps}
         permissionsProps={permissionsProps}
-        homeProps={homeProps}
+        exploreProps={exploreProps}
         openMore={openMore}
         isLanguageOpen={isLanguageOpen}
         setOpenMore={setOpenMore}
@@ -270,7 +270,7 @@ export default function WindowComponent(): JSX.Element {
         accountPublicProps={accountPublicProps}
         accountProps={accountProps}
         permissionsProps={permissionsProps}
-        homeProps={homeProps}
+        exploreProps={exploreProps}
         openMore={openMore}
         isLanguageOpen={isLanguageOpen}
         setOpenMore={setOpenMore}

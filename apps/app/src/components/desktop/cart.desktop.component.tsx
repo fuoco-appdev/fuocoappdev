@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
 import { LineItem, ProductVariant, Discount, Cart } from '@medusajs/medusa';
 import CartItemComponent from '../cart-item.component';
-import HomeController from '../../controllers/home.controller';
+import ExploreController from '../../controllers/explore.controller';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
 import { CartResponsiveProps } from '../cart.component';
@@ -20,8 +20,8 @@ import { createPortal } from 'react-dom';
 
 export default function CartDesktopComponent({
   cartProps,
-  homeProps,
-  homeLocalProps,
+  exploreProps,
+  exploreLocalProps,
   storeProps,
   windowProps,
   salesChannelTabs,
@@ -128,9 +128,9 @@ export default function CartDesktopComponent({
                         tabSliderPill: styles['tab-slider-pill'],
                       }}
                       type={'pills'}
-                      activeId={homeLocalProps.selectedInventoryLocationId}
+                      activeId={exploreLocalProps.selectedInventoryLocationId}
                       onChange={(id: string) =>
-                        HomeController.updateSelectedInventoryLocationId(id)
+                        ExploreController.updateSelectedInventoryLocationId(id)
                       }
                       tabs={salesChannelTabs}
                     />
@@ -182,10 +182,10 @@ export default function CartDesktopComponent({
                         }}
                         size={'large'}
                         onClick={() =>
-                          setTimeout(() => navigate(RoutePathsType.Home), 75)
+                          setTimeout(() => navigate(RoutePathsType.Explore), 75)
                         }
                       >
-                        {t('home')}
+                        {t('explore')}
                       </Button>
                     </div>
                   </>
@@ -537,7 +537,7 @@ export default function CartDesktopComponent({
           title={t('foodRequirement') ?? ''}
           description={
             t('foodRequirementDescription', {
-              region: homeProps?.selectedInventoryLocation?.region,
+              region: exploreProps?.selectedInventoryLocation?.region,
             }) ?? ''
           }
           visible={isFoodRequirementOpen}

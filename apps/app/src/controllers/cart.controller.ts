@@ -17,8 +17,8 @@ import {
 import MedusaService from '../services/medusa.service';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import WindowController from './window.controller';
-import HomeController from './home.controller';
-import { InventoryLocation } from '../models/home.model';
+import ExploreController from './explore.controller';
+import { InventoryLocation } from '../models/explore.model';
 import { MedusaRegionMetadata } from '../types/medusa.type';
 import { MedusaProductTypeNames } from '../types/medusa.type';
 
@@ -74,7 +74,7 @@ class CartController extends Controller {
   }
 
   public async removeDiscountCodeAsync(code: string): Promise<void> {
-    const { selectedInventoryLocationId } = HomeController.model;
+    const { selectedInventoryLocationId } = ExploreController.model;
     const cartId = selectedInventoryLocationId
       ? this._model.cartIds[selectedInventoryLocationId]
       : undefined;
@@ -96,7 +96,7 @@ class CartController extends Controller {
   }
 
   public async updateCartAsync(payload: StorePostCartsCartReq): Promise<void> {
-    const { selectedInventoryLocationId } = HomeController.model;
+    const { selectedInventoryLocationId } = ExploreController.model;
     const cartId = selectedInventoryLocationId
       ? this._model.cartIds[selectedInventoryLocationId]
       : undefined;
@@ -120,7 +120,7 @@ class CartController extends Controller {
   public async completeCartAsync(): Promise<
     Cart | Order | Swap | null | undefined
   > {
-    const { selectedInventoryLocationId } = HomeController.model;
+    const { selectedInventoryLocationId } = ExploreController.model;
     const cartId = selectedInventoryLocationId
       ? this._model.cartIds[selectedInventoryLocationId]
       : undefined;
@@ -145,7 +145,7 @@ class CartController extends Controller {
       return;
     }
 
-    const { selectedInventoryLocation } = HomeController.model;
+    const { selectedInventoryLocation } = ExploreController.model;
     await this.createCartAsync(
       StoreController.model.selectedRegion.id,
       selectedInventoryLocation
@@ -266,7 +266,7 @@ class CartController extends Controller {
 
   private async initializeAsync(renderCount: number): Promise<void> {
     this._selectedInventoryLocationSubscription?.unsubscribe();
-    this._selectedInventoryLocationSubscription = HomeController.model.store
+    this._selectedInventoryLocationSubscription = ExploreController.model.store
       .pipe(select((model) => model.selectedInventoryLocation))
       .subscribe({
         next: this.onSelectedInventoryLocationChangedAsync,

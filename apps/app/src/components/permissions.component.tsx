@@ -9,19 +9,16 @@ import {
 } from './responsive.component';
 import { MapRef } from 'react-map-gl';
 import {
-  HomeLocalState,
-  HomeState,
+  ExploreLocalState,
+  ExploreState,
   InventoryLocation,
-} from '../models/home.model';
+} from '../models/explore.model';
 import { Helmet } from 'react-helmet';
 import { useObservable } from '@ngneat/use-observable';
-import HomeController from '../controllers/home.controller';
+import ExploreController from '../controllers/explore.controller';
 import { Store } from '@ngneat/elf';
-import { HomeSuspenseDesktopComponent } from './desktop/suspense/home.suspense.desktop.component';
-import { HomeSuspenseMobileComponent } from './mobile/suspense/home.suspense.mobile.component';
 import React from 'react';
 import { lazy } from '@loadable/component';
-import { HomeSuspenseTabletComponent } from './tablet/suspense/home.suspense.tablet.component';
 import { PermissionsState } from '../models/permissions.model';
 import PermissionsController from '../controllers/permissions.controller';
 import { WindowState } from '../models/window.model';
@@ -62,16 +59,16 @@ export default function PermissionsComponent(): JSX.Element {
 
   const onContinueAsync = async () => {
     if (windowProps.loadedLocationPath !== RoutePathsType.Permissions) {
-      navigate(windowProps.loadedLocationPath ?? RoutePathsType.Home);
+      navigate(windowProps.loadedLocationPath ?? RoutePathsType.Explore);
     } else {
-      navigate(RoutePathsType.Home);
+      navigate(RoutePathsType.Explore);
     }
   };
 
   const updateDefaultInventoryLocationAsync = async () => {
-    if (!HomeController.model.selectedInventoryLocation) {
+    if (!ExploreController.model.selectedInventoryLocation) {
       const defaultInventoryLocation =
-        await HomeController.getDefaultInventoryLocationAsync();
+        await ExploreController.getDefaultInventoryLocationAsync();
       WindowController.updateQueryInventoryLocation(
         defaultInventoryLocation?.id
       );

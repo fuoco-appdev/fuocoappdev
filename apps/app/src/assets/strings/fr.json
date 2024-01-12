@@ -246,7 +246,7 @@
   "cvc": "CVC",
   "utilizeSearchEngineDescription": "Utilisez un moteur de recherche intégré pour explorer un large éventail de sélections {{product_count, string}}.",
   "menu": "Menu",
-  "home": "Accueil",
+  "explore": "Explorer",
   "store": "Magasin",
   "confirm": "Confirmer",
   "remove": "Supprimer",

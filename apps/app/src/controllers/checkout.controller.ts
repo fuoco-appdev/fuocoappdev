@@ -26,7 +26,7 @@ import {
 } from '@stripe/stripe-js';
 import SupabaseService from '../services/supabase.service';
 import { AuthChangeEvent, Session } from '@supabase/supabase-js';
-import HomeController from './home.controller';
+import ExploreController from './explore.controller';
 
 class CheckoutController extends Controller {
   private readonly _model: CheckoutModel;
@@ -141,7 +141,7 @@ class CheckoutController extends Controller {
   public async updateSelectedShippingOptionIdAsync(
     value: string
   ): Promise<void> {
-    const { selectedInventoryLocationId } = HomeController.model;
+    const { selectedInventoryLocationId } = ExploreController.model;
     const cartId = selectedInventoryLocationId
       ? CartController.model.cartIds[selectedInventoryLocationId]
       : undefined;
@@ -211,7 +211,7 @@ class CheckoutController extends Controller {
   public async updateSelectedProviderIdAsync(
     value: ProviderType
   ): Promise<void> {
-    const { selectedInventoryLocationId } = HomeController.model;
+    const { selectedInventoryLocationId } = ExploreController.model;
     const cartId = selectedInventoryLocationId
       ? CartController.model.cartIds[selectedInventoryLocationId]
       : undefined;
@@ -242,7 +242,7 @@ class CheckoutController extends Controller {
   }
 
   public async continueToDeliveryAsync(): Promise<void> {
-    const { selectedInventoryLocationId } = HomeController.model;
+    const { selectedInventoryLocationId } = ExploreController.model;
     const cartId = selectedInventoryLocationId
       ? CartController.model.cartIds[selectedInventoryLocationId]
       : undefined;

@@ -5,7 +5,7 @@ import {
 } from './responsive.component';
 import AccountController from '../controllers/account.controller';
 import WindowController from '../controllers/window.controller';
-import HomeController from '../controllers/home.controller';
+import ExploreController from '../controllers/explore.controller';
 import StoreController from '../controllers/store.controller';
 import ProductController from '../controllers/product.controller';
 import { useTranslation } from 'react-i18next';
@@ -19,7 +19,7 @@ import { AccountLikesSuspenseMobileComponent } from './mobile/suspense/account-l
 import { AccountState } from '../models/account.model';
 import { AccountLikesSuspenseTabletComponent } from './tablet/suspense/account-likes.suspense.tablet.component';
 import { Store } from '@ngneat/elf';
-import { HomeLocalState } from '../models/home.model';
+import { ExploreLocalState } from '../models/explore.model';
 import {
   PricedVariant,
   PricedProduct,

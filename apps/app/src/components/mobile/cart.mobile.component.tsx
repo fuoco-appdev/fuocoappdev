@@ -20,7 +20,7 @@ import StoreController from '../../controllers/store.controller';
 import { formatAmount } from 'medusa-react';
 import WindowController from '../../controllers/window.controller';
 import { CartResponsiveProps } from '../cart.component';
-import HomeController from '../../controllers/home.controller';
+import ExploreController from '../../controllers/explore.controller';
 import { Store } from '@ngneat/elf';
 import { ResponsiveMobile } from '../responsive.component';
 import CartVariantItemComponent from '../cart-variant-item.component';
@@ -29,8 +29,8 @@ import { createPortal } from 'react-dom';
 
 export default function CartMobileComponent({
   cartProps,
-  homeProps,
-  homeLocalProps,
+  exploreProps,
+  exploreLocalProps,
   storeProps,
   windowProps,
   salesChannelTabs,
@@ -129,9 +129,9 @@ export default function CartMobileComponent({
                     tabSliderPill: styles['tab-slider-pill'],
                   }}
                   type={'pills'}
-                  activeId={homeLocalProps.selectedInventoryLocationId}
+                  activeId={exploreLocalProps.selectedInventoryLocationId}
                   onChange={(id: string) =>
-                    HomeController.updateSelectedInventoryLocationId(id)
+                    ExploreController.updateSelectedInventoryLocationId(id)
                   }
                   tabs={salesChannelTabs}
                 />
@@ -181,10 +181,10 @@ export default function CartMobileComponent({
                     size={'large'}
                     touchScreen={true}
                     onClick={() =>
-                      setTimeout(() => navigate(RoutePathsType.Home), 75)
+                      setTimeout(() => navigate(RoutePathsType.Explore), 75)
                     }
                   >
-                    {t('home')}
+                    {t('explore')}
                   </Button>
                 </div>
               </>
@@ -517,7 +517,7 @@ export default function CartMobileComponent({
             ].join(' ')}
           >
             {t('foodRequirementDescription', {
-              region: homeProps?.selectedInventoryLocation?.region,
+              region: exploreProps?.selectedInventoryLocation?.region,
             }) ?? ''}
           </div>
           <div

@@ -32,7 +32,7 @@ export default function WindowMobileComponent({
   accountProps,
   accountPublicProps,
   permissionsProps,
-  homeProps,
+  exploreProps,
   openMore,
   isLanguageOpen,
   setOpenMore,
@@ -266,7 +266,8 @@ export default function WindowMobileComponent({
                             }}
                             size={'custom'}
                             text={
-                              homeProps.selectedInventoryLocation?.company ?? ''
+                              exploreProps.selectedInventoryLocation?.company ??
+                              ''
                             }
                             src={''}
                             touchScreen={true}
@@ -276,7 +277,8 @@ export default function WindowMobileComponent({
                               ' '
                             )}
                           >
-                            {homeProps.selectedInventoryLocation?.company ?? ''}
+                            {exploreProps.selectedInventoryLocation?.company ??
+                              ''}
                           </div>
                         </>
                       )}
@@ -428,7 +430,7 @@ export default function WindowMobileComponent({
                         rippleProps={{
                           color: 'rgba(252, 245, 227, .35)',
                         }}
-                        onClick={() => navigate(RoutePathsType.Home)}
+                        onClick={() => navigate(RoutePathsType.Explore)}
                         disabled={
                           windowProps.activeRoute === RoutePathsType.Cart
                         }
@@ -437,14 +439,14 @@ export default function WindowMobileComponent({
                         size={'tiny'}
                         touchScreen={true}
                         icon={
-                          windowProps.activeRoute === RoutePathsType.Home ||
+                          windowProps.activeRoute === RoutePathsType.Explore ||
                           windowProps.activeRoute === RoutePathsType.Default ? (
-                            <Solid.Home
+                            <Solid.Explore
                               size={24}
                               color={'rgba(252, 245, 227, 1)'}
                             />
                           ) : (
-                            <Line.Home
+                            <Line.Explore
                               size={24}
                               color={'rgba(252, 245, 227, .6)'}
                             />

@@ -1,11 +1,11 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import * as React from 'react';
 import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
-import styles from '../../home.module.scss';
+import styles from '../../explore.module.scss';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { ResponsiveSuspenseMobile } from 'src/components/responsive.component';
 
-export function HomeSuspenseMobileComponent(): JSX.Element {
+export function ExploreSuspenseMobileComponent(): JSX.Element {
   return (
     <ResponsiveSuspenseMobile>
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>

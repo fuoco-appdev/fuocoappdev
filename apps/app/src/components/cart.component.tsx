@@ -8,15 +8,15 @@ import { TabProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/tabs/tab
 import StoreController from '../controllers/store.controller';
 import { useObservable } from '@ngneat/use-observable';
 import CartController from '../controllers/cart.controller';
-import HomeController from '../controllers/home.controller';
+import ExploreController from '../controllers/explore.controller';
 import WindowController from '../controllers/window.controller';
 import ProductController from '../controllers/product.controller';
 import { Store } from '@ngneat/elf';
 import {
-  HomeLocalState,
-  HomeState,
+  ExploreLocalState,
+  ExploreState,
   InventoryLocation,
-} from '../models/home.model';
+} from '../models/explore.model';
 import { Helmet } from 'react-helmet';
 import { CartState } from '../models/cart.model';
 import { StoreState } from '../models/store.model';
@@ -46,10 +46,10 @@ const CartMobileComponent = lazy(
 
 export interface CartResponsiveProps {
   cartProps: CartState;
-  homeProps: HomeState;
+  exploreProps: ExploreState;
   storeProps: StoreState;
   windowProps: WindowState;
-  homeLocalProps: HomeLocalState;
+  exploreLocalProps: ExploreLocalState;
   salesChannelTabs: TabProps[];
   isFoodRequirementOpen: boolean;
   foodVariantQuantities: Record<string, number>;
@@ -62,14 +62,14 @@ export interface CartResponsiveProps {
 export default function CartComponent(): JSX.Element {
   const navigate = useNavigate();
   const [cartProps] = useObservable(CartController.model.store);
-  const [homeProps] = useObservable(HomeController.model.store);
+  const [exploreProps] = useObservable(ExploreController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
   const [windowProps] = useObservable(WindowController.model.store);
   const [cartLocalProps] = useObservable(
     CartController.model.localStore ?? Store.prototype
   );
-  const [homeLocalProps] = useObservable(
-    HomeController.model.localStore ?? Store.prototype
+  const [exploreLocalProps] = useObservable(
+    ExploreController.model.localStore ?? Store.prototype
   );
   const [salesChannelTabs, setSalesChannelTabs] = useState<TabProps[]>([]);
   const [isFoodRequirementOpen, setIsFoodRequirementOpen] =
@@ -104,7 +104,7 @@ export default function CartComponent(): JSX.Element {
 
   useEffect(() => {
     const tabProps: TabProps[] = [];
-    const locations = homeProps.inventoryLocations as InventoryLocation[];
+    const locations = exploreProps.inventoryLocations as InventoryLocation[];
     for (const key in cartLocalProps.cartIds) {
       if (!key.startsWith('sloc_')) {
         continue;
@@ -116,7 +116,7 @@ export default function CartComponent(): JSX.Element {
     }
 
     setSalesChannelTabs(tabProps);
-  }, [cartLocalProps.cartIds, homeProps.inventoryLocations]);
+  }, [cartLocalProps.cartIds, exploreProps.inventoryLocations]);
 
   useEffect(() => {
     const quantities: Record<string, number> = {};
@@ -175,10 +175,10 @@ export default function CartComponent(): JSX.Element {
       <React.Suspense fallback={suspenceComponent}>
         <CartDesktopComponent
           cartProps={cartProps}
-          homeProps={homeProps}
+          exploreProps={exploreProps}
           storeProps={storeProps}
           windowProps={windowProps}
-          homeLocalProps={homeLocalProps}
+          exploreLocalProps={exploreLocalProps}
           salesChannelTabs={salesChannelTabs}
           foodVariantQuantities={foodVariantQuantities}
           setFoodVariantQuantities={setFoodVariantQuantities}
@@ -189,10 +189,10 @@ export default function CartComponent(): JSX.Element {
         />
         <CartTabletComponent
           cartProps={cartProps}
-          homeProps={homeProps}
+          exploreProps={exploreProps}
           storeProps={storeProps}
           windowProps={windowProps}
-          homeLocalProps={homeLocalProps}
+          exploreLocalProps={exploreLocalProps}
           salesChannelTabs={salesChannelTabs}
           foodVariantQuantities={foodVariantQuantities}
           setFoodVariantQuantities={setFoodVariantQuantities}
@@ -203,10 +203,10 @@ export default function CartComponent(): JSX.Element {
         />
         <CartMobileComponent
           cartProps={cartProps}
-          homeProps={homeProps}
+          exploreProps={exploreProps}
           storeProps={storeProps}
           windowProps={windowProps}
-          homeLocalProps={homeLocalProps}
+          exploreLocalProps={exploreLocalProps}
           salesChannelTabs={salesChannelTabs}
           foodVariantQuantities={foodVariantQuantities}
           setFoodVariantQuantities={setFoodVariantQuantities}

@@ -30,8 +30,8 @@ import { ProductTabs } from '../../models/store.model';
 import { Country, Region, Product, SalesChannel } from '@medusajs/medusa';
 import ProductPreviewComponent from '../product-preview.component';
 import ReactCountryFlag from 'react-country-flag';
-import HomeController from '../../controllers/home.controller';
-import { InventoryLocation } from '../../models/home.model';
+import ExploreController from '../../controllers/explore.controller';
+import { InventoryLocation } from '../../models/explore.model';
 import { StoreResponsiveProps } from '../store.component';
 import {
   PricedProduct,
@@ -47,8 +47,8 @@ export default function StoreMobileComponent({
   windowProps,
   storeProps,
   accountProps,
-  homeProps,
-  homeLocalProps,
+  exploreProps,
+  exploreLocalProps,
   openFilter,
   openCartVariants,
   countryOptions,
@@ -252,13 +252,13 @@ export default function StoreMobileComponent({
             className={styles['loading-ring']}
             style={{
               display:
-                homeLocalProps.selectedInventoryLocationId &&
+                exploreLocalProps.selectedInventoryLocationId &&
                 (storeProps.hasMorePreviews || storeProps.isLoading)
                   ? 'flex'
                   : 'none',
             }}
           />
-          {!homeLocalProps.selectedInventoryLocationId && (
+          {!exploreLocalProps.selectedInventoryLocationId && (
             <div
               className={[
                 styles['no-inventory-location-container'],
@@ -288,10 +288,10 @@ export default function StoreMobileComponent({
                   }}
                   size={'large'}
                   onClick={() =>
-                    setTimeout(() => navigate(RoutePathsType.Home), 75)
+                    setTimeout(() => navigate(RoutePathsType.Explore), 75)
                   }
                 >
-                  {t('home')}
+                  {t('explore')}
                 </Button>
               </div>
             </div>

@@ -37,12 +37,12 @@ import { ProductTabs, StoreState } from '../models/store.model';
 import { Country, Region, Product, SalesChannel } from '@medusajs/medusa';
 import ProductPreviewComponent from './product-preview.component';
 import ReactCountryFlag from 'react-country-flag';
-import HomeController from '../controllers/home.controller';
+import ExploreController from '../controllers/explore.controller';
 import {
-  HomeLocalState,
-  HomeState,
+  ExploreLocalState,
+  ExploreState,
   InventoryLocation,
-} from '../models/home.model';
+} from '../models/explore.model';
 import { center } from '@turf/turf';
 import { Helmet } from 'react-helmet';
 import ReactDOM from 'react-dom';
@@ -76,9 +76,9 @@ const StoreMobileComponent = lazy(
 export interface StoreResponsiveProps {
   windowProps: WindowState;
   storeProps: StoreState;
-  homeProps: HomeState;
+  exploreProps: ExploreState;
   accountProps: AccountState;
-  homeLocalProps: HomeLocalState;
+  exploreLocalProps: ExploreLocalState;
   openFilter: boolean;
   openCartVariants: boolean;
   countryOptions: OptionProps[];
@@ -117,10 +117,10 @@ export default function StoreComponent(): JSX.Element {
   const navigate = useNavigate();
   const [windowProps] = useObservable(WindowController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
-  const [homeProps] = useObservable(HomeController.model.store);
+  const [exploreProps] = useObservable(ExploreController.model.store);
   const [accountProps] = useObservable(AccountController.model.store);
-  const [homeLocalProps] = useObservable(
-    HomeController.model.localStore ?? Store.prototype
+  const [exploreLocalProps] = useObservable(
+    ExploreController.model.localStore ?? Store.prototype
   );
   const [openFilter, setOpenFilter] = useState<boolean>(false);
   const [openCartVariants, setOpenCartVariants] = useState<boolean>(false);
@@ -255,14 +255,14 @@ export default function StoreComponent(): JSX.Element {
 
   useEffect(() => {
     if (
-      !homeProps.inventoryLocations ||
+      !exploreProps.inventoryLocations ||
       !storeProps.selectedRegion ||
-      !homeProps.selectedInventoryLocation
+      !exploreProps.selectedInventoryLocation
     ) {
       return;
     }
 
-    const inventoryLocationsInRegion = homeProps.inventoryLocations?.filter(
+    const inventoryLocationsInRegion = exploreProps.inventoryLocations?.filter(
       (value: InventoryLocation) =>
         value.region === storeProps.selectedRegion.name
     );
@@ -281,15 +281,15 @@ export default function StoreComponent(): JSX.Element {
     }
 
     setCellarOptions(cellars);
-  }, [homeProps.inventoryLocations, storeProps.selectedRegion]);
+  }, [exploreProps.inventoryLocations, storeProps.selectedRegion]);
 
   useEffect(() => {
     if (cellarOptions.length <= 0) {
       return;
     }
 
-    setSelectedCellarId(homeLocalProps.selectedInventoryLocationId);
-  }, [homeLocalProps.selectedInventoryLocationId, cellarOptions]);
+    setSelectedCellarId(exploreLocalProps.selectedInventoryLocationId);
+  }, [exploreLocalProps.selectedInventoryLocationId, cellarOptions]);
 
   useEffect(() => {
     if (!storeProps.selectedRegion || countryOptions.length <= 0) {
@@ -414,9 +414,9 @@ export default function StoreComponent(): JSX.Element {
         <StoreDesktopComponent
           windowProps={windowProps}
           storeProps={storeProps}
-          homeProps={homeProps}
+          exploreProps={exploreProps}
           accountProps={accountProps}
-          homeLocalProps={homeLocalProps}
+          exploreLocalProps={exploreLocalProps}
           openFilter={openFilter}
           openCartVariants={openCartVariants}
           countryOptions={countryOptions}
@@ -444,8 +444,8 @@ export default function StoreComponent(): JSX.Element {
           windowProps={windowProps}
           storeProps={storeProps}
           accountProps={accountProps}
-          homeProps={homeProps}
-          homeLocalProps={homeLocalProps}
+          exploreProps={exploreProps}
+          exploreLocalProps={exploreLocalProps}
           openFilter={openFilter}
           openCartVariants={openCartVariants}
           countryOptions={countryOptions}
@@ -473,8 +473,8 @@ export default function StoreComponent(): JSX.Element {
           windowProps={windowProps}
           storeProps={storeProps}
           accountProps={accountProps}
-          homeProps={homeProps}
-          homeLocalProps={homeLocalProps}
+          exploreProps={exploreProps}
+          exploreLocalProps={exploreLocalProps}
           openFilter={openFilter}
           openCartVariants={openCartVariants}
           countryOptions={countryOptions}

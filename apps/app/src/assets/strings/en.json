@@ -246,7 +246,7 @@
   "cvc": "CVC",
   "utilizeSearchEngineDescription": "Utilize an integrated search engine to explore a wide array of {{product_count, string}} selections.",
   "menu": "Menu",
-  "home": "Home",
+  "explore": "Explore",
   "store": "Store",
   "confirm": "Confirm",
   "remove": "Remove",

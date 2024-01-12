@@ -9,44 +9,44 @@ import {
 } from './responsive.component';
 import { MapRef } from 'react-map-gl';
 import {
-  HomeLocalState,
-  HomeState,
+  ExploreLocalState,
+  ExploreState,
   InventoryLocation,
-} from '../models/home.model';
+} from '../models/explore.model';
 import { Helmet } from 'react-helmet';
 import { useObservable } from '@ngneat/use-observable';
-import HomeController from '../controllers/home.controller';
+import ExploreController from '../controllers/explore.controller';
 import { Store } from '@ngneat/elf';
-import { HomeSuspenseDesktopComponent } from './desktop/suspense/home.suspense.desktop.component';
-import { HomeSuspenseMobileComponent } from './mobile/suspense/home.suspense.mobile.component';
+import { ExploreSuspenseDesktopComponent } from './desktop/suspense/explore.suspense.desktop.component';
+import { ExploreSuspenseMobileComponent } from './mobile/suspense/explore.suspense.mobile.component';
 import React from 'react';
 import { lazy } from '@loadable/component';
-import { HomeSuspenseTabletComponent } from './tablet/suspense/home.suspense.tablet.component';
+import { ExploreSuspenseTabletComponent } from './tablet/suspense/explore.suspense.tablet.component';
 
-const HomeDesktopComponent = lazy(
-  () => import('./desktop/home.desktop.component')
+const ExploreDesktopComponent = lazy(
+  () => import('./desktop/explore.desktop.component')
 );
-const HomeTabletComponent = lazy(
-  () => import('./tablet/home.tablet.component')
+const ExploreTabletComponent = lazy(
+  () => import('./tablet/explore.tablet.component')
 );
-const HomeMobileComponent = lazy(
-  () => import('./mobile/home.mobile.component')
+const ExploreMobileComponent = lazy(
+  () => import('./mobile/explore.mobile.component')
 );
 
-export interface HomeResponsiveProps {
-  homeProps: HomeState;
-  homeLocalProps: HomeLocalState;
+export interface ExploreResponsiveProps {
+  exploreProps: ExploreState;
+  exploreLocalProps: ExploreLocalState;
   mapRef: React.Ref<MapRef> | undefined;
   selectedPoint: InventoryLocation | null;
   setMapStyleLoaded: (value: boolean) => void;
   setSelectedPoint: (value: InventoryLocation | null) => void;
 }
 
-export default function HomeComponent(): JSX.Element {
+export default function ExploreComponent(): JSX.Element {
   const navigate = useNavigate();
-  const [homeProps] = useObservable(HomeController.model.store);
-  const [homeLocalProps] = useObservable(
-    HomeController.model.localStore ?? Store.prototype
+  const [exploreProps] = useObservable(ExploreController.model.store);
+  const [exploreLocalProps] = useObservable(
+    ExploreController.model.localStore ?? Store.prototype
   );
   const [mapStyleLoaded, setMapStyleLoaded] = useState<boolean>(false);
   const [selectedPoint, setSelectedPoint] = useState<InventoryLocation | null>(
@@ -62,7 +62,7 @@ export default function HomeComponent(): JSX.Element {
     }
 
     if (location.pathname === RoutePathsType.Default) {
-      navigate(RoutePathsType.Home);
+      navigate(RoutePathsType.Explore);
     }
   }, [location.pathname]);
 
@@ -88,9 +88,9 @@ export default function HomeComponent(): JSX.Element {
 
   const suspenceComponent = (
     <>
-      <HomeSuspenseDesktopComponent />
-      <HomeSuspenseTabletComponent />
-      <HomeSuspenseMobileComponent />
+      <ExploreSuspenseDesktopComponent />
+      <ExploreSuspenseTabletComponent />
+      <ExploreSuspenseMobileComponent />
     </>
   );
 
@@ -101,9 +101,9 @@ export default function HomeComponent(): JSX.Element {
   return (
     <>
       <Helmet>
-        <title>Home | Cruthology</title>
+        <title>Explore | Cruthology</title>
         <link rel="canonical" href={window.location.href} />
-        <meta name="title" content={'Home | Cruthology'} />
+        <meta name="title" content={'Explore | Cruthology'} />
         <meta
           name="description"
           content={
@@ -114,7 +114,7 @@ export default function HomeComponent(): JSX.Element {
           property="og:image"
           content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
         />
-        <meta property="og:title" content={'Home | Cruthology'} />
+        <meta property="og:title" content={'Explore | Cruthology'} />
         <meta
           property="og:description"
           content={
@@ -127,25 +127,25 @@ export default function HomeComponent(): JSX.Element {
         <meta property="og:url" content={window.location.href} />
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
-        <HomeDesktopComponent
-          homeProps={homeProps}
-          homeLocalProps={homeLocalProps}
+        <ExploreDesktopComponent
+          exploreProps={exploreProps}
+          exploreLocalProps={exploreLocalProps}
           mapRef={mapRef}
           selectedPoint={selectedPoint}
           setMapStyleLoaded={setMapStyleLoaded}
           setSelectedPoint={setSelectedPoint}
         />
-        <HomeTabletComponent
-          homeProps={homeProps}
-          homeLocalProps={homeLocalProps}
+        <ExploreTabletComponent
+          exploreProps={exploreProps}
+          exploreLocalProps={exploreLocalProps}
           mapRef={mapRef}
           selectedPoint={selectedPoint}
           setMapStyleLoaded={setMapStyleLoaded}
           setSelectedPoint={setSelectedPoint}
         />
-        <HomeMobileComponent
-          homeProps={homeProps}
-          homeLocalProps={homeLocalProps}
+        <ExploreMobileComponent
+          exploreProps={exploreProps}
+          exploreLocalProps={exploreLocalProps}
           mapRef={mapRef}
           selectedPoint={selectedPoint}
           setMapStyleLoaded={setMapStyleLoaded}

@@ -40,7 +40,7 @@ export default function WindowTabletComponent({
   accountProps,
   accountPublicProps,
   permissionsProps,
-  homeProps,
+  exploreProps,
   openMore,
   isLanguageOpen,
   setOpenMore,
@@ -420,14 +420,14 @@ export default function WindowTabletComponent({
                 }}
                 tabs={[
                   {
-                    id: RoutePathsType.Home,
+                    id: RoutePathsType.Explore,
                     icon:
-                      windowProps.activeRoute === RoutePathsType.Home ? (
-                        <Solid.Home size={24} />
+                      windowProps.activeRoute === RoutePathsType.Explore ? (
+                        <Solid.Explore size={24} />
                       ) : (
-                        <Line.Home size={24} />
+                        <Line.Explore size={24} />
                       ),
-                    label: isSideBarOpen ? t('home') ?? '' : undefined,
+                    label: isSideBarOpen ? t('explore') ?? '' : undefined,
                   },
                   {
                     id: RoutePathsType.Store,
@@ -557,14 +557,14 @@ export default function WindowTabletComponent({
                         }}
                         size={'custom'}
                         text={
-                          homeProps.selectedInventoryLocation?.company ?? ''
+                          exploreProps.selectedInventoryLocation?.company ?? ''
                         }
                         src={''}
                       />
                       <div
                         className={[styles['navigation-back-title']].join(' ')}
                       >
-                        {homeProps.selectedInventoryLocation?.company ?? ''}
+                        {exploreProps.selectedInventoryLocation?.company ?? ''}
                       </div>
                     </>
                   )}

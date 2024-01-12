@@ -6,7 +6,7 @@ import {
 import AccountController from '../controllers/account.controller';
 import AccountPublicController from '../controllers/account-public.controller';
 import WindowController from '../controllers/window.controller';
-import HomeController from '../controllers/home.controller';
+import ExploreController from '../controllers/explore.controller';
 import StoreController from '../controllers/store.controller';
 import ProductController from '../controllers/product.controller';
 import { useTranslation } from 'react-i18next';
@@ -17,7 +17,7 @@ import { lazy } from '@loadable/component';
 import React, { useEffect, useState } from 'react';
 import { AccountState } from '../models/account.model';
 import { Store } from '@ngneat/elf';
-import { HomeLocalState } from '../models/home.model';
+import { ExploreLocalState } from '../models/explore.model';
 import {
   PricedVariant,
   PricedProduct,

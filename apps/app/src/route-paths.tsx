@@ -1,6 +1,6 @@
 import { RouteObject, useLocation } from 'react-router-dom';
 import AppComponent from './components/app.component';
-import HomeComponent from './components/home.component';
+import HomeComponent from './components/explore.component';
 import SigninComponent from './components/signin.component';
 import SignupComponent from './components/signup.component';
 import ForgotPasswordComponent from './components/forgot-password.component';
@@ -34,7 +34,7 @@ import AccountPublicFollowingComponent from './components/account-public-followi
 
 export enum RoutePathsType {
   Default = '/',
-  Home = '/home',
+  Explore = '/explore',
   Signin = '/signin',
   Signup = '/signup',
   ForgotPassword = '/forgot-password',
@@ -78,7 +78,7 @@ export const getRoutePaths = (): RouteObject[] => [
         element: <HomeComponent />,
       },
       {
-        path: RoutePathsType.Home,
+        path: RoutePathsType.Explore,
         element: <HomeComponent />,
       },
       {

@@ -7,7 +7,7 @@ import WindowController from '../controllers/window.controller';
 import SigninController from '../controllers/signin.controller';
 import SignupController from '../controllers/signup.controller';
 import ForgotPasswordController from './forgot-password.controller';
-import HomeController from '../controllers/home.controller';
+import ExploreController from './explore.controller';
 import StoreController from '../controllers/store.controller';
 import EventsController from '../controllers/events.controller';
 import CartController from '../controllers/cart.controller';
@@ -49,7 +49,7 @@ class AppController extends Controller {
     AccountPublicController.dispose(renderCount);
     AccountController.dispose(renderCount);
     LoadingController.dispose(renderCount);
-    HomeController.dispose(renderCount);
+    ExploreController.dispose(renderCount);
     StoreController.dispose(renderCount);
     EventsController.dispose(renderCount);
     CartController.dispose(renderCount);
@@ -76,7 +76,7 @@ class AppController extends Controller {
     HelpController.initialize(renderCount);
     AccountPublicController.initialize(renderCount);
     AccountController.initialize(renderCount);
-    HomeController.initialize(renderCount);
+    ExploreController.initialize(renderCount);
     StoreController.initialize(renderCount);
     EventsController.initialize(renderCount);
     CartController.initialize(renderCount);

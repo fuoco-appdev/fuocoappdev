@@ -4,7 +4,7 @@ import { Model } from '../model';
 import { RoutePathsType } from '../route-paths';
 import * as core from '../protobuf/core_pb';
 import { ToastProps, LanguageInfo, BannerProps } from '@fuoco.appdev/core-ui';
-import { InventoryLocation } from './home.model';
+import { InventoryLocation } from './explore.model';
 import { PriceList } from '@medusajs/medusa';
 
 export interface WindowState {

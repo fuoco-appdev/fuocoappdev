@@ -4,9 +4,9 @@ import { Controller } from '../controller';
 import { StoreModel, ProductTabs } from '../models/store.model';
 import MeiliSearchService from '../services/meilisearch.service';
 import { Subscription, filter, firstValueFrom, take } from 'rxjs';
-import HomeController from './home.controller';
+import ExploreController from './explore.controller';
 import { select } from '@ngneat/elf';
-import { InventoryLocation } from '../models/home.model';
+import { InventoryLocation } from '../models/explore.model';
 import MedusaService from '../services/medusa.service';
 import CartController from '../controllers/cart.controller';
 import {
@@ -259,11 +259,11 @@ class StoreController extends Controller {
     const region = this._model.regions.find((value) => value.id === regionId);
     this.updateRegion(region);
 
-    const inventoryLocation = HomeController.model.inventoryLocations.find(
+    const inventoryLocation = ExploreController.model.inventoryLocations.find(
       (value) => value.id === cellarId
     );
     if (inventoryLocation) {
-      HomeController.updateSelectedInventoryLocation(inventoryLocation);
+      ExploreController.updateSelectedInventoryLocation(inventoryLocation);
     }
   }
 
@@ -323,7 +323,7 @@ class StoreController extends Controller {
       });
 
     this._selectedInventoryLocationSubscription?.unsubscribe();
-    this._selectedInventoryLocationSubscription = HomeController.model.store
+    this._selectedInventoryLocationSubscription = ExploreController.model.store
       .pipe(select((model) => model.selectedInventoryLocation))
       .subscribe({
         next: this.onSelectedInventoryLocationChangedAsync,

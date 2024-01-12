@@ -12,22 +12,22 @@ export interface InventoryLocation {
   salesChannels: Partial<SalesChannel>[];
 }
 
-export interface HomeState {
+export interface ExploreState {
   inventoryLocations: InventoryLocation[];
   selectedInventoryLocation: InventoryLocation | undefined;
   wineCount: number;
 }
 
-export interface HomeLocalState {
+export interface ExploreLocalState {
   selectedInventoryLocationId: string | undefined;
 }
 
-export class HomeModel extends Model {
+export class ExploreModel extends Model {
   constructor() {
     super(
       createStore(
-        { name: 'home' },
-        withProps<HomeState>({
+        { name: 'explore' },
+        withProps<ExploreState>({
           inventoryLocations: [],
           selectedInventoryLocation: undefined,
           wineCount: 0,
@@ -35,8 +35,8 @@ export class HomeModel extends Model {
       ),
       undefined,
       createStore(
-        { name: 'home-local' },
-        withProps<HomeLocalState>({
+        { name: 'explore-local' },
+        withProps<ExploreLocalState>({
           selectedInventoryLocationId: undefined,
         })
       )
