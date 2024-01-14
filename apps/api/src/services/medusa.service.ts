@@ -467,16 +467,17 @@ class MedusaService {
           searchText,
           addressData['country_code']
         );
-        metadata['coordinates'] = {
+        metadata['coordinates'] = JSON.stringify({
           longitude: feature?.center[0],
           latitude: feature?.center[1],
-        };
+        });
         metadata['place_name'] = feature?.place_name;
         const context = feature?.context.find((value) =>
           value.id.startsWith('region')
         );
         metadata['region'] = context?.text ?? '';
         metadata['updated_at'] = addressData['updated_at'];
+        location.metadata = metadata;
         const { error } = await SupabaseService.client
           .from('stock_location')
           .update({ metadata: metadata })
@@ -488,9 +489,7 @@ class MedusaService {
         }
       }
 
-      stockLocations.addLocations(
-        JSON.stringify({ location, metadata: metadata })
-      );
+      stockLocations.addLocations(JSON.stringify(location));
     }
 
     return stockLocations;

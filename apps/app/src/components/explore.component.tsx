@@ -22,6 +22,8 @@ import { ExploreSuspenseMobileComponent } from './mobile/suspense/explore.suspen
 import React from 'react';
 import { lazy } from '@loadable/component';
 import { ExploreSuspenseTabletComponent } from './tablet/suspense/explore.suspense.tablet.component';
+import { StockLocation } from '@medusajs/stock-location/dist/models';
+import mapboxgl from 'mapbox-gl';
 
 const ExploreDesktopComponent = lazy(
   () => import('./desktop/explore.desktop.component')
@@ -42,6 +44,8 @@ export interface ExploreResponsiveProps {
   setSelectedPoint: (value: InventoryLocation | null) => void;
   onScroll: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
   onScrollLoad: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
+  onStockLocationClicked: (stockLocation: InventoryLocation | null) => void;
+  onGoToStore: (stockLocation: InventoryLocation) => void;
 }
 
 export default function ExploreComponent(): JSX.Element {
@@ -81,6 +85,28 @@ export default function ExploreComponent(): JSX.Element {
       ExploreController.updateSearchedStockLocationScrollPosition(undefined);
     }
   };
+
+  const onStockLocationClicked = (stockLocation: InventoryLocation | null) => {
+    if (stockLocation?.coordinates) {
+      ExploreController.updateCoordinates(stockLocation.coordinates);
+      setSelectedPoint(stockLocation);
+    }
+  };
+
+  const onGoToStore = (stockLocation: InventoryLocation) => {
+    ExploreController.updateSelectedInventoryLocation(stockLocation);
+    navigate(RoutePathsType.Store);
+  };
+
+  useEffect(() => {
+    ExploreController.loadStockLocationsAsync();
+  }, []);
+
+  useEffect(() => {
+    if (selectedPoint?.id !== exploreProps.selectedInventoryLocation?.id) {
+      setSelectedPoint(exploreProps.selectedInventoryLocation);
+    }
+  }, [exploreProps.selectedInventoryLocation]);
 
   useEffect(() => {
     if (location.hash.startsWith(`#access_token=`)) {
@@ -162,6 +188,8 @@ export default function ExploreComponent(): JSX.Element {
           setSelectedPoint={setSelectedPoint}
           onScroll={onScroll}
           onScrollLoad={onScrollLoad}
+          onStockLocationClicked={onStockLocationClicked}
+          onGoToStore={onGoToStore}
         />
         <ExploreTabletComponent
           exploreProps={exploreProps}
@@ -172,6 +200,8 @@ export default function ExploreComponent(): JSX.Element {
           setSelectedPoint={setSelectedPoint}
           onScroll={onScroll}
           onScrollLoad={onScrollLoad}
+          onStockLocationClicked={onStockLocationClicked}
+          onGoToStore={onGoToStore}
         />
         <ExploreMobileComponent
           exploreProps={exploreProps}
@@ -182,6 +212,8 @@ export default function ExploreComponent(): JSX.Element {
           setSelectedPoint={setSelectedPoint}
           onScroll={onScroll}
           onScrollLoad={onScrollLoad}
+          onStockLocationClicked={onStockLocationClicked}
+          onGoToStore={onGoToStore}
         />
       </React.Suspense>
     </>

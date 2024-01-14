@@ -22,6 +22,7 @@ import { ExploreResponsiveProps } from '../explore.component';
 import ExploreController from '../../controllers/explore.controller';
 import { ResponsiveDesktop } from '../responsive.component';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
+import StockLocationItemComponent from '../stock-location-item.component';
 
 export default function ExploreDesktopComponent({
   exploreProps,
@@ -32,6 +33,8 @@ export default function ExploreDesktopComponent({
   setSelectedPoint,
   onScroll,
   onScrollLoad,
+  onStockLocationClicked,
+  onGoToStore,
 }: ExploreResponsiveProps): JSX.Element {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -169,7 +172,17 @@ export default function ExploreDesktopComponent({
           >
             {exploreProps.searchedStockLocations.map(
               (stockLocation: StockLocation, index: number) => {
-                return <div />;
+                return (
+                  <StockLocationItemComponent
+                    key={stockLocation.id}
+                    stockLocation={stockLocation}
+                    onClick={() =>
+                      onStockLocationClicked(
+                        ExploreController.getInventoryLocation(stockLocation)
+                      )
+                    }
+                  />
+                );
               }
             )}
             <img
@@ -183,7 +196,7 @@ export default function ExploreDesktopComponent({
                     : 'none',
               }}
             />
-            {!exploreProps.areSearchedStockLocationsLoading &&
+            {!exploreProps.hasMoreSearchedStockLocations &&
               exploreProps.searchedStockLocations.length <= 0 && (
                 <div
                   className={[
@@ -217,13 +230,13 @@ export default function ExploreDesktopComponent({
               interactive={true}
               initialViewState={{
                 longitude:
-                  exploreProps.selectedInventoryLocation?.coordinates.lng,
+                  exploreProps.selectedInventoryLocation?.coordinates.lng ?? 0,
                 latitude:
-                  exploreProps.selectedInventoryLocation?.coordinates.lat,
+                  exploreProps.selectedInventoryLocation?.coordinates.lat ?? 0,
                 zoom: 13,
               }}
-              longitude={exploreProps.longitude}
-              latitude={exploreProps.latitude}
+              longitude={exploreProps.longitude ?? 0}
+              latitude={exploreProps.latitude ?? 0}
               zoom={exploreProps.zoom ?? 13}
               mapStyle={ConfigService.mapbox.style_url}
               onMove={(e) => ExploreController.onMapMove(e.viewState)}
@@ -260,6 +273,8 @@ export default function ExploreDesktopComponent({
                 <Popup
                   anchor={'top'}
                   onClose={() => setSelectedPoint(null)}
+                  closeButton={false}
+                  maxWidth={'auto'}
                   latitude={selectedPoint.coordinates.lat}
                   longitude={selectedPoint.coordinates.lng}
                 >
@@ -283,39 +298,38 @@ export default function ExploreDesktopComponent({
                         styles['address-desktop'],
                       ].join(' ')}
                     >
+                      <Line.Place size={18} />
                       {selectedPoint.placeName}
                     </div>
                     <div
                       className={[
-                        styles['select-button-container'],
-                        styles['select-button-container-desktop'],
+                        styles['description'],
+                        styles['description-desktop'],
+                      ].join(' ')}
+                    >
+                      {selectedPoint.description}
+                    </div>
+                    <div
+                      className={[
+                        styles['go-to-store-button-container'],
+                        styles['go-to-store-button-container-desktop'],
                       ].join(' ')}
                     >
                       <div>
                         <Button
                           classNames={{
-                            button: styles['select-button'],
+                            button: styles['go-to-store-button'],
                           }}
                           rippleProps={{
                             color: 'rgba(133, 38, 122, .35)',
                           }}
-                          block={false}
-                          size={'tiny'}
-                          disabled={
-                            selectedPoint?.placeName ===
-                            exploreProps.selectedInventoryLocation?.placeName
-                          }
-                          type={'text'}
-                          onClick={() =>
-                            ExploreController.updateSelectedInventoryLocation(
-                              selectedPoint
-                            )
-                          }
+                          icon={<Line.Store size={24} />}
+                          block={true}
+                          size={'large'}
+                          type={'primary'}
+                          onClick={() => onGoToStore(selectedPoint)}
                         >
-                          {selectedPoint?.placeName !==
-                          exploreProps.selectedInventoryLocation?.placeName
-                            ? t('select')
-                            : t('selected')}
+                          {t('goToStore')}
                         </Button>
                       </div>
                     </div>

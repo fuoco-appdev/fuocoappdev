@@ -67,6 +67,7 @@ class StoreController extends Controller {
   }
 
   public override dispose(renderCount: number): void {
+    clearTimeout(this._timerId as number | undefined);
     this._accountSubscription?.unsubscribe();
     this._medusaAccessTokenSubscription?.unsubscribe();
     this._customerGroupSubscription?.unsubscribe();
@@ -232,16 +233,6 @@ class StoreController extends Controller {
       ...(cart && { cart_id: cart.id }),
     });
     const products = productsResponse?.products ?? [];
-    products.sort((a, b) => {
-      const currentId = a['id'] ?? '';
-      const nextId = b['id'] ?? '';
-
-      if (hitsOrder.indexOf(currentId) > hitsOrder.indexOf(nextId)) {
-        return 1;
-      } else {
-        return -1;
-      }
-    });
     for (let i = 0; i < products.length; i++) {
       for (const variant of products[i].variants) {
         const price = variant.prices?.find(

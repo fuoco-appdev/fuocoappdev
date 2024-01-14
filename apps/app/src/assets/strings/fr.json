@@ -282,5 +282,6 @@
   "followers": "Suiveurs",
   "results": "Résultats",
   "followerRequests": "Demandes de followers",
-  "noStockLocationsFound": "Aucun lieu n'a été trouvé."
+  "noStockLocationsFound": "Aucun lieu n'a été trouvé.",
+  "goToStore": "Aller Au Magasin"
 }

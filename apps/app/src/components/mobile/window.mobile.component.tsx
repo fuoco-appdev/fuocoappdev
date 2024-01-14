@@ -174,7 +174,7 @@ export default function WindowMobileComponent({
                         ].join(' '),
                       }}
                       rippleProps={{
-                        color: 'rgba(88, 40, 109, .35)',
+                        color: 'rgba(42, 42, 95, .35)',
                       }}
                       onClick={() => {
                         if (activeRoute === RoutePathsType.Cart) {

@@ -17,9 +17,11 @@ import PermissionsController from './permissions.controller';
 import { Index } from 'meilisearch';
 import MeiliSearchService from '../services/meilisearch.service';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
+import { SalesChannel } from '@medusajs/medusa';
 
 class ExploreController extends Controller {
   private readonly _model: ExploreModel;
+  private _timerId: NodeJS.Timeout | number | undefined;
   private _stockLocationsIndex: Index<Record<string, any>> | undefined;
   private _selectedInventoryLocationIdSubscription: Subscription | undefined;
   private _currentPositionSubscription: Subscription | undefined;
@@ -54,10 +56,15 @@ class ExploreController extends Controller {
   }
 
   public override dispose(renderCount: number): void {
+    clearTimeout(this._timerId as number | undefined);
     this._medusaAccessTokenSubscription?.unsubscribe();
     this._publicSecretsSubscription?.unsubscribe();
     this._currentPositionSubscription?.unsubscribe();
     this._selectedInventoryLocationIdSubscription?.unsubscribe();
+  }
+
+  public async loadStockLocationsAsync(): Promise<void> {
+    await this.searchStockLocationsAsync(this._model.input, 0, this._limit);
   }
 
   public onMapMove(state: ViewState): void {
@@ -84,6 +91,13 @@ class ExploreController extends Controller {
 
   public updateInput(value: string): void {
     this._model.input = value;
+    this._model.searchedStockLocationsPagination = 1;
+    this._model.searchedStockLocations = [];
+    this._model.hasMoreSearchedStockLocations = true;
+    clearTimeout(this._timerId as number | undefined);
+    this._timerId = setTimeout(() => {
+      this.searchStockLocationsAsync(value, 0, this._limit);
+    }, 750);
   }
 
   public updateCoordinates(value: mapboxgl.LngLat | undefined): void {
@@ -96,7 +110,10 @@ class ExploreController extends Controller {
   ): void {
     this._model.selectedInventoryLocationId = value?.id;
     this._model.selectedInventoryLocation = value;
-    this.updateCoordinates(value?.coordinates);
+
+    if (value?.coordinates) {
+      this.updateCoordinates(value?.coordinates);
+    }
   }
 
   public updateSelectedInventoryLocationId(value: string | undefined): void {
@@ -190,6 +207,40 @@ class ExploreController extends Controller {
     this._model.areSearchedStockLocationsLoading = false;
   }
 
+  public getInventoryLocation(
+    stockLocation: StockLocation & { sales_channels?: SalesChannel[] }
+  ): InventoryLocation | null {
+    const metadata = stockLocation.metadata;
+    const address = stockLocation.address;
+    let coordinates = null;
+    if (
+      metadata &&
+      Object.keys(metadata).includes('coordinates') &&
+      typeof stockLocation.metadata?.['coordinates'] === 'string'
+    ) {
+      coordinates = JSON.parse(metadata?.['coordinates'] as string);
+    } else {
+      coordinates = metadata?.['coordinates'];
+    }
+
+    if (!coordinates) {
+      return null;
+    }
+
+    return {
+      id: stockLocation.id,
+      salesChannels: stockLocation.sales_channels ?? [],
+      coordinates: new mapboxgl.LngLat(
+        coordinates?.['longitude'] ?? 0,
+        coordinates?.['latitude'] ?? 0
+      ),
+      placeName: (metadata?.['place_name'] as string) ?? '',
+      description: (metadata?.['description'] as string) ?? '',
+      company: address?.['company'] ?? '',
+      region: (metadata?.['region'] as string) ?? '',
+    };
+  }
+
   private resetMedusaModel(): void {
     this._model.inventoryLocations = [];
     this._model.selectedInventoryLocation = undefined;
@@ -199,6 +250,7 @@ class ExploreController extends Controller {
   private async initializeAsync(renderCount: number): Promise<void> {
     this._model.inventoryLocations =
       await this.requestInventoryLocationsAsync();
+    console.log(this._model.inventoryLocations);
 
     this._model.wineCount = await this.requestWineCountAsync();
 
@@ -251,23 +303,12 @@ class ExploreController extends Controller {
     const stockLocations = await MedusaService.requestStockLocationsAsync();
     const inventoryLocations: InventoryLocation[] = [];
     for (const stockLocation of stockLocations) {
-      const location = stockLocation.location;
-      const metadata = stockLocation.metadata;
-      const address = location.address;
-      const coordinates = metadata['coordinates'];
-      if (coordinates) {
-        inventoryLocations.push({
-          id: location['id'],
-          salesChannels: location['sales_channels'],
-          coordinates: new mapboxgl.LngLat(
-            coordinates['longitude'],
-            coordinates['latitude']
-          ),
-          placeName: metadata['place_name'],
-          company: address['company'] ?? '',
-          region: metadata['region'] ?? '',
-        });
+      const inventoryLocation = this.getInventoryLocation(stockLocation);
+      if (!inventoryLocation) {
+        continue;
       }
+
+      inventoryLocations.push(inventoryLocation);
     }
 
     return inventoryLocations;
@@ -300,6 +341,10 @@ class ExploreController extends Controller {
   ): mapboxgl.LngLat | null {
     const features = [];
     for (const location of locations) {
+      if (!location.coordinates) {
+        continue;
+      }
+
       features.push(
         point([location.coordinates.lng, location.coordinates.lat])
       );

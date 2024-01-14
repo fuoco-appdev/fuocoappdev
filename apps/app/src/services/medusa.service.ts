@@ -1,5 +1,11 @@
 import Medusa from '@medusajs/medusa-js';
-import { Customer, Order, CustomerGroup, PriceList } from '@medusajs/medusa';
+import {
+  Customer,
+  Order,
+  CustomerGroup,
+  PriceList,
+  SalesChannel,
+} from '@medusajs/medusa';
 import ConfigService from './config.service';
 import axios, { AxiosError } from 'axios';
 import { Service } from '../service';
@@ -8,6 +14,7 @@ import * as core from '../protobuf/core_pb';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import { BehaviorSubject, Observable } from 'rxjs';
 import Cookies from 'js-cookie';
+import { StockLocation } from '@medusajs/stock-location/dist/models';
 
 class MedusaService extends Service {
   private _medusa: Medusa | undefined;
@@ -361,7 +368,9 @@ class MedusaService extends Service {
     return [];
   }
 
-  public async requestStockLocationsAsync(): Promise<any[]> {
+  public async requestStockLocationsAsync(): Promise<
+    (StockLocation & { sales_channels: SalesChannel[] })[]
+  > {
     const response = await axios({
       method: 'post',
       url: `${this.endpointUrl}/medusa/stock-locations`,

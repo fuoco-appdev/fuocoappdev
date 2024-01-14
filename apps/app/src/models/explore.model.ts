@@ -9,6 +9,7 @@ export interface InventoryLocation {
   coordinates: mapboxgl.LngLat;
   placeName: string;
   company: string;
+  description: string;
   region: string;
   salesChannels: Partial<SalesChannel>[];
 }
@@ -96,7 +97,10 @@ export class ExploreModel extends Model {
 
   public set searchedStockLocationsPagination(value: number) {
     if (this.searchedStockLocationsPagination !== value) {
-      this.searchedStockLocationsPagination = value;
+      this.store.update((state) => ({
+        ...state,
+        searchedStockLocationsPagination: value,
+      }));
     }
   }
 
@@ -106,7 +110,10 @@ export class ExploreModel extends Model {
 
   public set hasMoreSearchedStockLocations(value: boolean) {
     if (this.hasMoreSearchedStockLocations !== value) {
-      this.hasMoreSearchedStockLocations = value;
+      this.store.update((state) => ({
+        ...state,
+        hasMoreSearchedStockLocations: value,
+      }));
     }
   }
 
@@ -126,7 +133,10 @@ export class ExploreModel extends Model {
 
   public set areSearchedStockLocationsLoading(value: boolean) {
     if (this.areSearchedStockLocationsLoading !== value) {
-      this.areSearchedStockLocationsLoading = value;
+      this.store.update((state) => ({
+        ...state,
+        areSearchedStockLocationsLoading: value,
+      }));
     }
   }
 

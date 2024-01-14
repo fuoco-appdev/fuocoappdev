@@ -2,7 +2,6 @@
 
 .root {
     display: flex;
-    flex-direction: row;
     width: 100%;
     height: 100%;
 
@@ -124,7 +123,9 @@
                 flex-wrap: wrap;
             -ms-flex-line-pack: start;
                 align-content: flex-start;
+            flex-direction: column;
             height: 100%;
+            width: 100%;
             overflow-y: auto;
             scroll-behavior: smooth;
             padding-top: calc(79px + 16px);
@@ -176,11 +177,24 @@
         height: 100%;
         width: 100%;
     }
+
+    & .floating-button-container {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: flex-end;
+        height: calc(100% - 56px);
+        width: 100%;
+        pointer-events: none;
+    }
 }
 
 .root-desktop {
+    flex-direction: row;
+
     & .search-container-desktop {
-        width: 380px;
+        width: 460px;
         height: 100%;
         border-right-width: 1px;
         border-left-width: 0px;
@@ -294,6 +308,24 @@
 
             }
         }
+
+        & .scroll-container-desktop {
+    
+            & .loading-ring-desktop {
+         
+            }
+    
+            & .no-searched-stock-locations-container-desktop {
+    
+                & .no-items-text-desktop {
+               
+                }
+            
+                & .no-items-container-desktop {
+   
+                }
+            }
+        }
     }
 
     & .map-container-desktop {
@@ -302,7 +334,18 @@
 }
 
 .root-tablet {
+    flex-direction: row;
+
     & .search-container-tablet {
+        width: 460px;
+        height: 100%;
+        border-right-width: 1px;
+        border-left-width: 0px;
+        border-top-width: 0px;
+        border-bottom-width: 0px;
+        border-color: rgba(42, 42, 95, .6);
+        border-style: solid;
+
         & .top-bar-container-tablet {
             padding-top: $mp-4;
             -webkit-box-orient: horizontal;
@@ -345,7 +388,7 @@
                 padding-right: $mp-4;
 
                 & .search-input-root-tablet {
-                    max-width: 456px;
+                    max-width: 556px;
 
                     & .search-input-container-tablet {
 
@@ -408,6 +451,24 @@
 
             }
         }
+
+        & .scroll-container-tablet {
+    
+            & .loading-ring-tablet {
+         
+            }
+    
+            & .no-searched-stock-locations-container-tablet {
+    
+                & .no-items-text-tablet {
+               
+                }
+            
+                & .no-items-container-tablet {
+   
+                }
+            }
+        }
     }
 
     & .map-container-tablet {
@@ -416,20 +477,60 @@
 }
 
 .root-mobile {
-    & .search-container-mobile {
-        & .top-bar-container-mobile {
-            -webkit-box-orient: vertical;
-            -webkit-box-direction: normal;
-                -ms-flex-direction: column;
-                    flex-direction: column;
+    flex-direction: column;
 
-            & .search-container-mobile {  
+    & .search-container-mobile {
+        width: 100%;
+        border-right-width: 1px;
+        border-left-width: 0px;
+        border-top-width: 0px;
+        border-bottom-width: 0px;
+        border-color: rgba(42, 42, 95, .6);
+        border-style: solid;
+
+        & .top-bar-container-mobile {
+            padding-top: $mp-4;
+            -webkit-box-orient: horizontal;
+            -webkit-box-direction: normal;
+                -ms-flex-direction: row;
+                    flex-direction: row;
+
+            & .top-bar-left-content-mobile {
+                display: -webkit-box;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-orient: vertical;
+                -webkit-box-direction: normal;
+                    -ms-flex-direction: column;
+                        flex-direction: column;
+                -webkit-box-flex: 1;
+                    -ms-flex: 1;
+                        flex: 1;
+                -webkit-box-align: center;
+                    -ms-flex-align: center;
+                        align-items: center;
+            }
+
+            & .top-bar-right-content-mobile {
+                padding-right: $mp-4;
+            }
+                    
+            & .search-container-mobile {
+                display: -webkit-box;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-orient: horizontal;
+                -webkit-box-direction: normal;
+                    -ms-flex-direction: row;
+                        flex-direction: row;
+                -webkit-box-pack: center;
+                    -ms-flex-pack: center;
+                        justify-content: center;
                 padding-left: $mp-4;
                 padding-right: $mp-4;
-                padding-top: $mp-4;
 
                 & .search-input-root-mobile {
-                    padding-right: $mp-4;
+                    max-width: 556px;
 
                     & .search-input-container-mobile {
 
@@ -473,7 +574,9 @@
             }
         
             & .tab-container-mobile { 
-                padding: 0 $mp-4;
+                width: -webkit-fit-content; 
+                width: -moz-fit-content; 
+                width: fit-content;
 
                 & .tab-button-mobile {
 
@@ -485,19 +588,49 @@
                 & .tab-slider-pill-mobile {
                 }
             }
-
-            & .tab-container-skeleton-mobile {
-                padding: 0 $mp-4;
-            }
         
             & .tab-container-mobile::-webkit-scrollbar {
 
+            }
+        }
+
+        & .scroll-container-mobile {
+    
+            & .loading-ring-mobile {
+         
+            }
+    
+            & .no-searched-stock-locations-container-mobile {
+    
+                & .no-items-text-mobile {
+               
+                }
+            
+                & .no-items-container-mobile {
+   
+                }
             }
         }
     }
 
     & .map-container-mobile {
 
+    }
+
+    
+    & .floating-button-container-mobile {
+        padding: $mp-4;
+
+        & .map-button-container-mobile {
+            -webkit-box-shadow: $shadow-1;
+                    box-shadow: $shadow-1;
+                    border: 1px solid $brand-900;
+          }
+    
+          & .map-button-mobile {
+            background-color: #fff;
+            color: $brand-900;
+          }
     }
 }
 
@@ -509,34 +642,85 @@
 
 .marker-popup {
     background-color: #fff;
-    padding: $mp-2;
+    padding: $mp-4;
     border-radius: $rounded-md;
-
-    & .company {
-        color: $brand-900;
-        font-weight: $font-weight-bold;
-    }
-
-    & .address {
-        color: $brand-900;
-    }
-
-    & .select-button-container {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        margin-top: $mp-2;
-        width: 100%;
-        -webkit-box-pack: end;
-            -ms-flex-pack: end;
-                justify-content: flex-end;
-    }
+    font-family: 'Noto Sans';
+    width: 446px;
 }
 
-.select-button {
-    background-color: transparent !important;
-    border-color: $brand-900 !important;
-    color: $brand-900 !important;
+.dropdown-content {
+    display: flex;
+    flex-direction: column;
+    padding: $mp-4;
+}
+
+.company {
+    color: $brand-900;
+    font-weight: $font-weight-bold;
+    margin-bottom: $mp-2;
+}
+
+.company-desktop {
+    font-size: $font-size-base;
+}
+
+.company-tablet {
+    font-size: $font-size-base;
+}
+
+.company-mobile {
+    font-size: $font-size-lg;
+}
+
+.address {
+    display: flex;
+    flex-direction: row;
+    gap: $mp-1;
+    color: $brand-900;
+    text-transform: capitalize;
+    margin-bottom: $mp-2;
+}
+
+.address-desktop {
+    font-size: $font-size-xs;
+}
+
+.address-tablet {
+    font-size: $font-size-xs;
+}
+
+.address-mobile {
+    font-size: $font-size-sm;
+}
+
+.description {
+    display: flex;
+    flex-direction: row;
+    gap: $mp-1;
+    color: $brand-900;
+    margin-bottom: $mp-4;
+}
+
+.description-desktop {
+    font-size: $font-size-xs;
+}
+
+.description-tablet {
+    font-size: $font-size-xs;
+}
+
+.description-mobile {
+    font-size: $font-size-sm;
+}
+
+.go-to-store-button-container {
+    width: 100%;
+}
+
+.go-to-store-button {
+    background-color: $brand-700 !important;
+    color: #fff !important;
+    width: 100%;
 }
 
 .shop-now-button {
