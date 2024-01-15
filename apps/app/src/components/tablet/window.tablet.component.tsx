@@ -39,7 +39,6 @@ export default function WindowTabletComponent({
   windowLocalProps,
   accountProps,
   accountPublicProps,
-  permissionsProps,
   exploreProps,
   openMore,
   isLanguageOpen,

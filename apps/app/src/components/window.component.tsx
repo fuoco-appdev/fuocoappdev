@@ -44,7 +44,6 @@ export interface WindowResponsiveProps {
   windowLocalProps: WindowLocalState;
   accountPublicProps: AccountPublicState;
   accountProps: AccountState;
-  permissionsProps: PermissionsState;
   exploreProps: ExploreState;
   openMore: boolean;
   isLanguageOpen: boolean;
@@ -68,7 +67,6 @@ export default function WindowComponent(): JSX.Element {
     AccountPublicController.model.store
   );
   const [accountProps] = useObservable(AccountController.model.store);
-  const [permissionsProps] = useObservable(PermissionsController.model.store);
   const [exploreProps] = useObservable(ExploreController.model.store);
   const isMounted = useRef<boolean>(false);
   const { i18n, t } = useTranslation();
@@ -208,16 +206,6 @@ export default function WindowComponent(): JSX.Element {
     }, 2000);
   }, [windowProps.isAuthenticated]);
 
-  useEffect(() => {
-    if (permissionsProps.arePermissionsActive === undefined) {
-      return;
-    }
-
-    if (!permissionsProps.arePermissionsActive) {
-      navigate(RoutePathsType.Permissions);
-    }
-  }, [permissionsProps.arePermissionsActive]);
-
   const suspenseComponent = (
     <>
       <WindowSuspenseDesktopComponent />
@@ -237,7 +225,6 @@ export default function WindowComponent(): JSX.Element {
         windowLocalProps={windowLocalProps}
         accountPublicProps={accountPublicProps}
         accountProps={accountProps}
-        permissionsProps={permissionsProps}
         exploreProps={exploreProps}
         openMore={openMore}
         isLanguageOpen={isLanguageOpen}
@@ -253,7 +240,6 @@ export default function WindowComponent(): JSX.Element {
         windowLocalProps={windowLocalProps}
         accountPublicProps={accountPublicProps}
         accountProps={accountProps}
-        permissionsProps={permissionsProps}
         exploreProps={exploreProps}
         openMore={openMore}
         isLanguageOpen={isLanguageOpen}
@@ -269,7 +255,6 @@ export default function WindowComponent(): JSX.Element {
         windowLocalProps={windowLocalProps}
         accountPublicProps={accountPublicProps}
         accountProps={accountProps}
-        permissionsProps={permissionsProps}
         exploreProps={exploreProps}
         openMore={openMore}
         isLanguageOpen={isLanguageOpen}

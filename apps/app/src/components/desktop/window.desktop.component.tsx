@@ -36,7 +36,6 @@ export default function WindowDesktopComponent({
   windowLocalProps,
   accountPublicProps,
   accountProps,
-  permissionsProps,
   exploreProps,
   openMore,
   isLanguageOpen,

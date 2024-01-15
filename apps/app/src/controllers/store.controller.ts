@@ -179,6 +179,8 @@ class StoreController extends Controller {
 
     if (hits.length < limit && this._model.hasMorePreviews) {
       this._model.hasMorePreviews = false;
+    } else {
+      this._model.hasMorePreviews = true;
     }
 
     if (hits.length <= 0) {
@@ -199,7 +201,6 @@ class StoreController extends Controller {
 
     this._model.isLoading = false;
 
-    const hitsOrder = hits.map((value) => value.id);
     const productIds: string[] = hits.map((value: Product) => value.id);
 
     try {

@@ -31,7 +31,6 @@ export default function WindowMobileComponent({
   windowLocalProps,
   accountProps,
   accountPublicProps,
-  permissionsProps,
   exploreProps,
   openMore,
   isLanguageOpen,
