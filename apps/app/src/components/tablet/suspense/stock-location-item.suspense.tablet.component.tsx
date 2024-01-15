@@ -3,43 +3,45 @@ import * as React from 'react';
 import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
 import styles from '../../stock-location-item.module.scss';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { ResponsiveSuspenseDesktop } from '../../responsive.component';
+import {
+  ResponsiveSuspenseMobile,
+  ResponsiveSuspenseTablet,
+} from '../../responsive.component';
 
-export function StockLocationItemSuspenseDesktopComponent(): JSX.Element {
+export function StockLocationItemSuspenseTabletComponent(): JSX.Element {
   return (
-    <ResponsiveSuspenseDesktop inheritStyles={false}>
-      <div className={[styles['root'], styles['root-desktop']].join(' ')}>
+    <ResponsiveSuspenseTablet inheritStyles={false}>
+      <div className={[styles['root'], styles['root-tablet']].join(' ')}>
         <div
-          className={[styles['container'], styles['container-desktop']].join(
+          className={[styles['container'], styles['container-tablet']].join(
             ' '
           )}
         >
           <div
-            className={[styles['details'], styles['details-desktop']].join(' ')}
+            className={[styles['details'], styles['details-tablet']].join(' ')}
           >
             <div
               className={[
                 styles['title-container'],
-                styles['title-container-desktop'],
+                styles['title-container-tablet'],
               ].join(' ')}
             >
               <div
-                className={[styles['title'], styles['title-desktop']].join(' ')}
+                className={[styles['title'], styles['title-tablet']].join(' ')}
               >
                 <Skeleton width={140} borderRadius={20} />
               </div>
               <div
-                className={[
-                  styles['location'],
-                  styles['location-desktop'],
-                ].join(' ')}
+                className={[styles['location'], styles['location-tablet']].join(
+                  ' '
+                )}
               >
                 <Skeleton count={2} width={200} height={16} borderRadius={20} />
               </div>
               <div
                 className={[
                   styles['description'],
-                  styles['description-desktop'],
+                  styles['description-tablet'],
                 ].join(' ')}
               >
                 <Skeleton width={200} height={16} count={2} borderRadius={20} />
@@ -48,25 +50,25 @@ export function StockLocationItemSuspenseDesktopComponent(): JSX.Element {
             <div
               className={[
                 styles['right-details-container'],
-                styles['right-details-container-desktop'],
+                styles['right-details-container-tablet'],
               ].join(' ')}
             >
               <div
                 className={[
                   styles['right-details-content'],
-                  styles['right-details-content-desktop'],
+                  styles['right-details-content-tablet'],
                 ].join(' ')}
               >
                 <div
                   className={[
                     styles['thumbnail'],
-                    styles['thumbnail-desktop'],
+                    styles['thumbnail-tablet'],
                   ].join(' ')}
                 >
                   <Skeleton
                     className={[
                       styles['thumbnail-image'],
-                      styles['thumbnail-image-desktop'],
+                      styles['thumbnail-image-tablet'],
                     ].join(' ')}
                     width={56}
                     height={56}
@@ -77,6 +79,6 @@ export function StockLocationItemSuspenseDesktopComponent(): JSX.Element {
           </div>
         </div>
       </div>
-    </ResponsiveSuspenseDesktop>
+    </ResponsiveSuspenseTablet>
   );
 }

@@ -15,12 +15,14 @@ import { OrderItemSuspenseTabletComponent } from './tablet/suspense/order-item.s
 import { StockLocation } from '@medusajs/stock-location/dist/models';
 import { StockLocationItemSuspenseDesktopComponent } from './desktop/suspense/stock-location-item.suspense.desktop.component';
 import { StorageFolderType } from '../protobuf/core_pb';
+import { StockLocationItemSuspenseMobileComponent } from './mobile/suspense/stock-location-item.suspense.mobile.component';
+import { StockLocationItemSuspenseTabletComponent } from './tablet/suspense/stock-location-item.suspense.tablet.component';
 
 const StockLocationItemDesktopComponent = lazy(
   () => import('./desktop/stock-location-item.desktop.component')
 );
 const StockLocationItemTabletComponent = lazy(
-  () => import('./tablet/order-item.tablet.component')
+  () => import('./tablet/stock-location-item.tablet.component')
 );
 const StockLocationItemMobileComponent = lazy(
   () => import('./mobile/stock-location-item.mobile.component')
@@ -63,8 +65,8 @@ export default function StockLocationItemComponent({
   const suspenceComponent = (
     <>
       <StockLocationItemSuspenseDesktopComponent />
-      <OrderItemSuspenseTabletComponent />
-      <OrderItemSuspenseMobileComponent />
+      <StockLocationItemSuspenseTabletComponent />
+      <StockLocationItemSuspenseMobileComponent />
     </>
   );
 
@@ -79,12 +81,11 @@ export default function StockLocationItemComponent({
         avatar={avatar}
         onClick={onClick}
       />
-      {/* <StockLocationItemTabletComponent
-        order={order}
-        fulfillmentStatus={fulfillmentStatus}
-        getNumberOfItems={getNumberOfItems}
+      <StockLocationItemTabletComponent
+        stockLocation={stockLocation}
+        avatar={avatar}
         onClick={onClick}
-      /> */}
+      />
       <StockLocationItemMobileComponent
         stockLocation={stockLocation}
         avatar={avatar}

@@ -11,23 +11,93 @@ export function ExploreSuspenseMobileComponent(): JSX.Element {
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
         <div
           className={[
-            styles['content-container'],
-            styles['content-container-mobile'],
+            styles['search-container'],
+            styles['search-container-mobile'],
           ].join(' ')}
         >
-          <Skeleton
+          <div
             className={[
-              styles['background-image'],
-              styles['background-image-mobile'],
+              styles['top-bar-container'],
+              styles['top-bar-container-mobile'],
             ].join(' ')}
-          />
+          >
+            <div
+              className={[
+                styles['top-bar-left-content'],
+                styles['top-bar-left-content-mobile'],
+              ].join(' ')}
+            >
+              <div
+                className={[
+                  styles['search-container'],
+                  styles['search-container-mobile'],
+                ].join(' ')}
+              >
+                <div
+                  className={[
+                    styles['search-input-root'],
+                    styles['search-input-root-mobile'],
+                  ].join(' ')}
+                >
+                  <Skeleton
+                    className={[
+                      styles['search-input-container-skeleton'],
+                      styles['search-input-container-skeleton-mobile'],
+                    ].join(' ')}
+                    height={46}
+                    borderRadius={46}
+                  />
+                </div>
+              </div>
+              {/* <div
+                className={[
+                  styles['tab-container'],
+                  styles['tab-container-mobile'],
+                ].join(' ')}
+              >
+                <Tabs
+                  classNames={{
+                    tabButton: styles['tab-button'],
+                    selectedTabButton: styles['selected-tab-button'],
+                    tabSliderPill: styles['tab-slider-pill'],
+                  }}
+                  removable={true}
+                  type={'pills'}
+                  activeId={storeProps.selectedTab}
+                  onChange={(id: string) =>
+                    StoreController.updateSelectedTabAsync(
+                      id.length > 0 ? (id as ProductTabs) : undefined
+                    )
+                  }
+                  tabs={[
+                    {
+                      id: ProductTabs.White,
+                      label: t('white') ?? 'White',
+                    },
+                    {
+                      id: ProductTabs.Red,
+                      label: t('red') ?? 'Red',
+                    },
+                    {
+                      id: ProductTabs.Rose,
+                      label: t('rose') ?? 'Rosé',
+                    },
+                    {
+                      id: ProductTabs.Spirits,
+                      label: t('spirits') ?? 'Spirits',
+                    },
+                  ]}
+                />
+              </div> */}
+            </div>
+          </div>
         </div>
-        <Skeleton
+        <div
           className={[
             styles['map-container'],
             styles['map-container-mobile'],
           ].join(' ')}
-        />
+        ></div>
       </div>
     </ResponsiveSuspenseMobile>
   );

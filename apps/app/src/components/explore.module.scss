@@ -116,15 +116,10 @@
         }
 
         & .scroll-container {
-            display: -webkit-box;
-            display: -ms-flexbox;
             display: flex;
-            -ms-flex-wrap: wrap;
-                flex-wrap: wrap;
-            -ms-flex-line-pack: start;
-                align-content: flex-start;
+            align-content: flex-start;
             flex-direction: column;
-            height: 100%;
+            justify-content: flex-start;
             width: 100%;
             overflow-y: auto;
             scroll-behavior: smooth;
