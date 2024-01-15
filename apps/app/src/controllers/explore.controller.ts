@@ -179,7 +179,11 @@ class ExploreController extends Controller {
       limit: limit,
     });
 
-    let hits = result?.hits as StockLocation[];
+    let hits = result?.hits as StockLocation[] | undefined;
+    if (!hits) {
+      return;
+    }
+
     if (hits.length <= 0 && offset <= 0) {
       this._model.searchedStockLocations = [];
     }
