@@ -254,7 +254,6 @@ class ExploreController extends Controller {
   private async initializeAsync(renderCount: number): Promise<void> {
     this._model.inventoryLocations =
       await this.requestInventoryLocationsAsync();
-    console.log(this._model.inventoryLocations);
 
     this._model.wineCount = await this.requestWineCountAsync();
 

@@ -72,6 +72,24 @@ export default function ExploreMobileComponent({
           >
             <div
               className={[
+                styles['logo-container'],
+                styles['logo-container-mobile'],
+              ].join(' ')}
+            >
+              <img
+                className={[styles['logo'], styles['logo-mobile']].join(' ')}
+                src={'../assets/svg/logo.svg'}
+              />
+              <img
+                className={[
+                  styles['logo-text'],
+                  styles['logo-text-mobile'],
+                ].join(' ')}
+                src={'../assets/svg/logo-text-dark.svg'}
+              />
+            </div>
+            <div
+              className={[
                 styles['top-bar-left-content'],
                 styles['top-bar-left-content-mobile'],
               ].join(' ')}

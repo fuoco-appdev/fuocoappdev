@@ -33,7 +33,7 @@ export function WindowSuspenseDesktopComponent(): JSX.Element {
                   styles['logo-text'],
                   styles['logo-text-desktop'],
                 ].join(' ')}
-                src={'../assets/svg/logo-text.svg'}
+                src={'../assets/svg/logo-text-light.svg'}
               />
             </div>
           </div>

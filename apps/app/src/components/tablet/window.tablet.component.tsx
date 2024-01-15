@@ -100,7 +100,7 @@ export default function WindowTabletComponent({
                   styles['logo-text'],
                   styles['logo-text-tablet'],
                 ].join(' ')}
-                src={'../assets/svg/logo-text.svg'}
+                src={'../assets/svg/logo-text-light.svg'}
               />
             </div>
           </div>

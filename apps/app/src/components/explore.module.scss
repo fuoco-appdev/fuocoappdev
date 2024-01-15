@@ -7,8 +7,6 @@
 
     & .search-container {
         position: relative;
-        display: flex;
-        flex-direction: column;
 
         & .top-bar-container {
             position: absolute;
@@ -16,11 +14,33 @@
             display: -webkit-box;
             display: -ms-flexbox;
             display: flex;
+            flex-direction: column;
             border-bottom: 1px solid rgba(42, 42, 95, .6);
             background-color: #fff;
             width: -moz-available;          /* WebKit-based browsers will ignore this. */
             width: -webkit-fill-available;  /* Mozilla-based browsers will ignore this. */
             width: stretch;
+            gap: $mp-4;
+
+            & .logo-container {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                gap: $mp-2;
+                width: 100%;
+                height: 48px;
+
+                & .logo {
+                    width: 32px;
+                }
+
+                & .logo-text {
+                    height: 30px;
+                    padding: $mp-2 0;
+                  }
+            }
+    
             
             & .search-container {
                 display: -webkit-box;
@@ -123,7 +143,6 @@
             width: 100%;
             overflow-y: auto;
             scroll-behavior: smooth;
-            padding-top: calc(79px + 16px);
     
             & .loading-ring {
                 width: 100%;
@@ -305,6 +324,7 @@
         }
 
         & .scroll-container-desktop {
+            padding-top: calc(79px + 16px);
     
             & .loading-ring-desktop {
          
@@ -448,6 +468,7 @@
         }
 
         & .scroll-container-tablet {
+            padding-top: calc(79px + 16px);
     
             & .loading-ring-tablet {
          
@@ -485,10 +506,6 @@
 
         & .top-bar-container-mobile {
             padding-top: $mp-4;
-            -webkit-box-orient: horizontal;
-            -webkit-box-direction: normal;
-                -ms-flex-direction: row;
-                    flex-direction: row;
 
             & .top-bar-left-content-mobile {
                 display: -webkit-box;
@@ -590,6 +607,7 @@
         }
 
         & .scroll-container-mobile {
+            padding-top: calc(143px + 16px);
     
             & .loading-ring-mobile {
          
