@@ -162,6 +162,13 @@ export default function StoreComponent(): JSX.Element {
     productLikesMetadata: core.ProductLikesMetadataResponse | null
   ) => {
     StoreController.updateScrollPosition(scrollTop);
+
+    if (!product || !productLikesMetadata) {
+      StoreController.updateSelectedPricedProduct(undefined);
+      StoreController.updateSelectedProductLikesMetadata(null);
+      return;
+    }
+
     StoreController.updateSelectedPricedProduct(product);
     StoreController.updateSelectedProductLikesMetadata(productLikesMetadata);
   };
@@ -174,8 +181,37 @@ export default function StoreComponent(): JSX.Element {
     product: PricedProduct,
     productLikesMetadata: core.ProductLikesMetadataResponse | null
   ) => {
+    if (!product || !productLikesMetadata) {
+      StoreController.updateSelectedPricedProduct(undefined);
+      StoreController.updateSelectedProductLikesMetadata(null);
+      return;
+    }
+
     StoreController.updateSelectedPricedProduct(product);
     StoreController.updateSelectedProductLikesMetadata(productLikesMetadata);
+
+    const variants: PricedVariant[] = product?.variants;
+    const quantities: Record<string, number> = {};
+    for (const variant of variants) {
+      if (!variant?.id) {
+        continue;
+      }
+      quantities[variant?.id] = 0;
+    }
+
+    const purchasableVariants = variants.filter(
+      (value: PricedVariant) => value.purchasable === true
+    );
+
+    if (purchasableVariants.length > 0) {
+      const cheapestVariant =
+        ProductController.getCheapestPrice(purchasableVariants);
+      if (cheapestVariant?.id && quantities[cheapestVariant.id] <= 0) {
+        quantities[cheapestVariant.id] = 1;
+      }
+    }
+
+    setVariantQuantities(quantities);
     setOpenCartVariants(true);
   };
 
@@ -344,35 +380,6 @@ export default function StoreComponent(): JSX.Element {
 
     setSelectedRegionId(storeProps.selectedRegion.id);
   }, [regionOptions, storeProps.selectedRegion]);
-
-  useEffect(() => {
-    if (!storeProps.selectedPreview) {
-      return;
-    }
-
-    const variants: PricedVariant[] = storeProps.selectedPreview?.variants;
-    const quantities: Record<string, number> = {};
-    for (const variant of variants) {
-      if (!variant?.id) {
-        continue;
-      }
-      quantities[variant?.id] = 0;
-    }
-
-    const purchasableVariants = variants.filter(
-      (value: PricedVariant) => value.purchasable === true
-    );
-
-    if (purchasableVariants.length > 0) {
-      const cheapestVariant =
-        ProductController.getCheapestPrice(purchasableVariants);
-      if (cheapestVariant?.id && quantities[cheapestVariant.id] <= 0) {
-        quantities[cheapestVariant.id] = 1;
-      }
-    }
-
-    setVariantQuantities(quantities);
-  }, [storeProps.selectedPreview]);
 
   const suspenceComponent = (
     <>

@@ -23,12 +23,14 @@ import CartController from '../../controllers/cart.controller';
 import { formatAmount } from 'medusa-react';
 import { ProductPreviewResponsiveProps } from '../product-preview.component';
 import { ResponsiveDesktop } from '../responsive.component';
+import Skeleton from 'react-loading-skeleton';
 
 export default function ProductPreviewDesktopComponent({
   thumbnail,
   title,
   subtitle,
   description,
+  likesMetadata,
   pricedProduct,
   accountProps,
   onClick,
@@ -203,42 +205,63 @@ export default function ProductPreviewDesktopComponent({
                     styles['like-status-container-desktop'],
                   ].join(' ')}
                 >
-                  <Button
-                    classNames={{
-                      container: styles['like-button-container'],
-                      button: styles['like-button'],
-                    }}
-                    rippleProps={{
-                      color: !isLiked
-                        ? 'rgba(233, 33, 66, .35)'
-                        : 'rgba(42, 42, 95, .35)',
-                    }}
-                    disabled={
-                      !accountProps.account ||
-                      accountProps.account.status === 'Incomplete'
-                    }
-                    rounded={true}
-                    onClick={() => onLikeChanged?.(!isLiked)}
-                    type={'text'}
-                    icon={
-                      isLiked ? (
-                        <Line.Favorite size={24} color={'#E92142'} />
-                      ) : (
-                        <Line.FavoriteBorder size={24} color={'#2A2A5F'} />
-                      )
-                    }
-                  />
-                  <div
-                    className={[
-                      styles['like-status-count'],
-                      styles['like-status-count-desktop'],
-                    ].join(' ')}
-                  >
-                    {formatNumberCompact(likeCount)}
-                  </div>
+                  {likesMetadata && (
+                    <>
+                      <Button
+                        classNames={{
+                          container: styles['like-button-container'],
+                          button: styles['like-button'],
+                        }}
+                        rippleProps={{
+                          color: !isLiked
+                            ? 'rgba(233, 33, 66, .35)'
+                            : 'rgba(42, 42, 95, .35)',
+                        }}
+                        disabled={
+                          !accountProps.account ||
+                          accountProps.account.status === 'Incomplete'
+                        }
+                        rounded={true}
+                        onClick={() => onLikeChanged?.(!isLiked)}
+                        type={'text'}
+                        icon={
+                          isLiked ? (
+                            <Line.Favorite size={24} color={'#E92142'} />
+                          ) : (
+                            <Line.FavoriteBorder size={24} color={'#2A2A5F'} />
+                          )
+                        }
+                      />
+                      <div
+                        className={[
+                          styles['like-status-count'],
+                          styles['like-status-count-desktop'],
+                        ].join(' ')}
+                      >
+                        {formatNumberCompact(likeCount)}
+                      </div>
+                    </>
+                  )}
+                  {!likesMetadata && (
+                    <>
+                      <Skeleton
+                        className={[
+                          styles['like-status-button-skeleton'],
+                          styles['like-status-button-skeleton-desktop'],
+                        ].join(' ')}
+                      />
+                      <Skeleton
+                        borderRadius={9999}
+                        className={[
+                          styles['like-status-count-skeleton'],
+                          styles['like-status-count-skeleton-desktop'],
+                        ].join(' ')}
+                      />
+                    </>
+                  )}
                 </div>
               </div>
-              {selectedVariantId && (
+              {pricedProduct && selectedVariantId && (
                 <Button
                   classNames={{ button: styles['floating-button'] }}
                   rippleProps={{
@@ -248,6 +271,9 @@ export default function ProductPreviewDesktopComponent({
                   onClick={onAddToCart}
                   icon={<Line.AddShoppingCart size={24} />}
                 />
+              )}
+              {!pricedProduct && (
+                <Skeleton width={46} height={46} borderRadius={46} />
               )}
             </div>
           </div>

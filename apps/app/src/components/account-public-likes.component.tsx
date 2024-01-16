@@ -82,6 +82,14 @@ export default function AccountPublicLikesComponent(): JSX.Element {
     productLikesMetadata: core.ProductLikesMetadataResponse | null
   ) => {
     AccountPublicController.updateLikesScrollPosition(scrollTop);
+
+    if (!product || !productLikesMetadata) {
+      AccountPublicController.updateSelectedLikedProduct(undefined);
+      StoreController.updateSelectedPricedProduct(undefined);
+      StoreController.updateSelectedProductLikesMetadata(null);
+      return;
+    }
+
     AccountPublicController.updateSelectedLikedProduct(product);
     StoreController.updateSelectedPricedProduct(product);
     StoreController.updateSelectedProductLikesMetadata(productLikesMetadata);

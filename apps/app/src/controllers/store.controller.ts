@@ -99,7 +99,7 @@ class StoreController extends Controller {
     }, 750);
   }
 
-  public updateSelectedPricedProduct(value: PricedProduct): void {
+  public updateSelectedPricedProduct(value: PricedProduct | undefined): void {
     this._model.selectedPricedProduct = value;
   }
 

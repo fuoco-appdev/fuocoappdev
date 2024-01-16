@@ -181,6 +181,7 @@ class ExploreController extends Controller {
 
     let hits = result?.hits as StockLocation[] | undefined;
     if (!hits) {
+      this._model.areSearchedStockLocationsLoading = false;
       return;
     }
 
