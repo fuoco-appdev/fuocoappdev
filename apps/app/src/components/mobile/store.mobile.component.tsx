@@ -18,6 +18,7 @@ import {
   Tabs,
   Listbox,
   OptionProps,
+  Avatar,
 } from '@fuoco.appdev/core-ui';
 import { RoutePathsType } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
@@ -93,6 +94,39 @@ export default function StoreMobileComponent({
             styles['top-bar-container-mobile'],
           ].join(' ')}
         >
+          {exploreProps.selectedInventoryLocation && (
+            <div
+              className={[
+                styles['sales-location-container'],
+                styles['sales-location-container-mobile'],
+              ].join(' ')}
+            >
+              <Avatar
+                classNames={{
+                  container: !exploreProps.selectedInventoryLocation?.avatar
+                    ? [
+                        styles['no-avatar-container'],
+                        styles['no-avatar-container-mobile'],
+                      ].join(' ')
+                    : [
+                        styles['avatar-container'],
+                        styles['avatar-container-mobile'],
+                      ].join(' '),
+                }}
+                size={'custom'}
+                text={exploreProps.selectedInventoryLocation?.company ?? ''}
+                src={exploreProps.selectedInventoryLocation?.avatar}
+              />
+              <div
+                className={[
+                  styles['sales-location-title'],
+                  styles['sales-location-title-mobile'],
+                ].join(' ')}
+              >
+                {exploreProps.selectedInventoryLocation?.company ?? ''}
+              </div>
+            </div>
+          )}
           <div
             className={[
               styles['search-container'],
@@ -186,7 +220,10 @@ export default function StoreMobileComponent({
             styles['scroll-container'],
             styles['scroll-container-mobile'],
           ].join(' ')}
-          style={{ height: window.innerHeight }}
+          style={{
+            height: window.innerHeight,
+            paddingTop: (topBarRef?.current?.clientHeight ?? 157) + 16,
+          }}
           onScroll={(e) => {
             onPreviewsScroll(e);
             const elementHeight = topBarRef.current?.clientHeight ?? 0;

@@ -102,7 +102,7 @@ export default function ProductMobileComponent({
               ].join(' ')}
               src={
                 productProps.product?.thumbnail ??
-                '../assets/svg/wine-bottle.svg'
+                '../assets/images/wine-bottle.png'
               }
             />
           ) : (

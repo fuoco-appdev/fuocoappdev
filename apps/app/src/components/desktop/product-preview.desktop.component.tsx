@@ -81,7 +81,7 @@ export default function ProductPreviewDesktopComponent({
               styles['thumbnail-image'],
               styles['thumbnail-image-desktop'],
             ].join(' ')}
-            src={thumbnail ?? '../assets/svg/wine-bottle.svg'}
+            src={thumbnail ?? '../assets/images/wine-bottle.png'}
           />
           <div
             className={[

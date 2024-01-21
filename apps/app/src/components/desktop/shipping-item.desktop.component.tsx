@@ -38,7 +38,7 @@ export default function ShippingItemDesktopComponent({
                 styles['thumbnail-image'],
                 styles['thumbnail-image-desktop'],
               ].join(' ')}
-              src={item.thumbnail || '../assets/svg/wine-bottle.svg'}
+              src={item.thumbnail || '../assets/images/wine-bottle.png'}
             />
           </div>
           <div

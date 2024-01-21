@@ -81,7 +81,7 @@ export default function ProductPreviewTabletComponent({
               styles['thumbnail-image'],
               styles['thumbnail-image-tablet'],
             ].join(' ')}
-            src={thumbnail || '../assets/svg/wine-bottle.svg'}
+            src={thumbnail || '../assets/images/wine-bottle.png'}
           />
           <div
             className={[

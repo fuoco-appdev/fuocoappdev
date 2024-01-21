@@ -557,28 +557,39 @@ export default function WindowDesktopComponent({
                 >
                   {windowProps.activeRoute?.startsWith(
                     `${RoutePathsType.Store}/`
-                  ) && (
-                    <>
-                      <Avatar
-                        classNames={{
-                          container: [
-                            styles['avatar-container'],
-                            styles['avatar-container-desktop'],
-                          ].join(' '),
-                        }}
-                        size={'custom'}
-                        text={
-                          exploreProps.selectedInventoryLocation?.company ?? ''
-                        }
-                        src={''}
-                      />
-                      <div
-                        className={[styles['navigation-back-title']].join(' ')}
-                      >
-                        {exploreProps.selectedInventoryLocation?.company ?? ''}
-                      </div>
-                    </>
-                  )}
+                  ) &&
+                    exploreProps.selectedInventoryLocation && (
+                      <>
+                        <Avatar
+                          classNames={{
+                            container: !exploreProps.selectedInventoryLocation
+                              ?.avatar
+                              ? [
+                                  styles['no-avatar-container'],
+                                  styles['no-avatar-container-desktop'],
+                                ].join(' ')
+                              : [
+                                  styles['avatar-container'],
+                                  styles['avatar-container-desktop'],
+                                ].join(' '),
+                          }}
+                          size={'custom'}
+                          text={
+                            exploreProps.selectedInventoryLocation?.company ??
+                            ''
+                          }
+                          src={exploreProps.selectedInventoryLocation?.avatar}
+                        />
+                        <div
+                          className={[styles['navigation-back-title']].join(
+                            ' '
+                          )}
+                        >
+                          {exploreProps.selectedInventoryLocation?.company ??
+                            ''}
+                        </div>
+                      </>
+                    )}
                   {WindowController.isLocationAccountWithId(
                     location.pathname ?? ''
                   ) && (

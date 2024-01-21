@@ -923,6 +923,12 @@
 .avatar-container {
   width: 24px;
   height: 24px;
+  background-color: #fff !important;
+}
+
+.no-avatar-container {
+  width: 24px;
+  height: 24px;
   background-color: $brand-700 !important;
   color: #fff !important;
 }

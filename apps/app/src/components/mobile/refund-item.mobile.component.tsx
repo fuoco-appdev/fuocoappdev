@@ -44,7 +44,7 @@ export default function RefundItemMobileComponent({
                 styles['thumbnail-image'],
                 styles['thumbnail-image-mobile'],
               ].join(' ')}
-              src={item.thumbnail || '../assets/svg/wine-bottle.svg'}
+              src={item.thumbnail || '../assets/images/wine-bottle.png'}
             />
           </div>
           <div

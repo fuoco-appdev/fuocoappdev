@@ -27,8 +27,8 @@ export function StoreSuspenseTabletComponent(): JSX.Element {
           >
             <div
               className={[
-                styles['top-bar-left-content'],
-                styles['top-bar-left-content-tablet'],
+                styles['top-bar-middle-content'],
+                styles['top-bar-middle-content-tablet'],
               ].join(' ')}
             >
               <div

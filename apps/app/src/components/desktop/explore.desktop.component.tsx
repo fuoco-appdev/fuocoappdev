@@ -176,9 +176,11 @@ export default function ExploreDesktopComponent({
                   <StockLocationItemComponent
                     key={stockLocation.id}
                     stockLocation={stockLocation}
-                    onClick={() =>
+                    onClick={async () =>
                       onStockLocationClicked(
-                        ExploreController.getInventoryLocation(stockLocation)
+                        await ExploreController.getInventoryLocationAsync(
+                          stockLocation
+                        )
                       )
                     }
                   />

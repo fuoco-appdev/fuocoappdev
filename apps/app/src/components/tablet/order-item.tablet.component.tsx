@@ -59,7 +59,7 @@ export default function OrderItemTabletComponent({
                   ].join(' ')}
                   src={
                     order.items?.[0]?.thumbnail ||
-                    '../assets/svg/wine-bottle.svg'
+                    '../assets/images/wine-bottle.png'
                   }
                 />
               </div>

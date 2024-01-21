@@ -12,6 +12,7 @@ export interface InventoryLocation {
   description: string;
   region: string;
   salesChannels: Partial<SalesChannel>[];
+  avatar?: string;
 }
 
 export interface ExploreState {

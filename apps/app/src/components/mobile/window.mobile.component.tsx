@@ -254,33 +254,42 @@ export default function WindowMobileComponent({
                         styles['navigation-back-text-container-mobile'],
                       ].join(' ')}
                     >
-                      {activeRoute?.startsWith(`${RoutePathsType.Store}/`) && (
-                        <>
-                          <Avatar
-                            classNames={{
-                              container: [
-                                styles['avatar-container'],
-                                styles['avatar-container-mobile'],
-                              ].join(' '),
-                            }}
-                            size={'custom'}
-                            text={
-                              exploreProps.selectedInventoryLocation?.company ??
-                              ''
-                            }
-                            src={''}
-                            touchScreen={true}
-                          />
-                          <div
-                            className={[styles['navigation-back-title']].join(
-                              ' '
-                            )}
-                          >
-                            {exploreProps.selectedInventoryLocation?.company ??
-                              ''}
-                          </div>
-                        </>
-                      )}
+                      {activeRoute?.startsWith(`${RoutePathsType.Store}/`) &&
+                        exploreProps.selectedInventoryLocation && (
+                          <>
+                            <Avatar
+                              classNames={{
+                                container: !exploreProps
+                                  .selectedInventoryLocation?.avatar
+                                  ? [
+                                      styles['no-avatar-container'],
+                                      styles['no-avatar-container-mobile'],
+                                    ].join(' ')
+                                  : [
+                                      styles['avatar-container'],
+                                      styles['avatar-container-mobile'],
+                                    ].join(' '),
+                              }}
+                              size={'custom'}
+                              text={
+                                exploreProps.selectedInventoryLocation
+                                  ?.company ?? ''
+                              }
+                              src={
+                                exploreProps.selectedInventoryLocation?.avatar
+                              }
+                              touchScreen={true}
+                            />
+                            <div
+                              className={[styles['navigation-back-title']].join(
+                                ' '
+                              )}
+                            >
+                              {exploreProps.selectedInventoryLocation
+                                ?.company ?? ''}
+                            </div>
+                          </>
+                        )}
                       {activeRoute === RoutePathsType.AccountHelp && (
                         <>
                           <Line.HelpOutline size={22} />

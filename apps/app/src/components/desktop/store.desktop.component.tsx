@@ -19,6 +19,7 @@ import {
   Listbox,
   OptionProps,
   Modal,
+  Avatar,
 } from '@fuoco.appdev/core-ui';
 import { RoutePathsType } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
@@ -107,6 +108,46 @@ export default function StoreDesktopComponent({
               className={[
                 styles['top-bar-left-content'],
                 styles['top-bar-left-content-desktop'],
+              ].join(' ')}
+            >
+              {exploreProps.selectedInventoryLocation && (
+                <div
+                  className={[
+                    styles['sales-location-container'],
+                    styles['sales-location-container-desktop'],
+                  ].join(' ')}
+                >
+                  <Avatar
+                    classNames={{
+                      container: !exploreProps.selectedInventoryLocation?.avatar
+                        ? [
+                            styles['no-avatar-container'],
+                            styles['no-avatar-container-desktop'],
+                          ].join(' ')
+                        : [
+                            styles['avatar-container'],
+                            styles['avatar-container-desktop'],
+                          ].join(' '),
+                    }}
+                    size={'custom'}
+                    text={exploreProps.selectedInventoryLocation?.company ?? ''}
+                    src={exploreProps.selectedInventoryLocation?.avatar}
+                  />
+                  <div
+                    className={[
+                      styles['sales-location-title'],
+                      styles['sales-location-title-desktop'],
+                    ].join(' ')}
+                  >
+                    {exploreProps.selectedInventoryLocation?.company ?? ''}
+                  </div>
+                </div>
+              )}
+            </div>
+            <div
+              className={[
+                styles['top-bar-middle-content'],
+                styles['top-bar-middle-content-desktop'],
               ].join(' ')}
             >
               <div
@@ -198,7 +239,6 @@ export default function StoreDesktopComponent({
                   rippleProps={{
                     color: 'rgba(233, 33, 66, .35)',
                   }}
-                  block={true}
                   icon={
                     openFilter ? (
                       <Line.Close size={24} color={'#fff'} />

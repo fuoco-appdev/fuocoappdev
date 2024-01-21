@@ -12,12 +12,13 @@ import { point, featureCollection, nearestPoint, helpers } from '@turf/turf';
 import WindowController from './window.controller';
 import { Subscription } from 'rxjs';
 import { select } from '@ngneat/elf';
-import { PublicSecrets } from '../protobuf/core_pb';
+import { PublicSecrets, StorageFolderType } from '../protobuf/core_pb';
 import PermissionsController from './permissions.controller';
 import { Index } from 'meilisearch';
 import MeiliSearchService from '../services/meilisearch.service';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
 import { SalesChannel } from '@medusajs/medusa';
+import BucketService from '../services/bucket.service';
 
 class ExploreController extends Controller {
   private readonly _model: ExploreModel;
@@ -212,9 +213,9 @@ class ExploreController extends Controller {
     this._model.areSearchedStockLocationsLoading = false;
   }
 
-  public getInventoryLocation(
+  public async getInventoryLocationAsync(
     stockLocation: StockLocation & { sales_channels?: SalesChannel[] }
-  ): InventoryLocation | null {
+  ): Promise<InventoryLocation | null> {
     const metadata = stockLocation.metadata;
     const address = stockLocation.address;
     let coordinates = null;
@@ -232,6 +233,17 @@ class ExploreController extends Controller {
       return null;
     }
 
+    let avatar = undefined;
+    const avatarMetadata = stockLocation.metadata?.['avatar'] as
+      | string
+      | undefined;
+    if (avatarMetadata) {
+      avatar = await BucketService.getPublicUrlAsync(
+        StorageFolderType.Avatars,
+        avatarMetadata
+      );
+    }
+
     return {
       id: stockLocation.id,
       salesChannels: stockLocation.sales_channels ?? [],
@@ -243,6 +255,7 @@ class ExploreController extends Controller {
       description: (metadata?.['description'] as string) ?? '',
       company: address?.['company'] ?? '',
       region: (metadata?.['region'] as string) ?? '',
+      avatar: avatar,
     };
   }
 
@@ -256,7 +269,7 @@ class ExploreController extends Controller {
     this._model.inventoryLocations =
       await this.requestInventoryLocationsAsync();
 
-    this._model.wineCount = await this.requestWineCountAsync();
+    this._model.isSelectedInventoryLocationLoaded = true;
 
     this._currentPositionSubscription?.unsubscribe();
     this._currentPositionSubscription = PermissionsController.model.store
@@ -292,8 +305,6 @@ class ExploreController extends Controller {
           if (inventoryLocation) {
             this.updateSelectedInventoryLocation(inventoryLocation);
           }
-
-          this._model.isSelectedInventoryLocationLoaded = true;
         },
       });
   }
@@ -307,7 +318,9 @@ class ExploreController extends Controller {
     const stockLocations = await MedusaService.requestStockLocationsAsync();
     const inventoryLocations: InventoryLocation[] = [];
     for (const stockLocation of stockLocations) {
-      const inventoryLocation = this.getInventoryLocation(stockLocation);
+      const inventoryLocation = await this.getInventoryLocationAsync(
+        stockLocation
+      );
       if (!inventoryLocation) {
         continue;
       }

@@ -60,7 +60,7 @@ export default function CartVariantItemTabletComponent({
                       styles['variant-thumbnail'],
                       styles['variant-thumbnail-desktop'],
                     ].join(' ')}
-                    src={'../../assets/svg/wine-bottle.svg'}
+                    src={'../../assets/images/wine-bottle.png'}
                   />
                 )}
               {!product?.thumbnail &&
@@ -78,7 +78,9 @@ export default function CartVariantItemTabletComponent({
                     styles['variant-thumbnail'],
                     styles['variant-thumbnail-desktop'],
                   ].join(' ')}
-                  src={product?.thumbnail ?? '../../assets/svg/wine-bottle.svg'}
+                  src={
+                    product?.thumbnail ?? '../../assets/images/wine-bottle.png'
+                  }
                 />
               )}
             </div>

@@ -29,6 +29,24 @@ export function ExploreSuspenseMobileComponent(): JSX.Element {
             >
               <div
                 className={[
+                  styles['logo-container'],
+                  styles['logo-container-mobile'],
+                ].join(' ')}
+              >
+                <img
+                  className={[styles['logo'], styles['logo-mobile']].join(' ')}
+                  src={'../assets/svg/logo.svg'}
+                />
+                <img
+                  className={[
+                    styles['logo-text'],
+                    styles['logo-text-mobile'],
+                  ].join(' ')}
+                  src={'../assets/svg/logo-text-dark.svg'}
+                />
+              </div>
+              <div
+                className={[
                   styles['search-container'],
                   styles['search-container-mobile'],
                 ].join(' ')}

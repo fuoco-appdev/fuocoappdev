@@ -54,7 +54,7 @@ export default function CartItemTabletComponent({
                     styles['thumbnail-image'],
                     styles['thumbnail-image-tablet'],
                   ].join(' ')}
-                  src={'../../assets/svg/wine-bottle.svg'}
+                  src={'../../assets/images/wine-bottle.png'}
                 />
               )}
             {!item?.thumbnail &&

@@ -30,6 +30,29 @@ export function StoreSuspenseDesktopComponent(): JSX.Element {
             >
               <div
                 className={[
+                  styles['sales-location-container'],
+                  styles['sales-location-container-desktop'],
+                ].join(' ')}
+              >
+                <Skeleton height={24} width={24} borderRadius={24} />
+                <div
+                  className={[
+                    styles['sales-location-title'],
+                    styles['sales-location-title-desktop'],
+                  ].join(' ')}
+                >
+                  <Skeleton height={20} width={140} borderRadius={20} />
+                </div>
+              </div>
+            </div>
+            <div
+              className={[
+                styles['top-bar-middle-content'],
+                styles['top-bar-middle-content-desktop'],
+              ].join(' ')}
+            >
+              <div
+                className={[
                   styles['search-container'],
                   styles['search-container-desktop'],
                 ].join(' ')}

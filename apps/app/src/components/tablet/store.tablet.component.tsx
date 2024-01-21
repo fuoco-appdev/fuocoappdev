@@ -19,6 +19,7 @@ import {
   Listbox,
   OptionProps,
   Modal,
+  Avatar,
 } from '@fuoco.appdev/core-ui';
 import { RoutePathsType } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
@@ -107,6 +108,46 @@ export default function StoreTabletComponent({
               className={[
                 styles['top-bar-left-content'],
                 styles['top-bar-left-content-tablet'],
+              ].join(' ')}
+            >
+              {exploreProps.selectedInventoryLocation && (
+                <div
+                  className={[
+                    styles['sales-location-container'],
+                    styles['sales-location-container-tablet'],
+                  ].join(' ')}
+                >
+                  <Avatar
+                    classNames={{
+                      container: !exploreProps.selectedInventoryLocation?.avatar
+                        ? [
+                            styles['no-avatar-container'],
+                            styles['no-avatar-container-tablet'],
+                          ].join(' ')
+                        : [
+                            styles['avatar-container'],
+                            styles['avatar-container-tablet'],
+                          ].join(' '),
+                    }}
+                    size={'custom'}
+                    text={exploreProps.selectedInventoryLocation?.company ?? ''}
+                    src={exploreProps.selectedInventoryLocation?.avatar}
+                  />
+                  <div
+                    className={[
+                      styles['sales-location-title'],
+                      styles['sales-location-title-tablet'],
+                    ].join(' ')}
+                  >
+                    {exploreProps.selectedInventoryLocation?.company ?? ''}
+                  </div>
+                </div>
+              )}
+            </div>
+            <div
+              className={[
+                styles['top-bar-middle-content'],
+                styles['top-bar-middle-content-tablet'],
               ].join(' ')}
             >
               <div

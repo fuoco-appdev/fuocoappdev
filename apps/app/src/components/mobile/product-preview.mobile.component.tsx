@@ -136,7 +136,7 @@ export default function ProductPreviewMobileComponent({
                 styles['thumbnail-image'],
                 styles['thumbnail-image-mobile'],
               ].join(' ')}
-              src={thumbnail || '../assets/svg/wine-bottle.svg'}
+              src={thumbnail || '../assets/images/wine-bottle.png'}
             />
             <div
               className={[
