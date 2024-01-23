@@ -33,7 +33,11 @@ import {
 } from './responsive.component';
 import LoadingComponent from './loading.component';
 import { Store } from '@ngneat/elf';
-import { ProductTabs, StoreState } from '../models/store.model';
+import {
+  ProductTabs,
+  StoreCategoryType,
+  StoreState,
+} from '../models/store.model';
 import { Country, Region, Product, SalesChannel } from '@medusajs/medusa';
 import ProductPreviewComponent from './product-preview.component';
 import ReactCountryFlag from 'react-country-flag';
@@ -62,6 +66,7 @@ import { useQuery } from '../route-paths';
 import { WindowState } from '../models';
 import AccountController from '../controllers/account.controller';
 import { AccountState } from '../models/account.model';
+import { TabProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/tabs/tabs';
 
 const StoreDesktopComponent = lazy(
   () => import('./desktop/store.desktop.component')
@@ -88,12 +93,15 @@ export interface StoreResponsiveProps {
   selectedRegionId: string;
   selectedCellarId: string;
   variantQuantities: Record<string, number>;
+  tabs: TabProps[];
+  categoryOpen: boolean;
   setOpenFilter: (value: boolean) => void;
   setOpenCartVariants: (value: boolean) => void;
   setSelectedCountryId: (value: string) => void;
   setSelectedRegionId: (value: string) => void;
   setSelectedCellarId: (value: string) => void;
   setVariantQuantities: (value: Record<string, number>) => void;
+  setCategoryOpen: (value: boolean) => void;
   onPreviewsScroll: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
   onPreviewsLoad: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
   onAddToCart: () => void;
@@ -111,10 +119,12 @@ export interface StoreResponsiveProps {
     isLiked: boolean,
     product: PricedProduct
   ) => void;
+  onCategoryChanged: (category: StoreCategoryType) => void;
 }
 
 export default function StoreComponent(): JSX.Element {
   const navigate = useNavigate();
+  const query = useQuery();
   const [windowProps] = useObservable(WindowController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
   const [exploreProps] = useObservable(ExploreController.model.store);
@@ -133,8 +143,9 @@ export default function StoreComponent(): JSX.Element {
   const [variantQuantities, setVariantQuantities] = useState<
     Record<string, number>
   >({});
+  const [tabs, setTabs] = useState<TabProps[]>([]);
+  const [categoryOpen, setCategoryOpen] = useState<boolean>(false);
   const { t, i18n } = useTranslation();
-  const query = useQuery();
 
   const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const scrollTop = e.currentTarget?.scrollTop ?? 0;
@@ -174,7 +185,10 @@ export default function StoreComponent(): JSX.Element {
   };
 
   const onProductPreviewRest = (product: PricedProduct) => {
-    navigate(`${RoutePathsType.Store}/${product.id}`);
+    navigate({
+      pathname: `${RoutePathsType.Store}/${product.id}`,
+      search: query.toString(),
+    });
   };
 
   const onProductPreviewAddToCart = (
@@ -246,13 +260,16 @@ export default function StoreComponent(): JSX.Element {
     setVariantQuantities({});
   };
 
+  const onCategoryChanged = (category: StoreCategoryType) => {
+    StoreController.updateCategory(category);
+    setCategoryOpen(false);
+  };
+
   useEffect(() => {
     const search = query.get('search');
     if (search && search !== storeProps.input) {
       StoreController.updateInput(search);
     }
-
-    StoreController.loadProductsAsync();
   }, []);
 
   useEffect(() => {
@@ -381,6 +398,50 @@ export default function StoreComponent(): JSX.Element {
     setSelectedRegionId(storeProps.selectedRegion.id);
   }, [regionOptions, storeProps.selectedRegion]);
 
+  useEffect(() => {
+    if (storeProps.category === StoreCategoryType.Wines) {
+      setTabs([
+        {
+          id: ProductTabs.White,
+          label: t('white') ?? 'White',
+        },
+        {
+          id: ProductTabs.Red,
+          label: t('red') ?? 'Red',
+        },
+        {
+          id: ProductTabs.Rose,
+          label: t('rose') ?? 'Rosé',
+        },
+        {
+          id: ProductTabs.Spirits,
+          label: t('spirits') ?? 'Spirits',
+        },
+      ]);
+    } else if (storeProps.category === StoreCategoryType.Menu) {
+      setTabs([
+        {
+          id: ProductTabs.Appetizers,
+          label: t('appetizers') ?? 'Appetizers',
+        },
+        {
+          id: ProductTabs.MainCourses,
+          label: t('mainCourses') ?? 'Main Courses',
+        },
+        {
+          id: ProductTabs.Desserts,
+          label: t('desserts') ?? 'Desserts',
+        },
+        {
+          id: ProductTabs.Extras,
+          label: t('extras') ?? 'Extras',
+        },
+      ]);
+    }
+
+    StoreController.loadProductsAsync();
+  }, [storeProps.category]);
+
   const suspenceComponent = (
     <>
       <StoreSuspenseDesktopComponent />
@@ -433,12 +494,15 @@ export default function StoreComponent(): JSX.Element {
           selectedCountryId={selectedCountryId}
           selectedRegionId={selectedRegionId}
           selectedCellarId={selectedCellarId}
+          tabs={tabs}
+          categoryOpen={categoryOpen}
           setOpenFilter={setOpenFilter}
           setOpenCartVariants={setOpenCartVariants}
           setSelectedCountryId={setSelectedCountryId}
           setSelectedRegionId={setSelectedRegionId}
           setSelectedCellarId={setSelectedCellarId}
           setVariantQuantities={setVariantQuantities}
+          setCategoryOpen={setCategoryOpen}
           onPreviewsScroll={onScroll}
           onPreviewsLoad={onLoad}
           onAddToCart={onAddToCart}
@@ -446,6 +510,7 @@ export default function StoreComponent(): JSX.Element {
           onProductPreviewClick={onProductPreviewClick}
           onProductPreviewLikeChanged={onProductPreviewLikeChanged}
           onProductPreviewRest={onProductPreviewRest}
+          onCategoryChanged={onCategoryChanged}
         />
         <StoreTabletComponent
           windowProps={windowProps}
@@ -462,12 +527,15 @@ export default function StoreComponent(): JSX.Element {
           selectedCountryId={selectedCountryId}
           selectedRegionId={selectedRegionId}
           selectedCellarId={selectedCellarId}
+          tabs={tabs}
+          categoryOpen={categoryOpen}
           setOpenFilter={setOpenFilter}
           setOpenCartVariants={setOpenCartVariants}
           setSelectedCountryId={setSelectedCountryId}
           setSelectedRegionId={setSelectedRegionId}
           setSelectedCellarId={setSelectedCellarId}
           setVariantQuantities={setVariantQuantities}
+          setCategoryOpen={setCategoryOpen}
           onPreviewsScroll={onScroll}
           onPreviewsLoad={onLoad}
           onAddToCart={onAddToCart}
@@ -475,6 +543,7 @@ export default function StoreComponent(): JSX.Element {
           onProductPreviewClick={onProductPreviewClick}
           onProductPreviewLikeChanged={onProductPreviewLikeChanged}
           onProductPreviewRest={onProductPreviewRest}
+          onCategoryChanged={onCategoryChanged}
         />
         <StoreMobileComponent
           windowProps={windowProps}
@@ -491,12 +560,15 @@ export default function StoreComponent(): JSX.Element {
           selectedCountryId={selectedCountryId}
           selectedRegionId={selectedRegionId}
           selectedCellarId={selectedCellarId}
+          tabs={tabs}
+          categoryOpen={categoryOpen}
           setOpenFilter={setOpenFilter}
           setOpenCartVariants={setOpenCartVariants}
           setSelectedCountryId={setSelectedCountryId}
           setSelectedRegionId={setSelectedRegionId}
           setSelectedCellarId={setSelectedCellarId}
           setVariantQuantities={setVariantQuantities}
+          setCategoryOpen={setCategoryOpen}
           onPreviewsScroll={onScroll}
           onPreviewsLoad={onLoad}
           onAddToCart={onAddToCart}
@@ -504,6 +576,7 @@ export default function StoreComponent(): JSX.Element {
           onProductPreviewClick={onProductPreviewClick}
           onProductPreviewLikeChanged={onProductPreviewLikeChanged}
           onProductPreviewRest={onProductPreviewRest}
+          onCategoryChanged={onCategoryChanged}
         />
       </React.Suspense>
     </>

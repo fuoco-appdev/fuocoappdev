@@ -13,7 +13,7 @@ import {
   Solid,
   ToastOverlay,
 } from '@fuoco.appdev/core-ui';
-import { RoutePathsType } from '../../route-paths';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
 import * as core from '../../protobuf/core_pb';
@@ -41,6 +41,7 @@ export default function WindowMobileComponent({
   onNavigateBack,
 }: WindowResponsiveProps): JSX.Element {
   const navigate = useNavigate();
+  const query = useQuery();
   const { t } = useTranslation();
   const outletRef = useRef<HTMLDivElement | null>(null);
   const bottomBarRef = useRef<HTMLDivElement | null>(null);
@@ -179,7 +180,14 @@ export default function WindowMobileComponent({
                         if (activeRoute === RoutePathsType.Cart) {
                           navigate(-1);
                         } else {
-                          setTimeout(() => navigate(RoutePathsType.Cart), 75);
+                          setTimeout(
+                            () =>
+                              navigate({
+                                pathname: RoutePathsType.Cart,
+                                search: query.toString(),
+                              }),
+                            75
+                          );
                         }
                       }}
                       type={'primary'}
@@ -438,7 +446,12 @@ export default function WindowMobileComponent({
                         rippleProps={{
                           color: 'rgba(252, 245, 227, .35)',
                         }}
-                        onClick={() => navigate(RoutePathsType.Explore)}
+                        onClick={() =>
+                          navigate({
+                            pathname: RoutePathsType.Explore,
+                            search: query.toString(),
+                          })
+                        }
                         disabled={
                           windowProps.activeRoute === RoutePathsType.Cart
                         }
@@ -472,7 +485,12 @@ export default function WindowMobileComponent({
                         rippleProps={{
                           color: 'rgba(252, 245, 227, .35)',
                         }}
-                        onClick={() => navigate(RoutePathsType.Store)}
+                        onClick={() =>
+                          navigate({
+                            pathname: RoutePathsType.Store,
+                            search: query.toString(),
+                          })
+                        }
                         disabled={
                           windowProps.activeRoute === RoutePathsType.Cart
                         }
@@ -621,7 +639,10 @@ export default function WindowMobileComponent({
                               color: 'rgba(252, 245, 227, .35)',
                             }}
                             onClick={() =>
-                              navigate(RoutePathsType.AccountLikes)
+                              navigate({
+                                pathname: RoutePathsType.AccountLikes,
+                                search: query.toString(),
+                              })
                             }
                             disabled={
                               windowProps.activeRoute === RoutePathsType.Cart
@@ -770,7 +791,10 @@ export default function WindowMobileComponent({
             >
               <Dropdown.Item
                 onClick={() => {
-                  navigate(RoutePathsType.Help);
+                  navigate({
+                    pathname: RoutePathsType.Help,
+                    search: query.toString(),
+                  });
                   setOpenMore(false);
                 }}
               >
@@ -788,7 +812,10 @@ export default function WindowMobileComponent({
               </Dropdown.Item>
               <Dropdown.Item
                 onClick={() => {
-                  navigate(RoutePathsType.Signin);
+                  navigate({
+                    pathname: RoutePathsType.Signin,
+                    search: query.toString(),
+                  });
                   setOpenMore(false);
                 }}
               >
@@ -806,7 +833,10 @@ export default function WindowMobileComponent({
               </Dropdown.Item>
               <Dropdown.Item
                 onClick={() => {
-                  navigate(RoutePathsType.Signup);
+                  navigate({
+                    pathname: RoutePathsType.Signup,
+                    search: query.toString(),
+                  });
                   setOpenMore(false);
                 }}
               >

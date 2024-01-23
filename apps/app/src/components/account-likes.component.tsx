@@ -25,7 +25,7 @@ import {
   PricedProduct,
 } from '@medusajs/medusa/dist/types/pricing';
 import { useNavigate } from 'react-router-dom';
-import { RoutePathsType } from '../route-paths';
+import { RoutePathsType, useQuery } from '../route-paths';
 import * as core from '../protobuf/core_pb';
 
 const AccountLikesDesktopComponent = lazy(
@@ -62,6 +62,7 @@ export interface AccountLikesResponsiveProps {
 export default function AccountLikesComponent(): JSX.Element {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const query = useQuery();
   const [storeProps] = useObservable(StoreController.model.store);
   const [accountProps] = useObservable(AccountController.model.store);
   const [openCartVariants, setOpenCartVariants] = useState<boolean>(false);
@@ -89,7 +90,10 @@ export default function AccountLikesComponent(): JSX.Element {
   };
 
   const onProductPreviewRest = (product: PricedProduct) => {
-    navigate(`${RoutePathsType.Store}/${product.id}`);
+    navigate({
+      pathname: `${RoutePathsType.Store}/${product.id}`,
+      search: query.toString(),
+    });
   };
 
   const onProductPreviewAddToCart = (product: PricedProduct) => {

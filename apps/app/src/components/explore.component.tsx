@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { RoutePathsType } from '../route-paths';
+import { RoutePathsType, useQuery } from '../route-paths';
 import { useTranslation } from 'react-i18next';
 import {
   ResponsiveDesktop,
@@ -50,6 +50,7 @@ export interface ExploreResponsiveProps {
 
 export default function ExploreComponent(): JSX.Element {
   const navigate = useNavigate();
+  const query = useQuery();
   const [exploreProps] = useObservable(ExploreController.model.store);
   const [exploreLocalProps] = useObservable(
     ExploreController.model.localStore ?? Store.prototype
@@ -95,7 +96,7 @@ export default function ExploreComponent(): JSX.Element {
 
   const onGoToStore = (stockLocation: InventoryLocation) => {
     ExploreController.updateSelectedInventoryLocation(stockLocation);
-    navigate(RoutePathsType.Store);
+    navigate({ pathname: RoutePathsType.Store, search: query.toString() });
   };
 
   useEffect(() => {
@@ -114,7 +115,7 @@ export default function ExploreComponent(): JSX.Element {
     }
 
     if (location.pathname === RoutePathsType.Default) {
-      navigate(RoutePathsType.Explore);
+      navigate({ pathname: RoutePathsType.Explore, search: query.toString() });
     }
   }, [location.pathname]);
 

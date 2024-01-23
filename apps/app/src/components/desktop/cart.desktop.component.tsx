@@ -3,7 +3,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import CartController from '../../controllers/cart.controller';
 import styles from '../cart.module.scss';
 import { Button, Input, Line, Modal, Solid, Tabs } from '@fuoco.appdev/core-ui';
-import { RoutePathsType } from '../../route-paths';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
 import { LineItem, ProductVariant, Discount, Cart } from '@medusajs/medusa';
@@ -33,6 +33,7 @@ export default function CartDesktopComponent({
   onAddFoodToCart,
 }: CartResponsiveProps): JSX.Element {
   const navigate = useNavigate();
+  const query = useQuery();
   const { t, i18n } = useTranslation();
 
   return (
@@ -76,7 +77,12 @@ export default function CartDesktopComponent({
                 }}
                 size={'large'}
                 touchScreen={true}
-                onClick={() => navigate(RoutePathsType.Signin)}
+                onClick={() =>
+                  navigate({
+                    pathname: RoutePathsType.Signin,
+                    search: query.toString(),
+                  })
+                }
               >
                 {t('signIn')}
               </Button>
@@ -182,7 +188,14 @@ export default function CartDesktopComponent({
                         }}
                         size={'large'}
                         onClick={() =>
-                          setTimeout(() => navigate(RoutePathsType.Explore), 75)
+                          setTimeout(
+                            () =>
+                              navigate({
+                                pathname: RoutePathsType.Explore,
+                                search: query.toString(),
+                              }),
+                            75
+                          )
                         }
                       >
                         {t('explore')}
@@ -216,7 +229,14 @@ export default function CartDesktopComponent({
                           }}
                           size={'large'}
                           onClick={() =>
-                            setTimeout(() => navigate(RoutePathsType.Store), 75)
+                            setTimeout(
+                              () =>
+                                navigate({
+                                  pathname: RoutePathsType.Store,
+                                  search: query.toString(),
+                                }),
+                              75
+                            )
                           }
                         >
                           {t('shopNow')}

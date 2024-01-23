@@ -7,7 +7,7 @@ import { AuthError } from '@supabase/supabase-js';
 import { useState, useEffect } from 'react';
 import { animated, config, useTransition } from 'react-spring';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { RoutePathsType } from '../../route-paths';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import ResetPasswordController from '../../controllers/reset-password.controller';
 import { useObservable } from '@ngneat/use-observable';
 import {
@@ -29,6 +29,7 @@ export default function ResetPasswordTabletComponent({
 }: ResetPasswordResponsiveProps): JSX.Element {
   const [show, setShow] = useState(false);
   const navigate = useNavigate();
+  const query = useQuery();
   const { t, i18n } = useTranslation();
 
   useTabletEffect(() => {
@@ -91,7 +92,10 @@ export default function ResetPasswordTabletComponent({
                           closable: true,
                         });
                         setAuthError(null);
-                        navigate(RoutePathsType.Account);
+                        navigate({
+                          pathname: RoutePathsType.Account,
+                          search: query.toString(),
+                        });
                       }}
                       onResetPasswordError={setAuthError}
                       supabaseClient={resetPasswordProps.supabaseClient}

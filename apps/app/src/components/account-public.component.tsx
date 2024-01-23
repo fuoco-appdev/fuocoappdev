@@ -9,7 +9,7 @@ import {
   useOutletContext,
   useParams,
 } from 'react-router-dom';
-import { RoutePathsType } from '../route-paths';
+import { RoutePathsType, useQuery } from '../route-paths';
 import {
   ResponsiveDesktop,
   ResponsiveMobile,
@@ -71,6 +71,7 @@ export interface AccountPublicResponsiveProps {
 export default function AccountPublicComponent(): JSX.Element {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const query = useQuery();
   const { id } = useParams();
   const [accountPublicProps] = useObservable(
     AccountPublicController.model.store
@@ -115,9 +116,10 @@ export default function AccountPublicComponent(): JSX.Element {
       return;
     }
 
-    navigate(
-      `${RoutePathsType.Account}/${accountPublicProps.account?.id}/likes`
-    );
+    navigate({
+      pathname: `${RoutePathsType.Account}/${accountPublicProps.account?.id}/likes`,
+      search: query.toString(),
+    });
   };
 
   const onFollowersClick = () => {
@@ -125,9 +127,10 @@ export default function AccountPublicComponent(): JSX.Element {
       return;
     }
 
-    navigate(
-      `${RoutePathsType.AccountStatus}/${accountPublicProps.account?.id}/followers`
-    );
+    navigate({
+      pathname: `${RoutePathsType.AccountStatus}/${accountPublicProps.account?.id}/followers`,
+      search: query.toString(),
+    });
   };
 
   const onFollowingClick = () => {
@@ -135,9 +138,10 @@ export default function AccountPublicComponent(): JSX.Element {
       return;
     }
 
-    navigate(
-      `${RoutePathsType.AccountStatus}/${accountPublicProps.account?.id}/following`
-    );
+    navigate({
+      pathname: `${RoutePathsType.AccountStatus}/${accountPublicProps.account?.id}/following`,
+      search: query.toString(),
+    });
   };
 
   const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {

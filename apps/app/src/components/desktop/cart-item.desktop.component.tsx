@@ -11,7 +11,7 @@ import StoreController from '../../controllers/store.controller';
 import { useObservable } from '@ngneat/use-observable';
 import { CartItemResponsiveProps } from '../cart-item.component';
 import { useNavigate } from 'react-router-dom';
-import { RoutePathsType } from '../../route-paths';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import { ResponsiveDesktop } from '../responsive.component';
 import { MedusaProductTypeNames } from '../../types/medusa.type';
 
@@ -31,6 +31,7 @@ export default function CartItemDesktopComponent({
   decrementItemQuantity,
 }: CartItemResponsiveProps): JSX.Element {
   const navigate = useNavigate();
+  const query = useQuery();
   const { t } = useTranslation();
 
   return (
@@ -82,7 +83,10 @@ export default function CartItemDesktopComponent({
               styles['title-container-desktop'],
             ].join(' ')}
             onClick={() =>
-              navigate(`${RoutePathsType.Store}/${item.variant.product_id}`)
+              navigate({
+                pathname: `${RoutePathsType.Store}/${item.variant.product_id}`,
+                search: query.toString(),
+              })
             }
           >
             <div

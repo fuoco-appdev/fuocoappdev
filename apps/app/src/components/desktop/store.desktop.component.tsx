@@ -20,15 +20,16 @@ import {
   OptionProps,
   Modal,
   Avatar,
+  DropdownAlignment,
 } from '@fuoco.appdev/core-ui';
-import { RoutePathsType } from '../../route-paths';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import SupabaseService from '../../services/supabase.service';
 import { useObservable } from '@ngneat/use-observable';
 import { useSpring } from 'react-spring';
 import * as core from '../../protobuf/core_pb';
 import { Store } from '@ngneat/elf';
-import { ProductTabs } from '../../models/store.model';
+import { ProductTabs, StoreCategoryType } from '../../models/store.model';
 import { Country, Region, Product, SalesChannel } from '@medusajs/medusa';
 import ProductPreviewComponent from '../product-preview.component';
 import ReactCountryFlag from 'react-country-flag';
@@ -62,12 +63,15 @@ export default function StoreDesktopComponent({
   selectedCountryId,
   selectedRegionId,
   selectedCellarId,
+  tabs,
+  categoryOpen,
   setOpenFilter,
   setOpenCartVariants,
   setSelectedCountryId,
   setSelectedRegionId,
   setSelectedCellarId,
   setVariantQuantities,
+  setCategoryOpen,
   onPreviewsScroll,
   onPreviewsLoad,
   onAddToCart,
@@ -75,12 +79,15 @@ export default function StoreDesktopComponent({
   onProductPreviewClick,
   onProductPreviewLikeChanged,
   onProductPreviewRest,
+  onCategoryChanged,
 }: StoreResponsiveProps): JSX.Element {
   const previewsContainerRef = createRef<HTMLDivElement>();
   const rootRef = createRef<HTMLDivElement>();
   const topBarRef = useRef<HTMLDivElement | null>(null);
   const sideBarRef = useRef<HTMLDivElement | null>(null);
+  const categoryButtonRef = useRef<HTMLButtonElement | null>(null);
   const navigate = useNavigate();
+  const query = useQuery();
   const { t, i18n } = useTranslation();
   let prevPreviewScrollTop = 0;
   let yPosition = 0;
@@ -143,6 +150,35 @@ export default function StoreDesktopComponent({
                   </div>
                 </div>
               )}
+              <Button
+                ref={categoryButtonRef}
+                classNames={{
+                  button: styles['category-button'],
+                }}
+                icon={
+                  <>
+                    {storeProps.category === StoreCategoryType.Wines && (
+                      <img
+                        style={{ height: 24, width: 24, objectFit: 'contain' }}
+                        src={'../../assets/images/wine-bottle.png'}
+                      />
+                    )}
+                    {storeProps.category === StoreCategoryType.Menu && (
+                      <img
+                        style={{ height: 24, width: 24, objectFit: 'contain' }}
+                        src={'../../assets/images/menu.png'}
+                      />
+                    )}
+                  </>
+                }
+                iconRight={<Line.ExpandMore size={24} />}
+                onClick={(e) => setCategoryOpen(true)}
+              >
+                {storeProps.category === StoreCategoryType.Wines &&
+                  t(StoreCategoryType.Wines)}
+                {storeProps.category === StoreCategoryType.Menu &&
+                  t(StoreCategoryType.Menu)}
+              </Button>
             </div>
             <div
               className={[
@@ -202,24 +238,7 @@ export default function StoreDesktopComponent({
                       id.length > 0 ? (id as ProductTabs) : undefined
                     )
                   }
-                  tabs={[
-                    {
-                      id: ProductTabs.White,
-                      label: t('white') ?? 'White',
-                    },
-                    {
-                      id: ProductTabs.Red,
-                      label: t('red') ?? 'Red',
-                    },
-                    {
-                      id: ProductTabs.Rose,
-                      label: t('rose') ?? 'Rosé',
-                    },
-                    {
-                      id: ProductTabs.Spirits,
-                      label: t('spirits') ?? 'Spirits',
-                    },
-                  ]}
+                  tabs={tabs}
                 />
               </div>
             </div>
@@ -373,7 +392,14 @@ export default function StoreDesktopComponent({
                     }}
                     size={'large'}
                     onClick={() =>
-                      setTimeout(() => navigate(RoutePathsType.Explore), 75)
+                      setTimeout(
+                        () =>
+                          navigate({
+                            pathname: RoutePathsType.Explore,
+                            search: query.toString(),
+                          }),
+                        75
+                      )
                     }
                   >
                     {t('explore')}
@@ -504,93 +530,141 @@ export default function StoreDesktopComponent({
         </CSSTransition>
       </div>
       {createPortal(
-        <Modal
-          classNames={{
-            overlay: [
-              styles['modal-overlay'],
-              styles['modal-overlay-desktop'],
-            ].join(' '),
-            modal: [styles['modal'], styles['modal-desktop']].join(' '),
-            text: [styles['modal-text'], styles['modal-text-desktop']].join(
-              ' '
-            ),
-            title: [styles['modal-title'], styles['modal-title-desktop']].join(
-              ' '
-            ),
-            description: [
-              styles['modal-description'],
-              styles['modal-description-desktop'],
-            ].join(' '),
-            footerButtonContainer: [
-              styles['modal-footer-button-container'],
-              styles['modal-footer-button-container-desktop'],
-              styles['modal-address-footer-button-container-desktop'],
-            ].join(' '),
-            cancelButton: {
-              button: [
-                styles['modal-cancel-button'],
-                styles['modal-cancel-button-desktop'],
+        <>
+          <Modal
+            classNames={{
+              overlay: [
+                styles['modal-overlay'],
+                styles['modal-overlay-desktop'],
               ].join(' '),
-            },
-            confirmButton: {
-              button: [
-                styles['modal-confirm-button'],
-                styles['modal-confirm-button-desktop'],
+              modal: [styles['modal'], styles['modal-desktop']].join(' '),
+              text: [styles['modal-text'], styles['modal-text-desktop']].join(
+                ' '
+              ),
+              title: [
+                styles['modal-title'],
+                styles['modal-title-desktop'],
               ].join(' '),
-            },
-          }}
-          title={t('addVariant') ?? ''}
-          visible={openCartVariants}
-          onCancel={() => setOpenCartVariants(false)}
-          hideFooter={true}
-        >
-          <div
-            className={[
-              styles['add-variants-container'],
-              styles['add-variants-container-desktop'],
-            ].join(' ')}
-          >
-            {storeProps.selectedPricedProduct?.variants.map((variant) => {
-              return (
-                <CartVariantItemComponent
-                  productType={MedusaProductTypeNames.Wine}
-                  key={variant.id}
-                  product={storeProps.selectedPricedProduct}
-                  variant={variant}
-                  storeProps={storeProps}
-                  variantQuantities={variantQuantities}
-                  setVariantQuantities={setVariantQuantities}
-                />
-              );
-            })}
-            <Button
-              classNames={{
-                container: [
-                  styles['add-to-cart-button-container'],
-                  styles['add-to-cart-button-container-desktop'],
-                ].join(' '),
+              description: [
+                styles['modal-description'],
+                styles['modal-description-desktop'],
+              ].join(' '),
+              footerButtonContainer: [
+                styles['modal-footer-button-container'],
+                styles['modal-footer-button-container-desktop'],
+                styles['modal-address-footer-button-container-desktop'],
+              ].join(' '),
+              cancelButton: {
                 button: [
-                  styles['add-to-cart-button'],
-                  styles['add-to-cart-button-desktop'],
+                  styles['modal-cancel-button'],
+                  styles['modal-cancel-button-desktop'],
                 ].join(' '),
-              }}
-              block={true}
-              size={'full'}
-              rippleProps={{
-                color: 'rgba(233, 33, 66, .35)',
-              }}
-              icon={<Line.AddShoppingCart size={24} />}
-              disabled={
-                Object.values(variantQuantities).reduce((current, next) => {
-                  return current + next;
-                }, 0) <= 0
-              }
-              onClick={onAddToCart}
+              },
+              confirmButton: {
+                button: [
+                  styles['modal-confirm-button'],
+                  styles['modal-confirm-button-desktop'],
+                ].join(' '),
+              },
+            }}
+            title={t('addVariant') ?? ''}
+            visible={openCartVariants}
+            onCancel={() => setOpenCartVariants(false)}
+            hideFooter={true}
+          >
+            <div
+              className={[
+                styles['add-variants-container'],
+                styles['add-variants-container-desktop'],
+              ].join(' ')}
             >
-              {t('addToCart')}
-            </Button>
-          </div>
-        </Modal>,
+              {storeProps.selectedPricedProduct?.variants.map((variant) => {
+                return (
+                  <CartVariantItemComponent
+                    productType={MedusaProductTypeNames.Wine}
+                    key={variant.id}
+                    product={storeProps.selectedPricedProduct}
+                    variant={variant}
+                    storeProps={storeProps}
+                    variantQuantities={variantQuantities}
+                    setVariantQuantities={setVariantQuantities}
+                  />
+                );
+              })}
+              <Button
+                classNames={{
+                  container: [
+                    styles['add-to-cart-button-container'],
+                    styles['add-to-cart-button-container-desktop'],
+                  ].join(' '),
+                  button: [
+                    styles['add-to-cart-button'],
+                    styles['add-to-cart-button-desktop'],
+                  ].join(' '),
+                }}
+                block={true}
+                size={'full'}
+                rippleProps={{
+                  color: 'rgba(233, 33, 66, .35)',
+                }}
+                icon={<Line.AddShoppingCart size={24} />}
+                disabled={
+                  Object.values(variantQuantities).reduce((current, next) => {
+                    return current + next;
+                  }, 0) <= 0
+                }
+                onClick={onAddToCart}
+              >
+                {t('addToCart')}
+              </Button>
+            </div>
+          </Modal>
+          <Dropdown
+            anchorRef={categoryButtonRef}
+            align={DropdownAlignment.Right}
+            open={categoryOpen}
+            onClose={() => {
+              setCategoryOpen(false);
+            }}
+          >
+            <Dropdown.Item
+              onClick={() => onCategoryChanged(StoreCategoryType.Wines)}
+            >
+              <Dropdown.Icon>
+                <img
+                  style={{ height: 24, width: 24, objectFit: 'contain' }}
+                  src={'../../assets/images/wine-bottle.png'}
+                />
+              </Dropdown.Icon>
+              <div
+                className={[
+                  styles['category-text'],
+                  styles['category-text-desktop'],
+                ].join(' ')}
+              >
+                {t(StoreCategoryType.Wines)}
+              </div>
+            </Dropdown.Item>
+            <Dropdown.Item
+              onClick={() => onCategoryChanged(StoreCategoryType.Menu)}
+            >
+              <Dropdown.Icon>
+                <img
+                  style={{ height: 24, width: 24, objectFit: 'contain' }}
+                  src={'../../assets/images/menu.png'}
+                />
+              </Dropdown.Icon>
+              <div
+                className={[
+                  styles['category-text'],
+                  styles['category-text-desktop'],
+                ].join(' ')}
+              >
+                {t(StoreCategoryType.Menu)}
+              </div>
+            </Dropdown.Item>
+          </Dropdown>
+        </>,
         document.body
       )}
     </ResponsiveDesktop>

@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { RoutePathsType } from '../route-paths';
+import { RoutePathsType, useQuery } from '../route-paths';
 import { useTranslation } from 'react-i18next';
 import {
   ResponsiveDesktop,
@@ -45,6 +45,7 @@ export default function PermissionsComponent(): JSX.Element {
   const [permissionsProps] = useObservable(PermissionsController.model.store);
   const [windowProps] = useObservable(WindowController.model.store);
   const navigate = useNavigate();
+  const query = useQuery();
 
   const onAccessLocationChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.checked) {
@@ -59,9 +60,12 @@ export default function PermissionsComponent(): JSX.Element {
 
   const onContinueAsync = async () => {
     if (windowProps.loadedLocationPath !== RoutePathsType.Permissions) {
-      navigate(windowProps.loadedLocationPath ?? RoutePathsType.Explore);
+      navigate({
+        pathname: windowProps.loadedLocationPath ?? RoutePathsType.Explore,
+        search: query.toString(),
+      });
     } else {
-      navigate(RoutePathsType.Explore);
+      navigate({ pathname: RoutePathsType.Explore, search: query.toString() });
     }
   };
 
@@ -69,7 +73,7 @@ export default function PermissionsComponent(): JSX.Element {
     if (!ExploreController.model.selectedInventoryLocation) {
       const defaultInventoryLocation =
         await ExploreController.getDefaultInventoryLocationAsync();
-      WindowController.updateQueryInventoryLocation(
+      await WindowController.updateQueryInventoryLocationAsync(
         defaultInventoryLocation?.id
       );
     }

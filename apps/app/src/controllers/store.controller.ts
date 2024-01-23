@@ -1,12 +1,19 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Index } from 'meilisearch';
 import { Controller } from '../controller';
-import { StoreModel, ProductTabs } from '../models/store.model';
+import {
+  StoreModel,
+  ProductTabs,
+  StoreCategoryType,
+} from '../models/store.model';
 import MeiliSearchService from '../services/meilisearch.service';
 import { Subscription, filter, firstValueFrom, take } from 'rxjs';
 import ExploreController from './explore.controller';
 import { select } from '@ngneat/elf';
-import { InventoryLocation } from '../models/explore.model';
+import {
+  InventoryLocation,
+  InventoryLocationType,
+} from '../models/explore.model';
 import MedusaService from '../services/medusa.service';
 import CartController from '../controllers/cart.controller';
 import {
@@ -107,6 +114,10 @@ class StoreController extends Controller {
     value: ProductLikesMetadataResponse | null
   ): void {
     this._model.selectedProductLikesMetadata = value;
+  }
+
+  public updateCategory(value: StoreCategoryType) {
+    this._model.category = value;
   }
 
   public updateScrollPosition(value: number | undefined) {

@@ -30,7 +30,7 @@ import {
 import StripePayButtonComponent from '../stripe-pay-button.component';
 import { CheckoutResponsiveProps } from '../checkout.component';
 import { useNavigate } from 'react-router-dom';
-import { RoutePathsType } from '../../route-paths';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import { ResponsiveMobile } from '../responsive.component';
 import { loadStripe } from '@stripe/stripe-js';
 import { createPortal } from 'react-dom';
@@ -58,6 +58,7 @@ export default function CheckoutMobileComponent({
   const stripePromise = loadStripe(process.env['STRIPE_PUBLISHABLE_KEY'] ?? '');
   const rootRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
+  const query = useQuery();
   const { t } = useTranslation();
 
   const customer = accountProps.customer as Customer;
@@ -1085,7 +1086,10 @@ export default function CheckoutMobileComponent({
                         setIsPayOpen(false);
                         const id =
                           await CheckoutController.proceedToManualPaymentAsync();
-                        navigate(`${RoutePathsType.OrderConfirmed}/${id}`);
+                        navigate({
+                          pathname: `${RoutePathsType.OrderConfirmed}/${id}`,
+                          search: query.toString(),
+                        });
                       }}
                     >
                       {t('pay')}

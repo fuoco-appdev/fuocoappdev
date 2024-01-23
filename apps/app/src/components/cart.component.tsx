@@ -26,7 +26,7 @@ import React from 'react';
 import { CartSuspenseDesktopComponent } from './desktop/suspense/cart.suspense.desktop.component';
 import { CartSuspenseMobileComponent } from './mobile/suspense/cart.suspense.mobile.component';
 import { CartSuspenseTabletComponent } from './tablet/suspense/cart.suspense.tablet.component';
-import { RoutePathsType } from '../route-paths';
+import { RoutePathsType, useQuery } from '../route-paths';
 import { useNavigate } from 'react-router-dom';
 import {
   PricedProduct,
@@ -61,6 +61,7 @@ export interface CartResponsiveProps {
 
 export default function CartComponent(): JSX.Element {
   const navigate = useNavigate();
+  const query = useQuery();
   const [cartProps] = useObservable(CartController.model.store);
   const [exploreProps] = useObservable(ExploreController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
@@ -99,7 +100,14 @@ export default function CartComponent(): JSX.Element {
       return;
     }
 
-    setTimeout(() => navigate(RoutePathsType.Checkout), 75);
+    setTimeout(
+      () =>
+        navigate({
+          pathname: RoutePathsType.Checkout,
+          search: query.toString(),
+        }),
+      75
+    );
   };
 
   useEffect(() => {

@@ -4,7 +4,7 @@ import WindowController from '../controllers/window.controller';
 import StoreController from '../controllers/store.controller';
 import { useObservable } from '@ngneat/use-observable';
 import { useLocation, useNavigate, useOutletContext } from 'react-router-dom';
-import { RoutePathsType } from '../route-paths';
+import { RoutePathsType, useQuery } from '../route-paths';
 import {
   ResponsiveDesktop,
   ResponsiveMobile,
@@ -61,6 +61,7 @@ export interface AccountResponsiveProps {
 export default function AccountComponent(): JSX.Element {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const query = useQuery();
   const [accountProps] = useObservable(AccountController.model.store);
   const [windowProps] = useObservable(WindowController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
@@ -149,19 +150,24 @@ export default function AccountComponent(): JSX.Element {
   };
 
   const onLikesClick = () => {
-    navigate(RoutePathsType.AccountLikes);
+    navigate({
+      pathname: RoutePathsType.AccountLikes,
+      search: query.toString(),
+    });
   };
 
   const onFollowersClick = () => {
-    navigate(
-      `${RoutePathsType.AccountStatus}/${accountProps.account?.id}/followers`
-    );
+    navigate({
+      pathname: `${RoutePathsType.AccountStatus}/${accountProps.account?.id}/followers`,
+      search: query.toString(),
+    });
   };
 
   const onFollowingClick = () => {
-    navigate(
-      `${RoutePathsType.AccountStatus}/${accountProps.account?.id}/following`
-    );
+    navigate({
+      pathname: `${RoutePathsType.AccountStatus}/${accountProps.account?.id}/following`,
+      search: query.toString(),
+    });
   };
 
   useEffect(() => {
@@ -174,7 +180,10 @@ export default function AccountComponent(): JSX.Element {
 
   useEffect(() => {
     if (windowProps.activeRoute === RoutePathsType.Account) {
-      navigate(RoutePathsType.AccountLikes);
+      navigate({
+        pathname: RoutePathsType.AccountLikes,
+        search: query.toString(),
+      });
     }
   }, []);
 
@@ -215,7 +224,10 @@ export default function AccountComponent(): JSX.Element {
       WindowController.updateLoadedLocationPath(undefined);
     } else {
       if (!loadedLocation?.startsWith(RoutePathsType.AccountSettings)) {
-        navigate(accountProps.activeTabId);
+        navigate({
+          pathname: accountProps.activeTabId,
+          search: query.toString(),
+        });
       }
     }
   }, [windowProps.loadedLocationPath]);

@@ -23,7 +23,7 @@ import {
   PricedProduct,
 } from '@medusajs/medusa/dist/types/pricing';
 import { useNavigate, useParams } from 'react-router-dom';
-import { RoutePathsType } from '../route-paths';
+import { RoutePathsType, useQuery } from '../route-paths';
 import * as core from '../protobuf/core_pb';
 import { AccountPublicLikesSuspenseDesktopComponent } from './desktop/suspense/account-public-likes.suspense.desktop.component';
 import { AccountPublicLikesSuspenseTabletComponent } from './tablet/suspense/account-public-likes.suspense.tablet.component';
@@ -66,6 +66,7 @@ export default function AccountPublicLikesComponent(): JSX.Element {
   const { t, i18n } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
+  const query = useQuery();
   const [storeProps] = useObservable(StoreController.model.store);
   const [accountProps] = useObservable(AccountController.model.store);
   const [accountPublicProps] = useObservable(
@@ -96,7 +97,10 @@ export default function AccountPublicLikesComponent(): JSX.Element {
   };
 
   const onProductPreviewRest = (product: PricedProduct) => {
-    navigate(`${RoutePathsType.Store}/${product.id}`);
+    navigate({
+      pathname: `${RoutePathsType.Store}/${product.id}`,
+      search: query.toString(),
+    });
   };
 
   const onProductPreviewAddToCart = (product: PricedProduct) => {

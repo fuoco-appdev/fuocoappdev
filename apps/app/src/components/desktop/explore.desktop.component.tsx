@@ -17,7 +17,10 @@ import { useSpring } from 'react-spring';
 import * as core from '../../protobuf/core_pb';
 import Map, { MapRef, Marker, Popup } from 'react-map-gl';
 import ConfigService from '../../services/config.service';
-import { InventoryLocation } from '../../models/explore.model';
+import {
+  InventoryLocation,
+  InventoryLocationType,
+} from '../../models/explore.model';
 import { ExploreResponsiveProps } from '../explore.component';
 import ExploreController from '../../controllers/explore.controller';
 import { ResponsiveDesktop } from '../responsive.component';
@@ -256,18 +259,34 @@ export default function ExploreDesktopComponent({
                       setSelectedPoint(point);
                     }}
                   >
-                    <img
-                      src={
-                        exploreProps.selectedInventoryLocation?.placeName !==
-                        point.placeName
-                          ? '../assets/images/unselected-cellar.png'
-                          : '../assets/images/selected-cellar.png'
-                      }
-                      className={[
-                        styles['marker'],
-                        styles['marker-desktop'],
-                      ].join(' ')}
-                    />
+                    {point.type === InventoryLocationType.Cellar && (
+                      <img
+                        src={
+                          exploreProps.selectedInventoryLocation?.id !==
+                          point.id
+                            ? '../assets/images/unselected-cellar.png'
+                            : '../assets/images/selected-cellar.png'
+                        }
+                        className={[
+                          styles['marker'],
+                          styles['marker-desktop'],
+                        ].join(' ')}
+                      />
+                    )}
+                    {point.type === InventoryLocationType.Restaurant && (
+                      <img
+                        src={
+                          exploreProps.selectedInventoryLocation?.id !==
+                          point.id
+                            ? '../assets/images/unselected-restaurant.png'
+                            : '../assets/images/selected-restaurant.png'
+                        }
+                        className={[
+                          styles['marker'],
+                          styles['marker-desktop'],
+                        ].join(' ')}
+                      />
+                    )}
                   </Marker>
                 )
               )}
@@ -301,6 +320,8 @@ export default function ExploreDesktopComponent({
                       ].join(' ')}
                     >
                       <Line.Place size={18} />
+                      {t(selectedPoint.type as string)}
+                      &nbsp;
                       {selectedPoint.placeName}
                     </div>
                     <div

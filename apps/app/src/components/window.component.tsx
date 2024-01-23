@@ -28,6 +28,8 @@ import { ExploreState } from '../models/explore.model';
 import { PriceList } from '@medusajs/medusa';
 import { Line } from '@fuoco.appdev/core-ui';
 import { AccountPublicState } from '../models/account-public.model';
+import StoreController from '../controllers/store.controller';
+import { StoreCategoryType } from 'src/models/store.model';
 
 const WindowDesktopComponent = lazy(
   () => import('./desktop/window.desktop.component')
@@ -66,6 +68,7 @@ export default function WindowComponent(): JSX.Element {
   const [accountPublicProps] = useObservable(
     AccountPublicController.model.store
   );
+  const [storeProps] = useObservable(StoreController.model.store);
   const [accountProps] = useObservable(AccountController.model.store);
   const [exploreProps] = useObservable(ExploreController.model.store);
   const isMounted = useRef<boolean>(false);
@@ -77,8 +80,9 @@ export default function WindowComponent(): JSX.Element {
   );
 
   const onCancelLocation = () => {
-    query.delete('sales_location');
-    WindowController.updateQueryInventoryLocation(undefined);
+    query.set('sales_location', exploreLocalProps.selectedInventoryLocationId);
+    navigate({ search: query.toString() });
+    WindowController.updateQueryInventoryLocationAsync(undefined);
   };
 
   const onSelectLocation = () => {
@@ -89,7 +93,7 @@ export default function WindowComponent(): JSX.Element {
   };
 
   const onSidebarTabsChanged = (id: string) => {
-    navigate(id);
+    navigate({ pathname: id, search: query.toString() });
   };
 
   const onNavigateBack = () => {
@@ -98,7 +102,14 @@ export default function WindowComponent(): JSX.Element {
       !doesAnyHistoryEntryExist &&
       windowProps.activeRoute?.startsWith(`${RoutePathsType.Store}/`)
     ) {
-      setTimeout(() => navigate(RoutePathsType.Store), 150);
+      setTimeout(
+        () =>
+          navigate({
+            pathname: RoutePathsType.Store,
+            search: query.toString(),
+          }),
+        150
+      );
       return;
     }
 
@@ -106,20 +117,35 @@ export default function WindowComponent(): JSX.Element {
       windowProps.loadedLocationPath &&
       WindowController.isLocationAccountWithId(windowProps.loadedLocationPath)
     ) {
-      setTimeout(() => navigate(RoutePathsType.Account), 150);
+      setTimeout(
+        () =>
+          navigate({
+            pathname: RoutePathsType.Account,
+            search: query.toString(),
+          }),
+        150
+      );
       return;
     }
 
     if (WindowController.isLocationAccountStatusWithId(location.pathname)) {
       if (accountProps.account?.id === accountPublicProps.account?.id) {
-        setTimeout(() => navigate(RoutePathsType.Account), 150);
+        setTimeout(
+          () =>
+            navigate({
+              pathname: RoutePathsType.Account,
+              search: query.toString(),
+            }),
+          150
+        );
         return;
       } else {
         setTimeout(
           () =>
-            navigate(
-              `${RoutePathsType.Account}/${accountPublicProps.account?.id}/likes`
-            ),
+            navigate({
+              pathname: `${RoutePathsType.Account}/${accountPublicProps.account?.id}/likes`,
+              search: query.toString(),
+            }),
           150
         );
         return;
@@ -136,11 +162,16 @@ export default function WindowComponent(): JSX.Element {
     }
 
     const salesLocationId = query.get('sales_location');
+    const storeCategory = query.get('store_category');
     if (
       salesLocationId &&
       salesLocationId !== exploreLocalProps.selectedInventoryLocationId
     ) {
-      WindowController.updateQueryInventoryLocation(salesLocationId);
+      WindowController.updateQueryInventoryLocationAsync(salesLocationId);
+    }
+
+    if (storeCategory && storeCategory !== storeProps.category) {
+      StoreController.updateCategory(storeProps.category as StoreCategoryType);
     }
   }, []);
 
@@ -150,11 +181,14 @@ export default function WindowComponent(): JSX.Element {
 
   useEffect(() => {
     if (windowProps.authState === 'SIGNED_OUT') {
-      navigate(RoutePathsType.Signin);
+      navigate({ pathname: RoutePathsType.Signin, search: query.toString() });
     } else if (windowProps.authState === 'USER_DELETED') {
-      navigate(RoutePathsType.Signup);
+      navigate({ pathname: RoutePathsType.Signup, search: query.toString() });
     } else if (windowProps.authState === 'PASSWORD_RECOVERY') {
-      navigate(RoutePathsType.ResetPassword);
+      navigate({
+        pathname: RoutePathsType.ResetPassword,
+        search: query.toString(),
+      });
     }
   }, [windowProps.authState]);
 
@@ -169,6 +203,24 @@ export default function WindowComponent(): JSX.Element {
   useEffect(() => {
     WindowController.addBanner(undefined);
   }, [windowProps.banner]);
+
+  useEffect(() => {
+    if (!exploreLocalProps.selectedInventoryLocationId) {
+      return;
+    }
+
+    query.set('sales_location', exploreLocalProps.selectedInventoryLocationId);
+    navigate({ search: query.toString() });
+  }, [exploreLocalProps.selectedInventoryLocationId]);
+
+  useEffect(() => {
+    if (!storeProps.category) {
+      return;
+    }
+
+    query.set('store_category', storeProps.category);
+    navigate({ search: query.toString() });
+  }, [storeProps.category]);
 
   useEffect(() => {
     for (const priceList of windowProps.priceLists as PriceList[]) {

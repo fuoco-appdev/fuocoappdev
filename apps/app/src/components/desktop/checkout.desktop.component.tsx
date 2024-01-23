@@ -1164,7 +1164,10 @@ export default function CheckoutDesktopComponent({
                         setIsPayOpen(false);
                         const id =
                           await CheckoutController.proceedToManualPaymentAsync();
-                        navigate(`${RoutePathsType.OrderConfirmed}/${id}`);
+                        navigate({
+                          pathname: `${RoutePathsType.OrderConfirmed}/${id}`,
+                          search: query.toString(),
+                        });
                       }}
                     >
                       {t('pay')}

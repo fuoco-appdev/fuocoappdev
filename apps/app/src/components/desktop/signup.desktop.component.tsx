@@ -6,7 +6,7 @@ import SignupController from '../../controllers/signup.controller';
 import WindowController from '../../controllers/window.controller';
 import styles from '../signup.module.scss';
 import SupabaseService from '../../services/supabase.service';
-import { RoutePathsType } from '../../route-paths';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import { useObservable } from '@ngneat/use-observable';
 import { useTranslation } from 'react-i18next';
 import { AuthError } from '@supabase/supabase-js';
@@ -24,6 +24,7 @@ export default function SignupDesktopComponent({
   setConfirmPasswordError,
 }: SignupResponsiveProps): JSX.Element {
   const navigate = useNavigate();
+  const query = useQuery();
   const [props] = useObservable(SignupController.model.store);
   const [show, setShow] = useState(false);
   const { t } = useTranslation();
@@ -129,20 +130,37 @@ export default function SignupDesktopComponent({
                         )
                       }
                       onForgotPasswordRedirect={() =>
-                        navigate(RoutePathsType.ForgotPassword)
+                        navigate({
+                          pathname: RoutePathsType.ForgotPassword,
+                          search: query.toString(),
+                        })
                       }
                       onTermsOfServiceRedirect={() =>
-                        navigate(RoutePathsType.TermsOfService)
+                        navigate({
+                          pathname: RoutePathsType.TermsOfService,
+                          search: query.toString(),
+                        })
                       }
                       onPrivacyPolicyRedirect={() =>
-                        navigate(RoutePathsType.PrivacyPolicy)
+                        navigate({
+                          pathname: RoutePathsType.PrivacyPolicy,
+                          search: query.toString(),
+                        })
                       }
-                      onSigninRedirect={() => navigate(RoutePathsType.Signin)}
+                      onSigninRedirect={() =>
+                        navigate({
+                          pathname: RoutePathsType.Signin,
+                          search: query.toString(),
+                        })
+                      }
                       onSignupRedirect={() => {
                         setEmailError('');
                         setPasswordError('');
                         setConfirmPasswordError('');
-                        navigate(RoutePathsType.Signup);
+                        navigate({
+                          pathname: RoutePathsType.Signup,
+                          search: query.toString(),
+                        });
                       }}
                       onSignupError={(error: AuthError) => setAuthError(error)}
                       onEmailConfirmationSent={() => {

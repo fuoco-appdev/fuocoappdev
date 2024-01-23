@@ -3,7 +3,7 @@ import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
 import AccountPublicController from '../../controllers/account-public.controller';
 import styles from '../account-public-status.module.scss';
 import { Alert, Button, Input, Line, Modal, Tabs } from '@fuoco.appdev/core-ui';
-import { RoutePathsType } from '../../route-paths';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
 import Ripples from 'react-ripples';
@@ -27,6 +27,7 @@ export default function AccountPublicStatusDesktopComponent({
 }: AccountFollowersFollowingResponsiveProps): JSX.Element {
   const scrollContainerRef = createRef<HTMLDivElement>();
   const navigate = useNavigate();
+  const query = useQuery();
   const location = useLocation();
   const { t, i18n } = useTranslation();
 
@@ -67,15 +68,17 @@ export default function AccountPublicStatusDesktopComponent({
                 onChange={(id) => {
                   AccountPublicController.updateActiveStatusTabId(id);
                   if (id === RoutePathsType.AccountStatusWithIdFollowers) {
-                    navigate(
-                      `${RoutePathsType.AccountStatus}/${accountPublicProps.account?.id}/followers`
-                    );
+                    navigate({
+                      pathname: `${RoutePathsType.AccountStatus}/${accountPublicProps.account?.id}/followers`,
+                      search: query.toString(),
+                    });
                   } else if (
                     id === RoutePathsType.AccountStatusWithIdFollowing
                   ) {
-                    navigate(
-                      `${RoutePathsType.AccountStatus}/${accountPublicProps.account?.id}/following`
-                    );
+                    navigate({
+                      pathname: `${RoutePathsType.AccountStatus}/${accountPublicProps.account?.id}/following`,
+                      search: query.toString(),
+                    });
                   }
                 }}
                 type={'underlined'}

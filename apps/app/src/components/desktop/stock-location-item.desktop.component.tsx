@@ -18,6 +18,7 @@ import Ripples from 'react-ripples';
 import { useNavigate } from 'react-router-dom';
 import { ResponsiveDesktop } from '../responsive.component';
 import { StockLocationItemResponsiveProps } from '../stock-location-item.component';
+import { InventoryLocationType } from 'src/models/explore.model';
 
 export default function StockLocationItemDesktopComponent({
   stockLocation,
@@ -108,13 +109,34 @@ export default function StockLocationItemDesktopComponent({
                       styles['thumbnail-desktop'],
                     ].join(' ')}
                   >
-                    <img
-                      className={[
-                        styles['thumbnail-image'],
-                        styles['thumbnail-image-desktop'],
-                      ].join(' ')}
-                      src={avatar || '../assets/images/selected-cellar.png'}
-                    />
+                    {Object.keys(stockLocation?.metadata ?? {}).includes(
+                      'type'
+                    ) &&
+                      (stockLocation?.metadata?.['type'] as string) ===
+                        InventoryLocationType.Cellar && (
+                        <img
+                          className={[
+                            styles['thumbnail-image'],
+                            styles['thumbnail-image-desktop'],
+                          ].join(' ')}
+                          src={avatar || '../assets/images/selected-cellar.png'}
+                        />
+                      )}
+                    {Object.keys(stockLocation?.metadata ?? {}).includes(
+                      'type'
+                    ) &&
+                      (stockLocation?.metadata?.['type'] as string) ===
+                        InventoryLocationType.Restaurant && (
+                        <img
+                          className={[
+                            styles['thumbnail-image'],
+                            styles['thumbnail-image-desktop'],
+                          ].join(' ')}
+                          src={
+                            avatar || '../assets/images/selected-restaurant.png'
+                          }
+                        />
+                      )}
                   </div>
                 </div>
               </div>

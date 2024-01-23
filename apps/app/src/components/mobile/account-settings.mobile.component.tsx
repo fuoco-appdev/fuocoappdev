@@ -3,7 +3,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import AccountController from '../../controllers/account.controller';
 import styles from '../account-settings.module.scss';
 import { Alert, Button, Line, Modal } from '@fuoco.appdev/core-ui';
-import { RoutePathsType } from '../../route-paths';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import SupabaseService from '../../services/supabase.service';
 import { useObservable } from '@ngneat/use-observable';
@@ -19,6 +19,7 @@ export default function AccountSettingsMobileComponent({
   windowProps,
 }: AccountSettingsResponsiveProps): JSX.Element {
   const navigate = useNavigate();
+  const query = useQuery();
   const { t, i18n } = useTranslation();
 
   return (
@@ -33,7 +34,11 @@ export default function AccountSettingsMobileComponent({
             color={'rgba(42, 42, 95, .35)'}
             onClick={() =>
               setTimeout(
-                () => navigate(RoutePathsType.AccountSettingsAccount),
+                () =>
+                  navigate({
+                    pathname: RoutePathsType.AccountSettingsAccount,
+                    search: query.toString(),
+                  }),
                 75
               )
             }

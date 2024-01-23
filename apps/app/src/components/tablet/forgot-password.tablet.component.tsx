@@ -14,13 +14,14 @@ import {
 } from '../responsive.component';
 import { useTranslation } from 'react-i18next';
 import { AuthError } from '@supabase/supabase-js';
-import { RoutePathsType } from '../../route-paths';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import { ForgotPasswordResponsiveProps } from '../forgot-password.component';
 
 export default function ForgotPasswordTabletComponent({
   forgotPasswordProps,
 }: ForgotPasswordResponsiveProps): JSX.Element {
   const navigate = useNavigate();
+  const query = useQuery();
   const [show, setShow] = useState(false);
   const [error, setError] = useState<AuthError | null>(null);
   const { t, i18n } = useTranslation();
@@ -85,7 +86,12 @@ export default function ForgotPasswordTabletComponent({
                         });
                         setError(null);
                       }}
-                      onSigninRedirect={() => navigate(RoutePathsType.Signin)}
+                      onSigninRedirect={() =>
+                        navigate({
+                          pathname: RoutePathsType.Signin,
+                          search: query.toString(),
+                        })
+                      }
                       emailErrorMessage={
                         error ? t('emailErrorMessage') ?? '' : undefined
                       }

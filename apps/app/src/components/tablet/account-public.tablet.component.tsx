@@ -26,7 +26,7 @@ import WindowController from '../../controllers/window.controller';
 import { animated, useTransition, config } from 'react-spring';
 import { useObservable } from '@ngneat/use-observable';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { RoutePathsType } from '../../route-paths';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import * as core from '../../protobuf/core_pb';
 import AccountProfileFormComponent from '../account-profile-form.component';
@@ -61,6 +61,7 @@ export default function AccountPublicTabletComponent({
 }: AccountPublicResponsiveProps): JSX.Element {
   const scrollContainerRef = createRef<HTMLDivElement>();
   const navigate = useNavigate();
+  const query = useQuery();
   const { t, i18n } = useTranslation();
 
   return (
@@ -234,7 +235,10 @@ export default function AccountPublicTabletComponent({
                   }}
                   onChange={(id) => {
                     AccountPublicController.updateActiveTabId(id);
-                    navigate(`${RoutePathsType.Account}/${id}/likes`);
+                    navigate({
+                      pathname: `${RoutePathsType.Account}/${id}/likes`,
+                      search: query.toString(),
+                    });
                   }}
                   type={'underlined'}
                   tabs={[

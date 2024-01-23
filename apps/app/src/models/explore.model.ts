@@ -4,6 +4,11 @@ import mapboxgl from 'mapbox-gl';
 import { SalesChannel } from '@medusajs/medusa';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
 
+export enum InventoryLocationType {
+  Cellar = 'cellar',
+  Restaurant = 'restaurant',
+}
+
 export interface InventoryLocation {
   id: string;
   coordinates: mapboxgl.LngLat;
@@ -12,6 +17,7 @@ export interface InventoryLocation {
   description: string;
   region: string;
   salesChannels: Partial<SalesChannel>[];
+  type?: InventoryLocationType;
   avatar?: string;
 }
 

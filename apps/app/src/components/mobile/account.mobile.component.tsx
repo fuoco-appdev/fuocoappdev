@@ -26,7 +26,7 @@ import WindowController from '../../controllers/window.controller';
 import { animated, useTransition, config } from 'react-spring';
 import { useObservable } from '@ngneat/use-observable';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { RoutePathsType } from '../../route-paths';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import * as core from '../../protobuf/core_pb';
 import AccountProfileFormComponent from '../account-profile-form.component';
@@ -60,6 +60,7 @@ export default function AccountMobileComponent({
   const topBarRef = useRef<HTMLDivElement | null>(null);
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const query = useQuery();
   let prevPreviewScrollTop = 0;
   let yPosition = 0;
 
@@ -110,7 +111,14 @@ export default function AccountMobileComponent({
                   color: 'rgba(88, 40, 109, .35)',
                 }}
                 onClick={() =>
-                  setTimeout(() => navigate(RoutePathsType.AccountHelp), 150)
+                  setTimeout(
+                    () =>
+                      navigate({
+                        pathname: RoutePathsType.AccountHelp,
+                        search: query.toString(),
+                      }),
+                    150
+                  )
                 }
                 type={'text'}
                 rounded={true}
@@ -136,7 +144,11 @@ export default function AccountMobileComponent({
                   }}
                   onClick={() =>
                     setTimeout(
-                      () => navigate(RoutePathsType.AccountAddFriends),
+                      () =>
+                        navigate({
+                          pathname: RoutePathsType.AccountAddFriends,
+                          search: query.toString(),
+                        }),
                       75
                     )
                   }
@@ -160,7 +172,11 @@ export default function AccountMobileComponent({
                 }}
                 onClick={() =>
                   setTimeout(
-                    () => navigate(RoutePathsType.AccountSettings),
+                    () =>
+                      navigate({
+                        pathname: RoutePathsType.AccountSettings,
+                        search: query.toString(),
+                      }),
                     150
                   )
                 }
@@ -569,7 +585,7 @@ export default function AccountMobileComponent({
                   }}
                   onChange={(id) => {
                     AccountController.updateActiveTabId(id);
-                    navigate(id);
+                    navigate({ pathname: id, search: query.toString() });
                   }}
                   type={'underlined'}
                   tabs={[

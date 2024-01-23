@@ -20,7 +20,7 @@ import {
   OptionProps,
   Avatar,
 } from '@fuoco.appdev/core-ui';
-import { RoutePathsType } from '../../route-paths';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import SupabaseService from '../../services/supabase.service';
 import { useObservable } from '@ngneat/use-observable';
@@ -59,6 +59,7 @@ export default function StoreMobileComponent({
   selectedCountryId,
   selectedRegionId,
   selectedCellarId,
+  tabs,
   setOpenFilter,
   setOpenCartVariants,
   setVariantQuantities,
@@ -77,6 +78,7 @@ export default function StoreMobileComponent({
   const rootRef = createRef<HTMLDivElement>();
   const topBarRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
+  const query = useQuery();
   const { t, i18n } = useTranslation();
   let prevPreviewScrollTop = 0;
   let yPosition = 0;
@@ -194,24 +196,7 @@ export default function StoreMobileComponent({
                   id.length > 0 ? (id as ProductTabs) : undefined
                 )
               }
-              tabs={[
-                {
-                  id: ProductTabs.White,
-                  label: t('white') ?? 'White',
-                },
-                {
-                  id: ProductTabs.Red,
-                  label: t('red') ?? 'Red',
-                },
-                {
-                  id: ProductTabs.Rose,
-                  label: t('rose') ?? 'Rosé',
-                },
-                {
-                  id: ProductTabs.Spirits,
-                  label: t('spirits') ?? 'Spirits',
-                },
-              ]}
+              tabs={tabs}
             />
           </div>
         </div>
@@ -339,7 +324,14 @@ export default function StoreMobileComponent({
                   }}
                   size={'large'}
                   onClick={() =>
-                    setTimeout(() => navigate(RoutePathsType.Explore), 75)
+                    setTimeout(
+                      () =>
+                        navigate({
+                          pathname: RoutePathsType.Explore,
+                          search: query.toString(),
+                        }),
+                      75
+                    )
                   }
                 >
                   {t('explore')}

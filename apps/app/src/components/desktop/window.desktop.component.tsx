@@ -18,7 +18,7 @@ import {
   ToastOverlay,
   Typography,
 } from '@fuoco.appdev/core-ui';
-import { RoutePathsType } from '../../route-paths';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
 import * as core from '../../protobuf/core_pb';
@@ -48,6 +48,7 @@ export default function WindowDesktopComponent({
 }: WindowResponsiveProps): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const query = useQuery();
   const sideBarRef = useRef<HTMLDivElement | null>(null);
   const navigationBackRef = useRef<HTMLDivElement | null>(null);
   const [isSideBarOpen, setIsSideBarOpen] = useState<boolean>(false);
@@ -143,7 +144,12 @@ export default function WindowDesktopComponent({
                 rippleProps={{
                   color: 'rgba(252, 245, 227, .35)',
                 }}
-                onClick={() => navigate(RoutePathsType.Help)}
+                onClick={() =>
+                  navigate({
+                    pathname: RoutePathsType.Help,
+                    search: query.toString(),
+                  })
+                }
                 type={'text'}
                 floatingLabel={t('help') ?? ''}
                 rounded={true}
@@ -177,7 +183,14 @@ export default function WindowDesktopComponent({
                   color: 'rgba(252, 245, 227, .35)',
                 }}
                 onClick={() =>
-                  setTimeout(() => navigate(RoutePathsType.Cart), 75)
+                  setTimeout(
+                    () =>
+                      navigate({
+                        pathname: RoutePathsType.Cart,
+                        search: query.toString(),
+                      }),
+                    75
+                  )
                 }
                 type={'text'}
                 floatingLabel={t('shoppingCart') ?? ''}
@@ -228,7 +241,12 @@ export default function WindowDesktopComponent({
                     rippleProps={{
                       color: 'rgba(252, 245, 227, .35)',
                     }}
-                    onClick={() => navigate(RoutePathsType.Signup)}
+                    onClick={() =>
+                      navigate({
+                        pathname: RoutePathsType.Signup,
+                        search: query.toString(),
+                      })
+                    }
                     type={'text'}
                     floatingLabel={t('signup') ?? ''}
                     rounded={true}
@@ -258,7 +276,12 @@ export default function WindowDesktopComponent({
                     rippleProps={{
                       color: 'rgba(252, 245, 227, .35)',
                     }}
-                    onClick={() => navigate(RoutePathsType.Signin)}
+                    onClick={() =>
+                      navigate({
+                        pathname: RoutePathsType.Signin,
+                        search: query.toString(),
+                      })
+                    }
                     type={'text'}
                     floatingLabel={t('signin') ?? ''}
                     rounded={true}
@@ -315,7 +338,12 @@ export default function WindowDesktopComponent({
                     rippleProps={{
                       color: 'rgba(252, 245, 227, .35)',
                     }}
-                    onClick={() => navigate(RoutePathsType.Account)}
+                    onClick={() =>
+                      navigate({
+                        pathname: RoutePathsType.Account,
+                        search: query.toString(),
+                      })
+                    }
                     floatingLabel={
                       account?.status !== 'Incomplete'
                         ? `${customer?.first_name} ${customer?.last_name}`
@@ -457,7 +485,10 @@ export default function WindowDesktopComponent({
                   >
                     <Typography.Link
                       onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
-                        navigate(RoutePathsType.TermsOfService);
+                        navigate({
+                          pathname: RoutePathsType.TermsOfService,
+                          search: query.toString(),
+                        });
                         e.preventDefault();
                       }}
                     >
@@ -465,7 +496,10 @@ export default function WindowDesktopComponent({
                     </Typography.Link>
                     <Typography.Link
                       onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
-                        navigate(RoutePathsType.PrivacyPolicy);
+                        navigate({
+                          pathname: RoutePathsType.PrivacyPolicy,
+                          search: query.toString(),
+                        });
                         e.preventDefault();
                       }}
                     >
@@ -539,7 +573,14 @@ export default function WindowDesktopComponent({
                           RoutePathsType.AccountSettings
                         )
                       ) {
-                        setTimeout(() => navigate(RoutePathsType.Account), 150);
+                        setTimeout(
+                          () =>
+                            navigate({
+                              pathname: RoutePathsType.Account,
+                              search: query.toString(),
+                            }),
+                          150
+                        );
                         return;
                       }
 

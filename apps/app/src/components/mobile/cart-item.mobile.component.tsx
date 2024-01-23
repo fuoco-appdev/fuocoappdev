@@ -10,7 +10,7 @@ import { formatAmount } from 'medusa-react';
 import StoreController from '../../controllers/store.controller';
 import { useObservable } from '@ngneat/use-observable';
 import { CartItemResponsiveProps } from '../cart-item.component';
-import { RoutePathsType } from '../../route-paths';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import { useNavigate } from 'react-router-dom';
 import { ResponsiveMobile } from '../responsive.component';
 import { MedusaProductTypeNames } from '../../types/medusa.type';
@@ -31,6 +31,7 @@ export default function CartItemMobileComponent({
   decrementItemQuantity,
 }: CartItemResponsiveProps): JSX.Element {
   const navigate = useNavigate();
+  const query = useQuery();
   const { t } = useTranslation();
 
   return (
@@ -82,7 +83,10 @@ export default function CartItemMobileComponent({
               styles['title-container-mobile'],
             ].join(' ')}
             onClick={() =>
-              navigate(`${RoutePathsType.Store}/${item.variant.product_id}`)
+              navigate({
+                pathname: `${RoutePathsType.Store}/${item.variant.product_id}`,
+                search: query.toString(),
+              })
             }
           >
             <div

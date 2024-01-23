@@ -3,7 +3,7 @@ import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
 import AccountController from '../../controllers/account.controller';
 import styles from '../account-add-friends.module.scss';
 import { Alert, Button, Input, Line, Modal, Tabs } from '@fuoco.appdev/core-ui';
-import { RoutePathsType } from '../../route-paths';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
 import Ripples from 'react-ripples';
@@ -18,6 +18,7 @@ export default function AccountAddFriendsTabletComponent({
   onAddFriendsScroll,
 }: AccountAddFriendsResponsiveProps): JSX.Element {
   const navigate = useNavigate();
+  const query = useQuery();
   const location = useLocation();
   const { t, i18n } = useTranslation();
 
@@ -94,7 +95,10 @@ export default function AccountAddFriendsTabletComponent({
                     customer={customerRequest}
                     isRequest={true}
                     onClick={() =>
-                      navigate(`${RoutePathsType.Account}/${value.id}/likes`)
+                      navigate({
+                        pathname: `${RoutePathsType.Account}/${value.id}/likes`,
+                        search: query.toString(),
+                      })
                     }
                     onConfirm={() =>
                       AccountController.confirmFollowRequestAsync(
@@ -143,7 +147,10 @@ export default function AccountAddFriendsTabletComponent({
                 customer={customer}
                 isRequest={false}
                 onClick={() =>
-                  navigate(`${RoutePathsType.Account}/${value.id}/likes`)
+                  navigate({
+                    pathname: `${RoutePathsType.Account}/${value.id}/likes`,
+                    search: query.toString(),
+                  })
                 }
                 onFollow={() => AccountController.requestFollowAsync(value.id)}
                 onRequested={() =>

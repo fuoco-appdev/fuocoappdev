@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
-import { Subscription } from 'rxjs';
+import { Subscription, filter, firstValueFrom, take } from 'rxjs';
 import { Controller } from '../controller';
 import { WindowModel } from '../models/window.model';
 import { RoutePathsType } from '../route-paths';
@@ -114,24 +114,25 @@ class WindowController extends Controller {
     this._model.showNavigateBack = value;
   }
 
-  public updateQueryInventoryLocation(id: string | undefined) {
+  public async updateQueryInventoryLocationAsync(id: string | undefined) {
     if (!id) {
       this._model.queryInventoryLocation = undefined;
       return;
     }
 
-    this._inventoryLocationsSubscription?.unsubscribe();
-    this._inventoryLocationsSubscription = ExploreController.model.store
-      .pipe(select((model: ExploreState) => model.inventoryLocations))
-      .subscribe({
-        next: (value: InventoryLocation[]) => {
-          const inventoryLocation = value.find((location) => location.id == id);
-          if (inventoryLocation) {
-            this._model.queryInventoryLocation = inventoryLocation;
-            this._inventoryLocationsSubscription?.unsubscribe();
-          }
-        },
-      });
+    const inventoryLocations = await firstValueFrom(
+      ExploreController.model.store.pipe(
+        select((model: ExploreState) => model.inventoryLocations),
+        filter((value) => value !== undefined),
+        take(1)
+      )
+    );
+    const inventoryLocation = inventoryLocations.find(
+      (location) => location.id == id
+    );
+    if (inventoryLocation) {
+      this._model.queryInventoryLocation = inventoryLocation;
+    }
   }
 
   public updateOnLocationChanged(location: RouterLocation): void {

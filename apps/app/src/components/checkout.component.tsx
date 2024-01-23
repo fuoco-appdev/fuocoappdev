@@ -21,7 +21,7 @@ import { PaymentSession, Customer, Cart } from '@medusajs/medusa';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
 import { useNavigate } from 'react-router-dom';
-import { RoutePathsType } from '../route-paths';
+import { RoutePathsType, useQuery } from '../route-paths';
 import AccountController from '../controllers/account.controller';
 import WindowController from '../controllers/window.controller';
 import {
@@ -75,6 +75,7 @@ export interface CheckoutResponsiveProps {
 }
 
 export default function CheckoutComponent(): JSX.Element {
+  const query = useQuery();
   const [checkoutProps] = useObservable(CheckoutController.model.store);
   const [accountProps] = useObservable(AccountController.model.store);
   const [cartProps] = useObservable(CartController.model.store);
@@ -98,7 +99,7 @@ export default function CheckoutComponent(): JSX.Element {
       (cartProps.isFoodInCartRequired &&
         !CartController.isFoodRequirementInCart())
     ) {
-      navigate(RoutePathsType.Cart);
+      navigate({ pathname: RoutePathsType.Cart, search: query.toString() });
     }
   }, [cartProps.cart]);
 

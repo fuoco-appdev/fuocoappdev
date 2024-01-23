@@ -222,7 +222,10 @@
             & .top-bar-left-content-desktop {
                 display: flex;
                 justify-content: flex-start;
+                align-items: flex-start;
+                flex-direction: column;
                 padding-left: $mp-6;
+                gap: $mp-4;
                 flex: 1;
 
                 & .sales-location-container-desktop {
@@ -673,6 +676,16 @@
 
 .filter-button {
     background-color: $brand-700 !important;
+}
+
+.category-button {
+    background-color: transparent !important;
+    color: $brand-900 !important;
+    padding: $mp-2 0 !important;
+}
+
+.category-text {
+    color: $brand-900 !important;
 }
 
 .tab-button {

@@ -17,7 +17,7 @@ import {
   ToastOverlay,
   Typography,
 } from '@fuoco.appdev/core-ui';
-import { RoutePathsType } from '../../route-paths';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
 import * as core from '../../protobuf/core_pb';
@@ -51,6 +51,7 @@ export default function WindowTabletComponent({
 }: WindowResponsiveProps): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const query = useQuery();
   const sideBarRef = useRef<HTMLDivElement | null>(null);
   const navigationBackRef = useRef<HTMLDivElement | null>(null);
   const [isSideBarOpen, setIsSideBarOpen] = useState<boolean>(false);
@@ -146,7 +147,12 @@ export default function WindowTabletComponent({
                 rippleProps={{
                   color: 'rgba(252, 245, 227, .35)',
                 }}
-                onClick={() => navigate(RoutePathsType.Help)}
+                onClick={() =>
+                  navigate({
+                    pathname: RoutePathsType.Help,
+                    search: query.toString(),
+                  })
+                }
                 type={'text'}
                 rounded={true}
                 size={'tiny'}
@@ -180,7 +186,14 @@ export default function WindowTabletComponent({
                   color: 'rgba(252, 245, 227, .35)',
                 }}
                 onClick={() =>
-                  setTimeout(() => navigate(RoutePathsType.Cart), 75)
+                  setTimeout(
+                    () =>
+                      navigate({
+                        pathname: RoutePathsType.Cart,
+                        search: query.toString(),
+                      }),
+                    75
+                  )
                 }
                 type={'text'}
                 rounded={true}
@@ -231,7 +244,12 @@ export default function WindowTabletComponent({
                     rippleProps={{
                       color: 'rgba(252, 245, 227, .35)',
                     }}
-                    onClick={() => navigate(RoutePathsType.Signup)}
+                    onClick={() =>
+                      navigate({
+                        pathname: RoutePathsType.Signup,
+                        search: query.toString(),
+                      })
+                    }
                     type={'text'}
                     rounded={true}
                     size={'tiny'}
@@ -261,7 +279,12 @@ export default function WindowTabletComponent({
                     rippleProps={{
                       color: 'rgba(252, 245, 227, .35)',
                     }}
-                    onClick={() => navigate(RoutePathsType.Signin)}
+                    onClick={() =>
+                      navigate({
+                        pathname: RoutePathsType.Signin,
+                        search: query.toString(),
+                      })
+                    }
                     type={'text'}
                     rounded={true}
                     size={'tiny'}
@@ -318,7 +341,12 @@ export default function WindowTabletComponent({
                     rippleProps={{
                       color: 'rgba(252, 245, 227, .35)',
                     }}
-                    onClick={() => navigate(RoutePathsType.Account)}
+                    onClick={() =>
+                      navigate({
+                        pathname: RoutePathsType.Account,
+                        search: query.toString(),
+                      })
+                    }
                     type={'text'}
                     rounded={true}
                     size={'tiny'}
@@ -455,7 +483,10 @@ export default function WindowTabletComponent({
                   >
                     <Typography.Link
                       onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
-                        navigate(RoutePathsType.TermsOfService);
+                        navigate({
+                          pathname: RoutePathsType.TermsOfService,
+                          search: query.toString(),
+                        });
                         e.preventDefault();
                       }}
                     >
@@ -463,7 +494,10 @@ export default function WindowTabletComponent({
                     </Typography.Link>
                     <Typography.Link
                       onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
-                        navigate(RoutePathsType.PrivacyPolicy);
+                        navigate({
+                          pathname: RoutePathsType.PrivacyPolicy,
+                          search: query.toString(),
+                        });
                         e.preventDefault();
                       }}
                     >

@@ -5,6 +5,7 @@ import {
   ExploreModel,
   ExploreState,
   InventoryLocation,
+  InventoryLocationType,
 } from '../models/explore.model';
 import MedusaService from '../services/medusa.service';
 import mapboxgl from 'mapbox-gl';
@@ -218,6 +219,7 @@ class ExploreController extends Controller {
   ): Promise<InventoryLocation | null> {
     const metadata = stockLocation.metadata;
     const address = stockLocation.address;
+
     let coordinates = null;
     if (
       metadata &&
@@ -229,7 +231,12 @@ class ExploreController extends Controller {
       coordinates = metadata?.['coordinates'];
     }
 
-    if (!coordinates) {
+    let type: InventoryLocationType | undefined;
+    if (metadata && Object.keys(metadata).includes('type')) {
+      type = metadata?.['type'] as InventoryLocationType | undefined;
+    }
+
+    if (!coordinates || !type) {
       return null;
     }
 
@@ -255,6 +262,7 @@ class ExploreController extends Controller {
       description: (metadata?.['description'] as string) ?? '',
       company: address?.['company'] ?? '',
       region: (metadata?.['region'] as string) ?? '',
+      type: type,
       avatar: avatar,
     };
   }

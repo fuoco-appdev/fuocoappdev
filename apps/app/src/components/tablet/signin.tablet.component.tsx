@@ -3,7 +3,7 @@ import { Auth } from '@fuoco.appdev/core-ui';
 import SigninController from '../../controllers/signin.controller';
 import styles from '../signin.module.scss';
 import SupabaseService from '../../services/supabase.service';
-import { RoutePathsType } from '../../route-paths';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import { AuthError } from '@supabase/supabase-js';
 import { useState, useEffect } from 'react';
 import { animated, config, useTransition } from 'react-spring';
@@ -24,6 +24,7 @@ export default function SigninTabletComponent({
   setAuthError,
 }: SigninResponsiveProps): JSX.Element {
   const navigate = useNavigate();
+  const query = useQuery();
   const [show, setShow] = useState(false);
   const { t } = useTranslation();
 
@@ -120,16 +121,35 @@ export default function SigninTabletComponent({
                         SigninController.updatePassword(e.target.value)
                       }
                       onForgotPasswordRedirect={() =>
-                        navigate(RoutePathsType.ForgotPassword)
+                        navigate({
+                          pathname: RoutePathsType.ForgotPassword,
+                          search: query.toString(),
+                        })
                       }
                       onTermsOfServiceRedirect={() =>
-                        navigate(RoutePathsType.TermsOfService)
+                        navigate({
+                          pathname: RoutePathsType.TermsOfService,
+                          search: query.toString(),
+                        })
                       }
                       onPrivacyPolicyRedirect={() =>
-                        navigate(RoutePathsType.PrivacyPolicy)
+                        navigate({
+                          pathname: RoutePathsType.PrivacyPolicy,
+                          search: query.toString(),
+                        })
                       }
-                      onSigninRedirect={() => navigate(RoutePathsType.Signin)}
-                      onSignupRedirect={() => navigate(RoutePathsType.Signup)}
+                      onSigninRedirect={() =>
+                        navigate({
+                          pathname: RoutePathsType.Signin,
+                          search: query.toString(),
+                        })
+                      }
+                      onSignupRedirect={() =>
+                        navigate({
+                          pathname: RoutePathsType.Signup,
+                          search: query.toString(),
+                        })
+                      }
                       onSigninError={(error: AuthError) => setAuthError(error)}
                       redirectTo={window.location.origin}
                     />

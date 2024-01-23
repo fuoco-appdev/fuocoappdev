@@ -22,6 +22,7 @@ import {
   ResponsiveTablet,
 } from '../responsive.component';
 import { StockLocationItemResponsiveProps } from '../stock-location-item.component';
+import { InventoryLocationType } from 'src/models/explore.model';
 
 export default function StockLocationItemTabletComponent({
   stockLocation,
@@ -112,13 +113,34 @@ export default function StockLocationItemTabletComponent({
                       styles['thumbnail-tablet'],
                     ].join(' ')}
                   >
-                    <img
-                      className={[
-                        styles['thumbnail-image'],
-                        styles['thumbnail-image-tablet'],
-                      ].join(' ')}
-                      src={avatar || '../assets/images/selected-cellar.png'}
-                    />
+                    {Object.keys(stockLocation?.metadata ?? {}).includes(
+                      'type'
+                    ) &&
+                      (stockLocation?.metadata?.['type'] as string) ===
+                        InventoryLocationType.Cellar && (
+                        <img
+                          className={[
+                            styles['thumbnail-image'],
+                            styles['thumbnail-image-tablet'],
+                          ].join(' ')}
+                          src={avatar || '../assets/images/selected-cellar.png'}
+                        />
+                      )}
+                    {Object.keys(stockLocation?.metadata ?? {}).includes(
+                      'type'
+                    ) &&
+                      (stockLocation?.metadata?.['type'] as string) ===
+                        InventoryLocationType.Restaurant && (
+                        <img
+                          className={[
+                            styles['thumbnail-image'],
+                            styles['thumbnail-image-tablet'],
+                          ].join(' ')}
+                          src={
+                            avatar || '../assets/images/selected-restaurant.png'
+                          }
+                        />
+                      )}
                   </div>
                 </div>
               </div>

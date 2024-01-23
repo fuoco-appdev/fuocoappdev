@@ -4,7 +4,7 @@ import AccountController from '../../controllers/account.controller';
 import ProductController from '../../controllers/product.controller';
 import styles from '../account-likes.module.scss';
 import { Alert, Button, Line, Modal } from '@fuoco.appdev/core-ui';
-import { RoutePathsType } from '../../route-paths';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import SupabaseService from '../../services/supabase.service';
 import { useObservable } from '@ngneat/use-observable';
@@ -41,6 +41,7 @@ export default function AccountLikesDesktopComponent({
   const { t, i18n } = useTranslation();
   const rootRef = createRef<HTMLDivElement>();
   const navigate = useNavigate();
+  const query = useQuery();
   const context = useAccountOutletContext();
 
   return (
@@ -150,7 +151,14 @@ export default function AccountLikesDesktopComponent({
                     }}
                     size={'large'}
                     onClick={() =>
-                      setTimeout(() => navigate(RoutePathsType.Store), 75)
+                      setTimeout(
+                        () =>
+                          navigate({
+                            pathname: RoutePathsType.Store,
+                            search: query.toString(),
+                          }),
+                        75
+                      )
                     }
                   >
                     {t('store')}

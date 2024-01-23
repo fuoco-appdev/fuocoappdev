@@ -28,7 +28,7 @@ import { useObservable } from '@ngneat/use-observable';
 import CheckoutController from '../controllers/checkout.controller';
 import { useTranslation } from 'react-i18next';
 import { ProviderType } from '../models/checkout.model';
-import { RoutePathsType } from '../route-paths';
+import { RoutePathsType, useQuery } from '../route-paths';
 import { lazy } from '@loadable/component';
 import React from 'react';
 
@@ -57,6 +57,7 @@ export default function StripePayButtonComponent({
   onPaymentClick,
   onPaymentComplete,
 }: StripePayButtonProps): JSX.Element {
+  const query = useQuery();
   const navigate = useNavigate();
   const stripe = useStripe();
   const elements = useElements();
@@ -77,7 +78,10 @@ export default function StripePayButtonComponent({
 
     if (id) {
       onPaymentComplete?.();
-      navigate(`${RoutePathsType.OrderConfirmed}/${id}`);
+      navigate({
+        pathname: `${RoutePathsType.OrderConfirmed}/${id}`,
+        search: query.toString(),
+      });
     }
   };
 

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import AccountController from '../../controllers/account.controller';
 import styles from '../account-order-history.module.scss';
 import { Button } from '@fuoco.appdev/core-ui';
-import { RoutePathsType } from '../../route-paths';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
 import { Order } from '@medusajs/medusa';
@@ -17,6 +17,7 @@ export default function AccountOrderHistoryTabletComponent({
 }: AccountOrderHistoryResponsiveProps): JSX.Element {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
+  const query = useQuery();
   const { t, i18n } = useTranslation();
   const context = useAccountOutletContext();
 
@@ -66,9 +67,10 @@ export default function AccountOrderHistoryTabletComponent({
                     );
                     setTimeout(
                       () =>
-                        navigate(
-                          `${RoutePathsType.OrderConfirmed}/${order.id}`
-                        ),
+                        navigate({
+                          pathname: `${RoutePathsType.OrderConfirmed}/${order.id}`,
+                          search: query.toString(),
+                        }),
                       250
                     );
                   }}
@@ -116,7 +118,14 @@ export default function AccountOrderHistoryTabletComponent({
                   }}
                   size={'large'}
                   onClick={() =>
-                    setTimeout(() => navigate(RoutePathsType.Store), 75)
+                    setTimeout(
+                      () =>
+                        navigate({
+                          pathname: RoutePathsType.Store,
+                          search: query.toString(),
+                        }),
+                      75
+                    )
                   }
                 >
                   {t('shopNow')}

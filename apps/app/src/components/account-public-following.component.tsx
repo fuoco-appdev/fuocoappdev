@@ -13,7 +13,7 @@ import { AccountPublicFollowingSuspenseMobileComponent } from './mobile/suspense
 import { AccountPublicFollowingSuspenseTabletComponent } from './tablet/suspense/account-public-following.suspense.tablet.component copy';
 import { useNavigate } from 'react-router-dom';
 import AccountController from '../controllers/account.controller';
-import { RoutePathsType } from '../route-paths';
+import { RoutePathsType, useQuery } from '../route-paths';
 
 const AccountPublicFollowingDesktopComponent = lazy(
   () => import('./desktop/account-public-following.desktop.component')
@@ -33,6 +33,7 @@ export interface AccountPublicFollowingResponsiveProps {
 
 export default function AccountPublicFollowingComponent(): JSX.Element {
   const navigate = useNavigate();
+  const query = useQuery();
   const [accountPublicProps] = useObservable(
     AccountPublicController.model.store
   );
@@ -40,9 +41,15 @@ export default function AccountPublicFollowingComponent(): JSX.Element {
 
   const onItemClick = (followerId: string) => {
     if (AccountController.model.account?.id !== followerId) {
-      navigate(`${RoutePathsType.Account}/${followerId}/likes`);
+      navigate({
+        pathname: `${RoutePathsType.Account}/${followerId}/likes`,
+        search: query.toString(),
+      });
     } else {
-      navigate(RoutePathsType.AccountLikes);
+      navigate({
+        pathname: RoutePathsType.AccountLikes,
+        search: query.toString(),
+      });
     }
   };
 
