@@ -31,7 +31,7 @@ import {
 } from '@stripe/react-stripe-js';
 import StripePayButtonComponent from '../stripe-pay-button.component';
 import { CheckoutResponsiveProps } from '../checkout.component';
-import { RoutePathsType } from '../../route-paths';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import { useNavigate } from 'react-router-dom';
 import { ResponsiveDesktop } from '../responsive.component';
 import { loadStripe } from '@stripe/stripe-js';
@@ -61,6 +61,7 @@ export default function CheckoutDesktopComponent({
   const rootRef = useRef<HTMLDivElement | null>(null);
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const query = useQuery();
 
   const customer = accountProps.customer as Customer;
   return (
