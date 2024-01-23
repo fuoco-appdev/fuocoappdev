@@ -27,12 +27,15 @@ import { useObservable } from '@ngneat/use-observable';
 import { useSpring } from 'react-spring';
 import * as core from '../../protobuf/core_pb';
 import { Store } from '@ngneat/elf';
-import { ProductTabs } from '../../models/store.model';
+import { ProductTabs, StoreCategoryType } from '../../models/store.model';
 import { Country, Region, Product, SalesChannel } from '@medusajs/medusa';
 import ProductPreviewComponent from '../product-preview.component';
 import ReactCountryFlag from 'react-country-flag';
 import ExploreController from '../../controllers/explore.controller';
-import { InventoryLocation } from '../../models/explore.model';
+import {
+  InventoryLocation,
+  InventoryLocationType,
+} from '../../models/explore.model';
 import { StoreResponsiveProps } from '../store.component';
 import {
   PricedProduct,
@@ -54,18 +57,20 @@ export default function StoreMobileComponent({
   openCartVariants,
   countryOptions,
   regionOptions,
-  cellarOptions,
+  salesLocationOptions,
   variantQuantities,
   selectedCountryId,
   selectedRegionId,
-  selectedCellarId,
+  selectedSalesLocationId,
   tabs,
+  categoryOpen,
   setOpenFilter,
   setOpenCartVariants,
   setVariantQuantities,
   setSelectedCountryId,
   setSelectedRegionId,
-  setSelectedCellarId,
+  setSelectedSalesLocationId,
+  setCategoryOpen,
   onPreviewsScroll,
   onPreviewsLoad,
   onAddToCart,
@@ -73,10 +78,12 @@ export default function StoreMobileComponent({
   onProductPreviewClick,
   onProductPreviewLikeChanged,
   onProductPreviewRest,
+  onCategoryChanged,
 }: StoreResponsiveProps): JSX.Element {
   const previewsContainerRef = createRef<HTMLDivElement>();
   const rootRef = createRef<HTMLDivElement>();
   const topBarRef = useRef<HTMLDivElement | null>(null);
+  const categoryButtonRef = useRef<HTMLButtonElement | null>(null);
   const navigate = useNavigate();
   const query = useQuery();
   const { t, i18n } = useTranslation();
@@ -96,39 +103,87 @@ export default function StoreMobileComponent({
             styles['top-bar-container-mobile'],
           ].join(' ')}
         >
-          {exploreProps.selectedInventoryLocation && (
-            <div
-              className={[
-                styles['sales-location-container'],
-                styles['sales-location-container-mobile'],
-              ].join(' ')}
-            >
-              <Avatar
-                classNames={{
-                  container: !exploreProps.selectedInventoryLocation?.avatar
-                    ? [
-                        styles['no-avatar-container'],
-                        styles['no-avatar-container-mobile'],
-                      ].join(' ')
-                    : [
-                        styles['avatar-container'],
-                        styles['avatar-container-mobile'],
-                      ].join(' '),
-                }}
-                size={'custom'}
-                text={exploreProps.selectedInventoryLocation?.company ?? ''}
-                src={exploreProps.selectedInventoryLocation?.avatar}
-              />
+          <div
+            className={[
+              styles['top-bar-top-content'],
+              styles['top-bar-top-content-mobile'],
+            ].join(' ')}
+          >
+            {exploreProps.selectedInventoryLocation && (
               <div
                 className={[
-                  styles['sales-location-title'],
-                  styles['sales-location-title-mobile'],
+                  styles['sales-location-container'],
+                  styles['sales-location-container-mobile'],
                 ].join(' ')}
               >
-                {exploreProps.selectedInventoryLocation?.company ?? ''}
+                <Avatar
+                  classNames={{
+                    container: !exploreProps.selectedInventoryLocation?.avatar
+                      ? [
+                          styles['no-avatar-container'],
+                          styles['no-avatar-container-mobile'],
+                        ].join(' ')
+                      : [
+                          styles['avatar-container'],
+                          styles['avatar-container-mobile'],
+                        ].join(' '),
+                  }}
+                  size={'custom'}
+                  text={exploreProps.selectedInventoryLocation?.company ?? ''}
+                  src={exploreProps.selectedInventoryLocation?.avatar}
+                />
+                <div
+                  className={[
+                    styles['sales-location-title'],
+                    styles['sales-location-title-mobile'],
+                  ].join(' ')}
+                >
+                  {exploreProps.selectedInventoryLocation?.company ?? ''}
+                </div>
               </div>
-            </div>
-          )}
+            )}
+            {exploreProps.selectedInventoryLocation?.type ===
+              InventoryLocationType.Restaurant && (
+              <Button
+                ref={categoryButtonRef}
+                classNames={{
+                  button: styles['category-button'],
+                }}
+                icon={
+                  <>
+                    {storeProps.category === StoreCategoryType.Wines && (
+                      <img
+                        style={{
+                          height: 24,
+                          width: 24,
+                          objectFit: 'contain',
+                        }}
+                        src={'../../assets/images/wine-bottle.png'}
+                      />
+                    )}
+                    {storeProps.category === StoreCategoryType.Menu && (
+                      <img
+                        style={{
+                          height: 24,
+                          width: 24,
+                          objectFit: 'contain',
+                        }}
+                        src={'../../assets/images/menu.png'}
+                      />
+                    )}
+                  </>
+                }
+                iconRight={<Line.ExpandMore size={24} />}
+                onClick={(e) => setCategoryOpen(true)}
+              >
+                {storeProps.category === StoreCategoryType.Wines &&
+                  t(StoreCategoryType.Wines)}
+                {storeProps.category === StoreCategoryType.Menu &&
+                  t(StoreCategoryType.Menu)}
+              </Button>
+            )}
+          </div>
+
           <div
             className={[
               styles['search-container'],
@@ -400,11 +455,11 @@ export default function StoreMobileComponent({
                     label: styles['listbox-label'],
                   }}
                   touchScreen={true}
-                  label={t('cellar') ?? ''}
-                  options={cellarOptions}
-                  selectedId={selectedCellarId}
+                  label={t('location') ?? ''}
+                  options={salesLocationOptions}
+                  selectedId={selectedSalesLocationId}
                   onChange={(index: number, id: string) =>
-                    setSelectedCellarId(id)
+                    setSelectedSalesLocationId(id)
                   }
                 />
                 <Button
@@ -423,14 +478,14 @@ export default function StoreMobileComponent({
                   onClick={() => {
                     if (
                       selectedRegionId.length <= 0 ||
-                      selectedCellarId.length <= 0
+                      selectedSalesLocationId.length <= 0
                     ) {
                       return;
                     }
 
                     StoreController.applyFilterAsync(
                       selectedRegionId,
-                      selectedCellarId
+                      selectedSalesLocationId
                     );
                     setTimeout(() => setOpenFilter(false), 250);
                   }}
@@ -493,6 +548,51 @@ export default function StoreMobileComponent({
                   {t('addToCart')}
                 </Button>
               </div>
+            </Dropdown>
+            <Dropdown
+              touchScreen={true}
+              anchorRef={categoryButtonRef}
+              open={categoryOpen}
+              onClose={() => {
+                setCategoryOpen(false);
+              }}
+            >
+              <Dropdown.Item
+                onClick={() => onCategoryChanged(StoreCategoryType.Wines)}
+              >
+                <Dropdown.Icon>
+                  <img
+                    style={{ height: 24, width: 24, objectFit: 'contain' }}
+                    src={'../../assets/images/wine-bottle.png'}
+                  />
+                </Dropdown.Icon>
+                <div
+                  className={[
+                    styles['category-text'],
+                    styles['category-text-desktop'],
+                  ].join(' ')}
+                >
+                  {t(StoreCategoryType.Wines)}
+                </div>
+              </Dropdown.Item>
+              <Dropdown.Item
+                onClick={() => onCategoryChanged(StoreCategoryType.Menu)}
+              >
+                <Dropdown.Icon>
+                  <img
+                    style={{ height: 24, width: 24, objectFit: 'contain' }}
+                    src={'../../assets/images/menu.png'}
+                  />
+                </Dropdown.Icon>
+                <div
+                  className={[
+                    styles['category-text'],
+                    styles['category-text-desktop'],
+                  ].join(' ')}
+                >
+                  {t(StoreCategoryType.Menu)}
+                </div>
+              </Dropdown.Item>
             </Dropdown>
           </>,
           document.body

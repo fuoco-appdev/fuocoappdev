@@ -389,7 +389,10 @@
             & .top-bar-left-content-tablet {
                 display: flex;
                 justify-content: flex-start;
+                align-items: flex-start;
+                flex-direction: column;
                 padding-left: $mp-6;
+                gap: $mp-4;
                 flex: 1;
         
                 & .sales-location-container-tablet {
@@ -527,12 +530,19 @@
         -webkit-box-direction: normal;
             -ms-flex-direction: column;
                 flex-direction: column;
-        
-        & .sales-location-container-mobile {
-            padding-top: $mp-4;
 
-            & .sales-location-title-mobile {
+        & .top-bar-top-content-mobile {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: $mp-4;
+            padding-left: $mp-4;
+            padding-right: $mp-4;
             
+            & .sales-location-container-mobile {
+                & .sales-location-title-mobile {
+                
+                }
             }
         }
 

@@ -20,6 +20,7 @@ import {
   OptionProps,
   Modal,
   Avatar,
+  DropdownAlignment,
 } from '@fuoco.appdev/core-ui';
 import { RoutePathsType, useQuery } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
@@ -28,13 +29,16 @@ import { useObservable } from '@ngneat/use-observable';
 import { useSpring } from 'react-spring';
 import * as core from '../../protobuf/core_pb';
 import { Store } from '@ngneat/elf';
-import { ProductTabs } from '../../models/store.model';
+import { ProductTabs, StoreCategoryType } from '../../models/store.model';
 import { Country, Region, Product, SalesChannel } from '@medusajs/medusa';
 import ProductPreviewComponent from '../product-preview.component';
 import ReactCountryFlag from 'react-country-flag';
 import ExploreController from '../../controllers/explore.controller';
 import ProductController from '../../controllers/product.controller';
-import { InventoryLocation } from '../../models/explore.model';
+import {
+  InventoryLocation,
+  InventoryLocationType,
+} from '../../models/explore.model';
 import { StoreResponsiveProps } from '../store.component';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import {
@@ -57,18 +61,20 @@ export default function StoreTabletComponent({
   openCartVariants,
   countryOptions,
   regionOptions,
-  cellarOptions,
+  salesLocationOptions,
   variantQuantities,
   selectedCountryId,
   selectedRegionId,
-  selectedCellarId,
+  selectedSalesLocationId,
   tabs,
+  categoryOpen,
   setOpenFilter,
   setOpenCartVariants,
   setSelectedCountryId,
   setSelectedRegionId,
-  setSelectedCellarId,
+  setSelectedSalesLocationId,
   setVariantQuantities,
+  setCategoryOpen,
   onPreviewsScroll,
   onPreviewsLoad,
   onAddToCart,
@@ -76,11 +82,13 @@ export default function StoreTabletComponent({
   onProductPreviewClick,
   onProductPreviewLikeChanged,
   onProductPreviewRest,
+  onCategoryChanged,
 }: StoreResponsiveProps): JSX.Element {
   const previewsContainerRef = createRef<HTMLDivElement>();
   const rootRef = createRef<HTMLDivElement>();
   const topBarRef = useRef<HTMLDivElement | null>(null);
   const sideBarRef = useRef<HTMLDivElement | null>(null);
+  const categoryButtonRef = useRef<HTMLButtonElement | null>(null);
   const navigate = useNavigate();
   const query = useQuery();
   const { t, i18n } = useTranslation();
@@ -144,6 +152,46 @@ export default function StoreTabletComponent({
                     {exploreProps.selectedInventoryLocation?.company ?? ''}
                   </div>
                 </div>
+              )}
+              {exploreProps.selectedInventoryLocation?.type ===
+                InventoryLocationType.Restaurant && (
+                <Button
+                  ref={categoryButtonRef}
+                  classNames={{
+                    button: styles['category-button'],
+                  }}
+                  icon={
+                    <>
+                      {storeProps.category === StoreCategoryType.Wines && (
+                        <img
+                          style={{
+                            height: 24,
+                            width: 24,
+                            objectFit: 'contain',
+                          }}
+                          src={'../../assets/images/wine-bottle.png'}
+                        />
+                      )}
+                      {storeProps.category === StoreCategoryType.Menu && (
+                        <img
+                          style={{
+                            height: 24,
+                            width: 24,
+                            objectFit: 'contain',
+                          }}
+                          src={'../../assets/images/menu.png'}
+                        />
+                      )}
+                    </>
+                  }
+                  iconRight={<Line.ExpandMore size={24} />}
+                  onClick={(e) => setCategoryOpen(true)}
+                >
+                  {storeProps.category === StoreCategoryType.Wines &&
+                    t(StoreCategoryType.Wines)}
+                  {storeProps.category === StoreCategoryType.Menu &&
+                    t(StoreCategoryType.Menu)}
+                </Button>
               )}
             </div>
             <div
@@ -456,11 +504,11 @@ export default function StoreTabletComponent({
                   chevron: styles['listbox-chevron'],
                   label: styles['listbox-label'],
                 }}
-                label={t('cellar') ?? ''}
-                options={cellarOptions}
-                selectedId={selectedCellarId}
+                label={t('location') ?? ''}
+                options={salesLocationOptions}
+                selectedId={selectedSalesLocationId}
                 onChange={(index: number, id: string) =>
-                  setSelectedCellarId(id)
+                  setSelectedSalesLocationId(id)
                 }
               />
             </div>
@@ -482,14 +530,14 @@ export default function StoreTabletComponent({
               onClick={() => {
                 if (
                   selectedRegionId.length <= 0 ||
-                  selectedCellarId.length <= 0
+                  selectedSalesLocationId.length <= 0
                 ) {
                   return;
                 }
 
                 StoreController.applyFilterAsync(
                   selectedRegionId,
-                  selectedCellarId
+                  selectedSalesLocationId
                 );
                 setTimeout(() => setOpenFilter(false), 250);
               }}
@@ -500,92 +548,141 @@ export default function StoreTabletComponent({
         </CSSTransition>
       </div>
       {createPortal(
-        <Modal
-          classNames={{
-            overlay: [
-              styles['modal-overlay'],
-              styles['modal-overlay-tablet'],
-            ].join(' '),
-            modal: [styles['modal'], styles['modal-tablet']].join(' '),
-            text: [styles['modal-text'], styles['modal-text-tablet']].join(' '),
-            title: [styles['modal-title'], styles['modal-title-tablet']].join(
-              ' '
-            ),
-            description: [
-              styles['modal-description'],
-              styles['modal-description-tablet'],
-            ].join(' '),
-            footerButtonContainer: [
-              styles['modal-footer-button-container'],
-              styles['modal-footer-button-container-tablet'],
-              styles['modal-address-footer-button-container-tablet'],
-            ].join(' '),
-            cancelButton: {
-              button: [
-                styles['modal-cancel-button'],
-                styles['modal-cancel-button-tablet'],
+        <>
+          <Modal
+            classNames={{
+              overlay: [
+                styles['modal-overlay'],
+                styles['modal-overlay-tablet'],
               ].join(' '),
-            },
-            confirmButton: {
-              button: [
-                styles['modal-confirm-button'],
-                styles['modal-confirm-button-tablet'],
+              modal: [styles['modal'], styles['modal-tablet']].join(' '),
+              text: [styles['modal-text'], styles['modal-text-tablet']].join(
+                ' '
+              ),
+              title: [styles['modal-title'], styles['modal-title-tablet']].join(
+                ' '
+              ),
+              description: [
+                styles['modal-description'],
+                styles['modal-description-tablet'],
               ].join(' '),
-            },
-          }}
-          title={t('addVariant') ?? ''}
-          visible={openCartVariants}
-          onCancel={() => setOpenCartVariants(false)}
-          hideFooter={true}
-        >
-          <div
-            className={[
-              styles['add-variants-container'],
-              styles['add-variants-container-tablet'],
-            ].join(' ')}
-          >
-            {storeProps.selectedPricedProduct?.variants.map((variant) => {
-              return (
-                <CartVariantItemComponent
-                  productType={MedusaProductTypeNames.Wine}
-                  key={variant.id}
-                  product={storeProps.selectedPricedProduct}
-                  variant={variant}
-                  storeProps={storeProps}
-                  variantQuantities={variantQuantities}
-                  setVariantQuantities={setVariantQuantities}
-                />
-              );
-            })}
-            <Button
-              touchScreen={true}
-              classNames={{
-                container: [
-                  styles['add-to-cart-button-container'],
-                  styles['add-to-cart-button-container-tablet'],
-                ].join(' '),
+              footerButtonContainer: [
+                styles['modal-footer-button-container'],
+                styles['modal-footer-button-container-tablet'],
+                styles['modal-address-footer-button-container-tablet'],
+              ].join(' '),
+              cancelButton: {
                 button: [
-                  styles['add-to-cart-button'],
-                  styles['add-to-cart-button-tablet'],
+                  styles['modal-cancel-button'],
+                  styles['modal-cancel-button-tablet'],
                 ].join(' '),
-              }}
-              block={true}
-              size={'full'}
-              rippleProps={{
-                color: 'rgba(233, 33, 66, .35)',
-              }}
-              icon={<Line.AddShoppingCart size={24} />}
-              disabled={
-                Object.values(variantQuantities).reduce((current, next) => {
-                  return current + next;
-                }, 0) <= 0
-              }
-              onClick={onAddToCart}
+              },
+              confirmButton: {
+                button: [
+                  styles['modal-confirm-button'],
+                  styles['modal-confirm-button-tablet'],
+                ].join(' '),
+              },
+            }}
+            title={t('addVariant') ?? ''}
+            visible={openCartVariants}
+            onCancel={() => setOpenCartVariants(false)}
+            hideFooter={true}
+          >
+            <div
+              className={[
+                styles['add-variants-container'],
+                styles['add-variants-container-tablet'],
+              ].join(' ')}
             >
-              {t('addToCart')}
-            </Button>
-          </div>
-        </Modal>,
+              {storeProps.selectedPricedProduct?.variants.map((variant) => {
+                return (
+                  <CartVariantItemComponent
+                    productType={MedusaProductTypeNames.Wine}
+                    key={variant.id}
+                    product={storeProps.selectedPricedProduct}
+                    variant={variant}
+                    storeProps={storeProps}
+                    variantQuantities={variantQuantities}
+                    setVariantQuantities={setVariantQuantities}
+                  />
+                );
+              })}
+              <Button
+                touchScreen={true}
+                classNames={{
+                  container: [
+                    styles['add-to-cart-button-container'],
+                    styles['add-to-cart-button-container-tablet'],
+                  ].join(' '),
+                  button: [
+                    styles['add-to-cart-button'],
+                    styles['add-to-cart-button-tablet'],
+                  ].join(' '),
+                }}
+                block={true}
+                size={'full'}
+                rippleProps={{
+                  color: 'rgba(233, 33, 66, .35)',
+                }}
+                icon={<Line.AddShoppingCart size={24} />}
+                disabled={
+                  Object.values(variantQuantities).reduce((current, next) => {
+                    return current + next;
+                  }, 0) <= 0
+                }
+                onClick={onAddToCart}
+              >
+                {t('addToCart')}
+              </Button>
+            </div>
+          </Modal>
+          <Dropdown
+            anchorRef={categoryButtonRef}
+            align={DropdownAlignment.Right}
+            open={categoryOpen}
+            onClose={() => {
+              setCategoryOpen(false);
+            }}
+          >
+            <Dropdown.Item
+              onClick={() => onCategoryChanged(StoreCategoryType.Wines)}
+            >
+              <Dropdown.Icon>
+                <img
+                  style={{ height: 24, width: 24, objectFit: 'contain' }}
+                  src={'../../assets/images/wine-bottle.png'}
+                />
+              </Dropdown.Icon>
+              <div
+                className={[
+                  styles['category-text'],
+                  styles['category-text-desktop'],
+                ].join(' ')}
+              >
+                {t(StoreCategoryType.Wines)}
+              </div>
+            </Dropdown.Item>
+            <Dropdown.Item
+              onClick={() => onCategoryChanged(StoreCategoryType.Menu)}
+            >
+              <Dropdown.Icon>
+                <img
+                  style={{ height: 24, width: 24, objectFit: 'contain' }}
+                  src={'../../assets/images/menu.png'}
+                />
+              </Dropdown.Icon>
+              <div
+                className={[
+                  styles['category-text'],
+                  styles['category-text-desktop'],
+                ].join(' ')}
+              >
+                {t(StoreCategoryType.Menu)}
+              </div>
+            </Dropdown.Item>
+          </Dropdown>
+        </>,
         document.body
       )}
     </ResponsiveTablet>

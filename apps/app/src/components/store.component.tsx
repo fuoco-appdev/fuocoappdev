@@ -88,10 +88,10 @@ export interface StoreResponsiveProps {
   openCartVariants: boolean;
   countryOptions: OptionProps[];
   regionOptions: OptionProps[];
-  cellarOptions: OptionProps[];
+  salesLocationOptions: OptionProps[];
   selectedCountryId: string;
   selectedRegionId: string;
-  selectedCellarId: string;
+  selectedSalesLocationId: string;
   variantQuantities: Record<string, number>;
   tabs: TabProps[];
   categoryOpen: boolean;
@@ -99,7 +99,7 @@ export interface StoreResponsiveProps {
   setOpenCartVariants: (value: boolean) => void;
   setSelectedCountryId: (value: string) => void;
   setSelectedRegionId: (value: string) => void;
-  setSelectedCellarId: (value: string) => void;
+  setSelectedSalesLocationId: (value: string) => void;
   setVariantQuantities: (value: Record<string, number>) => void;
   setCategoryOpen: (value: boolean) => void;
   onPreviewsScroll: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
@@ -136,10 +136,13 @@ export default function StoreComponent(): JSX.Element {
   const [openCartVariants, setOpenCartVariants] = useState<boolean>(false);
   const [countryOptions, setCountryOptions] = useState<OptionProps[]>([]);
   const [regionOptions, setRegionOptions] = useState<OptionProps[]>([]);
-  const [cellarOptions, setCellarOptions] = useState<OptionProps[]>([]);
+  const [salesLocationOptions, setSalesLocationOptions] = useState<
+    OptionProps[]
+  >([]);
   const [selectedCountryId, setSelectedCountryId] = useState<string>('');
   const [selectedRegionId, setSelectedRegionId] = useState<string>('');
-  const [selectedCellarId, setSelectedCellarId] = useState<string>('');
+  const [selectedSalesLocationId, setSelectedSalesLocationId] =
+    useState<string>('');
   const [variantQuantities, setVariantQuantities] = useState<
     Record<string, number>
   >({});
@@ -270,6 +273,17 @@ export default function StoreComponent(): JSX.Element {
     if (search && search !== storeProps.input) {
       StoreController.updateInput(search);
     }
+
+    const storeCategory = query.get('store_category');
+    if (
+      storeCategory &&
+      storeCategory !== storeProps.category &&
+      Object.values(StoreCategoryType).includes(
+        storeCategory as StoreCategoryType
+      )
+    ) {
+      StoreController.updateCategory(storeCategory as StoreCategoryType);
+    }
   }, []);
 
   useEffect(() => {
@@ -333,16 +347,16 @@ export default function StoreComponent(): JSX.Element {
       });
     }
 
-    setCellarOptions(cellars);
+    setSalesLocationOptions(cellars);
   }, [exploreProps.inventoryLocations, storeProps.selectedRegion]);
 
   useEffect(() => {
-    if (cellarOptions.length <= 0) {
+    if (salesLocationOptions.length <= 0) {
       return;
     }
 
-    setSelectedCellarId(exploreLocalProps.selectedInventoryLocationId);
-  }, [exploreLocalProps.selectedInventoryLocationId, cellarOptions]);
+    setSelectedSalesLocationId(exploreLocalProps.selectedInventoryLocationId);
+  }, [exploreLocalProps.selectedInventoryLocationId, salesLocationOptions]);
 
   useEffect(() => {
     if (!storeProps.selectedRegion || countryOptions.length <= 0) {
@@ -489,18 +503,18 @@ export default function StoreComponent(): JSX.Element {
           openCartVariants={openCartVariants}
           countryOptions={countryOptions}
           regionOptions={regionOptions}
-          cellarOptions={cellarOptions}
+          salesLocationOptions={salesLocationOptions}
           variantQuantities={variantQuantities}
           selectedCountryId={selectedCountryId}
           selectedRegionId={selectedRegionId}
-          selectedCellarId={selectedCellarId}
+          selectedSalesLocationId={selectedSalesLocationId}
           tabs={tabs}
           categoryOpen={categoryOpen}
           setOpenFilter={setOpenFilter}
           setOpenCartVariants={setOpenCartVariants}
           setSelectedCountryId={setSelectedCountryId}
           setSelectedRegionId={setSelectedRegionId}
-          setSelectedCellarId={setSelectedCellarId}
+          setSelectedSalesLocationId={setSelectedSalesLocationId}
           setVariantQuantities={setVariantQuantities}
           setCategoryOpen={setCategoryOpen}
           onPreviewsScroll={onScroll}
@@ -522,18 +536,18 @@ export default function StoreComponent(): JSX.Element {
           openCartVariants={openCartVariants}
           countryOptions={countryOptions}
           regionOptions={regionOptions}
-          cellarOptions={cellarOptions}
+          salesLocationOptions={salesLocationOptions}
           variantQuantities={variantQuantities}
           selectedCountryId={selectedCountryId}
           selectedRegionId={selectedRegionId}
-          selectedCellarId={selectedCellarId}
+          selectedSalesLocationId={selectedSalesLocationId}
           tabs={tabs}
           categoryOpen={categoryOpen}
           setOpenFilter={setOpenFilter}
           setOpenCartVariants={setOpenCartVariants}
           setSelectedCountryId={setSelectedCountryId}
           setSelectedRegionId={setSelectedRegionId}
-          setSelectedCellarId={setSelectedCellarId}
+          setSelectedSalesLocationId={setSelectedSalesLocationId}
           setVariantQuantities={setVariantQuantities}
           setCategoryOpen={setCategoryOpen}
           onPreviewsScroll={onScroll}
@@ -555,18 +569,18 @@ export default function StoreComponent(): JSX.Element {
           openCartVariants={openCartVariants}
           countryOptions={countryOptions}
           regionOptions={regionOptions}
-          cellarOptions={cellarOptions}
+          salesLocationOptions={salesLocationOptions}
           variantQuantities={variantQuantities}
           selectedCountryId={selectedCountryId}
           selectedRegionId={selectedRegionId}
-          selectedCellarId={selectedCellarId}
+          selectedSalesLocationId={selectedSalesLocationId}
           tabs={tabs}
           categoryOpen={categoryOpen}
           setOpenFilter={setOpenFilter}
           setOpenCartVariants={setOpenCartVariants}
           setSelectedCountryId={setSelectedCountryId}
           setSelectedRegionId={setSelectedRegionId}
-          setSelectedCellarId={setSelectedCellarId}
+          setSelectedSalesLocationId={setSelectedSalesLocationId}
           setVariantQuantities={setVariantQuantities}
           setCategoryOpen={setCategoryOpen}
           onPreviewsScroll={onScroll}

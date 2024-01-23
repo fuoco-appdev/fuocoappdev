@@ -34,7 +34,10 @@ import { Country, Region, Product, SalesChannel } from '@medusajs/medusa';
 import ProductPreviewComponent from '../product-preview.component';
 import ReactCountryFlag from 'react-country-flag';
 import ExploreController from '../../controllers/explore.controller';
-import { InventoryLocation } from '../../models/explore.model';
+import {
+  InventoryLocation,
+  InventoryLocationType,
+} from '../../models/explore.model';
 import { StoreResponsiveProps } from '../store.component';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import {
@@ -58,18 +61,18 @@ export default function StoreDesktopComponent({
   openCartVariants,
   countryOptions,
   regionOptions,
-  cellarOptions,
+  salesLocationOptions,
   variantQuantities,
   selectedCountryId,
   selectedRegionId,
-  selectedCellarId,
+  selectedSalesLocationId,
   tabs,
   categoryOpen,
   setOpenFilter,
   setOpenCartVariants,
   setSelectedCountryId,
   setSelectedRegionId,
-  setSelectedCellarId,
+  setSelectedSalesLocationId,
   setVariantQuantities,
   setCategoryOpen,
   onPreviewsScroll,
@@ -150,35 +153,46 @@ export default function StoreDesktopComponent({
                   </div>
                 </div>
               )}
-              <Button
-                ref={categoryButtonRef}
-                classNames={{
-                  button: styles['category-button'],
-                }}
-                icon={
-                  <>
-                    {storeProps.category === StoreCategoryType.Wines && (
-                      <img
-                        style={{ height: 24, width: 24, objectFit: 'contain' }}
-                        src={'../../assets/images/wine-bottle.png'}
-                      />
-                    )}
-                    {storeProps.category === StoreCategoryType.Menu && (
-                      <img
-                        style={{ height: 24, width: 24, objectFit: 'contain' }}
-                        src={'../../assets/images/menu.png'}
-                      />
-                    )}
-                  </>
-                }
-                iconRight={<Line.ExpandMore size={24} />}
-                onClick={(e) => setCategoryOpen(true)}
-              >
-                {storeProps.category === StoreCategoryType.Wines &&
-                  t(StoreCategoryType.Wines)}
-                {storeProps.category === StoreCategoryType.Menu &&
-                  t(StoreCategoryType.Menu)}
-              </Button>
+              {exploreProps.selectedInventoryLocation?.type ===
+                InventoryLocationType.Restaurant && (
+                <Button
+                  ref={categoryButtonRef}
+                  classNames={{
+                    button: styles['category-button'],
+                  }}
+                  icon={
+                    <>
+                      {storeProps.category === StoreCategoryType.Wines && (
+                        <img
+                          style={{
+                            height: 24,
+                            width: 24,
+                            objectFit: 'contain',
+                          }}
+                          src={'../../assets/images/wine-bottle.png'}
+                        />
+                      )}
+                      {storeProps.category === StoreCategoryType.Menu && (
+                        <img
+                          style={{
+                            height: 24,
+                            width: 24,
+                            objectFit: 'contain',
+                          }}
+                          src={'../../assets/images/menu.png'}
+                        />
+                      )}
+                    </>
+                  }
+                  iconRight={<Line.ExpandMore size={24} />}
+                  onClick={(e) => setCategoryOpen(true)}
+                >
+                  {storeProps.category === StoreCategoryType.Wines &&
+                    t(StoreCategoryType.Wines)}
+                  {storeProps.category === StoreCategoryType.Menu &&
+                    t(StoreCategoryType.Menu)}
+                </Button>
+              )}
             </div>
             <div
               className={[
@@ -487,11 +501,11 @@ export default function StoreDesktopComponent({
                   chevron: styles['listbox-chevron'],
                   label: styles['listbox-label'],
                 }}
-                label={t('cellar') ?? ''}
-                options={cellarOptions}
-                selectedId={selectedCellarId}
+                label={t('location') ?? ''}
+                options={salesLocationOptions}
+                selectedId={selectedSalesLocationId}
                 onChange={(index: number, id: string) =>
-                  setSelectedCellarId(id)
+                  setSelectedSalesLocationId(id)
                 }
               />
             </div>
@@ -512,14 +526,14 @@ export default function StoreDesktopComponent({
               onClick={() => {
                 if (
                   selectedRegionId.length <= 0 ||
-                  selectedCellarId.length <= 0
+                  selectedSalesLocationId.length <= 0
                 ) {
                   return;
                 }
 
                 StoreController.applyFilterAsync(
                   selectedRegionId,
-                  selectedCellarId
+                  selectedSalesLocationId
                 );
                 setTimeout(() => setOpenFilter(false), 250);
               }}
