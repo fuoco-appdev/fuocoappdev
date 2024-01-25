@@ -13,6 +13,7 @@ import Skeleton from 'react-loading-skeleton';
 import { ProductResponsiveProps } from '../product.component';
 import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
 import loadable from '@loadable/component';
+import { MedusaProductTypeNames } from '../../types/medusa.type';
 const ReactMarkdown = loadable(
   async () => {
     const reactMarkdown = await import('react-markdown');
@@ -73,16 +74,52 @@ export default function ProductDesktopComponent({
             ].join(' ')}
           >
             {!productProps.isLoading ? (
-              <img
-                className={[
-                  styles['thumbnail-image'],
-                  styles['thumbnail-image-desktop'],
-                ].join(' ')}
-                src={
-                  productProps.product?.thumbnail ??
-                  '../assets/images/wine-bottle.png'
-                }
-              />
+              <>
+                {productProps.product?.thumbnail &&
+                  productProps.product?.type?.value ===
+                    MedusaProductTypeNames.Wine && (
+                    <img
+                      className={[
+                        styles['wine-thumbnail-image'],
+                        styles['wine-thumbnail-image-desktop'],
+                      ].join(' ')}
+                      src={productProps.product?.thumbnail}
+                    />
+                  )}
+                {productProps.product?.thumbnail &&
+                  productProps.product?.type?.value ===
+                    MedusaProductTypeNames.MenuItem && (
+                    <img
+                      className={[
+                        styles['menu-item-thumbnail-image'],
+                        styles['menu-item-thumbnail-image-desktop'],
+                      ].join(' ')}
+                      src={productProps.product?.thumbnail}
+                    />
+                  )}
+                {!productProps.product?.thumbnail &&
+                  productProps.product?.type?.value ===
+                    MedusaProductTypeNames.Wine && (
+                    <img
+                      className={[
+                        styles['no-thumbnail-image'],
+                        styles['no-thumbnail-image-desktop'],
+                      ].join(' ')}
+                      src={'../assets/images/wine-bottle.png'}
+                    />
+                  )}
+                {!productProps.product?.thumbnail &&
+                  productProps.product?.type?.value ===
+                    MedusaProductTypeNames.MenuItem && (
+                    <img
+                      className={[
+                        styles['no-thumbnail-image'],
+                        styles['no-thumbnail-image-desktop'],
+                      ].join(' ')}
+                      src={'../assets/images/menu.png'}
+                    />
+                  )}
+              </>
             ) : (
               <Skeleton
                 className={[
@@ -266,16 +303,21 @@ export default function ProductDesktopComponent({
                       includeTaxes: false,
                     })}
                 </div>
-                &nbsp;
-                <span
-                  className={[
-                    styles['inventory-quantity'],
-                    styles['inventory-quantity-desktop'],
-                  ].join(' ')}
-                >
-                  ({productProps.selectedVariant?.inventory_quantity}&nbsp;
-                  {t('inStock')})
-                </span>
+                {productProps.product?.type?.value ===
+                  MedusaProductTypeNames.Wine && (
+                  <>
+                    &nbsp;
+                    <span
+                      className={[
+                        styles['inventory-quantity'],
+                        styles['inventory-quantity-desktop'],
+                      ].join(' ')}
+                    >
+                      ({productProps.selectedVariant?.inventory_quantity}&nbsp;
+                      {t('inStock')})
+                    </span>
+                  </>
+                )}
               </>
             ) : (
               <Skeleton
@@ -328,6 +370,7 @@ export default function ProductDesktopComponent({
               <Tabs
                 flex={true}
                 classNames={{
+                  nav: styles['tab-nav'],
                   tabButton: styles['tab-button'],
                   tabOutline: styles['tab-outline'],
                 }}
@@ -344,271 +387,274 @@ export default function ProductDesktopComponent({
                 ].join(' ')}
               />
             )}
-            <div
-              className={[
-                styles['options-container'],
-                styles['options-container-desktop'],
-              ].join(' ')}
-            >
-              {!productProps.isLoading ? (
-                <>
-                  <div
-                    className={[
-                      styles['option-content'],
-                      styles['option-content-desktop'],
-                    ].join(' ')}
-                  >
+            {productProps.product?.type?.value ===
+              MedusaProductTypeNames.Wine && (
+              <div
+                className={[
+                  styles['options-container'],
+                  styles['options-container-desktop'],
+                ].join(' ')}
+              >
+                {!productProps.isLoading ? (
+                  <>
                     <div
                       className={[
-                        styles['option-title'],
-                        styles['option-title-desktop'],
+                        styles['option-content'],
+                        styles['option-content-desktop'],
                       ].join(' ')}
                     >
-                      {t('alcohol')}
+                      <div
+                        className={[
+                          styles['option-title'],
+                          styles['option-title-desktop'],
+                        ].join(' ')}
+                      >
+                        {t('alcohol')}
+                      </div>
+                      <div
+                        className={[
+                          styles['option-value'],
+                          styles['option-value-desktop'],
+                        ].join(' ')}
+                      >
+                        {alcohol}
+                      </div>
                     </div>
                     <div
                       className={[
-                        styles['option-value'],
-                        styles['option-value-desktop'],
+                        styles['option-content'],
+                        styles['option-content-desktop'],
                       ].join(' ')}
                     >
-                      {alcohol}
-                    </div>
-                  </div>
-                  <div
-                    className={[
-                      styles['option-content'],
-                      styles['option-content-desktop'],
-                    ].join(' ')}
-                  >
-                    <div
-                      className={[
-                        styles['option-title'],
-                        styles['option-title-desktop'],
-                      ].join(' ')}
-                    >
-                      {t('brand')}
-                    </div>
-                    <div
-                      className={[
-                        styles['option-value'],
-                        styles['option-value-desktop'],
-                      ].join(' ')}
-                    >
-                      {brand}
-                    </div>
-                  </div>
-                  <div
-                    className={[
-                      styles['option-content'],
-                      styles['option-content-desktop'],
-                    ].join(' ')}
-                  >
-                    <div
-                      className={[
-                        styles['option-title'],
-                        styles['option-title-desktop'],
-                      ].join(' ')}
-                    >
-                      {t('format')}
+                      <div
+                        className={[
+                          styles['option-title'],
+                          styles['option-title-desktop'],
+                        ].join(' ')}
+                      >
+                        {t('brand')}
+                      </div>
+                      <div
+                        className={[
+                          styles['option-value'],
+                          styles['option-value-desktop'],
+                        ].join(' ')}
+                      >
+                        {brand}
+                      </div>
                     </div>
                     <div
                       className={[
-                        styles['option-value'],
-                        styles['option-value-desktop'],
+                        styles['option-content'],
+                        styles['option-content-desktop'],
                       ].join(' ')}
                     >
-                      {format}
-                    </div>
-                  </div>
-                  <div
-                    className={[
-                      styles['option-content'],
-                      styles['option-content-desktop'],
-                    ].join(' ')}
-                  >
-                    <div
-                      className={[
-                        styles['option-title'],
-                        styles['option-title-desktop'],
-                      ].join(' ')}
-                    >
-                      {t('producerBottler')}
-                    </div>
-                    <div
-                      className={[
-                        styles['option-value'],
-                        styles['option-value-desktop'],
-                      ].join(' ')}
-                    >
-                      {producerBottler}
-                    </div>
-                  </div>
-                  <div
-                    className={[
-                      styles['option-content'],
-                      styles['option-content-desktop'],
-                    ].join(' ')}
-                  >
-                    <div
-                      className={[
-                        styles['option-title'],
-                        styles['option-title-desktop'],
-                      ].join(' ')}
-                    >
-                      {t('region')}
+                      <div
+                        className={[
+                          styles['option-title'],
+                          styles['option-title-desktop'],
+                        ].join(' ')}
+                      >
+                        {t('format')}
+                      </div>
+                      <div
+                        className={[
+                          styles['option-value'],
+                          styles['option-value-desktop'],
+                        ].join(' ')}
+                      >
+                        {format}
+                      </div>
                     </div>
                     <div
                       className={[
-                        styles['option-value'],
-                        styles['option-value-desktop'],
+                        styles['option-content'],
+                        styles['option-content-desktop'],
                       ].join(' ')}
                     >
-                      {region}
-                    </div>
-                  </div>
-                  <div
-                    className={[
-                      styles['option-content'],
-                      styles['option-content-desktop'],
-                    ].join(' ')}
-                  >
-                    <div
-                      className={[
-                        styles['option-title'],
-                        styles['option-title-desktop'],
-                      ].join(' ')}
-                    >
-                      {t('residualSugar')}
-                    </div>
-                    <div
-                      className={[
-                        styles['option-value'],
-                        styles['option-value-desktop'],
-                      ].join(' ')}
-                    >
-                      {residualSugar}
-                    </div>
-                  </div>
-                  <div
-                    className={[
-                      styles['option-content'],
-                      styles['option-content-desktop'],
-                    ].join(' ')}
-                  >
-                    <div
-                      className={[
-                        styles['option-title'],
-                        styles['option-title-desktop'],
-                      ].join(' ')}
-                    >
-                      {t('type')}
+                      <div
+                        className={[
+                          styles['option-title'],
+                          styles['option-title-desktop'],
+                        ].join(' ')}
+                      >
+                        {t('producerBottler')}
+                      </div>
+                      <div
+                        className={[
+                          styles['option-value'],
+                          styles['option-value-desktop'],
+                        ].join(' ')}
+                      >
+                        {producerBottler}
+                      </div>
                     </div>
                     <div
                       className={[
-                        styles['option-value'],
-                        styles['option-value-desktop'],
+                        styles['option-content'],
+                        styles['option-content-desktop'],
                       ].join(' ')}
                     >
-                      {type}
-                    </div>
-                  </div>
-                  <div
-                    className={[
-                      styles['option-content'],
-                      styles['option-content-desktop'],
-                    ].join(' ')}
-                  >
-                    <div
-                      className={[
-                        styles['option-title'],
-                        styles['option-title-desktop'],
-                      ].join(' ')}
-                    >
-                      {t('uvc')}
-                    </div>
-                    <div
-                      className={[
-                        styles['option-value'],
-                        styles['option-value-desktop'],
-                      ].join(' ')}
-                    >
-                      {uvc}
-                    </div>
-                  </div>
-                  <div
-                    className={[
-                      styles['option-content'],
-                      styles['option-content-desktop'],
-                    ].join(' ')}
-                  >
-                    <div
-                      className={[
-                        styles['option-title'],
-                        styles['option-title-desktop'],
-                      ].join(' ')}
-                    >
-                      {t('varietals')}
+                      <div
+                        className={[
+                          styles['option-title'],
+                          styles['option-title-desktop'],
+                        ].join(' ')}
+                      >
+                        {t('region')}
+                      </div>
+                      <div
+                        className={[
+                          styles['option-value'],
+                          styles['option-value-desktop'],
+                        ].join(' ')}
+                      >
+                        {region}
+                      </div>
                     </div>
                     <div
                       className={[
-                        styles['option-value'],
-                        styles['option-value-desktop'],
+                        styles['option-content'],
+                        styles['option-content-desktop'],
                       ].join(' ')}
                     >
-                      {varietals}
+                      <div
+                        className={[
+                          styles['option-title'],
+                          styles['option-title-desktop'],
+                        ].join(' ')}
+                      >
+                        {t('residualSugar')}
+                      </div>
+                      <div
+                        className={[
+                          styles['option-value'],
+                          styles['option-value-desktop'],
+                        ].join(' ')}
+                      >
+                        {residualSugar}
+                      </div>
                     </div>
-                  </div>
-                  <div
-                    className={[
-                      styles['option-content'],
-                      styles['option-content-desktop'],
-                    ].join(' ')}
-                  >
                     <div
                       className={[
-                        styles['option-title'],
-                        styles['option-title-desktop'],
+                        styles['option-content'],
+                        styles['option-content-desktop'],
                       ].join(' ')}
                     >
-                      {t('vintage')}
+                      <div
+                        className={[
+                          styles['option-title'],
+                          styles['option-title-desktop'],
+                        ].join(' ')}
+                      >
+                        {t('type')}
+                      </div>
+                      <div
+                        className={[
+                          styles['option-value'],
+                          styles['option-value-desktop'],
+                        ].join(' ')}
+                      >
+                        {type}
+                      </div>
                     </div>
                     <div
                       className={[
-                        styles['option-value'],
-                        styles['option-value-desktop'],
+                        styles['option-content'],
+                        styles['option-content-desktop'],
                       ].join(' ')}
                     >
-                      {vintage}
+                      <div
+                        className={[
+                          styles['option-title'],
+                          styles['option-title-desktop'],
+                        ].join(' ')}
+                      >
+                        {t('uvc')}
+                      </div>
+                      <div
+                        className={[
+                          styles['option-value'],
+                          styles['option-value-desktop'],
+                        ].join(' ')}
+                      >
+                        {uvc}
+                      </div>
                     </div>
-                  </div>
-                </>
-              ) : (
-                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(() => (
-                  <div
-                    className={[
-                      styles['option-content'],
-                      styles['option-content-desktop'],
-                    ].join(' ')}
-                  >
-                    <Skeleton
+                    <div
                       className={[
-                        styles['option-title-skeleton'],
-                        styles['option-title-skeleton-desktop'],
+                        styles['option-content'],
+                        styles['option-content-desktop'],
                       ].join(' ')}
-                      borderRadius={9999}
-                    />
-                    <Skeleton
+                    >
+                      <div
+                        className={[
+                          styles['option-title'],
+                          styles['option-title-desktop'],
+                        ].join(' ')}
+                      >
+                        {t('varietals')}
+                      </div>
+                      <div
+                        className={[
+                          styles['option-value'],
+                          styles['option-value-desktop'],
+                        ].join(' ')}
+                      >
+                        {varietals}
+                      </div>
+                    </div>
+                    <div
                       className={[
-                        styles['option-value-skeleton'],
-                        styles['option-value-skeleton-desktop'],
+                        styles['option-content'],
+                        styles['option-content-desktop'],
                       ].join(' ')}
-                      borderRadius={9999}
-                    />
-                  </div>
-                ))
-              )}
-            </div>
+                    >
+                      <div
+                        className={[
+                          styles['option-title'],
+                          styles['option-title-desktop'],
+                        ].join(' ')}
+                      >
+                        {t('vintage')}
+                      </div>
+                      <div
+                        className={[
+                          styles['option-value'],
+                          styles['option-value-desktop'],
+                        ].join(' ')}
+                      >
+                        {vintage}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(() => (
+                    <div
+                      className={[
+                        styles['option-content'],
+                        styles['option-content-desktop'],
+                      ].join(' ')}
+                    >
+                      <Skeleton
+                        className={[
+                          styles['option-title-skeleton'],
+                          styles['option-title-skeleton-desktop'],
+                        ].join(' ')}
+                        borderRadius={9999}
+                      />
+                      <Skeleton
+                        className={[
+                          styles['option-value-skeleton'],
+                          styles['option-value-skeleton-desktop'],
+                        ].join(' ')}
+                        borderRadius={9999}
+                      />
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
           </div>
           {!productProps.isLoading ? (
             <InputNumber
@@ -627,7 +673,11 @@ export default function ProductDesktopComponent({
               iconColor={'#2A2A5F'}
               value={quantity.toString()}
               min={1}
-              max={productProps.selectedVariant?.inventory_quantity ?? 0}
+              max={
+                !productProps.selectedVariant?.allow_backorder
+                  ? productProps.selectedVariant?.inventory_quantity ?? 0
+                  : undefined
+              }
               onChange={(e) => {
                 setQuantity(parseInt(e.currentTarget.value));
               }}
@@ -837,7 +887,7 @@ export default function ProductDesktopComponent({
                           styles['details-item-value-desktop'],
                         ].join(' ')}
                       >
-                        {productProps.product?.type?.value ?? '-'}
+                        {type ?? '-'}
                       </div>
                     </div>
                   </div>

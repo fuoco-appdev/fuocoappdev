@@ -288,5 +288,7 @@
   "results": "Résultats",
   "followerRequests": "Demandes de followers",
   "noStockLocationsFound": "Aucun lieu n'a été trouvé.",
-  "goToStore": "Aller Au Magasin"
+  "goToStore": "Aller Au Magasin",
+  "wine": "Vin",
+  "menuItem": "Élément de menu"
 }

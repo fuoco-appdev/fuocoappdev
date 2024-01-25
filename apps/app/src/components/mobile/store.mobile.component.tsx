@@ -511,7 +511,10 @@ export default function StoreMobileComponent({
                 {storeProps.selectedPricedProduct?.variants.map((variant) => {
                   return (
                     <CartVariantItemComponent
-                      productType={MedusaProductTypeNames.Wine}
+                      productType={
+                        storeProps.selectedPricedProduct?.type
+                          ?.value as MedusaProductTypeNames
+                      }
                       key={variant.id}
                       product={storeProps.selectedPricedProduct}
                       variant={variant}
@@ -558,24 +561,6 @@ export default function StoreMobileComponent({
               }}
             >
               <Dropdown.Item
-                onClick={() => onCategoryChanged(StoreCategoryType.Wines)}
-              >
-                <Dropdown.Icon>
-                  <img
-                    style={{ height: 24, width: 24, objectFit: 'contain' }}
-                    src={'../../assets/images/wine-bottle.png'}
-                  />
-                </Dropdown.Icon>
-                <div
-                  className={[
-                    styles['category-text'],
-                    styles['category-text-desktop'],
-                  ].join(' ')}
-                >
-                  {t(StoreCategoryType.Wines)}
-                </div>
-              </Dropdown.Item>
-              <Dropdown.Item
                 onClick={() => onCategoryChanged(StoreCategoryType.Menu)}
               >
                 <Dropdown.Icon>
@@ -591,6 +576,24 @@ export default function StoreMobileComponent({
                   ].join(' ')}
                 >
                   {t(StoreCategoryType.Menu)}
+                </div>
+              </Dropdown.Item>
+              <Dropdown.Item
+                onClick={() => onCategoryChanged(StoreCategoryType.Wines)}
+              >
+                <Dropdown.Icon>
+                  <img
+                    style={{ height: 24, width: 24, objectFit: 'contain' }}
+                    src={'../../assets/images/wine-bottle.png'}
+                  />
+                </Dropdown.Icon>
+                <div
+                  className={[
+                    styles['category-text'],
+                    styles['category-text-desktop'],
+                  ].join(' ')}
+                >
+                  {t(StoreCategoryType.Wines)}
                 </div>
               </Dropdown.Item>
             </Dropdown>

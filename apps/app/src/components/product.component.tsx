@@ -28,6 +28,7 @@ import { useTranslation } from 'react-i18next';
 import { ProductSuspenseTabletComponent } from './tablet/suspense/product.suspense.tablet.component';
 import AccountController from '../controllers/account.controller';
 import { AccountState } from '../models/account.model';
+import { MedusaProductTypeNames } from '../types/medusa.type';
 
 const ProductDesktopComponent = lazy(() =>
   timeout(import('./desktop/product.desktop.component'), 150)
@@ -196,22 +197,17 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
     }
 
     let tabProps: TabProps[] = [];
-    const vintageOption = productProps.product.options.find(
-      (value: ProductOption) => value.title === ProductOptions.Vintage
-    );
-    if (vintageOption) {
-      for (const variant of vintageOption.values) {
-        tabProps.push({ id: variant.variant_id, label: variant.value });
-      }
-      tabProps = tabProps.sort((n1, n2) => {
-        if (n1.label && n2.label) {
-          return n1.label > n2.label ? 1 : -1;
-        }
-
-        return 1;
-      });
-      setTabs(tabProps);
+    for (const variant of productProps.product.variants) {
+      tabProps.push({ id: variant.id, label: variant.title });
     }
+    tabProps = tabProps.sort((n1, n2) => {
+      if (n1.label && n2.label) {
+        return n1.label > n2.label ? 1 : -1;
+      }
+
+      return 1;
+    });
+    setTabs(tabProps);
   }, [productProps.product]);
 
   useEffect(() => {
@@ -272,7 +268,12 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
       setProducerBottler(
         productProps.product?.metadata?.['producer_bottler'] as string
       );
-      setType(productProps.product?.metadata?.['type'] as string);
+      const metadataType = productProps.product?.type.value as string;
+      if (metadataType === MedusaProductTypeNames.Wine) {
+        setType(t('wine') ?? '');
+      } else if (metadataType === MedusaProductTypeNames.MenuItem) {
+        setType(t('menuItem') ?? '');
+      }
       setAlcohol(alcoholValue?.value);
       setFormat(formatValue?.value);
       setResidualSugar(residualSugarValue?.value);

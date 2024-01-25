@@ -317,11 +317,6 @@ class ExploreController extends Controller {
       });
   }
 
-  private async requestWineCountAsync(): Promise<number> {
-    const count = await MedusaService.requestProductCountAsync('Wine');
-    return count;
-  }
-
   private async requestInventoryLocationsAsync(): Promise<InventoryLocation[]> {
     const stockLocations = await MedusaService.requestStockLocationsAsync();
     const inventoryLocations: InventoryLocation[] = [];

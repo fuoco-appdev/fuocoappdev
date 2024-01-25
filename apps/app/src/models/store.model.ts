@@ -45,7 +45,7 @@ export class StoreModel extends Model {
       createStore(
         { name: 'store' },
         withProps<StoreState>({
-          category: StoreCategoryType.Wines,
+          category: StoreCategoryType.Menu,
           products: [],
           pricedProducts: {},
           productLikesMetadata: [],

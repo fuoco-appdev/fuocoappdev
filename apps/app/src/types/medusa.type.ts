@@ -12,5 +12,6 @@ export enum MedusaProductTabs {
 
 export enum MedusaProductTypeNames {
   Wine = 'Wine',
+  MenuItem = 'MenuItem',
   RequiredFood = 'RequiredFood',
 }

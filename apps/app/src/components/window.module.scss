@@ -1300,8 +1300,11 @@
 }
 
 .toast-overlay-root {
-  padding-top: $mp-4;
   height: 100%;
+}
+
+.toast-overlay-root-desktop {
+  padding-top: calc(56px + 24px);
 }
 
 .toast-overlay-container {

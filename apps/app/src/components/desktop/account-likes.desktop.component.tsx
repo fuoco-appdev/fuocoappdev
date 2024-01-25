@@ -218,7 +218,10 @@ export default function AccountLikesDesktopComponent({
             {accountProps.selectedLikedProduct?.variants.map((variant) => {
               return (
                 <CartVariantItemComponent
-                  productType={MedusaProductTypeNames.Wine}
+                  productType={
+                    accountProps.selectedLikedProduct?.type
+                      ?.value as MedusaProductTypeNames
+                  }
                   key={variant.id}
                   product={accountProps.selectedLikedProduct}
                   variant={variant}

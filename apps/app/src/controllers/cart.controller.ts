@@ -251,11 +251,19 @@ class CartController extends Controller {
     }
 
     const hasFoodRequirement = this._model.cart?.items.some((cartItem) => {
-      return this._model.requiredFoodProducts.find(
-        (food) => cartItem.variant.product_id === food.id
+      return (
+        cartItem.variant.product.type.value ===
+        MedusaProductTypeNames.RequiredFood
       );
     });
-    return hasFoodRequirement ?? false;
+
+    const menuItems = this._model.cart?.items.some((cartItem) => {
+      return (
+        cartItem.variant.product.type.value === MedusaProductTypeNames.MenuItem
+      );
+    });
+
+    return (menuItems || hasFoodRequirement) ?? false;
   }
 
   private resetMedusaModel(): void {

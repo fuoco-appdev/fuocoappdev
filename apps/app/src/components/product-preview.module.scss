@@ -22,14 +22,30 @@
       background-color: $gray-100;
       border-top-left-radius: $mp-2;
       border-top-right-radius: $mp-2;
-      padding: 0 $mp-2;
+      align-items: center;
 
-      & .thumbnail-image {
+      & .wine-thumbnail-image {
         position: absolute;
-        padding: $mp-2 0;
         max-height: 100%;
         width: auto;
         color: $brand-900;
+        padding: $mp-4 0;
+      }
+  
+      & .menu-item-thumbnail-image {
+        position: absolute;
+        max-height: 100%;
+        width: auto;
+        color: $brand-900;
+      }
+  
+      & .no-thumbnail-image {
+        position: absolute;
+        max-height: 100%;
+        max-width: 100%;
+        width: auto;
+        color: $brand-900;
+        padding: $mp-4;
       }
 
       & .thumbnail-content-container {

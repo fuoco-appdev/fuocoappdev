@@ -15,6 +15,7 @@ import { ProductResponsiveProps } from '../product.component';
 import { useEffect, useState, lazy } from 'react';
 import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 import loadable from '@loadable/component';
+import { MedusaProductTypeNames } from '../../types/medusa.type';
 const ReactMarkdown = loadable(
   async () => {
     const reactMarkdown = await import('react-markdown');
@@ -95,16 +96,52 @@ export default function ProductMobileComponent({
           ].join(' ')}
         >
           {!productProps.isLoading ? (
-            <img
-              className={[
-                styles['thumbnail-image'],
-                styles['thumbnail-image-mobile'],
-              ].join(' ')}
-              src={
-                productProps.product?.thumbnail ??
-                '../assets/images/wine-bottle.png'
-              }
-            />
+            <>
+              {productProps.product?.thumbnail &&
+                productProps.product?.type?.value ===
+                  MedusaProductTypeNames.Wine && (
+                  <img
+                    className={[
+                      styles['wine-thumbnail-image'],
+                      styles['wine-thumbnail-image-mobile'],
+                    ].join(' ')}
+                    src={productProps.product?.thumbnail}
+                  />
+                )}
+              {productProps.product?.thumbnail &&
+                productProps.product?.type?.value ===
+                  MedusaProductTypeNames.MenuItem && (
+                  <img
+                    className={[
+                      styles['menu-item-thumbnail-image'],
+                      styles['menu-item-thumbnail-image-mobile'],
+                    ].join(' ')}
+                    src={productProps.product?.thumbnail}
+                  />
+                )}
+              {!productProps.product?.thumbnail &&
+                productProps.product?.type?.value ===
+                  MedusaProductTypeNames.Wine && (
+                  <img
+                    className={[
+                      styles['no-thumbnail-image'],
+                      styles['no-thumbnail-image-mobile'],
+                    ].join(' ')}
+                    src={'../assets/images/wine-bottle.png'}
+                  />
+                )}
+              {!productProps.product?.thumbnail &&
+                productProps.product?.type?.value ===
+                  MedusaProductTypeNames.MenuItem && (
+                  <img
+                    className={[
+                      styles['no-thumbnail-image'],
+                      styles['no-thumbnail-image-mobile'],
+                    ].join(' ')}
+                    src={'../assets/images/menu.png'}
+                  />
+                )}
+            </>
           ) : (
             <Skeleton
               className={[
@@ -294,16 +331,21 @@ export default function ProductMobileComponent({
                       includeTaxes: false,
                     })}
                 </div>
-                &nbsp;
-                <span
-                  className={[
-                    styles['inventory-quantity'],
-                    styles['inventory-quantity-mobile'],
-                  ].join(' ')}
-                >
-                  ({productProps.selectedVariant?.inventory_quantity}&nbsp;
-                  {t('inStock')})
-                </span>
+                {productProps.product?.type?.value ===
+                  MedusaProductTypeNames.Wine && (
+                  <>
+                    &nbsp;
+                    <span
+                      className={[
+                        styles['inventory-quantity'],
+                        styles['inventory-quantity-mobile'],
+                      ].join(' ')}
+                    >
+                      ({productProps.selectedVariant?.inventory_quantity}&nbsp;
+                      {t('inStock')})
+                    </span>
+                  </>
+                )}
               </>
             ) : (
               <Skeleton
@@ -373,271 +415,274 @@ export default function ProductMobileComponent({
                 ].join(' ')}
               />
             )}
-            <div
-              className={[
-                styles['options-container'],
-                styles['options-container-mobile'],
-              ].join(' ')}
-            >
-              {!productProps.isLoading ? (
-                <>
-                  <div
-                    className={[
-                      styles['option-content'],
-                      styles['option-content-mobile'],
-                    ].join(' ')}
-                  >
+            {productProps.product?.type?.value ===
+              MedusaProductTypeNames.Wine && (
+              <div
+                className={[
+                  styles['options-container'],
+                  styles['options-container-mobile'],
+                ].join(' ')}
+              >
+                {!productProps.isLoading ? (
+                  <>
                     <div
                       className={[
-                        styles['option-title'],
-                        styles['option-title-mobile'],
+                        styles['option-content'],
+                        styles['option-content-mobile'],
                       ].join(' ')}
                     >
-                      {t('alcohol')}
+                      <div
+                        className={[
+                          styles['option-title'],
+                          styles['option-title-mobile'],
+                        ].join(' ')}
+                      >
+                        {t('alcohol')}
+                      </div>
+                      <div
+                        className={[
+                          styles['option-value'],
+                          styles['option-value-mobile'],
+                        ].join(' ')}
+                      >
+                        {alcohol}
+                      </div>
                     </div>
                     <div
                       className={[
-                        styles['option-value'],
-                        styles['option-value-mobile'],
+                        styles['option-content'],
+                        styles['option-content-mobile'],
                       ].join(' ')}
                     >
-                      {alcohol}
-                    </div>
-                  </div>
-                  <div
-                    className={[
-                      styles['option-content'],
-                      styles['option-content-mobile'],
-                    ].join(' ')}
-                  >
-                    <div
-                      className={[
-                        styles['option-title'],
-                        styles['option-title-mobile'],
-                      ].join(' ')}
-                    >
-                      {t('brand')}
-                    </div>
-                    <div
-                      className={[
-                        styles['option-value'],
-                        styles['option-value-mobile'],
-                      ].join(' ')}
-                    >
-                      {brand}
-                    </div>
-                  </div>
-                  <div
-                    className={[
-                      styles['option-content'],
-                      styles['option-content-mobile'],
-                    ].join(' ')}
-                  >
-                    <div
-                      className={[
-                        styles['option-title'],
-                        styles['option-title-mobile'],
-                      ].join(' ')}
-                    >
-                      {t('format')}
+                      <div
+                        className={[
+                          styles['option-title'],
+                          styles['option-title-mobile'],
+                        ].join(' ')}
+                      >
+                        {t('brand')}
+                      </div>
+                      <div
+                        className={[
+                          styles['option-value'],
+                          styles['option-value-mobile'],
+                        ].join(' ')}
+                      >
+                        {brand}
+                      </div>
                     </div>
                     <div
                       className={[
-                        styles['option-value'],
-                        styles['option-value-mobile'],
+                        styles['option-content'],
+                        styles['option-content-mobile'],
                       ].join(' ')}
                     >
-                      {format}
-                    </div>
-                  </div>
-                  <div
-                    className={[
-                      styles['option-content'],
-                      styles['option-content-mobile'],
-                    ].join(' ')}
-                  >
-                    <div
-                      className={[
-                        styles['option-title'],
-                        styles['option-title-mobile'],
-                      ].join(' ')}
-                    >
-                      {t('producerBottler')}
-                    </div>
-                    <div
-                      className={[
-                        styles['option-value'],
-                        styles['option-value-mobile'],
-                      ].join(' ')}
-                    >
-                      {producerBottler}
-                    </div>
-                  </div>
-                  <div
-                    className={[
-                      styles['option-content'],
-                      styles['option-content-mobile'],
-                    ].join(' ')}
-                  >
-                    <div
-                      className={[
-                        styles['option-title'],
-                        styles['option-title-mobile'],
-                      ].join(' ')}
-                    >
-                      {t('region')}
+                      <div
+                        className={[
+                          styles['option-title'],
+                          styles['option-title-mobile'],
+                        ].join(' ')}
+                      >
+                        {t('format')}
+                      </div>
+                      <div
+                        className={[
+                          styles['option-value'],
+                          styles['option-value-mobile'],
+                        ].join(' ')}
+                      >
+                        {format}
+                      </div>
                     </div>
                     <div
                       className={[
-                        styles['option-value'],
-                        styles['option-value-mobile'],
+                        styles['option-content'],
+                        styles['option-content-mobile'],
                       ].join(' ')}
                     >
-                      {region}
-                    </div>
-                  </div>
-                  <div
-                    className={[
-                      styles['option-content'],
-                      styles['option-content-mobile'],
-                    ].join(' ')}
-                  >
-                    <div
-                      className={[
-                        styles['option-title'],
-                        styles['option-title-mobile'],
-                      ].join(' ')}
-                    >
-                      {t('residualSugar')}
-                    </div>
-                    <div
-                      className={[
-                        styles['option-value'],
-                        styles['option-value-mobile'],
-                      ].join(' ')}
-                    >
-                      {residualSugar}
-                    </div>
-                  </div>
-                  <div
-                    className={[
-                      styles['option-content'],
-                      styles['option-content-mobile'],
-                    ].join(' ')}
-                  >
-                    <div
-                      className={[
-                        styles['option-title'],
-                        styles['option-title-mobile'],
-                      ].join(' ')}
-                    >
-                      {t('type')}
+                      <div
+                        className={[
+                          styles['option-title'],
+                          styles['option-title-mobile'],
+                        ].join(' ')}
+                      >
+                        {t('producerBottler')}
+                      </div>
+                      <div
+                        className={[
+                          styles['option-value'],
+                          styles['option-value-mobile'],
+                        ].join(' ')}
+                      >
+                        {producerBottler}
+                      </div>
                     </div>
                     <div
                       className={[
-                        styles['option-value'],
-                        styles['option-value-mobile'],
+                        styles['option-content'],
+                        styles['option-content-mobile'],
                       ].join(' ')}
                     >
-                      {type}
-                    </div>
-                  </div>
-                  <div
-                    className={[
-                      styles['option-content'],
-                      styles['option-content-mobile'],
-                    ].join(' ')}
-                  >
-                    <div
-                      className={[
-                        styles['option-title'],
-                        styles['option-title-mobile'],
-                      ].join(' ')}
-                    >
-                      {t('uvc')}
-                    </div>
-                    <div
-                      className={[
-                        styles['option-value'],
-                        styles['option-value-mobile'],
-                      ].join(' ')}
-                    >
-                      {uvc}
-                    </div>
-                  </div>
-                  <div
-                    className={[
-                      styles['option-content'],
-                      styles['option-content-mobile'],
-                    ].join(' ')}
-                  >
-                    <div
-                      className={[
-                        styles['option-title'],
-                        styles['option-title-mobile'],
-                      ].join(' ')}
-                    >
-                      {t('varietals')}
+                      <div
+                        className={[
+                          styles['option-title'],
+                          styles['option-title-mobile'],
+                        ].join(' ')}
+                      >
+                        {t('region')}
+                      </div>
+                      <div
+                        className={[
+                          styles['option-value'],
+                          styles['option-value-mobile'],
+                        ].join(' ')}
+                      >
+                        {region}
+                      </div>
                     </div>
                     <div
                       className={[
-                        styles['option-value'],
-                        styles['option-value-mobile'],
+                        styles['option-content'],
+                        styles['option-content-mobile'],
                       ].join(' ')}
                     >
-                      {varietals}
+                      <div
+                        className={[
+                          styles['option-title'],
+                          styles['option-title-mobile'],
+                        ].join(' ')}
+                      >
+                        {t('residualSugar')}
+                      </div>
+                      <div
+                        className={[
+                          styles['option-value'],
+                          styles['option-value-mobile'],
+                        ].join(' ')}
+                      >
+                        {residualSugar}
+                      </div>
                     </div>
-                  </div>
-                  <div
-                    className={[
-                      styles['option-content'],
-                      styles['option-content-mobile'],
-                    ].join(' ')}
-                  >
                     <div
                       className={[
-                        styles['option-title'],
-                        styles['option-title-mobile'],
+                        styles['option-content'],
+                        styles['option-content-mobile'],
                       ].join(' ')}
                     >
-                      {t('vintage')}
+                      <div
+                        className={[
+                          styles['option-title'],
+                          styles['option-title-mobile'],
+                        ].join(' ')}
+                      >
+                        {t('type')}
+                      </div>
+                      <div
+                        className={[
+                          styles['option-value'],
+                          styles['option-value-mobile'],
+                        ].join(' ')}
+                      >
+                        {type}
+                      </div>
                     </div>
                     <div
                       className={[
-                        styles['option-value'],
-                        styles['option-value-mobile'],
+                        styles['option-content'],
+                        styles['option-content-mobile'],
                       ].join(' ')}
                     >
-                      {vintage}
+                      <div
+                        className={[
+                          styles['option-title'],
+                          styles['option-title-mobile'],
+                        ].join(' ')}
+                      >
+                        {t('uvc')}
+                      </div>
+                      <div
+                        className={[
+                          styles['option-value'],
+                          styles['option-value-mobile'],
+                        ].join(' ')}
+                      >
+                        {uvc}
+                      </div>
                     </div>
-                  </div>
-                </>
-              ) : (
-                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(() => (
-                  <div
-                    className={[
-                      styles['option-content'],
-                      styles['option-content-mobile'],
-                    ].join(' ')}
-                  >
-                    <Skeleton
+                    <div
                       className={[
-                        styles['option-title-skeleton'],
-                        styles['option-title-skeleton-mobile'],
+                        styles['option-content'],
+                        styles['option-content-mobile'],
                       ].join(' ')}
-                      borderRadius={9999}
-                    />
-                    <Skeleton
+                    >
+                      <div
+                        className={[
+                          styles['option-title'],
+                          styles['option-title-mobile'],
+                        ].join(' ')}
+                      >
+                        {t('varietals')}
+                      </div>
+                      <div
+                        className={[
+                          styles['option-value'],
+                          styles['option-value-mobile'],
+                        ].join(' ')}
+                      >
+                        {varietals}
+                      </div>
+                    </div>
+                    <div
                       className={[
-                        styles['option-value-skeleton'],
-                        styles['option-value-skeleton-mobile'],
+                        styles['option-content'],
+                        styles['option-content-mobile'],
                       ].join(' ')}
-                      borderRadius={9999}
-                    />
-                  </div>
-                ))
-              )}
-            </div>
+                    >
+                      <div
+                        className={[
+                          styles['option-title'],
+                          styles['option-title-mobile'],
+                        ].join(' ')}
+                      >
+                        {t('vintage')}
+                      </div>
+                      <div
+                        className={[
+                          styles['option-value'],
+                          styles['option-value-mobile'],
+                        ].join(' ')}
+                      >
+                        {vintage}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(() => (
+                    <div
+                      className={[
+                        styles['option-content'],
+                        styles['option-content-mobile'],
+                      ].join(' ')}
+                    >
+                      <Skeleton
+                        className={[
+                          styles['option-title-skeleton'],
+                          styles['option-title-skeleton-mobile'],
+                        ].join(' ')}
+                        borderRadius={9999}
+                      />
+                      <Skeleton
+                        className={[
+                          styles['option-value-skeleton'],
+                          styles['option-value-skeleton-mobile'],
+                        ].join(' ')}
+                        borderRadius={9999}
+                      />
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
           </div>
           {!productProps.isLoading ? (
             <InputNumber
@@ -657,7 +702,11 @@ export default function ProductMobileComponent({
               iconColor={'#2A2A5F'}
               value={quantity.toString()}
               min={1}
-              max={productProps.selectedVariant?.inventory_quantity ?? 0}
+              max={
+                !productProps.selectedVariant?.allow_backorder
+                  ? productProps.selectedVariant?.inventory_quantity ?? 0
+                  : undefined
+              }
               onChange={(e) => {
                 setQuantity(parseInt(e.currentTarget.value));
               }}
@@ -869,7 +918,7 @@ export default function ProductMobileComponent({
                           styles['details-item-value-mobile'],
                         ].join(' ')}
                       >
-                        {productProps.product?.type?.value ?? '-'}
+                        {type ?? '-'}
                       </div>
                     </div>
                   </div>

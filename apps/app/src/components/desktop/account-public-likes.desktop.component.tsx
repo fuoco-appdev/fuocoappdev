@@ -194,7 +194,10 @@ export default function AccountPublicLikesDesktopComponent({
               (variant) => {
                 return (
                   <CartVariantItemComponent
-                    productType={MedusaProductTypeNames.Wine}
+                    productType={
+                      accountPublicProps.selectedLikedProduct?.type
+                        ?.value as MedusaProductTypeNames
+                    }
                     key={variant.id}
                     product={accountPublicProps.selectedLikedProduct}
                     variant={variant}

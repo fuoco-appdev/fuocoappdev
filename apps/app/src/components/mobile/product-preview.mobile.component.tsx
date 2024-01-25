@@ -23,6 +23,7 @@ import { formatAmount } from 'medusa-react';
 import { ProductPreviewResponsiveProps } from '../product-preview.component';
 import { ResponsiveMobile } from '../responsive.component';
 import Skeleton from 'react-loading-skeleton';
+import { MedusaProductTypeNames } from '../../types/medusa.type';
 
 export default function ProductPreviewMobileComponent({
   thumbnail,
@@ -131,13 +132,48 @@ export default function ProductPreviewMobileComponent({
             ].join(' ')}
             style={{ height: expanded ? '100%' : 'calc(100% - 38px)' }}
           >
-            <img
-              className={[
-                styles['thumbnail-image'],
-                styles['thumbnail-image-mobile'],
-              ].join(' ')}
-              src={thumbnail || '../assets/images/wine-bottle.png'}
-            />
+            {pricedProduct?.thumbnail &&
+              pricedProduct?.type?.value === MedusaProductTypeNames.Wine && (
+                <img
+                  className={[
+                    styles['wine-thumbnail-image'],
+                    styles['wine-thumbnail-image-mobile'],
+                  ].join(' ')}
+                  src={pricedProduct?.thumbnail}
+                />
+              )}
+            {pricedProduct?.thumbnail &&
+              pricedProduct?.type?.value ===
+                MedusaProductTypeNames.MenuItem && (
+                <img
+                  className={[
+                    styles['menu-item-thumbnail-image'],
+                    styles['menu-item-thumbnail-image-mobile'],
+                  ].join(' ')}
+                  src={pricedProduct?.thumbnail}
+                />
+              )}
+            {!pricedProduct?.thumbnail &&
+              pricedProduct?.type?.value === MedusaProductTypeNames.Wine && (
+                <img
+                  className={[
+                    styles['no-thumbnail-image'],
+                    styles['no-thumbnail-image-mobile'],
+                  ].join(' ')}
+                  src={'../assets/images/wine-bottle.png'}
+                />
+              )}
+            {!pricedProduct?.thumbnail &&
+              pricedProduct?.type?.value ===
+                MedusaProductTypeNames.MenuItem && (
+                <img
+                  className={[
+                    styles['no-thumbnail-image'],
+                    styles['no-thumbnail-image-mobile'],
+                  ].join(' ')}
+                  src={'../assets/images/menu.png'}
+                />
+              )}
             <div
               className={[
                 styles['thumbnail-content-container'],

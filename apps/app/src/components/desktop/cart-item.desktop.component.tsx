@@ -59,6 +59,16 @@ export default function CartItemDesktopComponent({
                 />
               )}
             {!item?.thumbnail &&
+              productType === MedusaProductTypeNames.MenuItem && (
+                <img
+                  className={[
+                    styles['thumbnail-image'],
+                    styles['thumbnail-image-desktop'],
+                  ].join(' ')}
+                  src={'../../assets/images/menu.png'}
+                />
+              )}
+            {!item?.thumbnail &&
               productType === MedusaProductTypeNames.RequiredFood && (
                 <Line.RestaurantMenu
                   className={[

@@ -64,6 +64,16 @@ export default function CartVariantItemDesktopComponent({
                   />
                 )}
               {!product?.thumbnail &&
+                productType === MedusaProductTypeNames.MenuItem && (
+                  <img
+                    className={[
+                      styles['variant-thumbnail'],
+                      styles['variant-thumbnail-desktop'],
+                    ].join(' ')}
+                    src={'../../assets/images/menu.png'}
+                  />
+                )}
+              {!product?.thumbnail &&
                 productType === MedusaProductTypeNames.RequiredFood && (
                   <Line.RestaurantMenu
                     className={[
@@ -150,7 +160,11 @@ export default function CartVariantItemDesktopComponent({
           iconColor={'#2A2A5F'}
           value={variant?.id && variantQuantities[variant?.id]?.toString()}
           min={0}
-          max={variant?.inventory_quantity ?? 0}
+          max={
+            !variant.allow_backorder
+              ? variant?.inventory_quantity ?? 0
+              : undefined
+          }
           onChange={onQuantitiesChanged}
         />
       </div>

@@ -7,7 +7,7 @@
     "url": "http://localhost:9000"
   },
   "meilisearch": {
-    "url": "http://192.168.0.121:7700"
+    "url": "http://192.168.2.52:7700"
   },
   "mapbox": {
     "style_url": "mapbox://styles/lucasfuoco/cli44l6r902mw01qyaoqoa46t"

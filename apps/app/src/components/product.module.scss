@@ -14,14 +14,30 @@
         -ms-flex-pack: center;
             justify-content: center;
     background-color: $gray-100;
-    padding: 0 $mp-2;
+    align-items: center;
 
-    & .thumbnail-image {
+    & .wine-thumbnail-image {
       position: absolute;
       max-height: 100%;
       width: auto;
       color: $brand-900;
       padding: $mp-4 0;
+    }
+
+    & .menu-item-thumbnail-image {
+      position: absolute;
+      max-height: 100%;
+      width: auto;
+      color: $brand-900;
+    }
+
+    & .no-thumbnail-image {
+      position: absolute;
+      max-height: 100%;
+      max-width: 100%;
+      width: auto;
+      color: $brand-900;
+      padding: $mp-4;
     }
 
     & .thumbnail-image-skeleton {
@@ -771,6 +787,13 @@
   font-weight: $font-weight-bold;
   text-transform: uppercase;
   font-size: $font-size-sm !important;
+  padding-top: $mp-2 !important;
+  padding-bottom: $mp-2 !important;
+}
+
+.tab-nav {
+  padding: $mp-2 0 !important;
+  margin-bottom: $mp-4 !important;
 }
 
 .tab-outline {

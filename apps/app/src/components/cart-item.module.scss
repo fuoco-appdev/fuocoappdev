@@ -23,8 +23,9 @@
             margin-right: $mp-4;
 
             & .thumbnail-image {
-                padding: $mp-1 0;
+                padding: $mp-1;
                 max-height: 100%;
+                max-width: 100%;
                 width: auto;
                 color: $brand-900;
             }

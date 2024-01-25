@@ -35,6 +35,7 @@ import {
   ProductLikesMetadataResponse,
   AccountResponse,
 } from '../protobuf/core_pb';
+import { MedusaProductTypeNames } from '../types/medusa.type';
 
 class StoreController extends Controller {
   private readonly _model: StoreModel;
@@ -89,8 +90,14 @@ class StoreController extends Controller {
         take(1)
       )
     );
-    if (region) {
+    if (!region) {
+      return;
+    }
+
+    if (this._model.input.length > 0) {
       await this.searchAsync(this._model.input, 0, this._limit);
+    } else {
+      await this.requestProductsAsync(0, this._limit);
     }
   }
 
@@ -132,6 +139,7 @@ class StoreController extends Controller {
     this._model.products = [];
     this._model.pricedProducts = {};
     const offset = this._limit * (this._model.pagination - 1);
+
     await this.searchAsync(this._model.input, offset, this._limit, true);
   }
 
@@ -150,6 +158,112 @@ class StoreController extends Controller {
     await this.searchAsync(this._model.input, offset, this._limit);
   }
 
+  public async requestProductsAsync(
+    offset: number = 0,
+    limit: number = 10,
+    force: boolean = false
+  ): Promise<void> {
+    if (!force && (this._model.isLoading || !this._model.selectedRegion)) {
+      return;
+    }
+
+    if (!this._model.selectedSalesChannel) {
+      return;
+    }
+    this._model.isLoading = true;
+
+    const type = this.getType();
+    const productType = this._model.productTypes.find(
+      (value) => value.value === type
+    );
+    const { selectedRegion } = this._model;
+    const { cart } = CartController.model;
+    const productsResponse = await MedusaService.medusa?.products.list({
+      sales_channel_id: [this._model.selectedSalesChannel?.id ?? ''],
+      offset: offset,
+      limit: limit,
+      ...(productType && { type_id: [productType.id] }),
+      ...(selectedRegion && {
+        region_id: selectedRegion.id,
+        currency_code: selectedRegion.currency_code,
+      }),
+      ...(cart && { cart_id: cart.id }),
+    });
+
+    const products: Product[] = [];
+    const pricedProductList = productsResponse?.products ?? [];
+    for (let i = 0; i < pricedProductList.length; i++) {
+      for (const variant of pricedProductList[i].variants) {
+        const price = variant.prices?.find(
+          (value) => value.region_id === this._model.selectedRegion?.id
+        );
+        if (!price) {
+          pricedProductList.splice(i, 1);
+        }
+      }
+
+      products.push(Object.assign(pricedProductList[i]) as Product);
+    }
+
+    if (products.length <= 0 && offset <= 0) {
+      this._model.products = [];
+    }
+
+    if (products.length < limit && this._model.hasMorePreviews) {
+      this._model.hasMorePreviews = false;
+    }
+
+    if (products.length <= 0) {
+      this._model.isLoading = false;
+      this._model.hasMorePreviews = false;
+      return;
+    }
+
+    if (products.length >= limit && !this._model.hasMorePreviews) {
+      this._model.hasMorePreviews = true;
+    }
+
+    if (offset > 0) {
+      const productsCopy = this._model.products;
+      this._model.products = productsCopy.concat(products);
+    } else {
+      this._model.products = products;
+    }
+
+    const pricedProducts = {
+      ...this._model.pricedProducts,
+    };
+    for (const pricedProduct of pricedProductList ?? []) {
+      if (!pricedProduct.id) {
+        continue;
+      }
+      pricedProducts[pricedProduct.id] = pricedProduct;
+    }
+
+    this._model.pricedProducts = pricedProducts;
+    this._model.isLoading = false;
+
+    const productIds: string[] = products.map((value: Product) => value.id);
+    try {
+      const productLikesResponse =
+        await ProductLikesService.requestMetadataAsync({
+          accountId: AccountController.model.account?.id ?? '',
+          productIds: productIds,
+        });
+
+      if (offset > 0) {
+        const productLikesMetadata = this._model.productLikesMetadata;
+        this._model.productLikesMetadata = productLikesMetadata.concat(
+          productLikesResponse.metadata
+        );
+      } else {
+        this._model.productLikesMetadata = productLikesResponse.metadata;
+      }
+    } catch (error: any) {
+      console.error(error);
+    }
+  }
+
   public async searchAsync(
     query: string,
     offset: number = 0,
@@ -166,17 +280,7 @@ class StoreController extends Controller {
 
     this._model.isLoading = true;
 
-    let filter = 'type_value = Wine AND status = published';
-    if (
-      this._model.selectedTab &&
-      (this._model.selectedTab === ProductTabs.Red ||
-        this._model.selectedTab === ProductTabs.Rose ||
-        this._model.selectedTab === ProductTabs.Spirits ||
-        this._model.selectedTab === ProductTabs.White)
-    ) {
-      filter += ` AND metadata.type = ${this._model.selectedTab}`;
-    }
-
+    let filter = this.getFilter();
     const result = await this._productsIndex?.search(query, {
       filter: [filter],
       offset: offset,
@@ -190,12 +294,11 @@ class StoreController extends Controller {
 
     if (hits.length < limit && this._model.hasMorePreviews) {
       this._model.hasMorePreviews = false;
-    } else {
-      this._model.hasMorePreviews = true;
     }
 
     if (hits.length <= 0) {
       this._model.isLoading = false;
+      this._model.hasMorePreviews = false;
       return;
     }
 
@@ -369,8 +472,17 @@ class StoreController extends Controller {
       return;
     }
 
-    this._model.selectedSalesChannel = inventoryLocation.salesChannels[0];
+    if (inventoryLocation.type === InventoryLocationType.Cellar) {
+      this._model.category = StoreCategoryType.Wines;
+    } else if (inventoryLocation.type === InventoryLocationType.Restaurant) {
+      this._model.category = StoreCategoryType.Menu;
+    }
+
+    this._model.selectedTab = undefined;
     this._model.pagination = 1;
+    this._model.products = [];
+    this._model.pricedProducts = {};
+    this._model.selectedSalesChannel = inventoryLocation.salesChannels[0];
 
     const region = this._model.regions.find(
       (value) => value.name === inventoryLocation.region
@@ -381,6 +493,31 @@ class StoreController extends Controller {
 
   private updateRegion(region: Region | undefined): void {
     this._model.selectedRegion = region;
+  }
+
+  private getType(): string {
+    let type = '';
+    if (this._model.category === StoreCategoryType.Menu) {
+      type = MedusaProductTypeNames.MenuItem;
+    } else if (this._model.category === StoreCategoryType.Wines) {
+      type = MedusaProductTypeNames.Wine;
+    }
+
+    return type;
+  }
+
+  private getFilter(): string {
+    const type = this.getType();
+    let filter = `type_value = ${type} AND status = published`;
+    if (this._model.selectedTab) {
+      filter += ` AND metadata.type = ${this._model.selectedTab}`;
+    }
+
+    if (this._model.category === StoreCategoryType.Menu) {
+      filter += ` AND metadata.sales_channel_owner = ${this._model.selectedSalesChannel?.id}`;
+    }
+
+    return filter;
   }
 }
 

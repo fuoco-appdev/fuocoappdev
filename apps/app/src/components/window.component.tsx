@@ -97,10 +97,24 @@ export default function WindowComponent(): JSX.Element {
   };
 
   const onNavigateBack = () => {
-    const doesAnyHistoryEntryExist = location.key !== 'default';
     if (
-      !doesAnyHistoryEntryExist &&
-      windowProps.activeRoute?.startsWith(`${RoutePathsType.Store}/`)
+      windowProps.loadedLocationPath &&
+      windowProps.loadedLocationPath === RoutePathsType.Checkout
+    ) {
+      setTimeout(
+        () =>
+          navigate({
+            pathname: RoutePathsType.Cart,
+            search: query.toString(),
+          }),
+        150
+      );
+      return;
+    }
+
+    if (
+      windowProps.loadedLocationPath &&
+      windowProps.loadedLocationPath?.startsWith(`${RoutePathsType.Store}/`)
     ) {
       setTimeout(
         () =>
@@ -162,16 +176,11 @@ export default function WindowComponent(): JSX.Element {
     }
 
     const salesLocationId = query.get('sales_location');
-    const storeCategory = query.get('store_category');
     if (
       salesLocationId &&
       salesLocationId !== exploreLocalProps.selectedInventoryLocationId
     ) {
       WindowController.updateQueryInventoryLocationAsync(salesLocationId);
-    }
-
-    if (storeCategory && storeCategory !== storeProps.category) {
-      StoreController.updateCategory(storeProps.category as StoreCategoryType);
     }
   }, []);
 
@@ -212,15 +221,6 @@ export default function WindowComponent(): JSX.Element {
     query.set('sales_location', exploreLocalProps.selectedInventoryLocationId);
     navigate({ search: query.toString() });
   }, [exploreLocalProps.selectedInventoryLocationId]);
-
-  useEffect(() => {
-    if (!storeProps.category) {
-      return;
-    }
-
-    query.set('store_category', storeProps.category);
-    navigate({ search: query.toString() });
-  }, [storeProps.category]);
 
   useEffect(() => {
     for (const priceList of windowProps.priceLists as PriceList[]) {

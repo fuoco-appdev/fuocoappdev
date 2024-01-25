@@ -273,17 +273,6 @@ export default function StoreComponent(): JSX.Element {
     if (search && search !== storeProps.input) {
       StoreController.updateInput(search);
     }
-
-    const storeCategory = query.get('store_category');
-    if (
-      storeCategory &&
-      storeCategory !== storeProps.category &&
-      Object.values(StoreCategoryType).includes(
-        storeCategory as StoreCategoryType
-      )
-    ) {
-      StoreController.updateCategory(storeCategory as StoreCategoryType);
-    }
   }, []);
 
   useEffect(() => {

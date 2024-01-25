@@ -24,6 +24,7 @@ import { formatAmount } from 'medusa-react';
 import { ProductPreviewResponsiveProps } from '../product-preview.component';
 import { ResponsiveDesktop, ResponsiveTablet } from '../responsive.component';
 import Skeleton from 'react-loading-skeleton';
+import { MedusaProductTypeNames } from '../../types/medusa.type';
 
 export default function ProductPreviewTabletComponent({
   thumbnail,
@@ -76,13 +77,46 @@ export default function ProductPreviewTabletComponent({
             styles['thumbnail-container-tablet'],
           ].join(' ')}
         >
-          <img
-            className={[
-              styles['thumbnail-image'],
-              styles['thumbnail-image-tablet'],
-            ].join(' ')}
-            src={thumbnail || '../assets/images/wine-bottle.png'}
-          />
+          {pricedProduct?.thumbnail &&
+            pricedProduct?.type?.value === MedusaProductTypeNames.Wine && (
+              <img
+                className={[
+                  styles['wine-thumbnail-image'],
+                  styles['wine-thumbnail-image-tablet'],
+                ].join(' ')}
+                src={pricedProduct?.thumbnail}
+              />
+            )}
+          {pricedProduct?.thumbnail &&
+            pricedProduct?.type?.value === MedusaProductTypeNames.MenuItem && (
+              <img
+                className={[
+                  styles['menu-item-thumbnail-image'],
+                  styles['menu-item-thumbnail-image-tablet'],
+                ].join(' ')}
+                src={pricedProduct?.thumbnail}
+              />
+            )}
+          {!pricedProduct?.thumbnail &&
+            pricedProduct?.type?.value === MedusaProductTypeNames.Wine && (
+              <img
+                className={[
+                  styles['no-thumbnail-image'],
+                  styles['no-thumbnail-image-tablet'],
+                ].join(' ')}
+                src={'../assets/images/wine-bottle.png'}
+              />
+            )}
+          {!pricedProduct?.thumbnail &&
+            pricedProduct?.type?.value === MedusaProductTypeNames.MenuItem && (
+              <img
+                className={[
+                  styles['no-thumbnail-image'],
+                  styles['no-thumbnail-image-tablet'],
+                ].join(' ')}
+                src={'../assets/images/menu.png'}
+              />
+            )}
           <div
             className={[
               styles['thumbnail-content-container'],

@@ -103,16 +103,22 @@ export default function CartItemComponent({
   }, [storeProps.productTypes, item]);
 
   const incrementItemQuantity = (value: number): void => {
-    if (quantity < item.variant.inventory_quantity) {
-      const count = quantity + value;
+    const count = quantity + value;
+    if (
+      !item.variant.allow_backorder &&
+      quantity < item.variant.inventory_quantity
+    ) {
+      setQuantity(count);
+      onQuantityChanged?.(count);
+    } else {
       setQuantity(count);
       onQuantityChanged?.(count);
     }
   };
 
   const decrementItemQuantity = (value: number): void => {
+    const count = quantity - value;
     if (quantity > 1) {
-      const count = quantity - value;
       setQuantity(count);
       onQuantityChanged?.(count);
     }
