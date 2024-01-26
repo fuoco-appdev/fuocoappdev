@@ -7,6 +7,7 @@ import {
 } from '@supabase/supabase-js';
 import ConfigService from './config.service';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { Subscription } from '@supabase/gotrue-js/dist/main';
 
 class SupabaseService {
   private _supabaseClient: SupabaseClient | undefined;
@@ -23,8 +24,6 @@ class SupabaseService {
     >(undefined);
     this._userBehaviorSubject = new BehaviorSubject<User | null>(null);
     this._sessionBehaviorSubject = new BehaviorSubject<Session | null>(null);
-
-    this.onAuthStateChanged = this.onAuthStateChanged.bind(this);
   }
 
   public get user(): User | null {
@@ -59,12 +58,35 @@ class SupabaseService {
 
   public initializeSupabase(): void {
     this._anonKey = process.env['SUPABASE_ANON_KEY'] ?? '';
-    this._supabaseClient = createClient(
-      ConfigService.supabase.url,
-      this._anonKey
+    if (!this._supabaseClient) {
+      this._supabaseClient = createClient(
+        ConfigService.supabase.url,
+        this._anonKey
+      );
+      this._supabaseClientBehaviorSubject.next(this._supabaseClient);
+    }
+  }
+
+  public subscribeToAuthStateChanged(
+    callback?: (event: AuthChangeEvent, session: Session | null) => void
+  ): Subscription | undefined {
+    const object = this._supabaseClient?.auth.onAuthStateChange(
+      (event: AuthChangeEvent, session: Session | null) => {
+        callback?.(event, session);
+        this.onAuthStateChanged(event, session);
+      }
     );
-    this._supabaseClientBehaviorSubject.next(this._supabaseClient);
-    this._supabaseClient.auth.onAuthStateChange(this.onAuthStateChanged);
+    return object?.data.subscription;
+  }
+
+  public async setSessionAsync(
+    accessToken: string,
+    refreshToken: string
+  ): Promise<void> {
+    await this.supabaseClient?.auth.setSession({
+      access_token: accessToken,
+      refresh_token: refreshToken,
+    });
   }
 
   public async requestUserAsync(): Promise<User | null> {
@@ -112,6 +134,8 @@ class SupabaseService {
     event: AuthChangeEvent,
     session: Session | null
   ): Promise<void> {
+    console.log(event);
+    console.log(session);
     if (
       event === 'SIGNED_IN' ||
       event === 'INITIAL_SESSION' ||

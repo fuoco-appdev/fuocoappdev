@@ -110,7 +110,7 @@ export default function ExploreComponent(): JSX.Element {
   }, [exploreProps.selectedInventoryLocation]);
 
   useEffect(() => {
-    if (location.hash.startsWith(`#access_token=`)) {
+    if (location.hash) {
       return;
     }
 

@@ -20,6 +20,8 @@ import {
   matchPath,
   matchRoutes,
 } from 'react-router-dom';
+import SupabaseService from './services/supabase.service';
+import { CookiesProvider } from 'react-cookie';
 
 class HtmlWritable extends Writable {
   private _chunks: any[] = [];
@@ -95,6 +97,7 @@ export async function render(
     const matchedAgnosticRoute = matchRoutes(routePaths, request.url)?.at(-1);
     const route = matchedAgnosticRoute?.route;
     const element = route?.element as any;
+    SupabaseService.initializeSupabase();
     if (route && element?.type?.getServerSidePropsAsync) {
       const props = await element?.type.getServerSidePropsAsync(
         route,
@@ -119,7 +122,9 @@ export async function render(
   const { pipe, abort } = renderToPipeableStream(
     extractor.collectChunks(
       <StrictMode>
-        <StaticRouterProvider router={router} context={context} />
+        <CookiesProvider cookies={(request as any).universalCookies}>
+          <StaticRouterProvider router={router} context={context} />
+        </CookiesProvider>
       </StrictMode>
     ),
     {

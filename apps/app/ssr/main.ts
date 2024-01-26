@@ -3,6 +3,7 @@ import cors from 'cors';
 import * as fs from 'fs';
 import * as path from 'path';
 const MockBrowser = require('mock-browser').mocks.MockBrowser;
+const cookiesMiddleware = require('universal-cookie-express');
 
 declare const __non_webpack_require__: any;
 
@@ -31,10 +32,12 @@ router.get('*', (req, res) => {
     },
     writable: true,
   });
+
   const main = __non_webpack_require__(mainPath);
   main.render(req, res);
 });
 
 app.use(cors());
+app.use(cookiesMiddleware());
 app.use(router);
 app.listen(PORT, () => console.log(`Server started at port ${PORT}`));

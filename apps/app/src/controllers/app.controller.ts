@@ -62,8 +62,6 @@ class AppController extends Controller {
   public async initializeAsync(renderCount: number): Promise<void> {
     this.dispose(renderCount);
 
-    this.initializeServices();
-
     WindowController.initialize(renderCount);
     LoadingController.initialize(renderCount);
     SigninController.initialize(renderCount);
@@ -86,7 +84,7 @@ class AppController extends Controller {
     ProductController.initialize(renderCount);
   }
 
-  private initializeServices(): void {
+  public initializeServices(): void {
     try {
       SupabaseService.initializeSupabase();
       MeilisearchService.initializeMeiliSearch();
