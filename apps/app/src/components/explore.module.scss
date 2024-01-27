@@ -324,7 +324,7 @@
         }
 
         & .scroll-container-desktop {
-            padding-top: calc(79px + 16px);
+            padding-top: calc(141px + 16px);
     
             & .loading-ring-desktop {
          
@@ -468,7 +468,7 @@
         }
 
         & .scroll-container-tablet {
-            padding-top: calc(79px + 16px);
+            padding-top: calc(141px + 16px);
     
             & .loading-ring-tablet {
          
@@ -607,7 +607,7 @@
         }
 
         & .scroll-container-mobile {
-            padding-top: calc(127px + 16px);
+            padding-top: calc(189px + 16px);
     
             & .loading-ring-mobile {
          
@@ -645,6 +645,25 @@
             color: $brand-900;
           }
     }
+}
+
+.tab-nav {
+    padding: $mp-2 !important;
+}
+
+.tab-button {
+    color: $brand-900 !important;
+    font-size: $font-size-sm !important;
+    font-weight: $font-weight-bold !important;
+    padding: $mp-3 $mp-6 !important;
+}
+
+.selected-tab-button {
+    color: #fff !important;
+}
+
+.tab-slider-pill {
+    background-color: $brand-900 !important;
 }
 
 .marker {

@@ -9,6 +9,11 @@ export enum InventoryLocationType {
   Restaurant = 'restaurant',
 }
 
+export enum ExploreTabs {
+  Cellar = 'Cellar',
+  Restaurant = 'Restaurant',
+}
+
 export interface InventoryLocation {
   id: string;
   coordinates: mapboxgl.LngLat;
@@ -23,6 +28,7 @@ export interface InventoryLocation {
 
 export interface ExploreState {
   input: string;
+  selectedTab: ExploreTabs | undefined;
   inventoryLocations: InventoryLocation[];
   searchedStockLocations: StockLocation[];
   searchedStockLocationsPagination: number;
@@ -48,6 +54,7 @@ export class ExploreModel extends Model {
         { name: 'explore' },
         withProps<ExploreState>({
           input: '',
+          selectedTab: undefined,
           inventoryLocations: [],
           searchedStockLocations: [],
           searchedStockLocationsPagination: 1,
@@ -70,6 +77,16 @@ export class ExploreModel extends Model {
         })
       )
     );
+  }
+
+  public get selectedTab(): ExploreTabs | undefined {
+    return this.store.getValue().selectedTab;
+  }
+
+  public set selectedTab(value: ExploreTabs | undefined) {
+    if (this.selectedTab !== value) {
+      this.store.update((state) => ({ ...state, selectedTab: value }));
+    }
   }
 
   public get selectedInventoryLocationId(): string | undefined {

@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import styles from '../explore.module.scss';
-import { Alert, Button, Input, Line } from '@fuoco.appdev/core-ui';
+import { Alert, Button, Input, Line, Tabs } from '@fuoco.appdev/core-ui';
 import { RoutePathsType } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import SupabaseService from '../../services/supabase.service';
@@ -18,6 +18,7 @@ import * as core from '../../protobuf/core_pb';
 import Map, { MapRef, Marker, Popup } from 'react-map-gl';
 import ConfigService from '../../services/config.service';
 import {
+  ExploreTabs,
   InventoryLocation,
   InventoryLocationType,
 } from '../../models/explore.model';
@@ -100,7 +101,7 @@ export default function ExploreDesktopComponent({
                   />
                 </div>
               </div>
-              {/* <div
+              <div
                 className={[
                   styles['tab-container'],
                   styles['tab-container-desktop'],
@@ -108,38 +109,31 @@ export default function ExploreDesktopComponent({
               >
                 <Tabs
                   classNames={{
+                    nav: styles['tab-nav'],
                     tabButton: styles['tab-button'],
                     selectedTabButton: styles['selected-tab-button'],
                     tabSliderPill: styles['tab-slider-pill'],
                   }}
                   removable={true}
                   type={'pills'}
-                  activeId={storeProps.selectedTab}
+                  activeId={exploreProps.selectedTab}
                   onChange={(id: string) =>
-                    StoreController.updateSelectedTabAsync(
-                      id.length > 0 ? (id as ProductTabs) : undefined
+                    ExploreController.updateSelectedTabAsync(
+                      id.length > 0 ? (id as ExploreTabs) : undefined
                     )
                   }
                   tabs={[
                     {
-                      id: ProductTabs.White,
-                      label: t('white') ?? 'White',
+                      id: ExploreTabs.Cellar,
+                      label: t('cellar') ?? 'Cellar',
                     },
                     {
-                      id: ProductTabs.Red,
-                      label: t('red') ?? 'Red',
-                    },
-                    {
-                      id: ProductTabs.Rose,
-                      label: t('rose') ?? 'Rosé',
-                    },
-                    {
-                      id: ProductTabs.Spirits,
-                      label: t('spirits') ?? 'Spirits',
+                      id: ExploreTabs.Restaurant,
+                      label: t('restaurant') ?? 'Restaurant',
                     },
                   ]}
                 />
-              </div> */}
+              </div>
             </div>
           </div>
           <div

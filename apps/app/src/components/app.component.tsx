@@ -74,10 +74,6 @@ export default function AppComponent(): JSX.Element {
     }
   }, [cookies]);
 
-  useEffect(() => {
-    console.log(document.cookie);
-  }, [document.cookie]);
-
   useMemo(() => {
     memoCountRef.current += 1;
     if (memoCountRef.current > 1) {

@@ -30,14 +30,14 @@ import AccountController from '../controllers/account.controller';
 import { AccountState } from '../models/account.model';
 import { MedusaProductTypeNames } from '../types/medusa.type';
 
-const ProductDesktopComponent = lazy(() =>
-  timeout(import('./desktop/product.desktop.component'), 150)
+const ProductDesktopComponent = lazy(
+  () => import('./desktop/product.desktop.component')
 );
-const ProductTabletComponent = lazy(() =>
-  timeout(import('./tablet/product.tablet.component'), 150)
+const ProductTabletComponent = lazy(
+  () => import('./tablet/product.tablet.component')
 );
-const ProductMobileComponent = lazy(() =>
-  timeout(import('./mobile/product.mobile.component'), 150)
+const ProductMobileComponent = lazy(
+  () => import('./mobile/product.mobile.component')
 );
 
 export interface ProductProps {

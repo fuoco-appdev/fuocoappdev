@@ -134,8 +134,6 @@ class SupabaseService {
     event: AuthChangeEvent,
     session: Session | null
   ): Promise<void> {
-    console.log(event);
-    console.log(session);
     if (
       event === 'SIGNED_IN' ||
       event === 'INITIAL_SESSION' ||

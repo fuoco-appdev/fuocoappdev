@@ -4,6 +4,7 @@ import { Controller } from '../controller';
 import {
   ExploreModel,
   ExploreState,
+  ExploreTabs,
   InventoryLocation,
   InventoryLocationType,
 } from '../models/explore.model';
@@ -125,6 +126,23 @@ class ExploreController extends Controller {
     this._model.searchedStockLocationScrollPosition = value;
   }
 
+  public async updateSelectedTabAsync(
+    value: ExploreTabs | undefined
+  ): Promise<void> {
+    this._model.selectedTab = value;
+    this._model.searchedStockLocationsPagination = 1;
+    this._model.searchedStockLocations = [];
+    const offset =
+      this._limit * (this._model.searchedStockLocationsPagination - 1);
+
+    await this.searchStockLocationsAsync(
+      this._model.input,
+      offset,
+      this._limit,
+      true
+    );
+  }
+
   public isInventoryLocationIdValid(value: string): boolean {
     const inventoryLocation = this._model.inventoryLocations.find(
       (location) => location.id == value
@@ -171,7 +189,9 @@ class ExploreController extends Controller {
 
     this._model.areSearchedStockLocationsLoading = true;
 
+    let filter = this.getFilter();
     const result = await this._stockLocationsIndex?.search(query, {
+      filter: [filter],
       offset: offset,
       limit: limit,
     });
@@ -260,12 +280,6 @@ class ExploreController extends Controller {
       type: type,
       avatar: avatar,
     };
-  }
-
-  private resetMedusaModel(): void {
-    this._model.inventoryLocations = [];
-    this._model.selectedInventoryLocation = undefined;
-    this._model.wineCount = 0;
   }
 
   private async initializeAsync(renderCount: number): Promise<void> {
@@ -384,6 +398,15 @@ class ExploreController extends Controller {
       nearest.geometry.coordinates[0],
       nearest.geometry.coordinates[1]
     );
+  }
+
+  private getFilter(): string {
+    let filter = ``;
+    if (this._model.selectedTab) {
+      filter += `metadata.type = ${this._model.selectedTab}`;
+    }
+
+    return filter;
   }
 }
 

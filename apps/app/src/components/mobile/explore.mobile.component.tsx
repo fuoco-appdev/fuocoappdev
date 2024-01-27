@@ -16,6 +16,7 @@ import {
   Input,
   Line,
   Modal,
+  Tabs,
 } from '@fuoco.appdev/core-ui';
 import { RoutePathsType } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
@@ -27,12 +28,13 @@ import { Store } from '@ngneat/elf';
 import Map, { MapRef, Marker, Popup } from 'react-map-gl';
 import ConfigService from '../../services/config.service';
 import {
+  ExploreTabs,
   InventoryLocation,
   InventoryLocationType,
 } from '../../models/explore.model';
 import { ExploreResponsiveProps } from '../explore.component';
 import { ExploreSuspenseMobileComponent } from './suspense/explore.suspense.mobile.component';
-import { ResponsiveMobile } from '../responsive.component';
+import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 import StockLocationItemComponent from '../stock-location-item.component';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
 import { createPortal } from 'react-dom';
@@ -56,6 +58,14 @@ export default function ExploreMobileComponent({
   const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
   let prevScrollTop = 0;
   let yPosition = 0;
+
+  useMobileEffect(() => {
+    if (!exploreProps.selectedTab) {
+      return;
+    }
+
+    setIsSearchFocused(true);
+  }, [exploreProps.selectedTab]);
 
   return (
     <ResponsiveMobile>
@@ -130,46 +140,39 @@ export default function ExploreMobileComponent({
                   />
                 </div>
               </div>
-              {/* <div
+              <div
                 className={[
                   styles['tab-container'],
-                  styles['tab-container-mobile'],
+                  styles['tab-container-desktop'],
                 ].join(' ')}
               >
                 <Tabs
                   classNames={{
+                    nav: styles['tab-nav'],
                     tabButton: styles['tab-button'],
                     selectedTabButton: styles['selected-tab-button'],
                     tabSliderPill: styles['tab-slider-pill'],
                   }}
                   removable={true}
                   type={'pills'}
-                  activeId={storeProps.selectedTab}
+                  activeId={exploreProps.selectedTab}
                   onChange={(id: string) =>
-                    StoreController.updateSelectedTabAsync(
-                      id.length > 0 ? (id as ProductTabs) : undefined
+                    ExploreController.updateSelectedTabAsync(
+                      id.length > 0 ? (id as ExploreTabs) : undefined
                     )
                   }
                   tabs={[
                     {
-                      id: ProductTabs.White,
-                      label: t('white') ?? 'White',
+                      id: ExploreTabs.Cellar,
+                      label: t('cellar') ?? 'Cellar',
                     },
                     {
-                      id: ProductTabs.Red,
-                      label: t('red') ?? 'Red',
-                    },
-                    {
-                      id: ProductTabs.Rose,
-                      label: t('rose') ?? 'Rosé',
-                    },
-                    {
-                      id: ProductTabs.Spirits,
-                      label: t('spirits') ?? 'Spirits',
+                      id: ExploreTabs.Restaurant,
+                      label: t('restaurant') ?? 'Restaurant',
                     },
                   ]}
                 />
-              </div> */}
+              </div>
             </div>
           </div>
           {isSearchFocused && (
