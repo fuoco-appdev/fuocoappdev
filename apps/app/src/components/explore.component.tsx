@@ -60,6 +60,7 @@ export default function ExploreComponent(): JSX.Element {
     null
   );
   const mapRef = useRef<MapRef | null>(null);
+  const renderCountRef = useRef<number>(0);
   const location = useLocation();
   const { i18n } = useTranslation();
 
@@ -100,7 +101,13 @@ export default function ExploreComponent(): JSX.Element {
   };
 
   useEffect(() => {
+    renderCountRef.current += 1;
+    ExploreController.load(renderCountRef.current);
     ExploreController.loadStockLocationsAsync();
+
+    return () => {
+      ExploreController.disposeLoad(renderCountRef.current);
+    };
   }, []);
 
   useEffect(() => {

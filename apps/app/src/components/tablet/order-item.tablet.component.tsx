@@ -52,16 +52,24 @@ export default function OrderItemTabletComponent({
                   styles['thumbnail-tablet'],
                 ].join(' ')}
               >
-                <img
-                  className={[
-                    styles['thumbnail-image'],
-                    styles['thumbnail-image-tablet'],
-                  ].join(' ')}
-                  src={
-                    order.items?.[0]?.thumbnail ||
-                    '../assets/images/wine-bottle.png'
-                  }
-                />
+                {!order.items?.[0]?.thumbnail && (
+                  <img
+                    className={[
+                      styles['no-thumbnail-image'],
+                      styles['no-thumbnail-image-tablet'],
+                    ].join(' ')}
+                    src={'../assets/images/wine-bottle.png'}
+                  />
+                )}
+                {order.items?.[0]?.thumbnail && (
+                  <img
+                    className={[
+                      styles['thumbnail-image'],
+                      styles['thumbnail-image-tablet'],
+                    ].join(' ')}
+                    src={order.items?.[0]?.thumbnail}
+                  />
+                )}
               </div>
               <div
                 className={[

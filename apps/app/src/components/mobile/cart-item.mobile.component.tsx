@@ -104,20 +104,13 @@ export default function CartItemMobileComponent({
             >
               {item.title}
             </div>
-            {productType === MedusaProductTypeNames.Wine && (
-              <div
-                className={[styles['variant'], styles['variant-mobile']].join(
-                  ' '
-                )}
-              >{`${t('vintage')}: ${vintage}`}</div>
-            )}
-            {productType === MedusaProductTypeNames.RequiredFood && (
-              <div
-                className={[styles['variant'], styles['variant-mobile']].join(
-                  ' '
-                )}
-              >{`${t('type')}: ${type}`}</div>
-            )}
+            <div
+              className={[styles['variant'], styles['variant-mobile']].join(
+                ' '
+              )}
+            >
+              {item.variant.title}
+            </div>
           </div>
           <div
             className={[

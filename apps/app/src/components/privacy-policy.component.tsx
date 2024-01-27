@@ -4,7 +4,7 @@ import {
   ResponsiveTablet,
 } from './responsive.component';
 import { Helmet } from 'react-helmet';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useObservable } from '@ngneat/use-observable';
 import PrivacyPolicyController from '../controllers/privacy-policy.controller';
 import { PrivacyPolicyState } from '../models';
@@ -31,11 +31,19 @@ export default function PrivacyPolicyComponent(): JSX.Element {
     PrivacyPolicyController.model.store
   );
   const [remarkPlugins, setRemarkPlugins] = useState<any[]>([]);
+  const renderCountRef = useRef<number>(0);
 
   useEffect(() => {
+    renderCountRef.current += 1;
+
     import('remark-gfm').then((plugin) => {
       setRemarkPlugins([plugin.default]);
     });
+    PrivacyPolicyController.load(renderCountRef.current);
+
+    return () => {
+      PrivacyPolicyController.disposeLoad(renderCountRef.current);
+    };
   }, []);
 
   const suspenceComponent = (

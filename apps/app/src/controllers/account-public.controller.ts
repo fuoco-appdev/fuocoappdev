@@ -78,7 +78,9 @@ class AccountPublicController extends Controller {
       });
   }
 
-  public override dispose(renderCount: number): void {
+  public override load(renderCount: number): void {}
+
+  public override disposeInitialization(renderCount: number): void {
     clearTimeout(this._followingTimerId as number | undefined);
     clearTimeout(this._followersTimerId as number | undefined);
     clearTimeout(this._usernameTimerId as number | undefined);
@@ -89,6 +91,8 @@ class AccountPublicController extends Controller {
     this._medusaAccessTokenSubscription?.unsubscribe();
     this._cartSubscription?.unsubscribe();
   }
+
+  public override disposeLoad(renderCount: number): void {}
 
   public async loadLikedProductsAsync(id: string): Promise<void> {
     this._loadedAccountSubscription?.unsubscribe();

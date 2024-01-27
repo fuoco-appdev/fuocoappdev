@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import AccountController from '../controllers/account.controller';
 import WindowController from '../controllers/window.controller';
 import StoreController from '../controllers/store.controller';
@@ -74,6 +74,7 @@ export default function AccountComponent(): JSX.Element {
   const [followingCount, setFollowingCount] = useState<string | undefined>(
     undefined
   );
+  const renderCountRef = useRef<number>(0);
   const scrollOffsetTriggerGap = 16;
 
   const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
@@ -179,12 +180,18 @@ export default function AccountComponent(): JSX.Element {
   }, [i18n.language]);
 
   useEffect(() => {
+    renderCountRef.current += 1;
+    AccountController.load(renderCountRef.current);
     if (windowProps.activeRoute === RoutePathsType.Account) {
       navigate({
         pathname: RoutePathsType.AccountLikes,
         search: query.toString(),
       });
     }
+
+    return () => {
+      AccountController.disposeLoad(renderCountRef.current);
+    };
   }, []);
 
   useEffect(() => {

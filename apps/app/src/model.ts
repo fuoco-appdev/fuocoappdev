@@ -6,7 +6,7 @@ import {
 } from '@ngneat/elf-persist-state';
 import { Disposable } from './disposable';
 
-export abstract class Model implements Disposable {
+export abstract class Model {
   private readonly _store: Store;
   private readonly _sessionStore: Store | undefined;
   private readonly _localStore: Store | undefined;
@@ -42,6 +42,4 @@ export abstract class Model implements Disposable {
   public get localStore(): Store | undefined {
     return this._localStore;
   }
-
-  public dispose(): void {}
 }

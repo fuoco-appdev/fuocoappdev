@@ -104,20 +104,13 @@ export default function CartItemTabletComponent({
             >
               {item.title}
             </div>
-            {productType === MedusaProductTypeNames.Wine && (
-              <div
-                className={[styles['variant'], styles['variant-tablet']].join(
-                  ' '
-                )}
-              >{`${t('vintage')}: ${vintage}`}</div>
-            )}
-            {productType === MedusaProductTypeNames.RequiredFood && (
-              <div
-                className={[styles['variant'], styles['variant-tablet']].join(
-                  ' '
-                )}
-              >{`${t('type')}: ${type}`}</div>
-            )}
+            <div
+              className={[styles['variant'], styles['variant-tablet']].join(
+                ' '
+              )}
+            >
+              {item.variant.title}
+            </div>
           </div>
           <div
             className={[

@@ -4,7 +4,7 @@ import {
   ResponsiveTablet,
 } from './responsive.component';
 import { Helmet } from 'react-helmet';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useObservable } from '@ngneat/use-observable';
 import HelpController from '../controllers/help.controller';
 import { HelpState } from '../models';
@@ -46,12 +46,7 @@ export interface HelpResponsiveProps {
 export default function HelpComponent(): JSX.Element {
   const [helpProps] = useObservable(HelpController.model.store);
   const [remarkPlugins, setRemarkPlugins] = useState<any[]>([]);
-
-  useEffect(() => {
-    import('remark-gfm').then((plugin) => {
-      setRemarkPlugins([plugin.default]);
-    });
-  }, []);
+  const renderCountRef = useRef<number>(0);
 
   const suspenceComponent = (
     <>
@@ -70,6 +65,20 @@ export default function HelpComponent(): JSX.Element {
   if (process.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
+
+  useEffect(() => {
+    renderCountRef.current += 1;
+
+    import('remark-gfm').then((plugin) => {
+      setRemarkPlugins([plugin.default]);
+    });
+
+    HelpController.load(renderCountRef.current);
+
+    return () => {
+      HelpController.disposeLoad(renderCountRef.current);
+    };
+  }, []);
 
   return (
     <>

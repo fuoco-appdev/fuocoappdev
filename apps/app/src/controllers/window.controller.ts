@@ -61,18 +61,12 @@ class WindowController extends Controller {
   }
 
   public override initialize(renderCount: number): void {
-    this._medusaAccessTokenSubscription =
-      MedusaService.accessTokenObservable.subscribe({
-        next: (value: string | undefined) => {
-          if (!value) {
-            this.resetMedusaModel();
-            this.initializeAsync(renderCount);
-          }
-        },
-      });
+    this.initializeAsync(renderCount);
   }
 
-  public override dispose(renderCount: number): void {
+  public override load(renderCount: number): void {}
+
+  public override disposeInitialization(renderCount: number): void {
     this._medusaAccessTokenSubscription?.unsubscribe();
     this._customerSubscription?.unsubscribe();
     this._customerGroupSubscription?.unsubscribe();
@@ -80,6 +74,8 @@ class WindowController extends Controller {
     this._accountSubscription?.unsubscribe();
     this._cartSubscription?.unsubscribe();
   }
+
+  public override disposeLoad(renderCount: number): void {}
 
   public updateIsLoading(value: boolean): void {
     this._model.isLoading = value;

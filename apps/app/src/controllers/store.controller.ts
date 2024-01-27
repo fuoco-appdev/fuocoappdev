@@ -63,23 +63,46 @@ class StoreController extends Controller {
   public override initialize(renderCount: number): void {
     this._productsIndex = MeiliSearchService.client?.index('products');
 
-    this._medusaAccessTokenSubscription =
-      MedusaService.accessTokenObservable.subscribe({
-        next: (value: string | undefined) => {
+    this.initializeAsync(renderCount);
+  }
+
+  public override load(renderCount: number): void {
+    this._accountSubscription?.unsubscribe();
+    this._accountSubscription = AccountController.model.store
+      .pipe(select((model: AccountState) => model.account))
+      .subscribe({
+        next: (value: AccountResponse | undefined) => {
           if (!value) {
-            this.resetMedusaModel();
-            this.initializeAsync(renderCount);
+            return;
           }
+
+          this.searchAsync(this._model.input, 0, this._limit);
+        },
+      });
+
+    this._customerGroupSubscription?.unsubscribe();
+    this._customerGroupSubscription = AccountController.model.store
+      .pipe(select((model: AccountState) => model.customerGroup))
+      .subscribe({
+        next: (customerGroup: CustomerGroup | undefined) => {
+          if (!customerGroup) {
+            return;
+          }
+
+          this.searchAsync(this._model.input, 0, this._limit);
         },
       });
   }
 
-  public override dispose(renderCount: number): void {
-    clearTimeout(this._timerId as number | undefined);
-    this._accountSubscription?.unsubscribe();
+  public override disposeInitialization(renderCount: number): void {
     this._medusaAccessTokenSubscription?.unsubscribe();
-    this._customerGroupSubscription?.unsubscribe();
     this._selectedInventoryLocationSubscription?.unsubscribe();
+  }
+
+  public override disposeLoad(renderCount: number): void {
+    clearTimeout(this._timerId as number | undefined);
+    this._customerGroupSubscription?.unsubscribe();
+    this._accountSubscription?.unsubscribe();
   }
 
   public async loadProductsAsync(): Promise<void> {
@@ -416,32 +439,6 @@ class StoreController extends Controller {
   private async initializeAsync(renderCount: number): Promise<void> {
     await this.requestProductTypesAsync();
     await this.requestRegionsAsync();
-
-    this._customerGroupSubscription?.unsubscribe();
-    this._customerGroupSubscription = AccountController.model.store
-      .pipe(select((model: AccountState) => model.customerGroup))
-      .subscribe({
-        next: (customerGroup: CustomerGroup | undefined) => {
-          if (!customerGroup) {
-            return;
-          }
-
-          this.searchAsync(this._model.input, 0, this._limit);
-        },
-      });
-
-    this._accountSubscription?.unsubscribe();
-    this._accountSubscription = AccountController.model.store
-      .pipe(select((model: AccountState) => model.account))
-      .subscribe({
-        next: (value: AccountResponse | undefined) => {
-          if (!value) {
-            return;
-          }
-
-          this.searchAsync(this._model.input, 0, this._limit);
-        },
-      });
 
     this._selectedInventoryLocationSubscription?.unsubscribe();
     this._selectedInventoryLocationSubscription = ExploreController.model.store

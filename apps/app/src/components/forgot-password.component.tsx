@@ -6,7 +6,7 @@ import WindowController from '../controllers/window.controller';
 import SupabaseService from '../services/supabase.service';
 import { RoutePathsType } from '../route-paths';
 import { AuthError } from '@supabase/supabase-js';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { animated, config, useTransition } from 'react-spring';
 import {
   ResponsiveDesktop,
@@ -40,6 +40,7 @@ export default function ForgotPasswordComponent(): JSX.Element {
   const [forgotPasswordProps] = useObservable(
     ForgotPasswordController.model.store
   );
+  const renderCountRef = useRef<number>(0);
 
   const suspenceComponent = (
     <>
@@ -58,6 +59,15 @@ export default function ForgotPasswordComponent(): JSX.Element {
   if (process.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
+
+  useEffect(() => {
+    renderCountRef.current += 1;
+    ForgotPasswordController.load(renderCountRef.current);
+
+    return () => {
+      ForgotPasswordController.disposeLoad(renderCountRef.current);
+    };
+  }, []);
 
   return (
     <>

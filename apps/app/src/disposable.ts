@@ -1,3 +1,3 @@
 export interface Disposable {
-  dispose(renderCount: number): void;
+  disposeInitialization(renderCount: number): void;
 }

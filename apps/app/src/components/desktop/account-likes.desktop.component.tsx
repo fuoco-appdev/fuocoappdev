@@ -30,6 +30,8 @@ export default function AccountLikesDesktopComponent({
   accountProps,
   openCartVariants,
   variantQuantities,
+  isPreviewLoading,
+  setIsPreviewLoading,
   setOpenCartVariants,
   setVariantQuantities,
   onAddToCart,
@@ -89,6 +91,10 @@ export default function AccountLikesDesktopComponent({
                   subtitle={product.subtitle ?? undefined}
                   description={product.description ?? undefined}
                   pricedProduct={product}
+                  isLoading={
+                    isPreviewLoading &&
+                    accountProps.selectedLikedProduct?.id === product?.id
+                  }
                   likesMetadata={
                     productLikesMetadata ??
                     core.ProductLikesMetadataResponse.prototype
@@ -206,7 +212,10 @@ export default function AccountLikesDesktopComponent({
           }}
           title={t('addVariant') ?? ''}
           visible={openCartVariants}
-          onCancel={() => setOpenCartVariants(false)}
+          onCancel={() => {
+            setOpenCartVariants(false);
+            setIsPreviewLoading(false);
+          }}
           hideFooter={true}
         >
           <div

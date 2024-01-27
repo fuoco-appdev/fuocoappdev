@@ -101,6 +101,7 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
   const [quantity, setQuantity] = useState<number>(1);
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [likeCount, setLikeCount] = useState<number>(0);
+  const renderCountRef = useRef<number>(0);
   const { t, i18n } = useTranslation();
 
   const formatName = (title: string, subtitle?: string | null) => {
@@ -184,11 +185,18 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
   }, [productProps.product]);
 
   useEffect(() => {
+    renderCountRef.current += 1;
+    ProductController.load(renderCountRef.current);
+
     import('remark-gfm').then((plugin) => {
       setRemarkPlugins([plugin.default]);
     });
 
     ProductController.updateProductId(id);
+
+    return () => {
+      ProductController.disposeLoad(renderCountRef.current);
+    };
   }, []);
 
   useEffect(() => {

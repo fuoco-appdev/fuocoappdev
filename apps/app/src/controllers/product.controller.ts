@@ -52,25 +52,130 @@ class ProductController extends Controller {
   }
 
   public override initialize(renderCount: number): void {
-    this._medusaAccessTokenSubscription =
-      MedusaService.accessTokenObservable.subscribe({
-        next: (value: string | undefined) => {
-          if (!value) {
-            this.resetMedusaModel();
-            this.initializeAsync(renderCount);
+    this.initializeAsync(renderCount);
+  }
+
+  public override load(renderCount: number): void {
+    this._selectedPricedProductSubscription?.unsubscribe();
+    this._selectedPricedProductSubscription = StoreController.model.store
+      .pipe(select((model: StoreState) => model.selectedPricedProduct))
+      .subscribe({
+        next: (product: PricedProduct | undefined) => {
+          if (!product) {
+            return;
           }
+
+          this._model.isLoading = true;
+          this._model.product = product;
+          const selectedVariant = this.getCheapestPrice(
+            this._model.product.variants
+          );
+          this.updateSelectedVariant(selectedVariant?.id ?? '');
+          this._model.isLoading = false;
+        },
+      });
+
+    this._selectedProductLikesSubscription?.unsubscribe();
+    this._selectedProductLikesSubscription = StoreController.model.store
+      .pipe(select((model: StoreState) => model.selectedProductLikesMetadata))
+      .subscribe({
+        next: (likesMedata: ProductLikesMetadataResponse | null) => {
+          this._model.likesMetadata = likesMedata;
+        },
+      });
+
+    this._accountSubscription?.unsubscribe();
+    this._accountSubscription = AccountController.model.store
+      .pipe(select((model: AccountState) => model.account))
+      .subscribe({
+        next: async (account: AccountResponse | undefined) => {
+          const productId = await firstValueFrom(
+            this._model.store.pipe(
+              select((model) => model.productId),
+              filter((value) => value !== undefined),
+              take(1)
+            )
+          );
+          if (!productId) {
+            return;
+          }
+
+          const selectedProductLikesMetadata = await firstValueFrom(
+            StoreController.model.store.pipe(
+              select((model) => model.selectedProductLikesMetadata),
+              take(1)
+            )
+          );
+          if (selectedProductLikesMetadata) {
+            return;
+          }
+
+          try {
+            const productLikesResponse =
+              await ProductLikesService.requestMetadataAsync({
+                accountId: account?.id ?? '',
+                productIds: [productId],
+              });
+
+            if (productLikesResponse.metadata.length > 0) {
+              this._model.likesMetadata = productLikesResponse.metadata[0];
+            }
+          } catch (error: any) {
+            console.error(error);
+          }
+
+          const selectedPricedProduct = await firstValueFrom(
+            StoreController.model.store.pipe(
+              select((model) => model.selectedPricedProduct),
+              take(1)
+            )
+          );
+
+          if (selectedPricedProduct) {
+            return;
+          }
+
+          this._customerGroupSubscription?.unsubscribe();
+          this._customerGroupSubscription = AccountController.model.store
+            .pipe(select((model) => model.customerGroup))
+            .subscribe({
+              next: async (customerGroup: CustomerGroup | undefined) => {
+                const selectedRegion = await firstValueFrom(
+                  StoreController.model.store.pipe(
+                    select((model) => model.selectedRegion),
+                    filter((value) => value !== undefined),
+                    take(1)
+                  )
+                );
+                const channel = StoreController.model.selectedSalesChannel;
+                if (!productId || !channel) {
+                  return;
+                }
+
+                if (this._model.productId !== this._model.product?.id) {
+                  this.requestProductWithChannelAsync(
+                    productId,
+                    channel?.id ?? '',
+                    selectedRegion?.id ?? ''
+                  );
+                }
+              },
+            });
         },
       });
   }
 
-  public override dispose(renderCount: number): void {
+  public override disposeInitialization(renderCount: number): void {
     this._medusaAccessTokenSubscription?.unsubscribe();
-    this._accountSubscription?.unsubscribe();
     this._customerGroupSubscription?.unsubscribe();
-    this._selectedProductLikesSubscription?.unsubscribe();
-    this._selectedPricedProductSubscription?.unsubscribe();
     this._selectedRegionSubscription?.unsubscribe();
     this._selectedSalesChannelSubscription?.unsubscribe();
+  }
+
+  public override disposeLoad(renderCount: number): void {
+    this._accountSubscription?.unsubscribe();
+    this._selectedProductLikesSubscription?.unsubscribe();
+    this._selectedPricedProductSubscription?.unsubscribe();
   }
 
   public async requestProductLike(
@@ -209,119 +314,36 @@ class ProductController extends Controller {
   }
 
   private async initializeAsync(renderCount: number): Promise<void> {
-    this._selectedPricedProductSubscription?.unsubscribe();
-    this._selectedPricedProductSubscription = StoreController.model.store
-      .pipe(select((model: StoreState) => model.selectedPricedProduct))
-      .subscribe({
-        next: (product: PricedProduct | undefined) => {
-          if (!product) {
-            return;
-          }
-
-          this._model.isLoading = true;
-          this._model.product = product;
-          const selectedVariant = this.getCheapestPrice(
-            this._model.product.variants
-          );
-          this.updateSelectedVariant(selectedVariant?.id ?? '');
-          this._model.isLoading = false;
-        },
-      });
-
-    this._selectedProductLikesSubscription?.unsubscribe();
-    this._selectedProductLikesSubscription = StoreController.model.store
-      .pipe(select((model: StoreState) => model.selectedProductLikesMetadata))
-      .subscribe({
-        next: (likesMedata: ProductLikesMetadataResponse | null) => {
-          this._model.likesMetadata = likesMedata;
-        },
-      });
-
     this._selectedRegionSubscription?.unsubscribe();
     this._selectedRegionSubscription = StoreController.model.store
       .pipe(select((model) => model.selectedRegion))
       .subscribe({
-        next: (region: Region | undefined) => {
-          if (StoreController.model.selectedPricedProduct) {
+        next: async (region: Region | undefined) => {
+          const selectedPricedProduct = await firstValueFrom(
+            StoreController.model.store.pipe(
+              select((model) => model.selectedPricedProduct),
+              take(1)
+            )
+          );
+          if (selectedPricedProduct) {
             return;
           }
 
           if (this._model.productId !== this._model.product?.id) {
-            const channel = StoreController.model.selectedSalesChannel;
+            const selectedSalesChannel = await firstValueFrom(
+              StoreController.model.store.pipe(
+                select((model) => model.selectedSalesChannel),
+                filter((value) => value !== undefined),
+                take(1)
+              )
+            );
             this._model.product = undefined;
             this.requestProductWithChannelAsync(
               this._model.productId ?? '',
-              channel?.id ?? '',
+              selectedSalesChannel?.id ?? '',
               region?.id ?? ''
             );
           }
-        },
-      });
-
-    this._accountSubscription?.unsubscribe();
-    this._accountSubscription = AccountController.model.store
-      .pipe(select((model: AccountState) => model.account))
-      .subscribe({
-        next: async (account: AccountResponse | undefined) => {
-          const productId = await firstValueFrom(
-            this._model.store.pipe(
-              select((model) => model.productId),
-              filter((value) => value !== undefined),
-              take(1)
-            )
-          );
-          if (!productId) {
-            return;
-          }
-
-          if (StoreController.model.selectedProductLikesMetadata) {
-            return;
-          }
-
-          try {
-            const productLikesResponse =
-              await ProductLikesService.requestMetadataAsync({
-                accountId: account?.id ?? '',
-                productIds: [productId],
-              });
-
-            if (productLikesResponse.metadata.length > 0) {
-              this._model.likesMetadata = productLikesResponse.metadata[0];
-            }
-          } catch (error: any) {
-            console.error(error);
-          }
-
-          if (StoreController.model.selectedPricedProduct) {
-            return;
-          }
-
-          this._customerGroupSubscription?.unsubscribe();
-          this._customerGroupSubscription = AccountController.model.store
-            .pipe(select((model) => model.customerGroup))
-            .subscribe({
-              next: async (customerGroup: CustomerGroup | undefined) => {
-                const selectedRegion = await firstValueFrom(
-                  StoreController.model.store.pipe(
-                    select((model) => model.selectedRegion),
-                    filter((value) => value !== undefined),
-                    take(1)
-                  )
-                );
-                const channel = StoreController.model.selectedSalesChannel;
-                if (!productId || !channel) {
-                  return;
-                }
-
-                if (this._model.productId !== this._model.product?.id) {
-                  this.requestProductWithChannelAsync(
-                    productId,
-                    channel?.id ?? '',
-                    selectedRegion?.id ?? ''
-                  );
-                }
-              },
-            });
         },
       });
   }

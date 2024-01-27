@@ -33,6 +33,8 @@ export default function AccountPublicLikesMobileComponent({
   accountPublicProps,
   openCartVariants,
   variantQuantities,
+  isPreviewLoading,
+  setIsPreviewLoading,
   setOpenCartVariants,
   setVariantQuantities,
   onAddToCart,
@@ -90,6 +92,10 @@ export default function AccountPublicLikesMobileComponent({
                   subtitle={product.subtitle ?? undefined}
                   description={product.description ?? undefined}
                   pricedProduct={product}
+                  isLoading={
+                    isPreviewLoading &&
+                    accountPublicProps.selectedLikedProduct?.id === product?.id
+                  }
                   likesMetadata={
                     productLikesMetadata ??
                     core.ProductLikesMetadataResponse.prototype
@@ -151,7 +157,10 @@ export default function AccountPublicLikesMobileComponent({
             }}
             open={openCartVariants}
             touchScreen={true}
-            onClose={() => setOpenCartVariants(false)}
+            onClose={() => {
+              setOpenCartVariants(false);
+              setIsPreviewLoading(false);
+            }}
           >
             <div
               className={[

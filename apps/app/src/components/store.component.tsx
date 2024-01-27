@@ -95,6 +95,8 @@ export interface StoreResponsiveProps {
   variantQuantities: Record<string, number>;
   tabs: TabProps[];
   categoryOpen: boolean;
+  isPreviewLoading: boolean;
+  setIsPreviewLoading: (value: boolean) => void;
   setOpenFilter: (value: boolean) => void;
   setOpenCartVariants: (value: boolean) => void;
   setSelectedCountryId: (value: string) => void;
@@ -148,6 +150,8 @@ export default function StoreComponent(): JSX.Element {
   >({});
   const [tabs, setTabs] = useState<TabProps[]>([]);
   const [categoryOpen, setCategoryOpen] = useState<boolean>(false);
+  const [isPreviewLoading, setIsPreviewLoading] = useState<boolean>(false);
+  const renderCountRef = useRef<number>(0);
   const { t, i18n } = useTranslation();
 
   const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
@@ -207,6 +211,8 @@ export default function StoreComponent(): JSX.Element {
     StoreController.updateSelectedPricedProduct(product);
     StoreController.updateSelectedProductLikesMetadata(productLikesMetadata);
 
+    setIsPreviewLoading(true);
+
     const variants: PricedVariant[] = product?.variants;
     const quantities: Record<string, number> = {};
     for (const variant of variants) {
@@ -245,16 +251,18 @@ export default function StoreComponent(): JSX.Element {
       ProductController.addToCartAsync(
         id,
         quantity,
-        () =>
+        () => {
           WindowController.addToast({
             key: `add-to-cart-${Math.random()}`,
             message: t('addedToCart') ?? '',
             description:
               t('addedToCartDescription', {
-                item: storeProps.selectedPreview?.title,
+                item: storeProps.selectedPricedProduct?.title,
               }) ?? '',
             type: 'success',
-          }),
+          });
+          setIsPreviewLoading(false);
+        },
         (error) => console.error(error)
       );
     }
@@ -269,10 +277,16 @@ export default function StoreComponent(): JSX.Element {
   };
 
   useEffect(() => {
+    renderCountRef.current += 1;
+    StoreController.load(renderCountRef.current);
     const search = query.get('search');
     if (search && search !== storeProps.input) {
       StoreController.updateInput(search);
     }
+
+    return () => {
+      StoreController.disposeLoad(renderCountRef.current);
+    };
   }, []);
 
   useEffect(() => {
@@ -499,6 +513,8 @@ export default function StoreComponent(): JSX.Element {
           selectedSalesLocationId={selectedSalesLocationId}
           tabs={tabs}
           categoryOpen={categoryOpen}
+          isPreviewLoading={isPreviewLoading}
+          setIsPreviewLoading={setIsPreviewLoading}
           setOpenFilter={setOpenFilter}
           setOpenCartVariants={setOpenCartVariants}
           setSelectedCountryId={setSelectedCountryId}
@@ -532,6 +548,8 @@ export default function StoreComponent(): JSX.Element {
           selectedSalesLocationId={selectedSalesLocationId}
           tabs={tabs}
           categoryOpen={categoryOpen}
+          isPreviewLoading={isPreviewLoading}
+          setIsPreviewLoading={setIsPreviewLoading}
           setOpenFilter={setOpenFilter}
           setOpenCartVariants={setOpenCartVariants}
           setSelectedCountryId={setSelectedCountryId}
@@ -565,6 +583,8 @@ export default function StoreComponent(): JSX.Element {
           selectedSalesLocationId={selectedSalesLocationId}
           tabs={tabs}
           categoryOpen={categoryOpen}
+          isPreviewLoading={isPreviewLoading}
+          setIsPreviewLoading={setIsPreviewLoading}
           setOpenFilter={setOpenFilter}
           setOpenCartVariants={setOpenCartVariants}
           setSelectedCountryId={setSelectedCountryId}

@@ -25,7 +25,9 @@ class SignupController extends Controller {
     return this._model;
   }
 
-  public override initialize(renderCount: number): void {
+  public override initialize(renderCount: number): void {}
+
+  public override load(renderCount: number): void {
     SupabaseService.supabaseClient?.auth.onAuthStateChange(
       this.onAuthStateChanged
     );
@@ -38,7 +40,9 @@ class SignupController extends Controller {
       });
   }
 
-  public override dispose(renderCount: number): void {
+  public override disposeInitialization(renderCount: number): void {}
+
+  public override disposeLoad(renderCount: number): void {
     this._supabaseClientSubscription?.unsubscribe();
   }
 

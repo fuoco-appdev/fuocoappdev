@@ -68,6 +68,8 @@ export default function StoreTabletComponent({
   selectedSalesLocationId,
   tabs,
   categoryOpen,
+  isPreviewLoading,
+  setIsPreviewLoading,
   setOpenFilter,
   setOpenCartVariants,
   setSelectedCountryId,
@@ -338,6 +340,10 @@ export default function StoreTabletComponent({
                   subtitle={product.subtitle ?? undefined}
                   description={product.description ?? undefined}
                   pricedProduct={pricedProduct}
+                  isLoading={
+                    isPreviewLoading &&
+                    storeProps.selectedPricedProduct?.id === pricedProduct?.id
+                  }
                   likesMetadata={
                     productLikesMetadata ??
                     core.ProductLikesMetadataResponse.prototype
@@ -586,7 +592,10 @@ export default function StoreTabletComponent({
             }}
             title={t('addVariant') ?? ''}
             visible={openCartVariants}
-            onCancel={() => setOpenCartVariants(false)}
+            onCancel={() => {
+              setOpenCartVariants(false);
+              setIsPreviewLoading(false);
+            }}
             hideFooter={true}
           >
             <div

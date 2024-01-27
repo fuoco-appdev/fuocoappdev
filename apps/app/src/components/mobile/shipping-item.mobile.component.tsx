@@ -30,13 +30,24 @@ export default function ShippingItemMobileComponent({
               ' '
             )}
           >
-            <img
-              className={[
-                styles['thumbnail-image'],
-                styles['thumbnail-image-mobile'],
-              ].join(' ')}
-              src={item.thumbnail || '../assets/images/wine-bottle.png'}
-            />
+            {!item?.thumbnail && (
+              <img
+                className={[
+                  styles['no-thumbnail-image'],
+                  styles['no-thumbnail-image-mobile'],
+                ].join(' ')}
+                src={'../assets/images/wine-bottle.png'}
+              />
+            )}
+            {item?.thumbnail && (
+              <img
+                className={[
+                  styles['thumbnail-image'],
+                  styles['thumbnail-image-mobile'],
+                ].join(' ')}
+                src={item?.thumbnail}
+              />
+            )}
           </div>
           <div
             className={[
@@ -53,7 +64,9 @@ export default function ShippingItemMobileComponent({
               className={[styles['variant'], styles['variant-mobile']].join(
                 ' '
               )}
-            >{`${t('vintage')}: ${vintage}`}</div>
+            >
+              {item.variant.title}
+            </div>
           </div>
           <div
             className={[

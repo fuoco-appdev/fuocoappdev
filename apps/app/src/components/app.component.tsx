@@ -33,9 +33,11 @@ export default function AppComponent(): JSX.Element {
       }
     );
     AppController.initialize(renderCountRef.current);
+    AppController.load(renderCountRef.current);
     return () => {
       subscription?.unsubscribe();
-      AppController.dispose(renderCountRef.current);
+      AppController.disposeLoad(renderCountRef.current);
+      AppController.disposeInitialization(renderCountRef.current);
     };
   }, []);
 

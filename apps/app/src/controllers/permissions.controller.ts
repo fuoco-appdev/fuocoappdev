@@ -45,7 +45,11 @@ class PermissionsController extends Controller {
     }
   }
 
-  public override dispose(renderCount: number): void {}
+  public override load(renderCount: number): void {}
+
+  public override disposeInitialization(renderCount: number): void {}
+
+  public override disposeLoad(renderCount: number): void {}
 
   public updateAccessLocation(value: boolean): void {
     this._model.accessLocation = value;

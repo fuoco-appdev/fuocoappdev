@@ -52,16 +52,24 @@ export default function OrderItemMobileComponent({
                   styles['thumbnail-mobile'],
                 ].join(' ')}
               >
-                <img
-                  className={[
-                    styles['thumbnail-image'],
-                    styles['thumbnail-image-mobile'],
-                  ].join(' ')}
-                  src={
-                    order.items?.[0]?.thumbnail ||
-                    '../assets/images/wine-bottle.png'
-                  }
-                />
+                {!order.items?.[0]?.thumbnail && (
+                  <img
+                    className={[
+                      styles['no-thumbnail-image'],
+                      styles['no-thumbnail-image-mobile'],
+                    ].join(' ')}
+                    src={'../assets/images/wine-bottle.png'}
+                  />
+                )}
+                {order.items?.[0]?.thumbnail && (
+                  <img
+                    className={[
+                      styles['thumbnail-image'],
+                      styles['thumbnail-image-mobile'],
+                    ].join(' ')}
+                    src={order.items?.[0]?.thumbnail}
+                  />
+                )}
               </div>
               <div
                 className={[

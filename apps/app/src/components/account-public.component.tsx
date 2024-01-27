@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import AccountController from '../controllers/account.controller';
 import WindowController from '../controllers/window.controller';
 import StoreController from '../controllers/store.controller';
@@ -87,6 +87,7 @@ export default function AccountPublicComponent(): JSX.Element {
   const [followingCount, setFollowingCount] = useState<string | undefined>(
     undefined
   );
+  const renderCountRef = useRef<number>(0);
   const scrollOffsetTriggerGap = 16;
 
   const onFollow = () => {
@@ -175,6 +176,14 @@ export default function AccountPublicComponent(): JSX.Element {
       }
     }
   };
+
+  useEffect(() => {
+    renderCountRef.current += 1;
+    AccountPublicController.load(renderCountRef.current);
+    return () => {
+      AccountPublicController.disposeLoad(renderCountRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (!id) {

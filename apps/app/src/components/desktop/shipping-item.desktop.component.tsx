@@ -33,13 +33,24 @@ export default function ShippingItemDesktopComponent({
               ' '
             )}
           >
-            <img
-              className={[
-                styles['thumbnail-image'],
-                styles['thumbnail-image-desktop'],
-              ].join(' ')}
-              src={item.thumbnail || '../assets/images/wine-bottle.png'}
-            />
+            {!item?.thumbnail && (
+              <img
+                className={[
+                  styles['no-thumbnail-image'],
+                  styles['no-thumbnail-image-desktop'],
+                ].join(' ')}
+                src={'../assets/images/wine-bottle.png'}
+              />
+            )}
+            {item?.thumbnail && (
+              <img
+                className={[
+                  styles['thumbnail-image'],
+                  styles['thumbnail-image-desktop'],
+                ].join(' ')}
+                src={item?.thumbnail}
+              />
+            )}
           </div>
           <div
             className={[
@@ -56,7 +67,9 @@ export default function ShippingItemDesktopComponent({
               className={[styles['variant'], styles['variant-desktop']].join(
                 ' '
               )}
-            >{`${t('vintage')}: ${vintage}`}</div>
+            >
+              {item.variant.title}
+            </div>
           </div>
           <div
             className={[

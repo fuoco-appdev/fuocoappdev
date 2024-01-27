@@ -30,6 +30,7 @@ export default function ProductPreviewMobileComponent({
   title,
   subtitle,
   description,
+  isLoading,
   likesMetadata,
   pricedProduct,
   accountProps,
@@ -292,6 +293,16 @@ export default function ProductPreviewMobileComponent({
                       rounded={true}
                       onClick={onAddToCart}
                       icon={<Line.AddShoppingCart size={24} />}
+                      loadingComponent={
+                        <img
+                          src={'../assets/svg/ring-resize-light.svg'}
+                          className={[
+                            styles['loading-ring'],
+                            styles['loading-ring-mobile'],
+                          ].join(' ')}
+                        />
+                      }
+                      loading={isLoading}
                     />
                   )}
                   {!pricedProduct && (

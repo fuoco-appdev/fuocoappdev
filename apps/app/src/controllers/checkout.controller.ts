@@ -1,4 +1,4 @@
-import { Subscription } from 'rxjs';
+import { Subscription, filter, firstValueFrom, take } from 'rxjs';
 import {
   AddressFormErrors,
   AddressFormValues,
@@ -50,25 +50,22 @@ class CheckoutController extends Controller {
   }
 
   public override initialize(renderCount: number): void {
-    this._medusaAccessTokenSubscription =
-      MedusaService.accessTokenObservable.subscribe({
-        next: (value: string | undefined) => {
-          if (!value) {
-            this.resetMedusaModel();
-            this.initializeAsync(renderCount);
-          }
-        },
-      });
+    this.initializeAsync(renderCount);
   }
 
-  public override dispose(renderCount: number): void {
+  public override disposeInitialization(renderCount: number): void {
     this._medusaAccessTokenSubscription?.unsubscribe();
+  }
+
+  public override disposeLoad(renderCount: number): void {
+    this._cartSubscription?.unsubscribe();
     this._shippingFormSubscription?.unsubscribe();
     this._customerSubscription?.unsubscribe();
-    this._cartSubscription?.unsubscribe();
   }
 
-  public async initializeAsync(renderCount: number): Promise<void> {
+  public async initializeAsync(renderCount: number): Promise<void> {}
+
+  public override load(renderCount: number): void {
     this._cartSubscription?.unsubscribe();
     this._cartSubscription = CartController.model.store
       .pipe(select((model) => model.cart))
@@ -176,7 +173,13 @@ class CheckoutController extends Controller {
   public async updateSelectedShippingAddressOptionIdAsync(
     value: string
   ): Promise<void> {
-    const customer = AccountController.model.customer;
+    const customer: Customer = await firstValueFrom(
+      AccountController.model.store.pipe(
+        select((model) => model.customer),
+        filter((value) => value !== undefined),
+        take(1)
+      )
+    );
     const address = customer?.shipping_addresses.find(
       (address) => address.id === value
     );
@@ -389,15 +392,18 @@ class CheckoutController extends Controller {
     return this.getCompleteCartIdAsync();
   }
 
-  public getAddressFormErrors(
+  public async getAddressFormErrorsAsync(
     form: AddressFormValues
-  ): AddressFormErrors | undefined {
+  ): Promise<AddressFormErrors | undefined> {
     const errors: AddressFormErrors = {};
 
-    if (
-      !AccountController.model.customer &&
-      (!form.email || form.email?.length <= 0)
-    ) {
+    const customer = await firstValueFrom(
+      AccountController.model.store.pipe(
+        select((model) => model.customer),
+        take(1)
+      )
+    );
+    if (!customer && (!form.email || form.email?.length <= 0)) {
       errors.email = this._model.errorStrings.email;
     }
 
@@ -510,7 +516,12 @@ class CheckoutController extends Controller {
       return;
     }
 
-    const customer = AccountController.model.customer;
+    const customer = await firstValueFrom(
+      AccountController.model.store.pipe(
+        select((model) => model.customer),
+        take(1)
+      )
+    );
     if (!customer) {
       this._model.shippingForm = {
         email: value?.email,
@@ -528,8 +539,9 @@ class CheckoutController extends Controller {
 
       if (
         value?.shipping_address &&
-        Object.keys(this.getAddressFormErrors(this._model.shippingForm) ?? {})
-          .length <= 0
+        Object.keys(
+          (await this.getAddressFormErrorsAsync(this._model.shippingForm)) ?? {}
+        ).length <= 0
       ) {
         this._model.shippingFormComplete = true;
       }

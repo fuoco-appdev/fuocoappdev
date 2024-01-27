@@ -54,12 +54,20 @@ export default function OrderConfirmedComponent(): JSX.Element {
     []
   );
   const isRenderedRef = useRef<boolean>(false);
+  const renderCountRef = useRef<number>(0);
 
   useEffect(() => {
+    renderCountRef.current += 1;
+    OrderConfirmedController.load(renderCountRef.current);
+
     if (!isRenderedRef.current) {
       isRenderedRef.current = true;
       OrderConfirmedController.requestOrderAsync(id ?? '');
     }
+
+    return () => {
+      OrderConfirmedController.disposeLoad(renderCountRef.current);
+    };
   }, []);
 
   useEffect(() => {

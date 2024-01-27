@@ -76,7 +76,9 @@ class AccountController extends Controller {
       });
   }
 
-  public override dispose(renderCount: number): void {
+  public override load(renderCount: number): void {}
+
+  public override disposeInitialization(renderCount: number): void {
     clearTimeout(this._addFriendsTimerId as number | undefined);
     clearTimeout(this._usernameTimerId as number | undefined);
     this._loadedAccountSubscription?.unsubscribe();
@@ -86,6 +88,8 @@ class AccountController extends Controller {
     this._activeAccountSubscription?.unsubscribe();
     this._userSubscription?.unsubscribe();
   }
+
+  public override disposeLoad(renderCount: number): void {}
 
   public loadLikedProducts(): void {
     if (this._model.likedProducts.length > 0) {

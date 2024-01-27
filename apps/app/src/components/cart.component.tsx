@@ -3,7 +3,7 @@ import {
   ResponsiveMobile,
   ResponsiveTablet,
 } from './responsive.component';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { TabProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/tabs/tabs';
 import StoreController from '../controllers/store.controller';
 import { useObservable } from '@ngneat/use-observable';
@@ -78,6 +78,7 @@ export default function CartComponent(): JSX.Element {
   const [foodVariantQuantities, setFoodVariantQuantities] = useState<
     Record<string, number>
   >({});
+  const renderCountRef = useRef<number>(0);
   const { t, i18n } = useTranslation();
 
   const onAddFoodToCart = () => {
@@ -109,6 +110,14 @@ export default function CartComponent(): JSX.Element {
       75
     );
   };
+
+  useEffect(() => {
+    renderCountRef.current += 1;
+    CartController.load(renderCountRef.current);
+    return () => {
+      CartController.disposeLoad(renderCountRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     const tabProps: TabProps[] = [];

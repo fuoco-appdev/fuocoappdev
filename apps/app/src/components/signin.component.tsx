@@ -7,7 +7,7 @@ import styles from './signin.module.scss';
 import SupabaseService from '../services/supabase.service';
 import { RoutePathsType } from '../route-paths';
 import { AuthError } from '@supabase/supabase-js';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { animated, config, useTransition } from 'react-spring';
 import {
   ResponsiveDesktop,
@@ -49,6 +49,15 @@ export default function SigninComponent(): JSX.Element {
   const [authError, setAuthError] = useState<AuthError | null>(null);
   const [emailError, setEmailError] = useState<string>('');
   const [passwordError, setPasswordError] = useState<string>('');
+  const renderCountRef = useRef<number>(0);
+
+  useEffect(() => {
+    SigninController.load(renderCountRef.current);
+
+    return () => {
+      SigninController.disposeLoad(renderCountRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (authError?.message === 'Invalid login credentials') {

@@ -78,6 +78,7 @@ export default function WindowComponent(): JSX.Element {
   const [windowLocalProps] = useObservable(
     WindowController.model.localStore ?? Store.prototype
   );
+  const renderCountRef = useRef<number>(0);
 
   const onCancelLocation = () => {
     query.set('sales_location', exploreLocalProps.selectedInventoryLocationId);
@@ -115,6 +116,23 @@ export default function WindowComponent(): JSX.Element {
     if (
       windowProps.loadedLocationPath &&
       windowProps.loadedLocationPath?.startsWith(`${RoutePathsType.Store}/`)
+    ) {
+      setTimeout(
+        () =>
+          navigate({
+            pathname: RoutePathsType.Store,
+            search: query.toString(),
+          }),
+        150
+      );
+      return;
+    }
+
+    if (
+      windowProps.loadedLocationPath &&
+      windowProps.loadedLocationPath?.startsWith(
+        `${RoutePathsType.OrderConfirmed}/`
+      )
     ) {
       setTimeout(
         () =>
@@ -170,6 +188,9 @@ export default function WindowComponent(): JSX.Element {
   };
 
   useEffect(() => {
+    renderCountRef.current += 1;
+    WindowController.load(renderCountRef.current);
+
     if (!isMounted.current) {
       WindowController.updateIsLoading(true);
       isMounted.current = true;
@@ -182,6 +203,10 @@ export default function WindowComponent(): JSX.Element {
     ) {
       WindowController.updateQueryInventoryLocationAsync(salesLocationId);
     }
+
+    return () => {
+      WindowController.disposeLoad(renderCountRef.current);
+    };
   }, []);
 
   useEffect(() => {

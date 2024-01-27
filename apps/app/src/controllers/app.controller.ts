@@ -18,7 +18,6 @@ import TermsOfServiceController from '../controllers/terms-of-service.controller
 import PrivacyPolicyController from '../controllers/privacy-policy.controller';
 import PermissionsController from './permissions.controller';
 import HelpController from '../controllers/help.controller';
-import LoadingController from '../controllers/loading.controller';
 import ResetPasswordController from '../controllers/reset-password.controller';
 import AccountPublicController from '../controllers/account-public.controller';
 import AccountController from '../controllers/account.controller';
@@ -36,52 +35,54 @@ class AppController extends Controller {
     this.initializeAsync(renderCount);
   }
 
-  public override dispose(renderCount: number): void {
-    WindowController.dispose(renderCount);
-    SigninController.dispose(renderCount);
-    SignupController.dispose(renderCount);
-    ForgotPasswordController.dispose(renderCount);
-    TermsOfServiceController.dispose(renderCount);
-    PrivacyPolicyController.dispose(renderCount);
-    PermissionsController.dispose(renderCount);
-    HelpController.dispose(renderCount);
-    ResetPasswordController.dispose(renderCount);
-    AccountPublicController.dispose(renderCount);
-    AccountController.dispose(renderCount);
-    LoadingController.dispose(renderCount);
-    ExploreController.dispose(renderCount);
-    StoreController.dispose(renderCount);
-    EventsController.dispose(renderCount);
-    CartController.dispose(renderCount);
-    CheckoutController.dispose(renderCount);
-    OrderConfirmedController.dispose(renderCount);
-    NotificationsController.dispose(renderCount);
-    ProductController.dispose(renderCount);
+  public override load(renderCount: number): void {}
+
+  public override disposeInitialization(renderCount: number): void {
+    AccountPublicController.disposeInitialization(renderCount);
+    AccountController.disposeInitialization(renderCount);
+    ExploreController.disposeInitialization(renderCount);
+    StoreController.disposeInitialization(renderCount);
+    EventsController.disposeInitialization(renderCount);
+    CartController.disposeInitialization(renderCount);
+    NotificationsController.disposeInitialization(renderCount);
+    ProductController.disposeInitialization(renderCount);
+    SigninController.disposeInitialization(renderCount);
+    SignupController.disposeInitialization(renderCount);
+    ForgotPasswordController.disposeInitialization(renderCount);
+    CheckoutController.disposeInitialization(renderCount);
+    OrderConfirmedController.disposeInitialization(renderCount);
+    TermsOfServiceController.disposeInitialization(renderCount);
+    PrivacyPolicyController.disposeInitialization(renderCount);
+    PermissionsController.disposeInitialization(renderCount);
+    HelpController.disposeInitialization(renderCount);
+    ResetPasswordController.disposeInitialization(renderCount);
+    WindowController.disposeInitialization(renderCount);
   }
 
+  public override disposeLoad(renderCount: number): void {}
+
   public async initializeAsync(renderCount: number): Promise<void> {
-    this.dispose(renderCount);
+    this.disposeInitialization(renderCount);
 
     WindowController.initialize(renderCount);
-    LoadingController.initialize(renderCount);
-    SigninController.initialize(renderCount);
-    SignupController.initialize(renderCount);
-    ResetPasswordController.initialize(renderCount);
-    ForgotPasswordController.initialize(renderCount);
-    TermsOfServiceController.initialize(renderCount);
-    PrivacyPolicyController.initialize(renderCount);
-    PermissionsController.initialize(renderCount);
-    HelpController.initialize(renderCount);
     AccountPublicController.initialize(renderCount);
     AccountController.initialize(renderCount);
     ExploreController.initialize(renderCount);
     StoreController.initialize(renderCount);
     EventsController.initialize(renderCount);
     CartController.initialize(renderCount);
-    CheckoutController.initialize(renderCount);
-    OrderConfirmedController.initialize(renderCount);
     NotificationsController.initialize(renderCount);
     ProductController.initialize(renderCount);
+    SigninController.initialize(renderCount);
+    SignupController.initialize(renderCount);
+    ForgotPasswordController.initialize(renderCount);
+    CheckoutController.initialize(renderCount);
+    OrderConfirmedController.initialize(renderCount);
+    TermsOfServiceController.initialize(renderCount);
+    PrivacyPolicyController.initialize(renderCount);
+    PermissionsController.initialize(renderCount);
+    HelpController.initialize(renderCount);
+    ResetPasswordController.initialize(renderCount);
   }
 
   public initializeServices(): void {

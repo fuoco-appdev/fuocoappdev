@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Auth } from '@fuoco.appdev/core-ui';
 import SignupController from '../controllers/signup.controller';
@@ -50,7 +50,16 @@ export default function SignupComponent(): JSX.Element {
   const [emailError, setEmailError] = useState<string>('');
   const [passwordError, setPasswordError] = useState<string>('');
   const [confirmPasswordError, setConfirmPasswordError] = useState<string>('');
+  const renderCountRef = useRef<number>(0);
   const { t } = useTranslation();
+
+  useEffect(() => {
+    SignupController.load(renderCountRef.current);
+
+    return () => {
+      SignupController.disposeLoad(renderCountRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (authError?.status === 400) {

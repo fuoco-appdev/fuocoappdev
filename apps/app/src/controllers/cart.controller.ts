@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Subscription } from 'rxjs';
+import { Subscription, filter, firstValueFrom, take } from 'rxjs';
 import { Controller } from '../controller';
 import { CartModel } from '../models/cart.model';
 import StoreController from './store.controller';
@@ -13,6 +13,7 @@ import {
   Swap,
   SalesChannel,
   CustomerGroup,
+  ProductType,
 } from '@medusajs/medusa';
 import MedusaService from '../services/medusa.service';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
@@ -41,21 +42,17 @@ class CartController extends Controller {
   }
 
   public override initialize(renderCount: number): void {
-    this._medusaAccessTokenSubscription =
-      MedusaService.accessTokenObservable.subscribe({
-        next: (value: string | undefined) => {
-          if (!value) {
-            this.resetMedusaModel();
-            this.initializeAsync(renderCount);
-          }
-        },
-      });
+    this.initializeAsync(renderCount);
   }
 
-  public override dispose(renderCount: number): void {
+  public override load(renderCount: number): void {}
+
+  public override disposeInitialization(renderCount: number): void {
     this._medusaAccessTokenSubscription?.unsubscribe();
     this._selectedInventoryLocationSubscription?.unsubscribe();
   }
+
+  public override disposeLoad(renderCount: number): void {}
 
   public updateDiscountCodeText(value: string): void {
     this._model.discountCode = value;
@@ -317,16 +314,28 @@ class CartController extends Controller {
   private async onSelectedInventoryLocationChangedAsync(
     value: InventoryLocation | undefined
   ): Promise<void> {
-    const region = StoreController.model.regions.find(
-      (region) => region.name === value?.region
+    const regions: Region[] = await firstValueFrom(
+      StoreController.model.store.pipe(
+        select((model) => model.regions),
+        filter((value) => value !== undefined),
+        take(1)
+      )
     );
+    const region = regions.find((region) => region.name === value?.region);
     const cartId = value?.id ? this._model.cartIds[value.id] : undefined;
     const metadata = region?.metadata as MedusaRegionMetadata | undefined;
     this._model.isFoodInCartRequired =
       Boolean(metadata?.is_food_in_cart_required) ?? false;
 
     try {
-      const requiredFoodType = StoreController.model.productTypes.find(
+      const productTypes: ProductType[] = await firstValueFrom(
+        StoreController.model.store.pipe(
+          select((model) => model.productTypes),
+          filter((value) => value !== undefined),
+          take(1)
+        )
+      );
+      const requiredFoodType = productTypes.find(
         (value) => value.value === MedusaProductTypeNames.RequiredFood
       );
       const requiredFoodProductsResponse =

@@ -17,7 +17,11 @@ class EventsController extends Controller {
 
   public override initialize(renderCount: number): void {}
 
-  public override dispose(renderCount: number): void {}
+  public override load(renderCount: number): void {}
+
+  public override disposeInitialization(renderCount: number): void {}
+
+  public override disposeLoad(renderCount: number): void {}
 }
 
 export default new EventsController();

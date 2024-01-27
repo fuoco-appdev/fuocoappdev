@@ -27,7 +27,6 @@ class ExploreController extends Controller {
   private _stockLocationsIndex: Index<Record<string, any>> | undefined;
   private _selectedInventoryLocationIdSubscription: Subscription | undefined;
   private _currentPositionSubscription: Subscription | undefined;
-  private _publicSecretsSubscription: Subscription | undefined;
   private _medusaAccessTokenSubscription: Subscription | undefined;
   private _limit: number;
 
@@ -46,23 +45,19 @@ class ExploreController extends Controller {
     this._stockLocationsIndex =
       MeiliSearchService.client?.index('stock_locations');
 
-    this._medusaAccessTokenSubscription =
-      MedusaService.accessTokenObservable.subscribe({
-        next: (value: string | undefined) => {
-          if (!value) {
-            this.resetMedusaModel();
-            this.initializeAsync(renderCount);
-          }
-        },
-      });
+    this.initializeAsync(renderCount);
   }
 
-  public override dispose(renderCount: number): void {
-    clearTimeout(this._timerId as number | undefined);
+  public override load(renderCount: number): void {}
+
+  public override disposeInitialization(renderCount: number): void {
     this._medusaAccessTokenSubscription?.unsubscribe();
-    this._publicSecretsSubscription?.unsubscribe();
     this._currentPositionSubscription?.unsubscribe();
     this._selectedInventoryLocationIdSubscription?.unsubscribe();
+  }
+
+  public override disposeLoad(renderCount: number): void {
+    clearTimeout(this._timerId as number | undefined);
   }
 
   public async loadStockLocationsAsync(): Promise<void> {

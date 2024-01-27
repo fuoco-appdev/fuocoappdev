@@ -46,6 +46,18 @@ export default function ShippingItemComponent({
   );
   const [discountPercentage, setDiscountPercentage] = useState<string>('');
 
+  const suspenceComponent = (
+    <>
+      <ShippingItemSuspenseDesktopComponent />
+      <ShippingItemSuspenseTabletComponent />
+      <ShippingItemSuspenseMobileComponent />
+    </>
+  );
+
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return suspenceComponent;
+  }
+
   useEffect(() => {
     const vintageOption = item.variant.product.options?.find(
       (value) => value.title === ProductOptions.Vintage
@@ -62,18 +74,6 @@ export default function ShippingItemComponent({
 
     setHasReducedPrice((item.discount_total ?? 0) > 0);
   }, [item]);
-
-  const suspenceComponent = (
-    <>
-      <ShippingItemSuspenseDesktopComponent />
-      <ShippingItemSuspenseTabletComponent />
-      <ShippingItemSuspenseMobileComponent />
-    </>
-  );
-
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
-    return suspenceComponent;
-  }
 
   return (
     <React.Suspense fallback={suspenceComponent}>

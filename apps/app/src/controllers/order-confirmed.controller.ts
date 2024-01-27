@@ -21,16 +21,22 @@ class OrderConfirmedController extends Controller {
   }
 
   public override initialize(renderCount: number): void {
-    if (renderCount > 1) {
-      return;
-    }
-
     this.initializeAsync();
   }
 
-  public override dispose(renderCount: number): void {}
+  public override load(renderCount: number): void {
+    this.requestReturnReasonsAsync();
+  }
+
+  public override disposeInitialization(renderCount: number): void {}
+
+  public override disposeLoad(renderCount: number): void {}
 
   public async requestOrderAsync(orderId: string): Promise<void> {
+    this._model.order = undefined;
+    this._model.refundItems = {};
+    this._model.returnReasons = [];
+
     try {
       const orderResponse = await MedusaService.medusa?.orders.retrieve(
         orderId
@@ -72,11 +78,9 @@ class OrderConfirmedController extends Controller {
     }
   }
 
-  private async initializeAsync(): Promise<void> {
-    await this.requestReturnReasons();
-  }
+  private async initializeAsync(): Promise<void> {}
 
-  private async requestReturnReasons(): Promise<void> {
+  private async requestReturnReasonsAsync(): Promise<void> {
     try {
       const returnReasonsResponse =
         await MedusaService.medusa?.returnReasons.list();

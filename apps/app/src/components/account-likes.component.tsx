@@ -43,6 +43,8 @@ export interface AccountLikesResponsiveProps {
   accountProps: AccountState;
   openCartVariants: boolean;
   variantQuantities: Record<string, number>;
+  isPreviewLoading: boolean;
+  setIsPreviewLoading: (value: boolean) => void;
   setOpenCartVariants: (value: boolean) => void;
   setVariantQuantities: (value: Record<string, number>) => void;
   onAddToCart: () => void;
@@ -69,6 +71,7 @@ export default function AccountLikesComponent(): JSX.Element {
   const [variantQuantities, setVariantQuantities] = useState<
     Record<string, number>
   >({});
+  const [isPreviewLoading, setIsPreviewLoading] = useState<boolean>(false);
 
   const onProductPreviewClick = (
     scrollTop: number,
@@ -99,6 +102,7 @@ export default function AccountLikesComponent(): JSX.Element {
   const onProductPreviewAddToCart = (product: PricedProduct) => {
     AccountController.updateSelectedLikedProduct(product);
     setOpenCartVariants(true);
+    setIsPreviewLoading(true);
   };
 
   const onProductPreviewLikeChanged = (
@@ -114,7 +118,7 @@ export default function AccountLikesComponent(): JSX.Element {
       ProductController.addToCartAsync(
         id,
         quantity,
-        () =>
+        () => {
           WindowController.addToast({
             key: `add-to-cart-${Math.random()}`,
             message: t('addedToCart') ?? '',
@@ -123,7 +127,9 @@ export default function AccountLikesComponent(): JSX.Element {
                 item: accountProps.selectedLikedProduct?.title,
               }) ?? '',
             type: 'success',
-          }),
+          });
+          setIsPreviewLoading(false);
+        },
         (error) => console.error(error)
       );
     }
@@ -186,6 +192,8 @@ export default function AccountLikesComponent(): JSX.Element {
           accountProps={accountProps}
           openCartVariants={openCartVariants}
           variantQuantities={variantQuantities}
+          isPreviewLoading={isPreviewLoading}
+          setIsPreviewLoading={setIsPreviewLoading}
           setOpenCartVariants={setOpenCartVariants}
           setVariantQuantities={setVariantQuantities}
           onAddToCart={onAddToCart}
@@ -199,6 +207,8 @@ export default function AccountLikesComponent(): JSX.Element {
           accountProps={accountProps}
           openCartVariants={openCartVariants}
           variantQuantities={variantQuantities}
+          isPreviewLoading={isPreviewLoading}
+          setIsPreviewLoading={setIsPreviewLoading}
           setOpenCartVariants={setOpenCartVariants}
           setVariantQuantities={setVariantQuantities}
           onAddToCart={onAddToCart}
@@ -212,6 +222,8 @@ export default function AccountLikesComponent(): JSX.Element {
           accountProps={accountProps}
           openCartVariants={openCartVariants}
           variantQuantities={variantQuantities}
+          isPreviewLoading={isPreviewLoading}
+          setIsPreviewLoading={setIsPreviewLoading}
           setOpenCartVariants={setOpenCartVariants}
           setVariantQuantities={setVariantQuantities}
           onAddToCart={onAddToCart}

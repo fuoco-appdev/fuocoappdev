@@ -57,16 +57,24 @@ export default function OrderItemDesktopComponent({
                   styles['thumbnail-desktop'],
                 ].join(' ')}
               >
-                <img
-                  className={[
-                    styles['thumbnail-image'],
-                    styles['thumbnail-image-desktop'],
-                  ].join(' ')}
-                  src={
-                    order.items?.[0]?.thumbnail ||
-                    '../assets/images/wine-bottle.png'
-                  }
-                />
+                {!order.items?.[0]?.thumbnail && (
+                  <img
+                    className={[
+                      styles['no-thumbnail-image'],
+                      styles['no-thumbnail-image-desktop'],
+                    ].join(' ')}
+                    src={'../assets/images/wine-bottle.png'}
+                  />
+                )}
+                {order.items?.[0]?.thumbnail && (
+                  <img
+                    className={[
+                      styles['thumbnail-image'],
+                      styles['thumbnail-image-desktop'],
+                    ].join(' ')}
+                    src={order.items?.[0]?.thumbnail}
+                  />
+                )}
               </div>
               <div
                 className={[

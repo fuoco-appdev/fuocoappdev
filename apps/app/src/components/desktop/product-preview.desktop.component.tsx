@@ -31,6 +31,7 @@ export default function ProductPreviewDesktopComponent({
   title,
   subtitle,
   description,
+  isLoading,
   likesMetadata,
   pricedProduct,
   accountProps,
@@ -304,6 +305,16 @@ export default function ProductPreviewDesktopComponent({
                   rounded={true}
                   onClick={onAddToCart}
                   icon={<Line.AddShoppingCart size={24} />}
+                  loadingComponent={
+                    <img
+                      src={'../assets/svg/ring-resize-light.svg'}
+                      className={[
+                        styles['loading-ring'],
+                        styles['loading-ring-desktop'],
+                      ].join(' ')}
+                    />
+                  }
+                  loading={isLoading}
                 />
               )}
               {!pricedProduct && (

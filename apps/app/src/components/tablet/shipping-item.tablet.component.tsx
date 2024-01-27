@@ -33,13 +33,24 @@ export default function ShippingItemTabletComponent({
               ' '
             )}
           >
-            <img
-              className={[
-                styles['thumbnail-image'],
-                styles['thumbnail-image-tablet'],
-              ].join(' ')}
-              src={item.thumbnail || '../assets/images/wine-bottle.png'}
-            />
+            {!item?.thumbnail && (
+              <img
+                className={[
+                  styles['no-thumbnail-image'],
+                  styles['no-thumbnail-image-tablet'],
+                ].join(' ')}
+                src={'../assets/images/wine-bottle.png'}
+              />
+            )}
+            {item?.thumbnail && (
+              <img
+                className={[
+                  styles['thumbnail-image'],
+                  styles['thumbnail-image-tablet'],
+                ].join(' ')}
+                src={item?.thumbnail}
+              />
+            )}
           </div>
           <div
             className={[
@@ -56,7 +67,9 @@ export default function ShippingItemTabletComponent({
               className={[styles['variant'], styles['variant-tablet']].join(
                 ' '
               )}
-            >{`${t('vintage')}: ${vintage}`}</div>
+            >
+              {item.variant.title}
+            </div>
           </div>
           <div
             className={[

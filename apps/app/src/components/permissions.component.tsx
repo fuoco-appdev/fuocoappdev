@@ -44,6 +44,7 @@ export interface PermissionsResponsiveProps {
 export default function PermissionsComponent(): JSX.Element {
   const [permissionsProps] = useObservable(PermissionsController.model.store);
   const [windowProps] = useObservable(WindowController.model.store);
+  const renderCountRef = useRef<number>(0);
   const navigate = useNavigate();
   const query = useQuery();
 
@@ -79,6 +80,15 @@ export default function PermissionsComponent(): JSX.Element {
     }
   };
 
+  useEffect(() => {
+    renderCountRef.current += 1;
+
+    PermissionsController.load(renderCountRef.current);
+
+    return () => {
+      PermissionsController.disposeLoad(renderCountRef.current);
+    };
+  }, []);
   useLayoutEffect(() => {
     return () => {
       updateDefaultInventoryLocationAsync();

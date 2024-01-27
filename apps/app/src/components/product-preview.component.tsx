@@ -54,6 +54,7 @@ export interface ProductPreviewProps {
   parentRef: MutableRefObject<HTMLDivElement | null>;
   pricedProduct: PricedProduct | null;
   likesMetadata: ProductLikesMetadataResponse;
+  isLoading: boolean;
   thumbnail?: string;
   title?: string;
   subtitle?: string;
@@ -87,6 +88,7 @@ export default function ProductPreviewComponent({
   title,
   subtitle,
   description,
+  isLoading,
   pricedProduct,
   likesMetadata,
   onClick,
@@ -199,6 +201,7 @@ export default function ProductPreviewComponent({
         title={title}
         subtitle={subtitle}
         description={description}
+        isLoading={isLoading}
         pricedProduct={pricedProduct}
         onClick={onClick}
         onRest={onRest}
@@ -224,6 +227,7 @@ export default function ProductPreviewComponent({
         title={title}
         subtitle={subtitle}
         description={description}
+        isLoading={isLoading}
         pricedProduct={pricedProduct}
         onClick={onClick}
         onRest={onRest}
@@ -249,6 +253,7 @@ export default function ProductPreviewComponent({
         title={title}
         subtitle={subtitle}
         description={description}
+        isLoading={isLoading}
         pricedProduct={pricedProduct}
         onClick={onClick}
         onRest={onRest}

@@ -5,7 +5,7 @@ import {
 } from './responsive.component';
 import styles from './checkout.module.scss';
 import { useTranslation } from 'react-i18next';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useObservable } from '@ngneat/use-observable';
 import CheckoutController from '../controllers/checkout.controller';
 import { RadioProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/radio/radio';
@@ -89,9 +89,19 @@ export default function CheckoutComponent(): JSX.Element {
   const [isAddAddressOpen, setIsAddAddressOpen] = useState<boolean>(false);
   const [isPayOpen, setIsPayOpen] = useState<boolean>(false);
   const [stripeOptions, setStripeOptions] = useState<StripeElementsOptions>({});
+  const renderCountRef = useRef<number>(0);
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const customer = accountProps.customer as Customer;
+
+  useEffect(() => {
+    renderCountRef.current += 1;
+    CheckoutController.load(renderCountRef.current);
+
+    return () => {
+      CheckoutController.disposeLoad(renderCountRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (
@@ -236,7 +246,7 @@ export default function CheckoutComponent(): JSX.Element {
     });
   }, [i18n.language]);
 
-  const onContinueToDeliveryFromShippingAddress = () => {
+  const onContinueToDeliveryFromShippingAddress = async () => {
     CheckoutController.updateShippingAddressErrors({
       email: undefined,
       firstName: undefined,
@@ -250,7 +260,7 @@ export default function CheckoutComponent(): JSX.Element {
       phoneNumber: undefined,
     });
 
-    const errors = CheckoutController.getAddressFormErrors(
+    const errors = await CheckoutController.getAddressFormErrorsAsync(
       checkoutProps.shippingForm
     );
 
@@ -264,7 +274,7 @@ export default function CheckoutComponent(): JSX.Element {
     CheckoutController.continueToDeliveryAsync();
   };
 
-  const onContinueToBillingFromShippingAddress = () => {
+  const onContinueToBillingFromShippingAddress = async () => {
     CheckoutController.updateShippingAddressErrors({
       email: undefined,
       firstName: undefined,
@@ -278,7 +288,7 @@ export default function CheckoutComponent(): JSX.Element {
       phoneNumber: undefined,
     });
 
-    const errors = CheckoutController.getAddressFormErrors(
+    const errors = await CheckoutController.getAddressFormErrorsAsync(
       checkoutProps.shippingForm
     );
 
@@ -291,7 +301,7 @@ export default function CheckoutComponent(): JSX.Element {
     CheckoutController.continueToBilling();
   };
 
-  const onContinueToDeliveryFromBillingAddress = () => {
+  const onContinueToDeliveryFromBillingAddress = async () => {
     CheckoutController.updateBillingAddressErrors({
       email: undefined,
       firstName: undefined,
@@ -305,7 +315,7 @@ export default function CheckoutComponent(): JSX.Element {
       phoneNumber: undefined,
     });
 
-    const errors = CheckoutController.getAddressFormErrors(
+    const errors = await CheckoutController.getAddressFormErrorsAsync(
       CheckoutController.model.billingForm
     );
 
@@ -332,7 +342,7 @@ export default function CheckoutComponent(): JSX.Element {
       phoneNumber: undefined,
     });
 
-    const errors = CheckoutController.getAddressFormErrors(
+    const errors = await CheckoutController.getAddressFormErrorsAsync(
       checkoutProps.addShippingForm
     );
     if (errors) {

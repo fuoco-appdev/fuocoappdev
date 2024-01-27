@@ -7,7 +7,7 @@ import {
   ResponsiveSuspenseTablet,
   ResponsiveTablet,
 } from './responsive.component';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { TermsOfServiceState } from '../models/terms-of-service.model';
 import { useObservable } from '@ngneat/use-observable';
 import TermsOfServiceController from '../controllers/terms-of-service.controller';
@@ -34,11 +34,18 @@ export default function TermsOfServiceComponent(): JSX.Element {
     TermsOfServiceController.model.store
   );
   const [remarkPlugins, setRemarkPlugins] = useState<any[]>([]);
+  const renderCountRef = useRef<number>(0);
 
   useEffect(() => {
     import('remark-gfm').then((plugin) => {
       setRemarkPlugins([plugin.default]);
     });
+
+    TermsOfServiceController.load(renderCountRef.current);
+
+    return () => {
+      TermsOfServiceController.disposeLoad(renderCountRef.current);
+    };
   }, []);
 
   const suspenceComponent = (

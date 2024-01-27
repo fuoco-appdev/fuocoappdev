@@ -64,6 +64,8 @@ export default function StoreMobileComponent({
   selectedSalesLocationId,
   tabs,
   categoryOpen,
+  isPreviewLoading,
+  setIsPreviewLoading,
   setOpenFilter,
   setOpenCartVariants,
   setVariantQuantities,
@@ -312,6 +314,10 @@ export default function StoreMobileComponent({
                 subtitle={product.subtitle ?? undefined}
                 description={product.description ?? undefined}
                 pricedProduct={pricedProduct}
+                isLoading={
+                  isPreviewLoading &&
+                  storeProps.selectedPricedProduct?.id === pricedProduct?.id
+                }
                 likesMetadata={
                   productLikesMetadata ??
                   core.ProductLikesMetadataResponse.prototype
@@ -500,7 +506,10 @@ export default function StoreMobileComponent({
               }}
               open={openCartVariants}
               touchScreen={true}
-              onClose={() => setOpenCartVariants(false)}
+              onClose={() => {
+                setOpenCartVariants(false);
+                setIsPreviewLoading(false);
+              }}
             >
               <div
                 className={[

@@ -4,7 +4,7 @@ import styles from './reset-password.module.scss';
 import WindowController from '../controllers/window.controller';
 import SupabaseService from '../services/supabase.service';
 import { AuthError } from '@supabase/supabase-js';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { animated, config, useTransition } from 'react-spring';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { RoutePathsType } from '../route-paths';
@@ -50,6 +50,15 @@ export default function ResetPasswordComponent(): JSX.Element {
   const [resetPasswordProps] = useObservable(
     ResetPasswordController.model.store
   );
+  const renderCountRef = useRef<number>(0);
+
+  useEffect(() => {
+    ResetPasswordController.load(renderCountRef.current);
+
+    return () => {
+      ResetPasswordController.disposeLoad(renderCountRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (authError) {
