@@ -195,7 +195,7 @@ export default function ExploreDesktopComponent({
                     : 'none',
               }}
             />
-            {!exploreProps.hasMoreSearchedStockLocations &&
+            {!exploreProps.areSearchedStockLocationsLoading &&
               exploreProps.searchedStockLocations.length <= 0 && (
                 <div
                   className={[

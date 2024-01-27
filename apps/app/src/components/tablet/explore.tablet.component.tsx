@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import styles from '../explore.module.scss';
-import { Alert, Button, Input, Line } from '@fuoco.appdev/core-ui';
+import { Alert, Button, Input, Line, Tabs } from '@fuoco.appdev/core-ui';
 import { RoutePathsType } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import SupabaseService from '../../services/supabase.service';
@@ -18,6 +18,7 @@ import * as core from '../../protobuf/core_pb';
 import Map, { MapRef, Marker, Popup } from 'react-map-gl';
 import ConfigService from '../../services/config.service';
 import {
+  ExploreTabs,
   InventoryLocation,
   InventoryLocationType,
 } from '../../models/explore.model';
@@ -48,36 +49,36 @@ export default function ExploreTabletComponent({
 
   return (
     <ResponsiveTablet>
-      <div className={[styles['root'], styles['root-desktop']].join(' ')}>
+      <div className={[styles['root'], styles['root-tablet']].join(' ')}>
         <div
           className={[
             styles['search-container'],
-            styles['search-container-desktop'],
+            styles['search-container-tablet'],
           ].join(' ')}
         >
           <div
             ref={topBarRef}
             className={[
               styles['top-bar-container'],
-              styles['top-bar-container-desktop'],
+              styles['top-bar-container-tablet'],
             ].join(' ')}
           >
             <div
               className={[
                 styles['top-bar-left-content'],
-                styles['top-bar-left-content-desktop'],
+                styles['top-bar-left-content-tablet'],
               ].join(' ')}
             >
               <div
                 className={[
                   styles['search-container'],
-                  styles['search-container-desktop'],
+                  styles['search-container-tablet'],
                 ].join(' ')}
               >
                 <div
                   className={[
                     styles['search-input-root'],
-                    styles['search-input-root-desktop'],
+                    styles['search-input-root-tablet'],
                   ].join(' ')}
                 >
                   <Input
@@ -85,11 +86,11 @@ export default function ExploreTabletComponent({
                     classNames={{
                       container: [
                         styles['search-input-container'],
-                        styles['search-input-container-desktop'],
+                        styles['search-input-container-tablet'],
                       ].join(' '),
                       input: [
                         styles['search-input'],
-                        styles['search-input-desktop'],
+                        styles['search-input-tablet'],
                       ].join(' '),
                     }}
                     placeholder={t('search') ?? ''}
@@ -100,52 +101,45 @@ export default function ExploreTabletComponent({
                   />
                 </div>
               </div>
-              {/* <div
+              <div
                 className={[
                   styles['tab-container'],
-                  styles['tab-container-desktop'],
+                  styles['tab-container-tablet'],
                 ].join(' ')}
               >
                 <Tabs
                   classNames={{
+                    nav: styles['tab-nav'],
                     tabButton: styles['tab-button'],
                     selectedTabButton: styles['selected-tab-button'],
                     tabSliderPill: styles['tab-slider-pill'],
                   }}
                   removable={true}
                   type={'pills'}
-                  activeId={storeProps.selectedTab}
+                  activeId={exploreProps.selectedTab}
                   onChange={(id: string) =>
-                    StoreController.updateSelectedTabAsync(
-                      id.length > 0 ? (id as ProductTabs) : undefined
+                    ExploreController.updateSelectedTabAsync(
+                      id.length > 0 ? (id as ExploreTabs) : undefined
                     )
                   }
                   tabs={[
                     {
-                      id: ProductTabs.White,
-                      label: t('white') ?? 'White',
+                      id: ExploreTabs.Cellar,
+                      label: t('cellar') ?? 'Cellar',
                     },
                     {
-                      id: ProductTabs.Red,
-                      label: t('red') ?? 'Red',
-                    },
-                    {
-                      id: ProductTabs.Rose,
-                      label: t('rose') ?? 'Rosé',
-                    },
-                    {
-                      id: ProductTabs.Spirits,
-                      label: t('spirits') ?? 'Spirits',
+                      id: ExploreTabs.Restaurant,
+                      label: t('restaurant') ?? 'Restaurant',
                     },
                   ]}
                 />
-              </div> */}
+              </div>
             </div>
           </div>
           <div
             className={[
               styles['scroll-container'],
-              styles['scroll-container-desktop'],
+              styles['scroll-container-tablet'],
             ].join(' ')}
             style={{ height: window.innerHeight }}
             onScroll={(e) => {
@@ -201,18 +195,18 @@ export default function ExploreTabletComponent({
                     : 'none',
               }}
             />
-            {!exploreProps.hasMoreSearchedStockLocations &&
+            {!exploreProps.areSearchedStockLocationsLoading &&
               exploreProps.searchedStockLocations.length <= 0 && (
                 <div
                   className={[
                     styles['no-searched-stock-locations-container'],
-                    styles['no-searched-stock-locations-container-desktop'],
+                    styles['no-searched-stock-locations-container-tablet'],
                   ].join(' ')}
                 >
                   <div
                     className={[
                       styles['no-items-text'],
-                      styles['no-items-text-desktop'],
+                      styles['no-items-text-tablet'],
                     ].join(' ')}
                   >
                     {t('noStockLocationsFound')}
@@ -224,7 +218,7 @@ export default function ExploreTabletComponent({
         <div
           className={[
             styles['map-container'],
-            styles['map-container-desktop'],
+            styles['map-container-tablet'],
           ].join(' ')}
         >
           {exploreProps.isSelectedInventoryLocationLoaded && (
@@ -302,13 +296,13 @@ export default function ExploreTabletComponent({
                   <div
                     className={[
                       styles['marker-popup'],
-                      styles['marker-popup-desktop'],
+                      styles['marker-popup-tablet'],
                     ].join(' ')}
                   >
                     <div
                       className={[
                         styles['company'],
-                        styles['company-desktop'],
+                        styles['company-tablet'],
                       ].join(' ')}
                     >
                       {selectedPoint.company}
@@ -316,7 +310,7 @@ export default function ExploreTabletComponent({
                     <div
                       className={[
                         styles['address'],
-                        styles['address-desktop'],
+                        styles['address-tablet'],
                       ].join(' ')}
                     >
                       <Line.Place size={18} />
@@ -327,7 +321,7 @@ export default function ExploreTabletComponent({
                     <div
                       className={[
                         styles['description'],
-                        styles['description-desktop'],
+                        styles['description-tablet'],
                       ].join(' ')}
                     >
                       {selectedPoint.description}
@@ -335,7 +329,7 @@ export default function ExploreTabletComponent({
                     <div
                       className={[
                         styles['go-to-store-button-container'],
-                        styles['go-to-store-button-container-desktop'],
+                        styles['go-to-store-button-container-tablet'],
                       ].join(' ')}
                     >
                       <div>

@@ -235,7 +235,7 @@ export default function ExploreMobileComponent({
                       : 'none',
                 }}
               />
-              {!exploreProps.hasMoreSearchedStockLocations &&
+              {!exploreProps.areSearchedStockLocationsLoading &&
                 exploreProps.searchedStockLocations.length <= 0 && (
                   <div
                     className={[
