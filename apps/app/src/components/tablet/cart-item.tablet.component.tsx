@@ -48,12 +48,41 @@ export default function CartItemTabletComponent({
               ' '
             )}
           >
+            {item?.thumbnail && productType === MedusaProductTypeNames.Wine && (
+              <img
+                className={[
+                  styles['wine-thumbnail-image'],
+                  styles['wine-thumbnail-image-tablet'],
+                ].join(' ')}
+                src={item?.thumbnail}
+              />
+            )}
+            {item?.thumbnail &&
+              productType === MedusaProductTypeNames.MenuItem && (
+                <img
+                  className={[
+                    styles['menu-item-thumbnail-image'],
+                    styles['menu-item-thumbnail-image-tablet'],
+                  ].join(' ')}
+                  src={item?.thumbnail}
+                />
+              )}
+            {item?.thumbnail &&
+              productType === MedusaProductTypeNames.RequiredFood && (
+                <img
+                  className={[
+                    styles['required-food-thumbnail-image'],
+                    styles['required-food-thumbnail-image-tablet'],
+                  ].join(' ')}
+                  src={item?.thumbnail}
+                />
+              )}
             {!item?.thumbnail &&
               productType === MedusaProductTypeNames.Wine && (
                 <img
                   className={[
-                    styles['thumbnail-image'],
-                    styles['thumbnail-image-tablet'],
+                    styles['no-thumbnail-image'],
+                    styles['no-thumbnail-image-tablet'],
                   ].join(' ')}
                   src={'../../assets/images/wine-bottle.png'}
                 />
@@ -62,8 +91,8 @@ export default function CartItemTabletComponent({
               productType === MedusaProductTypeNames.MenuItem && (
                 <img
                   className={[
-                    styles['thumbnail-image'],
-                    styles['thumbnail-image-tablet'],
+                    styles['no-thumbnail-image'],
+                    styles['no-thumbnail-image-tablet'],
                   ].join(' ')}
                   src={'../../assets/images/menu.png'}
                 />
@@ -72,20 +101,11 @@ export default function CartItemTabletComponent({
               productType === MedusaProductTypeNames.RequiredFood && (
                 <Line.RestaurantMenu
                   className={[
-                    styles['thumbnail-image'],
-                    styles['thumbnail-image-tablet'],
+                    styles['no-thumbnail-image'],
+                    styles['no-thumbnail-image-tablet'],
                   ].join(' ')}
                 />
               )}
-            {item?.thumbnail && (
-              <img
-                className={[
-                  styles['thumbnail-image'],
-                  styles['thumbnail-image-tablet'],
-                ].join(' ')}
-                src={item.thumbnail}
-              />
-            )}
           </div>
           <div
             className={[

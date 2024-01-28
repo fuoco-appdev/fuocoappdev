@@ -78,27 +78,27 @@ export default function ProductPreviewTabletComponent({
             styles['thumbnail-container-tablet'],
           ].join(' ')}
         >
-          {pricedProduct?.thumbnail &&
+          {thumbnail &&
             pricedProduct?.type?.value === MedusaProductTypeNames.Wine && (
               <img
                 className={[
                   styles['wine-thumbnail-image'],
                   styles['wine-thumbnail-image-tablet'],
                 ].join(' ')}
-                src={pricedProduct?.thumbnail}
+                src={thumbnail}
               />
             )}
-          {pricedProduct?.thumbnail &&
+          {thumbnail &&
             pricedProduct?.type?.value === MedusaProductTypeNames.MenuItem && (
               <img
                 className={[
                   styles['menu-item-thumbnail-image'],
                   styles['menu-item-thumbnail-image-tablet'],
                 ].join(' ')}
-                src={pricedProduct?.thumbnail}
+                src={thumbnail}
               />
             )}
-          {!pricedProduct?.thumbnail &&
+          {!thumbnail &&
             pricedProduct?.type?.value === MedusaProductTypeNames.Wine && (
               <img
                 className={[
@@ -108,7 +108,7 @@ export default function ProductPreviewTabletComponent({
                 src={'../assets/images/wine-bottle.png'}
               />
             )}
-          {!pricedProduct?.thumbnail &&
+          {!thumbnail &&
             pricedProduct?.type?.value === MedusaProductTypeNames.MenuItem && (
               <img
                 className={[

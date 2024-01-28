@@ -97,7 +97,7 @@
 
         & .loading-ring {
             width: 100%;
-            height: 24px;
+            transition: max-height 150ms $transition-standard-easing;
         }
 
         & .no-items-container {

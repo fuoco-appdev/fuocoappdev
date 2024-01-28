@@ -377,11 +377,11 @@ export default function StoreTabletComponent({
               src={'../assets/svg/ring-resize-dark.svg'}
               className={styles['loading-ring']}
               style={{
-                display:
+                maxHeight:
                   exploreLocalProps.selectedInventoryLocationId &&
                   (storeProps.hasMorePreviews || storeProps.isLoading)
-                    ? 'flex'
-                    : 'none',
+                    ? 24
+                    : 0,
               }}
             />
             {!exploreLocalProps.selectedInventoryLocationId && (

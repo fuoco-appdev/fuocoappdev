@@ -228,11 +228,11 @@ export default function ExploreMobileComponent({
                 src={'../assets/svg/ring-resize-dark.svg'}
                 className={styles['loading-ring']}
                 style={{
-                  display:
+                  maxHeight:
                     exploreProps.hasMoreSearchedStockLocations ||
                     exploreProps.areSearchedStockLocationsLoading
-                      ? 'flex'
-                      : 'none',
+                      ? 24
+                      : 0,
                 }}
               />
               {!exploreProps.areSearchedStockLocationsLoading &&

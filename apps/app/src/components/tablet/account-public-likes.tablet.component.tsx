@@ -120,11 +120,11 @@ export default function AccountLikesTabletComponent({
             src={'../assets/svg/ring-resize-dark.svg'}
             className={styles['loading-ring']}
             style={{
-              display:
+              maxHeight:
                 accountPublicProps.areLikedProductsLoading ||
                 accountPublicProps.hasMoreLikes
-                  ? 'flex'
-                  : 'none',
+                  ? 24
+                  : 0,
             }}
           />
           {!accountPublicProps.areLikedProductsLoading &&

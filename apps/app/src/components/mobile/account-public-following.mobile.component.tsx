@@ -104,11 +104,11 @@ export default function AccountPublicFollowingMobileComponent({
             src={'../assets/svg/ring-resize-dark.svg'}
             className={styles['loading-ring']}
             style={{
-              display:
+              maxHeight:
                 accountPublicProps.hasMoreFollowing ||
                 accountPublicProps.areFollowingLoading
-                  ? 'flex'
-                  : 'none',
+                  ? 24
+                  : 0,
             }}
           />
           {!accountPublicProps.hasMoreFollowing &&

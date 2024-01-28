@@ -75,11 +75,12 @@ export default function CartVariantItemTabletComponent({
                 )}
               {product?.thumbnail &&
                 productType === MedusaProductTypeNames.RequiredFood && (
-                  <Line.RestaurantMenu
+                  <img
                     className={[
                       styles['required-food-thumbnail-image'],
                       styles['required-food-thumbnail-image-tablet'],
                     ].join(' ')}
+                    src={product?.thumbnail}
                   />
                 )}
               {!product?.thumbnail &&

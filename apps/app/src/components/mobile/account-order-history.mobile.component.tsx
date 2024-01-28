@@ -83,10 +83,10 @@ export default function AccountOrderHistoryMobileComponent({
               styles['loading-ring-mobile'],
             ].join(' ')}
             style={{
-              display:
+              maxHeight:
                 accountProps.hasMoreOrders || accountProps.areOrdersLoading
-                  ? 'flex'
-                  : 'none',
+                  ? 24
+                  : 0,
             }}
           />
           {!accountProps.areOrdersLoading && orders.length <= 0 && (

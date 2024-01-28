@@ -261,5 +261,5 @@
 
 .loading-ring {
   width: 24px;
-  height: 24px;
+  transition: max-height 150ms $transition-standard-easing;
 }

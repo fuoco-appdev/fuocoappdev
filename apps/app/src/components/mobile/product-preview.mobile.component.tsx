@@ -133,17 +133,17 @@ export default function ProductPreviewMobileComponent({
             ].join(' ')}
             style={{ height: expanded ? '100%' : 'calc(100% - 38px)' }}
           >
-            {pricedProduct?.thumbnail &&
+            {thumbnail &&
               pricedProduct?.type?.value === MedusaProductTypeNames.Wine && (
                 <img
                   className={[
                     styles['wine-thumbnail-image'],
                     styles['wine-thumbnail-image-mobile'],
                   ].join(' ')}
-                  src={pricedProduct?.thumbnail}
+                  src={thumbnail}
                 />
               )}
-            {pricedProduct?.thumbnail &&
+            {thumbnail &&
               pricedProduct?.type?.value ===
                 MedusaProductTypeNames.MenuItem && (
                 <img
@@ -151,10 +151,10 @@ export default function ProductPreviewMobileComponent({
                     styles['menu-item-thumbnail-image'],
                     styles['menu-item-thumbnail-image-mobile'],
                   ].join(' ')}
-                  src={pricedProduct?.thumbnail}
+                  src={thumbnail}
                 />
               )}
-            {!pricedProduct?.thumbnail &&
+            {!thumbnail &&
               pricedProduct?.type?.value === MedusaProductTypeNames.Wine && (
                 <img
                   className={[
@@ -164,7 +164,7 @@ export default function ProductPreviewMobileComponent({
                   src={'../assets/images/wine-bottle.png'}
                 />
               )}
-            {!pricedProduct?.thumbnail &&
+            {!thumbnail &&
               pricedProduct?.type?.value ===
                 MedusaProductTypeNames.MenuItem && (
                 <img

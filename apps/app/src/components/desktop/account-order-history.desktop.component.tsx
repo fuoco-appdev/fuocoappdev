@@ -87,10 +87,10 @@ export default function AccountOrderHistoryDesktopComponent({
               styles['loading-ring-desktop'],
             ].join(' ')}
             style={{
-              display:
+              maxHeight:
                 accountProps.hasMoreOrders || accountProps.areOrdersLoading
-                  ? 'flex'
-                  : 'none',
+                  ? 24
+                  : 0,
             }}
           />
           {!accountProps.areOrdersLoading && orders.length <= 0 && (

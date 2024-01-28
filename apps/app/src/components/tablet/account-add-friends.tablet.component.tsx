@@ -166,11 +166,11 @@ export default function AccountAddFriendsTabletComponent({
             src={'../assets/svg/ring-resize-dark.svg'}
             className={styles['loading-ring']}
             style={{
-              display:
+              maxHeight:
                 accountProps.hasMoreAddFriends ||
                 accountProps.areAddFriendsLoading
-                  ? 'flex'
-                  : 'none',
+                  ? 24
+                  : 0,
             }}
           />
           {!accountProps.hasMoreAddFriends &&

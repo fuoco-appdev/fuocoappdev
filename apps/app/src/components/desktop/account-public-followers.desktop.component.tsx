@@ -100,11 +100,11 @@ export default function AccountPublicFollowersDesktopComponent({
             src={'../assets/svg/ring-resize-dark.svg'}
             className={styles['loading-ring']}
             style={{
-              display:
+              maxHeight:
                 accountPublicProps.hasMoreFollowers ||
                 accountPublicProps.areFollowersLoading
-                  ? 'flex'
-                  : 'none',
+                  ? 24
+                  : 0,
             }}
           />
           {!accountPublicProps.hasMoreFollowers &&
