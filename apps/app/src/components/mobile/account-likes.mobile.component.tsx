@@ -90,6 +90,7 @@ export default function AccountLikesMobileComponent({
                   title={product.title ?? undefined}
                   subtitle={product.subtitle ?? undefined}
                   description={product.description ?? undefined}
+                  type={product.type ?? undefined}
                   pricedProduct={product}
                   isLoading={
                     isPreviewLoading &&

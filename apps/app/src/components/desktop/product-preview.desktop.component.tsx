@@ -31,6 +31,7 @@ export default function ProductPreviewDesktopComponent({
   title,
   subtitle,
   description,
+  type,
   isLoading,
   likesMetadata,
   pricedProduct,
@@ -78,46 +79,42 @@ export default function ProductPreviewDesktopComponent({
             styles['thumbnail-container-desktop'],
           ].join(' ')}
         >
-          {thumbnail &&
-            pricedProduct?.type?.value === MedusaProductTypeNames.Wine && (
-              <img
-                className={[
-                  styles['wine-thumbnail-image'],
-                  styles['wine-thumbnail-image-desktop'],
-                ].join(' ')}
-                src={thumbnail}
-              />
-            )}
-          {thumbnail &&
-            pricedProduct?.type?.value === MedusaProductTypeNames.MenuItem && (
-              <img
-                className={[
-                  styles['menu-item-thumbnail-image'],
-                  styles['menu-item-thumbnail-image-desktop'],
-                ].join(' ')}
-                src={thumbnail}
-              />
-            )}
-          {!thumbnail &&
-            pricedProduct?.type?.value === MedusaProductTypeNames.Wine && (
-              <img
-                className={[
-                  styles['no-thumbnail-image'],
-                  styles['no-thumbnail-image-desktop'],
-                ].join(' ')}
-                src={'../assets/images/wine-bottle.png'}
-              />
-            )}
-          {!thumbnail &&
-            pricedProduct?.type?.value === MedusaProductTypeNames.MenuItem && (
-              <img
-                className={[
-                  styles['no-thumbnail-image'],
-                  styles['no-thumbnail-image-desktop'],
-                ].join(' ')}
-                src={'../assets/images/menu.png'}
-              />
-            )}
+          {thumbnail && type?.value === MedusaProductTypeNames.Wine && (
+            <img
+              className={[
+                styles['wine-thumbnail-image'],
+                styles['wine-thumbnail-image-desktop'],
+              ].join(' ')}
+              src={thumbnail}
+            />
+          )}
+          {thumbnail && type?.value === MedusaProductTypeNames.MenuItem && (
+            <img
+              className={[
+                styles['menu-item-thumbnail-image'],
+                styles['menu-item-thumbnail-image-desktop'],
+              ].join(' ')}
+              src={thumbnail}
+            />
+          )}
+          {!thumbnail && type?.value === MedusaProductTypeNames.Wine && (
+            <img
+              className={[
+                styles['no-thumbnail-image'],
+                styles['no-thumbnail-image-desktop'],
+              ].join(' ')}
+              src={'../assets/images/wine-bottle.png'}
+            />
+          )}
+          {!thumbnail && type?.value === MedusaProductTypeNames.MenuItem && (
+            <img
+              className={[
+                styles['no-thumbnail-image'],
+                styles['no-thumbnail-image-desktop'],
+              ].join(' ')}
+              src={'../assets/images/menu.png'}
+            />
+          )}
           <div
             className={[
               styles['thumbnail-content-container'],

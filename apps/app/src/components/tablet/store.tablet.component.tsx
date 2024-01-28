@@ -339,6 +339,7 @@ export default function StoreTabletComponent({
                   title={product.title ?? undefined}
                   subtitle={product.subtitle ?? undefined}
                   description={product.description ?? undefined}
+                  type={product.type ?? undefined}
                   pricedProduct={pricedProduct}
                   isLoading={
                     isPreviewLoading &&

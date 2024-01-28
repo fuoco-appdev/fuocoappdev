@@ -8,7 +8,7 @@ import React, {
   useState,
 } from 'react';
 import styles from './product-preview.module.scss';
-import { MoneyAmount, Product, LineItem } from '@medusajs/medusa';
+import { MoneyAmount, Product, LineItem, ProductType } from '@medusajs/medusa';
 import {
   PricedProduct,
   PricedVariant,
@@ -59,6 +59,7 @@ export interface ProductPreviewProps {
   title?: string;
   subtitle?: string;
   description?: string;
+  type?: ProductType;
   storeProps?: StoreState;
   onClick?: () => void;
   onRest?: () => void;
@@ -88,6 +89,7 @@ export default function ProductPreviewComponent({
   title,
   subtitle,
   description,
+  type,
   isLoading,
   pricedProduct,
   likesMetadata,
@@ -201,6 +203,7 @@ export default function ProductPreviewComponent({
         title={title}
         subtitle={subtitle}
         description={description}
+        type={type}
         isLoading={isLoading}
         pricedProduct={pricedProduct}
         onClick={onClick}
@@ -227,6 +230,7 @@ export default function ProductPreviewComponent({
         title={title}
         subtitle={subtitle}
         description={description}
+        type={type}
         isLoading={isLoading}
         pricedProduct={pricedProduct}
         onClick={onClick}
@@ -253,6 +257,7 @@ export default function ProductPreviewComponent({
         title={title}
         subtitle={subtitle}
         description={description}
+        type={type}
         isLoading={isLoading}
         pricedProduct={pricedProduct}
         onClick={onClick}
