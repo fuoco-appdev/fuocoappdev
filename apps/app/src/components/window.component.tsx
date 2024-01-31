@@ -25,7 +25,7 @@ import { WindowSuspenseTabletComponent } from './tablet/suspense/window.suspense
 import PermissionsController from '../controllers/permissions.controller';
 import { PermissionsState } from '../models/permissions.model';
 import { ExploreState } from '../models/explore.model';
-import { PriceList } from '@medusajs/medusa';
+import { PriceList, PriceListStatus } from '@medusajs/medusa';
 import { Line } from '@fuoco.appdev/core-ui';
 import { AccountPublicState } from '../models/account-public.model';
 import StoreController from '../controllers/store.controller';
@@ -249,6 +249,10 @@ export default function WindowComponent(): JSX.Element {
 
   useEffect(() => {
     for (const priceList of windowProps.priceLists as PriceList[]) {
+      if (priceList.ends_at && priceList.ends_at >= new Date(Date.now())) {
+        continue;
+      }
+
       const date = new Date(priceList.ends_at?.toString() ?? '');
       setTimeout(
         () =>

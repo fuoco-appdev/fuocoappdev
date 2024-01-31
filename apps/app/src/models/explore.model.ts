@@ -24,6 +24,7 @@ export interface InventoryLocation {
   salesChannels: Partial<SalesChannel>[];
   type?: InventoryLocationType;
   avatar?: string;
+  thumbnails?: string[];
 }
 
 export interface ExploreState {

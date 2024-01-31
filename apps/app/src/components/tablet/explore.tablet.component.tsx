@@ -27,6 +27,7 @@ import ExploreController from '../../controllers/explore.controller';
 import { ResponsiveTablet } from '../responsive.component';
 import StockLocationItemComponent from '../stock-location-item.component';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
+import Slider from 'react-slick';
 
 export default function ExploreTabletComponent({
   exploreProps,
@@ -247,7 +248,7 @@ export default function ExploreTabletComponent({
                     key={`marker-${index}`}
                     latitude={point.coordinates.lat}
                     longitude={point.coordinates.lng}
-                    anchor={'bottom'}
+                    anchor={'right'}
                     onClick={(e) => {
                       e.originalEvent.stopPropagation();
                       setSelectedPoint(point);
@@ -286,7 +287,7 @@ export default function ExploreTabletComponent({
               )}
               {selectedPoint && (
                 <Popup
-                  anchor={'top'}
+                  anchor={'left'}
                   onClose={() => setSelectedPoint(null)}
                   closeButton={false}
                   maxWidth={'auto'}
@@ -299,56 +300,85 @@ export default function ExploreTabletComponent({
                       styles['marker-popup-tablet'],
                     ].join(' ')}
                   >
+                    {selectedPoint.thumbnails &&
+                      selectedPoint.thumbnails.length > 0 && (
+                        <div style={{ width: 423, height: 282 }}>
+                          <Slider
+                            dots={true}
+                            speed={250}
+                            slidesToShow={1}
+                            slidesToScroll={1}
+                            className={[
+                              styles['slider'],
+                              styles['slider-tablet'],
+                            ].join(' ')}
+                          >
+                            {selectedPoint.thumbnails.map((value) => (
+                              <img
+                                src={value}
+                                height={282}
+                                style={{ width: 'auto', objectFit: 'cover' }}
+                              />
+                            ))}
+                          </Slider>
+                        </div>
+                      )}
                     <div
                       className={[
-                        styles['company'],
-                        styles['company-tablet'],
+                        styles['info-container'],
+                        styles['info-container-tablet'],
                       ].join(' ')}
                     >
-                      {selectedPoint.company}
-                    </div>
-                    <div
-                      className={[
-                        styles['address'],
-                        styles['address-tablet'],
-                      ].join(' ')}
-                    >
-                      <Line.Place size={18} />
-                      {t(selectedPoint.type as string)}
-                      &nbsp;
-                      {selectedPoint.placeName}
-                    </div>
-                    <div
-                      className={[
-                        styles['description'],
-                        styles['description-tablet'],
-                      ].join(' ')}
-                    >
-                      {selectedPoint.description}
-                    </div>
-                    <div
-                      className={[
-                        styles['go-to-store-button-container'],
-                        styles['go-to-store-button-container-tablet'],
-                      ].join(' ')}
-                    >
-                      <div>
-                        <Button
-                          classNames={{
-                            button: styles['go-to-store-button'],
-                          }}
-                          rippleProps={{
-                            color: 'rgba(133, 38, 122, .35)',
-                          }}
-                          touchScreen={true}
-                          icon={<Line.Store size={24} />}
-                          block={true}
-                          size={'large'}
-                          type={'primary'}
-                          onClick={() => onGoToStore(selectedPoint)}
-                        >
-                          {t('goToStore')}
-                        </Button>
+                      <div
+                        className={[
+                          styles['company'],
+                          styles['company-tablet'],
+                        ].join(' ')}
+                      >
+                        {selectedPoint.company}
+                      </div>
+                      <div
+                        className={[
+                          styles['address'],
+                          styles['address-tablet'],
+                        ].join(' ')}
+                      >
+                        <Line.Place size={18} />
+                        {t(selectedPoint.type as string)}
+                        &nbsp;
+                        {selectedPoint.placeName}
+                      </div>
+                      <div
+                        className={[
+                          styles['description'],
+                          styles['description-tablet'],
+                        ].join(' ')}
+                      >
+                        {selectedPoint.description}
+                      </div>
+                      <div
+                        className={[
+                          styles['go-to-store-button-container'],
+                          styles['go-to-store-button-container-tablet'],
+                        ].join(' ')}
+                      >
+                        <div>
+                          <Button
+                            classNames={{
+                              button: styles['go-to-store-button'],
+                            }}
+                            rippleProps={{
+                              color: 'rgba(133, 38, 122, .35)',
+                            }}
+                            icon={<Line.Store size={24} />}
+                            block={true}
+                            size={'large'}
+                            type={'primary'}
+                            onClick={() => onGoToStore(selectedPoint)}
+                          >
+                            {t('goToStore')}
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </div>

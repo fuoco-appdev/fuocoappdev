@@ -266,6 +266,25 @@ class ExploreController extends Controller {
       );
     }
 
+    let thumbnails: string[] = [];
+    const thumbnailsMetadata = (
+      stockLocation.metadata?.['thumbnails'] as string
+    )?.split(',');
+
+    if (thumbnailsMetadata && thumbnailsMetadata.length > 0) {
+      for (const file of thumbnailsMetadata) {
+        const url = await BucketService.getPublicUrlAsync(
+          StorageFolderType.Thumbnails,
+          file
+        );
+        if (!url) {
+          continue;
+        }
+
+        thumbnails.push(url);
+      }
+    }
+
     return {
       id: stockLocation.id,
       salesChannels: stockLocation.sales_channels ?? [],
@@ -279,6 +298,7 @@ class ExploreController extends Controller {
       region: (metadata?.['region'] as string) ?? '',
       type: type,
       avatar: avatar,
+      thumbnails: thumbnails,
     };
   }
 

@@ -14,10 +14,16 @@ export enum StorageFolderType {
    * @generated from enum value: Avatars = 0;
    */
   Avatars = 0,
+
+  /**
+   * @generated from enum value: Thumbnails = 1;
+   */
+  Thumbnails = 1,
 }
 // Retrieve enum metadata with: proto3.getEnumType(StorageFolderType)
 proto3.util.setEnumType(StorageFolderType, "core.StorageFolderType", [
   { no: 0, name: "Avatars" },
+  { no: 1, name: "Thumbnails" },
 ]);
 
 /**

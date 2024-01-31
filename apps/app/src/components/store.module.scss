@@ -31,6 +31,16 @@
             }
         }
 
+        & .category-type-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: $mp-1;
+            color: $brand-900;
+            font-weight: $font-weight-bold;
+        }
+
         & .top-bar-left-content {
         
         }
@@ -691,7 +701,6 @@
 .category-button {
     background-color: transparent !important;
     color: $brand-900 !important;
-    padding: $mp-2 0 !important;
 }
 
 .category-text {

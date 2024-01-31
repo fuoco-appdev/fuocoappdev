@@ -1,4 +1,6 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
+@import 'slick-carousel/slick/slick.css';
+@import 'slick-carousel/slick/slick-theme.css';
 
 /* cyrillic-ext */
 @font-face {
@@ -249,4 +251,30 @@ body {
     -o-text-size-adjust: none;
     text-size-adjust: none;
   }
+}
+
+.mapboxgl-popup-content {
+  padding: 0 !important;
+}
+
+.slick-dots {
+  bottom: $mp-4;
+}
+
+.slick-prev {
+  left: $mp-4;
+  z-index: 1;
+}
+
+.slick-next {
+  right: $mp-4;
+  z-index: 1;
+}
+
+.slick-dots li.slick-active button:before {
+  color: #fff;
+}
+
+.slick-dots li button:before {
+  color: #fff;
 }

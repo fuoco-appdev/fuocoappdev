@@ -38,6 +38,7 @@ import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 import StockLocationItemComponent from '../stock-location-item.component';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
 import { createPortal } from 'react-dom';
+import Slider from 'react-slick';
 
 export default function ExploreMobileComponent({
   exploreProps,
@@ -372,53 +373,85 @@ export default function ExploreMobileComponent({
                   styles['dropdown-content-mobile'],
                 ].join(' ')}
               >
-                <div
-                  className={[styles['company'], styles['company-mobile']].join(
-                    ' '
+                {selectedPoint.thumbnails &&
+                  selectedPoint.thumbnails.length > 0 && (
+                    <div style={{ width: '100%', height: 282 }}>
+                      <Slider
+                        dots={true}
+                        speed={250}
+                        slidesToShow={1}
+                        slidesToScroll={1}
+                        className={[
+                          styles['slider'],
+                          styles['slider-mobile'],
+                        ].join(' ')}
+                      >
+                        {selectedPoint.thumbnails.map((value) => (
+                          <img
+                            src={value}
+                            height={282}
+                            style={{ width: 'auto', objectFit: 'cover' }}
+                          />
+                        ))}
+                      </Slider>
+                    </div>
                   )}
-                >
-                  {selectedPoint.company}
-                </div>
-                <div
-                  className={[styles['address'], styles['address-mobile']].join(
-                    ' '
-                  )}
-                >
-                  <Line.Place size={18} />
-                  {t(selectedPoint.type as string)}
-                  &nbsp;
-                  {selectedPoint.placeName}
-                </div>
                 <div
                   className={[
-                    styles['description'],
-                    styles['description-mobile'],
+                    styles['info-container'],
+                    styles['info-container-mobile'],
                   ].join(' ')}
                 >
-                  {selectedPoint.description}
-                </div>
-                <div
-                  className={[
-                    styles['go-to-store-button-container'],
-                    styles['go-to-store-button-container-mobile'],
-                  ].join(' ')}
-                >
-                  <div>
-                    <Button
-                      classNames={{
-                        button: styles['go-to-store-button'],
-                      }}
-                      rippleProps={{
-                        color: 'rgba(133, 38, 122, .35)',
-                      }}
-                      icon={<Line.Store size={24} />}
-                      block={true}
-                      size={'large'}
-                      type={'primary'}
-                      onClick={() => onGoToStore(selectedPoint)}
-                    >
-                      {t('goToStore')}
-                    </Button>
+                  <div
+                    className={[
+                      styles['company'],
+                      styles['company-mobile'],
+                    ].join(' ')}
+                  >
+                    {selectedPoint.company}
+                  </div>
+                  <div
+                    className={[
+                      styles['address'],
+                      styles['address-mobile'],
+                    ].join(' ')}
+                  >
+                    <Line.Place size={18} />
+                    {t(selectedPoint.type as string)}
+                    &nbsp;
+                    {selectedPoint.placeName}
+                  </div>
+                  <div
+                    className={[
+                      styles['description'],
+                      styles['description-mobile'],
+                    ].join(' ')}
+                  >
+                    {selectedPoint.description}
+                  </div>
+                  <div
+                    className={[
+                      styles['go-to-store-button-container'],
+                      styles['go-to-store-button-container-mobile'],
+                    ].join(' ')}
+                  >
+                    <div>
+                      <Button
+                        classNames={{
+                          button: styles['go-to-store-button'],
+                        }}
+                        rippleProps={{
+                          color: 'rgba(133, 38, 122, .35)',
+                        }}
+                        icon={<Line.Store size={24} />}
+                        block={true}
+                        size={'large'}
+                        type={'primary'}
+                        onClick={() => onGoToStore(selectedPoint)}
+                      >
+                        {t('goToStore')}
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>

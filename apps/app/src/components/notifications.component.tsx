@@ -14,33 +14,66 @@ import LoadingComponent from './loading.component';
 import { Store } from '@ngneat/elf';
 import { Helmet } from 'react-helmet';
 import { AuthenticatedComponent } from './authenticated.component';
+import { lazy } from '@loadable/component';
+import React from 'react';
+import { NotificationsSuspenseDesktopComponent } from './desktop/suspense/notifications.suspense.desktop.component';
+import { NotificationsSuspenseMobileComponent } from './mobile/suspense/notifications.suspense.mobile.component';
+import { NotificationsSuspenseTabletComponent } from './tablet/suspense/notifications.suspense.tablet.component';
 
-function NotificationsDesktopComponent(): JSX.Element {
-  const navigate = useNavigate();
-  const [props] = useObservable(NotificationsController.model.store);
-
-  return <></>;
-}
-
-function NotificationsMobileComponent(): JSX.Element {
-  const navigate = useNavigate();
-  const [props] = useObservable(NotificationsController.model.store);
-  const { t, i18n } = useTranslation();
-
-  return <></>;
-}
+const NotificationsDesktopComponent = lazy(
+  () => import('./desktop/notifications.desktop.component')
+);
+const NotificationsTabletComponent = lazy(
+  () => import('./tablet/notifications.tablet.component')
+);
+const NotificationsMobileComponent = lazy(
+  () => import('./mobile/notifications.mobile.component')
+);
 
 export default function NotificationsComponent(): JSX.Element {
+  const suspenceComponent = (
+    <>
+      <NotificationsSuspenseDesktopComponent />
+      <NotificationsSuspenseTabletComponent />
+      <NotificationsSuspenseMobileComponent />
+    </>
+  );
+
   return (
     <>
-      <AuthenticatedComponent>
-        <ResponsiveDesktop>
+      <Helmet>
+        <title>Cruthology</title>
+        <link rel="canonical" href={window.location.href} />
+        <meta name="title" content={'Cruthology'} />
+        <meta
+          name="description"
+          content={
+            'An exclusive wine club offering high-end dinners, entertainment, and enchanting wine tastings, providing a gateway to extraordinary cultural experiences.'
+          }
+        />
+        <meta
+          property="og:image"
+          content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
+        />
+        <meta property="og:title" content={'Cruthology'} />
+        <meta
+          property="og:description"
+          content={
+            'An exclusive wine club offering high-end dinners, entertainment, and enchanting wine tastings, providing a gateway to extraordinary cultural experiences.'
+          }
+        />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={window.location.href} />
+      </Helmet>
+      <React.Suspense fallback={suspenceComponent}>
+        <AuthenticatedComponent>
           <NotificationsDesktopComponent />
-        </ResponsiveDesktop>
-        <ResponsiveMobile>
+          <NotificationsTabletComponent />
           <NotificationsMobileComponent />
-        </ResponsiveMobile>
-      </AuthenticatedComponent>
+        </AuthenticatedComponent>
+      </React.Suspense>
     </>
   );
 }

@@ -4,6 +4,7 @@ package core;
 
 enum StorageFolderType {
     Avatars = 0;
+    Thumbnails = 1;
 }
 
 message PublicSecrets {

@@ -8460,7 +8460,8 @@ proto.core.AccountFollowersResponse.prototype.clearFollowersList = function() {
  * @enum {number}
  */
 proto.core.StorageFolderType = {
-  AVATARS: 0
+  AVATARS: 0,
+  THUMBNAILS: 1
 };
 
 export const AccountExistsRequest = proto.core.AccountExistsRequest;

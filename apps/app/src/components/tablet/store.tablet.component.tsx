@@ -157,43 +157,47 @@ export default function StoreTabletComponent({
               )}
               {exploreProps.selectedInventoryLocation?.type ===
                 InventoryLocationType.Restaurant && (
-                <Button
-                  ref={categoryButtonRef}
-                  classNames={{
-                    button: styles['category-button'],
-                  }}
-                  icon={
-                    <>
-                      {storeProps.category === StoreCategoryType.Wines && (
-                        <img
-                          style={{
-                            height: 24,
-                            width: 24,
-                            objectFit: 'contain',
-                          }}
-                          src={'../../assets/images/wine-bottle.png'}
-                        />
-                      )}
-                      {storeProps.category === StoreCategoryType.Menu && (
-                        <img
-                          style={{
-                            height: 24,
-                            width: 24,
-                            objectFit: 'contain',
-                          }}
-                          src={'../../assets/images/menu.png'}
-                        />
-                      )}
-                    </>
-                  }
-                  iconRight={<Line.ExpandMore size={24} />}
-                  onClick={(e) => setCategoryOpen(true)}
+                <div
+                  className={[
+                    styles['category-type-container'],
+                    styles['category-type-container-tablet'],
+                  ].join(' ')}
                 >
+                  {storeProps.category === StoreCategoryType.Wines && (
+                    <img
+                      style={{
+                        height: 24,
+                        width: 24,
+                        objectFit: 'contain',
+                      }}
+                      src={'../../assets/images/wine-bottle.png'}
+                    />
+                  )}
+                  {storeProps.category === StoreCategoryType.Menu && (
+                    <img
+                      style={{
+                        height: 24,
+                        width: 24,
+                        objectFit: 'contain',
+                      }}
+                      src={'../../assets/images/menu.png'}
+                    />
+                  )}
                   {storeProps.category === StoreCategoryType.Wines &&
                     t(StoreCategoryType.Wines)}
                   {storeProps.category === StoreCategoryType.Menu &&
                     t(StoreCategoryType.Menu)}
-                </Button>
+                  <Button
+                    ref={categoryButtonRef}
+                    classNames={{
+                      button: styles['category-button'],
+                    }}
+                    rounded={true}
+                    size={'tiny'}
+                    iconRight={<Line.ExpandMore size={24} />}
+                    onClick={(e) => setCategoryOpen(true)}
+                  ></Button>
+                </div>
               )}
             </div>
             <div
@@ -670,7 +674,7 @@ export default function StoreTabletComponent({
               <div
                 className={[
                   styles['category-text'],
-                  styles['category-text-desktop'],
+                  styles['category-text-tablet'],
                 ].join(' ')}
               >
                 {t(StoreCategoryType.Menu)}
@@ -688,7 +692,7 @@ export default function StoreTabletComponent({
               <div
                 className={[
                   styles['category-text'],
-                  styles['category-text-desktop'],
+                  styles['category-text-tablet'],
                 ].join(' ')}
               >
                 {t(StoreCategoryType.Wines)}
