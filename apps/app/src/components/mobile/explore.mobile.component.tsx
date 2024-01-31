@@ -387,11 +387,7 @@ export default function ExploreMobileComponent({
                         ].join(' ')}
                       >
                         {selectedPoint.thumbnails.map((value) => (
-                          <img
-                            src={value}
-                            height={282}
-                            style={{ width: 'auto', objectFit: 'cover' }}
-                          />
+                          <img src={value} height={282} />
                         ))}
                       </Slider>
                     </div>
