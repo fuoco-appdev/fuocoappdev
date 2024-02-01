@@ -249,11 +249,11 @@ export default function WindowComponent(): JSX.Element {
 
   useEffect(() => {
     for (const priceList of windowProps.priceLists as PriceList[]) {
-      if (priceList.ends_at && priceList.ends_at >= new Date(Date.now())) {
+      const date = new Date(priceList.ends_at?.toString() ?? '');
+      if (date < new Date(Date.now())) {
         continue;
       }
 
-      const date = new Date(priceList.ends_at?.toString() ?? '');
       setTimeout(
         () =>
           WindowController.addBanner({

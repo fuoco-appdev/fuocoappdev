@@ -14,14 +14,7 @@ export function ProductSuspenseMobileComponent(): JSX.Element {
             styles['thumbnail-container'],
             styles['thumbnail-container-mobile'],
           ].join(' ')}
-        >
-          <Skeleton
-            className={[
-              styles['thumbnail-image-skeleton'],
-              styles['thumbnail-image-skeleton-mobile'],
-            ].join(' ')}
-          />
-        </div>
+        ></div>
         <div
           className={[styles['content'], styles['content-mobile']].join(' ')}
         >

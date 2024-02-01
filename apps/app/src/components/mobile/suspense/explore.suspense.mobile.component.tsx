@@ -33,16 +33,17 @@ export function ExploreSuspenseMobileComponent(): JSX.Element {
                   styles['logo-container-mobile'],
                 ].join(' ')}
               >
-                <img
+                <Skeleton
                   className={[styles['logo'], styles['logo-mobile']].join(' ')}
-                  src={'../assets/svg/logo.svg'}
+                  borderRadius={32}
                 />
-                <img
+                <Skeleton
                   className={[
                     styles['logo-text'],
                     styles['logo-text-mobile'],
                   ].join(' ')}
-                  src={'../assets/svg/logo-text-dark.svg'}
+                  width={128}
+                  borderRadius={28}
                 />
               </div>
               <div

@@ -22,7 +22,6 @@ import MedusaService from '../services/medusa.service';
 
 class WindowController extends Controller {
   private readonly _model: WindowModel;
-  private _inventoryLocationsSubscription: Subscription | undefined;
   private _customerGroupSubscription: Subscription | undefined;
   private _scrollRef: HTMLDivElement | null;
   private _accountSubscription: Subscription | undefined;

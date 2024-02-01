@@ -39,6 +39,7 @@ import StockLocationItemComponent from '../stock-location-item.component';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
 import { createPortal } from 'react-dom';
 import Slider from 'react-slick';
+import Skeleton from 'react-loading-skeleton';
 
 export default function ExploreMobileComponent({
   exploreProps,
@@ -57,6 +58,8 @@ export default function ExploreMobileComponent({
   const topBarRef = useRef<HTMLDivElement | null>(null);
   const scrollContainerRef = createRef<HTMLDivElement>();
   const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
+  const [isLogoLoaded, setIsLogoLoaded] = useState<boolean>(false);
+  const [isLogoTextLoaded, setIsLogoTextLoaded] = useState<boolean>(false);
   let prevScrollTop = 0;
   let yPosition = 0;
 
@@ -67,6 +70,12 @@ export default function ExploreMobileComponent({
 
     setIsSearchFocused(true);
   }, [exploreProps.selectedTab]);
+
+  useMobileEffect(() => {
+    if (!isSearchFocused) {
+      ExploreController.updateSelectedTabAsync(undefined);
+    }
+  }, [isSearchFocused]);
 
   return (
     <ResponsiveMobile>
@@ -93,14 +102,34 @@ export default function ExploreMobileComponent({
               <img
                 className={[styles['logo'], styles['logo-mobile']].join(' ')}
                 src={'../assets/svg/logo.svg'}
+                onLoad={() => setIsLogoLoaded(true)}
               />
+              {!isLogoLoaded && (
+                <Skeleton
+                  className={[styles['logo'], styles['logo-mobile']].join(' ')}
+                  style={{ display: isLogoLoaded ? 'block' : 'none' }}
+                  borderRadius={32}
+                />
+              )}
               <img
                 className={[
                   styles['logo-text'],
                   styles['logo-text-mobile'],
                 ].join(' ')}
+                style={{ display: isLogoTextLoaded ? 'block' : 'none' }}
                 src={'../assets/svg/logo-text-dark.svg'}
+                onLoad={() => setIsLogoTextLoaded(true)}
               />
+              {!isLogoTextLoaded && (
+                <Skeleton
+                  className={[
+                    styles['logo-text'],
+                    styles['logo-text-mobile'],
+                  ].join(' ')}
+                  width={128}
+                  borderRadius={28}
+                />
+              )}
             </div>
             <div
               className={[
