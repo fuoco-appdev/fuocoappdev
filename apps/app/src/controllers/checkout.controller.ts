@@ -27,6 +27,7 @@ import {
 import SupabaseService from '../services/supabase.service';
 import { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import ExploreController from './explore.controller';
+import { Store } from '@fuoco.appdev/core-ui/dist/cjs/src/components/icon/icons/line';
 
 class CheckoutController extends Controller {
   private readonly _model: CheckoutModel;
@@ -51,34 +52,6 @@ class CheckoutController extends Controller {
 
   public override initialize(renderCount: number): void {
     this.initializeAsync(renderCount);
-  }
-
-  public override disposeInitialization(renderCount: number): void {
-    this._medusaAccessTokenSubscription?.unsubscribe();
-  }
-
-  public override disposeLoad(renderCount: number): void {
-    this._cartSubscription?.unsubscribe();
-    this._shippingFormSubscription?.unsubscribe();
-    this._customerSubscription?.unsubscribe();
-  }
-
-  public async initializeAsync(renderCount: number): Promise<void> {}
-
-  public override load(renderCount: number): void {
-    this._cartSubscription?.unsubscribe();
-    this._cartSubscription = CartController.model.store
-      .pipe(select((model) => model.cart))
-      .subscribe({
-        next: this.onCartChangedAsync,
-      });
-
-    this._customerSubscription?.unsubscribe();
-    this._customerSubscription = AccountController.model.store
-      .pipe(select((model) => model.customer))
-      .subscribe({
-        next: this.onCustomerChangedAsync,
-      });
 
     this._shippingFormSubscription?.unsubscribe();
     this._shippingFormSubscription = this._model.store
@@ -88,6 +61,22 @@ class CheckoutController extends Controller {
     SupabaseService.supabaseClient?.auth.onAuthStateChange(
       this.onAuthStateChanged
     );
+  }
+
+  public override disposeInitialization(renderCount: number): void {
+    this._medusaAccessTokenSubscription?.unsubscribe();
+    this._shippingFormSubscription?.unsubscribe();
+  }
+
+  public override disposeLoad(renderCount: number): void {
+    this.resetCheckoutStates();
+
+    this._cartSubscription?.unsubscribe();
+    this._customerSubscription?.unsubscribe();
+  }
+
+  public override load(renderCount: number): void {
+    this.loadAsync(renderCount);
   }
 
   public updateShippingAddress(value: AddressFormValues): void {
@@ -138,9 +127,15 @@ class CheckoutController extends Controller {
   public async updateSelectedShippingOptionIdAsync(
     value: string
   ): Promise<void> {
-    const { selectedInventoryLocationId } = ExploreController.model;
-    const cartId = selectedInventoryLocationId
-      ? CartController.model.cartIds[selectedInventoryLocationId]
+    const selectedInventoryLocation = await firstValueFrom(
+      ExploreController.model.store.pipe(
+        select((model) => model.selectedInventoryLocation),
+        filter((value) => value !== undefined),
+        take(1)
+      )
+    );
+    const cartId = selectedInventoryLocation
+      ? CartController.model.cartIds[selectedInventoryLocation.id]
       : undefined;
     if (
       !cartId ||
@@ -202,21 +197,31 @@ class CheckoutController extends Controller {
     });
 
     this._model.selectedShippingAddressOptionId = value;
+
+    const completed = await this.continueToDeliveryAsync();
+    if (!completed) {
+      return;
+    }
+
     this._model.shippingFormComplete = true;
 
     if (this._model.sameAsBillingAddress && !this._model.billingFormComplete) {
       this._model.billingFormComplete = true;
     }
-
-    await this.continueToDeliveryAsync();
   }
 
   public async updateSelectedProviderIdAsync(
     value: ProviderType
   ): Promise<void> {
-    const { selectedInventoryLocationId } = ExploreController.model;
-    const cartId = selectedInventoryLocationId
-      ? CartController.model.cartIds[selectedInventoryLocationId]
+    const selectedInventoryLocation = await firstValueFrom(
+      ExploreController.model.store.pipe(
+        select((model) => model.selectedInventoryLocation),
+        filter((value) => value !== undefined),
+        take(1)
+      )
+    );
+    const cartId = selectedInventoryLocation
+      ? CartController.model.cartIds[selectedInventoryLocation.id]
       : undefined;
     if (
       !cartId ||
@@ -244,13 +249,28 @@ class CheckoutController extends Controller {
     }
   }
 
-  public async continueToDeliveryAsync(): Promise<void> {
-    const { selectedInventoryLocationId } = ExploreController.model;
-    const cartId = selectedInventoryLocationId
-      ? CartController.model.cartIds[selectedInventoryLocationId]
+  public async continueToDeliveryAsync(): Promise<boolean> {
+    const selectedInventoryLocation = await firstValueFrom(
+      ExploreController.model.store.pipe(
+        select((model) => model.selectedInventoryLocation),
+        filter((value) => value !== undefined),
+        take(1)
+      )
+    );
+    const cartIds = CartController.model.localStore
+      ? await firstValueFrom(
+          CartController.model.localStore.pipe(
+            select((model) => model.cartIds),
+            filter((value) => value !== undefined),
+            take(1)
+          )
+        )
+      : {};
+    const cartId = selectedInventoryLocation
+      ? cartIds[selectedInventoryLocation.id]
       : undefined;
     if (!cartId) {
-      return;
+      return false;
     }
 
     if (this._model.sameAsBillingAddress) {
@@ -286,19 +306,18 @@ class CheckoutController extends Controller {
     try {
       const cartResponse = await MedusaService.medusa?.carts.update(cartId, {
         email: this._model.shippingForm.email,
-        shipping_address: this._model.shippingFormComplete
-          ? shippingAddressPayload
-          : undefined,
-        billing_address: this._model.shippingFormComplete
-          ? billingAddressPayload
-          : undefined,
+        shipping_address: shippingAddressPayload,
+        billing_address: billingAddressPayload,
       });
       if (cartResponse?.cart) {
         await CartController.updateLocalCartAsync(cartResponse.cart);
       }
     } catch (error: any) {
       console.error(error);
+      return false;
     }
+
+    return true;
   }
 
   public continueToBilling(): void {
@@ -437,6 +456,24 @@ class CheckoutController extends Controller {
     return undefined;
   }
 
+  private async initializeAsync(renderCount: number): Promise<void> {}
+
+  private async loadAsync(renderCount: number): Promise<void> {
+    const cart = await firstValueFrom(
+      CartController.model.store.pipe(
+        select((model) => model.cart),
+        filter((value) => value !== undefined),
+        take(1)
+      )
+    );
+    await this.onCartChangedAsync(cart);
+
+    this._customerSubscription?.unsubscribe();
+    this._customerSubscription = AccountController.model.store
+      .pipe(select((model) => model.customer))
+      .subscribe({ next: this.onCustomerChangedAsync });
+  }
+
   private resetMedusaModel(): void {
     this._model.shippingForm = {
       email: '',
@@ -508,6 +545,8 @@ class CheckoutController extends Controller {
     this._model.selectedShippingOptionId = undefined;
     this._model.giftCardCode = '';
     this._model.discountCode = '';
+    this._model.selectedShippingAddressOptionId = undefined;
+    this._model.selectedShippingOptionId = undefined;
     this._model.selectedProviderId = undefined;
   }
 
@@ -610,20 +649,20 @@ class CheckoutController extends Controller {
   private async onCustomerChangedAsync(
     value: Customer | undefined
   ): Promise<void> {
-    if (value && value?.shipping_addresses?.length <= 0) {
+    if (!value) {
+      return;
+    }
+
+    if (value.shipping_addresses?.length <= 0) {
       this._model.selectedShippingAddressOptionId = undefined;
     }
 
-    // Select first shipping address
-    if (
-      value &&
-      !this._model.selectedShippingAddressOptionId &&
-      value.shipping_addresses?.length > 0
-    ) {
-      await this.updateSelectedShippingAddressOptionIdAsync(
-        value.shipping_addresses[0].id ?? ''
-      );
-    }
+    // // Select first shipping address
+    // if (value.shipping_addresses?.length > 0) {
+    //   await this.updateSelectedShippingAddressOptionIdAsync(
+    //     value.shipping_addresses[0].id ?? ''
+    //   );
+    // }
   }
 
   private onShippingFormChanged(value: AddressFormValues): void {

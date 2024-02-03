@@ -86,6 +86,27 @@
       }
     }
   }
+
+  & .notification-container-details {
+    position: relative;
+
+    & .notification-status-container {
+      position: absolute;
+      border-radius: $rounded-full;
+      background-color: $brand-500;
+      height: 8px;
+      width: 8px;
+      top: 9px;
+      right: 9px;
+      text-align: center;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-pack: center;
+          -ms-flex-pack: center;
+              justify-content: center;
+    }
+  }
 }
 
 .root-mobile {
@@ -141,7 +162,7 @@
       }
     }
 
-    & .tab-container {
+    & .tab-container-mobile {
       display: -ms-grid;
       display: grid;
       -ms-grid-columns: 1fr 56px 1fr;
@@ -151,7 +172,7 @@
           -ms-flex-align: center;
               align-items: center;
 
-      & .left-tab-container {
+      & .left-tab-container-mobile {
         -ms-grid-column: 1;
             grid-column-start: 1;
         -ms-grid-column-span: 1;
@@ -169,7 +190,7 @@
                 flex-direction: row;
       }
 
-      & .right-tab-container {
+      & .right-tab-container-mobile {
         -ms-grid-column: 3;
             grid-column-start: 3;
         -ms-grid-column-span: 1;
@@ -185,10 +206,12 @@
         -webkit-box-direction: normal;
             -ms-flex-direction: row;
                 flex-direction: row;
+        gap: $mp-1;
+        align-items: center;
       }
     }
 
-    & .navigation-back-container {
+    & .navigation-back-container-mobile {
       display: -webkit-box;
       display: -ms-flexbox;
       display: flex;
@@ -203,7 +226,7 @@
       height: 100%;
       width: 100%;
 
-      & .navigation-back-text-container {
+      & .navigation-back-text-container-mobile {
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;
@@ -227,6 +250,14 @@
             -ms-flex-pack: center;
                 justify-content: center;
       }
+    }
+  }
+
+  & .notification-container-details-mobile {
+    min-height: 100%;
+
+    & .notification-status-container-mobile {
+
     }
   }
 }
@@ -272,6 +303,12 @@
     & .not-supported-text-tablet {
       color: white;
       font-size: 12pt;
+    }
+  }
+
+  & .notification-container-details-tablet {
+    & .notification-status-container-tablet {
+
     }
   }
 }
@@ -551,6 +588,12 @@
           width: 46px;
         }
       }
+    }
+  }
+
+  & .notification-container-details-desktop {
+    & .notification-status-container-desktop {
+
     }
   }
 
@@ -1291,6 +1334,10 @@
 
 .button:hover {
   background-color: rgba(42, 42, 95, .15) !important;
+}
+
+.floating-label-container {
+  color: #fff;
 }
 
 .dropdown-text {

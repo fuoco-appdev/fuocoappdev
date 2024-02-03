@@ -74,6 +74,11 @@ export default function WindowDesktopComponent({
           >
             <div className={[styles['top-bar-button-container']].join(' ')}>
               <Button
+                classNames={{
+                  floatingLabelContainer: [
+                    styles['floating-label-container'],
+                  ].join(' '),
+                }}
                 rippleProps={{
                   color: 'rgba(252, 245, 227, .35)',
                 }}
@@ -115,6 +120,13 @@ export default function WindowDesktopComponent({
                 ].join(' ')}
               >
                 <LanguageSwitch
+                  classNames={{
+                    button: {
+                      floatingLabelContainer: [
+                        styles['floating-label-container'],
+                      ].join(' '),
+                    },
+                  }}
                   open={isLanguageOpen}
                   onOpen={() => setIsLanguageOpen(true)}
                   onClose={() => setIsLanguageOpen(false)}
@@ -141,6 +153,11 @@ export default function WindowDesktopComponent({
               ].join(' ')}
             >
               <Button
+                classNames={{
+                  floatingLabelContainer: [
+                    styles['floating-label-container'],
+                  ].join(' '),
+                }}
                 rippleProps={{
                   color: 'rgba(252, 245, 227, .35)',
                 }}
@@ -177,6 +194,9 @@ export default function WindowDesktopComponent({
                   container: [
                     styles['top-bar-button-container'],
                     styles['top-bar-button-container-desktop'],
+                  ].join(' '),
+                  floatingLabelContainer: [
+                    styles['floating-label-container'],
                   ].join(' '),
                 }}
                 rippleProps={{
@@ -238,6 +258,11 @@ export default function WindowDesktopComponent({
                   ].join(' ')}
                 >
                   <Button
+                    classNames={{
+                      floatingLabelContainer: [
+                        styles['floating-label-container'],
+                      ].join(' '),
+                    }}
                     rippleProps={{
                       color: 'rgba(252, 245, 227, .35)',
                     }}
@@ -273,6 +298,11 @@ export default function WindowDesktopComponent({
                   ].join(' ')}
                 >
                   <Button
+                    classNames={{
+                      floatingLabelContainer: [
+                        styles['floating-label-container'],
+                      ].join(' '),
+                    }}
                     rippleProps={{
                       color: 'rgba(252, 245, 227, .35)',
                     }}
@@ -305,29 +335,63 @@ export default function WindowDesktopComponent({
             )}
             {windowProps.account && (
               <>
-                {/* <div className={styles['tab-button-container']}>
-                      <Button
-                        rippleProps={{
-                          color: 'rgba(252, 245, 227, .35)',
-                        }}
-                        onClick={() => navigate(RoutePathsType.Notifications)}
-                        disabled={windowProps.activeRoute === RoutePathsType.Cart}
-                        type={'text'}
-                        rounded={true}
-                        size={'tiny'}
-                        touchScreen={true}
-                        icon={
-                          <Line.Notifications
-                            size={24}
-                            color={
-                              windowProps.activeRoute === RoutePathsType.Notifications
-                                ? 'rgba(252, 245, 227, 1)'
-                                : 'rgba(252, 245, 227, .6)'
-                            }
-                          />
-                        }
-                      />
-                    </div> */}
+                <div
+                  className={[
+                    styles['notification-container-details'],
+                    styles['notification-container-details-desktop'],
+                  ].join(' ')}
+                >
+                  <Button
+                    classNames={{
+                      container: [
+                        styles['top-bar-button-container'],
+                        styles['top-bar-button-container-desktop'],
+                      ].join(' '),
+                      floatingLabelContainer: [
+                        styles['floating-label-container'],
+                      ].join(' '),
+                    }}
+                    rippleProps={{
+                      color: 'rgba(252, 245, 227, .35)',
+                    }}
+                    onClick={() =>
+                      setTimeout(
+                        () =>
+                          navigate({
+                            pathname: RoutePathsType.Notifications,
+                            search: query.toString(),
+                          }),
+                        75
+                      )
+                    }
+                    type={'text'}
+                    rounded={true}
+                    size={'tiny'}
+                    floatingLabel={t('notifications') ?? ''}
+                    icon={
+                      windowProps.activeRoute !==
+                      RoutePathsType.Notifications ? (
+                        <Line.Notifications
+                          size={24}
+                          color={'rgba(252, 245, 227, .8)'}
+                        />
+                      ) : (
+                        <Solid.Notifications
+                          size={24}
+                          color={'rgba(252, 245, 227, 1)'}
+                        />
+                      )
+                    }
+                  />
+                  {windowProps.unseenNotificationsCount > 0 && (
+                    <div
+                      className={[
+                        styles['notification-status-container'],
+                        styles['notification-status-container-desktop'],
+                      ].join(' ')}
+                    />
+                  )}
+                </div>
                 <div
                   className={[
                     styles['top-bar-button-container'],

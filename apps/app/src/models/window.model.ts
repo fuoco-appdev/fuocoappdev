@@ -12,6 +12,7 @@ export interface WindowState {
   isAuthenticated: boolean | undefined;
   activeRoute: RoutePathsType | undefined;
   cartCount: number;
+  unseenNotificationsCount: number;
   authState: AuthChangeEvent | undefined;
   isLoading: boolean;
   toast: ToastProps | undefined;
@@ -41,6 +42,7 @@ export class WindowModel extends Model {
           isAuthenticated: undefined,
           activeRoute: undefined,
           cartCount: 0,
+          unseenNotificationsCount: 0,
           authState: undefined,
           isLoading: false,
           toast: undefined,
@@ -116,6 +118,19 @@ export class WindowModel extends Model {
   public set activeRoute(value: RoutePathsType | undefined) {
     if (this.activeRoute !== value) {
       this.store.update((state) => ({ ...state, activeRoute: value }));
+    }
+  }
+
+  public get unseenNotificationsCount(): number {
+    return this.store.getValue().unseenNotificationsCount;
+  }
+
+  public set unseenNotificationsCount(value: number) {
+    if (this.unseenNotificationsCount !== value) {
+      this.store.update((state) => ({
+        ...state,
+        unseenNotificationsCount: value,
+      }));
     }
   }
 

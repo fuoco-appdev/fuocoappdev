@@ -1908,3 +1908,40 @@ export class AccountFollowersResponse extends Message<AccountFollowersResponse> 
   }
 }
 
+/**
+ * @generated from message core.AccountNotificationCountResponse
+ */
+export class AccountNotificationCountResponse extends Message<AccountNotificationCountResponse> {
+  /**
+   * @generated from field: int32 count = 1;
+   */
+  count = 0;
+
+  constructor(data?: PartialMessage<AccountNotificationCountResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.AccountNotificationCountResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "count", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountNotificationCountResponse {
+    return new AccountNotificationCountResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AccountNotificationCountResponse {
+    return new AccountNotificationCountResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AccountNotificationCountResponse {
+    return new AccountNotificationCountResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AccountNotificationCountResponse | PlainMessage<AccountNotificationCountResponse> | undefined, b: AccountNotificationCountResponse | PlainMessage<AccountNotificationCountResponse> | undefined): boolean {
+    return proto3.util.equals(AccountNotificationCountResponse, a, b);
+  }
+}
+

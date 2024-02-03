@@ -605,29 +605,65 @@ export default function WindowMobileComponent({
                     )}
                     {windowProps.account && (
                       <>
-                        {/* <div className={styles['tab-button-container']}>
-                      <Button
-                        rippleProps={{
-                          color: 'rgba(252, 245, 227, .35)',
-                        }}
-                        onClick={() => navigate(RoutePathsType.Notifications)}
-                        disabled={windowProps.activeRoute === RoutePathsType.Cart}
-                        type={'text'}
-                        rounded={true}
-                        size={'tiny'}
-                        touchScreen={true}
-                        icon={
-                          <Line.Notifications
-                            size={24}
-                            color={
-                              windowProps.activeRoute === RoutePathsType.Notifications
-                                ? 'rgba(252, 245, 227, 1)'
-                                : 'rgba(252, 245, 227, .6)'
+                        <div
+                          className={[
+                            styles['notification-container-details'],
+                            styles['notification-container-details-mobile'],
+                          ].join(' ')}
+                        >
+                          <Button
+                            classNames={{
+                              container: [
+                                styles['top-bar-button-container'],
+                                styles['top-bar-button-container-mobile'],
+                              ].join(' '),
+
+                              floatingLabelContainer: [
+                                styles['floating-label-container'],
+                              ].join(' '),
+                            }}
+                            rippleProps={{
+                              color: 'rgba(252, 245, 227, .35)',
+                            }}
+                            onClick={() =>
+                              setTimeout(
+                                () =>
+                                  navigate({
+                                    pathname: RoutePathsType.Notifications,
+                                    search: query.toString(),
+                                  }),
+                                75
+                              )
+                            }
+                            type={'text'}
+                            rounded={true}
+                            touchScreen={true}
+                            size={'tiny'}
+                            floatingLabel={t('notifications') ?? ''}
+                            icon={
+                              windowProps.activeRoute !==
+                              RoutePathsType.Notifications ? (
+                                <Line.Notifications
+                                  size={24}
+                                  color={'rgba(252, 245, 227, .8)'}
+                                />
+                              ) : (
+                                <Solid.Notifications
+                                  size={24}
+                                  color={'rgba(252, 245, 227, 1)'}
+                                />
+                              )
                             }
                           />
-                        }
-                      />
-                    </div> */}
+                          {windowProps.unseenNotificationsCount > 0 && (
+                            <div
+                              className={[
+                                styles['notification-status-container'],
+                                styles['notification-status-container-mobile'],
+                              ].join(' ')}
+                            />
+                          )}
+                        </div>
                         <div
                           className={[
                             styles['tab-button-container'],

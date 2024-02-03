@@ -24,6 +24,7 @@ import AccountController from '../controllers/account.controller';
 import ProductController from '../controllers/product.controller';
 import SupabaseService from '../services/supabase.service';
 import MeilisearchService from '../services/meilisearch.service';
+import AccountNotificationService from '../services/account-notification.service';
 import DeepLService from '../services/deepl.service';
 
 class AppController extends Controller {
@@ -38,6 +39,8 @@ class AppController extends Controller {
   public override load(renderCount: number): void {}
 
   public override disposeInitialization(renderCount: number): void {
+    AccountNotificationService.dispose();
+
     AccountPublicController.disposeInitialization(renderCount);
     AccountController.disposeInitialization(renderCount);
     ExploreController.disposeInitialization(renderCount);
@@ -92,6 +95,9 @@ class AppController extends Controller {
       MedusaService.intializeMedusa();
       DeepLService.initializeDeepL();
       BucketService.initializeS3();
+      if (SupabaseService.supabaseClient) {
+        AccountNotificationService.initialize(SupabaseService.supabaseClient);
+      }
     } catch (error: any) {
       console.error(error);
     }

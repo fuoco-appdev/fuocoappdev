@@ -233,3 +233,7 @@ message AccountFollowersRequest {
 message AccountFollowersResponse {
     repeated AccountFollowerResponse followers = 1;
 }
+
+message AccountNotificationCountResponse {
+    int32 count = 1;
+}

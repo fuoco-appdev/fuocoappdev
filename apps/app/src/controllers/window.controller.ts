@@ -19,6 +19,7 @@ import { ExploreState, InventoryLocation } from 'src/models/explore.model';
 import AccountController from './account.controller';
 import { AccountState } from '../models/account.model';
 import MedusaService from '../services/medusa.service';
+import AccountNotificationService from 'src/services/account-notification.service';
 
 class WindowController extends Controller {
   private readonly _model: WindowModel;
@@ -38,7 +39,8 @@ class WindowController extends Controller {
 
     this.onAuthStateChanged = this.onAuthStateChanged.bind(this);
     this.onCartChanged = this.onCartChanged.bind(this);
-    this.onActiveAccountChanged = this.onActiveAccountChanged.bind(this);
+    this.onActiveAccountChangedAsync =
+      this.onActiveAccountChangedAsync.bind(this);
     this.onSessionChangedAsync = this.onSessionChangedAsync.bind(this);
     this.onCustomerChanged = this.onCustomerChanged.bind(this);
     this.onCustomerGroupChangedAsync =
@@ -217,6 +219,12 @@ class WindowController extends Controller {
       this._model.activeRoute = RoutePathsType.AccountHelp;
       this._model.showNavigateBack = true;
       this._model.hideCartButton = true;
+    } else if (location.pathname === RoutePathsType.Notifications) {
+      this._model.transitionKeyIndex = 0;
+      this._model.scaleKeyIndex = 0;
+      this._model.activeRoute = RoutePathsType.Notifications;
+      this._model.showNavigateBack = false;
+      this._model.hideCartButton = false;
     } else if (location.pathname === RoutePathsType.Account) {
       this._model.transitionKeyIndex = 0;
       this._model.scaleKeyIndex = 0;
@@ -386,7 +394,7 @@ class WindowController extends Controller {
     this._accountSubscription?.unsubscribe();
     this._accountSubscription =
       AccountService.activeAccountObservable.subscribe({
-        next: this.onActiveAccountChanged,
+        next: this.onActiveAccountChangedAsync,
       });
 
     this._sessionSubscription?.unsubscribe();
@@ -451,8 +459,20 @@ class WindowController extends Controller {
     this._model.isLoading = false;
   }
 
-  private onActiveAccountChanged(value: core.AccountResponse | null): void {
+  private async onActiveAccountChangedAsync(
+    value: core.AccountResponse | null
+  ): Promise<void> {
+    if (this._model.account?.id === value?.id) {
+      return;
+    }
+
     this._model.account = value;
+
+    if (!value) {
+      return;
+    }
+
+    await this.requestNotificationUnseenCount(value.id);
   }
 
   private async requestActiveAccountAsync(
@@ -472,6 +492,19 @@ class WindowController extends Controller {
         console.error(error);
         return null;
       }
+    }
+  }
+
+  private async requestNotificationUnseenCount(
+    accountId: string
+  ): Promise<void> {
+    try {
+      const response = await AccountNotificationService.requestUnseenCountAsync(
+        accountId
+      );
+      this._model.unseenNotificationsCount = response.count ?? 0;
+    } catch (error: any) {
+      console.error(error);
     }
   }
 

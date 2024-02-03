@@ -176,6 +176,7 @@ export default function AccountSettingsAccountMobileComponent({
                     loadingComponent={
                       <img
                         src={'../assets/svg/ring-resize-light.svg'}
+                        style={{ height: 24 }}
                         className={[
                           styles['loading-ring'],
                           styles['loading-ring-mobile'],

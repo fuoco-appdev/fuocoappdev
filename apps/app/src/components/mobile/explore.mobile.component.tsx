@@ -109,6 +109,8 @@ export default function ExploreMobileComponent({
                   className={[styles['logo'], styles['logo-mobile']].join(' ')}
                   style={{ display: isLogoLoaded ? 'block' : 'none' }}
                   borderRadius={32}
+                  height={32}
+                  width={32}
                 />
               )}
               <img
