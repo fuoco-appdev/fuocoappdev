@@ -56,15 +56,14 @@ class SupabaseService {
     return this._anonKey;
   }
 
-  public initializeSupabase(): void {
+  public async initializeSupabase(): Promise<void> {
     this._anonKey = process.env['SUPABASE_ANON_KEY'] ?? '';
-    if (!this._supabaseClient) {
-      this._supabaseClient = createClient(
-        ConfigService.supabase.url,
-        this._anonKey
-      );
-      this._supabaseClientBehaviorSubject.next(this._supabaseClient);
-    }
+    this._supabaseClient = createClient(
+      ConfigService.supabase.url,
+      this._anonKey
+    );
+
+    this._supabaseClientBehaviorSubject.next(this._supabaseClient);
   }
 
   public subscribeToAuthStateChanged(
@@ -83,6 +82,7 @@ class SupabaseService {
     accessToken: string,
     refreshToken: string
   ): Promise<void> {
+    this.supabaseClient?.realtime.setAuth(accessToken);
     await this.supabaseClient?.auth.setSession({
       access_token: accessToken,
       refresh_token: refreshToken,

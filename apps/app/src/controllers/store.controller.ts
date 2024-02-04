@@ -311,21 +311,21 @@ class StoreController extends Controller {
     });
 
     let hits = result?.hits as Product[];
-    if (hits.length <= 0 && offset <= 0) {
+    if (hits && hits.length <= 0 && offset <= 0) {
       this._model.products = [];
     }
 
-    if (hits.length < limit && this._model.hasMorePreviews) {
+    if (hits && hits.length < limit && this._model.hasMorePreviews) {
       this._model.hasMorePreviews = false;
     }
 
-    if (hits.length <= 0) {
+    if (hits && hits.length <= 0) {
       this._model.isLoading = false;
       this._model.hasMorePreviews = false;
       return;
     }
 
-    if (hits.length >= limit && !this._model.hasMorePreviews) {
+    if (hits && hits.length >= limit && !this._model.hasMorePreviews) {
       this._model.hasMorePreviews = true;
     }
 

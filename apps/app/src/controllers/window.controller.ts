@@ -11,7 +11,7 @@ import * as core from '../protobuf/core_pb';
 import { ToastProps, LanguageInfo, BannerProps } from '@fuoco.appdev/core-ui';
 import AccountService from '../services/account.service';
 import CartController from './cart.controller';
-import { Cart, CustomerGroup, Customer } from '@medusajs/medusa';
+import { Cart, CustomerGroup, Customer, Order } from '@medusajs/medusa';
 import { select } from '@ngneat/elf';
 import BucketService from '../services/bucket.service';
 import ExploreController from './explore.controller';
@@ -29,6 +29,7 @@ class WindowController extends Controller {
   private _customerSubscription: Subscription | undefined;
   private _cartSubscription: Subscription | undefined;
   private _sessionSubscription: Subscription | undefined;
+  private _notificationCreatedSubscription: Subscription | undefined;
   private _medusaAccessTokenSubscription: Subscription | undefined;
 
   constructor() {
@@ -45,6 +46,7 @@ class WindowController extends Controller {
     this.onCustomerChanged = this.onCustomerChanged.bind(this);
     this.onCustomerGroupChangedAsync =
       this.onCustomerGroupChangedAsync.bind(this);
+    this.onNotificationCreated = this.onNotificationCreated.bind(this);
   }
 
   public get model(): WindowModel {
@@ -63,11 +65,17 @@ class WindowController extends Controller {
 
   public override initialize(renderCount: number): void {
     this.initializeAsync(renderCount);
+
+    this._notificationCreatedSubscription =
+      AccountNotificationService.notificationCreatedObservable.subscribe({
+        next: this.onNotificationCreated,
+      });
   }
 
   public override load(renderCount: number): void {}
 
   public override disposeInitialization(renderCount: number): void {
+    this._notificationCreatedSubscription?.unsubscribe();
     this._medusaAccessTokenSubscription?.unsubscribe();
     this._customerSubscription?.unsubscribe();
     this._customerGroupSubscription?.unsubscribe();
@@ -109,6 +117,10 @@ class WindowController extends Controller {
 
   public updateShowNavigateBack(value: boolean): void {
     this._model.showNavigateBack = value;
+  }
+
+  public updateOrderPlacedNotificationData(value: Order | undefined): void {
+    this._model.orderPlacedNotificationData = value;
   }
 
   public async updateQueryInventoryLocationAsync(id: string | undefined) {
@@ -377,14 +389,6 @@ class WindowController extends Controller {
     return false;
   }
 
-  private resetMedusaModel(): void {
-    this._model.cartCount = 0;
-    this._model.toast = undefined;
-    this._model.banner = undefined;
-    this._model.queryInventoryLocation = undefined;
-    this._model.priceLists = [];
-  }
-
   private async initializeAsync(renderCount: number): Promise<void> {
     this._cartSubscription?.unsubscribe();
     this._cartSubscription = CartController.model.store
@@ -412,6 +416,29 @@ class WindowController extends Controller {
     SupabaseService.supabaseClient?.auth.onAuthStateChange(
       this.onAuthStateChanged
     );
+  }
+
+  private onNotificationCreated(value: Record<string, any>): void {
+    const payload = value['payload'];
+    const resourceType = payload['resource_type'];
+    const eventName = payload['event_name'];
+    const data = payload['data'];
+    if (resourceType === 'order') {
+      if (eventName === 'order.placed') {
+        this.onOrderPlaced(data);
+      } else if (eventName === 'order.shipped') {
+      } else if (eventName === 'order.returned') {
+      } else if (eventName === 'order.canceled') {
+      }
+    }
+
+    this._model.unseenNotificationsCount =
+      this._model.unseenNotificationsCount + 1;
+  }
+
+  private onOrderPlaced(data: Record<string, any>): void {
+    const order = data as Order;
+    this._model.orderPlacedNotificationData = order;
   }
 
   private onCartChanged(

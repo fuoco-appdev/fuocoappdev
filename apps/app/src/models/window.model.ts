@@ -5,7 +5,7 @@ import { RoutePathsType } from '../route-paths';
 import * as core from '../protobuf/core_pb';
 import { ToastProps, LanguageInfo, BannerProps } from '@fuoco.appdev/core-ui';
 import { InventoryLocation } from './explore.model';
-import { PriceList } from '@medusajs/medusa';
+import { Order, PriceList } from '@medusajs/medusa';
 
 export interface WindowState {
   account: core.AccountResponse | null;
@@ -13,6 +13,7 @@ export interface WindowState {
   activeRoute: RoutePathsType | undefined;
   cartCount: number;
   unseenNotificationsCount: number;
+  orderPlacedNotificationData: Order | undefined;
   authState: AuthChangeEvent | undefined;
   isLoading: boolean;
   toast: ToastProps | undefined;
@@ -43,6 +44,7 @@ export class WindowModel extends Model {
           activeRoute: undefined,
           cartCount: 0,
           unseenNotificationsCount: 0,
+          orderPlacedNotificationData: undefined,
           authState: undefined,
           isLoading: false,
           toast: undefined,
@@ -130,6 +132,21 @@ export class WindowModel extends Model {
       this.store.update((state) => ({
         ...state,
         unseenNotificationsCount: value,
+      }));
+    }
+  }
+
+  public get orderPlacedNotificationData(): Order | undefined {
+    return this.store.getValue().orderPlacedNotificationData;
+  }
+
+  public set orderPlacedNotificationData(value: Order | undefined) {
+    if (
+      JSON.stringify(this.orderPlacedNotificationData) !== JSON.stringify(value)
+    ) {
+      this.store.update((state) => ({
+        ...state,
+        orderPlacedNotificationData: value,
       }));
     }
   }

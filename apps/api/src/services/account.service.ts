@@ -70,7 +70,7 @@ export class AccountService {
 
   public async checkExistsAsync(
     request: InstanceType<typeof AccountExistsRequest>
-  ): Promise<AccountProps | null> {
+  ): Promise<InstanceType<typeof AccountExistsResponse> | null> {
     const username = request.getUsername();
     const response = new AccountExistsResponse();
 
@@ -121,7 +121,7 @@ export class AccountService {
 
   public async findAccountsAsync(
     request: InstanceType<typeof AccountsRequest>
-  ): Promise<AccountsResponse | null> {
+  ): Promise<InstanceType<typeof AccountsResponse> | null> {
     const response = new AccountsResponse();
     const formattedIds = request.getAccountIdsList().toString();
     const { data, error } = await SupabaseService.client
@@ -155,7 +155,7 @@ export class AccountService {
 
   public async findLikeAsync(
     request: InstanceType<typeof AccountLikeRequest>
-  ): Promise<AccountsResponse | null> {
+  ): Promise<InstanceType<typeof AccountsResponse> | null> {
     const queryUsername = request.getQueryUsername();
     const accountId = request.getAccountId();
     const offset = request.getOffset();
@@ -181,7 +181,7 @@ export class AccountService {
 
   public async findFollowersLikeAsync(
     request: InstanceType<typeof AccountLikeRequest>
-  ): Promise<AccountsResponse | null> {
+  ): Promise<InstanceType<typeof AccountsResponse> | null> {
     const queryUsername = request.getQueryUsername();
     const accountId = request.getAccountId();
     const offset = request.getOffset();
@@ -209,7 +209,7 @@ export class AccountService {
 
   public async findFollowingLikeAsync(
     request: InstanceType<typeof AccountLikeRequest>
-  ): Promise<AccountsResponse | null> {
+  ): Promise<InstanceType<typeof AccountsResponse> | null> {
     const queryUsername = request.getQueryUsername();
     const accountId = request.getAccountId();
     const offset = request.getOffset();

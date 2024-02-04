@@ -20,7 +20,7 @@ export default function AppComponent(): JSX.Element {
   useEffect(() => {
     renderCountRef.current += 1;
 
-    AppController.initializeServices();
+    AppController.initializeServices(renderCountRef.current);
     const subscription = SupabaseService.subscribeToAuthStateChanged(
       (event: AuthChangeEvent, session: Session | null) => {
         if (event === 'TOKEN_REFRESHED' && session) {

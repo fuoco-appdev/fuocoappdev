@@ -15,10 +15,8 @@ const router = createBrowserRouter(routePaths);
 loadableReady(() => {
   ReactDOM.hydrateRoot(
     document.getElementById('root') as HTMLElement,
-    <StrictMode>
-      <CookiesProvider>
-        <RouterProvider router={router} />
-      </CookiesProvider>
-    </StrictMode>
+    <CookiesProvider>
+      <RouterProvider router={router} />
+    </CookiesProvider>
   );
 });

@@ -238,13 +238,13 @@ class MedusaService {
           },
         }
       );
+      const data = customerResponse.data['customer'];
+      updateCustomer.setData(JSON.stringify(data));
+      updateCustomer.setPassword(sessionToken);
     } catch (error: any) {
       console.error(error);
     }
 
-    const data = customerResponse.data['customer'];
-    updateCustomer.setData(JSON.stringify(data));
-    updateCustomer.setPassword(sessionToken);
     return updateCustomer;
   }
 
@@ -528,7 +528,7 @@ class MedusaService {
       return response;
     }
 
-    response.setCount(count);
+    response.setCount(count ?? 0);
     return response;
   }
 

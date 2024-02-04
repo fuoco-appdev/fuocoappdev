@@ -18,14 +18,14 @@ export interface ProductLikesProps {
 export class ProductLikesService {
   public async getCountMetadataAsync(
     accountId: string
-  ): Promise<ProductLikeCountMetadataResponse | null> {
+  ): Promise<InstanceType<typeof ProductLikeCountMetadataResponse> | null> {
     const metadataResponse = await this.findCountMetadataAsync(accountId);
     return metadataResponse;
   }
 
   public async getMetadataAsync(
     request: InstanceType<typeof ProductLikesMetadataRequest>
-  ): Promise<ProductLikesMetadatasResponse | null> {
+  ): Promise<InstanceType<typeof ProductLikesMetadatasResponse> | null> {
     const accountId = request.getAccountId();
     const productIds = request.getProductIdsList();
     const metadatasResponse = await this.findMetadataAsync(
@@ -39,7 +39,7 @@ export class ProductLikesService {
     accountId: string,
     offset: number,
     limit: number
-  ): Promise<ProductLikesMetadatasResponse | null> {
+  ): Promise<InstanceType<typeof ProductLikesMetadatasResponse> | null> {
     if (accountId.length <= 0) {
       console.error('Account id cannot be empty');
       return null;
@@ -58,7 +58,7 @@ export class ProductLikesService {
         console.error(accountProductLikesData.error);
       }
 
-      const data = accountProductLikesData.data ?? [];
+      const data: Record<string, any>[] = accountProductLikesData.data ?? [];
       accountProductIds = data.map((value) => value.product_id);
     } catch (error: any) {
       console.error(error);
@@ -76,7 +76,7 @@ export class ProductLikesService {
 
   public async getAccountMetadataAsync(
     request: InstanceType<typeof AccountProductLikesMetadataRequest>
-  ): Promise<ProductLikesMetadatasResponse | null> {
+  ): Promise<InstanceType<typeof ProductLikesMetadatasResponse> | null> {
     const accountId = request.getAccountId();
     const offset = request.getOffset();
     const limit = request.getLimit();
@@ -90,7 +90,7 @@ export class ProductLikesService {
 
   public async upsertAsync(
     request: InstanceType<typeof ProductLikeRequest>
-  ): Promise<ProductLikesMetadatasResponse | null> {
+  ): Promise<InstanceType<typeof ProductLikesMetadatasResponse> | null> {
     const productId = request.getProductId();
     const accountId = request.getAccountId();
 
@@ -131,18 +131,18 @@ export class ProductLikesService {
 
   public async deleteAsync(
     request: InstanceType<typeof ProductLikeRequest>
-  ): Promise<ProductLikesMetadatasResponse | null> {
+  ): Promise<InstanceType<typeof ProductLikesMetadatasResponse> | null> {
     const productId = request.getProductId();
     const accountId = request.getAccountId();
 
     if (!productId || productId.length <= 0) {
       console.error('Product id cannot be undefined');
-      return;
+      return null;
     }
 
     if (!accountId || accountId.length <= 0) {
       console.error('Account id cannot be undefined');
-      return;
+      return null;
     }
     const props: ProductLikesProps = {
       product_id: productId,
@@ -152,7 +152,7 @@ export class ProductLikesService {
     const { error } = await SupabaseService.client
       .from('product_likes')
       .delete()
-      .match(props);
+      .match(props as Record<string, any>);
 
     if (error) {
       console.error(error);
@@ -167,7 +167,7 @@ export class ProductLikesService {
 
   private async findCountMetadataAsync(
     accountId: string
-  ): Promise<ProductLikeCountMetadataResponse | null> {
+  ): Promise<InstanceType<typeof ProductLikeCountMetadataResponse> | null> {
     const metadataResponse = new ProductLikeCountMetadataResponse();
 
     if (accountId.length <= 0) {
@@ -184,7 +184,7 @@ export class ProductLikesService {
       if (likesData.error) {
         console.error(likesData.error);
       } else {
-        metadataResponse.setLikeCount(likesData.count);
+        metadataResponse.setLikeCount(likesData.count ?? 0);
       }
     } catch (error: any) {
       console.error(error);
@@ -197,7 +197,7 @@ export class ProductLikesService {
     accountId: string,
     productIds: string[],
     didAccountLike?: boolean
-  ): Promise<ProductLikesMetadatasResponse | null> {
+  ): Promise<InstanceType<typeof ProductLikesMetadatasResponse> | null> {
     const metadatasResponse = new ProductLikesMetadatasResponse();
 
     if (productIds.length <= 0) {
@@ -215,7 +215,7 @@ export class ProductLikesService {
         if (totalLikesData.error) {
           console.error(totalLikesData.error);
         } else {
-          metadataResponse.setTotalLikeCount(totalLikesData.count);
+          metadataResponse.setTotalLikeCount(totalLikesData.count ?? 0);
         }
       } catch (error: any) {
         console.error(error);

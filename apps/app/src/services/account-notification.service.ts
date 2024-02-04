@@ -12,28 +12,44 @@ import {
 } from '@supabase/supabase-js';
 
 class AccountNotificationService extends Service {
-  private postgresChangesSubscription: RealtimeChannel | undefined;
+  private readonly _notificationCreatedBehaviorSubject: BehaviorSubject<
+    Record<string, any>
+  >;
+  private _realtimeChannel: RealtimeChannel | undefined;
   constructor() {
     super();
+
+    this._notificationCreatedBehaviorSubject = new BehaviorSubject<
+      Record<string, any>
+    >({});
   }
 
-  public initialize(client: SupabaseClient<any, 'public', any>): void {
-    this.postgresChangesSubscription = client
-      .channel('schema-db-changes')
+  public get notificationCreatedObservable(): Observable<Record<string, any>> {
+    return this._notificationCreatedBehaviorSubject.asObservable();
+  }
+
+  public initializeRealtime(
+    client: SupabaseClient<any, 'public', any>,
+    accountId: string
+  ): void {
+    this._realtimeChannel = client
+      .channel(`account-notification-${accountId}`)
       .on(
-        'postgres_changes',
+        'broadcast',
         {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'account_notification',
+          event: 'CREATED',
         },
-        (payload) => console.log(payload)
-      )
-      .subscribe();
+        (payload: Record<string, any>) => {
+          this._notificationCreatedBehaviorSubject.next(payload);
+        }
+      );
+    this._realtimeChannel.subscribe();
   }
 
-  public dispose(): void {
-    this.postgresChangesSubscription?.unsubscribe();
+  public disposeRealtime(client: SupabaseClient<any, 'public', any>): void {
+    if (this._realtimeChannel) {
+      client.removeChannel(this._realtimeChannel);
+    }
   }
 
   public async requestUnseenCountAsync(

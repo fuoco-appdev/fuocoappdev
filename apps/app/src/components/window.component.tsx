@@ -30,6 +30,8 @@ import { Line } from '@fuoco.appdev/core-ui';
 import { AccountPublicState } from '../models/account-public.model';
 import StoreController from '../controllers/store.controller';
 import { StoreCategoryType } from 'src/models/store.model';
+import AccountNotificationService from '../services/account-notification.service';
+import SupabaseService from 'src/services/supabase.service';
 
 const WindowDesktopComponent = lazy(
   () => import('./desktop/window.desktop.component')
@@ -286,6 +288,44 @@ export default function WindowComponent(): JSX.Element {
       }
     }, 2000);
   }, [windowProps.isAuthenticated]);
+
+  useEffect(() => {
+    if (!windowProps.orderPlacedNotificationData) {
+      return;
+    }
+
+    WindowController.addToast({
+      key: `order-placed-${Math.random()}`,
+      message: t('orderPlaced') ?? '',
+      description:
+        t('orderPlacedDescription', {
+          displayId: windowProps.orderPlacedNotificationData?.display_id ?? 0,
+        }) ?? '',
+      type: 'success',
+    });
+    WindowController.updateOrderPlacedNotificationData(undefined);
+  }, [windowProps.orderPlacedNotificationData]);
+
+  useEffect(() => {
+    if (!accountProps.account) {
+      return;
+    }
+
+    if (SupabaseService.supabaseClient) {
+      AccountNotificationService.initializeRealtime(
+        SupabaseService.supabaseClient,
+        accountProps.account.id
+      );
+    }
+
+    return () => {
+      if (SupabaseService.supabaseClient) {
+        AccountNotificationService.disposeRealtime(
+          SupabaseService.supabaseClient
+        );
+      }
+    };
+  }, [accountProps.account]);
 
   const suspenseComponent = (
     <>

@@ -291,5 +291,7 @@
   "goToStore": "Aller Au Magasin",
   "wine": "Vin",
   "menuItem": "Élément de menu",
-  "notifications": "Notifications"
+  "notifications": "Notifications",
+  "orderPlaced": "Commande passée",
+  "orderPlacedDescription": "La commande #{{displayId, number}} a été passée avec succès."
 }

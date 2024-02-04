@@ -291,5 +291,7 @@
   "goToStore": "Go To Store",
   "wine": "Wine",
   "menuItem": "Menu item",
-  "notifications": "Notifications"
+  "notifications": "Notifications",
+  "orderPlaced": "Order placed",
+  "orderPlacedDescription": "Order #{{displayId, number}} has been successfully placed."
 }

@@ -250,8 +250,12 @@ module.exports = composePlugins(withNx(), (config, { options, context }) => {
         getClientEnvironment(process.env.NODE_ENV).stringified
       ),
       new webpack.DefinePlugin({
+        'process.env.HOST': JSON.stringify(process.env.HOST),
+        'process.env.DEBUG_SUSPENSE': JSON.stringify(process.env.DEBUG_SUSPENSE || 'false'),
         'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
         'process.env.SUPABASE_ANON_KEY': JSON.stringify(process.env.SUPABASE_ANON_KEY),
+        'process.env.SUPABASE_SERVICE_ROLE_KEY': JSON.stringify(process.env.SUPABASE_SERVICE_ROLE_KEY),
+        'process.env.S3_ACCESS_KEY_ID': JSON.stringify(process.env.S3_ACCESS_KEY_ID),
         'process.env.S3_SECRET_ACCESS_KEY': JSON.stringify(process.env.S3_SECRET_ACCESS_KEY),
         'process.env.MAPBOX_ACCESS_TOKEN': JSON.stringify(process.env.MAPBOX_ACCESS_TOKEN),
         'process.env.STRIPE_PUBLISHABLE_KEY': JSON.stringify(process.env.STRIPE_PUBLISHABLE_KEY),

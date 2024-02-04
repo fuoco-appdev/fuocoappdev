@@ -17,28 +17,28 @@ export interface AccountFollowersProps {
 export class AccountFollowersService {
   public async getCountMetadataAsync(
     accountId: string
-  ): Promise<AccountFollowerCountMetadataResponse | null> {
+  ): Promise<InstanceType<typeof AccountFollowerCountMetadataResponse> | null> {
     const metadataResponse = await this.findCountMetadataAsync(accountId);
     return metadataResponse;
   }
 
   public async getFollowersAsync(
     request: InstanceType<typeof AccountFollowersRequest>
-  ): Promise<AccountFollowersResponse | null> {
+  ): Promise<InstanceType<typeof AccountFollowersResponse> | null> {
     const response = await this.findFollowersAsync(request);
     return response;
   }
 
   public async getRequestsAsync(
     request: InstanceType<typeof AccountFollowerRequestsRequest>
-  ): Promise<AccountFollowersResponse | null> {
+  ): Promise<InstanceType<typeof AccountFollowersResponse> | null> {
     const response = await this.findRequestsAsync(request);
     return response;
   }
 
   public async upsertAsync(
     request: InstanceType<typeof AccountFollowerRequest>
-  ): Promise<AccountFollowerResponse | null> {
+  ): Promise<InstanceType<typeof AccountFollowerResponse> | null> {
     const accountId = request.getAccountId();
     const followerId = request.getFollowerId();
     const response = new AccountFollowerResponse();
@@ -84,7 +84,7 @@ export class AccountFollowersService {
 
   public async deleteAsync(
     request: InstanceType<typeof AccountFollowerRequest>
-  ): Promise<AccountFollowerResponse | null> {
+  ): Promise<InstanceType<typeof AccountFollowerResponse> | null> {
     const accountId = request.getAccountId();
     const followerId = request.getFollowerId();
     const response = new AccountFollowerResponse();
@@ -107,7 +107,7 @@ export class AccountFollowersService {
     const { error } = await SupabaseService.client
       .from('account_followers')
       .delete()
-      .match(props);
+      .match(props as Record<string, any>);
 
     if (error) {
       console.error(error);
@@ -123,7 +123,7 @@ export class AccountFollowersService {
 
   public async confirmAsync(
     request: InstanceType<typeof AccountFollowerRequest>
-  ): Promise<AccountFollowerResponse | null> {
+  ): Promise<InstanceType<typeof AccountFollowerResponse> | null> {
     const accountId = request.getAccountId();
     const followerId = request.getFollowerId();
     const response = new AccountFollowerResponse();
@@ -166,7 +166,7 @@ export class AccountFollowersService {
 
   private async findCountMetadataAsync(
     accountId: string
-  ): Promise<AccountFollowerCountMetadataResponse | null> {
+  ): Promise<InstanceType<typeof AccountFollowerCountMetadataResponse> | null> {
     const metadataResponse = new AccountFollowerCountMetadataResponse();
 
     if (accountId.length <= 0) {
@@ -184,7 +184,7 @@ export class AccountFollowersService {
       if (followingData.error) {
         console.error(followingData.error);
       } else {
-        metadataResponse.setFollowingCount(followingData.count);
+        metadataResponse.setFollowingCount(followingData.count ?? 0);
       }
     } catch (error: any) {
       console.error(error);
@@ -200,7 +200,7 @@ export class AccountFollowersService {
       if (followersData.error) {
         console.error(followersData.error);
       } else {
-        metadataResponse.setFollowersCount(followersData.count);
+        metadataResponse.setFollowersCount(followersData.count ?? 0);
       }
     } catch (error: any) {
       console.error(error);
@@ -211,7 +211,7 @@ export class AccountFollowersService {
 
   private async findFollowersAsync(
     request: InstanceType<typeof AccountFollowersRequest>
-  ): Promise<AccountFollowersResponse | null> {
+  ): Promise<InstanceType<typeof AccountFollowersResponse> | null> {
     const accountId = request.getAccountId();
     const otherAccountIds = request.getOtherAccountIdsList();
     const followersResponse = new AccountFollowersResponse();
@@ -260,7 +260,7 @@ export class AccountFollowersService {
 
   private async findRequestsAsync(
     request: InstanceType<typeof AccountFollowerRequestsRequest>
-  ): Promise<AccountFollowersResponse | null> {
+  ): Promise<InstanceType<typeof AccountFollowersResponse> | null> {
     const accountId = request.getAccountId();
     const offset = request.getOffset();
     const limit = request.getLimit();
@@ -282,7 +282,7 @@ export class AccountFollowersService {
         console.error(followerRequestsData.error);
       }
 
-      for (const requestedFollower of followerRequestsData.data) {
+      for (const requestedFollower of followerRequestsData.data ?? []) {
         const followerResponse = new AccountFollowerResponse();
         followerResponse.setAccountId(requestedFollower.account_id);
         followerResponse.setFollowerId(requestedFollower.follower_id);

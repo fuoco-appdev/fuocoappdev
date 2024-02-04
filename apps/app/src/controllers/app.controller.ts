@@ -39,8 +39,6 @@ class AppController extends Controller {
   public override load(renderCount: number): void {}
 
   public override disposeInitialization(renderCount: number): void {
-    AccountNotificationService.dispose();
-
     AccountPublicController.disposeInitialization(renderCount);
     AccountController.disposeInitialization(renderCount);
     ExploreController.disposeInitialization(renderCount);
@@ -65,8 +63,6 @@ class AppController extends Controller {
   public override disposeLoad(renderCount: number): void {}
 
   public async initializeAsync(renderCount: number): Promise<void> {
-    this.disposeInitialization(renderCount);
-
     WindowController.initialize(renderCount);
     AccountPublicController.initialize(renderCount);
     AccountController.initialize(renderCount);
@@ -88,16 +84,13 @@ class AppController extends Controller {
     ResetPasswordController.initialize(renderCount);
   }
 
-  public initializeServices(): void {
+  public async initializeServices(renderCount: number): Promise<void> {
     try {
       SupabaseService.initializeSupabase();
       MeilisearchService.initializeMeiliSearch();
       MedusaService.intializeMedusa();
       DeepLService.initializeDeepL();
       BucketService.initializeS3();
-      if (SupabaseService.supabaseClient) {
-        AccountNotificationService.initialize(SupabaseService.supabaseClient);
-      }
     } catch (error: any) {
       console.error(error);
     }

@@ -97,7 +97,6 @@ export async function render(
     const matchedAgnosticRoute = matchRoutes(routePaths, request.url)?.at(-1);
     const route = matchedAgnosticRoute?.route;
     const element = route?.element as any;
-    SupabaseService.initializeSupabase();
     if (route && element?.type?.getServerSidePropsAsync) {
       const props = await element?.type.getServerSidePropsAsync(
         route,
@@ -121,11 +120,9 @@ export async function render(
 
   const { pipe, abort } = renderToPipeableStream(
     extractor.collectChunks(
-      <StrictMode>
-        <CookiesProvider cookies={(request as any).universalCookies}>
-          <StaticRouterProvider router={router} context={context} />
-        </CookiesProvider>
-      </StrictMode>
+      <CookiesProvider cookies={(request as any).universalCookies}>
+        <StaticRouterProvider router={router} context={context} />
+      </CookiesProvider>
     ),
     {
       bootstrapScripts: ['/main.js'],
