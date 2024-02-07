@@ -32,6 +32,7 @@ export interface WindowState {
 }
 
 export interface WindowLocalState {
+  isSideBarOpen: boolean;
   languageCode: string;
   languageInfo: { isoCode: string; info: LanguageInfo } | undefined;
 }
@@ -69,6 +70,7 @@ export class WindowModel extends Model {
       createStore(
         { name: 'window-local' },
         withProps<WindowLocalState>({
+          isSideBarOpen: true,
           languageCode: 'en',
           languageInfo: undefined,
         })
@@ -309,36 +311,6 @@ export class WindowModel extends Model {
     }
   }
 
-  public get languageCode(): string {
-    return this.localStore?.getValue().languageCode;
-  }
-
-  public set languageCode(value: string) {
-    if (this.languageCode !== value) {
-      this.localStore?.update((state) => ({
-        ...state,
-        languageCode: value,
-      }));
-    }
-  }
-
-  public get languageInfo():
-    | { isoCode: string; info: LanguageInfo }
-    | undefined {
-    return this.localStore?.getValue().languageInfo;
-  }
-
-  public set languageInfo(
-    value: { isoCode: string; info: LanguageInfo } | undefined
-  ) {
-    if (JSON.stringify(this.languageInfo) !== JSON.stringify(value)) {
-      this.localStore?.update((state) => ({
-        ...state,
-        languageInfo: value,
-      }));
-    }
-  }
-
   public get prevTransitionKeyIndex(): number {
     return this.store?.getValue().prevTransitionKeyIndex;
   }
@@ -400,6 +372,46 @@ export class WindowModel extends Model {
       this.store?.update((state) => ({
         ...state,
         priceLists: value,
+      }));
+    }
+  }
+
+  public get isSideBarOpen(): boolean {
+    return this.localStore?.getValue().isSideBarOpen;
+  }
+
+  public set isSideBarOpen(value: boolean) {
+    if (this.isSideBarOpen !== value) {
+      this.localStore?.update((state) => ({ ...state, isSideBarOpen: value }));
+    }
+  }
+
+  public get languageCode(): string {
+    return this.localStore?.getValue().languageCode;
+  }
+
+  public set languageCode(value: string) {
+    if (this.languageCode !== value) {
+      this.localStore?.update((state) => ({
+        ...state,
+        languageCode: value,
+      }));
+    }
+  }
+
+  public get languageInfo():
+    | { isoCode: string; info: LanguageInfo }
+    | undefined {
+    return this.localStore?.getValue().languageInfo;
+  }
+
+  public set languageInfo(
+    value: { isoCode: string; info: LanguageInfo } | undefined
+  ) {
+    if (JSON.stringify(this.languageInfo) !== JSON.stringify(value)) {
+      this.localStore?.update((state) => ({
+        ...state,
+        languageInfo: value,
       }));
     }
   }

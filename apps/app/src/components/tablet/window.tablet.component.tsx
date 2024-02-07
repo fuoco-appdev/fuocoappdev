@@ -54,7 +54,6 @@ export default function WindowTabletComponent({
   const query = useQuery();
   const sideBarRef = useRef<HTMLDivElement | null>(null);
   const navigationBackRef = useRef<HTMLDivElement | null>(null);
-  const [isSideBarOpen, setIsSideBarOpen] = useState<boolean>(false);
   const [date, setDate] = useState<Date | null>(null);
 
   useDesktopEffect(() => {
@@ -81,7 +80,11 @@ export default function WindowTabletComponent({
                 rippleProps={{
                   color: 'rgba(252, 245, 227, .35)',
                 }}
-                onClick={() => setIsSideBarOpen(!isSideBarOpen)}
+                onClick={() =>
+                  WindowController.updateIsSideBarOpen(
+                    !windowLocalProps.isSideBarOpen
+                  )
+                }
                 type={'text'}
                 rounded={true}
                 size={'tiny'}
@@ -443,7 +446,7 @@ export default function WindowTabletComponent({
         >
           <CSSTransition
             nodeRef={sideBarRef}
-            in={isSideBarOpen && Boolean(sideBarRef.current)}
+            in={windowLocalProps.isSideBarOpen && Boolean(sideBarRef.current)}
             timeout={300}
             classNames={{
               appear: styles['side-bar-appear'],
@@ -471,7 +474,7 @@ export default function WindowTabletComponent({
                 classNames={{
                   tabOutline: [
                     styles['tab-outline'],
-                    isSideBarOpen
+                    windowLocalProps.isSideBarOpen
                       ? styles['tab-outline-open']
                       : styles['tab-outline-close'],
                   ].join(' '),
@@ -490,7 +493,9 @@ export default function WindowTabletComponent({
                       ) : (
                         <Line.Explore size={24} />
                       ),
-                    label: isSideBarOpen ? t('explore') ?? '' : undefined,
+                    label: windowLocalProps.isSideBarOpen
+                      ? t('explore') ?? ''
+                      : undefined,
                   },
                   {
                     id: RoutePathsType.Store,
@@ -500,11 +505,13 @@ export default function WindowTabletComponent({
                       ) : (
                         <Line.Store size={24} />
                       ),
-                    label: isSideBarOpen ? t('store') ?? '' : undefined,
+                    label: windowLocalProps.isSideBarOpen
+                      ? t('store') ?? ''
+                      : undefined,
                   },
                 ]}
               />
-              {isSideBarOpen && (
+              {windowLocalProps.isSideBarOpen && (
                 <div
                   className={[
                     styles['side-bar-bottom-content'],

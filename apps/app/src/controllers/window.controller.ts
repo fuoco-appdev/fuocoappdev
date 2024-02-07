@@ -140,6 +140,10 @@ class WindowController extends Controller {
     this._model.unseenNotificationsCount = value;
   }
 
+  public updateIsSideBarOpen(value: boolean): void {
+    this._model.isSideBarOpen = value;
+  }
+
   public async updateQueryInventoryLocationAsync(id: string | undefined) {
     if (!id) {
       this._model.queryInventoryLocation = undefined;
