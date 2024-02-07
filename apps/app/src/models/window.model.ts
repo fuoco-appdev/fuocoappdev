@@ -14,6 +14,9 @@ export interface WindowState {
   cartCount: number;
   unseenNotificationsCount: number;
   orderPlacedNotificationData: Order | undefined;
+  orderShippedNotificationData: Order | undefined;
+  orderReturnedNotificationData: Order | undefined;
+  orderCanceledNotificationData: Order | undefined;
   authState: AuthChangeEvent | undefined;
   isLoading: boolean;
   toast: ToastProps | undefined;
@@ -45,6 +48,9 @@ export class WindowModel extends Model {
           cartCount: 0,
           unseenNotificationsCount: 0,
           orderPlacedNotificationData: undefined,
+          orderShippedNotificationData: undefined,
+          orderReturnedNotificationData: undefined,
+          orderCanceledNotificationData: undefined,
           authState: undefined,
           isLoading: false,
           toast: undefined,
@@ -147,6 +153,54 @@ export class WindowModel extends Model {
       this.store.update((state) => ({
         ...state,
         orderPlacedNotificationData: value,
+      }));
+    }
+  }
+
+  public get orderShippedNotificationData(): Order | undefined {
+    return this.store.getValue().orderShippedNotificationData;
+  }
+
+  public set orderShippedNotificationData(value: Order | undefined) {
+    if (
+      JSON.stringify(this.orderShippedNotificationData) !==
+      JSON.stringify(value)
+    ) {
+      this.store.update((state) => ({
+        ...state,
+        orderShippedNotificationData: value,
+      }));
+    }
+  }
+
+  public get orderReturnedNotificationData(): Order | undefined {
+    return this.store.getValue().orderReturnedNotificationData;
+  }
+
+  public set orderReturnedNotificationData(value: Order | undefined) {
+    if (
+      JSON.stringify(this.orderReturnedNotificationData) !==
+      JSON.stringify(value)
+    ) {
+      this.store.update((state) => ({
+        ...state,
+        orderReturnedNotificationData: value,
+      }));
+    }
+  }
+
+  public get orderCanceledNotificationData(): Order | undefined {
+    return this.store.getValue().orderCanceledNotificationData;
+  }
+
+  public set orderCanceledNotificationData(value: Order | undefined) {
+    if (
+      JSON.stringify(this.orderCanceledNotificationData) !==
+      JSON.stringify(value)
+    ) {
+      this.store.update((state) => ({
+        ...state,
+        orderCanceledNotificationData: value,
       }));
     }
   }

@@ -251,6 +251,7 @@
   "cvc": "CVC",
   "utilizeSearchEngineDescription": "Utilize an integrated search engine to explore a wide array of {{product_count, string}} selections.",
   "menu": "Menu",
+  "wines": "Wines",
   "explore": "Explore",
   "store": "Store",
   "confirm": "Confirm",
@@ -292,6 +293,18 @@
   "wine": "Wine",
   "menuItem": "Menu item",
   "notifications": "Notifications",
+  "view": "View",
   "orderPlaced": "Order placed",
-  "orderPlacedDescription": "Order #{{displayId, number}} has been successfully placed."
+  "orderPlacedName": "Order #{{displayId, number}}",
+  "orderPlacedDescription": "has been successfully placed.",
+  "orderShipped": "Order shipped",
+  "orderShippedName": "Order #{{displayId, number}}",
+  "orderShippedDescription": "has been shipped.",
+  "orderReturned": "Order returned",
+  "orderReturnedName": "Order #{{displayId, number}}",
+  "orderReturnedDescription": "has been returned.",
+  "orderCanceled": "Order canceled",
+  "orderCanceledName": "Order #{{displayId, number}}",
+  "orderCanceledDescription": "has been canceled.",
+  "noNotifications": "No notifications found."
 }

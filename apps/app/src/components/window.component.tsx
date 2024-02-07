@@ -295,16 +295,159 @@ export default function WindowComponent(): JSX.Element {
     }
 
     WindowController.addToast({
-      key: `order-placed-${Math.random()}`,
+      key: `order-placed-${windowProps.orderPlacedNotificationData.id}`,
+      icon: (
+        <div className={[styles['toast-order-icon']].join(' ')}>
+          {!windowProps.orderPlacedNotificationData.items?.[0]?.thumbnail && (
+            <img
+              className={[
+                styles['no-thumbnail-image'],
+                styles['no-thumbnail-image-desktop'],
+              ].join(' ')}
+              src={'../assets/images/wine-bottle.png'}
+            />
+          )}
+          {windowProps.orderPlacedNotificationData.items?.[0]?.thumbnail && (
+            <img
+              className={[
+                styles['thumbnail-image'],
+                styles['thumbnail-image-desktop'],
+              ].join(' ')}
+              src={
+                windowProps.orderPlacedNotificationData.items?.[0]?.thumbnail
+              }
+            />
+          )}
+        </div>
+      ),
       message: t('orderPlaced') ?? '',
       description:
         t('orderPlacedDescription', {
           displayId: windowProps.orderPlacedNotificationData?.display_id ?? 0,
         }) ?? '',
-      type: 'success',
     });
     WindowController.updateOrderPlacedNotificationData(undefined);
   }, [windowProps.orderPlacedNotificationData]);
+
+  useEffect(() => {
+    if (!windowProps.orderShippedNotificationData) {
+      return;
+    }
+
+    WindowController.addToast({
+      key: `order-shipped-${windowProps.orderShippedNotificationData.id}`,
+      icon: (
+        <div className={[styles['toast-order-icon']].join(' ')}>
+          {!windowProps.orderShippedNotificationData.items?.[0]?.thumbnail && (
+            <img
+              className={[
+                styles['no-thumbnail-image'],
+                styles['no-thumbnail-image-desktop'],
+              ].join(' ')}
+              src={'../assets/images/wine-bottle.png'}
+            />
+          )}
+          {windowProps.orderShippedNotificationData.items?.[0]?.thumbnail && (
+            <img
+              className={[
+                styles['thumbnail-image'],
+                styles['thumbnail-image-desktop'],
+              ].join(' ')}
+              src={
+                windowProps.orderShippedNotificationData.items?.[0]?.thumbnail
+              }
+            />
+          )}
+        </div>
+      ),
+      message: t('orderShipped') ?? '',
+      description:
+        t('orderShippedDescription', {
+          displayId: windowProps.orderShippedNotificationData?.display_id ?? 0,
+        }) ?? '',
+    });
+    WindowController.updateOrderShippedNotificationData(undefined);
+  }, [windowProps.orderShippedNotificationData]);
+
+  useEffect(() => {
+    if (!windowProps.orderReturnedNotificationData) {
+      return;
+    }
+
+    WindowController.addToast({
+      key: `order-returned-${windowProps.orderReturnedNotificationData.id}`,
+      icon: (
+        <div className={[styles['toast-order-icon']].join(' ')}>
+          {!windowProps.orderReturnedNotificationData.items?.[0]?.thumbnail && (
+            <img
+              className={[
+                styles['no-thumbnail-image'],
+                styles['no-thumbnail-image-desktop'],
+              ].join(' ')}
+              src={'../assets/images/wine-bottle.png'}
+            />
+          )}
+          {windowProps.orderReturnedNotificationData.items?.[0]?.thumbnail && (
+            <img
+              className={[
+                styles['thumbnail-image'],
+                styles['thumbnail-image-desktop'],
+              ].join(' ')}
+              src={
+                windowProps.orderReturnedNotificationData.items?.[0]?.thumbnail
+              }
+            />
+          )}
+        </div>
+      ),
+      message: t('orderReturned') ?? '',
+      description:
+        t('orderReturnedDescription', {
+          displayId: windowProps.orderReturnedNotificationData?.display_id ?? 0,
+        }) ?? '',
+    });
+    WindowController.updateOrderReturnedNotificationData(undefined);
+  }, [windowProps.orderReturnedNotificationData]);
+
+  useEffect(() => {
+    if (!windowProps.orderCanceledNotificationData) {
+      return;
+    }
+
+    WindowController.addToast({
+      key: `order-canceled-${windowProps.orderCanceledNotificationData.id}`,
+      icon: (
+        <div className={[styles['toast-order-icon']].join(' ')}>
+          {!windowProps.orderCanceledNotificationData.items?.[0]?.thumbnail && (
+            <img
+              className={[
+                styles['no-thumbnail-image'],
+                styles['no-thumbnail-image-desktop'],
+              ].join(' ')}
+              src={'../assets/images/wine-bottle.png'}
+            />
+          )}
+          {windowProps.orderCanceledNotificationData.items?.[0]?.thumbnail && (
+            <img
+              className={[
+                styles['thumbnail-image'],
+                styles['thumbnail-image-desktop'],
+              ].join(' ')}
+              src={
+                windowProps.orderCanceledNotificationData.items?.[0]?.thumbnail
+              }
+            />
+          )}
+        </div>
+      ),
+      message: t('orderCanceled') ?? '',
+      description:
+        t('orderCanceledDescription', {
+          displayId: windowProps.orderCanceledNotificationData?.display_id ?? 0,
+        }) ?? '',
+    });
+    WindowController.updateOrderCanceledNotificationData(undefined);
+  }, [windowProps.orderCanceledNotificationData]);
 
   useEffect(() => {
     if (!accountProps.account) {

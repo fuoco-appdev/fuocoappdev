@@ -234,6 +234,28 @@ message AccountFollowersResponse {
     repeated AccountFollowerResponse followers = 1;
 }
 
+message AccountNotificationsRequest {
+    string account_id = 1;
+    int32 limit = 2;
+    int32 offset = 3;
+}
+
+message AccountNotificationResponse {
+    string id = 1;
+    string created_at = 2;
+    string event_name = 3;
+    string resource_type = 4;
+    string resource_id = 5;
+    string account_id = 6;
+    string data = 7;
+    bool seen = 8;
+    string updated_at = 9;
+}
+
+message AccountNotificationsResponse {
+    repeated AccountNotificationResponse notifications = 1;
+}
+
 message AccountNotificationCountResponse {
     int32 count = 1;
 }

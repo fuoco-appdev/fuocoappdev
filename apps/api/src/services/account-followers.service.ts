@@ -227,6 +227,7 @@ export class AccountFollowersService {
         const followerData = await SupabaseService.client
           .from('account_followers')
           .select()
+          .order('created_at', { ascending: false })
           .eq('account_id', accountId)
           .eq('follower_id', id);
 
@@ -275,6 +276,9 @@ export class AccountFollowersService {
       const followerRequestsData = await SupabaseService.client
         .from('account_followers')
         .select()
+        .order('created_at', { ascending: false })
+        .range(offset, offset + limit)
+        .limit(limit)
         .eq('follower_id', accountId)
         .eq('accepted', false);
 
@@ -282,7 +286,8 @@ export class AccountFollowersService {
         console.error(followerRequestsData.error);
       }
 
-      for (const requestedFollower of followerRequestsData.data ?? []) {
+      const data = followerRequestsData.data ?? [];
+      for (const requestedFollower of data) {
         const followerResponse = new AccountFollowerResponse();
         followerResponse.setAccountId(requestedFollower.account_id);
         followerResponse.setFollowerId(requestedFollower.follower_id);

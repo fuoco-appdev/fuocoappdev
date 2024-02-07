@@ -8,8 +8,8 @@ export interface GuestProps {
 }
 
 export function GuestComponent({ children }: GuestProps): React.ReactElement {
-  const [props] = useObservable(WindowController.model.store);
-  return !props.isAuthenticated ? (
+  const [windowProps] = useObservable(WindowController.model.store);
+  return !windowProps.isAuthenticated ? (
     children
   ) : (
     <Navigate to={RoutePathsType.Account} />

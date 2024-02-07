@@ -168,8 +168,9 @@ export default function StoreComponent(): JSX.Element {
   };
 
   const onLoad = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
-    if (storeProps.scrollPosition) {
-      e.currentTarget.scrollTop = storeProps.scrollPosition as number;
+    if (StoreController.model.scrollPosition) {
+      e.currentTarget.scrollTop = StoreController.model
+        .scrollPosition as number;
       StoreController.updateScrollPosition(undefined);
     }
   };

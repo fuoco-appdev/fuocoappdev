@@ -1,5 +1,10 @@
 import SupabaseService from './supabase.service.ts';
-import { AccountNotificationCountResponse } from '../protobuf/core_pb.js';
+import {
+  AccountNotificationCountResponse,
+  AccountNotificationsRequest,
+  AccountNotificationResponse,
+  AccountNotificationsResponse,
+} from '../protobuf/core_pb.js';
 import { RealtimeChannel } from 'https://esm.sh/v107/@supabase/realtime-js@2.6.0/dist/module/index.js';
 
 export interface AccountNotificationProps {
@@ -15,10 +20,55 @@ export interface AccountNotificationProps {
 }
 
 export class AccountNotificationService {
+  public async getNotificationsAsync(
+    request: InstanceType<typeof AccountNotificationsRequest>
+  ): Promise<InstanceType<typeof AccountNotificationsResponse> | null> {
+    const accountId = request.getAccountId();
+    const limit = request.getLimit();
+    const offset = request.getOffset();
+    const response = await this.findNotificationsAsync(
+      accountId,
+      limit,
+      offset
+    );
+    return response;
+  }
+
   public async getUnseenCountAsync(
     accountId: string
   ): Promise<InstanceType<typeof AccountNotificationCountResponse> | null> {
     const response = await this.findUnseenCountAsync(accountId);
+    return response;
+  }
+
+  public async updateSeenAllAsync(
+    accountId: string
+  ): Promise<InstanceType<typeof AccountNotificationCountResponse> | null> {
+    const response = new AccountNotificationCountResponse();
+    response.setCount(0);
+
+    if (accountId.length <= 0) {
+      console.error('Account id cannot be empty');
+      return null;
+    }
+
+    try {
+      const notificationData = await SupabaseService.client
+        .from('account_notification')
+        .update({ seen: true })
+        .eq('account_id', accountId)
+        .eq('seen', 'false')
+        .select();
+
+      if (notificationData.error) {
+        console.error(notificationData.error);
+      } else {
+        response.setCount(notificationData.count ?? 0);
+      }
+    } catch (error: any) {
+      console.error(error);
+    }
+
     return response;
   }
 
@@ -132,6 +182,65 @@ export class AccountNotificationService {
     }
 
     return data.length > 0 ? data[0] : {};
+  }
+
+  private async findNotificationsAsync(
+    accountId: string,
+    limit: number,
+    offset: number
+  ): Promise<InstanceType<typeof AccountNotificationsResponse> | null> {
+    const response = new AccountNotificationsResponse();
+    if (accountId.length <= 0) {
+      console.error('Account id cannot be empty');
+      return null;
+    }
+
+    try {
+      const accountNotificationsData = await SupabaseService.client
+        .from('account_notification')
+        .select()
+        .order('created_at', { ascending: false })
+        .range(offset, offset + limit)
+        .limit(limit)
+        .eq('account_id', accountId);
+
+      if (accountNotificationsData.error) {
+        console.error(accountNotificationsData.error);
+      }
+
+      const data = accountNotificationsData.data ?? [];
+      for (const accountNotification of data) {
+        const accountNotificationResponse = new AccountNotificationResponse();
+        accountNotificationResponse.setId(accountNotification.id);
+        accountNotificationResponse.setCreatedAt(
+          accountNotification.created_at
+        );
+        accountNotificationResponse.setEventName(
+          accountNotification.event_name
+        );
+        accountNotificationResponse.setResourceType(
+          accountNotification.resource_type
+        );
+        accountNotificationResponse.setResourceId(
+          accountNotification.resource_id
+        );
+        accountNotificationResponse.setAccountId(
+          accountNotification.account_id
+        );
+        accountNotificationResponse.setData(
+          JSON.stringify(accountNotification.data)
+        );
+        accountNotificationResponse.setUpdatedAt(
+          accountNotification.updated_at
+        );
+        accountNotificationResponse.setSeen(accountNotification.seen);
+        response.addNotifications(accountNotificationResponse);
+      }
+    } catch (error: any) {
+      console.error(error);
+    }
+
+    return response;
   }
 
   private async findUnseenCountAsync(

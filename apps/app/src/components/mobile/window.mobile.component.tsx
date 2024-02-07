@@ -756,6 +756,14 @@ export default function WindowMobileComponent({
               styles['toast-overlay-container-mobile'],
             ].join(' '),
             toast: {
+              container: [
+                styles['toast-container'],
+                styles['toast-container-mobile'],
+              ].join(' '),
+              description: [
+                styles['toast-description'],
+                styles['toast-description-mobile'],
+              ].join(' '),
               life: [styles['toast-life'], styles['toast-life-mobile']].join(
                 ' '
               ),

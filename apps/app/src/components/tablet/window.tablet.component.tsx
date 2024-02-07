@@ -830,6 +830,10 @@ export default function WindowTabletComponent({
                     styles['toast-container'],
                     styles['toast-container-tablet'],
                   ].join(' '),
+                  description: [
+                    styles['toast-description'],
+                    styles['toast-description-tablet'],
+                  ].join(' '),
                   life: [
                     styles['toast-life'],
                     styles['toast-life-tablet'],

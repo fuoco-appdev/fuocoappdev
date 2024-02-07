@@ -20,6 +20,7 @@ import AccountController from './account.controller';
 import { AccountState } from '../models/account.model';
 import MedusaService from '../services/medusa.service';
 import AccountNotificationService from 'src/services/account-notification.service';
+import NotificationsController from './notifications.controller';
 
 class WindowController extends Controller {
   private readonly _model: WindowModel;
@@ -121,6 +122,22 @@ class WindowController extends Controller {
 
   public updateOrderPlacedNotificationData(value: Order | undefined): void {
     this._model.orderPlacedNotificationData = value;
+  }
+
+  public updateOrderShippedNotificationData(value: Order | undefined): void {
+    this._model.orderShippedNotificationData = value;
+  }
+
+  public updateOrderReturnedNotificationData(value: Order | undefined): void {
+    this._model.orderReturnedNotificationData = value;
+  }
+
+  public updateOrderCanceledNotificationData(value: Order | undefined): void {
+    this._model.orderCanceledNotificationData = value;
+  }
+
+  public updateNotificationsCount(value: number): void {
+    this._model.unseenNotificationsCount = value;
   }
 
   public async updateQueryInventoryLocationAsync(id: string | undefined) {
@@ -419,6 +436,10 @@ class WindowController extends Controller {
   }
 
   private onNotificationCreated(value: Record<string, any>): void {
+    if (Object.keys(value).length <= 0) {
+      return;
+    }
+
     const payload = value['payload'];
     const resourceType = payload['resource_type'];
     const eventName = payload['event_name'];
@@ -427,18 +448,37 @@ class WindowController extends Controller {
       if (eventName === 'order.placed') {
         this.onOrderPlaced(data);
       } else if (eventName === 'order.shipped') {
+        this.onOrderShipped(data);
       } else if (eventName === 'order.returned') {
+        this.onOrderReturned(data);
       } else if (eventName === 'order.canceled') {
+        this.onOrderCanceled(data);
       }
     }
 
     this._model.unseenNotificationsCount =
       this._model.unseenNotificationsCount + 1;
+    NotificationsController.addAccountNotification(value);
   }
 
   private onOrderPlaced(data: Record<string, any>): void {
     const order = data as Order;
     this._model.orderPlacedNotificationData = order;
+  }
+
+  private onOrderShipped(data: Record<string, any>): void {
+    const order = data as Order;
+    this._model.orderShippedNotificationData = order;
+  }
+
+  private onOrderReturned(data: Record<string, any>): void {
+    const order = data as Order;
+    this._model.orderReturnedNotificationData = order;
+  }
+
+  private onOrderCanceled(data: Record<string, any>): void {
+    const order = data as Order;
+    this._model.orderCanceledNotificationData = order;
   }
 
   private onCartChanged(

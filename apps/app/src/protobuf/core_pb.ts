@@ -1909,6 +1909,177 @@ export class AccountFollowersResponse extends Message<AccountFollowersResponse> 
 }
 
 /**
+ * @generated from message core.AccountNotificationsRequest
+ */
+export class AccountNotificationsRequest extends Message<AccountNotificationsRequest> {
+  /**
+   * @generated from field: string account_id = 1;
+   */
+  accountId = "";
+
+  /**
+   * @generated from field: int32 limit = 2;
+   */
+  limit = 0;
+
+  /**
+   * @generated from field: int32 offset = 3;
+   */
+  offset = 0;
+
+  constructor(data?: PartialMessage<AccountNotificationsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.AccountNotificationsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "limit", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 3, name: "offset", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountNotificationsRequest {
+    return new AccountNotificationsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AccountNotificationsRequest {
+    return new AccountNotificationsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AccountNotificationsRequest {
+    return new AccountNotificationsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AccountNotificationsRequest | PlainMessage<AccountNotificationsRequest> | undefined, b: AccountNotificationsRequest | PlainMessage<AccountNotificationsRequest> | undefined): boolean {
+    return proto3.util.equals(AccountNotificationsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message core.AccountNotificationResponse
+ */
+export class AccountNotificationResponse extends Message<AccountNotificationResponse> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: string created_at = 2;
+   */
+  createdAt = "";
+
+  /**
+   * @generated from field: string event_name = 3;
+   */
+  eventName = "";
+
+  /**
+   * @generated from field: string resource_type = 4;
+   */
+  resourceType = "";
+
+  /**
+   * @generated from field: string resource_id = 5;
+   */
+  resourceId = "";
+
+  /**
+   * @generated from field: string account_id = 6;
+   */
+  accountId = "";
+
+  /**
+   * @generated from field: string data = 7;
+   */
+  data = "";
+
+  /**
+   * @generated from field: bool seen = 8;
+   */
+  seen = false;
+
+  /**
+   * @generated from field: string updated_at = 9;
+   */
+  updatedAt = "";
+
+  constructor(data?: PartialMessage<AccountNotificationResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.AccountNotificationResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "created_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "event_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "resource_type", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "resource_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 7, name: "data", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 8, name: "seen", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 9, name: "updated_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountNotificationResponse {
+    return new AccountNotificationResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AccountNotificationResponse {
+    return new AccountNotificationResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AccountNotificationResponse {
+    return new AccountNotificationResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AccountNotificationResponse | PlainMessage<AccountNotificationResponse> | undefined, b: AccountNotificationResponse | PlainMessage<AccountNotificationResponse> | undefined): boolean {
+    return proto3.util.equals(AccountNotificationResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message core.AccountNotificationsResponse
+ */
+export class AccountNotificationsResponse extends Message<AccountNotificationsResponse> {
+  /**
+   * @generated from field: repeated core.AccountNotificationResponse notifications = 1;
+   */
+  notifications: AccountNotificationResponse[] = [];
+
+  constructor(data?: PartialMessage<AccountNotificationsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.AccountNotificationsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "notifications", kind: "message", T: AccountNotificationResponse, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountNotificationsResponse {
+    return new AccountNotificationsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AccountNotificationsResponse {
+    return new AccountNotificationsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AccountNotificationsResponse {
+    return new AccountNotificationsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AccountNotificationsResponse | PlainMessage<AccountNotificationsResponse> | undefined, b: AccountNotificationsResponse | PlainMessage<AccountNotificationsResponse> | undefined): boolean {
+    return proto3.util.equals(AccountNotificationsResponse, a, b);
+  }
+}
+
+/**
  * @generated from message core.AccountNotificationCountResponse
  */
 export class AccountNotificationCountResponse extends Message<AccountNotificationCountResponse> {

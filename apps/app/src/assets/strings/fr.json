@@ -251,6 +251,7 @@
   "cvc": "CVC",
   "utilizeSearchEngineDescription": "Utilisez un moteur de recherche intégré pour explorer un large éventail de sélections {{product_count, string}}.",
   "menu": "Menu",
+  "wines": "Vins",
   "explore": "Explorer",
   "store": "Magasin",
   "confirm": "Confirmer",
@@ -292,6 +293,14 @@
   "wine": "Vin",
   "menuItem": "Élément de menu",
   "notifications": "Notifications",
+  "view": "Voir",
   "orderPlaced": "Commande passée",
-  "orderPlacedDescription": "La commande #{{displayId, number}} a été passée avec succès."
+  "orderPlacedDescription": "La commande #{{displayId, number}} a été passée avec succès.",
+  "orderShipped": "Commande livrée",
+  "orderShippedDescription": "La commande #{{displayId, number}} a été expédiée.",
+  "orderReturned": "Commande renvoyée",
+  "orderReturnedDescription": "La commande #{{displayId, number}} a été renvoyée.",
+  "orderCanceled": "Commande annulée",
+  "orderCanceledDescription": "La commande #{{displayId, number}} a été annulée.",
+  "noNotifications": "Aucune notification n'a été trouvée."
 }

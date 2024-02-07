@@ -873,6 +873,10 @@ export default function WindowDesktopComponent({
                 styles['toast-container'],
                 styles['toast-container-desktop'],
               ].join(' '),
+              description: [
+                styles['toast-description'],
+                styles['toast-description-desktop'],
+              ].join(' '),
               life: [styles['toast-life'], styles['toast-life-desktop']].join(
                 ' '
               ),

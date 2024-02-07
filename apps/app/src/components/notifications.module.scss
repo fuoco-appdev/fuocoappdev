@@ -1,0 +1,194 @@
+@import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
+
+.root {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-width: 100%;
+    min-height: 100%;
+
+    & .top-bar {
+        position: absolute;
+        height: 56px;
+        min-height: 56px;
+        width: 100%;
+        -webkit-box-align: center;
+            -ms-flex-align: center;
+                align-items: center;
+        background-color: #fff !important;
+        z-index: 2;
+
+        & .title-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            color: $brand-900;
+            height: 100%;
+            width: 100%;
+            gap: $mp-1;
+
+            & .title {
+                font-weight: $font-weight-bold;
+                font-size: $font-size-lg;
+                text-align: center;
+                line-height: 56px;
+            }
+        }
+    }
+
+    & .scroll-container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        overflow-y: auto;
+        scroll-behavior: smooth;
+
+        & .loading-ring {
+            width: 100%;
+            transition: max-height 150ms $transition-standard-easing;
+        }
+
+        & .from-now-date {
+           color: $brand-900;
+           font-weight: $font-weight-bold;
+           font-size: $font-size-sm; 
+        }
+
+        & .no-notifications-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 100%;
+
+            & .no-items-text {
+                margin-top: $mp-4;
+                color: $brand-900;
+                font-size: $font-size-sm;
+                text-align: center;
+            }
+        
+            & .no-items-container {
+                display: -webkit-box;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-orient: horizontal;
+                -webkit-box-direction: normal;
+                    -ms-flex-direction: row;
+                        flex-direction: row;
+                -webkit-box-pack: center;
+                    -ms-flex-pack: center;
+                        justify-content: center;
+                margin-top: $mp-8;
+                margin-bottom: $mp-4;
+            }
+        }
+    }
+}
+
+.root-desktop {
+    & .top-bar-desktop {
+        & .title-container-desktop {
+            & .title-desktop {
+                
+            }
+        }
+    }
+
+    & .scroll-container-desktop {
+        padding-top: calc(56px + 24px);
+        padding-bottom: $mp-6;
+
+        & .loading-ring-desktop {
+
+        }
+
+        & .from-now-date-desktop {
+            padding: $mp-4 $mp-6;
+        }
+
+        & .no-notifications-container-desktop {
+            padding: $mp-10;
+
+            & .no-items-text-desktop {
+   
+            }
+        
+            & .no-items-container-desktop {
+
+            }
+        }
+    }
+}
+
+.root-tablet {
+    & .top-bar-tablet {
+        & .title-container-tablet {
+            & .title-tablet {
+                
+            }
+        }
+    }
+
+    & .scroll-container-tablet {
+        padding-top: calc(56px + 24px);
+        padding-bottom: $mp-6;
+        
+        & .loading-ring-tablet {
+
+        }
+
+        & .from-now-date-tablet {
+            padding: $mp-4 $mp-6;
+        }
+
+        & .no-notifications-container-tablet {
+            padding: $mp-10;
+
+            & .no-items-text-tablet {
+   
+            }
+        
+            & .no-items-container-tablet {
+
+            }
+        }
+    }
+}
+
+.root-mobile {
+    & .top-bar-mobile {
+        & .title-container-mobile {
+            & .title-mobile {
+                
+            }
+        }
+    }
+
+    & .scroll-container-mobile {
+        padding-top: 56px;
+        padding-bottom: calc(56px + 24px);
+
+        & .loading-ring-mobile {
+
+        }
+
+        & .from-now-date-mobile {
+            padding: $mp-4 $mp-4;
+        }
+
+        & .no-notifications-container-mobile {
+            padding: $mp-10;
+
+            & .no-items-text-mobile {
+   
+            }
+        
+            & .no-items-container-mobile {
+
+            }
+        }
+    }
+}

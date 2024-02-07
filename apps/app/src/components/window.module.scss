@@ -1346,6 +1346,30 @@
   text-transform: capitalize;
 }
 
+.toast-order-icon {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  height: 32px;
+  width: 32px;
+  border-radius: 32px;
+  background-color: $gray-100;
+
+  & .thumbnail-image {
+    max-height: 100%;
+    width: auto;
+    color: $brand-900;
+  }
+
+  & .no-thumbnail-image {
+    padding: $mp-1;
+    max-height: 100%;
+    max-width: 100%;
+    width: auto;
+    color: $brand-900;
+  }
+}
+
 .toast-overlay-root {
   height: 100%;
 }
@@ -1354,9 +1378,22 @@
   padding-top: calc(56px + 24px);
 }
 
+.toast-overlay-root-mobile {
+  padding-top: $mp-4;
+}
+
 .toast-overlay-container {
   height: 100%;
   width: 100%;
+}
+
+.toast-container {
+  padding: $mp-4;
+}
+
+.toast-description {
+  color: #fff;
+  opacity: .9 !important;
 }
 
 .toast-life {

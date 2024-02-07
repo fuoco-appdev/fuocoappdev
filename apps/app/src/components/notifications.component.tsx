@@ -1,7 +1,6 @@
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import NotificationsController from '../controllers/notifications.controller';
-import styles from './window.module.scss';
 import { Alert } from '@fuoco.appdev/core-ui';
 import { RoutePathsType } from '../route-paths';
 import { useTranslation } from 'react-i18next';
@@ -19,6 +18,7 @@ import React from 'react';
 import { NotificationsSuspenseDesktopComponent } from './desktop/suspense/notifications.suspense.desktop.component';
 import { NotificationsSuspenseMobileComponent } from './mobile/suspense/notifications.suspense.mobile.component';
 import { NotificationsSuspenseTabletComponent } from './tablet/suspense/notifications.suspense.tablet.component';
+import { NotificationsState } from '../models/notifications.model';
 
 const NotificationsDesktopComponent = lazy(
   () => import('./desktop/notifications.desktop.component')
@@ -30,7 +30,44 @@ const NotificationsMobileComponent = lazy(
   () => import('./mobile/notifications.mobile.component')
 );
 
+export interface NotificationsResponsiveProps {
+  notificationsProps: NotificationsState;
+  fromNowRef: React.MutableRefObject<string | null>;
+  onScroll: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
+  onLoad: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
+}
+
 export default function NotificationsComponent(): JSX.Element {
+  const renderCountRef = useRef<number>(0);
+  const [notificationsProps] = useObservable(
+    NotificationsController.model.store
+  );
+  const fromNowRef = useRef<string | null>(null);
+
+  const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    const scrollTop = e.currentTarget?.scrollTop ?? 0;
+    const scrollHeight = e.currentTarget?.scrollHeight ?? 0;
+    const clientHeight = e.currentTarget?.clientHeight ?? 0;
+    const scrollOffset = scrollHeight - scrollTop - clientHeight;
+
+    if (
+      scrollOffset > 16 ||
+      !NotificationsController.model.hasMoreNotifications
+    ) {
+      return;
+    }
+
+    NotificationsController.onNextScrollAsync();
+  };
+
+  const onLoad = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
+    if (NotificationsController.model.scrollPosition) {
+      e.currentTarget.scrollTop = NotificationsController.model
+        .scrollPosition as number;
+      NotificationsController.updateScrollPosition(undefined);
+    }
+  };
+
   const suspenceComponent = (
     <>
       <NotificationsSuspenseDesktopComponent />
@@ -39,12 +76,25 @@ export default function NotificationsComponent(): JSX.Element {
     </>
   );
 
+  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+    return suspenceComponent;
+  }
+
+  useEffect(() => {
+    renderCountRef.current += 1;
+    NotificationsController.load(renderCountRef.current);
+
+    return () => {
+      NotificationsController.disposeLoad(renderCountRef.current);
+    };
+  }, []);
+
   return (
     <>
       <Helmet>
-        <title>Cruthology</title>
+        <title>Notifications | Cruthology</title>
         <link rel="canonical" href={window.location.href} />
-        <meta name="title" content={'Cruthology'} />
+        <meta name="title" content={'Notifications | Cruthology'} />
         <meta
           name="description"
           content={
@@ -55,7 +105,7 @@ export default function NotificationsComponent(): JSX.Element {
           property="og:image"
           content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
         />
-        <meta property="og:title" content={'Cruthology'} />
+        <meta property="og:title" content={'Notifications | Cruthology'} />
         <meta
           property="og:description"
           content={
@@ -69,9 +119,24 @@ export default function NotificationsComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <AuthenticatedComponent>
-          <NotificationsDesktopComponent />
-          <NotificationsTabletComponent />
-          <NotificationsMobileComponent />
+          <NotificationsDesktopComponent
+            notificationsProps={notificationsProps}
+            fromNowRef={fromNowRef}
+            onScroll={onScroll}
+            onLoad={onLoad}
+          />
+          <NotificationsTabletComponent
+            notificationsProps={notificationsProps}
+            fromNowRef={fromNowRef}
+            onScroll={onScroll}
+            onLoad={onLoad}
+          />
+          <NotificationsMobileComponent
+            notificationsProps={notificationsProps}
+            fromNowRef={fromNowRef}
+            onScroll={onScroll}
+            onLoad={onLoad}
+          />
         </AuthenticatedComponent>
       </React.Suspense>
     </>

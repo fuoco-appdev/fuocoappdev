@@ -126,7 +126,7 @@ export function ProductPreviewSuspenseDesktopComponent(): JSX.Element {
                   />
                 </div>
               </div>
-              <Skeleton width={56} height={56} borderRadius={56} />
+              <Skeleton width={46} height={46} borderRadius={46} />
             </div>
           </div>
         </div>
