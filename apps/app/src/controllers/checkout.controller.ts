@@ -71,8 +71,6 @@ class CheckoutController extends Controller {
   }
 
   public override disposeLoad(renderCount: number): void {
-    this.resetCheckoutStates();
-
     this._cartSubscription?.unsubscribe();
     this._customerSubscription?.unsubscribe();
   }
@@ -199,6 +197,30 @@ class CheckoutController extends Controller {
     });
 
     this._model.selectedShippingAddressOptionId = value;
+
+    const selectedRegion: Region = await firstValueFrom(
+      StoreController.model.store.pipe(
+        select((model) => model.selectedRegion),
+        filter((value) => value !== undefined),
+        take(1)
+      )
+    );
+    if (selectedRegion.id) {
+      try {
+        const shippingOptionsResponse =
+          await MedusaService.medusa?.shippingOptions.list();
+        const shippingOptionsFromRegion =
+          shippingOptionsResponse?.shipping_options.filter(
+            (option) => option.region_id === selectedRegion.id
+          );
+        shippingOptionsFromRegion?.sort(
+          (current, next) => (current.amount ?? 0) - (next.amount ?? 0)
+        );
+        this._model.shippingOptions = shippingOptionsFromRegion ?? [];
+      } catch (error: any) {
+        console.error(error);
+      }
+    }
 
     const completed = await this.continueToDeliveryAsync();
     if (!completed) {
@@ -563,13 +585,6 @@ class CheckoutController extends Controller {
         take(1)
       )
     );
-    const selectedRegion: Region = await firstValueFrom(
-      StoreController.model.store.pipe(
-        select((model) => model.selectedRegion),
-        filter((value) => value !== undefined),
-        take(1)
-      )
-    );
     if (!customer) {
       this._model.shippingForm = {
         email: value?.email,
@@ -592,23 +607,6 @@ class CheckoutController extends Controller {
         ).length <= 0
       ) {
         this._model.shippingFormComplete = true;
-      }
-    }
-
-    if (selectedRegion.id) {
-      try {
-        const shippingOptionsResponse =
-          await MedusaService.medusa?.shippingOptions.list();
-        const shippingOptionsFromRegion =
-          shippingOptionsResponse?.shipping_options.filter(
-            (option) => option.region_id === value?.region_id
-          );
-        shippingOptionsFromRegion?.sort(
-          (current, next) => (current.amount ?? 0) - (next.amount ?? 0)
-        );
-        this._model.shippingOptions = shippingOptionsFromRegion ?? [];
-      } catch (error: any) {
-        console.error(error);
       }
     }
 
