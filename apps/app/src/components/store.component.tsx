@@ -109,17 +109,17 @@ export interface StoreResponsiveProps {
   onAddToCart: () => void;
   onProductPreviewClick: (
     scrollTop: number,
-    product: PricedProduct,
+    product: PricedProduct | undefined,
     productLikesMetadata: core.ProductLikesMetadataResponse | null
   ) => void;
-  onProductPreviewRest: (product: PricedProduct) => void;
+  onProductPreviewRest: (product: PricedProduct | undefined) => void;
   onProductPreviewAddToCart: (
-    product: PricedProduct,
+    product: PricedProduct | undefined,
     productLikesMetadata: core.ProductLikesMetadataResponse | null
   ) => void;
   onProductPreviewLikeChanged: (
     isLiked: boolean,
-    product: PricedProduct
+    product: PricedProduct | undefined
   ) => void;
   onCategoryChanged: (category: StoreCategoryType) => void;
 }
@@ -177,7 +177,7 @@ export default function StoreComponent(): JSX.Element {
 
   const onProductPreviewClick = (
     scrollTop: number,
-    product: PricedProduct,
+    product: PricedProduct | undefined,
     productLikesMetadata: core.ProductLikesMetadataResponse | null
   ) => {
     StoreController.updateScrollPosition(scrollTop);
@@ -192,7 +192,11 @@ export default function StoreComponent(): JSX.Element {
     StoreController.updateSelectedProductLikesMetadata(productLikesMetadata);
   };
 
-  const onProductPreviewRest = (product: PricedProduct) => {
+  const onProductPreviewRest = (product: PricedProduct | undefined) => {
+    if (!product) {
+      return;
+    }
+
     navigate({
       pathname: `${RoutePathsType.Store}/${product.id}`,
       search: query.toString(),
@@ -200,7 +204,7 @@ export default function StoreComponent(): JSX.Element {
   };
 
   const onProductPreviewAddToCart = (
-    product: PricedProduct,
+    product: PricedProduct | undefined,
     productLikesMetadata: core.ProductLikesMetadataResponse | null
   ) => {
     if (!product || !productLikesMetadata) {
@@ -241,8 +245,12 @@ export default function StoreComponent(): JSX.Element {
 
   const onProductPreviewLikeChanged = (
     isLiked: boolean,
-    product: PricedProduct
+    product: PricedProduct | undefined
   ) => {
+    if (!product) {
+      return;
+    }
+
     ProductController.requestProductLike(isLiked, product.id ?? '');
   };
 

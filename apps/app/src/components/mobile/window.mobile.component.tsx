@@ -452,9 +452,6 @@ export default function WindowMobileComponent({
                             search: query.toString(),
                           })
                         }
-                        disabled={
-                          windowProps.activeRoute === RoutePathsType.Cart
-                        }
                         type={'text'}
                         rounded={true}
                         size={'tiny'}
@@ -490,9 +487,6 @@ export default function WindowMobileComponent({
                             pathname: RoutePathsType.Store,
                             search: query.toString(),
                           })
-                        }
-                        disabled={
-                          windowProps.activeRoute === RoutePathsType.Cart
                         }
                         type={'text'}
                         rounded={true}
@@ -580,9 +574,6 @@ export default function WindowMobileComponent({
                             rippleProps={{
                               color: 'rgba(252, 245, 227, .35)',
                             }}
-                            disabled={
-                              windowProps.activeRoute === RoutePathsType.Cart
-                            }
                             onClick={() => setOpenMore(true)}
                             type={'text'}
                             rounded={true}
@@ -679,9 +670,6 @@ export default function WindowMobileComponent({
                                 pathname: RoutePathsType.AccountLikes,
                                 search: query.toString(),
                               })
-                            }
-                            disabled={
-                              windowProps.activeRoute === RoutePathsType.Cart
                             }
                             type={'text'}
                             rounded={true}

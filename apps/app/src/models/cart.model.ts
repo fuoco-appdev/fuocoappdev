@@ -7,7 +7,7 @@ import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 export interface CartState {
   cart: Omit<Cart, 'refundable_amount' | 'refunded_total'> | undefined;
   requiredFoodProducts: PricedProduct[];
-  isFoodInCartRequired: boolean;
+  isFoodInCartRequired: boolean | undefined;
   discountCode: string;
 }
 
@@ -23,7 +23,7 @@ export class CartModel extends Model {
         withProps<CartState>({
           cart: undefined,
           requiredFoodProducts: [],
-          isFoodInCartRequired: false,
+          isFoodInCartRequired: undefined,
           discountCode: '',
         })
       ),
@@ -64,11 +64,11 @@ export class CartModel extends Model {
     }
   }
 
-  public get isFoodInCartRequired(): boolean {
+  public get isFoodInCartRequired(): boolean | undefined {
     return this.store?.getValue().isFoodInCartRequired;
   }
 
-  public set isFoodInCartRequired(value: boolean) {
+  public set isFoodInCartRequired(value: boolean | undefined) {
     if (this.isFoodInCartRequired !== value) {
       this.store?.update((state) => ({
         ...state,

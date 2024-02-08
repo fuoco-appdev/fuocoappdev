@@ -56,7 +56,7 @@ export function NotificationItemSuspenseMobileComponent(): JSX.Element {
             styles['right-content-mobile'],
           ].join(' ')}
         >
-          <Skeleton style={{ width: 80, height: 38 }} borderRadius={6} />
+          <Skeleton style={{ width: 52, height: 34 }} borderRadius={6} />
         </div>
       </div>
     </ResponsiveSuspenseMobile>

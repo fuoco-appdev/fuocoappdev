@@ -18,6 +18,29 @@ export function StoreSuspenseMobileComponent(): JSX.Element {
         >
           <div
             className={[
+              styles['top-bar-top-content'],
+              styles['top-bar-top-content-mobile'],
+            ].join(' ')}
+          >
+            <div
+              className={[
+                styles['sales-location-container'],
+                styles['sales-location-container-mobile'],
+              ].join(' ')}
+            >
+              <Skeleton width={28} height={28} borderRadius={28} />
+              <Skeleton
+                className={[
+                  styles['sales-location-title'],
+                  styles['sales-location-title-mobile'],
+                ].join(' ')}
+                width={120}
+                borderRadius={20}
+              />
+            </div>
+          </div>
+          <div
+            className={[
               styles['search-container'],
               styles['search-container-mobile'],
             ].join(' ')}

@@ -536,10 +536,12 @@
 
 .root-mobile {
     & .top-bar-container-mobile {
+        height: 221px;
         -webkit-box-orient: vertical;
         -webkit-box-direction: normal;
             -ms-flex-direction: column;
                 flex-direction: column;
+
 
         & .top-bar-top-content-mobile {
             display: flex;
@@ -548,7 +550,7 @@
             padding-top: $mp-4;
             padding-left: $mp-4;
             padding-right: $mp-4;
-            
+        
             & .sales-location-container-mobile {
                 height: 46px;
                 align-items: center;
@@ -634,7 +636,7 @@
     & .scroll-container-mobile {
         gap: $mp-4;
         padding: $mp-4;
-        padding-top: calc(157px + 16px);
+        padding-top: calc(219px + 16px);
         padding-bottom: calc(56px * 2);
 
         & .loading-ring-mobile {

@@ -49,11 +49,9 @@
             }
           ],
           "optimization": true,
-          "sourceMap": false,
-          "namedChunks": false,
-          "extractLicenses": true,
-          "vendorChunk": false,
-          "memoryLimit": 4096
+          "sourceMap": true,
+          "vendorChunk": true,
+          "extractLicenses": true
         }
       }
     },
@@ -99,8 +97,7 @@
           "namedChunks": false,
           "extractLicenses": true,
           "vendorChunk": false,
-          "extractCss": true,
-          "memoryLimit": 4096
+          "extractCss": true
         }
       }
     },

@@ -46,6 +46,7 @@ import CartVariantItemComponent from '../cart-variant-item.component';
 import { MedusaProductTypeNames } from 'src/types/medusa.type';
 import ReactDOM, { createPortal } from 'react-dom';
 import ProductController from '../../controllers/product.controller';
+import Skeleton from 'react-loading-skeleton';
 
 export default function StoreMobileComponent({
   windowProps,
@@ -111,39 +112,54 @@ export default function StoreMobileComponent({
               styles['top-bar-top-content-mobile'],
             ].join(' ')}
           >
-            {exploreProps.selectedInventoryLocation && (
-              <div
-                className={[
-                  styles['sales-location-container'],
-                  styles['sales-location-container-mobile'],
-                ].join(' ')}
-              >
-                <Avatar
-                  classNames={{
-                    container: !exploreProps.selectedInventoryLocation?.avatar
-                      ? [
-                          styles['no-avatar-container'],
-                          styles['no-avatar-container-mobile'],
-                        ].join(' ')
-                      : [
-                          styles['avatar-container'],
-                          styles['avatar-container-mobile'],
-                        ].join(' '),
-                  }}
-                  size={'custom'}
-                  text={exploreProps.selectedInventoryLocation?.company ?? ''}
-                  src={exploreProps.selectedInventoryLocation?.avatar}
-                />
-                <div
-                  className={[
-                    styles['sales-location-title'],
-                    styles['sales-location-title-mobile'],
-                  ].join(' ')}
-                >
-                  {exploreProps.selectedInventoryLocation?.company ?? ''}
-                </div>
-              </div>
-            )}
+            <div
+              className={[
+                styles['sales-location-container'],
+                styles['sales-location-container-mobile'],
+              ].join(' ')}
+            >
+              {exploreProps.selectedInventoryLocation && (
+                <>
+                  <Avatar
+                    classNames={{
+                      container: !exploreProps.selectedInventoryLocation?.avatar
+                        ? [
+                            styles['no-avatar-container'],
+                            styles['no-avatar-container-mobile'],
+                          ].join(' ')
+                        : [
+                            styles['avatar-container'],
+                            styles['avatar-container-mobile'],
+                          ].join(' '),
+                    }}
+                    size={'custom'}
+                    text={exploreProps.selectedInventoryLocation?.company ?? ''}
+                    src={exploreProps.selectedInventoryLocation?.avatar}
+                  />
+                  <div
+                    className={[
+                      styles['sales-location-title'],
+                      styles['sales-location-title-mobile'],
+                    ].join(' ')}
+                  >
+                    {exploreProps.selectedInventoryLocation?.company ?? ''}
+                  </div>
+                </>
+              )}
+              {!exploreProps.selectedInventoryLocation && (
+                <>
+                  <Skeleton width={28} height={28} borderRadius={28} />
+                  <Skeleton
+                    className={[
+                      styles['sales-location-title'],
+                      styles['sales-location-title-mobile'],
+                    ].join(' ')}
+                    width={120}
+                    borderRadius={20}
+                  />
+                </>
+              )}
+            </div>
             {exploreProps.selectedInventoryLocation?.type ===
               InventoryLocationType.Restaurant && (
               <div
@@ -268,7 +284,6 @@ export default function StoreMobileComponent({
           ].join(' ')}
           style={{
             height: window.innerHeight,
-            paddingTop: (topBarRef?.current?.clientHeight ?? 157) + 16,
           }}
           onScroll={(e) => {
             onPreviewsScroll(e);

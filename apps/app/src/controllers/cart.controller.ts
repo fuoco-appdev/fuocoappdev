@@ -243,7 +243,11 @@ class CartController extends Controller {
   }
 
   public isFoodRequirementInCart(): boolean {
-    if (!this._model.isFoodInCartRequired) {
+    if (this._model.isFoodInCartRequired === undefined) {
+      return false;
+    }
+
+    if (this._model.isFoodInCartRequired === false) {
       return true;
     }
 
@@ -261,12 +265,6 @@ class CartController extends Controller {
     });
 
     return (menuItems || hasFoodRequirement) ?? false;
-  }
-
-  private resetMedusaModel(): void {
-    this._model.requiredFoodProducts = [];
-    this._model.isFoodInCartRequired = false;
-    this._model.discountCode = '';
   }
 
   private async initializeAsync(renderCount: number): Promise<void> {
@@ -317,15 +315,17 @@ class CartController extends Controller {
     const regions: Region[] = await firstValueFrom(
       StoreController.model.store.pipe(
         select((model) => model.regions),
-        filter((value) => value !== undefined),
+        filter((value) => value !== undefined && value.length > 0),
         take(1)
       )
     );
     const region = regions.find((region) => region.name === value?.region);
     const cartId = value?.id ? this._model.cartIds[value.id] : undefined;
-    const metadata = region?.metadata as MedusaRegionMetadata | undefined;
-    this._model.isFoodInCartRequired =
-      Boolean(metadata?.is_food_in_cart_required) ?? false;
+    const metadata = region?.metadata as Record<string, any> | undefined;
+    const isFoodInCartRequired = metadata?.['is_food_in_cart_required'] as
+      | string
+      | undefined;
+    this._model.isFoodInCartRequired = isFoodInCartRequired === 'true' ?? false;
 
     try {
       const productTypes: ProductType[] = await firstValueFrom(
