@@ -454,7 +454,8 @@ export default function CheckoutDesktopComponent({
                     {t('enterBillingAddressForDelivery')}
                   </div>
                 )}
-              {checkoutProps.shippingFormComplete &&
+              {shippingOptions.length > 0 &&
+                checkoutProps.shippingFormComplete &&
                 checkoutProps.billingFormComplete && (
                   <Radio.Group
                     id={''}

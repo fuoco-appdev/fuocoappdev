@@ -155,7 +155,11 @@ export default function CheckoutComponent(): JSX.Element {
       });
     }
     setShippingOptions(radioOptions);
-  }, [checkoutProps.shippingOptions, cartProps.cart]);
+  }, [
+    checkoutProps.shippingOptions,
+    cartProps.cart,
+    storeProps.selectedRegion,
+  ]);
 
   useEffect(() => {
     if (!cartProps.cart) {
