@@ -3,33 +3,15 @@
   "affected": {
     "defaultBase": "main"
   },
-  "targetDefaults": {
-    "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "inputs": [
-        "production",
-        "^production"
-      ],
-      "cache": true
-    },
-    "install": {
-      "cache": true
-    },
-    "init": {
-      "cache": true
-    },
-    "lint": {
-      "cache": true
-    },
-    "test": {
-      "cache": true
-    },
-    "e2e": {
-      "cache": true
+  "plugins": [
+    {
+      "plugin": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "lint"
+      }
     }
-  },
+  ],
+  "targetDefaults": {},
   "generators": {
     "@nx/react": {
       "application": {
@@ -47,7 +29,24 @@
       }
     }
   },
-  "defaultProject": "app",
+  "release": {
+    "version": {
+      "generatorOptions": {
+        "currentVersionResolver": "git-tag",
+        "specifierSource": "conventional-commits"
+      }
+    },
+    "changelog": {
+      "git": {
+        "commit": true,
+        "tag": true
+      },
+      "workspaceChangelog": {
+        "createRelease": "github"
+      },
+      "projectChangelogs": true
+    }
+  },
   "namedInputs": {
     "default": [
       "{projectRoot}/**/*",
@@ -58,5 +57,5 @@
       "default"
     ]
   },
-  "nxCloudAccessToken": "MmQ3YTZjNzEtZGZjNi00MGY2LWIxNDgtN2I0ZTZmZWQ2NzdifHJlYWQtd3JpdGU="
+  "extends": "nx/presets/npm.json"
 }
