@@ -3,7 +3,6 @@
   "affected": {
     "defaultBase": "main"
   },
-  "useDaemonProcess": false,
   "targetDefaults": {
     "build": {
       "dependsOn": [
@@ -59,12 +58,5 @@
       "default"
     ]
   },
-  "release": {
-    "version": {
-      "generatorOptions": {
-        "currentVersionResolver": "git-tag",
-        "specifierSource": "conventional-commits"
-      }
-    }
-  }
+  "nxCloudAccessToken": "MmQ3YTZjNzEtZGZjNi00MGY2LWIxNDgtN2I0ZTZmZWQ2NzdifHJlYWQtd3JpdGU="
 }
