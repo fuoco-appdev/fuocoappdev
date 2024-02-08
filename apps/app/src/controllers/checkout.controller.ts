@@ -15,6 +15,7 @@ import {
   Order,
   Swap,
   Customer,
+  Region,
 } from '@medusajs/medusa';
 import { select } from '@ngneat/elf';
 import WindowController from './window.controller';
@@ -28,6 +29,7 @@ import SupabaseService from '../services/supabase.service';
 import { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import ExploreController from './explore.controller';
 import { Store } from '@fuoco.appdev/core-ui/dist/cjs/src/components/icon/icons/line';
+import StoreController from './store.controller';
 
 class CheckoutController extends Controller {
   private readonly _model: CheckoutModel;
@@ -561,6 +563,13 @@ class CheckoutController extends Controller {
         take(1)
       )
     );
+    const selectedRegion: Region = await firstValueFrom(
+      StoreController.model.store.pipe(
+        select((model) => model.selectedRegion),
+        filter((value) => value !== undefined),
+        take(1)
+      )
+    );
     if (!customer) {
       this._model.shippingForm = {
         email: value?.email,
@@ -586,7 +595,7 @@ class CheckoutController extends Controller {
       }
     }
 
-    if (value?.region_id && this._model.shippingOptions.length <= 0) {
+    if (selectedRegion.id !== value?.region_id) {
       try {
         const shippingOptionsResponse =
           await MedusaService.medusa?.shippingOptions.list();

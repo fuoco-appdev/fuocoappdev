@@ -114,6 +114,10 @@ export default function CheckoutComponent(): JSX.Element {
   }, [cartProps.cart]);
 
   useEffect(() => {
+    if (!cartProps.cart) {
+      return;
+    }
+
     const radioOptions: RadioProps[] = [];
     for (const option of checkoutProps.shippingOptions as PricedShippingOption[]) {
       const minRequirement = option.requirements?.find(
@@ -155,11 +159,7 @@ export default function CheckoutComponent(): JSX.Element {
       });
     }
     setShippingOptions(radioOptions);
-  }, [
-    checkoutProps.shippingOptions,
-    cartProps.cart,
-    storeProps.selectedRegion,
-  ]);
+  }, [checkoutProps.shippingOptions, cartProps.cart]);
 
   useEffect(() => {
     if (!cartProps.cart) {
