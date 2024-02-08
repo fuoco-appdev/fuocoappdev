@@ -97,6 +97,9 @@
                     -ms-flex-direction: row;
                         flex-direction: row;
                 width: 100%;
+                height: -webkit-fit-content;
+                height: -moz-fit-content;
+                height: fit-content;
                 -webkit-box-align: end;
                     -ms-flex-align: end;
                         align-items: flex-end;
@@ -320,12 +323,6 @@
         margin-bottom: $mp-2;
         padding: $mp-6;
         width: 100%;
-        height: -webkit-fit-content;
-        height: -moz-fit-content;
-        height: fit-content;
-        max-height: -webkit-fit-content;
-        max-height: -moz-fit-content;
-        max-height: fit-content;
 
         & .card-content-container-desktop {
 
