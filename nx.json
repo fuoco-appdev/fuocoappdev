@@ -5,8 +5,13 @@
   },
   "targetDefaults": {
     "build": {
-      "dependsOn": ["^build"],
-      "inputs": ["production", "^production"],
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "production",
+        "^production"
+      ],
       "cache": true
     },
     "install": {
@@ -44,9 +49,13 @@
   },
   "defaultProject": "app",
   "namedInputs": {
-    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "default": [
+      "{projectRoot}/**/*",
+      "sharedGlobals"
+    ],
     "sharedGlobals": [],
-    "production": ["default"]
-  },
-  "nxCloudAccessToken": "MmQ3YTZjNzEtZGZjNi00MGY2LWIxNDgtN2I0ZTZmZWQ2NzdifHJlYWQtd3JpdGU="
+    "production": [
+      "default"
+    ]
+  }
 }

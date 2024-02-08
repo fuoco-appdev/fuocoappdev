@@ -28,11 +28,10 @@
         "assets": ["apps/app/src/favicon.ico", "apps/app/src/assets"],
         "styles": [
           "node_modules/@fuoco.appdev/core-ui/dist/cjs/index.css",
-          "node_modules/mapbox-gl/dist/mapbox-gl.css",
+          "node_modules/mapbox-gl/src/css/mapbox-gl.css",
           "node_modules/react-loading-skeleton/dist/skeleton.css",
           "apps/app/src/styles.scss"
         ],
-        "isolatedConfig": true,
         "webpackConfig": "apps/app/webpack.config.js"
       },
       "configurations": {
@@ -78,7 +77,6 @@
           "apps/app/src/styles.scss"
         ],
         "scripts": [],
-        "isolatedConfig": true,
         "webpackConfig": "apps/app/webpack.server.config.js"
       },
       "configurations": {
@@ -115,6 +113,7 @@
         "outputPath": "dist/apps/app/ssr",
         "main": "apps/app/ssr/main.ts",
         "tsConfig": "apps/app/tsconfig.server.json",
+        "isolatedConfig": false,
         "assets": []
       },
       "configurations": {
@@ -135,7 +134,6 @@
     "build": {
       "executor": "nx:run-commands",
       "defaultConfiguration": "production",
-      "options": {},
       "configurations": {
         "development": {
           "commands": [
