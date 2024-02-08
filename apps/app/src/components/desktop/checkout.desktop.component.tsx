@@ -433,55 +433,31 @@ export default function CheckoutDesktopComponent({
                   {t('delivery')}
                 </div>
               </div>
-              {!checkoutProps.shippingFormComplete && (
-                <div
-                  className={[
-                    styles['card-description'],
-                    styles['card-description-desktop'],
-                  ].join(' ')}
-                >
-                  {t('enterShippingAddressForDelivery')}
-                </div>
+              {shippingOptions.length > 0 && (
+                <Radio.Group
+                  id={''}
+                  activeId={checkoutProps.selectedShippingOptionId ?? ''}
+                  rippleProps={{
+                    color: 'rgba(42, 42, 95, .35)',
+                  }}
+                  classNames={{
+                    radio: {
+                      containerCard: styles['radio-container-card'],
+                      labelText: styles['radio-label-text'],
+                      labelDescription: styles['radio-label-description-text'],
+                      containerCardActive:
+                        styles['radio-container-card-active'],
+                    },
+                  }}
+                  options={shippingOptions}
+                  type={'cards'}
+                  onChange={(event) =>
+                    CheckoutController.updateSelectedShippingOptionIdAsync(
+                      event.target.value
+                    )
+                  }
+                />
               )}
-              {checkoutProps.shippingFormComplete &&
-                !checkoutProps.billingFormComplete && (
-                  <div
-                    className={[
-                      styles['card-description'],
-                      styles['card-description-desktop'],
-                    ].join(' ')}
-                  >
-                    {t('enterBillingAddressForDelivery')}
-                  </div>
-                )}
-              {shippingOptions.length > 0 &&
-                checkoutProps.shippingFormComplete &&
-                checkoutProps.billingFormComplete && (
-                  <Radio.Group
-                    id={''}
-                    activeId={checkoutProps.selectedShippingOptionId ?? ''}
-                    rippleProps={{
-                      color: 'rgba(42, 42, 95, .35)',
-                    }}
-                    classNames={{
-                      radio: {
-                        containerCard: styles['radio-container-card'],
-                        labelText: styles['radio-label-text'],
-                        labelDescription:
-                          styles['radio-label-description-text'],
-                        containerCardActive:
-                          styles['radio-container-card-active'],
-                      },
-                    }}
-                    options={shippingOptions}
-                    type={'cards'}
-                    onChange={(event) =>
-                      CheckoutController.updateSelectedShippingOptionIdAsync(
-                        event.target.value
-                      )
-                    }
-                  />
-                )}
             </div>
           </div>
         </div>
