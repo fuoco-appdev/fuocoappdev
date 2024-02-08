@@ -595,7 +595,7 @@ class CheckoutController extends Controller {
       }
     }
 
-    if (selectedRegion.id !== value?.region_id) {
+    if (selectedRegion.id) {
       try {
         const shippingOptionsResponse =
           await MedusaService.medusa?.shippingOptions.list();
