@@ -35,9 +35,13 @@ import { ProductPreviewSuspenseDesktopComponent } from './desktop/suspense/produ
 import { ProductPreviewSuspenseMobileComponent } from './mobile/suspense/product-preview.suspense.mobile.component';
 import { ProductPreviewSuspenseTabletComponent } from './tablet/suspense/product-preview.suspense.tablet.component';
 import { WindowState } from '../models';
-import { ProductLikesMetadataResponse } from '../protobuf/core_pb';
+import {
+  DeepLTranslationsResponse,
+  ProductLikesMetadataResponse,
+} from '../protobuf/core_pb';
 import AccountController from '../controllers/account.controller';
 import { AccountState } from '../models/account.model';
+import DeeplService from '../services/deepl.service';
 
 const ProductPreviewDesktopComponent = lazy(
   () => import('./desktop/product-preview.desktop.component')
@@ -106,6 +110,9 @@ export default function ProductPreviewComponent({
   const [selectedVariantId, setSelectedVariantId] = useState<
     string | undefined
   >(undefined);
+  const [translatedDescription, setTranslatedDescription] = useState<
+    string | undefined
+  >(description);
   const { t, i18n } = useTranslation();
 
   const formatPrice = (price: MoneyAmount): string => {
@@ -140,6 +147,29 @@ export default function ProductPreviewComponent({
 
     onLikeChanged?.(isLiked);
   };
+
+  const updateTranslatedDescriptionAsync = async (description: string) => {
+    if (i18n.language !== 'en') {
+      const response: DeepLTranslationsResponse =
+        await DeeplService.translateAsync(description, i18n.language);
+      if (response.translations.length <= 0) {
+        return;
+      }
+
+      const firstTranslation = response.translations[0];
+      setTranslatedDescription(firstTranslation.text);
+    } else {
+      setTranslatedDescription(description);
+    }
+  };
+
+  useEffect(() => {
+    if (!description) {
+      return;
+    }
+
+    updateTranslatedDescriptionAsync(description);
+  }, [description, i18n.language]);
 
   useEffect(() => {
     if (likesMetadata.totalLikeCount !== undefined) {
@@ -202,7 +232,7 @@ export default function ProductPreviewComponent({
         thumbnail={thumbnail}
         title={title}
         subtitle={subtitle}
-        description={description}
+        description={translatedDescription}
         type={type}
         isLoading={isLoading}
         pricedProduct={pricedProduct}
@@ -229,7 +259,7 @@ export default function ProductPreviewComponent({
         thumbnail={thumbnail}
         title={title}
         subtitle={subtitle}
-        description={description}
+        description={translatedDescription}
         type={type}
         isLoading={isLoading}
         pricedProduct={pricedProduct}
@@ -256,7 +286,7 @@ export default function ProductPreviewComponent({
         thumbnail={thumbnail}
         title={title}
         subtitle={subtitle}
-        description={description}
+        description={translatedDescription}
         type={type}
         isLoading={isLoading}
         pricedProduct={pricedProduct}

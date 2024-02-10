@@ -1,38 +1,40 @@
 import axios, { AxiosError } from 'axios';
+import {
+  DeepLTranslationsResponse,
+  DeepLTranslateRequest,
+} from '../protobuf/core_pb';
+import { Service } from '../service';
 
-export interface Translation {
-  detected_source_language: string;
-  text: string;
-}
-
-class DeepLService {
-  private _authKey: string | undefined;
-
-  constructor() {}
-
-  public initializeDeepL(): void {
-    this._authKey = process.env['DEEPL_AUTH_KEY'];
+class DeepLService extends Service {
+  constructor() {
+    super();
   }
 
   public async translateAsync(
     text: string,
     languageCode: string
-  ): Promise<Translation[]> {
-    const response = await axios({
-      method: 'post',
-      url: `https://api-free.deepl.com/v2/translate`,
-      headers: {
-        Authorization: `DeepL-Auth-Key ${this._authKey}`,
-      },
-      data: {
-        text: text,
-        target_lang: languageCode.toUpperCase(),
-      },
-      responseType: 'json',
+  ): Promise<DeepLTranslationsResponse> {
+    const request = new DeepLTranslateRequest({
+      text: text,
+      languageCode: languageCode.toUpperCase(),
     });
 
-    const translations = response.data['translations'] as Translation[];
-    return translations;
+    const response = await axios({
+      method: 'post',
+      url: `${this.endpointUrl}/deepl/translate`,
+      headers: {
+        ...this.headers,
+      },
+      data: request.toBinary(),
+      responseType: 'arraybuffer',
+    });
+
+    const arrayBuffer = new Uint8Array(response.data);
+    this.assertResponse(arrayBuffer);
+
+    const translationsResponse =
+      DeepLTranslationsResponse.fromBinary(arrayBuffer);
+    return translationsResponse;
   }
 }
 

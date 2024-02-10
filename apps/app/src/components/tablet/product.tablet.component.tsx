@@ -32,6 +32,7 @@ export default function ProductTabletComponent({
   accountProps,
   storeProps,
   remarkPlugins,
+  translatedDescription,
   description,
   tabs,
   activeVariantId,
@@ -59,8 +60,8 @@ export default function ProductTabletComponent({
   const { t } = useTranslation();
 
   useTabletEffect(() => {
-    setDescription(productProps.product?.description ?? '');
-  }, [productProps.product]);
+    setDescription(translatedDescription ?? '');
+  }, [translatedDescription]);
 
   const selectedVariant = productProps.selectedVariant;
   return (

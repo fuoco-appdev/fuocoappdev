@@ -259,3 +259,17 @@ message AccountNotificationsResponse {
 message AccountNotificationCountResponse {
     int32 count = 1;
 }
+
+message DeepLTranslateRequest {
+    string text = 1;
+    string language_code = 2;
+}
+
+message DeepLTranslateResponse {
+    string text = 1;
+    string detected_source_language = 2;
+}
+
+message DeepLTranslationsResponse {
+    repeated DeepLTranslateResponse translations = 1;
+}

@@ -24,6 +24,8 @@ import { lazy } from '@loadable/component';
 import { ExploreSuspenseTabletComponent } from './tablet/suspense/explore.suspense.tablet.component';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
 import mapboxgl from 'mapbox-gl';
+import { DeepLTranslationsResponse } from '../protobuf/core_pb';
+import DeeplService from '../services/deepl.service';
 
 const ExploreDesktopComponent = lazy(
   () => import('./desktop/explore.desktop.component')
@@ -100,6 +102,24 @@ export default function ExploreComponent(): JSX.Element {
     navigate({ pathname: RoutePathsType.Store, search: query.toString() });
   };
 
+  const updateTranslatedDescriptionAsync = async (value: InventoryLocation) => {
+    if (i18n.language !== 'en') {
+      const selectedPointCopy = { ...value };
+      const response: DeepLTranslationsResponse =
+        await DeeplService.translateAsync(value.description, i18n.language);
+      if (response.translations.length <= 0) {
+        return;
+      }
+
+      const firstTranslation = response.translations[0];
+      selectedPointCopy.description = firstTranslation.text;
+
+      if (JSON.stringify(selectedPointCopy) !== JSON.stringify(value)) {
+        setSelectedPoint(selectedPointCopy);
+      }
+    }
+  };
+
   useEffect(() => {
     renderCountRef.current += 1;
     ExploreController.load(renderCountRef.current);
@@ -125,6 +145,14 @@ export default function ExploreComponent(): JSX.Element {
       navigate({ pathname: RoutePathsType.Explore, search: query.toString() });
     }
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (!selectedPoint) {
+      return;
+    }
+
+    updateTranslatedDescriptionAsync(selectedPoint);
+  }, [selectedPoint]);
 
   useLayoutEffect(() => {
     const labels = [

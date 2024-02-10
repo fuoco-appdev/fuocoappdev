@@ -27,6 +27,10 @@ export class AccountController {
     const requestValue = await readAll(body.value);
     const request = AccountsRequest.deserializeBinary(requestValue);
     const response = await AccountService.findAccountsAsync(request);
+    if (!response) {
+      console.error('Cannot find accounts');
+      return;
+    }
     context.response.type = 'application/x-protobuf';
     context.response.body = response.serializeBinary();
   }

@@ -22,6 +22,8 @@ import { InventoryLocationType } from 'src/models/explore.model';
 
 export default function StockLocationItemDesktopComponent({
   stockLocation,
+  placeName,
+  description,
   avatar,
   onClick,
 }: StockLocationItemResponsiveProps): JSX.Element {
@@ -70,9 +72,7 @@ export default function StockLocationItemDesktopComponent({
                     'type'
                   ) && t(stockLocation?.metadata?.['type'] as string)}
                   &nbsp;
-                  {Object.keys(stockLocation?.metadata ?? {}).includes(
-                    'place_name'
-                  ) && (stockLocation?.metadata?.['place_name'] as string)}
+                  {placeName}
                 </div>
                 {Object.keys(stockLocation?.metadata ?? {}).includes(
                   'description'
@@ -83,10 +83,7 @@ export default function StockLocationItemDesktopComponent({
                       styles['description-desktop'],
                     ].join(' ')}
                   >
-                    {(stockLocation?.metadata?.['description'] as string).slice(
-                      0,
-                      60
-                    )}
+                    {description.slice(0, 60)}
                     ...
                   </div>
                 )}

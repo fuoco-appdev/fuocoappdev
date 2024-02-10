@@ -14,9 +14,13 @@ import { OrderItemSuspenseMobileComponent } from './mobile/suspense/order-item.s
 import { OrderItemSuspenseTabletComponent } from './tablet/suspense/order-item.suspense.tablet.component';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
 import { StockLocationItemSuspenseDesktopComponent } from './desktop/suspense/stock-location-item.suspense.desktop.component';
-import { StorageFolderType } from '../protobuf/core_pb';
+import {
+  DeepLTranslationsResponse,
+  StorageFolderType,
+} from '../protobuf/core_pb';
 import { StockLocationItemSuspenseMobileComponent } from './mobile/suspense/stock-location-item.suspense.mobile.component';
 import { StockLocationItemSuspenseTabletComponent } from './tablet/suspense/stock-location-item.suspense.tablet.component';
+import DeeplService from '../services/deepl.service';
 
 const StockLocationItemDesktopComponent = lazy(
   () => import('./desktop/stock-location-item.desktop.component')
@@ -35,6 +39,8 @@ export interface StockLocationItemProps {
 
 export interface StockLocationItemResponsiveProps
   extends StockLocationItemProps {
+  placeName: string;
+  description: string;
   avatar?: string;
 }
 
@@ -44,6 +50,51 @@ export default function StockLocationItemComponent({
 }: StockLocationItemProps): JSX.Element {
   const { t, i18n } = useTranslation();
   const [avatar, setAvatar] = useState<string | undefined>(undefined);
+  const [placeName, setPlaceName] = useState<string>(
+    stockLocation?.metadata?.['place_name'] as string
+  );
+  const [description, setDescription] = useState<string>(
+    stockLocation?.metadata?.['description'] as string
+  );
+
+  const updateTranslatedPlaceNameAsync = async (value: string) => {
+    if (i18n.language !== 'en') {
+      const response: DeepLTranslationsResponse =
+        await DeeplService.translateAsync(value, i18n.language);
+      if (response.translations.length <= 0) {
+        return;
+      }
+
+      const firstTranslation = response.translations[0];
+      setPlaceName(firstTranslation.text);
+    } else {
+      setPlaceName(value);
+    }
+  };
+
+  const updateTranslatedDescriptionAsync = async (value: string) => {
+    if (i18n.language !== 'en') {
+      const response: DeepLTranslationsResponse =
+        await DeeplService.translateAsync(value, i18n.language);
+      if (response.translations.length <= 0) {
+        return;
+      }
+
+      const firstTranslation = response.translations[0];
+      setDescription(firstTranslation.text);
+    } else {
+      setDescription(value);
+    }
+  };
+
+  useEffect(() => {
+    updateTranslatedPlaceNameAsync(
+      stockLocation?.metadata?.['place_name'] as string
+    );
+    updateTranslatedDescriptionAsync(
+      stockLocation?.metadata?.['description'] as string
+    );
+  }, [stockLocation?.metadata]);
 
   useEffect(() => {
     if (!Object.keys(stockLocation?.metadata ?? {}).includes('avatar')) {
@@ -78,16 +129,22 @@ export default function StockLocationItemComponent({
     <React.Suspense fallback={suspenceComponent}>
       <StockLocationItemDesktopComponent
         stockLocation={stockLocation}
+        placeName={placeName}
+        description={description}
         avatar={avatar}
         onClick={onClick}
       />
       <StockLocationItemTabletComponent
         stockLocation={stockLocation}
+        placeName={placeName}
+        description={description}
         avatar={avatar}
         onClick={onClick}
       />
       <StockLocationItemMobileComponent
         stockLocation={stockLocation}
+        placeName={placeName}
+        description={description}
         avatar={avatar}
         onClick={onClick}
       />

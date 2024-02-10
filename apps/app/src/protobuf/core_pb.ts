@@ -2116,3 +2116,126 @@ export class AccountNotificationCountResponse extends Message<AccountNotificatio
   }
 }
 
+/**
+ * @generated from message core.DeepLTranslateRequest
+ */
+export class DeepLTranslateRequest extends Message<DeepLTranslateRequest> {
+  /**
+   * @generated from field: string text = 1;
+   */
+  text = "";
+
+  /**
+   * @generated from field: string language_code = 2;
+   */
+  languageCode = "";
+
+  constructor(data?: PartialMessage<DeepLTranslateRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.DeepLTranslateRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "text", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "language_code", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeepLTranslateRequest {
+    return new DeepLTranslateRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeepLTranslateRequest {
+    return new DeepLTranslateRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeepLTranslateRequest {
+    return new DeepLTranslateRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: DeepLTranslateRequest | PlainMessage<DeepLTranslateRequest> | undefined, b: DeepLTranslateRequest | PlainMessage<DeepLTranslateRequest> | undefined): boolean {
+    return proto3.util.equals(DeepLTranslateRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message core.DeepLTranslateResponse
+ */
+export class DeepLTranslateResponse extends Message<DeepLTranslateResponse> {
+  /**
+   * @generated from field: string text = 1;
+   */
+  text = "";
+
+  /**
+   * @generated from field: string detected_source_language = 2;
+   */
+  detectedSourceLanguage = "";
+
+  constructor(data?: PartialMessage<DeepLTranslateResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.DeepLTranslateResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "text", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "detected_source_language", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeepLTranslateResponse {
+    return new DeepLTranslateResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeepLTranslateResponse {
+    return new DeepLTranslateResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeepLTranslateResponse {
+    return new DeepLTranslateResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: DeepLTranslateResponse | PlainMessage<DeepLTranslateResponse> | undefined, b: DeepLTranslateResponse | PlainMessage<DeepLTranslateResponse> | undefined): boolean {
+    return proto3.util.equals(DeepLTranslateResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message core.DeepLTranslationsResponse
+ */
+export class DeepLTranslationsResponse extends Message<DeepLTranslationsResponse> {
+  /**
+   * @generated from field: repeated core.DeepLTranslateResponse translations = 1;
+   */
+  translations: DeepLTranslateResponse[] = [];
+
+  constructor(data?: PartialMessage<DeepLTranslationsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.DeepLTranslationsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "translations", kind: "message", T: DeepLTranslateResponse, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeepLTranslationsResponse {
+    return new DeepLTranslationsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeepLTranslationsResponse {
+    return new DeepLTranslationsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeepLTranslationsResponse {
+    return new DeepLTranslationsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: DeepLTranslationsResponse | PlainMessage<DeepLTranslationsResponse> | undefined, b: DeepLTranslationsResponse | PlainMessage<DeepLTranslationsResponse> | undefined): boolean {
+    return proto3.util.equals(DeepLTranslationsResponse, a, b);
+  }
+}
+

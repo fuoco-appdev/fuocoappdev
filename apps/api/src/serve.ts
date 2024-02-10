@@ -5,6 +5,7 @@ import {
   ProductLikesController,
   AccountFollowersController,
   AccountNotificationController,
+  DeepLController,
 } from './controllers/index.ts';
 
 const app = Core.registerApp([
@@ -13,5 +14,6 @@ const app = Core.registerApp([
   new ProductLikesController(),
   new AccountFollowersController(),
   new AccountNotificationController(),
+  new DeepLController(),
 ]);
 app.listen({ port: 8001 });

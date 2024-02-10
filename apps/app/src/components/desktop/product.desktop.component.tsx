@@ -27,6 +27,7 @@ export default function ProductDesktopComponent({
   accountProps,
   storeProps,
   remarkPlugins,
+  translatedDescription,
   description,
   tabs,
   activeVariantId,
@@ -54,8 +55,8 @@ export default function ProductDesktopComponent({
   const { t } = useTranslation();
 
   useDesktopEffect(() => {
-    setDescription(productProps.product?.description ?? '');
-  }, [productProps.product]);
+    setDescription(translatedDescription);
+  }, [translatedDescription]);
 
   const selectedVariant = productProps.selectedVariant;
   return (

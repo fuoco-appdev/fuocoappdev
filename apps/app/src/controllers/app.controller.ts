@@ -25,7 +25,6 @@ import ProductController from '../controllers/product.controller';
 import SupabaseService from '../services/supabase.service';
 import MeilisearchService from '../services/meilisearch.service';
 import AccountNotificationService from '../services/account-notification.service';
-import DeepLService from '../services/deepl.service';
 
 class AppController extends Controller {
   constructor() {
@@ -89,7 +88,6 @@ class AppController extends Controller {
       SupabaseService.initializeSupabase();
       MeilisearchService.initializeMeiliSearch();
       MedusaService.intializeMedusa();
-      DeepLService.initializeDeepL();
       BucketService.initializeS3();
     } catch (error: any) {
       console.error(error);

@@ -29,6 +29,8 @@ import { ProductSuspenseTabletComponent } from './tablet/suspense/product.suspen
 import AccountController from '../controllers/account.controller';
 import { AccountState } from '../models/account.model';
 import { MedusaProductTypeNames } from '../types/medusa.type';
+import DeeplService from '../services/deepl.service';
+import { DeepLTranslationsResponse } from '../protobuf/core_pb';
 
 const ProductDesktopComponent = lazy(
   () => import('./desktop/product.desktop.component')
@@ -49,6 +51,7 @@ export interface ProductResponsiveProps {
   storeProps: StoreState;
   accountProps: AccountState;
   remarkPlugins: any[];
+  translatedDescription: string;
   description: string;
   tabs: TabProps[];
   activeVariantId: string | undefined;
@@ -79,6 +82,8 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
   const [storeProps] = useObservable(StoreController.model.store);
   const [accountProps] = useObservable(AccountController.model.store);
   const { id } = useParams();
+  const [translatedDescription, setTranslatedDescription] =
+    useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [tabs, setTabs] = useState<TabProps[]>([]);
   const [activeVariantId, setActiveVariantId] = useState<string | undefined>();
@@ -161,6 +166,21 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
     formatDescription(`${productProps.product?.description?.slice(0, 205)}...`)
   );
 
+  const updateTranslatedDescriptionAsync = async (description: string) => {
+    if (i18n.language !== 'en') {
+      const response: DeepLTranslationsResponse =
+        await DeeplService.translateAsync(description, i18n.language);
+      if (response.translations.length <= 0) {
+        return;
+      }
+
+      const firstTranslation = response.translations[0];
+      setTranslatedDescription(firstTranslation.text);
+    } else {
+      setTranslatedDescription(description);
+    }
+  };
+
   useEffect(() => {
     if (!productProps.product) {
       return;
@@ -178,11 +198,15 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
       return;
     }
 
-    const formattedDescription = formatDescription(
-      `${productProps.product.description?.slice(0, 205)}...`
-    );
-    setShortDescription(formattedDescription);
+    updateTranslatedDescriptionAsync(productProps.product.description);
   }, [productProps.product]);
+
+  useEffect(() => {
+    const formattedDescription = formatDescription(
+      `${translatedDescription?.slice(0, 205)}...`
+    );
+    setShortDescription(formatDescription);
+  }, [translatedDescription]);
 
   useEffect(() => {
     renderCountRef.current += 1;
@@ -351,6 +375,7 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
           storeProps={storeProps}
           accountProps={accountProps}
           remarkPlugins={remarkPlugins}
+          translatedDescription={translatedDescription}
           description={description}
           tabs={tabs}
           activeVariantId={activeVariantId}
@@ -380,6 +405,7 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
           storeProps={storeProps}
           accountProps={accountProps}
           remarkPlugins={remarkPlugins}
+          translatedDescription={translatedDescription}
           description={description}
           tabs={tabs}
           activeVariantId={activeVariantId}
@@ -409,6 +435,7 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
           storeProps={storeProps}
           accountProps={accountProps}
           remarkPlugins={remarkPlugins}
+          translatedDescription={translatedDescription}
           description={description}
           tabs={tabs}
           activeVariantId={activeVariantId}

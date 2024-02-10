@@ -29,6 +29,7 @@ export default function ProductMobileComponent({
   storeProps,
   accountProps,
   remarkPlugins,
+  translatedDescription,
   description,
   tabs,
   activeVariantId,
@@ -58,21 +59,18 @@ export default function ProductMobileComponent({
   const [disableShowMore, setDisableShowMore] = useState<boolean>(false);
 
   useMobileEffect(() => {
-    if (!productProps.product?.description) {
+    if (!translatedDescription) {
       return;
     }
 
-    if (productProps.product.description.length < 356) {
+    if (translatedDescription.length < 356) {
       setDisableShowMore(true);
-      setDescription(productProps.product.description);
+      setDescription(translatedDescription);
     } else {
       setDisableShowMore(false);
       if (!showMore) {
         let index = 355;
-        let shortDescription = productProps.product.description.substring(
-          0,
-          index
-        );
+        let shortDescription = translatedDescription.substring(0, index);
         if (shortDescription.endsWith('.')) {
           shortDescription += '..';
         } else {
@@ -80,10 +78,10 @@ export default function ProductMobileComponent({
         }
         setDescription(shortDescription);
       } else {
-        setDescription(productProps.product.description);
+        setDescription(translatedDescription);
       }
     }
-  }, [productProps.product?.description, showMore]);
+  }, [translatedDescription, showMore]);
 
   const selectedVariant = productProps.selectedVariant;
   return (
@@ -275,7 +273,7 @@ export default function ProductMobileComponent({
               />
             )}
             {!productProps.isLoading &&
-              productProps.product?.description &&
+              translatedDescription &&
               !disableShowMore && (
                 <div
                   className={[
