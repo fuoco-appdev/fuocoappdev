@@ -110,7 +110,7 @@
         "outputPath": "dist/apps/app/ssr",
         "main": "apps/app/ssr/main.ts",
         "tsConfig": "apps/app/tsconfig.server.json",
-        "isolatedConfig": false,
+        "webpackConfig": "apps/app/webpack.ssr.config.js",
         "assets": []
       },
       "configurations": {
