@@ -12,7 +12,7 @@
     "start-electron": "npx nx run app:serve-electron",
     "start-nodemon": "nodemon ./dist/apps/app/ssr/main.js",
     "protobuf": "npx nx run-many --target=proto-generate --projects=api,app --parallel",
-    "build": "npx nx run build-all --configuration=production",
+    "build": "npx nx run app:build:production",
     "test": "npx nx test"
   },
   "private": true,
