@@ -16,6 +16,22 @@ export enum ProductTabs {
   Red = 'Red',
   Rose = 'Rose',
   Spirits = 'Spirits',
+  // Market
+  Produce = 'Produce',
+  Fruit = 'Fruits',
+  Bread = 'Bread',
+  Grains = 'Grains',
+  Meats = 'Meats',
+  Fish = 'Fish',
+  Condiments = 'Condiments',
+  Beverages = 'Beverages',
+  Snacks = 'Snacks',
+  Dairy = 'Dairy',
+  Oils = 'Oils',
+  Baking = 'Baking',
+  Spices = 'Spices',
+  Frozen = 'Frozen',
+  CannedGoods = 'CannedGoods',
 }
 
 export interface StoreState {
