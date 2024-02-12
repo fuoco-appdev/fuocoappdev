@@ -33,11 +33,7 @@ import {
 } from './responsive.component';
 import LoadingComponent from './loading.component';
 import { Store } from '@ngneat/elf';
-import {
-  ProductTabs,
-  StoreCategoryType,
-  StoreState,
-} from '../models/store.model';
+import { ProductTabs, StoreState } from '../models/store.model';
 import { Country, Region, Product, SalesChannel } from '@medusajs/medusa';
 import ProductPreviewComponent from './product-preview.component';
 import ReactCountryFlag from 'react-country-flag';
@@ -46,6 +42,7 @@ import {
   ExploreLocalState,
   ExploreState,
   InventoryLocation,
+  InventoryLocationType,
 } from '../models/explore.model';
 import { center } from '@turf/turf';
 import { Helmet } from 'react-helmet';
@@ -94,7 +91,6 @@ export interface StoreResponsiveProps {
   selectedSalesLocationId: string;
   variantQuantities: Record<string, number>;
   tabs: TabProps[];
-  categoryOpen: boolean;
   isPreviewLoading: boolean;
   setIsPreviewLoading: (value: boolean) => void;
   setOpenFilter: (value: boolean) => void;
@@ -103,7 +99,6 @@ export interface StoreResponsiveProps {
   setSelectedRegionId: (value: string) => void;
   setSelectedSalesLocationId: (value: string) => void;
   setVariantQuantities: (value: Record<string, number>) => void;
-  setCategoryOpen: (value: boolean) => void;
   onPreviewsScroll: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
   onPreviewsLoad: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
   onAddToCart: () => void;
@@ -121,7 +116,6 @@ export interface StoreResponsiveProps {
     isLiked: boolean,
     product: PricedProduct | undefined
   ) => void;
-  onCategoryChanged: (category: StoreCategoryType) => void;
 }
 
 export default function StoreComponent(): JSX.Element {
@@ -280,11 +274,6 @@ export default function StoreComponent(): JSX.Element {
     setVariantQuantities({});
   };
 
-  const onCategoryChanged = (category: StoreCategoryType) => {
-    StoreController.updateCategory(category);
-    setCategoryOpen(false);
-  };
-
   useEffect(() => {
     renderCountRef.current += 1;
     StoreController.load(renderCountRef.current);
@@ -425,7 +414,10 @@ export default function StoreComponent(): JSX.Element {
   }, [regionOptions, storeProps.selectedRegion]);
 
   useEffect(() => {
-    if (storeProps.category === StoreCategoryType.Wines) {
+    if (
+      exploreProps.selectedInventoryLocation?.type ===
+      InventoryLocationType.Cellar
+    ) {
       setTabs([
         {
           id: ProductTabs.White,
@@ -437,14 +429,17 @@ export default function StoreComponent(): JSX.Element {
         },
         {
           id: ProductTabs.Rose,
-          label: t('rose') ?? 'Rosé',
+          label: t('rose') ?? 'Rose',
         },
         {
           id: ProductTabs.Spirits,
           label: t('spirits') ?? 'Spirits',
         },
       ]);
-    } else if (storeProps.category === StoreCategoryType.Menu) {
+    } else if (
+      exploreProps.selectedInventoryLocation?.type ===
+      InventoryLocationType.Restaurant
+    ) {
       setTabs([
         {
           id: ProductTabs.Appetizers,
@@ -462,11 +457,13 @@ export default function StoreComponent(): JSX.Element {
           id: ProductTabs.Extras,
           label: t('extras') ?? 'Extras',
         },
+        {
+          id: ProductTabs.Wines,
+          label: t('wines') ?? 'Wines',
+        },
       ]);
     }
-
-    StoreController.loadProductsAsync();
-  }, [storeProps.category]);
+  }, [exploreProps.selectedInventoryLocation]);
 
   const suspenceComponent = (
     <>
@@ -521,7 +518,6 @@ export default function StoreComponent(): JSX.Element {
           selectedRegionId={selectedRegionId}
           selectedSalesLocationId={selectedSalesLocationId}
           tabs={tabs}
-          categoryOpen={categoryOpen}
           isPreviewLoading={isPreviewLoading}
           setIsPreviewLoading={setIsPreviewLoading}
           setOpenFilter={setOpenFilter}
@@ -530,7 +526,6 @@ export default function StoreComponent(): JSX.Element {
           setSelectedRegionId={setSelectedRegionId}
           setSelectedSalesLocationId={setSelectedSalesLocationId}
           setVariantQuantities={setVariantQuantities}
-          setCategoryOpen={setCategoryOpen}
           onPreviewsScroll={onScroll}
           onPreviewsLoad={onLoad}
           onAddToCart={onAddToCart}
@@ -538,7 +533,6 @@ export default function StoreComponent(): JSX.Element {
           onProductPreviewClick={onProductPreviewClick}
           onProductPreviewLikeChanged={onProductPreviewLikeChanged}
           onProductPreviewRest={onProductPreviewRest}
-          onCategoryChanged={onCategoryChanged}
         />
         <StoreTabletComponent
           windowProps={windowProps}
@@ -556,7 +550,6 @@ export default function StoreComponent(): JSX.Element {
           selectedRegionId={selectedRegionId}
           selectedSalesLocationId={selectedSalesLocationId}
           tabs={tabs}
-          categoryOpen={categoryOpen}
           isPreviewLoading={isPreviewLoading}
           setIsPreviewLoading={setIsPreviewLoading}
           setOpenFilter={setOpenFilter}
@@ -565,7 +558,6 @@ export default function StoreComponent(): JSX.Element {
           setSelectedRegionId={setSelectedRegionId}
           setSelectedSalesLocationId={setSelectedSalesLocationId}
           setVariantQuantities={setVariantQuantities}
-          setCategoryOpen={setCategoryOpen}
           onPreviewsScroll={onScroll}
           onPreviewsLoad={onLoad}
           onAddToCart={onAddToCart}
@@ -573,7 +565,6 @@ export default function StoreComponent(): JSX.Element {
           onProductPreviewClick={onProductPreviewClick}
           onProductPreviewLikeChanged={onProductPreviewLikeChanged}
           onProductPreviewRest={onProductPreviewRest}
-          onCategoryChanged={onCategoryChanged}
         />
         <StoreMobileComponent
           windowProps={windowProps}
@@ -591,7 +582,6 @@ export default function StoreComponent(): JSX.Element {
           selectedRegionId={selectedRegionId}
           selectedSalesLocationId={selectedSalesLocationId}
           tabs={tabs}
-          categoryOpen={categoryOpen}
           isPreviewLoading={isPreviewLoading}
           setIsPreviewLoading={setIsPreviewLoading}
           setOpenFilter={setOpenFilter}
@@ -600,7 +590,6 @@ export default function StoreComponent(): JSX.Element {
           setSelectedRegionId={setSelectedRegionId}
           setSelectedSalesLocationId={setSelectedSalesLocationId}
           setVariantQuantities={setVariantQuantities}
-          setCategoryOpen={setCategoryOpen}
           onPreviewsScroll={onScroll}
           onPreviewsLoad={onLoad}
           onAddToCart={onAddToCart}
@@ -608,7 +597,6 @@ export default function StoreComponent(): JSX.Element {
           onProductPreviewClick={onProductPreviewClick}
           onProductPreviewLikeChanged={onProductPreviewLikeChanged}
           onProductPreviewRest={onProductPreviewRest}
-          onCategoryChanged={onCategoryChanged}
         />
       </React.Suspense>
     </>

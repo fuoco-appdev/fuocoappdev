@@ -29,7 +29,6 @@ import { PriceList, PriceListStatus } from '@medusajs/medusa';
 import { Line } from '@fuoco.appdev/core-ui';
 import { AccountPublicState } from '../models/account-public.model';
 import StoreController from '../controllers/store.controller';
-import { StoreCategoryType } from 'src/models/store.model';
 import AccountNotificationService from '../services/account-notification.service';
 import SupabaseService from 'src/services/supabase.service';
 

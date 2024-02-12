@@ -5,23 +5,20 @@ import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import { ProductLikesMetadataResponse } from 'src/protobuf/core_pb';
 
 export enum ProductTabs {
-  White = 'White',
-  Red = 'Red',
-  Rose = 'Rose',
-  Spirits = 'Spirits',
+  // Restaurant
   Appetizers = 'Appetizers',
   MainCourses = 'MainCourses',
   Desserts = 'Desserts',
   Extras = 'Extras',
-}
-
-export enum StoreCategoryType {
-  Wines = 'wines',
-  Menu = 'menu',
+  Wines = 'Wines',
+  // Cellar
+  White = 'White',
+  Red = 'Red',
+  Rose = 'Rose',
+  Spirits = 'Spirits',
 }
 
 export interface StoreState {
-  category: StoreCategoryType;
   products: Product[];
   pricedProducts: Record<string, PricedProduct>;
   productLikesMetadata: ProductLikesMetadataResponse[];
@@ -45,7 +42,6 @@ export class StoreModel extends Model {
       createStore(
         { name: 'store' },
         withProps<StoreState>({
-          category: StoreCategoryType.Menu,
           products: [],
           pricedProducts: {},
           productLikesMetadata: [],
@@ -64,16 +60,6 @@ export class StoreModel extends Model {
         })
       )
     );
-  }
-
-  public get category(): StoreCategoryType {
-    return this.store.getValue().category;
-  }
-
-  public set category(value: StoreCategoryType) {
-    if (this.category !== value) {
-      this.store.update((state) => ({ ...state, category: value }));
-    }
   }
 
   public get products(): Product[] {

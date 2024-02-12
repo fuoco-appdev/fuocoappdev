@@ -29,7 +29,7 @@ import { useObservable } from '@ngneat/use-observable';
 import { useSpring } from 'react-spring';
 import * as core from '../../protobuf/core_pb';
 import { Store } from '@ngneat/elf';
-import { ProductTabs, StoreCategoryType } from '../../models/store.model';
+import { ProductTabs } from '../../models/store.model';
 import { Country, Region, Product, SalesChannel } from '@medusajs/medusa';
 import ProductPreviewComponent from '../product-preview.component';
 import ReactCountryFlag from 'react-country-flag';
@@ -67,7 +67,6 @@ export default function StoreDesktopComponent({
   selectedRegionId,
   selectedSalesLocationId,
   tabs,
-  categoryOpen,
   isPreviewLoading,
   setIsPreviewLoading,
   setOpenFilter,
@@ -76,7 +75,6 @@ export default function StoreDesktopComponent({
   setSelectedRegionId,
   setSelectedSalesLocationId,
   setVariantQuantities,
-  setCategoryOpen,
   onPreviewsScroll,
   onPreviewsLoad,
   onAddToCart,
@@ -84,7 +82,6 @@ export default function StoreDesktopComponent({
   onProductPreviewClick,
   onProductPreviewLikeChanged,
   onProductPreviewRest,
-  onCategoryChanged,
 }: StoreResponsiveProps): JSX.Element {
   const previewsContainerRef = createRef<HTMLDivElement>();
   const rootRef = createRef<HTMLDivElement>();
@@ -156,6 +153,25 @@ export default function StoreDesktopComponent({
                 </div>
               )}
               {exploreProps.selectedInventoryLocation?.type ===
+                InventoryLocationType.Cellar && (
+                <div
+                  className={[
+                    styles['category-type-container'],
+                    styles['category-type-container-desktop'],
+                  ].join(' ')}
+                >
+                  <img
+                    style={{
+                      height: 24,
+                      width: 24,
+                      objectFit: 'contain',
+                    }}
+                    src={'../../assets/images/selected-cellar.png'}
+                  />
+                  {t(InventoryLocationType.Cellar)}
+                </div>
+              )}
+              {exploreProps.selectedInventoryLocation?.type ===
                 InventoryLocationType.Restaurant && (
                 <div
                   className={[
@@ -163,40 +179,15 @@ export default function StoreDesktopComponent({
                     styles['category-type-container-desktop'],
                   ].join(' ')}
                 >
-                  {storeProps.category === StoreCategoryType.Wines && (
-                    <img
-                      style={{
-                        height: 24,
-                        width: 24,
-                        objectFit: 'contain',
-                      }}
-                      src={'../../assets/images/wine-bottle.png'}
-                    />
-                  )}
-                  {storeProps.category === StoreCategoryType.Menu && (
-                    <img
-                      style={{
-                        height: 24,
-                        width: 24,
-                        objectFit: 'contain',
-                      }}
-                      src={'../../assets/images/menu.png'}
-                    />
-                  )}
-                  {storeProps.category === StoreCategoryType.Wines &&
-                    t(StoreCategoryType.Wines)}
-                  {storeProps.category === StoreCategoryType.Menu &&
-                    t(StoreCategoryType.Menu)}
-                  <Button
-                    ref={categoryButtonRef}
-                    classNames={{
-                      button: styles['category-button'],
+                  <img
+                    style={{
+                      height: 24,
+                      width: 24,
+                      objectFit: 'contain',
                     }}
-                    rounded={true}
-                    size={'tiny'}
-                    iconRight={<Line.ExpandMore size={24} />}
-                    onClick={(e) => setCategoryOpen(true)}
-                  ></Button>
+                    src={'../../assets/images/selected-restaurant.png'}
+                  />
+                  {t(InventoryLocationType.Restaurant)}
                 </div>
               )}
             </div>
@@ -650,51 +641,6 @@ export default function StoreDesktopComponent({
               </Button>
             </div>
           </Modal>
-          <Dropdown
-            anchorRef={categoryButtonRef}
-            align={DropdownAlignment.Right}
-            open={categoryOpen}
-            onClose={() => {
-              setCategoryOpen(false);
-            }}
-          >
-            <Dropdown.Item
-              onClick={() => onCategoryChanged(StoreCategoryType.Menu)}
-            >
-              <Dropdown.Icon>
-                <img
-                  style={{ height: 24, width: 24, objectFit: 'contain' }}
-                  src={'../../assets/images/menu.png'}
-                />
-              </Dropdown.Icon>
-              <div
-                className={[
-                  styles['category-text'],
-                  styles['category-text-desktop'],
-                ].join(' ')}
-              >
-                {t(StoreCategoryType.Menu)}
-              </div>
-            </Dropdown.Item>
-            <Dropdown.Item
-              onClick={() => onCategoryChanged(StoreCategoryType.Wines)}
-            >
-              <Dropdown.Icon>
-                <img
-                  style={{ height: 24, width: 24, objectFit: 'contain' }}
-                  src={'../../assets/images/wine-bottle.png'}
-                />
-              </Dropdown.Icon>
-              <div
-                className={[
-                  styles['category-text'],
-                  styles['category-text-desktop'],
-                ].join(' ')}
-              >
-                {t(StoreCategoryType.Wines)}
-              </div>
-            </Dropdown.Item>
-          </Dropdown>
         </>,
         document.body
       )}

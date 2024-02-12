@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Index } from 'meilisearch';
 import { Controller } from '../controller';
-import {
-  StoreModel,
-  ProductTabs,
-  StoreCategoryType,
-} from '../models/store.model';
+import { StoreModel, ProductTabs } from '../models/store.model';
 import MeiliSearchService from '../services/meilisearch.service';
 import { Subscription, filter, firstValueFrom, take } from 'rxjs';
 import ExploreController from './explore.controller';
@@ -61,7 +57,7 @@ class StoreController extends Controller {
   }
 
   public override initialize(renderCount: number): void {
-    this._productsIndex = MeiliSearchService.client?.index('products');
+    this._productsIndex = MeiliSearchService.client?.index('products_custom');
 
     this.initializeAsync(renderCount);
   }
@@ -76,7 +72,7 @@ class StoreController extends Controller {
             return;
           }
 
-          this.searchAsync(this._model.input, 0, this._limit);
+          this.loadProductsAsync();
         },
       });
 
@@ -89,7 +85,7 @@ class StoreController extends Controller {
             return;
           }
 
-          this.searchAsync(this._model.input, 0, this._limit);
+          this.loadProductsAsync();
         },
       });
   }
@@ -146,10 +142,6 @@ class StoreController extends Controller {
     this._model.selectedProductLikesMetadata = value;
   }
 
-  public updateCategory(value: StoreCategoryType) {
-    this._model.category = value;
-  }
-
   public updateScrollPosition(value: number | undefined) {
     this._model.scrollPosition = value;
   }
@@ -195,17 +187,37 @@ class StoreController extends Controller {
     }
     this._model.isLoading = true;
 
-    const type = this.getType();
-    const productType = this._model.productTypes.find(
-      (value) => value.value === type
+    const selectedRegion = await firstValueFrom(
+      this._model.store.pipe(
+        select((model) => model.selectedRegion),
+        filter((value) => value !== undefined),
+        take(1)
+      )
     );
-    const { selectedRegion } = this._model;
-    const { cart } = CartController.model;
+    const cart = await firstValueFrom(
+      CartController.model.store.pipe(
+        select((model) => model.cart),
+        filter((value) => value !== undefined),
+        take(1)
+      )
+    );
+    const selectedInventoryLocation: InventoryLocation = await firstValueFrom(
+      ExploreController.model.store.pipe(
+        select((model) => model.selectedInventoryLocation),
+        filter((value) => value !== undefined),
+        take(1)
+      )
+    );
+    if (!selectedInventoryLocation.type) {
+      return;
+    }
+
+    const productTypeIds = this.getTypeIds(selectedInventoryLocation.type);
     const productsResponse = await MedusaService.medusa?.products.list({
       sales_channel_id: [this._model.selectedSalesChannel?.id ?? ''],
       offset: offset,
       limit: limit,
-      ...(productType && { type_id: [productType.id] }),
+      ...(productTypeIds.length > 0 && { type_id: productTypeIds }),
       ...(selectedRegion && {
         region_id: selectedRegion.id,
         currency_code: selectedRegion.currency_code,
@@ -301,15 +313,27 @@ class StoreController extends Controller {
       return;
     }
 
+    const selectedInventoryLocation: InventoryLocation = await firstValueFrom(
+      ExploreController.model.store.pipe(
+        select((model) => model.selectedInventoryLocation),
+        filter((value) => value !== undefined),
+        take(1)
+      )
+    );
+    if (!selectedInventoryLocation.type) {
+      return;
+    }
+
     this._model.isLoading = true;
 
-    let filter = this.getFilter();
+    let filterValue = await this.getFilterAsync(selectedInventoryLocation.type);
     const result = await this._productsIndex?.search(query, {
-      filter: [filter],
+      filter: [filterValue],
       offset: offset,
       limit: limit,
     });
 
+    console.log(result?.hits);
     let hits = result?.hits as Product[];
     if (hits && hits.length <= 0 && offset <= 0) {
       this._model.products = [];
@@ -359,8 +383,20 @@ class StoreController extends Controller {
       console.error(error);
     }
 
-    const { selectedRegion } = this._model;
-    const { cart } = CartController.model;
+    const selectedRegion = await firstValueFrom(
+      this._model.store.pipe(
+        select((model) => model.selectedRegion),
+        filter((value) => value !== undefined),
+        take(1)
+      )
+    );
+    const cart = await firstValueFrom(
+      CartController.model.store.pipe(
+        select((model) => model.cart),
+        filter((value) => value !== undefined),
+        take(1)
+      )
+    );
     const productsResponse = await MedusaService.medusa?.products.list({
       id: productIds,
       sales_channel_id: [this._model.selectedSalesChannel?.id ?? ''],
@@ -422,20 +458,6 @@ class StoreController extends Controller {
     this._model.productLikesMetadata = productLikesMetadata;
   }
 
-  private resetMedusaModel(): void {
-    this._model.products = [];
-    this._model.pricedProducts = {};
-    this._model.selectedPricedProduct = undefined;
-    this._model.regions = [];
-    this._model.selectedRegion = undefined;
-    this._model.selectedSalesChannel = undefined;
-    this._model.pagination = 1;
-    this._model.hasMorePreviews = true;
-    this._model.scrollPosition = undefined;
-    this._model.isLoading = false;
-    this._model.productTypes = [];
-  }
-
   private async initializeAsync(renderCount: number): Promise<void> {
     await this.requestProductTypesAsync();
     await this.requestRegionsAsync();
@@ -469,12 +491,6 @@ class StoreController extends Controller {
       return;
     }
 
-    if (inventoryLocation.type === InventoryLocationType.Cellar) {
-      this._model.category = StoreCategoryType.Wines;
-    } else if (inventoryLocation.type === InventoryLocationType.Restaurant) {
-      this._model.category = StoreCategoryType.Menu;
-    }
-
     this._model.selectedTab = undefined;
     this._model.pagination = 1;
     this._model.products = [];
@@ -492,29 +508,42 @@ class StoreController extends Controller {
     this._model.selectedRegion = region;
   }
 
-  private getType(): string {
-    let type = '';
-    if (this._model.category === StoreCategoryType.Menu) {
-      type = MedusaProductTypeNames.MenuItem;
-    } else if (this._model.category === StoreCategoryType.Wines) {
-      type = MedusaProductTypeNames.Wine;
+  private getTypeIds(inventoryType: InventoryLocationType): string[] {
+    let names: MedusaProductTypeNames[] = [];
+
+    if (inventoryType === InventoryLocationType.Cellar) {
+      names = [MedusaProductTypeNames.Wine];
+    } else if (inventoryType === InventoryLocationType.Restaurant) {
+      names = [MedusaProductTypeNames.MenuItem, MedusaProductTypeNames.Wine];
     }
 
-    return type;
+    const productTypeIds = this._model.productTypes
+      .filter((type) => names.includes(type.value as MedusaProductTypeNames))
+      .map((type) => type.id);
+
+    return productTypeIds;
   }
 
-  private getFilter(): string {
-    const type = this.getType();
-    let filter = `type_value = ${type} AND status = published`;
-    if (this._model.selectedTab) {
-      filter += ` AND metadata.type = ${this._model.selectedTab}`;
+  private async getFilterAsync(
+    inventoryType: InventoryLocationType
+  ): Promise<string> {
+    const types = this.getTypeIds(inventoryType);
+    let filterValue = `type_id IN [${types.join(', ')}]`;
+    filterValue += ` AND sales_channel_ids = ${this._model.selectedSalesChannel?.id}`;
+    filterValue += ` AND status = published`;
+    if (
+      this._model.selectedTab &&
+      this._model.selectedTab !== ProductTabs.Wines
+    ) {
+      filterValue += ` AND metadata.type = ${this._model.selectedTab}`;
+    } else if (
+      this._model.selectedTab &&
+      this._model.selectedTab === ProductTabs.Wines
+    ) {
+      filterValue += ` AND metadata.type IN [${ProductTabs.White}, ${ProductTabs.Red}, ${ProductTabs.Rose}, ${ProductTabs.Spirits}]`;
     }
 
-    if (this._model.category === StoreCategoryType.Menu) {
-      filter += ` AND metadata.sales_channel_owner = ${this._model.selectedSalesChannel?.id}`;
-    }
-
-    return filter;
+    return filterValue;
   }
 }
 
