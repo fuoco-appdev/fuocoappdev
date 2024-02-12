@@ -31,12 +31,14 @@ import AccountPublicLikesComponent from './components/account-public-likes.compo
 import AccountPublicStatusComponent from './components/account-public-status.component';
 import AccountPublicFollowersComponent from './components/account-public-followers.component';
 import AccountPublicFollowingComponent from './components/account-public-following.component';
+import EmailConfirmationComponent from './components/email-confirmation.component';
 
 export enum RoutePathsType {
   Default = '/',
   Explore = '/explore',
   Signin = '/signin',
   Signup = '/signup',
+  EmailConfirmation = '/email-confirmation',
   ForgotPassword = '/forgot-password',
   TermsOfService = '/terms-of-service',
   PrivacyPolicy = '/privacy-policy',
@@ -88,6 +90,10 @@ export const getRoutePaths = (): RouteObject[] => [
       {
         path: RoutePathsType.Signup,
         element: <SignupComponent />,
+      },
+      {
+        path: RoutePathsType.EmailConfirmation,
+        element: <EmailConfirmationComponent />,
       },
       {
         path: RoutePathsType.ForgotPassword,

@@ -24,7 +24,7 @@ import AccountController from '../controllers/account.controller';
 import ProductController from '../controllers/product.controller';
 import SupabaseService from '../services/supabase.service';
 import MeilisearchService from '../services/meilisearch.service';
-import AccountNotificationService from '../services/account-notification.service';
+import EmailConfirmationController from './email-confirmation.controller';
 
 class AppController extends Controller {
   constructor() {
@@ -46,6 +46,7 @@ class AppController extends Controller {
     CartController.disposeInitialization(renderCount);
     NotificationsController.disposeInitialization(renderCount);
     ProductController.disposeInitialization(renderCount);
+    EmailConfirmationController.disposeInitialization(renderCount);
     SigninController.disposeInitialization(renderCount);
     SignupController.disposeInitialization(renderCount);
     ForgotPasswordController.disposeInitialization(renderCount);
@@ -73,6 +74,7 @@ class AppController extends Controller {
     ProductController.initialize(renderCount);
     SigninController.initialize(renderCount);
     SignupController.initialize(renderCount);
+    EmailConfirmationController.initialize(renderCount);
     ForgotPasswordController.initialize(renderCount);
     CheckoutController.initialize(renderCount);
     OrderConfirmedController.initialize(renderCount);

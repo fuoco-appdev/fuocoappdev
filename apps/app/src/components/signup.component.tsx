@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Auth } from '@fuoco.appdev/core-ui';
 import SignupController from '../controllers/signup.controller';
 import WindowController from '../controllers/window.controller';
+import EmailConfirmationController from '../controllers/email-confirmation.controller';
 import styles from './signup.module.scss';
 import SupabaseService from '../services/supabase.service';
 import { RoutePathsType } from '../route-paths';
@@ -20,6 +21,7 @@ import { GuestComponent } from './guest.component';
 import { Helmet } from 'react-helmet';
 import { lazy } from '@loadable/component';
 import React from 'react';
+import { SignupState } from '../models';
 
 const SignupDesktopComponent = lazy(
   () => import('./desktop/signup.desktop.component')
@@ -34,6 +36,7 @@ const SignupMobileComponent = lazy(
 export interface SignupProps {}
 
 export interface SignupResponsiveProps {
+  signupProps: SignupState;
   emailError: string;
   passwordError: string;
   confirmPasswordError: string;
@@ -41,17 +44,31 @@ export interface SignupResponsiveProps {
   setEmailError: (value: string) => void;
   setPasswordError: (value: string) => void;
   setConfirmPasswordError: (value: string) => void;
+  onEmailConfirmationSent: () => void;
 }
 
 export default function SignupComponent(): JSX.Element {
   const location = useLocation();
+  const navigate = useNavigate();
   SignupController.model.location = location;
+  const [signupProps] = useObservable(SignupController.model.store);
   const [authError, setAuthError] = useState<AuthError | null>(null);
   const [emailError, setEmailError] = useState<string>('');
   const [passwordError, setPasswordError] = useState<string>('');
   const [confirmPasswordError, setConfirmPasswordError] = useState<string>('');
   const renderCountRef = useRef<number>(0);
   const { t } = useTranslation();
+
+  const onEmailConfirmationSent = () => {
+    WindowController.addToast({
+      key: 'signup-email-confirmation-sent',
+      message: t('emailConfirmation') ?? '',
+      description: t('emailConfirmationDescription') ?? '',
+      type: 'success',
+    });
+    EmailConfirmationController.updateEmail(signupProps.email);
+    navigate(RoutePathsType.EmailConfirmation);
+  };
 
   useEffect(() => {
     SignupController.load(renderCountRef.current);
@@ -126,6 +143,7 @@ export default function SignupComponent(): JSX.Element {
       <React.Suspense fallback={suspenceComponent}>
         <GuestComponent>
           <SignupDesktopComponent
+            signupProps={signupProps}
             emailError={emailError}
             passwordError={passwordError}
             confirmPasswordError={confirmPasswordError}
@@ -133,8 +151,10 @@ export default function SignupComponent(): JSX.Element {
             setEmailError={setEmailError}
             setPasswordError={setPasswordError}
             setConfirmPasswordError={setConfirmPasswordError}
+            onEmailConfirmationSent={onEmailConfirmationSent}
           />
           <SignupTabletComponent
+            signupProps={signupProps}
             emailError={emailError}
             passwordError={passwordError}
             confirmPasswordError={confirmPasswordError}
@@ -142,8 +162,10 @@ export default function SignupComponent(): JSX.Element {
             setEmailError={setEmailError}
             setPasswordError={setPasswordError}
             setConfirmPasswordError={setConfirmPasswordError}
+            onEmailConfirmationSent={onEmailConfirmationSent}
           />
           <SignupMobileComponent
+            signupProps={signupProps}
             emailError={emailError}
             passwordError={passwordError}
             confirmPasswordError={confirmPasswordError}
@@ -151,6 +173,7 @@ export default function SignupComponent(): JSX.Element {
             setEmailError={setEmailError}
             setPasswordError={setPasswordError}
             setConfirmPasswordError={setConfirmPasswordError}
+            onEmailConfirmationSent={onEmailConfirmationSent}
           />
         </GuestComponent>
       </React.Suspense>

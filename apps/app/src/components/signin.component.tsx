@@ -21,6 +21,7 @@ import { SigninState } from '../models/signin.model';
 import { GuestComponent } from './guest.component';
 import { lazy } from '@loadable/component';
 import React from 'react';
+import EmailConfirmationController from '../controllers/email-confirmation.controller';
 
 const SigninDesktopComponent = lazy(
   () => import('./desktop/signin.desktop.component')
@@ -43,6 +44,7 @@ export interface SigninProps {}
 
 export default function SigninComponent(): JSX.Element {
   const location = useLocation();
+  const navigate = useNavigate();
   SigninController.model.location = location;
   const { t } = useTranslation();
   const [signInProps] = useObservable(SigninController.model.store);
@@ -73,10 +75,12 @@ export default function SigninComponent(): JSX.Element {
             key: `signin-email-confirmation-sent-${Math.random()}`,
             message: t('emailConfirmation') ?? '',
             description: t('emailConfirmationDescription') ?? '',
-            type: 'loading',
+            type: 'success',
           });
         }
       );
+      EmailConfirmationController.updateEmail(signInProps.email);
+      navigate(RoutePathsType.EmailConfirmation);
     } else {
       if (authError) {
         WindowController.addToast({

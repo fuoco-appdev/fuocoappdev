@@ -150,6 +150,26 @@ export default function SigninTabletComponent({
                           search: query.toString(),
                         })
                       }
+                      socialLoadingComponent={
+                        <img
+                          src={'../assets/svg/ring-resize-dark.svg'}
+                          style={{ height: 24 }}
+                          className={[
+                            styles['loading-ring'],
+                            styles['loading-ring-tablet'],
+                          ].join(' ')}
+                        />
+                      }
+                      emailLoadingComponent={
+                        <img
+                          src={'../assets/svg/ring-resize-light.svg'}
+                          style={{ height: 24 }}
+                          className={[
+                            styles['loading-ring'],
+                            styles['loading-ring-tablet'],
+                          ].join(' ')}
+                        />
+                      }
                       onSigninError={(error: AuthError) => setAuthError(error)}
                       redirectTo={window.location.origin}
                     />

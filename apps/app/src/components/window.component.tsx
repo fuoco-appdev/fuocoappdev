@@ -117,6 +117,21 @@ export default function WindowComponent(): JSX.Element {
 
     if (
       windowProps.loadedLocationPath &&
+      windowProps.loadedLocationPath === RoutePathsType.EmailConfirmation
+    ) {
+      setTimeout(
+        () =>
+          navigate({
+            pathname: RoutePathsType.Signin,
+            search: query.toString(),
+          }),
+        150
+      );
+      return;
+    }
+
+    if (
+      windowProps.loadedLocationPath &&
       windowProps.loadedLocationPath?.startsWith(`${RoutePathsType.Store}/`)
     ) {
       setTimeout(

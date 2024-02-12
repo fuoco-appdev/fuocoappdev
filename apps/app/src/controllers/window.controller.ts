@@ -216,6 +216,12 @@ class WindowController extends Controller {
       this._model.activeRoute = RoutePathsType.Signup;
       this._model.showNavigateBack = false;
       this._model.hideCartButton = false;
+    } else if (location.pathname === RoutePathsType.EmailConfirmation) {
+      this._model.transitionKeyIndex = 0;
+      this._model.scaleKeyIndex = 0;
+      this._model.activeRoute = RoutePathsType.EmailConfirmation;
+      this._model.showNavigateBack = true;
+      this._model.hideCartButton = true;
     } else if (location.pathname === RoutePathsType.ForgotPassword) {
       this._model.transitionKeyIndex = 0;
       this._model.scaleKeyIndex = 0;

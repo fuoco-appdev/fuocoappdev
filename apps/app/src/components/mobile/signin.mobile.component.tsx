@@ -149,6 +149,26 @@ export default function SigninMobileComponent({
                         onSigninError={(error: AuthError) =>
                           setAuthError(error)
                         }
+                        socialLoadingComponent={
+                          <img
+                            src={'../assets/svg/ring-resize-dark.svg'}
+                            style={{ height: 24 }}
+                            className={[
+                              styles['loading-ring'],
+                              styles['loading-ring-mobile'],
+                            ].join(' ')}
+                          />
+                        }
+                        emailLoadingComponent={
+                          <img
+                            src={'../assets/svg/ring-resize-light.svg'}
+                            style={{ height: 24 }}
+                            className={[
+                              styles['loading-ring'],
+                              styles['loading-ring-mobile'],
+                            ].join(' ')}
+                          />
+                        }
                         redirectTo={window.location.origin}
                       />
                     )}

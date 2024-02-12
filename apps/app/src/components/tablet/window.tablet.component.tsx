@@ -656,6 +656,17 @@ export default function WindowTabletComponent({
                       </>
                     )}
                   {windowProps.activeRoute ===
+                    RoutePathsType.EmailConfirmation && (
+                    <>
+                      <Line.Email size={24} />
+                      <div
+                        className={[styles['navigation-back-title']].join(' ')}
+                      >
+                        {t('emailConfirmation')}
+                      </div>
+                    </>
+                  )}
+                  {windowProps.activeRoute ===
                     RoutePathsType.AccountAddFriends && (
                     <>
                       <Line.PersonAddAlt1 size={24} />

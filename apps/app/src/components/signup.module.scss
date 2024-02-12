@@ -128,3 +128,8 @@
 .auth-email-button {
   background-color: $brand-700 !important;
 }
+
+.loading-ring {
+  width: 24px;
+  transition: max-height 150ms $transition-standard-easing;
+}

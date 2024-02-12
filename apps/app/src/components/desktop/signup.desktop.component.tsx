@@ -15,6 +15,7 @@ import { SignupResponsiveProps } from '../signup.component';
 import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
 
 export default function SignupDesktopComponent({
+  signupProps,
   emailError,
   passwordError,
   confirmPasswordError,
@@ -22,10 +23,10 @@ export default function SignupDesktopComponent({
   setEmailError,
   setPasswordError,
   setConfirmPasswordError,
+  onEmailConfirmationSent,
 }: SignupResponsiveProps): JSX.Element {
   const navigate = useNavigate();
   const query = useQuery();
-  const [props] = useObservable(SignupController.model.store);
   const [show, setShow] = useState(false);
   const { t } = useTranslation();
 
@@ -54,7 +55,7 @@ export default function SignupDesktopComponent({
             (style, item) =>
               item && (
                 <animated.div style={style}>
-                  {props.supabaseClient && (
+                  {signupProps.supabaseClient && (
                     <Auth
                       classNames={{
                         socialAuth: {
@@ -95,13 +96,35 @@ export default function SignupDesktopComponent({
                         },
                       }}
                       defaultIconColor={'#2A2A5F'}
-                      emailValue={props?.email ?? ''}
-                      passwordValue={props?.password ?? ''}
-                      confirmPasswordValue={props?.confirmationPassword ?? ''}
+                      emailValue={signupProps?.email ?? ''}
+                      passwordValue={signupProps?.password ?? ''}
+                      confirmPasswordValue={
+                        signupProps?.confirmationPassword ?? ''
+                      }
                       litIconColor={'#2A2A5F'}
                       providers={['google']}
                       view={'sign_up'}
                       socialColors={false}
+                      socialLoadingComponent={
+                        <img
+                          src={'../assets/svg/ring-resize-dark.svg'}
+                          style={{ height: 24 }}
+                          className={[
+                            styles['loading-ring'],
+                            styles['loading-ring-desktop'],
+                          ].join(' ')}
+                        />
+                      }
+                      emailLoadingComponent={
+                        <img
+                          src={'../assets/svg/ring-resize-light.svg'}
+                          style={{ height: 24 }}
+                          className={[
+                            styles['loading-ring'],
+                            styles['loading-ring-desktop'],
+                          ].join(' ')}
+                        />
+                      }
                       strings={{
                         signUpWith: t('signUpWith') ?? '',
                         orContinueWith: t('orContinueWith') ?? '',
@@ -117,7 +140,7 @@ export default function SignupDesktopComponent({
                       emailErrorMessage={emailError}
                       passwordErrorMessage={passwordError}
                       confirmPasswordErrorMessage={confirmPasswordError}
-                      supabaseClient={props.supabaseClient}
+                      supabaseClient={signupProps.supabaseClient}
                       onEmailChanged={(e) =>
                         SignupController.updateEmail(e.target.value)
                       }
@@ -163,14 +186,7 @@ export default function SignupDesktopComponent({
                         });
                       }}
                       onSignupError={(error: AuthError) => setAuthError(error)}
-                      onEmailConfirmationSent={() => {
-                        WindowController.addToast({
-                          key: 'signup-email-confirmation-sent',
-                          message: t('emailConfirmation') ?? '',
-                          description: t('emailConfirmationDescription') ?? '',
-                          type: 'loading',
-                        });
-                      }}
+                      onEmailConfirmationSent={onEmailConfirmationSent}
                       redirectTo={window.location.origin}
                     />
                   )}

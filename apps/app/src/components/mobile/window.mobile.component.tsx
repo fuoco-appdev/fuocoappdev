@@ -358,6 +358,19 @@ export default function WindowMobileComponent({
                           </div>
                         </>
                       )}
+                      {windowProps.activeRoute ===
+                        RoutePathsType.EmailConfirmation && (
+                        <>
+                          <Line.Email size={24} />
+                          <div
+                            className={[styles['navigation-back-title']].join(
+                              ' '
+                            )}
+                          >
+                            {t('emailConfirmation')}
+                          </div>
+                        </>
+                      )}
                       {activeRoute === RoutePathsType.AccountAddFriends && (
                         <>
                           <Line.PersonAddAlt1 size={22} />
