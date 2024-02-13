@@ -31,6 +31,7 @@ import { AccountState } from '../models/account.model';
 import { MedusaProductTypeNames } from '../types/medusa.type';
 import DeeplService from '../services/deepl.service';
 import { DeepLTranslationsResponse } from '../protobuf/core_pb';
+import SupabaseService from '../services/supabase.service';
 
 const ProductDesktopComponent = lazy(
   () => import('./desktop/product.desktop.component')
@@ -182,16 +183,20 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
   };
 
   useEffect(() => {
-    if (!productProps.product) {
+    if (!productProps.metadata) {
       return;
     }
 
     const formattedName = formatName(
-      productProps.product.title,
-      productProps.product.subtitle
+      productProps.metadata.title,
+      productProps.metadata.subtitle
+    );
+    const formattedDescription = formatDescription(
+      productProps.metadata.description
     );
     setFullName(formattedName);
-  }, [productProps.product]);
+    setShortDescription(formattedDescription);
+  }, [productProps.metadata]);
 
   useEffect(() => {
     if (!productProps.product) {
@@ -205,7 +210,7 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
     const formattedDescription = formatDescription(
       `${translatedDescription?.slice(0, 205)}...`
     );
-    setShortDescription(formatDescription);
+    setShortDescription(formattedDescription);
   }, [translatedDescription]);
 
   useEffect(() => {
@@ -340,7 +345,7 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
           }
         />
         <meta name="description" content={shortDescription} />
-        <meta property="og:image" content={productProps.product?.thumbnail} />
+        <meta property="og:image" content={productProps.metadata?.thumbnail} />
         <meta
           property="og:image:secure_url"
           content={productProps.product?.thumbnail}
@@ -470,15 +475,23 @@ ProductComponent.getServerSidePropsAsync = async (
   request: Request,
   result: Response
 ): Promise<ProductProps> => {
+  SupabaseService.initializeSupabase();
+
   const url = new URL(
     `${(request as any).protocol}://${(request as any).hostname}${request.url}`
   );
   const id = url.pathname.split('/').at(-1) ?? '';
-  const product = await ProductController.requestProductAsync(id);
-  ProductController.updateProduct(product);
-  return Promise.resolve({
-    product: product,
-  });
+  if (!id.startsWith('prod_')) {
+    return Promise.resolve({});
+  }
+  try {
+    const productMetadata = await MedusaService.requestProductMetadataAsync(id);
+    ProductController.updateMetadata(productMetadata);
+  } catch (error: any) {
+    console.error(error as Error);
+  }
+
+  return Promise.resolve({});
 };
 
 export default ProductComponent;

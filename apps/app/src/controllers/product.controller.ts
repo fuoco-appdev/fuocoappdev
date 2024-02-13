@@ -26,6 +26,7 @@ import ProductLikesService from '../services/product-likes.service';
 import {
   AccountResponse,
   ProductLikesMetadataResponse,
+  ProductMetadataResponse,
 } from '../protobuf/core_pb';
 import { AccountState } from '../models/account.model';
 
@@ -251,6 +252,10 @@ class ProductController extends Controller {
 
   public updateProduct(value: PricedProduct | undefined): void {
     this._model.product = value;
+  }
+
+  public updateMetadata(value: ProductMetadataResponse | undefined): void {
+    this._model.metadata = value;
   }
 
   public updateSelectedVariant(id: string): void {

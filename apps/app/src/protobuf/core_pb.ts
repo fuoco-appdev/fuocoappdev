@@ -860,39 +860,57 @@ export class ProductCountResponse extends Message<ProductCountResponse> {
 }
 
 /**
- * @generated from message core.ProductResponse
+ * @generated from message core.ProductMetadataResponse
  */
-export class ProductResponse extends Message<ProductResponse> {
+export class ProductMetadataResponse extends Message<ProductMetadataResponse> {
   /**
-   * @generated from field: string data = 1;
+   * @generated from field: string title = 1;
    */
-  data = "";
+  title = "";
 
-  constructor(data?: PartialMessage<ProductResponse>) {
+  /**
+   * @generated from field: string subtitle = 2;
+   */
+  subtitle = "";
+
+  /**
+   * @generated from field: string description = 3;
+   */
+  description = "";
+
+  /**
+   * @generated from field: string thumbnail = 4;
+   */
+  thumbnail = "";
+
+  constructor(data?: PartialMessage<ProductMetadataResponse>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime = proto3;
-  static readonly typeName = "core.ProductResponse";
+  static readonly typeName = "core.ProductMetadataResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "data", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: "title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "subtitle", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "description", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "thumbnail", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ProductResponse {
-    return new ProductResponse().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ProductMetadataResponse {
+    return new ProductMetadataResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ProductResponse {
-    return new ProductResponse().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ProductMetadataResponse {
+    return new ProductMetadataResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ProductResponse {
-    return new ProductResponse().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ProductMetadataResponse {
+    return new ProductMetadataResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: ProductResponse | PlainMessage<ProductResponse> | undefined, b: ProductResponse | PlainMessage<ProductResponse> | undefined): boolean {
-    return proto3.util.equals(ProductResponse, a, b);
+  static equals(a: ProductMetadataResponse | PlainMessage<ProductMetadataResponse> | undefined, b: ProductMetadataResponse | PlainMessage<ProductMetadataResponse> | undefined): boolean {
+    return proto3.util.equals(ProductMetadataResponse, a, b);
   }
 }
 

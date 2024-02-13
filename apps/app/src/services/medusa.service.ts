@@ -50,12 +50,12 @@ class MedusaService extends Service {
     });
   }
 
-  public async requestProductAsync(
+  public async requestProductMetadataAsync(
     productId: string
-  ): Promise<PricedProduct | undefined> {
+  ): Promise<core.ProductMetadataResponse | undefined> {
     const response = await axios({
       method: 'post',
-      url: `${this.endpointUrl}/medusa/products/${productId}`,
+      url: `${this.endpointUrl}/medusa/product-metadata/${productId}`,
       headers: {
         ...this.headers,
       },
@@ -65,8 +65,9 @@ class MedusaService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const productResponse = core.ProductResponse.fromBinary(arrayBuffer);
-    return JSON.parse(productResponse.data) as PricedProduct | undefined;
+    const productMetadataResponse =
+      core.ProductMetadataResponse.fromBinary(arrayBuffer);
+    return productMetadataResponse;
   }
 
   public async requestProductCountAsync(type: string): Promise<number> {

@@ -8,10 +8,12 @@ import { lazy } from '@loadable/component';
 import WindowComponent from './window.component';
 import SupabaseService from '../services/supabase.service';
 import { useCookies } from 'react-cookie';
-import { useLocation } from 'react-router-dom';
+import { RouteObject, useLocation } from 'react-router-dom';
 import { AuthChangeEvent, Session } from '@supabase/supabase-js';
 
-export default function AppComponent(): JSX.Element {
+export interface AppProps {}
+
+function AppComponent({}: AppProps): JSX.Element {
   const location = useLocation();
   const [cookies, setCookie, removeCookie] = useCookies();
   const renderCountRef = useRef<number>(0);
@@ -85,3 +87,5 @@ export default function AppComponent(): JSX.Element {
 
   return <WindowComponent />;
 }
+
+export default AppComponent;

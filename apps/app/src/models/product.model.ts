@@ -1,6 +1,9 @@
 import { createStore, withProps } from '@ngneat/elf';
 import { Model } from '../model';
-import { ProductLikesMetadataResponse } from '../protobuf/core_pb';
+import {
+  ProductLikesMetadataResponse,
+  ProductMetadataResponse,
+} from '../protobuf/core_pb';
 import { ProductTag, ProductOption, MoneyAmount } from '@medusajs/medusa';
 import {
   PricedVariant,
@@ -25,6 +28,7 @@ export interface ProductState {
   isLoading: boolean;
   productId: string | undefined;
   product: PricedProduct | undefined;
+  metadata: ProductMetadataResponse | undefined;
   selectedVariant: PricedVariant | undefined;
   likesMetadata: ProductLikesMetadataResponse | null;
 }
@@ -38,6 +42,7 @@ export class ProductModel extends Model {
           isLoading: true,
           productId: undefined,
           product: undefined,
+          metadata: undefined,
           selectedVariant: undefined,
           likesMetadata: null,
         })
@@ -72,6 +77,16 @@ export class ProductModel extends Model {
   public set product(value: PricedProduct | undefined) {
     if (JSON.stringify(this.product) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, product: value }));
+    }
+  }
+
+  public get metadata(): ProductMetadataResponse | undefined {
+    return this.store.getValue().metadata;
+  }
+
+  public set metadata(value: ProductMetadataResponse | undefined) {
+    if (JSON.stringify(this.metadata) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, metadata: value }));
     }
   }
 

@@ -1,7 +1,7 @@
 {
   "supabase": {
     "url": "http://localhost:8000",
-    "functions_url": "http://localhost:8001"
+    "functions_url": "http://192.168.2.52:8001"
   },
   "medusa": {
     "url": "http://localhost:9000"
