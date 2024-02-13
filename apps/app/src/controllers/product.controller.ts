@@ -1,34 +1,34 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Subscription, filter, firstValueFrom, take } from 'rxjs';
-import { Controller } from '../controller';
-import { Product, MoneyAmount } from '@medusajs/medusa';
-import { ProductModel } from '../models/product.model';
-import { select } from '@ngneat/elf';
-import { StoreModel, StoreState } from '../models/store.model';
-import StoreController from './store.controller';
-import ExploreController from './explore.controller';
-import MedusaService from '../services/medusa.service';
-import i18n from '../i18n';
-import CartController from './cart.controller';
+import { filter, firstValueFrom, Subscription, take } from "rxjs";
+import { Controller } from "../controller";
+import { MoneyAmount, Product } from "@medusajs/medusa";
+import { ProductModel } from "../models/product.model";
+import { select } from "@ngneat/elf";
+import { StoreModel, StoreState } from "../models/store.model";
+import StoreController from "./store.controller";
+import ExploreController from "./explore.controller";
+import MedusaService from "../services/medusa.service";
+import i18n from "../i18n";
+import CartController from "./cart.controller";
 import {
+  CustomerGroup,
   LineItem,
   Region,
   SalesChannel,
-  CustomerGroup,
-} from '@medusajs/medusa';
+} from "@medusajs/medusa";
 import {
   PricedProduct,
   PricedVariant,
-} from '@medusajs/medusa/dist/types/pricing';
-import AccountController from './account.controller';
-import AccountPublicController from './account-public.controller';
-import ProductLikesService from '../services/product-likes.service';
+} from "@medusajs/medusa/dist/types/pricing";
+import AccountController from "./account.controller";
+import AccountPublicController from "./account-public.controller";
+import ProductLikesService from "../services/product-likes.service";
 import {
   AccountResponse,
   ProductLikesMetadataResponse,
   ProductMetadataResponse,
-} from '../protobuf/core_pb';
-import { AccountState } from '../models/account.model';
+} from "../protobuf/core_pb";
+import { AccountState } from "../models/account.model";
 
 class ProductController extends Controller {
   private readonly _model: ProductModel;
@@ -67,11 +67,11 @@ class ProductController extends Controller {
           }
 
           this._model.isLoading = true;
-          this._model.product = product;
+          this.updateProduct(product);
           const selectedVariant = this.getCheapestPrice(
-            this._model.product.variants
+            this._model.product?.variants ?? [],
           );
-          this.updateSelectedVariant(selectedVariant?.id ?? '');
+          this.updateSelectedVariant(selectedVariant?.id ?? "");
           this._model.isLoading = false;
         },
       });
@@ -94,8 +94,8 @@ class ProductController extends Controller {
             this._model.store.pipe(
               select((model) => model.productId),
               filter((value) => value !== undefined),
-              take(1)
-            )
+              take(1),
+            ),
           );
           if (!productId) {
             return;
@@ -104,17 +104,17 @@ class ProductController extends Controller {
           const selectedProductLikesMetadata = await firstValueFrom(
             StoreController.model.store.pipe(
               select((model) => model.selectedProductLikesMetadata),
-              take(1)
-            )
+              take(1),
+            ),
           );
           if (selectedProductLikesMetadata) {
             return;
           }
 
           try {
-            const productLikesResponse =
-              await ProductLikesService.requestMetadataAsync({
-                accountId: account?.id ?? '',
+            const productLikesResponse = await ProductLikesService
+              .requestMetadataAsync({
+                accountId: account?.id ?? "",
                 productIds: [productId],
               });
 
@@ -128,8 +128,8 @@ class ProductController extends Controller {
           const selectedPricedProduct = await firstValueFrom(
             StoreController.model.store.pipe(
               select((model) => model.selectedPricedProduct),
-              take(1)
-            )
+              take(1),
+            ),
           );
 
           if (selectedPricedProduct) {
@@ -145,8 +145,8 @@ class ProductController extends Controller {
                   StoreController.model.store.pipe(
                     select((model) => model.selectedRegion),
                     filter((value) => value !== undefined),
-                    take(1)
-                  )
+                    take(1),
+                  ),
                 );
                 const channel = StoreController.model.selectedSalesChannel;
                 if (!productId || !channel) {
@@ -156,8 +156,8 @@ class ProductController extends Controller {
                 if (this._model.productId !== this._model.product?.id) {
                   this.requestProductWithChannelAsync(
                     productId,
-                    channel?.id ?? '',
-                    selectedRegion?.id ?? ''
+                    channel?.id ?? "",
+                    selectedRegion?.id ?? "",
                   );
                 }
               },
@@ -181,12 +181,12 @@ class ProductController extends Controller {
 
   public async requestProductLike(
     isLiked: boolean,
-    productId: string
+    productId: string,
   ): Promise<void> {
     try {
       if (isLiked) {
         const metadata = await ProductLikesService.requestAddAsync({
-          accountId: AccountController.model.account?.id ?? '',
+          accountId: AccountController.model.account?.id ?? "",
           productId: productId,
         });
         if (!metadata) {
@@ -200,7 +200,7 @@ class ProductController extends Controller {
       }
 
       const metadata = await ProductLikesService.requestRemoveAsync({
-        accountId: AccountController.model.account?.id ?? '',
+        accountId: AccountController.model.account?.id ?? "",
         productId: productId,
       });
       if (!metadata) {
@@ -216,7 +216,7 @@ class ProductController extends Controller {
   }
 
   public async requestProductAsync(
-    id: string
+    id: string,
   ): Promise<PricedProduct | undefined> {
     const productResponse = await MedusaService.medusa?.products.retrieve(id);
     return productResponse?.product;
@@ -225,7 +225,7 @@ class ProductController extends Controller {
   public async requestProductWithChannelAsync(
     id: string,
     salesChannelId: string,
-    regionId?: string
+    regionId?: string,
   ): Promise<void> {
     this._model.isLoading = true;
     const { cart } = CartController.model;
@@ -238,11 +238,11 @@ class ProductController extends Controller {
       ...(cart && { cart_id: cart.id }),
     });
     const product = productResponse?.products[0];
-    this._model.product = product;
+    this.updateProduct(product);
     const selectedVariant = this.getCheapestPrice(
-      this._model.product?.variants ?? []
+      this._model.product?.variants ?? [],
     );
-    this.updateSelectedVariant(selectedVariant?.id ?? '');
+    this.updateSelectedVariant(selectedVariant?.id ?? "");
     this._model.isLoading = false;
   }
 
@@ -252,6 +252,14 @@ class ProductController extends Controller {
 
   public updateProduct(value: PricedProduct | undefined): void {
     this._model.product = value;
+    this.updateMetadata(
+      new ProductMetadataResponse({
+        title: value?.title,
+        subtitle: value?.subtitle ?? undefined,
+        description: value?.description ?? undefined,
+        thumbnail: value?.thumbnail ?? undefined,
+      }),
+    );
   }
 
   public updateMetadata(value: ProductMetadataResponse | undefined): void {
@@ -264,7 +272,7 @@ class ProductController extends Controller {
     }
 
     const variant = this._model.product.variants.find(
-      (value) => value.id === id
+      (value) => value.id === id,
     );
     this._model.selectedVariant = variant;
   }
@@ -273,7 +281,7 @@ class ProductController extends Controller {
     variantId: string,
     quantity: number = 1,
     successCallback?: () => void,
-    errorCallback?: (error: Error) => void
+    errorCallback?: (error: Error) => void,
   ): Promise<void> {
     const { selectedInventoryLocationId } = ExploreController.model;
     const cartId = selectedInventoryLocationId
@@ -289,7 +297,7 @@ class ProductController extends Controller {
         {
           variant_id: variantId,
           quantity: quantity,
-        }
+        },
       );
       if (cartResponse?.cart) {
         await CartController.updateLocalCartAsync(cartResponse.cart);
@@ -302,7 +310,7 @@ class ProductController extends Controller {
   }
 
   public getCheapestPrice(
-    variants: PricedVariant[]
+    variants: PricedVariant[],
   ): Partial<PricedVariant> | undefined {
     if (variants.length <= 0) {
       return undefined;
@@ -313,7 +321,7 @@ class ProductController extends Controller {
         return (current?.calculated_price ?? 0) < (next?.calculated_price ?? 0)
           ? current
           : next;
-      }
+      },
     );
     return cheapestVariant;
   }
@@ -327,8 +335,8 @@ class ProductController extends Controller {
           const selectedPricedProduct = await firstValueFrom(
             StoreController.model.store.pipe(
               select((model) => model.selectedPricedProduct),
-              take(1)
-            )
+              take(1),
+            ),
           );
           if (selectedPricedProduct) {
             return;
@@ -339,14 +347,14 @@ class ProductController extends Controller {
               StoreController.model.store.pipe(
                 select((model) => model.selectedSalesChannel),
                 filter((value) => value !== undefined),
-                take(1)
-              )
+                take(1),
+              ),
             );
             this._model.product = undefined;
             this.requestProductWithChannelAsync(
-              this._model.productId ?? '',
-              selectedSalesChannel?.id ?? '',
-              region?.id ?? ''
+              this._model.productId ?? "",
+              selectedSalesChannel?.id ?? "",
+              region?.id ?? "",
             );
           }
         },

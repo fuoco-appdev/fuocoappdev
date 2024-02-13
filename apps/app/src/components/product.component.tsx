@@ -163,13 +163,6 @@ function ProductComponent({ metadata }: ProductProps): JSX.Element {
     return formatter.format(value);
   };
 
-  const [fullName, setFullName] = useState<string>(
-    formatName(metadata?.title ?? '', metadata?.subtitle) ?? ''
-  );
-  const [shortDescription, setShortDescription] = useState<string>(
-    formatDescription(`${metadata?.description?.slice(0, 205)}...`)
-  );
-
   const updateTranslatedDescriptionAsync = async (description: string) => {
     if (i18n.language !== 'en') {
       const response: DeepLTranslationsResponse =
@@ -186,35 +179,12 @@ function ProductComponent({ metadata }: ProductProps): JSX.Element {
   };
 
   useEffect(() => {
-    if (!productProps.metadata) {
-      return;
-    }
-
-    const formattedName = formatName(
-      productProps.metadata.title,
-      productProps.metadata.subtitle
-    );
-    const formattedDescription = formatDescription(
-      productProps.metadata.description
-    );
-    setFullName(formattedName);
-    setShortDescription(formattedDescription);
-  }, [productProps.metadata]);
-
-  useEffect(() => {
     if (!productProps.product) {
       return;
     }
 
     updateTranslatedDescriptionAsync(productProps.product.description);
   }, [productProps.product]);
-
-  useEffect(() => {
-    const formattedDescription = formatDescription(
-      `${translatedDescription?.slice(0, 205)}...`
-    );
-    setShortDescription(formattedDescription);
-  }, [translatedDescription]);
 
   useEffect(() => {
     renderCountRef.current += 1;
@@ -338,16 +308,32 @@ function ProductComponent({ metadata }: ProductProps): JSX.Element {
     <>
       <Helmet>
         <title>
-          {fullName.length > 0 ? `${fullName} | Cruthology` : 'Cruthology'}
+          {productProps.metadata && productProps.metadata.title.length > 0
+            ? `${formatName(
+                productProps.metadata.title,
+                productProps.metadata.subtitle
+              )} | Cruthology`
+            : 'Cruthology'}
         </title>
         <link rel="canonical" href={window.location.href} />
         <meta
           name="title"
           content={
-            fullName.length > 0 ? `${fullName} | Cruthology` : 'Cruthology'
+            productProps.metadata && productProps.metadata.title.length > 0
+              ? `${formatName(
+                  productProps.metadata.title,
+                  productProps.metadata.subtitle
+                )} | Cruthology`
+              : 'Cruthology'
           }
         />
-        <meta name="description" content={shortDescription} />
+        <meta
+          name="description"
+          content={
+            productProps.metadata &&
+            formatDescription(productProps.metadata.description)
+          }
+        />
         <meta property="og:image" content={productProps.metadata?.thumbnail} />
         <meta
           property="og:image:secure_url"
@@ -356,10 +342,21 @@ function ProductComponent({ metadata }: ProductProps): JSX.Element {
         <meta
           property="og:title"
           content={
-            fullName.length > 0 ? `${fullName} | Cruthology` : 'Cruthology'
+            productProps.metadata && productProps.metadata.title.length > 0
+              ? `${formatName(
+                  productProps.metadata.title,
+                  productProps.metadata.subtitle
+                )} | Cruthology`
+              : 'Cruthology'
           }
         />
-        <meta property="og:description" content={shortDescription} />
+        <meta
+          property="og:description"
+          content={
+            productProps.metadata &&
+            formatDescription(productProps.metadata.description)
+          }
+        />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:image:type" content="image/png" />
@@ -368,14 +365,25 @@ function ProductComponent({ metadata }: ProductProps): JSX.Element {
         <meta
           property="twitter:title"
           content={
-            fullName.length > 0 ? `${fullName} | Cruthology` : 'Cruthology'
+            productProps.metadata && productProps.metadata.title.length > 0
+              ? `${formatName(
+                  productProps.metadata.title,
+                  productProps.metadata.subtitle
+                )} | Cruthology`
+              : 'Cruthology'
           }
         />
         <meta
           property="twitter:image"
           content={productProps.metadata?.thumbnail}
         />
-        <meta property="twitter:description" content={shortDescription} />
+        <meta
+          property="twitter:description"
+          content={
+            productProps.metadata &&
+            formatDescription(productProps.metadata.description)
+          }
+        />
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <ProductDesktopComponent
