@@ -121,11 +121,14 @@ function ProductComponent({ metadata }: ProductProps): JSX.Element {
     return name;
   };
 
-  const formatDescription = (description: string): string => {
-    const regex = /\*\*(.*?)\*\*/g;
-    const cleanDescription = description.trim();
-    const descriptionWithoutTitles = cleanDescription.replace(regex, '');
-    return descriptionWithoutTitles.trim();
+  const formatDescription = (markdown: string): string => {
+    const toText = markdown
+      .replace(/^### (.*$)/gim, '$1') // h3 tag
+      .replace(/^## (.*$)/gim, '$1') // h2 tag
+      .replace(/^# (.*$)/gim, '$1') // h1 tag
+      .replace(/\*\*(.*)\*\*/gim, '$1') // bold text
+      .replace(/\*(.*)\*/gim, '$1'); // italic text
+    return toText.trim();
   };
 
   const onAddToCart = () => {
@@ -304,86 +307,40 @@ function ProductComponent({ metadata }: ProductProps): JSX.Element {
     return suspenceComponent;
   }
 
+  const fullNameMetadata = `${formatName(
+    productProps.metadata?.title ?? '',
+    productProps.metadata?.subtitle ?? ''
+  )} | Cruthology`;
+  const descriptionMetadata =
+    formatDescription(productProps.metadata?.description ?? '').substring(
+      0,
+      255
+    ) ?? '';
   return (
     <>
       <Helmet>
-        <title>
-          {productProps.metadata && productProps.metadata.title.length > 0
-            ? `${formatName(
-                productProps.metadata.title,
-                productProps.metadata.subtitle
-              )} | Cruthology`
-            : 'Cruthology'}
-        </title>
+        <title>{fullNameMetadata}</title>
         <link rel="canonical" href={window.location.href} />
-        <meta
-          name="title"
-          content={
-            productProps.metadata && productProps.metadata.title.length > 0
-              ? `${formatName(
-                  productProps.metadata.title,
-                  productProps.metadata.subtitle
-                )} | Cruthology`
-              : 'Cruthology'
-          }
-        />
-        <meta
-          name="description"
-          content={
-            productProps.metadata &&
-            formatDescription(productProps.metadata.description)
-          }
-        />
+        <meta name="title" content={fullNameMetadata} />
+        <meta name="description" content={descriptionMetadata} />
         <meta property="og:image" content={productProps.metadata?.thumbnail} />
         <meta
           property="og:image:secure_url"
           content={productProps.metadata?.thumbnail}
         />
-        <meta
-          property="og:title"
-          content={
-            productProps.metadata && productProps.metadata.title.length > 0
-              ? `${formatName(
-                  productProps.metadata.title,
-                  productProps.metadata.subtitle
-                )} | Cruthology`
-              : 'Cruthology'
-          }
-        />
-        <meta
-          property="og:description"
-          content={
-            productProps.metadata &&
-            formatDescription(productProps.metadata.description)
-          }
-        />
+        <meta property="og:title" content={fullNameMetadata} />
+        <meta property="og:description" content={descriptionMetadata} />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:image:type" content="image/png" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={window.location.href} />
-        <meta
-          property="twitter:title"
-          content={
-            productProps.metadata && productProps.metadata.title.length > 0
-              ? `${formatName(
-                  productProps.metadata.title,
-                  productProps.metadata.subtitle
-                )} | Cruthology`
-              : 'Cruthology'
-          }
-        />
+        <meta property="twitter:title" content={fullNameMetadata} />
         <meta
           property="twitter:image"
           content={productProps.metadata?.thumbnail}
         />
-        <meta
-          property="twitter:description"
-          content={
-            productProps.metadata &&
-            formatDescription(productProps.metadata.description)
-          }
-        />
+        <meta property="twitter:description" content={descriptionMetadata} />
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <ProductDesktopComponent

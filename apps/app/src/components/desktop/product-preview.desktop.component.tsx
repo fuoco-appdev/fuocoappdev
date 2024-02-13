@@ -48,11 +48,14 @@ export default function ProductPreviewDesktopComponent({
   formatNumberCompact,
 }: ProductPreviewResponsiveProps): JSX.Element {
   const ref = useRef<HTMLDivElement | null>(null);
-  const formatDescription = (description: string): string => {
-    const regex = /\*\*(.*?)\*\*/g;
-    const cleanDescription = description.trim();
-    const descriptionWithoutTitles = cleanDescription.replace(regex, '');
-    return descriptionWithoutTitles;
+  const formatDescription = (markdown: string): string => {
+    const toText = markdown
+      .replace(/^### (.*$)/gim, '$1') // h3 tag
+      .replace(/^## (.*$)/gim, '$1') // h2 tag
+      .replace(/^# (.*$)/gim, '$1') // h1 tag
+      .replace(/\*\*(.*)\*\*/gim, '$1') // bold text
+      .replace(/\*(.*)\*/gim, '$1'); // italic text
+    return toText.trim();
   };
 
   return (
