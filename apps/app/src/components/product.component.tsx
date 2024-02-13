@@ -470,8 +470,11 @@ ProductComponent.getServerSidePropsAsync = async (
   request: Request,
   result: Response
 ): Promise<ProductProps> => {
-  const id = request.url.split('/').at(-1) ?? '';
-  const product = await MedusaService.requestProductAsync(id);
+  const url = new URL(
+    `${(request as any).protocol}://${(request as any).hostname}${request.url}`
+  );
+  const id = url.pathname.split('/').at(-1) ?? '';
+  const product = await ProductController.requestProductAsync(id);
   ProductController.updateProduct(product);
   return Promise.resolve({
     product: product,
