@@ -30,7 +30,10 @@ import AccountController from '../controllers/account.controller';
 import { AccountState } from '../models/account.model';
 import { MedusaProductTypeNames } from '../types/medusa.type';
 import DeeplService from '../services/deepl.service';
-import { DeepLTranslationsResponse } from '../protobuf/core_pb';
+import {
+  DeepLTranslationsResponse,
+  ProductMetadataResponse,
+} from '../protobuf/core_pb';
 import SupabaseService from '../services/supabase.service';
 
 const ProductDesktopComponent = lazy(
@@ -44,7 +47,7 @@ const ProductMobileComponent = lazy(
 );
 
 export interface ProductProps {
-  product?: PricedProduct | undefined;
+  metadata?: ProductMetadataResponse;
 }
 
 export interface ProductResponsiveProps {
@@ -78,7 +81,7 @@ export interface ProductResponsiveProps {
   formatNumberCompact: (value: number) => string;
 }
 
-function ProductComponent({ product }: ProductProps): JSX.Element {
+function ProductComponent({ metadata }: ProductProps): JSX.Element {
   const [productProps] = useObservable(ProductController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
   const [accountProps] = useObservable(AccountController.model.store);
@@ -161,10 +164,10 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
   };
 
   const [fullName, setFullName] = useState<string>(
-    formatName(product?.title ?? '', product?.subtitle) ?? ''
+    formatName(metadata?.title ?? '', metadata?.subtitle) ?? ''
   );
   const [shortDescription, setShortDescription] = useState<string>(
-    formatDescription(`${productProps.product?.description?.slice(0, 205)}...`)
+    formatDescription(`${metadata?.description?.slice(0, 205)}...`)
   );
 
   const updateTranslatedDescriptionAsync = async (description: string) => {
@@ -348,7 +351,7 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
         <meta property="og:image" content={productProps.metadata?.thumbnail} />
         <meta
           property="og:image:secure_url"
-          content={productProps.product?.thumbnail}
+          content={productProps.metadata?.thumbnail}
         />
         <meta
           property="og:title"
@@ -370,7 +373,7 @@ function ProductComponent({ product }: ProductProps): JSX.Element {
         />
         <meta
           property="twitter:image"
-          content={productProps.product?.thumbnail}
+          content={productProps.metadata?.thumbnail}
         />
         <meta property="twitter:description" content={shortDescription} />
       </Helmet>
@@ -487,11 +490,11 @@ ProductComponent.getServerSidePropsAsync = async (
   try {
     const productMetadata = await MedusaService.requestProductMetadataAsync(id);
     ProductController.updateMetadata(productMetadata);
+    return Promise.resolve({ metadata: productMetadata });
   } catch (error: any) {
     console.error(error as Error);
+    return Promise.resolve({});
   }
-
-  return Promise.resolve({});
 };
 
 export default ProductComponent;
