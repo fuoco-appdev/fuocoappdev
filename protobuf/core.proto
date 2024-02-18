@@ -116,6 +116,10 @@ message ProductMetadataResponse {
     string thumbnail = 4;
 }
 
+message StockLocationResponse {
+    string data = 1;
+}
+
 message StockLocationsResponse {
     repeated string locations = 1;
 }

@@ -14,6 +14,7 @@ import {
   ProductCountResponse,
   ProductMetadataResponse,
   RemoveCustomerFromGroupRequest,
+  StockLocationResponse,
   StockLocationsResponse,
   UpdateCustomerRequest,
   UpdateCustomerResponse,
@@ -501,6 +502,27 @@ class MedusaService {
     }
 
     return stockLocations;
+  }
+
+  public async getStockLocationAsync(stockLocationId: string): Promise<
+    InstanceType<typeof StockLocationResponse>
+  > {
+    const stockLocation = new StockLocationResponse();
+    const params = new URLSearchParams({
+      expand: "address,sales_channels",
+    }).toString();
+    const stockLocationResponse = await axiod.get(
+      `${this._url}/admin/stock-locations/${stockLocationId}?${params}`,
+      {
+        headers: {
+          "x-medusa-access-token": this._token,
+        },
+      },
+    );
+
+    const data = stockLocationResponse.data["stock_location"];
+    stockLocation.setData(JSON.stringify(data));
+    return stockLocation;
   }
 
   public async getProductCountAsync(

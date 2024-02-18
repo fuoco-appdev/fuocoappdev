@@ -11,7 +11,13 @@
       }
     }
   ],
-  "targetDefaults": {},
+  "targetDefaults": {
+    "@nx/esbuild:esbuild": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    }
+  },
   "generators": {
     "@nx/react": {
       "application": {
@@ -48,14 +54,9 @@
     }
   },
   "namedInputs": {
-    "default": [
-      "{projectRoot}/**/*",
-      "sharedGlobals"
-    ],
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "sharedGlobals": [],
-    "production": [
-      "default"
-    ]
+    "production": ["default"]
   },
   "extends": "nx/presets/npm.json"
 }

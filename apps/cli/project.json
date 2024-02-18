@@ -1,0 +1,76 @@
+{
+  "name": "cli",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/cli/src",
+  "projectType": "application",
+  "targets": {
+    "proto-generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "protoc -I . --plugin ./node_modules/.bin/protoc-gen-es.cmd --es_out apps/cli/src --es_opt target=ts protobuf/core.proto"
+        ],
+        "parallel": false
+      }
+    },
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/apps/cli",
+        "format": ["cjs"],
+        "bundle": true,
+        "main": "apps/cli/src/main.ts",
+        "tsConfig": "apps/cli/tsconfig.app.json",
+        "assets": [{
+          "input": "./apps/cli/src",
+          "glob": "**/*.!(ts)",
+          "output": "./"
+        }],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        },
+        "external": ["jsdom"]
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "cli:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "cli:build:development"
+        },
+        "production": {
+          "buildTarget": "cli:build:production"
+        }
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/cli/jest.config.ts"
+      }
+    }
+  },
+  "tags": []
+}

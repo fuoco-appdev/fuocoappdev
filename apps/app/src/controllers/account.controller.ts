@@ -1,38 +1,38 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Subscription, filter, firstValueFrom, take } from 'rxjs';
-import { Controller } from '../controller';
-import { AccountModel, ProfileFormErrorStrings } from '../models/account.model';
-import AccountService from '../services/account.service';
-import * as core from '../protobuf/core_pb';
-import SupabaseService from '../services/supabase.service';
-import BucketService from '../services/bucket.service';
-import MedusaService from '../services/medusa.service';
-import ProductLikesService from '../services/product-likes.service';
-import { StorePostCustomersReq, Customer, Address } from '@medusajs/medusa';
-import WindowController from './window.controller';
+import { filter, firstValueFrom, Subscription, take } from "rxjs";
+import { Controller } from "../controller";
+import { AccountModel, ProfileFormErrorStrings } from "../models/account.model";
+import AccountService from "../services/account.service";
+import * as core from "../protobuf/core_pb";
+import SupabaseService from "../services/supabase.service";
+import BucketService from "../services/bucket.service";
+import MedusaService from "../services/medusa.service";
+import ProductLikesService from "../services/product-likes.service";
+import { Address, Customer, StorePostCustomersReq } from "@medusajs/medusa";
+import WindowController from "./window.controller";
 import {
   ProfileFormErrors,
   ProfileFormValues,
-} from '../components/account-profile-form.component';
-import { v4 as uuidv4 } from 'uuid';
-import mime from 'mime';
-import { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
+} from "../components/account-profile-form.component";
+import { v4 as uuidv4 } from "uuid";
+import mime from "mime";
+import { AuthChangeEvent, Session, User } from "@supabase/supabase-js";
 import {
   AddressFormErrors,
   AddressFormValues,
-} from '../components/address-form.component';
-import { RoutePathsType } from '../route-paths';
-import { LanguageInfo } from '@fuoco.appdev/core-ui';
-import { select } from '@ngneat/elf';
-import ExploreController from './explore.controller';
-import { ExploreLocalState } from '../models/explore.model';
-import Cookies from 'js-cookie';
-import { ProductLikesMetadataResponse } from '../protobuf/core_pb';
-import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
-import StoreController from './store.controller';
-import CartController from './cart.controller';
-import AccountFollowersService from '../services/account-followers.service';
+} from "../components/address-form.component";
+import { RoutePathsType } from "../route-paths";
+import { LanguageInfo } from "@fuoco.appdev/core-ui";
+import { select } from "@ngneat/elf";
+import ExploreController from "./explore.controller";
+import { ExploreLocalState } from "../models/explore.model";
+import Cookies from "js-cookie";
+import { ProductLikesMetadataResponse } from "../protobuf/core_pb";
+import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
+import StoreController from "./store.controller";
+import CartController from "./cart.controller";
+import AccountFollowersService from "../services/account-followers.service";
 
 class AccountController extends Controller {
   private readonly _model: AccountModel;
@@ -52,12 +52,13 @@ class AccountController extends Controller {
     this._model = new AccountModel();
     this._limit = 10;
     this.onAuthStateChangedAsync = this.onAuthStateChangedAsync.bind(this);
-    this.onActiveAccountChangedAsync =
-      this.onActiveAccountChangedAsync.bind(this);
+    this.onActiveAccountChangedAsync = this.onActiveAccountChangedAsync.bind(
+      this,
+    );
     this.onActiveUserChangedAsync = this.onActiveUserChangedAsync.bind(this);
     this.uploadAvatarAsync = this.uploadAvatarAsync.bind(this);
-    this.onSelectedInventoryLocationIdChangedAsync =
-      this.onSelectedInventoryLocationIdChangedAsync.bind(this);
+    this.onSelectedInventoryLocationIdChangedAsync = this
+      .onSelectedInventoryLocationIdChangedAsync.bind(this);
   }
 
   public get model(): AccountModel {
@@ -65,8 +66,8 @@ class AccountController extends Controller {
   }
 
   public override initialize(renderCount: number): void {
-    this._medusaAccessTokenSubscription =
-      MedusaService.accessTokenObservable.subscribe({
+    this._medusaAccessTokenSubscription = MedusaService.accessTokenObservable
+      .subscribe({
         next: (value: string | undefined) => {
           if (!value) {
             this.resetMedusaModel();
@@ -147,7 +148,7 @@ class AccountController extends Controller {
             this._model.addFriendsInput,
             0,
             this._limit,
-            true
+            true,
           );
           await this.requestFollowerRequestsAsync(account.id, 0, 100, true);
         },
@@ -185,7 +186,7 @@ class AccountController extends Controller {
     await this.addFriendsSearchAsync(
       this._model.addFriendsInput,
       offset,
-      this._limit
+      this._limit,
     );
   }
 
@@ -262,7 +263,7 @@ class AccountController extends Controller {
   }
 
   public updateSelectedProductLikes(
-    value: ProductLikesMetadataResponse | undefined
+    value: ProductLikesMetadataResponse | undefined,
   ): void {
     this._model.selectedProductLikes = value;
   }
@@ -297,11 +298,11 @@ class AccountController extends Controller {
 
   public async confirmFollowRequestAsync(
     accountId: string,
-    followerId: string
+    followerId: string,
   ): Promise<void> {
     try {
-      const followerRequestResponse =
-        await AccountFollowersService.requestConfirmAsync({
+      const followerRequestResponse = await AccountFollowersService
+        .requestConfirmAsync({
           accountId: accountId,
           followerId: followerId,
         });
@@ -315,7 +316,7 @@ class AccountController extends Controller {
           followRequestAccountFollowers;
 
         const index = this._model.followRequestAccounts.findIndex(
-          (value) => value.id === accountId
+          (value) => value.id === accountId,
         );
         const followRequestAccounts = this._model.followRequestAccounts;
         followRequestAccounts.splice(index, 1);
@@ -328,7 +329,7 @@ class AccountController extends Controller {
 
   public async removeFollowRequestAsync(
     accountId: string,
-    followerId: string
+    followerId: string,
   ): Promise<void> {
     try {
       const follower = await AccountFollowersService.requestRemoveAsync({
@@ -343,7 +344,7 @@ class AccountController extends Controller {
         this._model.followRequestAccountFollowers = accountFollowers;
 
         const index = this._model.followRequestAccounts.findIndex(
-          (value) => value.id === accountId
+          (value) => value.id === accountId,
         );
         const followRequestAccounts = this._model.followRequestAccounts;
         followRequestAccounts.splice(index, 1);
@@ -358,15 +359,15 @@ class AccountController extends Controller {
     accountId: string,
     offset: number = 0,
     limit: number = 10,
-    force: boolean = false
+    force: boolean = false,
   ): Promise<void> {
     if (!force && this._model.areFollowRequestAccountsLoading) {
       return;
     }
 
     try {
-      const requestedFollowersResponse =
-        await AccountFollowersService.requestFollowerRequestsAsync({
+      const requestedFollowersResponse = await AccountFollowersService
+        .requestFollowerRequestsAsync({
           accountId: accountId,
           limit: limit,
           offset: offset,
@@ -393,10 +394,10 @@ class AccountController extends Controller {
 
     try {
       const accountIds = Object.values(
-        this._model.followRequestAccountFollowers
+        this._model.followRequestAccountFollowers,
       ).map((value) => value.accountId);
       const accountsResponse = await AccountService.requestAccountsAsync(
-        accountIds
+        accountIds,
       );
       if (!accountsResponse.accounts || accountsResponse.accounts.length <= 0) {
         this._model.areFollowRequestAccountsLoading = false;
@@ -406,7 +407,7 @@ class AccountController extends Controller {
       if (offset > 0) {
         const followRequestAccounts = this._model.followRequestAccounts;
         this._model.followRequestAccounts = followRequestAccounts.concat(
-          accountsResponse.accounts
+          accountsResponse.accounts,
         );
       } else {
         this._model.followRequestAccounts = accountsResponse.accounts;
@@ -417,7 +418,7 @@ class AccountController extends Controller {
 
     try {
       const customerIds = this._model.followRequestAccounts.map(
-        (value) => value.customerId
+        (value) => value.customerId,
       );
       const customersResponse = await MedusaService.requestCustomersAsync({
         customerIds: customerIds,
@@ -443,7 +444,7 @@ class AccountController extends Controller {
     query: string,
     offset: number = 0,
     limit: number = 10,
-    force: boolean = false
+    force: boolean = false,
   ): Promise<void> {
     if (!force && this._model.areAddFriendsLoading) {
       return;
@@ -454,7 +455,7 @@ class AccountController extends Controller {
     try {
       const accountsResponse = await AccountService.requestSearchAsync({
         queryUsername: query,
-        accountId: this._model.account?.id ?? '',
+        accountId: this._model.account?.id ?? "",
         offset: offset,
         limit: limit,
       });
@@ -474,7 +475,7 @@ class AccountController extends Controller {
       if (offset > 0) {
         const addFriendsAccount = this._model.addFriendAccounts;
         this._model.addFriendAccounts = addFriendsAccount.concat(
-          accountsResponse.accounts
+          accountsResponse.accounts,
         );
       } else {
         this._model.addFriendAccounts = accountsResponse.accounts;
@@ -485,11 +486,11 @@ class AccountController extends Controller {
 
     try {
       const otherAccountIds = this._model.addFriendAccounts.map(
-        (value) => value.id
+        (value) => value.id,
       );
-      const followerResponse =
-        await AccountFollowersService.requestFollowersAsync({
-          accountId: this._model.account?.id ?? '',
+      const followerResponse = await AccountFollowersService
+        .requestFollowersAsync({
+          accountId: this._model.account?.id ?? "",
           otherAccountIds: otherAccountIds,
         });
 
@@ -506,7 +507,7 @@ class AccountController extends Controller {
 
     try {
       const customerIds = this._model.addFriendAccounts.map(
-        (value) => value.customerId
+        (value) => value.customerId,
       );
       const customersResponse = await MedusaService.requestCustomersAsync({
         customerIds: customerIds,
@@ -534,7 +535,7 @@ class AccountController extends Controller {
           this._model.profileFormErrors = await this.getUsernameErrorsAsync(
             value,
             this._model.profileFormErrors,
-            true
+            true,
           );
           resolve();
         } catch (error: any) {
@@ -547,7 +548,7 @@ class AccountController extends Controller {
   }
 
   public getAddressFormErrors(
-    form: AddressFormValues
+    form: AddressFormValues,
   ): AddressFormErrors | undefined {
     const errors: AddressFormErrors = {};
 
@@ -583,14 +584,14 @@ class AccountController extends Controller {
 
   public async getProfileFormErrorsAsync(
     form: ProfileFormValues,
-    strict: boolean = false
+    strict: boolean = false,
   ): Promise<ProfileFormErrors | undefined> {
     let errors: ProfileFormErrors = {};
 
     errors = await this.getUsernameErrorsAsync(
-      form.username ?? '',
+      form.username ?? "",
       errors,
-      strict
+      strict,
     );
 
     if (!form.firstName || form.firstName?.length <= 0) {
@@ -614,7 +615,7 @@ class AccountController extends Controller {
   public async completeProfileAsync(): Promise<void> {
     const errors = await this.getProfileFormErrorsAsync(
       this._model.profileForm,
-      true
+      true,
     );
     if (errors) {
       this._model.profileFormErrors = errors;
@@ -627,24 +628,24 @@ class AccountController extends Controller {
 
     try {
       this._model.isCreateCustomerLoading = true;
-      this._model.customer =
-        await MedusaService.requestUpdateCustomerAccountAsync({
+      this._model.customer = await MedusaService
+        .requestUpdateCustomerAccountAsync({
           email: SupabaseService.user.email,
-          first_name: this._model.profileForm.firstName ?? '',
-          last_name: this._model.profileForm.lastName ?? '',
+          first_name: this._model.profileForm.firstName ?? "",
+          last_name: this._model.profileForm.lastName ?? "",
           phone: this._model.profileForm.phoneNumber,
         });
 
       if (!this._model.customer) {
         this._model.isCreateCustomerLoading = false;
-        throw new Error('No customer created');
+        throw new Error("No customer created");
       }
 
       this._model.account = await AccountService.requestUpdateActiveAsync({
         customerId: this._model.customer?.id,
-        status: 'Complete',
+        status: "Complete",
         languageCode: WindowController.model.languageInfo?.isoCode,
-        username: this._model.profileForm.username ?? '',
+        username: this._model.profileForm.username ?? "",
       });
       this._model.isCreateCustomerLoading = false;
     } catch (error: any) {
@@ -654,7 +655,7 @@ class AccountController extends Controller {
   }
 
   public async updateGeneralInfoAsync(
-    form: ProfileFormValues
+    form: ProfileFormValues,
   ): Promise<boolean> {
     if (!this._model.customer || !this._model.account) {
       return false;
@@ -670,14 +671,14 @@ class AccountController extends Controller {
 
     try {
       const customerResponse = await MedusaService.medusa?.customers.update({
-        first_name: form.firstName ?? '',
-        last_name: form.lastName ?? '',
+        first_name: form.firstName ?? "",
+        last_name: form.lastName ?? "",
         phone: form.phoneNumber,
       });
       this._model.customer = customerResponse?.customer as Customer;
 
       this._model.account = await AccountService.requestUpdateActiveAsync({
-        username: this._model.profileForm.username ?? '',
+        username: this._model.profileForm.username ?? "",
       });
     } catch (error: any) {
       console.error(error);
@@ -697,13 +698,13 @@ class AccountController extends Controller {
       if (this._model.account?.profileUrl) {
         await BucketService.removeAsync(
           core.StorageFolderType.Avatars,
-          this._model.account?.profileUrl
+          this._model.account?.profileUrl,
         );
       }
       await BucketService.uploadPublicAsync(
         core.StorageFolderType.Avatars,
         newFile,
-        blob
+        blob,
       );
       this._model.account = await AccountService.requestUpdateActiveAsync({
         profileUrl: newFile,
@@ -716,19 +717,19 @@ class AccountController extends Controller {
   }
 
   public async addAddressAsync(addressForm: AddressFormValues): Promise<void> {
-    const customerResponse =
-      await MedusaService.medusa?.customers.addresses.addAddress({
+    const customerResponse = await MedusaService.medusa?.customers.addresses
+      .addAddress({
         address: {
-          first_name: addressForm.firstName ?? '',
-          last_name: addressForm.lastName ?? '',
-          phone: addressForm.phoneNumber ?? '',
-          company: addressForm.company ?? '',
-          address_1: addressForm.address ?? '',
-          address_2: addressForm.apartments ?? '',
-          city: addressForm.city ?? '',
-          country_code: addressForm.countryCode ?? '',
-          province: addressForm.region ?? '',
-          postal_code: addressForm.postalCode ?? '',
+          first_name: addressForm.firstName ?? "",
+          last_name: addressForm.lastName ?? "",
+          phone: addressForm.phoneNumber ?? "",
+          company: addressForm.company ?? "",
+          address_1: addressForm.address ?? "",
+          address_2: addressForm.apartments ?? "",
+          city: addressForm.city ?? "",
+          country_code: addressForm.countryCode ?? "",
+          province: addressForm.region ?? "",
+          postal_code: addressForm.postalCode ?? "",
           metadata: {},
         },
       });
@@ -741,8 +742,8 @@ class AccountController extends Controller {
       return;
     }
 
-    const customerResponse =
-      await MedusaService.medusa?.customers.addresses.deleteAddress(id);
+    const customerResponse = await MedusaService.medusa?.customers.addresses
+      .deleteAddress(id);
     this._model.customer = customerResponse?.customer as Customer;
     this._model.selectedAddress = undefined;
   }
@@ -752,18 +753,18 @@ class AccountController extends Controller {
       return;
     }
 
-    const customerResponse =
-      await MedusaService.medusa?.customers.addresses.updateAddress(id, {
-        first_name: this._model.editShippingForm.firstName ?? '',
-        last_name: this._model.editShippingForm.lastName ?? '',
-        phone: this._model.editShippingForm.phoneNumber ?? '',
-        company: this._model.editShippingForm.company ?? '',
-        address_1: this._model.editShippingForm.address ?? '',
-        address_2: this._model.editShippingForm.apartments ?? '',
-        city: this._model.editShippingForm.city ?? '',
-        country_code: this._model.editShippingForm.countryCode ?? '',
-        province: this._model.editShippingForm.region ?? '',
-        postal_code: this._model.editShippingForm.postalCode ?? '',
+    const customerResponse = await MedusaService.medusa?.customers.addresses
+      .updateAddress(id, {
+        first_name: this._model.editShippingForm.firstName ?? "",
+        last_name: this._model.editShippingForm.lastName ?? "",
+        phone: this._model.editShippingForm.phoneNumber ?? "",
+        company: this._model.editShippingForm.company ?? "",
+        address_1: this._model.editShippingForm.address ?? "",
+        address_2: this._model.editShippingForm.apartments ?? "",
+        city: this._model.editShippingForm.city ?? "",
+        country_code: this._model.editShippingForm.countryCode ?? "",
+        province: this._model.editShippingForm.region ?? "",
+        postal_code: this._model.editShippingForm.postalCode ?? "",
         metadata: {},
       });
     this._model.customer = customerResponse?.customer as Customer;
@@ -789,7 +790,7 @@ class AccountController extends Controller {
 
   public async updateAccountLanguageAsync(
     code: string,
-    info: LanguageInfo
+    info: LanguageInfo,
   ): Promise<void> {
     if (this._model.account?.languageCode !== code) {
       this._model.account = await AccountService.requestUpdateActiveAsync({
@@ -801,7 +802,7 @@ class AccountController extends Controller {
 
   public updateProductLikesMetadata(
     id: string,
-    metadata: ProductLikesMetadataResponse
+    metadata: ProductLikesMetadataResponse,
   ): void {
     let productLikesMetadata = { ...this._model.productLikesMetadata };
     productLikesMetadata[id] = metadata;
@@ -857,7 +858,7 @@ class AccountController extends Controller {
   private async getUsernameErrorsAsync(
     username: string,
     errors: ProfileFormErrors,
-    strict: boolean = false
+    strict: boolean = false,
   ): Promise<ProfileFormErrors> {
     let errorsCopy = { ...errors };
     if (!username || username?.length <= 0) {
@@ -865,7 +866,7 @@ class AccountController extends Controller {
       return errorsCopy;
     }
 
-    if (username.indexOf(' ') !== -1) {
+    if (username.indexOf(" ") !== -1) {
       errorsCopy.username = this._model.errorStrings?.spaces;
       return errorsCopy;
     }
@@ -883,7 +884,7 @@ class AccountController extends Controller {
 
   private async requestOrdersAsync(
     offset: number = 0,
-    limit: number = 10
+    limit: number = 10,
   ): Promise<void> {
     if (this._model.areOrdersLoading || !this._model.customer) {
       return;
@@ -897,7 +898,7 @@ class AccountController extends Controller {
         {
           offset: offset,
           limit: limit,
-        }
+        },
       );
 
       if (!orders || orders.length <= 0) {
@@ -927,7 +928,7 @@ class AccountController extends Controller {
   }
 
   private async requestDoesUsernameExistAsync(
-    username: string
+    username: string,
   ): Promise<boolean> {
     if (!this._model.account) {
       return false;
@@ -939,7 +940,7 @@ class AccountController extends Controller {
 
   private async requestLikedProductsAsync(
     offset: number = 0,
-    limit: number = 10
+    limit: number = 10,
   ): Promise<void> {
     if (this._model.areLikedProductsLoading || !this._model.account) {
       return;
@@ -949,8 +950,8 @@ class AccountController extends Controller {
 
     let productIds: string[] = [];
     try {
-      const productLikesMetadataResponse =
-        await ProductLikesService.requestAccountLikesMetadataAsync({
+      const productLikesMetadataResponse = await ProductLikesService
+        .requestAccountLikesMetadataAsync({
           accountId: this._model.account.id,
           offset: offset,
           limit: limit,
@@ -978,7 +979,7 @@ class AccountController extends Controller {
       this._model.productLikesMetadata = productLikesMetadata;
 
       productIds = productLikesMetadataResponse.metadata.map(
-        (value) => value.productId
+        (value) => value.productId,
       );
     } catch (error: any) {
       console.error(error);
@@ -999,7 +1000,7 @@ class AccountController extends Controller {
       const { cart } = CartController.model;
       const productsResponse = await MedusaService.medusa?.products.list({
         id: productIds,
-        sales_channel_id: [selectedSalesChannel?.id ?? ''],
+        sales_channel_id: [selectedSalesChannel?.id ?? ""],
         ...(selectedRegion && {
           region_id: selectedRegion.id,
           currency_code: selectedRegion.currency_code,
@@ -1008,8 +1009,8 @@ class AccountController extends Controller {
       });
       const products = productsResponse?.products ?? [];
       products.sort((a, b) => {
-        const currentId = a['id'] ?? '';
-        const nextId = b['id'] ?? '';
+        const currentId = a["id"] ?? "";
+        const nextId = b["id"] ?? "";
 
         if (productIds.indexOf(currentId) > productIds.indexOf(nextId)) {
           return 1;
@@ -1020,7 +1021,7 @@ class AccountController extends Controller {
       for (let i = 0; i < products.length; i++) {
         for (const variant of products[i].variants) {
           const price = variant.prices?.find(
-            (value) => value.region_id === selectedRegion?.id
+            (value) => value.region_id === selectedRegion?.id,
           );
           if (!price) {
             products.splice(i, 1);
@@ -1045,7 +1046,7 @@ class AccountController extends Controller {
   private async requestLikeCountAsync(accountId: string): Promise<void> {
     try {
       const response = await ProductLikesService.requestCountMetadataAsync(
-        accountId
+        accountId,
       );
       this._model.likeCount = response.likeCount;
     } catch (error: any) {
@@ -1054,11 +1055,11 @@ class AccountController extends Controller {
   }
 
   private async requestFollowerCountMetadataAsync(
-    accountId: string
+    accountId: string,
   ): Promise<void> {
     try {
       const response = await AccountFollowersService.requestCountMetadataAsync(
-        accountId
+        accountId,
       );
       this._model.followerCount = response.followersCount;
       this._model.followingCount = response.followingCount;
@@ -1074,45 +1075,45 @@ class AccountController extends Controller {
     this._model.customerGroup = undefined;
     this._model.isCustomerGroupLoading = false;
     this._model.profileForm = {
-      firstName: '',
-      lastName: '',
-      phoneNumber: '',
+      firstName: "",
+      lastName: "",
+      phoneNumber: "",
     };
     this._model.profileFormErrors = {};
     this._model.errorStrings = {};
     this._model.profileUrl = undefined;
-    this._model.username = '';
+    this._model.username = "";
     this._model.orders = [];
     this._model.orderPagination = 1;
     this._model.hasMoreOrders = false;
     this._model.shippingForm = {
-      email: '',
-      firstName: '',
-      lastName: '',
-      company: '',
-      address: '',
-      apartments: '',
-      postalCode: '',
-      city: '',
-      countryCode: '',
-      region: '',
-      phoneNumber: '',
+      email: "",
+      firstName: "",
+      lastName: "",
+      company: "",
+      address: "",
+      apartments: "",
+      postalCode: "",
+      city: "",
+      countryCode: "",
+      region: "",
+      phoneNumber: "",
     };
     this._model.shippingFormErrors = {};
     this._model.addressErrorStrings = {};
     this._model.selectedAddress = undefined;
     this._model.editShippingForm = {
-      email: '',
-      firstName: '',
-      lastName: '',
-      company: '',
-      address: '',
-      apartments: '',
-      postalCode: '',
-      city: '',
-      countryCode: '',
-      region: '',
-      phoneNumber: '',
+      email: "",
+      firstName: "",
+      lastName: "",
+      company: "",
+      address: "",
+      apartments: "",
+      postalCode: "",
+      city: "",
+      countryCode: "",
+      region: "",
+      phoneNumber: "",
     };
     this._model.areOrdersLoading = false;
     this._model.editShippingFormErrors = {};
@@ -1123,7 +1124,7 @@ class AccountController extends Controller {
     this._model.isCreateCustomerLoading = false;
     this._model.isUpdateGeneralInfoLoading = false;
     this._model.addFriendAccounts = [];
-    this._model.addFriendsInput = '';
+    this._model.addFriendsInput = "";
     this._model.addFriendsPagination = 1;
     this._model.addFriendsScrollPosition = undefined;
     this._model.addFriendAccountFollowers = {};
@@ -1137,8 +1138,8 @@ class AccountController extends Controller {
 
   private async initializeAsync(renderCount: number): Promise<void> {
     this._activeAccountSubscription?.unsubscribe();
-    this._activeAccountSubscription =
-      AccountService.activeAccountObservable.subscribe({
+    this._activeAccountSubscription = AccountService.activeAccountObservable
+      .subscribe({
         next: this.onActiveAccountChangedAsync,
       });
 
@@ -1148,12 +1149,12 @@ class AccountController extends Controller {
     });
 
     SupabaseService.supabaseClient?.auth.onAuthStateChange(
-      this.onAuthStateChangedAsync
+      this.onAuthStateChangedAsync,
     );
   }
 
   private async onActiveAccountChangedAsync(
-    value: core.AccountResponse | null
+    value: core.AccountResponse | null,
   ): Promise<void> {
     if (
       !value ||
@@ -1164,20 +1165,20 @@ class AccountController extends Controller {
 
     try {
       this._model.customer = await MedusaService.requestCustomerAccountAsync(
-        value.supabaseId ?? ''
+        value.supabaseId ?? "",
       );
 
       this._selectedInventoryLocationIdSubscription?.unsubscribe();
-      this._selectedInventoryLocationIdSubscription =
-        ExploreController.model?.localStore
-          ?.pipe(
-            select(
-              (model: ExploreLocalState) => model.selectedInventoryLocationId
-            )
-          )
-          .subscribe({
-            next: this.onSelectedInventoryLocationIdChangedAsync,
-          });
+      this._selectedInventoryLocationIdSubscription = ExploreController.model
+        ?.localStore
+        ?.pipe(
+          select(
+            (model: ExploreLocalState) => model.selectedInventoryLocationId,
+          ),
+        )
+        .subscribe({
+          next: this.onSelectedInventoryLocationIdChangedAsync,
+        });
     } catch (error: any) {
       console.error(error);
     }
@@ -1195,15 +1196,15 @@ class AccountController extends Controller {
     const s3 = await firstValueFrom(
       BucketService.s3Observable.pipe(
         filter((value) => value !== undefined),
-        take(1)
-      )
+        take(1),
+      ),
     );
     if (s3) {
       if (value?.profileUrl && value.profileUrl.length > 0) {
         try {
           this._model.profileUrl = await BucketService.getPublicUrlAsync(
             core.StorageFolderType.Avatars,
-            value.profileUrl
+            value.profileUrl,
           );
         } catch (error: any) {
           console.error(error);
@@ -1219,12 +1220,12 @@ class AccountController extends Controller {
     };
 
     const errors = await this.getProfileFormErrorsAsync(
-      this._model.profileForm
+      this._model.profileForm,
     );
-    if (errors && this._model.account?.status === 'Complete') {
+    if (errors && this._model.account?.status === "Complete") {
       try {
         this._model.account = await AccountService.requestUpdateActiveAsync({
-          status: 'Incomplete',
+          status: "Incomplete",
         });
       } catch (error: any) {
         console.error(error);
@@ -1243,7 +1244,7 @@ class AccountController extends Controller {
   }
 
   private async onSelectedInventoryLocationIdChangedAsync(
-    id: string | undefined
+    id: string | undefined,
   ): Promise<void> {
     if (
       !MedusaService.accessToken ||
@@ -1255,7 +1256,7 @@ class AccountController extends Controller {
 
     if (
       this._model.customerGroup &&
-      this._model.customerGroup.metadata['sales_location_id'] === id
+      this._model.customerGroup.metadata["sales_location_id"] === id
     ) {
       return;
     }
@@ -1263,12 +1264,12 @@ class AccountController extends Controller {
     try {
       this._model.isCustomerGroupLoading = true;
       this._model.customerGroup = await MedusaService.requestCustomerGroupAsync(
-        id
+        id,
       );
-      this._model.customerGroup =
-        await MedusaService.requestAddCustomerToGroupAsync({
-          customerGroupId: this._model.customerGroup?.id ?? '',
-          customerId: this._model.customer?.id ?? '',
+      this._model.customerGroup = await MedusaService
+        .requestAddCustomerToGroupAsync({
+          customerGroupId: this._model.customerGroup?.id ?? "",
+          customerId: this._model.customer?.id ?? "",
         });
       this._model.isCreateCustomerLoading = false;
     } catch (error: any) {
@@ -1278,9 +1279,9 @@ class AccountController extends Controller {
 
   private async onAuthStateChangedAsync(
     event: AuthChangeEvent,
-    session: Session | null
+    session: Session | null,
   ): Promise<void> {
-    if (event === 'SIGNED_OUT') {
+    if (event === "SIGNED_OUT") {
       await MedusaService.deleteSessionAsync();
     }
   }
