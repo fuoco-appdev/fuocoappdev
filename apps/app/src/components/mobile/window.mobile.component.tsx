@@ -723,10 +723,17 @@ export default function WindowMobileComponent({
                                 >
                                   <Avatar
                                     classNames={{
-                                      container: [
-                                        styles['avatar-container'],
-                                        styles['avatar-container-mobile'],
-                                      ].join(' '),
+                                      container: accountProps?.profileUrl
+                                        ? [
+                                            styles['avatar-container'],
+                                            styles['avatar-container-mobile'],
+                                          ].join(' ')
+                                        : [
+                                            styles['no-avatar-container'],
+                                            styles[
+                                              'no-avatar-container-mobile'
+                                            ],
+                                          ].join(' '),
                                     }}
                                     size={'custom'}
                                     text={customer?.first_name}

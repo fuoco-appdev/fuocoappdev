@@ -452,10 +452,15 @@ export default function WindowDesktopComponent({
                         >
                           <Avatar
                             classNames={{
-                              container: [
-                                styles['avatar-container'],
-                                styles['avatar-container-desktop'],
-                              ].join(' '),
+                              container: accountProps?.profileUrl
+                                ? [
+                                    styles['avatar-container'],
+                                    styles['avatar-container-desktop'],
+                                  ].join(' ')
+                                : [
+                                    styles['no-avatar-container'],
+                                    styles['no-avatar-container-desktop'],
+                                  ].join(' '),
                             }}
                             size={'custom'}
                             text={customer?.first_name}

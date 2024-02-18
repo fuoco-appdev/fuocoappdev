@@ -422,10 +422,15 @@ export default function WindowTabletComponent({
                         >
                           <Avatar
                             classNames={{
-                              container: [
-                                styles['avatar-container'],
-                                styles['avatar-container-tablet'],
-                              ].join(' '),
+                              container: accountProps?.profileUrl
+                                ? [
+                                    styles['avatar-container'],
+                                    styles['avatar-container-tablet'],
+                                  ].join(' ')
+                                : [
+                                    styles['no-avatar-container'],
+                                    styles['no-avatar-container-tablet'],
+                                  ].join(' '),
                             }}
                             size={'custom'}
                             text={customer?.first_name}
