@@ -3,9 +3,5 @@
         "url": "http://127.0.0.1:8000",
         "functions_url": "http://192.168.2.52:8001",
         "anon_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICAgInJvbGUiOiAiYW5vbiIsCiAgICAiaXNzIjogInN1cGFiYXNlIiwKICAgICJpYXQiOiAxNjgzNzc3NjAwLAogICAgImV4cCI6IDE4NDE2MzA0MDAKfQ.uKHtXlVXjFGozrOEbtTayv2Vrr5LS7eavQBiOdZekZ4"
-    },
-    "medusa": {
-        "url": "http://localhost:9000",
-        "public_key": "pk_01GTD1M5RFEJV1RNY05VDHG5E4"
     }
 }

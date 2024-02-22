@@ -17,23 +17,12 @@ import Cookies from "js-cookie";
 import { StockLocation } from "@medusajs/stock-location/dist/models";
 
 class MedusaService extends Service {
-  private _medusa: Medusa | undefined;
-
   constructor() {
     super();
   }
 
-  public get medusa(): Medusa | undefined {
-    return this._medusa;
-  }
-
   public override initialize(config: Config): void {
     super.initialize(config);
-    this._medusa = new Medusa({
-      baseUrl: config.medusa.url,
-      apiKey: config.medusa.public_key,
-      maxRetries: 3,
-    });
   }
 
   public async requestStockLocationAsync(stockLocationId: string): Promise<
@@ -58,15 +47,6 @@ class MedusaService extends Service {
     );
     const json = JSON.parse(stockLocationResponse.data);
     return json;
-  }
-
-  public async deleteSessionAsync(): Promise<void> {
-    try {
-      await this._medusa?.auth.deleteSession();
-      window.location.reload();
-    } catch (error: any) {
-      console.error(error);
-    }
   }
 }
 

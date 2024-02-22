@@ -3,18 +3,12 @@ import fs from "fs";
 
 export interface Config {
   supabase: SupabaseConfig;
-  medusa: MedusaConfig;
 }
 
 export interface SupabaseConfig {
   url: string;
   functions_url: string;
   anon_key: string;
-}
-
-export interface MedusaConfig {
-  url: string;
-  public_key: string;
 }
 
 class ConfigService {
@@ -38,21 +32,9 @@ class ConfigService {
             },
           },
         },
-        medusa: {
-          type: "object",
-          required: ["url", "public_key"],
-          items: {
-            type: "object",
-            properties: {
-              url: { type: "string" },
-              public_key: { type: "string" },
-            },
-          },
-        },
       },
       required: [
         "supabase",
-        "medusa",
       ],
       additionalProperties: false,
     };

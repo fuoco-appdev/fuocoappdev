@@ -5,31 +5,35 @@ escpos.Serial = require("escpos-serialport");
 escpos.USB = require("escpos-usb");
 
 class ESCPOSService extends Service {
-  private _device: escpos.Adapter | undefined;
+  private _devices: Record<string, escpos.Adapter>;
   constructor() {
     super();
+
+    this._devices = {};
   }
 
-  public createNetworkDevice(address: string, port: number): void {
-    this._device = new escpos.Network(address, port);
+  public createNetworkDevice(id: string, address: string, port: number): void {
+    this._devices[id] = new escpos.Network(address, port);
   }
 
   public createSerialDevice(
+    id: string,
     port: number,
     options?: { baudRate: number; autoOpen: boolean } | undefined,
   ): void {
-    this._device = new escpos.Serial(port, options);
+    this._devices[id] = new escpos.Serial(port, options);
   }
 
   public createUSBDevice(
+    id: string,
     vid?: string | undefined,
     pid?: string | undefined,
   ): void {
-    this._device = new escpos.USB(vid, pid);
+    this._devices[id] = new escpos.USB(vid, pid);
   }
 
-  public updateUSBDevice(adapter: escpos.USB): void {
-    this._device = adapter;
+  public updateUSBDevice(id: string, adapter: escpos.USB): void {
+    this._devices[id] = adapter;
   }
 
   public findUSBPrinter(): escpos.USB[] {
@@ -41,18 +45,26 @@ class ESCPOSService extends Service {
     }
   }
 
-  public openDevice(
-    callback: (printer: escpos.Printer, error: any) => void,
+  public createPrinter(
+    id: string,
     options?: {
       encoding?: string | undefined;
     } | undefined,
-  ): void {
-    if (!this._device) {
-      return;
+  ): escpos.Printer {
+    return new escpos.Printer(this._devices[id], options);
+  }
+
+  public openDevice(
+    id: string,
+    printer: escpos.Printer,
+    callback: (printer: escpos.Printer, error: any) => void,
+  ): escpos.Adapter | null {
+    console.log(this._devices[id]);
+    if (!Object.keys(this._devices).includes(id)) {
+      return null;
     }
 
-    const printer = new escpos.Printer(this._device, options);
-    this._device?.open((error: any) => {
+    return this._devices[id]?.open((error: any) => {
       callback(printer, error);
     });
   }

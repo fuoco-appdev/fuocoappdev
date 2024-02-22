@@ -3,9 +3,5 @@
         "url": "https://supabase.cruthology.com",
         "functions_url": "https://api.cruthology.com",
         "anon_key": ""
-    },
-    "medusa": {
-        "url": "https://medusa.cruthology.com",
-        "public_key": ""
     }
 }

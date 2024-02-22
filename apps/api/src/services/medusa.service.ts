@@ -609,6 +609,20 @@ class MedusaService {
     return orders;
   }
 
+  public async getOrderAsync(orderId: string): Promise<Record<string, any>> {
+    const ordersResponse = await axiod.get(
+      `${this._url}/admin/orders/${orderId}`,
+      {
+        headers: {
+          "x-medusa-access-token": this._token,
+        },
+      },
+    );
+
+    const data = ordersResponse.data["order"];
+    return data;
+  }
+
   private async findCustomersAsync(
     email: string,
   ): Promise<Record<string, unknown>[]> {

@@ -1,13 +1,13 @@
-import SupabaseService from './supabase.service.ts';
+import SupabaseService from "./supabase.service.ts";
 import {
+  AccountExistsRequest,
+  AccountExistsResponse,
+  AccountLikeRequest,
   AccountRequest,
   AccountResponse,
   AccountsRequest,
   AccountsResponse,
-  AccountExistsRequest,
-  AccountExistsResponse,
-  AccountLikeRequest,
-} from '../protobuf/core_pb.js';
+} from "../protobuf/core_pb.js";
 
 export interface AccountProps {
   id?: string;
@@ -20,10 +20,10 @@ export interface AccountProps {
   username?: string;
 }
 
-export class AccountService {
+class AccountService {
   public async findAsync(supabaseId: string): Promise<AccountProps | null> {
     const { data, error } = await SupabaseService.client
-      .from('account')
+      .from("account")
       .select()
       .match({ supabase_id: supabaseId });
 
@@ -36,7 +36,7 @@ export class AccountService {
   }
 
   public async createAsync(
-    request: InstanceType<typeof AccountRequest>
+    request: InstanceType<typeof AccountRequest>,
   ): Promise<AccountProps | null> {
     const supabaseId = request.getSupabaseId();
     const existingAccount = await this.findAsync(supabaseId);
@@ -45,7 +45,7 @@ export class AccountService {
     }
 
     const supabaseUser = await SupabaseService.client.auth.admin.getUserById(
-      supabaseId
+      supabaseId,
     );
     if (supabaseUser.error) {
       console.error(supabaseUser.error);
@@ -56,7 +56,7 @@ export class AccountService {
       supabaseId,
     });
     const { data, error } = await SupabaseService.client
-      .from('account')
+      .from("account")
       .insert([accountData])
       .select();
 
@@ -69,15 +69,15 @@ export class AccountService {
   }
 
   public async checkExistsAsync(
-    request: InstanceType<typeof AccountExistsRequest>
+    request: InstanceType<typeof AccountExistsRequest>,
   ): Promise<InstanceType<typeof AccountExistsResponse> | null> {
     const username = request.getUsername();
     const response = new AccountExistsResponse();
 
     const { data, error } = await SupabaseService.client
-      .from('account')
+      .from("account")
       .select()
-      .eq('username', username);
+      .eq("username", username);
 
     if (error) {
       console.error(error);
@@ -90,7 +90,7 @@ export class AccountService {
 
   public async updateAsync(
     supabaseId: string,
-    request: InstanceType<typeof AccountRequest>
+    request: InstanceType<typeof AccountRequest>,
   ): Promise<AccountProps | null> {
     const customerId = request.getCustomerId();
     const profileUrl = request.getProfileUrl();
@@ -106,7 +106,7 @@ export class AccountService {
       username,
     });
     const { data, error } = await SupabaseService.client
-      .from('account')
+      .from("account")
       .update(accountData)
       .match({ supabase_id: supabaseId })
       .select();
@@ -120,14 +120,14 @@ export class AccountService {
   }
 
   public async findAccountsAsync(
-    request: InstanceType<typeof AccountsRequest>
+    request: InstanceType<typeof AccountsRequest>,
   ): Promise<InstanceType<typeof AccountsResponse> | null> {
     const response = new AccountsResponse();
     const formattedIds = request.getAccountIdsList().toString();
     const { data, error } = await SupabaseService.client
-      .from('account')
+      .from("account")
       .select()
-      .filter('id', 'in', `(${formattedIds})`);
+      .filter("id", "in", `(${formattedIds})`);
 
     if (error) {
       console.error(error);
@@ -144,7 +144,7 @@ export class AccountService {
 
   public async deleteAsync(supabaseId: string): Promise<void> {
     const { error } = await SupabaseService.client
-      .from('account')
+      .from("account")
       .delete()
       .match({ supabase_id: supabaseId });
 
@@ -154,7 +154,7 @@ export class AccountService {
   }
 
   public async findLikeAsync(
-    request: InstanceType<typeof AccountLikeRequest>
+    request: InstanceType<typeof AccountLikeRequest>,
   ): Promise<InstanceType<typeof AccountsResponse> | null> {
     const queryUsername = request.getQueryUsername();
     const accountId = request.getAccountId();
@@ -162,13 +162,13 @@ export class AccountService {
     const limit = request.getLimit();
 
     const { data, error } = await SupabaseService.client
-      .from('account')
+      .from("account")
       .select()
-      .not('id', 'in', `(${accountId})`)
-      .not('status', 'in', '(Incomplete)')
+      .not("id", "in", `(${accountId})`)
+      .not("status", "in", "(Incomplete)")
       .limit(limit)
       .range(offset, offset + limit)
-      .ilike('username', `%${queryUsername}%`);
+      .ilike("username", `%${queryUsername}%`);
 
     if (error) {
       console.error(error);
@@ -180,7 +180,7 @@ export class AccountService {
   }
 
   public async findFollowersLikeAsync(
-    request: InstanceType<typeof AccountLikeRequest>
+    request: InstanceType<typeof AccountLikeRequest>,
   ): Promise<InstanceType<typeof AccountsResponse> | null> {
     const queryUsername = request.getQueryUsername();
     const accountId = request.getAccountId();
@@ -188,15 +188,15 @@ export class AccountService {
     const limit = request.getLimit();
 
     const accountsData = await SupabaseService.client
-      .from('account')
-      .select('*, account_followers!account_followers_account_id_fkey!inner(*)')
-      .filter('account_followers.follower_id', 'eq', accountId)
-      .not('account_followers.accepted', 'in', '(false)')
-      .not('id', 'in', `(${accountId})`)
-      .not('status', 'in', '(Incomplete)')
+      .from("account")
+      .select("*, account_followers!account_followers_account_id_fkey!inner(*)")
+      .filter("account_followers.follower_id", "eq", accountId)
+      .not("account_followers.accepted", "in", "(false)")
+      .not("id", "in", `(${accountId})`)
+      .not("status", "in", "(Incomplete)")
       .limit(limit)
       .range(offset, offset + limit)
-      .ilike('username', `%${queryUsername}%`);
+      .ilike("username", `%${queryUsername}%`);
 
     if (accountsData.error) {
       console.error(accountsData.error);
@@ -208,7 +208,7 @@ export class AccountService {
   }
 
   public async findFollowingLikeAsync(
-    request: InstanceType<typeof AccountLikeRequest>
+    request: InstanceType<typeof AccountLikeRequest>,
   ): Promise<InstanceType<typeof AccountsResponse> | null> {
     const queryUsername = request.getQueryUsername();
     const accountId = request.getAccountId();
@@ -216,17 +216,17 @@ export class AccountService {
     const limit = request.getLimit();
 
     const accountsData = await SupabaseService.client
-      .from('account')
+      .from("account")
       .select(
-        '*, account_followers!account_followers_follower_id_fkey!inner(*)'
+        "*, account_followers!account_followers_follower_id_fkey!inner(*)",
       )
-      .filter('account_followers.account_id', 'eq', accountId)
-      .not('account_followers.accepted', 'in', '(false)')
-      .not('id', 'in', `(${accountId})`)
-      .not('status', 'in', '(Incomplete)')
+      .filter("account_followers.account_id", "eq", accountId)
+      .not("account_followers.accepted", "in", "(false)")
+      .not("id", "in", `(${accountId})`)
+      .not("status", "in", "(Incomplete)")
       .limit(limit)
       .range(offset, offset + limit)
-      .ilike('username', `%${queryUsername}%`);
+      .ilike("username", `%${queryUsername}%`);
 
     if (accountsData.error) {
       console.error(accountsData.error);
@@ -238,7 +238,7 @@ export class AccountService {
   }
 
   public assignAndGetAccountsProtocol(
-    props: AccountProps[]
+    props: AccountProps[],
   ): InstanceType<typeof AccountsResponse> {
     const accountsResponse = new AccountsResponse();
     for (const accountData of props) {
@@ -250,7 +250,7 @@ export class AccountService {
   }
 
   public assignAndGetAccountProtocol(
-    props: AccountProps
+    props: AccountProps,
   ): InstanceType<typeof AccountResponse> {
     const account = new AccountResponse();
 
