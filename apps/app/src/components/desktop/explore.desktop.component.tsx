@@ -233,11 +233,11 @@ export default function ExploreDesktopComponent({
                   exploreProps.selectedInventoryLocation?.coordinates.lng ?? 0,
                 latitude:
                   exploreProps.selectedInventoryLocation?.coordinates.lat ?? 0,
-                zoom: 13,
+                zoom: 15,
               }}
               longitude={exploreProps.longitude ?? 0}
               latitude={exploreProps.latitude ?? 0}
-              zoom={exploreProps.zoom ?? 13}
+              zoom={exploreProps.zoom ?? 15}
               mapStyle={ConfigService.mapbox.style_url}
               onMove={(e) => ExploreController.onMapMove(e.viewState)}
               onLoad={(e) => setMapStyleLoaded(e.target ? true : false)}

@@ -39,6 +39,57 @@ class MedusaService {
     }
   }
 
+  public async updateStockLocationMetadataAsync(
+    stockLocation: Record<string, any>,
+  ): Promise<void> {
+    const id = stockLocation["id"];
+    const addressData = stockLocation["address"];
+    let metadata = stockLocation["metadata"];
+
+    if (!addressData) {
+      return;
+    }
+
+    if (!metadata) {
+      metadata = {};
+    }
+
+    let searchText = "";
+    if (addressData["company"]) {
+      searchText += `${addressData["company"]}, `;
+    }
+    if (addressData["address_1"]) {
+      searchText += `${addressData["address_1"]}, `;
+    }
+    if (addressData["address_2"]) {
+      searchText += `${addressData["address_2"]}, `;
+    }
+    if (addressData["city"]) {
+      searchText += `${addressData["city"]}`;
+    }
+    const feature = await this.getFeatureAsync(
+      searchText,
+      addressData["country_code"],
+    );
+    metadata["coordinates"] = JSON.stringify({
+      longitude: feature?.center[0],
+      latitude: feature?.center[1],
+    });
+    metadata["place_name"] = feature?.place_name;
+    const context = feature?.context.find((value) =>
+      value.id.startsWith("region")
+    );
+    metadata["region"] = context?.text ?? "";
+    await axiod.post(
+      `${this._url}/admin/stock-locations/${id}`,
+      {
+        headers: {
+          "x-medusa-access-token": this._token,
+        },
+      },
+    );
+  }
+
   public async getCustomerMetadataAsync(
     customerId: string,
   ): Promise<InstanceType<typeof CustomerMetadataResponse>> {
@@ -446,58 +497,6 @@ class MedusaService {
     const stockLocations = new StockLocationsResponse();
     const data = stockLocationsResponse.data["stock_locations"];
     for (const location of data) {
-      const addressData = location["address"];
-      let metadata = location["metadata"];
-      if (!metadata) {
-        metadata = {};
-      }
-
-      if (
-        addressData &&
-        (!metadata["coordinates"] ||
-          !metadata["place_name"] ||
-          !metadata["region"] ||
-          metadata["updated_at"] !== addressData["updated_at"])
-      ) {
-        let searchText = "";
-        if (addressData["company"]) {
-          searchText += `${addressData["company"]}, `;
-        }
-        if (addressData["address_1"]) {
-          searchText += `${addressData["address_1"]}, `;
-        }
-        if (addressData["address_2"]) {
-          searchText += `${addressData["address_2"]}, `;
-        }
-        if (addressData["city"]) {
-          searchText += `${addressData["city"]}`;
-        }
-        const feature = await this.getFeatureAsync(
-          searchText,
-          addressData["country_code"],
-        );
-        metadata["coordinates"] = JSON.stringify({
-          longitude: feature?.center[0],
-          latitude: feature?.center[1],
-        });
-        metadata["place_name"] = feature?.place_name;
-        const context = feature?.context.find((value) =>
-          value.id.startsWith("region")
-        );
-        metadata["region"] = context?.text ?? "";
-        metadata["updated_at"] = addressData["updated_at"];
-        location.metadata = metadata;
-        const { error } = await SupabaseService.client
-          .from("stock_location")
-          .update({ metadata: metadata })
-          .match({ address_id: addressData["id"] })
-          .select();
-
-        if (error) {
-          console.error(error);
-        }
-      }
-
       stockLocations.addLocations(JSON.stringify(location));
     }
 

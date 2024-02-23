@@ -15,6 +15,22 @@ import MedusaService from "../services/medusa.service.ts";
 
 @Controller("/medusa")
 export class MedusaController {
+  @Post("/webhook/stock-location")
+  @ContentType("application/x-protobuf")
+  public async handleWebhookStockLocationAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >,
+  ): Promise<void> {
+    const body = await context.request.body().value;
+    const stockLocation = body["record"];
+    await MedusaService.updateStockLocationMetadataAsync(stockLocation);
+
+    context.response.status = 200;
+  }
+
   @Post("/stock-locations")
   @ContentType("application/x-protobuf")
   public async getStockLocationsAsync(

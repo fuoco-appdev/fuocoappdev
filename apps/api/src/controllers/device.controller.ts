@@ -15,7 +15,7 @@ import DeviceService from "../services/device.service.ts";
 export class DeviceController {
   @Post("/webhook/fulfillment")
   @ContentType("application/json")
-  public async handleWebhookOrderAsync(
+  public async handleWebhookFulfillmentAsync(
     context: Oak.RouterContext<
       string,
       Oak.RouteParams<string>,
