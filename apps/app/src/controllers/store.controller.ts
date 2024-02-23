@@ -88,6 +88,8 @@ class StoreController extends Controller {
           this.loadProductsAsync();
         },
       });
+
+    this.loadProductsAsync();
   }
 
   public override disposeInitialization(renderCount: number): void {
