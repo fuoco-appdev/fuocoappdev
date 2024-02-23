@@ -798,6 +798,7 @@ class ESCPOSController {
                   return;
                 }
 
+                printer.cut();
                 printer.close();
               },
             );

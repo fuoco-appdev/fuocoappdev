@@ -113,11 +113,7 @@ class StoreController extends Controller {
       return;
     }
 
-    if (this._model.input.length > 0) {
-      await this.searchAsync(this._model.input, 0, this._limit);
-    } else {
-      await this.requestProductsAsync(0, this._limit);
-    }
+    await this.searchAsync(this._model.input, 0, this._limit);
   }
 
   public updateInput(value: string): void {
@@ -171,132 +167,6 @@ class StoreController extends Controller {
 
     const offset = this._limit * (this._model.pagination - 1);
     await this.searchAsync(this._model.input, offset, this._limit);
-  }
-
-  public async requestProductsAsync(
-    offset: number = 0,
-    limit: number = 10,
-    force: boolean = false,
-  ): Promise<void> {
-    if (!force && (this._model.isLoading || !this._model.selectedRegion)) {
-      return;
-    }
-
-    if (!this._model.selectedSalesChannel) {
-      return;
-    }
-    this._model.isLoading = true;
-
-    const selectedRegion = await firstValueFrom(
-      this._model.store.pipe(
-        select((model) => model.selectedRegion),
-        filter((value) => value !== undefined),
-        take(1),
-      ),
-    );
-    const cart = await firstValueFrom(
-      CartController.model.store.pipe(
-        select((model) => model.cart),
-        filter((value) => value !== undefined),
-        take(1),
-      ),
-    );
-    const selectedInventoryLocation: InventoryLocation = await firstValueFrom(
-      ExploreController.model.store.pipe(
-        select((model) => model.selectedInventoryLocation),
-        filter((value) => value !== undefined),
-        take(1),
-      ),
-    );
-    if (!selectedInventoryLocation.type) {
-      return;
-    }
-
-    const productTypeIds = this.getTypeIds(selectedInventoryLocation.type);
-    const productsResponse = await MedusaService.medusa?.products.list({
-      sales_channel_id: [this._model.selectedSalesChannel?.id ?? ""],
-      offset: offset,
-      limit: limit,
-      ...(productTypeIds.length > 0 && { type_id: productTypeIds }),
-      ...(selectedRegion && {
-        region_id: selectedRegion.id,
-        currency_code: selectedRegion.currency_code,
-      }),
-      ...(cart && { cart_id: cart.id }),
-    });
-
-    const products: Product[] = [];
-    const pricedProductList = productsResponse?.products ?? [];
-    for (let i = 0; i < pricedProductList.length; i++) {
-      for (const variant of pricedProductList[i].variants) {
-        const price = variant.prices?.find(
-          (value) => value.region_id === this._model.selectedRegion?.id,
-        );
-        if (!price) {
-          pricedProductList.splice(i, 1);
-        }
-      }
-
-      products.push(Object.assign(pricedProductList[i]) as Product);
-    }
-
-    if (products.length <= 0 && offset <= 0) {
-      this._model.products = [];
-    }
-
-    if (products.length < limit && this._model.hasMorePreviews) {
-      this._model.hasMorePreviews = false;
-    }
-
-    if (products.length <= 0) {
-      this._model.isLoading = false;
-      this._model.hasMorePreviews = false;
-      return;
-    }
-
-    if (products.length >= limit && !this._model.hasMorePreviews) {
-      this._model.hasMorePreviews = true;
-    }
-
-    if (offset > 0) {
-      const productsCopy = this._model.products;
-      this._model.products = productsCopy.concat(products);
-    } else {
-      this._model.products = products;
-    }
-
-    const pricedProducts = {
-      ...this._model.pricedProducts,
-    };
-    for (const pricedProduct of pricedProductList ?? []) {
-      if (!pricedProduct.id) {
-        continue;
-      }
-      pricedProducts[pricedProduct.id] = pricedProduct;
-    }
-
-    this._model.pricedProducts = pricedProducts;
-    this._model.isLoading = false;
-
-    const productIds: string[] = products.map((value: Product) => value.id);
-    try {
-      const productLikesResponse = await ProductLikesService
-        .requestMetadataAsync({
-          accountId: AccountController.model.account?.id ?? "",
-          productIds: productIds,
-        });
-
-      if (offset > 0) {
-        const productLikesMetadata = this._model.productLikesMetadata;
-        this._model.productLikesMetadata = productLikesMetadata.concat(
-          productLikesResponse.metadata,
-        );
-      } else {
-        this._model.productLikesMetadata = productLikesResponse.metadata;
-      }
-    } catch (error: any) {
-      console.error(error);
-    }
   }
 
   public async searchAsync(
