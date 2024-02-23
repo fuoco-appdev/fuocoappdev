@@ -10,6 +10,7 @@ import SupabaseService from '../services/supabase.service';
 import { useCookies } from 'react-cookie';
 import { RouteObject, useLocation } from 'react-router-dom';
 import { AuthChangeEvent, Session } from '@supabase/supabase-js';
+import MedusaService from '../services/medusa.service';
 
 export interface AppProps {}
 
@@ -31,6 +32,7 @@ function AppComponent({}: AppProps): JSX.Element {
         } else if (event === 'SIGNED_OUT') {
           removeCookie('sb-refresh-token');
           removeCookie('sb-access-token');
+          MedusaService.deleteSessionAsync();
         }
       }
     );

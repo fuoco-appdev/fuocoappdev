@@ -328,7 +328,7 @@ class StoreController extends Controller {
     let sortValue = this.getSorting(selectedInventoryLocation.type);
     const result = await this._productsIndex?.search(query, {
       filter: [filterValue],
-      sort: [sortValue],
+      ...(sortValue && { sort: [sortValue] }),
       offset: offset,
       limit: limit,
     });
@@ -547,10 +547,10 @@ class StoreController extends Controller {
     return filterValue;
   }
 
-  private getSorting(inventoryType: InventoryLocationType): string {
-    let sortValue = ``;
+  private getSorting(inventoryType: InventoryLocationType): string | undefined {
+    let sortValue = undefined;
     if (inventoryType === InventoryLocationType.Restaurant) {
-      sortValue += `metadata.order_index:asc`;
+      sortValue = `metadata.order_index:asc`;
     }
 
     return sortValue;

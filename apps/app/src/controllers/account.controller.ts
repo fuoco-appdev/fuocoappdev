@@ -51,7 +51,6 @@ class AccountController extends Controller {
 
     this._model = new AccountModel();
     this._limit = 10;
-    this.onAuthStateChangedAsync = this.onAuthStateChangedAsync.bind(this);
     this.onActiveAccountChangedAsync = this.onActiveAccountChangedAsync.bind(
       this,
     );
@@ -1147,10 +1146,6 @@ class AccountController extends Controller {
     this._userSubscription = SupabaseService.userObservable.subscribe({
       next: this.onActiveUserChangedAsync,
     });
-
-    SupabaseService.supabaseClient?.auth.onAuthStateChange(
-      this.onAuthStateChangedAsync,
-    );
   }
 
   private async onActiveAccountChangedAsync(
@@ -1274,15 +1269,6 @@ class AccountController extends Controller {
       this._model.isCreateCustomerLoading = false;
     } catch (error: any) {
       console.error(error);
-    }
-  }
-
-  private async onAuthStateChangedAsync(
-    event: AuthChangeEvent,
-    session: Session | null,
-  ): Promise<void> {
-    if (event === "SIGNED_OUT") {
-      await MedusaService.deleteSessionAsync();
     }
   }
 }
