@@ -115,11 +115,7 @@ class StoreController extends Controller {
       return;
     }
 
-    if (this._model.input.length > 0) {
-      await this.searchAsync(this._model.input, 0, this._limit);
-    } else {
-      await this.requestProductsAsync(0, this._limit);
-    }
+    await this.searchAsync(this._model.input, 0, this._limit);
   }
 
   public updateInput(value: string): void {
@@ -328,9 +324,11 @@ class StoreController extends Controller {
 
     this._model.isLoading = true;
 
-    let filterValue = await this.getFilterAsync(selectedInventoryLocation.type);
+    let filterValue = this.getFilter(selectedInventoryLocation.type);
+    let sortValue = this.getSorting(selectedInventoryLocation.type);
     const result = await this._productsIndex?.search(query, {
       filter: [filterValue],
+      sort: [sortValue],
       offset: offset,
       limit: limit,
     });
@@ -525,9 +523,9 @@ class StoreController extends Controller {
     return productTypeIds;
   }
 
-  private async getFilterAsync(
+  private getFilter(
     inventoryType: InventoryLocationType,
-  ): Promise<string> {
+  ): string {
     const types = this.getTypeIds(inventoryType);
     let filterValue = `type_id IN [${types.join(", ")}]`;
     filterValue +=
@@ -547,6 +545,15 @@ class StoreController extends Controller {
     }
 
     return filterValue;
+  }
+
+  private getSorting(inventoryType: InventoryLocationType): string {
+    let sortValue = ``;
+    if (inventoryType === InventoryLocationType.Restaurant) {
+      sortValue += `metadata.order_index:asc`;
+    }
+
+    return sortValue;
   }
 }
 

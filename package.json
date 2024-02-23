@@ -7,7 +7,7 @@
     "init": "nx run api:init",
     "build-web-client": "npx nx run app:build-client:development --watch",
     "build-web-server": "npx nx run app:build-server:development --watch",
-    "build-web-ssr": "npx nx run app:build-ssr:development",
+    "build-web-ssr": "npx nx run app:build-ssr:development --watch",
     "build-cli": "npx nx run cli:build:development --watch",
     "start-api": "cd ./apps/api && deno run --allow-net --allow-env --allow-read --watch src/serve.ts",
     "start-electron": "npx nx run app:serve-electron",
