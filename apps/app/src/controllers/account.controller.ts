@@ -995,39 +995,7 @@ class AccountController extends Controller {
     }
 
     try {
-      const { selectedRegion, selectedSalesChannel } = StoreController.model;
-      const { cart } = CartController.model;
-      const productsResponse = await MedusaService.medusa?.products.list({
-        id: productIds,
-        sales_channel_id: [selectedSalesChannel?.id ?? ""],
-        ...(selectedRegion && {
-          region_id: selectedRegion.id,
-          currency_code: selectedRegion.currency_code,
-        }),
-        ...(cart && { cart_id: cart.id }),
-      });
-      const products = productsResponse?.products ?? [];
-      products.sort((a, b) => {
-        const currentId = a["id"] ?? "";
-        const nextId = b["id"] ?? "";
-
-        if (productIds.indexOf(currentId) > productIds.indexOf(nextId)) {
-          return 1;
-        } else {
-          return -1;
-        }
-      });
-      for (let i = 0; i < products.length; i++) {
-        for (const variant of products[i].variants) {
-          const price = variant.prices?.find(
-            (value) => value.region_id === selectedRegion?.id,
-          );
-          if (!price) {
-            products.splice(i, 1);
-          }
-        }
-      }
-
+      const products = await MedusaService.requestProductsAsync(productIds);
       if (offset > 0) {
         this._model.likedProducts = this._model.likedProducts.concat(products);
       } else {

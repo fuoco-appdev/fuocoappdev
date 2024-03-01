@@ -26,6 +26,7 @@ import CartVariantItemComponent from '../cart-variant-item.component';
 import { MedusaProductTypeNames } from '../../types/medusa.type';
 import { AccountPublicLikesResponsiveProps } from '../account-public-likes.component';
 import { useAccountPublicOutletContext } from '../account-public.component';
+import { Product } from '@medusajs/medusa';
 
 export default function AccountPublicLikesMobileComponent({
   storeProps,
@@ -75,7 +76,7 @@ export default function AccountPublicLikesMobileComponent({
           ].join(' ')}
         >
           {accountPublicProps.likedProducts.map(
-            (product: PricedProduct, index: number) => {
+            (product: Product, index: number) => {
               const productLikesMetadata = Object.keys(
                 accountPublicProps.productLikesMetadata
               ).includes(product.id ?? '')
@@ -87,12 +88,13 @@ export default function AccountPublicLikesMobileComponent({
                   key={index}
                   storeProps={storeProps}
                   accountProps={accountProps}
+                  purchasable={false}
                   thumbnail={product.thumbnail ?? undefined}
                   title={product.title ?? undefined}
                   subtitle={product.subtitle ?? undefined}
                   description={product.description ?? undefined}
                   type={product.type ?? undefined}
-                  pricedProduct={product}
+                  pricedProduct={null}
                   isLoading={
                     isPreviewLoading &&
                     accountPublicProps.selectedLikedProduct?.id === product?.id

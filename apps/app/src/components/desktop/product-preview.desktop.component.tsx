@@ -36,6 +36,7 @@ export default function ProductPreviewDesktopComponent({
   likesMetadata,
   pricedProduct,
   accountProps,
+  purchasable,
   onClick,
   originalPrice,
   calculatedPrice,
@@ -296,7 +297,7 @@ export default function ProductPreviewDesktopComponent({
                   )}
                 </div>
               </div>
-              {pricedProduct && selectedVariantId && (
+              {purchasable && pricedProduct && selectedVariantId && (
                 <Button
                   classNames={{ button: styles['floating-button'] }}
                   rippleProps={{
@@ -318,7 +319,7 @@ export default function ProductPreviewDesktopComponent({
                   loading={isLoading}
                 />
               )}
-              {!pricedProduct && (
+              {purchasable && !pricedProduct && (
                 <Skeleton width={46} height={46} borderRadius={46} />
               )}
             </div>

@@ -26,6 +26,7 @@ import { InventoryLocationType } from 'src/models/explore.model';
 
 export default function StockLocationItemTabletComponent({
   stockLocation,
+  hideDescription,
   placeName,
   description,
   avatar,
@@ -80,19 +81,20 @@ export default function StockLocationItemTabletComponent({
                     'place_name'
                   ) && placeName}
                 </div>
-                {Object.keys(stockLocation?.metadata ?? {}).includes(
-                  'description'
-                ) && (
-                  <div
-                    className={[
-                      styles['description'],
-                      styles['description-tablet'],
-                    ].join(' ')}
-                  >
-                    {description.slice(0, 60)}
-                    ...
-                  </div>
-                )}
+                {!hideDescription &&
+                  Object.keys(stockLocation?.metadata ?? {}).includes(
+                    'description'
+                  ) && (
+                    <div
+                      className={[
+                        styles['description'],
+                        styles['description-tablet'],
+                      ].join(' ')}
+                    >
+                      {description.slice(0, 60)}
+                      ...
+                    </div>
+                  )}
               </div>
               <div
                 className={[

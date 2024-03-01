@@ -62,6 +62,22 @@ export function ProductSuspenseMobileComponent(): JSX.Element {
           </div>
           <div
             className={[
+              styles['tags-container'],
+              styles['tags-container-mobile'],
+            ].join(' ')}
+          >
+            {[1, 2, 3, 4].map(() => (
+              <Skeleton
+                className={[
+                  styles['tag-skeleton'],
+                  styles['tag-skeleton-mobile'],
+                ].join(' ')}
+                borderRadius={9999}
+              />
+            ))}
+          </div>
+          <div
+            className={[
               styles['description-container'],
               styles['description-container-mobile'],
             ].join(' ')}
@@ -85,21 +101,28 @@ export function ProductSuspenseMobileComponent(): JSX.Element {
               count={1}
             />
           </div>
-          <div
-            className={[
-              styles['tags-container'],
-              styles['tags-container-mobile'],
-            ].join(' ')}
-          >
-            {[1, 2, 3, 4].map(() => (
-              <Skeleton
-                className={[
-                  styles['tag-skeleton'],
-                  styles['tag-skeleton-mobile'],
-                ].join(' ')}
-                borderRadius={9999}
-              />
-            ))}
+        </div>
+        <div
+          className={[
+            styles['top-bar-container'],
+            styles['top-bar-container-mobile'],
+          ].join(' ')}
+        ></div>
+        <div
+          className={[
+            styles['price-container'],
+            styles['price-container-mobile'],
+          ].join(' ')}
+        >
+          <div className={[styles['price'], styles['price-mobile']].join(' ')}>
+            <Skeleton
+              className={[
+                styles['inventory-quantity'],
+                styles['inventory-quantity-mobile'],
+              ].join(' ')}
+              borderRadius={9999}
+              count={1}
+            />
           </div>
           <div
             className={[

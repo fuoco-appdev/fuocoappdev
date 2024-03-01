@@ -319,6 +319,7 @@ export default function StoreMobileComponent({
                 key={index}
                 storeProps={storeProps}
                 accountProps={accountProps}
+                purchasable={true}
                 thumbnail={product.thumbnail ?? undefined}
                 title={product.title ?? undefined}
                 subtitle={product.subtitle ?? undefined}

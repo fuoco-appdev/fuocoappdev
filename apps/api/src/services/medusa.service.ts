@@ -13,6 +13,8 @@ import {
   ProductCountRequest,
   ProductCountResponse,
   ProductMetadataResponse,
+  ProductsRequest,
+  ProductsResponse,
   RemoveCustomerFromGroupRequest,
   StockLocationResponse,
   StockLocationsResponse,
@@ -561,11 +563,38 @@ class MedusaService {
     return response;
   }
 
+  public async getProductsAsync(
+    request: InstanceType<typeof ProductsRequest>,
+  ): Promise<InstanceType<typeof ProductsResponse>> {
+    const ids = request.getIdsList();
+    const params = new URLSearchParams();
+    ids.map((value) => params.append("id", value));
+    const productsResponse = await axiod.get(
+      `${this._url}/admin/products?${params.toString()}`,
+      {
+        headers: {
+          "x-medusa-access-token": this._token,
+        },
+      },
+    );
+
+    const products = new ProductsResponse();
+    const productsData = productsResponse.data["products"];
+    for (const data of productsData) {
+      products.addProducts(JSON.stringify(data));
+    }
+
+    return products;
+  }
+
   public async getProductMetadataAsync(
     productId: string,
   ): Promise<InstanceType<typeof ProductMetadataResponse>> {
+    const params = new URLSearchParams({
+      expand: "sales_channels,tags,options,variants,type",
+    });
     const productResponse = await axiod.get(
-      `${this._url}/admin/products/${productId}`,
+      `${this._url}/admin/products/${productId}?${params}`,
       {
         headers: {
           "x-medusa-access-token": this._token,
@@ -578,6 +607,26 @@ class MedusaService {
     productMetadata.setSubtitle(data.subtitle);
     productMetadata.setDescription(data.description);
     productMetadata.setThumbnail(data.thumbnail);
+    productMetadata.setType(JSON.stringify(data.type));
+    productMetadata.setMaterial(data.material);
+    productMetadata.setLength(data.length);
+    productMetadata.setWeight(data.weight);
+    productMetadata.setHeight(data.height);
+    productMetadata.setWidth(data.width);
+    productMetadata.setOriginCountry(data.origin_country);
+    productMetadata.setMetadata(JSON.stringify(data.metadata));
+    data.tags.map((value: Record<string, any>) =>
+      productMetadata.addTags(JSON.stringify(value))
+    );
+    data.options.map((value: Record<string, any>) =>
+      productMetadata.addOptions(JSON.stringify(value))
+    );
+    data.variants.map((value: Record<string, any>) =>
+      productMetadata.addVariantIds(value.id)
+    );
+    data.sales_channels.map((value: Record<string, any>) =>
+      productMetadata.addSalesChannelIds(value.id)
+    );
 
     return productMetadata;
   }

@@ -27,6 +27,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { RoutePathsType, useQuery } from '../route-paths';
 import * as core from '../protobuf/core_pb';
+import { Product } from '@medusajs/medusa';
 
 const AccountLikesDesktopComponent = lazy(
   () => import('./desktop/account-likes.desktop.component')
@@ -50,15 +51,12 @@ export interface AccountLikesResponsiveProps {
   onAddToCart: () => void;
   onProductPreviewClick: (
     scrollTop: number,
-    product: PricedProduct,
+    product: Product,
     productLikesMetadata: core.ProductLikesMetadataResponse | null
   ) => void;
-  onProductPreviewRest: (product: PricedProduct) => void;
-  onProductPreviewAddToCart: (product: PricedProduct) => void;
-  onProductPreviewLikeChanged: (
-    isLiked: boolean,
-    product: PricedProduct
-  ) => void;
+  onProductPreviewRest: (product: Product) => void;
+  onProductPreviewAddToCart: (product: Product) => void;
+  onProductPreviewLikeChanged: (isLiked: boolean, product: Product) => void;
 }
 
 export default function AccountLikesComponent(): JSX.Element {
@@ -75,40 +73,25 @@ export default function AccountLikesComponent(): JSX.Element {
 
   const onProductPreviewClick = (
     scrollTop: number,
-    product: PricedProduct,
+    product: Product,
     productLikesMetadata: core.ProductLikesMetadataResponse | null
   ) => {
     AccountController.updateLikesScrollPosition(scrollTop);
-
-    if (!product || !productLikesMetadata) {
-      AccountController.updateSelectedLikedProduct(undefined);
-      StoreController.updateSelectedPricedProduct(undefined);
-      StoreController.updateSelectedProductLikesMetadata(null);
-      return;
-    }
-
-    AccountController.updateSelectedLikedProduct(product);
-    StoreController.updateSelectedPricedProduct(product);
-    StoreController.updateSelectedProductLikesMetadata(productLikesMetadata);
   };
 
-  const onProductPreviewRest = (product: PricedProduct) => {
+  const onProductPreviewRest = (product: Product) => {
     navigate({
       pathname: `${RoutePathsType.Store}/${product.id}`,
       search: query.toString(),
     });
   };
 
-  const onProductPreviewAddToCart = (product: PricedProduct) => {
-    AccountController.updateSelectedLikedProduct(product);
+  const onProductPreviewAddToCart = (product: Product) => {
     setOpenCartVariants(true);
     setIsPreviewLoading(true);
   };
 
-  const onProductPreviewLikeChanged = (
-    isLiked: boolean,
-    product: PricedProduct
-  ) => {
+  const onProductPreviewLikeChanged = (isLiked: boolean, product: Product) => {
     ProductController.requestProductLike(isLiked, product.id ?? '');
   };
 

@@ -57,7 +57,7 @@ export default function ExploreMobileComponent({
   const { t } = useTranslation();
   const topBarRef = useRef<HTMLDivElement | null>(null);
   const scrollContainerRef = createRef<HTMLDivElement>();
-  const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
+  const [isSearchFocused, setIsSearchFocused] = useState<boolean>(true);
   const [isLogoLoaded, setIsLogoLoaded] = useState<boolean>(false);
   const [isLogoTextLoaded, setIsLogoTextLoaded] = useState<boolean>(false);
   let prevScrollTop = 0;
@@ -295,7 +295,7 @@ export default function ExploreMobileComponent({
           ].join(' ')}
         >
           <Map
-            style={{ minWidth: '100%', minHeight: '100%' }}
+            style={{ minWidth: '100%', minHeight: '100vh' }}
             mapboxAccessToken={process.env['MAPBOX_ACCESS_TOKEN']}
             ref={mapRef}
             interactive={true}

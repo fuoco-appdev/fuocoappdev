@@ -6,6 +6,7 @@ import {
   OrdersRequest,
   PriceListsRequest,
   ProductCountRequest,
+  ProductsRequest,
   RemoveCustomerFromGroupRequest,
   UpdateCustomerRequest,
 } from "../protobuf/core_pb.js";
@@ -58,6 +59,24 @@ export class MedusaController {
     const requestValue = await readAll(body.value);
     const request = ProductCountRequest.deserializeBinary(requestValue);
     const response = await MedusaService.getProductCountAsync(request);
+    context.response.type = "application/x-protobuf";
+    context.response.body = response.serializeBinary();
+  }
+
+  @Post("/products")
+  @Guard(AuthGuard)
+  @ContentType("application/x-protobuf")
+  public async getProductsAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >,
+  ): Promise<void> {
+    const body = await context.request.body({ type: "reader" });
+    const requestValue = await readAll(body.value);
+    const request = ProductsRequest.deserializeBinary(requestValue);
+    const response = await MedusaService.getProductsAsync(request);
     context.response.type = "application/x-protobuf";
     context.response.body = response.serializeBinary();
   }

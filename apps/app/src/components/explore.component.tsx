@@ -131,12 +131,6 @@ export default function ExploreComponent(): JSX.Element {
   }, []);
 
   useEffect(() => {
-    if (selectedPoint?.id !== exploreProps.selectedInventoryLocation?.id) {
-      setSelectedPoint(exploreProps.selectedInventoryLocation);
-    }
-  }, [exploreProps.selectedInventoryLocation]);
-
-  useEffect(() => {
     if (location.hash) {
       return;
     }

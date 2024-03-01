@@ -7,8 +7,17 @@ import {
 } from './responsive.component';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { RouteObject, useParams } from 'react-router-dom';
-import { ProductOptions, ProductState } from '../models/product.model';
-import { ProductOptionValue, ProductOption } from '@medusajs/medusa';
+import {
+  ProductOptions,
+  ProductState,
+  ProductTabType,
+} from '../models/product.model';
+import {
+  ProductOptionValue,
+  ProductOption,
+  ProductType,
+  ProductTag,
+} from '@medusajs/medusa';
 import {
   PricedProduct,
   PricedVariant,
@@ -35,6 +44,9 @@ import {
   ProductMetadataResponse,
 } from '../protobuf/core_pb';
 import SupabaseService from '../services/supabase.service';
+import { Line } from '@fuoco.appdev/core-ui';
+import { InventoryLocation } from '../models/explore.model';
+import ExploreController from '../controllers/explore.controller';
 
 const ProductDesktopComponent = lazy(
   () => import('./desktop/product.desktop.component')
@@ -57,6 +69,7 @@ export interface ProductResponsiveProps {
   remarkPlugins: any[];
   translatedDescription: string;
   description: string;
+  sideBarTabs: TabProps[];
   tabs: TabProps[];
   activeVariantId: string | undefined;
   activeDetails: string | undefined;
@@ -67,18 +80,26 @@ export interface ProductResponsiveProps {
   format: string | undefined;
   region: string | undefined;
   residualSugar: string | undefined;
-  type: string | undefined;
+  type: ProductType | undefined;
+  tags: ProductTag[];
   uvc: string | undefined;
   vintage: string | undefined;
   quantity: number;
   isLiked: boolean;
   likeCount: number;
+  selectedStockLocation: InventoryLocation | null;
   setActiveDetails: (value: string | undefined) => void;
   setDescription: (value: string) => void;
   setQuantity: (value: number) => void;
+  setSelectedStockLocation: (value: InventoryLocation | null) => void;
   onAddToCart: () => void;
   onLikeChanged: (isLiked: boolean) => void;
   formatNumberCompact: (value: number) => string;
+  onStockLocationClicked: (stockLocation: InventoryLocation | null) => void;
+  onSideBarScroll: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
+  onSideBarLoad: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
+  onSelectLocation: () => void;
+  onCancelLocation: () => void;
 }
 
 function ProductComponent({ metadata }: ProductProps): JSX.Element {
@@ -103,13 +124,17 @@ function ProductComponent({ metadata }: ProductProps): JSX.Element {
   const [format, setFormat] = useState<string | undefined>('');
   const [region, setRegion] = useState<string | undefined>('');
   const [residualSugar, setResidualSugar] = useState<string | undefined>('');
-  const [type, setType] = useState<string | undefined>('');
+  const [type, setType] = useState<ProductType | undefined>(undefined);
+  const [tags, setTags] = useState<ProductTag[]>([]);
   const [uvc, setUVC] = useState<string | undefined>('');
   const [vintage, setVintage] = useState<string | undefined>('');
   const [remarkPlugins, setRemarkPlugins] = useState<any[]>([]);
   const [quantity, setQuantity] = useState<number>(1);
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [likeCount, setLikeCount] = useState<number>(0);
+  const [sideBarTabs, setSideBarTabs] = useState<TabProps[]>([]);
+  const [selectedStockLocation, setSelectedStockLocation] =
+    useState<InventoryLocation | null>(null);
   const renderCountRef = useRef<number>(0);
   const { t, i18n } = useTranslation();
 
@@ -131,6 +156,53 @@ function ProductComponent({ metadata }: ProductProps): JSX.Element {
     return toText.trim();
   };
 
+  const onStockLocationClicked = (stockLocation: InventoryLocation | null) => {
+    if (
+      ExploreController.model.selectedInventoryLocationId !== stockLocation?.id
+    ) {
+      setSelectedStockLocation(stockLocation);
+    }
+  };
+
+  const onSelectLocation = () => {
+    ExploreController.updateSelectedInventoryLocationId(
+      selectedStockLocation?.id
+    );
+    setSelectedStockLocation(null);
+  };
+
+  const onCancelLocation = () => {
+    setSelectedStockLocation(null);
+  };
+
+  const onSideBarScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    const scrollTop = e.currentTarget?.scrollTop ?? 0;
+    const scrollHeight = e.currentTarget?.scrollHeight ?? 0;
+    const clientHeight = e.currentTarget?.clientHeight ?? 0;
+    const scrollOffset = scrollHeight - scrollTop - clientHeight;
+
+    if (ProductController.model.activeTabId === ProductTabType.Locations) {
+      if (
+        scrollOffset > 16 ||
+        !ProductController.model.hasMoreSearchedStockLocations
+      ) {
+        return;
+      }
+
+      ProductController.onStockLocationsNextScrollAsync();
+    }
+  };
+
+  const onSideBarLoad = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
+    if (ProductController.model.activeTabId === ProductTabType.Locations) {
+      if (productProps.searchedStockLocationScrollPosition) {
+        e.currentTarget.scrollTop =
+          productProps.searchedStockLocationScrollPosition as number;
+        ProductController.updateSearchedStockLocationScrollPosition(undefined);
+      }
+    }
+  };
+
   const onAddToCart = () => {
     ProductController.addToCartAsync(
       productProps.selectedVariant?.id ?? '',
@@ -141,7 +213,7 @@ function ProductComponent({ metadata }: ProductProps): JSX.Element {
           message: t('addedToCart') ?? '',
           description:
             t('addedToCartDescription', {
-              item: productProps.product?.title,
+              item: productProps.metadata?.title,
             }) ?? '',
           type: 'success',
         }),
@@ -182,22 +254,54 @@ function ProductComponent({ metadata }: ProductProps): JSX.Element {
   };
 
   useEffect(() => {
-    if (!productProps.product) {
+    if (!productProps.metadata) {
       return;
     }
 
-    updateTranslatedDescriptionAsync(productProps.product.description);
-  }, [productProps.product]);
+    const type = JSON.parse(productProps.metadata?.type) as ProductType;
+    setType(type);
+    setTags(
+      productProps.metadata?.tags.map(
+        (value: string) => JSON.parse(value) as ProductTag
+      )
+    );
+
+    updateTranslatedDescriptionAsync(productProps.metadata.description);
+  }, [productProps.metadata]);
+
+  useEffect(() => {
+    let tabs: TabProps[] = [];
+    if (
+      storeProps.selectedSalesChannel &&
+      productProps.metadata?.salesChannelIds.includes(
+        storeProps.selectedSalesChannel?.id ?? ''
+      )
+    ) {
+      tabs.push({
+        id: ProductTabType.Price,
+        icon: <Line.PriceCheck size={24} />,
+      });
+      ProductController.updateActiveTabId(ProductTabType.Price);
+    } else {
+      ProductController.updateActiveTabId(ProductTabType.Locations);
+    }
+
+    tabs.push({
+      id: ProductTabType.Locations,
+      icon: <Line.LocationOn size={24} />,
+    });
+
+    setSideBarTabs(tabs);
+  }, [productProps.metadata, storeProps.selectedSalesChannel]);
 
   useEffect(() => {
     renderCountRef.current += 1;
+    ProductController.updateProductId(id);
     ProductController.load(renderCountRef.current);
 
     import('remark-gfm').then((plugin) => {
       setRemarkPlugins([plugin.default]);
     });
-
-    ProductController.updateProductId(id);
 
     return () => {
       ProductController.disposeLoad(renderCountRef.current);
@@ -205,12 +309,12 @@ function ProductComponent({ metadata }: ProductProps): JSX.Element {
   }, []);
 
   useEffect(() => {
-    if (!productProps.product) {
+    if (!productProps.variants) {
       return;
     }
 
     let tabProps: TabProps[] = [];
-    for (const variant of productProps.product.variants) {
+    for (const variant of productProps.variants) {
       tabProps.push({ id: variant.id, label: variant.title });
     }
     tabProps = tabProps.sort((n1, n2) => {
@@ -221,7 +325,7 @@ function ProductComponent({ metadata }: ProductProps): JSX.Element {
       return 1;
     });
     setTabs(tabProps);
-  }, [productProps.product]);
+  }, [productProps.variants]);
 
   useEffect(() => {
     setActiveVariantId(productProps.selectedVariant?.id);
@@ -233,26 +337,26 @@ function ProductComponent({ metadata }: ProductProps): JSX.Element {
   }, [productProps.likesMetadata, accountProps.account]);
 
   useEffect(() => {
-    if (
-      !ProductController.model.product ||
-      !ProductController.model.product.options
-    ) {
+    if (!ProductController.model.metadata) {
       return;
     }
 
-    const alcoholOption = ProductController.model.product.options.find(
+    const options = ProductController.model.metadata.options.map(
+      (value) => JSON.parse(value) as ProductOption
+    );
+    const alcoholOption = options.find(
       (value) => value.title === ProductOptions.Alcohol
     );
-    const formatOption = ProductController.model.product.options.find(
+    const formatOption = options.find(
       (value) => value.title === ProductOptions.Format
     );
-    const residualSugarOption = ProductController.model.product.options.find(
+    const residualSugarOption = options.find(
       (value) => value.title === ProductOptions.ResidualSugar
     );
-    const uvcOption = ProductController.model.product.options.find(
+    const uvcOption = options.find(
       (value) => value.title === ProductOptions.UVC
     );
-    const vintageOption = ProductController.model.product.options.find(
+    const vintageOption = options.find(
       (value) => value.title === ProductOptions.Vintage
     );
 
@@ -275,25 +379,21 @@ function ProductComponent({ metadata }: ProductProps): JSX.Element {
         (value: ProductOptionValue) => value.option_id === vintageOption?.id
       );
 
-      setBrand(productProps.product?.metadata?.['brand'] as string);
-      setRegion(productProps.product?.metadata?.['region'] as string);
-      setVarietals(productProps.product?.metadata?.['varietals'] as string);
-      setProducerBottler(
-        productProps.product?.metadata?.['producer_bottler'] as string
-      );
-      const metadataType = productProps.product?.type.value as string;
-      if (metadataType === MedusaProductTypeNames.Wine) {
-        setType(t('wine') ?? '');
-      } else if (metadataType === MedusaProductTypeNames.MenuItem) {
-        setType(t('menuItem') ?? '');
-      }
+      const metadata = JSON.parse(productProps.metadata?.metadata) as Record<
+        string,
+        any
+      >;
+      setBrand(metadata?.['brand'] as string);
+      setRegion(metadata?.['region'] as string);
+      setVarietals(metadata?.['varietals'] as string);
+      setProducerBottler(metadata?.['producer_bottler'] as string);
       setAlcohol(alcoholValue?.value);
       setFormat(formatValue?.value);
       setResidualSugar(residualSugarValue?.value);
       setUVC(uvcValue?.value);
       setVintage(vintageValue?.value);
     }
-  }, [productProps.selectedVariant, productProps.product]);
+  }, [productProps.selectedVariant, productProps.metadata]);
 
   const suspenceComponent = (
     <>
@@ -350,7 +450,9 @@ function ProductComponent({ metadata }: ProductProps): JSX.Element {
           remarkPlugins={remarkPlugins}
           translatedDescription={translatedDescription}
           description={description}
+          sideBarTabs={sideBarTabs}
           tabs={tabs}
+          tags={tags}
           activeVariantId={activeVariantId}
           activeDetails={activeDetails}
           alcohol={alcohol}
@@ -366,12 +468,19 @@ function ProductComponent({ metadata }: ProductProps): JSX.Element {
           quantity={quantity}
           isLiked={isLiked}
           likeCount={likeCount}
+          selectedStockLocation={selectedStockLocation}
           setActiveDetails={setActiveDetails}
           setDescription={setDescription}
           setQuantity={setQuantity}
+          setSelectedStockLocation={setSelectedStockLocation}
           onAddToCart={onAddToCart}
           onLikeChanged={onLikeChanged}
           formatNumberCompact={formatNumberCompact}
+          onStockLocationClicked={onStockLocationClicked}
+          onSideBarScroll={onSideBarScroll}
+          onSideBarLoad={onSideBarLoad}
+          onSelectLocation={onSelectLocation}
+          onCancelLocation={onCancelLocation}
         />
         <ProductTabletComponent
           productProps={productProps}
@@ -380,7 +489,9 @@ function ProductComponent({ metadata }: ProductProps): JSX.Element {
           remarkPlugins={remarkPlugins}
           translatedDescription={translatedDescription}
           description={description}
+          sideBarTabs={sideBarTabs}
           tabs={tabs}
+          tags={tags}
           activeVariantId={activeVariantId}
           activeDetails={activeDetails}
           alcohol={alcohol}
@@ -396,12 +507,19 @@ function ProductComponent({ metadata }: ProductProps): JSX.Element {
           quantity={quantity}
           isLiked={isLiked}
           likeCount={likeCount}
+          selectedStockLocation={selectedStockLocation}
           setActiveDetails={setActiveDetails}
           setDescription={setDescription}
           setQuantity={setQuantity}
+          setSelectedStockLocation={setSelectedStockLocation}
           onAddToCart={onAddToCart}
           onLikeChanged={onLikeChanged}
           formatNumberCompact={formatNumberCompact}
+          onStockLocationClicked={onStockLocationClicked}
+          onSideBarScroll={onSideBarScroll}
+          onSideBarLoad={onSideBarLoad}
+          onSelectLocation={onSelectLocation}
+          onCancelLocation={onCancelLocation}
         />
         <ProductMobileComponent
           productProps={productProps}
@@ -410,7 +528,9 @@ function ProductComponent({ metadata }: ProductProps): JSX.Element {
           remarkPlugins={remarkPlugins}
           translatedDescription={translatedDescription}
           description={description}
+          sideBarTabs={sideBarTabs}
           tabs={tabs}
+          tags={tags}
           activeVariantId={activeVariantId}
           activeDetails={activeDetails}
           alcohol={alcohol}
@@ -426,12 +546,19 @@ function ProductComponent({ metadata }: ProductProps): JSX.Element {
           quantity={quantity}
           isLiked={isLiked}
           likeCount={likeCount}
+          selectedStockLocation={selectedStockLocation}
           setActiveDetails={setActiveDetails}
           setDescription={setDescription}
           setQuantity={setQuantity}
+          setSelectedStockLocation={setSelectedStockLocation}
           onAddToCart={onAddToCart}
           onLikeChanged={onLikeChanged}
           formatNumberCompact={formatNumberCompact}
+          onStockLocationClicked={onStockLocationClicked}
+          onSideBarScroll={onSideBarScroll}
+          onSideBarLoad={onSideBarLoad}
+          onSelectLocation={onSelectLocation}
+          onCancelLocation={onCancelLocation}
         />
       </React.Suspense>
     </>

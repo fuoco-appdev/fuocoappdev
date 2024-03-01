@@ -34,6 +34,7 @@ const StockLocationItemMobileComponent = lazy(
 
 export interface StockLocationItemProps {
   stockLocation: StockLocation;
+  hideDescription?: boolean;
   onClick: () => void;
 }
 
@@ -46,6 +47,7 @@ export interface StockLocationItemResponsiveProps
 
 export default function StockLocationItemComponent({
   stockLocation,
+  hideDescription = false,
   onClick,
 }: StockLocationItemProps): JSX.Element {
   const { t, i18n } = useTranslation();
@@ -129,6 +131,7 @@ export default function StockLocationItemComponent({
     <React.Suspense fallback={suspenceComponent}>
       <StockLocationItemDesktopComponent
         stockLocation={stockLocation}
+        hideDescription={hideDescription}
         placeName={placeName}
         description={description}
         avatar={avatar}
@@ -136,6 +139,7 @@ export default function StockLocationItemComponent({
       />
       <StockLocationItemTabletComponent
         stockLocation={stockLocation}
+        hideDescription={hideDescription}
         placeName={placeName}
         description={description}
         avatar={avatar}
@@ -143,6 +147,7 @@ export default function StockLocationItemComponent({
       />
       <StockLocationItemMobileComponent
         stockLocation={stockLocation}
+        hideDescription={hideDescription}
         placeName={placeName}
         description={description}
         avatar={avatar}

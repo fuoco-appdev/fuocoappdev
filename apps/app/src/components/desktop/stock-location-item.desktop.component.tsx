@@ -25,6 +25,7 @@ export default function StockLocationItemDesktopComponent({
   placeName,
   description,
   avatar,
+  hideDescription,
   onClick,
 }: StockLocationItemResponsiveProps): JSX.Element {
   const { t } = useTranslation();
@@ -74,19 +75,20 @@ export default function StockLocationItemDesktopComponent({
                   &nbsp;
                   {placeName}
                 </div>
-                {Object.keys(stockLocation?.metadata ?? {}).includes(
-                  'description'
-                ) && (
-                  <div
-                    className={[
-                      styles['description'],
-                      styles['description-desktop'],
-                    ].join(' ')}
-                  >
-                    {description.slice(0, 60)}
-                    ...
-                  </div>
-                )}
+                {!hideDescription &&
+                  Object.keys(stockLocation?.metadata ?? {}).includes(
+                    'description'
+                  ) && (
+                    <div
+                      className={[
+                        styles['description'],
+                        styles['description-desktop'],
+                      ].join(' ')}
+                    >
+                      {description.slice(0, 60)}
+                      ...
+                    </div>
+                  )}
               </div>
               <div
                 className={[

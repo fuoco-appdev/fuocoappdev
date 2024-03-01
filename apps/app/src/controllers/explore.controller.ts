@@ -1,26 +1,26 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { ViewState } from 'react-map-gl';
-import { Controller } from '../controller';
+import { ViewState } from "react-map-gl";
+import { Controller } from "../controller";
 import {
   ExploreModel,
   ExploreState,
   ExploreTabs,
   InventoryLocation,
   InventoryLocationType,
-} from '../models/explore.model';
-import MedusaService from '../services/medusa.service';
-import mapboxgl from 'mapbox-gl';
-import { point, featureCollection, nearestPoint, helpers } from '@turf/turf';
-import WindowController from './window.controller';
-import { Subscription } from 'rxjs';
-import { select } from '@ngneat/elf';
-import { PublicSecrets, StorageFolderType } from '../protobuf/core_pb';
-import PermissionsController from './permissions.controller';
-import { Index } from 'meilisearch';
-import MeiliSearchService from '../services/meilisearch.service';
-import { StockLocation } from '@medusajs/stock-location/dist/models';
-import { SalesChannel } from '@medusajs/medusa';
-import BucketService from '../services/bucket.service';
+} from "../models/explore.model";
+import MedusaService from "../services/medusa.service";
+import mapboxgl from "mapbox-gl";
+import { featureCollection, helpers, nearestPoint, point } from "@turf/turf";
+import WindowController from "./window.controller";
+import { Subscription } from "rxjs";
+import { select } from "@ngneat/elf";
+import { PublicSecrets, StorageFolderType } from "../protobuf/core_pb";
+import PermissionsController from "./permissions.controller";
+import { Index } from "meilisearch";
+import MeiliSearchService from "../services/meilisearch.service";
+import { StockLocation } from "@medusajs/stock-location/dist/models";
+import { SalesChannel } from "@medusajs/medusa";
+import BucketService from "../services/bucket.service";
 
 class ExploreController extends Controller {
   private readonly _model: ExploreModel;
@@ -43,8 +43,9 @@ class ExploreController extends Controller {
   }
 
   public override initialize(renderCount: number): void {
-    this._stockLocationsIndex =
-      MeiliSearchService.client?.index('stock_locations');
+    this._stockLocationsIndex = MeiliSearchService.client?.index(
+      "stock_locations",
+    );
 
     this.initializeAsync(renderCount);
   }
@@ -78,12 +79,12 @@ class ExploreController extends Controller {
 
     this._model.searchedStockLocationsPagination =
       this._model.searchedStockLocationsPagination + 1;
-    const offset =
-      this._limit * (this._model.searchedStockLocationsPagination - 1);
+    const offset = this._limit *
+      (this._model.searchedStockLocationsPagination - 1);
     await this.searchStockLocationsAsync(
       this._model.input,
       offset,
-      this._limit
+      this._limit,
     );
   }
 
@@ -104,7 +105,7 @@ class ExploreController extends Controller {
   }
 
   public updateSelectedInventoryLocation(
-    value: InventoryLocation | undefined
+    value: InventoryLocation | undefined,
   ): void {
     this._model.selectedInventoryLocationId = value?.id;
     this._model.selectedInventoryLocation = value;
@@ -116,7 +117,7 @@ class ExploreController extends Controller {
 
   public updateSelectedInventoryLocationId(value: string | undefined): void {
     const selectedInventoryLocation = this._model.inventoryLocations.find(
-      (location) => location.id == value
+      (location) => location.id == value,
     );
 
     this.updateSelectedInventoryLocation(selectedInventoryLocation);
@@ -127,25 +128,25 @@ class ExploreController extends Controller {
   }
 
   public async updateSelectedTabAsync(
-    value: ExploreTabs | undefined
+    value: ExploreTabs | undefined,
   ): Promise<void> {
     this._model.selectedTab = value;
     this._model.searchedStockLocationsPagination = 1;
     this._model.searchedStockLocations = [];
-    const offset =
-      this._limit * (this._model.searchedStockLocationsPagination - 1);
+    const offset = this._limit *
+      (this._model.searchedStockLocationsPagination - 1);
 
     await this.searchStockLocationsAsync(
       this._model.input,
       offset,
       this._limit,
-      true
+      true,
     );
   }
 
   public isInventoryLocationIdValid(value: string): boolean {
     const inventoryLocation = this._model.inventoryLocations.find(
-      (location) => location.id == value
+      (location) => location.id == value,
     );
 
     return inventoryLocation !== undefined;
@@ -181,7 +182,7 @@ class ExploreController extends Controller {
     query: string,
     offset: number = 0,
     limit: number = 10,
-    force: boolean = false
+    force: boolean = false,
   ): Promise<void> {
     if (!force && this._model.areSearchedStockLocationsLoading) {
       return;
@@ -230,7 +231,7 @@ class ExploreController extends Controller {
   }
 
   public async getInventoryLocationAsync(
-    stockLocation: StockLocation & { sales_channels?: SalesChannel[] }
+    stockLocation: StockLocation & { sales_channels?: SalesChannel[] },
   ): Promise<InventoryLocation | null> {
     const metadata = stockLocation.metadata;
     const address = stockLocation.address;
@@ -238,17 +239,17 @@ class ExploreController extends Controller {
     let coordinates = null;
     if (
       metadata &&
-      Object.keys(metadata).includes('coordinates') &&
-      typeof stockLocation.metadata?.['coordinates'] === 'string'
+      Object.keys(metadata).includes("coordinates") &&
+      typeof stockLocation.metadata?.["coordinates"] === "string"
     ) {
-      coordinates = JSON.parse(metadata?.['coordinates'] as string);
+      coordinates = JSON.parse(metadata?.["coordinates"] as string);
     } else {
-      coordinates = metadata?.['coordinates'];
+      coordinates = metadata?.["coordinates"];
     }
 
     let type: InventoryLocationType | undefined;
-    if (metadata && Object.keys(metadata).includes('type')) {
-      type = metadata?.['type'] as InventoryLocationType | undefined;
+    if (metadata && Object.keys(metadata).includes("type")) {
+      type = metadata?.["type"] as InventoryLocationType | undefined;
     }
 
     if (!coordinates || !type) {
@@ -256,26 +257,26 @@ class ExploreController extends Controller {
     }
 
     let avatar = undefined;
-    const avatarMetadata = stockLocation.metadata?.['avatar'] as
+    const avatarMetadata = stockLocation.metadata?.["avatar"] as
       | string
       | undefined;
     if (avatarMetadata) {
       avatar = await BucketService.getPublicUrlAsync(
         StorageFolderType.Avatars,
-        avatarMetadata
+        avatarMetadata,
       );
     }
 
     let thumbnails: string[] = [];
     const thumbnailsMetadata = (
-      stockLocation.metadata?.['thumbnails'] as string
-    )?.split(',');
+      stockLocation.metadata?.["thumbnails"] as string
+    )?.split(",");
 
     if (thumbnailsMetadata && thumbnailsMetadata.length > 0) {
       for (const file of thumbnailsMetadata) {
         const url = await BucketService.getPublicUrlAsync(
           StorageFolderType.Thumbnails,
-          file
+          file,
         );
         if (!url) {
           continue;
@@ -289,13 +290,13 @@ class ExploreController extends Controller {
       id: stockLocation.id,
       salesChannels: stockLocation.sales_channels ?? [],
       coordinates: new mapboxgl.LngLat(
-        coordinates?.['longitude'] ?? 0,
-        coordinates?.['latitude'] ?? 0
+        coordinates?.["longitude"] ?? 0,
+        coordinates?.["latitude"] ?? 0,
       ),
-      placeName: (metadata?.['place_name'] as string) ?? '',
-      description: (metadata?.['description'] as string) ?? '',
-      company: address?.['company'] ?? '',
-      region: (metadata?.['region'] as string) ?? '',
+      placeName: (metadata?.["place_name"] as string) ?? "",
+      description: (metadata?.["description"] as string) ?? "",
+      company: address?.["company"] ?? "",
+      region: (metadata?.["region"] as string) ?? "",
       type: type,
       avatar: avatar,
       thumbnails: thumbnails,
@@ -303,8 +304,8 @@ class ExploreController extends Controller {
   }
 
   private async initializeAsync(renderCount: number): Promise<void> {
-    this._model.inventoryLocations =
-      await this.requestInventoryLocationsAsync();
+    this._model.inventoryLocations = await this
+      .requestInventoryLocationsAsync();
 
     this._model.isSelectedInventoryLocationLoaded = true;
 
@@ -323,21 +324,21 @@ class ExploreController extends Controller {
         next: (id: string | undefined) => {
           if (!id) {
             this._currentPositionSubscription?.unsubscribe();
-            this._currentPositionSubscription =
-              PermissionsController.model.store
-                .pipe(select((model) => model.currentPosition))
-                .subscribe({
-                  next: (value) =>
-                    this.onCurrentPositionChanged(
-                      value,
-                      this._model.inventoryLocations
-                    ),
-                });
+            this._currentPositionSubscription = PermissionsController.model
+              .store
+              .pipe(select((model) => model.currentPosition))
+              .subscribe({
+                next: (value) =>
+                  this.onCurrentPositionChanged(
+                    value,
+                    this._model.inventoryLocations,
+                  ),
+              });
             return;
           }
 
           const inventoryLocation = this._model.inventoryLocations.find(
-            (value) => value.id === id
+            (value) => value.id === id,
           );
           if (inventoryLocation) {
             this.updateSelectedInventoryLocation(inventoryLocation);
@@ -351,7 +352,7 @@ class ExploreController extends Controller {
     const inventoryLocations: InventoryLocation[] = [];
     for (const stockLocation of stockLocations) {
       const inventoryLocation = await this.getInventoryLocationAsync(
-        stockLocation
+        stockLocation,
       );
       if (!inventoryLocation) {
         continue;
@@ -365,7 +366,7 @@ class ExploreController extends Controller {
 
   private onCurrentPositionChanged(
     value: GeolocationPosition,
-    inventoryLocations: InventoryLocation[]
+    inventoryLocations: InventoryLocation[],
   ): void {
     if (!value?.coords || this._model.selectedInventoryLocationId) {
       return;
@@ -376,7 +377,7 @@ class ExploreController extends Controller {
     const point = this.findNearestPoint(currentPoint, inventoryLocations);
     if (point) {
       const inventoryLocation = this._model.inventoryLocations.find(
-        (value) => value.coordinates.distanceTo(point) === 0
+        (value) => value.coordinates.distanceTo(point) === 0,
       );
       if (inventoryLocation) {
         this.updateSelectedInventoryLocation(inventoryLocation);
@@ -386,7 +387,7 @@ class ExploreController extends Controller {
 
   private findNearestPoint(
     target: mapboxgl.LngLat,
-    locations: InventoryLocation[]
+    locations: InventoryLocation[],
   ): mapboxgl.LngLat | null {
     const features = [];
     for (const location of locations) {
@@ -395,7 +396,7 @@ class ExploreController extends Controller {
       }
 
       features.push(
-        point([location.coordinates.lng, location.coordinates.lat])
+        point([location.coordinates.lng, location.coordinates.lat]),
       );
     }
 
@@ -407,7 +408,10 @@ class ExploreController extends Controller {
 
     const nearest = nearestPoint(
       targetPoint,
-      collection as helpers.FeatureCollection<helpers.Point, helpers.Properties>
+      collection as helpers.FeatureCollection<
+        helpers.Point,
+        helpers.Properties
+      >,
     );
 
     if (!nearest) {
@@ -416,7 +420,7 @@ class ExploreController extends Controller {
 
     return new mapboxgl.LngLat(
       nearest.geometry.coordinates[0],
-      nearest.geometry.coordinates[1]
+      nearest.geometry.coordinates[1],
     );
   }
 

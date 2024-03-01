@@ -1,46 +1,46 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import {
-  Subscription,
   filter,
   firstValueFrom,
   lastValueFrom,
+  Subscription,
   take,
-} from 'rxjs';
-import { Controller } from '../controller';
-import AccountService from '../services/account.service';
-import * as core from '../protobuf/core_pb';
-import SupabaseService from '../services/supabase.service';
-import BucketService from '../services/bucket.service';
-import MedusaService from '../services/medusa.service';
-import ProductLikesService from '../services/product-likes.service';
-import { StorePostCustomersReq, Customer, Address } from '@medusajs/medusa';
-import WindowController from './window.controller';
+} from "rxjs";
+import { Controller } from "../controller";
+import AccountService from "../services/account.service";
+import * as core from "../protobuf/core_pb";
+import SupabaseService from "../services/supabase.service";
+import BucketService from "../services/bucket.service";
+import MedusaService from "../services/medusa.service";
+import ProductLikesService from "../services/product-likes.service";
+import { Address, Customer, StorePostCustomersReq } from "@medusajs/medusa";
+import WindowController from "./window.controller";
 import {
   ProfileFormErrors,
   ProfileFormValues,
-} from '../components/account-profile-form.component';
-import { v4 as uuidv4 } from 'uuid';
-import mime from 'mime';
-import { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
+} from "../components/account-profile-form.component";
+import { v4 as uuidv4 } from "uuid";
+import mime from "mime";
+import { AuthChangeEvent, Session, User } from "@supabase/supabase-js";
 import {
   AddressFormErrors,
   AddressFormValues,
-} from '../components/address-form.component';
-import { RoutePathsType } from '../route-paths';
-import { LanguageInfo } from '@fuoco.appdev/core-ui';
-import { select } from '@ngneat/elf';
-import ExploreController from './explore.controller';
-import { ExploreLocalState } from '../models/explore.model';
-import Cookies from 'js-cookie';
-import { ProductLikesMetadataResponse } from '../protobuf/core_pb';
-import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
-import StoreController from './store.controller';
-import CartController from './cart.controller';
-import AccountFollowersService from '../services/account-followers.service';
-import { AccountPublicModel } from '../models/account-public.model';
-import AccountController from './account.controller';
-import { S3 } from 'aws-sdk';
+} from "../components/address-form.component";
+import { RoutePathsType } from "../route-paths";
+import { LanguageInfo } from "@fuoco.appdev/core-ui";
+import { select } from "@ngneat/elf";
+import ExploreController from "./explore.controller";
+import { ExploreLocalState } from "../models/explore.model";
+import Cookies from "js-cookie";
+import { ProductLikesMetadataResponse } from "../protobuf/core_pb";
+import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
+import StoreController from "./store.controller";
+import CartController from "./cart.controller";
+import AccountFollowersService from "../services/account-followers.service";
+import { AccountPublicModel } from "../models/account-public.model";
+import AccountController from "./account.controller";
+import { S3 } from "aws-sdk";
 
 class AccountPublicController extends Controller {
   private readonly _model: AccountPublicModel;
@@ -67,8 +67,8 @@ class AccountPublicController extends Controller {
   }
 
   public override initialize(renderCount: number): void {
-    this._medusaAccessTokenSubscription =
-      MedusaService.accessTokenObservable.subscribe({
+    this._medusaAccessTokenSubscription = MedusaService.accessTokenObservable
+      .subscribe({
         next: (value: string | undefined) => {
           if (!value) {
             this.resetMedusaModel();
@@ -109,15 +109,15 @@ class AccountPublicController extends Controller {
             CartController.model.store.pipe(
               select((model) => model.cart),
               filter((value) => value !== undefined),
-              take(1)
-            )
+              take(1),
+            ),
           );
           if (cart) {
             await this.requestLikedProductsAsync(
               id,
               account?.id,
               0,
-              this._limit
+              this._limit,
             );
           }
         },
@@ -135,8 +135,8 @@ class AccountPublicController extends Controller {
       this._model.store.pipe(
         select((model) => model.account),
         filter((value) => value !== undefined),
-        take(1)
-      )
+        take(1),
+      ),
     );
 
     if (!publicAccount) {
@@ -157,8 +157,8 @@ class AccountPublicController extends Controller {
       this._model.store.pipe(
         select((model) => model.account),
         filter((value) => value !== undefined),
-        take(1)
-      )
+        take(1),
+      ),
     );
 
     if (!publicAccount) {
@@ -207,7 +207,7 @@ class AccountPublicController extends Controller {
       this._model.accountId,
       AccountController.model.account?.id,
       offset,
-      this._limit
+      this._limit,
     );
   }
 
@@ -221,7 +221,7 @@ class AccountPublicController extends Controller {
     await this.followersSearchAsync(
       this._model.followersInput,
       offset,
-      this._limit
+      this._limit,
     );
   }
 
@@ -235,7 +235,7 @@ class AccountPublicController extends Controller {
     await this.followingSearchAsync(
       this._model.followingInput,
       offset,
-      this._limit
+      this._limit,
     );
   }
 
@@ -286,14 +286,14 @@ class AccountPublicController extends Controller {
   }
 
   public updateSelectedProductLikes(
-    value: ProductLikesMetadataResponse | undefined
+    value: ProductLikesMetadataResponse | undefined,
   ): void {
     this._model.selectedProductLikes = value;
   }
 
   public updateProductLikesMetadata(
     id: string,
-    metadata: ProductLikesMetadataResponse
+    metadata: ProductLikesMetadataResponse,
   ): void {
     if (!this._model.accountId) {
       return;
@@ -311,7 +311,7 @@ class AccountPublicController extends Controller {
       this._model.accountId,
       AccountController.model.account?.id,
       0,
-      this._limit
+      this._limit,
     );
   }
 
@@ -319,7 +319,7 @@ class AccountPublicController extends Controller {
     query: string,
     offset: number = 0,
     limit: number = 10,
-    force: boolean = false
+    force: boolean = false,
   ): Promise<void> {
     if (!force && this._model.areFollowersLoading) {
       return;
@@ -331,10 +331,10 @@ class AccountPublicController extends Controller {
       const accountsResponse = await AccountService.requestFollowersSearchAsync(
         {
           queryUsername: query,
-          accountId: this._model.account?.id ?? '',
+          accountId: this._model.account?.id ?? "",
           offset: offset,
           limit: limit,
-        }
+        },
       );
 
       if (!accountsResponse.accounts || accountsResponse.accounts.length <= 0) {
@@ -352,7 +352,7 @@ class AccountPublicController extends Controller {
       if (offset > 0) {
         const followerAccounts = this._model.followerAccounts;
         this._model.followerAccounts = followerAccounts.concat(
-          accountsResponse.accounts
+          accountsResponse.accounts,
         );
       } else {
         this._model.followerAccounts = accountsResponse.accounts;
@@ -363,11 +363,11 @@ class AccountPublicController extends Controller {
 
     try {
       const otherAccountIds = this._model.followerAccounts.map(
-        (value) => value.id
+        (value) => value.id,
       );
-      const followerResponse =
-        await AccountFollowersService.requestFollowersAsync({
-          accountId: this._model.account?.id ?? '',
+      const followerResponse = await AccountFollowersService
+        .requestFollowersAsync({
+          accountId: this._model.account?.id ?? "",
           otherAccountIds: otherAccountIds,
         });
 
@@ -385,7 +385,7 @@ class AccountPublicController extends Controller {
 
     try {
       const customerIds = this._model.followerAccounts.map(
-        (value) => value.customerId
+        (value) => value.customerId,
       );
       const customersResponse = await MedusaService.requestCustomersAsync({
         customerIds: customerIds,
@@ -409,7 +409,7 @@ class AccountPublicController extends Controller {
     query: string,
     offset: number = 0,
     limit: number = 10,
-    force: boolean = false
+    force: boolean = false,
   ): Promise<void> {
     if (!force && this._model.areFollowingLoading) {
       return;
@@ -421,10 +421,10 @@ class AccountPublicController extends Controller {
       const accountsResponse = await AccountService.requestFollowingSearchAsync(
         {
           queryUsername: query,
-          accountId: this._model.account?.id ?? '',
+          accountId: this._model.account?.id ?? "",
           offset: offset,
           limit: limit,
-        }
+        },
       );
 
       if (!accountsResponse.accounts || accountsResponse.accounts.length <= 0) {
@@ -442,7 +442,7 @@ class AccountPublicController extends Controller {
       if (offset > 0) {
         const followingAccounts = this._model.followingAccounts;
         this._model.followingAccounts = followingAccounts.concat(
-          accountsResponse.accounts
+          accountsResponse.accounts,
         );
       } else {
         this._model.followingAccounts = accountsResponse.accounts;
@@ -453,11 +453,11 @@ class AccountPublicController extends Controller {
 
     try {
       const otherAccountIds = this._model.followingAccounts.map(
-        (value) => value.id
+        (value) => value.id,
       );
-      const followerResponse =
-        await AccountFollowersService.requestFollowersAsync({
-          accountId: this._model.account?.id ?? '',
+      const followerResponse = await AccountFollowersService
+        .requestFollowersAsync({
+          accountId: this._model.account?.id ?? "",
           otherAccountIds: otherAccountIds,
         });
 
@@ -474,7 +474,7 @@ class AccountPublicController extends Controller {
 
     try {
       const customerIds = this._model.followingAccounts.map(
-        (value) => value.customerId
+        (value) => value.customerId,
       );
       const customersResponse = await MedusaService.requestCustomersAsync({
         customerIds: customerIds,
@@ -500,7 +500,7 @@ class AccountPublicController extends Controller {
     this._model.accountFollower = undefined;
     this._model.showFollowButton = undefined;
     this._model.profileUrl = undefined;
-    this._model.username = '';
+    this._model.username = "";
     this._model.activeTabId = RoutePathsType.AccountLikes;
     this._model.prevTabIndex = 0;
     this._model.activeTabIndex = 0;
@@ -508,13 +508,13 @@ class AccountPublicController extends Controller {
     this._model.likesScrollPosition = 0;
     this._model.likedProductPagination = 1;
     this._model.productLikesMetadata = {};
-    this._model.followersInput = '';
+    this._model.followersInput = "";
     this._model.followerAccounts = [];
     this._model.followerScrollPosition = 0;
     this._model.followersPagination = 1;
     this._model.followerAccountFollowers = {};
     this._model.followerCustomers = {};
-    this._model.followingInput = '';
+    this._model.followingInput = "";
     this._model.followingAccounts = [];
     this._model.followingScrollPosition = 0;
     this._model.followingPagination = 1;
@@ -530,7 +530,7 @@ class AccountPublicController extends Controller {
     accountId: string | undefined,
     offset: number = 0,
     limit: number = 10,
-    force: boolean = false
+    force: boolean = false,
   ): Promise<void> {
     if (!publicAccountId) {
       return;
@@ -567,17 +567,19 @@ class AccountPublicController extends Controller {
       }
 
       const productLikesMetadata = { ...this._model.productLikesMetadata };
-      for (const metadata of publicAccountProductLikesMetadataResponse.metadata) {
+      for (
+        const metadata of publicAccountProductLikesMetadataResponse.metadata
+      ) {
         productLikesMetadata[metadata.productId] = metadata;
       }
 
       productIds = publicAccountProductLikesMetadataResponse.metadata.map(
-        (value) => value.productId
+        (value) => value.productId,
       );
 
       if (accountId) {
-        const accountProductLikesMetadataResponse =
-          await ProductLikesService.requestMetadataAsync({
+        const accountProductLikesMetadataResponse = await ProductLikesService
+          .requestMetadataAsync({
             accountId: accountId,
             productIds: productIds,
           });
@@ -585,7 +587,7 @@ class AccountPublicController extends Controller {
           accountProductLikesMetadataResponse.metadata;
         for (const key in productLikesMetadata) {
           const index = accountProductLikesMetadata.findIndex(
-            (value) => value.productId === key
+            (value) => value.productId === key,
           );
           productLikesMetadata[key].didAccountLike =
             accountProductLikesMetadata[index].didAccountLike;
@@ -608,39 +610,7 @@ class AccountPublicController extends Controller {
     }
 
     try {
-      const { selectedRegion, selectedSalesChannel } = StoreController.model;
-      const { cart } = CartController.model;
-      const productsResponse = await MedusaService.medusa?.products.list({
-        id: productIds,
-        sales_channel_id: [selectedSalesChannel?.id ?? ''],
-        ...(selectedRegion && {
-          region_id: selectedRegion.id,
-          currency_code: selectedRegion.currency_code,
-        }),
-        ...(cart && { cart_id: cart.id }),
-      });
-      const products = productsResponse?.products ?? [];
-      products.sort((a, b) => {
-        const currentId = a['id'] ?? '';
-        const nextId = b['id'] ?? '';
-
-        if (productIds.indexOf(currentId) > productIds.indexOf(nextId)) {
-          return 1;
-        } else {
-          return -1;
-        }
-      });
-      for (let i = 0; i < products.length; i++) {
-        for (const variant of products[i].variants) {
-          const price = variant.prices?.find(
-            (value) => value.region_id === selectedRegion?.id
-          );
-          if (!price) {
-            products.splice(i, 1);
-          }
-        }
-      }
-
+      const products = await MedusaService.requestProductsAsync(productIds);
       if (offset > 0) {
         this._model.likedProducts = this._model.likedProducts.concat(products);
       } else {
@@ -685,9 +655,9 @@ class AccountPublicController extends Controller {
           this.initializeAccountSubscription(this._model.account);
 
           try {
-            this._model.customerMetadata =
-              await MedusaService.requestCustomerMetadataAsync(
-                this._model.account?.customerId ?? ''
+            this._model.customerMetadata = await MedusaService
+              .requestCustomerMetadataAsync(
+                this._model.account?.customerId ?? "",
               );
           } catch (error: any) {
             console.error(error);
@@ -715,7 +685,7 @@ class AccountPublicController extends Controller {
   }
 
   private initializeAccountSubscription(
-    publicAccount: core.AccountResponse
+    publicAccount: core.AccountResponse,
   ): void {
     this._accountSubscription?.unsubscribe();
     this._accountSubscription = AccountController.model.store
@@ -727,9 +697,9 @@ class AccountPublicController extends Controller {
           }
 
           try {
-            const accountFollowerResponse =
-              await AccountFollowersService.requestFollowersAsync({
-                accountId: account?.id ?? '',
+            const accountFollowerResponse = await AccountFollowersService
+              .requestFollowersAsync({
+                accountId: account?.id ?? "",
                 otherAccountIds: [publicAccount.id],
               });
             if (
@@ -752,13 +722,13 @@ class AccountPublicController extends Controller {
   }
 
   public async initializeS3BucketAsync(
-    publicAccount: core.AccountResponse | null
+    publicAccount: core.AccountResponse | null,
   ): Promise<void> {
     const s3 = await firstValueFrom(
       BucketService.s3Observable.pipe(
         filter((value) => value !== undefined),
-        take(1)
-      )
+        take(1),
+      ),
     );
     if (!s3) {
       return;
@@ -768,7 +738,7 @@ class AccountPublicController extends Controller {
       try {
         this._model.profileUrl = await BucketService.getPublicUrlAsync(
           core.StorageFolderType.Avatars,
-          publicAccount.profileUrl
+          publicAccount.profileUrl,
         );
       } catch (error: any) {
         console.error(error);
@@ -779,7 +749,7 @@ class AccountPublicController extends Controller {
   private async requestLikeCountAsync(accountId: string): Promise<void> {
     try {
       const response = await ProductLikesService.requestCountMetadataAsync(
-        accountId
+        accountId,
       );
       this._model.likeCount = response.likeCount;
     } catch (error: any) {
@@ -788,11 +758,11 @@ class AccountPublicController extends Controller {
   }
 
   private async requestFollowerCountMetadataAsync(
-    accountId: string
+    accountId: string,
   ): Promise<void> {
     try {
       const response = await AccountFollowersService.requestCountMetadataAsync(
-        accountId
+        accountId,
       );
       this._model.followerCount = response.followersCount;
       this._model.followingCount = response.followingCount;

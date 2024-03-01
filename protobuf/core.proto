@@ -114,6 +114,26 @@ message ProductMetadataResponse {
     string subtitle = 2;
     string description = 3;
     string thumbnail = 4;
+    string type = 5;
+    string material = 6;
+    int32 length = 7;
+    int32 weight = 8;
+    int32 width = 9;
+    int32 height = 10;
+    string origin_country = 11;
+    string metadata = 12;
+    repeated string tags = 13;
+    repeated string options = 14;
+    repeated string variant_ids = 15;
+    repeated string sales_channel_ids = 16;
+}
+
+message ProductsRequest {
+    repeated string ids = 1;
+}
+
+message ProductsResponse {
+    repeated string products = 1;
 }
 
 message StockLocationResponse {

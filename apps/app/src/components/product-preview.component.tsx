@@ -59,6 +59,7 @@ export interface ProductPreviewProps {
   pricedProduct: PricedProduct | null;
   likesMetadata: ProductLikesMetadataResponse;
   isLoading: boolean;
+  purchasable: boolean;
   thumbnail?: string;
   title?: string;
   subtitle?: string;
@@ -89,6 +90,7 @@ export default function ProductPreviewComponent({
   storeProps,
   accountProps,
   parentRef,
+  purchasable,
   thumbnail,
   title,
   subtitle,
@@ -230,6 +232,7 @@ export default function ProductPreviewComponent({
         likesMetadata={likesMetadata}
         parentRef={parentRef}
         thumbnail={thumbnail}
+        purchasable={purchasable}
         title={title}
         subtitle={subtitle}
         description={translatedDescription}
@@ -257,6 +260,7 @@ export default function ProductPreviewComponent({
         likesMetadata={likesMetadata}
         parentRef={parentRef}
         thumbnail={thumbnail}
+        purchasable={purchasable}
         title={title}
         subtitle={subtitle}
         description={translatedDescription}
@@ -284,6 +288,7 @@ export default function ProductPreviewComponent({
         likesMetadata={likesMetadata}
         parentRef={parentRef}
         thumbnail={thumbnail}
+        purchasable={purchasable}
         title={title}
         subtitle={subtitle}
         description={translatedDescription}

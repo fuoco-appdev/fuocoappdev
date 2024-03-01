@@ -136,17 +136,17 @@
 
     /* Chrome, Edge, and Safari */
     *::-webkit-scrollbar {
-      width: $mp-2;
+      width: $mp-2 !important;
     }
 
     *::-webkit-scrollbar-track {
-      background: rgba(255, 255, 255, 0);
+      background: rgba(255, 255, 255, 0) !important;
     }
 
     *::-webkit-scrollbar-thumb {
-      background-color: $gray-100;
-      border-radius: $rounded-full;
-      border: $mp-2 solid transparent;
+      background-color: $gray-100 !important;
+      border-radius: $rounded-full !important;
+      border: $mp-2 solid transparent !important;
     }
   }
 }

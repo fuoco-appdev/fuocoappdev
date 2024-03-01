@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { filter, firstValueFrom, Subscription, take } from "rxjs";
 import { Controller } from "../controller";
-import { MoneyAmount, Product } from "@medusajs/medusa";
-import { ProductModel } from "../models/product.model";
+import { MoneyAmount, Product, ProductVariant } from "@medusajs/medusa";
+import { ProductModel, ProductTabType } from "../models/product.model";
 import { select } from "@ngneat/elf";
 import { StoreModel, StoreState } from "../models/store.model";
 import StoreController from "./store.controller";
@@ -29,21 +29,26 @@ import {
   ProductMetadataResponse,
 } from "../protobuf/core_pb";
 import { AccountState } from "../models/account.model";
+import { StockLocation } from "@medusajs/stock-location/dist/models";
+import { Index } from "meilisearch";
+import MeiliSearchService from "../services/meilisearch.service";
 
 class ProductController extends Controller {
   private readonly _model: ProductModel;
-  private _selectedPricedProductSubscription: Subscription | undefined;
-  private _selectedProductLikesSubscription: Subscription | undefined;
+  private _timerId: NodeJS.Timeout | number | undefined;
+  private _stockLocationsIndex: Index<Record<string, any>> | undefined;
   private _selectedSalesChannelSubscription: Subscription | undefined;
   private _customerGroupSubscription: Subscription | undefined;
   private _accountSubscription: Subscription | undefined;
-  private _selectedRegionSubscription: Subscription | undefined;
   private _medusaAccessTokenSubscription: Subscription | undefined;
+  private _activeTabIdSubscription: Subscription | undefined;
+  private _limit: number;
 
   constructor() {
     super();
 
     this._model = new ProductModel();
+    this._limit = 20;
 
     this.updateSelectedVariant = this.updateSelectedVariant.bind(this);
   }
@@ -53,51 +58,64 @@ class ProductController extends Controller {
   }
 
   public override initialize(renderCount: number): void {
+    this._stockLocationsIndex = MeiliSearchService.client?.index(
+      "stock_locations",
+    );
+
     this.initializeAsync(renderCount);
   }
 
-  public override load(renderCount: number): void {
-    this._selectedPricedProductSubscription?.unsubscribe();
-    this._selectedPricedProductSubscription = StoreController.model.store
-      .pipe(select((model: StoreState) => model.selectedPricedProduct))
-      .subscribe({
-        next: (product: PricedProduct | undefined) => {
-          if (!product) {
-            return;
+  public override async load(renderCount: number): Promise<void> {
+    const productId = await firstValueFrom(
+      this._model.store.pipe(
+        select((model) => model.productId),
+        filter((value) => value !== undefined),
+        take(1),
+      ),
+    );
+    await this.requestProductAsync(
+      productId,
+    );
+
+    this._activeTabIdSubscription?.unsubscribe();
+    this._activeTabIdSubscription = this._model.store.pipe(
+      select((model) => model.activeTabId),
+    ).subscribe({
+      next: async (value: ProductTabType) => {
+        const metadata = await firstValueFrom(
+          this._model.store.pipe(
+            select((model) => model.metadata),
+            filter((value) => value !== undefined),
+            take(1),
+          ),
+        );
+        if (value === ProductTabType.Price) {
+          const selectedSalesChannel: Partial<SalesChannel> | undefined =
+            await firstValueFrom(
+              StoreController.model.store.pipe(
+                select((model) => model.selectedSalesChannel),
+                take(1),
+              ),
+            );
+          if (
+            this._model.metadata?.salesChannelIds.includes(
+              selectedSalesChannel?.id ?? "",
+            )
+          ) {
+            await this.requestProductVariants(metadata?.variantIds ?? []);
           }
-
-          this._model.isLoading = true;
-          this.updateProduct(product);
-          const selectedVariant = this.getCheapestPrice(
-            this._model.product?.variants ?? [],
-          );
-          this.updateSelectedVariant(selectedVariant?.id ?? "");
-          this._model.isLoading = false;
-        },
-      });
-
-    this._selectedProductLikesSubscription?.unsubscribe();
-    this._selectedProductLikesSubscription = StoreController.model.store
-      .pipe(select((model: StoreState) => model.selectedProductLikesMetadata))
-      .subscribe({
-        next: (likesMedata: ProductLikesMetadataResponse | null) => {
-          this._model.likesMetadata = likesMedata;
-        },
-      });
+        } else if (value === ProductTabType.Locations) {
+          await this.loadStockLocationsAsync();
+        }
+      },
+    });
 
     this._accountSubscription?.unsubscribe();
     this._accountSubscription = AccountController.model.store
       .pipe(select((model: AccountState) => model.account))
       .subscribe({
         next: async (account: AccountResponse | undefined) => {
-          const productId = await firstValueFrom(
-            this._model.store.pipe(
-              select((model) => model.productId),
-              filter((value) => value !== undefined),
-              take(1),
-            ),
-          );
-          if (!productId) {
+          if (!account) {
             return;
           }
 
@@ -124,44 +142,6 @@ class ProductController extends Controller {
           } catch (error: any) {
             console.error(error);
           }
-
-          const selectedPricedProduct = await firstValueFrom(
-            StoreController.model.store.pipe(
-              select((model) => model.selectedPricedProduct),
-              take(1),
-            ),
-          );
-
-          if (selectedPricedProduct) {
-            return;
-          }
-
-          this._customerGroupSubscription?.unsubscribe();
-          this._customerGroupSubscription = AccountController.model.store
-            .pipe(select((model) => model.customerGroup))
-            .subscribe({
-              next: async (customerGroup: CustomerGroup | undefined) => {
-                const selectedRegion = await firstValueFrom(
-                  StoreController.model.store.pipe(
-                    select((model) => model.selectedRegion),
-                    filter((value) => value !== undefined),
-                    take(1),
-                  ),
-                );
-                const channel = StoreController.model.selectedSalesChannel;
-                if (!productId || !channel) {
-                  return;
-                }
-
-                if (this._model.productId !== this._model.product?.id) {
-                  this.requestProductWithChannelAsync(
-                    productId,
-                    channel?.id ?? "",
-                    selectedRegion?.id ?? "",
-                  );
-                }
-              },
-            });
         },
       });
   }
@@ -169,14 +149,50 @@ class ProductController extends Controller {
   public override disposeInitialization(renderCount: number): void {
     this._medusaAccessTokenSubscription?.unsubscribe();
     this._customerGroupSubscription?.unsubscribe();
-    this._selectedRegionSubscription?.unsubscribe();
     this._selectedSalesChannelSubscription?.unsubscribe();
   }
 
   public override disposeLoad(renderCount: number): void {
     this._accountSubscription?.unsubscribe();
-    this._selectedProductLikesSubscription?.unsubscribe();
-    this._selectedPricedProductSubscription?.unsubscribe();
+  }
+
+  public async loadStockLocationsAsync(): Promise<void> {
+    await this.searchStockLocationsAsync(
+      this._model.stockLocationInput,
+      0,
+      this._limit,
+    );
+  }
+
+  public async onStockLocationsNextScrollAsync(): Promise<void> {
+    if (this._model.areSearchedStockLocationsLoading) {
+      return;
+    }
+
+    this._model.searchedStockLocationsPagination =
+      this._model.searchedStockLocationsPagination + 1;
+    const offset = this._limit *
+      (this._model.searchedStockLocationsPagination - 1);
+    await this.searchStockLocationsAsync(
+      this._model.stockLocationInput,
+      offset,
+      this._limit,
+    );
+  }
+
+  public updateStockLocationInput(value: string): void {
+    this._model.stockLocationInput = value;
+    this._model.searchedStockLocationsPagination = 1;
+    this._model.searchedStockLocations = [];
+    this._model.hasMoreSearchedStockLocations = true;
+    clearTimeout(this._timerId as number | undefined);
+    this._timerId = setTimeout(() => {
+      this.searchStockLocationsAsync(value, 0, this._limit);
+    }, 750);
+  }
+
+  public updateSearchedStockLocationScrollPosition(value: number | undefined) {
+    this._model.searchedStockLocationScrollPosition = value;
   }
 
   public async requestProductLike(
@@ -217,32 +233,15 @@ class ProductController extends Controller {
 
   public async requestProductAsync(
     id: string,
-  ): Promise<PricedProduct | undefined> {
-    const productResponse = await MedusaService.medusa?.products.retrieve(id);
-    return productResponse?.product;
-  }
-
-  public async requestProductWithChannelAsync(
-    id: string,
-    salesChannelId: string,
-    regionId?: string,
   ): Promise<void> {
+    if (this._model.isLoading) {
+      return;
+    }
+
     this._model.isLoading = true;
-    const { cart } = CartController.model;
-    const productResponse = await MedusaService.medusa?.products.list({
-      id: id,
-      sales_channel_id: [salesChannelId],
-      ...(regionId && {
-        region_id: regionId,
-      }),
-      ...(cart && { cart_id: cart.id }),
-    });
-    const product = productResponse?.products[0];
-    this.updateProduct(product);
-    const selectedVariant = this.getCheapestPrice(
-      this._model.product?.variants ?? [],
-    );
-    this.updateSelectedVariant(selectedVariant?.id ?? "");
+    const productMetadataResponse = await MedusaService
+      .requestProductMetadataAsync(id);
+    this._model.metadata = productMetadataResponse;
     this._model.isLoading = false;
   }
 
@@ -250,28 +249,26 @@ class ProductController extends Controller {
     this._model.productId = value;
   }
 
-  public updateProduct(value: PricedProduct | undefined): void {
-    this._model.product = value;
-    this.updateMetadata(
-      new ProductMetadataResponse({
-        title: value?.title,
-        subtitle: value?.subtitle ?? undefined,
-        description: value?.description ?? undefined,
-        thumbnail: value?.thumbnail ?? undefined,
-      }),
-    );
-  }
-
   public updateMetadata(value: ProductMetadataResponse | undefined): void {
     this._model.metadata = value;
   }
 
+  public updateActiveTabId(value: ProductTabType): void {
+    this._model.prevTransitionKeyIndex = Object.values(ProductTabType).indexOf(
+      this._model.activeTabId,
+    );
+    this._model.transitionKeyIndex = Object.values(ProductTabType).indexOf(
+      value,
+    );
+    this._model.activeTabId = value;
+  }
+
   public updateSelectedVariant(id: string): void {
-    if (!this._model.product) {
+    if (!this._model.variants) {
       return;
     }
 
-    const variant = this._model.product.variants.find(
+    const variant = this._model.variants?.find(
       (value) => value.id === id,
     );
     this._model.selectedVariant = variant;
@@ -326,44 +323,121 @@ class ProductController extends Controller {
     return cheapestVariant;
   }
 
-  private async initializeAsync(renderCount: number): Promise<void> {
-    this._selectedRegionSubscription?.unsubscribe();
-    this._selectedRegionSubscription = StoreController.model.store
-      .pipe(select((model) => model.selectedRegion))
-      .subscribe({
-        next: async (region: Region | undefined) => {
-          const selectedPricedProduct = await firstValueFrom(
-            StoreController.model.store.pipe(
-              select((model) => model.selectedPricedProduct),
-              take(1),
-            ),
-          );
-          if (selectedPricedProduct) {
-            return;
-          }
+  public async searchStockLocationsAsync(
+    query: string,
+    offset: number = 0,
+    limit: number = 10,
+    force: boolean = false,
+  ): Promise<void> {
+    if (!force && this._model.areSearchedStockLocationsLoading) {
+      return;
+    }
 
-          if (this._model.productId !== this._model.product?.id) {
-            const selectedSalesChannel = await firstValueFrom(
-              StoreController.model.store.pipe(
-                select((model) => model.selectedSalesChannel),
-                filter((value) => value !== undefined),
-                take(1),
-              ),
-            );
-            this._model.product = undefined;
-            this.requestProductWithChannelAsync(
-              this._model.productId ?? "",
-              selectedSalesChannel?.id ?? "",
-              region?.id ?? "",
-            );
+    this._model.areSearchedStockLocationsLoading = true;
+
+    let filter = this.getFilter();
+    const result = await this._stockLocationsIndex?.search(query, {
+      filter: [filter],
+      offset: offset,
+      limit: limit,
+    });
+
+    let hits = result?.hits as StockLocation[] | undefined;
+    if (!hits) {
+      this._model.areSearchedStockLocationsLoading = false;
+      return;
+    }
+
+    if (hits.length <= 0 && offset <= 0) {
+      this._model.searchedStockLocations = [];
+    }
+
+    if (hits.length < limit && this._model.hasMoreSearchedStockLocations) {
+      this._model.hasMoreSearchedStockLocations = false;
+    }
+
+    if (hits.length <= 0) {
+      this._model.areSearchedStockLocationsLoading = false;
+      return;
+    }
+
+    if (hits.length >= limit && !this._model.hasMoreSearchedStockLocations) {
+      this._model.hasMoreSearchedStockLocations = true;
+    }
+
+    if (offset > 0) {
+      const stockLocations = this._model.searchedStockLocations;
+      this._model.searchedStockLocations = stockLocations.concat(hits);
+    } else {
+      this._model.searchedStockLocations = hits;
+    }
+
+    this._model.areSearchedStockLocationsLoading = false;
+  }
+
+  private async initializeAsync(renderCount: number): Promise<void> {
+    this._customerGroupSubscription?.unsubscribe();
+    this._customerGroupSubscription = AccountController.model.store
+      .pipe(select((model) => model.customerGroup))
+      .subscribe({
+        next: async (customerGroup: CustomerGroup | undefined) => {
+          if (!customerGroup) {
+            return;
           }
         },
       });
   }
 
-  private resetMedusaModel(): void {
-    this._model.product = undefined;
-    this._model.selectedVariant = undefined;
+  private async requestProductVariants(variantIds: string[]): Promise<void> {
+    const currentVariantIds = this._model.variants?.map((value) => value.id);
+    if (JSON.stringify(variantIds) === JSON.stringify(currentVariantIds)) {
+      return;
+    }
+
+    const salesChannel = await firstValueFrom(
+      StoreController.model.store.pipe(
+        select((model) => model.selectedSalesChannel),
+        filter((value) => value !== undefined),
+        take(1),
+      ),
+    );
+
+    const selectedRegion = await firstValueFrom(
+      StoreController.model.store.pipe(
+        select((model) => model.selectedRegion),
+        take(1),
+      ),
+    );
+
+    const cart = await firstValueFrom(
+      CartController.model.store.pipe(
+        select((model) => model.cart),
+        filter((value) => value !== undefined),
+        take(1),
+      ),
+    );
+
+    const response = await MedusaService.medusa?.products.variants.list({
+      id: variantIds,
+      sales_channel_id: salesChannel.id,
+      ...(selectedRegion && {
+        region_id: selectedRegion.id,
+      }),
+      ...(cart && { cart_id: cart.id }),
+    });
+    const variants = response?.variants;
+    this._model.variants = variants;
+    const selectedVariant = this.getCheapestPrice(
+      variants ?? [],
+    );
+    this.updateSelectedVariant(selectedVariant?.id ?? "");
+  }
+
+  private getFilter(): string {
+    let filter = `sales_channel_ids IN [${
+      this._model.metadata?.salesChannelIds.join(", ")
+    }]`;
+    return filter;
   }
 }
 

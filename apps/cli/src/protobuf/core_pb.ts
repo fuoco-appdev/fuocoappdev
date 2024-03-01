@@ -883,6 +883,66 @@ export class ProductMetadataResponse extends Message<ProductMetadataResponse> {
    */
   thumbnail = "";
 
+  /**
+   * @generated from field: string type = 5;
+   */
+  type = "";
+
+  /**
+   * @generated from field: string material = 6;
+   */
+  material = "";
+
+  /**
+   * @generated from field: int32 length = 7;
+   */
+  length = 0;
+
+  /**
+   * @generated from field: int32 weight = 8;
+   */
+  weight = 0;
+
+  /**
+   * @generated from field: int32 width = 9;
+   */
+  width = 0;
+
+  /**
+   * @generated from field: int32 height = 10;
+   */
+  height = 0;
+
+  /**
+   * @generated from field: string origin_country = 11;
+   */
+  originCountry = "";
+
+  /**
+   * @generated from field: string metadata = 12;
+   */
+  metadata = "";
+
+  /**
+   * @generated from field: repeated string tags = 13;
+   */
+  tags: string[] = [];
+
+  /**
+   * @generated from field: repeated string options = 14;
+   */
+  options: string[] = [];
+
+  /**
+   * @generated from field: repeated string variant_ids = 15;
+   */
+  variantIds: string[] = [];
+
+  /**
+   * @generated from field: repeated string sales_channel_ids = 16;
+   */
+  salesChannelIds: string[] = [];
+
   constructor(data?: PartialMessage<ProductMetadataResponse>) {
     super();
     proto3.util.initPartial(data, this);
@@ -895,6 +955,18 @@ export class ProductMetadataResponse extends Message<ProductMetadataResponse> {
     { no: 2, name: "subtitle", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "description", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "thumbnail", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "type", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "material", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 7, name: "length", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 8, name: "weight", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 9, name: "width", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 10, name: "height", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 11, name: "origin_country", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 12, name: "metadata", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 13, name: "tags", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 14, name: "options", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 15, name: "variant_ids", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 16, name: "sales_channel_ids", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ProductMetadataResponse {
@@ -911,6 +983,80 @@ export class ProductMetadataResponse extends Message<ProductMetadataResponse> {
 
   static equals(a: ProductMetadataResponse | PlainMessage<ProductMetadataResponse> | undefined, b: ProductMetadataResponse | PlainMessage<ProductMetadataResponse> | undefined): boolean {
     return proto3.util.equals(ProductMetadataResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message core.ProductsRequest
+ */
+export class ProductsRequest extends Message<ProductsRequest> {
+  /**
+   * @generated from field: repeated string ids = 1;
+   */
+  ids: string[] = [];
+
+  constructor(data?: PartialMessage<ProductsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.ProductsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "ids", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ProductsRequest {
+    return new ProductsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ProductsRequest {
+    return new ProductsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ProductsRequest {
+    return new ProductsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ProductsRequest | PlainMessage<ProductsRequest> | undefined, b: ProductsRequest | PlainMessage<ProductsRequest> | undefined): boolean {
+    return proto3.util.equals(ProductsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message core.ProductsResponse
+ */
+export class ProductsResponse extends Message<ProductsResponse> {
+  /**
+   * @generated from field: repeated string products = 1;
+   */
+  products: string[] = [];
+
+  constructor(data?: PartialMessage<ProductsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.ProductsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "products", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ProductsResponse {
+    return new ProductsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ProductsResponse {
+    return new ProductsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ProductsResponse {
+    return new ProductsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ProductsResponse | PlainMessage<ProductsResponse> | undefined, b: ProductsResponse | PlainMessage<ProductsResponse> | undefined): boolean {
+    return proto3.util.equals(ProductsResponse, a, b);
   }
 }
 

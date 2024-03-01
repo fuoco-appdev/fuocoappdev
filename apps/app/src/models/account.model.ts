@@ -1,19 +1,25 @@
-import { createStore, withProps } from '@ngneat/elf';
-import { Model } from '../model';
-import * as core from '../protobuf/core_pb';
-import { Customer, Order, Address, CustomerGroup } from '@medusajs/medusa';
+import { createStore, withProps } from "@ngneat/elf";
+import { Model } from "../model";
+import * as core from "../protobuf/core_pb";
+import {
+  Address,
+  Customer,
+  CustomerGroup,
+  Order,
+  Product,
+} from "@medusajs/medusa";
 import {
   ProfileFormErrors,
   ProfileFormValues,
-} from '../components/account-profile-form.component';
+} from "../components/account-profile-form.component";
 import {
   AddressFormErrors,
   AddressFormValues,
-} from '../components/address-form.component';
-import { RoutePathsType } from '../route-paths';
-import { User } from '@supabase/supabase-js';
-import { ProductLikesMetadataResponse } from '../protobuf/core_pb';
-import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+} from "../components/address-form.component";
+import { RoutePathsType } from "../route-paths";
+import { User } from "@supabase/supabase-js";
+import { ProductLikesMetadataResponse } from "../protobuf/core_pb";
+import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
 
 export interface ProfileFormErrorStrings {
   empty?: string;
@@ -50,7 +56,7 @@ export interface AccountState {
   isUpdateGeneralInfoLoading: boolean;
   hasMoreLikes: boolean;
   likesScrollPosition: number | undefined;
-  likedProducts: PricedProduct[];
+  likedProducts: Product[];
   productLikesMetadata: Record<string, ProductLikesMetadataResponse>;
   likedProductPagination: number;
   areLikedProductsLoading: boolean;
@@ -78,7 +84,7 @@ export class AccountModel extends Model {
   constructor() {
     super(
       createStore(
-        { name: 'account' },
+        { name: "account" },
         withProps<AccountState>({
           user: null,
           account: undefined,
@@ -86,49 +92,49 @@ export class AccountModel extends Model {
           customerGroup: undefined,
           isCustomerGroupLoading: false,
           profileForm: {
-            firstName: '',
-            lastName: '',
-            phoneNumber: '',
+            firstName: "",
+            lastName: "",
+            phoneNumber: "",
           },
           profileFormErrors: {},
           errorStrings: {},
           profileUrl: undefined,
-          username: '',
+          username: "",
           orders: [],
           orderPagination: 1,
           hasMoreOrders: true,
           shippingForm: {
-            email: '',
-            firstName: '',
-            lastName: '',
-            company: '',
-            address: '',
-            apartments: '',
-            postalCode: '',
-            city: '',
-            countryCode: '',
-            region: '',
-            phoneNumber: '',
+            email: "",
+            firstName: "",
+            lastName: "",
+            company: "",
+            address: "",
+            apartments: "",
+            postalCode: "",
+            city: "",
+            countryCode: "",
+            region: "",
+            phoneNumber: "",
           },
           shippingFormErrors: {},
           addressErrorStrings: {},
           selectedAddress: undefined,
           editShippingForm: {
-            email: '',
-            firstName: '',
-            lastName: '',
-            company: '',
-            address: '',
-            apartments: '',
-            postalCode: '',
-            city: '',
-            countryCode: '',
-            region: '',
-            phoneNumber: '',
+            email: "",
+            firstName: "",
+            lastName: "",
+            company: "",
+            address: "",
+            apartments: "",
+            postalCode: "",
+            city: "",
+            countryCode: "",
+            region: "",
+            phoneNumber: "",
           },
           areOrdersLoading: true,
           editShippingFormErrors: {},
-          activeTabId: '/account/likes',
+          activeTabId: "/account/likes",
           prevTabIndex: 0,
           activeTabIndex: 0,
           ordersScrollPosition: undefined,
@@ -143,7 +149,7 @@ export class AccountModel extends Model {
           selectedLikedProduct: undefined,
           selectedProductLikes: undefined,
           isAvatarUploadLoading: false,
-          addFriendsInput: '',
+          addFriendsInput: "",
           addFriendsPagination: 1,
           hasMoreAddFriends: true,
           areAddFriendsLoading: false,
@@ -158,8 +164,8 @@ export class AccountModel extends Model {
           likeCount: undefined,
           followerCount: undefined,
           followingCount: undefined,
-        })
-      )
+        }),
+      ),
     );
   }
 
@@ -476,11 +482,11 @@ export class AccountModel extends Model {
     }
   }
 
-  public get likedProducts(): PricedProduct[] {
+  public get likedProducts(): Product[] {
     return this.store?.getValue().likedProducts;
   }
 
-  public set likedProducts(value: PricedProduct[]) {
+  public set likedProducts(value: Product[]) {
     if (JSON.stringify(this.likedProducts) !== JSON.stringify(value)) {
       this.store?.update((state) => ({ ...state, likedProducts: value }));
     }
@@ -494,7 +500,7 @@ export class AccountModel extends Model {
   }
 
   public set productLikesMetadata(
-    value: Record<string, ProductLikesMetadataResponse>
+    value: Record<string, ProductLikesMetadataResponse>,
   ) {
     if (JSON.stringify(this.productLikesMetadata) !== JSON.stringify(value)) {
       this.store?.update((state) => ({
@@ -545,7 +551,7 @@ export class AccountModel extends Model {
   }
 
   public set selectedProductLikes(
-    value: ProductLikesMetadataResponse | undefined
+    value: ProductLikesMetadataResponse | undefined,
   ) {
     if (JSON.stringify(this.selectedProductLikes) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, selectedProductLikes: value }));
@@ -661,7 +667,7 @@ export class AccountModel extends Model {
   }
 
   public set addFriendAccountFollowers(
-    value: Record<string, core.AccountFollowerResponse>
+    value: Record<string, core.AccountFollowerResponse>,
   ) {
     if (
       JSON.stringify(this.addFriendAccountFollowers) !== JSON.stringify(value)
@@ -704,7 +710,7 @@ export class AccountModel extends Model {
   }
 
   public set followRequestCustomers(
-    value: Record<string, core.CustomerResponse>
+    value: Record<string, core.CustomerResponse>,
   ) {
     if (JSON.stringify(this.followRequestCustomers) !== JSON.stringify(value)) {
       this.store?.update((state) => ({
@@ -722,11 +728,11 @@ export class AccountModel extends Model {
   }
 
   public set followRequestAccountFollowers(
-    value: Record<string, core.AccountFollowerResponse>
+    value: Record<string, core.AccountFollowerResponse>,
   ) {
     if (
       JSON.stringify(this.followRequestAccountFollowers) !==
-      JSON.stringify(value)
+        JSON.stringify(value)
     ) {
       this.store.update((state) => ({
         ...state,

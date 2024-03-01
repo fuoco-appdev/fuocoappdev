@@ -25,6 +25,7 @@ import { createPortal } from 'react-dom';
 import CartVariantItemComponent from '../cart-variant-item.component';
 import { MedusaProductTypeNames } from '../../types/medusa.type';
 import { useAccountOutletContext } from '../account.component';
+import { Product } from '@medusajs/medusa';
 
 export default function AccountLikesMobileComponent({
   storeProps,
@@ -73,49 +74,48 @@ export default function AccountLikesMobileComponent({
             styles['items-container-mobile'],
           ].join(' ')}
         >
-          {accountProps.likedProducts.map(
-            (product: PricedProduct, index: number) => {
-              const productLikesMetadata = Object.keys(
-                accountProps.productLikesMetadata
-              ).includes(product.id ?? '')
-                ? accountProps.productLikesMetadata[product.id ?? '']
-                : null;
-              return (
-                <ProductPreviewComponent
-                  parentRef={rootRef}
-                  key={index}
-                  storeProps={storeProps}
-                  accountProps={accountProps}
-                  thumbnail={product.thumbnail ?? undefined}
-                  title={product.title ?? undefined}
-                  subtitle={product.subtitle ?? undefined}
-                  description={product.description ?? undefined}
-                  type={product.type ?? undefined}
-                  pricedProduct={product}
-                  isLoading={
-                    isPreviewLoading &&
-                    accountProps.selectedLikedProduct?.id === product?.id
-                  }
-                  likesMetadata={
-                    productLikesMetadata ??
-                    core.ProductLikesMetadataResponse.prototype
-                  }
-                  onClick={() =>
-                    onProductPreviewClick(
-                      context?.scrollContainerRef?.current?.scrollTop ?? 0,
-                      product,
-                      productLikesMetadata
-                    )
-                  }
-                  onRest={() => onProductPreviewRest(product)}
-                  onAddToCart={() => onProductPreviewAddToCart(product)}
-                  onLikeChanged={(isLiked: boolean) =>
-                    onProductPreviewLikeChanged(isLiked, product)
-                  }
-                />
-              );
-            }
-          )}
+          {accountProps.likedProducts.map((product: Product, index: number) => {
+            const productLikesMetadata = Object.keys(
+              accountProps.productLikesMetadata
+            ).includes(product.id ?? '')
+              ? accountProps.productLikesMetadata[product.id ?? '']
+              : null;
+            return (
+              <ProductPreviewComponent
+                parentRef={rootRef}
+                key={index}
+                storeProps={storeProps}
+                accountProps={accountProps}
+                purchasable={false}
+                thumbnail={product.thumbnail ?? undefined}
+                title={product.title ?? undefined}
+                subtitle={product.subtitle ?? undefined}
+                description={product.description ?? undefined}
+                type={product.type ?? undefined}
+                pricedProduct={null}
+                isLoading={
+                  isPreviewLoading &&
+                  accountProps.selectedLikedProduct?.id === product?.id
+                }
+                likesMetadata={
+                  productLikesMetadata ??
+                  core.ProductLikesMetadataResponse.prototype
+                }
+                onClick={() =>
+                  onProductPreviewClick(
+                    context?.scrollContainerRef?.current?.scrollTop ?? 0,
+                    product,
+                    productLikesMetadata
+                  )
+                }
+                onRest={() => onProductPreviewRest(product)}
+                onAddToCart={() => onProductPreviewAddToCart(product)}
+                onLikeChanged={(isLiked: boolean) =>
+                  onProductPreviewLikeChanged(isLiked, product)
+                }
+              />
+            );
+          })}
           <img
             src={'../assets/svg/ring-resize-dark.svg'}
             className={styles['loading-ring']}

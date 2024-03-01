@@ -35,6 +35,7 @@ export default function ProductPreviewMobileComponent({
   likesMetadata,
   pricedProduct,
   accountProps,
+  purchasable,
   parentRef,
   onClick,
   onRest,
@@ -279,7 +280,7 @@ export default function ProductPreviewMobileComponent({
                     styles['thumbnail-bottom-content-mobile'],
                   ].join(' ')}
                 >
-                  {pricedProduct && selectedVariantId && (
+                  {purchasable && pricedProduct && selectedVariantId && (
                     <Button
                       classNames={{ button: styles['floating-button'] }}
                       rippleProps={{
@@ -301,7 +302,7 @@ export default function ProductPreviewMobileComponent({
                       loading={isLoading}
                     />
                   )}
-                  {!pricedProduct && (
+                  {purchasable && !pricedProduct && (
                     <Skeleton width={46} height={46} borderRadius={46} />
                   )}
                 </div>

@@ -1,53 +1,90 @@
-import { createStore, withProps } from '@ngneat/elf';
-import { Model } from '../model';
+import { createStore, withProps } from "@ngneat/elf";
+import { Model } from "../model";
 import {
   ProductLikesMetadataResponse,
   ProductMetadataResponse,
-} from '../protobuf/core_pb';
-import { ProductTag, ProductOption, MoneyAmount } from '@medusajs/medusa';
+} from "../protobuf/core_pb";
+import { MoneyAmount, ProductOption, ProductTag } from "@medusajs/medusa";
 import {
-  PricedVariant,
   PricedProduct,
-} from '@medusajs/medusa/dist/types/pricing';
+  PricedVariant,
+} from "@medusajs/medusa/dist/types/pricing";
+import { StockLocation } from "@medusajs/stock-location/dist/models";
+
+export enum ProductTabType {
+  Price = "price",
+  Locations = "locations",
+}
 
 export enum ProductOptions {
-  Alcohol = 'Alcohol',
-  Brand = 'Brand',
-  Varietals = 'Varietals',
-  ProducerBottler = 'Producer Bottler',
-  Code = 'Code',
-  Format = 'Format',
-  Region = 'Region',
-  ResidualSugar = 'Residual Sugar',
-  Type = 'Type',
-  UVC = 'UVC',
-  Vintage = 'Vintage',
+  Alcohol = "Alcohol",
+  Brand = "Brand",
+  Varietals = "Varietals",
+  ProducerBottler = "Producer Bottler",
+  Code = "Code",
+  Format = "Format",
+  Region = "Region",
+  ResidualSugar = "Residual Sugar",
+  Type = "Type",
+  UVC = "UVC",
+  Vintage = "Vintage",
 }
 
 export interface ProductState {
   isLoading: boolean;
   productId: string | undefined;
-  product: PricedProduct | undefined;
+  variants: PricedVariant[] | undefined;
   metadata: ProductMetadataResponse | undefined;
   selectedVariant: PricedVariant | undefined;
   likesMetadata: ProductLikesMetadataResponse | null;
+  activeTabId: ProductTabType;
+  prevTransitionKeyIndex: number;
+  transitionKeyIndex: number;
+  stockLocationInput: string;
+  searchedStockLocations: StockLocation[];
+  searchedStockLocationsPagination: number;
+  hasMoreSearchedStockLocations: boolean;
+  searchedStockLocationScrollPosition: number | undefined;
+  areSearchedStockLocationsLoading: boolean;
 }
 
 export class ProductModel extends Model {
   constructor() {
     super(
       createStore(
-        { name: 'product' },
+        { name: "product" },
         withProps<ProductState>({
-          isLoading: true,
+          isLoading: false,
           productId: undefined,
-          product: undefined,
+          variants: undefined,
           metadata: undefined,
           selectedVariant: undefined,
           likesMetadata: null,
-        })
-      )
+          activeTabId: ProductTabType.Locations,
+          prevTransitionKeyIndex: 0,
+          transitionKeyIndex: 0,
+          stockLocationInput: "",
+          searchedStockLocations: [],
+          searchedStockLocationsPagination: 1,
+          hasMoreSearchedStockLocations: true,
+          searchedStockLocationScrollPosition: 0,
+          areSearchedStockLocationsLoading: false,
+        }),
+      ),
     );
+  }
+
+  public get stockLocationInput(): string {
+    return this.store.getValue().stockLocationInput;
+  }
+
+  public set stockLocationInput(value: string) {
+    if (this.stockLocationInput !== value) {
+      this.store.update((state) => ({
+        ...state,
+        stockLocationInput: value,
+      }));
+    }
   }
 
   public get isLoading(): boolean {
@@ -70,13 +107,13 @@ export class ProductModel extends Model {
     }
   }
 
-  public get product(): PricedProduct | undefined {
-    return this.store.getValue().product;
+  public get variants(): PricedVariant[] | undefined {
+    return this.store.getValue().variants;
   }
 
-  public set product(value: PricedProduct | undefined) {
-    if (JSON.stringify(this.product) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, product: value }));
+  public set variants(value: PricedVariant[] | undefined) {
+    if (JSON.stringify(this.variants) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, variants: value }));
     }
   }
 
@@ -107,6 +144,104 @@ export class ProductModel extends Model {
   public set likesMetadata(value: ProductLikesMetadataResponse | null) {
     if (JSON.stringify(this.likesMetadata) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, likesMetadata: value }));
+    }
+  }
+
+  public get activeTabId(): ProductTabType {
+    return this.store.getValue().activeTabId;
+  }
+
+  public set activeTabId(value: ProductTabType) {
+    if (JSON.stringify(this.activeTabId) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, activeTabId: value }));
+    }
+  }
+
+  public get prevTransitionKeyIndex(): number {
+    return this.store?.getValue().prevTransitionKeyIndex;
+  }
+
+  public set prevTransitionKeyIndex(value: number) {
+    if (this.prevTransitionKeyIndex !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        prevTransitionKeyIndex: value,
+      }));
+    }
+  }
+
+  public get transitionKeyIndex(): number {
+    return this.store?.getValue().transitionKeyIndex;
+  }
+
+  public set transitionKeyIndex(value: number) {
+    if (this.transitionKeyIndex !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        transitionKeyIndex: value,
+      }));
+    }
+  }
+
+  public get searchedStockLocations(): StockLocation[] {
+    return this.store.getValue().searchedStockLocations;
+  }
+
+  public set searchedStockLocations(value: StockLocation[]) {
+    if (JSON.stringify(this.searchedStockLocations) !== JSON.stringify(value)) {
+      this.store.update((state) => ({
+        ...state,
+        searchedStockLocations: value,
+      }));
+    }
+  }
+
+  public get searchedStockLocationsPagination(): number {
+    return this.store.getValue().searchedStockLocationsPagination;
+  }
+
+  public set searchedStockLocationsPagination(value: number) {
+    if (this.searchedStockLocationsPagination !== value) {
+      this.store.update((state) => ({
+        ...state,
+        searchedStockLocationsPagination: value,
+      }));
+    }
+  }
+
+  public get hasMoreSearchedStockLocations(): boolean {
+    return this.store.getValue().hasMoreSearchedStockLocations;
+  }
+
+  public set hasMoreSearchedStockLocations(value: boolean) {
+    if (this.hasMoreSearchedStockLocations !== value) {
+      this.store.update((state) => ({
+        ...state,
+        hasMoreSearchedStockLocations: value,
+      }));
+    }
+  }
+
+  public get searchedStockLocationScrollPosition(): number | undefined {
+    return this.store.getValue().searchedStockLocationScrollPosition;
+  }
+
+  public set searchedStockLocationScrollPosition(value: number | undefined) {
+    if (this.searchedStockLocationScrollPosition !== value) {
+      this.searchedStockLocationScrollPosition = value;
+    }
+  }
+
+  public get areSearchedStockLocationsLoading(): boolean {
+    return this.store.getValue().areSearchedStockLocationsLoading;
+  }
+
+  public set areSearchedStockLocationsLoading(value: boolean) {
+    if (this.areSearchedStockLocationsLoading !== value) {
+      this.store.update((state) => ({
+        ...state,
+        areSearchedStockLocationsLoading: value,
+      }));
     }
   }
 }
