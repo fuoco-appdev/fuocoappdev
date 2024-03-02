@@ -147,7 +147,7 @@ export default function ExploreTabletComponent({
               onScroll(e);
               const elementHeight = topBarRef.current?.clientHeight ?? 0;
               const scrollTop = e.currentTarget.scrollTop;
-              if (prevScrollTop > scrollTop) {
+              if (prevScrollTop >= scrollTop) {
                 yPosition += prevScrollTop - scrollTop;
                 if (yPosition >= 0) {
                   yPosition = 0;

@@ -177,7 +177,7 @@ export default function AccountDesktopComponent({
             onScroll(e);
             const elementHeight = topBarRef.current?.clientHeight ?? 0;
             const scrollTop = e.currentTarget.scrollTop;
-            if (prevPreviewScrollTop > scrollTop) {
+            if (prevPreviewScrollTop >= scrollTop) {
               yPosition += prevPreviewScrollTop - scrollTop;
               if (yPosition >= 0) {
                 yPosition = 0;

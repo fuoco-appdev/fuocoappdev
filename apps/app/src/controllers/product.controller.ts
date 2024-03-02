@@ -119,29 +119,7 @@ class ProductController extends Controller {
             return;
           }
 
-          const selectedProductLikesMetadata = await firstValueFrom(
-            StoreController.model.store.pipe(
-              select((model) => model.selectedProductLikesMetadata),
-              take(1),
-            ),
-          );
-          if (selectedProductLikesMetadata) {
-            return;
-          }
-
-          try {
-            const productLikesResponse = await ProductLikesService
-              .requestMetadataAsync({
-                accountId: account?.id ?? "",
-                productIds: [productId],
-              });
-
-            if (productLikesResponse.metadata.length > 0) {
-              this._model.likesMetadata = productLikesResponse.metadata[0];
-            }
-          } catch (error: any) {
-            console.error(error);
-          }
+          await this.requestLikesMetadataAsync(productId, account?.id);
         },
       });
   }
@@ -239,10 +217,42 @@ class ProductController extends Controller {
     }
 
     this._model.isLoading = true;
-    const productMetadataResponse = await MedusaService
-      .requestProductMetadataAsync(id);
-    this._model.metadata = productMetadataResponse;
+    try {
+      const productMetadataResponse = await MedusaService
+        .requestProductMetadataAsync(id);
+      this._model.metadata = productMetadataResponse;
+    } catch (error: any) {
+      console.error(error);
+    }
+
+    const account = await firstValueFrom(
+      AccountController.model.store.pipe(
+        select((model) => model.account),
+        take(1),
+      ),
+    );
+    await this.requestLikesMetadataAsync(id, account?.id);
+
     this._model.isLoading = false;
+  }
+
+  public async requestLikesMetadataAsync(
+    productId: string,
+    accountId: string | undefined,
+  ): Promise<void> {
+    try {
+      const productLikesResponse = await ProductLikesService
+        .requestMetadataAsync({
+          accountId: accountId ?? "",
+          productIds: [productId],
+        });
+
+      if (productLikesResponse.metadata.length > 0) {
+        this._model.likesMetadata = productLikesResponse.metadata[0];
+      }
+    } catch (error: any) {
+      console.error(error);
+    }
   }
 
   public updateProductId(value: string | undefined): void {
