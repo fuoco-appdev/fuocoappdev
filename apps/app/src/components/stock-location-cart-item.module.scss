@@ -1,0 +1,270 @@
+@import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
+
+.root {
+    width: 100%;
+    
+    & .ripples {
+        width: 100%;
+        height: 100%;
+    }
+
+    & .ripples-selected {
+        background-color: rgba(133, 38, 122, .1);
+    }
+
+    & .container {
+        width: 100%;
+    
+        & .details {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            margin-bottom: $mp-1;
+    
+            & .title-container {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: $mp-2;
+
+                & .title {
+                    color: $brand-900;
+                    font-size: $font-size-sm;
+                    font-weight: $font-weight-bold;
+                    margin-bottom: $mp-1;
+                }
+
+                & .title-selected {
+                    color: $brand-700;
+                }
+    
+                & .location {
+                    display: flex;
+                    flex-direction: row;
+                    gap: $mp-1;
+                    color: $brand-900;
+                    font-size: $font-size-xs;
+                    text-transform: capitalize;
+                    margin-bottom: $mp-1;
+                }
+
+                & .description {
+                    display: flex;
+                    flex-direction: row;
+                    gap: $mp-1;
+                    color: $brand-900;
+                    font-size: $font-size-xs;
+                }
+            }
+    
+            & .right-details-container {
+                display: -webkit-box;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-orient: horizontal;
+                -webkit-box-direction: normal;
+                    -ms-flex-direction: row;
+                        flex-direction: row;
+                -webkit-box-pack: right;
+                    -ms-flex-pack: right;
+                        justify-content: right;
+                -webkit-box-flex: 1;
+                    -ms-flex: 1;
+                        flex: 1;
+
+                & .right-details-content {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+
+                    & .cart-number-container {
+                        border-radius: $rounded-full;
+                        border: 1px solid $brand-500;
+                        text-align: center;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        width: 24px;
+                        height: 24px;
+                    }
+
+                    & .cart-number-container-selected {
+                        background-color: $brand-500;
+                    }
+
+                    & .cart-number {
+                        font-size: 10px;
+                        font-weight: $font-weight-bold;
+                        line-height: 24px;
+                        color: $brand-500;
+                    }
+
+                    & .cart-number-selected {
+                        color: #fff;
+                    }
+                }
+        
+            }
+    
+            & .remove-container {
+                & .remove-button {
+                    color: $brand-900;
+                }
+            }
+        }
+    }
+}
+
+.root:hover {
+    & .container {    
+        & .details {    
+            & .title-container {
+                & .title {
+                    color: $brand-700;
+                }
+    
+                & .location {
+                    color: $brand-700;
+                }
+
+                & .description {
+                    color: $brand-700;
+                }
+            }
+        }
+    }
+}
+
+.root-desktop {
+    & .ripples-desktop {
+        cursor: pointer;
+        -webkit-transition: all $transition-standard-easing 150ms;
+        -o-transition: all $transition-standard-easing 150ms;
+        transition: all $transition-standard-easing 150ms;
+    }
+
+    & .container-desktop {   
+        padding: $mp-3 $mp-6;
+
+        & .details-desktop {       
+            & .thumbnail-desktop {        
+                & .thumbnail-image-desktop {
+                }
+            }
+    
+            & .title-container-desktop {
+                & .title-desktop {
+                }
+    
+                & .status-desktop {
+                }
+            }
+    
+            & .right-details-container-desktop {
+                & .right-details-content-desktop {
+                    & .pricing-desktop {
+                    }
+                }
+        
+            }
+    
+            & .remove-container-desktop {
+                & .remove-button-desktop {
+                }
+            }
+        }
+    }
+}
+
+.root-tablet {
+    & .ripples-tablet {
+        
+    }
+
+    & .container-tablet {   
+        padding: $mp-4 $mp-6;
+
+        & .details-tablet {       
+            & .thumbnail-tablet {        
+                & .thumbnail-image-tablet {
+                }
+            }
+    
+            & .title-container-tablet {
+                & .title-tablet {
+                }
+    
+                & .status-tablet {
+                }
+            }
+    
+            & .right-details-container-tablet {
+                & .right-details-content-tablet {
+                    & .pricing-tablet {
+                    }
+                }
+        
+            }
+    
+            & .remove-container-tablet {
+                & .remove-button-tablet {
+                }
+            }
+        }
+    }
+}
+
+.root-mobile {
+    & .ripples-mobile {
+        
+    }
+
+    & .container-mobile {   
+        padding: $mp-2 $mp-4;
+
+        & .details-mobile {       
+            & .thumbnail-mobile {        
+                & .thumbnail-image-mobile {
+                }
+            }
+    
+            & .title-container-mobile {
+                & .title-mobile {
+                }
+    
+                & .status-mobile {
+                }
+            }
+    
+            & .right-details-container-mobile {
+                & .right-details-content-mobile {
+                    & .pricing-mobile {
+                    }
+                }
+        
+            }
+    
+            & .remove-container-mobile {
+                & .remove-button-mobile {
+                }
+            }
+        }
+    }
+}
+
+.overlay {
+    z-index: 24;
+}
+
+.avatar-container {
+    width: 32px;
+    height: 32px;
+    background-color: #fff !important;
+}
+  
+.no-avatar-container {
+    width: 32px;
+    height: 32px;
+    background-color: $brand-700 !important;
+    color: #fff !important;
+}

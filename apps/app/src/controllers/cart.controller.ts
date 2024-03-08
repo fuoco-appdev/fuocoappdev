@@ -298,8 +298,6 @@ class CartController extends Controller {
         console.error(error);
       }
     }
-
-    console.log(this._model.carts);
   }
 
   private async createCartAsync(

@@ -58,8 +58,6 @@ class LoginController {
         console.error("No url!");
         return;
       }
-
-      console.log(url);
     } catch (error: any) {
       console.error(error);
       await this.promptLoginAsync();
