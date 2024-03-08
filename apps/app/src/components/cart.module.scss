@@ -4,7 +4,35 @@
     width: 100%;
     min-width: 100%;
     height: 100%;
-    overflow-y: auto;
+
+    & .shopping-carts-container {
+        & .top-bar-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            height: 56px;
+            gap: $mp-2;
+            color: $brand-900;
+
+            & .shopping-carts-title {
+                font-size: $font-size-sm;
+                font-weight: $font-weight-bold;
+            }
+        }
+        
+        & .shopping-cart-items-container {
+            padding: $mp-4 0;
+            overflow-y: auto;
+        }
+    }
+
+    & .cart-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
 
     & .account-container {
         margin-top: 56px;
@@ -286,21 +314,33 @@
 }
 
 .root-desktop {
+    display: flex;
+    flex-direction: row;
     height: 100%;
-    padding: $mp-10;
+
+    & .shopping-carts-container-desktop {
+        min-width: 320px;
+        max-width: 320px;
+        height: 100%;
+        border-right-width: 1px;
+        border-left-width: 0px;
+        border-top-width: 0px;
+        border-bottom-width: 0px;
+        border-color: rgba(42, 42, 95, .6);
+        border-style: solid;
+    }
+
+    & .cart-container-desktop {
+        overflow-y: auto;
+        padding: $mp-10;
+    }
 
     & .content-desktop {
-        display: -webkit-box;
-        display: -ms-flexbox;
         display: flex;
-        -webkit-box-orient: horizontal;
-        -webkit-box-direction: normal;
-            -ms-flex-direction: row;
-                flex-direction: row;
-        -webkit-box-pack: center;
-            -ms-flex-pack: center;
-                justify-content: center;
+        flex-direction: column;
+        justify-content: center;
         gap: $mp-6;
+        width: 556px;
 
         & .card-container-desktop {
             padding: $mp-6;

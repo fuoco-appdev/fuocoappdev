@@ -1061,6 +1061,43 @@ export class ProductsResponse extends Message<ProductsResponse> {
 }
 
 /**
+ * @generated from message core.StockLocationsRequest
+ */
+export class StockLocationsRequest extends Message<StockLocationsRequest> {
+  /**
+   * @generated from field: repeated string ids = 1;
+   */
+  ids: string[] = [];
+
+  constructor(data?: PartialMessage<StockLocationsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "core.StockLocationsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "ids", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): StockLocationsRequest {
+    return new StockLocationsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): StockLocationsRequest {
+    return new StockLocationsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): StockLocationsRequest {
+    return new StockLocationsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: StockLocationsRequest | PlainMessage<StockLocationsRequest> | undefined, b: StockLocationsRequest | PlainMessage<StockLocationsRequest> | undefined): boolean {
+    return proto3.util.equals(StockLocationsRequest, a, b);
+  }
+}
+
+/**
  * @generated from message core.StockLocationResponse
  */
 export class StockLocationResponse extends Message<StockLocationResponse> {

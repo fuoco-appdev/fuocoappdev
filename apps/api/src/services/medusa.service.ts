@@ -17,6 +17,7 @@ import {
   ProductsResponse,
   RemoveCustomerFromGroupRequest,
   StockLocationResponse,
+  StockLocationsRequest,
   StockLocationsResponse,
   UpdateCustomerRequest,
   UpdateCustomerResponse,
@@ -481,7 +482,36 @@ class MedusaService {
     return priceListsResponse;
   }
 
-  public async getStockLocationsAsync(): Promise<
+  public async getStockLocationsAsync(
+    request: InstanceType<typeof StockLocationsRequest>,
+  ): Promise<
+    InstanceType<typeof StockLocationsResponse>
+  > {
+    const ids = request.getIdsList();
+    const params = new URLSearchParams({
+      expand: "address",
+    });
+    ids.map((value) => params.append("id", value));
+
+    const stockLocationsResponse = await axiod.get(
+      `${this._url}/admin/stock-locations?${params.toString()}`,
+      {
+        headers: {
+          "x-medusa-access-token": this._token,
+        },
+      },
+    );
+
+    const stockLocations = new StockLocationsResponse();
+    const data = stockLocationsResponse.data["stock_locations"];
+    for (const location of data) {
+      stockLocations.addLocations(JSON.stringify(location));
+    }
+
+    return stockLocations;
+  }
+
+  public async getStockLocationsAllAsync(): Promise<
     InstanceType<typeof StockLocationsResponse>
   > {
     const params = new URLSearchParams({

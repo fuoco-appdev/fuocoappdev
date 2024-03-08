@@ -209,7 +209,8 @@
     flex-direction: row;
 
     & .search-container-desktop {
-        width: 460px;
+        min-width: 380px;
+        max-width: 380px;
         height: 100%;
         border-right-width: 1px;
         border-left-width: 0px;

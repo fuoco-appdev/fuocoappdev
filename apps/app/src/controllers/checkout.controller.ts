@@ -1,38 +1,39 @@
-import { Subscription, filter, firstValueFrom, take } from 'rxjs';
+import { filter, firstValueFrom, Subscription, take } from "rxjs";
 import {
   AddressFormErrors,
   AddressFormValues,
-} from '../components/address-form.component';
-import { Controller } from '../controller';
-import { CheckoutModel, ProviderType } from '../models/checkout.model';
-import MedusaService from '../services/medusa.service';
-import CartController from './cart.controller';
+} from "../components/address-form.component";
+import { Controller } from "../controller";
+import { CheckoutModel, ProviderType } from "../models/checkout.model";
+import MedusaService from "../services/medusa.service";
+import CartController from "./cart.controller";
 import {
   AddressPayload,
   Cart,
+  Customer,
+  Order,
+  Region,
   ShippingMethod,
   ShippingOption,
-  Order,
   Swap,
-  Customer,
-  Region,
-} from '@medusajs/medusa';
-import { select } from '@ngneat/elf';
-import WindowController from './window.controller';
-import AccountController from './account.controller';
+} from "@medusajs/medusa";
+import { select } from "@ngneat/elf";
+import WindowController from "./window.controller";
+import AccountController from "./account.controller";
 import {
   Stripe,
-  StripeElements,
   StripeCardNumberElement,
-} from '@stripe/stripe-js';
-import SupabaseService from '../services/supabase.service';
-import { AuthChangeEvent, Session } from '@supabase/supabase-js';
-import ExploreController from './explore.controller';
-import { Store } from '@fuoco.appdev/core-ui/dist/cjs/src/components/icon/icons/line';
-import StoreController from './store.controller';
+  StripeElements,
+} from "@stripe/stripe-js";
+import SupabaseService from "../services/supabase.service";
+import { AuthChangeEvent, Session } from "@supabase/supabase-js";
+import ExploreController from "./explore.controller";
+import { Store } from "@fuoco.appdev/core-ui/dist/cjs/src/components/icon/icons/line";
+import StoreController from "./store.controller";
 
 class CheckoutController extends Controller {
   private readonly _model: CheckoutModel;
+  private readonly _cartRelations: string;
   private _cartSubscription: Subscription | undefined;
   private _customerSubscription: Subscription | undefined;
   private _shippingFormSubscription: Subscription | undefined;
@@ -42,6 +43,8 @@ class CheckoutController extends Controller {
     super();
 
     this._model = new CheckoutModel();
+    this._cartRelations =
+      "payment_session,billing_address,shipping_address,items,region,discounts,gift_cards,customer,payment_sessions,payment,shipping_methods,sales_channel,sales_channels";
     this.onCartChangedAsync = this.onCartChangedAsync.bind(this);
     this.onCustomerChangedAsync = this.onCustomerChangedAsync.bind(this);
     this.onShippingFormChanged = this.onShippingFormChanged.bind(this);
@@ -61,7 +64,7 @@ class CheckoutController extends Controller {
       .subscribe({ next: this.onShippingFormChanged });
 
     SupabaseService.supabaseClient?.auth.onAuthStateChange(
-      this.onAuthStateChanged
+      this.onAuthStateChanged,
     );
   }
 
@@ -125,23 +128,29 @@ class CheckoutController extends Controller {
   }
 
   public async updateSelectedShippingOptionIdAsync(
-    value: string
+    value: string,
   ): Promise<void> {
     const selectedInventoryLocation = await firstValueFrom(
       ExploreController.model.store.pipe(
         select((model) => model.selectedInventoryLocation),
         filter((value) => value !== undefined),
-        take(1)
-      )
+        take(1),
+      ),
     );
     const cartId = selectedInventoryLocation
       ? CartController.model.cartIds[selectedInventoryLocation.id]
       : undefined;
+    const carts = await firstValueFrom(
+      CartController.model.store.pipe(
+        select((model) => model.carts),
+        take(1),
+      ),
+    );
     if (
       !cartId ||
       this._model.selectedShippingAddressOptionId === value ||
-      !CartController.model.cart ||
-      CartController.model.cart?.items.length <= 0
+      !carts[cartId] ||
+      carts[cartId]?.items.length <= 0
     ) {
       return;
     }
@@ -149,11 +158,21 @@ class CheckoutController extends Controller {
     try {
       const cartResponse = await MedusaService.medusa?.carts.addShippingMethod(
         cartId,
-        { option_id: value }
+        { option_id: value },
+        {
+          expand: this._cartRelations,
+        },
       );
-      if (cartResponse?.cart) {
-        await CartController.updateLocalCartAsync(cartResponse.cart);
+
+      if (!cartResponse?.cart) {
+        return;
       }
+
+      CartController.updateCarts(cartResponse.cart.id, cartResponse.cart);
+      CartController.updateSelectedCart(
+        cartResponse.cart.id,
+        cartResponse.cart,
+      );
 
       this._model.selectedShippingOptionId = value;
     } catch (error: any) {
@@ -166,17 +185,17 @@ class CheckoutController extends Controller {
   }
 
   public async updateSelectedShippingAddressOptionIdAsync(
-    value: string
+    value: string,
   ): Promise<void> {
     const customer: Customer = await firstValueFrom(
       AccountController.model.store.pipe(
         select((model) => model.customer),
         filter((value) => value !== undefined),
-        take(1)
-      )
+        take(1),
+      ),
     );
     const address = customer?.shipping_addresses.find(
-      (address) => address.id === value
+      (address) => address.id === value,
     );
     if (!address) {
       return;
@@ -184,43 +203,19 @@ class CheckoutController extends Controller {
 
     this.updateShippingAddress({
       email: customer?.email,
-      firstName: address?.first_name ?? '',
-      lastName: address?.last_name ?? '',
-      company: address?.company ?? '',
-      address: address?.address_1 ?? '',
-      apartments: address?.address_2 ?? '',
-      postalCode: address?.postal_code ?? '',
-      city: address?.city ?? '',
-      countryCode: address.country_code ?? '',
-      region: address?.province ?? '',
-      phoneNumber: address?.phone ?? '',
+      firstName: address?.first_name ?? "",
+      lastName: address?.last_name ?? "",
+      company: address?.company ?? "",
+      address: address?.address_1 ?? "",
+      apartments: address?.address_2 ?? "",
+      postalCode: address?.postal_code ?? "",
+      city: address?.city ?? "",
+      countryCode: address.country_code ?? "",
+      region: address?.province ?? "",
+      phoneNumber: address?.phone ?? "",
     });
 
     this._model.selectedShippingAddressOptionId = value;
-
-    const selectedRegion: Region = await firstValueFrom(
-      StoreController.model.store.pipe(
-        select((model) => model.selectedRegion),
-        filter((value) => value !== undefined),
-        take(1)
-      )
-    );
-    if (selectedRegion.id) {
-      try {
-        const shippingOptionsResponse =
-          await MedusaService.medusa?.shippingOptions.list();
-        const shippingOptionsFromRegion =
-          shippingOptionsResponse?.shipping_options.filter(
-            (option) => option.region_id === selectedRegion.id
-          );
-        shippingOptionsFromRegion?.sort(
-          (current, next) => (current.amount ?? 0) - (next.amount ?? 0)
-        );
-        this._model.shippingOptions = shippingOptionsFromRegion ?? [];
-      } catch (error: any) {
-        console.error(error);
-      }
-    }
 
     const completed = await this.continueToDeliveryAsync();
     if (!completed) {
@@ -235,21 +230,27 @@ class CheckoutController extends Controller {
   }
 
   public async updateSelectedProviderIdAsync(
-    value: ProviderType
+    value: ProviderType,
   ): Promise<void> {
     const selectedInventoryLocation = await firstValueFrom(
       ExploreController.model.store.pipe(
         select((model) => model.selectedInventoryLocation),
         filter((value) => value !== undefined),
-        take(1)
-      )
+        take(1),
+      ),
     );
     const cartId = selectedInventoryLocation
       ? CartController.model.cartIds[selectedInventoryLocation.id]
       : undefined;
+    const cart = await firstValueFrom(
+      CartController.model.store.pipe(
+        select((model) => model.cart),
+        take(1),
+      ),
+    );
     if (
       !cartId ||
-      !CartController.model.cart ||
+      !cart ||
       !this._model.billingFormComplete ||
       this._model.selectedProviderId === value
     ) {
@@ -261,11 +262,20 @@ class CheckoutController extends Controller {
         cartId,
         {
           provider_id: value,
-        }
+        },
+        {
+          expand: this._cartRelations,
+        },
       );
-      if (cartResponse?.cart) {
-        await CartController.updateLocalCartAsync(cartResponse.cart);
+      if (!cartResponse?.cart) {
+        return;
       }
+
+      CartController.updateCarts(cartResponse.cart.id, cartResponse.cart);
+      CartController.updateSelectedCart(
+        cartResponse.cart.id,
+        cartResponse.cart,
+      );
 
       this._model.selectedProviderId = value;
     } catch (error: any) {
@@ -278,17 +288,17 @@ class CheckoutController extends Controller {
       ExploreController.model.store.pipe(
         select((model) => model.selectedInventoryLocation),
         filter((value) => value !== undefined),
-        take(1)
-      )
+        take(1),
+      ),
     );
     const cartIds = CartController.model.localStore
       ? await firstValueFrom(
-          CartController.model.localStore.pipe(
-            select((model) => model.cartIds),
-            filter((value) => value !== undefined),
-            take(1)
-          )
-        )
+        CartController.model.localStore.pipe(
+          select((model) => model.cartIds),
+          filter((value) => value !== undefined),
+          take(1),
+        ),
+      )
       : {};
     const cartId = selectedInventoryLocation
       ? cartIds[selectedInventoryLocation.id]
@@ -332,10 +342,18 @@ class CheckoutController extends Controller {
         email: this._model.shippingForm.email,
         shipping_address: shippingAddressPayload,
         billing_address: billingAddressPayload,
+      }, {
+        expand: this._cartRelations,
       });
-      if (cartResponse?.cart) {
-        await CartController.updateLocalCartAsync(cartResponse.cart);
+      if (!cartResponse?.cart) {
+        return false;
       }
+
+      CartController.updateCarts(cartResponse.cart.id, cartResponse.cart);
+      CartController.updateSelectedCart(
+        cartResponse.cart.id,
+        cartResponse.cart,
+      );
     } catch (error: any) {
       console.error(error);
       return false;
@@ -361,7 +379,7 @@ class CheckoutController extends Controller {
       gift_cards: [{ code: this._model.giftCardCode }],
     });
 
-    this._model.giftCardCode = '';
+    this._model.giftCardCode = "";
   }
 
   public updateDiscountCodeText(value: string): void {
@@ -377,13 +395,13 @@ class CheckoutController extends Controller {
       discounts: [{ code: this._model.discountCode }],
     });
 
-    this._model.discountCode = '';
+    this._model.discountCode = "";
   }
 
   public async proceedToStripePaymentAsync(
     stripe: Stripe | null | undefined,
     card: StripeCardNumberElement | null | undefined,
-    clientSecret: string | undefined
+    clientSecret: string | undefined,
   ): Promise<string | undefined> {
     if (
       !card ||
@@ -400,7 +418,8 @@ class CheckoutController extends Controller {
         payment_method: {
           card: card,
           billing_details: {
-            name: `${this._model.billingForm.firstName} ${this._model.billingForm.lastName}`,
+            name:
+              `${this._model.billingForm.firstName} ${this._model.billingForm.lastName}`,
             email: this._model.shippingForm.email,
             phone: this._model.billingForm.phoneNumber,
             address: {
@@ -436,15 +455,15 @@ class CheckoutController extends Controller {
   }
 
   public async getAddressFormErrorsAsync(
-    form: AddressFormValues
+    form: AddressFormValues,
   ): Promise<AddressFormErrors | undefined> {
     const errors: AddressFormErrors = {};
 
     const customer = await firstValueFrom(
       AccountController.model.store.pipe(
         select((model) => model.customer),
-        take(1)
-      )
+        take(1),
+      ),
     );
     if (!customer && (!form.email || form.email?.length <= 0)) {
       errors.email = this._model.errorStrings.email;
@@ -483,12 +502,14 @@ class CheckoutController extends Controller {
   private async initializeAsync(renderCount: number): Promise<void> {}
 
   private async loadAsync(renderCount: number): Promise<void> {
+    await this.requestShippingOptions();
+
     const cart = await firstValueFrom(
       CartController.model.store.pipe(
         select((model) => model.cart),
         filter((value) => value !== undefined),
-        take(1)
-      )
+        take(1),
+      ),
     );
     await this.onCartChangedAsync(cart);
 
@@ -498,61 +519,25 @@ class CheckoutController extends Controller {
       .subscribe({ next: this.onCustomerChangedAsync });
   }
 
-  private resetMedusaModel(): void {
-    this._model.shippingForm = {
-      email: '',
-      firstName: '',
-      lastName: '',
-      company: '',
-      address: '',
-      apartments: '',
-      postalCode: '',
-      city: '',
-      countryCode: '',
-      region: '',
-      phoneNumber: '',
-    };
-    this._model.shippingFormErrors = {};
-    this._model.shippingFormComplete = false;
-    this._model.selectedShippingAddressOptionId = '';
-    this._model.billingForm = {
-      email: '',
-      firstName: '',
-      lastName: '',
-      company: '',
-      address: '',
-      apartments: '',
-      postalCode: '',
-      city: '',
-      countryCode: '',
-      region: '',
-      phoneNumber: '',
-    };
-    this._model.billingFormErrors = {};
-    this._model.billingFormComplete = false;
-    this._model.addShippingForm = {
-      email: '',
-      firstName: '',
-      lastName: '',
-      company: '',
-      address: '',
-      apartments: '',
-      postalCode: '',
-      city: '',
-      countryCode: '',
-      region: '',
-      phoneNumber: '',
-    };
-    this._model.addShippingFormErrors = {};
-    this._model.errorStrings = {};
-    this._model.sameAsBillingAddress = true;
-    this._model.shippingOptions = [];
-    this._model.selectedShippingOptionId = undefined;
-    this._model.giftCardCode = '';
-    this._model.discountCode = '';
-    this._model.selectedProviderId = undefined;
-    this._model.isPaymentLoading = false;
-    this._model.isLegalAge = false;
+  private async requestShippingOptions(): Promise<void> {
+    const selectedRegion: Region = await firstValueFrom(
+      StoreController.model.store.pipe(
+        select((model) => model.selectedRegion),
+        filter((value) => value !== undefined),
+        take(1),
+      ),
+    );
+
+    try {
+      const shippingOptionsResponse = await MedusaService.medusa
+        ?.shippingOptions.list({
+          region_id: selectedRegion?.id,
+        });
+      this._model.shippingOptions = shippingOptionsResponse?.shipping_options ??
+        [];
+    } catch (error: any) {
+      console.error(error);
+    }
   }
 
   private async getCompleteCartIdAsync(): Promise<string | undefined> {
@@ -567,8 +552,8 @@ class CheckoutController extends Controller {
     this._model.sameAsBillingAddress = true;
     this._model.shippingOptions = [];
     this._model.selectedShippingOptionId = undefined;
-    this._model.giftCardCode = '';
-    this._model.discountCode = '';
+    this._model.giftCardCode = "";
+    this._model.discountCode = "";
     this._model.selectedShippingAddressOptionId = undefined;
     this._model.selectedShippingOptionId = undefined;
     this._model.selectedProviderId = undefined;
@@ -582,29 +567,30 @@ class CheckoutController extends Controller {
     const customer = await firstValueFrom(
       AccountController.model.store.pipe(
         select((model) => model.customer),
-        take(1)
-      )
+        take(1),
+      ),
     );
     if (!customer) {
       this._model.shippingForm = {
         email: value?.email,
-        firstName: value?.shipping_address?.first_name ?? '',
-        lastName: value?.shipping_address?.last_name ?? '',
-        company: value?.shipping_address?.company ?? '',
-        address: value?.shipping_address?.address_1 ?? '',
-        apartments: value?.shipping_address?.address_2 ?? '',
-        postalCode: value?.shipping_address?.postal_code ?? '',
-        city: value?.shipping_address?.city ?? '',
-        countryCode: value?.shipping_address?.country_code ?? '',
-        region: value?.shipping_address?.province ?? '',
-        phoneNumber: value?.shipping_address?.phone ?? '',
+        firstName: value?.shipping_address?.first_name ?? "",
+        lastName: value?.shipping_address?.last_name ?? "",
+        company: value?.shipping_address?.company ?? "",
+        address: value?.shipping_address?.address_1 ?? "",
+        apartments: value?.shipping_address?.address_2 ?? "",
+        postalCode: value?.shipping_address?.postal_code ?? "",
+        city: value?.shipping_address?.city ?? "",
+        countryCode: value?.shipping_address?.country_code ?? "",
+        region: value?.shipping_address?.province ?? "",
+        phoneNumber: value?.shipping_address?.phone ?? "",
       };
 
       if (
         value?.shipping_address &&
         Object.keys(
-          (await this.getAddressFormErrorsAsync(this._model.shippingForm)) ?? {}
-        ).length <= 0
+            (await this.getAddressFormErrorsAsync(this._model.shippingForm)) ??
+              {},
+          ).length <= 0
       ) {
         this._model.shippingFormComplete = true;
       }
@@ -617,7 +603,7 @@ class CheckoutController extends Controller {
       value?.payment_sessions.length > 0
     ) {
       await this.updateSelectedProviderIdAsync(
-        value?.payment_sessions[0].provider_id as ProviderType
+        value?.payment_sessions[0].provider_id as ProviderType,
       );
     }
 
@@ -627,11 +613,19 @@ class CheckoutController extends Controller {
   private async initializePaymentSessionAsync(cart: Cart): Promise<void> {
     if (cart?.id && cart.payment_sessions?.length <= 0 && cart?.items?.length) {
       try {
-        const cartResponse =
-          await MedusaService.medusa?.carts.createPaymentSessions(cart.id);
-        if (cartResponse?.cart) {
-          await CartController.updateLocalCartAsync(cartResponse.cart);
+        const cartResponse = await MedusaService.medusa?.carts
+          .createPaymentSessions(cart.id, {
+            expand: this._cartRelations,
+          });
+        if (!cartResponse?.cart) {
+          return;
         }
+
+        CartController.updateCarts(cartResponse.cart.id, cartResponse.cart);
+        CartController.updateSelectedCart(
+          cartResponse.cart.id,
+          cartResponse.cart,
+        );
       } catch (error: any) {
         console.error(error);
       }
@@ -639,14 +633,23 @@ class CheckoutController extends Controller {
 
     if (cart.payment_session) {
       try {
-        const cartResponse =
-          await MedusaService.medusa?.carts.refreshPaymentSession(
+        const cartResponse = await MedusaService.medusa?.carts
+          .refreshPaymentSession(
             cart.id,
-            cart.payment_session.id
+            cart.payment_session.id,
+            {
+              expand: this._cartRelations,
+            },
           );
-        if (cartResponse?.cart) {
-          await CartController.updateLocalCartAsync(cartResponse.cart);
+        if (!cartResponse?.cart) {
+          return;
         }
+
+        CartController.updateCarts(cartResponse.cart.id, cartResponse.cart);
+        CartController.updateSelectedCart(
+          cartResponse.cart.id,
+          cartResponse.cart,
+        );
       } catch (error: any) {
         console.error(error);
       }
@@ -654,7 +657,7 @@ class CheckoutController extends Controller {
   }
 
   private async onCustomerChangedAsync(
-    value: Customer | undefined
+    value: Customer | undefined,
   ): Promise<void> {
     if (!value) {
       return;
@@ -681,9 +684,9 @@ class CheckoutController extends Controller {
 
   private onAuthStateChanged(
     event: AuthChangeEvent,
-    session: Session | null
+    session: Session | null,
   ): void {
-    if (event === 'SIGNED_OUT') {
+    if (event === "SIGNED_OUT") {
       this._model.shippingForm = {};
       this._model.billingForm = {};
       this._model.shippingFormComplete = false;

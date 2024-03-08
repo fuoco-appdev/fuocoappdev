@@ -404,12 +404,46 @@ class MedusaService extends Service {
     return [];
   }
 
-  public async requestStockLocationsAsync(): Promise<
+  public async requestStockLocationsAsync(ids: string[]): Promise<
+    StockLocation[]
+  > {
+    const request = new core.StockLocationsRequest({
+      ids: ids,
+    });
+    const response = await axios({
+      method: "post",
+      url: `${this.endpointUrl}/medusa/stock-locations`,
+      headers: {
+        ...this.headers,
+      },
+      data: request.toBinary(),
+      responseType: "arraybuffer",
+    });
+    const arrayBuffer = new Uint8Array(response.data);
+    this.assertResponse(arrayBuffer);
+
+    const stockLocationsResponse = core.StockLocationsResponse.fromBinary(
+      arrayBuffer,
+    );
+    const locations: StockLocation[] = [];
+    for (const stockLocation of stockLocationsResponse.locations) {
+      const json = JSON.parse(stockLocation) as StockLocation;
+      if (!json) {
+        continue;
+      }
+
+      locations.push(json);
+    }
+
+    return locations;
+  }
+
+  public async requestStockLocationsAllAsync(): Promise<
     (StockLocation & { sales_channels: SalesChannel[] })[]
   > {
     const response = await axios({
       method: "post",
-      url: `${this.endpointUrl}/medusa/stock-locations`,
+      url: `${this.endpointUrl}/medusa/stock-locations/all`,
       headers: {
         ...this.headers,
       },

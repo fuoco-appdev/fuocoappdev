@@ -164,6 +164,7 @@
   "alreadyHaveAnAccount": "Vous avez déjà un compte?",
   "alreadyHaveAnAccountDescription": "Connectez-vous pour accéder à des offres tarifaires améliorées.",
   "shoppingCart": "Panier d'achat",
+  "shoppingCarts": "Panier D'achats",
   "quantity": "Quantité",
   "removeItem": "Supprimer un élément?",
   "removeItemDescription": "L'article {{item, string}} sera retiré de votre panier.",

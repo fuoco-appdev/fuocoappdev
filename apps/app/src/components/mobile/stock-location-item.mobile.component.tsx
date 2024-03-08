@@ -22,6 +22,7 @@ import { InventoryLocationType } from 'src/models/explore.model';
 
 export default function StockLocationItemMobileComponent({
   stockLocation,
+  selected,
   hideDescription,
   placeName,
   description,
@@ -36,7 +37,11 @@ export default function StockLocationItemMobileComponent({
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
         <Ripples
           color={'rgba(133, 38, 122, .35)'}
-          className={[styles['ripples'], styles['ripples-mobile']].join(' ')}
+          className={[
+            styles['ripples'],
+            styles['ripples-mobile'],
+            selected && styles['ripples-selected'],
+          ].join(' ')}
           onClick={onClick}
         >
           <div

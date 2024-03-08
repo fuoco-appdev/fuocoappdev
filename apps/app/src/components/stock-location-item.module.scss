@@ -8,6 +8,10 @@
         height: 100%;
     }
 
+    & .ripples-selected {
+        background-color: rgba(133, 38, 122, .1);
+    }
+
     & .container {
         width: 100%;
     

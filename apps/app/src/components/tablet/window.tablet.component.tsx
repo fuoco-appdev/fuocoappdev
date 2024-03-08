@@ -474,7 +474,7 @@ export default function WindowTabletComponent({
               <Tabs
                 activeId={windowProps.activeRoute}
                 direction={'vertical'}
-                type={'underlined'}
+                type={'nav'}
                 onChange={onSidebarTabsChanged}
                 classNames={{
                   tabOutline: [

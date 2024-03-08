@@ -160,3 +160,14 @@
 .input-button-desktop:hover {
     background-color: rgba(42, 42, 95, .15) !important;
 }
+
+.input-root-skeleton {
+    -webkit-box-flex: 1;
+        -ms-flex: 1;
+            flex: 1;
+    margin-bottom: $mp-2;
+}
+
+.input-form-layout-label-skeleton {
+    margin-bottom: $mp-2;
+}

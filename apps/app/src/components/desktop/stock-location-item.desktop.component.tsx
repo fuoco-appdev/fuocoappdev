@@ -22,6 +22,7 @@ import { InventoryLocationType } from 'src/models/explore.model';
 
 export default function StockLocationItemDesktopComponent({
   stockLocation,
+  selected,
   placeName,
   description,
   avatar,
@@ -36,7 +37,11 @@ export default function StockLocationItemDesktopComponent({
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>
         <Ripples
           color={'rgba(133, 38, 122, .35)'}
-          className={[styles['ripples'], styles['ripples-desktop']].join(' ')}
+          className={[
+            styles['ripples'],
+            styles['ripples-desktop'],
+            selected && styles['ripples-selected'],
+          ].join(' ')}
           onClick={onClick}
         >
           <div

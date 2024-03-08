@@ -516,7 +516,10 @@ export default function StoreMobileComponent({
               classNames={{
                 touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
               }}
-              open={openCartVariants}
+              open={
+                openCartVariants &&
+                storeProps.selectedPricedProduct !== undefined
+              }
               touchScreen={true}
               onClose={() => {
                 setOpenCartVariants(false);

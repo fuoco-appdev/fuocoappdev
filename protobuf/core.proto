@@ -136,6 +136,10 @@ message ProductsResponse {
     repeated string products = 1;
 }
 
+message StockLocationsRequest {
+    repeated string ids = 1;
+}
+
 message StockLocationResponse {
     string data = 1;
 }

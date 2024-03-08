@@ -1,30 +1,31 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Subscription, filter, firstValueFrom, take } from 'rxjs';
-import { Controller } from '../controller';
-import { CartModel } from '../models/cart.model';
-import StoreController from './store.controller';
-import { select } from '@ngneat/elf';
+import { filter, firstValueFrom, Subscription, take } from "rxjs";
+import { Controller } from "../controller";
+import { CartModel } from "../models/cart.model";
+import StoreController from "./store.controller";
+import { select, Store } from "@ngneat/elf";
 import {
-  Region,
   Cart,
-  LineItem,
-  StorePostCartsCartReq,
-  Order,
-  Swap,
-  SalesChannel,
   CustomerGroup,
+  LineItem,
+  Order,
   ProductType,
-} from '@medusajs/medusa';
-import MedusaService from '../services/medusa.service';
-import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
-import WindowController from './window.controller';
-import ExploreController from './explore.controller';
-import { InventoryLocation } from '../models/explore.model';
-import { MedusaRegionMetadata } from '../types/medusa.type';
-import { MedusaProductTypeNames } from '../types/medusa.type';
+  Region,
+  SalesChannel,
+  StorePostCartsCartReq,
+  Swap,
+} from "@medusajs/medusa";
+import MedusaService from "../services/medusa.service";
+import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
+import WindowController from "./window.controller";
+import ExploreController from "./explore.controller";
+import { InventoryLocation } from "../models/explore.model";
+import { MedusaRegionMetadata } from "../types/medusa.type";
+import { MedusaProductTypeNames } from "../types/medusa.type";
 
 class CartController extends Controller {
   private readonly _model: CartModel;
+  private readonly _cartRelations: string;
   private _timerId: NodeJS.Timeout | number | undefined;
   private _selectedInventoryLocationSubscription: Subscription | undefined;
   private _medusaAccessTokenSubscription: Subscription | undefined;
@@ -33,8 +34,10 @@ class CartController extends Controller {
     super();
 
     this._model = new CartModel();
-    this.onSelectedInventoryLocationChangedAsync =
-      this.onSelectedInventoryLocationChangedAsync.bind(this);
+    this.onSelectedInventoryLocationChangedAsync = this
+      .onSelectedInventoryLocationChangedAsync.bind(this);
+    this._cartRelations =
+      "payment_session,billing_address,shipping_address,items,region,discounts,gift_cards,customer,payment_sessions,payment,shipping_methods,sales_channel,sales_channels";
   }
 
   public get model(): CartModel {
@@ -45,7 +48,9 @@ class CartController extends Controller {
     this.initializeAsync(renderCount);
   }
 
-  public override load(renderCount: number): void {}
+  public override async load(renderCount: number): Promise<void> {
+    this.requestStockLocationsAsync();
+  }
 
   public override disposeInitialization(renderCount: number): void {
     this._medusaAccessTokenSubscription?.unsubscribe();
@@ -58,6 +63,22 @@ class CartController extends Controller {
     this._model.discountCode = value;
   }
 
+  public updateCarts(
+    id: string,
+    value: Omit<Cart, "refundable_amount" | "refunded_total"> | undefined,
+  ): void {
+    const carts = { ...this._model.carts };
+    carts[id] = value;
+    this._model.carts = carts;
+  }
+
+  public updateSelectedCart(
+    id: string,
+    value: Omit<Cart, "refundable_amount" | "refunded_total"> | undefined,
+  ) {
+    this._model.cart = value;
+  }
+
   public async updateDiscountCodeAsync(): Promise<void> {
     if (!this._model.discountCode || this._model.discountCode.length <= 0) {
       return;
@@ -67,7 +88,7 @@ class CartController extends Controller {
       discounts: [{ code: this._model.discountCode }],
     });
 
-    this._model.discountCode = '';
+    this._model.discountCode = "";
   }
 
   public async removeDiscountCodeAsync(code: string): Promise<void> {
@@ -82,11 +103,14 @@ class CartController extends Controller {
     try {
       const cartResponse = await MedusaService.medusa?.carts.deleteDiscount(
         cartId,
-        code
+        code,
       );
-      if (cartResponse?.cart) {
-        await this.updateLocalCartAsync(cartResponse.cart);
+      if (!cartResponse?.cart) {
+        return;
       }
+
+      this.updateCarts(cartResponse.cart.id, cartResponse?.cart);
+      this.updateSelectedCart(cartResponse.cart.id, cartResponse?.cart);
     } catch (error: any) {
       console.error(error);
     }
@@ -104,11 +128,18 @@ class CartController extends Controller {
     try {
       const cartResponse = await MedusaService.medusa?.carts.update(
         cartId,
-        payload
+        payload,
+        {
+          expand: this._cartRelations,
+        },
       );
-      if (cartResponse?.cart) {
-        await this.updateLocalCartAsync(cartResponse.cart);
+
+      if (!cartResponse?.cart) {
+        return;
       }
+
+      this.updateCarts(cartResponse.cart.id, cartResponse?.cart);
+      this.updateSelectedCart(cartResponse.cart.id, cartResponse?.cart);
     } catch (error: any) {
       console.error(error);
     }
@@ -127,7 +158,7 @@ class CartController extends Controller {
 
     try {
       const completeCartResponse = await MedusaService.medusa?.carts.complete(
-        cartId
+        cartId,
       );
 
       return completeCartResponse?.data;
@@ -145,7 +176,7 @@ class CartController extends Controller {
     const { selectedInventoryLocation } = ExploreController.model;
     await this.createCartAsync(
       StoreController.model.selectedRegion.id,
-      selectedInventoryLocation
+      selectedInventoryLocation,
     );
   }
 
@@ -153,11 +184,18 @@ class CartController extends Controller {
     try {
       const cartResponse = await MedusaService.medusa?.carts.lineItems.delete(
         item.cart_id,
-        item.id
+        item.id,
+        {
+          expand: this._cartRelations,
+        },
       );
-      if (cartResponse?.cart) {
-        await this.updateLocalCartAsync(cartResponse.cart);
+
+      if (!cartResponse?.cart) {
+        return;
       }
+
+      this.updateCarts(cartResponse.cart.id, cartResponse?.cart);
+      this.updateSelectedCart(cartResponse.cart.id, cartResponse?.cart);
     } catch (error: any) {
       console.error(error);
     }
@@ -165,7 +203,7 @@ class CartController extends Controller {
 
   public async updateLineItemQuantityAsync(
     quantity: number,
-    item: LineItem
+    item: LineItem,
   ): Promise<void> {
     clearTimeout(this._timerId as number | undefined);
     this._timerId = setTimeout(async () => {
@@ -175,74 +213,30 @@ class CartController extends Controller {
           item.id,
           {
             quantity: quantity,
-          }
+          },
+          {
+            expand: this._cartRelations,
+          },
         );
-        if (cartResponse?.cart) {
-          await this.updateLocalCartAsync(cartResponse.cart);
+
+        if (!cartResponse?.cart) {
+          return;
         }
+
+        this.updateCarts(cartResponse.cart.id, cartResponse?.cart);
+        this.updateSelectedCart(cartResponse.cart.id, cartResponse?.cart);
       } catch (error: any) {
         console.error(error);
       }
     }, 750);
   }
 
-  public async updateLocalCartAsync(
-    value: Omit<Cart, 'refundable_amount' | 'refunded_total'>
-  ): Promise<void> {
-    const items: LineItem[] = [];
-    for (const item of value.items) {
-      const itemCache = this._model.cart?.items.find(
-        (value) => value.id === item.id
-      );
-      let product: PricedProduct | undefined = itemCache?.variant.product as
-        | PricedProduct
-        | undefined;
-      if (!product) {
-        try {
-          const { selectedRegion } = StoreController.model;
-          const { cart } = this._model;
-          const productResponse = await MedusaService.medusa?.products.list({
-            id: item.variant.product_id,
-            sales_channel_id: [value.sales_channel_id ?? ''],
-            ...(selectedRegion && {
-              region_id: selectedRegion.id,
-              currency_code: selectedRegion.currency_code,
-            }),
-            ...(cart && { cart_id: cart.id }),
-          });
-          product = productResponse?.products[0];
-        } catch (error: any) {
-          console.error(error);
-        }
-      }
-
-      const variant = product?.variants.find(
-        (value) => value.id === item.variant_id
-      );
-      if (variant) {
-        items.push({
-          ...item,
-          // @ts-ignore
-          variant: {
-            ...variant,
-            // @ts-ignore
-            product: product,
-          },
-        });
-      }
-    }
-
-    const cart = {
-      ...value,
-      items: items,
-    };
-
-    if (JSON.stringify(cart) !== JSON.stringify(this._model.cart)) {
-      this._model.cart = cart;
-    }
-  }
-
   public isFoodRequirementInCart(): boolean {
+    const cart = this._model.cart;
+    if (!cart) {
+      return false;
+    }
+
     if (this._model.isFoodInCartRequired === undefined) {
       return false;
     }
@@ -251,16 +245,21 @@ class CartController extends Controller {
       return true;
     }
 
-    const hasFoodRequirement = this._model.cart?.items.some((cartItem) => {
+    const requiredFoodType = StoreController.model.productTypes.find(
+      (value) => value.value === MedusaProductTypeNames.RequiredFood,
+    );
+    const menuItemType = StoreController.model.productTypes.find(
+      (value) => value.value === MedusaProductTypeNames.MenuItem,
+    );
+    const hasFoodRequirement = cart.items.some((cartItem) => {
       return (
-        cartItem.variant.product.type.value ===
-        MedusaProductTypeNames.RequiredFood
+        cartItem.variant.product.type_id === requiredFoodType?.id
       );
     });
 
-    const menuItems = this._model.cart?.items.some((cartItem) => {
+    const menuItems = cart.items.some((cartItem) => {
       return (
-        cartItem.variant.product.type.value === MedusaProductTypeNames.MenuItem
+        cartItem.variant.product.type_id === menuItemType?.id
       );
     });
 
@@ -276,11 +275,38 @@ class CartController extends Controller {
       });
   }
 
+  private async requestStockLocationsAsync(): Promise<void> {
+    const cartIds = await firstValueFrom(
+      this._model.localStore?.pipe(select((model) => model.cartIds), take(1)) ??
+        Store.prototype,
+    );
+    const stockLocationIds = Object.keys(cartIds);
+    const stockLocations = await MedusaService.requestStockLocationsAsync(
+      stockLocationIds,
+    );
+    this._model.stockLocations = stockLocations;
+
+    await this.requestCartsAsync(Object.values(cartIds));
+  }
+
+  private async requestCartsAsync(cartIds: string[]): Promise<void> {
+    for (const id of cartIds) {
+      try {
+        const cartResponse = await MedusaService.medusa?.carts.retrieve(id);
+        this.updateCarts(id, cartResponse?.cart);
+      } catch (error: any) {
+        console.error(error);
+      }
+    }
+
+    console.log(this._model.carts);
+  }
+
   private async createCartAsync(
     regionId: string,
-    selectedInventoryLocation: InventoryLocation | undefined
+    selectedInventoryLocation: InventoryLocation | undefined,
   ): Promise<
-    Omit<Cart, 'refundable_amount' | 'refunded_total'> | null | undefined
+    Omit<Cart, "refundable_amount" | "refunded_total"> | null | undefined
   > {
     if (!selectedInventoryLocation || !selectedInventoryLocation.id) {
       return null;
@@ -292,15 +318,20 @@ class CartController extends Controller {
       const cartResponse = await MedusaService.medusa?.carts.create({
         region_id: regionId,
         sales_channel_id: selectedSalesChannelId,
+      }, {
+        expand: this._cartRelations,
       });
 
       const cartIds = { ...this._model.cartIds };
       cartIds[selectedInventoryLocation.id] = cartResponse?.cart.id;
       this._model.cartIds = cartIds;
 
-      if (cartResponse?.cart) {
-        await this.updateLocalCartAsync(cartResponse.cart);
+      if (!cartResponse?.cart) {
+        return;
       }
+
+      this.updateCarts(cartResponse.cart.id, cartResponse?.cart);
+      this.updateSelectedCart(cartResponse.cart.id, cartResponse?.cart);
 
       return cartResponse?.cart;
     } catch (error: any) {
@@ -310,39 +341,39 @@ class CartController extends Controller {
   }
 
   private async onSelectedInventoryLocationChangedAsync(
-    value: InventoryLocation | undefined
+    value: InventoryLocation | undefined,
   ): Promise<void> {
     const regions: Region[] = await firstValueFrom(
       StoreController.model.store.pipe(
         select((model) => model.regions),
         filter((value) => value !== undefined && value.length > 0),
-        take(1)
-      )
+        take(1),
+      ),
     );
     const region = regions.find((region) => region.name === value?.region);
     const cartId = value?.id ? this._model.cartIds[value.id] : undefined;
     const metadata = region?.metadata as Record<string, any> | undefined;
-    const isFoodInCartRequired = metadata?.['is_food_in_cart_required'] as
+    const isFoodInCartRequired = metadata?.["is_food_in_cart_required"] as
       | string
       | undefined;
-    this._model.isFoodInCartRequired = isFoodInCartRequired === 'true' ?? false;
+    this._model.isFoodInCartRequired = isFoodInCartRequired === "true" ?? false;
 
     try {
       const productTypes: ProductType[] = await firstValueFrom(
         StoreController.model.store.pipe(
           select((model) => model.productTypes),
           filter((value) => value !== undefined),
-          take(1)
-        )
+          take(1),
+        ),
       );
       const requiredFoodType = productTypes.find(
-        (value) => value.value === MedusaProductTypeNames.RequiredFood
+        (value) => value.value === MedusaProductTypeNames.RequiredFood,
       );
-      const requiredFoodProductsResponse =
-        await MedusaService.medusa?.products.list({
-          type_id: [requiredFoodType?.id ?? ''],
+      const requiredFoodProductsResponse = await MedusaService.medusa?.products
+        .list({
+          type_id: [requiredFoodType?.id ?? ""],
           sales_channel_id: value?.salesChannels.map(
-            (value) => value.id
+            (value) => value.id,
           ) as string[],
           region_id: region?.id,
         });
@@ -358,10 +389,19 @@ class CartController extends Controller {
 
     if (cartId && cartId.length > 0) {
       try {
-        const cartResponse = await MedusaService.medusa?.carts.retrieve(cartId);
-        if (cartResponse?.cart) {
-          await this.updateLocalCartAsync(cartResponse.cart);
+        const cartResponse = await MedusaService.medusa?.carts.retrieve(
+          cartId,
+          {
+            expand: this._cartRelations,
+          },
+        );
+
+        if (!cartResponse?.cart) {
+          return;
         }
+
+        this.updateCarts(cartResponse.cart.id, cartResponse?.cart);
+        this.updateSelectedCart(cartResponse.cart.id, cartResponse?.cart);
       } catch (error: any) {
         console.error(error);
       }

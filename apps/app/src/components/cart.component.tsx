@@ -18,7 +18,7 @@ import {
   InventoryLocation,
 } from '../models/explore.model';
 import { Helmet } from 'react-helmet';
-import { CartState } from '../models/cart.model';
+import { CartLocalState, CartState } from '../models/cart.model';
 import { StoreState } from '../models/store.model';
 import { WindowState } from '../models/window.model';
 import { lazy } from '@loadable/component';
@@ -46,6 +46,7 @@ const CartMobileComponent = lazy(
 
 export interface CartResponsiveProps {
   cartProps: CartState;
+  cartLocalProps: CartLocalState;
   exploreProps: ExploreState;
   storeProps: StoreState;
   windowProps: WindowState;
@@ -192,6 +193,7 @@ export default function CartComponent(): JSX.Element {
       <React.Suspense fallback={suspenceComponent}>
         <CartDesktopComponent
           cartProps={cartProps}
+          cartLocalProps={cartLocalProps}
           exploreProps={exploreProps}
           storeProps={storeProps}
           windowProps={windowProps}
@@ -206,6 +208,7 @@ export default function CartComponent(): JSX.Element {
         />
         <CartTabletComponent
           cartProps={cartProps}
+          cartLocalProps={cartLocalProps}
           exploreProps={exploreProps}
           storeProps={storeProps}
           windowProps={windowProps}
@@ -220,6 +223,7 @@ export default function CartComponent(): JSX.Element {
         />
         <CartMobileComponent
           cartProps={cartProps}
+          cartLocalProps={cartLocalProps}
           exploreProps={exploreProps}
           storeProps={storeProps}
           windowProps={windowProps}

@@ -8,6 +8,7 @@ import {
   ProductCountRequest,
   ProductsRequest,
   RemoveCustomerFromGroupRequest,
+  StockLocationsRequest,
   UpdateCustomerRequest,
 } from "../protobuf/core_pb.js";
 import { ContentType, Controller, Guard, Post } from "../index.ts";
@@ -41,7 +42,24 @@ export class MedusaController {
       Record<string, any>
     >,
   ): Promise<void> {
-    const response = await MedusaService.getStockLocationsAsync();
+    const body = await context.request.body({ type: "reader" });
+    const requestValue = await readAll(body.value);
+    const request = StockLocationsRequest.deserializeBinary(requestValue);
+    const response = await MedusaService.getStockLocationsAsync(request);
+    context.response.type = "application/x-protobuf";
+    context.response.body = response.serializeBinary();
+  }
+
+  @Post("/stock-locations/all")
+  @ContentType("application/x-protobuf")
+  public async getStockLocationsAllAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >,
+  ): Promise<void> {
+    const response = await MedusaService.getStockLocationsAllAsync();
     context.response.type = "application/x-protobuf";
     context.response.body = response.serializeBinary();
   }

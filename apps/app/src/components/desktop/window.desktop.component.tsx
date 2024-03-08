@@ -504,7 +504,7 @@ export default function WindowDesktopComponent({
               <Tabs
                 activeId={windowProps.activeRoute}
                 direction={'vertical'}
-                type={'underlined'}
+                type={'nav'}
                 onChange={onSidebarTabsChanged}
                 classNames={{
                   tabOutline: [

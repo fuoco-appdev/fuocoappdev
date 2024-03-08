@@ -1,11 +1,18 @@
-import { createStore, withProps } from '@ngneat/elf';
-import { Model } from '../model';
-import e from 'express';
-import { Cart } from '@medusajs/medusa';
-import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+import { createStore, withProps } from "@ngneat/elf";
+import { Model } from "../model";
+import e from "express";
+import { Cart, SalesChannel } from "@medusajs/medusa";
+import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
+import { InventoryLocation } from "./explore.model";
+import { StockLocation } from "@medusajs/stock-location/dist/models";
 
 export interface CartState {
-  cart: Omit<Cart, 'refundable_amount' | 'refunded_total'> | undefined;
+  stockLocations: StockLocation[];
+  carts: Record<
+    string,
+    Omit<Cart, "refundable_amount" | "refunded_total"> | undefined
+  >;
+  cart: Omit<Cart, "refundable_amount" | "refunded_total"> | undefined;
   requiredFoodProducts: PricedProduct[];
   isFoodInCartRequired: boolean | undefined;
   discountCode: string;
@@ -19,32 +26,64 @@ export class CartModel extends Model {
   constructor() {
     super(
       createStore(
-        { name: 'cart' },
+        { name: "cart" },
         withProps<CartState>({
+          stockLocations: [],
+          carts: {},
           cart: undefined,
           requiredFoodProducts: [],
           isFoodInCartRequired: undefined,
-          discountCode: '',
-        })
+          discountCode: "",
+        }),
       ),
       undefined,
       createStore(
-        { name: 'cart-local' },
+        { name: "cart-local" },
         withProps<CartLocalState>({
           cartIds: {},
-        })
-      )
+        }),
+      ),
     );
   }
 
+  public get stockLocations(): StockLocation[] {
+    return this.store?.getValue().stockLocations;
+  }
+
+  public set stockLocations(
+    value: StockLocation[],
+  ) {
+    if (JSON.stringify(this.stockLocations) !== JSON.stringify(value)) {
+      this.store?.update((state) => ({ ...state, stockLocations: value }));
+    }
+  }
+
+  public get carts(): Record<
+    string,
+    Omit<Cart, "refundable_amount" | "refunded_total"> | undefined
+  > {
+    return this.store?.getValue().carts;
+  }
+
+  public set carts(
+    value: Record<
+      string,
+      Omit<Cart, "refundable_amount" | "refunded_total"> | undefined
+    >,
+  ) {
+    if (JSON.stringify(this.carts) !== JSON.stringify(value)) {
+      this.store?.update((state) => ({ ...state, carts: value }));
+    }
+  }
+
   public get cart():
-    | Omit<Cart, 'refundable_amount' | 'refunded_total'>
+    | Omit<Cart, "refundable_amount" | "refunded_total">
     | undefined {
     return this.store?.getValue().cart;
   }
 
   public set cart(
-    value: Omit<Cart, 'refundable_amount' | 'refunded_total'> | undefined
+    value: Omit<Cart, "refundable_amount" | "refunded_total"> | undefined,
   ) {
     if (JSON.stringify(this.cart) !== JSON.stringify(value)) {
       this.store?.update((state) => ({ ...state, cart: value }));

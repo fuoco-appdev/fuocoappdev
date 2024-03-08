@@ -78,7 +78,7 @@
           -ms-flex-pack: center;
               justify-content: center;
 
-      .cart-number {
+      & .cart-number {
         font-size: 10px;
         font-weight: $font-weight-bold;
         line-height: 24px;
@@ -1015,6 +1015,7 @@
 .tab-button {
   color: $brand-900 !important;
   font-weight: $font-weight-bold;
+  margin: 0 !important;
 }
 
 .hovered-tab-icon {

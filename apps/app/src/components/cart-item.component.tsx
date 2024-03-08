@@ -71,7 +71,7 @@ export default function CartItemComponent({
   const [discountPercentage, setDiscountPercentage] = useState<string>('');
 
   useEffect(() => {
-    const vintageOption = item.variant.product.options.find(
+    const vintageOption = item.variant.product.options?.find(
       (value) => value.title === ProductOptions.Vintage
     );
     const vintageValue = item.variant.options?.find(
@@ -79,7 +79,7 @@ export default function CartItemComponent({
     );
     setVintage(vintageValue?.value ?? '');
 
-    const typeOption = item.variant.product.options.find(
+    const typeOption = item.variant.product.options?.find(
       (value) => value.title === ProductOptions.Type
     );
     const typeValue = item.variant.options?.find(

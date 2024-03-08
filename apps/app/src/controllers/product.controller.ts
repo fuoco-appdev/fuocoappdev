@@ -35,6 +35,7 @@ import MeiliSearchService from "../services/meilisearch.service";
 
 class ProductController extends Controller {
   private readonly _model: ProductModel;
+  private readonly _cartRelations: string;
   private _timerId: NodeJS.Timeout | number | undefined;
   private _stockLocationsIndex: Index<Record<string, any>> | undefined;
   private _selectedSalesChannelSubscription: Subscription | undefined;
@@ -49,6 +50,8 @@ class ProductController extends Controller {
 
     this._model = new ProductModel();
     this._limit = 20;
+    this._cartRelations =
+      "payment_session,billing_address,shipping_address,items,region,discounts,gift_cards,customer,payment_sessions,payment,shipping_methods,sales_channel,sales_channels";
 
     this.updateSelectedVariant = this.updateSelectedVariant.bind(this);
   }
@@ -305,10 +308,20 @@ class ProductController extends Controller {
           variant_id: variantId,
           quantity: quantity,
         },
+        {
+          expand: this._cartRelations,
+        },
       );
-      if (cartResponse?.cart) {
-        await CartController.updateLocalCartAsync(cartResponse.cart);
+
+      if (!cartResponse?.cart) {
+        return;
       }
+
+      CartController.updateCarts(cartResponse.cart.id, cartResponse.cart);
+      CartController.updateSelectedCart(
+        cartResponse.cart.id,
+        cartResponse.cart,
+      );
 
       successCallback?.();
     } catch (error: any) {

@@ -348,7 +348,7 @@ class ExploreController extends Controller {
   }
 
   private async requestInventoryLocationsAsync(): Promise<InventoryLocation[]> {
-    const stockLocations = await MedusaService.requestStockLocationsAsync();
+    const stockLocations = await MedusaService.requestStockLocationsAllAsync();
     const inventoryLocations: InventoryLocation[] = [];
     for (const stockLocation of stockLocations) {
       const inventoryLocation = await this.getInventoryLocationAsync(
