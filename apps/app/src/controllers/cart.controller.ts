@@ -73,7 +73,6 @@ class CartController extends Controller {
   }
 
   public updateSelectedCart(
-    id: string,
     value: Omit<Cart, "refundable_amount" | "refunded_total"> | undefined,
   ) {
     this._model.cart = value;
@@ -110,7 +109,7 @@ class CartController extends Controller {
       }
 
       this.updateCarts(cartResponse.cart.id, cartResponse?.cart);
-      this.updateSelectedCart(cartResponse.cart.id, cartResponse?.cart);
+      this.updateSelectedCart(cartResponse?.cart);
     } catch (error: any) {
       console.error(error);
     }
@@ -139,7 +138,7 @@ class CartController extends Controller {
       }
 
       this.updateCarts(cartResponse.cart.id, cartResponse?.cart);
-      this.updateSelectedCart(cartResponse.cart.id, cartResponse?.cart);
+      this.updateSelectedCart(cartResponse?.cart);
     } catch (error: any) {
       console.error(error);
     }
@@ -195,7 +194,7 @@ class CartController extends Controller {
       }
 
       this.updateCarts(cartResponse.cart.id, cartResponse?.cart);
-      this.updateSelectedCart(cartResponse.cart.id, cartResponse?.cart);
+      this.updateSelectedCart(cartResponse?.cart);
     } catch (error: any) {
       console.error(error);
     }
@@ -224,7 +223,7 @@ class CartController extends Controller {
         }
 
         this.updateCarts(cartResponse.cart.id, cartResponse?.cart);
-        this.updateSelectedCart(cartResponse.cart.id, cartResponse?.cart);
+        this.updateSelectedCart(cartResponse?.cart);
       } catch (error: any) {
         console.error(error);
       }
@@ -329,7 +328,7 @@ class CartController extends Controller {
       }
 
       this.updateCarts(cartResponse.cart.id, cartResponse?.cart);
-      this.updateSelectedCart(cartResponse.cart.id, cartResponse?.cart);
+      this.updateSelectedCart(cartResponse?.cart);
 
       return cartResponse?.cart;
     } catch (error: any) {
@@ -385,7 +384,7 @@ class CartController extends Controller {
       await this.createCartAsync(region.id, value);
     }
 
-    if (cartId && cartId.length > 0) {
+    if (cartId && !this._model.carts[cartId]) {
       try {
         const cartResponse = await MedusaService.medusa?.carts.retrieve(
           cartId,
@@ -399,10 +398,12 @@ class CartController extends Controller {
         }
 
         this.updateCarts(cartResponse.cart.id, cartResponse?.cart);
-        this.updateSelectedCart(cartResponse.cart.id, cartResponse?.cart);
+        this.updateSelectedCart(cartResponse?.cart);
       } catch (error: any) {
         console.error(error);
       }
+    } else if (cartId) {
+      this.updateSelectedCart(this._model.carts[cartId]);
     }
   }
 }

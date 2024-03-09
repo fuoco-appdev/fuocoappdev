@@ -170,7 +170,6 @@ class CheckoutController extends Controller {
 
       CartController.updateCarts(cartResponse.cart.id, cartResponse.cart);
       CartController.updateSelectedCart(
-        cartResponse.cart.id,
         cartResponse.cart,
       );
 
@@ -273,7 +272,6 @@ class CheckoutController extends Controller {
 
       CartController.updateCarts(cartResponse.cart.id, cartResponse.cart);
       CartController.updateSelectedCart(
-        cartResponse.cart.id,
         cartResponse.cart,
       );
 
@@ -351,7 +349,6 @@ class CheckoutController extends Controller {
 
       CartController.updateCarts(cartResponse.cart.id, cartResponse.cart);
       CartController.updateSelectedCart(
-        cartResponse.cart.id,
         cartResponse.cart,
       );
     } catch (error: any) {
@@ -623,7 +620,6 @@ class CheckoutController extends Controller {
 
         CartController.updateCarts(cartResponse.cart.id, cartResponse.cart);
         CartController.updateSelectedCart(
-          cartResponse.cart.id,
           cartResponse.cart,
         );
       } catch (error: any) {
@@ -647,7 +643,6 @@ class CheckoutController extends Controller {
 
         CartController.updateCarts(cartResponse.cart.id, cartResponse.cart);
         CartController.updateSelectedCart(
-          cartResponse.cart.id,
           cartResponse.cart,
         );
       } catch (error: any) {

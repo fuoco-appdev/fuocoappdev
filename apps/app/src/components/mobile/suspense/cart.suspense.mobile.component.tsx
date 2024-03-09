@@ -5,6 +5,7 @@ import styles from '../../cart.module.scss';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { CartItemSuspenseMobileComponent } from './cart-item.suspense.mobile.component';
 import { ResponsiveSuspenseMobile } from 'src/components/responsive.component';
+import { StockLocationCartItemSuspenseMobileComponent } from './stock-location-cart-item.suspense.mobile.component';
 
 export function CartSuspenseMobileComponent(): JSX.Element {
   return (
@@ -12,229 +13,38 @@ export function CartSuspenseMobileComponent(): JSX.Element {
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
         <div
           className={[
-            styles['account-container'],
-            styles['account-container-mobile'],
+            styles['shopping-carts-container'],
+            styles['shopping-carts-container-mobile'],
           ].join(' ')}
         >
-          <Skeleton
-            className={[
-              styles['already-have-an-account-title'],
-              styles['already-have-an-account-title-mobile'],
-            ].join(' ')}
-            width={156}
-            borderRadius={20}
-          />
-          <Skeleton
-            className={[
-              styles['already-have-an-account-description'],
-              styles['already-have-an-account-description-mobile'],
-            ].join(' ')}
-            width={400}
-            borderRadius={20}
-          />
           <div
             className={[
-              styles['sign-in-button-container'],
-              styles['sign-in-button-container-mobile'],
+              styles['top-bar-container'],
+              styles['top-bar-container-mobile'],
             ].join(' ')}
           >
-            <Skeleton width={96} height={48} borderRadius={6} />
-          </div>
-        </div>
-        <div
-          className={[
-            styles['shopping-cart-container'],
-            styles['shopping-cart-container-mobile'],
-          ].join(' ')}
-        >
-          <Skeleton
-            className={[
-              styles['shopping-cart-title-skeleton'],
-              styles['shopping-cart-title-skeleton-mobile'],
-            ].join(' ')}
-            width={156}
-            borderRadius={20}
-          />
-          <div
-            className={[
-              styles['shopping-cart-items'],
-              styles['shopping-cart-items-mobile'],
-            ].join(' ')}
-          >
+            <Skeleton width={24} height={24} borderRadius={24} />
             <div
               className={[
-                styles['tabs-container-skeleton'],
-                styles['tabs-container-skeleton-mobile'],
+                styles['shopping-carts-title'],
+                styles['shopping-carts-title-mobile'],
               ].join(' ')}
             >
-              <Skeleton style={{ height: 36, width: 100 }} borderRadius={36} />
-              <Skeleton style={{ height: 36, width: 100 }} borderRadius={36} />
-            </div>
-            {[1, 2].map(() => (
-              <CartItemSuspenseMobileComponent />
-            ))}
-          </div>
-        </div>
-        <div
-          className={[
-            styles['pricing-container'],
-            styles['pricing-container-mobile'],
-          ].join(' ')}
-        >
-          <div
-            className={[
-              styles['subtotal-container'],
-              styles['subtotal-container-mobile'],
-            ].join(' ')}
-          >
-            <Skeleton
-              className={[
-                styles['subtotal-text'],
-                styles['subtotal-text-mobile'],
-              ].join(' ')}
-              width={62}
-              borderRadius={20}
-            />
-            <Skeleton
-              className={[
-                styles['subtotal-text'],
-                styles['subtotal-text-mobile'],
-              ].join(' ')}
-              width={62}
-              borderRadius={20}
-            />
-          </div>
-          <div
-            className={[
-              styles['total-detail-container'],
-              styles['total-detail-container-mobile'],
-            ].join(' ')}
-          >
-            <Skeleton
-              className={[
-                styles['total-detail-text'],
-                styles['total-detail-text-mobile'],
-              ].join(' ')}
-              width={62}
-              borderRadius={20}
-            />
-            <Skeleton
-              className={[
-                styles['total-detail-text'],
-                styles['total-detail-text-mobile'],
-              ].join(' ')}
-              width={62}
-              borderRadius={20}
-            />
-          </div>
-          <div
-            className={[
-              styles['total-detail-container'],
-              styles['total-detail-container-mobile'],
-            ].join(' ')}
-          >
-            <Skeleton
-              className={[
-                styles['total-detail-text'],
-                styles['total-detail-text-mobile'],
-              ].join(' ')}
-              width={62}
-              borderRadius={20}
-            />
-            <Skeleton
-              className={[
-                styles['total-detail-text'],
-                styles['total-detail-text-mobile'],
-              ].join(' ')}
-              width={62}
-              borderRadius={20}
-            />
-          </div>
-          <div
-            className={[
-              styles['total-detail-container'],
-              styles['total-detail-container-mobile'],
-            ].join(' ')}
-          >
-            <Skeleton
-              className={[
-                styles['total-detail-text'],
-                styles['total-detail-text-mobile'],
-              ].join(' ')}
-              width={62}
-              borderRadius={20}
-            />
-            <Skeleton
-              className={[
-                styles['total-detail-text'],
-                styles['total-detail-text-mobile'],
-              ].join(' ')}
-              width={62}
-              borderRadius={20}
-            />
-          </div>
-          <div
-            className={[
-              styles['total-container-skeleton'],
-              styles['total-container-skeleton-mobile'],
-            ].join(' ')}
-          >
-            <Skeleton
-              className={[
-                styles['total-text'],
-                styles['total-text-mobile'],
-              ].join(' ')}
-              width={62}
-              borderRadius={20}
-            />
-            <Skeleton
-              className={[
-                styles['total-text'],
-                styles['total-text-mobile'],
-              ].join(' ')}
-              width={62}
-              borderRadius={20}
-            />
-          </div>
-        </div>
-        <div
-          className={[
-            styles['discount-container'],
-            styles['discount-container-mobile'],
-          ].join(' ')}
-        >
-          <div
-            className={[
-              styles['discount-input-container'],
-              styles['discount-input-container-mobile'],
-            ].join(' ')}
-          >
-            <div className={styles['input-root-skeleton']}>
-              <Skeleton
-                className={styles['input-form-layout-label-skeleton']}
-                height={20}
-                width={120}
-                borderRadius={20}
-              />
-              <Skeleton style={{ height: 44 }} borderRadius={6} />
+              <Skeleton width={80} height={20} borderRadius={20} />
             </div>
           </div>
           <div
             className={[
-              styles['apply-button-container-skeleton'],
-              styles['apply-button-container-skeleton-mobile'],
+              styles['shopping-cart-items-container'],
+              styles['shopping-cart-items-container-mobile'],
             ].join(' ')}
           >
-            <Skeleton width={96} height={44} borderRadius={6} />
+            {[1, 1, 1, 1].map((value: number, index: number) => {
+              return (
+                <StockLocationCartItemSuspenseMobileComponent key={index} />
+              );
+            })}
           </div>
-        </div>
-        <div
-          className={[
-            styles['go-to-checkout-container'],
-            styles['go-to-checkout-container-mobile'],
-          ].join(' ')}
-        >
-          <Skeleton height={48} borderRadius={6} />
         </div>
       </div>
     </ResponsiveSuspenseMobile>

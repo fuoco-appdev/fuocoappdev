@@ -101,6 +101,21 @@ export default function WindowComponent(): JSX.Element {
   const onNavigateBack = () => {
     if (
       windowProps.loadedLocationPath &&
+      windowProps.loadedLocationPath === RoutePathsType.Cart
+    ) {
+      setTimeout(
+        () =>
+          navigate({
+            pathname: RoutePathsType.Store,
+            search: query.toString(),
+          }),
+        150
+      );
+      return;
+    }
+
+    if (
+      windowProps.loadedLocationPath &&
       windowProps.loadedLocationPath === RoutePathsType.Checkout
     ) {
       setTimeout(

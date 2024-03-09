@@ -319,7 +319,6 @@ class ProductController extends Controller {
 
       CartController.updateCarts(cartResponse.cart.id, cartResponse.cart);
       CartController.updateSelectedCart(
-        cartResponse.cart.id,
         cartResponse.cart,
       );
 
