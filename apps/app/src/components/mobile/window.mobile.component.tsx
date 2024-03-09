@@ -176,7 +176,20 @@ export default function WindowMobileComponent({
                       rippleProps={{
                         color: 'rgba(42, 42, 95, .35)',
                       }}
-                      onClick={() => navigate(-1)}
+                      onClick={() => {
+                        if (activeRoute === RoutePathsType.Cart) {
+                          navigate(-1);
+                        } else {
+                          setTimeout(
+                            () =>
+                              navigate({
+                                pathname: RoutePathsType.Cart,
+                                search: query.toString(),
+                              }),
+                            75
+                          );
+                        }
+                      }}
                       type={'primary'}
                       rounded={true}
                       size={'small'}
