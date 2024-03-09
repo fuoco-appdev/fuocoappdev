@@ -393,6 +393,9 @@ export default function ExploreMobileComponent({
             classNames={{
               touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
             }}
+            extendThresholdPercent={70}
+            dropThresholdPercent={60}
+            defaultHeightPercent={90}
             open={Boolean(selectedPoint)}
             touchScreen={true}
             onClose={() => setSelectedPoint(null)}
