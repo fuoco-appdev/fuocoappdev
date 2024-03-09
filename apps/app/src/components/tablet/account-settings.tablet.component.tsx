@@ -33,7 +33,7 @@ export default function AccountSettingsTabletComponent({
           <Tabs
             activeId={windowProps.activeRoute}
             direction={'vertical'}
-            type={'underlined'}
+            type={'nav'}
             onChange={(id) =>
               navigate({ pathname: id, search: query.toString() })
             }
