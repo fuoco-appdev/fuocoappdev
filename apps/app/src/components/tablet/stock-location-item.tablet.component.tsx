@@ -119,32 +119,41 @@ export default function StockLocationItemTabletComponent({
                       styles['thumbnail-tablet'],
                     ].join(' ')}
                   >
-                    {Object.keys(stockLocation?.metadata ?? {}).includes(
-                      'type'
-                    ) &&
+                    {avatar && (
+                      <img
+                        className={[
+                          styles['thumbnail-image'],
+                          styles['thumbnail-image-tablet'],
+                        ].join(' ')}
+                        src={avatar}
+                      />
+                    )}
+                    {!avatar &&
+                      Object.keys(stockLocation?.metadata ?? {}).includes(
+                        'type'
+                      ) &&
                       (stockLocation?.metadata?.['type'] as string) ===
                         InventoryLocationType.Cellar && (
                         <img
                           className={[
-                            styles['thumbnail-image'],
-                            styles['thumbnail-image-tablet'],
+                            styles['no-thumbnail-image'],
+                            styles['no-thumbnail-image-tablet'],
                           ].join(' ')}
-                          src={avatar || '../assets/images/selected-cellar.png'}
+                          src={'../assets/images/selected-cellar.png'}
                         />
                       )}
-                    {Object.keys(stockLocation?.metadata ?? {}).includes(
-                      'type'
-                    ) &&
+                    {!avatar &&
+                      Object.keys(stockLocation?.metadata ?? {}).includes(
+                        'type'
+                      ) &&
                       (stockLocation?.metadata?.['type'] as string) ===
                         InventoryLocationType.Restaurant && (
                         <img
                           className={[
-                            styles['thumbnail-image'],
-                            styles['thumbnail-image-tablet'],
+                            styles['no-thumbnail-image'],
+                            styles['no-thumbnail-image-tablet'],
                           ].join(' ')}
-                          src={
-                            avatar || '../assets/images/selected-restaurant.png'
-                          }
+                          src={'../assets/images/selected-restaurant.png'}
                         />
                       )}
                   </div>

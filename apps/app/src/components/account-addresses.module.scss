@@ -152,6 +152,7 @@
 .modal {
     max-height: 95vh;
     overflow-y: auto;
+    overscroll-behavior: none;
 }
 
 .modal-desktop {
@@ -235,6 +236,7 @@
 .add-address-container-desktop {
     height: 100%;
     overflow-y: auto;
+    overscroll-behavior: none;
 
     & .add-address-button-container-desktop {
         & .add-address-button-desktop {
@@ -245,6 +247,7 @@
 .add-address-container-tablet {
     height: 100%;
     overflow-y: auto;
+    overscroll-behavior: none;
 
     & .add-address-button-container-tablet {
         & .add-address-button-tablet {
@@ -275,6 +278,7 @@
 .edit-address-container-desktop {
     height: 100%;
     overflow-y: auto;
+    overscroll-behavior: none;
 
     & .edit-address-button-container-desktop {
         & .edit-address-button-desktop {
@@ -285,6 +289,7 @@
 .edit-address-container-tablet {
     height: 100%;
     overflow-y: auto;
+    overscroll-behavior: none;
 
     & .edit-address-button-container-tablet {
         & .edit-address-button-tablet {

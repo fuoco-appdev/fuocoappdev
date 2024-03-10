@@ -152,6 +152,10 @@ export const getRoutePaths = (): RouteObject[] => [
         element: <AccountComponent />,
         children: [
           {
+            index: true,
+            element: <AccountEditComponent />,
+          },
+          {
             path: RoutePathsType.AccountLikes,
             element: <AccountEditComponent />,
           },
@@ -170,6 +174,10 @@ export const getRoutePaths = (): RouteObject[] => [
         element: <AccountPublicComponent />,
         children: [
           {
+            index: true,
+            element: <AccountPublicLikesComponent />,
+          },
+          {
             path: RoutePathsType.AccountWithIdLikes,
             element: <AccountPublicLikesComponent />,
           },
@@ -179,6 +187,10 @@ export const getRoutePaths = (): RouteObject[] => [
         path: RoutePathsType.AccountStatusWithId,
         element: <AccountPublicStatusComponent />,
         children: [
+          {
+            index: true,
+            element: <AccountPublicFollowersComponent />,
+          },
           {
             path: RoutePathsType.AccountStatusWithIdFollowers,
             element: <AccountPublicFollowersComponent />,
@@ -201,6 +213,10 @@ export const getRoutePaths = (): RouteObject[] => [
         path: RoutePathsType.AccountSettings,
         element: <AccountSettingsComponent />,
         children: [
+          {
+            index: true,
+            element: <AccountSettingsAccountComponent />,
+          },
           {
             path: RoutePathsType.AccountSettingsAccount,
             element: <AccountSettingsAccountComponent />,

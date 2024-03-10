@@ -249,6 +249,7 @@
     max-height: 95vh;
     min-width: 500px;
     overflow-y: auto;
+    overscroll-behavior: none;
 }
 
 .modal-text-desktop {
@@ -259,6 +260,7 @@
     max-height: 95vh;
     min-width: 500px;
     overflow-y: auto;
+    overscroll-behavior: none;
 }
 
 .modal-text-tablet {

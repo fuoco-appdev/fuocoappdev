@@ -45,6 +45,7 @@
     height: 100%;
     width: 100%;
     overflow-y: hidden;
+    overscroll-behavior: none;
     /* Prevent native touch events on Windows */
     -ms-touch-action: none;
 
@@ -895,6 +896,7 @@
   max-width: 500px;
   padding: $mp-8 !important;
   overflow-y: auto;
+  overscroll-behavior: none;
 }
 
 .modal-text-desktop {

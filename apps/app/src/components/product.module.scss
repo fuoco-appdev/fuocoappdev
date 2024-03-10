@@ -603,6 +603,7 @@
     flex: 1;
     gap: $mp-6;
     overflow-y: auto;
+    overscroll-behavior: none;
   }
 
   & .middle-content-desktop {
@@ -626,6 +627,7 @@
 
     & .side-bar-content-desktop {
       overflow-y: auto;
+      overscroll-behavior: none;
       overflow-x: hidden;
       padding-bottom: $mp-4;
       padding-top: $mp-4;
@@ -837,6 +839,7 @@
     flex: 1;
     gap: $mp-6;
     overflow-y: auto;
+    overscroll-behavior: none;
   }
 
   & .middle-content-tablet {
@@ -860,6 +863,7 @@
 
     & .side-bar-content-tablet {
       overflow-y: auto;
+      overscroll-behavior: none;
       overflow-x: hidden;
       padding-bottom: $mp-4;
       padding-top: $mp-4;
@@ -1046,6 +1050,7 @@
 
 .root-mobile {
   overflow-y: auto;
+  overscroll-behavior: none;
   height: 100%;
   
   & .thumbnail-container-mobile {
@@ -1342,6 +1347,7 @@
   max-width: 500px;
   padding: $mp-8 !important;
   overflow-y: auto;
+  overscroll-behavior: none;
 }
 
 .modal-text-desktop {

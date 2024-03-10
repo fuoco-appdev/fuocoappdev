@@ -90,6 +90,14 @@
                             object-fit: cover;
                             color: $brand-900;
                         }
+
+                        & .no-thumbnail-image {
+                            max-height: 100%;
+                            max-width: 100%;
+                            width: auto;
+                            color: $brand-900;
+                            padding: $mp-1;
+                        }
                     }
                 }
         

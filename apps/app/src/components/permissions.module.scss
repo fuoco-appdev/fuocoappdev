@@ -63,6 +63,7 @@
   height: 100%;
   min-height: 100%;
   overflow-y: auto;
+  overscroll-behavior: none;
 
   & .permissions-container-desktop {
     display: -webkit-box;
@@ -109,6 +110,7 @@
     height: 100%;
     min-height: 100%;
     overflow-y: auto;
+    overscroll-behavior: none;
   
     & .permissions-container-tablet {
       display: -webkit-box;

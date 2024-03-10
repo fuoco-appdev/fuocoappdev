@@ -24,6 +24,7 @@
         & .shopping-cart-items-container {
             padding: $mp-4 0;
             overflow-y: auto;
+            overscroll-behavior: none;
         }
     }
 
@@ -332,6 +333,7 @@
 
     & .cart-container-desktop {
         overflow-y: auto;
+        overscroll-behavior: none;
         padding: $mp-10;
     }
 
@@ -700,6 +702,7 @@
     max-height: 95vh;
     width: 500px;
     overflow-y: auto;
+    overscroll-behavior: none;
     padding: $mp-8 !important;
 }
 
@@ -711,6 +714,7 @@
     max-height: 95vh;
     width: 500px;
     overflow-y: auto;
+    overscroll-behavior: none;
     padding: $mp-6 !important;
 }
 
