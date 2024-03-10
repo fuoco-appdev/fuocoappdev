@@ -23,8 +23,9 @@
 
             & .thumbnail-image {
                 padding: $mp-1 0;
-                max-height: 100%;
-                width: auto;
+                height: 100%;
+                width: 100%;
+                object-fit: cover;
                 color: $brand-900;
             }
         }
