@@ -215,17 +215,48 @@ class ProductController extends Controller {
   public async requestProductAsync(
     id: string,
   ): Promise<void> {
+    this._model.metadata = undefined;
+
     if (this._model.isLoading) {
       return;
     }
 
     this._model.isLoading = true;
-    try {
-      const productMetadataResponse = await MedusaService
-        .requestProductMetadataAsync(id);
-      this._model.metadata = productMetadataResponse;
-    } catch (error: any) {
-      console.error(error);
+    const cachedProducts: (Product & { sales_channel_ids: string[] })[] =
+      await firstValueFrom(
+        StoreController.model.store.pipe(
+          select((model) => model.products),
+          take(1),
+        ),
+      );
+    const cachedProduct = cachedProducts.find((value) => value.id === id);
+    if (cachedProduct) {
+      this._model.metadata = new ProductMetadataResponse({
+        title: cachedProduct.title,
+        subtitle: cachedProduct.subtitle ?? undefined,
+        description: cachedProduct.description ?? undefined,
+        thumbnail: cachedProduct.thumbnail ?? undefined,
+        type: JSON.stringify(cachedProduct.type),
+        material: cachedProduct.material ?? undefined,
+        length: cachedProduct.length ?? undefined,
+        weight: cachedProduct.weight ?? undefined,
+        width: cachedProduct.width ?? undefined,
+        height: cachedProduct.height ?? undefined,
+        originCountry: cachedProduct.origin_country ?? undefined,
+        metadata: JSON.stringify(cachedProduct.metadata),
+        tags: cachedProduct.tags?.map((value) => JSON.stringify(value)),
+        options: cachedProduct.options?.map((value) => JSON.stringify(value)),
+        variantIds: cachedProduct.variants.map((value) => value.id ?? ""),
+        salesChannelIds: cachedProduct.sales_channel_ids,
+      });
+    } else {
+      try {
+        const productMetadataResponse = await MedusaService
+          .requestProductMetadataAsync(id);
+        this._model.metadata = productMetadataResponse;
+      } catch (error: any) {
+        console.error(error);
+      }
     }
 
     const account = await firstValueFrom(
@@ -243,18 +274,32 @@ class ProductController extends Controller {
     productId: string,
     accountId: string | undefined,
   ): Promise<void> {
-    try {
-      const productLikesResponse = await ProductLikesService
-        .requestMetadataAsync({
-          accountId: accountId ?? "",
-          productIds: [productId],
-        });
+    const cachedProductLikesMetadataList: ProductLikesMetadataResponse[] =
+      await firstValueFrom(
+        StoreController.model.store.pipe(
+          select((model) => model.productLikesMetadata),
+          take(1),
+        ),
+      );
+    const cachedProductLikesMetadata = cachedProductLikesMetadataList.find((
+      value,
+    ) => value.productId === productId);
+    if (cachedProductLikesMetadata) {
+      this._model.likesMetadata = cachedProductLikesMetadata;
+    } else {
+      try {
+        const productLikesResponse = await ProductLikesService
+          .requestMetadataAsync({
+            accountId: accountId ?? "",
+            productIds: [productId],
+          });
 
-      if (productLikesResponse.metadata.length > 0) {
-        this._model.likesMetadata = productLikesResponse.metadata[0];
+        if (productLikesResponse.metadata.length > 0) {
+          this._model.likesMetadata = productLikesResponse.metadata[0];
+        }
+      } catch (error: any) {
+        console.error(error);
       }
-    } catch (error: any) {
-      console.error(error);
     }
   }
 

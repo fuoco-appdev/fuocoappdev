@@ -1,41 +1,41 @@
-import { createStore, withProps } from '@ngneat/elf';
-import { Model } from '../model';
-import { Product, Region, SalesChannel, ProductType } from '@medusajs/medusa';
-import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
-import { ProductLikesMetadataResponse } from 'src/protobuf/core_pb';
+import { createStore, withProps } from "@ngneat/elf";
+import { Model } from "../model";
+import { Product, ProductType, Region, SalesChannel } from "@medusajs/medusa";
+import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
+import { ProductLikesMetadataResponse } from "src/protobuf/core_pb";
 
 export enum ProductTabs {
   // Restaurant
-  Appetizers = 'Appetizers',
-  MainCourses = 'MainCourses',
-  Desserts = 'Desserts',
-  Extras = 'Extras',
-  Wines = 'Wines',
+  Appetizers = "Appetizers",
+  MainCourses = "MainCourses",
+  Desserts = "Desserts",
+  Extras = "Extras",
+  Wines = "Wines",
   // Cellar
-  White = 'White',
-  Red = 'Red',
-  Rose = 'Rose',
-  Spirits = 'Spirits',
+  White = "White",
+  Red = "Red",
+  Rose = "Rose",
+  Spirits = "Spirits",
   // Market
-  Produce = 'Produce',
-  Fruit = 'Fruits',
-  Bread = 'Bread',
-  Grains = 'Grains',
-  Meats = 'Meats',
-  Fish = 'Fish',
-  Condiments = 'Condiments',
-  Beverages = 'Beverages',
-  Snacks = 'Snacks',
-  Dairy = 'Dairy',
-  Oils = 'Oils',
-  Baking = 'Baking',
-  Spices = 'Spices',
-  Frozen = 'Frozen',
-  CannedGoods = 'CannedGoods',
+  Produce = "Produce",
+  Fruit = "Fruits",
+  Bread = "Bread",
+  Grains = "Grains",
+  Meats = "Meats",
+  Fish = "Fish",
+  Condiments = "Condiments",
+  Beverages = "Beverages",
+  Snacks = "Snacks",
+  Dairy = "Dairy",
+  Oils = "Oils",
+  Baking = "Baking",
+  Spices = "Spices",
+  Frozen = "Frozen",
+  CannedGoods = "CannedGoods",
 }
 
 export interface StoreState {
-  products: Product[];
+  products: (Product & { sales_channel_ids: string[] })[];
   pricedProducts: Record<string, PricedProduct>;
   productLikesMetadata: ProductLikesMetadataResponse[];
   input: string;
@@ -56,12 +56,12 @@ export class StoreModel extends Model {
   constructor() {
     super(
       createStore(
-        { name: 'store' },
+        { name: "store" },
         withProps<StoreState>({
           products: [],
           pricedProducts: {},
           productLikesMetadata: [],
-          input: '',
+          input: "",
           selectedPricedProduct: undefined,
           selectedProductLikesMetadata: null,
           regions: [],
@@ -73,8 +73,8 @@ export class StoreModel extends Model {
           scrollPosition: undefined,
           isLoading: false,
           productTypes: [],
-        })
-      )
+        }),
+      ),
     );
   }
 
@@ -131,16 +131,18 @@ export class StoreModel extends Model {
     }
   }
 
-  public get selectedProductLikesMetadata(): ProductLikesMetadataResponse | null {
+  public get selectedProductLikesMetadata():
+    | ProductLikesMetadataResponse
+    | null {
     return this.store.getValue().selectedProductLikesMetadata;
   }
 
   public set selectedProductLikesMetadata(
-    value: ProductLikesMetadataResponse | null
+    value: ProductLikesMetadataResponse | null,
   ) {
     if (
       JSON.stringify(this.selectedProductLikesMetadata) !==
-      JSON.stringify(value)
+        JSON.stringify(value)
     ) {
       this.store.update((state) => ({
         ...state,
