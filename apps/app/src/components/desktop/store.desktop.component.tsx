@@ -313,9 +313,7 @@ export default function StoreDesktopComponent({
                       productLikesMetadata
                     )
                   }
-                  onRest={() =>
-                    pricedProduct && onProductPreviewRest(pricedProduct)
-                  }
+                  onRest={() => onProductPreviewRest(product)}
                   onAddToCart={() =>
                     pricedProduct &&
                     onProductPreviewAddToCart(

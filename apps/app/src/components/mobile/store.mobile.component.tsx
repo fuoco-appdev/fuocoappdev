@@ -304,9 +304,7 @@ export default function StoreMobileComponent({
                     productLikesMetadata
                   )
                 }
-                onRest={() =>
-                  pricedProduct && onProductPreviewRest(pricedProduct)
-                }
+                onRest={() => onProductPreviewRest(product)}
                 onAddToCart={() =>
                   pricedProduct &&
                   onProductPreviewAddToCart(pricedProduct, productLikesMetadata)

@@ -107,7 +107,7 @@ export interface StoreResponsiveProps {
     product: PricedProduct | undefined,
     productLikesMetadata: core.ProductLikesMetadataResponse | null
   ) => void;
-  onProductPreviewRest: (product: PricedProduct | undefined) => void;
+  onProductPreviewRest: (product: Product | undefined) => void;
   onProductPreviewAddToCart: (
     product: PricedProduct | undefined,
     productLikesMetadata: core.ProductLikesMetadataResponse | null
@@ -186,13 +186,9 @@ export default function StoreComponent(): JSX.Element {
     StoreController.updateSelectedProductLikesMetadata(productLikesMetadata);
   };
 
-  const onProductPreviewRest = (product: PricedProduct | undefined) => {
-    if (!product) {
-      return;
-    }
-
+  const onProductPreviewRest = (product: Product | undefined) => {
     navigate({
-      pathname: `${RoutePathsType.Store}/${product.id}`,
+      pathname: `${RoutePathsType.Store}/${product?.id}`,
       search: query.toString(),
     });
   };

@@ -10,6 +10,8 @@
 
 .root {
   background-color: #fff;
+  border-radius: $mp-2;
+  border: 1px solid rgba(42, 42, 95, .6);
   
     & .thumbnail-container {
       position: relative;
@@ -108,12 +110,9 @@
 
     & .product-title {
       color: $brand-900;
-      margin-right: $mp-2;
-      word-break: break-all;
-      -o-text-overflow: ellipsis;
-         text-overflow: ellipsis;
+      word-break: break-word;
+      text-overflow: ellipsis;
       overflow: hidden;
-      white-space: nowrap;
 
       /* Prevent native touch events on Windows */
       -ms-touch-action: none;
@@ -222,6 +221,10 @@
 
     & .thumbnail-image-desktop {
 
+    }
+
+    & .no-thumbnail-image-desktop {
+      padding: $mp-4;
     }
 
     & .thumbnail-content-container-desktop {
@@ -457,6 +460,10 @@
 
     }
 
+    & .no-thumbnail-image-tablet {
+      padding: $mp-4;
+    }
+
     & .thumbnail-content-container-tablet {
 
       & .thumbnail-top-content-tablet {
@@ -681,14 +688,68 @@
 
 
 .root-mobile {
-  width: calc(50vw - ($mp-2 * 3)) !important;
-  height: 200px;
+  width: 100%;
+  height: fit-content;
+  min-height: 173px;
+
+  & .animated-root-mobile {
+    display: flex;
+    flex-direction: row;
+    padding: $mp-4;
+    gap: $mp-4;
+  }
+
+    & .left-content-mobile {
+      display: flex;
+      flex-direction: column;
+      gap: $mp-2;
+      flex: 1;
+
+      & .top-content-mobile {
+        display: flex;
+        flex-direction: row;
+        gap: $mp-2;
+        width: 100%;
+        height: fit-content;
+
+        & .thumbnail-content {
+          display: flex;
+          flex-direction: row;
+          gap: $mp-4;
+          width: 100%;
+
+          & .title-container {
+            display: flex;
+            flex-direction: column;
+          }
+        }
+      }
+    }
+
+    & .right-content-mobile {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-end;
+      min-width: 56px;
+
+      & .price-container-mobile {
+        display: flex;
+        flex-direction: row;
+        gap: $mp-2;
+        min-width: 38px;
+      }
+    }
 
     & .thumbnail-container-mobile {
       max-height: 382px;
 
       & .thumbnail-image-mobile {
 
+      }
+
+      & .no-thumbnail-image-mobile {
+        padding: $mp-2;
       }
 
       & .thumbnail-content-container-mobile {
@@ -709,29 +770,56 @@
       }
     }
 
-    & .bottom-bar-mobile {
-      -webkit-box-align: center;
-          -ms-flex-align: center;
-              align-items: center;
+    & .product-title-mobile {
+      color: $brand-900;
+      font-size: $font-size-sm;
+      font-weight: $font-weight-bold;
+    }
 
-      & .product-title-mobile {
-        font-size: $font-size-xs;
-        line-height: 32px;
-        font-weight: $font-weight-bold;
-      }
+    & .product-subtitle-mobile {
+      color: $brand-900;
+      font-size: $font-size-sm;
+      font-weight: $font-weight-bold;
+    }
 
-      & .product-price-mobile {
-        font-size: $font-size-xs;
-        line-height: 32px;
-        font-weight: $font-weight-bold;
-      }
+    & .product-price-mobile {
+      color: $brand-900;
+      font-size: $font-size-sm;
+      font-weight: $font-weight-bold;
+    }
 
-      & .product-limit-icon-mobile {
-      }
+    & .product-description-mobile {
+      color: $brand-900;
+      font-size: $font-size-sm;
+         text-overflow: ellipsis;
+      overflow: hidden;
+      /* Prevent native touch events on Windows */
+      -ms-touch-action: none;
+
+      /* Prevent the callout on tap-hold and text selection */
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+
+      /* Prevent text resize on orientation change, useful for web-apps */
+      -webkit-text-size-adjust: none;
+      -moz-text-size-adjust: none;
+      -ms-text-size-adjust: none;
+      -o-text-size-adjust: none;
+      text-size-adjust: none;
+      flex: 1;
+      max-height: 114px;
+    }
+
+    & .product-limit-icon-mobile {
     }
 
     & .status-content-container-mobile {
-      width: fit-content;
+      justify-content: center;
+      width: 46px;
+
       
       & .like-status-container-mobile {
 
@@ -757,7 +845,9 @@
 }
 
 .floating-button {
-  background-color: $brand-900 !important;
+  background-color: #fff !important;
+  color: $brand-900 !important;
+  border: 1px solid $brand-900;
 }
 
 .like-button-container {
@@ -779,10 +869,4 @@
   width: 100% !important;
   -webkit-box-shadow: none !important;
           box-shadow: none !important;
-}
-
-.root {
-  border-radius: $mp-2;
-  background-color: #fff;
-  border: 1px solid rgba(42, 42, 95, .6);
 }

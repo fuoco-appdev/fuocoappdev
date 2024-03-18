@@ -84,6 +84,7 @@ export interface ProductPreviewResponsiveProps extends ProductPreviewProps {
   setLikeCount: (value: number) => void;
   formatPrice: (price: MoneyAmount) => string;
   formatNumberCompact: (value: number) => string;
+  formatDescription: (markdown: string) => string;
 }
 
 export default function ProductPreviewComponent({
@@ -136,6 +137,16 @@ export default function ProductPreviewComponent({
   const formatNumberCompact = (value: number): string => {
     const formatter = Intl.NumberFormat(i18n.language, { notation: 'compact' });
     return formatter.format(value);
+  };
+
+  const formatDescription = (markdown: string): string => {
+    const toText = markdown
+      .replace(/^### (.*$)/gim, '$1') // h3 tag
+      .replace(/^## (.*$)/gim, '$1') // h2 tag
+      .replace(/^# (.*$)/gim, '$1') // h1 tag
+      .replace(/\*\*(.*)\*\*/gim, '$1') // bold text
+      .replace(/\*(.*)\*/gim, '$1'); // italic text
+    return toText.trim();
   };
 
   const onLikeChangedOverride = (isLiked: boolean) => {
@@ -254,6 +265,7 @@ export default function ProductPreviewComponent({
         onAddToCart={onAddToCart}
         onLikeChanged={onLikeChangedOverride}
         formatNumberCompact={formatNumberCompact}
+        formatDescription={formatDescription}
       />
       <ProductPreviewTabletComponent
         accountProps={accountProps}
@@ -282,6 +294,7 @@ export default function ProductPreviewComponent({
         onAddToCart={onAddToCart}
         onLikeChanged={onLikeChangedOverride}
         formatNumberCompact={formatNumberCompact}
+        formatDescription={formatDescription}
       />
       <ProductPreviewMobileComponent
         accountProps={accountProps}
@@ -310,6 +323,7 @@ export default function ProductPreviewComponent({
         onAddToCart={onAddToCart}
         onLikeChanged={onLikeChangedOverride}
         formatNumberCompact={formatNumberCompact}
+        formatDescription={formatDescription}
       />
     </React.Suspense>
   );

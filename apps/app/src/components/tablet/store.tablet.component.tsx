@@ -315,9 +315,7 @@ export default function StoreTabletComponent({
                       productLikesMetadata
                     )
                   }
-                  onRest={() =>
-                    pricedProduct && onProductPreviewRest(pricedProduct)
-                  }
+                  onRest={() => onProductPreviewRest(product)}
                   onAddToCart={() =>
                     pricedProduct &&
                     onProductPreviewAddToCart(

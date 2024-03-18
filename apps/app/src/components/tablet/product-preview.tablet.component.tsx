@@ -47,17 +47,9 @@ export default function ProductPreviewTabletComponent({
   onRest,
   onLikeChanged,
   formatNumberCompact,
+  formatDescription,
 }: ProductPreviewResponsiveProps): JSX.Element {
   const ref = useRef<HTMLDivElement | null>(null);
-  const formatDescription = (markdown: string): string => {
-    const toText = markdown
-      .replace(/^### (.*$)/gim, '$1') // h3 tag
-      .replace(/^## (.*$)/gim, '$1') // h2 tag
-      .replace(/^# (.*$)/gim, '$1') // h1 tag
-      .replace(/\*\*(.*)\*\*/gim, '$1') // bold text
-      .replace(/\*(.*)\*/gim, '$1'); // italic text
-    return toText.trim();
-  };
 
   return (
     <ResponsiveTablet>
@@ -308,7 +300,7 @@ export default function ProductPreviewTabletComponent({
                   icon={<Line.AddShoppingCart size={24} />}
                   loadingComponent={
                     <img
-                      src={'../assets/svg/ring-resize-light.svg'}
+                      src={'../assets/svg/ring-resize-dark.svg'}
                       style={{ height: 24 }}
                       className={[
                         styles['loading-ring'],
