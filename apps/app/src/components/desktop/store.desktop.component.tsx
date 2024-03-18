@@ -152,44 +152,6 @@ export default function StoreDesktopComponent({
                   </div>
                 </div>
               )}
-              {exploreProps.selectedInventoryLocation?.type ===
-                InventoryLocationType.Cellar && (
-                <div
-                  className={[
-                    styles['category-type-container'],
-                    styles['category-type-container-desktop'],
-                  ].join(' ')}
-                >
-                  <img
-                    style={{
-                      height: 24,
-                      width: 24,
-                      objectFit: 'contain',
-                    }}
-                    src={'../../assets/images/selected-cellar.png'}
-                  />
-                  {t(InventoryLocationType.Cellar)}
-                </div>
-              )}
-              {exploreProps.selectedInventoryLocation?.type ===
-                InventoryLocationType.Restaurant && (
-                <div
-                  className={[
-                    styles['category-type-container'],
-                    styles['category-type-container-desktop'],
-                  ].join(' ')}
-                >
-                  <img
-                    style={{
-                      height: 24,
-                      width: 24,
-                      objectFit: 'contain',
-                    }}
-                    src={'../../assets/images/selected-restaurant.png'}
-                  />
-                  {t(InventoryLocationType.Restaurant)}
-                </div>
-              )}
             </div>
             <div
               className={[
