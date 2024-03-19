@@ -356,36 +356,41 @@ export default function ExploreMobileComponent({
             )}
           </Map>
         </div>
-        {isSearchFocused && (
-          <div
-            className={[
-              styles['floating-button-container'],
-              styles['floating-button-container-mobile'],
-            ].join(' ')}
-          >
-            <Button
-              classNames={{
-                container: [
-                  styles['map-button-container'],
-                  styles['map-button-container-mobile'],
-                ].join(' '),
-                button: [
-                  styles['map-button'],
-                  styles['map-button-mobile'],
-                ].join(' '),
-              }}
-              rippleProps={{
-                color: 'rgba(88, 40, 109, .35)',
-              }}
-              onClick={() => setTimeout(() => setIsSearchFocused(false), 150)}
-              type={'primary'}
-              rounded={true}
-              size={'small'}
-              touchScreen={true}
-              icon={<Line.Map size={24} />}
-            />
-          </div>
-        )}
+        <div
+          className={[
+            styles['floating-button-container'],
+            styles['floating-button-container-mobile'],
+          ].join(' ')}
+        >
+          <Button
+            classNames={{
+              container: [
+                styles['map-button-container'],
+                styles['map-button-container-mobile'],
+              ].join(' '),
+              button: [styles['map-button'], styles['map-button-mobile']].join(
+                ' '
+              ),
+            }}
+            rippleProps={{
+              color: 'rgba(88, 40, 109, .35)',
+            }}
+            onClick={() =>
+              setTimeout(() => setIsSearchFocused(!isSearchFocused), 150)
+            }
+            type={'primary'}
+            rounded={true}
+            size={'small'}
+            touchScreen={true}
+            icon={
+              isSearchFocused ? (
+                <Line.Map size={24} />
+              ) : (
+                <Line.Search size={24} />
+              )
+            }
+          />
+        </div>
       </div>
       {createPortal(
         <>
