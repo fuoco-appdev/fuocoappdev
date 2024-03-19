@@ -219,8 +219,12 @@
   & .thumbnail-container-desktop {
     min-height: 194px;
 
-    & .thumbnail-image-desktop {
+    & .wine-thumbnail-image-desktop {
+      padding: $mp-4;
+    }
 
+    & .menu-item-thumbnail-image-desktop {
+      
     }
 
     & .no-thumbnail-image-desktop {
@@ -456,8 +460,12 @@
   & .thumbnail-container-tablet {
     min-height: 194px;
 
-    & .thumbnail-image-tablet {
+    & .wine-thumbnail-image-tablet {
+      padding: $mp-4;
+    }
 
+    & .menu-item-thumbnail-image-tablet {
+      
     }
 
     & .no-thumbnail-image-tablet {
@@ -752,10 +760,14 @@
     & .thumbnail-container-mobile {
       max-height: 382px;
 
-      & .thumbnail-image-mobile {
-
+      & .wine-thumbnail-image-mobile {
+        padding: $mp-2;
       }
-
+  
+      & .menu-item-thumbnail-image-mobile {
+        
+      }
+  
       & .no-thumbnail-image-mobile {
         padding: $mp-2;
       }
