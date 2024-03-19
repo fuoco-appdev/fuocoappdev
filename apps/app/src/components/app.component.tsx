@@ -29,6 +29,12 @@ function AppComponent({}: AppProps): JSX.Element {
         if (event === 'TOKEN_REFRESHED' && session) {
           setCookie('sb-refresh-token', session.refresh_token);
           setCookie('sb-access-token', session.access_token);
+        } else if (event === 'INITIAL_SESSION' && session) {
+          setCookie('sb-refresh-token', session.refresh_token);
+          setCookie('sb-access-token', session.access_token);
+        } else if (event === 'SIGNED_IN' && session) {
+          setCookie('sb-refresh-token', session.refresh_token);
+          setCookie('sb-access-token', session.access_token);
         } else if (event === 'SIGNED_OUT') {
           removeCookie('sb-refresh-token');
           removeCookie('sb-access-token');
@@ -73,7 +79,10 @@ function AppComponent({}: AppProps): JSX.Element {
     const refreshToken =
       Object.keys(cookies).includes('sb-refresh-token') &&
       cookies['sb-refresh-token'];
-    if (accessToken && refreshToken) {
+    if (
+      accessToken !== SupabaseService.session?.access_token ||
+      refreshToken !== SupabaseService.session?.refresh_token
+    ) {
       SupabaseService.setSessionAsync(accessToken, refreshToken);
     }
   }, [cookies]);
