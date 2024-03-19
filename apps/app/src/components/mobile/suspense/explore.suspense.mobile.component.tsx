@@ -23,91 +23,53 @@ export function ExploreSuspenseMobileComponent(): JSX.Element {
           >
             <div
               className={[
-                styles['top-bar-left-content'],
-                styles['top-bar-left-content-mobile'],
+                styles['logo-container'],
+                styles['logo-container-mobile'],
+              ].join(' ')}
+            >
+              <Skeleton
+                className={[styles['logo'], styles['logo-mobile']].join(' ')}
+                borderRadius={32}
+              />
+              <Skeleton
+                className={[
+                  styles['logo-text'],
+                  styles['logo-text-mobile'],
+                ].join(' ')}
+                width={128}
+                borderRadius={28}
+              />
+            </div>
+            <div
+              className={[
+                styles['search-container'],
+                styles['search-container-mobile'],
               ].join(' ')}
             >
               <div
                 className={[
-                  styles['logo-container'],
-                  styles['logo-container-mobile'],
+                  styles['search-input-root'],
+                  styles['search-input-root-mobile'],
                 ].join(' ')}
               >
                 <Skeleton
-                  className={[styles['logo'], styles['logo-mobile']].join(' ')}
-                  borderRadius={32}
-                />
-                <Skeleton
                   className={[
-                    styles['logo-text'],
-                    styles['logo-text-mobile'],
+                    styles['search-input-container-skeleton'],
+                    styles['search-input-container-skeleton-mobile'],
                   ].join(' ')}
-                  width={128}
-                  borderRadius={28}
+                  height={46}
+                  borderRadius={46}
                 />
               </div>
-              <div
-                className={[
-                  styles['search-container'],
-                  styles['search-container-mobile'],
-                ].join(' ')}
-              >
-                <div
-                  className={[
-                    styles['search-input-root'],
-                    styles['search-input-root-mobile'],
-                  ].join(' ')}
-                >
-                  <Skeleton
-                    className={[
-                      styles['search-input-container-skeleton'],
-                      styles['search-input-container-skeleton-mobile'],
-                    ].join(' ')}
-                    height={46}
-                    borderRadius={46}
-                  />
-                </div>
-              </div>
-              {/* <div
-                className={[
-                  styles['tab-container'],
-                  styles['tab-container-mobile'],
-                ].join(' ')}
-              >
-                <Tabs
-                  classNames={{
-                    tabButton: styles['tab-button'],
-                    selectedTabButton: styles['selected-tab-button'],
-                    tabSliderPill: styles['tab-slider-pill'],
-                  }}
-                  removable={true}
-                  type={'pills'}
-                  activeId={storeProps.selectedTab}
-                  onChange={(id: string) =>
-                    StoreController.updateSelectedTabAsync(
-                      id.length > 0 ? (id as ProductTabs) : undefined
-                    )
-                  }
-                  tabs={[
-                    {
-                      id: ProductTabs.White,
-                      label: t('white') ?? 'White',
-                    },
-                    {
-                      id: ProductTabs.Red,
-                      label: t('red') ?? 'Red',
-                    },
-                    {
-                      id: ProductTabs.Rose,
-                      label: t('rose') ?? 'Rosé',
-                    },
-                    {
-                      id: ProductTabs.Spirits,
-                      label: t('spirits') ?? 'Spirits',
-                    },
-                  ]}
-                />
-              </div> */}
+            </div>
+            <div
+              className={[
+                styles['tab-container-skeleton'],
+                styles['tab-container-skeleton-mobile'],
+              ].join(' ')}
+            >
+              <Skeleton style={{ width: 80, height: 24 }} borderRadius={24} />
+              <Skeleton style={{ width: 80, height: 24 }} borderRadius={24} />
             </div>
           </div>
         </div>
