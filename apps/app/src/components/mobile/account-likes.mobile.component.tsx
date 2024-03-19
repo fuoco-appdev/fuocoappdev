@@ -56,20 +56,6 @@ export default function AccountLikesMobileComponent({
       >
         <div
           className={[
-            styles['likes-text-container'],
-            styles['likes-text-container-mobile'],
-          ].join(' ')}
-        >
-          <div
-            className={[styles['likes-text'], styles['likes-text-mobile']].join(
-              ' '
-            )}
-          >
-            {t('likes')}
-          </div>
-        </div>
-        <div
-          className={[
             styles['items-container'],
             styles['items-container-mobile'],
           ].join(' ')}

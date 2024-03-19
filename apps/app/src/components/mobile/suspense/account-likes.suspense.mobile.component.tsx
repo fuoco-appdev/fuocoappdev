@@ -13,21 +13,6 @@ export function AccountLikesSuspenseMobileComponent(): JSX.Element {
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
         <div
           className={[
-            styles['likes-text-container-skeleton'],
-            styles['likes-text-container-skeleton-mobile'],
-          ].join(' ')}
-        >
-          <div
-            className={[
-              styles['likes-text-skeleton'],
-              styles['likes-text-skeleton-mobile'],
-            ].join(' ')}
-          >
-            <Skeleton count={1} borderRadius={20} height={20} width={120} />
-          </div>
-        </div>
-        <div
-          className={[
             styles['items-container'],
             styles['items-container-mobile'],
           ].join(' ')}

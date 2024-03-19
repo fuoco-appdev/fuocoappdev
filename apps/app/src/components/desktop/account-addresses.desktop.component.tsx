@@ -41,37 +41,6 @@ export default function AccountAddressesDesktopComponent({
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>
         <div
           className={[
-            styles['addresses-text-container'],
-            styles['addresses-text-container-desktop'],
-          ].join(' ')}
-        >
-          <div
-            className={[
-              styles['addresses-text'],
-              styles['addresses-text-desktop'],
-            ].join(' ')}
-          >
-            {t('addresses')}
-          </div>
-          <div
-            className={[
-              styles['addresses-add-button-container'],
-              styles['addresses-add-button-container-desktop'],
-            ].join(' ')}
-          >
-            <Button
-              rounded={true}
-              icon={<Line.Add size={24} color={'#2A2A5F'} />}
-              type={'text'}
-              rippleProps={{
-                color: 'rgba(42, 42, 95, .35)',
-              }}
-              onClick={() => setOpenAddDropdown(true)}
-            />
-          </div>
-        </div>
-        <div
-          className={[
             styles['address-list-container'],
             styles['address-list-container-desktop'],
           ].join(' ')}
@@ -95,6 +64,22 @@ export default function AccountAddressesDesktopComponent({
               {t('noAddresses')}
             </div>
           )}
+        </div>
+        <div
+          className={[
+            styles['addresses-add-button-container'],
+            styles['addresses-add-button-container-desktop'],
+          ].join(' ')}
+        >
+          <Button
+            rounded={true}
+            icon={<Line.Add size={24} color={'#2A2A5F'} />}
+            type={'text'}
+            rippleProps={{
+              color: 'rgba(42, 42, 95, .35)',
+            }}
+            onClick={() => setOpenAddDropdown(true)}
+          />
         </div>
         {createPortal(
           <>

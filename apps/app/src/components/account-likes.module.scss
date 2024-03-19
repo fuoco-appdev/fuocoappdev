@@ -1,77 +1,17 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
 .root {
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
+    flex-direction: column;
     height: 100%;
     min-width: 100%;
     min-height: 100%;
 
-    & .likes-text-container-skeleton {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-orient: horizontal;
-        -webkit-box-direction: normal;
-            -ms-flex-direction: row;
-                flex-direction: row;
-        -webkit-box-align: center;
-            -ms-flex-align: center;
-                align-items: center;
-
-        & .likes-text-skeleton {
-            -webkit-box-flex: 1;
-                -ms-flex: 1;
-                    flex: 1;
-        }
-    }
-    
-    & .likes-text-container {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-orient: horizontal;
-        -webkit-box-direction: normal;
-            -ms-flex-direction: row;
-                flex-direction: row;
-        border-bottom: solid 1px $brand-900;
-        -webkit-box-align: center;
-            -ms-flex-align: center;
-                align-items: center;
-
-        & .likes-text {
-            color: $brand-900;
-            font-weight: $font-weight-bold;
-            line-height: 46px;
-            font-size: $font-size-lg;
-        }
-            
-        & .likes-text-skeleton {
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            height: 46px;
-            padding: 0 $mp-4;
-            -webkit-box-align: center;
-            -ms-flex-align: center;
-            align-items: center;
-        }
-    }
-
     & .items-container {
         width: 100%;
-        display: -webkit-box;
-        display: -ms-flexbox;
         display: flex;
-        -ms-flex-wrap: wrap;
-            flex-wrap: wrap;
-        -ms-flex-line-pack: start;
-            align-content: flex-start;
+        flex-wrap: wrap;
+        align-content: flex-start;
 
         & .loading-ring {
             width: 100%;
@@ -125,28 +65,9 @@
     flex-direction: column;
     align-items: center;
 
-    & .likes-text-container-skeleton-desktop {
-        margin-bottom: $mp-6;
-        width: 100%;
-
-        & .likes-text-skeleton-desktop {
-            padding: 0 $mp-6;
-        }
-    }
-
-    & .likes-text-container-desktop {
-        margin-bottom: $mp-6;
-        width: 100%;
-
-        & .likes-text-desktop {
-            padding: 0 $mp-6;
-        }
-    }
-
     & .items-container-desktop {
         gap: $mp-6;
-        padding: 0 $mp-6;
-        padding-bottom: $mp-6;
+        padding: $mp-6;
         -webkit-box-pack: center;
         -ms-flex-pack: center;
         justify-content: center;
@@ -166,31 +87,9 @@
     flex-direction: column;
     align-items: center;
 
-    & .likes-text-container-skeleton-tablet {
-        margin-bottom: $mp-4;
-        width: 100%;
-
-        & .likes-text-skeleton-tablet {
-            padding: 0 $mp-4;
-        }
-    }
-
-    & .likes-text-container-tablet {
-        margin-bottom: $mp-4;
-        width: 100%;
-
-        & .likes-text-tablet {
-            padding: 0 $mp-4;
-        }
-            
-        & .likes-text-skeleton-tablet {
-        }
-    }
-
     & .items-container-tablet {
         gap: $mp-4;
-        padding: 0 $mp-4;
-        padding-bottom: $mp-4;
+        padding: $mp-4;
         -webkit-box-pack: center;
         -ms-flex-pack: center;
         justify-content: center;
@@ -206,29 +105,10 @@
 }
 
 .root-mobile {
-    & .likes-text-container-skeleton-mobile {
-        margin-bottom: $mp-4;
-
-        & .likes-text-skeleton-mobile {
-            padding: 0 $mp-4;
-        }
-    }
-
-    & .likes-text-container-mobile {
-        margin-bottom: $mp-4;
-
-        & .likes-text-mobile {
-            padding: 0 $mp-4;
-        }
-            
-        & .likes-text-skeleton-mobile {
-        }
-    }
-
     & .items-container-mobile {
         gap: $mp-4;
-        padding: 0 $mp-4;
-        padding-bottom: calc(56px * 2);
+        padding: $mp-4;
+        padding-bottom: 56px;
 
         & .loading-ring-mobile {
 

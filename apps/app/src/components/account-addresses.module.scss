@@ -1,56 +1,6 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
-.root {    
-    min-width: 100%;
-    min-height: 100%;
-
-    & .addresses-text-container-skeleton {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-orient: horizontal;
-        -webkit-box-direction: normal;
-            -ms-flex-direction: row;
-                flex-direction: row;
-        -webkit-box-align: center;
-            -ms-flex-align: center;
-                align-items: center;
-
-        & .addresses-text-skeleton {
-            -webkit-box-flex: 1;
-                -ms-flex: 1;
-                    flex: 1;
-        }
-    }
-    
-    & .addresses-text-container {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-orient: horizontal;
-        -webkit-box-direction: normal;
-            -ms-flex-direction: row;
-                flex-direction: row;
-        border-bottom: solid 1px $brand-900;
-        -webkit-box-align: center;
-            -ms-flex-align: center;
-                align-items: center;
-
-        & .addresses-text {
-            -webkit-box-flex: 1;
-                -ms-flex: 1;
-                    flex: 1;
-            color: $brand-900;
-            font-weight: $font-weight-bold;
-            line-height: 46px;
-            font-size: $font-size-lg;
-        }
-
-        & .addresses-add-button-container {
-
-        }
-    }
-
+.root {
     & .address-list-container {
         & .no-addresses-text {
             color: $brand-900;
@@ -59,80 +9,57 @@
             margin: $mp-10;
         }
     }
+
+    & .addresses-add-button-container {
+        position: fixed;
+        display: flex;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        width: 100%;
+        height: 100vh;
+    }
 }
 
 .root-desktop {  
-    & .addresses-text-container-skeleton-desktop {
-        margin: 0 $mp-6;
-        margin-top: $mp-4;
-        margin-bottom: $mp-2;
-    }
-
-    & .addresses-text-container-desktop {
-        margin-bottom: $mp-2;
-
-        & .addresses-text-desktop {
-            padding: 0 $mp-6;
-        }
-
-        & .addresses-add-button-container-desktop {
-            padding: 0 $mp-6;
-        }
-    }
-
     & .address-list-container-desktop {
+        padding: $mp-6 0;
+
         & .no-addresses-text-desktop {
         }
+    }
+
+    & .addresses-add-button-container-desktop {
+        padding: 0 $mp-6;
     }
 }
 
 .root-tablet { 
-    & .addresses-text-container-skeleton-tablet {
-        margin: 0 $mp-6;
-        margin-top: $mp-4;
-        margin-bottom: $mp-2;
-    }
-
-    & .addresses-text-container-tablet {
-        margin-bottom: $mp-2;
-
-        & .addresses-text-tablet {
-            padding: 0 $mp-6;
-        }
-
-        & .addresses-add-button-container-tablet {
-            padding: 0 $mp-6;
-        }
-    }
-
     & .address-list-container-tablet {
+        padding: $mp-6 0;
+
         & .no-addresses-text-tablet {
         }
+    }
+
+    & .addresses-add-button-container-tablet {
+        padding: 0 $mp-6;
     }
 }
 
 .root-mobile { 
-    & .addresses-text-container-skeleton-mobile {
-        margin: 0 $mp-4;
-        margin-top: $mp-4;
-        margin-bottom: $mp-2;
-    }
-
-    & .addresses-text-container-mobile {
-        margin-bottom: $mp-2;
-        
-        & .addresses-text-mobile {
-            padding: 0 $mp-4;
-        }
-
-        & .addresses-add-button-container-mobile {
-            padding: 0 $mp-4;
-        }
-    }
-
     & .address-list-container-mobile {
+        padding: $mp-4;
+
         & .no-addresses-text-mobile {
         }
+    }
+
+    & .addresses-add-button-container-mobile {
+        padding: 0 $mp-4;
+        padding-bottom: calc(56px + 16px);
+        align-items: flex-end;
+        justify-content: flex-end;
     }
 }
 
@@ -304,4 +231,14 @@
         & .edit-address-button-mobile {
         }
     }
+}
+
+.floating-button-container-mobile {
+    box-shadow: $shadow-1;
+    border: 1px solid $brand-900 !important;
+}
+
+.floating-button-mobile {
+    background-color: #fff !important;
+    color: $brand-900;
 }

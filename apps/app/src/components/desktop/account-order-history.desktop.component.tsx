@@ -34,21 +34,6 @@ export default function AccountOrderHistoryDesktopComponent({
       >
         <div
           className={[
-            styles['order-history-text-container'],
-            styles['order-history-text-container-desktop'],
-          ].join(' ')}
-        >
-          <div
-            className={[
-              styles['order-history-text'],
-              styles['order-history-text-desktop'],
-            ].join(' ')}
-          >
-            {t('orderHistory')}
-          </div>
-        </div>
-        <div
-          className={[
             styles['items-container'],
             styles['items-container-desktop'],
           ].join(' ')}

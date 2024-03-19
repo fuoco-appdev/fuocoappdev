@@ -56,20 +56,6 @@ export default function AccountLikesTabletComponent({
       >
         <div
           className={[
-            styles['likes-text-container'],
-            styles['likes-text-container-tablet'],
-          ].join(' ')}
-        >
-          <div
-            className={[styles['likes-text'], styles['likes-text-tablet']].join(
-              ' '
-            )}
-          >
-            {t('likes')}
-          </div>
-        </div>
-        <div
-          className={[
             styles['items-container'],
             styles['items-container-tablet'],
           ].join(' ')}

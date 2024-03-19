@@ -34,21 +34,6 @@ export default function AccountOrderHistoryMobileComponent({
             styles['items-container-mobile'],
           ].join(' ')}
         >
-          <div
-            className={[
-              styles['order-history-text-container'],
-              styles['order-history-text-container-mobile'],
-            ].join(' ')}
-          >
-            <div
-              className={[
-                styles['order-history-text'],
-                styles['order-history-text-mobile'],
-              ].join(' ')}
-            >
-              {t('orderHistory')}
-            </div>
-          </div>
           {orders.length > 0 &&
             orders
               .sort((current: Order, next: Order) => {

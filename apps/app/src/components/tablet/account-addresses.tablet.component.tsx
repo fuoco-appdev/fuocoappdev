@@ -41,38 +41,6 @@ export default function AccountAddressesTabletComponent({
       <div className={[styles['root'], styles['root-tablet']].join(' ')}>
         <div
           className={[
-            styles['addresses-text-container'],
-            styles['addresses-text-container-tablet'],
-          ].join(' ')}
-        >
-          <div
-            className={[
-              styles['addresses-text'],
-              styles['addresses-text-tablet'],
-            ].join(' ')}
-          >
-            {t('addresses')}
-          </div>
-          <div
-            className={[
-              styles['addresses-add-button-container'],
-              styles['addresses-add-button-container-tablet'],
-            ].join(' ')}
-          >
-            <Button
-              rounded={true}
-              icon={<Line.Add size={24} color={'#2A2A5F'} />}
-              type={'text'}
-              rippleProps={{
-                color: 'rgba(42, 42, 95, .35)',
-              }}
-              touchScreen={true}
-              onClick={() => setOpenAddDropdown(true)}
-            />
-          </div>
-        </div>
-        <div
-          className={[
             styles['address-list-container'],
             styles['address-list-container-tablet'],
           ].join(' ')}
@@ -96,6 +64,23 @@ export default function AccountAddressesTabletComponent({
               {t('noAddresses')}
             </div>
           )}
+        </div>
+        <div
+          className={[
+            styles['addresses-add-button-container'],
+            styles['addresses-add-button-container-tablet'],
+          ].join(' ')}
+        >
+          <Button
+            rounded={true}
+            icon={<Line.Add size={24} color={'#2A2A5F'} />}
+            type={'text'}
+            rippleProps={{
+              color: 'rgba(42, 42, 95, .35)',
+            }}
+            touchScreen={true}
+            onClick={() => setOpenAddDropdown(true)}
+          />
         </div>
         {createPortal(
           <>

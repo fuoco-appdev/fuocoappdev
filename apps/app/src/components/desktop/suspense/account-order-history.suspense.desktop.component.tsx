@@ -13,14 +13,6 @@ export function AccountOrderHistorySuspenseDesktopComponent(): JSX.Element {
         <div className={[styles['scroll'], styles['scroll-desktop']].join(' ')}>
           <div
             className={[
-              styles['order-history-text-skeleton'],
-              styles['order-history-text-skeleton-desktop'],
-            ].join(' ')}
-          >
-            <Skeleton count={1} borderRadius={20} height={20} width={120} />
-          </div>
-          <div
-            className={[
               styles['items-container'],
               styles['items-container-desktop'],
             ].join(' ')}

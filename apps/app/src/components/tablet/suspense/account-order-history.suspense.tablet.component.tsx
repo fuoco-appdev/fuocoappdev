@@ -16,14 +16,6 @@ export function AccountOrderHistorySuspenseTabletComponent(): JSX.Element {
         <div className={[styles['scroll'], styles['scroll-tablet']].join(' ')}>
           <div
             className={[
-              styles['order-history-text-skeleton'],
-              styles['order-history-text-skeleton-tablet'],
-            ].join(' ')}
-          >
-            <Skeleton count={1} borderRadius={20} height={20} width={120} />
-          </div>
-          <div
-            className={[
               styles['items-container'],
               styles['items-container-tablet'],
             ].join(' ')}

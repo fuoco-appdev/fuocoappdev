@@ -14,21 +14,6 @@ export function AccountLikesSuspenseDesktopComponent(): JSX.Element {
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>
         <div
           className={[
-            styles['likes-text-container-skeleton'],
-            styles['likes-text-container-skeleton-desktop'],
-          ].join(' ')}
-        >
-          <div
-            className={[
-              styles['likes-text-skeleton'],
-              styles['likes-text-skeleton-desktop'],
-            ].join(' ')}
-          >
-            <Skeleton count={1} borderRadius={20} height={20} width={120} />
-          </div>
-        </div>
-        <div
-          className={[
             styles['items-container'],
             styles['items-container-desktop'],
           ].join(' ')}

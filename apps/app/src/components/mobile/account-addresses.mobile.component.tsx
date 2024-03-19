@@ -41,38 +41,6 @@ export default function AccountAddressesMobileComponent({
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
         <div
           className={[
-            styles['addresses-text-container'],
-            styles['addresses-text-container-mobile'],
-          ].join(' ')}
-        >
-          <div
-            className={[
-              styles['addresses-text'],
-              styles['addresses-text-mobile'],
-            ].join(' ')}
-          >
-            {t('addresses')}
-          </div>
-          <div
-            className={[
-              styles['addresses-add-button-container'],
-              styles['addresses-add-button-container-mobile'],
-            ].join(' ')}
-          >
-            <Button
-              rounded={true}
-              icon={<Line.Add size={24} color={'#2A2A5F'} />}
-              type={'text'}
-              rippleProps={{
-                color: 'rgba(42, 42, 95, .35)',
-              }}
-              touchScreen={true}
-              onClick={() => setOpenAddDropdown(true)}
-            />
-          </div>
-        </div>
-        <div
-          className={[
             styles['address-list-container'],
             styles['address-list-container-mobile'],
           ].join(' ')}
@@ -96,6 +64,33 @@ export default function AccountAddressesMobileComponent({
               {t('noAddresses')}
             </div>
           )}
+        </div>
+        <div
+          className={[
+            styles['addresses-add-button-container'],
+            styles['addresses-add-button-container-mobile'],
+          ].join(' ')}
+        >
+          <Button
+            rounded={true}
+            classNames={{
+              container: [
+                styles['floating-button-container'],
+                styles['floating-button-container-mobile'],
+              ].join(' '),
+              button: [
+                styles['floating-button'],
+                styles['floating-button-mobile'],
+              ].join(' '),
+            }}
+            icon={<Line.Add size={24} color={'#2A2A5F'} />}
+            type={'primary'}
+            rippleProps={{
+              color: 'rgba(42, 42, 95, .35)',
+            }}
+            touchScreen={true}
+            onClick={() => setOpenAddDropdown(true)}
+          />
         </div>
         {createPortal(
           <>
