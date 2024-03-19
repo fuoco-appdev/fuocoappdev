@@ -1,11 +1,10 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
 .animated-root {
-  width: 100% !important;
-  height: 100%;
-  -webkit-box-shadow: $shadow-2;
-          box-shadow: $shadow-2;
   background-color: #fff;
+  border-radius: $mp-2;
+  height: 100%;
+  width: 100%;
 }
 
 .root {
@@ -688,7 +687,7 @@
 
 
 .root-mobile {
-  width: 100%;
+  min-width: 100%;
   height: fit-content;
   min-height: 173px;
 
@@ -723,6 +722,13 @@
             flex-direction: column;
           }
         }
+      }
+
+      & .product-description-skeleton-mobile {
+        margin-top: $mp-2;
+        font-size: $font-size-sm;
+        max-height: 114px;
+        width: 100%;
       }
     }
 

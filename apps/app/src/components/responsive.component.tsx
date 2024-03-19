@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { CSSProperties, useEffect } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import styles from './responsive.module.scss';
 import {
@@ -69,11 +69,13 @@ export function useMobileEffect(
 export interface ResponsiveProps {
   children: any;
   inheritStyles?: boolean;
+  style?: CSSProperties;
 }
 
 export function ResponsiveSuspenseDesktop({
   children,
   inheritStyles = true,
+  style,
 }: ResponsiveProps) {
   return isBrowser ? (
     <div
@@ -81,6 +83,7 @@ export function ResponsiveSuspenseDesktop({
         styles['desktop-layout'],
         inheritStyles ? styles['inherit'] : '',
       ].join(' ')}
+      style={style}
     >
       {children}
     </div>
@@ -90,9 +93,13 @@ export function ResponsiveSuspenseDesktop({
 export function ResponsiveSuspenseTablet({
   children,
   inheritStyles = true,
+  style,
 }: ResponsiveProps) {
   return isTablet && (isIOS || isAndroid) ? (
-    <div className={[inheritStyles ? styles['inherit'] : ''].join(' ')}>
+    <div
+      className={[inheritStyles ? styles['inherit'] : ''].join(' ')}
+      style={style}
+    >
       {children}
     </div>
   ) : null;
@@ -101,6 +108,7 @@ export function ResponsiveSuspenseTablet({
 export function ResponsiveSuspenseMobile({
   children,
   inheritStyles = true,
+  style,
 }: ResponsiveProps) {
   return isMobile && (isIOS || isAndroid) ? (
     <div
@@ -108,6 +116,7 @@ export function ResponsiveSuspenseMobile({
         styles['mobile-layout'],
         inheritStyles ? styles['inherit'] : '',
       ].join(' ')}
+      style={style}
     >
       {children}
     </div>

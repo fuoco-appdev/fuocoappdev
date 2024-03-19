@@ -7,100 +7,134 @@ import { ResponsiveSuspenseMobile } from 'src/components/responsive.component';
 
 export function ProductPreviewSuspenseMobileComponent(): JSX.Element {
   return (
-    <ResponsiveSuspenseMobile inheritStyles={false}>
+    <ResponsiveSuspenseMobile inheritStyles={false} style={{ width: '100%' }}>
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
         <div
           className={[
-            styles['thumbnail-container'],
-            styles['thumbnail-container-mobile'],
+            styles['animated-root'],
+            styles['animated-root-mobile'],
           ].join(' ')}
-          style={{ height: 'calc(100% - 38px)' }}
         >
-          <Skeleton
-            className={[
-              styles['thumbnail-image'],
-              styles['thumbnail-image-mobile'],
-            ].join(' ')}
-          />
           <div
             className={[
-              styles['thumbnail-content-container'],
-              styles['thumbnail-content-container-mobile'],
+              styles['left-content'],
+              styles['left-content-mobile'],
             ].join(' ')}
           >
             <div
               className={[
-                styles['thumbnail-top-content'],
-                styles['thumbnail-top-content-mobile'],
+                styles['top-content'],
+                styles['top-content-mobile'],
               ].join(' ')}
             >
               <div
                 className={[
-                  styles['label-container'],
-                  styles['label-container-mobile'],
-                ].join(' ')}
-              ></div>
-              <div
-                className={[
-                  styles['status-content-container'],
-                  styles['status-content-container--mobile'],
+                  styles['thumbnail-content'],
+                  styles['thumbnail-content-mobile'],
                 ].join(' ')}
               >
                 <div
                   className={[
-                    styles['like-status-container'],
-                    styles['like-status-container--mobile'],
+                    styles['thumbnail-container'],
+                    styles['thumbnail-container-mobile'],
+                  ].join(' ')}
+                  style={{
+                    height: '56px',
+                    width: '56px',
+                    borderRadius: '6px',
+                  }}
+                >
+                  <Skeleton
+                    className={[
+                      styles['thumbnail-image'],
+                      styles['thumbnail-image-mobile'],
+                    ].join(' ')}
+                  />
+                </div>
+                <div
+                  className={[
+                    styles['title-container'],
+                    styles['title-container-mobile'],
                   ].join(' ')}
                 >
                   <Skeleton
                     className={[
-                      styles['like-status-button-skeleton'],
-                      styles['like-status-button-skeleton--mobile'],
+                      styles['product-title'],
+                      styles['product-title-mobile'],
                     ].join(' ')}
+                    width={156}
+                    borderRadius={20}
                   />
                   <Skeleton
-                    borderRadius={9999}
                     className={[
-                      styles['like-status-count-skeleton'],
-                      styles['like-status-count-skeleton--mobile'],
+                      styles['product-subtitle'],
+                      styles['product-subtitle-mobile'],
                     ].join(' ')}
+                    width={100}
+                    borderRadius={20}
                   />
                 </div>
               </div>
             </div>
             <div
               className={[
-                styles['thumbnail-bottom-content'],
-                styles['thumbnail-bottom-content-mobile'],
+                styles['product-description-skeleton'],
+                styles['product-description-skeleton-mobile'],
               ].join(' ')}
             >
-              <Skeleton width={46} height={46} borderRadius={46} />
+              <Skeleton count={4} borderRadius={20} />
             </div>
           </div>
-        </div>
-        <div
-          className={[styles['bottom-bar'], styles['bottom-bar-mobile']].join(
-            ' '
-          )}
-        >
-          <Skeleton
+          <div
             className={[
-              styles['product-title'],
-              styles['product-title-mobile'],
+              styles['right-content'],
+              styles['right-content-mobile'],
             ].join(' ')}
-            width={60}
-            height={20}
-            borderRadius={20}
-          />
-          <Skeleton
-            className={[
-              styles['product-price'],
-              styles['product-price-mobile'],
-            ].join(' ')}
-            width={40}
-            height={20}
-            borderRadius={20}
-          />
+          >
+            <div
+              className={[
+                styles['price-container'],
+                styles['price-container-mobile'],
+              ].join(' ')}
+            >
+              <Skeleton
+                className={[
+                  styles['product-price'],
+                  styles['product-price-mobile'],
+                ].join(' ')}
+                width={40}
+                borderRadius={20}
+              />
+            </div>
+            <div
+              className={[
+                styles['status-content-container'],
+                styles['status-content-container-mobile'],
+              ].join(' ')}
+            >
+              <div
+                className={[
+                  styles['like-status-container'],
+                  styles['like-status-container-mobile'],
+                ].join(' ')}
+              >
+                <Skeleton
+                  className={[
+                    styles['like-status-button-skeleton'],
+                    styles['like-status-button-skeleton-mobile'],
+                  ].join(' ')}
+                />
+                <Skeleton
+                  borderRadius={9999}
+                  className={[
+                    styles['like-status-count-skeleton'],
+                    styles['like-status-count-skeleton-mobile'],
+                  ].join(' ')}
+                />
+              </div>
+            </div>
+            <Skeleton width={46} height={46} borderRadius={46} />
+          </div>
         </div>
       </div>
     </ResponsiveSuspenseMobile>
