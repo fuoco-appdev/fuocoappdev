@@ -81,6 +81,34 @@ export default function AccountAddressesDesktopComponent({
             onClick={() => setOpenAddDropdown(true)}
           />
         </div>
+        <div
+          className={[
+            styles['addresses-add-button-container'],
+            styles['addresses-add-button-container-desktop'],
+          ].join(' ')}
+        >
+          <Button
+            rounded={true}
+            classNames={{
+              container: [
+                styles['floating-button-container'],
+                styles['floating-button-container-desktop'],
+              ].join(' '),
+              button: [
+                styles['floating-button'],
+                styles['floating-button-desktop'],
+              ].join(' '),
+            }}
+            icon={<Line.Add size={24} color={'#2A2A5F'} />}
+            type={'primary'}
+            size={'small'}
+            rippleProps={{
+              color: 'rgba(42, 42, 95, .35)',
+            }}
+            touchScreen={true}
+            onClick={() => setOpenAddDropdown(true)}
+          />
+        </div>
         {createPortal(
           <>
             <Modal

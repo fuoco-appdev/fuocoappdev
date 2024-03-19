@@ -73,8 +73,19 @@ export default function AccountAddressesTabletComponent({
         >
           <Button
             rounded={true}
+            classNames={{
+              container: [
+                styles['floating-button-container'],
+                styles['floating-button-container-tablet'],
+              ].join(' '),
+              button: [
+                styles['floating-button'],
+                styles['floating-button-tablet'],
+              ].join(' '),
+            }}
             icon={<Line.Add size={24} color={'#2A2A5F'} />}
-            type={'text'}
+            type={'primary'}
+            size={'small'}
             rippleProps={{
               color: 'rgba(42, 42, 95, .35)',
             }}

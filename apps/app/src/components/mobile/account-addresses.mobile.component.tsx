@@ -85,6 +85,7 @@ export default function AccountAddressesMobileComponent({
             }}
             icon={<Line.Add size={24} color={'#2A2A5F'} />}
             type={'primary'}
+            size={'small'}
             rippleProps={{
               color: 'rgba(42, 42, 95, .35)',
             }}

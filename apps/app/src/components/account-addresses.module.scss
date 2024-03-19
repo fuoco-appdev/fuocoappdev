@@ -30,7 +30,9 @@
     }
 
     & .addresses-add-button-container-desktop {
-        padding: 0 $mp-6;
+        padding: $mp-6;
+        align-items: flex-end;
+        justify-content: flex-end;
     }
 }
 
@@ -43,7 +45,9 @@
     }
 
     & .addresses-add-button-container-tablet {
-        padding: 0 $mp-6;
+        padding: $mp-6;
+        align-items: flex-end;
+        justify-content: flex-end;
     }
 }
 
@@ -233,12 +237,12 @@
     }
 }
 
-.floating-button-container-mobile {
+.floating-button-container {
     box-shadow: $shadow-1;
     border: 1px solid $brand-900 !important;
 }
 
-.floating-button-mobile {
+.floating-button {
     background-color: #fff !important;
     color: $brand-900;
 }
