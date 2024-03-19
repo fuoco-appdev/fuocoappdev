@@ -49,9 +49,11 @@
             }
           ],
           "optimization": true,
-          "sourceMap": true,
-          "vendorChunk": true,
-          "extractLicenses": true
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "extractCss": true
         }
       }
     },
