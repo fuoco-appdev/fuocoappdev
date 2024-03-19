@@ -145,7 +145,7 @@
 
     & .items-container-desktop {
         gap: $mp-6;
-        padding: 0 $mp-6;
+        padding: $mp-6;
         padding-bottom: $mp-6;
         -webkit-box-pack: center;
         -ms-flex-pack: center;
@@ -189,7 +189,7 @@
 
     & .items-container-tablet {
         gap: $mp-4;
-        padding: 0 $mp-4;
+        padding: $mp-4;
         padding-bottom: $mp-4;
         -webkit-box-pack: center;
         -ms-flex-pack: center;
@@ -227,7 +227,7 @@
 
     & .items-container-mobile {
         gap: $mp-4;
-        padding: 0 $mp-4;
+        padding: $mp-4;
         padding-bottom: calc(56px * 2);
 
         & .loading-ring-mobile {
