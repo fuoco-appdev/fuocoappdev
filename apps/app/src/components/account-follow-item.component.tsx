@@ -10,11 +10,9 @@ import { ProductOptions } from '../models/product.model';
 import { useTranslation } from 'react-i18next';
 import { Button, Line, Modal } from '@fuoco.appdev/core-ui';
 import CartController from '../controllers/cart.controller';
-import {
-  AccountFollowerResponse,
-  CustomerResponse,
-  StorageFolderType,
-} from '../protobuf/core_pb';
+import { AccountFollowerResponse } from '../protobuf/account-follower_pb';
+import { CustomerResponse } from '../protobuf/customer_pb';
+import { StorageFolderType } from '../protobuf/common_pb';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
 import StoreController from '../controllers/store.controller';
@@ -26,7 +24,7 @@ import {
   PricedProduct,
   PricedVariant,
 } from '@medusajs/medusa/dist/types/pricing';
-import { AccountResponse } from '../protobuf/core_pb';
+import { AccountResponse } from '../protobuf/account_pb';
 import { MedusaProductTypeNames } from '../types/medusa.type';
 import { AccountFollowItemSuspenseDesktopComponent } from './desktop/suspense/account-follow-item.suspense.desktop.component';
 import { AccountFollowItemSuspenseTabletComponent } from './tablet/suspense/account-follow-item.suspense.tablet.component';

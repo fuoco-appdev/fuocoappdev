@@ -28,7 +28,6 @@ import { useObservable } from '@ngneat/use-observable';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { RoutePathsType, useQuery } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
-import * as core from '../../protobuf/core_pb';
 import AccountProfileFormComponent from '../account-profile-form.component';
 import { Customer } from '@medusajs/medusa';
 import Skeleton from 'react-loading-skeleton';
@@ -39,6 +38,7 @@ import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
 import { AccountResponsiveProps } from '../account.component';
 import { createPortal } from 'react-dom';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { AccountResponse } from '../../protobuf/account_pb';
 
 export default function AccountDesktopComponent({
   windowProps,
@@ -66,7 +66,7 @@ export default function AccountDesktopComponent({
   let prevPreviewScrollTop = 0;
   let yPosition = 0;
 
-  const account = accountProps.account as core.AccountResponse;
+  const account = accountProps.account as AccountResponse;
   const customer = accountProps.customer as Customer;
   return (
     <ResponsiveDesktop>

@@ -28,7 +28,6 @@ import { useObservable } from '@ngneat/use-observable';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { RoutePathsType, useQuery } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
-import * as core from '../../protobuf/core_pb';
 import AccountProfileFormComponent from '../account-profile-form.component';
 import { Customer } from '@medusajs/medusa';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
@@ -37,6 +36,7 @@ import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 import { AccountResponsiveProps } from '../account.component';
 import StoreController from 'src/controllers/store.controller';
 import { createPortal } from 'react-dom';
+import { AccountResponse } from '../../protobuf/account_pb';
 
 export default function AccountMobileComponent({
   windowProps,
@@ -64,7 +64,7 @@ export default function AccountMobileComponent({
   let prevPreviewScrollTop = 0;
   let yPosition = 0;
 
-  const account = accountProps.account as core.AccountResponse;
+  const account = accountProps.account as AccountResponse;
   const customer = accountProps.customer as Customer;
   return (
     <ResponsiveMobile>

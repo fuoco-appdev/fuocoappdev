@@ -24,7 +24,7 @@ import { lazy } from '@loadable/component';
 import { ExploreSuspenseTabletComponent } from './tablet/suspense/explore.suspense.tablet.component';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
 import mapboxgl from 'mapbox-gl';
-import { DeepLTranslationsResponse } from '../protobuf/core_pb';
+import { DeepLTranslationsResponse } from '../protobuf/deepl_pb';
 import DeeplService from '../services/deepl.service';
 
 const ExploreDesktopComponent = lazy(

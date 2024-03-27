@@ -27,10 +27,8 @@ import SupabaseService from "../services/supabase.service";
 import { AccountState } from "../models/account.model";
 import AccountController from "./account.controller";
 import ProductLikesService from "../services/product-likes.service";
-import {
-  AccountResponse,
-  ProductLikesMetadataResponse,
-} from "../protobuf/core_pb";
+import { AccountResponse } from "../protobuf/account_pb";
+import { ProductLikesMetadataResponse } from "../protobuf/product-like_pb";
 import { MedusaProductTypeNames } from "../types/medusa.type";
 
 class StoreController extends Controller {

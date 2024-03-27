@@ -8,7 +8,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "protoc -I . --plugin ./node_modules/.bin/protoc-gen-es.cmd --es_out apps/app/src --es_opt target=ts protobuf/core.proto"
+          "protoc -I . --plugin ./node_modules/.bin/protoc-gen-es.cmd --es_out apps/app/src --es_opt target=ts protobuf/*.proto"
         ],
         "parallel": false
       }

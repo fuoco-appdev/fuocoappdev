@@ -17,7 +17,6 @@ import { useTranslation } from 'react-i18next';
 import SupabaseService from '../../services/supabase.service';
 import { useObservable } from '@ngneat/use-observable';
 import { useSpring } from 'react-spring';
-import * as core from '../../protobuf/core_pb';
 import { Store } from '@ngneat/elf';
 import Ripples from 'react-ripples';
 import { AuthError, User } from '@supabase/supabase-js';

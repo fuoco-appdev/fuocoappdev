@@ -11,7 +11,7 @@ import { NotificationItemSuspenseDesktopComponent } from './desktop/suspense/not
 import React from 'react';
 import { NotificationItemSuspenseMobileComponent } from './mobile/suspense/notification-item.suspense.mobile.component';
 import { NotificationItemSuspenseTabletComponent } from './tablet/suspense/notification-item.suspense.tablet.component';
-import { AccountNotificationResponse } from '../protobuf/core_pb';
+import { AccountNotificationResponse } from '../protobuf/account-notification_pb';
 
 const NotificationItemDesktopComponent = lazy(
   () => import('./desktop/notification-item.desktop.component')

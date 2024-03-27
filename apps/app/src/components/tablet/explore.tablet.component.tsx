@@ -14,7 +14,6 @@ import { useTranslation } from 'react-i18next';
 import SupabaseService from '../../services/supabase.service';
 import { useObservable } from '@ngneat/use-observable';
 import { useSpring } from 'react-spring';
-import * as core from '../../protobuf/core_pb';
 import Map, { MapRef, Marker, Popup } from 'react-map-gl';
 import ConfigService from '../../services/config.service';
 import {

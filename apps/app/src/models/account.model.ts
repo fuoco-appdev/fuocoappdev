@@ -1,6 +1,5 @@
 import { createStore, withProps } from "@ngneat/elf";
 import { Model } from "../model";
-import * as core from "../protobuf/core_pb";
 import {
   Address,
   Customer,
@@ -18,8 +17,11 @@ import {
 } from "../components/address-form.component";
 import { RoutePathsType } from "../route-paths";
 import { User } from "@supabase/supabase-js";
-import { ProductLikesMetadataResponse } from "../protobuf/core_pb";
+import { ProductLikesMetadataResponse } from "../protobuf/product-like_pb";
 import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
+import { AccountFollowerResponse } from "../protobuf/account-follower_pb";
+import { CustomerResponse } from "../protobuf/customer_pb";
+import { AccountResponse } from "../protobuf/account_pb";
 
 export interface ProfileFormErrorStrings {
   empty?: string;
@@ -29,7 +31,7 @@ export interface ProfileFormErrorStrings {
 
 export interface AccountState {
   user: User | null;
-  account: core.AccountResponse | undefined;
+  account: AccountResponse | undefined;
   customer: Customer | undefined;
   customerGroup: CustomerGroup | undefined;
   isCustomerGroupLoading: boolean;
@@ -67,14 +69,14 @@ export interface AccountState {
   addFriendsPagination: number;
   hasMoreAddFriends: boolean;
   areAddFriendsLoading: boolean;
-  addFriendAccounts: core.AccountResponse[];
-  addFriendCustomers: Record<string, core.CustomerResponse>;
+  addFriendAccounts: AccountResponse[];
+  addFriendCustomers: Record<string, CustomerResponse>;
   addFriendsScrollPosition: number | undefined;
-  addFriendAccountFollowers: Record<string, core.AccountFollowerResponse>;
+  addFriendAccountFollowers: Record<string, AccountFollowerResponse>;
   areFollowRequestAccountsLoading: boolean;
-  followRequestAccounts: core.AccountResponse[];
-  followRequestCustomers: Record<string, core.CustomerResponse>;
-  followRequestAccountFollowers: Record<string, core.AccountFollowerResponse>;
+  followRequestAccounts: AccountResponse[];
+  followRequestCustomers: Record<string, CustomerResponse>;
+  followRequestAccountFollowers: Record<string, AccountFollowerResponse>;
   likeCount: number | undefined;
   followerCount: number | undefined;
   followingCount: number | undefined;
@@ -265,11 +267,11 @@ export class AccountModel extends Model {
     }
   }
 
-  public get account(): core.AccountResponse | undefined {
+  public get account(): AccountResponse | undefined {
     return this.store.getValue().account;
   }
 
-  public set account(value: core.AccountResponse | undefined) {
+  public set account(value: AccountResponse | undefined) {
     if (JSON.stringify(this.account) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, account: value }));
     }
@@ -620,11 +622,11 @@ export class AccountModel extends Model {
     }
   }
 
-  public get addFriendAccounts(): core.AccountResponse[] {
+  public get addFriendAccounts(): AccountResponse[] {
     return this.store?.getValue().addFriendAccounts;
   }
 
-  public set addFriendAccounts(value: core.AccountResponse[]) {
+  public set addFriendAccounts(value: AccountResponse[]) {
     if (JSON.stringify(this.addFriendAccounts) !== JSON.stringify(value)) {
       this.store?.update((state) => ({
         ...state,
@@ -633,11 +635,11 @@ export class AccountModel extends Model {
     }
   }
 
-  public get addFriendCustomers(): Record<string, core.CustomerResponse> {
+  public get addFriendCustomers(): Record<string, CustomerResponse> {
     return this.store?.getValue().addFriendCustomers;
   }
 
-  public set addFriendCustomers(value: Record<string, core.CustomerResponse>) {
+  public set addFriendCustomers(value: Record<string, CustomerResponse>) {
     if (JSON.stringify(this.addFriendCustomers) !== JSON.stringify(value)) {
       this.store?.update((state) => ({
         ...state,
@@ -661,13 +663,13 @@ export class AccountModel extends Model {
 
   public get addFriendAccountFollowers(): Record<
     string,
-    core.AccountFollowerResponse
+    AccountFollowerResponse
   > {
     return this.store.getValue().addFriendAccountFollowers;
   }
 
   public set addFriendAccountFollowers(
-    value: Record<string, core.AccountFollowerResponse>,
+    value: Record<string, AccountFollowerResponse>,
   ) {
     if (
       JSON.stringify(this.addFriendAccountFollowers) !== JSON.stringify(value)
@@ -692,11 +694,11 @@ export class AccountModel extends Model {
     }
   }
 
-  public get followRequestAccounts(): core.AccountResponse[] {
+  public get followRequestAccounts(): AccountResponse[] {
     return this.store?.getValue().followRequestAccounts;
   }
 
-  public set followRequestAccounts(value: core.AccountResponse[]) {
+  public set followRequestAccounts(value: AccountResponse[]) {
     if (JSON.stringify(this.followRequestAccounts) !== JSON.stringify(value)) {
       this.store?.update((state) => ({
         ...state,
@@ -705,12 +707,12 @@ export class AccountModel extends Model {
     }
   }
 
-  public get followRequestCustomers(): Record<string, core.CustomerResponse> {
+  public get followRequestCustomers(): Record<string, CustomerResponse> {
     return this.store?.getValue().followRequestCustomers;
   }
 
   public set followRequestCustomers(
-    value: Record<string, core.CustomerResponse>,
+    value: Record<string, CustomerResponse>,
   ) {
     if (JSON.stringify(this.followRequestCustomers) !== JSON.stringify(value)) {
       this.store?.update((state) => ({
@@ -722,13 +724,13 @@ export class AccountModel extends Model {
 
   public get followRequestAccountFollowers(): Record<
     string,
-    core.AccountFollowerResponse
+    AccountFollowerResponse
   > {
     return this.store.getValue().followRequestAccountFollowers;
   }
 
   public set followRequestAccountFollowers(
-    value: Record<string, core.AccountFollowerResponse>,
+    value: Record<string, AccountFollowerResponse>,
   ) {
     if (
       JSON.stringify(this.followRequestAccountFollowers) !==

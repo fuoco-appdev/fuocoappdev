@@ -7,7 +7,7 @@ import {
   AccountResponse,
   AccountsRequest,
   AccountsResponse,
-} from "../protobuf/core_pb.js";
+} from "../protobuf/account_pb.js";
 
 export interface AccountProps {
   id?: string;

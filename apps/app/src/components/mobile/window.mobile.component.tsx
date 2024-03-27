@@ -16,7 +16,6 @@ import {
 import { RoutePathsType, useQuery } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
-import * as core from '../../protobuf/core_pb';
 import { Store } from '@ngneat/elf';
 import { Customer } from '@medusajs/medusa';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
@@ -25,6 +24,7 @@ import { useRef, useState } from 'react';
 import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 import { WindowSuspenseMobileComponent } from './suspense/window.suspense.mobile.component';
 import { createPortal } from 'react-dom';
+import { AccountResponse } from '../../protobuf/account_pb';
 
 export default function WindowMobileComponent({
   windowProps,
@@ -58,7 +58,7 @@ export default function WindowMobileComponent({
     setTimeout(() => setActiveRoute(windowProps.activeRoute), 75);
   }, [windowProps.activeRoute]);
 
-  const account = windowProps.account as core.AccountResponse;
+  const account = windowProps.account as AccountResponse;
   const customer = accountProps.customer as Customer;
 
   return (

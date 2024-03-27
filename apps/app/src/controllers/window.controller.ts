@@ -7,7 +7,6 @@ import { WindowModel } from "../models/window.model";
 import { RoutePathsType } from "../route-paths";
 import SupabaseService from "../services/supabase.service";
 import { Location as RouterLocation } from "react-router-dom";
-import * as core from "../protobuf/core_pb";
 import { BannerProps, LanguageInfo, ToastProps } from "@fuoco.appdev/core-ui";
 import AccountService from "../services/account.service";
 import CartController from "./cart.controller";
@@ -21,6 +20,7 @@ import { AccountState } from "../models/account.model";
 import MedusaService from "../services/medusa.service";
 import AccountNotificationService from "src/services/account-notification.service";
 import NotificationsController from "./notifications.controller";
+import { AccountResponse } from "../protobuf/account_pb";
 
 class WindowController extends Controller {
   private readonly _model: WindowModel;
@@ -541,7 +541,7 @@ class WindowController extends Controller {
   }
 
   private async onActiveAccountChangedAsync(
-    value: core.AccountResponse | null,
+    value: AccountResponse | null,
   ): Promise<void> {
     if (this._model.account?.id === value?.id) {
       return;
@@ -558,7 +558,7 @@ class WindowController extends Controller {
 
   private async requestActiveAccountAsync(
     session: Session,
-  ): Promise<core.AccountResponse | null> {
+  ): Promise<AccountResponse | null> {
     try {
       return await AccountService.requestActiveAsync(session);
     } catch (error: any) {

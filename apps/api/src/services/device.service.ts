@@ -5,7 +5,7 @@ import {
   DevicesRequest,
   DevicesResponse,
   UpdateDeviceRequest,
-} from "../protobuf/core_pb.js";
+} from "../protobuf/device_pb.js";
 import AccountService from "./account.service.ts";
 import MedusaService from "./medusa.service.ts";
 import { RealtimeChannel } from "https://esm.sh/@supabase/supabase-js@2.7.0";

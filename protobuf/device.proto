@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package device;
+
+message CreateDeviceRequest {
+    string type = 1;
+    string stock_location_id = 2;
+    string name = 3;
+    string metadata = 4;
+}
+
+message UpdateDeviceRequest {
+    string stock_location_id = 1;
+    string name = 2;
+    string metadata = 3;
+}
+
+message DevicesRequest {
+    string stock_location_id = 1;
+}
+
+message DeviceResponse {
+    string id = 1;
+    string created_at = 2;
+    string type = 3;
+    string stock_location_id = 4;
+    string name = 5;
+    string metadata = 6;
+    string updated_at = 7;
+}
+
+message DevicesResponse {
+    repeated DeviceResponse devices = 1;
+}

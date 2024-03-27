@@ -14,7 +14,7 @@ import { featureCollection, helpers, nearestPoint, point } from "@turf/turf";
 import WindowController from "./window.controller";
 import { Subscription } from "rxjs";
 import { select } from "@ngneat/elf";
-import { PublicSecrets, StorageFolderType } from "../protobuf/core_pb";
+import { StorageFolderType } from "../protobuf/common_pb";
 import PermissionsController from "./permissions.controller";
 import { Index } from "meilisearch";
 import MeiliSearchService from "../services/meilisearch.service";

@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package stocklocation;
+
+message StockLocationsRequest {
+    repeated string ids = 1;
+}
+
+message StockLocationResponse {
+    string data = 1;
+}
+
+message StockLocationsResponse {
+    repeated string locations = 1;
+}

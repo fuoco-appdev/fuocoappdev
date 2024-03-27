@@ -1,6 +1,5 @@
-import { createStore, withProps } from '@ngneat/elf';
-import { Model } from '../model';
-import * as core from '../protobuf/core_pb';
+import { createStore, withProps } from "@ngneat/elf";
+import { Model } from "../model";
 
 export interface PermissionsState {
   accessLocation: boolean;
@@ -12,13 +11,13 @@ export class PermissionsModel extends Model {
   constructor() {
     super(
       createStore(
-        { name: 'permissions' },
+        { name: "permissions" },
         withProps<PermissionsState>({
           accessLocation: false,
           arePermissionsActive: undefined,
           currentPosition: undefined,
-        })
-      )
+        }),
+      ),
     );
   }
 

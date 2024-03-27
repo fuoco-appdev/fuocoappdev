@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package common;
+
+enum StorageFolderType {
+    Avatars = 0;
+    Thumbnails = 1;
+}

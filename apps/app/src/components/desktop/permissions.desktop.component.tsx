@@ -23,7 +23,6 @@ import { useObservable } from '@ngneat/use-observable';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { RoutePathsType } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
-import * as core from '../../protobuf/core_pb';
 import AccountProfileFormComponent from '../account-profile-form.component';
 import { Customer } from '@medusajs/medusa';
 import Skeleton from 'react-loading-skeleton';

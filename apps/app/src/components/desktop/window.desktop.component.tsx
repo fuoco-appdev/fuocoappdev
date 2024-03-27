@@ -21,7 +21,6 @@ import {
 import { RoutePathsType, useQuery } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import { useObservable } from '@ngneat/use-observable';
-import * as core from '../../protobuf/core_pb';
 import { Store } from '@ngneat/elf';
 import { Customer } from '@medusajs/medusa';
 import AccountController from '../../controllers/account.controller';
@@ -30,6 +29,7 @@ import { WindowResponsiveProps } from '../window.component';
 import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
 import LoadingComponent from '../loading.component';
 import { WindowSuspenseDesktopComponent } from './suspense/window.suspense.desktop.component';
+import { AccountResponse } from '../../protobuf/account_pb';
 
 export default function WindowDesktopComponent({
   windowProps,
@@ -57,7 +57,7 @@ export default function WindowDesktopComponent({
     setDate(new Date(Date.now()));
   }, []);
 
-  const account = windowProps.account as core.AccountResponse;
+  const account = windowProps.account as AccountResponse;
   const customer = accountProps.customer as Customer;
   return (
     <ResponsiveDesktop>

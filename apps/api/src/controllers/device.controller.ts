@@ -5,7 +5,7 @@ import {
   CreateDeviceRequest,
   DevicesRequest,
   UpdateDeviceRequest,
-} from "../protobuf/core_pb.js";
+} from "../protobuf/device_pb.js";
 import * as HttpError from "https://deno.land/x/http_errors@3.0.0/mod.ts";
 import { readAll } from "https://deno.land/std@0.105.0/io/util.ts";
 import SupabaseService from "../services/supabase.service.ts";

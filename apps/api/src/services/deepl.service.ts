@@ -1,15 +1,15 @@
-import axiod from 'https://deno.land/x/axiod@0.26.2/mod.ts';
+import axiod from "https://deno.land/x/axiod@0.26.2/mod.ts";
 import {
   DeepLTranslateRequest,
   DeepLTranslateResponse,
   DeepLTranslationsResponse,
-} from '../protobuf/core_pb.js';
-import 'https://deno.land/x/dotenv@v3.2.0/load.ts';
+} from "../protobuf/deepl_pb.js";
+import "https://deno.land/x/dotenv@v3.2.0/load.ts";
 
 class DeepLService {
   private _authKey: string | undefined;
   constructor() {
-    this._authKey = Deno.env.get('DEEPL_AUTH_KEY');
+    this._authKey = Deno.env.get("DEEPL_AUTH_KEY");
 
     if (!this._authKey) {
       throw new Error("DEEPL_AUTH_KEY doesn't exist");
@@ -17,7 +17,7 @@ class DeepLService {
   }
 
   public async translateAsync(
-    request: InstanceType<typeof DeepLTranslateRequest>
+    request: InstanceType<typeof DeepLTranslateRequest>,
   ): Promise<InstanceType<typeof DeepLTranslationsResponse>> {
     const response = new DeepLTranslationsResponse();
     const text = request.getText();
@@ -33,17 +33,19 @@ class DeepLService {
           headers: {
             Authorization: `DeepL-Auth-Key ${this._authKey}`,
           },
-        }
+        },
       );
 
-      for (const translation of translatedResponse.data[
-        'translations'
-      ] as Record<string, string>[]) {
+      for (
+        const translation of translatedResponse.data[
+          "translations"
+        ] as Record<string, string>[]
+      ) {
         const translateResponse = new DeepLTranslateResponse();
         translateResponse.setDetectedSourceLanguage(
-          translation?.['detected_source_language'] ?? ''
+          translation?.["detected_source_language"] ?? "",
         );
-        translateResponse.setText(translation?.['text'] ?? '');
+        translateResponse.setText(translation?.["text"] ?? "");
         response.addTranslations(translateResponse);
       }
     } catch (error: any) {

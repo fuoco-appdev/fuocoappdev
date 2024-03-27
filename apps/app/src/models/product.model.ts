@@ -1,9 +1,7 @@
 import { createStore, withProps } from "@ngneat/elf";
 import { Model } from "../model";
-import {
-  ProductLikesMetadataResponse,
-  ProductMetadataResponse,
-} from "../protobuf/core_pb";
+import { ProductLikesMetadataResponse } from "../protobuf/product-like_pb";
+import { ProductMetadataResponse } from "../protobuf/product_pb";
 import { MoneyAmount, ProductOption, ProductTag } from "@medusajs/medusa";
 import {
   PricedProduct,

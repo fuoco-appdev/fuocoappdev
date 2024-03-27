@@ -24,12 +24,12 @@ import {
 } from '@medusajs/medusa/dist/types/pricing';
 import { useNavigate, useParams } from 'react-router-dom';
 import { RoutePathsType, useQuery } from '../route-paths';
-import * as core from '../protobuf/core_pb';
 import { AccountPublicLikesSuspenseDesktopComponent } from './desktop/suspense/account-public-likes.suspense.desktop.component';
 import { AccountPublicLikesSuspenseTabletComponent } from './tablet/suspense/account-public-likes.suspense.tablet.component';
 import { AccountPublicLikesSuspenseMobileComponent } from './mobile/suspense/account-public-likes.suspense.mobile.component';
 import { AccountPublicState } from '../models/account-public.model';
 import { Product } from '@medusajs/medusa';
+import { ProductLikesMetadataResponse } from '../protobuf/product-like_pb';
 
 const AccountPublicLikesDesktopComponent = lazy(
   () => import('./desktop/account-public-likes.desktop.component')
@@ -55,7 +55,7 @@ export interface AccountPublicLikesResponsiveProps {
   onProductPreviewClick: (
     scrollTop: number,
     product: Product,
-    productLikesMetadata: core.ProductLikesMetadataResponse | null
+    productLikesMetadata: ProductLikesMetadataResponse | null
   ) => void;
   onProductPreviewRest: (product: Product) => void;
   onProductPreviewAddToCart: (product: Product) => void;
@@ -81,7 +81,7 @@ export default function AccountPublicLikesComponent(): JSX.Element {
   const onProductPreviewClick = (
     scrollTop: number,
     product: Product,
-    productLikesMetadata: core.ProductLikesMetadataResponse | null
+    productLikesMetadata: ProductLikesMetadataResponse | null
   ) => {
     AccountPublicController.updateLikesScrollPosition(scrollTop);
   };

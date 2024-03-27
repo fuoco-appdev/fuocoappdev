@@ -25,7 +25,6 @@ import { useTranslation } from 'react-i18next';
 import SupabaseService from '../services/supabase.service';
 import { useObservable } from '@ngneat/use-observable';
 import { useSpring } from 'react-spring';
-import * as core from '../protobuf/core_pb';
 import {
   ResponsiveDesktop,
   ResponsiveMobile,
@@ -64,6 +63,7 @@ import { WindowState } from '../models';
 import AccountController from '../controllers/account.controller';
 import { AccountState } from '../models/account.model';
 import { TabProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/tabs/tabs';
+import { ProductLikesMetadataResponse } from 'src/protobuf/product-like_pb';
 
 const StoreDesktopComponent = lazy(
   () => import('./desktop/store.desktop.component')
@@ -105,12 +105,12 @@ export interface StoreResponsiveProps {
   onProductPreviewClick: (
     scrollTop: number,
     product: PricedProduct | undefined,
-    productLikesMetadata: core.ProductLikesMetadataResponse | null
+    productLikesMetadata: ProductLikesMetadataResponse | null
   ) => void;
   onProductPreviewRest: (product: Product | undefined) => void;
   onProductPreviewAddToCart: (
     product: PricedProduct | undefined,
-    productLikesMetadata: core.ProductLikesMetadataResponse | null
+    productLikesMetadata: ProductLikesMetadataResponse | null
   ) => void;
   onProductPreviewLikeChanged: (
     isLiked: boolean,
@@ -172,7 +172,7 @@ export default function StoreComponent(): JSX.Element {
   const onProductPreviewClick = (
     scrollTop: number,
     product: PricedProduct | undefined,
-    productLikesMetadata: core.ProductLikesMetadataResponse | null
+    productLikesMetadata: ProductLikesMetadataResponse | null
   ) => {
     StoreController.updateScrollPosition(scrollTop);
 
@@ -195,7 +195,7 @@ export default function StoreComponent(): JSX.Element {
 
   const onProductPreviewAddToCart = (
     product: PricedProduct | undefined,
-    productLikesMetadata: core.ProductLikesMetadataResponse | null
+    productLikesMetadata: ProductLikesMetadataResponse | null
   ) => {
     if (!product || !productLikesMetadata) {
       StoreController.updateSelectedPricedProduct(undefined);

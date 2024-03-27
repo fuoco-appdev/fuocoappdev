@@ -14,10 +14,8 @@ import { OrderItemSuspenseMobileComponent } from './mobile/suspense/order-item.s
 import { OrderItemSuspenseTabletComponent } from './tablet/suspense/order-item.suspense.tablet.component';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
 import { StockLocationItemSuspenseDesktopComponent } from './desktop/suspense/stock-location-item.suspense.desktop.component';
-import {
-  DeepLTranslationsResponse,
-  StorageFolderType,
-} from '../protobuf/core_pb';
+import { DeepLTranslationsResponse } from '../protobuf/deepl_pb';
+import { StorageFolderType } from '../protobuf/common_pb';
 import { StockLocationItemSuspenseMobileComponent } from './mobile/suspense/stock-location-item.suspense.mobile.component';
 import { StockLocationItemSuspenseTabletComponent } from './tablet/suspense/stock-location-item.suspense.tablet.component';
 import DeeplService from '../services/deepl.service';

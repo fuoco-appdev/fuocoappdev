@@ -1,10 +1,7 @@
 import ESCPOSService from "../services/escpos.service";
 import AccountService from "../services/account.service";
-import {
-  AccountResponse,
-  CreateDeviceRequest,
-  DeviceResponse,
-} from "../protobuf/core_pb";
+import { AccountResponse } from "../protobuf/account_pb";
+import { CreateDeviceRequest, DeviceResponse } from "../protobuf/device_pb";
 import MedusaService from "../services/medusa.service";
 import { StockLocation } from "@medusajs/stock-location/dist/models";
 import { Printer } from "escpos";

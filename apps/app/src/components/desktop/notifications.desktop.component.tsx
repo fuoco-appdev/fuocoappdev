@@ -6,7 +6,7 @@ import styles from '../notifications.module.scss';
 import { NotificationsResponsiveProps } from '../notifications.component';
 import { createRef, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AccountNotificationResponse } from '../../protobuf/core_pb';
+import { AccountNotificationResponse } from '../../protobuf/account-notification_pb';
 import NotificationItemComponent from '../notification-item.component';
 import moment from 'moment';
 import { Line } from '@fuoco.appdev/core-ui';

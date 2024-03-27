@@ -4,7 +4,6 @@ import { filter, firstValueFrom, Subscription, take } from "rxjs";
 import { Controller } from "../controller";
 import { AccountModel, ProfileFormErrorStrings } from "../models/account.model";
 import AccountService from "../services/account.service";
-import * as core from "../protobuf/core_pb";
 import SupabaseService from "../services/supabase.service";
 import BucketService from "../services/bucket.service";
 import MedusaService from "../services/medusa.service";
@@ -28,11 +27,13 @@ import { select } from "@ngneat/elf";
 import ExploreController from "./explore.controller";
 import { ExploreLocalState } from "../models/explore.model";
 import Cookies from "js-cookie";
-import { ProductLikesMetadataResponse } from "../protobuf/core_pb";
 import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
 import StoreController from "./store.controller";
 import CartController from "./cart.controller";
 import AccountFollowersService from "../services/account-followers.service";
+import { StorageFolderType } from "../protobuf/common_pb";
+import { AccountResponse } from "../protobuf/account_pb";
+import { ProductLikesMetadataResponse } from "../protobuf/product-like_pb";
 
 class AccountController extends Controller {
   private readonly _model: AccountModel;
@@ -100,7 +101,7 @@ class AccountController extends Controller {
     this._loadedAccountSubscription = this._model.store
       .pipe(select((model) => model.account))
       .subscribe({
-        next: (account: core.AccountResponse | null) => {
+        next: (account: AccountResponse | null) => {
           if (!account) {
             return;
           }
@@ -119,7 +120,7 @@ class AccountController extends Controller {
     this._loadedAccountSubscription = this._model.store
       .pipe(select((model) => model.account))
       .subscribe({
-        next: (account: core.AccountResponse | null) => {
+        next: (account: AccountResponse | null) => {
           if (!account) {
             return;
           }
@@ -138,7 +139,7 @@ class AccountController extends Controller {
     this._loadedAccountSubscription = this._model.store
       .pipe(select((model) => model.account))
       .subscribe({
-        next: async (account: core.AccountResponse | null) => {
+        next: async (account: AccountResponse | null) => {
           if (!account) {
             return;
           }
@@ -696,12 +697,12 @@ class AccountController extends Controller {
       const newFile = `public/${uuidv4()}.${extension}`;
       if (this._model.account?.profileUrl) {
         await BucketService.removeAsync(
-          core.StorageFolderType.Avatars,
+          StorageFolderType.Avatars,
           this._model.account?.profileUrl,
         );
       }
       await BucketService.uploadPublicAsync(
-        core.StorageFolderType.Avatars,
+        StorageFolderType.Avatars,
         newFile,
         blob,
       );
@@ -1117,7 +1118,7 @@ class AccountController extends Controller {
   }
 
   private async onActiveAccountChangedAsync(
-    value: core.AccountResponse | null,
+    value: AccountResponse | null,
   ): Promise<void> {
     if (
       !value ||
@@ -1166,7 +1167,7 @@ class AccountController extends Controller {
       if (value?.profileUrl && value.profileUrl.length > 0) {
         try {
           this._model.profileUrl = await BucketService.getPublicUrlAsync(
-            core.StorageFolderType.Avatars,
+            StorageFolderType.Avatars,
             value.profileUrl,
           );
         } catch (error: any) {

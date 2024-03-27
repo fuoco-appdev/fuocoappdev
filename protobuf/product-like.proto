@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package productlike;
+
+message ProductLikesMetadataRequest {
+    string account_id = 1;
+    repeated string product_ids = 2;
+}
+
+message AccountProductLikesMetadataRequest {
+    string account_id = 1;
+    int32 offset = 2;
+    int32 limit = 3;
+}
+
+message ProductLikesMetadataResponse {
+    string product_id = 1;
+    int32 total_like_count = 2;
+    bool did_account_like = 3;
+}
+
+message ProductLikesMetadatasResponse {
+    repeated productlike.ProductLikesMetadataResponse metadata = 1;
+}
+
+message ProductLikeRequest {
+    string product_id = 1;
+    string account_id = 2;
+}
+
+message ProductLikeResponse {
+    string product_id = 1;
+    string account_id = 2;
+}
+
+message ProductLikesResponse {
+    repeated productlike.ProductLikeResponse likes = 1;
+}
+
+message ProductLikeCountMetadataResponse {
+    int32 like_count = 1;
+}

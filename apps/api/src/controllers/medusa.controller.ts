@@ -3,14 +3,16 @@ import * as Oak from "https://deno.land/x/oak@v11.1.0/mod.ts";
 import {
   AddCustomerToGroupRequest,
   CustomersRequest,
-  OrdersRequest,
-  PriceListsRequest,
+  RemoveCustomerFromGroupRequest,
+  UpdateCustomerRequest,
+} from "../protobuf/customer_pb.js";
+import { OrdersRequest } from "../protobuf/order_pb.js";
+import { PriceListsRequest } from "../protobuf/price-list_pb.js";
+import {
   ProductCountRequest,
   ProductsRequest,
-  RemoveCustomerFromGroupRequest,
-  StockLocationsRequest,
-  UpdateCustomerRequest,
-} from "../protobuf/core_pb.js";
+} from "../protobuf/product_pb.js";
+import { StockLocationsRequest } from "../protobuf/stock-location_pb.js";
 import { ContentType, Controller, Guard, Post } from "../index.ts";
 import { readAll } from "https://deno.land/std@0.105.0/io/util.ts";
 import MedusaService from "../services/medusa.service.ts";

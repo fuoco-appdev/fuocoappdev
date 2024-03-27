@@ -23,11 +23,9 @@ import {
 import AccountController from "./account.controller";
 import AccountPublicController from "./account-public.controller";
 import ProductLikesService from "../services/product-likes.service";
-import {
-  AccountResponse,
-  ProductLikesMetadataResponse,
-  ProductMetadataResponse,
-} from "../protobuf/core_pb";
+import { ProductLikesMetadataResponse } from "../protobuf/product-like_pb";
+import { AccountResponse } from "../protobuf/account_pb";
+import { ProductMetadataResponse } from "../protobuf/product_pb";
 import { AccountState } from "../models/account.model";
 import { StockLocation } from "@medusajs/stock-location/dist/models";
 import { Index } from "meilisearch";

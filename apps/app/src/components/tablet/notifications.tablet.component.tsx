@@ -11,7 +11,7 @@ import { createRef, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from '../notifications.module.scss';
 import { Line } from '@fuoco.appdev/core-ui';
-import { AccountNotificationResponse } from '../../protobuf/core_pb';
+import { AccountNotificationResponse } from '../../protobuf/account-notification_pb';
 import moment from 'moment';
 import NotificationItemComponent from '../notification-item.component';
 

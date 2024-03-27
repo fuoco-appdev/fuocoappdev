@@ -1,11 +1,11 @@
-import SupabaseService from './supabase.service.ts';
+import SupabaseService from "./supabase.service.ts";
 import {
   AccountNotificationCountResponse,
-  AccountNotificationsRequest,
   AccountNotificationResponse,
+  AccountNotificationsRequest,
   AccountNotificationsResponse,
-} from '../protobuf/core_pb.js';
-import { RealtimeChannel } from 'https://esm.sh/v107/@supabase/realtime-js@2.6.0/dist/module/index.js';
+} from "../protobuf/account-notification_pb.js";
+import { RealtimeChannel } from "https://esm.sh/v107/@supabase/realtime-js@2.6.0/dist/module/index.js";
 
 export interface AccountNotificationProps {
   id?: string;
@@ -21,7 +21,7 @@ export interface AccountNotificationProps {
 
 export class AccountNotificationService {
   public async getNotificationsAsync(
-    request: InstanceType<typeof AccountNotificationsRequest>
+    request: InstanceType<typeof AccountNotificationsRequest>,
   ): Promise<InstanceType<typeof AccountNotificationsResponse> | null> {
     const accountId = request.getAccountId();
     const limit = request.getLimit();
@@ -29,35 +29,35 @@ export class AccountNotificationService {
     const response = await this.findNotificationsAsync(
       accountId,
       limit,
-      offset
+      offset,
     );
     return response;
   }
 
   public async getUnseenCountAsync(
-    accountId: string
+    accountId: string,
   ): Promise<InstanceType<typeof AccountNotificationCountResponse> | null> {
     const response = await this.findUnseenCountAsync(accountId);
     return response;
   }
 
   public async updateSeenAllAsync(
-    accountId: string
+    accountId: string,
   ): Promise<InstanceType<typeof AccountNotificationCountResponse> | null> {
     const response = new AccountNotificationCountResponse();
     response.setCount(0);
 
     if (accountId.length <= 0) {
-      console.error('Account id cannot be empty');
+      console.error("Account id cannot be empty");
       return null;
     }
 
     try {
       const notificationData = await SupabaseService.client
-        .from('account_notification')
+        .from("account_notification")
         .update({ seen: true })
-        .eq('account_id', accountId)
-        .eq('seen', 'false')
+        .eq("account_id", accountId)
+        .eq("seen", "false")
         .select();
 
       if (notificationData.error) {
@@ -73,16 +73,16 @@ export class AccountNotificationService {
   }
 
   public async createOrderNotificationAsync(
-    order: Record<string, any>
+    order: Record<string, any>,
   ): Promise<void> {
-    const fulfillmentStatus = order['fulfillment_status'] as string;
-    const customerId = order['customer_id'] as string;
-    const orderId = order['id'] as string;
+    const fulfillmentStatus = order["fulfillment_status"] as string;
+    const customerId = order["customer_id"] as string;
+    const orderId = order["id"] as string;
     const accountData = await SupabaseService.client
-      .from('account')
+      .from("account")
       .select()
-      .eq('customer_id', customerId)
-      .eq('status', 'Complete');
+      .eq("customer_id", customerId)
+      .eq("status", "Complete");
 
     if (accountData.error) {
       console.error(accountData.error);
@@ -90,18 +90,18 @@ export class AccountNotificationService {
     }
 
     if (accountData.data.length <= 0) {
-      console.error('No account found!');
+      console.error("No account found!");
       return;
     }
 
-    const accountId = accountData.data[0]['id'] as string;
+    const accountId = accountData.data[0]["id"] as string;
     const accountNotificationChannel = SupabaseService.client.channel(
-      `account-notification-${accountId}`
+      `account-notification-${accountId}`,
     );
-    if (fulfillmentStatus === 'not_fulfilled') {
+    if (fulfillmentStatus === "not_fulfilled") {
       const data = await this.createNotificationAsync({
-        event_name: 'order.placed',
-        resource_type: 'order',
+        event_name: "order.placed",
+        resource_type: "order",
         ...(orderId && { resource_id: orderId }),
         ...(accountId && { account_id: accountId }),
         data: order,
@@ -109,13 +109,13 @@ export class AccountNotificationService {
       });
 
       this.sendCreatedBroadcast(accountNotificationChannel, data);
-    } else if (fulfillmentStatus === 'partially_fulfilled') {
-    } else if (fulfillmentStatus === 'fulfilled') {
-    } else if (fulfillmentStatus === 'partially_shipped') {
-    } else if (fulfillmentStatus === 'shipped') {
+    } else if (fulfillmentStatus === "partially_fulfilled") {
+    } else if (fulfillmentStatus === "fulfilled") {
+    } else if (fulfillmentStatus === "partially_shipped") {
+    } else if (fulfillmentStatus === "shipped") {
       const data = await this.createNotificationAsync({
-        event_name: 'order.shipped',
-        resource_type: 'order',
+        event_name: "order.shipped",
+        resource_type: "order",
         ...(orderId && { resource_id: orderId }),
         ...(accountId && { account_id: accountId }),
         data: order,
@@ -123,11 +123,11 @@ export class AccountNotificationService {
       });
 
       this.sendCreatedBroadcast(accountNotificationChannel, data);
-    } else if (fulfillmentStatus === 'partially_returned') {
-    } else if (fulfillmentStatus === 'returned') {
+    } else if (fulfillmentStatus === "partially_returned") {
+    } else if (fulfillmentStatus === "returned") {
       const data = await this.createNotificationAsync({
-        event_name: 'order.returned',
-        resource_type: 'order',
+        event_name: "order.returned",
+        resource_type: "order",
         ...(orderId && { resource_id: orderId }),
         ...(accountId && { account_id: accountId }),
         data: order,
@@ -135,10 +135,10 @@ export class AccountNotificationService {
       });
 
       this.sendCreatedBroadcast(accountNotificationChannel, data);
-    } else if (fulfillmentStatus === 'canceled') {
+    } else if (fulfillmentStatus === "canceled") {
       const data = await this.createNotificationAsync({
-        event_name: 'order.canceled',
-        resource_type: 'order',
+        event_name: "order.canceled",
+        resource_type: "order",
         ...(orderId && { resource_id: orderId }),
         ...(accountId && { account_id: accountId }),
         data: order,
@@ -146,21 +146,21 @@ export class AccountNotificationService {
       });
 
       this.sendCreatedBroadcast(accountNotificationChannel, data);
-    } else if (fulfillmentStatus === 'requires_action') {
+    } else if (fulfillmentStatus === "requires_action") {
     }
   }
 
   private sendCreatedBroadcast(
     channel: RealtimeChannel,
-    data: Record<string, any>
+    data: Record<string, any>,
   ): void {
     const subscription = channel?.subscribe(async (status) => {
-      if (status !== 'SUBSCRIBED') {
+      if (status !== "SUBSCRIBED") {
         return;
       }
       await channel?.send({
-        type: 'broadcast',
-        event: 'CREATED',
+        type: "broadcast",
+        event: "CREATED",
         payload: data,
       });
 
@@ -169,10 +169,10 @@ export class AccountNotificationService {
   }
 
   private async createNotificationAsync(
-    props: AccountNotificationProps
+    props: AccountNotificationProps,
   ): Promise<Record<string, any>> {
     const { data, error } = await SupabaseService.client
-      .from('account_notification')
+      .from("account_notification")
       .insert([props])
       .select();
 
@@ -187,22 +187,22 @@ export class AccountNotificationService {
   private async findNotificationsAsync(
     accountId: string,
     limit: number,
-    offset: number
+    offset: number,
   ): Promise<InstanceType<typeof AccountNotificationsResponse> | null> {
     const response = new AccountNotificationsResponse();
     if (accountId.length <= 0) {
-      console.error('Account id cannot be empty');
+      console.error("Account id cannot be empty");
       return null;
     }
 
     try {
       const accountNotificationsData = await SupabaseService.client
-        .from('account_notification')
+        .from("account_notification")
         .select()
-        .order('created_at', { ascending: false })
+        .order("created_at", { ascending: false })
         .range(offset, offset + limit)
         .limit(limit)
-        .eq('account_id', accountId);
+        .eq("account_id", accountId);
 
       if (accountNotificationsData.error) {
         console.error(accountNotificationsData.error);
@@ -213,25 +213,25 @@ export class AccountNotificationService {
         const accountNotificationResponse = new AccountNotificationResponse();
         accountNotificationResponse.setId(accountNotification.id);
         accountNotificationResponse.setCreatedAt(
-          accountNotification.created_at
+          accountNotification.created_at,
         );
         accountNotificationResponse.setEventName(
-          accountNotification.event_name
+          accountNotification.event_name,
         );
         accountNotificationResponse.setResourceType(
-          accountNotification.resource_type
+          accountNotification.resource_type,
         );
         accountNotificationResponse.setResourceId(
-          accountNotification.resource_id
+          accountNotification.resource_id,
         );
         accountNotificationResponse.setAccountId(
-          accountNotification.account_id
+          accountNotification.account_id,
         );
         accountNotificationResponse.setData(
-          JSON.stringify(accountNotification.data)
+          JSON.stringify(accountNotification.data),
         );
         accountNotificationResponse.setUpdatedAt(
-          accountNotification.updated_at
+          accountNotification.updated_at,
         );
         accountNotificationResponse.setSeen(accountNotification.seen);
         response.addNotifications(accountNotificationResponse);
@@ -244,22 +244,22 @@ export class AccountNotificationService {
   }
 
   private async findUnseenCountAsync(
-    accountId: string
+    accountId: string,
   ): Promise<InstanceType<typeof AccountNotificationCountResponse> | null> {
     const response = new AccountNotificationCountResponse();
     response.setCount(0);
 
     if (accountId.length <= 0) {
-      console.error('Account id cannot be empty');
+      console.error("Account id cannot be empty");
       return null;
     }
 
     try {
       const notificationData = await SupabaseService.client
-        .from('account_notification')
-        .select('', { count: 'exact' })
-        .eq('account_id', accountId)
-        .eq('seen', 'false');
+        .from("account_notification")
+        .select("", { count: "exact" })
+        .eq("account_id", accountId)
+        .eq("seen", "false");
 
       if (notificationData.error) {
         console.error(notificationData.error);

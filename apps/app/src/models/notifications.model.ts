@@ -1,6 +1,6 @@
-import { createStore, withProps } from '@ngneat/elf';
-import { Model } from '../model';
-import { AccountNotificationResponse } from '../protobuf/core_pb';
+import { createStore, withProps } from "@ngneat/elf";
+import { Model } from "../model";
+import { AccountNotificationResponse } from "../protobuf/account-notification_pb";
 
 export interface NotificationsState {
   accountNotifications: AccountNotificationResponse[];
@@ -14,15 +14,15 @@ export class NotificationsModel extends Model {
   constructor() {
     super(
       createStore(
-        { name: 'notifications' },
+        { name: "notifications" },
         withProps<NotificationsState>({
           accountNotifications: [],
           pagination: 1,
           hasMoreNotifications: true,
           scrollPosition: 0,
           isLoading: false,
-        })
-      )
+        }),
+      ),
     );
   }
 

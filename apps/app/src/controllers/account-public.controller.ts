@@ -9,7 +9,6 @@ import {
 } from "rxjs";
 import { Controller } from "../controller";
 import AccountService from "../services/account.service";
-import * as core from "../protobuf/core_pb";
 import SupabaseService from "../services/supabase.service";
 import BucketService from "../services/bucket.service";
 import MedusaService from "../services/medusa.service";
@@ -33,7 +32,6 @@ import { select } from "@ngneat/elf";
 import ExploreController from "./explore.controller";
 import { ExploreLocalState } from "../models/explore.model";
 import Cookies from "js-cookie";
-import { ProductLikesMetadataResponse } from "../protobuf/core_pb";
 import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
 import StoreController from "./store.controller";
 import CartController from "./cart.controller";
@@ -41,6 +39,9 @@ import AccountFollowersService from "../services/account-followers.service";
 import { AccountPublicModel } from "../models/account-public.model";
 import AccountController from "./account.controller";
 import { S3 } from "aws-sdk";
+import { AccountResponse } from "../protobuf/account_pb";
+import { StorageFolderType } from "../protobuf/common_pb";
+import { ProductLikesMetadataResponse } from "../protobuf/product-like_pb";
 
 class AccountPublicController extends Controller {
   private readonly _model: AccountPublicModel;
@@ -99,7 +100,7 @@ class AccountPublicController extends Controller {
     this._loadedAccountSubscription = AccountController.model.store
       .pipe(select((model) => model.account))
       .subscribe({
-        next: async (account: core.AccountResponse | undefined) => {
+        next: async (account: AccountResponse | undefined) => {
           this._model.likedProducts = [];
           this._model.likesScrollPosition = 0;
           this._model.likedProductPagination = 1;
@@ -685,13 +686,13 @@ class AccountPublicController extends Controller {
   }
 
   private initializeAccountSubscription(
-    publicAccount: core.AccountResponse,
+    publicAccount: AccountResponse,
   ): void {
     this._accountSubscription?.unsubscribe();
     this._accountSubscription = AccountController.model.store
       .pipe(select((model) => model.account))
       .subscribe({
-        next: async (account: core.AccountResponse | undefined) => {
+        next: async (account: AccountResponse | undefined) => {
           if (!account) {
             return;
           }
@@ -722,7 +723,7 @@ class AccountPublicController extends Controller {
   }
 
   public async initializeS3BucketAsync(
-    publicAccount: core.AccountResponse | null,
+    publicAccount: AccountResponse | null,
   ): Promise<void> {
     const s3 = await firstValueFrom(
       BucketService.s3Observable.pipe(
@@ -737,7 +738,7 @@ class AccountPublicController extends Controller {
     if (publicAccount?.profileUrl && publicAccount.profileUrl.length > 0) {
       try {
         this._model.profileUrl = await BucketService.getPublicUrlAsync(
-          core.StorageFolderType.Avatars,
+          StorageFolderType.Avatars,
           publicAccount.profileUrl,
         );
       } catch (error: any) {

@@ -39,10 +39,8 @@ import AccountController from '../controllers/account.controller';
 import { AccountState } from '../models/account.model';
 import { MedusaProductTypeNames } from '../types/medusa.type';
 import DeeplService from '../services/deepl.service';
-import {
-  DeepLTranslationsResponse,
-  ProductMetadataResponse,
-} from '../protobuf/core_pb';
+import { DeepLTranslationsResponse } from '../protobuf/deepl_pb';
+import { ProductMetadataResponse } from '../protobuf/product_pb';
 import SupabaseService from '../services/supabase.service';
 import { Line } from '@fuoco.appdev/core-ui';
 import { InventoryLocation } from '../models/explore.model';

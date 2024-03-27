@@ -1,9 +1,9 @@
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError } from "axios";
 import {
-  DeepLTranslationsResponse,
   DeepLTranslateRequest,
-} from '../protobuf/core_pb';
-import { Service } from '../service';
+  DeepLTranslationsResponse,
+} from "../protobuf/deepl_pb";
+import { Service } from "../service";
 
 class DeepLService extends Service {
   constructor() {
@@ -12,7 +12,7 @@ class DeepLService extends Service {
 
   public async translateAsync(
     text: string,
-    languageCode: string
+    languageCode: string,
   ): Promise<DeepLTranslationsResponse> {
     const request = new DeepLTranslateRequest({
       text: text,
@@ -20,20 +20,21 @@ class DeepLService extends Service {
     });
 
     const response = await axios({
-      method: 'post',
+      method: "post",
       url: `${this.endpointUrl}/deepl/translate`,
       headers: {
         ...this.headers,
       },
       data: request.toBinary(),
-      responseType: 'arraybuffer',
+      responseType: "arraybuffer",
     });
 
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const translationsResponse =
-      DeepLTranslationsResponse.fromBinary(arrayBuffer);
+    const translationsResponse = DeepLTranslationsResponse.fromBinary(
+      arrayBuffer,
+    );
     return translationsResponse;
   }
 }

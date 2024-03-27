@@ -26,8 +26,8 @@ import {
 } from '@medusajs/medusa/dist/types/pricing';
 import { useNavigate } from 'react-router-dom';
 import { RoutePathsType, useQuery } from '../route-paths';
-import * as core from '../protobuf/core_pb';
 import { Product } from '@medusajs/medusa';
+import { ProductLikesMetadataResponse } from '../protobuf/product-like_pb';
 
 const AccountLikesDesktopComponent = lazy(
   () => import('./desktop/account-likes.desktop.component')
@@ -52,7 +52,7 @@ export interface AccountLikesResponsiveProps {
   onProductPreviewClick: (
     scrollTop: number,
     product: Product,
-    productLikesMetadata: core.ProductLikesMetadataResponse | null
+    productLikesMetadata: ProductLikesMetadataResponse | null
   ) => void;
   onProductPreviewRest: (product: Product) => void;
   onProductPreviewAddToCart: (product: Product) => void;
@@ -74,7 +74,7 @@ export default function AccountLikesComponent(): JSX.Element {
   const onProductPreviewClick = (
     scrollTop: number,
     product: Product,
-    productLikesMetadata: core.ProductLikesMetadataResponse | null
+    productLikesMetadata: ProductLikesMetadataResponse | null
   ) => {
     AccountController.updateLikesScrollPosition(scrollTop);
   };

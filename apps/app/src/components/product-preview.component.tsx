@@ -35,10 +35,8 @@ import { ProductPreviewSuspenseDesktopComponent } from './desktop/suspense/produ
 import { ProductPreviewSuspenseMobileComponent } from './mobile/suspense/product-preview.suspense.mobile.component';
 import { ProductPreviewSuspenseTabletComponent } from './tablet/suspense/product-preview.suspense.tablet.component';
 import { WindowState } from '../models';
-import {
-  DeepLTranslationsResponse,
-  ProductLikesMetadataResponse,
-} from '../protobuf/core_pb';
+import { DeepLTranslationsResponse } from '../protobuf/deepl_pb';
+import { ProductLikesMetadataResponse } from '../protobuf/product-like_pb';
 import AccountController from '../controllers/account.controller';
 import { AccountState } from '../models/account.model';
 import DeeplService from '../services/deepl.service';

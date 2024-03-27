@@ -6,22 +6,27 @@ import {
   CustomerResponse,
   CustomersRequest,
   CustomersResponse,
-  OrdersRequest,
-  OrdersResponse,
+  RemoveCustomerFromGroupRequest,
+  UpdateCustomerRequest,
+  UpdateCustomerResponse,
+} from "../protobuf/customer_pb.js";
+import { OrdersRequest, OrdersResponse } from "../protobuf/order_pb.js";
+import {
   PriceListsRequest,
   PriceListsResponse,
+} from "../protobuf/price-list_pb.js";
+import {
   ProductCountRequest,
   ProductCountResponse,
   ProductMetadataResponse,
   ProductsRequest,
   ProductsResponse,
-  RemoveCustomerFromGroupRequest,
+} from "../protobuf/product_pb.js";
+import {
   StockLocationResponse,
   StockLocationsRequest,
   StockLocationsResponse,
-  UpdateCustomerRequest,
-  UpdateCustomerResponse,
-} from "../protobuf/core_pb.js";
+} from "../protobuf/stock-location_pb.js";
 import "https://deno.land/x/dotenv@v3.2.0/load.ts";
 import MapboxService, { GeocodingFeature } from "./mapbox.service.ts";
 import SupabaseService from "./supabase.service.ts";

@@ -9,7 +9,6 @@ import { useTranslation } from 'react-i18next';
 import SupabaseService from '../../services/supabase.service';
 import { useObservable } from '@ngneat/use-observable';
 import { useSpring } from 'react-spring';
-import * as core from '../../protobuf/core_pb';
 import LoadingComponent from '../loading.component';
 import { Store } from '@ngneat/elf';
 import AccountProfileFormComponent from '../account-profile-form.component';
@@ -26,6 +25,7 @@ import { MedusaProductTypeNames } from '../../types/medusa.type';
 import { useAccountPublicOutletContext } from '../account-public.component';
 import { AccountPublicLikesResponsiveProps } from '../account-public-likes.component';
 import { Product } from '@medusajs/medusa';
+import { ProductLikesMetadataResponse } from '../../protobuf/product-like_pb';
 
 export default function AccountPublicLikesDesktopComponent({
   storeProps,
@@ -86,7 +86,7 @@ export default function AccountPublicLikesDesktopComponent({
                   }
                   likesMetadata={
                     productLikesMetadata ??
-                    core.ProductLikesMetadataResponse.prototype
+                    ProductLikesMetadataResponse.prototype
                   }
                   onClick={() =>
                     onProductPreviewClick(

@@ -9,7 +9,6 @@ import { useTranslation } from 'react-i18next';
 import SupabaseService from '../../services/supabase.service';
 import { useObservable } from '@ngneat/use-observable';
 import { useSpring } from 'react-spring';
-import * as core from '../../protobuf/core_pb';
 import LoadingComponent from '../loading.component';
 import { Store } from '@ngneat/elf';
 import AccountProfileFormComponent from '../account-profile-form.component';
@@ -26,6 +25,7 @@ import CartVariantItemComponent from '../cart-variant-item.component';
 import { MedusaProductTypeNames } from '../../types/medusa.type';
 import { useAccountOutletContext } from '../account.component';
 import { Product } from '@medusajs/medusa';
+import { ProductLikesMetadataResponse } from '../../protobuf/product-like_pb';
 
 export default function AccountLikesTabletComponent({
   storeProps,
@@ -84,8 +84,7 @@ export default function AccountLikesTabletComponent({
                   accountProps.selectedLikedProduct?.id === product?.id
                 }
                 likesMetadata={
-                  productLikesMetadata ??
-                  core.ProductLikesMetadataResponse.prototype
+                  productLikesMetadata ?? ProductLikesMetadataResponse.prototype
                 }
                 onClick={() =>
                   onProductPreviewClick(
