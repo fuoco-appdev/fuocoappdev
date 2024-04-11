@@ -39,7 +39,7 @@ goog.exportSymbol('proto.account.AccountsResponse', null, global);
  * @constructor
  */
 proto.account.AccountRequest = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.account.AccountRequest.repeatedFields_, null);
 };
 goog.inherits(proto.account.AccountRequest, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -60,7 +60,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.account.AccountResponse = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.account.AccountResponse.repeatedFields_, null);
 };
 goog.inherits(proto.account.AccountResponse, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -176,6 +176,13 @@ if (goog.DEBUG && !COMPILED) {
   proto.account.AccountLikeRequest.displayName = 'proto.account.AccountLikeRequest';
 }
 
+/**
+ * List of repeated fields within this message type.
+ * @private {!Array<number>}
+ * @const
+ */
+proto.account.AccountRequest.repeatedFields_ = [11];
+
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
@@ -213,7 +220,11 @@ proto.account.AccountRequest.toObject = function(includeInstance, msg) {
     profileUrl: jspb.Message.getFieldWithDefault(msg, 4, ""),
     status: jspb.Message.getFieldWithDefault(msg, 5, ""),
     languageCode: jspb.Message.getFieldWithDefault(msg, 7, ""),
-    username: jspb.Message.getFieldWithDefault(msg, 8, "")
+    username: jspb.Message.getFieldWithDefault(msg, 8, ""),
+    birthday: jspb.Message.getFieldWithDefault(msg, 9, ""),
+    sex: jspb.Message.getFieldWithDefault(msg, 10, ""),
+    interestsList: (f = jspb.Message.getRepeatedField(msg, 11)) == null ? undefined : f,
+    metadata: jspb.Message.getFieldWithDefault(msg, 12, "")
   };
 
   if (includeInstance) {
@@ -277,6 +288,22 @@ proto.account.AccountRequest.deserializeBinaryFromReader = function(msg, reader)
     case 8:
       var value = /** @type {string} */ (reader.readString());
       msg.setUsername(value);
+      break;
+    case 9:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setBirthday(value);
+      break;
+    case 10:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setSex(value);
+      break;
+    case 11:
+      var value = /** @type {string} */ (reader.readString());
+      msg.addInterests(value);
+      break;
+    case 12:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setMetadata(value);
       break;
     default:
       reader.skipField();
@@ -353,6 +380,34 @@ proto.account.AccountRequest.serializeBinaryToWriter = function(message, writer)
   if (f.length > 0) {
     writer.writeString(
       8,
+      f
+    );
+  }
+  f = message.getBirthday();
+  if (f.length > 0) {
+    writer.writeString(
+      9,
+      f
+    );
+  }
+  f = message.getSex();
+  if (f.length > 0) {
+    writer.writeString(
+      10,
+      f
+    );
+  }
+  f = message.getInterestsList();
+  if (f.length > 0) {
+    writer.writeRepeatedString(
+      11,
+      f
+    );
+  }
+  f = message.getMetadata();
+  if (f.length > 0) {
+    writer.writeString(
+      12,
       f
     );
   }
@@ -485,6 +540,104 @@ proto.account.AccountRequest.prototype.setUsername = function(value) {
 };
 
 
+/**
+ * optional string birthday = 9;
+ * @return {string}
+ */
+proto.account.AccountRequest.prototype.getBirthday = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.account.AccountRequest} returns this
+ */
+proto.account.AccountRequest.prototype.setBirthday = function(value) {
+  return jspb.Message.setProto3StringField(this, 9, value);
+};
+
+
+/**
+ * optional string sex = 10;
+ * @return {string}
+ */
+proto.account.AccountRequest.prototype.getSex = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 10, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.account.AccountRequest} returns this
+ */
+proto.account.AccountRequest.prototype.setSex = function(value) {
+  return jspb.Message.setProto3StringField(this, 10, value);
+};
+
+
+/**
+ * repeated string interests = 11;
+ * @return {!Array<string>}
+ */
+proto.account.AccountRequest.prototype.getInterestsList = function() {
+  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 11));
+};
+
+
+/**
+ * @param {!Array<string>} value
+ * @return {!proto.account.AccountRequest} returns this
+ */
+proto.account.AccountRequest.prototype.setInterestsList = function(value) {
+  return jspb.Message.setField(this, 11, value || []);
+};
+
+
+/**
+ * @param {string} value
+ * @param {number=} opt_index
+ * @return {!proto.account.AccountRequest} returns this
+ */
+proto.account.AccountRequest.prototype.addInterests = function(value, opt_index) {
+  return jspb.Message.addToRepeatedField(this, 11, value, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.account.AccountRequest} returns this
+ */
+proto.account.AccountRequest.prototype.clearInterestsList = function() {
+  return this.setInterestsList([]);
+};
+
+
+/**
+ * optional string metadata = 12;
+ * @return {string}
+ */
+proto.account.AccountRequest.prototype.getMetadata = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 12, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.account.AccountRequest} returns this
+ */
+proto.account.AccountRequest.prototype.setMetadata = function(value) {
+  return jspb.Message.setProto3StringField(this, 12, value);
+};
+
+
+
+/**
+ * List of repeated fields within this message type.
+ * @private {!Array<number>}
+ * @const
+ */
+proto.account.AccountResponse.repeatedFields_ = [11];
 
 
 
@@ -524,7 +677,11 @@ proto.account.AccountResponse.toObject = function(includeInstance, msg) {
     status: jspb.Message.getFieldWithDefault(msg, 5, ""),
     updateAt: jspb.Message.getFieldWithDefault(msg, 6, ""),
     languageCode: jspb.Message.getFieldWithDefault(msg, 7, ""),
-    username: jspb.Message.getFieldWithDefault(msg, 8, "")
+    username: jspb.Message.getFieldWithDefault(msg, 8, ""),
+    birthday: jspb.Message.getFieldWithDefault(msg, 9, ""),
+    sex: jspb.Message.getFieldWithDefault(msg, 10, ""),
+    interestsList: (f = jspb.Message.getRepeatedField(msg, 11)) == null ? undefined : f,
+    metadata: jspb.Message.getFieldWithDefault(msg, 12, "")
   };
 
   if (includeInstance) {
@@ -592,6 +749,22 @@ proto.account.AccountResponse.deserializeBinaryFromReader = function(msg, reader
     case 8:
       var value = /** @type {string} */ (reader.readString());
       msg.setUsername(value);
+      break;
+    case 9:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setBirthday(value);
+      break;
+    case 10:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setSex(value);
+      break;
+    case 11:
+      var value = /** @type {string} */ (reader.readString());
+      msg.addInterests(value);
+      break;
+    case 12:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setMetadata(value);
       break;
     default:
       reader.skipField();
@@ -675,6 +848,34 @@ proto.account.AccountResponse.serializeBinaryToWriter = function(message, writer
   if (f.length > 0) {
     writer.writeString(
       8,
+      f
+    );
+  }
+  f = message.getBirthday();
+  if (f.length > 0) {
+    writer.writeString(
+      9,
+      f
+    );
+  }
+  f = message.getSex();
+  if (f.length > 0) {
+    writer.writeString(
+      10,
+      f
+    );
+  }
+  f = message.getInterestsList();
+  if (f.length > 0) {
+    writer.writeRepeatedString(
+      11,
+      f
+    );
+  }
+  f = message.getMetadata();
+  if (f.length > 0) {
+    writer.writeString(
+      12,
       f
     );
   }
@@ -822,6 +1023,97 @@ proto.account.AccountResponse.prototype.getUsername = function() {
  */
 proto.account.AccountResponse.prototype.setUsername = function(value) {
   return jspb.Message.setProto3StringField(this, 8, value);
+};
+
+
+/**
+ * optional string birthday = 9;
+ * @return {string}
+ */
+proto.account.AccountResponse.prototype.getBirthday = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.account.AccountResponse} returns this
+ */
+proto.account.AccountResponse.prototype.setBirthday = function(value) {
+  return jspb.Message.setProto3StringField(this, 9, value);
+};
+
+
+/**
+ * optional string sex = 10;
+ * @return {string}
+ */
+proto.account.AccountResponse.prototype.getSex = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 10, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.account.AccountResponse} returns this
+ */
+proto.account.AccountResponse.prototype.setSex = function(value) {
+  return jspb.Message.setProto3StringField(this, 10, value);
+};
+
+
+/**
+ * repeated string interests = 11;
+ * @return {!Array<string>}
+ */
+proto.account.AccountResponse.prototype.getInterestsList = function() {
+  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 11));
+};
+
+
+/**
+ * @param {!Array<string>} value
+ * @return {!proto.account.AccountResponse} returns this
+ */
+proto.account.AccountResponse.prototype.setInterestsList = function(value) {
+  return jspb.Message.setField(this, 11, value || []);
+};
+
+
+/**
+ * @param {string} value
+ * @param {number=} opt_index
+ * @return {!proto.account.AccountResponse} returns this
+ */
+proto.account.AccountResponse.prototype.addInterests = function(value, opt_index) {
+  return jspb.Message.addToRepeatedField(this, 11, value, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.account.AccountResponse} returns this
+ */
+proto.account.AccountResponse.prototype.clearInterestsList = function() {
+  return this.setInterestsList([]);
+};
+
+
+/**
+ * optional string metadata = 12;
+ * @return {string}
+ */
+proto.account.AccountResponse.prototype.getMetadata = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 12, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.account.AccountResponse} returns this
+ */
+proto.account.AccountResponse.prototype.setMetadata = function(value) {
+  return jspb.Message.setProto3StringField(this, 12, value);
 };
 
 

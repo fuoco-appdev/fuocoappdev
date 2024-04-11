@@ -221,39 +221,34 @@ export class AccountFollowersService {
       return null;
     }
 
-    for (const id of otherAccountIds) {
+    const followersData = await SupabaseService.client
+      .from("account_followers")
+      .select()
+      .in("follower_id", otherAccountIds)
+      .order("created_at", { ascending: false })
+      .eq("account_id", accountId);
+
+    if (followersData.error) {
+      console.error(followersData.error);
+    }
+
+    for (const data of followersData.data) {
       const followerResponse = new AccountFollowerResponse();
-      try {
-        const followerData = await SupabaseService.client
-          .from("account_followers")
-          .select()
-          .order("created_at", { ascending: false })
-          .eq("account_id", accountId)
-          .eq("follower_id", id);
-
-        if (followerData.error) {
-          console.error(followerData.error);
-        }
-
-        if (!followerData.data || followerData.data?.length <= 0) {
-          followerResponse.setAccountId(accountId);
-          followerResponse.setFollowerId(id);
-          followerResponse.setIsFollowing(false);
-          followerResponse.setAccepted(false);
-        } else {
-          const data = followerData.data[0];
-          followerResponse.setAccountId(data.account_id);
-          followerResponse.setFollowerId(data.follower_id);
-          followerResponse.setIsFollowing(true);
-          followerResponse.setAccepted(data.accepted);
-          followerResponse.setCreatedAt(data.created_at);
-          followerResponse.setUpdatedAt(data.updated_at);
-        }
-
-        followersResponse.addFollowers(followerResponse);
-      } catch (error: any) {
-        console.error(error);
+      if (!data || data?.length <= 0) {
+        followerResponse.setAccountId(accountId);
+        followerResponse.setFollowerId(data.id);
+        followerResponse.setIsFollowing(false);
+        followerResponse.setAccepted(false);
+      } else {
+        followerResponse.setAccountId(data.account_id);
+        followerResponse.setFollowerId(data.follower_id);
+        followerResponse.setIsFollowing(true);
+        followerResponse.setAccepted(data.accepted);
+        followerResponse.setCreatedAt(data.created_at);
+        followerResponse.setUpdatedAt(data.updated_at);
       }
+
+      followersResponse.addFollowers(followerResponse);
     }
 
     return followersResponse;

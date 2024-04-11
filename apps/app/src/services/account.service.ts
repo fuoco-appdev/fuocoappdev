@@ -165,6 +165,10 @@ class AccountService extends Service {
     status?: "Incomplete" | "Complete";
     languageCode?: string;
     username?: string;
+    birthday?: string;
+    sex?: "male" | "female";
+    interests?: string[];
+    metadata?: string;
   }): Promise<AccountResponse> {
     const supabaseUser = await SupabaseService.requestUserAsync();
     if (!supabaseUser) {
@@ -184,6 +188,10 @@ class AccountService extends Service {
       status?: "Incomplete" | "Complete";
       languageCode?: string;
       username?: string;
+      birthday?: string;
+      sex?: "male" | "female";
+      interests?: string[];
+      metadata?: string;
     },
   ): Promise<AccountResponse> {
     const session = await SupabaseService.requestSessionAsync();
@@ -193,7 +201,12 @@ class AccountService extends Service {
       status: props.status,
       languageCode: props.languageCode,
       username: props.username,
+      birthday: props.birthday,
+      sex: props.sex,
+      interests: props.interests,
+      metadata: props.metadata,
     });
+
     const response = await axios({
       method: "post",
       url: `${this.endpointUrl}/account/update/${supabaseId}`,

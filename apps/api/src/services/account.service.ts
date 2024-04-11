@@ -18,6 +18,9 @@ export interface AccountProps {
   updated_at?: string;
   language_code?: string;
   username?: string;
+  birthday?: string;
+  sex?: string;
+  interests?: string[];
 }
 
 class AccountService {
@@ -73,18 +76,8 @@ class AccountService {
   ): Promise<InstanceType<typeof AccountExistsResponse> | null> {
     const username = request.getUsername();
     const response = new AccountExistsResponse();
-
-    const { data, error } = await SupabaseService.client
-      .from("account")
-      .select()
-      .eq("username", username);
-
-    if (error) {
-      console.error(error);
-      return null;
-    }
-
-    response.setExists(data.length > 0);
+    const exists = await this.checkUsernameExistsAsync(username);
+    response.setExists(exists);
     return response;
   }
 
@@ -97,6 +90,9 @@ class AccountService {
     const status = request.getStatus();
     const languageCode = request.getLanguageCode();
     const username = request.getUsername();
+    const birthday = request.getBirthday();
+    const sex = request.getSex();
+    const interests = request.getInterestsList();
 
     const accountData = this.assignAndGetAccountData({
       customerId,
@@ -104,6 +100,9 @@ class AccountService {
       status,
       languageCode,
       username,
+      birthday,
+      sex,
+      interests,
     });
     const { data, error } = await SupabaseService.client
       .from("account")
@@ -262,6 +261,9 @@ class AccountService {
     props.updated_at && account.setUpdateAt(props.updated_at);
     props.language_code && account.setLanguageCode(props.language_code);
     props.username && account.setUsername(props.username);
+    props.birthday && account.setBirthday(props.birthday);
+    props.sex && account.setSex(props.sex);
+    props.interests && account.setInterestsList(props.interests);
 
     return account;
   }
@@ -274,6 +276,9 @@ class AccountService {
     status?: string;
     languageCode?: string;
     username?: string;
+    birthday?: string;
+    sex?: string;
+    interests?: string[];
   }) {
     const date = new Date(Date.now());
     return {
@@ -283,8 +288,25 @@ class AccountService {
       ...(props.status && { status: props.status }),
       ...(props.languageCode && { language_code: props.languageCode }),
       ...(props.username && { username: props.username }),
+      ...(props.birthday && { birthday: props.birthday }),
+      ...(props.sex && { sex: props.sex }),
+      ...(props.interests && { interests: props.interests }),
       updated_at: date.toUTCString(),
     };
+  }
+
+  private async checkUsernameExistsAsync(username: string): Promise<boolean> {
+    const { data, error } = await SupabaseService.client
+      .from("account")
+      .select()
+      .eq("username", username);
+
+    if (error) {
+      console.error(error);
+      return false;
+    }
+
+    return data.length > 0;
   }
 }
 

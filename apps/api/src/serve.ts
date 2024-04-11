@@ -5,6 +5,7 @@ import {
   AccountNotificationController,
   DeepLController,
   DeviceController,
+  InterestController,
   MedusaController,
   ProductLikesController,
 } from "./controllers/index.ts";
@@ -17,5 +18,6 @@ const app = Core.registerApp([
   new AccountNotificationController(),
   new DeepLController(),
   new DeviceController(),
+  new InterestController(),
 ]);
 app.listen({ port: 8001 });

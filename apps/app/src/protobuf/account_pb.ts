@@ -45,6 +45,26 @@ export class AccountRequest extends Message<AccountRequest> {
    */
   username = "";
 
+  /**
+   * @generated from field: string birthday = 9;
+   */
+  birthday = "";
+
+  /**
+   * @generated from field: string sex = 10;
+   */
+  sex = "";
+
+  /**
+   * @generated from field: repeated string interests = 11;
+   */
+  interests: string[] = [];
+
+  /**
+   * @generated from field: string metadata = 12;
+   */
+  metadata = "";
+
   constructor(data?: PartialMessage<AccountRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -60,6 +80,10 @@ export class AccountRequest extends Message<AccountRequest> {
     { no: 5, name: "status", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 7, name: "language_code", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 8, name: "username", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 9, name: "birthday", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 10, name: "sex", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 11, name: "interests", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 12, name: "metadata", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountRequest {
@@ -123,6 +147,26 @@ export class AccountResponse extends Message<AccountResponse> {
    */
   username = "";
 
+  /**
+   * @generated from field: string birthday = 9;
+   */
+  birthday = "";
+
+  /**
+   * @generated from field: string sex = 10;
+   */
+  sex = "";
+
+  /**
+   * @generated from field: repeated string interests = 11;
+   */
+  interests: string[] = [];
+
+  /**
+   * @generated from field: string metadata = 12;
+   */
+  metadata = "";
+
   constructor(data?: PartialMessage<AccountResponse>) {
     super();
     proto3.util.initPartial(data, this);
@@ -139,6 +183,10 @@ export class AccountResponse extends Message<AccountResponse> {
     { no: 6, name: "update_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 7, name: "language_code", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 8, name: "username", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 9, name: "birthday", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 10, name: "sex", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 11, name: "interests", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 12, name: "metadata", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountResponse {

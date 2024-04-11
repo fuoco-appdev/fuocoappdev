@@ -19,6 +19,9 @@ import {
   Line,
   Avatar,
   Tabs,
+  FormLayout,
+  Dropdown,
+  DropdownAlignment,
 } from '@fuoco.appdev/core-ui';
 import styles from '../account.module.scss';
 import AccountController from '../../controllers/account.controller';
@@ -44,6 +47,7 @@ import { AccountResponsiveProps } from '../account.component';
 import { createPortal } from 'react-dom';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { AccountResponse } from '../../protobuf/account_pb';
+import { InterestResponse } from '../../protobuf/interest_pb';
 
 export default function AccountTabletComponent({
   windowProps,
@@ -53,6 +57,8 @@ export default function AccountTabletComponent({
   likeCount,
   followerCount,
   followingCount,
+  isAddInterestOpen,
+  setIsAddInterestOpen,
   setIsCropImageModalVisible,
   onUsernameChanged,
   onCompleteProfile,
@@ -67,6 +73,8 @@ export default function AccountTabletComponent({
   const topBarRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const query = useQuery();
+  const interestButtonRef = useRef<HTMLButtonElement | null>(null);
+  const interestInputRef = useRef<HTMLInputElement | null>(null);
   const { t, i18n } = useTranslation();
   let prevPreviewScrollTop = 0;
   let yPosition = 0;
@@ -86,18 +94,43 @@ export default function AccountTabletComponent({
               styles['left-tab-container-tablet'],
             ].join(' ')}
           >
+            {accountProps.account?.status === 'Complete' && (
+              <div
+                className={[
+                  styles['username-container'],
+                  styles['username-container-tablet'],
+                ].join(' ')}
+              >
+                <div
+                  className={[
+                    styles['username'],
+                    styles['username-tablet'],
+                  ].join(' ')}
+                >
+                  {accountProps.account?.username}
+                </div>
+              </div>
+            )}
+          </div>
+          <div
+            className={[
+              styles['center-tab-container'],
+              styles['center-tab-container-tablet'],
+            ].join(' ')}
+          >
             <div
               className={[
-                styles['username-container'],
-                styles['username-container-tablet'],
+                styles['top-bar-text-container'],
+                styles['top-bar-text-container-tablet'],
               ].join(' ')}
             >
               <div
-                className={[styles['username'], styles['username-tablet']].join(
-                  ' '
-                )}
+                className={[
+                  styles['top-bar-text'],
+                  styles['top-bar-text-tablet'],
+                ].join(' ')}
               >
-                {accountProps.account?.username}
+                {t('completeProfile')}
               </div>
             </div>
           </div>
@@ -207,8 +240,8 @@ export default function AccountTabletComponent({
           {account?.status === 'Incomplete' && (
             <div
               className={[
-                styles['incomplete-profile-container'],
-                styles['incomplete-profile-container-tablet'],
+                styles['incomplete-form-container'],
+                styles['incomplete-form-container-tablet'],
               ].join(' ')}
             >
               <div
@@ -219,11 +252,11 @@ export default function AccountTabletComponent({
               >
                 <div
                   className={[
-                    styles['complete-profile-title'],
-                    styles['complete-profile-title-tablet'],
+                    styles['incomplete-form-title'],
+                    styles['incomplete-form-title-tablet'],
                   ].join(' ')}
                 >
-                  {t('completeProfile')}
+                  {t('generalInformation')}
                 </div>
                 <div
                   className={[
@@ -250,6 +283,16 @@ export default function AccountTabletComponent({
                         });
                         onUsernameChanged(event);
                       },
+                      birthday: (event) => {
+                        AccountController.updateProfile({
+                          birthday: event.currentTarget.value,
+                        });
+                      },
+                      sex: (value) => {
+                        AccountController.updateProfile({
+                          sex: value,
+                        });
+                      },
                       phoneNumber: (value, event, formattedValue) =>
                         AccountController.updateProfile({
                           phoneNumber: value,
@@ -257,38 +300,117 @@ export default function AccountTabletComponent({
                     }}
                   />
                 </div>
-                <div>
-                  <Button
-                    touchScreen={true}
-                    classNames={{
-                      container: [
-                        styles['submit-button-container'],
-                        styles['submit-button-container-tablet'],
-                      ].join(' '),
-                      button: [
-                        styles['submit-button'],
-                        styles['submit-button-tablet'],
-                      ].join(' '),
-                    }}
-                    block={true}
-                    size={'large'}
-                    icon={<Line.Done size={24} />}
-                    onClick={onCompleteProfile}
-                    loading={accountProps.isCreateCustomerLoading}
-                    loadingComponent={
-                      <img
-                        src={'../assets/svg/ring-resize-light.svg'}
-                        style={{ height: 24 }}
-                        className={[
-                          styles['loading-ring'],
-                          styles['loading-ring-tablet'],
-                        ].join(' ')}
-                      />
-                    }
-                  >
-                    {t('complete')}
-                  </Button>
+              </div>
+              <div
+                className={[
+                  styles['incomplete-content'],
+                  styles['incomplete-content-tablet'],
+                ].join(' ')}
+              >
+                <div
+                  className={[
+                    styles['incomplete-form-title'],
+                    styles['incomplete-form-title-tablet'],
+                  ].join(' ')}
+                >
+                  {t('optional')}
                 </div>
+                <div
+                  className={[
+                    styles['form-container'],
+                    styles['form-container-tablet'],
+                  ].join(' ')}
+                >
+                  <FormLayout
+                    classNames={{ label: styles['input-form-layout-label'] }}
+                    label={t('interests') ?? undefined}
+                  >
+                    <Button
+                      ref={interestButtonRef}
+                      block={true}
+                      classNames={{
+                        button: [styles['secondary-button']].join(' '),
+                      }}
+                      type={'primary'}
+                      size={'large'}
+                      rippleProps={{
+                        color: 'rgba(133, 38, 122, 0.35)',
+                      }}
+                      icon={<Line.Add size={24} />}
+                      onClick={() => setIsAddInterestOpen(true)}
+                    >
+                      {t('addInterest')}
+                    </Button>
+                  </FormLayout>
+                  <div
+                    className={[
+                      styles['selected-interests-container'],
+                      styles['selected-interests-container-tablet'],
+                    ].join(' ')}
+                  >
+                    {Object.values(accountProps.selectedInterests).map(
+                      (value: InterestResponse) => {
+                        return (
+                          <Button
+                            size={'tiny'}
+                            rounded={true}
+                            classNames={{
+                              button: [
+                                styles['secondary-button'],
+                                styles['interest-selected'],
+                              ].join(' '),
+                            }}
+                            rippleProps={{
+                              color: 'rgba(133, 38, 122, 0.35)',
+                            }}
+                            onClick={() =>
+                              AccountController.updateSelectedInterest(value)
+                            }
+                          >
+                            {value.name}
+                          </Button>
+                        );
+                      }
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div
+                className={[
+                  styles['incomplete-content'],
+                  styles['incomplete-content-tablet'],
+                ].join(' ')}
+              >
+                <Button
+                  touchScreen={true}
+                  classNames={{
+                    container: [
+                      styles['submit-button-container'],
+                      styles['submit-button-container-tablet'],
+                    ].join(' '),
+                    button: [
+                      styles['submit-button'],
+                      styles['submit-button-tablet'],
+                    ].join(' '),
+                  }}
+                  block={true}
+                  size={'large'}
+                  icon={<Line.Done size={24} />}
+                  onClick={onCompleteProfile}
+                  loading={accountProps.isCreateCustomerLoading}
+                  loadingComponent={
+                    <img
+                      src={'../assets/svg/ring-resize-light.svg'}
+                      style={{ height: 24 }}
+                      className={[
+                        styles['loading-ring'],
+                        styles['loading-ring-tablet'],
+                      ].join(' ')}
+                    />
+                  }
+                >
+                  {t('complete')}
+                </Button>
               </div>
             </div>
           )}
@@ -660,6 +782,141 @@ export default function AccountTabletComponent({
           )}
         </div>
       </div>
+      {createPortal(
+        <>
+          <Dropdown
+            open={isAddInterestOpen}
+            anchorRef={interestButtonRef}
+            align={DropdownAlignment.Left}
+            style={{ width: interestButtonRef.current?.clientWidth }}
+            onClose={() => setIsAddInterestOpen(false)}
+            onOpen={() => {
+              interestInputRef.current?.focus();
+            }}
+          >
+            <Dropdown.Item
+              classNames={{
+                container: styles['dropdown-item-container-search'],
+                button: {
+                  button: styles['dropdown-item-button-search'],
+                },
+              }}
+              rippleProps={{ color: 'rgba(0,0,0,0)' }}
+            >
+              <div
+                className={[
+                  styles['search-container'],
+                  styles['search-container-desktop'],
+                ].join(' ')}
+              >
+                <div
+                  className={[
+                    styles['search-input-root'],
+                    styles['search-input-root-desktop'],
+                  ].join(' ')}
+                >
+                  <Input
+                    inputRef={interestInputRef}
+                    value={accountProps.addInterestInput}
+                    classNames={{
+                      container: [
+                        styles['search-input-container'],
+                        styles['search-input-container-desktop'],
+                      ].join(' '),
+                      input: [
+                        styles['search-input'],
+                        styles['search-input-desktop'],
+                      ].join(' '),
+                    }}
+                    placeholder={t('search') ?? ''}
+                    icon={<Line.Search size={24} color={'#2A2A5F'} />}
+                    onChange={(event) =>
+                      AccountController.updateAddInterestInput(
+                        event.target.value
+                      )
+                    }
+                  />
+                </div>
+              </div>
+            </Dropdown.Item>
+            <Dropdown.Item
+              classNames={{
+                container: styles['dropdown-item-container-interests'],
+                button: {
+                  button: styles['dropdown-item-button-interests'],
+                  children: styles['dropdown-item-button-children-interests'],
+                },
+              }}
+              rippleProps={{ color: 'rgba(0,0,0,0)' }}
+            >
+              {!accountProps.areAddInterestsLoading &&
+                accountProps.creatableInterest && (
+                  <Button
+                    classNames={{
+                      button: styles['secondary-button'],
+                    }}
+                    size={'tiny'}
+                    rounded={true}
+                    icon={<Line.Add size={24} />}
+                    rippleProps={{
+                      color: 'rgba(133, 38, 122, 0.35)',
+                    }}
+                    onClick={() =>
+                      AccountController.addInterestsCreateAsync(
+                        accountProps.creatableInterest ?? ''
+                      )
+                    }
+                  >
+                    {accountProps.creatableInterest}
+                  </Button>
+                )}
+              {accountProps.searchedInterests.map((value: InterestResponse) => {
+                return (
+                  <Button
+                    size={'tiny'}
+                    rounded={true}
+                    classNames={{
+                      button: [
+                        styles['secondary-button'],
+                        Object.keys(accountProps.selectedInterests).includes(
+                          value.id
+                        ) && styles['interest-selected'],
+                      ].join(' '),
+                    }}
+                    rippleProps={{
+                      color: 'rgba(133, 38, 122, 0.35)',
+                    }}
+                    onClick={() =>
+                      AccountController.updateSelectedInterest(value)
+                    }
+                  >
+                    {value.name}
+                  </Button>
+                );
+              })}
+            </Dropdown.Item>
+            <Dropdown.Item
+              classNames={{
+                container: styles['dropdown-item-container-loading'],
+                button: {
+                  button: styles['dropdown-item-button-loading'],
+                },
+              }}
+              rippleProps={{ color: 'rgba(0,0,0,0)' }}
+            >
+              <img
+                src={'../assets/svg/ring-resize-dark.svg'}
+                className={styles['loading-ring']}
+                style={{
+                  maxHeight: accountProps.areAddInterestsLoading ? 24 : 0,
+                  width: '100%',
+                }}
+              />
+            </Dropdown.Item>
+          </Dropdown>
+        </>,
+        document.body
+      )}
     </ResponsiveTablet>
   );
 }

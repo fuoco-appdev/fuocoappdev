@@ -87,29 +87,6 @@ export class AccountController {
     context.response.body = response.serializeBinary();
   }
 
-  // @Post("/complete")
-  // @Guard(AuthGuard)
-  // @ContentType("application/x-protobuf")
-  // public async checkAccountIsCompleteAsync(
-  //   context: Oak.RouterContext<
-  //     string,
-  //     Oak.RouteParams<string>,
-  //     Record<string, any>
-  //   >,
-  // ): Promise<void> {
-  //   const body = await context.request.body({ type: "reader" });
-  //   const requestValue = await readAll(body.value);
-  //   const accountExists = AccountExistsRequest.deserializeBinary(requestValue);
-  //   const response = await AccountService.checkExistsAsync(accountExists);
-  //   if (!response) {
-  //     console.error("Cannot check if account exists.");
-  //     return;
-  //   }
-
-  //   context.response.type = "application/x-protobuf";
-  //   context.response.body = response.serializeBinary();
-  // }
-
   @Post("/search")
   @Guard(AuthGuard)
   @ContentType("application/x-protobuf")

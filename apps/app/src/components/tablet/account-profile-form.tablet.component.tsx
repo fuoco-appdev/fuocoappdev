@@ -8,7 +8,13 @@ import {
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import AccountController from '../../controllers/account.controller';
 import styles from '../account-profile-form.module.scss';
-import { Alert, Input, InputPhoneNumber } from '@fuoco.appdev/core-ui';
+import {
+  Alert,
+  Button,
+  FormLayout,
+  Input,
+  InputPhoneNumber,
+} from '@fuoco.appdev/core-ui';
 import { RoutePathsType } from '../../route-paths';
 import { useTranslation } from 'react-i18next';
 import SupabaseService from '../../services/supabase.service';
@@ -74,6 +80,65 @@ export default function AccountProfileFormTabletComponent({
         error={errors?.username}
         onChange={onChangeCallbacks?.username}
       />
+      <Input
+        classNames={{
+          root: styles['input-root'],
+          formLayout: { label: styles['input-form-layout-label'] },
+          input: styles['input'],
+          container: styles['input-container'],
+        }}
+        label={t('birthday') ?? ''}
+        type={'date'}
+        value={values?.birthday}
+        error={errors?.birthday}
+        onChange={onChangeCallbacks?.birthday}
+      />
+      <FormLayout
+        classNames={{ label: styles['input-form-layout-label'] }}
+        label={t('sex') ?? undefined}
+        error={errors?.sex}
+      >
+        <div
+          className={[styles['sex-options'], styles['sex-options-tablet']].join(
+            ' '
+          )}
+        >
+          <Button
+            block={true}
+            classNames={{
+              button: [
+                styles['button'],
+                values?.sex === 'male' && styles['button-selected'],
+              ].join(' '),
+            }}
+            type={'primary'}
+            size={'large'}
+            rippleProps={{
+              color: 'rgba(133, 38, 122, 0.35)',
+            }}
+            onClick={() => onChangeCallbacks?.sex?.('male')}
+          >
+            {t('male')}
+          </Button>
+          <Button
+            block={true}
+            classNames={{
+              button: [
+                styles['button'],
+                values?.sex === 'female' && styles['button-selected'],
+              ].join(' '),
+            }}
+            type={'primary'}
+            size={'large'}
+            rippleProps={{
+              color: 'rgba(133, 38, 122, 0.35)',
+            }}
+            onClick={() => onChangeCallbacks?.sex?.('female')}
+          >
+            {t('female')}
+          </Button>
+        </div>
+      </FormLayout>
       <InputPhoneNumber
         defaultValue={values?.phoneNumber}
         classNames={{

@@ -8,15 +8,6 @@ import { ResponsiveSuspenseMobile } from 'src/components/responsive.component';
 export function AddressFormSuspenseMobileComponent(): JSX.Element {
   return (
     <ResponsiveSuspenseMobile>
-      <div className={styles['input-root-skeleton']}>
-        <Skeleton
-          className={styles['input-form-layout-label-skeleton']}
-          height={20}
-          width={120}
-          borderRadius={20}
-        />
-        <Skeleton style={{ height: 44 }} borderRadius={6} />
-      </div>
       <div
         className={[
           styles['horizontal-input-container'],
@@ -60,15 +51,6 @@ export function AddressFormSuspenseMobileComponent(): JSX.Element {
         />
         <Skeleton style={{ height: 44 }} borderRadius={6} />
       </div>
-      <div className={styles['input-root-skeleton']}>
-        <Skeleton
-          className={styles['input-form-layout-label-skeleton']}
-          height={20}
-          width={120}
-          borderRadius={20}
-        />
-        <Skeleton style={{ height: 44 }} borderRadius={6} />
-      </div>
       <div
         className={[
           styles['horizontal-input-container'],
@@ -93,24 +75,6 @@ export function AddressFormSuspenseMobileComponent(): JSX.Element {
           />
           <Skeleton style={{ height: 44 }} borderRadius={6} />
         </div>
-      </div>
-      <div className={styles['input-root-skeleton']}>
-        <Skeleton
-          className={styles['input-form-layout-label-skeleton']}
-          height={20}
-          width={120}
-          borderRadius={20}
-        />
-        <Skeleton style={{ height: 44 }} borderRadius={6} />
-      </div>
-      <div className={styles['input-root-skeleton']}>
-        <Skeleton
-          className={styles['input-form-layout-label-skeleton']}
-          height={20}
-          width={120}
-          borderRadius={20}
-        />
-        <Skeleton style={{ height: 44 }} borderRadius={6} />
       </div>
       <div className={styles['input-root-skeleton']}>
         <Skeleton

@@ -79,18 +79,43 @@ export default function AccountMobileComponent({
               styles['left-tab-container-mobile'],
             ].join(' ')}
           >
+            {accountProps.account?.status === 'Complete' && (
+              <div
+                className={[
+                  styles['top-bar-text-container'],
+                  styles['top-bar-text-container-mobile'],
+                ].join(' ')}
+              >
+                <div
+                  className={[
+                    styles['top-bar-text'],
+                    styles['top-bar-text-mobile'],
+                  ].join(' ')}
+                >
+                  {accountProps.account?.username}
+                </div>
+              </div>
+            )}
+          </div>
+          <div
+            className={[
+              styles['center-tab-container'],
+              styles['center-tab-container-mobile'],
+            ].join(' ')}
+          >
             <div
               className={[
-                styles['username-container'],
-                styles['username-container-mobile'],
+                styles['top-bar-text-container'],
+                styles['top-bar-text-container-mobile'],
               ].join(' ')}
             >
               <div
-                className={[styles['username'], styles['username-mobile']].join(
-                  ' '
-                )}
+                className={[
+                  styles['top-bar-text'],
+                  styles['top-bar-text-mobile'],
+                ].join(' ')}
               >
-                {accountProps.account?.username}
+                {t('completeProfile')}
               </div>
             </div>
           </div>
@@ -223,17 +248,17 @@ export default function AccountMobileComponent({
           {account?.status === 'Incomplete' && (
             <div
               className={[
-                styles['incomplete-profile-container'],
-                styles['incomplete-profile-container-mobile'],
+                styles['incomplete-form-container'],
+                styles['incomplete-form-container-mobile'],
               ].join(' ')}
             >
               <div
                 className={[
-                  styles['complete-profile-title'],
-                  styles['complete-profile-title-mobile'],
+                  styles['incomplete-form-title'],
+                  styles['incomplete-form-title-mobile'],
                 ].join(' ')}
               >
-                {t('completeProfile')}
+                {t('generalInformation')}
               </div>
               <div
                 className={[

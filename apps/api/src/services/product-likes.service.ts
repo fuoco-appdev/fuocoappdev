@@ -198,55 +198,55 @@ export class ProductLikesService {
     productIds: string[],
     didAccountLike?: boolean,
   ): Promise<InstanceType<typeof ProductLikesMetadatasResponse> | null> {
+    const totalLikesRelation: Record<string, any[]> = {};
     const metadatasResponse = new ProductLikesMetadatasResponse();
 
     if (productIds.length <= 0) {
       return metadatasResponse;
     }
 
-    for (const id of productIds) {
-      const metadataResponse = new ProductLikesMetadataResponse();
-      try {
-        const totalLikesData = await SupabaseService.client
-          .from("product_likes")
-          .select("", { count: "exact" })
-          .eq("product_id", id);
+    try {
+      const totalLikesData = await SupabaseService.client
+        .from("product_likes")
+        .select()
+        .in("product_id", productIds);
 
-        if (totalLikesData.error) {
-          console.error(totalLikesData.error);
-        } else {
-          metadataResponse.setTotalLikeCount(totalLikesData.count ?? 0);
-        }
-      } catch (error: any) {
-        console.error(error);
+      if (totalLikesData.error) {
+        console.error(totalLikesData.error);
       }
 
-      if (didAccountLike === undefined) {
+      for (const productLikes of totalLikesData.data) {
+        if (
+          !Object.keys(totalLikesRelation).includes(productLikes.product_id)
+        ) {
+          totalLikesRelation[productLikes.product_id] = [];
+        }
+
+        totalLikesRelation[productLikes.product_id].push(productLikes);
+      }
+    } catch (error: any) {
+      console.error(error);
+    }
+
+    for (const relationKey in totalLikesRelation) {
+      const productLikes = totalLikesRelation[relationKey];
+      const metadataResponse = new ProductLikesMetadataResponse();
+      metadataResponse.setProductId(relationKey);
+      metadataResponse.setTotalLikeCount(productLikes.length);
+
+      if (didAccountLike !== undefined) {
+        metadataResponse.setDidAccountLike(didAccountLike ?? false);
+      } else {
         if (!accountId || accountId.length <= 0) {
           metadataResponse.setDidAccountLike(false);
         } else {
-          try {
-            const didAccountLikeData = await SupabaseService.client
-              .from("product_likes")
-              .select()
-              .eq("product_id", id)
-              .eq("account_id", accountId);
-            if (didAccountLikeData.error) {
-              console.error(didAccountLikeData.error);
-            } else {
-              metadataResponse.setDidAccountLike(
-                didAccountLikeData.data.length > 0 ?? false,
-              );
-            }
-          } catch (error: any) {
-            console.error(error);
-          }
+          metadataResponse.setDidAccountLike(
+            productLikes.filter((value) => value.account_id === accountId)
+              .length > 0,
+          );
         }
-      } else {
-        metadataResponse.setDidAccountLike(didAccountLike ?? false);
       }
 
-      metadataResponse.setProductId(id);
       metadatasResponse.addMetadata(metadataResponse);
     }
 

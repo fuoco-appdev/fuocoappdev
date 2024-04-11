@@ -27,6 +27,8 @@ export interface ProfileFormOnChangeCallbacks {
   firstName?: (event: ChangeEvent<HTMLInputElement>) => void;
   lastName?: (event: ChangeEvent<HTMLInputElement>) => void;
   username?: (event: ChangeEvent<HTMLInputElement>) => void;
+  birthday?: (event: ChangeEvent<HTMLInputElement>) => void;
+  sex?: (value: 'male' | 'female') => void;
   phoneNumber?: (
     value: string,
     data: {} | CountryDataProps,
@@ -41,6 +43,8 @@ export interface ProfileFormErrors {
   firstName?: string;
   lastName?: string;
   username?: string;
+  birthday?: string;
+  sex?: string;
   phoneNumber?: string;
 }
 
@@ -48,6 +52,8 @@ export interface ProfileFormValues {
   firstName?: string;
   lastName?: string;
   username?: string;
+  birthday?: string;
+  sex?: 'male' | 'female';
   phoneNumber?: string;
 }
 

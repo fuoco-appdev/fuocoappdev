@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package interest;
+
+message CreateInterestRequest {
+    string name = 1;
+}
+
+message SearchInterestsRequest {
+    string query = 1;
+    int32 limit = 2;
+    int32 offset = 3;
+}
+
+message InterestResponse {
+    string id = 1;
+    string name = 2;
+    string created_at = 3;
+}
+
+message InterestsRequest {
+    repeated string ids = 1;
+}
+
+message InterestsResponse {
+    repeated interest.InterestResponse interests = 1;
+}

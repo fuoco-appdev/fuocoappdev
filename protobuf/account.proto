@@ -10,6 +10,10 @@ message AccountRequest {
     string status = 5;
     string language_code = 7;
     string username = 8;
+    string birthday = 9;
+    string sex = 10;
+    repeated string interests = 11;
+    string metadata = 12;
 }
 
 message AccountResponse {
@@ -21,6 +25,10 @@ message AccountResponse {
     string update_at = 6;
     string language_code = 7;
     string username = 8;
+    string birthday = 9;
+    string sex = 10;
+    repeated string interests = 11;
+    string metadata = 12;
 }
 
 message AccountsRequest {

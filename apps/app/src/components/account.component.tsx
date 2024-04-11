@@ -47,6 +47,8 @@ export interface AccountResponsiveProps {
   likeCount: string | undefined;
   followerCount: string | undefined;
   followingCount: string | undefined;
+  isAddInterestOpen: boolean;
+  setIsAddInterestOpen: (value: boolean) => void;
   setIsCropImageModalVisible: (value: boolean) => void;
   onUsernameChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onCompleteProfile: () => void;
@@ -74,6 +76,7 @@ export default function AccountComponent(): JSX.Element {
   const [followingCount, setFollowingCount] = useState<string | undefined>(
     undefined
   );
+  const [isAddInterestOpen, setIsAddInterestOpen] = useState<boolean>(false);
   const renderCountRef = useRef<number>(0);
   const scrollOffsetTriggerGap = 16;
 
@@ -303,6 +306,8 @@ export default function AccountComponent(): JSX.Element {
             likeCount={likeCount}
             followerCount={followerCount}
             followingCount={followingCount}
+            isAddInterestOpen={isAddInterestOpen}
+            setIsAddInterestOpen={setIsAddInterestOpen}
             setIsCropImageModalVisible={setIsCropImageModalVisible}
             onUsernameChanged={onUsernameChanged}
             onCompleteProfile={onCompleteProfile}
@@ -321,6 +326,8 @@ export default function AccountComponent(): JSX.Element {
             likeCount={likeCount}
             followerCount={followerCount}
             followingCount={followingCount}
+            isAddInterestOpen={isAddInterestOpen}
+            setIsAddInterestOpen={setIsAddInterestOpen}
             setIsCropImageModalVisible={setIsCropImageModalVisible}
             onUsernameChanged={onUsernameChanged}
             onCompleteProfile={onCompleteProfile}
@@ -339,6 +346,8 @@ export default function AccountComponent(): JSX.Element {
             likeCount={likeCount}
             followerCount={followerCount}
             followingCount={followingCount}
+            isAddInterestOpen={isAddInterestOpen}
+            setIsAddInterestOpen={setIsAddInterestOpen}
             setIsCropImageModalVisible={setIsCropImageModalVisible}
             onUsernameChanged={onUsernameChanged}
             onCompleteProfile={onCompleteProfile}

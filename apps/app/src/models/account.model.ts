@@ -22,6 +22,7 @@ import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
 import { AccountFollowerResponse } from "../protobuf/account-follower_pb";
 import { CustomerResponse } from "../protobuf/customer_pb";
 import { AccountResponse } from "../protobuf/account_pb";
+import { InterestResponse } from "../protobuf/interest_pb";
 
 export interface ProfileFormErrorStrings {
   empty?: string;
@@ -80,6 +81,11 @@ export interface AccountState {
   likeCount: number | undefined;
   followerCount: number | undefined;
   followingCount: number | undefined;
+  addInterestInput: string;
+  areAddInterestsLoading: boolean;
+  searchedInterests: InterestResponse[];
+  creatableInterest: string | undefined;
+  selectedInterests: Record<string, InterestResponse>;
 }
 
 export class AccountModel extends Model {
@@ -166,6 +172,11 @@ export class AccountModel extends Model {
           likeCount: undefined,
           followerCount: undefined,
           followingCount: undefined,
+          addInterestInput: "",
+          areAddInterestsLoading: false,
+          searchedInterests: [],
+          creatableInterest: undefined,
+          selectedInterests: {},
         }),
       ),
     );
@@ -778,6 +789,71 @@ export class AccountModel extends Model {
       this.store.update((state) => ({
         ...state,
         followingCount: value,
+      }));
+    }
+  }
+
+  public get addInterestInput(): string {
+    return this.store.getValue().addInterestInput;
+  }
+
+  public set addInterestInput(value: string) {
+    if (this.addInterestInput !== value) {
+      this.store.update((state) => ({
+        ...state,
+        addInterestInput: value,
+      }));
+    }
+  }
+
+  public get areAddInterestsLoading(): boolean {
+    return this.store.getValue().areAddInterestsLoading;
+  }
+
+  public set areAddInterestsLoading(value: boolean) {
+    if (this.areAddInterestsLoading !== value) {
+      this.store.update((state) => ({
+        ...state,
+        areAddInterestsLoading: value,
+      }));
+    }
+  }
+
+  public get searchedInterests(): InterestResponse[] {
+    return this.store.getValue().searchedInterests;
+  }
+
+  public set searchedInterests(value: InterestResponse[]) {
+    if (JSON.stringify(this.searchedInterests) !== JSON.stringify(value)) {
+      this.store.update((state) => ({
+        ...state,
+        searchedInterests: value,
+      }));
+    }
+  }
+
+  public get creatableInterest(): string | undefined {
+    return this.store.getValue().creatableInterest;
+  }
+
+  public set creatableInterest(value: string | undefined) {
+    if (this.creatableInterest !== value) {
+      this.store.update((state) => ({
+        ...state,
+        creatableInterest: value,
+      }));
+    }
+  }
+
+  public get selectedInterests(): Record<string, InterestResponse> {
+    return this.store.getValue().selectedInterests;
+  }
+
+  public set selectedInterests(value: Record<string, InterestResponse>) {
+    if (JSON.stringify(this.selectedInterests) !== JSON.stringify(value)) {
+      this.store.update((state) => ({
+        ...state,
+        selectedInterests: value,
       }));
     }
   }

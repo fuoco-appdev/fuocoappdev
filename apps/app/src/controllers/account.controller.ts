@@ -34,12 +34,15 @@ import AccountFollowersService from "../services/account-followers.service";
 import { StorageFolderType } from "../protobuf/common_pb";
 import { AccountResponse } from "../protobuf/account_pb";
 import { ProductLikesMetadataResponse } from "../protobuf/product-like_pb";
+import InterestService from "../services/interest.service";
+import { InterestResponse } from "src/protobuf/interest_pb";
 
 class AccountController extends Controller {
   private readonly _model: AccountModel;
   private readonly _limit: number;
   private _usernameTimerId: NodeJS.Timeout | number | undefined;
   private _addFriendsTimerId: NodeJS.Timeout | number | undefined;
+  private _addInterestTimerId: NodeJS.Timeout | number | undefined;
   private _activeAccountSubscription: Subscription | undefined;
   private _userSubscription: Subscription | undefined;
   private _selectedInventoryLocationIdSubscription: Subscription | undefined;
@@ -80,6 +83,7 @@ class AccountController extends Controller {
   public override load(renderCount: number): void {}
 
   public override disposeInitialization(renderCount: number): void {
+    clearTimeout(this._addInterestTimerId as number | undefined);
     clearTimeout(this._addFriendsTimerId as number | undefined);
     clearTimeout(this._usernameTimerId as number | undefined);
     this._loadedAccountSubscription?.unsubscribe();
@@ -286,6 +290,15 @@ class AccountController extends Controller {
 
   public updateAddFriendsScrollPosition(value: number | undefined): void {
     this._model.addFriendsScrollPosition = value;
+  }
+
+  public updateAddInterestInput(value: string): void {
+    this._model.addInterestInput = value;
+
+    clearTimeout(this._addInterestTimerId as number | undefined);
+    this._addInterestTimerId = setTimeout(() => {
+      this.addInterestsSearchAsync(value, 0, 50);
+    }, 750);
   }
 
   public incrementLikeCount(): void {
@@ -527,6 +540,79 @@ class AccountController extends Controller {
     this._model.areAddFriendsLoading = false;
   }
 
+  public updateSelectedInterest(interest: InterestResponse): void {
+    const selectedInterests = this._model.selectedInterests;
+    if (Object.keys(selectedInterests).includes(interest.id)) {
+      delete selectedInterests[interest.id];
+    } else {
+      selectedInterests[interest.id] = interest;
+    }
+
+    this._model.selectedInterests = selectedInterests;
+
+    let searchedInterests = this._model.searchedInterests;
+    this._model.searchedInterests = [];
+    this._model.searchedInterests = searchedInterests;
+  }
+
+  public async addInterestsCreateAsync(name: string): Promise<void> {
+    if (name.length <= 0) {
+      return;
+    }
+
+    const formattedQuery = name.toLowerCase();
+    try {
+      const interestResponse = await InterestService.requestCreateAsync(
+        formattedQuery,
+      );
+      this._model.searchedInterests = this._model.searchedInterests.concat([
+        interestResponse,
+      ]);
+
+      this.updateSelectedInterest(interestResponse);
+      this._model.creatableInterest = undefined;
+    } catch (error: any) {
+      console.error(error);
+    }
+  }
+
+  public async addInterestsSearchAsync(
+    query: string,
+    offset: number = 0,
+    limit: number = 50,
+    force: boolean = false,
+  ): Promise<void> {
+    if (!force && this._model.areAddInterestsLoading) {
+      return;
+    }
+
+    this._model.areAddInterestsLoading = true;
+
+    const formattedQuery = query.toLowerCase();
+    try {
+      const interestsResponse = await InterestService.requestSearchAsync({
+        query: formattedQuery,
+        offset: offset,
+        limit: limit,
+      });
+
+      this._model.searchedInterests = interestsResponse.interests;
+
+      const existingInterest = this._model.searchedInterests.find((value) =>
+        value.name === formattedQuery
+      );
+      if (
+        !existingInterest
+      ) {
+        this._model.creatableInterest = query;
+      }
+    } catch (error: any) {
+      console.error(error);
+    }
+
+    this._model.areAddInterestsLoading = false;
+  }
+
   public checkIfUsernameExists(value: string): void {
     clearTimeout(this._usernameTimerId as number | undefined);
     this._usernameTimerId = setTimeout(() => {
@@ -602,6 +688,14 @@ class AccountController extends Controller {
       errors.lastName = this._model.errorStrings.empty;
     }
 
+    if (!form.birthday) {
+      errors.birthday = this._model.errorStrings.empty;
+    }
+
+    if (!form.sex || form.sex?.length <= 0) {
+      errors.sex = this._model.errorStrings.empty;
+    }
+
     if (!form.phoneNumber || form.phoneNumber?.length <= 0) {
       errors.phoneNumber = this._model.errorStrings.empty;
     }
@@ -646,6 +740,11 @@ class AccountController extends Controller {
         status: "Complete",
         languageCode: WindowController.model.languageInfo?.isoCode,
         username: this._model.profileForm.username ?? "",
+        birthday: this._model.profileForm.birthday,
+        sex: this._model.profileForm.sex,
+        interests: Object.values(this._model.selectedInterests).map((value) =>
+          value.id
+        ),
       });
       this._model.isCreateCustomerLoading = false;
     } catch (error: any) {
@@ -679,6 +778,11 @@ class AccountController extends Controller {
 
       this._model.account = await AccountService.requestUpdateActiveAsync({
         username: this._model.profileForm.username ?? "",
+        birthday: this._model.profileForm.birthday,
+        sex: this._model.profileForm.sex,
+        interests: Object.values(this._model.selectedInterests).map((value) =>
+          value.id
+        ),
       });
     } catch (error: any) {
       console.error(error);
@@ -850,6 +954,19 @@ class AccountController extends Controller {
         accountFollowers[follower.followerId] = follower;
         this._model.addFriendAccountFollowers = accountFollowers;
       }
+    } catch (error: any) {
+      console.error(error);
+    }
+  }
+
+  private async loadSelectedInterestsAsync(ids: string[]): Promise<void> {
+    try {
+      const interestsResponse = await InterestService.requestFindAsync(ids);
+      const selectedInterests = this._model.selectedInterests;
+      for (const interest of interestsResponse.interests) {
+        selectedInterests[interest.id] = interest;
+      }
+      this._model.selectedInterests = selectedInterests;
     } catch (error: any) {
       console.error(error);
     }
@@ -1102,6 +1219,11 @@ class AccountController extends Controller {
     this._model.likeCount = undefined;
     this._model.followerCount = undefined;
     this._model.followingCount = undefined;
+    this._model.addInterestInput = "";
+    this._model.areAddInterestsLoading = false;
+    this._model.searchedInterests = [];
+    this._model.creatableInterest = undefined;
+    this._model.selectedInterests = {};
   }
 
   private async initializeAsync(renderCount: number): Promise<void> {
@@ -1115,6 +1237,8 @@ class AccountController extends Controller {
     this._userSubscription = SupabaseService.userObservable.subscribe({
       next: this.onActiveUserChangedAsync,
     });
+
+    await this.addInterestsSearchAsync(this._model.addInterestInput);
   }
 
   private async onActiveAccountChangedAsync(
@@ -1181,11 +1305,16 @@ class AccountController extends Controller {
       lastName: this._model.customer?.last_name,
       phoneNumber: this._model.customer?.phone,
       username: value?.username,
+      birthday: value?.birthday,
+      sex: value?.sex as "male" | "female",
     };
+
+    await this.loadSelectedInterestsAsync(value.interests);
 
     const errors = await this.getProfileFormErrorsAsync(
       this._model.profileForm,
     );
+
     if (errors && this._model.account?.status === "Complete") {
       try {
         this._model.account = await AccountService.requestUpdateActiveAsync({
