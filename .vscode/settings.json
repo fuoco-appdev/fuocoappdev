@@ -12,7 +12,5 @@
     "[typescript]": { "editor.defaultFormatter": "denoland.vscode-deno" },
     "deno.enablePaths": [
         "./apps/api",
-        "./apps/app/deno_dist",
-        "./apps/app/serve.ts"
     ],
 }

@@ -1,12 +1,23 @@
-import { Avatar, Button, Line, Tabs } from '@fuoco.appdev/core-ui';
+import {
+  Avatar,
+  Button,
+  Dropdown,
+  DropdownAlignment,
+  FormLayout,
+  Input,
+  Line,
+  Tabs,
+} from '@fuoco.appdev/core-ui';
 import { Customer } from '@medusajs/medusa';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import Skeleton from 'react-loading-skeleton';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import AccountController from '../../controllers/account.controller';
 import { AccountResponse } from '../../protobuf/account_pb';
+import { InterestResponse } from '../../protobuf/interest_pb';
 import { RoutePathsType, useQuery } from '../../route-paths';
 import AccountProfileFormComponent from '../account-profile-form.component';
 import { AccountResponsiveProps } from '../account.component';
@@ -20,6 +31,8 @@ export default function AccountMobileComponent({
   likeCount,
   followerCount,
   followingCount,
+  isAddInterestOpen,
+  setIsAddInterestOpen,
   setIsCropImageModalVisible,
   onUsernameChanged,
   onCompleteProfile,
@@ -32,6 +45,8 @@ export default function AccountMobileComponent({
 }: AccountResponsiveProps): JSX.Element {
   const scrollContainerRef = React.createRef<HTMLDivElement>();
   const topBarRef = React.useRef<HTMLDivElement | null>(null);
+  const interestButtonRef = React.useRef<HTMLButtonElement | null>(null);
+  const interestInputRef = React.useRef<HTMLInputElement | null>(null);
   const { t } = useTranslation();
   const navigate = useNavigate();
   const query = useQuery();
@@ -265,6 +280,73 @@ export default function AccountMobileComponent({
                       }),
                   }}
                 />
+              </div>
+              <div
+                className={[
+                  styles['incomplete-form-title'],
+                  styles['incomplete-form-title-desktop'],
+                ].join(' ')}
+              >
+                {t('optional')}
+              </div>
+              <div
+                className={[
+                  styles['form-container'],
+                  styles['form-container-desktop'],
+                ].join(' ')}
+              >
+                <FormLayout
+                  classNames={{ label: styles['input-form-layout-label'] }}
+                  label={t('interests') ?? undefined}
+                >
+                  <Button
+                    ref={interestButtonRef}
+                    block={true}
+                    classNames={{
+                      button: [styles['secondary-button']].join(' '),
+                    }}
+                    type={'primary'}
+                    size={'large'}
+                    rippleProps={{
+                      color: 'rgba(133, 38, 122, 0.35)',
+                    }}
+                    icon={<Line.Add size={24} />}
+                    onClick={() => setIsAddInterestOpen(true)}
+                  >
+                    {t('addInterest')}
+                  </Button>
+                </FormLayout>
+                <div
+                  className={[
+                    styles['selected-interests-container'],
+                    styles['selected-interests-container-desktop'],
+                  ].join(' ')}
+                >
+                  {Object.values(accountProps.selectedInterests).map(
+                    (value: InterestResponse) => {
+                      return (
+                        <Button
+                          size={'tiny'}
+                          rounded={true}
+                          classNames={{
+                            button: [
+                              styles['secondary-button'],
+                              styles['interest-selected'],
+                            ].join(' '),
+                          }}
+                          rippleProps={{
+                            color: 'rgba(133, 38, 122, 0.35)',
+                          }}
+                          onClick={() =>
+                            AccountController.updateSelectedInterest(value)
+                          }
+                        >
+                          {value.name}
+                        </Button>
+                      );
+                    }
+                  )}
+                </div>
               </div>
               <div>
                 <Button
@@ -674,6 +756,142 @@ export default function AccountMobileComponent({
           )}
         </div>
       </div>
+      {ReactDOM.createPortal(
+        <>
+          <Dropdown
+            open={isAddInterestOpen}
+            anchorRef={interestButtonRef}
+            align={DropdownAlignment.Left}
+            style={{ width: interestButtonRef.current?.clientWidth }}
+            onClose={() => setIsAddInterestOpen(false)}
+            onOpen={() => {
+              interestInputRef.current?.focus();
+            }}
+            touchScreen={true}
+          >
+            <Dropdown.Item
+              classNames={{
+                container: styles['dropdown-item-container-search'],
+                button: {
+                  button: styles['dropdown-item-button-search'],
+                },
+              }}
+              rippleProps={{ color: 'rgba(0,0,0,0)' }}
+            >
+              <div
+                className={[
+                  styles['search-container'],
+                  styles['search-container-desktop'],
+                ].join(' ')}
+              >
+                <div
+                  className={[
+                    styles['search-input-root'],
+                    styles['search-input-root-desktop'],
+                  ].join(' ')}
+                >
+                  <Input
+                    inputRef={interestInputRef}
+                    value={accountProps.addInterestInput}
+                    classNames={{
+                      container: [
+                        styles['search-input-container'],
+                        styles['search-input-container-desktop'],
+                      ].join(' '),
+                      input: [
+                        styles['search-input'],
+                        styles['search-input-desktop'],
+                      ].join(' '),
+                    }}
+                    placeholder={t('search') ?? ''}
+                    icon={<Line.Search size={24} color={'#2A2A5F'} />}
+                    onChange={(event) =>
+                      AccountController.updateAddInterestInput(
+                        event.target.value
+                      )
+                    }
+                  />
+                </div>
+              </div>
+            </Dropdown.Item>
+            <Dropdown.Item
+              classNames={{
+                container: styles['dropdown-item-container-interests'],
+                button: {
+                  button: styles['dropdown-item-button-interests'],
+                  children: styles['dropdown-item-button-children-interests'],
+                },
+              }}
+              rippleProps={{ color: 'rgba(0,0,0,0)' }}
+            >
+              {!accountProps.areAddInterestsLoading &&
+                accountProps.creatableInterest && (
+                  <Button
+                    classNames={{
+                      button: styles['secondary-button'],
+                    }}
+                    size={'tiny'}
+                    rounded={true}
+                    icon={<Line.Add size={24} />}
+                    rippleProps={{
+                      color: 'rgba(133, 38, 122, 0.35)',
+                    }}
+                    onClick={() =>
+                      AccountController.addInterestsCreateAsync(
+                        accountProps.creatableInterest ?? ''
+                      )
+                    }
+                  >
+                    {accountProps.creatableInterest}
+                  </Button>
+                )}
+              {accountProps.searchedInterests.map((value: InterestResponse) => {
+                return (
+                  <Button
+                    size={'tiny'}
+                    rounded={true}
+                    classNames={{
+                      button: [
+                        styles['secondary-button'],
+                        Object.keys(accountProps.selectedInterests).includes(
+                          value.id
+                        ) && styles['interest-selected'],
+                      ].join(' '),
+                    }}
+                    rippleProps={{
+                      color: 'rgba(133, 38, 122, 0.35)',
+                    }}
+                    onClick={() =>
+                      AccountController.updateSelectedInterest(value)
+                    }
+                  >
+                    {value.name}
+                  </Button>
+                );
+              })}
+            </Dropdown.Item>
+            <Dropdown.Item
+              classNames={{
+                container: styles['dropdown-item-container-loading'],
+                button: {
+                  button: styles['dropdown-item-button-loading'],
+                },
+              }}
+              rippleProps={{ color: 'rgba(0,0,0,0)' }}
+            >
+              <img
+                src={'../assets/svg/ring-resize-dark.svg'}
+                className={styles['loading-ring']}
+                style={{
+                  maxHeight: accountProps.areAddInterestsLoading ? 24 : 0,
+                  width: '100%',
+                }}
+              />
+            </Dropdown.Item>
+          </Dropdown>
+        </>,
+        document.body
+      )}
     </ResponsiveMobile>
   );
 }
