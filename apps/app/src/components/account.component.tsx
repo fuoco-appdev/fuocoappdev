@@ -1,22 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react';
-import AccountController from '../controllers/account.controller';
-import WindowController from '../controllers/window.controller';
-import StoreController from '../controllers/store.controller';
-import { useObservable } from '@ngneat/use-observable';
-import { useLocation, useNavigate, useOutletContext } from 'react-router-dom';
-import { RoutePathsType, useQuery } from '../route-paths';
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
-import { useTranslation } from 'react-i18next';
-import { Helmet } from 'react-helmet';
-import { AccountState } from '../models/account.model';
-import { WindowState } from '../models/window.model';
-import { StoreState } from '../models/store.model';
-import { AuthenticatedComponent } from './authenticated.component';
 import { lazy } from '@loadable/component';
+import { useObservable } from '@ngneat/use-observable';
+import React from 'react';
+import { Helmet } from 'react-helmet';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useOutletContext } from 'react-router-dom';
+import AccountController from '../controllers/account.controller';
+import StoreController from '../controllers/store.controller';
+import WindowController from '../controllers/window.controller';
+import { AccountState } from '../models/account.model';
+import { StoreState } from '../models/store.model';
+import { WindowState } from '../models/window.model';
+import { RoutePathsType, useQuery } from '../route-paths';
+import { AuthenticatedComponent } from './authenticated.component';
 import { AccountSuspenseDesktopComponent } from './desktop/suspense/account.suspense.desktop.component';
 import { AccountSuspenseMobileComponent } from './mobile/suspense/account.suspense.mobile.component';
 import { AccountSuspenseTabletComponent } from './tablet/suspense/account.suspense.tablet.component';
@@ -68,16 +63,19 @@ export default function AccountComponent(): JSX.Element {
   const [windowProps] = useObservable(WindowController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
   const [isCropImageModalVisible, setIsCropImageModalVisible] =
-    useState<boolean>(false);
-  const [likeCount, setLikeCount] = useState<string | undefined>(undefined);
-  const [followerCount, setFollowerCount] = useState<string | undefined>(
+    React.useState<boolean>(false);
+  const [likeCount, setLikeCount] = React.useState<string | undefined>(
     undefined
   );
-  const [followingCount, setFollowingCount] = useState<string | undefined>(
+  const [followerCount, setFollowerCount] = React.useState<string | undefined>(
     undefined
   );
-  const [isAddInterestOpen, setIsAddInterestOpen] = useState<boolean>(false);
-  const renderCountRef = useRef<number>(0);
+  const [followingCount, setFollowingCount] = React.useState<
+    string | undefined
+  >(undefined);
+  const [isAddInterestOpen, setIsAddInterestOpen] =
+    React.useState<boolean>(false);
+  const renderCountRef = React.useRef<number>(0);
   const scrollOffsetTriggerGap = 16;
 
   const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
@@ -174,7 +172,7 @@ export default function AccountComponent(): JSX.Element {
     });
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     AccountController.updateErrorStrings({
       empty: t('fieldEmptyError') ?? '',
       exists: t('fieldExistsError') ?? '',
@@ -182,7 +180,7 @@ export default function AccountComponent(): JSX.Element {
     });
   }, [i18n.language]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     renderCountRef.current += 1;
     AccountController.load(renderCountRef.current);
     if (windowProps.activeRoute === RoutePathsType.Account) {
@@ -197,7 +195,7 @@ export default function AccountComponent(): JSX.Element {
     };
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (accountProps.likeCount !== undefined) {
       setLikeCount(
         new Intl.NumberFormat(i18n.language).format(accountProps.likeCount)
@@ -221,7 +219,7 @@ export default function AccountComponent(): JSX.Element {
     accountProps.followingCount,
   ]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const loadedLocation = windowProps.loadedLocationPath as string | undefined;
     if (loadedLocation && loadedLocation !== RoutePathsType.Account) {
       if (
@@ -242,7 +240,7 @@ export default function AccountComponent(): JSX.Element {
     }
   }, [windowProps.loadedLocationPath]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (AccountController.model.activeTabId === location.pathname) {
       return;
     }

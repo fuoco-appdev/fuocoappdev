@@ -1,8 +1,8 @@
-import { createStore, withProps } from '@ngneat/elf';
-import { Model } from '../model';
-import mapboxgl from 'mapbox-gl';
 import { SalesChannel } from '@medusajs/medusa';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
+import { createStore, withProps } from '@ngneat/elf';
+import mapboxgl from 'mapbox-gl';
+import { Model } from '../model';
 
 export enum InventoryLocationType {
   Cellar = 'cellar',

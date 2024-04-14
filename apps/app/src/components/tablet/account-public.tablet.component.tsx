@@ -1,55 +1,17 @@
-import React, {
-  createRef,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
-import {
-  Typography,
-  Button,
-  Accordion,
-  Input,
-  InputPhoneNumber,
-  Listbox,
-  InputGeocoding,
-  OptionProps,
-  Modal,
-  LanguageSwitch,
-  Line,
-  Avatar,
-  Tabs,
-} from '@fuoco.appdev/core-ui';
-import styles from '../account-public.module.scss';
-import AccountController from '../../controllers/account.controller';
-import WindowController from '../../controllers/window.controller';
-import { animated, useTransition, config } from 'react-spring';
-import { useObservable } from '@ngneat/use-observable';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { RoutePathsType, useQuery } from '../../route-paths';
+import { Avatar, Button, Line, Tabs } from '@fuoco.appdev/core-ui';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import AccountProfileFormComponent from '../account-profile-form.component';
-import { Customer } from '@medusajs/medusa';
 import Skeleton from 'react-loading-skeleton';
-import AccountOrderHistoryComponent from '../account-order-history.component';
-import AccountAddressesComponent from '../account-addresses.component';
-import AccountEditComponent from '../account-likes.component';
-import {
-  ResponsiveDesktop,
-  ResponsiveTablet,
-  useDesktopEffect,
-  useTabletEffect,
-} from '../responsive.component';
-import { AccountResponsiveProps } from '../account.component';
-import { createPortal } from 'react-dom';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import { AccountPublicResponsiveProps } from '../account-public.component';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import AccountPublicController from '../../controllers/account-public.controller';
+import { RoutePathsType, useQuery } from '../../route-paths';
+import { AccountPublicResponsiveProps } from '../account-public.component';
+import styles from '../account-public.module.scss';
+import { ResponsiveTablet } from '../responsive.component';
 
 export default function AccountPublicTabletComponent({
-  windowProps,
   accountPublicProps,
-  storeProps,
   isFollowing,
   isAccepted,
   onScroll,
@@ -58,10 +20,10 @@ export default function AccountPublicTabletComponent({
   onRequested,
   onUnfollow,
 }: AccountPublicResponsiveProps): JSX.Element {
-  const scrollContainerRef = createRef<HTMLDivElement>();
+  const scrollContainerRef = React.createRef<HTMLDivElement>();
   const navigate = useNavigate();
   const query = useQuery();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <ResponsiveTablet>

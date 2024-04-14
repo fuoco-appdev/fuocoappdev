@@ -1,7 +1,6 @@
 import { createStore, withProps } from '@ngneat/elf';
-import { Location } from 'react-router-dom';
-import { Model } from '../model';
 import { SupabaseClient } from '@supabase/supabase-js';
+import { Model } from '../model';
 
 export interface ForgotPasswordState {
   supabaseClient?: SupabaseClient | undefined;

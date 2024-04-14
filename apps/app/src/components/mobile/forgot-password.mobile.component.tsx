@@ -1,28 +1,23 @@
-import { useLocation, useNavigate } from 'react-router-dom';
 import { Auth } from '@fuoco.appdev/core-ui';
-import styles from '../forgot-password.module.scss';
-import { useState, useEffect } from 'react';
-import { animated, config, useTransition } from 'react-spring';
-import { useObservable } from '@ngneat/use-observable';
-import WindowController from '../../controllers/window.controller';
-import {
-  ResponsiveMobile,
-  useDesktopEffect,
-  useMobileEffect,
-} from '../responsive.component';
-import { useTranslation } from 'react-i18next';
 import { AuthError } from '@supabase/supabase-js';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { animated, config, useTransition } from 'react-spring';
+import WindowController from '../../controllers/window.controller';
 import { RoutePathsType, useQuery } from '../../route-paths';
 import { ForgotPasswordResponsiveProps } from '../forgot-password.component';
+import styles from '../forgot-password.module.scss';
+import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 
 export default function ForgotPasswordMobileComponent({
   forgotPasswordProps,
 }: ForgotPasswordResponsiveProps): JSX.Element {
   const navigate = useNavigate();
   const query = useQuery();
-  const [show, setShow] = useState(false);
-  const [error, setError] = useState<AuthError | null>(null);
-  const { t, i18n } = useTranslation();
+  const [show, setShow] = React.useState(false);
+  const [error, setError] = React.useState<AuthError | null>(null);
+  const { t } = useTranslation();
 
   useMobileEffect(() => {
     setShow(true);

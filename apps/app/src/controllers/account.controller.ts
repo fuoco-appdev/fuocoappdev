@@ -1,41 +1,38 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { filter, firstValueFrom, Subscription, take } from "rxjs";
-import { Controller } from "../controller";
-import { AccountModel, ProfileFormErrorStrings } from "../models/account.model";
-import AccountService from "../services/account.service";
-import SupabaseService from "../services/supabase.service";
-import BucketService from "../services/bucket.service";
-import MedusaService from "../services/medusa.service";
-import ProductLikesService from "../services/product-likes.service";
-import { Address, Customer, StorePostCustomersReq } from "@medusajs/medusa";
-import WindowController from "./window.controller";
+import { LanguageInfo } from "@fuoco.appdev/core-ui";
+import { Address, Customer } from "@medusajs/medusa";
+import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
+import { select } from "@ngneat/elf";
+import { User } from "@supabase/supabase-js";
+import mime from "mime";
+import { Subscription, filter, firstValueFrom, take } from "rxjs";
+import { v4 as uuidv4 } from "uuid";
 import {
   ProfileFormErrors,
   ProfileFormValues,
 } from "../components/account-profile-form.component";
-import { v4 as uuidv4 } from "uuid";
-import mime from "mime";
-import { AuthChangeEvent, Session, User } from "@supabase/supabase-js";
 import {
   AddressFormErrors,
   AddressFormValues,
 } from "../components/address-form.component";
-import { RoutePathsType } from "../route-paths";
-import { LanguageInfo } from "@fuoco.appdev/core-ui";
-import { select } from "@ngneat/elf";
-import ExploreController from "./explore.controller";
+import { Controller } from "../controller";
+import { AccountModel, ProfileFormErrorStrings } from "../models/account.model";
 import { ExploreLocalState } from "../models/explore.model";
-import Cookies from "js-cookie";
-import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
-import StoreController from "./store.controller";
-import CartController from "./cart.controller";
-import AccountFollowersService from "../services/account-followers.service";
-import { StorageFolderType } from "../protobuf/common_pb";
 import { AccountResponse } from "../protobuf/account_pb";
+import { StorageFolderType } from "../protobuf/common_pb";
+import { InterestResponse } from "../protobuf/interest_pb";
 import { ProductLikesMetadataResponse } from "../protobuf/product-like_pb";
+import { RoutePathsType } from "../route-paths";
+import AccountFollowersService from "../services/account-followers.service";
+import AccountService from "../services/account.service";
+import BucketService from "../services/bucket.service";
 import InterestService from "../services/interest.service";
-import { InterestResponse } from "src/protobuf/interest_pb";
+import MedusaService from "../services/medusa.service";
+import ProductLikesService from "../services/product-likes.service";
+import SupabaseService from "../services/supabase.service";
+import ExploreController from "./explore.controller";
+import WindowController from "./window.controller";
 
 class AccountController extends Controller {
   private readonly _model: AccountModel;
@@ -80,9 +77,9 @@ class AccountController extends Controller {
       });
   }
 
-  public override load(renderCount: number): void {}
+  public override load(_renderCount: number): void {}
 
-  public override disposeInitialization(renderCount: number): void {
+  public override disposeInitialization(_renderCount: number): void {
     clearTimeout(this._addInterestTimerId as number | undefined);
     clearTimeout(this._addFriendsTimerId as number | undefined);
     clearTimeout(this._usernameTimerId as number | undefined);
@@ -94,7 +91,7 @@ class AccountController extends Controller {
     this._userSubscription?.unsubscribe();
   }
 
-  public override disposeLoad(renderCount: number): void {}
+  public override disposeLoad(_renderCount: number): void {}
 
   public loadLikedProducts(): void {
     if (this._model.likedProducts.length > 0) {
@@ -793,7 +790,7 @@ class AccountController extends Controller {
     return true;
   }
 
-  public async uploadAvatarAsync(index: number, blob: Blob): Promise<void> {
+  public async uploadAvatarAsync(_index: number, blob: Blob): Promise<void> {
     this._model.isAvatarUploadLoading = true;
 
     try {
@@ -1226,7 +1223,7 @@ class AccountController extends Controller {
     this._model.selectedInterests = {};
   }
 
-  private async initializeAsync(renderCount: number): Promise<void> {
+  private async initializeAsync(_renderCount: number): Promise<void> {
     this._activeAccountSubscription?.unsubscribe();
     this._activeAccountSubscription = AccountService.activeAccountObservable
       .subscribe({

@@ -1,4 +1,3 @@
-import Medusa from "@medusajs/medusa-js";
 import {
   Customer,
   CustomerGroup,
@@ -7,23 +6,10 @@ import {
   Product,
   SalesChannel,
 } from "@medusajs/medusa";
-import ConfigService from "./config.service";
-import axios, { AxiosError } from "axios";
-import { Service } from "../service";
-import SupabaseService from "./supabase.service";
-import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
-import { BehaviorSubject, Observable } from "rxjs";
-import Cookies from "js-cookie";
+import Medusa from "@medusajs/medusa-js";
 import { StockLocation } from "@medusajs/stock-location/dist/models";
-import { OrdersRequest, OrdersResponse } from "src/protobuf/order_pb";
-import {
-  StockLocationsRequest,
-  StockLocationsResponse,
-} from "../protobuf/stock-location_pb";
-import {
-  PriceListsRequest,
-  PriceListsResponse,
-} from "../protobuf/price-list_pb";
+import axios from "axios";
+import { BehaviorSubject, Observable } from "rxjs";
 import {
   AddCustomerToGroupRequest,
   CustomerGroupResponse,
@@ -35,6 +21,11 @@ import {
   UpdateCustomerRequest,
   UpdateCustomerResponse,
 } from "../protobuf/customer_pb";
+import { OrdersRequest, OrdersResponse } from "../protobuf/order_pb";
+import {
+  PriceListsRequest,
+  PriceListsResponse,
+} from "../protobuf/price-list_pb";
 import {
   ProductCountRequest,
   ProductCountResponse,
@@ -42,6 +33,13 @@ import {
   ProductsRequest,
   ProductsResponse,
 } from "../protobuf/product_pb";
+import {
+  StockLocationsRequest,
+  StockLocationsResponse,
+} from "../protobuf/stock-location_pb";
+import { Service } from "../service";
+import ConfigService from "./config.service";
+import SupabaseService from "./supabase.service";
 
 class MedusaService extends Service {
   private _medusa: Medusa | undefined;

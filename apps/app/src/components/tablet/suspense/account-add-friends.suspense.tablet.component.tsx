@@ -1,8 +1,5 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import * as React from 'react';
-import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
+import Skeleton from 'react-loading-skeleton';
 import styles from '../../account-add-friends.module.scss';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { ResponsiveSuspenseTablet } from '../../responsive.component';
 import { AccountFollowItemSuspenseTabletComponent } from './account-follow-item.suspense.tablet.component';
 

@@ -1,10 +1,7 @@
-import { Auth, Typography, Button, Line } from '@fuoco.appdev/core-ui';
-import { useObservable } from '@ngneat/use-observable';
-import styles from '../privacy-policy.module.scss';
-import PrivacyPolicyController from '../../controllers/privacy-policy.controller';
-import { lazy } from 'react';
-import { PrivacyPolicyResponsiveProps } from '../privacy-policy.component';
+import { Auth, Typography } from '@fuoco.appdev/core-ui';
 import loadable from '@loadable/component';
+import { PrivacyPolicyResponsiveProps } from '../privacy-policy.component';
+import styles from '../privacy-policy.module.scss';
 import { ResponsiveTablet } from '../responsive.component';
 const ReactMarkdown = loadable(
   async () => {

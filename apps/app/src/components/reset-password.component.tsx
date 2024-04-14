@@ -1,28 +1,17 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import { Auth } from '@fuoco.appdev/core-ui';
-import styles from './reset-password.module.scss';
-import WindowController from '../controllers/window.controller';
-import SupabaseService from '../services/supabase.service';
-import { AuthError } from '@supabase/supabase-js';
-import { useState, useEffect, useRef } from 'react';
-import { animated, config, useTransition } from 'react-spring';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { RoutePathsType } from '../route-paths';
-import ResetPasswordController from '../controllers/reset-password.controller';
+import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
+import { AuthError } from '@supabase/supabase-js';
+import React from 'react';
+import { Helmet } from 'react-helmet';
+import ResetPasswordController from '../controllers/reset-password.controller';
+import WindowController from '../controllers/window.controller';
+import { ResetPasswordState } from '../models';
 import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
   ResponsiveSuspenseDesktop,
   ResponsiveSuspenseMobile,
   ResponsiveSuspenseTablet,
-  ResponsiveTablet,
 } from './responsive.component';
-import { useTranslation } from 'react-i18next';
-import { Helmet } from 'react-helmet';
-import React from 'react';
-import { ResetPasswordState } from '../models';
-import { lazy } from '@loadable/component';
 
 const ResetPasswordDesktopComponent = lazy(
   () => import('./desktop/reset-password.desktop.component')
@@ -44,15 +33,16 @@ export interface ResetPasswordResponsiveProps {
 }
 
 export default function ResetPasswordComponent(): JSX.Element {
-  const [authError, setAuthError] = useState<AuthError | null>(null);
-  const [passwordError, setPasswordError] = useState<string>('');
-  const [confirmPasswordError, setConfirmPasswordError] = useState<string>('');
+  const [authError, setAuthError] = React.useState<AuthError | null>(null);
+  const [passwordError, setPasswordError] = React.useState<string>('');
+  const [confirmPasswordError, setConfirmPasswordError] =
+    React.useState<string>('');
   const [resetPasswordProps] = useObservable(
     ResetPasswordController.model.store
   );
-  const renderCountRef = useRef<number>(0);
+  const renderCountRef = React.useRef<number>(0);
 
-  useEffect(() => {
+  React.useEffect(() => {
     ResetPasswordController.load(renderCountRef.current);
 
     return () => {
@@ -60,7 +50,7 @@ export default function ResetPasswordComponent(): JSX.Element {
     };
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (authError) {
       WindowController.addToast({
         key: `reset-password-${Math.random()}`,

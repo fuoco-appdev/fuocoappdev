@@ -25,12 +25,17 @@
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
   },
   "files": [],
   "include": [],
   "compileOnSave": false,
-  "exclude": ["node_modules", "tmp"],
+  "exclude": [
+    "node_modules",
+    "deno_dist/",
+    "src/**/*.deno.ts",
+    "src/**/*.deno.tsx",
+  ],
   "references": [
     {
       "path": "./tsconfig.app.json"

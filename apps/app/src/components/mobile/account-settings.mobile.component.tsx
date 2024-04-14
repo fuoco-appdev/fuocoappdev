@@ -1,17 +1,11 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import AccountController from '../../controllers/account.controller';
-import styles from '../account-settings.module.scss';
-import { Alert, Button, Line, Modal } from '@fuoco.appdev/core-ui';
-import { RoutePathsType, useQuery } from '../../route-paths';
+import { Button, Line } from '@fuoco.appdev/core-ui';
 import { useTranslation } from 'react-i18next';
-import SupabaseService from '../../services/supabase.service';
-import { useObservable } from '@ngneat/use-observable';
-import { useSpring } from 'react-spring';
-import LoadingComponent from '../loading.component';
-import { Store } from '@ngneat/elf';
 import Ripples from 'react-ripples';
+import { Outlet, useNavigate } from 'react-router-dom';
+import AccountController from '../../controllers/account.controller';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import { AccountSettingsResponsiveProps } from '../account-settings.component';
+import styles from '../account-settings.module.scss';
 import { ResponsiveMobile } from '../responsive.component';
 
 export default function AccountSettingsMobileComponent({
@@ -19,7 +13,7 @@ export default function AccountSettingsMobileComponent({
 }: AccountSettingsResponsiveProps): JSX.Element {
   const navigate = useNavigate();
   const query = useQuery();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <ResponsiveMobile>

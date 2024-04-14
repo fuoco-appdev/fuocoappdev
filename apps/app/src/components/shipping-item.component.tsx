@@ -1,16 +1,8 @@
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
-import { LineItem, ProductOptionValue } from '@medusajs/medusa';
-import { useEffect, useState } from 'react';
-import { ProductOptions } from '../models/product.model';
-import { useObservable } from '@ngneat/use-observable';
-import StoreController from '../controllers/store.controller';
-import { StoreState } from '../models/store.model';
 import { lazy } from '@loadable/component';
+import { LineItem, ProductOptionValue } from '@medusajs/medusa';
 import React from 'react';
+import { ProductOptions } from '../models/product.model';
+import { StoreState } from '../models/store.model';
 import { ShippingItemSuspenseDesktopComponent } from './desktop/suspense/shipping-item.suspense.desktop.component';
 import { ShippingItemSuspenseMobileComponent } from './mobile/suspense/shipping-item.suspense.mobile.component';
 import { ShippingItemSuspenseTabletComponent } from './tablet/suspense/shipping-item.suspense.tablet.component';
@@ -40,11 +32,12 @@ export default function ShippingItemComponent({
   storeProps,
   item,
 }: ShippingItemProps): JSX.Element {
-  const [vintage, setVintage] = useState<string>('');
-  const [hasReducedPrice, setHasReducedPrice] = useState<boolean>(
+  const [vintage, setVintage] = React.useState<string>('');
+  const [hasReducedPrice, setHasReducedPrice] = React.useState<boolean>(
     (item.discount_total ?? 0) > 0
   );
-  const [discountPercentage, setDiscountPercentage] = useState<string>('');
+  const [discountPercentage, setDiscountPercentage] =
+    React.useState<string>('');
 
   const suspenceComponent = (
     <>
@@ -58,7 +51,7 @@ export default function ShippingItemComponent({
     return suspenceComponent;
   }
 
-  useEffect(() => {
+  React.useEffect(() => {
     const vintageOption = item.variant.product.options?.find(
       (value) => value.title === ProductOptions.Vintage
     );

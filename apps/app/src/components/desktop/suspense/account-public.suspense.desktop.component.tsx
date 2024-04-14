@@ -1,9 +1,7 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import * as React from 'react';
-import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
+import Skeleton from 'react-loading-skeleton';
+import { Outlet } from 'react-router-dom';
 import styles from '../../account-public.module.scss';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { ResponsiveSuspenseDesktop } from 'src/components/responsive.component';
+import { ResponsiveSuspenseDesktop } from '../../responsive.component';
 
 export function AccountPublicSuspenseDesktopComponent(): JSX.Element {
   return (

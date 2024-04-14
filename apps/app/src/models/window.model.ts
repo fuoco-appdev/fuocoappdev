@@ -1,11 +1,11 @@
+import { BannerProps, LanguageInfo, ToastProps } from "@fuoco.appdev/core-ui";
+import { Order, PriceList } from "@medusajs/medusa";
 import { createStore, withProps } from "@ngneat/elf";
 import { AuthChangeEvent } from "@supabase/supabase-js";
 import { Model } from "../model";
-import { RoutePathsType } from "../route-paths";
-import { BannerProps, LanguageInfo, ToastProps } from "@fuoco.appdev/core-ui";
-import { InventoryLocation } from "./explore.model";
-import { Order, PriceList } from "@medusajs/medusa";
 import { AccountResponse } from "../protobuf/account_pb";
+import { RoutePathsType } from "../route-paths";
+import { InventoryLocation } from "./explore.model";
 
 export interface WindowState {
   account: AccountResponse | null;

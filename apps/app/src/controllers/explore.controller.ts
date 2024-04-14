@@ -1,5 +1,12 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import { SalesChannel } from "@medusajs/medusa";
+import { StockLocation } from "@medusajs/stock-location/dist/models";
+import { select } from "@ngneat/elf";
+import { featureCollection, helpers, nearestPoint, point } from "@turf/turf";
+import mapboxgl from "mapbox-gl";
+import { Index } from "meilisearch";
 import { ViewState } from "react-map-gl";
+import { Subscription } from "rxjs";
 import { Controller } from "../controller";
 import {
   ExploreModel,
@@ -8,19 +15,11 @@ import {
   InventoryLocation,
   InventoryLocationType,
 } from "../models/explore.model";
-import MedusaService from "../services/medusa.service";
-import mapboxgl from "mapbox-gl";
-import { featureCollection, helpers, nearestPoint, point } from "@turf/turf";
-import WindowController from "./window.controller";
-import { Subscription } from "rxjs";
-import { select } from "@ngneat/elf";
 import { StorageFolderType } from "../protobuf/common_pb";
-import PermissionsController from "./permissions.controller";
-import { Index } from "meilisearch";
-import MeiliSearchService from "../services/meilisearch.service";
-import { StockLocation } from "@medusajs/stock-location/dist/models";
-import { SalesChannel } from "@medusajs/medusa";
 import BucketService from "../services/bucket.service";
+import MedusaService from "../services/medusa.service";
+import MeiliSearchService from "../services/meilisearch.service";
+import PermissionsController from "./permissions.controller";
 
 class ExploreController extends Controller {
   private readonly _model: ExploreModel;
@@ -50,15 +49,15 @@ class ExploreController extends Controller {
     this.initializeAsync(renderCount);
   }
 
-  public override load(renderCount: number): void {}
+  public override load(_renderCount: number): void {}
 
-  public override disposeInitialization(renderCount: number): void {
+  public override disposeInitialization(_renderCount: number): void {
     this._medusaAccessTokenSubscription?.unsubscribe();
     this._currentPositionSubscription?.unsubscribe();
     this._selectedInventoryLocationIdSubscription?.unsubscribe();
   }
 
-  public override disposeLoad(renderCount: number): void {
+  public override disposeLoad(_renderCount: number): void {
     clearTimeout(this._timerId as number | undefined);
   }
 
@@ -236,7 +235,7 @@ class ExploreController extends Controller {
     const metadata = stockLocation.metadata;
     const address = stockLocation.address;
 
-    let coordinates = null;
+    let coordinates: {longitude: number, latitude: number} | null = null;
     if (
       metadata &&
       Object.keys(metadata).includes("coordinates") &&
@@ -244,7 +243,7 @@ class ExploreController extends Controller {
     ) {
       coordinates = JSON.parse(metadata?.["coordinates"] as string);
     } else {
-      coordinates = metadata?.["coordinates"];
+      coordinates = metadata?.["coordinates"] as {longitude: number, latitude: number};
     }
 
     let type: InventoryLocationType | undefined;
@@ -256,7 +255,7 @@ class ExploreController extends Controller {
       return null;
     }
 
-    let avatar = undefined;
+    let avatar: string | undefined = undefined;
     const avatarMetadata = stockLocation.metadata?.["avatar"] as
       | string
       | undefined;
@@ -303,7 +302,7 @@ class ExploreController extends Controller {
     };
   }
 
-  private async initializeAsync(renderCount: number): Promise<void> {
+  private async initializeAsync(_renderCount: number): Promise<void> {
     this._model.inventoryLocations = await this
       .requestInventoryLocationsAsync();
 
@@ -389,7 +388,7 @@ class ExploreController extends Controller {
     target: mapboxgl.LngLat,
     locations: InventoryLocation[],
   ): mapboxgl.LngLat | null {
-    const features = [];
+    const features: helpers.Feature<helpers.Point, helpers.Properties>[] = [];
     for (const location of locations) {
       if (!location.coordinates) {
         continue;

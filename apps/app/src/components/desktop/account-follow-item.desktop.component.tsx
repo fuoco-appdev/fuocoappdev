@@ -1,18 +1,13 @@
-import styles from '../account-follow-item.module.scss';
-import { Avatar, Button, Line, Modal } from '@fuoco.appdev/core-ui';
-import { AddressItemProps } from '../address-item.component';
+import { Avatar, Button } from '@fuoco.appdev/core-ui';
 import { useTranslation } from 'react-i18next';
-import { ResponsiveDesktop } from '../responsive.component';
-import { AccountFollowItemResponsiveProps } from '../account-follow-item.component';
-import { useState } from 'react';
-import Ripples from 'react-ripples';
-import AccountController from '../../controllers/account.controller';
 import Skeleton from 'react-loading-skeleton';
+import { AccountFollowItemResponsiveProps } from '../account-follow-item.component';
+import styles from '../account-follow-item.module.scss';
+import { ResponsiveDesktop } from '../responsive.component';
 
 export default function AccountFollowItemDesktopComponent({
   accountProps,
   account,
-  follower,
   customer,
   isRequest,
   isFollowing,
@@ -25,7 +20,7 @@ export default function AccountFollowItemDesktopComponent({
   onConfirm,
   onRemove,
 }: AccountFollowItemResponsiveProps): JSX.Element {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <ResponsiveDesktop>

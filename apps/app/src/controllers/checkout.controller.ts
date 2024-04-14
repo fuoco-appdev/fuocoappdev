@@ -1,4 +1,16 @@
-import { filter, firstValueFrom, Subscription, take } from "rxjs";
+import {
+  AddressPayload,
+  Cart,
+  Customer,
+  Region
+} from "@medusajs/medusa";
+import { select } from "@ngneat/elf";
+import {
+  Stripe,
+  StripeCardNumberElement
+} from "@stripe/stripe-js";
+import { AuthChangeEvent, Session } from "@supabase/supabase-js";
+import { Subscription, filter, firstValueFrom, take } from "rxjs";
 import {
   AddressFormErrors,
   AddressFormValues,
@@ -6,29 +18,10 @@ import {
 import { Controller } from "../controller";
 import { CheckoutModel, ProviderType } from "../models/checkout.model";
 import MedusaService from "../services/medusa.service";
-import CartController from "./cart.controller";
-import {
-  AddressPayload,
-  Cart,
-  Customer,
-  Order,
-  Region,
-  ShippingMethod,
-  ShippingOption,
-  Swap,
-} from "@medusajs/medusa";
-import { select } from "@ngneat/elf";
-import WindowController from "./window.controller";
-import AccountController from "./account.controller";
-import {
-  Stripe,
-  StripeCardNumberElement,
-  StripeElements,
-} from "@stripe/stripe-js";
 import SupabaseService from "../services/supabase.service";
-import { AuthChangeEvent, Session } from "@supabase/supabase-js";
+import AccountController from "./account.controller";
+import CartController from "./cart.controller";
 import ExploreController from "./explore.controller";
-import { Store } from "@fuoco.appdev/core-ui/dist/cjs/src/components/icon/icons/line";
 import StoreController from "./store.controller";
 
 class CheckoutController extends Controller {
@@ -68,12 +61,12 @@ class CheckoutController extends Controller {
     );
   }
 
-  public override disposeInitialization(renderCount: number): void {
+  public override disposeInitialization(_renderCount: number): void {
     this._medusaAccessTokenSubscription?.unsubscribe();
     this._shippingFormSubscription?.unsubscribe();
   }
 
-  public override disposeLoad(renderCount: number): void {
+  public override disposeLoad(_renderCount: number): void {
     this._cartSubscription?.unsubscribe();
     this._customerSubscription?.unsubscribe();
   }
@@ -496,9 +489,9 @@ class CheckoutController extends Controller {
     return undefined;
   }
 
-  private async initializeAsync(renderCount: number): Promise<void> {}
+  private async initializeAsync(_renderCount: number): Promise<void> {}
 
-  private async loadAsync(renderCount: number): Promise<void> {
+  private async loadAsync(_renderCount: number): Promise<void> {
     await this.requestShippingOptions();
 
     const cart = await firstValueFrom(
@@ -679,7 +672,7 @@ class CheckoutController extends Controller {
 
   private onAuthStateChanged(
     event: AuthChangeEvent,
-    session: Session | null,
+    _session: Session | null,
   ): void {
     if (event === "SIGNED_OUT") {
       this._model.shippingForm = {};

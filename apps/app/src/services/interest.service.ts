@@ -1,9 +1,4 @@
-import { Service } from "../service";
-import { BehaviorSubject, Observable } from "rxjs";
-import SupabaseService from "./supabase.service";
-import axios, { AxiosError } from "axios";
-import WindowController from "../controllers/window.controller";
-import { Session, User } from "@supabase/supabase-js";
+import axios from "axios";
 import {
   CreateInterestRequest,
   InterestResponse,
@@ -11,6 +6,8 @@ import {
   InterestsResponse,
   SearchInterestsRequest,
 } from "../protobuf/interest_pb";
+import { Service } from "../service";
+import SupabaseService from "./supabase.service";
 
 class InterestService extends Service {
   constructor() {

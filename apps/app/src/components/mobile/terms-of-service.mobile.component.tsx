@@ -1,12 +1,8 @@
-import { Auth, Typography, Button } from '@fuoco.appdev/core-ui';
-import { Line } from '@fuoco.appdev/core-ui';
-import { useObservable } from '@ngneat/use-observable';
-import styles from '../terms-of-service.module.scss';
-import TermsOfServiceController from '../../controllers/terms-of-service.controller';
-import { useNavigate } from 'react-router-dom';
-import { TermsOfServiceResponsiveProps } from '../terms-of-service.component';
+import { Auth, Typography } from '@fuoco.appdev/core-ui';
 import loadable from '@loadable/component';
 import { ResponsiveMobile } from '../responsive.component';
+import { TermsOfServiceResponsiveProps } from '../terms-of-service.component';
+import styles from '../terms-of-service.module.scss';
 const ReactMarkdown = loadable(
   async () => {
     const reactMarkdown = await import('react-markdown');

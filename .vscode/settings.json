@@ -2,8 +2,17 @@
     "deno.enable": true,
     "deno.lint": true,
     "editor.formatOnSave": true,
+    "editor.showUnused": true,
+    "workbench.colorCustomizations": {
+        "editorUnnecessaryCode.border": "#FF0000"
+    },
+    "editor.codeActionsOnSave": {
+    "source.organizeImports": "always"
+    },
     "[typescript]": { "editor.defaultFormatter": "denoland.vscode-deno" },
     "deno.enablePaths": [
-        "./apps/api"
+        "./apps/api",
+        "./apps/app/deno_dist",
+        "./apps/app/serve.ts"
     ],
 }

@@ -1,45 +1,19 @@
-import React, {
-  createRef,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
-import {
-  Typography,
-  Button,
-  Accordion,
-  Input,
-  InputPhoneNumber,
-  Listbox,
-  InputGeocoding,
-  OptionProps,
-  Modal,
-  LanguageSwitch,
-  Line,
-  Avatar,
-  Tabs,
-} from '@fuoco.appdev/core-ui';
-import styles from '../account.module.scss';
-import AccountController from '../../controllers/account.controller';
-import WindowController from '../../controllers/window.controller';
-import { animated, useTransition, config } from 'react-spring';
-import { useObservable } from '@ngneat/use-observable';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { RoutePathsType, useQuery } from '../../route-paths';
-import { useTranslation } from 'react-i18next';
-import AccountProfileFormComponent from '../account-profile-form.component';
+import { Avatar, Button, Line, Tabs } from '@fuoco.appdev/core-ui';
 import { Customer } from '@medusajs/medusa';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 import Skeleton from 'react-loading-skeleton';
-import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
-import { AccountResponsiveProps } from '../account.component';
-import StoreController from 'src/controllers/store.controller';
-import { createPortal } from 'react-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import AccountController from '../../controllers/account.controller';
 import { AccountResponse } from '../../protobuf/account_pb';
+import { RoutePathsType, useQuery } from '../../route-paths';
+import AccountProfileFormComponent from '../account-profile-form.component';
+import { AccountResponsiveProps } from '../account.component';
+import styles from '../account.module.scss';
+import { ResponsiveMobile } from '../responsive.component';
 
 export default function AccountMobileComponent({
-  windowProps,
   accountProps,
   storeProps,
   isCropImageModalVisible,
@@ -56,8 +30,8 @@ export default function AccountMobileComponent({
   onFollowersClick,
   onFollowingClick,
 }: AccountResponsiveProps): JSX.Element {
-  const scrollContainerRef = createRef<HTMLDivElement>();
-  const topBarRef = useRef<HTMLDivElement | null>(null);
+  const scrollContainerRef = React.createRef<HTMLDivElement>();
+  const topBarRef = React.useRef<HTMLDivElement | null>(null);
   const { t } = useTranslation();
   const navigate = useNavigate();
   const query = useQuery();
@@ -285,7 +259,7 @@ export default function AccountMobileComponent({
                       });
                       onUsernameChanged(event);
                     },
-                    phoneNumber: (value, event, formattedValue) =>
+                    phoneNumber: (value, _event, _formattedValue) =>
                       AccountController.updateProfile({
                         phoneNumber: value,
                       }),

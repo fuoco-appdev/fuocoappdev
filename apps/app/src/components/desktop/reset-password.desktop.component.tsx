@@ -1,24 +1,14 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import { Auth } from '@fuoco.appdev/core-ui';
-import styles from '../reset-password.module.scss';
-import WindowController from '../../controllers/window.controller';
-import SupabaseService from '../../services/supabase.service';
-import { AuthError } from '@supabase/supabase-js';
-import { useState, useEffect } from 'react';
-import { animated, config, useTransition } from 'react-spring';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { RoutePathsType, useQuery } from '../../route-paths';
-import ResetPasswordController from '../../controllers/reset-password.controller';
-import { useObservable } from '@ngneat/use-observable';
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-  useDesktopEffect,
-} from '../responsive.component';
-import { useTranslation } from 'react-i18next';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { animated, config, useTransition } from 'react-spring';
+import WindowController from '../../controllers/window.controller';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import { ResetPasswordResponsiveProps } from '../reset-password.component';
+import styles from '../reset-password.module.scss';
+import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
 
 export default function ResetPasswordDesktopComponent({
   resetPasswordProps,
@@ -26,10 +16,10 @@ export default function ResetPasswordDesktopComponent({
   confirmPasswordError,
   setAuthError,
 }: ResetPasswordResponsiveProps): JSX.Element {
-  const [show, setShow] = useState(false);
+  const [show, setShow] = React.useState(false);
   const navigate = useNavigate();
   const query = useQuery();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   useDesktopEffect(() => {
     setShow(true);

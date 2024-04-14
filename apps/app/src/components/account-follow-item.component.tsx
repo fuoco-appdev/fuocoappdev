@@ -1,36 +1,15 @@
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
-import { LineItem, ProductOptionValue } from '@medusajs/medusa';
-import styles from './cart-item.module.scss';
-import { useEffect, useState } from 'react';
-import { ProductOptions } from '../models/product.model';
-import { useTranslation } from 'react-i18next';
-import { Button, Line, Modal } from '@fuoco.appdev/core-ui';
-import CartController from '../controllers/cart.controller';
 import { AccountFollowerResponse } from '../protobuf/account-follower_pb';
-import { CustomerResponse } from '../protobuf/customer_pb';
 import { StorageFolderType } from '../protobuf/common_pb';
+import { CustomerResponse } from '../protobuf/customer_pb';
 // @ts-ignore
-import { formatAmount } from 'medusa-react';
-import StoreController from '../controllers/store.controller';
-import { useObservable } from '@ngneat/use-observable';
-import { StoreState } from '../models/store.model';
 import { lazy } from '@loadable/component';
 import React from 'react';
-import {
-  PricedProduct,
-  PricedVariant,
-} from '@medusajs/medusa/dist/types/pricing';
-import { AccountResponse } from '../protobuf/account_pb';
-import { MedusaProductTypeNames } from '../types/medusa.type';
-import { AccountFollowItemSuspenseDesktopComponent } from './desktop/suspense/account-follow-item.suspense.desktop.component';
-import { AccountFollowItemSuspenseTabletComponent } from './tablet/suspense/account-follow-item.suspense.tablet.component';
-import { AccountFollowItemSuspenseMobileComponent } from './mobile/suspense/account-follow-item.suspense.mobile.component';
-import BucketService from '../services/bucket.service';
 import { AccountState } from '../models/account.model';
+import { AccountResponse } from '../protobuf/account_pb';
+import BucketService from '../services/bucket.service';
+import { AccountFollowItemSuspenseDesktopComponent } from './desktop/suspense/account-follow-item.suspense.desktop.component';
+import { AccountFollowItemSuspenseMobileComponent } from './mobile/suspense/account-follow-item.suspense.mobile.component';
+import { AccountFollowItemSuspenseTabletComponent } from './tablet/suspense/account-follow-item.suspense.tablet.component';
 
 const AccountFollowItemDesktopComponent = lazy(
   () => import('./desktop/account-follow-item.desktop.component')
@@ -76,11 +55,13 @@ export default function AccountFollowItemComponent({
   onConfirm,
   onRemove,
 }: AccountFollowItemProps): JSX.Element {
-  const [profileUrl, setProfileUrl] = useState<string | undefined>(undefined);
-  const [isFollowing, setIsFollowing] = useState<boolean>(false);
-  const [isAccepted, setIsAccepted] = useState<boolean>(false);
+  const [profileUrl, setProfileUrl] = React.useState<string | undefined>(
+    undefined
+  );
+  const [isFollowing, setIsFollowing] = React.useState<boolean>(false);
+  const [isAccepted, setIsAccepted] = React.useState<boolean>(false);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!account.profileUrl) {
       return;
     }
@@ -93,7 +74,7 @@ export default function AccountFollowItemComponent({
     });
   }, [account]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     setIsFollowing(follower?.isFollowing ?? false);
     setIsAccepted(follower?.accepted ?? false);
   }, [follower]);

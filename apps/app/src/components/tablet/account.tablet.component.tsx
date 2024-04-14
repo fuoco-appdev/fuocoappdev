@@ -1,56 +1,30 @@
-import React, {
-  createRef,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
 import {
-  Typography,
-  Button,
-  Accordion,
-  Input,
-  InputPhoneNumber,
-  Listbox,
-  InputGeocoding,
-  OptionProps,
-  Modal,
-  LanguageSwitch,
-  Line,
   Avatar,
-  Tabs,
-  FormLayout,
+  Button,
   Dropdown,
   DropdownAlignment,
+  FormLayout,
+  Input,
+  Line,
+  Tabs,
 } from '@fuoco.appdev/core-ui';
-import styles from '../account.module.scss';
-import AccountController from '../../controllers/account.controller';
-import WindowController from '../../controllers/window.controller';
-import { animated, useTransition, config } from 'react-spring';
-import { useObservable } from '@ngneat/use-observable';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { RoutePathsType, useQuery } from '../../route-paths';
-import { useTranslation } from 'react-i18next';
-import AccountProfileFormComponent from '../account-profile-form.component';
 import { Customer } from '@medusajs/medusa';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { useTranslation } from 'react-i18next';
 import Skeleton from 'react-loading-skeleton';
-import AccountOrderHistoryComponent from '../account-order-history.component';
-import AccountAddressesComponent from '../account-addresses.component';
-import AccountEditComponent from '../account-likes.component';
-import {
-  ResponsiveDesktop,
-  ResponsiveTablet,
-  useDesktopEffect,
-  useTabletEffect,
-} from '../responsive.component';
-import { AccountResponsiveProps } from '../account.component';
-import { createPortal } from 'react-dom';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import AccountController from '../../controllers/account.controller';
 import { AccountResponse } from '../../protobuf/account_pb';
 import { InterestResponse } from '../../protobuf/interest_pb';
+import { RoutePathsType, useQuery } from '../../route-paths';
+import AccountProfileFormComponent from '../account-profile-form.component';
+import { AccountResponsiveProps } from '../account.component';
+import styles from '../account.module.scss';
+import { ResponsiveTablet } from '../responsive.component';
 
 export default function AccountTabletComponent({
-  windowProps,
   accountProps,
   storeProps,
   isCropImageModalVisible,
@@ -69,13 +43,13 @@ export default function AccountTabletComponent({
   onFollowersClick,
   onFollowingClick,
 }: AccountResponsiveProps): JSX.Element {
-  const scrollContainerRef = createRef<HTMLDivElement>();
-  const topBarRef = useRef<HTMLDivElement | null>(null);
+  const scrollContainerRef = React.createRef<HTMLDivElement>();
+  const topBarRef = React.useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const query = useQuery();
-  const interestButtonRef = useRef<HTMLButtonElement | null>(null);
-  const interestInputRef = useRef<HTMLInputElement | null>(null);
-  const { t, i18n } = useTranslation();
+  const interestButtonRef = React.useRef<HTMLButtonElement | null>(null);
+  const interestInputRef = React.useRef<HTMLInputElement | null>(null);
+  const { t } = useTranslation();
   let prevPreviewScrollTop = 0;
   let yPosition = 0;
 
@@ -293,7 +267,7 @@ export default function AccountTabletComponent({
                           sex: value,
                         });
                       },
-                      phoneNumber: (value, event, formattedValue) =>
+                      phoneNumber: (value, _event, _formattedValue) =>
                         AccountController.updateProfile({
                           phoneNumber: value,
                         }),
@@ -782,7 +756,7 @@ export default function AccountTabletComponent({
           )}
         </div>
       </div>
-      {createPortal(
+      {ReactDOM.createPortal(
         <>
           <Dropdown
             open={isAddInterestOpen}

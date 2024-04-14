@@ -1,29 +1,10 @@
-import { useEffect, useLayoutEffect, useRef } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import AccountController from '../controllers/account.controller';
-import styles from './window.module.scss';
-import { Alert } from '@fuoco.appdev/core-ui';
-import { RoutePathsType } from '../route-paths';
-import { useTranslation } from 'react-i18next';
-import SupabaseService from '../services/supabase.service';
-import { useObservable } from '@ngneat/use-observable';
-import { useSpring } from 'react-spring';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
-import LoadingComponent from './loading.component';
-import { Store } from '@ngneat/elf';
 
 function AccountEventsDesktopComponent(): JSX.Element {
-  const navigate = useNavigate();
-  const [props] = useObservable(AccountController.model.store);
-
   return <></>;
 }
 
 function AccountEventsMobileComponent(): JSX.Element {
-  const navigate = useNavigate();
-  const [props] = useObservable(AccountController.model.store);
-  const { t, i18n } = useTranslation();
-
   return <></>;
 }
 

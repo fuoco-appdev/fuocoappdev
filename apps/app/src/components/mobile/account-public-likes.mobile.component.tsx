@@ -1,32 +1,16 @@
-import { createRef, useEffect, useLayoutEffect, useRef } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import AccountController from '../../controllers/account.controller';
-import ProductController from '../../controllers/product.controller';
-import styles from '../account-public-likes.module.scss';
-import { Alert, Button, Dropdown, Line } from '@fuoco.appdev/core-ui';
-import { RoutePathsType } from '../../route-paths';
+import { Button, Dropdown, Line } from '@fuoco.appdev/core-ui';
+import { Product } from '@medusajs/medusa';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import SupabaseService from '../../services/supabase.service';
-import { useObservable } from '@ngneat/use-observable';
-import { useSpring } from 'react-spring';
-import LoadingComponent from '../loading.component';
-import { Store } from '@ngneat/elf';
-import AccountProfileFormComponent from '../account-profile-form.component';
-import WindowController from '../../controllers/window.controller';
-import { AccountLikesResponsiveProps } from '../account-likes.component';
-import { ResponsiveMobile } from '../responsive.component';
-import ProductPreviewComponent from '../product-preview.component';
-import {
-  PricedProduct,
-  PricedVariant,
-} from '@medusajs/medusa/dist/types/pricing';
-import { createPortal } from 'react-dom';
-import CartVariantItemComponent from '../cart-variant-item.component';
+import { ProductLikesMetadataResponse } from '../../protobuf/product-like_pb';
 import { MedusaProductTypeNames } from '../../types/medusa.type';
 import { AccountPublicLikesResponsiveProps } from '../account-public-likes.component';
+import styles from '../account-public-likes.module.scss';
 import { useAccountPublicOutletContext } from '../account-public.component';
-import { Product } from '@medusajs/medusa';
-import { ProductLikesMetadataResponse } from '../../protobuf/product-like_pb';
+import CartVariantItemComponent from '../cart-variant-item.component';
+import ProductPreviewComponent from '../product-preview.component';
+import { ResponsiveMobile } from '../responsive.component';
 
 export default function AccountPublicLikesMobileComponent({
   storeProps,
@@ -44,9 +28,8 @@ export default function AccountPublicLikesMobileComponent({
   onProductPreviewAddToCart,
   onProductPreviewLikeChanged,
 }: AccountPublicLikesResponsiveProps): JSX.Element {
-  const { t, i18n } = useTranslation();
-  const rootRef = createRef<HTMLDivElement>();
-  const navigate = useNavigate();
+  const { t } = useTranslation();
+  const rootRef = React.createRef<HTMLDivElement>();
   const context = useAccountPublicOutletContext();
 
   return (
@@ -138,7 +121,7 @@ export default function AccountPublicLikesMobileComponent({
             )}
         </div>
       </div>
-      {createPortal(
+      {ReactDOM.createPortal(
         <>
           <Dropdown
             classNames={{

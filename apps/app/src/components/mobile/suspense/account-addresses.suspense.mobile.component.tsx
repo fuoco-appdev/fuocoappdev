@@ -1,10 +1,6 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import * as React from 'react';
-import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
 import styles from '../../account-addresses.module.scss';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { ResponsiveSuspenseMobile } from '../../responsive.component';
 import { AddressItemSuspenseMobileComponent } from './address-item.suspense.mobile.component';
-import { ResponsiveSuspenseMobile } from 'src/components/responsive.component';
 
 export function AccountAddressesSuspenseMobileComponent(): JSX.Element {
   return (

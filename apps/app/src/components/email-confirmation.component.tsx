@@ -1,22 +1,11 @@
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
-import { useParams } from 'react-router-dom';
-import { useObservable } from '@ngneat/use-observable';
-import WindowController from '../controllers/window.controller';
-import EmailConfirmationController from '../controllers/email-confirmation.controller';
-import StoreController from '../controllers/store.controller';
-import { useEffect, useRef, useState } from 'react';
-import { OptionProps } from '@fuoco.appdev/core-ui';
-import { LineItem, ShippingMethod, ReturnReason } from '@medusajs/medusa';
-import { StoreState } from '../models/store.model';
 import { lazy } from '@loadable/component';
+import { useObservable } from '@ngneat/use-observable';
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import { EmailConfirmationState } from '../models/email-confirmation.model';
 import { useTranslation } from 'react-i18next';
+import EmailConfirmationController from '../controllers/email-confirmation.controller';
+import WindowController from '../controllers/window.controller';
+import { EmailConfirmationState } from '../models/email-confirmation.model';
 
 const EmailConfirmationDesktopComponent = lazy(
   () => import('./desktop/email-confirmation.desktop.component')
@@ -36,13 +25,11 @@ export interface EmailConfirmationResponsiveProps {
 }
 
 export default function EmailConfirmationComponent(): JSX.Element {
-  const { id } = useParams();
   const { t } = useTranslation();
   const [emailConfirmationProps] = useObservable(
     EmailConfirmationController.model.store
   );
-  const isRenderedRef = useRef<boolean>(false);
-  const renderCountRef = useRef<number>(0);
+  const renderCountRef = React.useRef<number>(0);
 
   const onResendConfirmationClick = () => {
     EmailConfirmationController.resendEmailConfirmationAsync(
@@ -66,7 +53,7 @@ export default function EmailConfirmationComponent(): JSX.Element {
     );
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     renderCountRef.current += 1;
     EmailConfirmationController.load(renderCountRef.current);
 

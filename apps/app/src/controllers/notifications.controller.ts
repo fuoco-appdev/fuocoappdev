@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import { select } from "@ngneat/elf";
 import { filter, firstValueFrom, Subscription, take } from "rxjs";
 import { Controller } from "../controller";
 import { NotificationsModel } from "../models/notifications.model";
-import { select } from "@ngneat/elf";
-import AccountController from "./account.controller";
-import AccountNotificationService from "../services/account-notification.service";
-import WindowController from "./window.controller";
 import { AccountNotificationResponse } from "../protobuf/account-notification_pb";
 import { AccountResponse } from "../protobuf/account_pb";
+import AccountNotificationService from "../services/account-notification.service";
+import AccountController from "./account.controller";
+import WindowController from "./window.controller";
 
 class NotificationsController extends Controller {
   private readonly _model: NotificationsModel;
@@ -25,15 +25,15 @@ class NotificationsController extends Controller {
     return this._model;
   }
 
-  public override initialize(renderCount: number): void {}
+  public override initialize(_renderCount: number): void {}
 
-  public override load(renderCount: number): void {
+  public override load(_renderCount: number): void {
     this.loadAccountNotifications();
   }
 
-  public override disposeInitialization(renderCount: number): void {}
+  public override disposeInitialization(_renderCount: number): void {}
 
-  public override disposeLoad(renderCount: number): void {
+  public override disposeLoad(_renderCount: number): void {
     this._loadedAccountSubscription?.unsubscribe();
   }
 

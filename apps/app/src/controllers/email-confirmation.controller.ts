@@ -1,7 +1,7 @@
-import { EmailConfirmationModel } from '../models/email-confirmation.model';
-import { Controller } from '../controller';
-import SupabaseService from '../services/supabase.service';
 import { AuthError } from '@supabase/supabase-js';
+import { Controller } from '../controller';
+import { EmailConfirmationModel } from '../models/email-confirmation.model';
+import SupabaseService from '../services/supabase.service';
 
 class EmailConfirmationController extends Controller {
   private readonly _model: EmailConfirmationModel;
@@ -16,13 +16,13 @@ class EmailConfirmationController extends Controller {
     return this._model;
   }
 
-  public override initialize(renderCount: number): void {}
+  public override initialize(_renderCount: number): void {}
 
-  public override load(renderCount: number): void {}
+  public override load(_renderCount: number): void {}
 
-  public override disposeInitialization(renderCount: number): void {}
+  public override disposeInitialization(_renderCount: number): void {}
 
-  public override disposeLoad(renderCount: number): void {}
+  public override disposeLoad(_renderCount: number): void {}
 
   public updateEmail(value: string): void {
     this._model.email = value;

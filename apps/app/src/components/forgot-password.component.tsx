@@ -1,26 +1,16 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Auth } from '@fuoco.appdev/core-ui';
-import styles from './forgot-password.module.scss';
-import WindowController from '../controllers/window.controller';
-import SupabaseService from '../services/supabase.service';
-import { RoutePathsType } from '../route-paths';
-import { AuthError } from '@supabase/supabase-js';
-import { useState, useEffect, useRef } from 'react';
-import { animated, config, useTransition } from 'react-spring';
+import { lazy } from '@loadable/component';
+import { useObservable } from '@ngneat/use-observable';
+import React from 'react';
+import { Helmet } from 'react-helmet';
+import ForgotPasswordController from '../controllers/forgot-password.controller';
+import { ForgotPasswordState } from '../models/forgot-password.model';
+import { GuestComponent } from './guest.component';
 import {
   ResponsiveDesktop,
   ResponsiveMobile,
   ResponsiveTablet,
 } from './responsive.component';
-import { useTranslation } from 'react-i18next';
-import { Helmet } from 'react-helmet';
-import { useObservable } from '@ngneat/use-observable';
-import ForgotPasswordController from '../controllers/forgot-password.controller';
-import { ForgotPasswordState } from '../models/forgot-password.model';
-import { GuestComponent } from './guest.component';
-import { lazy } from '@loadable/component';
-import React from 'react';
 
 const ForgotPasswordDesktopComponent = lazy(
   () => import('./desktop/forgot-password.desktop.component')
@@ -40,7 +30,7 @@ export default function ForgotPasswordComponent(): JSX.Element {
   const [forgotPasswordProps] = useObservable(
     ForgotPasswordController.model.store
   );
-  const renderCountRef = useRef<number>(0);
+  const renderCountRef = React.useRef<number>(0);
 
   const suspenceComponent = (
     <>
@@ -60,7 +50,7 @@ export default function ForgotPasswordComponent(): JSX.Element {
     return suspenceComponent;
   }
 
-  useEffect(() => {
+  React.useEffect(() => {
     renderCountRef.current += 1;
     ForgotPasswordController.load(renderCountRef.current);
 

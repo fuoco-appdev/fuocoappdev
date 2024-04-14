@@ -1,9 +1,6 @@
-import { Service } from "../service";
+import { Session } from "@supabase/supabase-js";
+import axios from "axios";
 import { BehaviorSubject, Observable } from "rxjs";
-import SupabaseService from "./supabase.service";
-import axios, { AxiosError } from "axios";
-import WindowController from "../controllers/window.controller";
-import { Session, User } from "@supabase/supabase-js";
 import {
   AccountExistsRequest,
   AccountExistsResponse,
@@ -13,6 +10,8 @@ import {
   AccountsRequest,
   AccountsResponse,
 } from "../protobuf/account_pb";
+import { Service } from "../service";
+import SupabaseService from "./supabase.service";
 
 class AccountService extends Service {
   private readonly _activeAccountBehaviorSubject: BehaviorSubject<

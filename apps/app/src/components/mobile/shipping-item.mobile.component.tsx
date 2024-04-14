@@ -1,16 +1,13 @@
-import styles from '../shipping-item.module.scss';
 import { useTranslation } from 'react-i18next';
+import styles from '../shipping-item.module.scss';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
-import StoreController from '../../controllers/store.controller';
-import { useObservable } from '@ngneat/use-observable';
-import { ShippingItemResponsiveProps } from '../shipping-item.component';
 import { ResponsiveMobile } from '../responsive.component';
+import { ShippingItemResponsiveProps } from '../shipping-item.component';
 
 export default function ShippingItemMobileComponent({
   storeProps,
   item,
-  vintage,
   hasReducedPrice,
   discountPercentage,
 }: ShippingItemResponsiveProps): JSX.Element {

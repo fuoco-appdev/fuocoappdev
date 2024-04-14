@@ -1,12 +1,11 @@
+import { LineItem, Order } from '@medusajs/medusa';
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import { Controller } from '../controller';
 import {
   OrderConfirmedModel,
   RefundItem,
 } from '../models/order-confirmed.model';
 import MedusaService from '../services/medusa.service';
-import { Order, LineItem, StorePostReturnsReq } from '@medusajs/medusa';
-import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
-import WindowController from './window.controller';
 
 class OrderConfirmedController extends Controller {
   private readonly _model: OrderConfirmedModel;
@@ -20,17 +19,17 @@ class OrderConfirmedController extends Controller {
     return this._model;
   }
 
-  public override initialize(renderCount: number): void {
+  public override initialize(_renderCount: number): void {
     this.initializeAsync();
   }
 
-  public override load(renderCount: number): void {
+  public override load(_renderCount: number): void {
     this.requestReturnReasonsAsync();
   }
 
-  public override disposeInitialization(renderCount: number): void {}
+  public override disposeInitialization(_renderCount: number): void {}
 
-  public override disposeLoad(renderCount: number): void {}
+  public override disposeLoad(_renderCount: number): void {}
 
   public async requestOrderAsync(orderId: string): Promise<void> {
     this._model.order = undefined;
@@ -69,7 +68,7 @@ class OrderConfirmedController extends Controller {
     }
 
     try {
-      const returnResponse = await MedusaService.medusa?.returns.create({
+      await MedusaService.medusa?.returns.create({
         order_id: this._model.order?.id,
         items: items,
       });

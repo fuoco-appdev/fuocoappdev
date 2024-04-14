@@ -1,22 +1,13 @@
+import { OptionProps } from '@fuoco.appdev/core-ui';
+import { lazy } from '@loadable/component';
+import { LineItem, ProductOptionValue } from '@medusajs/medusa';
+import React from 'react';
+import { ProductOptions } from '../models/product.model';
 import {
   ResponsiveDesktop,
   ResponsiveMobile,
   ResponsiveTablet,
 } from './responsive.component';
-import { LineItem, ProductOptionValue } from '@medusajs/medusa';
-import styles from './refund-item.module.scss';
-import { useEffect, useState } from 'react';
-import { ProductOptions } from '../models/product.model';
-import { useTranslation } from 'react-i18next';
-import {
-  Button,
-  Input,
-  Line,
-  Listbox,
-  OptionProps,
-} from '@fuoco.appdev/core-ui';
-import { lazy } from '@loadable/component';
-import React from 'react';
 
 const RefundItemDesktopComponent = lazy(
   () => import('./desktop/refund-item.desktop.component')
@@ -57,9 +48,9 @@ export default function RefundItemComponent({
   returnReasonOptions,
   onChanged,
 }: RefundItemProps): JSX.Element {
-  const [vintage, setVintage] = useState<string>('');
+  const [vintage, setVintage] = React.useState<string>('');
 
-  useEffect(() => {
+  React.useEffect(() => {
     const vintageOption = item.variant.product.options.find(
       (value) => value.title === ProductOptions.Vintage
     );

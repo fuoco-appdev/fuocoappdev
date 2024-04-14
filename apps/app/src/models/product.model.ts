@@ -1,13 +1,11 @@
+import {
+  PricedVariant
+} from "@medusajs/medusa/dist/types/pricing";
+import { StockLocation } from "@medusajs/stock-location/dist/models";
 import { createStore, withProps } from "@ngneat/elf";
 import { Model } from "../model";
 import { ProductLikesMetadataResponse } from "../protobuf/product-like_pb";
 import { ProductMetadataResponse } from "../protobuf/product_pb";
-import { MoneyAmount, ProductOption, ProductTag } from "@medusajs/medusa";
-import {
-  PricedProduct,
-  PricedVariant,
-} from "@medusajs/medusa/dist/types/pricing";
-import { StockLocation } from "@medusajs/stock-location/dist/models";
 
 export enum ProductTabType {
   Price = "price",

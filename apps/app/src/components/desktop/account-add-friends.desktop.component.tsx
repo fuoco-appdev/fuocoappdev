@@ -1,18 +1,12 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
-import AccountController from '../../controllers/account.controller';
-import styles from '../account-add-friends.module.scss';
-import { Alert, Button, Input, Line, Modal, Tabs } from '@fuoco.appdev/core-ui';
-import { RoutePathsType, useQuery } from '../../route-paths';
+import { Input, Line } from '@fuoco.appdev/core-ui';
 import { useTranslation } from 'react-i18next';
-import { useObservable } from '@ngneat/use-observable';
-import Ripples from 'react-ripples';
-import WindowController from '../../controllers/window.controller';
-import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
-import AccountAddFriendsComponent, {
-  AccountAddFriendsResponsiveProps,
-} from '../account-add-friends.component';
+import { useNavigate } from 'react-router-dom';
+import AccountController from '../../controllers/account.controller';
+import { RoutePathsType, useQuery } from '../../route-paths';
+import { AccountAddFriendsResponsiveProps } from '../account-add-friends.component';
+import styles from '../account-add-friends.module.scss';
 import AccountFollowItemComponent from '../account-follow-item.component';
+import { ResponsiveDesktop } from '../responsive.component';
 
 export default function AccountAddFriendsDesktopComponent({
   accountProps,
@@ -21,8 +15,7 @@ export default function AccountAddFriendsDesktopComponent({
 }: AccountAddFriendsResponsiveProps): JSX.Element {
   const navigate = useNavigate();
   const query = useQuery();
-  const location = useLocation();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <ResponsiveDesktop>

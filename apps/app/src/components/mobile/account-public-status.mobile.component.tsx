@@ -1,26 +1,14 @@
-import { createRef, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
-import AccountPublicController from '../../controllers/account-public.controller';
-import styles from '../account-public-status.module.scss';
-import { Alert, Button, Input, Line, Modal, Tabs } from '@fuoco.appdev/core-ui';
-import { RoutePathsType, useQuery } from '../../route-paths';
-import { useTranslation } from 'react-i18next';
-import { useObservable } from '@ngneat/use-observable';
-import Ripples from 'react-ripples';
-import WindowController from '../../controllers/window.controller';
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  useDesktopEffect,
-} from '../responsive.component';
-import AccountAddFriendsComponent, {
-  AccountAddFriendsResponsiveProps,
-} from '../account-add-friends.component';
-import AccountFollowItemComponent from '../account-follow-item.component';
-import { AccountFollowersFollowingResponsiveProps } from '../account-public-status.component';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import Skeleton from 'react-loading-skeleton';
+import { Tabs } from '@fuoco.appdev/core-ui';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import Skeleton from 'react-loading-skeleton';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import AccountPublicController from '../../controllers/account-public.controller';
+import { RoutePathsType, useQuery } from '../../route-paths';
+import { AccountFollowersFollowingResponsiveProps } from '../account-public-status.component';
+import styles from '../account-public-status.module.scss';
+import { ResponsiveMobile } from '../responsive.component';
 
 export default function AccountPublicStatusMobileComponent({
   accountPublicProps,
@@ -29,11 +17,10 @@ export default function AccountPublicStatusMobileComponent({
   onScroll,
   onLoad,
 }: AccountFollowersFollowingResponsiveProps): JSX.Element {
-  const scrollContainerRef = createRef<HTMLDivElement>();
+  const scrollContainerRef = React.createRef<HTMLDivElement>();
   const navigate = useNavigate();
   const query = useQuery();
-  const location = useLocation();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <ResponsiveMobile>

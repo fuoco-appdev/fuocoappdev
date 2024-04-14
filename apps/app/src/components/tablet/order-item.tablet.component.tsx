@@ -1,22 +1,10 @@
-import styles from '../order-item.module.scss';
-import { useEffect, useState } from 'react';
-import { ProductOptions } from '../../models/product.model';
-import { LineItem } from '@medusajs/medusa';
 import { useTranslation } from 'react-i18next';
-import { Button, Line, Modal } from '@fuoco.appdev/core-ui';
-import CartController from '../../controllers/cart.controller';
+import styles from '../order-item.module.scss';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
-import StoreController from '../../controllers/store.controller';
-import { useObservable } from '@ngneat/use-observable';
 import Ripples from 'react-ripples';
-import { useNavigate } from 'react-router-dom';
-import { RoutePathsType } from '../../route-paths';
-import {
-  OrderItemProps,
-  OrderItemResponsiveProps,
-} from '../order-item.component';
-import { ResponsiveMobile, ResponsiveTablet } from '../responsive.component';
+import { OrderItemResponsiveProps } from '../order-item.component';
+import { ResponsiveTablet } from '../responsive.component';
 
 export default function OrderItemTabletComponent({
   order,
@@ -25,7 +13,6 @@ export default function OrderItemTabletComponent({
   onClick,
 }: OrderItemResponsiveProps): JSX.Element {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   return (
     <ResponsiveTablet>

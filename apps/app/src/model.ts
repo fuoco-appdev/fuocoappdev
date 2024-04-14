@@ -4,7 +4,6 @@ import {
   persistState,
   sessionStorageStrategy,
 } from '@ngneat/elf-persist-state';
-import { Disposable } from './disposable';
 
 export abstract class Model {
   private readonly _store: Store;

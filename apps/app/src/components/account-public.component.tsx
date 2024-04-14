@@ -1,35 +1,20 @@
-import React, { useEffect, useRef, useState } from 'react';
-import AccountController from '../controllers/account.controller';
-import WindowController from '../controllers/window.controller';
-import StoreController from '../controllers/store.controller';
-import { useObservable } from '@ngneat/use-observable';
-import {
-  useLocation,
-  useNavigate,
-  useOutletContext,
-  useParams,
-} from 'react-router-dom';
-import { RoutePathsType, useQuery } from '../route-paths';
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
-import { useTranslation } from 'react-i18next';
-import { Helmet } from 'react-helmet';
-import { AccountState } from '../models/account.model';
-import { WindowState } from '../models/window.model';
-import { StoreState } from '../models/store.model';
-import { AuthenticatedComponent } from './authenticated.component';
 import { lazy } from '@loadable/component';
-import { AccountSuspenseDesktopComponent } from './desktop/suspense/account.suspense.desktop.component';
-import { AccountSuspenseMobileComponent } from './mobile/suspense/account.suspense.mobile.component';
-import { AccountSuspenseTabletComponent } from './tablet/suspense/account.suspense.tablet.component';
+import { useObservable } from '@ngneat/use-observable';
+import React from 'react';
+import { Helmet } from 'react-helmet';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
+import AccountPublicController from '../controllers/account-public.controller';
+import AccountController from '../controllers/account.controller';
+import StoreController from '../controllers/store.controller';
+import WindowController from '../controllers/window.controller';
+import { AccountPublicState } from '../models/account-public.model';
+import { StoreState } from '../models/store.model';
+import { WindowState } from '../models/window.model';
+import { RoutePathsType, useQuery } from '../route-paths';
 import { AccountPublicSuspenseDesktopComponent } from './desktop/suspense/account-public.suspense.desktop.component';
 import { AccountPublicSuspenseMobileComponent } from './mobile/suspense/account-public.suspense.mobile.component';
 import { AccountPublicSuspenseTabletComponent } from './tablet/suspense/account-public.suspense.tablet.component';
-import AccountPublicController from '../controllers/account-public.controller';
-import { AccountPublicState } from '../models/account-public.model';
 
 const AccountPublicDesktopComponent = lazy(
   () => import('./desktop/account-public.desktop.component')
@@ -69,7 +54,7 @@ export interface AccountPublicResponsiveProps {
 }
 
 export default function AccountPublicComponent(): JSX.Element {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const navigate = useNavigate();
   const query = useQuery();
   const { id } = useParams();
@@ -78,16 +63,18 @@ export default function AccountPublicComponent(): JSX.Element {
   );
   const [windowProps] = useObservable(WindowController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
-  const [isFollowing, setIsFollowing] = useState<boolean>(false);
-  const [isAccepted, setIsAccepted] = useState<boolean>(false);
-  const [likeCount, setLikeCount] = useState<string | undefined>(undefined);
-  const [followerCount, setFollowerCount] = useState<string | undefined>(
+  const [isFollowing, setIsFollowing] = React.useState<boolean>(false);
+  const [isAccepted, setIsAccepted] = React.useState<boolean>(false);
+  const [likeCount, setLikeCount] = React.useState<string | undefined>(
     undefined
   );
-  const [followingCount, setFollowingCount] = useState<string | undefined>(
+  const [followerCount, setFollowerCount] = React.useState<string | undefined>(
     undefined
   );
-  const renderCountRef = useRef<number>(0);
+  const [followingCount, setFollowingCount] = React.useState<
+    string | undefined
+  >(undefined);
+  const renderCountRef = React.useRef<number>(0);
   const scrollOffsetTriggerGap = 16;
 
   const onFollow = () => {
@@ -177,7 +164,7 @@ export default function AccountPublicComponent(): JSX.Element {
     }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     renderCountRef.current += 1;
     AccountPublicController.load(renderCountRef.current);
     return () => {
@@ -185,7 +172,7 @@ export default function AccountPublicComponent(): JSX.Element {
     };
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!id) {
       navigate(-1);
       return;
@@ -194,12 +181,12 @@ export default function AccountPublicComponent(): JSX.Element {
     AccountPublicController.updateAccountId(id);
   }, [id]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     setIsFollowing(accountPublicProps.accountFollower?.isFollowing ?? false);
     setIsAccepted(accountPublicProps.accountFollower?.accepted ?? false);
   }, [accountPublicProps.accountFollower]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (accountPublicProps.likeCount !== undefined) {
       setLikeCount(
         new Intl.NumberFormat(i18n.language).format(
@@ -229,7 +216,7 @@ export default function AccountPublicComponent(): JSX.Element {
     accountPublicProps.followingCount,
   ]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (
       WindowController.isLocationAccountWithId(
         location.pathname,

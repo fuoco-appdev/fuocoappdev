@@ -1,33 +1,18 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
-import AccountController from '../../controllers/account.controller';
-import AccountPublicController from '../../controllers/account-public.controller';
-import styles from '../account-public-following.module.scss';
-import { Alert, Button, Input, Line, Modal, Tabs } from '@fuoco.appdev/core-ui';
-import { RoutePathsType } from '../../route-paths';
+import { Input, Line } from '@fuoco.appdev/core-ui';
 import { useTranslation } from 'react-i18next';
-import { useObservable } from '@ngneat/use-observable';
-import Ripples from 'react-ripples';
-import WindowController from '../../controllers/window.controller';
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  useDesktopEffect,
-} from '../responsive.component';
-import AccountAddFriendsComponent, {
-  AccountAddFriendsResponsiveProps,
-} from '../account-add-friends.component';
+import AccountPublicController from '../../controllers/account-public.controller';
+import AccountController from '../../controllers/account.controller';
 import AccountFollowItemComponent from '../account-follow-item.component';
 import { AccountPublicFollowingResponsiveProps } from '../account-public-following.component';
+import styles from '../account-public-following.module.scss';
+import { ResponsiveMobile } from '../responsive.component';
 
 export default function AccountPublicFollowingMobileComponent({
   accountPublicProps,
   accountProps,
   onItemClick,
 }: AccountPublicFollowingResponsiveProps): JSX.Element {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <ResponsiveMobile>

@@ -1,20 +1,20 @@
-import React, { useState } from 'react';
+import { lazy } from '@loadable/component';
+import { Store } from '@ngneat/elf';
+import { useObservable } from '@ngneat/use-observable';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import AccountController from '../controllers/account.controller';
+import StoreController from '../controllers/store.controller';
+import WindowController from '../controllers/window.controller';
+import { AccountState } from '../models/account.model';
+import { StoreState } from '../models/store.model';
+import { WindowLocalState } from '../models/window.model';
+import { AuthenticatedComponent } from './authenticated.component';
 import {
   ResponsiveDesktop,
   ResponsiveMobile,
   ResponsiveTablet,
 } from './responsive.component';
-import { WindowLocalState } from '../models/window.model';
-import { useObservable } from '@ngneat/use-observable';
-import WindowController from '../controllers/window.controller';
-import AccountController from '../controllers/account.controller';
-import StoreController from '../controllers/store.controller';
-import { Store } from '@ngneat/elf';
-import { AccountState } from '../models/account.model';
-import { AuthenticatedComponent } from './authenticated.component';
-import { lazy } from '@loadable/component';
-import { StoreState } from '../models/store.model';
-import { useTranslation } from 'react-i18next';
 
 const AccountSettingsAccountDesktopComponent = lazy(
   () => import('./desktop/account-settings-account.desktop.component')
@@ -47,15 +47,15 @@ export default function AccountSettingsAccountComponent(): JSX.Element {
   );
   const [accountProps] = useObservable(AccountController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
-  const [updatePasswordError, setUpdatePasswordError] = useState<
+  const [updatePasswordError, setUpdatePasswordError] = React.useState<
     string | undefined
   >(undefined);
-  const [confirmPasswordError, setConfirmPasswordError] = useState<
+  const [confirmPasswordError, setConfirmPasswordError] = React.useState<
     string | undefined
   >(undefined);
-  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
-  const [isLanguageOpen, setIsLanguageOpen] = useState<boolean>(false);
-  const { t, i18n } = useTranslation();
+  const [showDeleteModal, setShowDeleteModal] = React.useState<boolean>(false);
+  const [isLanguageOpen, setIsLanguageOpen] = React.useState<boolean>(false);
+  const { t } = useTranslation();
 
   const onGeneralInformationSaveAsync = async () => {
     const updated = await AccountController.updateGeneralInfoAsync(

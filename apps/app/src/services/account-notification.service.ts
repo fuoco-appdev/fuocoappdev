@@ -1,19 +1,16 @@
-import { Service } from "../service";
-import { BehaviorSubject, Observable } from "rxjs";
-import SupabaseService from "./supabase.service";
-import axios, { AxiosError } from "axios";
-import WindowController from "../controllers/window.controller";
 import {
   RealtimeChannel,
-  Session,
-  SupabaseClient,
-  User,
+  SupabaseClient
 } from "@supabase/supabase-js";
+import axios from "axios";
+import { BehaviorSubject, Observable } from "rxjs";
 import {
   AccountNotificationCountResponse,
   AccountNotificationsRequest,
   AccountNotificationsResponse,
 } from "../protobuf/account-notification_pb";
+import { Service } from "../service";
+import SupabaseService from "./supabase.service";
 
 class AccountNotificationService extends Service {
   private readonly _notificationCreatedBehaviorSubject: BehaviorSubject<

@@ -1,5 +1,3 @@
-import { createStore, withProps } from "@ngneat/elf";
-import { Model } from "../model";
 import {
   Address,
   Customer,
@@ -7,6 +5,9 @@ import {
   Order,
   Product,
 } from "@medusajs/medusa";
+import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
+import { createStore, withProps } from "@ngneat/elf";
+import { User } from "@supabase/supabase-js";
 import {
   ProfileFormErrors,
   ProfileFormValues,
@@ -15,14 +16,12 @@ import {
   AddressFormErrors,
   AddressFormValues,
 } from "../components/address-form.component";
-import { RoutePathsType } from "../route-paths";
-import { User } from "@supabase/supabase-js";
-import { ProductLikesMetadataResponse } from "../protobuf/product-like_pb";
-import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
+import { Model } from "../model";
 import { AccountFollowerResponse } from "../protobuf/account-follower_pb";
-import { CustomerResponse } from "../protobuf/customer_pb";
 import { AccountResponse } from "../protobuf/account_pb";
+import { CustomerResponse } from "../protobuf/customer_pb";
 import { InterestResponse } from "../protobuf/interest_pb";
+import { ProductLikesMetadataResponse } from "../protobuf/product-like_pb";
 
 export interface ProfileFormErrorStrings {
   empty?: string;

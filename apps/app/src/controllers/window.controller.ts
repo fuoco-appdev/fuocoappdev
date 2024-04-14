@@ -1,26 +1,25 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AuthChangeEvent, Session, User } from "@supabase/supabase-js";
-import { filter, firstValueFrom, Subscription, take } from "rxjs";
-import { Controller } from "../controller";
-import { WindowModel } from "../models/window.model";
-import { RoutePathsType } from "../route-paths";
-import SupabaseService from "../services/supabase.service";
-import { Location as RouterLocation } from "react-router-dom";
 import { BannerProps, LanguageInfo, ToastProps } from "@fuoco.appdev/core-ui";
-import AccountService from "../services/account.service";
-import CartController from "./cart.controller";
 import { Cart, Customer, CustomerGroup, Order } from "@medusajs/medusa";
 import { select } from "@ngneat/elf";
-import BucketService from "../services/bucket.service";
-import ExploreController from "./explore.controller";
-import { ExploreState, InventoryLocation } from "src/models/explore.model";
-import AccountController from "./account.controller";
+import { AuthChangeEvent, Session } from "@supabase/supabase-js";
+import { Location as RouterLocation } from "react-router-dom";
+import { Subscription, filter, firstValueFrom, take } from "rxjs";
+import { Controller } from "../controller";
 import { AccountState } from "../models/account.model";
-import MedusaService from "../services/medusa.service";
-import AccountNotificationService from "src/services/account-notification.service";
-import NotificationsController from "./notifications.controller";
+import { ExploreState } from "../models/explore.model";
+import { WindowModel } from "../models/window.model";
 import { AccountResponse } from "../protobuf/account_pb";
+import { RoutePathsType } from "../route-paths";
+import AccountNotificationService from "../services/account-notification.service";
+import AccountService from "../services/account.service";
+import MedusaService from "../services/medusa.service";
+import SupabaseService from "../services/supabase.service";
+import AccountController from "./account.controller";
+import CartController from "./cart.controller";
+import ExploreController from "./explore.controller";
+import NotificationsController from "./notifications.controller";
 
 class WindowController extends Controller {
   private readonly _model: WindowModel;
@@ -75,9 +74,9 @@ class WindowController extends Controller {
       });
   }
 
-  public override load(renderCount: number): void {}
+  public override load(_renderCount: number): void {}
 
-  public override disposeInitialization(renderCount: number): void {
+  public override disposeInitialization(_renderCount: number): void {
     this._notificationCreatedSubscription?.unsubscribe();
     this._medusaAccessTokenSubscription?.unsubscribe();
     this._customerSubscription?.unsubscribe();
@@ -87,7 +86,7 @@ class WindowController extends Controller {
     this._cartSubscription?.unsubscribe();
   }
 
-  public override disposeLoad(renderCount: number): void {}
+  public override disposeLoad(_renderCount: number): void {}
 
   public updateIsLoading(value: boolean): void {
     this._model.isLoading = value;
@@ -420,7 +419,7 @@ class WindowController extends Controller {
     return false;
   }
 
-  private async initializeAsync(renderCount: number): Promise<void> {
+  private async initializeAsync(_renderCount: number): Promise<void> {
     this._cartSubscription?.unsubscribe();
     this._cartSubscription = CartController.model.store
       .pipe(select((model) => model.cart))

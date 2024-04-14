@@ -1,15 +1,15 @@
+import { lazy } from '@loadable/component';
+import { useObservable } from '@ngneat/use-observable';
+import React from 'react';
+import { Helmet } from 'react-helmet';
+import WindowController from '../controllers/window.controller';
+import { WindowState } from '../models/window.model';
+import { AuthenticatedComponent } from './authenticated.component';
 import {
   ResponsiveDesktop,
   ResponsiveMobile,
   ResponsiveTablet,
 } from './responsive.component';
-import { Helmet } from 'react-helmet';
-import { useObservable } from '@ngneat/use-observable';
-import WindowController from '../controllers/window.controller';
-import { WindowState } from '../models/window.model';
-import { AuthenticatedComponent } from './authenticated.component';
-import { lazy } from '@loadable/component';
-import React from 'react';
 
 const AccountSettingsDesktopComponent = lazy(
   () => import('./desktop/account-settings.desktop.component')

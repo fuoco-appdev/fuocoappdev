@@ -1,30 +1,16 @@
+import {
+  Product
+} from "@medusajs/medusa";
+import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
 import { createStore, withProps } from "@ngneat/elf";
 import { Model } from "../model";
-import {
-  Address,
-  Customer,
-  CustomerGroup,
-  Order,
-  Product,
-} from "@medusajs/medusa";
-import {
-  ProfileFormErrors,
-  ProfileFormValues,
-} from "../components/account-profile-form.component";
-import {
-  AddressFormErrors,
-  AddressFormValues,
-} from "../components/address-form.component";
-import { RoutePathsType } from "../route-paths";
-import { User } from "@supabase/supabase-js";
-import { ProductLikesMetadataResponse } from "../protobuf/product-like_pb";
-import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
+import { AccountFollowerResponse } from "../protobuf/account-follower_pb";
 import { AccountResponse } from "../protobuf/account_pb";
 import {
   CustomerMetadataResponse,
   CustomerResponse,
 } from "../protobuf/customer_pb";
-import { AccountFollowerResponse } from "../protobuf/account-follower_pb";
+import { ProductLikesMetadataResponse } from "../protobuf/product-like_pb";
 
 export interface AccountPublicState {
   accountId: string | undefined;

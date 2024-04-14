@@ -1,48 +1,17 @@
-import React, {
-  createRef,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
-import {
-  Typography,
-  Button,
-  Accordion,
-  Input,
-  InputPhoneNumber,
-  Listbox,
-  InputGeocoding,
-  OptionProps,
-  Modal,
-  LanguageSwitch,
-  Line,
-  Avatar,
-  Tabs,
-} from '@fuoco.appdev/core-ui';
-import styles from '../account-public.module.scss';
-import AccountController from '../../controllers/account.controller';
-import WindowController from '../../controllers/window.controller';
-import { animated, useTransition, config } from 'react-spring';
-import { useObservable } from '@ngneat/use-observable';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { RoutePathsType, useQuery } from '../../route-paths';
+import { Avatar, Button, Line, Tabs } from '@fuoco.appdev/core-ui';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import AccountProfileFormComponent from '../account-profile-form.component';
-import { Customer } from '@medusajs/medusa';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import Skeleton from 'react-loading-skeleton';
-import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
-import { AccountResponsiveProps } from '../account.component';
-import StoreController from 'src/controllers/store.controller';
-import { createPortal } from 'react-dom';
-import { AccountPublicResponsiveProps } from '../account-public.component';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import AccountPublicController from '../../controllers/account-public.controller';
+import { RoutePathsType, useQuery } from '../../route-paths';
+import { AccountPublicResponsiveProps } from '../account-public.component';
+import styles from '../account-public.module.scss';
+import { ResponsiveMobile } from '../responsive.component';
 
 export default function AccountPublicMobileComponent({
-  windowProps,
   accountPublicProps,
-  storeProps,
   isFollowing,
   isAccepted,
   likeCount,
@@ -57,12 +26,10 @@ export default function AccountPublicMobileComponent({
   onFollowersClick,
   onFollowingClick,
 }: AccountPublicResponsiveProps): JSX.Element {
-  const scrollContainerRef = createRef<HTMLDivElement>();
+  const scrollContainerRef = React.createRef<HTMLDivElement>();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const query = useQuery();
-  let prevPreviewScrollTop = 0;
-  let yPosition = 0;
 
   return (
     <ResponsiveMobile>

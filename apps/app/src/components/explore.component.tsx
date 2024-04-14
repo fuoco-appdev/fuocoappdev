@@ -1,31 +1,23 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { RoutePathsType, useQuery } from '../route-paths';
+import { lazy } from '@loadable/component';
+import { Store } from '@ngneat/elf';
+import { useObservable } from '@ngneat/use-observable';
+import React from 'react';
+import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
 import { MapRef } from 'react-map-gl';
+import { useLocation, useNavigate } from 'react-router-dom';
+import ExploreController from '../controllers/explore.controller';
 import {
   ExploreLocalState,
   ExploreState,
   InventoryLocation,
 } from '../models/explore.model';
-import { Helmet } from 'react-helmet';
-import { useObservable } from '@ngneat/use-observable';
-import ExploreController from '../controllers/explore.controller';
-import { Store } from '@ngneat/elf';
+import { DeepLTranslationsResponse } from '../protobuf/deepl_pb';
+import { RoutePathsType, useQuery } from '../route-paths';
+import DeeplService from '../services/deepl.service';
 import { ExploreSuspenseDesktopComponent } from './desktop/suspense/explore.suspense.desktop.component';
 import { ExploreSuspenseMobileComponent } from './mobile/suspense/explore.suspense.mobile.component';
-import React from 'react';
-import { lazy } from '@loadable/component';
 import { ExploreSuspenseTabletComponent } from './tablet/suspense/explore.suspense.tablet.component';
-import { StockLocation } from '@medusajs/stock-location/dist/models';
-import mapboxgl from 'mapbox-gl';
-import { DeepLTranslationsResponse } from '../protobuf/deepl_pb';
-import DeeplService from '../services/deepl.service';
 
 const ExploreDesktopComponent = lazy(
   () => import('./desktop/explore.desktop.component')
@@ -57,12 +49,11 @@ export default function ExploreComponent(): JSX.Element {
   const [exploreLocalProps] = useObservable(
     ExploreController.model.localStore ?? Store.prototype
   );
-  const [mapStyleLoaded, setMapStyleLoaded] = useState<boolean>(false);
-  const [selectedPoint, setSelectedPoint] = useState<InventoryLocation | null>(
-    null
-  );
-  const mapRef = useRef<MapRef | null>(null);
-  const renderCountRef = useRef<number>(0);
+  const [mapStyleLoaded, setMapStyleLoaded] = React.useState<boolean>(false);
+  const [selectedPoint, setSelectedPoint] =
+    React.useState<InventoryLocation | null>(null);
+  const mapRef = React.useRef<MapRef | null>(null);
+  const renderCountRef = React.useRef<number>(0);
   const location = useLocation();
   const { i18n } = useTranslation();
 
@@ -120,7 +111,7 @@ export default function ExploreComponent(): JSX.Element {
     }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     renderCountRef.current += 1;
     ExploreController.load(renderCountRef.current);
     ExploreController.loadStockLocationsAsync();
@@ -130,7 +121,7 @@ export default function ExploreComponent(): JSX.Element {
     };
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (location.hash) {
       return;
     }
@@ -140,7 +131,7 @@ export default function ExploreComponent(): JSX.Element {
     }
   }, [location.pathname]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!selectedPoint) {
       return;
     }
@@ -148,7 +139,7 @@ export default function ExploreComponent(): JSX.Element {
     updateTranslatedDescriptionAsync(selectedPoint);
   }, [selectedPoint]);
 
-  useLayoutEffect(() => {
+  React.useLayoutEffect(() => {
     const labels = [
       'country-label',
       'state-label',

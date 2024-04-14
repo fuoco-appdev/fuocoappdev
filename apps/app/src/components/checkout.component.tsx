@@ -1,41 +1,36 @@
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
-import styles from './checkout.module.scss';
-import { useTranslation } from 'react-i18next';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useObservable } from '@ngneat/use-observable';
-import CheckoutController from '../controllers/checkout.controller';
 import { RadioProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/radio/radio';
-import StoreController from '../controllers/store.controller';
+import { Cart, Customer, PaymentSession } from '@medusajs/medusa';
 import { PricedShippingOption } from '@medusajs/medusa/dist/types/pricing';
+import { useObservable } from '@ngneat/use-observable';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import CartController from '../controllers/cart.controller';
+import CheckoutController from '../controllers/checkout.controller';
+import StoreController from '../controllers/store.controller';
 import {
   CheckoutState,
   ProviderType,
   ShippingType,
 } from '../models/checkout.model';
-import CartController from '../controllers/cart.controller';
-import { PaymentSession, Customer, Cart } from '@medusajs/medusa';
+import styles from './checkout.module.scss';
 // @ts-ignore
-import { formatAmount } from 'medusa-react';
-import { useNavigate } from 'react-router-dom';
-import { RoutePathsType, useQuery } from '../route-paths';
-import AccountController from '../controllers/account.controller';
-import WindowController from '../controllers/window.controller';
+import { lazy } from '@loadable/component';
 import {
   StripeCardCvcElementOptions,
   StripeCardExpiryElementOptions,
   StripeCardNumberElementOptions,
   StripeElementsOptions,
 } from '@stripe/stripe-js';
+import { formatAmount } from 'medusa-react';
 import { Helmet } from 'react-helmet';
+import { useNavigate } from 'react-router-dom';
+import AccountController from '../controllers/account.controller';
+import WindowController from '../controllers/window.controller';
 import { AccountState } from '../models/account.model';
-import { StoreState } from '../models/store.model';
 import { CartState } from '../models/cart.model';
+import { StoreState } from '../models/store.model';
 import { WindowState } from '../models/window.model';
-import { lazy } from '@loadable/component';
+import { RoutePathsType, useQuery } from '../route-paths';
 import { CheckoutSuspenseDesktopComponent } from './desktop/suspense/checkout.suspense.desktop.component';
 import { CheckoutSuspenseMobileComponent } from './mobile/suspense/checkout.suspense.mobile.component';
 import { CheckoutSuspenseTabletComponent } from './tablet/suspense/checkout.suspense.tablet.component';
@@ -81,20 +76,26 @@ export default function CheckoutComponent(): JSX.Element {
   const [cartProps] = useObservable(CartController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
   const [windowProps] = useObservable(WindowController.model.store);
-  const [shippingOptions, setShippingOptions] = useState<RadioProps[]>([]);
-  const [providerOptions, setProviderOptions] = useState<RadioProps[]>([]);
-  const [shippingAddressOptions, setShippingAddressOptions] = useState<
+  const [shippingOptions, setShippingOptions] = React.useState<RadioProps[]>(
+    []
+  );
+  const [providerOptions, setProviderOptions] = React.useState<RadioProps[]>(
+    []
+  );
+  const [shippingAddressOptions, setShippingAddressOptions] = React.useState<
     RadioProps[]
   >([]);
-  const [isAddAddressOpen, setIsAddAddressOpen] = useState<boolean>(false);
-  const [isPayOpen, setIsPayOpen] = useState<boolean>(false);
-  const [stripeOptions, setStripeOptions] = useState<StripeElementsOptions>({});
-  const renderCountRef = useRef<number>(0);
+  const [isAddAddressOpen, setIsAddAddressOpen] =
+    React.useState<boolean>(false);
+  const [isPayOpen, setIsPayOpen] = React.useState<boolean>(false);
+  const [stripeOptions, setStripeOptions] =
+    React.useState<StripeElementsOptions>({});
+  const renderCountRef = React.useRef<number>(0);
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const customer = accountProps.customer as Customer;
 
-  useEffect(() => {
+  React.useEffect(() => {
     renderCountRef.current += 1;
     CheckoutController.load(renderCountRef.current);
 
@@ -103,7 +104,7 @@ export default function CheckoutComponent(): JSX.Element {
     };
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (
       (cartProps.cart && cartProps.cart.items.length <= 0) ||
       (cartProps.isFoodInCartRequired &&
@@ -113,7 +114,7 @@ export default function CheckoutComponent(): JSX.Element {
     }
   }, [cartProps.cart]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!cartProps.cart) {
       return;
     }
@@ -161,7 +162,7 @@ export default function CheckoutComponent(): JSX.Element {
     setShippingOptions(radioOptions);
   }, [checkoutProps.shippingOptions, cartProps.cart]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!cartProps.cart) {
       return;
     }
@@ -202,7 +203,7 @@ export default function CheckoutComponent(): JSX.Element {
     }
   }, [cartProps.cart]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     let radioOptions: RadioProps[] = [];
     if (!customer) {
       return;
@@ -238,7 +239,7 @@ export default function CheckoutComponent(): JSX.Element {
     setShippingAddressOptions(radioOptions);
   }, [accountProps.customer]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     CheckoutController.updateErrorStrings({
       email: t('fieldEmptyError') ?? '',
       firstName: t('fieldEmptyError') ?? '',
@@ -373,7 +374,7 @@ export default function CheckoutComponent(): JSX.Element {
   const stripeElementOptions:
     | StripeCardNumberElementOptions
     | StripeCardExpiryElementOptions
-    | StripeCardCvcElementOptions = useMemo(() => {
+    | StripeCardCvcElementOptions = React.useMemo(() => {
     return {
       classes: {
         base: styles['stripe-input-base'],

@@ -1,12 +1,6 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import * as React from 'react';
-import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
+import Skeleton from 'react-loading-skeleton';
 import styles from '../../account-public-followers.module.scss';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import {
-  ResponsiveSuspenseDesktop,
-  ResponsiveSuspenseMobile,
-} from '../../responsive.component';
+import { ResponsiveSuspenseMobile } from '../../responsive.component';
 import { AccountFollowItemSuspenseMobileComponent } from './account-follow-item.suspense.mobile.component';
 
 export function AccountPublicFollowersSuspenseMobileComponent(): JSX.Element {

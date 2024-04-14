@@ -1,27 +1,22 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { filter, firstValueFrom, Subscription, take } from "rxjs";
-import { Controller } from "../controller";
-import { CartModel } from "../models/cart.model";
-import StoreController from "./store.controller";
-import { select, Store } from "@ngneat/elf";
 import {
   Cart,
-  CustomerGroup,
   LineItem,
   Order,
   ProductType,
   Region,
-  SalesChannel,
   StorePostCartsCartReq,
-  Swap,
+  Swap
 } from "@medusajs/medusa";
-import MedusaService from "../services/medusa.service";
-import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
-import WindowController from "./window.controller";
-import ExploreController from "./explore.controller";
+import { Store, select } from "@ngneat/elf";
+import { Subscription, filter, firstValueFrom, take } from "rxjs";
+import { Controller } from "../controller";
+import { CartModel } from "../models/cart.model";
 import { InventoryLocation } from "../models/explore.model";
-import { MedusaRegionMetadata } from "../types/medusa.type";
+import MedusaService from "../services/medusa.service";
 import { MedusaProductTypeNames } from "../types/medusa.type";
+import ExploreController from "./explore.controller";
+import StoreController from "./store.controller";
 
 class CartController extends Controller {
   private readonly _model: CartModel;
@@ -48,16 +43,16 @@ class CartController extends Controller {
     this.initializeAsync(renderCount);
   }
 
-  public override async load(renderCount: number): Promise<void> {
+  public override async load(_renderCount: number): Promise<void> {
     this.requestStockLocationsAsync();
   }
 
-  public override disposeInitialization(renderCount: number): void {
+  public override disposeInitialization(_renderCount: number): void {
     this._medusaAccessTokenSubscription?.unsubscribe();
     this._selectedInventoryLocationSubscription?.unsubscribe();
   }
 
-  public override disposeLoad(renderCount: number): void {}
+  public override disposeLoad(_renderCount: number): void {}
 
   public updateDiscountCodeText(value: string): void {
     this._model.discountCode = value;
@@ -265,7 +260,7 @@ class CartController extends Controller {
     return (menuItems || hasFoodRequirement) ?? false;
   }
 
-  private async initializeAsync(renderCount: number): Promise<void> {
+  private async initializeAsync(_renderCount: number): Promise<void> {
     this._selectedInventoryLocationSubscription?.unsubscribe();
     this._selectedInventoryLocationSubscription = ExploreController.model.store
       .pipe(select((model) => model.selectedInventoryLocation))

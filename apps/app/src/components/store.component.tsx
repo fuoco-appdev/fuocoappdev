@@ -1,69 +1,38 @@
+import { OptionProps } from '@fuoco.appdev/core-ui';
+import { TabProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/tabs/tabs';
+import { lazy } from '@loadable/component';
+import { Country, Product, Region } from '@medusajs/medusa';
 import {
-  ReactNode,
-  Suspense,
-  createRef,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import StoreController from '../controllers/store.controller';
-import styles from './store.module.scss';
-import {
-  Alert,
-  Button,
-  Dropdown,
-  Input,
-  Line,
-  Tabs,
-  Listbox,
-  OptionProps,
-} from '@fuoco.appdev/core-ui';
-import { RoutePathsType } from '../route-paths';
-import { useTranslation } from 'react-i18next';
-import SupabaseService from '../services/supabase.service';
-import { useObservable } from '@ngneat/use-observable';
-import { useSpring } from 'react-spring';
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
-import LoadingComponent from './loading.component';
+  PricedProduct,
+  PricedVariant,
+} from '@medusajs/medusa/dist/types/pricing';
 import { Store } from '@ngneat/elf';
-import { ProductTabs, StoreState } from '../models/store.model';
-import { Country, Region, Product, SalesChannel } from '@medusajs/medusa';
-import ProductPreviewComponent from './product-preview.component';
+import { useObservable } from '@ngneat/use-observable';
+import React from 'react';
 import ReactCountryFlag from 'react-country-flag';
+import { Helmet } from 'react-helmet';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import AccountController from '../controllers/account.controller';
 import ExploreController from '../controllers/explore.controller';
+import ProductController from '../controllers/product.controller';
+import StoreController from '../controllers/store.controller';
+import WindowController from '../controllers/window.controller';
+import { WindowState } from '../models';
+import { AccountState } from '../models/account.model';
 import {
   ExploreLocalState,
   ExploreState,
   InventoryLocation,
   InventoryLocationType,
 } from '../models/explore.model';
-import { center } from '@turf/turf';
-import { Helmet } from 'react-helmet';
-import ReactDOM from 'react-dom';
-import React from 'react';
+import { ProductTabs, StoreState } from '../models/store.model';
+import { ProductLikesMetadataResponse } from '../protobuf/product-like_pb';
+import { RoutePathsType, useQuery } from '../route-paths';
 import { StoreSuspenseDesktopComponent } from './desktop/suspense/store.suspense.desktop.component';
 import { StoreSuspenseMobileComponent } from './mobile/suspense/store.suspense.mobile.component';
-import { lazy } from '@loadable/component';
-import { timeout } from 'promise-timeout';
-import {
-  PricedVariant,
-  PricedProduct,
-} from '@medusajs/medusa/dist/types/pricing';
-import ProductController from '../controllers/product.controller';
-import WindowController from '../controllers/window.controller';
+import styles from './store.module.scss';
 import { StoreSuspenseTabletComponent } from './tablet/suspense/store.suspense.tablet.component';
-import { useQuery } from '../route-paths';
-import { WindowState } from '../models';
-import AccountController from '../controllers/account.controller';
-import { AccountState } from '../models/account.model';
-import { TabProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/tabs/tabs';
-import { ProductLikesMetadataResponse } from 'src/protobuf/product-like_pb';
 
 const StoreDesktopComponent = lazy(
   () => import('./desktop/store.desktop.component')
@@ -128,25 +97,26 @@ export default function StoreComponent(): JSX.Element {
   const [exploreLocalProps] = useObservable(
     ExploreController.model.localStore ?? Store.prototype
   );
-  const [openFilter, setOpenFilter] = useState<boolean>(false);
-  const [openCartVariants, setOpenCartVariants] = useState<boolean>(false);
-  const [countryOptions, setCountryOptions] = useState<OptionProps[]>([]);
-  const [regionOptions, setRegionOptions] = useState<OptionProps[]>([]);
-  const [salesLocationOptions, setSalesLocationOptions] = useState<
+  const [openFilter, setOpenFilter] = React.useState<boolean>(false);
+  const [openCartVariants, setOpenCartVariants] =
+    React.useState<boolean>(false);
+  const [countryOptions, setCountryOptions] = React.useState<OptionProps[]>([]);
+  const [regionOptions, setRegionOptions] = React.useState<OptionProps[]>([]);
+  const [salesLocationOptions, setSalesLocationOptions] = React.useState<
     OptionProps[]
   >([]);
-  const [selectedCountryId, setSelectedCountryId] = useState<string>('');
-  const [selectedRegionId, setSelectedRegionId] = useState<string>('');
+  const [selectedCountryId, setSelectedCountryId] = React.useState<string>('');
+  const [selectedRegionId, setSelectedRegionId] = React.useState<string>('');
   const [selectedSalesLocationId, setSelectedSalesLocationId] =
-    useState<string>('');
-  const [variantQuantities, setVariantQuantities] = useState<
+    React.useState<string>('');
+  const [variantQuantities, setVariantQuantities] = React.useState<
     Record<string, number>
   >({});
-  const [tabs, setTabs] = useState<TabProps[]>([]);
-  const [categoryOpen, setCategoryOpen] = useState<boolean>(false);
-  const [isPreviewLoading, setIsPreviewLoading] = useState<boolean>(false);
-  const renderCountRef = useRef<number>(0);
-  const { t, i18n } = useTranslation();
+  const [tabs, setTabs] = React.useState<TabProps[]>([]);
+  const [isPreviewLoading, setIsPreviewLoading] =
+    React.useState<boolean>(false);
+  const renderCountRef = React.useRef<number>(0);
+  const { t } = useTranslation();
 
   const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const scrollTop = e.currentTarget?.scrollTop ?? 0;
@@ -270,7 +240,7 @@ export default function StoreComponent(): JSX.Element {
     setVariantQuantities({});
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     renderCountRef.current += 1;
     StoreController.load(renderCountRef.current);
     const search = query.get('search');
@@ -283,7 +253,7 @@ export default function StoreComponent(): JSX.Element {
     };
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const countries: OptionProps[] = [];
     for (const region of storeProps.regions as Region[]) {
       for (const country of region.countries as Country[]) {
@@ -317,7 +287,7 @@ export default function StoreComponent(): JSX.Element {
     setCountryOptions(countries);
   }, [storeProps.regions]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (
       !exploreProps.inventoryLocations ||
       !storeProps.selectedRegion ||
@@ -347,7 +317,7 @@ export default function StoreComponent(): JSX.Element {
     setSalesLocationOptions(cellars);
   }, [exploreProps.inventoryLocations, storeProps.selectedRegion]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (salesLocationOptions.length <= 0) {
       return;
     }
@@ -355,7 +325,7 @@ export default function StoreComponent(): JSX.Element {
     setSelectedSalesLocationId(exploreLocalProps.selectedInventoryLocationId);
   }, [exploreLocalProps.selectedInventoryLocationId, salesLocationOptions]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!storeProps.selectedRegion || countryOptions.length <= 0) {
       return;
     }
@@ -370,7 +340,7 @@ export default function StoreComponent(): JSX.Element {
     setSelectedRegionId('');
   }, [countryOptions, storeProps.selectedRegion]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (countryOptions.length <= 0 || selectedCountryId.length <= 0) {
       return;
     }
@@ -401,7 +371,7 @@ export default function StoreComponent(): JSX.Element {
     setRegionOptions(regions);
   }, [selectedCountryId, countryOptions]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!storeProps.selectedRegion || regionOptions.length <= 0) {
       return;
     }
@@ -409,7 +379,7 @@ export default function StoreComponent(): JSX.Element {
     setSelectedRegionId(storeProps.selectedRegion.id);
   }, [regionOptions, storeProps.selectedRegion]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (
       exploreProps.selectedInventoryLocation?.type ===
       InventoryLocationType.Cellar

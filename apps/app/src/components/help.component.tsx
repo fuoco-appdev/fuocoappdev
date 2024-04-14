@@ -1,15 +1,14 @@
+import { lazy } from '@loadable/component';
+import { useObservable } from '@ngneat/use-observable';
+import React from 'react';
+import { Helmet } from 'react-helmet';
+import HelpController from '../controllers/help.controller';
+import { HelpState } from '../models';
 import {
   ResponsiveDesktop,
   ResponsiveMobile,
   ResponsiveTablet,
 } from './responsive.component';
-import { Helmet } from 'react-helmet';
-import { useState, useEffect, useRef } from 'react';
-import { useObservable } from '@ngneat/use-observable';
-import HelpController from '../controllers/help.controller';
-import { HelpState } from '../models';
-import { lazy } from '@loadable/component';
-import React from 'react';
 
 const HelpDesktopComponent = lazy(
   () => import('./desktop/help.desktop.component')
@@ -45,8 +44,8 @@ export interface HelpResponsiveProps {
 
 export default function HelpComponent(): JSX.Element {
   const [helpProps] = useObservable(HelpController.model.store);
-  const [remarkPlugins, setRemarkPlugins] = useState<any[]>([]);
-  const renderCountRef = useRef<number>(0);
+  const [remarkPlugins, setRemarkPlugins] = React.useState<any[]>([]);
+  const renderCountRef = React.useRef<number>(0);
 
   const suspenceComponent = (
     <>
@@ -66,7 +65,7 @@ export default function HelpComponent(): JSX.Element {
     return suspenceComponent;
   }
 
-  useEffect(() => {
+  React.useEffect(() => {
     renderCountRef.current += 1;
 
     import('remark-gfm').then((plugin) => {

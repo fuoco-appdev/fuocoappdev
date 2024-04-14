@@ -1,13 +1,10 @@
-import { Auth, Typography, Button, Line } from '@fuoco.appdev/core-ui';
-import { useObservable } from '@ngneat/use-observable';
-import styles from '../help.module.scss';
-import { lazy } from 'react';
-import { HelpResponsiveProps } from '../help.component';
+import { Auth, Button, Typography } from '@fuoco.appdev/core-ui';
 import loadable from '@loadable/component';
-import { ResponsiveDesktop, ResponsiveTablet } from '../responsive.component';
 import { useTranslation } from 'react-i18next';
 import ConfigService from '../../services/config.service';
-import { DiscordIcon } from '../help.component';
+import { DiscordIcon, HelpResponsiveProps } from '../help.component';
+import styles from '../help.module.scss';
+import { ResponsiveTablet } from '../responsive.component';
 
 const ReactMarkdown = loadable(
   async () => {
@@ -21,7 +18,7 @@ export default function HelpTabletComponent({
   helpProps,
   remarkPlugins,
 }: HelpResponsiveProps): JSX.Element {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <ResponsiveTablet>

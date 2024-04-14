@@ -1,30 +1,18 @@
-import { createRef, useEffect, useLayoutEffect, useRef } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import AccountController from '../../controllers/account.controller';
-import ProductController from '../../controllers/product.controller';
-import styles from '../account-likes.module.scss';
-import { Alert, Button, Line, Modal } from '@fuoco.appdev/core-ui';
-import { RoutePathsType, useQuery } from '../../route-paths';
-import { useTranslation } from 'react-i18next';
-import SupabaseService from '../../services/supabase.service';
-import { useObservable } from '@ngneat/use-observable';
-import { useSpring } from 'react-spring';
-import LoadingComponent from '../loading.component';
-import { Store } from '@ngneat/elf';
-import AccountProfileFormComponent from '../account-profile-form.component';
-import { AccountLikesResponsiveProps } from '../account-likes.component';
-import { ResponsiveDesktop } from '../responsive.component';
-import {
-  PricedProduct,
-  PricedVariant,
-} from '@medusajs/medusa/dist/types/pricing';
-import ProductPreviewComponent from '../product-preview.component';
-import { createPortal } from 'react-dom';
-import CartVariantItemComponent from '../cart-variant-item.component';
-import { MedusaProductTypeNames } from '../../types/medusa.type';
-import { useAccountOutletContext } from '../account.component';
+import { Button, Line, Modal } from '@fuoco.appdev/core-ui';
 import { Product } from '@medusajs/medusa';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { ProductLikesMetadataResponse } from '../../protobuf/product-like_pb';
+import { RoutePathsType, useQuery } from '../../route-paths';
+import { MedusaProductTypeNames } from '../../types/medusa.type';
+import { AccountLikesResponsiveProps } from '../account-likes.component';
+import styles from '../account-likes.module.scss';
+import { useAccountOutletContext } from '../account.component';
+import CartVariantItemComponent from '../cart-variant-item.component';
+import ProductPreviewComponent from '../product-preview.component';
+import { ResponsiveDesktop } from '../responsive.component';
 
 export default function AccountLikesDesktopComponent({
   storeProps,
@@ -41,8 +29,8 @@ export default function AccountLikesDesktopComponent({
   onProductPreviewLikeChanged,
   onProductPreviewRest,
 }: AccountLikesResponsiveProps): JSX.Element {
-  const { t, i18n } = useTranslation();
-  const rootRef = createRef<HTMLDivElement>();
+  const { t } = useTranslation();
+  const rootRef = React.createRef<HTMLDivElement>();
   const navigate = useNavigate();
   const query = useQuery();
   const context = useAccountOutletContext();
@@ -155,7 +143,7 @@ export default function AccountLikesDesktopComponent({
             )}
         </div>
       </div>
-      {createPortal(
+      {ReactDOM.createPortal(
         <Modal
           classNames={{
             overlay: [

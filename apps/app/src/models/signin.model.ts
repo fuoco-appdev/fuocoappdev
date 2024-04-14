@@ -1,7 +1,7 @@
 import { createStore, withProps } from '@ngneat/elf';
+import { SupabaseClient } from '@supabase/supabase-js';
 import { Location } from 'react-router-dom';
 import { Model } from '../model';
-import { SupabaseClient } from '@supabase/supabase-js';
 
 export interface SigninState {
   supabaseClient?: SupabaseClient | undefined;

@@ -1,5 +1,5 @@
-import ConfigService from './config.service';
 import { MeiliSearch } from 'meilisearch';
+import ConfigService from './config.service';
 
 class MeiliSearchService {
   private _client: MeiliSearch | undefined;

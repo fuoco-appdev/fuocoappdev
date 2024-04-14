@@ -1,21 +1,13 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import AccountController from '../../controllers/account.controller';
-import styles from '../account-addresses.module.scss';
-import { Alert, Button, Dropdown, Line, Modal } from '@fuoco.appdev/core-ui';
-import { RoutePathsType } from '../../route-paths';
+import { Button, Line, Modal } from '@fuoco.appdev/core-ui';
+import { Address, Customer } from '@medusajs/medusa';
+import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import SupabaseService from '../../services/supabase.service';
-import { useObservable } from '@ngneat/use-observable';
-import { useSpring } from 'react-spring';
-import LoadingComponent from '../loading.component';
-import { Store } from '@ngneat/elf';
-import { Customer, Address } from '@medusajs/medusa';
-import AddressItemComponent from '../address-item.component';
-import AddressFormComponent from '../address-form.component';
+import AccountController from '../../controllers/account.controller';
 import { AccountAddressResponsiveProps } from '../account-addresses.component';
-import { ResponsiveMobile, ResponsiveTablet } from '../responsive.component';
-import { createPortal } from 'react-dom';
+import styles from '../account-addresses.module.scss';
+import AddressFormComponent from '../address-form.component';
+import AddressItemComponent from '../address-item.component';
+import { ResponsiveTablet } from '../responsive.component';
 
 export default function AccountAddressesTabletComponent({
   accountProps,
@@ -31,7 +23,7 @@ export default function AccountAddressesTabletComponent({
   setOpenAddDropdown,
   setOpenEditDropdown,
 }: AccountAddressResponsiveProps): JSX.Element {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const customer = accountProps.customer as Customer | undefined;
   const selectedAddress = accountProps.selectedAddress as Address | undefined;
@@ -92,7 +84,7 @@ export default function AccountAddressesTabletComponent({
             onClick={() => setOpenAddDropdown(true)}
           />
         </div>
-        {createPortal(
+        {ReactDOM.createPortal(
           <>
             <Modal
               classNames={{
@@ -170,15 +162,15 @@ export default function AccountAddressesTabletComponent({
                       AccountController.updateShippingAddress({
                         city: event.target.value,
                       }),
-                    country: (id, value) =>
+                    country: (id, _value) =>
                       AccountController.updateShippingAddress({
                         countryCode: id,
                       }),
-                    region: (id, value) =>
+                    region: (_id, value) =>
                       AccountController.updateShippingAddress({
                         region: value,
                       }),
-                    phoneNumber: (value, event, formattedValue) =>
+                    phoneNumber: (value, _event, _formattedValue) =>
                       AccountController.updateShippingAddress({
                         phoneNumber: value,
                       }),
@@ -283,15 +275,15 @@ export default function AccountAddressesTabletComponent({
                       AccountController.updateEditShippingAddress({
                         city: event.target.value,
                       }),
-                    country: (id, value) =>
+                    country: (id, _value) =>
                       AccountController.updateEditShippingAddress({
                         countryCode: id,
                       }),
-                    region: (id, value) =>
+                    region: (_id, value) =>
                       AccountController.updateEditShippingAddress({
                         region: value,
                       }),
-                    phoneNumber: (value, event, formattedValue) =>
+                    phoneNumber: (value, _event, _formattedValue) =>
                       AccountController.updateEditShippingAddress({
                         phoneNumber: value,
                       }),

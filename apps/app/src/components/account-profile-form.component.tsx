@@ -1,16 +1,8 @@
-import { useEffect, ChangeEvent, useState } from 'react';
-import { useObservable } from '@ngneat/use-observable';
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
-import StoreController from '../controllers/store.controller';
 import { CountryDataProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/input-phone-number/country-data';
-import { StoreState } from '../models/store.model';
 import { lazy } from '@loadable/component';
-import { AccountProfileFormSuspenseDesktopComponent } from './desktop/suspense/account-profile-form.suspense.desktop.component';
 import React from 'react';
+import { StoreState } from '../models/store.model';
+import { AccountProfileFormSuspenseDesktopComponent } from './desktop/suspense/account-profile-form.suspense.desktop.component';
 import { AccountProfileFormSuspenseMobileComponent } from './mobile/suspense/account-profile-form.suspense.mobile.component';
 
 const AccountProfileFormDesktopComponent = lazy(
@@ -24,10 +16,10 @@ const AccountProfileFormMobileComponent = lazy(
 );
 
 export interface ProfileFormOnChangeCallbacks {
-  firstName?: (event: ChangeEvent<HTMLInputElement>) => void;
-  lastName?: (event: ChangeEvent<HTMLInputElement>) => void;
-  username?: (event: ChangeEvent<HTMLInputElement>) => void;
-  birthday?: (event: ChangeEvent<HTMLInputElement>) => void;
+  firstName?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  lastName?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  username?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  birthday?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   sex?: (value: 'male' | 'female') => void;
   phoneNumber?: (
     value: string,
@@ -75,9 +67,9 @@ export default function AccountProfileFormComponent({
   errors,
   onChangeCallbacks,
 }: AccountProfileFormProps): JSX.Element {
-  const [selectedCountry, setSelectedCountry] = useState<string>('');
+  const [selectedCountry, setSelectedCountry] = React.useState<string>('');
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!storeProps.selectedRegion) {
       return;
     }

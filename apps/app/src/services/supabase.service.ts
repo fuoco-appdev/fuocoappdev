@@ -1,13 +1,13 @@
+import { Subscription } from '@supabase/gotrue-js/dist/main';
 import {
-  createClient,
+  AuthChangeEvent,
+  Session,
   SupabaseClient,
   User,
-  Session,
-  AuthChangeEvent,
+  createClient,
 } from '@supabase/supabase-js';
-import ConfigService from './config.service';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Subscription } from '@supabase/gotrue-js/dist/main';
+import ConfigService from './config.service';
 
 class SupabaseService {
   private _supabaseClient: SupabaseClient | undefined;

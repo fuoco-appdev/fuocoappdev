@@ -1,9 +1,6 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import * as React from 'react';
-import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
-import styles from '../../stock-location-cart-item.module.scss';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import Skeleton from 'react-loading-skeleton';
 import { ResponsiveSuspenseDesktop } from '../../responsive.component';
+import styles from '../../stock-location-cart-item.module.scss';
 
 export function StockLocationCartItemSuspenseDesktopComponent(): JSX.Element {
   return (

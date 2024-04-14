@@ -1,5 +1,8 @@
 {
-  "version": "2",
+  "version": "3",
+  "redirects": {
+    "https://deno.land/x/deno_google_protobuf/google-protobuf.js": "https://deno.land/x/deno_google_protobuf@4.0.0-rc.2/google-protobuf.js"
+  },
   "remote": {
     "https://deno.land/std@0.105.0/_util/assert.ts": "2f868145a042a11d5ad0a3c748dcf580add8a0dbc0e876eaa0026303a5488f58",
     "https://deno.land/std@0.105.0/bytes/mod.ts": "440684e07e8f57a19a43b34d57eb63af0b36fc92b6657b6dcdbf9d5612d62e29",

@@ -1,18 +1,8 @@
-import { LineItem, ProductOptionValue } from '@medusajs/medusa';
-import styles from '../refund-item.module.scss';
-import { useEffect, useState } from 'react';
-import { ProductOptions } from '../../models/product.model';
+import { Button, Input, Line, Listbox } from '@fuoco.appdev/core-ui';
 import { useTranslation } from 'react-i18next';
-import {
-  Button,
-  Input,
-  Line,
-  Listbox,
-  OptionProps,
-} from '@fuoco.appdev/core-ui';
-import { useObservable } from '@ngneat/use-observable';
 import { RefundItemResponsiveProps } from '../refund-item.component';
-import { ResponsiveDesktop, ResponsiveTablet } from '../responsive.component';
+import styles from '../refund-item.module.scss';
+import { ResponsiveTablet } from '../responsive.component';
 
 export default function RefundItemTabletComponent({
   item,
@@ -157,7 +147,7 @@ export default function RefundItemTabletComponent({
                 label={t('reason') ?? ''}
                 options={returnReasonOptions}
                 selectedId={refundItem.reason_id ?? ''}
-                onChange={(index, id) =>
+                onChange={(_index, id) =>
                   onChanged?.({
                     ...refundItem,
                     reason_id: id,

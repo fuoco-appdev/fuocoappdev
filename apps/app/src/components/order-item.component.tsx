@@ -1,14 +1,8 @@
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
-import { Order, LineItem } from '@medusajs/medusa';
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { lazy } from '@loadable/component';
-import { OrderItemSuspenseDesktopComponent } from './desktop/suspense/order-item.suspense.desktop.component';
+import { LineItem, Order } from '@medusajs/medusa';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { OrderItemSuspenseDesktopComponent } from './desktop/suspense/order-item.suspense.desktop.component';
 import { OrderItemSuspenseMobileComponent } from './mobile/suspense/order-item.suspense.mobile.component';
 import { OrderItemSuspenseTabletComponent } from './tablet/suspense/order-item.suspense.tablet.component';
 
@@ -36,7 +30,7 @@ export default function OrderItemComponent({
   order,
   onClick,
 }: OrderItemProps): JSX.Element {
-  const [fulfillmentStatus, setFulfillmentStatus] = useState<string>('');
+  const [fulfillmentStatus, setFulfillmentStatus] = React.useState<string>('');
   const { t, i18n } = useTranslation();
 
   const getNumberOfItems = (items: LineItem[]) => {
@@ -45,7 +39,7 @@ export default function OrderItemComponent({
     }, 0);
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (order.fulfillment_status === 'canceled')
       setFulfillmentStatus(t('canceled') ?? '');
     else if (order.fulfillment_status === 'fulfilled')

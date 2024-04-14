@@ -1,36 +1,23 @@
-import React, {
-  createRef,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import styles from '../explore.module.scss';
-import { Alert, Button, Input, Line, Tabs } from '@fuoco.appdev/core-ui';
-import { RoutePathsType } from '../../route-paths';
+import { Button, Input, Line, Tabs } from '@fuoco.appdev/core-ui';
+import { StockLocation } from '@medusajs/stock-location/dist/models';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import SupabaseService from '../../services/supabase.service';
-import { useObservable } from '@ngneat/use-observable';
-import { useSpring } from 'react-spring';
-import Map, { MapRef, Marker, Popup } from 'react-map-gl';
-import ConfigService from '../../services/config.service';
+import Map, { Marker, Popup } from 'react-map-gl';
+import Slider from 'react-slick';
+import ExploreController from '../../controllers/explore.controller';
 import {
   ExploreTabs,
   InventoryLocation,
   InventoryLocationType,
 } from '../../models/explore.model';
+import ConfigService from '../../services/config.service';
 import { ExploreResponsiveProps } from '../explore.component';
-import ExploreController from '../../controllers/explore.controller';
+import styles from '../explore.module.scss';
 import { ResponsiveDesktop } from '../responsive.component';
-import { StockLocation } from '@medusajs/stock-location/dist/models';
 import StockLocationItemComponent from '../stock-location-item.component';
-import Slider from 'react-slick';
 
 export default function ExploreDesktopComponent({
   exploreProps,
-  exploreLocalProps,
   mapRef,
   selectedPoint,
   setMapStyleLoaded,
@@ -40,10 +27,9 @@ export default function ExploreDesktopComponent({
   onStockLocationClicked,
   onGoToStore,
 }: ExploreResponsiveProps): JSX.Element {
-  const navigate = useNavigate();
   const { t } = useTranslation();
-  const topBarRef = useRef<HTMLDivElement | null>(null);
-  const scrollContainerRef = createRef<HTMLDivElement>();
+  const topBarRef = React.useRef<HTMLDivElement | null>(null);
+  const scrollContainerRef = React.createRef<HTMLDivElement>();
   let prevScrollTop = 0;
   let yPosition = 0;
 
@@ -168,7 +154,7 @@ export default function ExploreDesktopComponent({
             onLoad={onScrollLoad}
           >
             {exploreProps.searchedStockLocations.map(
-              (stockLocation: StockLocation, index: number) => {
+              (stockLocation: StockLocation, _index: number) => {
                 return (
                   <StockLocationItemComponent
                     key={stockLocation.id}

@@ -1,11 +1,6 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import * as React from 'react';
-import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
+import Skeleton from 'react-loading-skeleton';
 import styles from '../../account-public-likes.module.scss';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { AddressItemSuspenseDesktopComponent } from './address-item.suspense.desktop.component';
-import { AccountProfileFormSuspenseDesktopComponent } from './account-profile-form.suspense.desktop.component';
-import { ResponsiveSuspenseDesktop } from 'src/components/responsive.component';
+import { ResponsiveSuspenseDesktop } from '../../responsive.component';
 import { ProductPreviewSuspenseDesktopComponent } from './product-preview.suspense.desktop.component';
 
 export function AccountPublicLikesSuspenseDesktopComponent(): JSX.Element {

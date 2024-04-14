@@ -1,8 +1,7 @@
-import SupabaseService from "./supabase.service";
-import ConfigService from "./config.service";
-import AWS, { Config } from "aws-sdk";
+import AWS from "aws-sdk";
 import { BehaviorSubject, Observable } from "rxjs";
 import { StorageFolderType } from "../protobuf/common_pb";
+import ConfigService from "./config.service";
 
 class BucketService {
   private _s3: AWS.S3 | undefined;

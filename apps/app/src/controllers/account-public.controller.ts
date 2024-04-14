@@ -1,47 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-empty-function */
+import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
+import { select } from "@ngneat/elf";
 import {
   filter,
   firstValueFrom,
-  lastValueFrom,
   Subscription,
-  take,
+  take
 } from "rxjs";
 import { Controller } from "../controller";
-import AccountService from "../services/account.service";
-import SupabaseService from "../services/supabase.service";
-import BucketService from "../services/bucket.service";
-import MedusaService from "../services/medusa.service";
-import ProductLikesService from "../services/product-likes.service";
-import { Address, Customer, StorePostCustomersReq } from "@medusajs/medusa";
-import WindowController from "./window.controller";
-import {
-  ProfileFormErrors,
-  ProfileFormValues,
-} from "../components/account-profile-form.component";
-import { v4 as uuidv4 } from "uuid";
-import mime from "mime";
-import { AuthChangeEvent, Session, User } from "@supabase/supabase-js";
-import {
-  AddressFormErrors,
-  AddressFormValues,
-} from "../components/address-form.component";
-import { RoutePathsType } from "../route-paths";
-import { LanguageInfo } from "@fuoco.appdev/core-ui";
-import { select } from "@ngneat/elf";
-import ExploreController from "./explore.controller";
-import { ExploreLocalState } from "../models/explore.model";
-import Cookies from "js-cookie";
-import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
-import StoreController from "./store.controller";
-import CartController from "./cart.controller";
-import AccountFollowersService from "../services/account-followers.service";
 import { AccountPublicModel } from "../models/account-public.model";
-import AccountController from "./account.controller";
-import { S3 } from "aws-sdk";
 import { AccountResponse } from "../protobuf/account_pb";
 import { StorageFolderType } from "../protobuf/common_pb";
 import { ProductLikesMetadataResponse } from "../protobuf/product-like_pb";
+import { RoutePathsType } from "../route-paths";
+import AccountFollowersService from "../services/account-followers.service";
+import AccountService from "../services/account.service";
+import BucketService from "../services/bucket.service";
+import MedusaService from "../services/medusa.service";
+import ProductLikesService from "../services/product-likes.service";
+import AccountController from "./account.controller";
+import CartController from "./cart.controller";
 
 class AccountPublicController extends Controller {
   private readonly _model: AccountPublicModel;
@@ -79,9 +58,9 @@ class AccountPublicController extends Controller {
       });
   }
 
-  public override load(renderCount: number): void {}
+  public override load(_renderCount: number): void {}
 
-  public override disposeInitialization(renderCount: number): void {
+  public override disposeInitialization(_renderCount: number): void {
     clearTimeout(this._followingTimerId as number | undefined);
     clearTimeout(this._followersTimerId as number | undefined);
     clearTimeout(this._usernameTimerId as number | undefined);
@@ -93,7 +72,7 @@ class AccountPublicController extends Controller {
     this._cartSubscription?.unsubscribe();
   }
 
-  public override disposeLoad(renderCount: number): void {}
+  public override disposeLoad(_renderCount: number): void {}
 
   public async loadLikedProductsAsync(id: string): Promise<void> {
     this._loadedAccountSubscription?.unsubscribe();
@@ -626,7 +605,7 @@ class AccountPublicController extends Controller {
     this._model.areLikedProductsLoading = false;
   }
 
-  private async initializeAsync(renderCount: number): Promise<void> {
+  private async initializeAsync(_renderCount: number): Promise<void> {
     this._publicAccountIdSubscription?.unsubscribe();
     this._publicAccountIdSubscription = this._model.store
       .pipe(select((model) => model.accountId))

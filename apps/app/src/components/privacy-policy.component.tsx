@@ -1,15 +1,14 @@
+import { lazy } from '@loadable/component';
+import { useObservable } from '@ngneat/use-observable';
+import React from 'react';
+import { Helmet } from 'react-helmet';
+import PrivacyPolicyController from '../controllers/privacy-policy.controller';
+import { PrivacyPolicyState } from '../models';
 import {
   ResponsiveDesktop,
   ResponsiveMobile,
   ResponsiveTablet,
 } from './responsive.component';
-import { Helmet } from 'react-helmet';
-import { useState, useEffect, useRef } from 'react';
-import { useObservable } from '@ngneat/use-observable';
-import PrivacyPolicyController from '../controllers/privacy-policy.controller';
-import { PrivacyPolicyState } from '../models';
-import { lazy } from '@loadable/component';
-import React from 'react';
 
 const PrivacyPolicyDesktopComponent = lazy(
   () => import('./desktop/privacy-policy.desktop.component')
@@ -30,10 +29,10 @@ export default function PrivacyPolicyComponent(): JSX.Element {
   const [privacyPolicyProps] = useObservable(
     PrivacyPolicyController.model.store
   );
-  const [remarkPlugins, setRemarkPlugins] = useState<any[]>([]);
-  const renderCountRef = useRef<number>(0);
+  const [remarkPlugins, setRemarkPlugins] = React.useState<any[]>([]);
+  const renderCountRef = React.useRef<number>(0);
 
-  useEffect(() => {
+  React.useEffect(() => {
     renderCountRef.current += 1;
 
     import('remark-gfm').then((plugin) => {

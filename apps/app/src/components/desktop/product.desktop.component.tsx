@@ -1,32 +1,30 @@
 import {
-  Typography,
   Button,
-  Tabs,
-  InputNumber,
   Input,
+  InputNumber,
+  Line,
   Modal,
+  Tabs,
 } from '@fuoco.appdev/core-ui';
-import { Line } from '@fuoco.appdev/core-ui';
-import { useObservable } from '@ngneat/use-observable';
-import styles from '../product.module.scss';
-import ProductController from '../../controllers/product.controller';
-import { useParams } from 'react-router-dom';
+import { ProductTag } from '@medusajs/medusa';
 import { useTranslation } from 'react-i18next';
-import { ProductTag, ProductType } from '@medusajs/medusa';
+import ProductController from '../../controllers/product.controller';
+import styles from '../product.module.scss';
 // @ts-ignore
+import loadable from '@loadable/component';
+import { StockLocation } from '@medusajs/stock-location/dist/models';
 import { formatAmount } from 'medusa-react';
-import ExploreController from '../../controllers/explore.controller';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import Skeleton from 'react-loading-skeleton';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import ExploreController from '../../controllers/explore.controller';
+import { ProductTabType } from '../../models/product.model';
+import { MedusaProductTypeNames } from '../../types/medusa.type';
 import { ProductResponsiveProps } from '../product.component';
 import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
-import loadable from '@loadable/component';
-import { MedusaProductTypeNames } from '../../types/medusa.type';
-import { ProductTabType } from 'src/models/product.model';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import { cloneElement } from 'react';
-import { StockLocation } from '@medusajs/stock-location/dist/models';
 import StockLocationItemComponent from '../stock-location-item.component';
-import { createPortal } from 'react-dom';
+
 const ReactMarkdown = loadable(
   async () => {
     const reactMarkdown = await import('react-markdown');
@@ -64,7 +62,6 @@ export default function ProductDesktopComponent({
   setActiveDetails,
   setDescription,
   setQuantity,
-  setSelectedStockLocation,
   onAddToCart,
   onLikeChanged,
   formatNumberCompact,
@@ -364,7 +361,7 @@ export default function ProductDesktopComponent({
             <TransitionGroup
               component={null}
               childFactory={(child) =>
-                cloneElement(child, {
+                React.cloneElement(child, {
                   classNames: {
                     enter:
                       productProps.transitionKeyIndex <
@@ -1240,7 +1237,7 @@ export default function ProductDesktopComponent({
                         ].join(' ')}
                       >
                         {productProps.searchedStockLocations.map(
-                          (stockLocation: StockLocation, index: number) => {
+                          (stockLocation: StockLocation, _index: number) => {
                             return (
                               <StockLocationItemComponent
                                 key={stockLocation.id}
@@ -1297,7 +1294,7 @@ export default function ProductDesktopComponent({
           </div>
         </div>
       </div>
-      {createPortal(
+      {ReactDOM.createPortal(
         <>
           <Modal
             classNames={{

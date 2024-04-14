@@ -1,21 +1,9 @@
-import styles from '../order-item.module.scss';
-import { useEffect, useState } from 'react';
-import { ProductOptions } from '../../models/product.model';
-import { LineItem } from '@medusajs/medusa';
 import { useTranslation } from 'react-i18next';
-import { Button, Line, Modal } from '@fuoco.appdev/core-ui';
-import CartController from '../../controllers/cart.controller';
+import styles from '../order-item.module.scss';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
-import StoreController from '../../controllers/store.controller';
-import { useObservable } from '@ngneat/use-observable';
 import Ripples from 'react-ripples';
-import { useNavigate } from 'react-router-dom';
-import { RoutePathsType } from '../../route-paths';
-import {
-  OrderItemProps,
-  OrderItemResponsiveProps,
-} from '../order-item.component';
+import { OrderItemResponsiveProps } from '../order-item.component';
 import { ResponsiveMobile } from '../responsive.component';
 
 export default function OrderItemMobileComponent({
@@ -25,7 +13,6 @@ export default function OrderItemMobileComponent({
   onClick,
 }: OrderItemResponsiveProps): JSX.Element {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   return (
     <ResponsiveMobile>

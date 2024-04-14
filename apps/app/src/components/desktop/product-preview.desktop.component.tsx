@@ -1,30 +1,11 @@
-import {
-  Key,
-  LegacyRef,
-  MutableRefObject,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  lazy,
-} from 'react';
+import { Button, Card, Line } from '@fuoco.appdev/core-ui';
+import React from 'react';
 import styles from '../product-preview.module.scss';
-import { MoneyAmount, Product, LineItem } from '@medusajs/medusa';
-import { Button, Card, Line, Solid } from '@fuoco.appdev/core-ui';
-import { animated, useSpring } from 'react-spring';
-import i18n from '../../i18n';
-import ProductController from '../../controllers/product.controller';
-import StoreController from '../../controllers/store.controller';
-import { useObservable } from '@ngneat/use-observable';
-import WindowController from '../../controllers/window.controller';
-import { useTranslation } from 'react-i18next';
-import CartController from '../../controllers/cart.controller';
 // @ts-ignore
-import { formatAmount } from 'medusa-react';
-import { ProductPreviewResponsiveProps } from '../product-preview.component';
-import { ResponsiveDesktop } from '../responsive.component';
 import Skeleton from 'react-loading-skeleton';
 import { MedusaProductTypeNames } from '../../types/medusa.type';
+import { ProductPreviewResponsiveProps } from '../product-preview.component';
+import { ResponsiveDesktop } from '../responsive.component';
 
 export default function ProductPreviewDesktopComponent({
   thumbnail,
@@ -49,7 +30,7 @@ export default function ProductPreviewDesktopComponent({
   formatNumberCompact,
   formatDescription,
 }: ProductPreviewResponsiveProps): JSX.Element {
-  const ref = useRef<HTMLDivElement | null>(null);
+  const ref = React.useRef<HTMLDivElement | null>(null);
 
   return (
     <ResponsiveDesktop>

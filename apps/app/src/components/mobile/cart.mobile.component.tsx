@@ -1,33 +1,22 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import CartController from '../../controllers/cart.controller';
-import styles from '../cart.module.scss';
-import {
-  Button,
-  Dropdown,
-  Input,
-  Line,
-  Solid,
-  Tabs,
-} from '@fuoco.appdev/core-ui';
-import { RoutePathsType, useQuery } from '../../route-paths';
+import { Button, Dropdown, Input, Line, Solid } from '@fuoco.appdev/core-ui';
+import { Discount, LineItem } from '@medusajs/medusa';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useObservable } from '@ngneat/use-observable';
-import { LineItem, ProductVariant, Discount, Cart } from '@medusajs/medusa';
+import { useNavigate } from 'react-router-dom';
+import CartController from '../../controllers/cart.controller';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import CartItemComponent from '../cart-item.component';
-import StoreController from '../../controllers/store.controller';
+import styles from '../cart.module.scss';
 // @ts-ignore
-import { formatAmount } from 'medusa-react';
-import WindowController from '../../controllers/window.controller';
-import { CartResponsiveProps } from '../cart.component';
-import ExploreController from '../../controllers/explore.controller';
-import { Store } from '@ngneat/elf';
-import { ResponsiveMobile } from '../responsive.component';
-import CartVariantItemComponent from '../cart-variant-item.component';
-import { MedusaProductTypeNames } from '../../types/medusa.type';
-import { createPortal } from 'react-dom';
-import StockLocationCartItemComponent from '../stock-location-cart-item.component';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
+import { formatAmount } from 'medusa-react';
+import ReactDOM from 'react-dom';
+import ExploreController from '../../controllers/explore.controller';
+import { MedusaProductTypeNames } from '../../types/medusa.type';
+import CartVariantItemComponent from '../cart-variant-item.component';
+import { CartResponsiveProps } from '../cart.component';
+import { ResponsiveMobile } from '../responsive.component';
+import StockLocationCartItemComponent from '../stock-location-cart-item.component';
 
 export default function CartMobileComponent({
   cartProps,
@@ -46,8 +35,8 @@ export default function CartMobileComponent({
 }: CartResponsiveProps): JSX.Element {
   const navigate = useNavigate();
   const query = useQuery();
-  const { t, i18n } = useTranslation();
-  const [openCheckout, setOpenCheckout] = useState<boolean>(true);
+  const { t } = useTranslation();
+  const [openCheckout, setOpenCheckout] = React.useState<boolean>(true);
 
   return (
     <ResponsiveMobile>
@@ -131,7 +120,7 @@ export default function CartMobileComponent({
             ].join(' ')}
           >
             {cartProps.stockLocations.map(
-              (stockLocation: StockLocation, index: number) => {
+              (stockLocation: StockLocation, _index: number) => {
                 const cartId = cartLocalProps.cartIds[stockLocation.id] ?? '';
                 const cart = cartProps.carts[cartId];
                 return (
@@ -156,7 +145,7 @@ export default function CartMobileComponent({
           </div>
         </div>
       </div>
-      {createPortal(
+      {ReactDOM.createPortal(
         <>
           <Dropdown
             classNames={{

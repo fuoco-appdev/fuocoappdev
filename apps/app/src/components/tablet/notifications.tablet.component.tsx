@@ -1,19 +1,12 @@
-import { useNavigate } from 'react-router-dom';
-import NotificationsController from '../../controllers/notifications.controller';
-import { useObservable } from '@ngneat/use-observable';
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from '../responsive.component';
-import { NotificationsResponsiveProps } from '../notifications.component';
-import { createRef, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
-import styles from '../notifications.module.scss';
 import { Line } from '@fuoco.appdev/core-ui';
-import { AccountNotificationResponse } from '../../protobuf/account-notification_pb';
 import moment from 'moment';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { AccountNotificationResponse } from '../../protobuf/account-notification_pb';
 import NotificationItemComponent from '../notification-item.component';
+import { NotificationsResponsiveProps } from '../notifications.component';
+import styles from '../notifications.module.scss';
+import { ResponsiveTablet } from '../responsive.component';
 
 export default function NotificationsTabletComponent({
   notificationsProps,
@@ -21,8 +14,8 @@ export default function NotificationsTabletComponent({
   onScroll,
   onLoad,
 }: NotificationsResponsiveProps): JSX.Element {
-  const scrollContainerRef = createRef<HTMLDivElement>();
-  const topBarRef = useRef<HTMLDivElement | null>(null);
+  const scrollContainerRef = React.createRef<HTMLDivElement>();
+  const topBarRef = React.useRef<HTMLDivElement | null>(null);
   const { t, i18n } = useTranslation();
   let prevPreviewScrollTop = 0;
   let yPosition = 0;
@@ -80,7 +73,7 @@ export default function NotificationsTabletComponent({
           onLoad={onLoad}
         >
           {notificationsProps.accountNotifications.map(
-            (notification: AccountNotificationResponse, index: number) => {
+            (notification: AccountNotificationResponse, _index: number) => {
               const fromNowCurrent = moment(notification?.createdAt)
                 .locale(i18n.language)
                 .startOf('day')

@@ -1,9 +1,4 @@
-import { Service } from "../service";
-import { BehaviorSubject, Observable } from "rxjs";
-import SupabaseService from "./supabase.service";
-import axios, { AxiosError } from "axios";
-import WindowController from "../controllers/window.controller";
-import { Session, User } from "@supabase/supabase-js";
+import axios from "axios";
 import {
   AccountProductLikesMetadataRequest,
   ProductLikeCountMetadataResponse,
@@ -12,6 +7,8 @@ import {
   ProductLikesMetadataResponse,
   ProductLikesMetadatasResponse,
 } from "../protobuf/product-like_pb";
+import { Service } from "../service";
+import SupabaseService from "./supabase.service";
 
 class ProductLikesService extends Service {
   constructor() {

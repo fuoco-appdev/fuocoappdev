@@ -1,27 +1,12 @@
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
-import { Order, LineItem, Cart } from '@medusajs/medusa';
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { lazy } from '@loadable/component';
-import { OrderItemSuspenseDesktopComponent } from './desktop/suspense/order-item.suspense.desktop.component';
-import React from 'react';
-import BucketService from '../services/bucket.service';
-import { OrderItemSuspenseMobileComponent } from './mobile/suspense/order-item.suspense.mobile.component';
-import { OrderItemSuspenseTabletComponent } from './tablet/suspense/order-item.suspense.tablet.component';
+import { Cart } from '@medusajs/medusa';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
-import { StockLocationItemSuspenseDesktopComponent } from './desktop/suspense/stock-location-item.suspense.desktop.component';
-import { DeepLTranslationsResponse } from '../protobuf/deepl_pb';
+import React from 'react';
 import { StorageFolderType } from '../protobuf/common_pb';
-import { StockLocationItemSuspenseMobileComponent } from './mobile/suspense/stock-location-item.suspense.mobile.component';
-import { StockLocationItemSuspenseTabletComponent } from './tablet/suspense/stock-location-item.suspense.tablet.component';
-import DeeplService from '../services/deepl.service';
+import BucketService from '../services/bucket.service';
 import { StockLocationCartItemSuspenseDesktopComponent } from './desktop/suspense/stock-location-cart-item.suspense.desktop.component';
-import { StockLocationCartItemSuspenseTabletComponent } from './tablet/suspense/stock-location-cart-item.suspense.tablet.component';
 import { StockLocationCartItemSuspenseMobileComponent } from './mobile/suspense/stock-location-cart-item.suspense.mobile.component';
+import { StockLocationCartItemSuspenseTabletComponent } from './tablet/suspense/stock-location-cart-item.suspense.tablet.component';
 
 const StockLocationCartItemDesktopComponent = lazy(
   () => import('./desktop/stock-location-cart-item.desktop.component')
@@ -52,11 +37,12 @@ export default function StockLocationCartItemComponent({
   selected = false,
   onClick,
 }: StockLocationCartItemProps): JSX.Element {
-  const { t, i18n } = useTranslation();
-  const [cartCount, setCartCount] = useState<number | undefined>(undefined);
-  const [avatar, setAvatar] = useState<string | undefined>(undefined);
+  const [cartCount, setCartCount] = React.useState<number | undefined>(
+    undefined
+  );
+  const [avatar, setAvatar] = React.useState<string | undefined>(undefined);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!Object.keys(stockLocation?.metadata ?? {}).includes('avatar')) {
       return;
     }
@@ -73,7 +59,7 @@ export default function StockLocationCartItemComponent({
     }
   }, [stockLocation]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     setCartCount(cart?.items.length);
   }, [cart]);
 

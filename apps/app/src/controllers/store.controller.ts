@@ -1,35 +1,29 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Index } from "meilisearch";
-import { Controller } from "../controller";
-import { ProductTabs, StoreModel } from "../models/store.model";
-import MeiliSearchService from "../services/meilisearch.service";
-import { filter, firstValueFrom, Subscription, take } from "rxjs";
-import ExploreController from "./explore.controller";
+import {
+  CustomerGroup,
+  Product,
+  Region
+} from "@medusajs/medusa";
+import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
 import { select } from "@ngneat/elf";
+import { Index } from "meilisearch";
+import { Subscription, filter, firstValueFrom, take } from "rxjs";
+import { Controller } from "../controller";
+import CartController from "../controllers/cart.controller";
+import { AccountState } from "../models/account.model";
 import {
   InventoryLocation,
   InventoryLocationType,
 } from "../models/explore.model";
-import MedusaService from "../services/medusa.service";
-import CartController from "../controllers/cart.controller";
-import {
-  CustomerGroup,
-  Product,
-  ProductOption,
-  ProductOptionValue,
-  Region,
-  SalesChannel,
-} from "@medusajs/medusa";
-import { ProductOptions } from "../models/product.model";
-import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
-import { AuthChangeEvent, Session } from "@supabase/supabase-js";
-import SupabaseService from "../services/supabase.service";
-import { AccountState } from "../models/account.model";
-import AccountController from "./account.controller";
-import ProductLikesService from "../services/product-likes.service";
+import { ProductTabs, StoreModel } from "../models/store.model";
 import { AccountResponse } from "../protobuf/account_pb";
 import { ProductLikesMetadataResponse } from "../protobuf/product-like_pb";
+import MedusaService from "../services/medusa.service";
+import MeiliSearchService from "../services/meilisearch.service";
+import ProductLikesService from "../services/product-likes.service";
 import { MedusaProductTypeNames } from "../types/medusa.type";
+import AccountController from "./account.controller";
+import ExploreController from "./explore.controller";
 
 class StoreController extends Controller {
   private readonly _model: StoreModel;
@@ -60,7 +54,7 @@ class StoreController extends Controller {
     this.initializeAsync(renderCount);
   }
 
-  public override load(renderCount: number): void {
+  public override load(_renderCount: number): void {
     this._accountSubscription?.unsubscribe();
     this._accountSubscription = AccountController.model.store
       .pipe(select((model: AccountState) => model.account))
@@ -90,12 +84,12 @@ class StoreController extends Controller {
     this.loadProductsAsync();
   }
 
-  public override disposeInitialization(renderCount: number): void {
+  public override disposeInitialization(_renderCount: number): void {
     this._medusaAccessTokenSubscription?.unsubscribe();
     this._selectedInventoryLocationSubscription?.unsubscribe();
   }
 
-  public override disposeLoad(renderCount: number): void {
+  public override disposeLoad(_renderCount: number): void {
     clearTimeout(this._timerId as number | undefined);
     this._customerGroupSubscription?.unsubscribe();
     this._accountSubscription?.unsubscribe();
@@ -455,7 +449,7 @@ class StoreController extends Controller {
     this._model.productLikesMetadata = productLikesMetadata;
   }
 
-  private async initializeAsync(renderCount: number): Promise<void> {
+  private async initializeAsync(_renderCount: number): Promise<void> {
     await this.requestProductTypesAsync();
     await this.requestRegionsAsync();
 
@@ -546,7 +540,7 @@ class StoreController extends Controller {
   }
 
   private getSorting(inventoryType: InventoryLocationType): string | undefined {
-    let sortValue = undefined;
+    let sortValue: string | undefined = undefined;
     if (inventoryType === InventoryLocationType.Restaurant) {
       sortValue = `metadata.order_index:asc`;
     }

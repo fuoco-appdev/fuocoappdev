@@ -1,9 +1,6 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import * as React from 'react';
-import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
+import Skeleton from 'react-loading-skeleton';
 import styles from '../../checkout.module.scss';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { ResponsiveSuspenseDesktop } from 'src/components/responsive.component';
+import { ResponsiveSuspenseDesktop } from '../../responsive.component';
 import { AddressFormSuspenseDesktopComponent } from './address-form.suspense.desktop.component';
 
 export function CheckoutSuspenseDesktopComponent(): JSX.Element {

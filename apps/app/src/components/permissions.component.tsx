@@ -1,28 +1,14 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { RoutePathsType, useQuery } from '../route-paths';
-import { useTranslation } from 'react-i18next';
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
-import { MapRef } from 'react-map-gl';
-import {
-  ExploreLocalState,
-  ExploreState,
-  InventoryLocation,
-} from '../models/explore.model';
-import { Helmet } from 'react-helmet';
-import { useObservable } from '@ngneat/use-observable';
-import ExploreController from '../controllers/explore.controller';
-import { Store } from '@ngneat/elf';
-import React from 'react';
 import { lazy } from '@loadable/component';
-import { PermissionsState } from '../models/permissions.model';
+import { useObservable } from '@ngneat/use-observable';
+import React from 'react';
+import { Helmet } from 'react-helmet';
+import { useNavigate } from 'react-router-dom';
+import ExploreController from '../controllers/explore.controller';
 import PermissionsController from '../controllers/permissions.controller';
-import { WindowState } from '../models/window.model';
 import WindowController from '../controllers/window.controller';
+import { PermissionsState } from '../models/permissions.model';
+import { WindowState } from '../models/window.model';
+import { RoutePathsType, useQuery } from '../route-paths';
 
 const PermissionsDesktopComponent = lazy(
   () => import('./desktop/permissions.desktop.component')
@@ -44,7 +30,7 @@ export interface PermissionsResponsiveProps {
 export default function PermissionsComponent(): JSX.Element {
   const [permissionsProps] = useObservable(PermissionsController.model.store);
   const [windowProps] = useObservable(WindowController.model.store);
-  const renderCountRef = useRef<number>(0);
+  const renderCountRef = React.useRef<number>(0);
   const navigate = useNavigate();
   const query = useQuery();
 
@@ -80,7 +66,7 @@ export default function PermissionsComponent(): JSX.Element {
     }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     renderCountRef.current += 1;
 
     PermissionsController.load(renderCountRef.current);
@@ -89,7 +75,8 @@ export default function PermissionsComponent(): JSX.Element {
       PermissionsController.disposeLoad(renderCountRef.current);
     };
   }, []);
-  useLayoutEffect(() => {
+
+  React.useLayoutEffect(() => {
     return () => {
       updateDefaultInventoryLocationAsync();
     };

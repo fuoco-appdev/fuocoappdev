@@ -1,19 +1,16 @@
-import { Helmet } from 'react-helmet';
-import { useObservable } from '@ngneat/use-observable';
-import WindowController from '../controllers/window.controller';
-import { WindowState } from '../models/window.model';
-import { AuthenticatedComponent } from './authenticated.component';
 import { lazy } from '@loadable/component';
-import React, { useEffect } from 'react';
+import { useObservable } from '@ngneat/use-observable';
+import React from 'react';
+import { Helmet } from 'react-helmet';
+import { useNavigate } from 'react-router-dom';
 import AccountPublicController from '../controllers/account-public.controller';
-import { AccountState } from '../models/account.model';
+import AccountController from '../controllers/account.controller';
 import { AccountPublicState } from '../models/account-public.model';
+import { AccountState } from '../models/account.model';
+import { RoutePathsType, useQuery } from '../route-paths';
 import { AccountPublicFollowersSuspenseDesktopComponent } from './desktop/suspense/account-public-followers.suspense.desktop.component';
 import { AccountPublicFollowersSuspenseMobileComponent } from './mobile/suspense/account-public-followers.suspense.mobile.component';
 import { AccountPublicFollowersSuspenseTabletComponent } from './tablet/suspense/account-public-followers.suspense.tablet.component';
-import AccountController from '../controllers/account.controller';
-import { RoutePathsType, useQuery } from '../route-paths';
-import { useNavigate } from 'react-router-dom';
 
 const AccountPublicFollowersDesktopComponent = lazy(
   () => import('./desktop/account-public-followers.desktop.component')
@@ -53,7 +50,7 @@ export default function AccountPublicFollowersComponent(): JSX.Element {
     }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     AccountPublicController.loadFollowersAsync();
   }, []);
 

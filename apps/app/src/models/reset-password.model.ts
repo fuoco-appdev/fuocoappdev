@@ -1,6 +1,6 @@
 import { createStore, withProps } from '@ngneat/elf';
-import { Model } from '../model';
 import { SupabaseClient } from '@supabase/supabase-js';
+import { Model } from '../model';
 
 export interface ResetPasswordState {
   supabaseClient: SupabaseClient | undefined;

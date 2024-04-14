@@ -1,41 +1,36 @@
-import styles from '../checkout.module.scss';
 import {
   Button,
   Checkbox,
-  Line,
-  Radio,
-  Input,
-  Solid,
-  Dropdown,
   FormLayout,
+  Input,
+  Line,
   Modal,
+  Radio,
+  Solid,
 } from '@fuoco.appdev/core-ui';
+import { Customer, Discount, GiftCard } from '@medusajs/medusa';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRef } from 'react';
-import { useObservable } from '@ngneat/use-observable';
-import CheckoutController from '../../controllers/checkout.controller';
-import AddressFormComponent from '../address-form.component';
-import StoreController from '../../controllers/store.controller';
-import { ProviderType } from '../../models/checkout.model';
 import CartController from '../../controllers/cart.controller';
-import { Discount, GiftCard, Customer } from '@medusajs/medusa';
+import CheckoutController from '../../controllers/checkout.controller';
+import { ProviderType } from '../../models/checkout.model';
+import AddressFormComponent from '../address-form.component';
+import styles from '../checkout.module.scss';
 // @ts-ignore
-import { formatAmount } from 'medusa-react';
-import WindowController from '../../controllers/window.controller';
-import AccountController from '../../controllers/account.controller';
 import {
-  Elements,
   CardCvcElement,
   CardExpiryElement,
   CardNumberElement,
+  Elements,
 } from '@stripe/react-stripe-js';
-import StripePayButtonComponent from '../stripe-pay-button.component';
-import { CheckoutResponsiveProps } from '../checkout.component';
-import { RoutePathsType, useQuery } from '../../route-paths';
-import { useNavigate } from 'react-router-dom';
-import { ResponsiveDesktop } from '../responsive.component';
 import { loadStripe } from '@stripe/stripe-js';
-import { createPortal } from 'react-dom';
+import { formatAmount } from 'medusa-react';
+import ReactDOM from 'react-dom';
+import { useNavigate } from 'react-router-dom';
+import { RoutePathsType, useQuery } from '../../route-paths';
+import { CheckoutResponsiveProps } from '../checkout.component';
+import { ResponsiveDesktop } from '../responsive.component';
+import StripePayButtonComponent from '../stripe-pay-button.component';
 
 export default function CheckoutDesktopComponent({
   checkoutProps,
@@ -58,7 +53,7 @@ export default function CheckoutDesktopComponent({
   onAddAddressAsync,
 }: CheckoutResponsiveProps): JSX.Element {
   const stripePromise = loadStripe(process.env['STRIPE_PUBLISHABLE_KEY'] ?? '');
-  const rootRef = useRef<HTMLDivElement | null>(null);
+  const rootRef = React.useRef<HTMLDivElement | null>(null);
   const { t } = useTranslation();
   const navigate = useNavigate();
   const query = useQuery();
@@ -176,15 +171,15 @@ export default function CheckoutDesktopComponent({
                       CheckoutController.updateShippingAddress({
                         city: event.target.value,
                       }),
-                    country: (id, value) =>
+                    country: (id, _value) =>
                       CheckoutController.updateShippingAddress({
                         countryCode: id,
                       }),
-                    region: (id, value) =>
+                    region: (_id, value) =>
                       CheckoutController.updateShippingAddress({
                         region: value,
                       }),
-                    phoneNumber: (value, event, formattedValue) =>
+                    phoneNumber: (value, _event, _formattedValue) =>
                       CheckoutController.updateShippingAddress({
                         phoneNumber: value,
                       }),
@@ -356,15 +351,15 @@ export default function CheckoutDesktopComponent({
                           CheckoutController.updateBillingAddress({
                             city: event.target.value,
                           }),
-                        country: (id, value) =>
+                        country: (id, _value) =>
                           CheckoutController.updateBillingAddress({
                             countryCode: id,
                           }),
-                        region: (id, value) =>
+                        region: (_id, value) =>
                           CheckoutController.updateBillingAddress({
                             region: value,
                           }),
-                        phoneNumber: (value, event, formattedValue) =>
+                        phoneNumber: (value, _event, _formattedValue) =>
                           CheckoutController.updateBillingAddress({
                             phoneNumber: value,
                           }),
@@ -985,7 +980,7 @@ export default function CheckoutDesktopComponent({
             </div>
           </div>
         </div>
-        {createPortal(
+        {ReactDOM.createPortal(
           <>
             <Modal
               classNames={{
@@ -1063,15 +1058,15 @@ export default function CheckoutDesktopComponent({
                       CheckoutController.updateAddShippingAddress({
                         city: event.target.value,
                       }),
-                    country: (id, value) =>
+                    country: (id, _value) =>
                       CheckoutController.updateAddShippingAddress({
                         countryCode: id,
                       }),
-                    region: (id, value) =>
+                    region: (_id, value) =>
                       CheckoutController.updateAddShippingAddress({
                         region: value,
                       }),
-                    phoneNumber: (value, event, formattedValue) =>
+                    phoneNumber: (value, _event, _formattedValue) =>
                       CheckoutController.updateAddShippingAddress({
                         phoneNumber: value,
                       }),

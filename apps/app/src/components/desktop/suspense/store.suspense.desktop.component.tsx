@@ -1,10 +1,7 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import * as React from 'react';
-import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
+import Skeleton from 'react-loading-skeleton';
+import { ResponsiveSuspenseDesktop } from '../../responsive.component';
 import styles from '../../store.module.scss';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { ProductPreviewSuspenseDesktopComponent } from './product-preview.suspense.desktop.component';
-import { ResponsiveSuspenseDesktop } from 'src/components/responsive.component';
 
 export function StoreSuspenseDesktopComponent(): JSX.Element {
   return (

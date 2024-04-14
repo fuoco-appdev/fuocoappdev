@@ -1,12 +1,6 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import * as React from 'react';
-import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
+import Skeleton from 'react-loading-skeleton';
 import styles from '../../product-preview.module.scss';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import {
-  ResponsiveSuspenseMobile,
-  ResponsiveSuspenseTablet,
-} from 'src/components/responsive.component';
+import { ResponsiveSuspenseTablet } from '../../responsive.component';
 
 export function ProductPreviewSuspenseTabletComponent(): JSX.Element {
   return (

@@ -1,23 +1,13 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import NotificationsController from '../controllers/notifications.controller';
-import { Alert } from '@fuoco.appdev/core-ui';
-import { RoutePathsType } from '../route-paths';
-import { useTranslation } from 'react-i18next';
-import SupabaseService from '../services/supabase.service';
-import { useObservable } from '@ngneat/use-observable';
-import { useSpring } from 'react-spring';
-import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
-import LoadingComponent from './loading.component';
-import { Store } from '@ngneat/elf';
-import { Helmet } from 'react-helmet';
-import { AuthenticatedComponent } from './authenticated.component';
 import { lazy } from '@loadable/component';
+import { useObservable } from '@ngneat/use-observable';
 import React from 'react';
+import { Helmet } from 'react-helmet';
+import NotificationsController from '../controllers/notifications.controller';
+import { NotificationsState } from '../models/notifications.model';
+import { AuthenticatedComponent } from './authenticated.component';
 import { NotificationsSuspenseDesktopComponent } from './desktop/suspense/notifications.suspense.desktop.component';
 import { NotificationsSuspenseMobileComponent } from './mobile/suspense/notifications.suspense.mobile.component';
 import { NotificationsSuspenseTabletComponent } from './tablet/suspense/notifications.suspense.tablet.component';
-import { NotificationsState } from '../models/notifications.model';
 
 const NotificationsDesktopComponent = lazy(
   () => import('./desktop/notifications.desktop.component')
@@ -37,11 +27,11 @@ export interface NotificationsResponsiveProps {
 }
 
 export default function NotificationsComponent(): JSX.Element {
-  const renderCountRef = useRef<number>(0);
+  const renderCountRef = React.useRef<number>(0);
   const [notificationsProps] = useObservable(
     NotificationsController.model.store
   );
-  const fromNowRef = useRef<string | null>(null);
+  const fromNowRef = React.useRef<string | null>(null);
 
   const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const scrollTop = e.currentTarget?.scrollTop ?? 0;
@@ -79,7 +69,7 @@ export default function NotificationsComponent(): JSX.Element {
     return suspenceComponent;
   }
 
-  useEffect(() => {
+  React.useEffect(() => {
     renderCountRef.current += 1;
     NotificationsController.load(renderCountRef.current);
 

@@ -1,13 +1,13 @@
-import { CSSProperties, useEffect } from 'react';
-import { useMediaQuery } from 'react-responsive';
-import styles from './responsive.module.scss';
+import React from 'react';
 import {
+  isAndroid,
   isBrowser,
+  isIOS,
   isMobile,
   isTablet,
-  isIOS,
-  isAndroid,
 } from 'react-device-detect';
+import { useMediaQuery } from 'react-responsive';
+import styles from './responsive.module.scss';
 
 export function useIsDesktop(): boolean {
   const query = useMediaQuery({
@@ -35,7 +35,7 @@ export function useDesktopEffect(
   deps?: React.DependencyList | undefined
 ) {
   const isDesktop = useIsDesktop();
-  useEffect(() => {
+  React.useEffect(() => {
     if (isDesktop) {
       effect();
     }
@@ -47,7 +47,7 @@ export function useTabletEffect(
   deps?: React.DependencyList | undefined
 ) {
   const isTablet = useIsTablet();
-  useEffect(() => {
+  React.useEffect(() => {
     if (isTablet) {
       effect();
     }
@@ -59,7 +59,8 @@ export function useMobileEffect(
   deps?: React.DependencyList | undefined
 ) {
   const isMobile = useIsMobile();
-  useEffect(() => {
+
+  React.useEffect(() => {
     if (isMobile) {
       effect();
     }
@@ -69,7 +70,7 @@ export function useMobileEffect(
 export interface ResponsiveProps {
   children: any;
   inheritStyles?: boolean;
-  style?: CSSProperties;
+  style?: React.CSSProperties;
 }
 
 export function ResponsiveSuspenseDesktop({

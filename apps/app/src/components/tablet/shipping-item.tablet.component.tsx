@@ -1,20 +1,13 @@
-import { LineItem, ProductOptionValue } from '@medusajs/medusa';
-import styles from '../shipping-item.module.scss';
-import { useEffect, useState } from 'react';
-import { ProductOptions } from '../../models/product.model';
 import { useTranslation } from 'react-i18next';
-import { Button, Line, Modal } from '@fuoco.appdev/core-ui';
-import CartController from '../../controllers/cart.controller';
+import styles from '../shipping-item.module.scss';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
-import { useObservable } from '@ngneat/use-observable';
+import { ResponsiveTablet } from '../responsive.component';
 import { ShippingItemResponsiveProps } from '../shipping-item.component';
-import { ResponsiveDesktop, ResponsiveTablet } from '../responsive.component';
 
 export default function ShippingItemTabletComponent({
   storeProps,
   item,
-  vintage,
   hasReducedPrice,
   discountPercentage,
 }: ShippingItemResponsiveProps): JSX.Element {
