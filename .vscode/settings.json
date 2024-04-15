@@ -3,11 +3,8 @@
     "deno.lint": true,
     "editor.formatOnSave": true,
     "editor.showUnused": true,
-    "workbench.colorCustomizations": {
-        "editorUnnecessaryCode.border": "#FF0000"
-    },
     "editor.codeActionsOnSave": {
-    "source.organizeImports": "always"
+        "source.organizeImports": "always"
     },
     "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
     "deno.enablePaths": [

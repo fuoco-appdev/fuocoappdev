@@ -292,7 +292,10 @@ export default function ExploreMobileComponent({
             zoom={exploreProps.zoom ?? 15}
             mapStyle={ConfigService.mapbox.style_url}
             onMove={(e) => ExploreController.onMapMove(e.viewState)}
-            onLoad={(e) => setMapStyleLoaded(e.target ? true : false)}
+            onLoad={(e) => {
+              setMapStyleLoaded(e.target ? true : false);
+              e.target.resize();
+            }}
           >
             {exploreProps.inventoryLocations?.map(
               (point: InventoryLocation, index: number) => (

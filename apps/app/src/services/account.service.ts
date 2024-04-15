@@ -1,6 +1,6 @@
-import { Session } from "@supabase/supabase-js";
-import axios from "axios";
-import { BehaviorSubject, Observable } from "rxjs";
+import { Session } from '@supabase/supabase-js';
+import axios from 'axios';
+import { BehaviorSubject, Observable } from 'rxjs';
 import {
   AccountExistsRequest,
   AccountExistsResponse,
@@ -9,32 +9,23 @@ import {
   AccountResponse,
   AccountsRequest,
   AccountsResponse,
-} from "../protobuf/account_pb";
-import { Service } from "../service";
-import SupabaseService from "./supabase.service";
+} from '../protobuf/account_pb';
+import { Service } from '../service';
+import SupabaseService from './supabase.service';
 
 class AccountService extends Service {
-  private readonly _activeAccountBehaviorSubject: BehaviorSubject<
-    AccountResponse | null
-  >;
-  private readonly _accountsBehaviorSubject: BehaviorSubject<
-    AccountResponse[]
-  >;
+  private readonly _activeAccountBehaviorSubject: BehaviorSubject<AccountResponse | null>;
+  private readonly _accountsBehaviorSubject: BehaviorSubject<AccountResponse[]>;
 
   constructor() {
     super();
 
-    this._activeAccountBehaviorSubject = new BehaviorSubject<
-      AccountResponse | null
-    >(null);
-    this._accountsBehaviorSubject = new BehaviorSubject<AccountResponse[]>(
-      [],
-    );
+    this._activeAccountBehaviorSubject =
+      new BehaviorSubject<AccountResponse | null>(null);
+    this._accountsBehaviorSubject = new BehaviorSubject<AccountResponse[]>([]);
   }
 
-  public get activeAccountObservable(): Observable<
-    AccountResponse | null
-  > {
+  public get activeAccountObservable(): Observable<AccountResponse | null> {
     return this._activeAccountBehaviorSubject.asObservable();
   }
 
@@ -50,9 +41,7 @@ class AccountService extends Service {
     this._activeAccountBehaviorSubject.next(null);
   }
 
-  public async requestActiveAsync(
-    session: Session,
-  ): Promise<AccountResponse> {
+  public async requestActiveAsync(session: Session): Promise<AccountResponse> {
     const account = await this.requestAsync(session, session.user.id);
     this._activeAccountBehaviorSubject.next(account);
     return account;
@@ -60,17 +49,17 @@ class AccountService extends Service {
 
   public async requestAsync(
     session: Session,
-    supabaseId: string,
+    supabaseId: string
   ): Promise<AccountResponse> {
     const response = await axios({
-      method: "post",
+      method: 'post',
       url: `${this.endpointUrl}/account/${supabaseId}`,
       headers: {
         ...this.headers,
-        "Session-Token": `${session?.access_token}`,
+        'Session-Token': `${session?.access_token}`,
       },
-      data: "",
-      responseType: "arraybuffer",
+      data: '',
+      responseType: 'arraybuffer',
     });
 
     const arrayBuffer = new Uint8Array(response.data);
@@ -81,21 +70,21 @@ class AccountService extends Service {
   }
 
   public async requestAccountsAsync(
-    accountIds: string[],
+    accountIds: string[]
   ): Promise<AccountsResponse> {
     const session = await SupabaseService.requestSessionAsync();
     const request = new AccountsRequest({
       accountIds: accountIds,
     });
     const response = await axios({
-      method: "post",
+      method: 'post',
       url: `${this.endpointUrl}/account/accounts`,
       headers: {
         ...this.headers,
-        "Session-Token": `${session?.access_token}`,
+        'Session-Token': `${session?.access_token}`,
       },
       data: request.toBinary(),
-      responseType: "arraybuffer",
+      responseType: 'arraybuffer',
     });
 
     const arrayBuffer = new Uint8Array(response.data);
@@ -105,77 +94,77 @@ class AccountService extends Service {
     return accountsResponse;
   }
 
-  public async requestCreateAsync(
-    session: Session,
-  ): Promise<AccountResponse> {
+  public async requestCreateAsync(session: Session): Promise<AccountResponse> {
     const account = new AccountRequest({
       supabaseId: session.user.id,
     });
     const response = await axios({
-      method: "post",
+      method: 'post',
       url: `${this.endpointUrl}/account/create`,
       headers: {
         ...this.headers,
-        "Session-Token": `${session?.access_token}`,
+        'Session-Token': `${session?.access_token}`,
       },
       data: account.toBinary(),
-      responseType: "arraybuffer",
+      responseType: 'arraybuffer',
     });
 
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
     const accountResponse = AccountResponse.fromBinary(arrayBuffer);
-    this._activeAccountBehaviorSubject.next(accountResponse);
+    if (this.activeAccount?.toJsonString() !== accountResponse.toJsonString()) {
+      this._activeAccountBehaviorSubject.next(accountResponse);
+    }
 
     return accountResponse;
   }
 
   public async requestExistsAsync(
-    username: string,
+    username: string
   ): Promise<AccountExistsResponse> {
     const session = await SupabaseService.requestSessionAsync();
     const request = new AccountExistsRequest({
       username: username,
     });
     const response = await axios({
-      method: "post",
+      method: 'post',
       url: `${this.endpointUrl}/account/exists`,
       headers: {
         ...this.headers,
-        "Session-Token": `${session?.access_token}`,
+        'Session-Token': `${session?.access_token}`,
       },
       data: request.toBinary(),
-      responseType: "arraybuffer",
+      responseType: 'arraybuffer',
     });
 
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const accountExistsResponse = AccountExistsResponse.fromBinary(
-      arrayBuffer,
-    );
+    const accountExistsResponse = AccountExistsResponse.fromBinary(arrayBuffer);
     return accountExistsResponse;
   }
 
   public async requestUpdateActiveAsync(props: {
     customerId?: string;
     profileUrl?: string;
-    status?: "Incomplete" | "Complete";
+    status?: 'Incomplete' | 'Complete';
     languageCode?: string;
     username?: string;
     birthday?: string;
-    sex?: "male" | "female";
+    sex?: 'male' | 'female';
     interests?: string[];
     metadata?: string;
   }): Promise<AccountResponse> {
     const supabaseUser = await SupabaseService.requestUserAsync();
     if (!supabaseUser) {
-      throw new Error("No user");
+      throw new Error('No user');
     }
 
     const account = await this.requestUpdateAsync(supabaseUser.id, props);
-    this._activeAccountBehaviorSubject.next(account);
+    if (this.activeAccount?.toJsonString() !== account.toJsonString()) {
+      this._activeAccountBehaviorSubject.next(account);
+    }
     return account;
   }
 
@@ -184,14 +173,14 @@ class AccountService extends Service {
     props: {
       customerId?: string;
       profileUrl?: string;
-      status?: "Incomplete" | "Complete";
+      status?: 'Incomplete' | 'Complete';
       languageCode?: string;
       username?: string;
       birthday?: string;
-      sex?: "male" | "female";
+      sex?: 'male' | 'female';
       interests?: string[];
       metadata?: string;
-    },
+    }
   ): Promise<AccountResponse> {
     const session = await SupabaseService.requestSessionAsync();
     const user = new AccountRequest({
@@ -207,14 +196,14 @@ class AccountService extends Service {
     });
 
     const response = await axios({
-      method: "post",
+      method: 'post',
       url: `${this.endpointUrl}/account/update/${supabaseId}`,
       headers: {
         ...this.headers,
-        "Session-Token": `${session?.access_token}`,
+        'Session-Token': `${session?.access_token}`,
       },
       data: user.toBinary(),
-      responseType: "arraybuffer",
+      responseType: 'arraybuffer',
     });
 
     const arrayBuffer = new Uint8Array(response.data);
@@ -227,7 +216,7 @@ class AccountService extends Service {
   public async requestActiveDeleteAsync(): Promise<void> {
     const supabaseUser = await SupabaseService.requestUserAsync();
     if (!supabaseUser) {
-      throw new Error("No user");
+      throw new Error('No user');
     }
 
     await this.requestDeleteAsync(supabaseUser.id);
@@ -236,13 +225,13 @@ class AccountService extends Service {
   public async requestDeleteAsync(supabaseId: string): Promise<void> {
     const session = await SupabaseService.requestSessionAsync();
     const response = await axios({
-      method: "post",
+      method: 'post',
       url: `${this.endpointUrl}/account/delete/${supabaseId}`,
       headers: {
         ...this.headers,
-        "Session-Token": `${session?.access_token}`,
+        'Session-Token': `${session?.access_token}`,
       },
-      data: "",
+      data: '',
     });
 
     if (response.status > 400) {
@@ -264,14 +253,14 @@ class AccountService extends Service {
       limit: props.limit,
     });
     const response = await axios({
-      method: "post",
+      method: 'post',
       url: `${this.endpointUrl}/account/search`,
       headers: {
         ...this.headers,
-        "Session-Token": `${session?.access_token}`,
+        'Session-Token': `${session?.access_token}`,
       },
       data: request.toBinary(),
-      responseType: "arraybuffer",
+      responseType: 'arraybuffer',
     });
 
     const arrayBuffer = new Uint8Array(response.data);
@@ -296,14 +285,14 @@ class AccountService extends Service {
       limit: props.limit,
     });
     const response = await axios({
-      method: "post",
+      method: 'post',
       url: `${this.endpointUrl}/account/followers/search`,
       headers: {
         ...this.headers,
-        "Session-Token": `${session?.access_token}`,
+        'Session-Token': `${session?.access_token}`,
       },
       data: request.toBinary(),
-      responseType: "arraybuffer",
+      responseType: 'arraybuffer',
     });
 
     const arrayBuffer = new Uint8Array(response.data);
@@ -327,14 +316,14 @@ class AccountService extends Service {
       limit: props.limit,
     });
     const response = await axios({
-      method: "post",
+      method: 'post',
       url: `${this.endpointUrl}/account/following/search`,
       headers: {
         ...this.headers,
-        "Session-Token": `${session?.access_token}`,
+        'Session-Token': `${session?.access_token}`,
       },
       data: request.toBinary(),
-      responseType: "arraybuffer",
+      responseType: 'arraybuffer',
     });
 
     const arrayBuffer = new Uint8Array(response.data);

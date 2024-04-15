@@ -23,6 +23,7 @@ export interface AccountProps {
   birthday?: string;
   sex?: string;
   interests?: string[];
+  metadata?: string;
 }
 
 export interface AccountDocument extends AccountProps {
@@ -61,7 +62,16 @@ class AccountService {
     }
 
     customer['orders'] = null;
-    const document = { ...account, customer: customer };
+    const metadata = JSON.parse(account.metadata);
+    const geo = metadata?.['geo'];
+    const document = {
+      ...account,
+      customer: customer,
+      _geo: {
+        lat: geo?.lat ?? 0,
+        lng: geo?.lng ?? 0,
+      },
+    };
     await MeiliSearchService.addDocumentAsync(this._meiliIndexName, document);
   }
 
@@ -74,7 +84,16 @@ class AccountService {
     }
 
     customer['orders'] = null;
-    const document = { ...account, customer: customer };
+    const metadata = JSON.parse(account.metadata);
+    const geo = metadata?.['geo'];
+    const document = {
+      ...account,
+      customer: customer,
+      _geo: {
+        lat: geo?.lat ?? 0,
+        lng: geo?.lng ?? 0,
+      },
+    };
     await MeiliSearchService.updateDocumentAsync(
       this._meiliIndexName,
       document
@@ -157,6 +176,7 @@ class AccountService {
     const birthday = request.getBirthday();
     const sex = request.getSex();
     const interests = request.getInterestsList();
+    const metadata = request.getMetadata();
 
     const accountData = this.assignAndGetAccountData({
       customerId,
@@ -167,6 +187,7 @@ class AccountService {
       birthday,
       sex,
       interests,
+      metadata,
     });
     const { data, error } = await SupabaseService.client
       .from('account')
@@ -328,6 +349,7 @@ class AccountService {
     props.birthday && account.setBirthday(props.birthday);
     props.sex && account.setSex(props.sex);
     props.interests && account.setInterestsList(props.interests);
+    props.metadata && account.setMetadata(props.metadata);
 
     return account;
   }
@@ -343,6 +365,7 @@ class AccountService {
     birthday?: string;
     sex?: string;
     interests?: string[];
+    metadata?: string;
   }) {
     const date = new Date(Date.now());
     return {
@@ -355,6 +378,7 @@ class AccountService {
       ...(props.birthday && { birthday: props.birthday }),
       ...(props.sex && { sex: props.sex }),
       ...(props.interests && { interests: props.interests }),
+      ...(props.metadata && { metadata: props.metadata }),
       updated_at: date.toUTCString(),
     };
   }
