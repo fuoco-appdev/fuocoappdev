@@ -32,6 +32,10 @@
         width: 100%;
         text-align: center;
       }
+
+      & .top-bar-username {
+        text-transform: lowercase;
+      }
     }
 
     & .left-tab-container {
@@ -248,15 +252,8 @@
   min-height: 100%;
 
   & .top-bar-desktop {
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: row;
             flex-direction: row;
-    -webkit-box-pack: justify;
-        -ms-flex-pack: justify;
             justify-content: space-between;
     padding: 0 $mp-4;
     margin-bottom: $mp-4;

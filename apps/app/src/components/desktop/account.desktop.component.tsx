@@ -78,6 +78,7 @@ export default function AccountDesktopComponent({
                 <div
                   className={[
                     styles['top-bar-text'],
+                    styles['top-bar-username'],
                     styles['top-bar-text-desktop'],
                   ].join(' ')}
                 >

@@ -78,6 +78,7 @@ export default function AccountMobileComponent({
                 <div
                   className={[
                     styles['top-bar-text'],
+                    styles['top-bar-username'],
                     styles['top-bar-text-mobile'],
                   ].join(' ')}
                 >
