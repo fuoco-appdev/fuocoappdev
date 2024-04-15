@@ -209,7 +209,12 @@ export default function ExploreTabletComponent({
         >
           {exploreProps.isSelectedInventoryLocationLoaded && (
             <Map
-              style={{ minWidth: '100%', minHeight: '100%' }}
+              style={{
+                minWidth: '100%',
+                minHeight: '100%',
+                width: '100%',
+                height: '100%',
+              }}
               mapboxAccessToken={process.env['MAPBOX_ACCESS_TOKEN']}
               ref={mapRef}
               interactive={true}

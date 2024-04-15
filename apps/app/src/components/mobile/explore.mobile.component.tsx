@@ -271,7 +271,12 @@ export default function ExploreMobileComponent({
           ].join(' ')}
         >
           <Map
-            style={{ minWidth: '100%', minHeight: '100vh' }}
+            style={{
+              minWidth: '100%',
+              minHeight: '100vh',
+              width: '100%',
+              height: '100%',
+            }}
             mapboxAccessToken={process.env['MAPBOX_ACCESS_TOKEN']}
             ref={mapRef}
             interactive={true}

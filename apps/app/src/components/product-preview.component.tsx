@@ -116,8 +116,8 @@ export default function ProductPreviewComponent({
       .replace(/^### (.*$)/gim, '$1') // h3 tag
       .replace(/^## (.*$)/gim, '$1') // h2 tag
       .replace(/^# (.*$)/gim, '$1') // h1 tag
-      .replace(/\*\*(.*)\*\*/gim, '$1') // bold text
-      .replace(/\*(.*)\*/gim, '$1'); // italic text
+      .replace(/\*\*(.*)\*\*/gim, '') // bold text
+      .replace(/\*(.*)\*/gim, ''); // italic text
     return toText.trim();
   };
 
