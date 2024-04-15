@@ -814,13 +814,28 @@
   transition: max-height 150ms $transition-standard-easing;
 }
 
+.dropdown-touchscreen-overlay {
+  background-color: rgba(42, 42, 95, .15) !important;
+}
+
 .dropdown-item-container-search:hover {
   background-color: transparent;
 }
 
 .dropdown-item-button-search {
-  padding: $mp-4 !important;
   cursor: default;
+}
+
+.dropdown-item-button-search-desktop {
+  padding: $mp-4 !important;
+}
+
+.dropdown-item-button-search-tablet {
+  padding: $mp-4 !important;
+}
+
+.dropdown-item-button-search-mobile {
+  padding: 0 $mp-4 !important;
 }
 
 .dropdown-item-container-interests svg {

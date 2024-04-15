@@ -759,6 +759,9 @@ export default function AccountTabletComponent({
       {ReactDOM.createPortal(
         <>
           <Dropdown
+            classNames={{
+              touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
+            }}
             open={isAddInterestOpen}
             anchorRef={interestButtonRef}
             align={DropdownAlignment.Left}
@@ -772,7 +775,10 @@ export default function AccountTabletComponent({
               classNames={{
                 container: styles['dropdown-item-container-search'],
                 button: {
-                  button: styles['dropdown-item-button-search'],
+                  button: [
+                    styles['dropdown-item-button-search'],
+                    styles['dropdown-item-button-search-tablet'],
+                  ].join(' '),
                 },
               }}
               rippleProps={{ color: 'rgba(0,0,0,0)' }}

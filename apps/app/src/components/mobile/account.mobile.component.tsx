@@ -274,6 +274,16 @@ export default function AccountMobileComponent({
                       });
                       onUsernameChanged(event);
                     },
+                    birthday: (event) => {
+                      AccountController.updateProfile({
+                        birthday: event.currentTarget.value,
+                      });
+                    },
+                    sex: (value) => {
+                      AccountController.updateProfile({
+                        sex: value,
+                      });
+                    },
                     phoneNumber: (value, _event, _formattedValue) =>
                       AccountController.updateProfile({
                         phoneNumber: value,
@@ -759,6 +769,9 @@ export default function AccountMobileComponent({
       {ReactDOM.createPortal(
         <>
           <Dropdown
+            classNames={{
+              touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
+            }}
             open={isAddInterestOpen}
             anchorRef={interestButtonRef}
             align={DropdownAlignment.Left}
@@ -773,7 +786,10 @@ export default function AccountMobileComponent({
               classNames={{
                 container: styles['dropdown-item-container-search'],
                 button: {
-                  button: styles['dropdown-item-button-search'],
+                  button: [
+                    styles['dropdown-item-button-search'],
+                    styles['dropdown-item-button-search-mobile'],
+                  ].join(' '),
                 },
               }}
               rippleProps={{ color: 'rgba(0,0,0,0)' }}
