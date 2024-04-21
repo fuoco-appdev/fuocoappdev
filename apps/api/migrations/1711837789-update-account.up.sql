@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS public.interest
     id uuid NOT NULL DEFAULT gen_random_uuid(),
     created_at timestamp with time zone NOT NULL DEFAULT now(),
     name text COLLATE pg_catalog."default",
-    CONSTRAINT interest_pkey PRIMARY KEY (id)
+    CONSTRAINT interest_pkey PRIMARY KEY (id),
     CONSTRAINT interest_name_key UNIQUE (name)
 )
 
