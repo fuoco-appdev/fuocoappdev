@@ -1239,6 +1239,8 @@ class AccountController extends Controller {
     this._model.profileForm = {
       firstName: '',
       lastName: '',
+      username: '',
+      birthday: new Date(Date.now()).toDateString(),
       phoneNumber: '',
     };
     this._model.profileFormErrors = {};
@@ -1417,7 +1419,7 @@ class AccountController extends Controller {
       lastName: this._model.customer?.last_name,
       phoneNumber: this._model.customer?.phone,
       username: value?.username,
-      birthday: value?.birthday,
+      birthday: value?.birthday ?? new Date(Date.now()).toDateString(),
       sex: value?.sex as 'male' | 'female',
     };
 

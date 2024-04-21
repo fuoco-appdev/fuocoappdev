@@ -126,6 +126,8 @@ export class AccountModel extends Model {
           profileForm: {
             firstName: '',
             lastName: '',
+            username: '',
+            birthday: new Date(Date.now()).toDateString(),
             phoneNumber: '',
           },
           profileFormErrors: {},
