@@ -1,6 +1,5 @@
 import { CountryDataProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/input-phone-number/country-data';
 import { lazy } from '@loadable/component';
-import moment from 'moment';
 import React from 'react';
 import { StoreState } from '../models/store.model';
 import { AccountProfileFormSuspenseDesktopComponent } from './desktop/suspense/account-profile-form.suspense.desktop.component';
@@ -69,7 +68,6 @@ export default function AccountProfileFormComponent({
   onChangeCallbacks,
 }: AccountProfileFormProps): JSX.Element {
   const [selectedCountry, setSelectedCountry] = React.useState<string>('');
-  console.log(moment(new Date(Date.now())).format("YYYY-MM-DD"));
   React.useEffect(() => {
     if (!storeProps.selectedRegion) {
       return;

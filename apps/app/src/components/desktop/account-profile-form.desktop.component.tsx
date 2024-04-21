@@ -72,7 +72,7 @@ export default function AccountProfileFormDesktopComponent({
         }}
         label={t('birthday') ?? ''}
         type={'date'}
-        value={values?.birthday ?? moment(new Date(Date.now())).format("YYYY-MM-DD")}
+        value={values?.birthday && values.birthday.length > 0 ? values.birthday : moment(new Date(Date.now())).format("YYYY-MM-DD")}
         error={errors?.birthday}
         onChange={onChangeCallbacks?.birthday}
       />
