@@ -17,6 +17,7 @@ node_modules
 *.launch
 .settings/
 *.sublime-workspace
+apps/api/src/deno.lock
 
 # IDE - VSCode
 .vscode/*
@@ -40,3 +41,5 @@ testem.log
 Thumbs.db
 
 .nx/cache
+apps/api/src/deno.lock
+apps/api/src/deno.lock
