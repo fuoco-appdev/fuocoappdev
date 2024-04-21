@@ -4,6 +4,7 @@ import {
   Input,
   InputPhoneNumber,
 } from '@fuoco.appdev/core-ui';
+import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import { AccountProfileFormResponsiveProps } from '../account-profile-form.component';
 import styles from '../account-profile-form.module.scss';
@@ -71,7 +72,7 @@ export default function AccountProfileFormDesktopComponent({
         }}
         label={t('birthday') ?? ''}
         type={'date'}
-        value={values?.birthday}
+        value={values?.birthday ?? moment(new Date(Date.now())).format("YYYY-MM-DD")}
         error={errors?.birthday}
         onChange={onChangeCallbacks?.birthday}
       />
