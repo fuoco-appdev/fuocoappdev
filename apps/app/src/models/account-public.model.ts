@@ -1,16 +1,15 @@
-import {
-  Product
-} from "@medusajs/medusa";
-import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
-import { createStore, withProps } from "@ngneat/elf";
-import { Model } from "../model";
-import { AccountFollowerResponse } from "../protobuf/account-follower_pb";
-import { AccountResponse } from "../protobuf/account_pb";
+import { Product } from '@medusajs/medusa';
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+import { createStore, withProps } from '@ngneat/elf';
+import { Model } from '../model';
+import { AccountFollowerResponse } from '../protobuf/account-follower_pb';
+import { AccountResponse } from '../protobuf/account_pb';
 import {
   CustomerMetadataResponse,
   CustomerResponse,
-} from "../protobuf/customer_pb";
-import { ProductLikesMetadataResponse } from "../protobuf/product-like_pb";
+} from '../protobuf/customer_pb';
+import { ProductLikesMetadataResponse } from '../protobuf/product-like_pb';
+import { AccountDocument } from './account.model';
 
 export interface AccountPublicState {
   accountId: string | undefined;
@@ -38,16 +37,14 @@ export interface AccountPublicState {
   followersPagination: number;
   hasMoreFollowers: boolean;
   areFollowersLoading: boolean;
-  followerAccounts: AccountResponse[];
-  followerCustomers: Record<string, CustomerResponse>;
+  followerAccounts: AccountDocument[];
   followerScrollPosition: number | undefined;
   followerAccountFollowers: Record<string, AccountFollowerResponse>;
   followingInput: string;
   followingPagination: number;
   hasMoreFollowing: boolean;
   areFollowingLoading: boolean;
-  followingAccounts: AccountResponse[];
-  followingCustomers: Record<string, CustomerResponse>;
+  followingAccounts: AccountDocument[];
   followingScrollPosition: number | undefined;
   followingAccountFollowers: Record<string, AccountFollowerResponse>;
   likeCount: number | undefined;
@@ -59,7 +56,7 @@ export class AccountPublicModel extends Model {
   constructor() {
     super(
       createStore(
-        { name: "account-public" },
+        { name: 'account-public' },
         withProps<AccountPublicState>({
           accountId: undefined,
           account: undefined,
@@ -67,8 +64,8 @@ export class AccountPublicModel extends Model {
           accountFollower: undefined,
           showFollowButton: undefined,
           profileUrl: undefined,
-          username: "",
-          activeTabId: "/account/:id/likes",
+          username: '',
+          activeTabId: '/account/:id/likes',
           prevTabIndex: 0,
           activeTabIndex: 0,
           hasMoreLikes: true,
@@ -79,30 +76,28 @@ export class AccountPublicModel extends Model {
           areLikedProductsLoading: false,
           selectedLikedProduct: undefined,
           selectedProductLikes: undefined,
-          activeStatusTabId: "/account/status/:id/followers",
+          activeStatusTabId: '/account/status/:id/followers',
           prevStatusTabIndex: 0,
           activeStatusTabIndex: 0,
-          followersInput: "",
+          followersInput: '',
           followersPagination: 1,
           hasMoreFollowers: true,
           areFollowersLoading: false,
           followerAccounts: [],
-          followerCustomers: {},
           followerScrollPosition: undefined,
           followerAccountFollowers: {},
-          followingInput: "",
+          followingInput: '',
           followingPagination: 1,
           hasMoreFollowing: true,
           areFollowingLoading: false,
           followingAccounts: [],
-          followingCustomers: {},
           followingScrollPosition: undefined,
           followingAccountFollowers: {},
           likeCount: undefined,
           followerCount: undefined,
           followingCount: undefined,
-        }),
-      ),
+        })
+      )
     );
   }
 
@@ -130,9 +125,7 @@ export class AccountPublicModel extends Model {
     return this.store.getValue().customerMetadata;
   }
 
-  public set customerMetadata(
-    value: CustomerMetadataResponse | undefined,
-  ) {
+  public set customerMetadata(value: CustomerMetadataResponse | undefined) {
     if (JSON.stringify(this.customerMetadata) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, customerMetadata: value }));
     }
@@ -255,7 +248,7 @@ export class AccountPublicModel extends Model {
   }
 
   public set productLikesMetadata(
-    value: Record<string, ProductLikesMetadataResponse>,
+    value: Record<string, ProductLikesMetadataResponse>
   ) {
     if (JSON.stringify(this.productLikesMetadata) !== JSON.stringify(value)) {
       this.store?.update((state) => ({
@@ -306,7 +299,7 @@ export class AccountPublicModel extends Model {
   }
 
   public set selectedProductLikes(
-    value: ProductLikesMetadataResponse | undefined,
+    value: ProductLikesMetadataResponse | undefined
   ) {
     if (JSON.stringify(this.selectedProductLikes) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, selectedProductLikes: value }));
@@ -401,11 +394,11 @@ export class AccountPublicModel extends Model {
     }
   }
 
-  public get followingAccounts(): AccountResponse[] {
+  public get followingAccounts(): AccountDocument[] {
     return this.store?.getValue().followingAccounts;
   }
 
-  public set followingAccounts(value: AccountResponse[]) {
+  public set followingAccounts(value: AccountDocument[]) {
     if (JSON.stringify(this.followingAccounts) !== JSON.stringify(value)) {
       this.store?.update((state) => ({
         ...state,
@@ -448,7 +441,7 @@ export class AccountPublicModel extends Model {
   }
 
   public set followingAccountFollowers(
-    value: Record<string, AccountFollowerResponse>,
+    value: Record<string, AccountFollowerResponse>
   ) {
     if (
       JSON.stringify(this.followingAccountFollowers) !== JSON.stringify(value)
@@ -509,28 +502,15 @@ export class AccountPublicModel extends Model {
     }
   }
 
-  public get followerAccounts(): AccountResponse[] {
+  public get followerAccounts(): AccountDocument[] {
     return this.store?.getValue().followerAccounts;
   }
 
-  public set followerAccounts(value: AccountResponse[]) {
+  public set followerAccounts(value: AccountDocument[]) {
     if (JSON.stringify(this.followerAccounts) !== JSON.stringify(value)) {
       this.store?.update((state) => ({
         ...state,
         followerAccounts: value,
-      }));
-    }
-  }
-
-  public get followerCustomers(): Record<string, CustomerResponse> {
-    return this.store?.getValue().followerCustomers;
-  }
-
-  public set followerCustomers(value: Record<string, CustomerResponse>) {
-    if (JSON.stringify(this.followerCustomers) !== JSON.stringify(value)) {
-      this.store?.update((state) => ({
-        ...state,
-        followerCustomers: value,
       }));
     }
   }
@@ -556,7 +536,7 @@ export class AccountPublicModel extends Model {
   }
 
   public set followerAccountFollowers(
-    value: Record<string, AccountFollowerResponse>,
+    value: Record<string, AccountFollowerResponse>
   ) {
     if (
       JSON.stringify(this.followerAccountFollowers) !== JSON.stringify(value)

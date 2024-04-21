@@ -5,6 +5,7 @@ import { Address, Customer } from '@medusajs/medusa';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import { select } from '@ngneat/elf';
 import { User } from '@supabase/supabase-js';
+import { Index } from 'meilisearch';
 import mime from 'mime';
 import { Subscription, filter, firstValueFrom, take } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
@@ -17,7 +18,11 @@ import {
   AddressFormValues,
 } from '../components/address-form.component';
 import { Controller } from '../controller';
-import { AccountModel, ProfileFormErrorStrings } from '../models/account.model';
+import {
+  AccountDocument,
+  AccountModel,
+  ProfileFormErrorStrings,
+} from '../models/account.model';
 import { ExploreLocalState } from '../models/explore.model';
 import { AccountResponse } from '../protobuf/account_pb';
 import { StorageFolderType } from '../protobuf/common_pb';
@@ -28,7 +33,9 @@ import AccountFollowersService from '../services/account-followers.service';
 import AccountService from '../services/account.service';
 import BucketService from '../services/bucket.service';
 import InterestService from '../services/interest.service';
+import MapboxService, { GeocodingFeature } from '../services/mapbox.service';
 import MedusaService from '../services/medusa.service';
+import MeiliSearchService from '../services/meilisearch.service';
 import ProductLikesService from '../services/product-likes.service';
 import SupabaseService from '../services/supabase.service';
 import ExploreController from './explore.controller';
@@ -39,6 +46,8 @@ class AccountController extends Controller {
   private readonly _limit: number;
   private _usernameTimerId: NodeJS.Timeout | number | undefined;
   private _addFriendsTimerId: NodeJS.Timeout | number | undefined;
+  private _addFriendsGeocodingTimerId: NodeJS.Timeout | number | undefined;
+  private _accountsIndex: Index<Record<string, any>> | undefined;
   private _addInterestTimerId: NodeJS.Timeout | number | undefined;
   private _activeAccountSubscription: Subscription | undefined;
   private _userSubscription: Subscription | undefined;
@@ -65,6 +74,8 @@ class AccountController extends Controller {
   }
 
   public override initialize(renderCount: number): void {
+    this._accountsIndex = MeiliSearchService.client?.index('account');
+
     this._medusaAccessTokenSubscription =
       MedusaService.accessTokenObservable.subscribe({
         next: (value: string | undefined) => {
@@ -76,10 +87,11 @@ class AccountController extends Controller {
       });
   }
 
-  public override load(_renderCount: number): void {}
+  public override load(_renderCount: number): void { }
 
   public override disposeInitialization(_renderCount: number): void {
     clearTimeout(this._addInterestTimerId as number | undefined);
+    clearTimeout(this._addFriendsGeocodingTimerId as number | undefined);
     clearTimeout(this._addFriendsTimerId as number | undefined);
     clearTimeout(this._usernameTimerId as number | undefined);
     this._loadedAccountSubscription?.unsubscribe();
@@ -90,7 +102,7 @@ class AccountController extends Controller {
     this._userSubscription?.unsubscribe();
   }
 
-  public override disposeLoad(_renderCount: number): void {}
+  public override disposeLoad(_renderCount: number): void { }
 
   public loadLikedProducts(): void {
     if (this._model.likedProducts.length > 0) {
@@ -145,7 +157,7 @@ class AccountController extends Controller {
           }
 
           await this.addFriendsSearchAsync(
-            this._model.addFriendsInput,
+            this._model.addFriendsSearchInput,
             0,
             this._limit,
             true
@@ -184,7 +196,7 @@ class AccountController extends Controller {
     this._model.addFriendsPagination = this._model.addFriendsPagination + 1;
     const offset = this._limit * (this._model.addFriendsPagination - 1);
     await this.addFriendsSearchAsync(
-      this._model.addFriendsInput,
+      this._model.addFriendsSearchInput,
       offset,
       this._limit
     );
@@ -272,8 +284,8 @@ class AccountController extends Controller {
     this._model.isAvatarUploadLoading = value;
   }
 
-  public updateAddFriendsInput(value: string): void {
-    this._model.addFriendsInput = value;
+  public updateAddFriendsSearchInput(value: string): void {
+    this._model.addFriendsSearchInput = value;
     this._model.addFriendsPagination = 1;
     this._model.addFriendAccounts = [];
     this._model.hasMoreAddFriends = true;
@@ -281,6 +293,41 @@ class AccountController extends Controller {
     clearTimeout(this._addFriendsTimerId as number | undefined);
     this._addFriendsTimerId = setTimeout(() => {
       this.addFriendsSearchAsync(value, 0, this._limit);
+    }, 750);
+  }
+
+  public updateAddFriendsLocationInput(value: string): void {
+    this._model.addFriendsLocationInput = value;
+
+    clearTimeout(this._addFriendsGeocodingTimerId as number | undefined);
+    this._addFriendsGeocodingTimerId = setTimeout(() => {
+      this.addFriendsSearchPlacesAsync(value);
+    }, 750);
+  }
+
+  public updateAddFriendsRadiusMeters(value: number): void {
+    this._model.addFriendsRadiusMeters = value;
+
+    clearTimeout(this._addFriendsTimerId as number | undefined);
+    this._addFriendsTimerId = setTimeout(() => {
+      this.addFriendsSearchAsync(this._model.addFriendsSearchInput, 0, this._limit);
+    }, 750);
+  }
+
+  public updateAddFriendsSexes(value: 'male' | 'female'): void {
+    if (this._model.addFriendsSexes.includes(value)) {
+      const addFriendsSexes = this._model.addFriendsSexes.filter(
+        (sex) => sex !== value
+      );
+      this._model.addFriendsSexes = addFriendsSexes;
+    } else {
+      const addFriendsSexes = [...this._model.addFriendsSexes, value];
+      this._model.addFriendsSexes = addFriendsSexes;
+    }
+
+    clearTimeout(this._addFriendsTimerId as number | undefined);
+    this._addFriendsTimerId = setTimeout(() => {
+      this.addFriendsSearchAsync(this._model.addFriendsSearchInput, 0, this._limit);
     }, 750);
   }
 
@@ -366,14 +413,15 @@ class AccountController extends Controller {
 
   public async requestFollowerRequestsAsync(
     accountId: string,
-    offset: number = 0,
-    limit: number = 10,
-    force: boolean = false
+    offset = 0,
+    limit = 10,
+    force = false
   ): Promise<void> {
     if (!force && this._model.areFollowRequestAccountsLoading) {
       return;
     }
 
+    let followRequestAccounts: AccountDocument[] = [];
     try {
       const requestedFollowersResponse =
         await AccountFollowersService.requestFollowerRequestsAsync({
@@ -412,48 +460,66 @@ class AccountController extends Controller {
         this._model.areFollowRequestAccountsLoading = false;
         return;
       }
-
+      const documents = accountsResponse.accounts.map((protobuf) => ({
+        id: protobuf.id,
+        customer_id: protobuf.customerId,
+        supabase_id: protobuf.supabaseId,
+        profile_url: protobuf.profileUrl,
+        status: protobuf.status,
+        updated_at: protobuf.updateAt,
+        language_code: protobuf.languageCode,
+        username: protobuf.username,
+        birthday: protobuf.birthday,
+        sex: protobuf.sex,
+        interests: protobuf.interests,
+        metadata: protobuf.metadata,
+      }) as AccountDocument);
       if (offset > 0) {
-        const followRequestAccounts = this._model.followRequestAccounts;
-        this._model.followRequestAccounts = followRequestAccounts.concat(
-          accountsResponse.accounts
-        );
+        followRequestAccounts = followRequestAccounts.concat(
+          documents
+        );;
       } else {
-        this._model.followRequestAccounts = accountsResponse.accounts;
+        followRequestAccounts = documents;
       }
     } catch (error: any) {
       console.error(error);
     }
 
     try {
-      const customerIds = this._model.followRequestAccounts.map(
-        (value) => value.customerId
+      const customerIds: string[] = followRequestAccounts.map(
+        (value) => value.customer_id ?? ''
       );
       const customersResponse = await MedusaService.requestCustomersAsync({
         customerIds: customerIds,
       });
-      if (customersResponse) {
-        const followRequestCustomers = {
-          ...this._model.followRequestCustomers,
-        };
-        for (const customer of customersResponse) {
-          followRequestCustomers[customer.id] = customer;
-        }
-
-        this._model.followRequestCustomers = followRequestCustomers;
+      for (let i = 0; i < followRequestAccounts.length; i++) {
+        const customerId = followRequestAccounts[i].customer_id;
+        const customer = customersResponse?.find(
+          (value) => value.id === customerId
+        );
+        followRequestAccounts[i].customer = {
+          email: customer?.email,
+          first_name: customer?.firstName,
+          last_name: customer?.lastName,
+          billing_address_id: customer?.billingAddressId,
+          phone: customer?.phone,
+          has_account: customer?.hasAccount,
+          metadata: customer?.metadata
+        } as Partial<Customer>;
       }
     } catch (error: any) {
       console.error(error);
     }
 
+    this._model.followRequestAccounts = followRequestAccounts;
     this._model.areFollowRequestAccountsLoading = false;
   }
 
   public async addFriendsSearchAsync(
     query: string,
-    offset: number = 0,
-    limit: number = 10,
-    force: boolean = false
+    offset = 0,
+    limit = 10,
+    force = false
   ): Promise<void> {
     if (!force && this._model.areAddFriendsLoading) {
       return;
@@ -461,41 +527,50 @@ class AccountController extends Controller {
 
     this._model.areAddFriendsLoading = true;
 
+    const { lat, lng } = this._model.addFriendsLocationCoordinates;
+    let filterValue = `id != ${this._model.account?.id} AND status = 'Complete' AND _geoRadius(${lat}, ${lng}, ${this._model.addFriendsRadiusMeters})`;
+    if (this._model.addFriendsSexes.length > 0) {
+      filterValue += ` AND sex IN [${this._model.addFriendsSexes.toString()}]`
+    }
     try {
-      const accountsResponse = await AccountService.requestSearchAsync({
-        queryUsername: query,
-        accountId: this._model.account?.id ?? '',
+      const result = await this._accountsIndex?.search(query, {
+        filter: [filterValue],
         offset: offset,
         limit: limit,
       });
+      const hits = result?.hits as AccountDocument[];
 
-      if (!accountsResponse.accounts || accountsResponse.accounts.length <= 0) {
+      if (hits && hits.length <= 0 && offset <= 0) {
+        this._model.addFriendAccounts = [];
+      }
+
+      if (hits && hits.length < limit && this._model.hasMoreAddFriends) {
         this._model.hasMoreAddFriends = false;
+      }
+
+      if (hits && hits.length <= 0) {
         this._model.areAddFriendsLoading = false;
+        this._model.hasMoreAddFriends = false;
         return;
       }
 
-      if (accountsResponse.accounts.length < limit) {
-        this._model.hasMoreAddFriends = false;
-      } else {
+      if (hits && hits.length >= limit && !this._model.hasMoreAddFriends) {
         this._model.hasMoreAddFriends = true;
       }
 
       if (offset > 0) {
-        const addFriendsAccount = this._model.addFriendAccounts;
-        this._model.addFriendAccounts = addFriendsAccount.concat(
-          accountsResponse.accounts
-        );
+        const addFriendAccounts = this._model.addFriendAccounts;
+        this._model.addFriendAccounts = addFriendAccounts.concat(hits);
       } else {
-        this._model.addFriendAccounts = accountsResponse.accounts;
+        this._model.addFriendAccounts = hits;
       }
     } catch (error: any) {
       console.error(error);
     }
 
     try {
-      const otherAccountIds = this._model.addFriendAccounts.map(
-        (value) => value.id
+      const otherAccountIds: string[] = this._model.addFriendAccounts.map(
+        (value) => value.id ?? ''
       );
       const followerResponse =
         await AccountFollowersService.requestFollowersAsync({
@@ -514,25 +589,6 @@ class AccountController extends Controller {
       console.error(error);
     }
 
-    try {
-      const customerIds = this._model.addFriendAccounts.map(
-        (value) => value.customerId
-      );
-      const customersResponse = await MedusaService.requestCustomersAsync({
-        customerIds: customerIds,
-      });
-      if (customersResponse) {
-        const addFriendCustomers = { ...this._model.addFriendCustomers };
-        for (const customer of customersResponse) {
-          addFriendCustomers[customer.id] = customer;
-        }
-
-        this._model.addFriendCustomers = addFriendCustomers;
-      }
-    } catch (error: any) {
-      console.error(error);
-    }
-
     this._model.areAddFriendsLoading = false;
   }
 
@@ -546,9 +602,23 @@ class AccountController extends Controller {
 
     this._model.selectedInterests = selectedInterests;
 
-    let searchedInterests = this._model.searchedInterests;
+    const searchedInterests = this._model.searchedInterests;
     this._model.searchedInterests = [];
     this._model.searchedInterests = searchedInterests;
+  }
+
+  public updateAddFriendsLocationFeature(value: GeocodingFeature | undefined): void {
+    this._model.addFriendsLocationFeature = value;
+    this._model.addFriendsLocationCoordinates = {
+      lng: value?.center[0] ?? 0,
+      lat: value?.center[1] ?? 0
+    };
+    this._model.addFriendsLocationInput = value?.place_name ?? '';
+
+    clearTimeout(this._addFriendsTimerId as number | undefined);
+    this._addFriendsTimerId = setTimeout(() => {
+      this.addFriendsSearchAsync(this._model.addFriendsSearchInput, 0, this._limit);
+    }, 750);
   }
 
   public async addInterestsCreateAsync(name: string): Promise<void> {
@@ -605,6 +675,19 @@ class AccountController extends Controller {
     }
 
     this._model.areAddInterestsLoading = false;
+  }
+
+  public async addFriendsSearchPlacesAsync(searchText: string): Promise<void> {
+    const response = await MapboxService.requestGeocodingPlacesAsync(searchText, this._model.account?.languageCode ?? 'en', ['place']);
+    this._model.addFriendsLocationGeocoding = response;
+  }
+
+  public async addFriendsSearchReversePlacesAsync(geo: {
+    lat: number;
+    lng: number;
+  }): Promise<void> {
+    const response = await MapboxService.requestReverseGeocodingPlacesAsync(geo, this._model.account?.languageCode ?? 'en', ['place']);
+    this._model.addFriendsLocationGeocoding = response;
   }
 
   public checkIfUsernameExists(value: string): void {
@@ -902,7 +985,7 @@ class AccountController extends Controller {
     id: string,
     metadata: ProductLikesMetadataResponse
   ): void {
-    let productLikesMetadata = { ...this._model.productLikesMetadata };
+    const productLikesMetadata = { ...this._model.productLikesMetadata };
     productLikesMetadata[id] = metadata;
 
     if (!metadata.didAccountLike) {
@@ -1203,7 +1286,7 @@ class AccountController extends Controller {
     this._model.isCreateCustomerLoading = false;
     this._model.isUpdateGeneralInfoLoading = false;
     this._model.addFriendAccounts = [];
-    this._model.addFriendsInput = '';
+    this._model.addFriendsSearchInput = '';
     this._model.addFriendsPagination = 1;
     this._model.addFriendsScrollPosition = undefined;
     this._model.addFriendAccountFollowers = {};
@@ -1270,6 +1353,15 @@ class AccountController extends Controller {
     }
 
     this._model.account = value;
+
+    const geo = JSON.parse(value.metadata)['geo'] ?? { lat: 0, lng: 0 };
+    this._model.addFriendsLocationCoordinates = geo;
+
+    await this.addFriendsSearchReversePlacesAsync(geo);
+    if (this._model.addFriendsLocationGeocoding?.features && this._model.addFriendsLocationGeocoding?.features.length > 0) {
+      this.updateAddFriendsLocationFeature(this._model.addFriendsLocationGeocoding?.features[0]);
+    }
+
 
     try {
       this._model.customer = await MedusaService.requestCustomerAccountAsync(

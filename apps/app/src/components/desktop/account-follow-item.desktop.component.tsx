@@ -8,7 +8,6 @@ import { ResponsiveDesktop } from '../responsive.component';
 export default function AccountFollowItemDesktopComponent({
   accountProps,
   account,
-  customer,
   isRequest,
   isFollowing,
   isAccepted,
@@ -42,7 +41,7 @@ export default function AccountFollowItemDesktopComponent({
               ].join(' '),
             }}
             size={'custom'}
-            text={customer?.firstName}
+            text={account.customer?.first_name}
             src={profileUrl}
           />
           <div
@@ -70,17 +69,17 @@ export default function AccountFollowItemDesktopComponent({
                 />
               )}
             </div>
-            {customer && (
+            {account.customer && (
               <div
                 className={[
                   styles['full-name'],
                   styles['full-name-desktop'],
                 ].join(' ')}
               >
-                {`${customer?.firstName} ${customer?.lastName}`}
+                {`${account.customer?.first_name} ${account.customer?.last_name}`}
               </div>
             )}
-            {!customer && (
+            {!account.customer && (
               <Skeleton
                 count={1}
                 borderRadius={16}

@@ -8,7 +8,6 @@ import { ResponsiveTablet } from '../responsive.component';
 export default function AccountFollowItemTabletComponent({
   accountProps,
   account,
-  customer,
   isRequest,
   isFollowing,
   isAccepted,
@@ -41,7 +40,7 @@ export default function AccountFollowItemTabletComponent({
               ].join(' '),
             }}
             size={'custom'}
-            text={customer?.firstName}
+            text={account.customer?.first_name}
             src={profileUrl}
           />
           <div
@@ -69,17 +68,17 @@ export default function AccountFollowItemTabletComponent({
                 />
               )}
             </div>
-            {customer && (
+            {account.customer && (
               <div
                 className={[
                   styles['full-name'],
                   styles['full-name-tablet'],
                 ].join(' ')}
               >
-                {`${customer?.firstName} ${customer?.lastName}`}
+                {`${account.customer?.first_name} ${account.customer?.last_name}`}
               </div>
             )}
-            {!customer && (
+            {!account.customer && (
               <Skeleton
                 count={1}
                 borderRadius={16}

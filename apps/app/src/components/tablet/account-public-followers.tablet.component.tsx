@@ -58,13 +58,8 @@ export default function AccountPublicFollowersTabletComponent({
           {accountPublicProps.followerAccounts.map((value) => {
             const accountFollower = Object.keys(
               accountPublicProps.followerAccountFollowers
-            ).includes(value.id)
-              ? accountPublicProps.followerAccountFollowers[value.id]
-              : null;
-            const customer = Object.keys(
-              accountPublicProps.followerCustomers
-            ).includes(value.customerId)
-              ? accountPublicProps.followerCustomers[value.customerId]
+            ).includes(value.id ?? '')
+              ? accountPublicProps.followerAccountFollowers[value.id ?? '']
               : null;
             return (
               <AccountFollowItemComponent
@@ -72,15 +67,14 @@ export default function AccountPublicFollowersTabletComponent({
                 accountProps={accountProps}
                 account={value}
                 follower={accountFollower}
-                customer={customer}
                 isRequest={false}
-                onClick={() => onItemClick(value.id)}
-                onFollow={() => AccountController.requestFollowAsync(value.id)}
+                onClick={() => onItemClick(value.id ?? '')}
+                onFollow={() => AccountController.requestFollowAsync(value.id ?? '')}
                 onRequested={() =>
-                  AccountController.requestUnfollowAsync(value.id)
+                  AccountController.requestUnfollowAsync(value.id ?? '')
                 }
                 onUnfollow={() =>
-                  AccountController.requestUnfollowAsync(value.id)
+                  AccountController.requestUnfollowAsync(value.id ?? '')
                 }
               />
             );

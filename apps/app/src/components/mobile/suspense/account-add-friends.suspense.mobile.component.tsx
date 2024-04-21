@@ -28,6 +28,11 @@ export function AccountAddFriendsSuspenseMobileComponent(): JSX.Element {
               borderRadius={46}
             />
           </div>
+          <Skeleton
+            height={46}
+            width={46}
+            borderRadius={46}
+          />
         </div>
         <div className={[styles['title'], styles['title-mobile']].join(' ')}>
           <Skeleton count={1} borderRadius={14} height={14} width={80} />

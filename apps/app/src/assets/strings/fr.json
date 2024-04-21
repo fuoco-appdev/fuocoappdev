@@ -314,5 +314,6 @@
   "birthday": "Anniversaire",
   "sex": "Sex",
   "interests": "Intérêts",
-  "addInterest": "Ajouter un intérêt"
+  "addInterest": "Ajouter un intérêt",
+  "radius": "Rayon"
 }

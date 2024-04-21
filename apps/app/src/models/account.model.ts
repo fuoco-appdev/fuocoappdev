@@ -4,24 +4,42 @@ import {
   CustomerGroup,
   Order,
   Product,
-} from "@medusajs/medusa";
-import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
-import { createStore, withProps } from "@ngneat/elf";
-import { User } from "@supabase/supabase-js";
+} from '@medusajs/medusa';
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+import { createStore, withProps } from '@ngneat/elf';
+import { User } from '@supabase/supabase-js';
 import {
   ProfileFormErrors,
   ProfileFormValues,
-} from "../components/account-profile-form.component";
+} from '../components/account-profile-form.component';
 import {
   AddressFormErrors,
   AddressFormValues,
-} from "../components/address-form.component";
-import { Model } from "../model";
-import { AccountFollowerResponse } from "../protobuf/account-follower_pb";
-import { AccountResponse } from "../protobuf/account_pb";
-import { CustomerResponse } from "../protobuf/customer_pb";
-import { InterestResponse } from "../protobuf/interest_pb";
-import { ProductLikesMetadataResponse } from "../protobuf/product-like_pb";
+} from '../components/address-form.component';
+import { Model } from '../model';
+import { AccountFollowerResponse } from '../protobuf/account-follower_pb';
+import { AccountResponse } from '../protobuf/account_pb';
+import { CustomerResponse } from '../protobuf/customer_pb';
+import { InterestResponse } from '../protobuf/interest_pb';
+import { ProductLikesMetadataResponse } from '../protobuf/product-like_pb';
+import { Geocoding, GeocodingFeature } from '../services/mapbox.service';
+
+export interface AccountDocument {
+  id?: string;
+  customer_id?: string;
+  supabase_id?: string;
+  profile_url?: string;
+  status?: string;
+  updated_at?: string;
+  language_code?: string;
+  username?: string;
+  birthday?: string;
+  sex?: string;
+  about_me?: string;
+  interests?: string[];
+  metadata?: string;
+  customer?: Partial<Customer>;
+}
 
 export interface ProfileFormErrorStrings {
   empty?: string;
@@ -65,17 +83,24 @@ export interface AccountState {
   selectedLikedProduct: PricedProduct | undefined;
   selectedProductLikes: ProductLikesMetadataResponse | undefined;
   isAvatarUploadLoading: boolean;
-  addFriendsInput: string;
+  addFriendsSearchInput: string;
+  addFriendsLocationInput: string;
+  addFriendsLocationGeocoding: Geocoding | undefined;
+  addFriendsLocationFeature: GeocodingFeature | undefined;
+  addFriendsLocationCoordinates: {
+    lat: number;
+    lng: number;
+  };
+  addFriendsRadiusMeters: number;
+  addFriendsSexes: ('male' | 'female')[];
   addFriendsPagination: number;
   hasMoreAddFriends: boolean;
   areAddFriendsLoading: boolean;
-  addFriendAccounts: AccountResponse[];
-  addFriendCustomers: Record<string, CustomerResponse>;
+  addFriendAccounts: AccountDocument[];
   addFriendsScrollPosition: number | undefined;
   addFriendAccountFollowers: Record<string, AccountFollowerResponse>;
   areFollowRequestAccountsLoading: boolean;
-  followRequestAccounts: AccountResponse[];
-  followRequestCustomers: Record<string, CustomerResponse>;
+  followRequestAccounts: AccountDocument[];
   followRequestAccountFollowers: Record<string, AccountFollowerResponse>;
   likeCount: number | undefined;
   followerCount: number | undefined;
@@ -91,7 +116,7 @@ export class AccountModel extends Model {
   constructor() {
     super(
       createStore(
-        { name: "account" },
+        { name: 'account' },
         withProps<AccountState>({
           user: null,
           account: undefined,
@@ -99,49 +124,49 @@ export class AccountModel extends Model {
           customerGroup: undefined,
           isCustomerGroupLoading: false,
           profileForm: {
-            firstName: "",
-            lastName: "",
-            phoneNumber: "",
+            firstName: '',
+            lastName: '',
+            phoneNumber: '',
           },
           profileFormErrors: {},
           errorStrings: {},
           profileUrl: undefined,
-          username: "",
+          username: '',
           orders: [],
           orderPagination: 1,
           hasMoreOrders: true,
           shippingForm: {
-            email: "",
-            firstName: "",
-            lastName: "",
-            company: "",
-            address: "",
-            apartments: "",
-            postalCode: "",
-            city: "",
-            countryCode: "",
-            region: "",
-            phoneNumber: "",
+            email: '',
+            firstName: '',
+            lastName: '',
+            company: '',
+            address: '',
+            apartments: '',
+            postalCode: '',
+            city: '',
+            countryCode: '',
+            region: '',
+            phoneNumber: '',
           },
           shippingFormErrors: {},
           addressErrorStrings: {},
           selectedAddress: undefined,
           editShippingForm: {
-            email: "",
-            firstName: "",
-            lastName: "",
-            company: "",
-            address: "",
-            apartments: "",
-            postalCode: "",
-            city: "",
-            countryCode: "",
-            region: "",
-            phoneNumber: "",
+            email: '',
+            firstName: '',
+            lastName: '',
+            company: '',
+            address: '',
+            apartments: '',
+            postalCode: '',
+            city: '',
+            countryCode: '',
+            region: '',
+            phoneNumber: '',
           },
           areOrdersLoading: true,
           editShippingFormErrors: {},
-          activeTabId: "/account/likes",
+          activeTabId: '/account/likes',
           prevTabIndex: 0,
           activeTabIndex: 0,
           ordersScrollPosition: undefined,
@@ -156,28 +181,35 @@ export class AccountModel extends Model {
           selectedLikedProduct: undefined,
           selectedProductLikes: undefined,
           isAvatarUploadLoading: false,
-          addFriendsInput: "",
+          addFriendsSearchInput: '',
+          addFriendsLocationInput: '',
+          addFriendsLocationGeocoding: undefined,
+          addFriendsLocationFeature: undefined,
+          addFriendsLocationCoordinates: {
+            lat: 0,
+            lng: 0,
+          },
+          addFriendsRadiusMeters: 100000,
+          addFriendsSexes: [],
           addFriendsPagination: 1,
           hasMoreAddFriends: true,
           areAddFriendsLoading: false,
           addFriendAccounts: [],
-          addFriendCustomers: {},
           addFriendsScrollPosition: undefined,
           addFriendAccountFollowers: {},
           areFollowRequestAccountsLoading: false,
           followRequestAccounts: [],
-          followRequestCustomers: {},
           followRequestAccountFollowers: {},
           likeCount: undefined,
           followerCount: undefined,
           followingCount: undefined,
-          addInterestInput: "",
+          addInterestInput: '',
           areAddInterestsLoading: false,
           searchedInterests: [],
           creatableInterest: undefined,
           selectedInterests: {},
-        }),
-      ),
+        })
+      )
     );
   }
 
@@ -512,7 +544,7 @@ export class AccountModel extends Model {
   }
 
   public set productLikesMetadata(
-    value: Record<string, ProductLikesMetadataResponse>,
+    value: Record<string, ProductLikesMetadataResponse>
   ) {
     if (JSON.stringify(this.productLikesMetadata) !== JSON.stringify(value)) {
       this.store?.update((state) => ({
@@ -563,7 +595,7 @@ export class AccountModel extends Model {
   }
 
   public set selectedProductLikes(
-    value: ProductLikesMetadataResponse | undefined,
+    value: ProductLikesMetadataResponse | undefined
   ) {
     if (JSON.stringify(this.selectedProductLikes) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, selectedProductLikes: value }));
@@ -583,16 +615,97 @@ export class AccountModel extends Model {
     }
   }
 
-  public get addFriendsInput(): string {
-    return this.store?.getValue().addFriendsInput;
+  public get addFriendsSearchInput(): string {
+    return this.store?.getValue().addFriendsSearchInput;
   }
 
-  public set addFriendsInput(value: string) {
-    if (this.addFriendsInput !== value) {
+  public set addFriendsSearchInput(value: string) {
+    if (this.addFriendsSearchInput !== value) {
       this.store?.update((state) => ({
         ...state,
-        addFriendsInput: value,
+        addFriendsSearchInput: value,
       }));
+    }
+  }
+
+  public get addFriendsLocationInput(): string {
+    return this.store?.getValue().addFriendsLocationInput;
+  }
+
+  public set addFriendsLocationInput(value: string) {
+    if (this.addFriendsLocationInput !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        addFriendsLocationInput: value,
+      }));
+    }
+  }
+
+  public get addFriendsLocationGeocoding(): Geocoding | undefined {
+    return this.store?.getValue().addFriendsLocationGeocoding;
+  }
+
+  public set addFriendsLocationGeocoding(value: Geocoding | undefined) {
+    if (JSON.stringify(this.addFriendsLocationGeocoding) !== JSON.stringify(value)) {
+      this.store?.update((state) => ({
+        ...state,
+        addFriendsLocationGeocoding: value,
+      }));
+    }
+  }
+
+  public get addFriendsLocationFeature(): GeocodingFeature | undefined {
+    return this.store?.getValue().addFriendsLocationFeature;
+  }
+
+  public set addFriendsLocationFeature(value: GeocodingFeature | undefined) {
+    if (JSON.stringify(this.addFriendsLocationFeature) !== JSON.stringify(value)) {
+      this.store?.update((state) => ({
+        ...state,
+        addFriendsLocationFeature: value,
+      }));
+    }
+  }
+
+  public get addFriendsLocationCoordinates(): { lat: number; lng: number } {
+    return this.store?.getValue().addFriendsLocationCoordinates;
+  }
+
+  public set addFriendsLocationCoordinates(value: {
+    lat: number;
+    lng: number;
+  }) {
+    if (
+      JSON.stringify(this.addFriendsLocationCoordinates) !==
+      JSON.stringify(value)
+    ) {
+      this.store?.update((state) => ({
+        ...state,
+        addFriendsLocationCoordinates: value,
+      }));
+    }
+  }
+
+  public get addFriendsRadiusMeters(): number {
+    return this.store?.getValue().addFriendsRadiusMeters;
+  }
+
+  public set addFriendsRadiusMeters(value: number) {
+    if (this.addFriendsRadiusMeters !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        addFriendsRadiusMeters: value,
+      }));
+    }
+  }
+
+  public get addFriendsSexes(): ('male' | 'female')[] {
+    return this.store?.getValue().addFriendsSexes;
+  }
+
+  public set addFriendsSexes(value: ('male' | 'female')[]) {
+    if (JSON.stringify(this.addFriendsSexes) !== JSON.stringify(value)) {
+      this.store?.update((state) => ({ ...state, addFriendsSexes: value }));
     }
   }
 
@@ -632,28 +745,15 @@ export class AccountModel extends Model {
     }
   }
 
-  public get addFriendAccounts(): AccountResponse[] {
+  public get addFriendAccounts(): AccountDocument[] {
     return this.store?.getValue().addFriendAccounts;
   }
 
-  public set addFriendAccounts(value: AccountResponse[]) {
+  public set addFriendAccounts(value: AccountDocument[]) {
     if (JSON.stringify(this.addFriendAccounts) !== JSON.stringify(value)) {
       this.store?.update((state) => ({
         ...state,
         addFriendAccounts: value,
-      }));
-    }
-  }
-
-  public get addFriendCustomers(): Record<string, CustomerResponse> {
-    return this.store?.getValue().addFriendCustomers;
-  }
-
-  public set addFriendCustomers(value: Record<string, CustomerResponse>) {
-    if (JSON.stringify(this.addFriendCustomers) !== JSON.stringify(value)) {
-      this.store?.update((state) => ({
-        ...state,
-        addFriendCustomers: value,
       }));
     }
   }
@@ -679,7 +779,7 @@ export class AccountModel extends Model {
   }
 
   public set addFriendAccountFollowers(
-    value: Record<string, AccountFollowerResponse>,
+    value: Record<string, AccountFollowerResponse>
   ) {
     if (
       JSON.stringify(this.addFriendAccountFollowers) !== JSON.stringify(value)
@@ -704,11 +804,11 @@ export class AccountModel extends Model {
     }
   }
 
-  public get followRequestAccounts(): AccountResponse[] {
+  public get followRequestAccounts(): AccountDocument[] {
     return this.store?.getValue().followRequestAccounts;
   }
 
-  public set followRequestAccounts(value: AccountResponse[]) {
+  public set followRequestAccounts(value: AccountDocument[]) {
     if (JSON.stringify(this.followRequestAccounts) !== JSON.stringify(value)) {
       this.store?.update((state) => ({
         ...state,
@@ -721,9 +821,7 @@ export class AccountModel extends Model {
     return this.store?.getValue().followRequestCustomers;
   }
 
-  public set followRequestCustomers(
-    value: Record<string, CustomerResponse>,
-  ) {
+  public set followRequestCustomers(value: Record<string, CustomerResponse>) {
     if (JSON.stringify(this.followRequestCustomers) !== JSON.stringify(value)) {
       this.store?.update((state) => ({
         ...state,
@@ -740,11 +838,11 @@ export class AccountModel extends Model {
   }
 
   public set followRequestAccountFollowers(
-    value: Record<string, AccountFollowerResponse>,
+    value: Record<string, AccountFollowerResponse>
   ) {
     if (
       JSON.stringify(this.followRequestAccountFollowers) !==
-        JSON.stringify(value)
+      JSON.stringify(value)
     ) {
       this.store.update((state) => ({
         ...state,

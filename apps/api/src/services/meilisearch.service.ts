@@ -61,35 +61,18 @@ class MeiliSearchService {
     }
   }
 
-  public async updateFilterableAttributes(
+  public async updateSettingsAsync(
     indexName: string,
-    attributes: string[]
-  ): Promise<object | null> {
-    try {
-      const response = await axiod.put(
-        `${this._url}/indexes/${indexName}/settings/filterable-attributes`,
-        attributes,
-        {
-          headers: {
-            Authorization: `Bearer ${this._apiKey}`,
-          },
-        }
-      );
-
-      return response.data;
-    } catch (error: any) {
-      console.error(error);
-      return null;
+    attributes: {
+      searchableAttributes: string[];
+      displayedAttributes: string[];
+      filterableAttributes: string[];
+      sortableAttributes: string[];
     }
-  }
-
-  public async updateSortableAttributes(
-    indexName: string,
-    attributes: string[]
   ): Promise<object | null> {
     try {
-      const response = await axiod.put(
-        `${this._url}/indexes/${indexName}/settings/sortable-attributes`,
+      const response = await axiod.patch(
+        `${this._url}/indexes/${indexName}/settings`,
         attributes,
         {
           headers: {

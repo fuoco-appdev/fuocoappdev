@@ -58,13 +58,8 @@ export default function AccountPublicFollowingDesktopComponent({
           {accountPublicProps.followingAccounts.map((value) => {
             const accountFollower = Object.keys(
               accountPublicProps.followingAccountFollowers
-            ).includes(value.id)
-              ? accountPublicProps.followingAccountFollowers[value.id]
-              : null;
-            const customer = Object.keys(
-              accountPublicProps.followingCustomers
-            ).includes(value.customerId)
-              ? accountPublicProps.followingCustomers[value.customerId]
+            ).includes(value.id ?? '')
+              ? accountPublicProps.followingAccountFollowers[value.id ?? '']
               : null;
             return (
               <AccountFollowItemComponent
@@ -72,15 +67,14 @@ export default function AccountPublicFollowingDesktopComponent({
                 accountProps={accountProps}
                 account={value}
                 follower={accountFollower}
-                customer={customer}
                 isRequest={false}
-                onClick={() => onItemClick(value.id)}
-                onFollow={() => AccountController.requestFollowAsync(value.id)}
+                onClick={() => onItemClick(value.id ?? '')}
+                onFollow={() => AccountController.requestFollowAsync(value.id ?? '')}
                 onRequested={() =>
-                  AccountController.requestUnfollowAsync(value.id)
+                  AccountController.requestUnfollowAsync(value.id ?? '')
                 }
                 onUnfollow={() =>
-                  AccountController.requestUnfollowAsync(value.id)
+                  AccountController.requestUnfollowAsync(value.id ?? '')
                 }
               />
             );

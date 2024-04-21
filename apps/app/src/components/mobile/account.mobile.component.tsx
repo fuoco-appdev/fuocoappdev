@@ -93,7 +93,7 @@ export default function AccountMobileComponent({
               styles['center-tab-container-mobile'],
             ].join(' ')}
           >
-            <div
+            {accountProps.account?.status === 'Incomplete' && (<div
               className={[
                 styles['top-bar-text-container'],
                 styles['top-bar-text-container-mobile'],
@@ -107,7 +107,7 @@ export default function AccountMobileComponent({
               >
                 {t('completeProfile')}
               </div>
-            </div>
+            </div>)}
           </div>
           <div
             className={[
@@ -711,22 +711,22 @@ export default function AccountMobileComponent({
                       classNames: {
                         enter:
                           accountProps.activeTabIndex >
-                          accountProps.prevTabIndex
+                            accountProps.prevTabIndex
                             ? styles['left-to-right-enter']
                             : styles['right-to-left-enter'],
                         enterActive:
                           accountProps.activeTabIndex >
-                          accountProps.prevTabIndex
+                            accountProps.prevTabIndex
                             ? styles['left-to-right-enter-active']
                             : styles['right-to-left-enter-active'],
                         exit:
                           accountProps.activeTabIndex >
-                          accountProps.prevTabIndex
+                            accountProps.prevTabIndex
                             ? styles['left-to-right-exit']
                             : styles['right-to-left-exit'],
                         exitActive:
                           accountProps.activeTabIndex >
-                          accountProps.prevTabIndex
+                            accountProps.prevTabIndex
                             ? styles['left-to-right-exit-active']
                             : styles['right-to-left-exit-active'],
                       },

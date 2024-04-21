@@ -9,7 +9,6 @@ import { ResponsiveMobile } from '../responsive.component';
 export default function AccountFollowItemMobileComponent({
   accountProps,
   account,
-  customer,
   isRequest,
   isFollowing,
   isAccepted,
@@ -40,7 +39,7 @@ export default function AccountFollowItemMobileComponent({
                 ].join(' '),
               }}
               size={'custom'}
-              text={customer?.firstName}
+              text={account.customer?.first_name}
               src={profileUrl}
             />
             <div
@@ -68,17 +67,17 @@ export default function AccountFollowItemMobileComponent({
                   />
                 )}
               </div>
-              {customer && (
+              {account.customer && (
                 <div
                   className={[
                     styles['full-name'],
                     styles['full-name-mobile'],
                   ].join(' ')}
                 >
-                  {`${customer?.firstName} ${customer?.lastName}`}
+                  {`${account.customer?.first_name} ${account.customer?.last_name}`}
                 </div>
               )}
-              {!customer && (
+              {!account.customer && (
                 <Skeleton
                   count={1}
                   borderRadius={16}

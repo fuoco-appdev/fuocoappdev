@@ -21,12 +21,15 @@ const AccountAddFriendsMobileComponent = lazy(
 
 export interface AccountAddFriendsResponsiveProps {
   accountProps: AccountState;
+  locationDropdownOpen: boolean;
+  setLocationDropdownOpen: (value: boolean) => void;
   onAddFriendsScroll: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
   onAddFriendsLoad: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
 }
 
 export default function AccountAddFriendsComponent(): JSX.Element {
   const [accountProps] = useObservable(AccountController.model.store);
+  const [locationDropdownOpen, setLocationDropdownOpen] = React.useState<boolean>(false);
   const scrollOffsetTriggerGap = 16;
 
   const onAddFriendsScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
@@ -101,16 +104,22 @@ export default function AccountAddFriendsComponent(): JSX.Element {
         <AuthenticatedComponent>
           <AccountAddFriendsDesktopComponent
             accountProps={accountProps}
+            locationDropdownOpen={locationDropdownOpen}
+            setLocationDropdownOpen={setLocationDropdownOpen}
             onAddFriendsLoad={onAddFriendsLoad}
             onAddFriendsScroll={onAddFriendsScroll}
           />
           <AccountAddFriendsTabletComponent
             accountProps={accountProps}
+            locationDropdownOpen={locationDropdownOpen}
+            setLocationDropdownOpen={setLocationDropdownOpen}
             onAddFriendsLoad={onAddFriendsLoad}
             onAddFriendsScroll={onAddFriendsScroll}
           />
           <AccountAddFriendsMobileComponent
             accountProps={accountProps}
+            locationDropdownOpen={locationDropdownOpen}
+            setLocationDropdownOpen={setLocationDropdownOpen}
             onAddFriendsLoad={onAddFriendsLoad}
             onAddFriendsScroll={onAddFriendsScroll}
           />

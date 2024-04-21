@@ -1,29 +1,25 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import {
-  CustomerGroup,
-  Product,
-  Region
-} from "@medusajs/medusa";
-import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
-import { select } from "@ngneat/elf";
-import { Index } from "meilisearch";
-import { Subscription, filter, firstValueFrom, take } from "rxjs";
-import { Controller } from "../controller";
-import CartController from "../controllers/cart.controller";
-import { AccountState } from "../models/account.model";
+import { CustomerGroup, Product, Region } from '@medusajs/medusa';
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+import { select } from '@ngneat/elf';
+import { Index } from 'meilisearch';
+import { Subscription, filter, firstValueFrom, take } from 'rxjs';
+import { Controller } from '../controller';
+import CartController from '../controllers/cart.controller';
+import { AccountState } from '../models/account.model';
 import {
   InventoryLocation,
   InventoryLocationType,
-} from "../models/explore.model";
-import { ProductTabs, StoreModel } from "../models/store.model";
-import { AccountResponse } from "../protobuf/account_pb";
-import { ProductLikesMetadataResponse } from "../protobuf/product-like_pb";
-import MedusaService from "../services/medusa.service";
-import MeiliSearchService from "../services/meilisearch.service";
-import ProductLikesService from "../services/product-likes.service";
-import { MedusaProductTypeNames } from "../types/medusa.type";
-import AccountController from "./account.controller";
-import ExploreController from "./explore.controller";
+} from '../models/explore.model';
+import { ProductTabs, StoreModel } from '../models/store.model';
+import { AccountResponse } from '../protobuf/account_pb';
+import { ProductLikesMetadataResponse } from '../protobuf/product-like_pb';
+import MedusaService from '../services/medusa.service';
+import MeiliSearchService from '../services/meilisearch.service';
+import ProductLikesService from '../services/product-likes.service';
+import { MedusaProductTypeNames } from '../types/medusa.type';
+import AccountController from './account.controller';
+import ExploreController from './explore.controller';
 
 class StoreController extends Controller {
   private readonly _model: StoreModel;
@@ -39,8 +35,8 @@ class StoreController extends Controller {
     super();
 
     this._model = new StoreModel();
-    this.onSelectedInventoryLocationChangedAsync = this
-      .onSelectedInventoryLocationChangedAsync.bind(this);
+    this.onSelectedInventoryLocationChangedAsync =
+      this.onSelectedInventoryLocationChangedAsync.bind(this);
     this._limit = 20;
   }
 
@@ -49,7 +45,7 @@ class StoreController extends Controller {
   }
 
   public override initialize(renderCount: number): void {
-    this._productsIndex = MeiliSearchService.client?.index("products_custom");
+    this._productsIndex = MeiliSearchService.client?.index('products_custom');
 
     this.initializeAsync(renderCount);
   }
@@ -100,8 +96,8 @@ class StoreController extends Controller {
       this._model.store.pipe(
         select((model) => model.selectedRegion),
         filter((value) => value !== undefined),
-        take(1),
-      ),
+        take(1)
+      )
     );
     if (!region) {
       return;
@@ -127,7 +123,7 @@ class StoreController extends Controller {
   }
 
   public updateSelectedProductLikesMetadata(
-    value: ProductLikesMetadataResponse | null,
+    value: ProductLikesMetadataResponse | null
   ): void {
     this._model.selectedProductLikesMetadata = value;
   }
@@ -137,7 +133,7 @@ class StoreController extends Controller {
   }
 
   public async updateSelectedTabAsync(
-    value: ProductTabs | undefined,
+    value: ProductTabs | undefined
   ): Promise<void> {
     this._model.selectedTab = value;
     this._model.pagination = 1;
@@ -166,7 +162,7 @@ class StoreController extends Controller {
   public async requestProductsAsync(
     offset: number = 0,
     limit: number = 10,
-    force: boolean = false,
+    force: boolean = false
   ): Promise<void> {
     if (!force && (this._model.isLoading || !this._model.selectedRegion)) {
       return;
@@ -181,22 +177,22 @@ class StoreController extends Controller {
       this._model.store.pipe(
         select((model) => model.selectedRegion),
         filter((value) => value !== undefined),
-        take(1),
-      ),
+        take(1)
+      )
     );
     const cart = await firstValueFrom(
       CartController.model.store.pipe(
         select((model) => model.cart),
         filter((value) => value !== undefined),
-        take(1),
-      ),
+        take(1)
+      )
     );
     const selectedInventoryLocation: InventoryLocation = await firstValueFrom(
       ExploreController.model.store.pipe(
         select((model) => model.selectedInventoryLocation),
         filter((value) => value !== undefined),
-        take(1),
-      ),
+        take(1)
+      )
     );
     if (!selectedInventoryLocation.type) {
       return;
@@ -204,7 +200,7 @@ class StoreController extends Controller {
 
     const productTypeIds = this.getTypeIds(selectedInventoryLocation.type);
     const productsResponse = await MedusaService.medusa?.products.list({
-      sales_channel_id: [this._model.selectedSalesChannel?.id ?? ""],
+      sales_channel_id: [this._model.selectedSalesChannel?.id ?? ''],
       offset: offset,
       limit: limit,
       ...(productTypeIds.length > 0 && { type_id: productTypeIds }),
@@ -220,7 +216,7 @@ class StoreController extends Controller {
     for (let i = 0; i < pricedProductList.length; i++) {
       for (const variant of pricedProductList[i].variants) {
         const price = variant.prices?.find(
-          (value) => value.region_id === this._model.selectedRegion?.id,
+          (value) => value.region_id === this._model.selectedRegion?.id
         );
         if (!price) {
           pricedProductList.splice(i, 1);
@@ -270,16 +266,16 @@ class StoreController extends Controller {
 
     const productIds: string[] = products.map((value: Product) => value.id);
     try {
-      const productLikesResponse = await ProductLikesService
-        .requestMetadataAsync({
-          accountId: AccountController.model.account?.id ?? "",
+      const productLikesResponse =
+        await ProductLikesService.requestMetadataAsync({
+          accountId: AccountController.model.account?.id ?? '',
           productIds: productIds,
         });
 
       if (offset > 0) {
         const productLikesMetadata = this._model.productLikesMetadata;
         this._model.productLikesMetadata = productLikesMetadata.concat(
-          productLikesResponse.metadata,
+          productLikesResponse.metadata
         );
       } else {
         this._model.productLikesMetadata = productLikesResponse.metadata;
@@ -293,7 +289,7 @@ class StoreController extends Controller {
     query: string,
     offset: number = 0,
     limit: number = 10,
-    force: boolean = false,
+    force: boolean = false
   ): Promise<void> {
     if (!force && (this._model.isLoading || !this._model.selectedRegion)) {
       return;
@@ -307,8 +303,8 @@ class StoreController extends Controller {
       ExploreController.model.store.pipe(
         select((model) => model.selectedInventoryLocation),
         filter((value) => value !== undefined),
-        take(1),
-      ),
+        take(1)
+      )
     );
     if (!selectedInventoryLocation.type) {
       return;
@@ -316,8 +312,8 @@ class StoreController extends Controller {
 
     this._model.isLoading = true;
 
-    let filterValue = this.getFilter(selectedInventoryLocation.type);
-    let sortValue = this.getSorting(selectedInventoryLocation.type);
+    const filterValue = this.getFilter(selectedInventoryLocation.type);
+    const sortValue = this.getSorting(selectedInventoryLocation.type);
     const result = await this._productsIndex?.search(query, {
       filter: [filterValue],
       ...(sortValue && { sort: [sortValue] }),
@@ -325,7 +321,7 @@ class StoreController extends Controller {
       limit: limit,
     });
 
-    let hits = result?.hits as Product[];
+    const hits = result?.hits as Product[];
     if (hits && hits.length <= 0 && offset <= 0) {
       this._model.products = [];
     }
@@ -356,16 +352,16 @@ class StoreController extends Controller {
     const productIds: string[] = hits.map((value: Product) => value.id);
 
     try {
-      const productLikesResponse = await ProductLikesService
-        .requestMetadataAsync({
-          accountId: AccountController.model.account?.id ?? "",
+      const productLikesResponse =
+        await ProductLikesService.requestMetadataAsync({
+          accountId: AccountController.model.account?.id ?? '',
           productIds: productIds,
         });
 
       if (offset > 0) {
         const productLikesMetadata = this._model.productLikesMetadata;
         this._model.productLikesMetadata = productLikesMetadata.concat(
-          productLikesResponse.metadata,
+          productLikesResponse.metadata
         );
       } else {
         this._model.productLikesMetadata = productLikesResponse.metadata;
@@ -378,19 +374,19 @@ class StoreController extends Controller {
       this._model.store.pipe(
         select((model) => model.selectedRegion),
         filter((value) => value !== undefined),
-        take(1),
-      ),
+        take(1)
+      )
     );
     const cart = await firstValueFrom(
       CartController.model.store.pipe(
         select((model) => model.cart),
         filter((value) => value !== undefined),
-        take(1),
-      ),
+        take(1)
+      )
     );
     const productsResponse = await MedusaService.medusa?.products.list({
       id: productIds,
-      sales_channel_id: [this._model.selectedSalesChannel?.id ?? ""],
+      sales_channel_id: [this._model.selectedSalesChannel?.id ?? ''],
       ...(selectedRegion && {
         region_id: selectedRegion.id,
         currency_code: selectedRegion.currency_code,
@@ -401,7 +397,7 @@ class StoreController extends Controller {
     for (let i = 0; i < products.length; i++) {
       for (const variant of products[i].variants) {
         const price = variant.prices?.find(
-          (value) => value.region_id === this._model.selectedRegion?.id,
+          (value) => value.region_id === this._model.selectedRegion?.id
         );
         if (!price) {
           products.splice(i, 1);
@@ -424,13 +420,13 @@ class StoreController extends Controller {
 
   public async applyFilterAsync(
     regionId: string,
-    cellarId: string,
+    cellarId: string
   ): Promise<void> {
     const region = this._model.regions.find((value) => value.id === regionId);
     this.updateRegion(region);
 
     const inventoryLocation = ExploreController.model.inventoryLocations.find(
-      (value) => value.id === cellarId,
+      (value) => value.id === cellarId
     );
     if (inventoryLocation) {
       ExploreController.updateSelectedInventoryLocation(inventoryLocation);
@@ -439,10 +435,10 @@ class StoreController extends Controller {
 
   public updateProductLikesMetadata(
     id: string,
-    metadata: ProductLikesMetadataResponse,
+    metadata: ProductLikesMetadataResponse
   ): void {
     const metadataIndex = this._model.productLikesMetadata.findIndex(
-      (value) => value.productId === id,
+      (value) => value.productId === id
     );
     const productLikesMetadata = [...this._model.productLikesMetadata];
     productLikesMetadata[metadataIndex] = metadata;
@@ -472,7 +468,7 @@ class StoreController extends Controller {
   }
 
   private async onSelectedInventoryLocationChangedAsync(
-    inventoryLocation: InventoryLocation,
+    inventoryLocation: InventoryLocation
   ): Promise<void> {
     if (!inventoryLocation?.region) {
       return;
@@ -489,7 +485,7 @@ class StoreController extends Controller {
     this._model.selectedSalesChannel = inventoryLocation.salesChannels[0];
 
     const region = this._model.regions.find(
-      (value) => value.name === inventoryLocation.region,
+      (value) => value.name === inventoryLocation.region
     );
 
     this.updateRegion(region);
@@ -515,13 +511,10 @@ class StoreController extends Controller {
     return productTypeIds;
   }
 
-  private getFilter(
-    inventoryType: InventoryLocationType,
-  ): string {
+  private getFilter(inventoryType: InventoryLocationType): string {
     const types = this.getTypeIds(inventoryType);
-    let filterValue = `type_id IN [${types.join(", ")}]`;
-    filterValue +=
-      ` AND sales_channel_ids = ${this._model.selectedSalesChannel?.id}`;
+    let filterValue = `type_id IN [${types.join(', ')}]`;
+    filterValue += ` AND sales_channel_ids = ${this._model.selectedSalesChannel?.id}`;
     filterValue += ` AND status = published`;
     if (
       this._model.selectedTab &&
@@ -532,8 +525,7 @@ class StoreController extends Controller {
       this._model.selectedTab &&
       this._model.selectedTab === ProductTabs.Wines
     ) {
-      filterValue +=
-        ` AND metadata.type IN [${ProductTabs.White}, ${ProductTabs.Red}, ${ProductTabs.Rose}, ${ProductTabs.Spirits}]`;
+      filterValue += ` AND metadata.type IN [${ProductTabs.White}, ${ProductTabs.Red}, ${ProductTabs.Rose}, ${ProductTabs.Spirits}]`;
     }
 
     return filterValue;

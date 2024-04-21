@@ -92,7 +92,7 @@ export default function AccountTabletComponent({
               styles['center-tab-container-tablet'],
             ].join(' ')}
           >
-            <div
+            {accountProps.account?.status === 'Incomplete' && (<div
               className={[
                 styles['top-bar-text-container'],
                 styles['top-bar-text-container-tablet'],
@@ -101,13 +101,12 @@ export default function AccountTabletComponent({
               <div
                 className={[
                   styles['top-bar-text'],
-                  styles['top-bar-username'],
                   styles['top-bar-text-tablet'],
                 ].join(' ')}
               >
                 {t('completeProfile')}
               </div>
-            </div>
+            </div>)}
           </div>
           <div
             className={[
@@ -701,22 +700,22 @@ export default function AccountTabletComponent({
                       classNames: {
                         enter:
                           accountProps.activeTabIndex >
-                          accountProps.prevTabIndex
+                            accountProps.prevTabIndex
                             ? styles['left-to-right-enter']
                             : styles['right-to-left-enter'],
                         enterActive:
                           accountProps.activeTabIndex >
-                          accountProps.prevTabIndex
+                            accountProps.prevTabIndex
                             ? styles['left-to-right-enter-active']
                             : styles['right-to-left-enter-active'],
                         exit:
                           accountProps.activeTabIndex >
-                          accountProps.prevTabIndex
+                            accountProps.prevTabIndex
                             ? styles['left-to-right-exit']
                             : styles['right-to-left-exit'],
                         exitActive:
                           accountProps.activeTabIndex >
-                          accountProps.prevTabIndex
+                            accountProps.prevTabIndex
                             ? styles['left-to-right-exit-active']
                             : styles['right-to-left-exit-active'],
                       },

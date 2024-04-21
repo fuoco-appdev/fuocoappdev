@@ -22,6 +22,7 @@ export interface AccountProps {
   username?: string;
   birthday?: string;
   sex?: string;
+  about_me?: string;
   interests?: string[];
   metadata?: string;
 }
@@ -41,13 +42,14 @@ class AccountService {
           await MeiliSearchService.createIndexAsync(this._meiliIndexName);
         }
 
-        await MeiliSearchService.updateFilterableAttributes(
+        await MeiliSearchService.updateSettingsAsync(
           this._meiliIndexName,
-          []
-        );
-        await MeiliSearchService.updateSortableAttributes(
-          this._meiliIndexName,
-          []
+          {
+            searchableAttributes: ['*'],
+            displayedAttributes: ['*'],
+            filterableAttributes: ['_geo', 'sex', 'status', 'id'],
+            sortableAttributes: []
+          }
         );
       }
     );

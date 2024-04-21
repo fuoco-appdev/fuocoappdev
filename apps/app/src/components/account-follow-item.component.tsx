@@ -1,11 +1,8 @@
-import { AccountFollowerResponse } from '../protobuf/account-follower_pb';
-import { StorageFolderType } from '../protobuf/common_pb';
-import { CustomerResponse } from '../protobuf/customer_pb';
-// @ts-ignore
 import { lazy } from '@loadable/component';
 import React from 'react';
-import { AccountState } from '../models/account.model';
-import { AccountResponse } from '../protobuf/account_pb';
+import { AccountDocument, AccountState } from '../models/account.model';
+import { AccountFollowerResponse } from '../protobuf/account-follower_pb';
+import { StorageFolderType } from '../protobuf/common_pb';
 import BucketService from '../services/bucket.service';
 import { AccountFollowItemSuspenseDesktopComponent } from './desktop/suspense/account-follow-item.suspense.desktop.component';
 import { AccountFollowItemSuspenseMobileComponent } from './mobile/suspense/account-follow-item.suspense.mobile.component';
@@ -23,9 +20,8 @@ const AccountFollowItemMobileComponent = lazy(
 
 export interface AccountFollowItemProps {
   accountProps: AccountState;
-  account: AccountResponse;
+  account: AccountDocument;
   follower: AccountFollowerResponse | null;
-  customer: CustomerResponse | null;
   isRequest: boolean;
   onClick: () => void;
   onFollow?: () => void;
@@ -46,7 +42,6 @@ export default function AccountFollowItemComponent({
   accountProps,
   account,
   follower,
-  customer,
   isRequest,
   onClick,
   onFollow,
@@ -62,13 +57,13 @@ export default function AccountFollowItemComponent({
   const [isAccepted, setIsAccepted] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    if (!account.profileUrl) {
+    if (!account.profile_url) {
       return;
     }
 
     BucketService.getPublicUrlAsync(
       StorageFolderType.Avatars,
-      account.profileUrl
+      account.profile_url
     ).then((value) => {
       setProfileUrl(value);
     });
@@ -140,7 +135,6 @@ export default function AccountFollowItemComponent({
         accountProps={accountProps}
         account={account}
         follower={follower}
-        customer={customer}
         isRequest={isRequest}
         isFollowing={isFollowing}
         isAccepted={isAccepted}
@@ -156,7 +150,6 @@ export default function AccountFollowItemComponent({
         accountProps={accountProps}
         account={account}
         follower={follower}
-        customer={customer}
         isRequest={isRequest}
         isFollowing={isFollowing}
         isAccepted={isAccepted}
@@ -172,7 +165,6 @@ export default function AccountFollowItemComponent({
         accountProps={accountProps}
         account={account}
         follower={follower}
-        customer={customer}
         isRequest={isRequest}
         isFollowing={isFollowing}
         isAccepted={isAccepted}

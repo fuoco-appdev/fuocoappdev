@@ -314,5 +314,6 @@
   "birthday": "Birthday",
   "sex": "Sex",
   "interests": "Interests",
-  "addInterest": "Add Interest"
+  "addInterest": "Add Interest",
+  "radius": "Radius"
 }
