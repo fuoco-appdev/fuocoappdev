@@ -1419,7 +1419,7 @@ class AccountController extends Controller {
       lastName: this._model.customer?.last_name,
       phoneNumber: this._model.customer?.phone,
       username: value?.username,
-      birthday: value?.birthday ?? new Date(Date.now()).toDateString(),
+      birthday: value?.birthday ?? new Date(Date.now()).toISOString().split('T')[0],
       sex: value?.sex as 'male' | 'female',
     };
 

@@ -127,7 +127,7 @@ export class AccountModel extends Model {
             firstName: '',
             lastName: '',
             username: '',
-            birthday: new Date(Date.now()).toDateString(),
+            birthday: new Date(Date.now()).toISOString().split('T')[0],
             phoneNumber: '',
           },
           profileFormErrors: {},

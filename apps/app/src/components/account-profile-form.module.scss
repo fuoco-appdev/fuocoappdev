@@ -1,26 +1,18 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
 .horizontal-input-container {
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: row;
-            flex-direction: row;
+    flex-direction: row;
     gap: $mp-2;
+    width: 100%;
 }
 
 .input-root {
-    -webkit-box-flex: 1;
-        -ms-flex: 1;
-            flex: 1;
+    flex: 1;
 }
 
 .input-root-skeleton {
-    -webkit-box-flex: 1;
-        -ms-flex: 1;
-            flex: 1;
+    flex: 1;
     margin-bottom: $mp-2;
 }
 
@@ -31,11 +23,11 @@
 .input-form-layout-label {
     color: $brand-900 !important;
 }
-  
+
 .input {
     color: $brand-900 !important;
 }
-  
+
 .input-container {
     border-color: $brand-900 !important;
 }
@@ -57,7 +49,7 @@
 .listbox {
     border-color: $brand-900 !important;
 }
-  
+
 .listbox-chevron {
     color: $brand-900 !important;
 }
