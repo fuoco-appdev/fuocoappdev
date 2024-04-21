@@ -1,24 +1,8 @@
-import {
-  LineItem,
-  ProductOptionValue,
-  Order,
-  FulfillmentStatus,
-} from '@medusajs/medusa';
+import { Avatar } from '@fuoco.appdev/core-ui';
 import styles from '../stock-location-cart-item.module.scss';
-import { useEffect, useState } from 'react';
-import { ProductOptions } from '../../models/product.model';
-import { useTranslation } from 'react-i18next';
-import { Avatar, Button, Line, Modal } from '@fuoco.appdev/core-ui';
-import CartController from '../../controllers/cart.controller';
 // @ts-ignore
-import { formatAmount } from 'medusa-react';
-import StoreController from '../../controllers/store.controller';
-import { useObservable } from '@ngneat/use-observable';
 import Ripples from 'react-ripples';
-import { useNavigate } from 'react-router-dom';
-import { ResponsiveDesktop, ResponsiveMobile } from '../responsive.component';
-import { StockLocationItemResponsiveProps } from '../stock-location-item.component';
-import { InventoryLocationType } from 'src/models/explore.model';
+import { ResponsiveMobile } from '../responsive.component';
 import { StockLocationCartItemResponsiveProps } from '../stock-location-cart-item.component';
 
 export default function StockLocationCartItemMobileComponent({
@@ -28,9 +12,6 @@ export default function StockLocationCartItemMobileComponent({
   avatar,
   onClick,
 }: StockLocationCartItemResponsiveProps): JSX.Element {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-
   return (
     <ResponsiveMobile>
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>

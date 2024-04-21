@@ -1,5 +1,5 @@
 import { createStore, withProps } from '@ngneat/elf';
-import {Model} from '../model';
+import { Model } from '../model';
 
 export interface LoadingState {
     isLoading: boolean;

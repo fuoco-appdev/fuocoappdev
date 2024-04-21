@@ -1,33 +1,22 @@
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
-import AccountController from '../controllers/account.controller';
-import WindowController from '../controllers/window.controller';
-import ExploreController from '../controllers/explore.controller';
-import StoreController from '../controllers/store.controller';
-import ProductController from '../controllers/product.controller';
-import { useTranslation } from 'react-i18next';
-import { useObservable } from '@ngneat/use-observable';
-import { StoreState } from '../models/store.model';
-import { AuthenticatedComponent } from './authenticated.component';
 import { lazy } from '@loadable/component';
-import { AccountLikesSuspenseDesktopComponent } from './desktop/suspense/account-likes.suspense.desktop.component';
-import React, { useEffect, useState } from 'react';
-import { AccountLikesSuspenseMobileComponent } from './mobile/suspense/account-likes.suspense.mobile.component';
-import { AccountState } from '../models/account.model';
-import { AccountLikesSuspenseTabletComponent } from './tablet/suspense/account-likes.suspense.tablet.component';
-import { Store } from '@ngneat/elf';
-import { ExploreLocalState } from '../models/explore.model';
-import {
-  PricedVariant,
-  PricedProduct,
-} from '@medusajs/medusa/dist/types/pricing';
-import { useNavigate } from 'react-router-dom';
-import { RoutePathsType, useQuery } from '../route-paths';
-import * as core from '../protobuf/core_pb';
 import { Product } from '@medusajs/medusa';
+import { PricedVariant } from '@medusajs/medusa/dist/types/pricing';
+import { useObservable } from '@ngneat/use-observable';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import AccountController from '../controllers/account.controller';
+import ProductController from '../controllers/product.controller';
+import StoreController from '../controllers/store.controller';
+import WindowController from '../controllers/window.controller';
+import { AccountState } from '../models/account.model';
+import { StoreState } from '../models/store.model';
+import { ProductLikesMetadataResponse } from '../protobuf/product-like_pb';
+import { RoutePathsType, useQuery } from '../route-paths';
+import { AuthenticatedComponent } from './authenticated.component';
+import { AccountLikesSuspenseDesktopComponent } from './desktop/suspense/account-likes.suspense.desktop.component';
+import { AccountLikesSuspenseMobileComponent } from './mobile/suspense/account-likes.suspense.mobile.component';
+import { AccountLikesSuspenseTabletComponent } from './tablet/suspense/account-likes.suspense.tablet.component';
 
 const AccountLikesDesktopComponent = lazy(
   () => import('./desktop/account-likes.desktop.component')
@@ -52,7 +41,7 @@ export interface AccountLikesResponsiveProps {
   onProductPreviewClick: (
     scrollTop: number,
     product: Product,
-    productLikesMetadata: core.ProductLikesMetadataResponse | null
+    productLikesMetadata: ProductLikesMetadataResponse | null
   ) => void;
   onProductPreviewRest: (product: Product) => void;
   onProductPreviewAddToCart: (product: Product) => void;
@@ -60,21 +49,23 @@ export interface AccountLikesResponsiveProps {
 }
 
 export default function AccountLikesComponent(): JSX.Element {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const query = useQuery();
   const [storeProps] = useObservable(StoreController.model.store);
   const [accountProps] = useObservable(AccountController.model.store);
-  const [openCartVariants, setOpenCartVariants] = useState<boolean>(false);
-  const [variantQuantities, setVariantQuantities] = useState<
+  const [openCartVariants, setOpenCartVariants] =
+    React.useState<boolean>(false);
+  const [variantQuantities, setVariantQuantities] = React.useState<
     Record<string, number>
   >({});
-  const [isPreviewLoading, setIsPreviewLoading] = useState<boolean>(false);
+  const [isPreviewLoading, setIsPreviewLoading] =
+    React.useState<boolean>(false);
 
   const onProductPreviewClick = (
     scrollTop: number,
-    product: Product,
-    productLikesMetadata: core.ProductLikesMetadataResponse | null
+    _product: Product,
+    _productLikesMetadata: ProductLikesMetadataResponse | null
   ) => {
     AccountController.updateLikesScrollPosition(scrollTop);
   };
@@ -86,7 +77,7 @@ export default function AccountLikesComponent(): JSX.Element {
     });
   };
 
-  const onProductPreviewAddToCart = (product: Product) => {
+  const onProductPreviewAddToCart = (_product: Product) => {
     setOpenCartVariants(true);
     setIsPreviewLoading(true);
   };
@@ -121,11 +112,11 @@ export default function AccountLikesComponent(): JSX.Element {
     setVariantQuantities({});
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     AccountController.loadLikedProducts();
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!accountProps.selectedLikedProduct) {
       return;
     }

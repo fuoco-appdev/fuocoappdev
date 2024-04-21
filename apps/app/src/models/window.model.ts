@@ -1,14 +1,14 @@
-import { createStore, withProps } from '@ngneat/elf';
-import { AuthChangeEvent } from '@supabase/supabase-js';
-import { Model } from '../model';
-import { RoutePathsType } from '../route-paths';
-import * as core from '../protobuf/core_pb';
-import { ToastProps, LanguageInfo, BannerProps } from '@fuoco.appdev/core-ui';
-import { InventoryLocation } from './explore.model';
-import { Order, PriceList } from '@medusajs/medusa';
+import { BannerProps, LanguageInfo, ToastProps } from "@fuoco.appdev/core-ui";
+import { Order, PriceList } from "@medusajs/medusa";
+import { createStore, withProps } from "@ngneat/elf";
+import { AuthChangeEvent } from "@supabase/supabase-js";
+import { Model } from "../model";
+import { AccountResponse } from "../protobuf/account_pb";
+import { RoutePathsType } from "../route-paths";
+import { InventoryLocation } from "./explore.model";
 
 export interface WindowState {
-  account: core.AccountResponse | null;
+  account: AccountResponse | null;
   isAuthenticated: boolean | undefined;
   activeRoute: RoutePathsType | undefined;
   cartCount: number;
@@ -41,7 +41,7 @@ export class WindowModel extends Model {
   constructor() {
     super(
       createStore(
-        { name: 'window' },
+        { name: "window" },
         withProps<WindowState>({
           account: null,
           isAuthenticated: undefined,
@@ -64,25 +64,25 @@ export class WindowModel extends Model {
           scaleKeyIndex: 0,
           queryInventoryLocation: undefined,
           priceLists: [],
-        })
+        }),
       ),
       undefined,
       createStore(
-        { name: 'window-local' },
+        { name: "window-local" },
         withProps<WindowLocalState>({
           isSideBarOpen: true,
-          languageCode: 'en',
+          languageCode: "en",
           languageInfo: undefined,
-        })
-      )
+        }),
+      ),
     );
   }
 
-  public get account(): core.AccountResponse | null {
+  public get account(): AccountResponse | null {
     return this.store.getValue().account;
   }
 
-  public set account(value: core.AccountResponse | null) {
+  public set account(value: AccountResponse | null) {
     if (JSON.stringify(this.account) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, account: value }));
     }
@@ -166,7 +166,7 @@ export class WindowModel extends Model {
   public set orderShippedNotificationData(value: Order | undefined) {
     if (
       JSON.stringify(this.orderShippedNotificationData) !==
-      JSON.stringify(value)
+        JSON.stringify(value)
     ) {
       this.store.update((state) => ({
         ...state,
@@ -182,7 +182,7 @@ export class WindowModel extends Model {
   public set orderReturnedNotificationData(value: Order | undefined) {
     if (
       JSON.stringify(this.orderReturnedNotificationData) !==
-      JSON.stringify(value)
+        JSON.stringify(value)
     ) {
       this.store.update((state) => ({
         ...state,
@@ -198,7 +198,7 @@ export class WindowModel extends Model {
   public set orderCanceledNotificationData(value: Order | undefined) {
     if (
       JSON.stringify(this.orderCanceledNotificationData) !==
-      JSON.stringify(value)
+        JSON.stringify(value)
     ) {
       this.store.update((state) => ({
         ...state,
@@ -406,7 +406,7 @@ export class WindowModel extends Model {
   }
 
   public set languageInfo(
-    value: { isoCode: string; info: LanguageInfo } | undefined
+    value: { isoCode: string; info: LanguageInfo } | undefined,
   ) {
     if (JSON.stringify(this.languageInfo) !== JSON.stringify(value)) {
       this.localStore?.update((state) => ({

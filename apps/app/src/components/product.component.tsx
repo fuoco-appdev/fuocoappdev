@@ -1,52 +1,39 @@
-import { useObservable } from '@ngneat/use-observable';
-import ProductController from '../controllers/product.controller';
+import { Line } from '@fuoco.appdev/core-ui';
+import { TabProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/tabs/tabs';
+import { lazy } from '@loadable/component';
 import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
-import { Suspense, useEffect, useRef, useState } from 'react';
+  ProductOption,
+  ProductOptionValue,
+  ProductTag,
+  ProductType,
+} from '@medusajs/medusa';
+import { PricedVariant } from '@medusajs/medusa/dist/types/pricing';
+import { useObservable } from '@ngneat/use-observable';
+import React from 'react';
+import { Helmet } from 'react-helmet';
+import { useTranslation } from 'react-i18next';
 import { RouteObject, useParams } from 'react-router-dom';
+import AccountController from '../controllers/account.controller';
+import ExploreController from '../controllers/explore.controller';
+import ProductController from '../controllers/product.controller';
+import StoreController from '../controllers/store.controller';
+import WindowController from '../controllers/window.controller';
+import { AccountState } from '../models/account.model';
+import { InventoryLocation } from '../models/explore.model';
 import {
   ProductOptions,
   ProductState,
   ProductTabType,
 } from '../models/product.model';
-import {
-  ProductOptionValue,
-  ProductOption,
-  ProductType,
-  ProductTag,
-} from '@medusajs/medusa';
-import {
-  PricedProduct,
-  PricedVariant,
-} from '@medusajs/medusa/dist/types/pricing';
-import { TabProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/tabs/tabs';
-import { Helmet } from 'react-helmet';
-import MedusaService from '../services/medusa.service';
-import StoreController from '../controllers/store.controller';
 import { StoreState } from '../models/store.model';
-import { lazy } from '@loadable/component';
-import { timeout } from 'promise-timeout';
-import React from 'react';
+import { DeepLTranslationsResponse } from '../protobuf/deepl_pb';
+import { ProductMetadataResponse } from '../protobuf/product_pb';
+import DeeplService from '../services/deepl.service';
+import MedusaService from '../services/medusa.service';
+import SupabaseService from '../services/supabase.service';
 import { ProductSuspenseDesktopComponent } from './desktop/suspense/product.suspense.desktop.component';
 import { ProductSuspenseMobileComponent } from './mobile/suspense/product.suspense.mobile.component';
-import WindowController from '../controllers/window.controller';
-import { useTranslation } from 'react-i18next';
 import { ProductSuspenseTabletComponent } from './tablet/suspense/product.suspense.tablet.component';
-import AccountController from '../controllers/account.controller';
-import { AccountState } from '../models/account.model';
-import { MedusaProductTypeNames } from '../types/medusa.type';
-import DeeplService from '../services/deepl.service';
-import {
-  DeepLTranslationsResponse,
-  ProductMetadataResponse,
-} from '../protobuf/core_pb';
-import SupabaseService from '../services/supabase.service';
-import { Line } from '@fuoco.appdev/core-ui';
-import { InventoryLocation } from '../models/explore.model';
-import ExploreController from '../controllers/explore.controller';
 
 const ProductDesktopComponent = lazy(
   () => import('./desktop/product.desktop.component')
@@ -102,40 +89,44 @@ export interface ProductResponsiveProps {
   onCancelLocation: () => void;
 }
 
-function ProductComponent({ metadata }: ProductProps): JSX.Element {
+function ProductComponent({}: ProductProps): JSX.Element {
   const [productProps] = useObservable(ProductController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
   const [accountProps] = useObservable(AccountController.model.store);
   const { id } = useParams();
   const [translatedDescription, setTranslatedDescription] =
-    useState<string>('');
-  const [description, setDescription] = useState<string>('');
-  const [tabs, setTabs] = useState<TabProps[]>([]);
-  const [activeVariantId, setActiveVariantId] = useState<string | undefined>();
-  const [activeDetails, setActiveDetails] = useState<string | undefined>(
+    React.useState<string>('');
+  const [description, setDescription] = React.useState<string>('');
+  const [tabs, setTabs] = React.useState<TabProps[]>([]);
+  const [activeVariantId, setActiveVariantId] = React.useState<
+    string | undefined
+  >();
+  const [activeDetails, setActiveDetails] = React.useState<string | undefined>(
     'information'
   );
-  const [alcohol, setAlcohol] = useState<string | undefined>('');
-  const [brand, setBrand] = useState<string | undefined>('');
-  const [varietals, setVarietals] = useState<string | undefined>('');
-  const [producerBottler, setProducerBottler] = useState<string | undefined>(
+  const [alcohol, setAlcohol] = React.useState<string | undefined>('');
+  const [brand, setBrand] = React.useState<string | undefined>('');
+  const [varietals, setVarietals] = React.useState<string | undefined>('');
+  const [producerBottler, setProducerBottler] = React.useState<
+    string | undefined
+  >('');
+  const [format, setFormat] = React.useState<string | undefined>('');
+  const [region, setRegion] = React.useState<string | undefined>('');
+  const [residualSugar, setResidualSugar] = React.useState<string | undefined>(
     ''
   );
-  const [format, setFormat] = useState<string | undefined>('');
-  const [region, setRegion] = useState<string | undefined>('');
-  const [residualSugar, setResidualSugar] = useState<string | undefined>('');
-  const [type, setType] = useState<ProductType | undefined>(undefined);
-  const [tags, setTags] = useState<ProductTag[]>([]);
-  const [uvc, setUVC] = useState<string | undefined>('');
-  const [vintage, setVintage] = useState<string | undefined>('');
-  const [remarkPlugins, setRemarkPlugins] = useState<any[]>([]);
-  const [quantity, setQuantity] = useState<number>(1);
-  const [isLiked, setIsLiked] = useState<boolean>(false);
-  const [likeCount, setLikeCount] = useState<number>(0);
-  const [sideBarTabs, setSideBarTabs] = useState<TabProps[]>([]);
+  const [type, setType] = React.useState<ProductType | undefined>(undefined);
+  const [tags, setTags] = React.useState<ProductTag[]>([]);
+  const [uvc, setUVC] = React.useState<string | undefined>('');
+  const [vintage, setVintage] = React.useState<string | undefined>('');
+  const [remarkPlugins, setRemarkPlugins] = React.useState<any[]>([]);
+  const [quantity, setQuantity] = React.useState<number>(1);
+  const [isLiked, setIsLiked] = React.useState<boolean>(false);
+  const [likeCount, setLikeCount] = React.useState<number>(0);
+  const [sideBarTabs, setSideBarTabs] = React.useState<TabProps[]>([]);
   const [selectedStockLocation, setSelectedStockLocation] =
-    useState<InventoryLocation | null>(null);
-  const renderCountRef = useRef<number>(0);
+    React.useState<InventoryLocation | null>(null);
+  const renderCountRef = React.useRef<number>(0);
   const { t, i18n } = useTranslation();
 
   const formatName = (title: string, subtitle?: string | null) => {
@@ -253,7 +244,7 @@ function ProductComponent({ metadata }: ProductProps): JSX.Element {
     }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!productProps.metadata) {
       return;
     }
@@ -269,7 +260,7 @@ function ProductComponent({ metadata }: ProductProps): JSX.Element {
     updateTranslatedDescriptionAsync(productProps.metadata.description);
   }, [productProps.metadata]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     let tabs: TabProps[] = [];
     if (
       storeProps.selectedSalesChannel &&
@@ -294,7 +285,7 @@ function ProductComponent({ metadata }: ProductProps): JSX.Element {
     setSideBarTabs(tabs);
   }, [productProps.metadata, storeProps.selectedSalesChannel]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     renderCountRef.current += 1;
     ProductController.updateProductId(id);
     ProductController.load(renderCountRef.current);
@@ -308,7 +299,7 @@ function ProductComponent({ metadata }: ProductProps): JSX.Element {
     };
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!productProps.variants) {
       return;
     }
@@ -327,16 +318,16 @@ function ProductComponent({ metadata }: ProductProps): JSX.Element {
     setTabs(tabProps);
   }, [productProps.variants]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     setActiveVariantId(productProps.selectedVariant?.id);
   }, [productProps.selectedVariant]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     setIsLiked(Boolean(productProps.likesMetadata?.didAccountLike));
     setLikeCount(productProps.likesMetadata?.totalLikeCount ?? 0);
   }, [productProps.likesMetadata, accountProps.account]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!ProductController.model.metadata) {
       return;
     }
@@ -566,9 +557,9 @@ function ProductComponent({ metadata }: ProductProps): JSX.Element {
 }
 
 ProductComponent.getServerSidePropsAsync = async (
-  route: RouteObject,
+  _route: RouteObject,
   request: Request,
-  result: Response
+  _result: Response
 ): Promise<ProductProps> => {
   SupabaseService.initializeSupabase();
 

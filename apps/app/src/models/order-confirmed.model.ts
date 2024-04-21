@@ -1,6 +1,5 @@
-import { Order } from '@medusajs/medusa';
+import { Order, ReturnReason } from '@medusajs/medusa';
 import { createStore, withProps } from '@ngneat/elf';
-import { ReturnReason } from '@medusajs/medusa';
 import { Model } from '../model';
 
 export interface RefundItem {

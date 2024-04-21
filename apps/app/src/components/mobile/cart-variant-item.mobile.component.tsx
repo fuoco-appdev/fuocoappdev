@@ -1,20 +1,11 @@
-import { LineItem, ProductOptionValue } from '@medusajs/medusa';
-import styles from '../cart-variant-item.module.scss';
-import { useEffect, useState } from 'react';
-import { ProductOptions } from '../../models/product.model';
+import { InputNumber, Line } from '@fuoco.appdev/core-ui';
 import { useTranslation } from 'react-i18next';
-import { Button, InputNumber, Line, Modal } from '@fuoco.appdev/core-ui';
-import CartController from '../../controllers/cart.controller';
+import styles from '../cart-variant-item.module.scss';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
-import StoreController from '../../controllers/store.controller';
-import { useObservable } from '@ngneat/use-observable';
-import { CartItemResponsiveProps } from '../cart-item.component';
-import { RoutePathsType } from '../../route-paths';
-import { useNavigate } from 'react-router-dom';
-import { ResponsiveMobile } from '../responsive.component';
-import { CartVariantItemResponsiveProps } from '../cart-variant-item.component';
 import { MedusaProductTypeNames } from '../../types/medusa.type';
+import { CartVariantItemResponsiveProps } from '../cart-variant-item.component';
+import { ResponsiveMobile } from '../responsive.component';
 
 export default function CartItemMobileComponent({
   productType,
@@ -22,10 +13,9 @@ export default function CartItemMobileComponent({
   variant,
   storeProps,
   variantQuantities,
-  setVariantQuantities,
   onQuantitiesChanged,
 }: CartVariantItemResponsiveProps): JSX.Element {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <ResponsiveMobile>

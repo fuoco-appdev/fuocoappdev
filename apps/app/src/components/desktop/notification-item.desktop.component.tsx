@@ -1,29 +1,13 @@
-import {
-  LineItem,
-  ProductOptionValue,
-  Order,
-  FulfillmentStatus,
-} from '@medusajs/medusa';
-import styles from '../notification-item.module.scss';
-import { useEffect, useState } from 'react';
-import { ProductOptions } from '../../models/product.model';
+import { Button } from '@fuoco.appdev/core-ui';
+import { Order } from '@medusajs/medusa';
 import { useTranslation } from 'react-i18next';
-import { Button, Line, Modal } from '@fuoco.appdev/core-ui';
-import CartController from '../../controllers/cart.controller';
+import styles from '../notification-item.module.scss';
 // @ts-ignore
-import { formatAmount } from 'medusa-react';
-import StoreController from '../../controllers/store.controller';
-import { useObservable } from '@ngneat/use-observable';
-import Ripples from 'react-ripples';
+import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 import { RoutePathsType } from '../../route-paths';
-import {
-  OrderItemProps,
-  OrderItemResponsiveProps,
-} from '../order-item.component';
-import { ResponsiveDesktop } from '../responsive.component';
 import { NotificationItemResponsiveProps } from '../notification-item.component';
-import moment from 'moment';
+import { ResponsiveDesktop } from '../responsive.component';
 
 export default function NotificationItemDesktopComponent({
   notification,

@@ -1,10 +1,14 @@
-import { Service } from '../service';
-import * as core from '../protobuf/core_pb';
-import { BehaviorSubject, Observable } from 'rxjs';
-import SupabaseService from './supabase.service';
-import axios, { AxiosError } from 'axios';
-import WindowController from '../controllers/window.controller';
-import { Session, User } from '@supabase/supabase-js';
+import axios from "axios";
+import {
+  AccountFollowerCountMetadataResponse,
+  AccountFollowerRequest,
+  AccountFollowerRequestsRequest,
+  AccountFollowerResponse,
+  AccountFollowersRequest,
+  AccountFollowersResponse,
+} from "../protobuf/account-follower_pb";
+import { Service } from "../service";
+import SupabaseService from "./supabase.service";
 
 class AccountFollowersService extends Service {
   constructor() {
@@ -12,51 +16,52 @@ class AccountFollowersService extends Service {
   }
 
   public async requestCountMetadataAsync(
-    accountId: string
-  ): Promise<core.AccountFollowerCountMetadataResponse> {
+    accountId: string,
+  ): Promise<AccountFollowerCountMetadataResponse> {
     const response = await axios({
-      method: 'post',
+      method: "post",
       url: `${this.endpointUrl}/account-followers/count-metadata/${accountId}`,
       headers: {
         ...this.headers,
       },
-      data: '',
-      responseType: 'arraybuffer',
+      data: "",
+      responseType: "arraybuffer",
     });
 
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
     const accountFollowerCountMetadataResponse =
-      core.AccountFollowerCountMetadataResponse.fromBinary(arrayBuffer);
+      AccountFollowerCountMetadataResponse.fromBinary(arrayBuffer);
     return accountFollowerCountMetadataResponse;
   }
 
   public async requestFollowersAsync(props: {
     accountId: string;
     otherAccountIds: string[];
-  }): Promise<core.AccountFollowersResponse | null> {
+  }): Promise<AccountFollowersResponse | null> {
     const session = await SupabaseService.requestSessionAsync();
-    const accountFollowersRequest = new core.AccountFollowersRequest({
+    const accountFollowersRequest = new AccountFollowersRequest({
       accountId: props.accountId,
       otherAccountIds: props.otherAccountIds,
     });
     const response = await axios({
-      method: 'post',
+      method: "post",
       url: `${this.endpointUrl}/account-followers/followers`,
       headers: {
         ...this.headers,
-        'Session-Token': `${session?.access_token}`,
+        "Session-Token": `${session?.access_token}`,
       },
       data: accountFollowersRequest.toBinary(),
-      responseType: 'arraybuffer',
+      responseType: "arraybuffer",
     });
 
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const accountFollowersResponse =
-      core.AccountFollowersResponse.fromBinary(arrayBuffer);
+    const accountFollowersResponse = AccountFollowersResponse.fromBinary(
+      arrayBuffer,
+    );
 
     return accountFollowersResponse;
   }
@@ -65,30 +70,30 @@ class AccountFollowersService extends Service {
     accountId: string;
     offset: number;
     limit: number;
-  }): Promise<core.AccountFollowersResponse | null> {
+  }): Promise<AccountFollowersResponse | null> {
     const session = await SupabaseService.requestSessionAsync();
-    const accountFollowerRequestsRequest =
-      new core.AccountFollowerRequestsRequest({
-        accountId: props.accountId,
-        offset: props.offset,
-        limit: props.limit,
-      });
+    const accountFollowerRequestsRequest = new AccountFollowerRequestsRequest({
+      accountId: props.accountId,
+      offset: props.offset,
+      limit: props.limit,
+    });
     const response = await axios({
-      method: 'post',
+      method: "post",
       url: `${this.endpointUrl}/account-followers/requests`,
       headers: {
         ...this.headers,
-        'Session-Token': `${session?.access_token}`,
+        "Session-Token": `${session?.access_token}`,
       },
       data: accountFollowerRequestsRequest.toBinary(),
-      responseType: 'arraybuffer',
+      responseType: "arraybuffer",
     });
 
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const accountFollowersResponse =
-      core.AccountFollowersResponse.fromBinary(arrayBuffer);
+    const accountFollowersResponse = AccountFollowersResponse.fromBinary(
+      arrayBuffer,
+    );
 
     return accountFollowersResponse;
   }
@@ -96,28 +101,29 @@ class AccountFollowersService extends Service {
   public async requestAddAsync(props: {
     accountId: string;
     followerId: string;
-  }): Promise<core.AccountFollowerResponse | null> {
+  }): Promise<AccountFollowerResponse | null> {
     const session = await SupabaseService.requestSessionAsync();
-    const accountFollowerRequest = new core.AccountFollowerRequest({
+    const accountFollowerRequest = new AccountFollowerRequest({
       accountId: props.accountId,
       followerId: props.followerId,
     });
     const response = await axios({
-      method: 'post',
+      method: "post",
       url: `${this.endpointUrl}/account-followers/add`,
       headers: {
         ...this.headers,
-        'Session-Token': `${session?.access_token}`,
+        "Session-Token": `${session?.access_token}`,
       },
       data: accountFollowerRequest.toBinary(),
-      responseType: 'arraybuffer',
+      responseType: "arraybuffer",
     });
 
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const accountFollowerResponse =
-      core.AccountFollowerResponse.fromBinary(arrayBuffer);
+    const accountFollowerResponse = AccountFollowerResponse.fromBinary(
+      arrayBuffer,
+    );
 
     return accountFollowerResponse;
   }
@@ -125,28 +131,29 @@ class AccountFollowersService extends Service {
   public async requestRemoveAsync(props: {
     accountId: string;
     followerId: string;
-  }): Promise<core.AccountFollowerResponse | null> {
+  }): Promise<AccountFollowerResponse | null> {
     const session = await SupabaseService.requestSessionAsync();
-    const accountFollowerRequest = new core.AccountFollowerRequest({
+    const accountFollowerRequest = new AccountFollowerRequest({
       accountId: props.accountId,
       followerId: props.followerId,
     });
     const response = await axios({
-      method: 'post',
+      method: "post",
       url: `${this.endpointUrl}/account-followers/remove`,
       headers: {
         ...this.headers,
-        'Session-Token': `${session?.access_token}`,
+        "Session-Token": `${session?.access_token}`,
       },
       data: accountFollowerRequest.toBinary(),
-      responseType: 'arraybuffer',
+      responseType: "arraybuffer",
     });
 
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const accountFollowerResponse =
-      core.AccountFollowerResponse.fromBinary(arrayBuffer);
+    const accountFollowerResponse = AccountFollowerResponse.fromBinary(
+      arrayBuffer,
+    );
 
     return accountFollowerResponse;
   }
@@ -154,28 +161,29 @@ class AccountFollowersService extends Service {
   public async requestConfirmAsync(props: {
     accountId: string;
     followerId: string;
-  }): Promise<core.AccountFollowerResponse | null> {
+  }): Promise<AccountFollowerResponse | null> {
     const session = await SupabaseService.requestSessionAsync();
-    const accountFollowerRequest = new core.AccountFollowerRequest({
+    const accountFollowerRequest = new AccountFollowerRequest({
       accountId: props.accountId,
       followerId: props.followerId,
     });
     const response = await axios({
-      method: 'post',
+      method: "post",
       url: `${this.endpointUrl}/account-followers/confirm`,
       headers: {
         ...this.headers,
-        'Session-Token': `${session?.access_token}`,
+        "Session-Token": `${session?.access_token}`,
       },
       data: accountFollowerRequest.toBinary(),
-      responseType: 'arraybuffer',
+      responseType: "arraybuffer",
     });
 
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const accountFollowerResponse =
-      core.AccountFollowerResponse.fromBinary(arrayBuffer);
+    const accountFollowerResponse = AccountFollowerResponse.fromBinary(
+      arrayBuffer,
+    );
 
     return accountFollowerResponse;
   }

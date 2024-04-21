@@ -1,13 +1,6 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import * as React from 'react';
-import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
+import { ResponsiveSuspenseTablet } from '../../../components/responsive.component';
 import styles from '../../account-order-history.module.scss';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { OrderItemSuspenseTabletComponent } from './order-item.suspense.tablet.component';
-import {
-  ResponsiveSuspenseMobile,
-  ResponsiveSuspenseTablet,
-} from '../../../components/responsive.component';
 
 export function AccountOrderHistorySuspenseTabletComponent(): JSX.Element {
   return (

@@ -1,8 +1,8 @@
-import styles from '../checkout.module.scss';
 import { Button, Line } from '@fuoco.appdev/core-ui';
 import { useTranslation } from 'react-i18next';
-import { StripePayButtonResponsiveProps } from '../stripe-pay-button.component';
+import styles from '../checkout.module.scss';
 import { ResponsiveDesktop } from '../responsive.component';
+import { StripePayButtonResponsiveProps } from '../stripe-pay-button.component';
 
 export default function StripePayButtonDesktopComponent({
   onPayAsync,

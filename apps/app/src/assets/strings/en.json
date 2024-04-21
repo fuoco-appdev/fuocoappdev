@@ -310,5 +310,10 @@
   "orderCanceled": "Order canceled",
   "orderCanceledName": "Order #{{displayId, number}}",
   "orderCanceledDescription": "has been canceled.",
-  "noNotifications": "No notifications found."
+  "noNotifications": "No notifications found.",
+  "birthday": "Birthday",
+  "sex": "Sex",
+  "interests": "Interests",
+  "addInterest": "Add Interest",
+  "radius": "Radius"
 }

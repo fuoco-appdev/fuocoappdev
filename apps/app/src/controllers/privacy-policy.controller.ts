@@ -15,7 +15,7 @@ class PrivacyPolicyController extends Controller {
     return this._model;
   }
 
-  public override initialize(renderCount: number): void {}
+  public override initialize(_renderCount: number): void {}
 
   public override load(renderCount: number): void {
     if (renderCount > 1) {
@@ -28,9 +28,9 @@ class PrivacyPolicyController extends Controller {
       });
   }
 
-  public override disposeInitialization(renderCount: number): void {}
+  public override disposeInitialization(_renderCount: number): void {}
 
-  public override disposeLoad(renderCount: number): void {}
+  public override disposeLoad(_renderCount: number): void {}
 }
 
 export default new PrivacyPolicyController();

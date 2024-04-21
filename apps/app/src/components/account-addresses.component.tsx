@@ -1,29 +1,12 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import AccountController from '../controllers/account.controller';
-import styles from './account-addresses.module.scss';
-import { Alert, Button, Dropdown, Line, Modal } from '@fuoco.appdev/core-ui';
-import { RoutePathsType } from '../route-paths';
-import { useTranslation } from 'react-i18next';
-import SupabaseService from '../services/supabase.service';
+import { lazy } from '@loadable/component';
+import { Address } from '@medusajs/medusa';
 import { useObservable } from '@ngneat/use-observable';
-import { useSpring } from 'react-spring';
-import * as core from '../protobuf/core_pb';
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
-import LoadingComponent from './loading.component';
-import { Store } from '@ngneat/elf';
-import { Customer, Address } from '@medusajs/medusa';
-import AddressItemComponent from './address-item.component';
-import AddressFormComponent from './address-form.component';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import AccountController from '../controllers/account.controller';
 import { AccountState } from '../models/account.model';
 import { AuthenticatedComponent } from './authenticated.component';
-import { lazy } from '@loadable/component';
 import { AccountAddressesSuspenseDesktopComponent } from './desktop/suspense/account-addresses.suspense.desktop.component';
-import React from 'react';
 import { AccountAddressesSuspenseMobileComponent } from './mobile/suspense/account-addresses.suspense.mobile.component';
 import { AccountAddressesSuspenseTabletComponent } from './tablet/suspense/account-addresses.suspense.tablet.component';
 
@@ -55,9 +38,11 @@ export interface AccountAddressResponsiveProps {
 export default function AccountAddressesComponent(): JSX.Element {
   const { t, i18n } = useTranslation();
   const [accountProps] = useObservable(AccountController.model.store);
-  const [openAddDropdown, setOpenAddDropdown] = useState<boolean>(false);
-  const [openEditDropdown, setOpenEditDropdown] = useState<boolean>(false);
-  const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
+  const [openAddDropdown, setOpenAddDropdown] = React.useState<boolean>(false);
+  const [openEditDropdown, setOpenEditDropdown] =
+    React.useState<boolean>(false);
+  const [deleteModalVisible, setDeleteModalVisible] =
+    React.useState<boolean>(false);
 
   const onAddAddressAsync = async () => {
     AccountController.updateShippingAddressErrors({
@@ -147,7 +132,7 @@ export default function AccountAddressesComponent(): JSX.Element {
     setDeleteModalVisible(true);
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     AccountController.updateAddressErrorStrings({
       email: t('fieldEmptyError') ?? '',
       firstName: t('fieldEmptyError') ?? '',

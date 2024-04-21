@@ -1,23 +1,17 @@
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
-import { useParams } from 'react-router-dom';
+import { OptionProps } from '@fuoco.appdev/core-ui';
+import { lazy } from '@loadable/component';
+import { LineItem, ReturnReason } from '@medusajs/medusa';
 import { useObservable } from '@ngneat/use-observable';
+import React from 'react';
+import { Helmet } from 'react-helmet';
+import { useParams } from 'react-router-dom';
 import OrderConfirmedController from '../controllers/order-confirmed.controller';
 import StoreController from '../controllers/store.controller';
-import { useEffect, useRef, useState } from 'react';
-import { OptionProps } from '@fuoco.appdev/core-ui';
-import { LineItem, ShippingMethod, ReturnReason } from '@medusajs/medusa';
-import styles from './order-confirmed.module.scss';
+import { OrderConfirmedState } from '../models/order-confirmed.model';
 import { StoreState } from '../models/store.model';
-import { lazy } from '@loadable/component';
-import React from 'react';
 import { OrderConfirmedSuspenseDesktopComponent } from './desktop/suspense/order-confirmed.suspense.desktop.component';
 import { OrderConfirmedSuspenseMobileComponent } from './mobile/suspense/order-confirmed.suspense.mobile.component';
-import { Helmet } from 'react-helmet';
-import { OrderConfirmedState } from 'src/models/order-confirmed.model';
+import styles from './order-confirmed.module.scss';
 import { OrderConfirmedSuspenseTabletComponent } from './tablet/suspense/order-confirmed.suspense.tablet.component';
 
 const OrderConfirmedDesktopComponent = lazy(
@@ -48,15 +42,15 @@ export default function OrderConfirmedComponent(): JSX.Element {
     OrderConfirmedController.model.store
   );
   const [storeProps] = useObservable(StoreController.model.store);
-  const [quantity, setQuantity] = useState<number>(0);
-  const [openRefund, setOpenRefund] = useState<boolean>(false);
-  const [returnReasonOptions, setReturnReasonOptions] = useState<OptionProps[]>(
-    []
-  );
-  const isRenderedRef = useRef<boolean>(false);
-  const renderCountRef = useRef<number>(0);
+  const [quantity, setQuantity] = React.useState<number>(0);
+  const [openRefund, setOpenRefund] = React.useState<boolean>(false);
+  const [returnReasonOptions, setReturnReasonOptions] = React.useState<
+    OptionProps[]
+  >([]);
+  const isRenderedRef = React.useRef<boolean>(false);
+  const renderCountRef = React.useRef<number>(0);
 
-  useEffect(() => {
+  React.useEffect(() => {
     renderCountRef.current += 1;
     OrderConfirmedController.load(renderCountRef.current);
 
@@ -70,8 +64,12 @@ export default function OrderConfirmedComponent(): JSX.Element {
     };
   }, []);
 
-  useEffect(() => {
-    const options = [];
+  React.useEffect(() => {
+    const options: {
+      id: string;
+      value: string;
+      children: () => JSX.Element;
+    }[] = [];
     for (const returnReason of orderConfirmedProps.returnReasons as ReturnReason[]) {
       options.push({
         id: returnReason.id,
@@ -85,7 +83,7 @@ export default function OrderConfirmedComponent(): JSX.Element {
     setReturnReasonOptions(options);
   }, [orderConfirmedProps.returnReasons]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!orderConfirmedProps.order || !orderConfirmedProps.returnReasons) {
       return;
     }

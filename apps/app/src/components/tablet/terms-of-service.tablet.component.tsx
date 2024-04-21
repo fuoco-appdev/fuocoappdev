@@ -1,8 +1,8 @@
 import { Auth, Typography } from '@fuoco.appdev/core-ui';
-import styles from '../terms-of-service.module.scss';
+import loadable from '@loadable/component';
+import { ResponsiveTablet } from '../responsive.component';
 import { TermsOfServiceResponsiveProps } from '../terms-of-service.component';
-import loadable, { LoadableComponent } from '@loadable/component';
-import { ResponsiveDesktop, ResponsiveTablet } from '../responsive.component';
+import styles from '../terms-of-service.module.scss';
 const ReactMarkdown = loadable(
   async () => {
     const reactMarkdown = await import('react-markdown');

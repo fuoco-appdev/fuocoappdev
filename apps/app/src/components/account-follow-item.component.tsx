@@ -1,38 +1,12 @@
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
-import { LineItem, ProductOptionValue } from '@medusajs/medusa';
-import styles from './cart-item.module.scss';
-import { useEffect, useState } from 'react';
-import { ProductOptions } from '../models/product.model';
-import { useTranslation } from 'react-i18next';
-import { Button, Line, Modal } from '@fuoco.appdev/core-ui';
-import CartController from '../controllers/cart.controller';
-import {
-  AccountFollowerResponse,
-  CustomerResponse,
-  StorageFolderType,
-} from '../protobuf/core_pb';
-// @ts-ignore
-import { formatAmount } from 'medusa-react';
-import StoreController from '../controllers/store.controller';
-import { useObservable } from '@ngneat/use-observable';
-import { StoreState } from '../models/store.model';
 import { lazy } from '@loadable/component';
 import React from 'react';
-import {
-  PricedProduct,
-  PricedVariant,
-} from '@medusajs/medusa/dist/types/pricing';
-import { AccountResponse } from '../protobuf/core_pb';
-import { MedusaProductTypeNames } from '../types/medusa.type';
-import { AccountFollowItemSuspenseDesktopComponent } from './desktop/suspense/account-follow-item.suspense.desktop.component';
-import { AccountFollowItemSuspenseTabletComponent } from './tablet/suspense/account-follow-item.suspense.tablet.component';
-import { AccountFollowItemSuspenseMobileComponent } from './mobile/suspense/account-follow-item.suspense.mobile.component';
+import { AccountDocument, AccountState } from '../models/account.model';
+import { AccountFollowerResponse } from '../protobuf/account-follower_pb';
+import { StorageFolderType } from '../protobuf/common_pb';
 import BucketService from '../services/bucket.service';
-import { AccountState } from '../models/account.model';
+import { AccountFollowItemSuspenseDesktopComponent } from './desktop/suspense/account-follow-item.suspense.desktop.component';
+import { AccountFollowItemSuspenseMobileComponent } from './mobile/suspense/account-follow-item.suspense.mobile.component';
+import { AccountFollowItemSuspenseTabletComponent } from './tablet/suspense/account-follow-item.suspense.tablet.component';
 
 const AccountFollowItemDesktopComponent = lazy(
   () => import('./desktop/account-follow-item.desktop.component')
@@ -46,9 +20,8 @@ const AccountFollowItemMobileComponent = lazy(
 
 export interface AccountFollowItemProps {
   accountProps: AccountState;
-  account: AccountResponse;
+  account: AccountDocument;
   follower: AccountFollowerResponse | null;
-  customer: CustomerResponse | null;
   isRequest: boolean;
   onClick: () => void;
   onFollow?: () => void;
@@ -69,7 +42,6 @@ export default function AccountFollowItemComponent({
   accountProps,
   account,
   follower,
-  customer,
   isRequest,
   onClick,
   onFollow,
@@ -78,24 +50,26 @@ export default function AccountFollowItemComponent({
   onConfirm,
   onRemove,
 }: AccountFollowItemProps): JSX.Element {
-  const [profileUrl, setProfileUrl] = useState<string | undefined>(undefined);
-  const [isFollowing, setIsFollowing] = useState<boolean>(false);
-  const [isAccepted, setIsAccepted] = useState<boolean>(false);
+  const [profileUrl, setProfileUrl] = React.useState<string | undefined>(
+    undefined
+  );
+  const [isFollowing, setIsFollowing] = React.useState<boolean>(false);
+  const [isAccepted, setIsAccepted] = React.useState<boolean>(false);
 
-  useEffect(() => {
-    if (!account.profileUrl) {
+  React.useEffect(() => {
+    if (!account.profile_url) {
       return;
     }
 
     BucketService.getPublicUrlAsync(
       StorageFolderType.Avatars,
-      account.profileUrl
+      account.profile_url
     ).then((value) => {
       setProfileUrl(value);
     });
   }, [account]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     setIsFollowing(follower?.isFollowing ?? false);
     setIsAccepted(follower?.accepted ?? false);
   }, [follower]);
@@ -161,7 +135,6 @@ export default function AccountFollowItemComponent({
         accountProps={accountProps}
         account={account}
         follower={follower}
-        customer={customer}
         isRequest={isRequest}
         isFollowing={isFollowing}
         isAccepted={isAccepted}
@@ -177,7 +150,6 @@ export default function AccountFollowItemComponent({
         accountProps={accountProps}
         account={account}
         follower={follower}
-        customer={customer}
         isRequest={isRequest}
         isFollowing={isFollowing}
         isAccepted={isAccepted}
@@ -193,7 +165,6 @@ export default function AccountFollowItemComponent({
         accountProps={accountProps}
         account={account}
         follower={follower}
-        customer={customer}
         isRequest={isRequest}
         isFollowing={isFollowing}
         isAccepted={isAccepted}

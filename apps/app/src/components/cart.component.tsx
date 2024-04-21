@@ -1,38 +1,28 @@
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
-import { useEffect, useRef, useState } from 'react';
 import { TabProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/tabs/tabs';
-import StoreController from '../controllers/store.controller';
+import { lazy } from '@loadable/component';
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+import { Store } from '@ngneat/elf';
 import { useObservable } from '@ngneat/use-observable';
+import React from 'react';
+import { Helmet } from 'react-helmet';
+import { useNavigate } from 'react-router-dom';
 import CartController from '../controllers/cart.controller';
 import ExploreController from '../controllers/explore.controller';
-import WindowController from '../controllers/window.controller';
 import ProductController from '../controllers/product.controller';
-import { Store } from '@ngneat/elf';
+import StoreController from '../controllers/store.controller';
+import WindowController from '../controllers/window.controller';
+import { CartLocalState, CartState } from '../models/cart.model';
 import {
   ExploreLocalState,
   ExploreState,
   InventoryLocation,
 } from '../models/explore.model';
-import { Helmet } from 'react-helmet';
-import { CartLocalState, CartState } from '../models/cart.model';
 import { StoreState } from '../models/store.model';
 import { WindowState } from '../models/window.model';
-import { lazy } from '@loadable/component';
-import React from 'react';
+import { RoutePathsType, useQuery } from '../route-paths';
 import { CartSuspenseDesktopComponent } from './desktop/suspense/cart.suspense.desktop.component';
 import { CartSuspenseMobileComponent } from './mobile/suspense/cart.suspense.mobile.component';
 import { CartSuspenseTabletComponent } from './tablet/suspense/cart.suspense.tablet.component';
-import { RoutePathsType, useQuery } from '../route-paths';
-import { useNavigate } from 'react-router-dom';
-import {
-  PricedProduct,
-  PricedVariant,
-} from '@medusajs/medusa/dist/types/pricing';
-import { useTranslation } from 'react-i18next';
 
 const CartDesktopComponent = lazy(
   () => import('./desktop/cart.desktop.component')
@@ -73,14 +63,15 @@ export default function CartComponent(): JSX.Element {
   const [exploreLocalProps] = useObservable(
     ExploreController.model.localStore ?? Store.prototype
   );
-  const [salesChannelTabs, setSalesChannelTabs] = useState<TabProps[]>([]);
+  const [salesChannelTabs, setSalesChannelTabs] = React.useState<TabProps[]>(
+    []
+  );
   const [isFoodRequirementOpen, setIsFoodRequirementOpen] =
-    useState<boolean>(false);
-  const [foodVariantQuantities, setFoodVariantQuantities] = useState<
+    React.useState<boolean>(false);
+  const [foodVariantQuantities, setFoodVariantQuantities] = React.useState<
     Record<string, number>
   >({});
-  const renderCountRef = useRef<number>(0);
-  const { t, i18n } = useTranslation();
+  const renderCountRef = React.useRef<number>(0);
 
   const onAddFoodToCart = () => {
     for (const id in foodVariantQuantities) {
@@ -112,7 +103,7 @@ export default function CartComponent(): JSX.Element {
     );
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     renderCountRef.current += 1;
     CartController.load(renderCountRef.current);
     return () => {
@@ -120,7 +111,7 @@ export default function CartComponent(): JSX.Element {
     };
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const tabProps: TabProps[] = [];
     const locations = exploreProps.inventoryLocations as InventoryLocation[];
     for (const key in cartLocalProps.cartIds) {
@@ -136,7 +127,7 @@ export default function CartComponent(): JSX.Element {
     setSalesChannelTabs(tabProps);
   }, [cartLocalProps.cartIds, exploreProps.inventoryLocations]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const quantities: Record<string, number> = {};
     for (const product of cartProps.requiredFoodProducts as PricedProduct[]) {
       for (const variant of product?.variants) {

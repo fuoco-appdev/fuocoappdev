@@ -1,12 +1,7 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import * as React from 'react';
-import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
+import Skeleton from 'react-loading-skeleton';
+import { Outlet } from 'react-router-dom';
+import { ResponsiveSuspenseTablet } from '../../../components/responsive.component';
 import styles from '../../account-public.module.scss';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import {
-  ResponsiveSuspenseMobile,
-  ResponsiveSuspenseTablet,
-} from '../../../components/responsive.component';
 
 export function AccountPublicSuspenseTabletComponent(): JSX.Element {
   return (

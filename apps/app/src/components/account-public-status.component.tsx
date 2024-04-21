@@ -1,19 +1,17 @@
-import { Helmet } from 'react-helmet';
-import { useObservable } from '@ngneat/use-observable';
-import WindowController from '../controllers/window.controller';
-import { WindowState } from '../models/window.model';
-import { AuthenticatedComponent } from './authenticated.component';
 import { lazy } from '@loadable/component';
-import React, { useEffect, useState } from 'react';
+import { useObservable } from '@ngneat/use-observable';
+import React from 'react';
+import { Helmet } from 'react-helmet';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import AccountPublicController from '../controllers/account-public.controller';
-import { AccountState } from '../models/account.model';
+import WindowController from '../controllers/window.controller';
+import { AccountPublicState } from '../models/account-public.model';
+import { RoutePathsType } from '../route-paths';
+import { AuthenticatedComponent } from './authenticated.component';
 import { AccountPublicStatusSuspenseDesktopComponent } from './desktop/suspense/account-public-status.suspense.desktop.component';
 import { AccountPublicStatusSuspenseMobileComponent } from './mobile/suspense/account-public-status.suspense.mobile.component';
 import { AccountPublicStatusSuspenseTabletComponent } from './tablet/suspense/account-public-status.suspense.tablet.component';
-import { AccountPublicState } from '../models/account-public.model';
-import { useParams } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { RoutePathsType } from 'src/route-paths';
 
 const AccountPublicStatusDesktopComponent = lazy(
   () => import('./desktop/account-public-status.desktop.component')
@@ -34,17 +32,17 @@ export interface AccountFollowersFollowingResponsiveProps {
 }
 
 export default function AccountFollowersFollowingComponent(): JSX.Element {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const { id } = useParams();
   const [accountPublicProps] = useObservable(
     AccountPublicController.model.store
   );
-  const [followerCount, setFollowerCount] = useState<string | undefined>(
+  const [followerCount, setFollowerCount] = React.useState<string | undefined>(
     undefined
   );
-  const [followingCount, setFollowingCount] = useState<string | undefined>(
-    undefined
-  );
+  const [followingCount, setFollowingCount] = React.useState<
+    string | undefined
+  >(undefined);
   const scrollOffsetTriggerGap = 16;
 
   const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
@@ -100,7 +98,7 @@ export default function AccountFollowersFollowingComponent(): JSX.Element {
     }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!id) {
       return;
     }
@@ -108,7 +106,7 @@ export default function AccountFollowersFollowingComponent(): JSX.Element {
     AccountPublicController.updateAccountId(id);
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (
       WindowController.isLocationAccountStatusWithId(
         location.pathname,
@@ -130,7 +128,7 @@ export default function AccountFollowersFollowingComponent(): JSX.Element {
     }
   }, [location.pathname]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (accountPublicProps.followerCount !== undefined) {
       setFollowerCount(
         new Intl.NumberFormat(i18n.language).format(

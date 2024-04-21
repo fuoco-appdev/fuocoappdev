@@ -30,7 +30,6 @@
         max-height: 100%;
         width: auto;
         color: $brand-900;
-        border-radius: 6px;
       }
   
       & .menu-item-thumbnail-image {
@@ -38,7 +37,6 @@
         height: 100%;
         width: 100%;
         color: $brand-900;
-        border-radius: 6px;
         object-fit: cover;
       }
   
@@ -221,10 +219,11 @@
 
     & .wine-thumbnail-image-desktop {
       padding: $mp-4;
+      border-radius: 6px;
     }
 
     & .menu-item-thumbnail-image-desktop {
-      
+      border-radius: 6px;
     }
 
     & .no-thumbnail-image-desktop {
@@ -462,10 +461,11 @@
 
     & .wine-thumbnail-image-tablet {
       padding: $mp-4;
+      border-radius: 6px;
     }
 
     & .menu-item-thumbnail-image-tablet {
-      
+      border-radius: 6px;
     }
 
     & .no-thumbnail-image-tablet {
@@ -762,10 +762,11 @@
 
       & .wine-thumbnail-image-mobile {
         padding: $mp-2;
+        border-radius: 6px;
       }
   
       & .menu-item-thumbnail-image-mobile {
-        
+        border-radius: 6px;
       }
   
       & .no-thumbnail-image-mobile {

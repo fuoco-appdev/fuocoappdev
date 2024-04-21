@@ -1,14 +1,7 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import * as React from 'react';
-import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
-import WindowController from '../../controllers/window.controller';
-import styles from '../window.module.scss';
 import {
-  Alert,
   Avatar,
   BannerOverlay,
   Button,
-  Dropdown,
   LanguageSwitch,
   Line,
   Modal,
@@ -17,22 +10,19 @@ import {
   ToastOverlay,
   Typography,
 } from '@fuoco.appdev/core-ui';
-import { RoutePathsType, useQuery } from '../../route-paths';
-import { useTranslation } from 'react-i18next';
-import { useObservable } from '@ngneat/use-observable';
-import * as core from '../../protobuf/core_pb';
-import { Store } from '@ngneat/elf';
 import { Customer } from '@medusajs/medusa';
-import AccountController from '../../controllers/account.controller';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { useTranslation } from 'react-i18next';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
+import AccountController from '../../controllers/account.controller';
+import WindowController from '../../controllers/window.controller';
+import { AccountResponse } from '../../protobuf/account_pb';
+import { RoutePathsType, useQuery } from '../../route-paths';
+import { ResponsiveTablet, useDesktopEffect } from '../responsive.component';
 import { WindowResponsiveProps } from '../window.component';
-import {
-  ResponsiveDesktop,
-  ResponsiveTablet,
-  useDesktopEffect,
-} from '../responsive.component';
-import LoadingComponent from '../loading.component';
-import { createPortal } from 'react-dom';
+import styles from '../window.module.scss';
 
 export default function WindowTabletComponent({
   windowProps,
@@ -40,9 +30,7 @@ export default function WindowTabletComponent({
   accountProps,
   accountPublicProps,
   exploreProps,
-  openMore,
   isLanguageOpen,
-  setOpenMore,
   setIsLanguageOpen,
   onSelectLocation,
   onCancelLocation,
@@ -52,15 +40,15 @@ export default function WindowTabletComponent({
   const { t } = useTranslation();
   const navigate = useNavigate();
   const query = useQuery();
-  const sideBarRef = useRef<HTMLDivElement | null>(null);
-  const navigationBackRef = useRef<HTMLDivElement | null>(null);
-  const [date, setDate] = useState<Date | null>(null);
+  const sideBarRef = React.useRef<HTMLDivElement | null>(null);
+  const navigationBackRef = React.useRef<HTMLDivElement | null>(null);
+  const [date, setDate] = React.useState<Date | null>(null);
 
   useDesktopEffect(() => {
     setDate(new Date(Date.now()));
   }, []);
 
-  const account = windowProps.account as core.AccountResponse;
+  const account = windowProps.account as AccountResponse;
   const customer = accountProps.customer as Customer;
   return (
     <ResponsiveTablet>
@@ -787,7 +775,7 @@ export default function WindowTabletComponent({
             <Outlet />
           </div>
         </div>
-        {createPortal(
+        {ReactDOM.createPortal(
           <>
             <Modal
               classNames={{

@@ -1,10 +1,7 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import * as React from 'react';
-import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
+import Skeleton from 'react-loading-skeleton';
 import styles from '../../cart.module.scss';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { ResponsiveSuspenseDesktop } from '../../responsive.component';
 import { CartItemSuspenseDesktopComponent } from './cart-item.suspense.desktop.component';
-import { ResponsiveSuspenseDesktop } from 'src/components/responsive.component';
 import { StockLocationCartItemSuspenseDesktopComponent } from './stock-location-cart-item.suspense.desktop.component';
 
 export function CartSuspenseDesktopComponent(): JSX.Element {
@@ -39,7 +36,7 @@ export function CartSuspenseDesktopComponent(): JSX.Element {
               styles['shopping-cart-items-container-desktop'],
             ].join(' ')}
           >
-            {[1, 1, 1, 1, 1].map((value: number, index: number) => {
+            {[1, 1, 1, 1, 1].map((_value: number, index: number) => {
               return (
                 <StockLocationCartItemSuspenseDesktopComponent key={index} />
               );

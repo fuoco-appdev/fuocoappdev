@@ -1,26 +1,14 @@
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
-import { Order, LineItem } from '@medusajs/medusa';
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { lazy } from '@loadable/component';
-import { OrderItemSuspenseDesktopComponent } from './desktop/suspense/order-item.suspense.desktop.component';
-import React from 'react';
-import BucketService from '../services/bucket.service';
-import { OrderItemSuspenseMobileComponent } from './mobile/suspense/order-item.suspense.mobile.component';
-import { OrderItemSuspenseTabletComponent } from './tablet/suspense/order-item.suspense.tablet.component';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { StorageFolderType } from '../protobuf/common_pb';
+import { DeepLTranslationsResponse } from '../protobuf/deepl_pb';
+import BucketService from '../services/bucket.service';
+import DeeplService from '../services/deepl.service';
 import { StockLocationItemSuspenseDesktopComponent } from './desktop/suspense/stock-location-item.suspense.desktop.component';
-import {
-  DeepLTranslationsResponse,
-  StorageFolderType,
-} from '../protobuf/core_pb';
 import { StockLocationItemSuspenseMobileComponent } from './mobile/suspense/stock-location-item.suspense.mobile.component';
 import { StockLocationItemSuspenseTabletComponent } from './tablet/suspense/stock-location-item.suspense.tablet.component';
-import DeeplService from '../services/deepl.service';
 
 const StockLocationItemDesktopComponent = lazy(
   () => import('./desktop/stock-location-item.desktop.component')
@@ -52,12 +40,12 @@ export default function StockLocationItemComponent({
   hideDescription = false,
   onClick,
 }: StockLocationItemProps): JSX.Element {
-  const { t, i18n } = useTranslation();
-  const [avatar, setAvatar] = useState<string | undefined>(undefined);
-  const [placeName, setPlaceName] = useState<string>(
+  const { i18n } = useTranslation();
+  const [avatar, setAvatar] = React.useState<string | undefined>(undefined);
+  const [placeName, setPlaceName] = React.useState<string>(
     stockLocation?.metadata?.['place_name'] as string
   );
-  const [description, setDescription] = useState<string>(
+  const [description, setDescription] = React.useState<string>(
     stockLocation?.metadata?.['description'] as string
   );
 
@@ -91,7 +79,7 @@ export default function StockLocationItemComponent({
     }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     updateTranslatedPlaceNameAsync(
       stockLocation?.metadata?.['place_name'] as string
     );
@@ -100,7 +88,7 @@ export default function StockLocationItemComponent({
     );
   }, [stockLocation?.metadata]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!Object.keys(stockLocation?.metadata ?? {}).includes('avatar')) {
       return;
     }

@@ -1,33 +1,31 @@
 import {
-  Typography,
   Button,
-  Tabs,
-  InputNumber,
   Input,
+  InputNumber,
+  Line,
   Modal,
+  Tabs,
+  Typography,
 } from '@fuoco.appdev/core-ui';
-import { Line } from '@fuoco.appdev/core-ui';
-import { useObservable } from '@ngneat/use-observable';
-import styles from '../product.module.scss';
-import ProductController from '../../controllers/product.controller';
-import { useParams } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { ProductTag } from '@medusajs/medusa';
+import { useTranslation } from 'react-i18next';
 import ExploreController from '../../controllers/explore.controller';
+import ProductController from '../../controllers/product.controller';
+import styles from '../product.module.scss';
 // @ts-ignore
-import { formatAmount } from 'medusa-react';
-import StoreController from '../../controllers/store.controller';
-import Skeleton from 'react-loading-skeleton';
-import { ProductResponsiveProps } from '../product.component';
-import { useEffect, useState, lazy, cloneElement } from 'react';
-import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 import loadable from '@loadable/component';
-import { MedusaProductTypeNames } from '../../types/medusa.type';
-import { ProductTabType } from 'src/models/product.model';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import StockLocationItemComponent from '../stock-location-item.component';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
-import { createPortal } from 'react-dom';
+import { formatAmount } from 'medusa-react';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Skeleton from 'react-loading-skeleton';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { ProductTabType } from '../../models/product.model';
+import { MedusaProductTypeNames } from '../../types/medusa.type';
+import { ProductResponsiveProps } from '../product.component';
+import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
+import StockLocationItemComponent from '../stock-location-item.component';
+
 const ReactMarkdown = loadable(
   async () => {
     const reactMarkdown = await import('react-markdown');
@@ -75,8 +73,8 @@ export default function ProductMobileComponent({
   onCancelLocation,
 }: ProductResponsiveProps): JSX.Element {
   const { t } = useTranslation();
-  const [showMore, setShowMore] = useState<boolean>(false);
-  const [disableShowMore, setDisableShowMore] = useState<boolean>(false);
+  const [showMore, setShowMore] = React.useState<boolean>(false);
+  const [disableShowMore, setDisableShowMore] = React.useState<boolean>(false);
 
   useMobileEffect(() => {
     if (!translatedDescription) {
@@ -371,7 +369,7 @@ export default function ProductMobileComponent({
         <TransitionGroup
           component={null}
           childFactory={(child) =>
-            cloneElement(child, {
+            React.cloneElement(child, {
               classNames: {
                 enter:
                   productProps.transitionKeyIndex <
@@ -1229,7 +1227,7 @@ export default function ProductMobileComponent({
                     ].join(' ')}
                   >
                     {productProps.searchedStockLocations.map(
-                      (stockLocation: StockLocation, index: number) => {
+                      (stockLocation: StockLocation, _index: number) => {
                         return (
                           <StockLocationItemComponent
                             key={stockLocation.id}
@@ -1285,7 +1283,7 @@ export default function ProductMobileComponent({
           </CSSTransition>
         </TransitionGroup>
       </div>
-      {createPortal(
+      {ReactDOM.createPortal(
         <>
           <Modal
             classNames={{

@@ -1,8 +1,8 @@
-import { createStore, withProps } from "@ngneat/elf";
-import { Model } from "../model";
 import { Product, ProductType, Region, SalesChannel } from "@medusajs/medusa";
 import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
-import { ProductLikesMetadataResponse } from "src/protobuf/core_pb";
+import { createStore, withProps } from "@ngneat/elf";
+import { Model } from "../model";
+import { ProductLikesMetadataResponse } from "../protobuf/product-like_pb";
 
 export enum ProductTabs {
   // Restaurant

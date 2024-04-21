@@ -1,28 +1,23 @@
-import { createRef, useEffect, useLayoutEffect, useRef } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import AccountController from '../../controllers/account.controller';
-import styles from '../account-order-history.module.scss';
-import { Alert, Button } from '@fuoco.appdev/core-ui';
-import { RoutePathsType, useQuery } from '../../route-paths';
+import { Button } from '@fuoco.appdev/core-ui';
+import { Order } from '@medusajs/medusa';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import SupabaseService from '../../services/supabase.service';
-import { useObservable } from '@ngneat/use-observable';
-import { useSpring } from 'react-spring';
-import * as core from '../../protobuf/core_pb';
-import { Store } from '@ngneat/elf';
-import { Customer, Order } from '@medusajs/medusa';
-import OrderItemComponent from '../order-item.component';
+import { useNavigate } from 'react-router-dom';
+import AccountController from '../../controllers/account.controller';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import { AccountOrderHistoryResponsiveProps } from '../account-order-history.component';
-import { ResponsiveDesktop } from '../responsive.component';
+import styles from '../account-order-history.module.scss';
 import { useAccountOutletContext } from '../account.component';
+import OrderItemComponent from '../order-item.component';
+import { ResponsiveDesktop } from '../responsive.component';
 
 export default function AccountOrderHistoryDesktopComponent({
   accountProps,
 }: AccountOrderHistoryResponsiveProps): JSX.Element {
-  const rootRef = useRef<HTMLDivElement | null>(null);
+  const rootRef = React.useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const query = useQuery();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const context = useAccountOutletContext();
 
   const orders = accountProps.orders as Order[];

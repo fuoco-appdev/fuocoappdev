@@ -102,7 +102,7 @@
     /* Firefox */
     * {
       scrollbar-width: 0px;
-      scrollbar-color: $brand-500 rgba(255, 255, 255, 0);
+      scrollbar-color: $gray-200 !important;
     }
 
     /* Chrome, Edge, and Safari */
@@ -123,6 +123,27 @@
 
   // Tablet
   @media screen and (min-width: 768px) and (max-width: 991px) {
+    /* ===== Scrollbar CSS ===== */
+    /* Firefox */
+    * {
+      scrollbar-width: $mp-2;
+      scrollbar-color: $gray-200 !important;
+    }
+
+    /* Chrome, Edge, and Safari */
+    *::-webkit-scrollbar {
+      width: $mp-2 !important;
+    }
+
+    *::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0) !important;
+    }
+
+    *::-webkit-scrollbar-thumb {
+      background-color: $gray-100 !important;
+      border-radius: $rounded-full !important;
+      border: $mp-2 solid transparent !important;
+    }
   }
 
   // Desktop
@@ -131,7 +152,7 @@
     /* Firefox */
     * {
       scrollbar-width: $mp-2;
-      scrollbar-color: $brand-500 rgba(255, 255, 255, 0);
+      scrollbar-color: $gray-200 !important;
     }
 
     /* Chrome, Edge, and Safari */

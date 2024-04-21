@@ -1,26 +1,24 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import React, { useEffect, useMemo, useRef } from 'react';
-import WindowController from '../controllers/window.controller';
-import AppController from '../controllers/app.controller';
-import styles from './app.module.scss';
-import { lazy } from '@loadable/component';
-import WindowComponent from './window.component';
-import SupabaseService from '../services/supabase.service';
-import { useCookies } from 'react-cookie';
-import { RouteObject, useLocation } from 'react-router-dom';
 import { AuthChangeEvent, Session } from '@supabase/supabase-js';
+import React from 'react';
+import { useCookies } from 'react-cookie';
+import { useLocation } from 'react-router-dom';
+import AppController from '../controllers/app.controller';
+import WindowController from '../controllers/window.controller';
 import MedusaService from '../services/medusa.service';
+import SupabaseService from '../services/supabase.service';
+import WindowComponent from './window.component';
 
 export interface AppProps {}
 
 function AppComponent({}: AppProps): JSX.Element {
   const location = useLocation();
   const [cookies, setCookie, removeCookie] = useCookies();
-  const renderCountRef = useRef<number>(0);
-  const memoCountRef = useRef<number>(0);
+  const renderCountRef = React.useRef<number>(0);
+  const memoCountRef = React.useRef<number>(0);
 
-  useEffect(() => {
+  React.useEffect(() => {
     renderCountRef.current += 1;
 
     AppController.initializeServices(renderCountRef.current);
@@ -51,7 +49,7 @@ function AppComponent({}: AppProps): JSX.Element {
     };
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!location.hash) {
       return;
     }
@@ -72,7 +70,7 @@ function AppComponent({}: AppProps): JSX.Element {
     }
   }, [location.pathname]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const accessToken =
       Object.keys(cookies).includes('sb-access-token') &&
       cookies['sb-access-token'];
@@ -87,7 +85,7 @@ function AppComponent({}: AppProps): JSX.Element {
     }
   }, [cookies]);
 
-  useMemo(() => {
+  React.useMemo(() => {
     memoCountRef.current += 1;
     if (memoCountRef.current > 1) {
       return;

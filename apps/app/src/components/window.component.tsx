@@ -1,36 +1,26 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import WindowController from '../controllers/window.controller';
-import AccountController from '../controllers/account.controller';
-import AccountPublicController from '../controllers/account-public.controller';
-import styles from './window.module.scss';
-import { RoutePathsType } from '../route-paths';
-import { useTranslation } from 'react-i18next';
-import { useObservable } from '@ngneat/use-observable';
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
-import LoadingComponent from './loading.component';
-import { Store } from '@ngneat/elf';
-import { WindowLocalState, WindowState } from '../models/window.model';
-import { AccountState } from '../models/account.model';
+import { Line } from '@fuoco.appdev/core-ui';
 import { lazy } from '@loadable/component';
-import { useQuery } from '../route-paths';
+import { PriceList } from '@medusajs/medusa';
+import { Store } from '@ngneat/elf';
+import { useObservable } from '@ngneat/use-observable';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
+import AccountPublicController from '../controllers/account-public.controller';
+import AccountController from '../controllers/account.controller';
+import ExploreController from '../controllers/explore.controller';
+import WindowController from '../controllers/window.controller';
+import { AccountPublicState } from '../models/account-public.model';
+import { AccountState } from '../models/account.model';
+import { ExploreState } from '../models/explore.model';
+import { WindowLocalState, WindowState } from '../models/window.model';
+import { RoutePathsType, useQuery } from '../route-paths';
+import AccountNotificationService from '../services/account-notification.service';
+import SupabaseService from '../services/supabase.service';
 import { WindowSuspenseDesktopComponent } from './desktop/suspense/window.suspense.desktop.component';
 import { WindowSuspenseMobileComponent } from './mobile/suspense/window.suspense.mobile.component';
-import ExploreController from '../controllers/explore.controller';
 import { WindowSuspenseTabletComponent } from './tablet/suspense/window.suspense.tablet.component';
-import PermissionsController from '../controllers/permissions.controller';
-import { PermissionsState } from '../models/permissions.model';
-import { ExploreState } from '../models/explore.model';
-import { PriceList, PriceListStatus } from '@medusajs/medusa';
-import { Line } from '@fuoco.appdev/core-ui';
-import { AccountPublicState } from '../models/account-public.model';
-import StoreController from '../controllers/store.controller';
-import AccountNotificationService from '../services/account-notification.service';
-import SupabaseService from 'src/services/supabase.service';
+import styles from './window.module.scss';
 
 const WindowDesktopComponent = lazy(
   () => import('./desktop/window.desktop.component')
@@ -69,17 +59,16 @@ export default function WindowComponent(): JSX.Element {
   const [accountPublicProps] = useObservable(
     AccountPublicController.model.store
   );
-  const [storeProps] = useObservable(StoreController.model.store);
   const [accountProps] = useObservable(AccountController.model.store);
   const [exploreProps] = useObservable(ExploreController.model.store);
-  const isMounted = useRef<boolean>(false);
+  const isMounted = React.useRef<boolean>(false);
   const { i18n, t } = useTranslation();
-  const [openMore, setOpenMore] = useState<boolean>(false);
-  const [isLanguageOpen, setIsLanguageOpen] = useState<boolean>(false);
+  const [openMore, setOpenMore] = React.useState<boolean>(false);
+  const [isLanguageOpen, setIsLanguageOpen] = React.useState<boolean>(false);
   const [windowLocalProps] = useObservable(
     WindowController.model.localStore ?? Store.prototype
   );
-  const renderCountRef = useRef<number>(0);
+  const renderCountRef = React.useRef<number>(0);
 
   const onCancelLocation = () => {
     query.set('sales_location', exploreLocalProps.selectedInventoryLocationId);
@@ -218,7 +207,7 @@ export default function WindowComponent(): JSX.Element {
     setTimeout(() => navigate(-1), 150);
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     renderCountRef.current += 1;
     WindowController.load(renderCountRef.current);
 
@@ -240,11 +229,11 @@ export default function WindowComponent(): JSX.Element {
     };
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     WindowController.updateOnLocationChanged(location);
   }, [location.pathname, windowProps.authState]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (windowProps.authState === 'SIGNED_OUT') {
       navigate({ pathname: RoutePathsType.Signin, search: query.toString() });
     } else if (windowProps.authState === 'USER_DELETED') {
@@ -257,19 +246,19 @@ export default function WindowComponent(): JSX.Element {
     }
   }, [windowProps.authState]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     i18n.changeLanguage(windowLocalProps.languageInfo?.isoCode);
   }, [windowLocalProps.languageInfo]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     WindowController.addToast(undefined);
   }, [windowProps.toast]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     WindowController.addBanner(undefined);
   }, [windowProps.banner]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!exploreLocalProps.selectedInventoryLocationId) {
       return;
     }
@@ -278,7 +267,7 @@ export default function WindowComponent(): JSX.Element {
     navigate({ search: query.toString() });
   }, [exploreLocalProps.selectedInventoryLocationId]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     for (const priceList of windowProps.priceLists as PriceList[]) {
       const date = new Date(priceList.ends_at?.toString() ?? '');
       if (date < new Date(Date.now())) {
@@ -305,7 +294,7 @@ export default function WindowComponent(): JSX.Element {
     }
   }, [windowProps.priceLists]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     setTimeout(() => {
       if (windowProps.isAuthenticated === false) {
         WindowController.addBanner({
@@ -318,7 +307,7 @@ export default function WindowComponent(): JSX.Element {
     }, 2000);
   }, [windowProps.isAuthenticated]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!windowProps.orderPlacedNotificationData) {
       return;
     }
@@ -358,7 +347,7 @@ export default function WindowComponent(): JSX.Element {
     WindowController.updateOrderPlacedNotificationData(undefined);
   }, [windowProps.orderPlacedNotificationData]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!windowProps.orderShippedNotificationData) {
       return;
     }
@@ -398,7 +387,7 @@ export default function WindowComponent(): JSX.Element {
     WindowController.updateOrderShippedNotificationData(undefined);
   }, [windowProps.orderShippedNotificationData]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!windowProps.orderReturnedNotificationData) {
       return;
     }
@@ -438,7 +427,7 @@ export default function WindowComponent(): JSX.Element {
     WindowController.updateOrderReturnedNotificationData(undefined);
   }, [windowProps.orderReturnedNotificationData]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!windowProps.orderCanceledNotificationData) {
       return;
     }
@@ -478,7 +467,7 @@ export default function WindowComponent(): JSX.Element {
     WindowController.updateOrderCanceledNotificationData(undefined);
   }, [windowProps.orderCanceledNotificationData]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!accountProps.account) {
       return;
     }

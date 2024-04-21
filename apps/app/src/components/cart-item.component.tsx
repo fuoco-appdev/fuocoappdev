@@ -1,26 +1,13 @@
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
 import { LineItem, ProductOptionValue } from '@medusajs/medusa';
-import styles from './cart-item.module.scss';
-import { useEffect, useState } from 'react';
 import { ProductOptions } from '../models/product.model';
-import { useTranslation } from 'react-i18next';
-import { Button, Line, Modal } from '@fuoco.appdev/core-ui';
-import CartController from '../controllers/cart.controller';
 // @ts-ignore
-import { formatAmount } from 'medusa-react';
-import StoreController from '../controllers/store.controller';
-import { useObservable } from '@ngneat/use-observable';
-import { StoreState } from '../models/store.model';
 import { lazy } from '@loadable/component';
 import React from 'react';
+import { StoreState } from '../models/store.model';
+import { MedusaProductTypeNames } from '../types/medusa.type';
 import { CartItemSuspenseDesktopComponent } from './desktop/suspense/cart-item.suspense.desktop.component';
 import { CartItemSuspenseMobileComponent } from './mobile/suspense/cart-item.suspense.mobile.component';
 import { CartItemSuspenseTabletComponent } from './tablet/suspense/cart-item.suspense.tablet.component';
-import { MedusaProductTypeNames } from 'src/types/medusa.type';
 
 const CartItemDesktopComponent = lazy(
   () => import('./desktop/cart-item.desktop.component')
@@ -58,19 +45,21 @@ export default function CartItemComponent({
   onQuantityChanged,
   onRemove,
 }: CartItemProps): JSX.Element {
-  const [productType, setProductType] = useState<
+  const [productType, setProductType] = React.useState<
     MedusaProductTypeNames | undefined
   >();
-  const [vintage, setVintage] = useState<string>('');
-  const [type, setType] = useState<string>('');
-  const [quantity, setQuantity] = useState<number>(item.quantity);
-  const [hasReducedPrice, setHasReducedPrice] = useState<boolean>(
+  const [vintage, setVintage] = React.useState<string>('');
+  const [type, setType] = React.useState<string>('');
+  const [quantity, setQuantity] = React.useState<number>(item.quantity);
+  const [hasReducedPrice, setHasReducedPrice] = React.useState<boolean>(
     (item.discount_total ?? 0) > 0
   );
-  const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
-  const [discountPercentage, setDiscountPercentage] = useState<string>('');
+  const [deleteModalVisible, setDeleteModalVisible] =
+    React.useState<boolean>(false);
+  const [discountPercentage, setDiscountPercentage] =
+    React.useState<string>('');
 
-  useEffect(() => {
+  React.useEffect(() => {
     const vintageOption = item.variant.product.options?.find(
       (value) => value.title === ProductOptions.Vintage
     );
@@ -95,7 +84,7 @@ export default function CartItemComponent({
     setHasReducedPrice((item.discount_total ?? 0) > 0);
   }, [item]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const type = storeProps.productTypes.find(
       (value) => value.id === item.variant.product.type_id
     );

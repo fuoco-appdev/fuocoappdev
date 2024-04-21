@@ -1,18 +1,15 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { Auth } from '@fuoco.appdev/core-ui';
-import SignupController from '../../controllers/signup.controller';
-import WindowController from '../../controllers/window.controller';
-import styles from '../signup.module.scss';
-import SupabaseService from '../../services/supabase.service';
-import { RoutePathsType, useQuery } from '../../route-paths';
-import { useObservable } from '@ngneat/use-observable';
-import { useTranslation } from 'react-i18next';
 import { AuthError } from '@supabase/supabase-js';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { animated, config, useTransition } from 'react-spring';
-import { SignupResponsiveProps } from '../signup.component';
+import SignupController from '../../controllers/signup.controller';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
+import { SignupResponsiveProps } from '../signup.component';
+import styles from '../signup.module.scss';
 
 export default function SignupMobileComponent({
   signupProps,
@@ -27,7 +24,7 @@ export default function SignupMobileComponent({
 }: SignupResponsiveProps): JSX.Element {
   const navigate = useNavigate();
   const query = useQuery();
-  const [show, setShow] = useState(false);
+  const [show, setShow] = React.useState(false);
   const { t } = useTranslation();
 
   useMobileEffect(() => {

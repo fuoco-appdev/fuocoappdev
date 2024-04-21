@@ -1,17 +1,13 @@
-import styles from '../account-follow-item.module.scss';
-import { Avatar, Button, Line, Modal } from '@fuoco.appdev/core-ui';
-import { AddressItemProps } from '../address-item.component';
+import { Avatar, Button } from '@fuoco.appdev/core-ui';
 import { useTranslation } from 'react-i18next';
-import { ResponsiveDesktop, ResponsiveTablet } from '../responsive.component';
-import { AccountFollowItemResponsiveProps } from '../account-follow-item.component';
-import AccountController from '../../controllers/account.controller';
 import Skeleton from 'react-loading-skeleton';
+import { AccountFollowItemResponsiveProps } from '../account-follow-item.component';
+import styles from '../account-follow-item.module.scss';
+import { ResponsiveTablet } from '../responsive.component';
 
 export default function AccountFollowItemTabletComponent({
   accountProps,
   account,
-  follower,
-  customer,
   isRequest,
   isFollowing,
   isAccepted,
@@ -23,7 +19,7 @@ export default function AccountFollowItemTabletComponent({
   onConfirm,
   onRemove,
 }: AccountFollowItemResponsiveProps): JSX.Element {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   return (
     <ResponsiveTablet>
       <div
@@ -44,7 +40,7 @@ export default function AccountFollowItemTabletComponent({
               ].join(' '),
             }}
             size={'custom'}
-            text={customer?.firstName}
+            text={account.customer?.first_name}
             src={profileUrl}
           />
           <div
@@ -72,17 +68,17 @@ export default function AccountFollowItemTabletComponent({
                 />
               )}
             </div>
-            {customer && (
+            {account.customer && (
               <div
                 className={[
                   styles['full-name'],
                   styles['full-name-tablet'],
                 ].join(' ')}
               >
-                {`${customer?.firstName} ${customer?.lastName}`}
+                {`${account.customer?.first_name} ${account.customer?.last_name}`}
               </div>
             )}
-            {!customer && (
+            {!account.customer && (
               <Skeleton
                 count={1}
                 borderRadius={16}

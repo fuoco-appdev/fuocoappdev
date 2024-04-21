@@ -1,15 +1,7 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import * as React from 'react';
-import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
-import WindowController from '../../controllers/window.controller';
-import styles from '../window.module.scss';
 import {
-  Alert,
   Avatar,
-  Banner,
   BannerOverlay,
   Button,
-  Dropdown,
   LanguageSwitch,
   Line,
   Modal,
@@ -18,18 +10,18 @@ import {
   ToastOverlay,
   Typography,
 } from '@fuoco.appdev/core-ui';
-import { RoutePathsType, useQuery } from '../../route-paths';
-import { useTranslation } from 'react-i18next';
-import { useObservable } from '@ngneat/use-observable';
-import * as core from '../../protobuf/core_pb';
-import { Store } from '@ngneat/elf';
 import { Customer } from '@medusajs/medusa';
-import AccountController from '../../controllers/account.controller';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
-import { WindowResponsiveProps } from '../window.component';
+import AccountController from '../../controllers/account.controller';
+import WindowController from '../../controllers/window.controller';
+import { AccountResponse } from '../../protobuf/account_pb';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
-import LoadingComponent from '../loading.component';
-import { WindowSuspenseDesktopComponent } from './suspense/window.suspense.desktop.component';
+import { WindowResponsiveProps } from '../window.component';
+import styles from '../window.module.scss';
 
 export default function WindowDesktopComponent({
   windowProps,
@@ -37,9 +29,7 @@ export default function WindowDesktopComponent({
   accountPublicProps,
   accountProps,
   exploreProps,
-  openMore,
   isLanguageOpen,
-  setOpenMore,
   setIsLanguageOpen,
   onSelectLocation,
   onCancelLocation,
@@ -49,15 +39,15 @@ export default function WindowDesktopComponent({
   const { t } = useTranslation();
   const navigate = useNavigate();
   const query = useQuery();
-  const sideBarRef = useRef<HTMLDivElement | null>(null);
-  const navigationBackRef = useRef<HTMLDivElement | null>(null);
-  const [date, setDate] = useState<Date | null>(null);
+  const sideBarRef = React.useRef<HTMLDivElement | null>(null);
+  const navigationBackRef = React.useRef<HTMLDivElement | null>(null);
+  const [date, setDate] = React.useState<Date | null>(null);
 
   useDesktopEffect(() => {
     setDate(new Date(Date.now()));
   }, []);
 
-  const account = windowProps.account as core.AccountResponse;
+  const account = windowProps.account as AccountResponse;
   const customer = accountProps.customer as Customer;
   return (
     <ResponsiveDesktop>

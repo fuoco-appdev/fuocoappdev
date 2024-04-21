@@ -1,31 +1,16 @@
-import { createRef, useEffect, useLayoutEffect, useRef } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import AccountController from '../../controllers/account.controller';
-import ProductController from '../../controllers/product.controller';
-import styles from '../account-likes.module.scss';
-import { Alert, Button, Line, Modal } from '@fuoco.appdev/core-ui';
-import { RoutePathsType } from '../../route-paths';
-import { useTranslation } from 'react-i18next';
-import SupabaseService from '../../services/supabase.service';
-import { useObservable } from '@ngneat/use-observable';
-import { useSpring } from 'react-spring';
-import * as core from '../../protobuf/core_pb';
-import LoadingComponent from '../loading.component';
-import { Store } from '@ngneat/elf';
-import AccountProfileFormComponent from '../account-profile-form.component';
-import { AccountLikesResponsiveProps } from '../account-likes.component';
-import { ResponsiveDesktop } from '../responsive.component';
-import {
-  PricedProduct,
-  PricedVariant,
-} from '@medusajs/medusa/dist/types/pricing';
-import ProductPreviewComponent from '../product-preview.component';
-import { createPortal } from 'react-dom';
-import CartVariantItemComponent from '../cart-variant-item.component';
-import { MedusaProductTypeNames } from '../../types/medusa.type';
-import { useAccountPublicOutletContext } from '../account-public.component';
-import { AccountPublicLikesResponsiveProps } from '../account-public-likes.component';
+import { Button, Line, Modal } from '@fuoco.appdev/core-ui';
 import { Product } from '@medusajs/medusa';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { useTranslation } from 'react-i18next';
+import { ProductLikesMetadataResponse } from '../../protobuf/product-like_pb';
+import { MedusaProductTypeNames } from '../../types/medusa.type';
+import styles from '../account-likes.module.scss';
+import { AccountPublicLikesResponsiveProps } from '../account-public-likes.component';
+import { useAccountPublicOutletContext } from '../account-public.component';
+import CartVariantItemComponent from '../cart-variant-item.component';
+import ProductPreviewComponent from '../product-preview.component';
+import { ResponsiveDesktop } from '../responsive.component';
 
 export default function AccountPublicLikesDesktopComponent({
   storeProps,
@@ -43,9 +28,8 @@ export default function AccountPublicLikesDesktopComponent({
   onProductPreviewLikeChanged,
   onProductPreviewRest,
 }: AccountPublicLikesResponsiveProps): JSX.Element {
-  const { t, i18n } = useTranslation();
-  const rootRef = createRef<HTMLDivElement>();
-  const navigate = useNavigate();
+  const { t } = useTranslation();
+  const rootRef = React.createRef<HTMLDivElement>();
   const context = useAccountPublicOutletContext();
 
   return (
@@ -86,7 +70,7 @@ export default function AccountPublicLikesDesktopComponent({
                   }
                   likesMetadata={
                     productLikesMetadata ??
-                    core.ProductLikesMetadataResponse.prototype
+                    ProductLikesMetadataResponse.prototype
                   }
                   onClick={() =>
                     onProductPreviewClick(
@@ -137,7 +121,7 @@ export default function AccountPublicLikesDesktopComponent({
             )}
         </div>
       </div>
-      {createPortal(
+      {ReactDOM.createPortal(
         <Modal
           classNames={{
             overlay: [

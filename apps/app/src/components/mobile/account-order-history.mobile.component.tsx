@@ -1,24 +1,23 @@
-import { createRef, useRef } from 'react';
+import { Button } from '@fuoco.appdev/core-ui';
+import { Order } from '@medusajs/medusa';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import AccountController from '../../controllers/account.controller';
-import styles from '../account-order-history.module.scss';
-import { Button } from '@fuoco.appdev/core-ui';
 import { RoutePathsType, useQuery } from '../../route-paths';
-import { useTranslation } from 'react-i18next';
-import { useObservable } from '@ngneat/use-observable';
-import { Order } from '@medusajs/medusa';
-import OrderItemComponent from '../order-item.component';
 import { AccountOrderHistoryResponsiveProps } from '../account-order-history.component';
-import { ResponsiveMobile } from '../responsive.component';
+import styles from '../account-order-history.module.scss';
 import { useAccountOutletContext } from '../account.component';
+import OrderItemComponent from '../order-item.component';
+import { ResponsiveMobile } from '../responsive.component';
 
 export default function AccountOrderHistoryMobileComponent({
   accountProps,
 }: AccountOrderHistoryResponsiveProps): JSX.Element {
-  const rootRef = useRef<HTMLDivElement | null>(null);
+  const rootRef = React.useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const query = useQuery();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const context = useAccountOutletContext();
 
   const orders = accountProps.orders as Order[];

@@ -1,37 +1,26 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { filter, firstValueFrom, Subscription, take } from "rxjs";
-import { Controller } from "../controller";
-import { MoneyAmount, Product, ProductVariant } from "@medusajs/medusa";
-import { ProductModel, ProductTabType } from "../models/product.model";
-import { select } from "@ngneat/elf";
-import { StoreModel, StoreState } from "../models/store.model";
-import StoreController from "./store.controller";
-import ExploreController from "./explore.controller";
-import MedusaService from "../services/medusa.service";
-import i18n from "../i18n";
-import CartController from "./cart.controller";
+import { CustomerGroup, Product, SalesChannel } from "@medusajs/medusa";
 import {
-  CustomerGroup,
-  LineItem,
-  Region,
-  SalesChannel,
-} from "@medusajs/medusa";
-import {
-  PricedProduct,
-  PricedVariant,
+  PricedVariant
 } from "@medusajs/medusa/dist/types/pricing";
-import AccountController from "./account.controller";
-import AccountPublicController from "./account-public.controller";
-import ProductLikesService from "../services/product-likes.service";
-import {
-  AccountResponse,
-  ProductLikesMetadataResponse,
-  ProductMetadataResponse,
-} from "../protobuf/core_pb";
-import { AccountState } from "../models/account.model";
 import { StockLocation } from "@medusajs/stock-location/dist/models";
+import { select } from "@ngneat/elf";
 import { Index } from "meilisearch";
+import { Subscription, filter, firstValueFrom, take } from "rxjs";
+import { Controller } from "../controller";
+import { AccountState } from "../models/account.model";
+import { ProductModel, ProductTabType } from "../models/product.model";
+import { AccountResponse } from "../protobuf/account_pb";
+import { ProductLikesMetadataResponse } from "../protobuf/product-like_pb";
+import { ProductMetadataResponse } from "../protobuf/product_pb";
+import MedusaService from "../services/medusa.service";
 import MeiliSearchService from "../services/meilisearch.service";
+import ProductLikesService from "../services/product-likes.service";
+import AccountPublicController from "./account-public.controller";
+import AccountController from "./account.controller";
+import CartController from "./cart.controller";
+import ExploreController from "./explore.controller";
+import StoreController from "./store.controller";
 
 class ProductController extends Controller {
   private readonly _model: ProductModel;
@@ -68,7 +57,7 @@ class ProductController extends Controller {
     this.initializeAsync(renderCount);
   }
 
-  public override async load(renderCount: number): Promise<void> {
+  public override async load(_renderCount: number): Promise<void> {
     const productId = await firstValueFrom(
       this._model.store.pipe(
         select((model) => model.productId),
@@ -127,13 +116,13 @@ class ProductController extends Controller {
       });
   }
 
-  public override disposeInitialization(renderCount: number): void {
+  public override disposeInitialization(_renderCount: number): void {
     this._medusaAccessTokenSubscription?.unsubscribe();
     this._customerGroupSubscription?.unsubscribe();
     this._selectedSalesChannelSubscription?.unsubscribe();
   }
 
-  public override disposeLoad(renderCount: number): void {
+  public override disposeLoad(_renderCount: number): void {
     this._accountSubscription?.unsubscribe();
   }
 
@@ -442,7 +431,7 @@ class ProductController extends Controller {
     this._model.areSearchedStockLocationsLoading = false;
   }
 
-  private async initializeAsync(renderCount: number): Promise<void> {
+  private async initializeAsync(_renderCount: number): Promise<void> {
     this._customerGroupSubscription?.unsubscribe();
     this._customerGroupSubscription = AccountController.model.store
       .pipe(select((model) => model.customerGroup))

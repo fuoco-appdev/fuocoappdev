@@ -1,17 +1,9 @@
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
-import { Order, LineItem } from '@medusajs/medusa';
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { lazy } from '@loadable/component';
-import { NotificationItemSuspenseDesktopComponent } from './desktop/suspense/notification-item.suspense.desktop.component';
 import React from 'react';
+import { AccountNotificationResponse } from '../protobuf/account-notification_pb';
+import { NotificationItemSuspenseDesktopComponent } from './desktop/suspense/notification-item.suspense.desktop.component';
 import { NotificationItemSuspenseMobileComponent } from './mobile/suspense/notification-item.suspense.mobile.component';
 import { NotificationItemSuspenseTabletComponent } from './tablet/suspense/notification-item.suspense.tablet.component';
-import { AccountNotificationResponse } from '../protobuf/core_pb';
 
 const NotificationItemDesktopComponent = lazy(
   () => import('./desktop/notification-item.desktop.component')
@@ -35,8 +27,6 @@ export default function NotificationItemComponent({
   notification,
   fromNow,
 }: NotificationItemProps): JSX.Element {
-  const { t, i18n } = useTranslation();
-
   const suspenceComponent = (
     <>
       <NotificationItemSuspenseDesktopComponent />

@@ -1,30 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Subscription } from 'rxjs';
-import { Controller } from '../controller';
-import { AccountModel } from '../models/account.model';
-import AccountService from '../services/account.service';
-import * as core from '../protobuf/core_pb';
-import SupabaseService from '../services/supabase.service';
-import BucketService from '../services/bucket.service';
-import MedusaService from '../services/medusa.service';
-import { StorePostCustomersReq, Customer, Address } from '@medusajs/medusa';
-import WindowController from './window.controller';
-import {
-  ProfileFormErrors,
-  ProfileFormValues,
-} from '../components/account-profile-form.component';
-import { v4 as uuidv4 } from 'uuid';
-import mime from 'mime';
-import { User } from '@supabase/supabase-js';
-import {
-  AddressFormErrors,
-  AddressFormValues,
-} from '../components/address-form.component';
-import { RoutePathsType } from '../route-paths';
-import { LanguageInfo } from '@fuoco.appdev/core-ui';
-import { select } from '@ngneat/elf';
-import { PermissionsModel } from '../models/permissions.model';
+import { Controller } from "../controller";
+import { PermissionsModel } from "../models/permissions.model";
 
 class PermissionsController extends Controller {
   private readonly _model: PermissionsModel;
@@ -45,11 +22,11 @@ class PermissionsController extends Controller {
     }
   }
 
-  public override load(renderCount: number): void {}
+  public override load(_renderCount: number): void {}
 
-  public override disposeInitialization(renderCount: number): void {}
+  public override disposeInitialization(_renderCount: number): void {}
 
-  public override disposeLoad(renderCount: number): void {}
+  public override disposeLoad(_renderCount: number): void {}
 
   public updateAccessLocation(value: boolean): void {
     this._model.accessLocation = value;
@@ -81,7 +58,7 @@ class PermissionsController extends Controller {
     return new Promise<GeolocationPosition>((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(
         (position) => resolve(position),
-        (error) => reject(error)
+        (error) => reject(error),
       );
     });
   }

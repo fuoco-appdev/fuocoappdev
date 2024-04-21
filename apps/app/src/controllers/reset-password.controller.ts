@@ -1,13 +1,11 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import {
+  SupabaseClient
+} from '@supabase/supabase-js';
 import { Subscription } from 'rxjs';
 import { Controller } from '../controller';
 import { ResetPasswordModel } from '../models/reset-password.model';
 import SupabaseService from '../services/supabase.service';
-import {
-  Session,
-  AuthChangeEvent,
-  SupabaseClient,
-} from '@supabase/supabase-js';
 
 class ResetPasswordController extends Controller {
   private readonly _model: ResetPasswordModel;
@@ -23,9 +21,9 @@ class ResetPasswordController extends Controller {
     return this._model;
   }
 
-  public override initialize(renderCount: number): void {}
+  public override initialize(_renderCount: number): void {}
 
-  public override load(renderCount: number): void {
+  public override load(_renderCount: number): void {
     this._supabaseClientSubscription =
       SupabaseService.supabaseClientObservable.subscribe({
         next: (value: SupabaseClient | undefined) => {
@@ -34,9 +32,9 @@ class ResetPasswordController extends Controller {
       });
   }
 
-  public override disposeInitialization(renderCount: number): void {}
+  public override disposeInitialization(_renderCount: number): void {}
 
-  public override disposeLoad(renderCount: number): void {
+  public override disposeLoad(_renderCount: number): void {
     this._supabaseClientSubscription?.unsubscribe();
   }
 }

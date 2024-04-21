@@ -435,22 +435,34 @@
 }
 
 .root-tablet {
+    display: flex;
+    flex-direction: row;
     height: 100%;
-    padding: $mp-10;
+
+    & .shopping-carts-container-tablet {
+        min-width: 320px;
+        max-width: 320px;
+        height: 100%;
+        border-right-width: 1px;
+        border-left-width: 0px;
+        border-top-width: 0px;
+        border-bottom-width: 0px;
+        border-color: rgba(42, 42, 95, .6);
+        border-style: solid;
+    }
+
+    & .cart-container-tablet {
+        overflow-y: auto;
+        overscroll-behavior: none;
+        padding: $mp-10;
+    }
 
     & .content-tablet {
-        display: -webkit-box;
-        display: -ms-flexbox;
         display: flex;
-        -webkit-box-orient: vertical;
-        -webkit-box-direction: normal;
-            -ms-flex-direction: column;
-                flex-direction: column;
-        -webkit-box-pack: center;
-            -ms-flex-pack: center;
-                justify-content: center;
+        flex-direction: column;
+        justify-content: center;
         gap: $mp-6;
-        align-items: center;
+        width: 556px;
 
         & .card-container-tablet {
             padding: $mp-6;
@@ -462,7 +474,7 @@
             height: fit-content;
         }
     }
-    
+
     & .account-container-tablet {
         & .already-have-an-account-title-tablet {
 
@@ -479,22 +491,18 @@
 }
 
 .shopping-cart-container-tablet {
-    margin-top: $mp-8;
-    padding: 0 $mp-4;
-
     & .shopping-cart-title-tablet {
 
     }
 
     & .shopping-cart-items-tablet {
         & .tab-container-tablet {
+
         }
     }
 }
 
 .pricing-container-tablet {
-    padding: $mp-4;
-
     & .subtotal-container-tablet {
         & .subtotal-text-tablet {
 
@@ -515,8 +523,6 @@
 }
 
 .discount-container-tablet {
-    padding: 0 $mp-4;
-
     & .discount-input-container-tablet {
 
     }
@@ -539,9 +545,6 @@
 }
 
 .go-to-checkout-container-tablet {
-    padding: 0 $mp-4;
-    margin-bottom: $mp-10;
-
     & .checkout-button-tablet {
     
     }

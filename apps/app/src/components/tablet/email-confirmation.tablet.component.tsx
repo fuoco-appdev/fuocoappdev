@@ -1,15 +1,10 @@
-import styles from '../email-confirmation.module.scss';
-import { useTranslation } from 'react-i18next';
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from '../responsive.component';
-import { EmailConfirmationResponsiveProps } from '../email-confirmation.component';
 import { Button, Line } from '@fuoco.appdev/core-ui';
+import { useTranslation } from 'react-i18next';
+import { EmailConfirmationResponsiveProps } from '../email-confirmation.component';
+import styles from '../email-confirmation.module.scss';
+import { ResponsiveTablet } from '../responsive.component';
 
 export default function EmailConfirmationTabletComponent({
-  emailConfirmationProps,
   onResendConfirmationClick,
 }: EmailConfirmationResponsiveProps): JSX.Element {
   const { t } = useTranslation();

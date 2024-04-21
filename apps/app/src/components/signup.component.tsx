@@ -1,27 +1,22 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import { useEffect, useRef, useState } from 'react';
+import { lazy } from '@loadable/component';
+import { useObservable } from '@ngneat/use-observable';
+import { AuthError } from '@supabase/supabase-js';
+import React from 'react';
+import { Helmet } from 'react-helmet';
+import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Auth } from '@fuoco.appdev/core-ui';
+import EmailConfirmationController from '../controllers/email-confirmation.controller';
 import SignupController from '../controllers/signup.controller';
 import WindowController from '../controllers/window.controller';
-import EmailConfirmationController from '../controllers/email-confirmation.controller';
-import styles from './signup.module.scss';
-import SupabaseService from '../services/supabase.service';
+import { SignupState } from '../models';
 import { RoutePathsType } from '../route-paths';
-import { useObservable } from '@ngneat/use-observable';
-import { useTranslation } from 'react-i18next';
-import { AuthError } from '@supabase/supabase-js';
-import { animated, config, useTransition } from 'react-spring';
+import { GuestComponent } from './guest.component';
 import {
   ResponsiveDesktop,
   ResponsiveMobile,
   ResponsiveTablet,
 } from './responsive.component';
-import { GuestComponent } from './guest.component';
-import { Helmet } from 'react-helmet';
-import { lazy } from '@loadable/component';
-import React from 'react';
-import { SignupState } from '../models';
 
 const SignupDesktopComponent = lazy(
   () => import('./desktop/signup.desktop.component')
@@ -52,11 +47,12 @@ export default function SignupComponent(): JSX.Element {
   const navigate = useNavigate();
   SignupController.model.location = location;
   const [signupProps] = useObservable(SignupController.model.store);
-  const [authError, setAuthError] = useState<AuthError | null>(null);
-  const [emailError, setEmailError] = useState<string>('');
-  const [passwordError, setPasswordError] = useState<string>('');
-  const [confirmPasswordError, setConfirmPasswordError] = useState<string>('');
-  const renderCountRef = useRef<number>(0);
+  const [authError, setAuthError] = React.useState<AuthError | null>(null);
+  const [emailError, setEmailError] = React.useState<string>('');
+  const [passwordError, setPasswordError] = React.useState<string>('');
+  const [confirmPasswordError, setConfirmPasswordError] =
+    React.useState<string>('');
+  const renderCountRef = React.useRef<number>(0);
   const { t } = useTranslation();
 
   const onEmailConfirmationSent = () => {
@@ -70,7 +66,7 @@ export default function SignupComponent(): JSX.Element {
     navigate(RoutePathsType.EmailConfirmation);
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     SignupController.load(renderCountRef.current);
 
     return () => {
@@ -78,7 +74,7 @@ export default function SignupComponent(): JSX.Element {
     };
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (authError?.status === 400) {
       setEmailError(t('userAlreadyRegistered') ?? '');
       setPasswordError(t('userAlreadyRegistered') ?? '');

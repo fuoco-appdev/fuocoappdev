@@ -1,30 +1,15 @@
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
-import { LineItem, ProductOptionValue } from '@medusajs/medusa';
-import styles from './cart-item.module.scss';
-import { useEffect, useState } from 'react';
-import { ProductOptions } from '../models/product.model';
-import { useTranslation } from 'react-i18next';
-import { Button, Line, Modal } from '@fuoco.appdev/core-ui';
-import CartController from '../controllers/cart.controller';
 // @ts-ignore
-import { formatAmount } from 'medusa-react';
-import StoreController from '../controllers/store.controller';
-import { useObservable } from '@ngneat/use-observable';
-import { StoreState } from '../models/store.model';
 import { lazy } from '@loadable/component';
-import React from 'react';
-import { CartVariantItemSuspenseDesktopComponent } from './desktop/suspense/cart-variant-item.suspense.desktop.component';
-import { CartVariantItemSuspenseMobileComponent } from './mobile/suspense/cart-variant-item.suspense.mobile.component';
 import {
   PricedProduct,
   PricedVariant,
 } from '@medusajs/medusa/dist/types/pricing';
+import React from 'react';
+import { StoreState } from '../models/store.model';
+import { MedusaProductTypeNames } from '../types/medusa.type';
+import { CartVariantItemSuspenseDesktopComponent } from './desktop/suspense/cart-variant-item.suspense.desktop.component';
+import { CartVariantItemSuspenseMobileComponent } from './mobile/suspense/cart-variant-item.suspense.mobile.component';
 import { CartVariantItemSuspenseTabletComponent } from './tablet/suspense/cart-variant-item.suspense.tablet.component';
-import { MedusaProductTypeNames } from 'src/types/medusa.type';
 
 const CartVariantItemDesktopComponent = lazy(
   () => import('./desktop/cart-variant-item.desktop.component')

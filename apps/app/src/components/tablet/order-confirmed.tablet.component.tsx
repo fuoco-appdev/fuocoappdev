@@ -1,18 +1,16 @@
-import styles from '../order-confirmed.module.scss';
+import { LineItem } from '@medusajs/medusa';
 import { useTranslation } from 'react-i18next';
-import { LineItem, ShippingMethod, ReturnReason } from '@medusajs/medusa';
 import OrderConfirmedController from '../../controllers/order-confirmed.controller';
-import StoreController from '../../controllers/store.controller';
-import { useObservable } from '@ngneat/use-observable';
+import styles from '../order-confirmed.module.scss';
 import ShippingItemComponent from '../shipping-item.component';
 // @ts-ignore
+import { Button, Modal } from '@fuoco.appdev/core-ui';
 import { formatAmount } from 'medusa-react';
-import { Button, Dropdown, Modal, OptionProps } from '@fuoco.appdev/core-ui';
-import RefundItemComponent from '../refund-item.component';
-import { RefundItem } from '../../models/order-confirmed.model';
 import WindowController from '../../controllers/window.controller';
+import { RefundItem } from '../../models/order-confirmed.model';
 import { OrderConfirmedResponsiveProps } from '../order-confirmed.component';
-import { ResponsiveDesktop, ResponsiveTablet } from '../responsive.component';
+import RefundItemComponent from '../refund-item.component';
+import { ResponsiveTablet } from '../responsive.component';
 import { OrderConfirmedSuspenseTabletComponent } from './suspense/order-confirmed.suspense.tablet.component';
 
 export default function OrderConfirmedTabletComponent({

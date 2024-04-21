@@ -1,31 +1,23 @@
-import { PipeableStream, renderToPipeableStream } from 'react-dom/server';
-import AppComponent from './components/app.component';
-import { ReactElement, StrictMode, ComponentType, cloneElement } from 'react';
-import Helmet, { HelmetData } from 'react-helmet';
+import { ChunkExtractor } from '@loadable/server';
+import { Request, Response } from 'express';
+import fs from 'fs';
+import path from 'path';
+import React from 'react';
+import { CookiesProvider } from 'react-cookie';
+import ReactDOMServer from 'react-dom/server';
+import Helmet from 'react-helmet';
+import { matchRoutes } from 'react-router-dom';
 import {
   StaticRouterProvider,
   createStaticHandler,
   createStaticRouter,
 } from 'react-router-dom/server';
-import { Request, Response, RouterOptions } from 'express';
-import { ChunkExtractor, ChunkExtractorManager } from '@loadable/server';
-import path from 'path';
 import { Writable } from 'stream';
-import fs from 'fs';
-import MedusaService from './services/medusa.service';
-import { getRoutePaths, RoutePathsType, updateRoutes } from './route-paths';
-import {
-  PathMatch,
-  RouteObject,
-  matchPath,
-  matchRoutes,
-} from 'react-router-dom';
-import SupabaseService from './services/supabase.service';
-import { CookiesProvider } from 'react-cookie';
+import { getRoutePaths, updateRoutes } from './route-paths';
 
 class HtmlWritable extends Writable {
   private _chunks: any[] = [];
-  private _html: string = '';
+  private _html = '';
 
   getHtml() {
     return this._html;
@@ -33,7 +25,7 @@ class HtmlWritable extends Writable {
 
   override _write(
     chunk: any,
-    encoding: BufferEncoding,
+    _encoding: BufferEncoding,
     callback: (error?: Error | null) => void
   ) {
     this._chunks.push(chunk);
@@ -47,19 +39,19 @@ class HtmlWritable extends Writable {
 }
 
 function createFetchRequest(req: Request): globalThis.Request {
-  let origin = `${req.protocol}://${req.get('host')}`;
+  const origin = `${req.protocol}://${req.get('host')}`;
   // Note: This had to take originalUrl into account for presumably vite's proxying
-  let url = new URL(req.originalUrl || req.url, origin);
+  const url = new URL(req.originalUrl || req.url, origin);
 
-  let controller = new AbortController();
+  const controller = new AbortController();
   req.on('close', () => controller.abort());
 
-  let headers = new Headers();
+  const headers = new Headers();
 
-  for (let [key, values] of Object.entries(req.headers)) {
+  for (const [key, values] of Object.entries(req.headers)) {
     if (values) {
       if (Array.isArray(values)) {
-        for (let value of values) {
+        for (const value of values) {
           headers.append(key, value);
         }
       } else {
@@ -68,7 +60,7 @@ function createFetchRequest(req: Request): globalThis.Request {
     }
   }
 
-  let init: RequestInit = {
+  const init: RequestInit = {
     method: req.method,
     headers,
     signal: controller.signal,
@@ -103,22 +95,22 @@ export async function render(
         request,
         response
       );
-      route.element = cloneElement(element, props);
+      route.element = React.cloneElement(element, props);
       routePaths = updateRoutes(routePaths, route);
     }
   } catch (error) {
     console.error(error);
   }
 
-  let { query, dataRoutes } = createStaticHandler(routePaths);
-  let fetchRequest = createFetchRequest(request);
-  let context = await query(fetchRequest);
+  const { query, dataRoutes } = createStaticHandler(routePaths);
+  const fetchRequest = createFetchRequest(request);
+  const context = await query(fetchRequest);
   if (context instanceof globalThis.Response) {
     throw context;
   }
-  let router = createStaticRouter(dataRoutes, context);
+  const router = createStaticRouter(dataRoutes, context);
 
-  const { pipe, abort } = renderToPipeableStream(
+  const { pipe, abort } = ReactDOMServer.renderToPipeableStream(
     extractor.collectChunks(
       <CookiesProvider cookies={(request as any).universalCookies}>
         <StaticRouterProvider router={router} context={context} />
@@ -192,6 +184,7 @@ export async function render(
         firstBodyTag + bodyHtml + scriptTags + lastBodyTag;
       indexHtml = indexHtml.replace(bodyRegex, htmlWithScripts);
     }
+
     response.send(indexHtml);
   });
 

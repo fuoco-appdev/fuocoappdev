@@ -1,32 +1,22 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import AccountController from '../../controllers/account.controller';
-import styles from '../account-settings-account.module.scss';
 import {
   Accordion,
-  Alert,
+  AccordionItemClasses,
   Auth,
   Button,
+  LanguageSwitch,
   Line,
   Modal,
-  AccordionItemClasses,
-  LanguageSwitch,
 } from '@fuoco.appdev/core-ui';
-import { RoutePathsType } from '../../route-paths';
-import { useTranslation } from 'react-i18next';
-import SupabaseService from '../../services/supabase.service';
-import { useSpring } from 'react-spring';
-import * as core from '../../protobuf/core_pb';
-import { Store } from '@ngneat/elf';
-import Ripples from 'react-ripples';
 import { AuthError, User } from '@supabase/supabase-js';
+import ReactDOM from 'react-dom';
+import { useTranslation } from 'react-i18next';
+import AccountController from '../../controllers/account.controller';
 import WindowController from '../../controllers/window.controller';
-import ReactCountryFlag from 'react-country-flag';
-import { Observable } from 'rxjs';
-import { AccountSettingsAccountResponsiveProps } from '../account-settings-account.component';
-import { ResponsiveDesktop } from '../responsive.component';
-import { createPortal } from 'react-dom';
+import SupabaseService from '../../services/supabase.service';
 import AccountProfileFormComponent from '../account-profile-form.component';
+import { AccountSettingsAccountResponsiveProps } from '../account-settings-account.component';
+import styles from '../account-settings-account.module.scss';
+import { ResponsiveDesktop } from '../responsive.component';
 
 export default function AccountSettingsAccountDesktopComponent({
   accountProps,
@@ -42,7 +32,7 @@ export default function AccountSettingsAccountDesktopComponent({
   setIsLanguageOpen,
   onGeneralInformationSaveAsync,
 }: AccountSettingsAccountResponsiveProps): JSX.Element {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const accordionItemClassNames: AccordionItemClasses = {
     topBar: styles['accordion-top-bar'],
@@ -146,7 +136,7 @@ export default function AccountSettingsAccountDesktopComponent({
                         AccountController.updateProfile({
                           username: event.target.value,
                         }),
-                      phoneNumber: (value, event, formattedValue) =>
+                      phoneNumber: (value, _event, _formattedValue) =>
                         AccountController.updateProfile({
                           phoneNumber: value,
                         }),
@@ -265,7 +255,7 @@ export default function AccountSettingsAccountDesktopComponent({
             {t('deleteAccount')}
           </Button>
         </div>
-        {createPortal(
+        {ReactDOM.createPortal(
           <Modal
             title={t('deleteYourAccount') ?? ''}
             description={t('deleteYourAccountDescription') ?? ''}

@@ -1,19 +1,13 @@
-import { LineItem, ProductOptionValue } from '@medusajs/medusa';
-import styles from '../cart-item.module.scss';
-import { useEffect, useState } from 'react';
-import { ProductOptions } from '../../models/product.model';
-import { useTranslation } from 'react-i18next';
 import { Button, Line, Modal } from '@fuoco.appdev/core-ui';
-import CartController from '../../controllers/cart.controller';
+import { useTranslation } from 'react-i18next';
+import styles from '../cart-item.module.scss';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
-import StoreController from '../../controllers/store.controller';
-import { useObservable } from '@ngneat/use-observable';
-import { CartItemResponsiveProps } from '../cart-item.component';
 import { useNavigate } from 'react-router-dom';
 import { RoutePathsType, useQuery } from '../../route-paths';
-import { ResponsiveDesktop } from '../responsive.component';
 import { MedusaProductTypeNames } from '../../types/medusa.type';
+import { CartItemResponsiveProps } from '../cart-item.component';
+import { ResponsiveDesktop } from '../responsive.component';
 
 export default function CartItemDesktopComponent({
   storeProps,
@@ -21,8 +15,6 @@ export default function CartItemDesktopComponent({
   productType,
   quantity,
   onRemove,
-  vintage,
-  type,
   hasReducedPrice,
   deleteModalVisible,
   discountPercentage,

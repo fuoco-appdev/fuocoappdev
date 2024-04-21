@@ -1,36 +1,39 @@
-import { Service } from '../service';
-import * as core from '../protobuf/core_pb';
+import { Session } from '@supabase/supabase-js';
+import axios from 'axios';
 import { BehaviorSubject, Observable } from 'rxjs';
+import {
+  AccountExistsRequest,
+  AccountExistsResponse,
+  AccountLikeRequest,
+  AccountRequest,
+  AccountResponse,
+  AccountsRequest,
+  AccountsResponse,
+} from '../protobuf/account_pb';
+import { Service } from '../service';
 import SupabaseService from './supabase.service';
-import axios, { AxiosError } from 'axios';
-import WindowController from '../controllers/window.controller';
-import { Session, User } from '@supabase/supabase-js';
 
 class AccountService extends Service {
-  private readonly _activeAccountBehaviorSubject: BehaviorSubject<core.AccountResponse | null>;
-  private readonly _accountsBehaviorSubject: BehaviorSubject<
-    core.AccountResponse[]
-  >;
+  private readonly _activeAccountBehaviorSubject: BehaviorSubject<AccountResponse | null>;
+  private readonly _accountsBehaviorSubject: BehaviorSubject<AccountResponse[]>;
 
   constructor() {
     super();
 
     this._activeAccountBehaviorSubject =
-      new BehaviorSubject<core.AccountResponse | null>(null);
-    this._accountsBehaviorSubject = new BehaviorSubject<core.AccountResponse[]>(
-      []
-    );
+      new BehaviorSubject<AccountResponse | null>(null);
+    this._accountsBehaviorSubject = new BehaviorSubject<AccountResponse[]>([]);
   }
 
-  public get activeAccountObservable(): Observable<core.AccountResponse | null> {
+  public get activeAccountObservable(): Observable<AccountResponse | null> {
     return this._activeAccountBehaviorSubject.asObservable();
   }
 
-  public get accountsObservable(): Observable<core.AccountResponse[]> {
+  public get accountsObservable(): Observable<AccountResponse[]> {
     return this._accountsBehaviorSubject.asObservable();
   }
 
-  public get activeAccount(): core.AccountResponse | null {
+  public get activeAccount(): AccountResponse | null {
     return this._activeAccountBehaviorSubject.getValue();
   }
 
@@ -38,9 +41,7 @@ class AccountService extends Service {
     this._activeAccountBehaviorSubject.next(null);
   }
 
-  public async requestActiveAsync(
-    session: Session
-  ): Promise<core.AccountResponse> {
+  public async requestActiveAsync(session: Session): Promise<AccountResponse> {
     const account = await this.requestAsync(session, session.user.id);
     this._activeAccountBehaviorSubject.next(account);
     return account;
@@ -49,7 +50,7 @@ class AccountService extends Service {
   public async requestAsync(
     session: Session,
     supabaseId: string
-  ): Promise<core.AccountResponse> {
+  ): Promise<AccountResponse> {
     const response = await axios({
       method: 'post',
       url: `${this.endpointUrl}/account/${supabaseId}`,
@@ -64,15 +65,15 @@ class AccountService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const accountResponse = core.AccountResponse.fromBinary(arrayBuffer);
+    const accountResponse = AccountResponse.fromBinary(arrayBuffer);
     return accountResponse;
   }
 
   public async requestAccountsAsync(
     accountIds: string[]
-  ): Promise<core.AccountsResponse> {
+  ): Promise<AccountsResponse> {
     const session = await SupabaseService.requestSessionAsync();
-    const request = new core.AccountsRequest({
+    const request = new AccountsRequest({
       accountIds: accountIds,
     });
     const response = await axios({
@@ -89,14 +90,12 @@ class AccountService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const accountsResponse = core.AccountsResponse.fromBinary(arrayBuffer);
+    const accountsResponse = AccountsResponse.fromBinary(arrayBuffer);
     return accountsResponse;
   }
 
-  public async requestCreateAsync(
-    session: Session
-  ): Promise<core.AccountResponse> {
-    const account = new core.AccountRequest({
+  public async requestCreateAsync(session: Session): Promise<AccountResponse> {
+    const account = new AccountRequest({
       supabaseId: session.user.id,
     });
     const response = await axios({
@@ -113,17 +112,19 @@ class AccountService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const accountResponse = core.AccountResponse.fromBinary(arrayBuffer);
-    this._activeAccountBehaviorSubject.next(accountResponse);
+    const accountResponse = AccountResponse.fromBinary(arrayBuffer);
+    if (this.activeAccount?.toJsonString() !== accountResponse.toJsonString()) {
+      this._activeAccountBehaviorSubject.next(accountResponse);
+    }
 
     return accountResponse;
   }
 
   public async requestExistsAsync(
     username: string
-  ): Promise<core.AccountExistsResponse> {
+  ): Promise<AccountExistsResponse> {
     const session = await SupabaseService.requestSessionAsync();
-    const request = new core.AccountExistsRequest({
+    const request = new AccountExistsRequest({
       username: username,
     });
     const response = await axios({
@@ -140,8 +141,7 @@ class AccountService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const accountExistsResponse =
-      core.AccountExistsResponse.fromBinary(arrayBuffer);
+    const accountExistsResponse = AccountExistsResponse.fromBinary(arrayBuffer);
     return accountExistsResponse;
   }
 
@@ -151,14 +151,20 @@ class AccountService extends Service {
     status?: 'Incomplete' | 'Complete';
     languageCode?: string;
     username?: string;
-  }): Promise<core.AccountResponse> {
+    birthday?: string;
+    sex?: 'male' | 'female';
+    interests?: string[];
+    metadata?: string;
+  }): Promise<AccountResponse> {
     const supabaseUser = await SupabaseService.requestUserAsync();
     if (!supabaseUser) {
       throw new Error('No user');
     }
 
     const account = await this.requestUpdateAsync(supabaseUser.id, props);
-    this._activeAccountBehaviorSubject.next(account);
+    if (this.activeAccount?.toJsonString() !== account.toJsonString()) {
+      this._activeAccountBehaviorSubject.next(account);
+    }
     return account;
   }
 
@@ -170,16 +176,25 @@ class AccountService extends Service {
       status?: 'Incomplete' | 'Complete';
       languageCode?: string;
       username?: string;
+      birthday?: string;
+      sex?: 'male' | 'female';
+      interests?: string[];
+      metadata?: string;
     }
-  ): Promise<core.AccountResponse> {
+  ): Promise<AccountResponse> {
     const session = await SupabaseService.requestSessionAsync();
-    const user = new core.AccountRequest({
+    const user = new AccountRequest({
       customerId: props.customerId,
       profileUrl: props.profileUrl,
       status: props.status,
       languageCode: props.languageCode,
       username: props.username,
+      birthday: props.birthday,
+      sex: props.sex,
+      interests: props.interests,
+      metadata: props.metadata,
     });
+
     const response = await axios({
       method: 'post',
       url: `${this.endpointUrl}/account/update/${supabaseId}`,
@@ -194,7 +209,7 @@ class AccountService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const accountResponse = core.AccountResponse.fromBinary(arrayBuffer);
+    const accountResponse = AccountResponse.fromBinary(arrayBuffer);
     return accountResponse;
   }
 
@@ -229,9 +244,9 @@ class AccountService extends Service {
     accountId: string;
     offset?: number;
     limit?: number;
-  }): Promise<core.AccountsResponse> {
+  }): Promise<AccountsResponse> {
     const session = await SupabaseService.requestSessionAsync();
-    const request = new core.AccountLikeRequest({
+    const request = new AccountLikeRequest({
       queryUsername: props.queryUsername,
       accountId: props.accountId,
       offset: props.offset,
@@ -251,7 +266,7 @@ class AccountService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const accountsResponse = core.AccountsResponse.fromBinary(arrayBuffer);
+    const accountsResponse = AccountsResponse.fromBinary(arrayBuffer);
     this._accountsBehaviorSubject.next(accountsResponse.accounts);
     return accountsResponse;
   }
@@ -261,9 +276,9 @@ class AccountService extends Service {
     accountId: string;
     offset?: number;
     limit?: number;
-  }): Promise<core.AccountsResponse> {
+  }): Promise<AccountsResponse> {
     const session = await SupabaseService.requestSessionAsync();
-    const request = new core.AccountLikeRequest({
+    const request = new AccountLikeRequest({
       queryUsername: props.queryUsername,
       accountId: props.accountId,
       offset: props.offset,
@@ -283,7 +298,7 @@ class AccountService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const accountsResponse = core.AccountsResponse.fromBinary(arrayBuffer);
+    const accountsResponse = AccountsResponse.fromBinary(arrayBuffer);
     return accountsResponse;
   }
 
@@ -292,9 +307,9 @@ class AccountService extends Service {
     accountId: string;
     offset?: number;
     limit?: number;
-  }): Promise<core.AccountsResponse> {
+  }): Promise<AccountsResponse> {
     const session = await SupabaseService.requestSessionAsync();
-    const request = new core.AccountLikeRequest({
+    const request = new AccountLikeRequest({
       queryUsername: props.queryUsername,
       accountId: props.accountId,
       offset: props.offset,
@@ -314,7 +329,7 @@ class AccountService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const accountsResponse = core.AccountsResponse.fromBinary(arrayBuffer);
+    const accountsResponse = AccountsResponse.fromBinary(arrayBuffer);
     return accountsResponse;
   }
 }

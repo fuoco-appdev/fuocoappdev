@@ -310,5 +310,10 @@
   "orderCanceled": "Commande annulée",
   "orderCanceledName": "La commande #{{displayId, number}}",
   "orderCanceledDescription": "a été annulée.",
-  "noNotifications": "Aucune notification n'a été trouvée."
+  "noNotifications": "Aucune notification n'a été trouvée.",
+  "birthday": "Anniversaire",
+  "sex": "Sex",
+  "interests": "Intérêts",
+  "addInterest": "Ajouter un intérêt",
+  "radius": "Rayon"
 }

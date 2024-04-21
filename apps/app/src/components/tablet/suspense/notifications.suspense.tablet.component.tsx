@@ -1,13 +1,6 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import * as React from 'react';
-import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
+import Skeleton from 'react-loading-skeleton';
 import styles from '../../notifications.module.scss';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import {
-  ResponsiveSuspenseDesktop,
-  ResponsiveSuspenseMobile,
-  ResponsiveSuspenseTablet,
-} from 'src/components/responsive.component';
+import { ResponsiveSuspenseTablet } from '../../responsive.component';
 import { NotificationItemSuspenseTabletComponent } from './notification-item.suspense.tablet.component';
 
 export function NotificationsSuspenseTabletComponent(): JSX.Element {
@@ -37,7 +30,7 @@ export function NotificationsSuspenseTabletComponent(): JSX.Element {
           ].join(' ')}
         >
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(
-            (value: number, index: number) => {
+            (value: number, _index: number) => {
               return <NotificationItemSuspenseTabletComponent key={value} />;
             }
           )}

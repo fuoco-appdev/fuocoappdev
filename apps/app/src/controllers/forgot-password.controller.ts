@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import {
+  AuthChangeEvent,
+  Session,
+  SupabaseClient,
+} from '@supabase/supabase-js';
 import { Subscription } from 'rxjs';
 import { Controller } from '../controller';
 import { ForgotPasswordModel } from '../models/forgot-password.model';
 import SupabaseService from '../services/supabase.service';
-import {
-  Session,
-  AuthChangeEvent,
-  SupabaseClient,
-} from '@supabase/supabase-js';
 
 class ForgotPasswordController extends Controller {
   private readonly _model: ForgotPasswordModel;
@@ -25,9 +25,9 @@ class ForgotPasswordController extends Controller {
     return this._model;
   }
 
-  public override initialize(renderCount: number): void {}
+  public override initialize(_renderCount: number): void {}
 
-  public override load(renderCount: number): void {
+  public override load(_renderCount: number): void {
     SupabaseService.supabaseClient?.auth.onAuthStateChange(
       this.onAuthStateChanged
     );
@@ -40,9 +40,9 @@ class ForgotPasswordController extends Controller {
       });
   }
 
-  public override disposeInitialization(renderCount: number): void {}
+  public override disposeInitialization(_renderCount: number): void {}
 
-  public override disposeLoad(renderCount: number): void {
+  public override disposeLoad(_renderCount: number): void {
     this._supabaseClientSubscription?.unsubscribe();
   }
 
@@ -52,7 +52,7 @@ class ForgotPasswordController extends Controller {
 
   private async onAuthStateChanged(
     event: AuthChangeEvent,
-    session: Session | null
+    _session: Session | null
   ): Promise<void> {
     if (event === 'SIGNED_IN') {
       this._model.email = '';

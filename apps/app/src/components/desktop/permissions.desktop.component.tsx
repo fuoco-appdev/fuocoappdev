@@ -1,48 +1,15 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
-import {
-  Typography,
-  Button,
-  Accordion,
-  Input,
-  InputPhoneNumber,
-  Listbox,
-  InputGeocoding,
-  OptionProps,
-  Modal,
-  LanguageSwitch,
-  Line,
-  Avatar,
-  Tabs,
-  Checkbox,
-} from '@fuoco.appdev/core-ui';
-import styles from '../permissions.module.scss';
-import AccountController from '../../controllers/account.controller';
-import WindowController from '../../controllers/window.controller';
-import { animated, useTransition, config } from 'react-spring';
-import { useObservable } from '@ngneat/use-observable';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { RoutePathsType } from '../../route-paths';
+import { Button, Checkbox, Line } from '@fuoco.appdev/core-ui';
 import { useTranslation } from 'react-i18next';
-import * as core from '../../protobuf/core_pb';
-import AccountProfileFormComponent from '../account-profile-form.component';
-import { Customer } from '@medusajs/medusa';
-import Skeleton from 'react-loading-skeleton';
-import AccountOrderHistoryComponent from '../account-order-history.component';
-import AccountAddressesComponent from '../account-addresses.component';
-import AccountEditComponent from '../account-likes.component';
-import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
-import { AccountResponsiveProps } from '../account.component';
-import { createPortal } from 'react-dom';
 import { PermissionsResponsiveProps } from '../permissions.component';
-import PermissionsController from 'src/controllers/permissions.controller';
+import styles from '../permissions.module.scss';
+import { ResponsiveDesktop } from '../responsive.component';
 
 export default function PermissionsDesktopComponent({
   permissionsProps,
-  windowProps,
   onAccessLocationChecked,
   onContinueAsync,
 }: PermissionsResponsiveProps): JSX.Element {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <ResponsiveDesktop>

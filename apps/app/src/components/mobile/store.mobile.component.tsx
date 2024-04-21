@@ -1,55 +1,30 @@
 import {
-  ReactNode,
-  createRef,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import StoreController from '../../controllers/store.controller';
-import styles from '../store.module.scss';
-import {
-  Alert,
+  Avatar,
   Button,
   Dropdown,
   Input,
   Line,
-  Tabs,
   Listbox,
-  OptionProps,
-  Avatar,
+  Tabs,
 } from '@fuoco.appdev/core-ui';
-import { RoutePathsType, useQuery } from '../../route-paths';
+import { Product } from '@medusajs/medusa';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import SupabaseService from '../../services/supabase.service';
-import { useObservable } from '@ngneat/use-observable';
-import { useSpring } from 'react-spring';
-import * as core from '../../protobuf/core_pb';
-import { Store } from '@ngneat/elf';
-import { ProductTabs } from '../../models/store.model';
-import { Country, Region, Product, SalesChannel } from '@medusajs/medusa';
-import ProductPreviewComponent from '../product-preview.component';
-import ReactCountryFlag from 'react-country-flag';
-import ExploreController from '../../controllers/explore.controller';
-import {
-  InventoryLocation,
-  InventoryLocationType,
-} from '../../models/explore.model';
-import { StoreResponsiveProps } from '../store.component';
-import {
-  PricedProduct,
-  PricedVariant,
-} from '@medusajs/medusa/dist/types/pricing';
-import { ResponsiveMobile } from '../responsive.component';
-import CartVariantItemComponent from '../cart-variant-item.component';
-import { MedusaProductTypeNames } from 'src/types/medusa.type';
-import ReactDOM, { createPortal } from 'react-dom';
-import ProductController from '../../controllers/product.controller';
 import Skeleton from 'react-loading-skeleton';
+import { useNavigate } from 'react-router-dom';
+import StoreController from '../../controllers/store.controller';
+import { ProductTabs } from '../../models/store.model';
+import { ProductLikesMetadataResponse } from '../../protobuf/product-like_pb';
+import { RoutePathsType, useQuery } from '../../route-paths';
+import { MedusaProductTypeNames } from '../../types/medusa.type';
+import CartVariantItemComponent from '../cart-variant-item.component';
+import ProductPreviewComponent from '../product-preview.component';
+import { ResponsiveMobile } from '../responsive.component';
+import { StoreResponsiveProps } from '../store.component';
+import styles from '../store.module.scss';
 
 export default function StoreMobileComponent({
-  windowProps,
   storeProps,
   accountProps,
   exploreProps,
@@ -80,13 +55,12 @@ export default function StoreMobileComponent({
   onProductPreviewLikeChanged,
   onProductPreviewRest,
 }: StoreResponsiveProps): JSX.Element {
-  const previewsContainerRef = createRef<HTMLDivElement>();
-  const rootRef = createRef<HTMLDivElement>();
-  const topBarRef = useRef<HTMLDivElement | null>(null);
-  const categoryButtonRef = useRef<HTMLButtonElement | null>(null);
+  const previewsContainerRef = React.createRef<HTMLDivElement>();
+  const rootRef = React.createRef<HTMLDivElement>();
+  const topBarRef = React.useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const query = useQuery();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   let prevPreviewScrollTop = 0;
   let yPosition = 0;
 
@@ -293,8 +267,7 @@ export default function StoreMobileComponent({
                   storeProps.selectedPricedProduct?.id === pricedProduct?.id
                 }
                 likesMetadata={
-                  productLikesMetadata ??
-                  core.ProductLikesMetadataResponse.prototype
+                  productLikesMetadata ?? ProductLikesMetadataResponse.prototype
                 }
                 onClick={() =>
                   pricedProduct &&
@@ -373,7 +346,7 @@ export default function StoreMobileComponent({
             </div>
           )}
         </div>
-        {createPortal(
+        {ReactDOM.createPortal(
           <>
             <Dropdown
               classNames={{
@@ -402,7 +375,7 @@ export default function StoreMobileComponent({
                   label={t('country') ?? ''}
                   options={countryOptions}
                   selectedId={selectedCountryId}
-                  onChange={(index: number, id: string) =>
+                  onChange={(_index: number, id: string) =>
                     setSelectedCountryId(id)
                   }
                 />
@@ -419,7 +392,7 @@ export default function StoreMobileComponent({
                   label={t('region') ?? ''}
                   options={regionOptions}
                   selectedId={selectedRegionId}
-                  onChange={(index: number, id: string) =>
+                  onChange={(_index: number, id: string) =>
                     setSelectedRegionId(id)
                   }
                 />
@@ -436,7 +409,7 @@ export default function StoreMobileComponent({
                   label={t('location') ?? ''}
                   options={salesLocationOptions}
                   selectedId={selectedSalesLocationId}
-                  onChange={(index: number, id: string) =>
+                  onChange={(_index: number, id: string) =>
                     setSelectedSalesLocationId(id)
                   }
                 />

@@ -44,6 +44,12 @@
     z-index: 24;
 }
 
+.sex-options {
+    display: flex;
+    flex-direction: row;
+    gap: $mp-2;
+}
+
 .listbox-form-layout-label {
     color: $brand-900 !important;
 }
@@ -72,4 +78,16 @@
 .option-name {
     color: $brand-900 !important;
     font-size: $font-size-sm;
+}
+
+.button {
+    border: 1px solid $brand-900;
+    background-color: transparent !important;
+    color: $brand-900;
+}
+
+.button-selected {
+    background-color: rgba(133, 38, 122, 0.2) !important;
+    border: 1px solid $brand-700;
+    color: $brand-700;
 }

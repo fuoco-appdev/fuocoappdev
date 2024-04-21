@@ -1,28 +1,11 @@
-import {
-  LineItem,
-  ProductOptionValue,
-  Order,
-  FulfillmentStatus,
-} from '@medusajs/medusa';
-import styles from '../stock-location-item.module.scss';
-import { useEffect, useState } from 'react';
-import { ProductOptions } from '../../models/product.model';
+import { Line } from '@fuoco.appdev/core-ui';
 import { useTranslation } from 'react-i18next';
-import { Button, Line, Modal } from '@fuoco.appdev/core-ui';
-import CartController from '../../controllers/cart.controller';
+import styles from '../stock-location-item.module.scss';
 // @ts-ignore
-import { formatAmount } from 'medusa-react';
-import StoreController from '../../controllers/store.controller';
-import { useObservable } from '@ngneat/use-observable';
 import Ripples from 'react-ripples';
-import { useNavigate } from 'react-router-dom';
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from '../responsive.component';
+import { InventoryLocationType } from '../../models/explore.model';
+import { ResponsiveTablet } from '../responsive.component';
 import { StockLocationItemResponsiveProps } from '../stock-location-item.component';
-import { InventoryLocationType } from 'src/models/explore.model';
 
 export default function StockLocationItemTabletComponent({
   stockLocation,
@@ -34,7 +17,6 @@ export default function StockLocationItemTabletComponent({
   onClick,
 }: StockLocationItemResponsiveProps): JSX.Element {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   return (
     <ResponsiveTablet>

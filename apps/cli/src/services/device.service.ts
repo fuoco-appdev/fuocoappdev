@@ -1,5 +1,11 @@
 import { Service } from "../service";
-import * as core from "../protobuf/core_pb";
+import {
+  CreateDeviceRequest,
+  DeviceResponse,
+  DevicesRequest,
+  DevicesResponse,
+  UpdateDeviceRequest,
+} from "../protobuf/device_pb";
 import { BehaviorSubject, Observable } from "rxjs";
 import SupabaseService from "./supabase.service";
 import axios, { AxiosError } from "axios";
@@ -25,9 +31,9 @@ class DeviceService extends Service {
 
   public async requestCreateAsync(
     { type, name, stockLocationId, metadata }: CreateDeviceProps,
-  ): Promise<core.DeviceResponse> {
+  ): Promise<DeviceResponse> {
     const session = await SupabaseService.requestSessionAsync();
-    const request = new core.CreateDeviceRequest({
+    const request = new CreateDeviceRequest({
       type: type,
       name: name,
       stockLocationId: stockLocationId,
@@ -47,16 +53,16 @@ class DeviceService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const deviceResponse = core.DeviceResponse.fromBinary(arrayBuffer);
+    const deviceResponse = DeviceResponse.fromBinary(arrayBuffer);
     return deviceResponse;
   }
 
   public async requestUpdateAsync(
     id: string,
     { name, stockLocationId, metadata }: UpdateDeviceProps,
-  ): Promise<core.DeviceResponse> {
+  ): Promise<DeviceResponse> {
     const session = await SupabaseService.requestSessionAsync();
-    const request = new core.UpdateDeviceRequest({
+    const request = new UpdateDeviceRequest({
       name: name,
       stockLocationId: stockLocationId,
       metadata: JSON.stringify(metadata),
@@ -75,15 +81,15 @@ class DeviceService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const deviceResponse = core.DeviceResponse.fromBinary(arrayBuffer);
+    const deviceResponse = DeviceResponse.fromBinary(arrayBuffer);
     return deviceResponse;
   }
 
   public async requestDevicesAsync(
     stockLocationId: string,
-  ): Promise<core.DevicesResponse> {
+  ): Promise<DevicesResponse> {
     const session = await SupabaseService.requestSessionAsync();
-    const request = new core.DevicesRequest({
+    const request = new DevicesRequest({
       stockLocationId: stockLocationId,
     });
     const response = await axios({
@@ -100,7 +106,7 @@ class DeviceService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const deviceResponse = core.DevicesResponse.fromBinary(arrayBuffer);
+    const deviceResponse = DevicesResponse.fromBinary(arrayBuffer);
     return deviceResponse;
   }
 }

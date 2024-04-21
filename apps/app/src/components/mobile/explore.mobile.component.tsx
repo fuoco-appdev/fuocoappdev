@@ -1,49 +1,25 @@
-import React, {
-  createRef,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import ExploreController from '../../controllers/explore.controller';
-import styles from '../explore.module.scss';
-import {
-  Alert,
-  Button,
-  Dropdown,
-  Input,
-  Line,
-  Modal,
-  Tabs,
-} from '@fuoco.appdev/core-ui';
-import { RoutePathsType } from '../../route-paths';
+import { Button, Dropdown, Input, Line, Tabs } from '@fuoco.appdev/core-ui';
+import { StockLocation } from '@medusajs/stock-location/dist/models';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import SupabaseService from '../../services/supabase.service';
-import { useObservable } from '@ngneat/use-observable';
-import { useSpring } from 'react-spring';
-import * as core from '../../protobuf/core_pb';
-import { Store } from '@ngneat/elf';
-import Map, { MapRef, Marker, Popup } from 'react-map-gl';
-import ConfigService from '../../services/config.service';
+import Skeleton from 'react-loading-skeleton';
+import Map, { Marker } from 'react-map-gl';
+import Slider from 'react-slick';
+import ExploreController from '../../controllers/explore.controller';
 import {
   ExploreTabs,
   InventoryLocation,
   InventoryLocationType,
 } from '../../models/explore.model';
+import ConfigService from '../../services/config.service';
 import { ExploreResponsiveProps } from '../explore.component';
-import { ExploreSuspenseMobileComponent } from './suspense/explore.suspense.mobile.component';
+import styles from '../explore.module.scss';
 import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 import StockLocationItemComponent from '../stock-location-item.component';
-import { StockLocation } from '@medusajs/stock-location/dist/models';
-import { createPortal } from 'react-dom';
-import Slider from 'react-slick';
-import Skeleton from 'react-loading-skeleton';
 
 export default function ExploreMobileComponent({
   exploreProps,
-  exploreLocalProps,
   mapRef,
   selectedPoint,
   setMapStyleLoaded,
@@ -53,13 +29,13 @@ export default function ExploreMobileComponent({
   onStockLocationClicked,
   onGoToStore,
 }: ExploreResponsiveProps): JSX.Element {
-  const navigate = useNavigate();
   const { t } = useTranslation();
-  const topBarRef = useRef<HTMLDivElement | null>(null);
-  const scrollContainerRef = createRef<HTMLDivElement>();
-  const [isSearchFocused, setIsSearchFocused] = useState<boolean>(true);
-  const [isLogoLoaded, setIsLogoLoaded] = useState<boolean>(false);
-  const [isLogoTextLoaded, setIsLogoTextLoaded] = useState<boolean>(false);
+  const topBarRef = React.useRef<HTMLDivElement | null>(null);
+  const scrollContainerRef = React.createRef<HTMLDivElement>();
+  const [isSearchFocused, setIsSearchFocused] = React.useState<boolean>(true);
+  const [isLogoLoaded, setIsLogoLoaded] = React.useState<boolean>(false);
+  const [isLogoTextLoaded, setIsLogoTextLoaded] =
+    React.useState<boolean>(false);
   let prevScrollTop = 0;
   let yPosition = 0;
 
@@ -240,7 +216,7 @@ export default function ExploreMobileComponent({
               onLoad={onScrollLoad}
             >
               {exploreProps.searchedStockLocations.map(
-                (stockLocation: StockLocation, index: number) => {
+                (stockLocation: StockLocation, _index: number) => {
                   return (
                     <StockLocationItemComponent
                       key={stockLocation.id}
@@ -295,7 +271,12 @@ export default function ExploreMobileComponent({
           ].join(' ')}
         >
           <Map
-            style={{ minWidth: '100%', minHeight: '100vh' }}
+            style={{
+              minWidth: '100%',
+              minHeight: '100vh',
+              width: '100%',
+              height: '100%',
+            }}
             mapboxAccessToken={process.env['MAPBOX_ACCESS_TOKEN']}
             ref={mapRef}
             interactive={true}
@@ -311,7 +292,10 @@ export default function ExploreMobileComponent({
             zoom={exploreProps.zoom ?? 15}
             mapStyle={ConfigService.mapbox.style_url}
             onMove={(e) => ExploreController.onMapMove(e.viewState)}
-            onLoad={(e) => setMapStyleLoaded(e.target ? true : false)}
+            onLoad={(e) => {
+              setMapStyleLoaded(e.target ? true : false);
+              e.target.resize();
+            }}
           >
             {exploreProps.inventoryLocations?.map(
               (point: InventoryLocation, index: number) => (
@@ -392,7 +376,7 @@ export default function ExploreMobileComponent({
           />
         </div>
       </div>
-      {createPortal(
+      {ReactDOM.createPortal(
         <>
           <Dropdown
             classNames={{

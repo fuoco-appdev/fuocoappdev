@@ -1,10 +1,6 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import * as React from 'react';
-import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
+import Skeleton from 'react-loading-skeleton';
 import styles from '../../cart.module.scss';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { CartItemSuspenseMobileComponent } from './cart-item.suspense.mobile.component';
-import { ResponsiveSuspenseMobile } from 'src/components/responsive.component';
+import { ResponsiveSuspenseMobile } from '../../responsive.component';
 import { StockLocationCartItemSuspenseMobileComponent } from './stock-location-cart-item.suspense.mobile.component';
 
 export function CartSuspenseMobileComponent(): JSX.Element {
@@ -39,7 +35,7 @@ export function CartSuspenseMobileComponent(): JSX.Element {
               styles['shopping-cart-items-container-mobile'],
             ].join(' ')}
           >
-            {[1, 1, 1, 1].map((value: number, index: number) => {
+            {[1, 1, 1, 1].map((_value: number, index: number) => {
               return (
                 <StockLocationCartItemSuspenseMobileComponent key={index} />
               );

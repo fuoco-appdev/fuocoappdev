@@ -1,7 +1,3 @@
-import * as React from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
-import WindowController from '../../controllers/window.controller';
-import styles from '../window.module.scss';
 import {
   Avatar,
   BannerOverlay,
@@ -13,18 +9,18 @@ import {
   Solid,
   ToastOverlay,
 } from '@fuoco.appdev/core-ui';
-import { RoutePathsType, useQuery } from '../../route-paths';
-import { useTranslation } from 'react-i18next';
-import { useObservable } from '@ngneat/use-observable';
-import * as core from '../../protobuf/core_pb';
-import { Store } from '@ngneat/elf';
 import { Customer } from '@medusajs/medusa';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { useTranslation } from 'react-i18next';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import { WindowResponsiveProps } from '../window.component';
-import { useRef, useState } from 'react';
+import WindowController from '../../controllers/window.controller';
+import { AccountResponse } from '../../protobuf/account_pb';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
-import { WindowSuspenseMobileComponent } from './suspense/window.suspense.mobile.component';
-import { createPortal } from 'react-dom';
+import { WindowResponsiveProps } from '../window.component';
+import styles from '../window.module.scss';
 
 export default function WindowMobileComponent({
   windowProps,
@@ -43,12 +39,11 @@ export default function WindowMobileComponent({
   const navigate = useNavigate();
   const query = useQuery();
   const { t } = useTranslation();
-  const outletRef = useRef<HTMLDivElement | null>(null);
-  const bottomBarRef = useRef<HTMLDivElement | null>(null);
-  const [switchBottomBar, setSwitchBottomBar] = useState<boolean>(false);
-  const [activeRoute, setActiveRoute] = useState<RoutePathsType | undefined>(
-    windowProps.activeRoute
-  );
+  const bottomBarRef = React.useRef<HTMLDivElement | null>(null);
+  const [switchBottomBar, setSwitchBottomBar] = React.useState<boolean>(false);
+  const [activeRoute, setActiveRoute] = React.useState<
+    RoutePathsType | undefined
+  >(windowProps.activeRoute);
 
   useMobileEffect(() => {
     setSwitchBottomBar(true);
@@ -58,7 +53,7 @@ export default function WindowMobileComponent({
     setTimeout(() => setActiveRoute(windowProps.activeRoute), 75);
   }, [windowProps.activeRoute]);
 
-  const account = windowProps.account as core.AccountResponse;
+  const account = windowProps.account as AccountResponse;
   const customer = accountProps.customer as Customer;
 
   return (
@@ -783,7 +778,7 @@ export default function WindowMobileComponent({
           align={'center'}
           touchScreen={true}
         />
-        {createPortal(
+        {ReactDOM.createPortal(
           <>
             <Modal
               classNames={{

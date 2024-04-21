@@ -1,12 +1,7 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import * as React from 'react';
-import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
+import Skeleton from 'react-loading-skeleton';
+import { Outlet } from 'react-router-dom';
 import styles from '../../account.module.scss';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { AccountOrderHistorySuspenseDesktopComponent } from './account-order-history.suspense.desktop.component';
-import { AccountAddressesSuspenseDesktopComponent } from './account-addresses.suspense.desktop.component';
-import { AccountLikesSuspenseDesktopComponent } from './account-likes.suspense.desktop.component';
-import { ResponsiveSuspenseDesktop } from 'src/components/responsive.component';
+import { ResponsiveSuspenseDesktop } from '../../responsive.component';
 
 export function AccountSuspenseDesktopComponent(): JSX.Element {
   return (

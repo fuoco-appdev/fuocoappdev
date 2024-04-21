@@ -1,6 +1,5 @@
-import express from "express";
 import cors from "cors";
-import * as fs from "fs";
+import express from "express";
 import * as path from "path";
 const MockBrowser = require("mock-browser").mocks.MockBrowser;
 const cookiesMiddleware = require("universal-cookie-express");

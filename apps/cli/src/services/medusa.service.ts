@@ -10,7 +10,7 @@ import ConfigService, { Config } from "./config.service";
 import axios, { AxiosError } from "axios";
 import { Service } from "../service";
 import SupabaseService from "./supabase.service";
-import * as core from "../protobuf/core_pb";
+import { StockLocationResponse } from "../protobuf/stock-location_pb";
 import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
 import { BehaviorSubject, Observable } from "rxjs";
 import Cookies from "js-cookie";
@@ -42,7 +42,7 @@ class MedusaService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const stockLocationResponse = core.StockLocationResponse.fromBinary(
+    const stockLocationResponse = StockLocationResponse.fromBinary(
       arrayBuffer,
     );
     const json = JSON.parse(stockLocationResponse.data);

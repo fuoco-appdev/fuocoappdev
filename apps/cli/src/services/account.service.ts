@@ -1,23 +1,27 @@
 import { Service } from "../service";
-import * as core from "../protobuf/core_pb";
+import {
+  AccountResponse,
+  AccountsRequest,
+  AccountsResponse,
+} from "../protobuf/account_pb";
 import { BehaviorSubject, Observable } from "rxjs";
 import SupabaseService from "./supabase.service";
 import axios, { AxiosError } from "axios";
 import { Session, User } from "@supabase/supabase-js";
 
 class AccountService extends Service {
-  private _activeAccount: core.AccountResponse | undefined;
+  private _activeAccount: AccountResponse | undefined;
   constructor() {
     super();
   }
 
-  public get activeAccount(): core.AccountResponse | undefined {
+  public get activeAccount(): AccountResponse | undefined {
     return this._activeAccount;
   }
 
   public async requestActiveAsync(
     session: Session,
-  ): Promise<core.AccountResponse> {
+  ): Promise<AccountResponse> {
     const account = await this.requestAsync(session, session.user.id);
     this._activeAccount = account;
     return account;
@@ -26,7 +30,7 @@ class AccountService extends Service {
   public async requestAsync(
     session: Session,
     supabaseId: string,
-  ): Promise<core.AccountResponse> {
+  ): Promise<AccountResponse> {
     const response = await axios({
       method: "post",
       url: `${this.endpointUrl}/account/${supabaseId}`,
@@ -41,15 +45,15 @@ class AccountService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const accountResponse = core.AccountResponse.fromBinary(arrayBuffer);
+    const accountResponse = AccountResponse.fromBinary(arrayBuffer);
     return accountResponse;
   }
 
   public async requestAccountsAsync(
     accountIds: string[],
-  ): Promise<core.AccountsResponse> {
+  ): Promise<AccountsResponse> {
     const session = await SupabaseService.requestSessionAsync();
-    const request = new core.AccountsRequest({
+    const request = new AccountsRequest({
       accountIds: accountIds,
     });
     const response = await axios({
@@ -66,7 +70,7 @@ class AccountService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const accountsResponse = core.AccountsResponse.fromBinary(arrayBuffer);
+    const accountsResponse = AccountsResponse.fromBinary(arrayBuffer);
     return accountsResponse;
   }
 }

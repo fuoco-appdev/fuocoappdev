@@ -1,10 +1,8 @@
+import { Cart } from "@medusajs/medusa";
+import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
+import { StockLocation } from "@medusajs/stock-location/dist/models";
 import { createStore, withProps } from "@ngneat/elf";
 import { Model } from "../model";
-import e from "express";
-import { Cart, SalesChannel } from "@medusajs/medusa";
-import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
-import { InventoryLocation } from "./explore.model";
-import { StockLocation } from "@medusajs/stock-location/dist/models";
 
 export interface CartState {
   stockLocations: StockLocation[];

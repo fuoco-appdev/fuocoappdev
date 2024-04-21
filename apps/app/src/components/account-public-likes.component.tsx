@@ -1,35 +1,23 @@
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
-import AccountController from '../controllers/account.controller';
-import AccountPublicController from '../controllers/account-public.controller';
-import WindowController from '../controllers/window.controller';
-import ExploreController from '../controllers/explore.controller';
-import StoreController from '../controllers/store.controller';
-import ProductController from '../controllers/product.controller';
-import { useTranslation } from 'react-i18next';
-import { useObservable } from '@ngneat/use-observable';
-import { StoreState } from '../models/store.model';
-import { AuthenticatedComponent } from './authenticated.component';
 import { lazy } from '@loadable/component';
-import React, { useEffect, useState } from 'react';
-import { AccountState } from '../models/account.model';
-import { Store } from '@ngneat/elf';
-import { ExploreLocalState } from '../models/explore.model';
-import {
-  PricedVariant,
-  PricedProduct,
-} from '@medusajs/medusa/dist/types/pricing';
-import { useNavigate, useParams } from 'react-router-dom';
-import { RoutePathsType, useQuery } from '../route-paths';
-import * as core from '../protobuf/core_pb';
-import { AccountPublicLikesSuspenseDesktopComponent } from './desktop/suspense/account-public-likes.suspense.desktop.component';
-import { AccountPublicLikesSuspenseTabletComponent } from './tablet/suspense/account-public-likes.suspense.tablet.component';
-import { AccountPublicLikesSuspenseMobileComponent } from './mobile/suspense/account-public-likes.suspense.mobile.component';
-import { AccountPublicState } from '../models/account-public.model';
 import { Product } from '@medusajs/medusa';
+import { PricedVariant } from '@medusajs/medusa/dist/types/pricing';
+import { useObservable } from '@ngneat/use-observable';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
+import AccountPublicController from '../controllers/account-public.controller';
+import AccountController from '../controllers/account.controller';
+import ProductController from '../controllers/product.controller';
+import StoreController from '../controllers/store.controller';
+import WindowController from '../controllers/window.controller';
+import { AccountPublicState } from '../models/account-public.model';
+import { AccountState } from '../models/account.model';
+import { StoreState } from '../models/store.model';
+import { ProductLikesMetadataResponse } from '../protobuf/product-like_pb';
+import { RoutePathsType, useQuery } from '../route-paths';
+import { AccountPublicLikesSuspenseDesktopComponent } from './desktop/suspense/account-public-likes.suspense.desktop.component';
+import { AccountPublicLikesSuspenseMobileComponent } from './mobile/suspense/account-public-likes.suspense.mobile.component';
+import { AccountPublicLikesSuspenseTabletComponent } from './tablet/suspense/account-public-likes.suspense.tablet.component';
 
 const AccountPublicLikesDesktopComponent = lazy(
   () => import('./desktop/account-public-likes.desktop.component')
@@ -55,7 +43,7 @@ export interface AccountPublicLikesResponsiveProps {
   onProductPreviewClick: (
     scrollTop: number,
     product: Product,
-    productLikesMetadata: core.ProductLikesMetadataResponse | null
+    productLikesMetadata: ProductLikesMetadataResponse | null
   ) => void;
   onProductPreviewRest: (product: Product) => void;
   onProductPreviewAddToCart: (product: Product) => void;
@@ -63,7 +51,7 @@ export interface AccountPublicLikesResponsiveProps {
 }
 
 export default function AccountPublicLikesComponent(): JSX.Element {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const query = useQuery();
@@ -72,16 +60,18 @@ export default function AccountPublicLikesComponent(): JSX.Element {
   const [accountPublicProps] = useObservable(
     AccountPublicController.model.store
   );
-  const [openCartVariants, setOpenCartVariants] = useState<boolean>(false);
-  const [variantQuantities, setVariantQuantities] = useState<
+  const [openCartVariants, setOpenCartVariants] =
+    React.useState<boolean>(false);
+  const [variantQuantities, setVariantQuantities] = React.useState<
     Record<string, number>
   >({});
-  const [isPreviewLoading, setIsPreviewLoading] = useState<boolean>(false);
+  const [isPreviewLoading, setIsPreviewLoading] =
+    React.useState<boolean>(false);
 
   const onProductPreviewClick = (
     scrollTop: number,
-    product: Product,
-    productLikesMetadata: core.ProductLikesMetadataResponse | null
+    _product: Product,
+    _productLikesMetadata: ProductLikesMetadataResponse | null
   ) => {
     AccountPublicController.updateLikesScrollPosition(scrollTop);
   };
@@ -93,7 +83,7 @@ export default function AccountPublicLikesComponent(): JSX.Element {
     });
   };
 
-  const onProductPreviewAddToCart = (product: Product) => {
+  const onProductPreviewAddToCart = (_product: Product) => {
     setOpenCartVariants(true);
     setIsPreviewLoading(true);
   };
@@ -128,7 +118,7 @@ export default function AccountPublicLikesComponent(): JSX.Element {
     setVariantQuantities({});
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!id) {
       return;
     }
@@ -136,7 +126,7 @@ export default function AccountPublicLikesComponent(): JSX.Element {
     AccountPublicController.loadLikedProductsAsync(id);
   }, [id]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!accountPublicProps.selectedLikedProduct) {
       return;
     }

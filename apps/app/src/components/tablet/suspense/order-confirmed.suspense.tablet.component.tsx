@@ -1,12 +1,6 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import * as React from 'react';
-import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
+import Skeleton from 'react-loading-skeleton';
 import styles from '../../order-confirmed.module.scss';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import {
-  ResponsiveSuspenseDesktop,
-  ResponsiveSuspenseTablet,
-} from '../../responsive.component';
+import { ResponsiveSuspenseTablet } from '../../responsive.component';
 import { ShippingItemSuspenseTabletComponent } from './shipping-item.suspense.tablet.component';
 
 export function OrderConfirmedSuspenseTabletComponent(): JSX.Element {

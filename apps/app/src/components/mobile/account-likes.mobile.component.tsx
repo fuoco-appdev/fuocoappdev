@@ -1,31 +1,18 @@
-import { createRef, useEffect, useLayoutEffect, useRef } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import AccountController from '../../controllers/account.controller';
-import ProductController from '../../controllers/product.controller';
-import styles from '../account-likes.module.scss';
-import { Alert, Button, Dropdown, Line } from '@fuoco.appdev/core-ui';
-import { RoutePathsType, useQuery } from '../../route-paths';
-import { useTranslation } from 'react-i18next';
-import SupabaseService from '../../services/supabase.service';
-import { useObservable } from '@ngneat/use-observable';
-import { useSpring } from 'react-spring';
-import * as core from '../../protobuf/core_pb';
-import LoadingComponent from '../loading.component';
-import { Store } from '@ngneat/elf';
-import AccountProfileFormComponent from '../account-profile-form.component';
-import WindowController from '../../controllers/window.controller';
-import { AccountLikesResponsiveProps } from '../account-likes.component';
-import { ResponsiveMobile } from '../responsive.component';
-import ProductPreviewComponent from '../product-preview.component';
-import {
-  PricedProduct,
-  PricedVariant,
-} from '@medusajs/medusa/dist/types/pricing';
-import { createPortal } from 'react-dom';
-import CartVariantItemComponent from '../cart-variant-item.component';
-import { MedusaProductTypeNames } from '../../types/medusa.type';
-import { useAccountOutletContext } from '../account.component';
+import { Button, Dropdown, Line } from '@fuoco.appdev/core-ui';
 import { Product } from '@medusajs/medusa';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { ProductLikesMetadataResponse } from '../../protobuf/product-like_pb';
+import { RoutePathsType, useQuery } from '../../route-paths';
+import { MedusaProductTypeNames } from '../../types/medusa.type';
+import { AccountLikesResponsiveProps } from '../account-likes.component';
+import styles from '../account-likes.module.scss';
+import { useAccountOutletContext } from '../account.component';
+import CartVariantItemComponent from '../cart-variant-item.component';
+import ProductPreviewComponent from '../product-preview.component';
+import { ResponsiveMobile } from '../responsive.component';
 
 export default function AccountLikesMobileComponent({
   storeProps,
@@ -42,8 +29,8 @@ export default function AccountLikesMobileComponent({
   onProductPreviewAddToCart,
   onProductPreviewLikeChanged,
 }: AccountLikesResponsiveProps): JSX.Element {
-  const { t, i18n } = useTranslation();
-  const rootRef = createRef<HTMLDivElement>();
+  const { t } = useTranslation();
+  const rootRef = React.createRef<HTMLDivElement>();
   const navigate = useNavigate();
   const query = useQuery();
   const context = useAccountOutletContext();
@@ -84,8 +71,7 @@ export default function AccountLikesMobileComponent({
                   accountProps.selectedLikedProduct?.id === product?.id
                 }
                 likesMetadata={
-                  productLikesMetadata ??
-                  core.ProductLikesMetadataResponse.prototype
+                  productLikesMetadata ?? ProductLikesMetadataResponse.prototype
                 }
                 onClick={() =>
                   onProductPreviewClick(
@@ -157,7 +143,7 @@ export default function AccountLikesMobileComponent({
             )}
         </div>
       </div>
-      {createPortal(
+      {ReactDOM.createPortal(
         <>
           <Dropdown
             classNames={{

@@ -1,31 +1,13 @@
-import {
-  Key,
-  LegacyRef,
-  MutableRefObject,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
-import styles from '../product-preview.module.scss';
-import { MoneyAmount, Product, LineItem } from '@medusajs/medusa';
 import { Button, Card, Line } from '@fuoco.appdev/core-ui';
+import React from 'react';
 import { animated, useSpring } from 'react-spring';
-import i18n from '../../i18n';
-import ProductController from '../../controllers/product.controller';
-import StoreController from '../../controllers/store.controller';
-import { useObservable } from '@ngneat/use-observable';
-import WindowController from '../../controllers/window.controller';
-import { useTranslation } from 'react-i18next';
-import CartController from '../../controllers/cart.controller';
+import styles from '../product-preview.module.scss';
 // @ts-ignore
-import { formatAmount } from 'medusa-react';
-import { ProductPreviewResponsiveProps } from '../product-preview.component';
-import { ResponsiveMobile } from '../responsive.component';
+import { easings } from '@react-spring/web';
 import Skeleton from 'react-loading-skeleton';
 import { MedusaProductTypeNames } from '../../types/medusa.type';
-import { config } from '@react-spring/web';
-import { easings } from '@react-spring/web';
+import { ProductPreviewResponsiveProps } from '../product-preview.component';
+import { ResponsiveMobile } from '../responsive.component';
 
 export default function ProductPreviewMobileComponent({
   thumbnail,
@@ -51,8 +33,8 @@ export default function ProductPreviewMobileComponent({
   formatNumberCompact,
   formatDescription,
 }: ProductPreviewResponsiveProps): JSX.Element {
-  const [expanded, setExpanded] = useState<boolean>(false);
-  const ref = useRef<HTMLDivElement | null>(null);
+  const [expanded, setExpanded] = React.useState<boolean>(false);
+  const ref = React.useRef<HTMLDivElement | null>(null);
   const [style, api] = useSpring(() => ({
     from: {
       top: ref?.current?.getBoundingClientRect().top,
@@ -74,7 +56,7 @@ export default function ProductPreviewMobileComponent({
     },
   }));
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!expanded) {
       return;
     }

@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Subscription, filter, firstValueFrom, take } from 'rxjs';
-import { Controller } from '../controller';
-import { NotificationsModel } from '../models/notifications.model';
-import { select } from '@ngneat/elf';
-import AccountController from './account.controller';
-import AccountNotificationService from '../services/account-notification.service';
-import * as core from '../protobuf/core_pb';
-import WindowController from './window.controller';
+import { select } from "@ngneat/elf";
+import { filter, firstValueFrom, Subscription, take } from "rxjs";
+import { Controller } from "../controller";
+import { NotificationsModel } from "../models/notifications.model";
+import { AccountNotificationResponse } from "../protobuf/account-notification_pb";
+import { AccountResponse } from "../protobuf/account_pb";
+import AccountNotificationService from "../services/account-notification.service";
+import AccountController from "./account.controller";
+import WindowController from "./window.controller";
 
 class NotificationsController extends Controller {
   private readonly _model: NotificationsModel;
@@ -24,15 +25,15 @@ class NotificationsController extends Controller {
     return this._model;
   }
 
-  public override initialize(renderCount: number): void {}
+  public override initialize(_renderCount: number): void {}
 
-  public override load(renderCount: number): void {
+  public override load(_renderCount: number): void {
     this.loadAccountNotifications();
   }
 
-  public override disposeInitialization(renderCount: number): void {}
+  public override disposeInitialization(_renderCount: number): void {}
 
-  public override disposeLoad(renderCount: number): void {
+  public override disposeLoad(_renderCount: number): void {
     this._loadedAccountSubscription?.unsubscribe();
   }
 
@@ -46,7 +47,7 @@ class NotificationsController extends Controller {
     this._loadedAccountSubscription = AccountController.model.store
       .pipe(select((model) => model.account))
       .subscribe({
-        next: async (account: core.AccountResponse | null) => {
+        next: async (account: AccountResponse | null) => {
           if (!account) {
             return;
           }
@@ -62,18 +63,18 @@ class NotificationsController extends Controller {
   }
 
   public addAccountNotification(notification: Record<string, any>): void {
-    const payload = notification['payload'];
-    const id = payload['id'] as string;
-    const createdAt = payload['created_at'] as string;
-    const eventName = payload['event_name'] as string;
-    const resourceType = payload['resource_type'] as string;
-    const resourceId = payload['resource_id'] as string;
-    const accountId = payload['account_id'] as string;
-    const data = payload['data'] as string;
-    const updatedAt = payload['updated_at'] as string;
-    const seen = payload['seen'] as boolean;
+    const payload = notification["payload"];
+    const id = payload["id"] as string;
+    const createdAt = payload["created_at"] as string;
+    const eventName = payload["event_name"] as string;
+    const resourceType = payload["resource_type"] as string;
+    const resourceId = payload["resource_id"] as string;
+    const accountId = payload["account_id"] as string;
+    const data = payload["data"] as string;
+    const updatedAt = payload["updated_at"] as string;
+    const seen = payload["seen"] as boolean;
 
-    const response = new core.AccountNotificationResponse({
+    const response = new AccountNotificationResponse({
       id: id,
       createdAt: createdAt,
       eventName: eventName,
@@ -86,7 +87,7 @@ class NotificationsController extends Controller {
     });
 
     this._model.accountNotifications = [response].concat(
-      this._model.accountNotifications
+      this._model.accountNotifications,
     );
   }
 
@@ -106,8 +107,8 @@ class NotificationsController extends Controller {
       AccountController.model.store.pipe(
         select((model) => model.account),
         filter((value) => value !== undefined),
-        take(1)
-      )
+        take(1),
+      ),
     );
     await AccountNotificationService.requestUpdateSeenAsync(account.id);
     WindowController.updateNotificationsCount(0);
@@ -115,7 +116,7 @@ class NotificationsController extends Controller {
 
   private async requestAccountNotificationsAsync(
     offset: number = 0,
-    limit: number = 10
+    limit: number = 10,
   ): Promise<void> {
     if (this._model.isLoading) {
       return;
@@ -128,11 +129,11 @@ class NotificationsController extends Controller {
         AccountController.model.store.pipe(
           select((model) => model.account),
           filter((value) => value !== undefined),
-          take(1)
-        )
+          take(1),
+        ),
       );
-      const accountNotificationsResponse =
-        await AccountNotificationService.requestNotificationsAsync({
+      const accountNotificationsResponse = await AccountNotificationService
+        .requestNotificationsAsync({
           accountId: account.id,
           offset: offset,
           limit: limit,
@@ -154,9 +155,9 @@ class NotificationsController extends Controller {
       }
 
       if (offset > 0) {
-        this._model.accountNotifications =
-          this._model.accountNotifications.concat(
-            accountNotificationsResponse.notifications
+        this._model.accountNotifications = this._model.accountNotifications
+          .concat(
+            accountNotificationsResponse.notifications,
           );
       } else {
         this._model.accountNotifications =

@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package customer;
+
+message UpdateCustomerRequest {
+    string email = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string phone = 4;
+    string metadata = 5;
+}
+
+message UpdateCustomerResponse {
+    string data = 1;
+    string password = 2;
+}
+
+message CustomersRequest {
+    repeated string customer_ids = 1;
+}
+
+message CustomerMetadataResponse {
+    string id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    bool has_account = 4;
+    string created_at = 5;
+    string updated_at = 6;
+    string deleted_at = 7;
+}
+
+message CustomerResponse {
+    string id = 1;
+    string email = 2;
+    string first_name = 3;
+    string last_name = 4;
+    string billing_address_id = 5;
+    string phone = 6;
+    bool has_account = 7;
+    string created_at = 8;
+    string updated_at = 9;
+    string deleted_at = 10;
+    string metadata = 11;
+}
+
+message CustomersResponse {
+    repeated customer.CustomerResponse customers = 1;
+}
+
+message AddCustomerToGroupRequest {
+    string customer_group_id = 1;
+    string customer_id = 2;
+}
+
+message RemoveCustomerFromGroupRequest {
+    string customer_group_id = 1;
+    string customer_id = 2;
+}
+
+message CustomerGroupResponse {
+    string data = 1;
+}

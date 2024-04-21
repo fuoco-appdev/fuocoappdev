@@ -1,15 +1,13 @@
-import { Helmet } from 'react-helmet';
-import { useObservable } from '@ngneat/use-observable';
-import WindowController from '../controllers/window.controller';
-import { WindowState } from '../models/window.model';
-import { AuthenticatedComponent } from './authenticated.component';
 import { lazy } from '@loadable/component';
-import React, { useEffect } from 'react';
+import { useObservable } from '@ngneat/use-observable';
+import React from 'react';
+import { Helmet } from 'react-helmet';
+import AccountController from '../controllers/account.controller';
+import { AccountState } from '../models/account.model';
+import { AuthenticatedComponent } from './authenticated.component';
 import { AccountAddFriendsSuspenseDesktopComponent } from './desktop/suspense/account-add-friends.suspense.desktop.component';
 import { AccountAddFriendsSuspenseMobileComponent } from './mobile/suspense/account-add-friends.suspense.mobile.component';
 import { AccountAddFriendsSuspenseTabletComponent } from './tablet/suspense/account-add-friends.suspense.tablet.component';
-import AccountController from '../controllers/account.controller';
-import { AccountState } from '../models/account.model';
 
 const AccountAddFriendsDesktopComponent = lazy(
   () => import('./desktop/account-add-friends.desktop.component')
@@ -23,12 +21,15 @@ const AccountAddFriendsMobileComponent = lazy(
 
 export interface AccountAddFriendsResponsiveProps {
   accountProps: AccountState;
+  locationDropdownOpen: boolean;
+  setLocationDropdownOpen: (value: boolean) => void;
   onAddFriendsScroll: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
   onAddFriendsLoad: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
 }
 
 export default function AccountAddFriendsComponent(): JSX.Element {
   const [accountProps] = useObservable(AccountController.model.store);
+  const [locationDropdownOpen, setLocationDropdownOpen] = React.useState<boolean>(false);
   const scrollOffsetTriggerGap = 16;
 
   const onAddFriendsScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
@@ -55,7 +56,7 @@ export default function AccountAddFriendsComponent(): JSX.Element {
     }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     AccountController.loadFollowRequestsAndFriendsAccounts();
   }, []);
 
@@ -103,16 +104,22 @@ export default function AccountAddFriendsComponent(): JSX.Element {
         <AuthenticatedComponent>
           <AccountAddFriendsDesktopComponent
             accountProps={accountProps}
+            locationDropdownOpen={locationDropdownOpen}
+            setLocationDropdownOpen={setLocationDropdownOpen}
             onAddFriendsLoad={onAddFriendsLoad}
             onAddFriendsScroll={onAddFriendsScroll}
           />
           <AccountAddFriendsTabletComponent
             accountProps={accountProps}
+            locationDropdownOpen={locationDropdownOpen}
+            setLocationDropdownOpen={setLocationDropdownOpen}
             onAddFriendsLoad={onAddFriendsLoad}
             onAddFriendsScroll={onAddFriendsScroll}
           />
           <AccountAddFriendsMobileComponent
             accountProps={accountProps}
+            locationDropdownOpen={locationDropdownOpen}
+            setLocationDropdownOpen={setLocationDropdownOpen}
             onAddFriendsLoad={onAddFriendsLoad}
             onAddFriendsScroll={onAddFriendsScroll}
           />

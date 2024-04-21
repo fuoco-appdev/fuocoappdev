@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package account;
+
+message AccountRequest {
+    string id = 1;
+    string customer_id = 2;
+    string supabase_id = 3;
+    string profile_url = 4;
+    string status = 5;
+    string language_code = 7;
+    string username = 8;
+    string birthday = 9;
+    string sex = 10;
+    repeated string interests = 11;
+    string metadata = 12;
+}
+
+message AccountResponse {
+    string id = 1;
+    string customer_id = 2;
+    string supabase_id = 3;
+    string profile_url = 4;
+    string status = 5;
+    string update_at = 6;
+    string language_code = 7;
+    string username = 8;
+    string birthday = 9;
+    string sex = 10;
+    repeated string interests = 11;
+    string metadata = 12;
+}
+
+message AccountsRequest {
+    repeated string account_ids = 1;
+}
+
+message AccountsResponse {
+    repeated account.AccountResponse accounts = 1;
+}
+
+message AccountExistsRequest {
+    string username = 1;
+}
+
+message AccountExistsResponse {
+    bool exists = 1;
+}
+
+message AccountLikeRequest {
+    string query_username = 1;
+    string account_id = 2;
+    int32 offset = 3;
+    int32 limit = 4;
+}

@@ -4,15 +4,8 @@ import {
   InputPhoneNumber,
   Line,
   Listbox,
-  OptionProps,
 } from '@fuoco.appdev/core-ui';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
-import { useObservable } from '@ngneat/use-observable';
 import { useTranslation } from 'react-i18next';
-import StoreController from '../../controllers/store.controller';
-import { Region, Country } from '@medusajs/medusa';
-import ReactCountryFlag from 'react-country-flag';
-import { CountryDataProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/input-phone-number/country-data';
 import { AddressFormResponsiveProps } from '../address-form.component';
 import styles from '../address-form.module.scss';
 import { ResponsiveTablet } from '../responsive.component';
@@ -166,7 +159,7 @@ export default function AddressFormTabletComponent({
             error={errors?.country}
             options={countryOptions}
             selectedId={selectedCountryId}
-            onChange={(index: number, id: string, value?: string) => {
+            onChange={(_index: number, id: string, value?: string) => {
               setSelectedCountryId(id);
               onChangeCallbacks?.country?.(id, value ?? '');
             }}
@@ -184,7 +177,7 @@ export default function AddressFormTabletComponent({
             options={regionOptions}
             error={errors?.region}
             selectedId={selectedRegionId}
-            onChange={(index: number, id: string, value?: string) => {
+            onChange={(_index: number, id: string, value?: string) => {
               setSelectedRegionId(id);
               onChangeCallbacks?.region?.(id, value ?? '');
             }}

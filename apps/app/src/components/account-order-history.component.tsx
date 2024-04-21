@@ -1,16 +1,10 @@
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
-import { useEffect, useLayoutEffect, useRef } from 'react';
-import AccountController from '../controllers/account.controller';
+import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
+import React from 'react';
+import AccountController from '../controllers/account.controller';
 import { AccountState } from '../models/account.model';
 import { AuthenticatedComponent } from './authenticated.component';
-import { lazy } from '@loadable/component';
 import { AccountOrderHistorySuspenseDesktopComponent } from './desktop/suspense/account-order-history.suspense.desktop.component';
-import React from 'react';
 import { AccountOrderHistorySuspenseMobileComponent } from './mobile/suspense/account-order-history.suspense.mobile.component';
 import { AccountOrderHistorySuspenseTabletComponent } from './tablet/suspense/account-order-history.suspense.tablet.component';
 
@@ -31,7 +25,7 @@ export interface AccountOrderHistoryResponsiveProps {
 export default function AccountOrderHistoryComponent(): JSX.Element {
   const [accountProps] = useObservable(AccountController.model.store);
 
-  useEffect(() => {
+  React.useEffect(() => {
     AccountController.loadOrders();
   }, []);
 

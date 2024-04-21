@@ -1,47 +1,19 @@
-import React, {
-  Key,
-  LegacyRef,
-  MutableRefObject,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
-import styles from './product-preview.module.scss';
-import { MoneyAmount, Product, LineItem, ProductType } from '@medusajs/medusa';
-import {
-  PricedProduct,
-  PricedVariant,
-} from '@medusajs/medusa/dist/types/pricing';
-import { Button, Card, Line } from '@fuoco.appdev/core-ui';
-import { animated, useSpring } from 'react-spring';
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
-import i18n from '../i18n';
-import ProductController from '../controllers/product.controller';
-import StoreController from '../controllers/store.controller';
-import { useObservable } from '@ngneat/use-observable';
-import WindowController from '../controllers/window.controller';
+import { MoneyAmount, ProductType } from '@medusajs/medusa';
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import CartController from '../controllers/cart.controller';
+import ProductController from '../controllers/product.controller';
 // @ts-ignore
-import { formatAmount } from 'medusa-react';
-import { StoreState } from '../models/store.model';
 import { lazy } from '@loadable/component';
+import { formatAmount } from 'medusa-react';
+import { AccountState } from '../models/account.model';
+import { StoreState } from '../models/store.model';
+import { DeepLTranslationsResponse } from '../protobuf/deepl_pb';
+import { ProductLikesMetadataResponse } from '../protobuf/product-like_pb';
+import DeeplService from '../services/deepl.service';
 import { ProductPreviewSuspenseDesktopComponent } from './desktop/suspense/product-preview.suspense.desktop.component';
 import { ProductPreviewSuspenseMobileComponent } from './mobile/suspense/product-preview.suspense.mobile.component';
 import { ProductPreviewSuspenseTabletComponent } from './tablet/suspense/product-preview.suspense.tablet.component';
-import { WindowState } from '../models';
-import {
-  DeepLTranslationsResponse,
-  ProductLikesMetadataResponse,
-} from '../protobuf/core_pb';
-import AccountController from '../controllers/account.controller';
-import { AccountState } from '../models/account.model';
-import DeeplService from '../services/deepl.service';
 
 const ProductPreviewDesktopComponent = lazy(
   () => import('./desktop/product-preview.desktop.component')
@@ -55,7 +27,7 @@ const ProductPreviewMobileComponent = lazy(
 
 export interface ProductPreviewProps {
   accountProps: AccountState;
-  parentRef: MutableRefObject<HTMLDivElement | null>;
+  parentRef: React.MutableRefObject<HTMLDivElement | null>;
   pricedProduct: PricedProduct | null;
   likesMetadata: ProductLikesMetadataResponse;
   isLoading: boolean;
@@ -105,18 +77,18 @@ export default function ProductPreviewComponent({
   onAddToCart,
   onLikeChanged,
 }: ProductPreviewProps): JSX.Element {
-  const [originalPrice, setOriginalPrice] = useState<string>('');
-  const [calculatedPrice, setCalculatedPrice] = useState<string>('');
-  const [addedToCartCount, setAddedToCartCount] = useState<number>(0);
-  const [isLiked, setIsLiked] = useState<boolean>(false);
-  const [likeCount, setLikeCount] = useState<number>(0);
-  const [selectedVariantId, setSelectedVariantId] = useState<
+  const [originalPrice, setOriginalPrice] = React.useState<string>('');
+  const [calculatedPrice, setCalculatedPrice] = React.useState<string>('');
+  const [addedToCartCount] = React.useState<number>(0);
+  const [isLiked, setIsLiked] = React.useState<boolean>(false);
+  const [likeCount, setLikeCount] = React.useState<number>(0);
+  const [selectedVariantId, setSelectedVariantId] = React.useState<
     string | undefined
   >(undefined);
-  const [translatedDescription, setTranslatedDescription] = useState<
+  const [translatedDescription, setTranslatedDescription] = React.useState<
     string | undefined
   >(description);
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
 
   const formatPrice = (price: MoneyAmount): string => {
     if (!price.amount) {
@@ -144,8 +116,8 @@ export default function ProductPreviewComponent({
       .replace(/^### (.*$)/gim, '$1') // h3 tag
       .replace(/^## (.*$)/gim, '$1') // h2 tag
       .replace(/^# (.*$)/gim, '$1') // h1 tag
-      .replace(/\*\*(.*)\*\*/gim, '$1') // bold text
-      .replace(/\*(.*)\*/gim, '$1'); // italic text
+      .replace(/\*\*(.*)\*\*/gim, '') // bold text
+      .replace(/\*(.*)\*/gim, ''); // italic text
     return toText.trim();
   };
 
@@ -176,7 +148,7 @@ export default function ProductPreviewComponent({
     }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!description) {
       return;
     }
@@ -184,7 +156,7 @@ export default function ProductPreviewComponent({
     updateTranslatedDescriptionAsync(description);
   }, [description, i18n.language]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (likesMetadata.totalLikeCount !== undefined) {
       setLikeCount(likesMetadata.totalLikeCount);
     }
@@ -192,7 +164,7 @@ export default function ProductPreviewComponent({
     setIsLiked(likesMetadata.didAccountLike);
   }, [likesMetadata, accountProps.account]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const purchasableVariants = pricedProduct?.variants.filter(
       (value) => value.purchasable === true
     );

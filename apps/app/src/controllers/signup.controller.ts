@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Controller } from '../controller';
-import { SignupModel } from '../models/signup.model';
 import {
-  Session,
   AuthChangeEvent,
+  Session,
   SupabaseClient,
 } from '@supabase/supabase-js';
-import SupabaseService from '../services/supabase.service';
 import { Subscription } from 'rxjs';
+import { Controller } from '../controller';
+import { SignupModel } from '../models/signup.model';
+import SupabaseService from '../services/supabase.service';
 
 class SignupController extends Controller {
   private readonly _model: SignupModel;
@@ -25,9 +25,9 @@ class SignupController extends Controller {
     return this._model;
   }
 
-  public override initialize(renderCount: number): void {}
+  public override initialize(_renderCount: number): void {}
 
-  public override load(renderCount: number): void {
+  public override load(_renderCount: number): void {
     SupabaseService.supabaseClient?.auth.onAuthStateChange(
       this.onAuthStateChanged
     );
@@ -40,9 +40,9 @@ class SignupController extends Controller {
       });
   }
 
-  public override disposeInitialization(renderCount: number): void {}
+  public override disposeInitialization(_renderCount: number): void {}
 
-  public override disposeLoad(renderCount: number): void {
+  public override disposeLoad(_renderCount: number): void {
     this._supabaseClientSubscription?.unsubscribe();
   }
 
@@ -64,7 +64,7 @@ class SignupController extends Controller {
 
   private async onAuthStateChanged(
     event: AuthChangeEvent,
-    session: Session | null
+    _session: Session | null
   ): Promise<void> {
     if (event === 'SIGNED_IN') {
       this._model.email = '';

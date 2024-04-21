@@ -1,24 +1,20 @@
-import { useEffect, useLayoutEffect, useRef } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import CartController from '../../controllers/cart.controller';
-import styles from '../cart.module.scss';
-import { Button, Input, Line, Modal, Solid, Tabs } from '@fuoco.appdev/core-ui';
-import { RoutePathsType, useQuery } from '../../route-paths';
+import { Button, Input, Line, Modal, Solid } from '@fuoco.appdev/core-ui';
+import { Discount, LineItem } from '@medusajs/medusa';
 import { useTranslation } from 'react-i18next';
-import { useObservable } from '@ngneat/use-observable';
-import { LineItem, ProductVariant, Discount, Cart } from '@medusajs/medusa';
-import CartItemComponent from '../cart-item.component';
+import { useNavigate } from 'react-router-dom';
+import CartController from '../../controllers/cart.controller';
 import ExploreController from '../../controllers/explore.controller';
+import { RoutePathsType, useQuery } from '../../route-paths';
+import CartItemComponent from '../cart-item.component';
+import styles from '../cart.module.scss';
 // @ts-ignore
-import { formatAmount } from 'medusa-react';
-import { CartResponsiveProps } from '../cart.component';
-import { Store } from '@ngneat/elf';
-import { ResponsiveDesktop } from '../responsive.component';
-import CartVariantItemComponent from '../cart-variant-item.component';
-import { MedusaProductTypeNames } from 'src/types/medusa.type';
-import { createPortal } from 'react-dom';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
-import StockLocationItemComponent from '../stock-location-item.component';
+import { formatAmount } from 'medusa-react';
+import ReactDOM from 'react-dom';
+import { MedusaProductTypeNames } from '../../types/medusa.type';
+import CartVariantItemComponent from '../cart-variant-item.component';
+import { CartResponsiveProps } from '../cart.component';
+import { ResponsiveDesktop } from '../responsive.component';
 import StockLocationCartItemComponent from '../stock-location-cart-item.component';
 
 export default function CartDesktopComponent({
@@ -38,7 +34,7 @@ export default function CartDesktopComponent({
 }: CartResponsiveProps): JSX.Element {
   const navigate = useNavigate();
   const query = useQuery();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <ResponsiveDesktop>
@@ -72,7 +68,7 @@ export default function CartDesktopComponent({
             ].join(' ')}
           >
             {cartProps.stockLocations.map(
-              (stockLocation: StockLocation, index: number) => {
+              (stockLocation: StockLocation, _index: number) => {
                 const cartId = cartLocalProps.cartIds[stockLocation.id] ?? '';
                 const cart = cartProps.carts[cartId];
                 return (
@@ -563,7 +559,7 @@ export default function CartDesktopComponent({
           </div>
         </div>
       </div>
-      {createPortal(
+      {ReactDOM.createPortal(
         <Modal
           classNames={{
             overlay: [

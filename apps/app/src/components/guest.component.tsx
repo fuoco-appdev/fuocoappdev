@@ -1,5 +1,5 @@
-import { Navigate } from 'react-router-dom';
 import { useObservable } from '@ngneat/use-observable';
+import { Navigate } from 'react-router-dom';
 import WindowController from '../controllers/window.controller';
 import { RoutePathsType } from '../route-paths';
 

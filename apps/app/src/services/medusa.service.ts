@@ -1,4 +1,3 @@
-import Medusa from "@medusajs/medusa-js";
 import {
   Customer,
   CustomerGroup,
@@ -7,15 +6,40 @@ import {
   Product,
   SalesChannel,
 } from "@medusajs/medusa";
-import ConfigService from "./config.service";
-import axios, { AxiosError } from "axios";
-import { Service } from "../service";
-import SupabaseService from "./supabase.service";
-import * as core from "../protobuf/core_pb";
-import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
-import { BehaviorSubject, Observable } from "rxjs";
-import Cookies from "js-cookie";
+import Medusa from "@medusajs/medusa-js";
 import { StockLocation } from "@medusajs/stock-location/dist/models";
+import axios from "axios";
+import { BehaviorSubject, Observable } from "rxjs";
+import {
+  AddCustomerToGroupRequest,
+  CustomerGroupResponse,
+  CustomerMetadataResponse,
+  CustomerResponse,
+  CustomersRequest,
+  CustomersResponse,
+  RemoveCustomerFromGroupRequest,
+  UpdateCustomerRequest,
+  UpdateCustomerResponse,
+} from "../protobuf/customer_pb";
+import { OrdersRequest, OrdersResponse } from "../protobuf/order_pb";
+import {
+  PriceListsRequest,
+  PriceListsResponse,
+} from "../protobuf/price-list_pb";
+import {
+  ProductCountRequest,
+  ProductCountResponse,
+  ProductMetadataResponse,
+  ProductsRequest,
+  ProductsResponse,
+} from "../protobuf/product_pb";
+import {
+  StockLocationsRequest,
+  StockLocationsResponse,
+} from "../protobuf/stock-location_pb";
+import { Service } from "../service";
+import ConfigService from "./config.service";
+import SupabaseService from "./supabase.service";
 
 class MedusaService extends Service {
   private _medusa: Medusa | undefined;
@@ -53,7 +77,7 @@ class MedusaService extends Service {
 
   public async requestProductMetadataAsync(
     productId: string,
-  ): Promise<core.ProductMetadataResponse | undefined> {
+  ): Promise<ProductMetadataResponse | undefined> {
     const response = await axios({
       method: "post",
       url: `${this.endpointUrl}/medusa/product-metadata/${productId}`,
@@ -66,14 +90,14 @@ class MedusaService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const productMetadataResponse = core.ProductMetadataResponse.fromBinary(
+    const productMetadataResponse = ProductMetadataResponse.fromBinary(
       arrayBuffer,
     );
     return productMetadataResponse;
   }
 
   public async requestProductCountAsync(type: string): Promise<number> {
-    const productCountRequest = new core.ProductCountRequest({ type: type });
+    const productCountRequest = new ProductCountRequest({ type: type });
     const response = await axios({
       method: "post",
       url: `${this.endpointUrl}/medusa/products/count`,
@@ -86,7 +110,7 @@ class MedusaService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const productCountResponse = core.ProductCountResponse.fromBinary(
+    const productCountResponse = ProductCountResponse.fromBinary(
       arrayBuffer,
     );
     return productCountResponse.count;
@@ -94,7 +118,7 @@ class MedusaService extends Service {
 
   public async requestProductsAsync(ids: string[]): Promise<Product[]> {
     const session = await SupabaseService.requestSessionAsync();
-    const request = new core.ProductsRequest({ ids: ids });
+    const request = new ProductsRequest({ ids: ids });
     const response = await axios({
       method: "post",
       url: `${this.endpointUrl}/medusa/products`,
@@ -108,7 +132,7 @@ class MedusaService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const productsResponse = core.ProductsResponse.fromBinary(
+    const productsResponse = ProductsResponse.fromBinary(
       arrayBuffer,
     );
 
@@ -121,7 +145,7 @@ class MedusaService extends Service {
 
   public async requestCustomerMetadataAsync(
     customerId: string,
-  ): Promise<core.CustomerMetadataResponse | undefined> {
+  ): Promise<CustomerMetadataResponse | undefined> {
     const response = await axios({
       method: "post",
       url: `${this.endpointUrl}/medusa/customer/metadata/${customerId}`,
@@ -134,7 +158,7 @@ class MedusaService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const customerMetadataResponse = core.CustomerMetadataResponse.fromBinary(
+    const customerMetadataResponse = CustomerMetadataResponse.fromBinary(
       arrayBuffer,
     );
     if (!customerMetadataResponse) {
@@ -161,7 +185,7 @@ class MedusaService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const customerResponse = core.UpdateCustomerResponse.fromBinary(
+    const customerResponse = UpdateCustomerResponse.fromBinary(
       arrayBuffer,
     );
     if (customerResponse.data.length <= 0) {
@@ -192,9 +216,9 @@ class MedusaService extends Service {
 
   public async requestCustomersAsync(props: {
     customerIds: string[];
-  }): Promise<core.CustomerResponse[] | undefined> {
+  }): Promise<CustomerResponse[] | undefined> {
     const session = await SupabaseService.requestSessionAsync();
-    const request = new core.CustomersRequest({
+    const request = new CustomersRequest({
       customerIds: props.customerIds,
     });
     const response = await axios({
@@ -210,7 +234,7 @@ class MedusaService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const customersResponse = core.CustomersResponse.fromBinary(arrayBuffer);
+    const customersResponse = CustomersResponse.fromBinary(arrayBuffer);
     if (customersResponse.customers.length <= 0) {
       return undefined;
     }
@@ -226,7 +250,7 @@ class MedusaService extends Service {
     metadata?: string;
   }): Promise<Customer | undefined> {
     const session = await SupabaseService.requestSessionAsync();
-    const customerRequest = new core.UpdateCustomerRequest({
+    const customerRequest = new UpdateCustomerRequest({
       email: props.email,
       firstName: props.first_name,
       lastName: props.last_name,
@@ -246,7 +270,7 @@ class MedusaService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const customerResponse = core.UpdateCustomerResponse.fromBinary(
+    const customerResponse = UpdateCustomerResponse.fromBinary(
       arrayBuffer,
     );
     if (customerResponse.data.length <= 0) {
@@ -287,7 +311,7 @@ class MedusaService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const customerGroupResponse = core.CustomerGroupResponse.fromBinary(
+    const customerGroupResponse = CustomerGroupResponse.fromBinary(
       arrayBuffer,
     );
     if (customerGroupResponse.data.length <= 0) {
@@ -303,7 +327,7 @@ class MedusaService extends Service {
     customerId: string;
   }): Promise<CustomerGroup | undefined> {
     const session = await SupabaseService.requestSessionAsync();
-    const addCustomerToGroupRequest = new core.AddCustomerToGroupRequest({
+    const addCustomerToGroupRequest = new AddCustomerToGroupRequest({
       customerGroupId: props.customerGroupId,
       customerId: props.customerId,
     });
@@ -320,7 +344,7 @@ class MedusaService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const customerGroupResponse = core.CustomerGroupResponse.fromBinary(
+    const customerGroupResponse = CustomerGroupResponse.fromBinary(
       arrayBuffer,
     );
     if (customerGroupResponse.data.length <= 0) {
@@ -336,8 +360,7 @@ class MedusaService extends Service {
     customerId: string;
   }): Promise<CustomerGroup | undefined> {
     const session = await SupabaseService.requestSessionAsync();
-    const removeCustomerFromGroupRequest = new core
-      .RemoveCustomerFromGroupRequest({
+    const removeCustomerFromGroupRequest = new RemoveCustomerFromGroupRequest({
       customerGroupId: props.customerGroupId,
       customerId: props.customerId,
     });
@@ -354,7 +377,7 @@ class MedusaService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const customerGroupResponse = core.CustomerGroupResponse.fromBinary(
+    const customerGroupResponse = CustomerGroupResponse.fromBinary(
       arrayBuffer,
     );
     if (customerGroupResponse.data.length <= 0) {
@@ -373,7 +396,7 @@ class MedusaService extends Service {
     type?: string[];
   }): Promise<PriceList[]> {
     const session = await SupabaseService.requestSessionAsync();
-    const priceListsRequest = new core.PriceListsRequest({
+    const priceListsRequest = new PriceListsRequest({
       offset: props.offset,
       limit: props.limit,
       status: props.status,
@@ -393,7 +416,7 @@ class MedusaService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const priceListsResponse = core.PriceListsResponse.fromBinary(arrayBuffer);
+    const priceListsResponse = PriceListsResponse.fromBinary(arrayBuffer);
     const priceListsData = priceListsResponse.data.length > 0
       ? JSON.parse(priceListsResponse.data)
       : {};
@@ -407,7 +430,7 @@ class MedusaService extends Service {
   public async requestStockLocationsAsync(ids: string[]): Promise<
     StockLocation[]
   > {
-    const request = new core.StockLocationsRequest({
+    const request = new StockLocationsRequest({
       ids: ids,
     });
     const response = await axios({
@@ -422,7 +445,7 @@ class MedusaService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const stockLocationsResponse = core.StockLocationsResponse.fromBinary(
+    const stockLocationsResponse = StockLocationsResponse.fromBinary(
       arrayBuffer,
     );
     const locations: StockLocation[] = [];
@@ -453,7 +476,7 @@ class MedusaService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const stockLocationsResponse = core.StockLocationsResponse.fromBinary(
+    const stockLocationsResponse = StockLocationsResponse.fromBinary(
       arrayBuffer,
     );
     const locations: any[] = [];
@@ -477,7 +500,7 @@ class MedusaService extends Service {
     },
   ): Promise<Order[] | undefined> {
     const session = await SupabaseService.requestSessionAsync();
-    const ordersRequest = new core.OrdersRequest({
+    const ordersRequest = new OrdersRequest({
       offset: props.offset,
       limit: props.limit,
     });
@@ -494,7 +517,7 @@ class MedusaService extends Service {
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const ordersResponse = core.OrdersResponse.fromBinary(arrayBuffer);
+    const ordersResponse = OrdersResponse.fromBinary(arrayBuffer);
     return ordersResponse.data && JSON.parse(ordersResponse.data);
   }
 

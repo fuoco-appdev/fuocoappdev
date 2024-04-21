@@ -1,18 +1,14 @@
+import { lazy } from '@loadable/component';
+import { useObservable } from '@ngneat/use-observable';
+import React from 'react';
 import { Helmet } from 'react-helmet';
+import TermsOfServiceController from '../controllers/terms-of-service.controller';
+import { TermsOfServiceState } from '../models/terms-of-service.model';
 import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
   ResponsiveSuspenseDesktop,
   ResponsiveSuspenseMobile,
   ResponsiveSuspenseTablet,
-  ResponsiveTablet,
 } from './responsive.component';
-import { useState, useEffect, useRef } from 'react';
-import { TermsOfServiceState } from '../models/terms-of-service.model';
-import { useObservable } from '@ngneat/use-observable';
-import TermsOfServiceController from '../controllers/terms-of-service.controller';
-import { lazy } from '@loadable/component';
-import React from 'react';
 
 const TermsOfServiceDesktopComponent = lazy(
   () => import('./desktop/terms-of-service.desktop.component')
@@ -33,10 +29,10 @@ export default function TermsOfServiceComponent(): JSX.Element {
   const [termsOfServiceProps] = useObservable(
     TermsOfServiceController.model.store
   );
-  const [remarkPlugins, setRemarkPlugins] = useState<any[]>([]);
-  const renderCountRef = useRef<number>(0);
+  const [remarkPlugins, setRemarkPlugins] = React.useState<any[]>([]);
+  const renderCountRef = React.useRef<number>(0);
 
-  useEffect(() => {
+  React.useEffect(() => {
     import('remark-gfm').then((plugin) => {
       setRemarkPlugins([plugin.default]);
     });

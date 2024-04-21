@@ -1,34 +1,24 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import AccountController from '../../controllers/account.controller';
-import styles from '../account-settings-account.module.scss';
 import {
   Accordion,
-  Alert,
+  AccordionItemClasses,
   Auth,
   Button,
+  LanguageSwitch,
   Line,
   Modal,
-  AccordionItemClasses,
-  LanguageSwitch,
 } from '@fuoco.appdev/core-ui';
-import { RoutePathsType } from '../../route-paths';
-import { useTranslation } from 'react-i18next';
-import SupabaseService from '../../services/supabase.service';
-import { useObservable } from '@ngneat/use-observable';
-import { useSpring } from 'react-spring';
-import * as core from '../../protobuf/core_pb';
-import { Store } from '@ngneat/elf';
-import Ripples from 'react-ripples';
 import { AuthError, User } from '@supabase/supabase-js';
-import WindowController from '../../controllers/window.controller';
 import ReactCountryFlag from 'react-country-flag';
-import { Observable } from 'rxjs';
-import { WindowLocalState } from '../../models';
-import { AccountSettingsAccountResponsiveProps } from '../account-settings-account.component';
-import { ResponsiveMobile } from '../responsive.component';
-import { createPortal } from 'react-dom';
+import ReactDOM from 'react-dom';
+import { useTranslation } from 'react-i18next';
+import Ripples from 'react-ripples';
+import AccountController from '../../controllers/account.controller';
+import WindowController from '../../controllers/window.controller';
+import SupabaseService from '../../services/supabase.service';
 import AccountProfileFormComponent from '../account-profile-form.component';
+import { AccountSettingsAccountResponsiveProps } from '../account-settings-account.component';
+import styles from '../account-settings-account.module.scss';
+import { ResponsiveMobile } from '../responsive.component';
 
 export default function AccountSettingsAccountMobileComponent({
   storeProps,
@@ -44,7 +34,7 @@ export default function AccountSettingsAccountMobileComponent({
   setIsLanguageOpen,
   onGeneralInformationSaveAsync,
 }: AccountSettingsAccountResponsiveProps): JSX.Element {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const accordionItemClassNames: AccordionItemClasses = {
     topBar: [
@@ -149,7 +139,7 @@ export default function AccountSettingsAccountMobileComponent({
                         AccountController.updateProfile({
                           username: event.target.value,
                         }),
-                      phoneNumber: (value, event, formattedValue) =>
+                      phoneNumber: (value, _event, _formattedValue) =>
                         AccountController.updateProfile({
                           phoneNumber: value,
                         }),
@@ -267,7 +257,7 @@ export default function AccountSettingsAccountMobileComponent({
             {t('deleteAccount')}
           </Button>
         </div>
-        {createPortal(
+        {ReactDOM.createPortal(
           <>
             <Modal
               title={t('deleteYourAccount') ?? ''}

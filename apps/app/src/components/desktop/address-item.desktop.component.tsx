@@ -1,7 +1,7 @@
-import styles from '../address-item.module.scss';
-import { Button, Line, Modal } from '@fuoco.appdev/core-ui';
-import { AddressItemProps } from '../address-item.component';
+import { Button, Line } from '@fuoco.appdev/core-ui';
 import { useTranslation } from 'react-i18next';
+import { AddressItemProps } from '../address-item.component';
+import styles from '../address-item.module.scss';
 import { ResponsiveDesktop } from '../responsive.component';
 
 export default function AddressItemDesktopComponent({
@@ -9,7 +9,7 @@ export default function AddressItemDesktopComponent({
   onEdit,
   onDelete,
 }: AddressItemProps): JSX.Element {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   return (
     <ResponsiveDesktop>
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>

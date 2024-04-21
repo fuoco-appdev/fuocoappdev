@@ -1,36 +1,18 @@
-import { MutableRefObject, useEffect, useRef } from 'react';
+import { lazy } from '@loadable/component';
+import { useElements, useStripe } from '@stripe/react-stripe-js';
 import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
+  StripeCardNumberElement,
+  StripeElementsOptions,
+} from '@stripe/stripe-js';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import CheckoutController from '../controllers/checkout.controller';
+import { RoutePathsType, useQuery } from '../route-paths';
+import {
   ResponsiveSuspenseDesktop,
   ResponsiveSuspenseMobile,
   ResponsiveSuspenseTablet,
-  ResponsiveTablet,
 } from './responsive.component';
-import {
-  Elements,
-  useElements,
-  useStripe,
-  CardCvcElement,
-  CardExpiryElement,
-  CardNumberElement,
-} from '@stripe/react-stripe-js';
-import {
-  loadStripe,
-  StripeCardCvcElementOptions,
-  StripeCardExpiryElementOptions,
-  StripeCardNumberElement,
-  StripeCardNumberElementOptions,
-  StripeElementsOptions,
-} from '@stripe/stripe-js';
-import { useNavigate } from 'react-router-dom';
-import { useObservable } from '@ngneat/use-observable';
-import CheckoutController from '../controllers/checkout.controller';
-import { useTranslation } from 'react-i18next';
-import { ProviderType } from '../models/checkout.model';
-import { RoutePathsType, useQuery } from '../route-paths';
-import { lazy } from '@loadable/component';
-import React from 'react';
 
 const StripePayButtonDesktopComponent = lazy(
   () => import('./desktop/stripe-pay-button.desktop.component')
@@ -61,9 +43,11 @@ export default function StripePayButtonComponent({
   const navigate = useNavigate();
   const stripe = useStripe();
   const elements = useElements();
-  const cardRef = useRef<StripeCardNumberElement | null | undefined>(null);
+  const cardRef = React.useRef<StripeCardNumberElement | null | undefined>(
+    null
+  );
 
-  useEffect(() => {
+  React.useEffect(() => {
     cardRef.current = elements?.getElement('cardNumber');
   }, [elements]);
 

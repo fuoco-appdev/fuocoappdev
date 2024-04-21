@@ -1,28 +1,17 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Outlet, Route, useLocation, useNavigate } from 'react-router-dom';
-import AccountController from '../../controllers/account.controller';
-import styles from '../account-settings.module.scss';
-import { Alert, Button, Line, Modal, Tabs } from '@fuoco.appdev/core-ui';
-import { RoutePathsType, useQuery } from '../../route-paths';
+import { Line, Tabs } from '@fuoco.appdev/core-ui';
 import { useTranslation } from 'react-i18next';
-import { useObservable } from '@ngneat/use-observable';
-import Ripples from 'react-ripples';
-import WindowController from '../../controllers/window.controller';
-import {
-  ResponsiveDesktop,
-  ResponsiveTablet,
-  useDesktopEffect,
-  useTabletEffect,
-} from '../responsive.component';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import { AccountSettingsResponsiveProps } from '../account-settings.component';
+import styles from '../account-settings.module.scss';
+import { ResponsiveTablet } from '../responsive.component';
 
 export default function AccountSettingsTabletComponent({
   windowProps,
 }: AccountSettingsResponsiveProps): JSX.Element {
   const navigate = useNavigate();
   const query = useQuery();
-  const location = useLocation();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <ResponsiveTablet>

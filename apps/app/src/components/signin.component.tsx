@@ -1,27 +1,22 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
+import { lazy } from '@loadable/component';
+import { useObservable } from '@ngneat/use-observable';
+import { AuthError } from '@supabase/supabase-js';
+import React from 'react';
+import { Helmet } from 'react-helmet';
+import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Auth } from '@fuoco.appdev/core-ui';
+import EmailConfirmationController from '../controllers/email-confirmation.controller';
 import SigninController from '../controllers/signin.controller';
 import WindowController from '../controllers/window.controller';
-import styles from './signin.module.scss';
-import SupabaseService from '../services/supabase.service';
+import { SigninState } from '../models/signin.model';
 import { RoutePathsType } from '../route-paths';
-import { AuthError } from '@supabase/supabase-js';
-import { useState, useEffect, useRef } from 'react';
-import { animated, config, useTransition } from 'react-spring';
+import { GuestComponent } from './guest.component';
 import {
   ResponsiveDesktop,
   ResponsiveMobile,
   ResponsiveTablet,
 } from './responsive.component';
-import { useTranslation } from 'react-i18next';
-import { useObservable } from '@ngneat/use-observable';
-import { Helmet } from 'react-helmet';
-import { SigninState } from '../models/signin.model';
-import { GuestComponent } from './guest.component';
-import { lazy } from '@loadable/component';
-import React from 'react';
-import EmailConfirmationController from '../controllers/email-confirmation.controller';
 
 const SigninDesktopComponent = lazy(
   () => import('./desktop/signin.desktop.component')
@@ -48,12 +43,12 @@ export default function SigninComponent(): JSX.Element {
   SigninController.model.location = location;
   const { t } = useTranslation();
   const [signInProps] = useObservable(SigninController.model.store);
-  const [authError, setAuthError] = useState<AuthError | null>(null);
-  const [emailError, setEmailError] = useState<string>('');
-  const [passwordError, setPasswordError] = useState<string>('');
-  const renderCountRef = useRef<number>(0);
+  const [authError, setAuthError] = React.useState<AuthError | null>(null);
+  const [emailError, setEmailError] = React.useState<string>('');
+  const [passwordError, setPasswordError] = React.useState<string>('');
+  const renderCountRef = React.useRef<number>(0);
 
-  useEffect(() => {
+  React.useEffect(() => {
     SigninController.load(renderCountRef.current);
 
     return () => {
@@ -61,7 +56,7 @@ export default function SigninComponent(): JSX.Element {
     };
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (authError?.message === 'Invalid login credentials') {
       setEmailError(t('invalidLoginCredentials') ?? '');
       setPasswordError(t('invalidLoginCredentials') ?? '');

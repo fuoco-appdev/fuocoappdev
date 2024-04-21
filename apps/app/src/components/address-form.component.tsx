@@ -1,25 +1,12 @@
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
-import styles from './address-form.module.scss';
-import {
-  Button,
-  Input,
-  InputPhoneNumber,
-  Line,
-  Listbox,
-  OptionProps,
-} from '@fuoco.appdev/core-ui';
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
-import { useObservable } from '@ngneat/use-observable';
-import { useTranslation } from 'react-i18next';
-import StoreController from '../controllers/store.controller';
-import { Region, Country } from '@medusajs/medusa';
-import ReactCountryFlag from 'react-country-flag';
+import { OptionProps } from '@fuoco.appdev/core-ui';
 import { CountryDataProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/input-phone-number/country-data';
 import { lazy } from '@loadable/component';
+import { Country, Region } from '@medusajs/medusa';
+import { useObservable } from '@ngneat/use-observable';
+import React from 'react';
+import ReactCountryFlag from 'react-country-flag';
+import StoreController from '../controllers/store.controller';
+import styles from './address-form.module.scss';
 import { AddressFormSuspenseDesktopComponent } from './desktop/suspense/address-form.suspense.desktop.component';
 import { AddressFormSuspenseMobileComponent } from './mobile/suspense/address-form.suspense.mobile.component';
 import { AddressFormSuspenseTabletComponent } from './tablet/suspense/address-form.suspense.tablet.component';
@@ -35,14 +22,14 @@ const AddressFormMobileComponent = lazy(
 );
 
 export interface AddressFormOnChangeCallbacks {
-  email?: (event: ChangeEvent<HTMLInputElement>) => void;
-  firstName?: (event: ChangeEvent<HTMLInputElement>) => void;
-  lastName?: (event: ChangeEvent<HTMLInputElement>) => void;
-  company?: (event: ChangeEvent<HTMLInputElement>) => void;
-  address?: (event: ChangeEvent<HTMLInputElement>) => void;
-  apartments?: (event: ChangeEvent<HTMLInputElement>) => void;
-  postalCode?: (event: ChangeEvent<HTMLInputElement>) => void;
-  city?: (event: ChangeEvent<HTMLInputElement>) => void;
+  email?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  firstName?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  lastName?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  company?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  address?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  apartments?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  postalCode?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  city?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   country?: (id: string, value: string) => void;
   region?: (id: string, value: string) => void;
   phoneNumber?: (
@@ -115,18 +102,18 @@ export default function AddressFormComponent({
   onEdit,
 }: AddressFormProps): JSX.Element {
   const [storeProps] = useObservable(StoreController.model.store);
-  const [countryOptions, setCountryOptions] = useState<OptionProps[]>([]);
-  const [regionOptions, setRegionOptions] = useState<OptionProps[]>([]);
-  const [selectedCountryId, setSelectedCountryId] = useState<string>('');
-  const [selectedRegionId, setSelectedRegionId] = useState<string>('');
-  const [selectedCountry, setSelectedCountry] = useState<string>('');
-  const [fullName, setFullName] = useState<string>('');
-  const [location, setLocation] = useState<string>('');
-  const [company, setCompany] = useState<string>('');
-  const [phoneNumber, setPhoneNumber] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
+  const [countryOptions, setCountryOptions] = React.useState<OptionProps[]>([]);
+  const [regionOptions, setRegionOptions] = React.useState<OptionProps[]>([]);
+  const [selectedCountryId, setSelectedCountryId] = React.useState<string>('');
+  const [selectedRegionId, setSelectedRegionId] = React.useState<string>('');
+  const [_selectedCountry, setSelectedCountry] = React.useState<string>('');
+  const [fullName, setFullName] = React.useState<string>('');
+  const [location, setLocation] = React.useState<string>('');
+  const [company, setCompany] = React.useState<string>('');
+  const [phoneNumber, setPhoneNumber] = React.useState<string>('');
+  const [email, setEmail] = React.useState<string>('');
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (countryOptions.length > 0) {
       const country = countryOptions.find(
         (value) => value.id === selectedCountryId
@@ -146,7 +133,7 @@ export default function AddressFormComponent({
     }
   }, [countryOptions, regionOptions]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const countries: OptionProps[] = [];
     for (const region of storeProps.regions as Region[]) {
       for (const country of region.countries as Country[]) {
@@ -180,7 +167,7 @@ export default function AddressFormComponent({
     setCountryOptions(countries);
   }, [storeProps.regions]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!storeProps.selectedRegion || !countryOptions) {
       return;
     }
@@ -191,7 +178,7 @@ export default function AddressFormComponent({
     setSelectedRegionId('');
   }, [countryOptions, storeProps.selectedRegion]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (countryOptions.length <= 0) {
       return;
     }
@@ -222,7 +209,7 @@ export default function AddressFormComponent({
     setRegionOptions(regions);
   }, [selectedCountryId, countryOptions]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const country = countryOptions.find(
       (value) => value.id === values?.countryCode
     );
@@ -260,7 +247,7 @@ export default function AddressFormComponent({
     return locationValue;
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (isComplete) {
       setFullName(`${values?.firstName} ${values?.lastName}`);
 
