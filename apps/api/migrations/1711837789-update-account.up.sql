@@ -1,7 +1,7 @@
 BEGIN;
 -- Type: sex_enum
 
-DROP TYPE IF EXISTS public.sex_enum cascade;
+-- DROP TYPE IF EXISTS public.sex_enum cascade;
 
 CREATE TYPE public.sex_enum AS ENUM
     ('male', 'female');
