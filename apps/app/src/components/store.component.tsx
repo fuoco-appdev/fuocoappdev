@@ -167,7 +167,7 @@ export default function StoreComponent(): JSX.Element {
     product: PricedProduct | undefined,
     productLikesMetadata: ProductLikesMetadataResponse | null
   ) => {
-    if (!product || !productLikesMetadata) {
+    if (!product) {
       StoreController.updateSelectedPricedProduct(undefined);
       StoreController.updateSelectedProductLikesMetadata(null);
       return;
