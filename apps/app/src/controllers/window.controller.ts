@@ -74,7 +74,7 @@ class WindowController extends Controller {
       });
   }
 
-  public override load(_renderCount: number): void {}
+  public override load(_renderCount: number): void { }
 
   public override disposeInitialization(_renderCount: number): void {
     this._notificationCreatedSubscription?.unsubscribe();
@@ -86,7 +86,7 @@ class WindowController extends Controller {
     this._cartSubscription?.unsubscribe();
   }
 
-  public override disposeLoad(_renderCount: number): void {}
+  public override disposeLoad(_renderCount: number): void { }
 
   public updateIsLoading(value: boolean): void {
     this._model.isLoading = value;
@@ -173,132 +173,154 @@ class WindowController extends Controller {
       this._model.transitionKeyIndex = 0;
       this._model.scaleKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.Explore;
+      this._model.activeTabsId = RoutePathsType.Explore;
       this._model.showNavigateBack = false;
       this._model.hideCartButton = false;
     } else if (location.pathname === RoutePathsType.Store) {
       this._model.transitionKeyIndex = 0;
       this._model.scaleKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.Store;
+      this._model.activeTabsId = RoutePathsType.Store;
       this._model.showNavigateBack = false;
       this._model.hideCartButton = false;
     } else if (location.pathname.startsWith(`${RoutePathsType.Store}/`)) {
       this._model.transitionKeyIndex = 0;
       this._model.scaleKeyIndex = 1;
       this._model.activeRoute = RoutePathsType.StoreWithId;
+      this._model.activeTabsId = RoutePathsType.Store;
       this._model.showNavigateBack = true;
       this._model.hideCartButton = true;
     } else if (location.pathname === RoutePathsType.Events) {
       this._model.transitionKeyIndex = 0;
       this._model.scaleKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.Events;
+      this._model.activeTabsId = RoutePathsType.Events;
       this._model.showNavigateBack = false;
       this._model.hideCartButton = false;
     } else if (location.pathname === RoutePathsType.Cart) {
       this._model.transitionKeyIndex = 0;
       this._model.scaleKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.Cart;
+      this._model.activeTabsId = undefined;
       this._model.showNavigateBack = false;
       this._model.hideCartButton = false;
     } else if (location.pathname === RoutePathsType.Checkout) {
       this._model.transitionKeyIndex = 1;
       this._model.scaleKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.Checkout;
+      this._model.activeTabsId = undefined;
       this._model.showNavigateBack = true;
       this._model.hideCartButton = true;
     } else if (location.pathname === RoutePathsType.Signin) {
       this._model.transitionKeyIndex = 0;
       this._model.scaleKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.Signin;
+      this._model.activeTabsId = RoutePathsType.Signin;
       this._model.showNavigateBack = false;
       this._model.hideCartButton = false;
     } else if (location.pathname === RoutePathsType.Signup) {
       this._model.transitionKeyIndex = 0;
       this._model.scaleKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.Signup;
+      this._model.activeTabsId = RoutePathsType.Signup;
       this._model.showNavigateBack = false;
       this._model.hideCartButton = false;
     } else if (location.pathname === RoutePathsType.EmailConfirmation) {
       this._model.transitionKeyIndex = 1;
       this._model.scaleKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.EmailConfirmation;
+      this._model.activeTabsId = undefined;
       this._model.showNavigateBack = true;
       this._model.hideCartButton = true;
     } else if (location.pathname === RoutePathsType.ForgotPassword) {
       this._model.transitionKeyIndex = 0;
       this._model.scaleKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.ForgotPassword;
+      this._model.activeTabsId = undefined;
       this._model.showNavigateBack = false;
       this._model.hideCartButton = false;
     } else if (location.pathname === RoutePathsType.ResetPassword) {
       this._model.transitionKeyIndex = 0;
       this._model.scaleKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.ResetPassword;
+      this._model.activeTabsId = undefined;
       this._model.showNavigateBack = false;
       this._model.hideCartButton = false;
     } else if (location.pathname === RoutePathsType.TermsOfService) {
       this._model.transitionKeyIndex = 1;
       this._model.scaleKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.TermsOfService;
+      this._model.activeTabsId = undefined;
       this._model.showNavigateBack = true;
       this._model.hideCartButton = true;
     } else if (location.pathname === RoutePathsType.PrivacyPolicy) {
       this._model.transitionKeyIndex = 1;
       this._model.scaleKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.PrivacyPolicy;
+      this._model.activeTabsId = undefined;
       this._model.showNavigateBack = true;
       this._model.hideCartButton = true;
     } else if (location.pathname === RoutePathsType.Help) {
       this._model.transitionKeyIndex = 0;
       this._model.scaleKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.Help;
+      this._model.activeTabsId = undefined;
       this._model.showNavigateBack = false;
       this._model.hideCartButton = false;
     } else if (location.pathname === RoutePathsType.AccountHelp) {
       this._model.transitionKeyIndex = 1;
       this._model.scaleKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.AccountHelp;
+      this._model.activeTabsId = undefined;
       this._model.showNavigateBack = true;
       this._model.hideCartButton = true;
     } else if (location.pathname === RoutePathsType.Notifications) {
       this._model.transitionKeyIndex = 0;
       this._model.scaleKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.Notifications;
+      this._model.activeTabsId = RoutePathsType.Notifications;
       this._model.showNavigateBack = false;
       this._model.hideCartButton = false;
     } else if (location.pathname === RoutePathsType.Account) {
       this._model.transitionKeyIndex = 0;
       this._model.scaleKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.Account;
+      this._model.activeTabsId = RoutePathsType.Account;
       this._model.showNavigateBack = false;
       this._model.hideCartButton = false;
     } else if (location.pathname === RoutePathsType.AccountOrderHistory) {
       this._model.transitionKeyIndex = 0;
       this._model.scaleKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.AccountOrderHistory;
+      this._model.activeTabsId = RoutePathsType.Account;
       this._model.showNavigateBack = false;
       this._model.hideCartButton = false;
     } else if (location.pathname === RoutePathsType.AccountAddresses) {
       this._model.transitionKeyIndex = 0;
       this._model.scaleKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.AccountAddresses;
+      this._model.activeTabsId = RoutePathsType.Account;
       this._model.showNavigateBack = false;
       this._model.hideCartButton = false;
     } else if (location.pathname === RoutePathsType.AccountLikes) {
       this._model.transitionKeyIndex = 0;
       this._model.scaleKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.AccountLikes;
+      this._model.activeTabsId = RoutePathsType.Account;
       this._model.showNavigateBack = false;
       this._model.hideCartButton = false;
     } else if (location.pathname === RoutePathsType.AccountAddFriends) {
       this._model.transitionKeyIndex = 1;
       this._model.scaleKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.AccountAddFriends;
+      this._model.activeTabsId = RoutePathsType.Account;
       this._model.showNavigateBack = true;
       this._model.hideCartButton = true;
     } else if (this.isLocationAccountWithId(location.pathname)) {
       this._model.transitionKeyIndex = 2;
       this._model.scaleKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.AccountWithId;
+      this._model.activeTabsId = undefined;
       this._model.showNavigateBack = true;
       this._model.hideCartButton = true;
     } else if (
@@ -403,7 +425,7 @@ class WindowController extends Controller {
     const childPathFormatted = childPath?.split("/").slice(-1) ?? [];
     if (
       `${splittedPath[0]}/${splittedPath[1]}` ===
-        RoutePathsType.AccountStatus.replace("/", "") &&
+      RoutePathsType.AccountStatus.replace("/", "") &&
       /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
         .test(
           splittedPath[2],

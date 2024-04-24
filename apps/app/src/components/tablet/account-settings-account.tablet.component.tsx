@@ -8,6 +8,7 @@ import {
   Modal,
 } from '@fuoco.appdev/core-ui';
 import { AuthError, User } from '@supabase/supabase-js';
+import { LanguageCode } from 'iso-639-1';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import AccountController from '../../controllers/account.controller';
@@ -92,7 +93,7 @@ export default function AccountSettingsAccountTabletComponent({
                     button: styles['button'],
                   },
                 }}
-                language={windowLocalProps.languageCode}
+                language={windowLocalProps.languageCode as LanguageCode}
                 open={isLanguageOpen}
                 supportedLanguages={[
                   { isoCode: 'en', countryCode: 'GB' },

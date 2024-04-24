@@ -238,7 +238,7 @@ export default function ExploreMobileComponent({
                 style={{
                   maxHeight:
                     exploreProps.hasMoreSearchedStockLocations ||
-                    exploreProps.areSearchedStockLocationsLoading
+                      exploreProps.areSearchedStockLocationsLoading
                       ? 24
                       : 0,
                 }}

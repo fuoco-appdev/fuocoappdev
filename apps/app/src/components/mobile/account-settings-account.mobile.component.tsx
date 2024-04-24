@@ -8,6 +8,7 @@ import {
   Modal,
 } from '@fuoco.appdev/core-ui';
 import { AuthError, User } from '@supabase/supabase-js';
+import { LanguageCode } from 'iso-639-1';
 import ReactCountryFlag from 'react-country-flag';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
@@ -284,7 +285,7 @@ export default function AccountSettingsAccountMobileComponent({
               }}
               type={'none'}
               touchScreen={true}
-              language={windowLocalProps.languageCode}
+              language={windowLocalProps.languageCode as LanguageCode}
               open={isLanguageOpen}
               supportedLanguages={[
                 { isoCode: 'en', countryCode: 'GB' },

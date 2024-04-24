@@ -11,6 +11,7 @@ import {
   Typography,
 } from '@fuoco.appdev/core-ui';
 import { Customer } from '@medusajs/medusa';
+import { LanguageCode } from 'iso-639-1';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
@@ -120,7 +121,7 @@ export default function WindowTabletComponent({
                     color: 'rgba(252, 245, 227, .35)',
                   }}
                   hideText={true}
-                  language={windowLocalProps.languageCode}
+                  language={windowLocalProps.languageCode as LanguageCode}
                   onChange={(isoCode: string, info) =>
                     WindowController.updateLanguageInfo(isoCode, info)
                   }
@@ -191,7 +192,7 @@ export default function WindowTabletComponent({
                 size={'tiny'}
                 icon={
                   windowProps.activeRoute !== RoutePathsType.Cart &&
-                  windowProps.activeRoute !== RoutePathsType.Checkout ? (
+                    windowProps.activeRoute !== RoutePathsType.Checkout ? (
                     <Line.ShoppingCart
                       size={24}
                       color={'rgba(252, 245, 227, .8)'}
@@ -222,212 +223,39 @@ export default function WindowTabletComponent({
                 </div>
               )}
             </div>
-            {!windowProps.account && (
-              <>
-                <div
-                  className={[
-                    styles['top-bar-button-container'],
-                    styles['top-bar-button-container-tablet'],
-                  ].join(' ')}
-                >
-                  <Button
-                    touchScreen={true}
-                    rippleProps={{
-                      color: 'rgba(252, 245, 227, .35)',
-                    }}
-                    onClick={() =>
-                      navigate({
-                        pathname: RoutePathsType.Signup,
-                        search: query.toString(),
-                      })
-                    }
-                    type={'text'}
-                    rounded={true}
-                    size={'tiny'}
-                    icon={
-                      windowProps.activeRoute !== RoutePathsType.Signup ? (
-                        <Line.PersonAdd
-                          size={24}
-                          color={'rgba(252, 245, 227, .8)'}
-                        />
-                      ) : (
-                        <Solid.PersonAdd
-                          size={24}
-                          color={'rgba(252, 245, 227, 1)'}
-                        />
-                      )
-                    }
-                  />
-                </div>
-                <div
-                  className={[
-                    styles['top-bar-button-container'],
-                    styles['top-bar-button-container-tablet'],
-                  ].join(' ')}
-                >
-                  <Button
-                    touchScreen={true}
-                    rippleProps={{
-                      color: 'rgba(252, 245, 227, .35)',
-                    }}
-                    onClick={() =>
-                      navigate({
-                        pathname: RoutePathsType.Signin,
-                        search: query.toString(),
-                      })
-                    }
-                    type={'text'}
-                    rounded={true}
-                    size={'tiny'}
-                    icon={
-                      windowProps.activeRoute !== RoutePathsType.Signin ? (
-                        <Line.Login
-                          size={24}
-                          color={'rgba(252, 245, 227, .8)'}
-                        />
-                      ) : (
-                        <Line.Login
-                          size={24}
-                          color={'rgba(252, 245, 227, 1)'}
-                        />
-                      )
-                    }
-                  />
-                </div>
-              </>
-            )}
             {windowProps.account && (
               <>
                 <div
                   className={[
-                    styles['notification-container-details'],
-                    styles['notification-container-details-tablet'],
-                  ].join(' ')}
-                >
-                  <Button
-                    classNames={{
-                      container: [
-                        styles['top-bar-button-container'],
-                        styles['top-bar-button-container-tablet'],
-                      ].join(' '),
-
-                      floatingLabelContainer: [
-                        styles['floating-label-container'],
-                      ].join(' '),
-                    }}
-                    rippleProps={{
-                      color: 'rgba(252, 245, 227, .35)',
-                    }}
-                    onClick={() =>
-                      setTimeout(
-                        () =>
-                          navigate({
-                            pathname: RoutePathsType.Notifications,
-                            search: query.toString(),
-                          }),
-                        75
-                      )
-                    }
-                    type={'text'}
-                    rounded={true}
-                    touchScreen={true}
-                    size={'tiny'}
-                    floatingLabel={t('notifications') ?? ''}
-                    icon={
-                      windowProps.activeRoute !==
-                      RoutePathsType.Notifications ? (
-                        <Line.Notifications
-                          size={24}
-                          color={'rgba(252, 245, 227, .8)'}
-                        />
-                      ) : (
-                        <Solid.Notifications
-                          size={24}
-                          color={'rgba(252, 245, 227, 1)'}
-                        />
-                      )
-                    }
-                  />
-                  {windowProps.unseenNotificationsCount > 0 && (
-                    <div
-                      className={[
-                        styles['notification-status-container'],
-                        styles['notification-status-container-tablet'],
-                      ].join(' ')}
-                    />
-                  )}
-                </div>
-                <div
-                  className={[
                     styles['top-bar-button-container'],
                     styles['top-bar-button-container-tablet'],
                   ].join(' ')}
                 >
                   <Button
-                    touchScreen={true}
                     rippleProps={{
                       color: 'rgba(252, 245, 227, .35)',
                     }}
                     onClick={() =>
                       navigate({
-                        pathname: RoutePathsType.Account,
+                        pathname: RoutePathsType.AccountSettingsAccount,
                         search: query.toString(),
                       })
                     }
+                    floatingLabel={t('settings') ?? ''}
                     type={'text'}
                     rounded={true}
                     size={'tiny'}
-                    icon={
-                      account?.status === 'Incomplete' ? (
-                        <Line.AccountCircle
-                          size={24}
-                          color={
-                            windowProps.activeRoute?.startsWith(
-                              RoutePathsType.Account
-                            ) &&
-                            !WindowController.isLocationAccountWithId(
-                              location.pathname
-                            )
-                              ? 'rgba(252, 245, 227, 1)'
-                              : 'rgba(252, 245, 227, .8)'
-                          }
-                        />
-                      ) : (
-                        <div
-                          className={
-                            windowProps.activeRoute?.startsWith(
-                              RoutePathsType.Account
-                            ) &&
-                            !WindowController.isLocationAccountWithId(
-                              location.pathname
-                            )
-                              ? [
-                                  styles['avatar-container-selected'],
-                                  styles['avatar-container-selected-tablet'],
-                                ].join(' ')
-                              : undefined
-                          }
-                        >
-                          <Avatar
-                            classNames={{
-                              container: accountProps?.profileUrl
-                                ? [
-                                    styles['avatar-container'],
-                                    styles['avatar-container-tablet'],
-                                  ].join(' ')
-                                : [
-                                    styles['no-avatar-container'],
-                                    styles['no-avatar-container-tablet'],
-                                  ].join(' '),
-                            }}
-                            size={'custom'}
-                            text={customer?.first_name}
-                            src={accountProps?.profileUrl}
-                            touchScreen={true}
-                          />
-                        </div>
-                      )
-                    }
+                    icon={!windowProps.activeRoute?.startsWith(RoutePathsType.AccountSettings) ? (
+                      <Line.Settings
+                        size={24}
+                        color={'rgba(252, 245, 227, .8)'}
+                      />
+                    ) : (
+                      <Solid.Settings
+                        size={24}
+                        color={'rgba(252, 245, 227, 1)'}
+                      />
+                    )}
                   />
                 </div>
               </>
@@ -460,7 +288,7 @@ export default function WindowTabletComponent({
               )}
             >
               <Tabs
-                activeId={windowProps.activeRoute}
+                activeId={windowProps.activeTabsId}
                 direction={'vertical'}
                 type={'nav'}
                 onChange={onSidebarTabsChanged}
@@ -502,6 +330,99 @@ export default function WindowTabletComponent({
                       ? t('store') ?? ''
                       : undefined,
                   },
+                  ...(!windowProps.account ? [{
+                    id: RoutePathsType.Signup,
+                    icon:
+                      windowProps.activeRoute === RoutePathsType.Signup ? (
+                        <Solid.PersonAdd size={24} />
+                      ) : (
+                        <Line.PersonAdd size={24} />
+                      ),
+                    label: windowLocalProps.isSideBarOpen
+                      ? t('signup') ?? ''
+                      : undefined,
+                  }, {
+                    id: RoutePathsType.Signin,
+                    icon:
+                      windowProps.activeRoute === RoutePathsType.Signin ? (
+                        <Line.Login size={24} />
+                      ) : (
+                        <Line.Login size={24} />
+                      ),
+                    label: windowLocalProps.isSideBarOpen
+                      ? t('signin') ?? ''
+                      : undefined,
+                  }] : []),
+                  ...(windowProps.account ? [{
+                    id: RoutePathsType.Notifications,
+                    icon: <div
+                      className={[
+                        styles['notification-container-details'],
+                        styles['notification-container-details-tablet'],
+                      ].join(' ')}
+                    >{windowProps.activeRoute !== RoutePathsType.Notifications ? (
+                      <Line.Notifications
+                        size={24}
+                      />
+                    ) : (
+                      <Solid.Notifications
+                        size={24}
+                      />
+                    )}
+                      {windowProps.unseenNotificationsCount > 0 && (
+                        <div
+                          className={[
+                            styles['notification-status-container'],
+                            styles['notification-status-container-tablet'],
+                          ].join(' ')}
+                        />
+                      )}
+                    </div>,
+                    label: windowLocalProps.isSideBarOpen
+                      ? t('notifications') ?? ''
+                      : undefined,
+                  },
+                  {
+                    id: RoutePathsType.Account,
+                    icon:
+                      account?.status === 'Incomplete' ? (
+                        <Line.AccountCircle
+                          size={24}
+                          color={
+                            windowProps.activeRoute?.startsWith(
+                              RoutePathsType.Account
+                            ) &&
+                              !WindowController.isLocationAccountWithId(
+                                location.pathname
+                              )
+                              ? 'rgba(252, 245, 227, 1)'
+                              : 'rgba(252, 245, 227, .8)'
+                          }
+                        />
+                      ) : (
+                        <Avatar
+                          classNames={{
+                            container: accountProps?.profileUrl
+                              ? [
+                                styles['avatar-container'],
+                                styles['avatar-container-tablet'],
+                              ].join(' ')
+                              : [
+                                styles['no-avatar-container'],
+                                styles['no-avatar-container-tablet'],
+                              ].join(' '),
+                          }}
+                          size={'custom'}
+                          text={customer?.first_name}
+                          src={accountProps?.profileUrl}
+                          touchScreen={true}
+                        />
+                      ),
+                    label: windowLocalProps.isSideBarOpen ? account?.status !== 'Incomplete'
+                      ? account.username
+                      : t('profile') ?? undefined : undefined,
+                  },
+                  ] : []),
                 ]}
               />
               {windowLocalProps.isSideBarOpen && (
@@ -623,13 +544,13 @@ export default function WindowTabletComponent({
                             container: !exploreProps.selectedInventoryLocation
                               ?.avatar
                               ? [
-                                  styles['no-avatar-container'],
-                                  styles['no-avatar-container-tablet'],
-                                ].join(' ')
+                                styles['no-avatar-container'],
+                                styles['no-avatar-container-tablet'],
+                              ].join(' ')
                               : [
-                                  styles['avatar-container'],
-                                  styles['avatar-container-tablet'],
-                                ].join(' '),
+                                styles['avatar-container'],
+                                styles['avatar-container-tablet'],
+                              ].join(' '),
                           }}
                           size={'custom'}
                           text={
@@ -650,58 +571,58 @@ export default function WindowTabletComponent({
                     )}
                   {windowProps.activeRoute ===
                     RoutePathsType.EmailConfirmation && (
-                    <>
-                      <Line.Email size={24} />
-                      <div
-                        className={[styles['navigation-back-title']].join(' ')}
-                      >
-                        {t('emailConfirmation')}
-                      </div>
-                    </>
-                  )}
+                      <>
+                        <Line.Email size={24} />
+                        <div
+                          className={[styles['navigation-back-title']].join(' ')}
+                        >
+                          {t('emailConfirmation')}
+                        </div>
+                      </>
+                    )}
                   {windowProps.activeRoute ===
                     RoutePathsType.AccountAddFriends && (
-                    <>
-                      <Line.PersonAddAlt1 size={24} />
-                      <div
-                        className={[styles['navigation-back-title']].join(' ')}
-                      >
-                        {t('addFriends')}
-                      </div>
-                    </>
-                  )}
+                      <>
+                        <Line.PersonAddAlt1 size={24} />
+                        <div
+                          className={[styles['navigation-back-title']].join(' ')}
+                        >
+                          {t('addFriends')}
+                        </div>
+                      </>
+                    )}
                   {WindowController.isLocationAccountWithId(
                     location.pathname ?? ''
                   ) && (
-                    <div
-                      className={[styles['navigation-back-title']].join(' ')}
-                      style={{ textTransform: 'lowercase' }}
-                    >
-                      {accountPublicProps.account?.username ?? ''}
-                    </div>
-                  )}
+                      <div
+                        className={[styles['navigation-back-title']].join(' ')}
+                        style={{ textTransform: 'lowercase' }}
+                      >
+                        {accountPublicProps.account?.username ?? ''}
+                      </div>
+                    )}
                   {WindowController.isLocationAccountStatusWithId(
                     location.pathname ?? ''
                   ) && (
-                    <div
-                      className={[styles['navigation-back-title']].join(' ')}
-                      style={{ textTransform: 'lowercase' }}
-                    >
-                      {accountPublicProps.account?.username ?? ''}
-                    </div>
-                  )}
+                      <div
+                        className={[styles['navigation-back-title']].join(' ')}
+                        style={{ textTransform: 'lowercase' }}
+                      >
+                        {accountPublicProps.account?.username ?? ''}
+                      </div>
+                    )}
                   {windowProps.activeRoute?.startsWith(
                     RoutePathsType.AccountSettings
                   ) && (
-                    <>
-                      <Line.Settings size={24} />
-                      <div
-                        className={[styles['navigation-back-title']].join(' ')}
-                      >
-                        {t('settings')}
-                      </div>
-                    </>
-                  )}
+                      <>
+                        <Line.Settings size={24} />
+                        <div
+                          className={[styles['navigation-back-title']].join(' ')}
+                        >
+                          {t('settings')}
+                        </div>
+                      </>
+                    )}
                   {windowProps.activeRoute === RoutePathsType.Checkout && (
                     <>
                       <Line.ShoppingCart size={24} />
@@ -714,15 +635,15 @@ export default function WindowTabletComponent({
                   )}
                   {windowProps.activeRoute ===
                     RoutePathsType.TermsOfService && (
-                    <>
-                      <Line.Gavel size={24} />
-                      <div
-                        className={[styles['navigation-back-title']].join(' ')}
-                      >
-                        {t('termsOfService')}
-                      </div>
-                    </>
-                  )}
+                      <>
+                        <Line.Gavel size={24} />
+                        <div
+                          className={[styles['navigation-back-title']].join(' ')}
+                        >
+                          {t('termsOfService')}
+                        </div>
+                      </>
+                    )}
                   {windowProps.activeRoute === RoutePathsType.PrivacyPolicy && (
                     <>
                       <Line.Gavel size={24} />
@@ -736,15 +657,15 @@ export default function WindowTabletComponent({
                   {windowProps.activeRoute?.startsWith(
                     RoutePathsType.OrderConfirmed
                   ) && (
-                    <>
-                      <Line.ShoppingCart size={24} />
-                      <div
-                        className={[styles['navigation-back-title']].join(' ')}
-                      >
-                        {t('orderConfirmed')}
-                      </div>
-                    </>
-                  )}
+                      <>
+                        <Line.ShoppingCart size={24} />
+                        <div
+                          className={[styles['navigation-back-title']].join(' ')}
+                        >
+                          {t('orderConfirmed')}
+                        </div>
+                      </>
+                    )}
                 </div>
                 <div
                   className={[
@@ -755,20 +676,20 @@ export default function WindowTabletComponent({
                   {windowProps.activeRoute?.startsWith(
                     RoutePathsType.AccountSettings
                   ) && (
-                    <Button
-                      touchScreen={true}
-                      classNames={{
-                        button: styles['button'],
-                      }}
-                      rippleProps={{
-                        color: 'rgba(252, 245, 227, .35)',
-                      }}
-                      rounded={true}
-                      onClick={() => AccountController.logoutAsync()}
-                      type={'text'}
-                      icon={<Line.Logout size={24} color={'#2A2A5F'} />}
-                    />
-                  )}
+                      <Button
+                        touchScreen={true}
+                        classNames={{
+                          button: styles['button'],
+                        }}
+                        rippleProps={{
+                          color: 'rgba(252, 245, 227, .35)',
+                        }}
+                        rounded={true}
+                        onClick={() => AccountController.logoutAsync()}
+                        type={'text'}
+                        icon={<Line.Logout size={24} color={'#2A2A5F'} />}
+                      />
+                    )}
                 </div>
               </div>
             </CSSTransition>

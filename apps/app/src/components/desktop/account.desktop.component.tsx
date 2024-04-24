@@ -149,36 +149,6 @@ export default function AccountDesktopComponent({
                 />
               </div>
             )}
-            <div
-              className={[
-                styles['tab-button-container'],
-                styles['tab-button-container-desktop'],
-              ].join(' ')}
-            >
-              <Button
-                classNames={{
-                  button: styles['button'],
-                }}
-                rippleProps={{
-                  color: 'rgba(88, 40, 109, .35)',
-                }}
-                onClick={() =>
-                  setTimeout(
-                    () =>
-                      navigate({
-                        pathname: RoutePathsType.AccountSettingsAccount,
-                        search: query.toString(),
-                      }),
-                    75
-                  )
-                }
-                type={'text'}
-                rounded={true}
-                floatingLabel={t('settings') ?? ''}
-                size={'tiny'}
-                icon={<Line.Settings size={24} color={'#2A2A5F'} />}
-              />
-            </div>
           </div>
         </div>
         <div
@@ -695,22 +665,22 @@ export default function AccountDesktopComponent({
                       classNames: {
                         enter:
                           accountProps.activeTabIndex >
-                          accountProps.prevTabIndex
+                            accountProps.prevTabIndex
                             ? styles['left-to-right-enter']
                             : styles['right-to-left-enter'],
                         enterActive:
                           accountProps.activeTabIndex >
-                          accountProps.prevTabIndex
+                            accountProps.prevTabIndex
                             ? styles['left-to-right-enter-active']
                             : styles['right-to-left-enter-active'],
                         exit:
                           accountProps.activeTabIndex >
-                          accountProps.prevTabIndex
+                            accountProps.prevTabIndex
                             ? styles['left-to-right-exit']
                             : styles['right-to-left-exit'],
                         exitActive:
                           accountProps.activeTabIndex >
-                          accountProps.prevTabIndex
+                            accountProps.prevTabIndex
                             ? styles['left-to-right-exit-active']
                             : styles['right-to-left-exit-active'],
                       },

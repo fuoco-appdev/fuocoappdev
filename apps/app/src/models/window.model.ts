@@ -11,6 +11,7 @@ export interface WindowState {
   account: AccountResponse | null;
   isAuthenticated: boolean | undefined;
   activeRoute: RoutePathsType | undefined;
+  activeTabsId: RoutePathsType | undefined;
   cartCount: number;
   unseenNotificationsCount: number;
   orderPlacedNotificationData: Order | undefined;
@@ -46,6 +47,7 @@ export class WindowModel extends Model {
           account: null,
           isAuthenticated: undefined,
           activeRoute: undefined,
+          activeTabsId: undefined,
           cartCount: 0,
           unseenNotificationsCount: 0,
           orderPlacedNotificationData: undefined,
@@ -131,6 +133,16 @@ export class WindowModel extends Model {
     }
   }
 
+  public get activeTabsId(): RoutePathsType | undefined {
+    return this.store.getValue().activeTabsId;
+  }
+
+  public set activeTabsId(value: RoutePathsType | undefined) {
+    if (this.activeTabsId !== value) {
+      this.store.update((state) => ({ ...state, activeTabsId: value }));
+    }
+  }
+
   public get unseenNotificationsCount(): number {
     return this.store.getValue().unseenNotificationsCount;
   }
@@ -166,7 +178,7 @@ export class WindowModel extends Model {
   public set orderShippedNotificationData(value: Order | undefined) {
     if (
       JSON.stringify(this.orderShippedNotificationData) !==
-        JSON.stringify(value)
+      JSON.stringify(value)
     ) {
       this.store.update((state) => ({
         ...state,
@@ -182,7 +194,7 @@ export class WindowModel extends Model {
   public set orderReturnedNotificationData(value: Order | undefined) {
     if (
       JSON.stringify(this.orderReturnedNotificationData) !==
-        JSON.stringify(value)
+      JSON.stringify(value)
     ) {
       this.store.update((state) => ({
         ...state,
@@ -198,7 +210,7 @@ export class WindowModel extends Model {
   public set orderCanceledNotificationData(value: Order | undefined) {
     if (
       JSON.stringify(this.orderCanceledNotificationData) !==
-        JSON.stringify(value)
+      JSON.stringify(value)
     ) {
       this.store.update((state) => ({
         ...state,

@@ -147,37 +147,6 @@ export default function AccountTabletComponent({
                 />
               </div>
             )}
-            <div
-              className={[
-                styles['tab-button-container'],
-                styles['tab-button-container-tablet'],
-              ].join(' ')}
-            >
-              <Button
-                touchScreen={true}
-                classNames={{
-                  button: styles['button'],
-                }}
-                rippleProps={{
-                  color: 'rgba(88, 40, 109, .35)',
-                }}
-                onClick={() =>
-                  setTimeout(
-                    () =>
-                      navigate({
-                        pathname: RoutePathsType.AccountSettingsAccount,
-                        search: query.toString(),
-                      }),
-                    75
-                  )
-                }
-                type={'text'}
-                rounded={true}
-                floatingLabel={t('settings') ?? ''}
-                size={'tiny'}
-                icon={<Line.Settings size={24} color={'#2A2A5F'} />}
-              />
-            </div>
           </div>
         </div>
         <div
