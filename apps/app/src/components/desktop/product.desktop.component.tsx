@@ -270,6 +270,7 @@ export default function ProductDesktopComponent({
                 <>
                   {tags?.map((value: ProductTag) => (
                     <div
+                      key={value.id}
                       className={[styles['tag'], styles['tag-desktop']].join(
                         ' '
                       )}
@@ -280,8 +281,9 @@ export default function ProductDesktopComponent({
                 </>
               ) : (
                 <>
-                  {[1, 2, 3, 4].map(() => (
+                  {[1, 2, 3, 4].map((key) => (
                     <Skeleton
+                      key={key}
                       className={[
                         styles['tag-skeleton'],
                         styles['tag-skeleton-desktop'],
@@ -776,8 +778,9 @@ export default function ProductDesktopComponent({
                                 </div>
                               </>
                             ) : (
-                              [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(() => (
+                              [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((key) => (
                                 <div
+                                  key={key}
                                   className={[
                                     styles['option-content'],
                                     styles['option-content-desktop'],
@@ -1145,8 +1148,9 @@ export default function ProductDesktopComponent({
                               styles['details-container-desktop'],
                             ].join(' ')}
                           >
-                            {[1, 2, 3, 4, 5, 6].map(() => (
+                            {[1, 2, 3, 4, 5, 6].map((key) => (
                               <div
+                                key={key}
                                 className={[
                                   styles['details-item-content'],
                                   styles['details-item-content-desktop'],

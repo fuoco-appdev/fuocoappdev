@@ -9,10 +9,12 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import AccountPublicController from '../controllers/account-public.controller';
 import AccountController from '../controllers/account.controller';
 import ExploreController from '../controllers/explore.controller';
+import ProductController from '../controllers/product.controller';
 import WindowController from '../controllers/window.controller';
 import { AccountPublicState } from '../models/account-public.model';
 import { AccountState } from '../models/account.model';
 import { ExploreState } from '../models/explore.model';
+import { ProductState } from '../models/product.model';
 import { WindowLocalState, WindowState } from '../models/window.model';
 import { RoutePathsType, useQuery } from '../route-paths';
 import AccountNotificationService from '../services/account-notification.service';
@@ -38,6 +40,7 @@ export interface WindowResponsiveProps {
   accountPublicProps: AccountPublicState;
   accountProps: AccountState;
   exploreProps: ExploreState;
+  productProps: ProductState;
   openMore: boolean;
   isLanguageOpen: boolean;
   setOpenMore: (value: boolean) => void;
@@ -61,6 +64,7 @@ export default function WindowComponent(): JSX.Element {
   );
   const [accountProps] = useObservable(AccountController.model.store);
   const [exploreProps] = useObservable(ExploreController.model.store);
+  const [productProps] = useObservable(ProductController.model.store);
   const isMounted = React.useRef<boolean>(false);
   const { i18n, t } = useTranslation();
   const [openMore, setOpenMore] = React.useState<boolean>(false);
@@ -500,6 +504,7 @@ export default function WindowComponent(): JSX.Element {
         accountPublicProps={accountPublicProps}
         accountProps={accountProps}
         exploreProps={exploreProps}
+        productProps={productProps}
         openMore={openMore}
         isLanguageOpen={isLanguageOpen}
         setOpenMore={setOpenMore}
@@ -515,6 +520,7 @@ export default function WindowComponent(): JSX.Element {
         accountPublicProps={accountPublicProps}
         accountProps={accountProps}
         exploreProps={exploreProps}
+        productProps={productProps}
         openMore={openMore}
         isLanguageOpen={isLanguageOpen}
         setOpenMore={setOpenMore}
@@ -530,6 +536,7 @@ export default function WindowComponent(): JSX.Element {
         accountPublicProps={accountPublicProps}
         accountProps={accountProps}
         exploreProps={exploreProps}
+        productProps={productProps}
         openMore={openMore}
         isLanguageOpen={isLanguageOpen}
         setOpenMore={setOpenMore}

@@ -32,6 +32,7 @@ export default function WindowTabletComponent({
   accountProps,
   accountPublicProps,
   exploreProps,
+  productProps,
   isLanguageOpen,
   setIsLanguageOpen,
   onSelectLocation,
@@ -538,38 +539,40 @@ export default function WindowTabletComponent({
                   {windowProps.activeRoute?.startsWith(
                     `${RoutePathsType.Store}/`
                   ) &&
-                    exploreProps.selectedInventoryLocation && (
-                      <>
-                        <Avatar
-                          classNames={{
-                            container: !exploreProps.selectedInventoryLocation
-                              ?.avatar
-                              ? [
-                                styles['no-avatar-container'],
-                                styles['no-avatar-container-tablet'],
-                              ].join(' ')
-                              : [
-                                styles['avatar-container'],
-                                styles['avatar-container-tablet'],
-                              ].join(' '),
-                          }}
-                          size={'custom'}
-                          text={
-                            exploreProps.selectedInventoryLocation?.company ??
-                            ''
-                          }
-                          src={exploreProps.selectedInventoryLocation?.avatar}
-                        />
-                        <div
-                          className={[styles['navigation-back-title']].join(
-                            ' '
-                          )}
-                        >
-                          {exploreProps.selectedInventoryLocation?.company ??
-                            ''}
-                        </div>
-                      </>
-                    )}
+                    (<>{exploreProps.selectedInventoryLocation && (
+                      <Avatar
+                        classNames={{
+                          container: !exploreProps
+                            .selectedInventoryLocation?.avatar
+                            ? [
+                              styles['no-avatar-container'],
+                              styles['no-avatar-container-tablet'],
+                            ].join(' ')
+                            : [
+                              styles['avatar-container'],
+                              styles['avatar-container-tablet'],
+                            ].join(' '),
+                        }}
+                        size={'custom'}
+                        text={
+                          exploreProps.selectedInventoryLocation
+                            ?.company ?? ''
+                        }
+                        src={
+                          exploreProps.selectedInventoryLocation?.avatar
+                        }
+                        touchScreen={true}
+                      />)}
+                      <div
+                        className={[styles['navigation-back-title']].join(
+                          ' '
+                        )}
+                      >
+                        {exploreProps.selectedInventoryLocation && `${exploreProps.selectedInventoryLocation
+                          ?.company ?? ''} - `}
+                        {productProps.metadata?.subtitle}
+                      </div>
+                    </>)}
                   {windowProps.activeRoute ===
                     RoutePathsType.EmailConfirmation && (
                       <>

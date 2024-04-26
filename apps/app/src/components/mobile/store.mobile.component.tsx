@@ -144,7 +144,7 @@ export default function StoreMobileComponent({
                   button: styles['rounded-button'],
                 }}
                 rippleProps={{
-                  color: 'rgba(252, 245, 227, .35)',
+                  color: 'rgba(233, 33, 66, .35)',
                 }}
                 onClick={() =>
                   setTimeout(
@@ -384,7 +384,7 @@ export default function StoreMobileComponent({
                 }}
                 onClick={onRemoveSalesChannel}
                 rippleProps={{
-                  color: 'rgba(252, 245, 227, .35)',
+                  color: 'rgba(233, 33, 66, .35)',
                 }}
                 type={'text'}
                 block={true}

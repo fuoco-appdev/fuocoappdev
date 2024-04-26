@@ -104,8 +104,9 @@ export function ProductSuspenseTabletComponent(): JSX.Element {
                 styles['tags-container-tablet'],
               ].join(' ')}
             >
-              {[1, 2, 3, 4].map(() => (
+              {[1, 2, 3, 4].map((key) => (
                 <Skeleton
+                  key={key}
                   className={[
                     styles['tag-skeleton'],
                     styles['tag-skeleton-tablet'],
@@ -171,8 +172,9 @@ export function ProductSuspenseTabletComponent(): JSX.Element {
                   styles['options-container-tablet'],
                 ].join(' ')}
               >
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(() => (
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((key) => (
                   <div
+                    key={key}
                     className={[
                       styles['option-content'],
                       styles['option-content-tablet'],
@@ -226,8 +228,9 @@ export function ProductSuspenseTabletComponent(): JSX.Element {
                   styles['details-container-tablet'],
                 ].join(' ')}
               >
-                {[1, 2, 3, 4, 5, 6].map(() => (
+                {[1, 2, 3, 4, 5, 6].map((key) => (
                   <div
+                    key={key}
                     className={[
                       styles['details-item-content'],
                       styles['details-item-content-tablet'],
