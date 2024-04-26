@@ -23,7 +23,6 @@ export interface WindowState {
   toast: ToastProps | undefined;
   banner: BannerProps | undefined;
   showNavigateBack: boolean;
-  hideCartButton: boolean;
   loadedLocationPath: string | undefined;
   prevTransitionKeyIndex: number;
   transitionKeyIndex: number;
@@ -59,7 +58,6 @@ export class WindowModel extends Model {
           toast: undefined,
           banner: undefined,
           showNavigateBack: false,
-          hideCartButton: false,
           loadedLocationPath: undefined,
           prevTransitionKeyIndex: 0,
           transitionKeyIndex: 0,
@@ -293,19 +291,6 @@ export class WindowModel extends Model {
       this.store.update((state) => ({
         ...state,
         showNavigateBack: value,
-      }));
-    }
-  }
-
-  public get hideCartButton(): boolean {
-    return this.store.getValue().hideCartButton;
-  }
-
-  public set hideCartButton(value: boolean) {
-    if (this.hideCartButton !== value) {
-      this.store.update((state) => ({
-        ...state,
-        hideCartButton: value,
       }));
     }
   }

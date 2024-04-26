@@ -16,22 +16,6 @@ export function CartSuspenseDesktopComponent(): JSX.Element {
         >
           <div
             className={[
-              styles['top-bar-container'],
-              styles['top-bar-container-desktop'],
-            ].join(' ')}
-          >
-            <Skeleton width={24} height={24} borderRadius={24} />
-            <div
-              className={[
-                styles['shopping-carts-title'],
-                styles['shopping-carts-title-desktop'],
-              ].join(' ')}
-            >
-              <Skeleton width={80} height={20} borderRadius={20} />
-            </div>
-          </div>
-          <div
-            className={[
               styles['shopping-cart-items-container'],
               styles['shopping-cart-items-container-desktop'],
             ].join(' ')}

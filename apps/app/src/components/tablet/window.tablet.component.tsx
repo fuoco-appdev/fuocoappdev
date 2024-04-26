@@ -654,6 +654,18 @@ export default function WindowTabletComponent({
                       </div>
                     </>
                   )}
+                  {windowProps.activeRoute === RoutePathsType.Cart && (
+                    <>
+                      <Line.ShoppingCart size={22} />
+                      <div
+                        className={[styles['navigation-back-title']].join(
+                          ' '
+                        )}
+                      >
+                        {t('shoppingCarts')}
+                      </div>
+                    </>
+                  )}
                   {windowProps.activeRoute?.startsWith(
                     RoutePathsType.OrderConfirmed
                   ) && (

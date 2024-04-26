@@ -94,7 +94,7 @@ export default function AccountPublicLikesDesktopComponent({
             style={{
               maxHeight:
                 accountPublicProps.areLikedProductsLoading ||
-                accountPublicProps.hasMoreLikes
+                  accountPublicProps.hasMoreLikes
                   ? 24
                   : 0,
             }}
@@ -203,7 +203,7 @@ export default function AccountPublicLikesDesktopComponent({
               block={true}
               size={'full'}
               rippleProps={{
-                color: 'rgba(233, 33, 66, .35)',
+                color: 'rgba(252, 245, 227, .35)',
               }}
               icon={<Line.AddShoppingCart size={24} />}
               disabled={

@@ -61,7 +61,8 @@ export default function PermissionsComponent(): JSX.Element {
       const defaultInventoryLocation =
         await ExploreController.getDefaultInventoryLocationAsync();
       await WindowController.updateQueryInventoryLocationAsync(
-        defaultInventoryLocation?.id
+        defaultInventoryLocation?.id,
+        query
       );
     }
   };

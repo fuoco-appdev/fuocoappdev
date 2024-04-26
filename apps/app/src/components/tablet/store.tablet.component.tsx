@@ -16,7 +16,7 @@ import { CSSTransition } from 'react-transition-group';
 import StoreController from '../../controllers/store.controller';
 import { ProductTabs } from '../../models/store.model';
 import { ProductLikesMetadataResponse } from '../../protobuf/product-like_pb';
-import { RoutePathsType, useQuery } from '../../route-paths';
+import { useQuery } from '../../route-paths';
 import { MedusaProductTypeNames } from '../../types/medusa.type';
 import CartVariantItemComponent from '../cart-variant-item.component';
 import ProductPreviewComponent from '../product-preview.component';
@@ -54,6 +54,7 @@ export default function StoreTabletComponent({
   onProductPreviewClick,
   onProductPreviewLikeChanged,
   onProductPreviewRest,
+  onRemoveSalesChannel
 }: StoreResponsiveProps): JSX.Element {
   const previewsContainerRef = React.createRef<HTMLDivElement>();
   const rootRef = React.createRef<HTMLDivElement>();
@@ -91,37 +92,55 @@ export default function StoreTabletComponent({
               ].join(' ')}
             >
               {exploreProps.selectedInventoryLocation && (
-                <div
-                  className={[
-                    styles['sales-location-container'],
-                    styles['sales-location-container-tablet'],
-                  ].join(' ')}
-                >
-                  <Avatar
-                    classNames={{
-                      container: !exploreProps.selectedInventoryLocation?.avatar
-                        ? [
+                <>
+                  <div>
+                    <Button
+                      classNames={{
+                        container: styles['rounded-container'],
+                        button: styles['rounded-button'],
+                      }}
+                      onClick={onRemoveSalesChannel}
+                      rippleProps={{
+                        color: 'rgba(252, 245, 227, .35)',
+                      }}
+                      type={'text'}
+                      block={true}
+                      icon={<Line.Close size={24} />}
+                      rounded={true}
+                    />
+                  </div>
+                  <div
+                    className={[
+                      styles['sales-location-container'],
+                      styles['sales-location-container-tablet'],
+                    ].join(' ')}
+                  >
+                    <Avatar
+                      classNames={{
+                        container: !exploreProps.selectedInventoryLocation?.avatar
+                          ? [
                             styles['no-avatar-container'],
                             styles['no-avatar-container-tablet'],
                           ].join(' ')
-                        : [
+                          : [
                             styles['avatar-container'],
                             styles['avatar-container-tablet'],
                           ].join(' '),
-                    }}
-                    size={'custom'}
-                    text={exploreProps.selectedInventoryLocation?.company ?? ''}
-                    src={exploreProps.selectedInventoryLocation?.avatar}
-                  />
-                  <div
-                    className={[
-                      styles['sales-location-title'],
-                      styles['sales-location-title-tablet'],
-                    ].join(' ')}
-                  >
-                    {exploreProps.selectedInventoryLocation?.company ?? ''}
+                      }}
+                      size={'custom'}
+                      text={exploreProps.selectedInventoryLocation?.company ?? ''}
+                      src={exploreProps.selectedInventoryLocation?.avatar}
+                    />
+                    <div
+                      className={[
+                        styles['sales-location-title'],
+                        styles['sales-location-title-tablet'],
+                      ].join(' ')}
+                    >
+                      {exploreProps.selectedInventoryLocation?.company ?? ''}
+                    </div>
                   </div>
-                </div>
+                </>
               )}
             </div>
             <div
@@ -196,19 +215,19 @@ export default function StoreTabletComponent({
                 <Button
                   touchScreen={true}
                   classNames={{
-                    container: styles['filter-container'],
-                    button: styles['filter-button'],
+                    container: styles['rounded-container'],
+                    button: styles['rounded-button'],
                   }}
                   onClick={() => setOpenFilter(!openFilter)}
                   rippleProps={{
-                    color: 'rgba(233, 33, 66, .35)',
+                    color: 'rgba(252, 245, 227, .35)',
                   }}
                   block={true}
                   icon={
                     openFilter ? (
-                      <Line.Close size={24} color={'#fff'} />
+                      <Line.Close size={24} />
                     ) : (
-                      <Line.FilterList size={24} color={'#fff'} />
+                      <Line.FilterList size={24} />
                     )
                   }
                   rounded={true}
@@ -264,6 +283,7 @@ export default function StoreTabletComponent({
                   storeProps={storeProps}
                   accountProps={accountProps}
                   purchasable={true}
+                  showPricingDetails={storeProps.selectedSalesChannel !== undefined}
                   thumbnail={product.thumbnail ?? undefined}
                   title={product.title ?? undefined}
                   subtitle={product.subtitle ?? undefined}
@@ -307,57 +327,11 @@ export default function StoreTabletComponent({
               style={{
                 maxHeight:
                   exploreLocalProps.selectedInventoryLocationId &&
-                  (storeProps.hasMorePreviews || storeProps.isLoading)
+                    (storeProps.hasMorePreviews || storeProps.isLoading)
                     ? 24
                     : 0,
               }}
             />
-            {!exploreLocalProps.selectedInventoryLocationId && (
-              <div
-                className={[
-                  styles['no-inventory-location-container'],
-                  styles['no-inventory-location-container-tablet'],
-                ].join(' ')}
-              >
-                <div
-                  className={[
-                    styles['no-items-text'],
-                    styles['no-items-text-tablet'],
-                  ].join(' ')}
-                >
-                  {t('chooseASalesChannel')}
-                </div>
-                <div
-                  className={[
-                    styles['no-items-container'],
-                    styles['no-items-container-tablet'],
-                  ].join(' ')}
-                >
-                  <Button
-                    touchScreen={true}
-                    classNames={{
-                      button: styles['outline-button'],
-                    }}
-                    rippleProps={{
-                      color: 'rgba(133, 38, 122, .35)',
-                    }}
-                    size={'large'}
-                    onClick={() =>
-                      setTimeout(
-                        () =>
-                          navigate({
-                            pathname: RoutePathsType.Explore,
-                            search: query.toString(),
-                          }),
-                        75
-                      )
-                    }
-                  >
-                    {t('explore')}
-                  </Button>
-                </div>
-              </div>
-            )}
           </div>
         </div>
         <CSSTransition

@@ -5,14 +5,15 @@ import {
   Input,
   Line,
   Listbox,
-  Tabs,
+  Tabs
 } from '@fuoco.appdev/core-ui';
 import { Product } from '@medusajs/medusa';
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import Skeleton from 'react-loading-skeleton';
 import { useNavigate } from 'react-router-dom';
+import { CSSTransition } from 'react-transition-group';
 import StoreController from '../../controllers/store.controller';
 import { ProductTabs } from '../../models/store.model';
 import { ProductLikesMetadataResponse } from '../../protobuf/product-like_pb';
@@ -20,7 +21,7 @@ import { RoutePathsType, useQuery } from '../../route-paths';
 import { MedusaProductTypeNames } from '../../types/medusa.type';
 import CartVariantItemComponent from '../cart-variant-item.component';
 import ProductPreviewComponent from '../product-preview.component';
-import { ResponsiveMobile } from '../responsive.component';
+import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 import { StoreResponsiveProps } from '../store.component';
 import styles from '../store.module.scss';
 
@@ -28,6 +29,7 @@ export default function StoreMobileComponent({
   storeProps,
   accountProps,
   exploreProps,
+  windowProps,
   exploreLocalProps,
   openFilter,
   openCartVariants,
@@ -54,16 +56,22 @@ export default function StoreMobileComponent({
   onProductPreviewClick,
   onProductPreviewLikeChanged,
   onProductPreviewRest,
+  onRemoveSalesChannel
 }: StoreResponsiveProps): JSX.Element {
   const previewsContainerRef = React.createRef<HTMLDivElement>();
   const rootRef = React.createRef<HTMLDivElement>();
   const topBarRef = React.useRef<HTMLDivElement | null>(null);
+  const bottomBarRef = React.useRef<HTMLDivElement | null>(null);
+  const [showBottomBar, setShowBottomBar] = useState<boolean>(false);
   const navigate = useNavigate();
   const query = useQuery();
   const { t } = useTranslation();
   let prevPreviewScrollTop = 0;
   let yPosition = 0;
 
+  useMobileEffect(() => {
+    setShowBottomBar(exploreLocalProps.selectedInventoryLocationId !== undefined);
+  }, [exploreLocalProps.selectedInventoryLocationId]);
   return (
     <ResponsiveMobile>
       <div
@@ -77,62 +85,6 @@ export default function StoreMobileComponent({
             styles['top-bar-container-mobile'],
           ].join(' ')}
         >
-          <div
-            className={[
-              styles['top-bar-top-content'],
-              styles['top-bar-top-content-mobile'],
-            ].join(' ')}
-          >
-            <div
-              className={[
-                styles['sales-location-container'],
-                styles['sales-location-container-mobile'],
-              ].join(' ')}
-            >
-              {exploreProps.selectedInventoryLocation && (
-                <>
-                  <Avatar
-                    classNames={{
-                      container: !exploreProps.selectedInventoryLocation?.avatar
-                        ? [
-                            styles['no-avatar-container'],
-                            styles['no-avatar-container-mobile'],
-                          ].join(' ')
-                        : [
-                            styles['avatar-container'],
-                            styles['avatar-container-mobile'],
-                          ].join(' '),
-                    }}
-                    size={'custom'}
-                    text={exploreProps.selectedInventoryLocation?.company ?? ''}
-                    src={exploreProps.selectedInventoryLocation?.avatar}
-                  />
-                  <div
-                    className={[
-                      styles['sales-location-title'],
-                      styles['sales-location-title-mobile'],
-                    ].join(' ')}
-                  >
-                    {exploreProps.selectedInventoryLocation?.company ?? ''}
-                  </div>
-                </>
-              )}
-              {!exploreProps.selectedInventoryLocation && (
-                <>
-                  <Skeleton width={28} height={28} borderRadius={28} />
-                  <Skeleton
-                    className={[
-                      styles['sales-location-title'],
-                      styles['sales-location-title-mobile'],
-                    ].join(' ')}
-                    width={120}
-                    borderRadius={20}
-                  />
-                </>
-              )}
-            </div>
-          </div>
-
           <div
             className={[
               styles['search-container'],
@@ -167,17 +119,70 @@ export default function StoreMobileComponent({
             <div>
               <Button
                 classNames={{
-                  container: styles['filter-container'],
-                  button: styles['filter-button'],
+                  container: styles['rounded-container'],
+                  button: styles['rounded-button'],
                 }}
                 onClick={() => setOpenFilter(true)}
                 rippleProps={{
                   color: 'rgba(233, 33, 66, .35)',
                 }}
+                type={'text'}
                 block={true}
-                icon={<Line.FilterList size={24} color={'#fff'} />}
+                icon={<Line.FilterList size={24} />}
                 rounded={true}
               />
+            </div>
+            <div
+              className={[
+                styles['shopping-cart-container-details'],
+                styles['shopping-cart-container-details-mobile'],
+              ].join(' ')}
+            >
+              <Button
+                classNames={{
+                  container: styles['rounded-container'],
+                  button: styles['rounded-button'],
+                }}
+                rippleProps={{
+                  color: 'rgba(252, 245, 227, .35)',
+                }}
+                onClick={() =>
+                  setTimeout(
+                    () =>
+                      navigate({
+                        pathname: RoutePathsType.Cart,
+                        search: query.toString(),
+                      }),
+                    150
+                  )
+                }
+                type={'text'}
+                touchScreen={true}
+                rounded={true}
+                size={'tiny'}
+                icon={
+                  <Line.ShoppingCart
+                    size={24}
+                  />
+                }
+              />
+              {windowProps.cartCount > 0 && (
+                <div
+                  className={[
+                    styles['cart-number-container'],
+                    styles['cart-number-container-mobile'],
+                  ].join(' ')}
+                >
+                  <span
+                    className={[
+                      styles['cart-number'],
+                      styles['cart-number-mobile'],
+                    ].join(' ')}
+                  >
+                    {windowProps.cartCount}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
           <div
@@ -256,6 +261,7 @@ export default function StoreMobileComponent({
                 storeProps={storeProps}
                 accountProps={accountProps}
                 purchasable={true}
+                showPricingDetails={storeProps.selectedSalesChannel !== undefined}
                 thumbnail={product.thumbnail ?? undefined}
                 title={product.title ?? undefined}
                 subtitle={product.subtitle ?? undefined}
@@ -295,57 +301,99 @@ export default function StoreMobileComponent({
             style={{
               maxHeight:
                 exploreLocalProps.selectedInventoryLocationId &&
-                (storeProps.hasMorePreviews || storeProps.isLoading)
+                  (storeProps.hasMorePreviews || storeProps.isLoading)
                   ? 24
                   : 0,
             }}
           />
-          {!exploreLocalProps.selectedInventoryLocationId && (
+        </div>
+        <CSSTransition
+          nodeRef={bottomBarRef}
+          in={!showBottomBar}
+          classNames={{
+            enter: styles['bottom-bar-enter'],
+            enterActive: styles['bottom-bar-enter-active'],
+            enterDone: styles['bottom-bar-enter-done'],
+            exit: styles['bottom-bar-exit'],
+            exitActive: styles['bottom-bar-exit-active'],
+            exitDone: styles['bottom-bar-exit-done'],
+          }}
+          timeout={150}
+        >
+          <div
+            className={[
+              styles['bottom-bar-container'],
+              styles['bottom-bar-container-mobile'],
+            ].join(' ')}
+            ref={bottomBarRef}
+          >
+            <div style={{ width: 46, height: 46 }} />
             <div
               className={[
-                styles['no-inventory-location-container'],
-                styles['no-inventory-location-container-mobile'],
+                styles['sales-location-container'],
+                styles['sales-location-container-mobile'],
               ].join(' ')}
             >
-              <div
-                className={[
-                  styles['no-items-text'],
-                  styles['no-items-text-mobile'],
-                ].join(' ')}
-              >
-                {t('chooseASalesChannel')}
-              </div>
-              <div
-                className={[
-                  styles['no-items-container'],
-                  styles['no-items-container-mobile'],
-                ].join(' ')}
-              >
-                <Button
-                  classNames={{
-                    button: styles['outline-button'],
-                  }}
-                  rippleProps={{
-                    color: 'rgba(133, 38, 122, .35)',
-                  }}
-                  size={'large'}
-                  onClick={() =>
-                    setTimeout(
-                      () =>
-                        navigate({
-                          pathname: RoutePathsType.Explore,
-                          search: query.toString(),
-                        }),
-                      75
-                    )
-                  }
-                >
-                  {t('explore')}
-                </Button>
-              </div>
+              {exploreProps.selectedInventoryLocation && (
+                <>
+                  <Avatar
+                    classNames={{
+                      container: !exploreProps.selectedInventoryLocation?.avatar
+                        ? [
+                          styles['no-avatar-container'],
+                          styles['no-avatar-container-mobile'],
+                        ].join(' ')
+                        : [
+                          styles['avatar-container'],
+                          styles['avatar-container-mobile'],
+                        ].join(' '),
+                    }}
+                    size={'custom'}
+                    text={exploreProps.selectedInventoryLocation?.company ?? ''}
+                    src={exploreProps.selectedInventoryLocation?.avatar}
+                  />
+                  <div
+                    className={[
+                      styles['sales-location-title'],
+                      styles['sales-location-title-mobile'],
+                    ].join(' ')}
+                  >
+                    {exploreProps.selectedInventoryLocation?.company ?? ''}
+                  </div>
+                </>
+              )}
+              {!exploreProps.selectedInventoryLocation && (
+                <>
+                  <Skeleton width={28} height={28} borderRadius={28} />
+                  <Skeleton
+                    className={[
+                      styles['sales-location-title'],
+                      styles['sales-location-title-mobile'],
+                    ].join(' ')}
+                    width={120}
+                    borderRadius={20}
+                  />
+                </>
+              )}
             </div>
-          )}
-        </div>
+            <div>
+              <Button
+                classNames={{
+                  container: styles['rounded-container'],
+                  button: styles['rounded-button'],
+                }}
+                onClick={onRemoveSalesChannel}
+                rippleProps={{
+                  color: 'rgba(252, 245, 227, .35)',
+                }}
+                type={'text'}
+                block={true}
+                icon={<Line.Close size={24} />}
+                rounded={true}
+              />
+            </div>
+          </div>
+        </CSSTransition>
         {ReactDOM.createPortal(
           <>
             <Dropdown

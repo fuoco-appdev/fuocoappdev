@@ -24,6 +24,7 @@ export default function ProductPreviewTabletComponent({
   selectedVariantId,
   isLiked,
   likeCount,
+  showPricingDetails,
   onAddToCart,
   onRest,
   onLikeChanged,
@@ -154,13 +155,13 @@ export default function ProductPreviewTabletComponent({
                 </div>
               )}
             </div>
-            {originalPrice.length > 0 ? (
+            {showPricingDetails && <>{originalPrice.length > 0 ? (
               <span
                 className={[
                   styles['product-price'],
                   styles['product-price-tablet'],
                   originalPrice !== calculatedPrice &&
-                    styles['product-price-crossed'],
+                  styles['product-price-crossed'],
                 ].join(' ')}
               >
                 {originalPrice}
@@ -174,7 +175,7 @@ export default function ProductPreviewTabletComponent({
               >
                 <Line.ProductionQuantityLimits size={20} />
               </div>
-            )}
+            )}</>}
           </div>
           <div
             className={[
@@ -191,8 +192,7 @@ export default function ProductPreviewTabletComponent({
               {description &&
                 description?.length > 0 &&
                 formatDescription(
-                  `${description?.slice(0, 205)}${
-                    description.length > 205 ? '...' : ''
+                  `${description?.slice(0, 205)}${description.length > 205 ? '...' : ''
                   }`
                 )}
             </div>
@@ -270,7 +270,7 @@ export default function ProductPreviewTabletComponent({
                   )}
                 </div>
               </div>
-              {purchasable && pricedProduct && selectedVariantId && (
+              {showPricingDetails && purchasable && pricedProduct && selectedVariantId && (
                 <Button
                   classNames={{ button: styles['floating-button'] }}
                   rippleProps={{
@@ -292,7 +292,7 @@ export default function ProductPreviewTabletComponent({
                   loading={isLoading}
                 />
               )}
-              {purchasable && !pricedProduct && (
+              {showPricingDetails && purchasable && !pricedProduct && (
                 <Skeleton width={46} height={46} borderRadius={46} />
               )}
             </div>

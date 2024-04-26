@@ -47,22 +47,6 @@ export default function CartTabletComponent({
         >
           <div
             className={[
-              styles['top-bar-container'],
-              styles['top-bar-container-tablet'],
-            ].join(' ')}
-          >
-            <Line.ShoppingCart size={24} />
-            <div
-              className={[
-                styles['shopping-carts-title'],
-                styles['shopping-carts-title-tablet'],
-              ].join(' ')}
-            >
-              {t('shoppingCarts')}
-            </div>
-          </div>
-          <div
-            className={[
               styles['shopping-cart-items-container'],
               styles['shopping-cart-items-container-tablet'],
             ].join(' ')}

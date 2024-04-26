@@ -92,17 +92,6 @@ class StoreController extends Controller {
   }
 
   public async loadProductsAsync(): Promise<void> {
-    const region = await firstValueFrom(
-      this._model.store.pipe(
-        select((model) => model.selectedRegion),
-        filter((value) => value !== undefined),
-        take(1)
-      )
-    );
-    if (!region) {
-      return;
-    }
-
     await this.searchAsync(this._model.input, 0, this._limit);
   }
 
@@ -159,6 +148,14 @@ class StoreController extends Controller {
     await this.searchAsync(this._model.input, offset, this._limit);
   }
 
+  public async reloadProductsAsync(): Promise<void> {
+    this._model.selectedTab = undefined;
+    this._model.pagination = 1;
+    this._model.products = [];
+    this._model.pricedProducts = {};
+    await this.searchAsync(this._model.input, 0, this._limit);
+  }
+
   public async requestProductsAsync(
     offset: number = 0,
     limit: number = 10,
@@ -213,17 +210,19 @@ class StoreController extends Controller {
 
     const products: Product[] = [];
     const pricedProductList = productsResponse?.products ?? [];
-    for (let i = 0; i < pricedProductList.length; i++) {
-      for (const variant of pricedProductList[i].variants) {
-        const price = variant.prices?.find(
-          (value) => value.region_id === this._model.selectedRegion?.id
-        );
-        if (!price) {
-          pricedProductList.splice(i, 1);
+    if (selectedRegion) {
+      for (let i = 0; i < pricedProductList.length; i++) {
+        for (const variant of pricedProductList[i].variants) {
+          const price = variant.prices?.find(
+            (value) => value.region_id === selectedRegion?.id
+          );
+          if (!price) {
+            pricedProductList.splice(i, 1);
+          }
         }
-      }
 
-      products.push(Object.assign(pricedProductList[i]) as Product);
+        products.push(Object.assign(pricedProductList[i]) as Product);
+      }
     }
 
     if (products.length <= 0 && offset <= 0) {
@@ -291,29 +290,21 @@ class StoreController extends Controller {
     limit: number = 10,
     force: boolean = false
   ): Promise<void> {
-    if (!force && (this._model.isLoading || !this._model.selectedRegion)) {
+    if (!force && this._model.isLoading) {
       return;
     }
 
-    if (!this._model.selectedSalesChannel) {
-      return;
-    }
-
-    const selectedInventoryLocation: InventoryLocation = await firstValueFrom(
+    const selectedInventoryLocation: InventoryLocation | undefined = await firstValueFrom(
       ExploreController.model.store.pipe(
         select((model) => model.selectedInventoryLocation),
-        filter((value) => value !== undefined),
         take(1)
       )
     );
-    if (!selectedInventoryLocation.type) {
-      return;
-    }
 
     this._model.isLoading = true;
 
-    const filterValue = this.getFilter(selectedInventoryLocation.type);
-    const sortValue = this.getSorting(selectedInventoryLocation.type);
+    const filterValue = this.getFilter(selectedInventoryLocation);
+    const sortValue = this.getSorting(selectedInventoryLocation);
     const result = await this._productsIndex?.search(query, {
       filter: [filterValue],
       ...(sortValue && { sort: [sortValue] }),
@@ -373,20 +364,19 @@ class StoreController extends Controller {
     const selectedRegion = await firstValueFrom(
       this._model.store.pipe(
         select((model) => model.selectedRegion),
-        filter((value) => value !== undefined),
         take(1)
       )
     );
     const cart = await firstValueFrom(
       CartController.model.store.pipe(
         select((model) => model.cart),
-        filter((value) => value !== undefined),
         take(1)
       )
     );
+    const salesChannel = selectedInventoryLocation?.salesChannels && selectedInventoryLocation?.salesChannels.length > 0 ? selectedInventoryLocation?.salesChannels[0] : undefined;
     const productsResponse = await MedusaService.medusa?.products.list({
       id: productIds,
-      sales_channel_id: [this._model.selectedSalesChannel?.id ?? ''],
+      ...(salesChannel && { sales_channel_id: [salesChannel?.id ?? ''] }),
       ...(selectedRegion && {
         region_id: selectedRegion.id,
         currency_code: selectedRegion.currency_code,
@@ -394,13 +384,15 @@ class StoreController extends Controller {
       ...(cart && { cart_id: cart.id }),
     });
     const products = productsResponse?.products ?? [];
-    for (let i = 0; i < products.length; i++) {
-      for (const variant of products[i].variants) {
-        const price = variant.prices?.find(
-          (value) => value.region_id === this._model.selectedRegion?.id
-        );
-        if (!price) {
-          products.splice(i, 1);
+    if (this._model.selectedRegion) {
+      for (let i = 0; i < products.length; i++) {
+        for (const variant of products[i].variants) {
+          const price = variant.prices?.find(
+            (value) => value.region_id === this._model.selectedRegion?.id
+          );
+          if (!price) {
+            products.splice(i, 1);
+          }
         }
       }
     }
@@ -470,11 +462,8 @@ class StoreController extends Controller {
   private async onSelectedInventoryLocationChangedAsync(
     inventoryLocation: InventoryLocation
   ): Promise<void> {
-    if (!inventoryLocation?.region) {
-      return;
-    }
-
-    if (!inventoryLocation || inventoryLocation.salesChannels?.length <= 0) {
+    if (!inventoryLocation || inventoryLocation.salesChannels?.length <= 0 || !inventoryLocation?.region) {
+      this._model.selectedSalesChannel = undefined;
       return;
     }
 
@@ -511,11 +500,18 @@ class StoreController extends Controller {
     return productTypeIds;
   }
 
-  private getFilter(inventoryType: InventoryLocationType): string {
-    const types = this.getTypeIds(inventoryType);
-    let filterValue = `type_id IN [${types.join(', ')}]`;
-    filterValue += ` AND sales_channel_ids = ${this._model.selectedSalesChannel?.id}`;
-    filterValue += ` AND status = published`;
+  private getFilter(inventory?: InventoryLocation | undefined): string {
+    let filterValue = `status = published`;
+    if (inventory?.type) {
+      const types = this.getTypeIds(inventory.type);
+      filterValue += ` AND type_id IN [${types.join(', ')}]`
+    }
+
+    const salesChannel = inventory?.salesChannels && inventory?.salesChannels.length > 0 ? inventory?.salesChannels[0] : undefined;
+    if (salesChannel) {
+      filterValue += ` AND sales_channel_ids = ${salesChannel.id}`;
+    }
+
     if (
       this._model.selectedTab &&
       this._model.selectedTab !== ProductTabs.Wines
@@ -531,9 +527,9 @@ class StoreController extends Controller {
     return filterValue;
   }
 
-  private getSorting(inventoryType: InventoryLocationType): string | undefined {
+  private getSorting(inventory: InventoryLocation | undefined): string | undefined {
     let sortValue: string | undefined = undefined;
-    if (inventoryType === InventoryLocationType.Restaurant) {
+    if (inventory?.type && inventory.type === InventoryLocationType.Restaurant) {
       sortValue = `metadata.order_index:asc`;
     }
 

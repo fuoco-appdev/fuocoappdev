@@ -47,22 +47,6 @@ export default function CartDesktopComponent({
         >
           <div
             className={[
-              styles['top-bar-container'],
-              styles['top-bar-container-desktop'],
-            ].join(' ')}
-          >
-            <Line.ShoppingCart size={24} />
-            <div
-              className={[
-                styles['shopping-carts-title'],
-                styles['shopping-carts-title-desktop'],
-              ].join(' ')}
-            >
-              {t('shoppingCarts')}
-            </div>
-          </div>
-          <div
-            className={[
               styles['shopping-cart-items-container'],
               styles['shopping-cart-items-container-desktop'],
             ].join(' ')}
@@ -542,7 +526,7 @@ export default function CartDesktopComponent({
                     button: styles['checkout-button'],
                   }}
                   rippleProps={{
-                    color: 'rgba(233, 33, 66, .35)',
+                    color: 'rgba(252, 245, 227, .35)',
                   }}
                   block={true}
                   disabled={
@@ -637,7 +621,7 @@ export default function CartDesktopComponent({
               block={true}
               size={'full'}
               rippleProps={{
-                color: 'rgba(233, 33, 66, .35)',
+                color: 'rgba(252, 245, 227, .35)',
               }}
               icon={<Line.AddShoppingCart size={24} />}
               disabled={

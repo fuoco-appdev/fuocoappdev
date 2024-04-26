@@ -38,6 +38,7 @@ export interface ProductPreviewProps {
   description?: string;
   type?: ProductType;
   storeProps?: StoreState;
+  showPricingDetails?: boolean;
   onClick?: () => void;
   onRest?: () => void;
   onAddToCart?: () => void;
@@ -72,6 +73,7 @@ export default function ProductPreviewComponent({
   isLoading,
   pricedProduct,
   likesMetadata,
+  showPricingDetails,
   onClick,
   onRest,
   onAddToCart,
@@ -229,6 +231,7 @@ export default function ProductPreviewComponent({
         selectedVariantId={selectedVariantId}
         likeCount={likeCount}
         isLiked={isLiked}
+        showPricingDetails={showPricingDetails}
         setOriginalPrice={setOriginalPrice}
         setCalculatedPrice={setCalculatedPrice}
         setSelectedVariantId={setSelectedVariantId}
@@ -258,6 +261,7 @@ export default function ProductPreviewComponent({
         selectedVariantId={selectedVariantId}
         likeCount={likeCount}
         isLiked={isLiked}
+        showPricingDetails={showPricingDetails}
         setOriginalPrice={setOriginalPrice}
         setCalculatedPrice={setCalculatedPrice}
         setSelectedVariantId={setSelectedVariantId}
@@ -287,6 +291,7 @@ export default function ProductPreviewComponent({
         selectedVariantId={selectedVariantId}
         likeCount={likeCount}
         isLiked={isLiked}
+        showPricingDetails={showPricingDetails}
         setOriginalPrice={setOriginalPrice}
         setCalculatedPrice={setCalculatedPrice}
         setSelectedVariantId={setSelectedVariantId}

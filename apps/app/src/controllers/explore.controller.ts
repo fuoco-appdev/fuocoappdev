@@ -2,7 +2,6 @@
 import { SalesChannel } from "@medusajs/medusa";
 import { StockLocation } from "@medusajs/stock-location/dist/models";
 import { select } from "@ngneat/elf";
-import { featureCollection, helpers, nearestPoint, point } from "@turf/turf";
 import mapboxgl from "mapbox-gl";
 import { Index } from "meilisearch";
 import { ViewState } from "react-map-gl";
@@ -19,7 +18,6 @@ import { StorageFolderType } from "../protobuf/common_pb";
 import BucketService from "../services/bucket.service";
 import MedusaService from "../services/medusa.service";
 import MeiliSearchService from "../services/meilisearch.service";
-import PermissionsController from "./permissions.controller";
 
 class ExploreController extends Controller {
   private readonly _model: ExploreModel;
@@ -49,7 +47,7 @@ class ExploreController extends Controller {
     this.initializeAsync(renderCount);
   }
 
-  public override load(_renderCount: number): void {}
+  public override load(_renderCount: number): void { }
 
   public override disposeInitialization(_renderCount: number): void {
     this._medusaAccessTokenSubscription?.unsubscribe();
@@ -235,7 +233,7 @@ class ExploreController extends Controller {
     const metadata = stockLocation.metadata;
     const address = stockLocation.address;
 
-    let coordinates: {longitude: number, latitude: number} | null = null;
+    let coordinates: { longitude: number, latitude: number } | null = null;
     if (
       metadata &&
       Object.keys(metadata).includes("coordinates") &&
@@ -243,7 +241,7 @@ class ExploreController extends Controller {
     ) {
       coordinates = JSON.parse(metadata?.["coordinates"] as string);
     } else {
-      coordinates = metadata?.["coordinates"] as {longitude: number, latitude: number};
+      coordinates = metadata?.["coordinates"] as { longitude: number, latitude: number };
     }
 
     let type: InventoryLocationType | undefined;
@@ -305,45 +303,8 @@ class ExploreController extends Controller {
   private async initializeAsync(_renderCount: number): Promise<void> {
     this._model.inventoryLocations = await this
       .requestInventoryLocationsAsync();
-
     this._model.isSelectedInventoryLocationLoaded = true;
-
-    this._currentPositionSubscription?.unsubscribe();
-    this._currentPositionSubscription = PermissionsController.model.store
-      .pipe(select((model) => model.currentPosition))
-      .subscribe({
-        next: (value) =>
-          this.onCurrentPositionChanged(value, this._model.inventoryLocations),
-      });
-
-    this._selectedInventoryLocationIdSubscription?.unsubscribe();
-    this._selectedInventoryLocationIdSubscription = this._model.localStore
-      ?.pipe(select((model) => model.selectedInventoryLocationId))
-      .subscribe({
-        next: (id: string | undefined) => {
-          if (!id) {
-            this._currentPositionSubscription?.unsubscribe();
-            this._currentPositionSubscription = PermissionsController.model
-              .store
-              .pipe(select((model) => model.currentPosition))
-              .subscribe({
-                next: (value) =>
-                  this.onCurrentPositionChanged(
-                    value,
-                    this._model.inventoryLocations,
-                  ),
-              });
-            return;
-          }
-
-          const inventoryLocation = this._model.inventoryLocations.find(
-            (value) => value.id === id,
-          );
-          if (inventoryLocation) {
-            this.updateSelectedInventoryLocation(inventoryLocation);
-          }
-        },
-      });
+    this.updateSelectedInventoryLocationId(this._model.selectedInventoryLocationId);
   }
 
   private async requestInventoryLocationsAsync(): Promise<InventoryLocation[]> {
@@ -361,66 +322,6 @@ class ExploreController extends Controller {
     }
 
     return inventoryLocations;
-  }
-
-  private onCurrentPositionChanged(
-    value: GeolocationPosition,
-    inventoryLocations: InventoryLocation[],
-  ): void {
-    if (!value?.coords || this._model.selectedInventoryLocationId) {
-      return;
-    }
-
-    const { longitude, latitude } = value.coords;
-    const currentPoint = new mapboxgl.LngLat(longitude, latitude);
-    const point = this.findNearestPoint(currentPoint, inventoryLocations);
-    if (point) {
-      const inventoryLocation = this._model.inventoryLocations.find(
-        (value) => value.coordinates.distanceTo(point) === 0,
-      );
-      if (inventoryLocation) {
-        this.updateSelectedInventoryLocation(inventoryLocation);
-      }
-    }
-  }
-
-  private findNearestPoint(
-    target: mapboxgl.LngLat,
-    locations: InventoryLocation[],
-  ): mapboxgl.LngLat | null {
-    const features: helpers.Feature<helpers.Point, helpers.Properties>[] = [];
-    for (const location of locations) {
-      if (!location.coordinates) {
-        continue;
-      }
-
-      features.push(
-        point([location.coordinates.lng, location.coordinates.lat]),
-      );
-    }
-
-    const targetPoint = point([target.lng, target.lat]);
-    const collection = featureCollection(features);
-    if (collection.features.length <= 0) {
-      return null;
-    }
-
-    const nearest = nearestPoint(
-      targetPoint,
-      collection as helpers.FeatureCollection<
-        helpers.Point,
-        helpers.Properties
-      >,
-    );
-
-    if (!nearest) {
-      return null;
-    }
-
-    return new mapboxgl.LngLat(
-      nearest.geometry.coordinates[0],
-      nearest.geometry.coordinates[1],
-    );
   }
 
   private getFilter(): string {

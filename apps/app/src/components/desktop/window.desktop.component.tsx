@@ -681,6 +681,18 @@ export default function WindowDesktopComponent({
                         </div>
                       </>
                     )}
+                  {windowProps.activeRoute === RoutePathsType.Cart && (
+                    <>
+                      <Line.ShoppingCart size={22} />
+                      <div
+                        className={[styles['navigation-back-title']].join(
+                          ' '
+                        )}
+                      >
+                        {t('shoppingCarts')}
+                      </div>
+                    </>
+                  )}
                   {windowProps.activeRoute === RoutePathsType.PrivacyPolicy && (
                     <>
                       <Line.Gavel size={24} />

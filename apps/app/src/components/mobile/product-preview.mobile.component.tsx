@@ -28,6 +28,7 @@ export default function ProductPreviewMobileComponent({
   selectedVariantId,
   likeCount,
   isLiked,
+  showPricingDetails,
   onAddToCart,
   onLikeChanged,
   formatNumberCompact,
@@ -133,9 +134,9 @@ export default function ProductPreviewMobileComponent({
             style={
               expanded
                 ? {
-                    height: '100%',
-                    width: '100%',
-                  }
+                  height: '100%',
+                  width: '100%',
+                }
                 : {}
             }
           >
@@ -147,9 +148,9 @@ export default function ProductPreviewMobileComponent({
               style={
                 expanded
                   ? {
-                      height: '100%',
-                      width: '100%',
-                    }
+                    height: '100%',
+                    width: '100%',
+                  }
                   : {}
               }
             >
@@ -161,9 +162,9 @@ export default function ProductPreviewMobileComponent({
                 style={
                   expanded
                     ? {
-                        height: '100%',
-                        width: '100%',
-                      }
+                      height: '100%',
+                      width: '100%',
+                    }
                     : {}
                 }
               >
@@ -257,8 +258,7 @@ export default function ProductPreviewMobileComponent({
                 {description &&
                   description?.length > 0 &&
                   formatDescription(
-                    `${description?.slice(0, 130)}${
-                      description.length > 130 ? '...' : ''
+                    `${description?.slice(0, 130)}${description.length > 130 ? '...' : ''
                     }`
                   )}
               </div>
@@ -271,7 +271,7 @@ export default function ProductPreviewMobileComponent({
                 styles['right-content-mobile'],
               ].join(' ')}
             >
-              <div
+              {showPricingDetails && (<div
                 className={[
                   styles['price-container'],
                   styles['price-container-mobile'],
@@ -300,7 +300,7 @@ export default function ProductPreviewMobileComponent({
                       styles['product-price'],
                       styles['product-price-mobile'],
                       originalPrice !== calculatedPrice &&
-                        styles['product-price-crossed'],
+                      styles['product-price-crossed'],
                     ].join(' ')}
                   >
                     {originalPrice}
@@ -315,7 +315,7 @@ export default function ProductPreviewMobileComponent({
                     <Line.ProductionQuantityLimits size={20} />
                   </div>
                 )}
-              </div>
+              </div>)}
               <div
                 className={[
                   styles['status-content-container'],
@@ -385,7 +385,7 @@ export default function ProductPreviewMobileComponent({
                   )}
                 </div>
               </div>
-              {purchasable && pricedProduct && selectedVariantId && (
+              {showPricingDetails && purchasable && pricedProduct && selectedVariantId && (
                 <Button
                   classNames={{ button: styles['floating-button'] }}
                   rippleProps={{
@@ -407,7 +407,7 @@ export default function ProductPreviewMobileComponent({
                   loading={isLoading}
                 />
               )}
-              {purchasable && !pricedProduct && (
+              {showPricingDetails && purchasable && !pricedProduct && (
                 <Skeleton width={46} height={46} borderRadius={46} />
               )}
             </div>

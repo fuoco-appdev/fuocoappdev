@@ -156,7 +156,7 @@ export default function CartItemDesktopComponent({
                     button: styles['quantity-button'],
                   }}
                   rippleProps={{
-                    color: 'rgba(233, 33, 66, .35)',
+                    color: 'rgba(252, 245, 227, .35)',
                   }}
                   floatingLabel={t('minus') ?? ''}
                   type={'text'}
@@ -179,7 +179,7 @@ export default function CartItemDesktopComponent({
                     button: styles['quantity-button'],
                   }}
                   rippleProps={{
-                    color: 'rgba(233, 33, 66, .35)',
+                    color: 'rgba(252, 245, 227, .35)',
                   }}
                   floatingLabel={t('add') ?? ''}
                   type={'text'}

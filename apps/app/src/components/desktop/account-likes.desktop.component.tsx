@@ -223,7 +223,7 @@ export default function AccountLikesDesktopComponent({
               block={true}
               size={'full'}
               rippleProps={{
-                color: 'rgba(233, 33, 66, .35)',
+                color: 'rgba(252, 245, 227, .35)',
               }}
               icon={<Line.AddShoppingCart size={24} />}
               disabled={

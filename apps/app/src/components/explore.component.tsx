@@ -89,7 +89,7 @@ export default function ExploreComponent(): JSX.Element {
   };
 
   const onGoToStore = (stockLocation: InventoryLocation) => {
-    ExploreController.updateSelectedInventoryLocation(stockLocation);
+    ExploreController.updateSelectedInventoryLocationId(stockLocation.id);
     navigate({ pathname: RoutePathsType.Store, search: query.toString() });
   };
 

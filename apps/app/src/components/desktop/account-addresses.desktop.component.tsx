@@ -203,7 +203,7 @@ export default function AccountAddressesDesktopComponent({
                       button: styles['add-address-button'],
                     }}
                     rippleProps={{
-                      color: 'rgba(233, 33, 66, .35)',
+                      color: 'rgba(252, 245, 227, .35)',
                     }}
                     block={true}
                     size={'large'}
@@ -318,7 +318,7 @@ export default function AccountAddressesDesktopComponent({
                       ].join(' '),
                     }}
                     rippleProps={{
-                      color: 'rgba(233, 33, 66, .35)',
+                      color: 'rgba(252, 245, 227, .35)',
                     }}
                     block={true}
                     size={'large'}

@@ -178,7 +178,7 @@ export default function WindowMobileComponent({
                       }
                     />
                   </div>
-                  {windowProps.hideCartButton && (
+                  {windowProps.showNavigateBack && (
                     <div
                       className={[
                         styles['navigation-back-text-container'],
@@ -254,6 +254,18 @@ export default function WindowMobileComponent({
                             )}
                           >
                             {t('privacyPolicy')}
+                          </div>
+                        </>
+                      )}
+                      {activeRoute === RoutePathsType.Cart && (
+                        <>
+                          <Line.ShoppingCart size={22} />
+                          <div
+                            className={[styles['navigation-back-title']].join(
+                              ' '
+                            )}
+                          >
+                            {t('shoppingCarts')}
                           </div>
                         </>
                       )}

@@ -73,7 +73,7 @@ export default function WindowComponent(): JSX.Element {
   const onCancelLocation = () => {
     query.set('sales_location', exploreLocalProps.selectedInventoryLocationId);
     navigate({ search: query.toString() });
-    WindowController.updateQueryInventoryLocationAsync(undefined);
+    WindowController.updateQueryInventoryLocationAsync(undefined, query);
   };
 
   const onSelectLocation = () => {
@@ -216,21 +216,13 @@ export default function WindowComponent(): JSX.Element {
       isMounted.current = true;
     }
 
-    const salesLocationId = query.get('sales_location');
-    if (
-      salesLocationId &&
-      salesLocationId !== exploreLocalProps.selectedInventoryLocationId
-    ) {
-      WindowController.updateQueryInventoryLocationAsync(salesLocationId);
-    }
-
     return () => {
       WindowController.disposeLoad(renderCountRef.current);
     };
   }, []);
 
   React.useEffect(() => {
-    WindowController.updateOnLocationChanged(location);
+    WindowController.updateOnLocationChanged(location, query);
   }, [location.pathname, windowProps.authState]);
 
   React.useEffect(() => {

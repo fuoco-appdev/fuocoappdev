@@ -52,7 +52,7 @@ class CartController extends Controller {
     this._selectedInventoryLocationSubscription?.unsubscribe();
   }
 
-  public override disposeLoad(_renderCount: number): void {}
+  public override disposeLoad(_renderCount: number): void { }
 
   public updateDiscountCodeText(value: string): void {
     this._model.discountCode = value;
@@ -272,7 +272,7 @@ class CartController extends Controller {
   private async requestStockLocationsAsync(): Promise<void> {
     const cartIds = await firstValueFrom(
       this._model.localStore?.pipe(select((model) => model.cartIds), take(1)) ??
-        Store.prototype,
+      Store.prototype,
     );
     const stockLocationIds = Object.keys(cartIds);
     const stockLocations = await MedusaService.requestStockLocationsAsync(
@@ -335,6 +335,11 @@ class CartController extends Controller {
   private async onSelectedInventoryLocationChangedAsync(
     value: InventoryLocation | undefined,
   ): Promise<void> {
+    if (!value) {
+      this.updateSelectedCart(undefined);
+      return;
+    }
+
     const regions: Region[] = await firstValueFrom(
       StoreController.model.store.pipe(
         select((model) => model.regions),

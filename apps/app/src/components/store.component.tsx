@@ -85,6 +85,7 @@ export interface StoreResponsiveProps {
     isLiked: boolean,
     product: PricedProduct | undefined
   ) => void;
+  onRemoveSalesChannel: () => void;
 }
 
 export default function StoreComponent(): JSX.Element {
@@ -239,6 +240,15 @@ export default function StoreComponent(): JSX.Element {
     setOpenCartVariants(false);
     setVariantQuantities({});
   };
+
+  const onRemoveSalesChannel = () => {
+    setTimeout(async () => {
+      ExploreController.updateSelectedInventoryLocationId(undefined);
+      await WindowController.updateQueryInventoryLocationAsync(undefined, query);
+      await StoreController.reloadProductsAsync();
+      navigate({ pathname: RoutePathsType.Store, search: query.toString() });
+    }, 150);
+  }
 
   React.useEffect(() => {
     renderCountRef.current += 1;
@@ -429,6 +439,26 @@ export default function StoreComponent(): JSX.Element {
         },
       ]);
     }
+    else {
+      setTabs([
+        {
+          id: ProductTabs.White,
+          label: t('white') ?? 'White',
+        },
+        {
+          id: ProductTabs.Red,
+          label: t('red') ?? 'Red',
+        },
+        {
+          id: ProductTabs.Rose,
+          label: t('rose') ?? 'Rose',
+        },
+        {
+          id: ProductTabs.Spirits,
+          label: t('spirits') ?? 'Spirits',
+        },
+      ]);
+    }
   }, [exploreProps.selectedInventoryLocation]);
 
   const suspenceComponent = (
@@ -499,6 +529,7 @@ export default function StoreComponent(): JSX.Element {
           onProductPreviewClick={onProductPreviewClick}
           onProductPreviewLikeChanged={onProductPreviewLikeChanged}
           onProductPreviewRest={onProductPreviewRest}
+          onRemoveSalesChannel={onRemoveSalesChannel}
         />
         <StoreTabletComponent
           windowProps={windowProps}
@@ -531,6 +562,7 @@ export default function StoreComponent(): JSX.Element {
           onProductPreviewClick={onProductPreviewClick}
           onProductPreviewLikeChanged={onProductPreviewLikeChanged}
           onProductPreviewRest={onProductPreviewRest}
+          onRemoveSalesChannel={onRemoveSalesChannel}
         />
         <StoreMobileComponent
           windowProps={windowProps}
@@ -563,6 +595,7 @@ export default function StoreComponent(): JSX.Element {
           onProductPreviewClick={onProductPreviewClick}
           onProductPreviewLikeChanged={onProductPreviewLikeChanged}
           onProductPreviewRest={onProductPreviewRest}
+          onRemoveSalesChannel={onRemoveSalesChannel}
         />
       </React.Suspense>
     </>
