@@ -9,7 +9,7 @@ import {
   Tabs,
 } from '@fuoco.appdev/core-ui';
 import { Customer } from '@medusajs/medusa';
-import React from 'react';
+import * as React from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import Skeleton from 'react-loading-skeleton';
@@ -23,6 +23,7 @@ import AccountProfileFormComponent from '../account-profile-form.component';
 import { AccountResponsiveProps } from '../account.component';
 import styles from '../account.module.scss';
 import { ResponsiveTablet } from '../responsive.component';
+;
 
 export default function AccountTabletComponent({
   accountProps,

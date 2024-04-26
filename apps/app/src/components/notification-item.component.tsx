@@ -1,5 +1,5 @@
 import { lazy } from '@loadable/component';
-import React from 'react';
+import * as React from 'react';
 import { AccountNotificationResponse } from '../protobuf/account-notification_pb';
 import { NotificationItemSuspenseDesktopComponent } from './desktop/suspense/notification-item.suspense.desktop.component';
 import { NotificationItemSuspenseMobileComponent } from './mobile/suspense/notification-item.suspense.mobile.component';
@@ -21,7 +21,7 @@ export interface NotificationItemProps {
 }
 
 export interface NotificationItemResponsiveProps
-  extends NotificationItemProps {}
+  extends NotificationItemProps { }
 
 export default function NotificationItemComponent({
   notification,

@@ -1,6 +1,6 @@
 import { lazy } from '@loadable/component';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
-import React from 'react';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StorageFolderType } from '../protobuf/common_pb';
 import { DeepLTranslationsResponse } from '../protobuf/deepl_pb';

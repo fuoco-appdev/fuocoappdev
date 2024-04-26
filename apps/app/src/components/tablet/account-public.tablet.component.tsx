@@ -1,5 +1,5 @@
 import { Avatar, Button, Line, Tabs } from '@fuoco.appdev/core-ui';
-import React from 'react';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import Skeleton from 'react-loading-skeleton';
 import { Outlet, useNavigate } from 'react-router-dom';
@@ -9,6 +9,7 @@ import { RoutePathsType, useQuery } from '../../route-paths';
 import { AccountPublicResponsiveProps } from '../account-public.component';
 import styles from '../account-public.module.scss';
 import { ResponsiveTablet } from '../responsive.component';
+;
 
 export default function AccountPublicTabletComponent({
   accountPublicProps,
@@ -223,22 +224,22 @@ export default function AccountPublicTabletComponent({
                       classNames: {
                         enter:
                           accountPublicProps.activeTabIndex >
-                          accountPublicProps.prevTabIndex
+                            accountPublicProps.prevTabIndex
                             ? styles['left-to-right-enter']
                             : styles['right-to-left-enter'],
                         enterActive:
                           accountPublicProps.activeTabIndex >
-                          accountPublicProps.prevTabIndex
+                            accountPublicProps.prevTabIndex
                             ? styles['left-to-right-enter-active']
                             : styles['right-to-left-enter-active'],
                         exit:
                           accountPublicProps.activeTabIndex >
-                          accountPublicProps.prevTabIndex
+                            accountPublicProps.prevTabIndex
                             ? styles['left-to-right-exit']
                             : styles['right-to-left-exit'],
                         exitActive:
                           accountPublicProps.activeTabIndex >
-                          accountPublicProps.prevTabIndex
+                            accountPublicProps.prevTabIndex
                             ? styles['left-to-right-exit-active']
                             : styles['right-to-left-exit-active'],
                       },
@@ -251,22 +252,22 @@ export default function AccountPublicTabletComponent({
                     classNames={{
                       enter:
                         accountPublicProps.activeTabIndex <
-                        accountPublicProps.prevTabIndex
+                          accountPublicProps.prevTabIndex
                           ? styles['left-to-right-enter']
                           : styles['right-to-left-enter'],
                       enterActive:
                         accountPublicProps.activeTabIndex <
-                        accountPublicProps.prevTabIndex
+                          accountPublicProps.prevTabIndex
                           ? styles['left-to-right-enter-active']
                           : styles['right-to-left-enter-active'],
                       exit:
                         accountPublicProps.activeTabIndex <
-                        accountPublicProps.prevTabIndex
+                          accountPublicProps.prevTabIndex
                           ? styles['left-to-right-exit']
                           : styles['right-to-left-exit'],
                       exitActive:
                         accountPublicProps.activeTabIndex <
-                        accountPublicProps.prevTabIndex
+                          accountPublicProps.prevTabIndex
                           ? styles['left-to-right-exit-active']
                           : styles['right-to-left-exit-active'],
                     }}

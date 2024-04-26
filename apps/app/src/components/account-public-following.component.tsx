@@ -1,6 +1,6 @@
 import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
-import React from 'react';
+import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 import AccountPublicController from '../controllers/account-public.controller';

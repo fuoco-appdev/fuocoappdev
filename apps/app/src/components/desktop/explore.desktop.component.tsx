@@ -1,6 +1,6 @@
 import { Button, Input, Line, Tabs } from '@fuoco.appdev/core-ui';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
-import React from 'react';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import Map, { Marker, Popup } from 'react-map-gl';
 import Slider from 'react-slick';
@@ -176,7 +176,7 @@ export default function ExploreDesktopComponent({
               style={{
                 maxHeight:
                   exploreProps.hasMoreSearchedStockLocations ||
-                  exploreProps.areSearchedStockLocationsLoading
+                    exploreProps.areSearchedStockLocationsLoading
                     ? 24
                     : 0,
               }}
@@ -251,7 +251,7 @@ export default function ExploreDesktopComponent({
                       <img
                         src={
                           exploreProps.selectedInventoryLocation?.id !==
-                          point.id
+                            point.id
                             ? '../assets/images/unselected-cellar.png'
                             : '../assets/images/selected-cellar.png'
                         }
@@ -265,7 +265,7 @@ export default function ExploreDesktopComponent({
                       <img
                         src={
                           exploreProps.selectedInventoryLocation?.id !==
-                          point.id
+                            point.id
                             ? '../assets/images/unselected-restaurant.png'
                             : '../assets/images/selected-restaurant.png'
                         }

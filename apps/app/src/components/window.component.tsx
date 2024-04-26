@@ -3,7 +3,7 @@ import { lazy } from '@loadable/component';
 import { PriceList } from '@medusajs/medusa';
 import { Store } from '@ngneat/elf';
 import { useObservable } from '@ngneat/use-observable';
-import React from 'react';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AccountPublicController from '../controllers/account-public.controller';

@@ -4,7 +4,7 @@ import {
   PricedProduct,
   PricedVariant,
 } from '@medusajs/medusa/dist/types/pricing';
-import React from 'react';
+import * as React from 'react';
 import { StoreState } from '../models/store.model';
 import { MedusaProductTypeNames } from '../types/medusa.type';
 import { CartVariantItemSuspenseDesktopComponent } from './desktop/suspense/cart-variant-item.suspense.desktop.component';

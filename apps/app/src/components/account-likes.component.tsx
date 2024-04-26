@@ -2,7 +2,7 @@ import { lazy } from '@loadable/component';
 import { Product } from '@medusajs/medusa';
 import { PricedVariant } from '@medusajs/medusa/dist/types/pricing';
 import { useObservable } from '@ngneat/use-observable';
-import React from 'react';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import AccountController from '../controllers/account.controller';

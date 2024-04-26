@@ -1,6 +1,6 @@
 import { MoneyAmount, ProductType } from '@medusajs/medusa';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
-import React from 'react';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import ProductController from '../controllers/product.controller';
 // @ts-ignore

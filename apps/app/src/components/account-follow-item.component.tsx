@@ -1,5 +1,5 @@
 import { lazy } from '@loadable/component';
-import React from 'react';
+import * as React from 'react';
 import { AccountDocument, AccountState } from '../models/account.model';
 import { AccountFollowerResponse } from '../protobuf/account-follower_pb';
 import { StorageFolderType } from '../protobuf/common_pb';

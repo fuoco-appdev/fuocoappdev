@@ -1,6 +1,6 @@
 import { Button, Dropdown, Input, Line, Tabs } from '@fuoco.appdev/core-ui';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
-import React from 'react';
+import * as React from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import Skeleton from 'react-loading-skeleton';
@@ -17,6 +17,7 @@ import { ExploreResponsiveProps } from '../explore.component';
 import styles from '../explore.module.scss';
 import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 import StockLocationItemComponent from '../stock-location-item.component';
+;
 
 export default function ExploreMobileComponent({
   exploreProps,

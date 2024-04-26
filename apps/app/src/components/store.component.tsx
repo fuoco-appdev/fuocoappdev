@@ -8,7 +8,7 @@ import {
 } from '@medusajs/medusa/dist/types/pricing';
 import { Store } from '@ngneat/elf';
 import { useObservable } from '@ngneat/use-observable';
-import React from 'react';
+import * as React from 'react';
 import ReactCountryFlag from 'react-country-flag';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';

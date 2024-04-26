@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { RouteObject, useLocation } from 'react-router-dom';
 import AccountAddFriendsComponent from './components/account-add-friends.component';
 import AccountAddressesComponent from './components/account-addresses.component';

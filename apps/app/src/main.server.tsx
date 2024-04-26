@@ -2,7 +2,7 @@ import { ChunkExtractor } from '@loadable/server';
 import { Request, Response } from 'express';
 import fs from 'fs';
 import path from 'path';
-import React from 'react';
+import * as React from 'react';
 import { CookiesProvider } from 'react-cookie';
 import ReactDOMServer from 'react-dom/server';
 import Helmet from 'react-helmet';

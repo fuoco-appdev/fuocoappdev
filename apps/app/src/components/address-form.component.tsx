@@ -3,7 +3,7 @@ import { CountryDataProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/
 import { lazy } from '@loadable/component';
 import { Country, Region } from '@medusajs/medusa';
 import { useObservable } from '@ngneat/use-observable';
-import React from 'react';
+import * as React from 'react';
 import ReactCountryFlag from 'react-country-flag';
 import StoreController from '../controllers/store.controller';
 import styles from './address-form.module.scss';

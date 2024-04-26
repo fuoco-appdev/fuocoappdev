@@ -2,7 +2,7 @@
 import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
 import { AuthError } from '@supabase/supabase-js';
-import React from 'react';
+import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import ResetPasswordController from '../controllers/reset-password.controller';
 import WindowController from '../controllers/window.controller';
@@ -23,7 +23,7 @@ const ResetPasswordMobileComponent = lazy(
   () => import('./mobile/reset-password.mobile.component')
 );
 
-export interface ResetPasswordProps {}
+export interface ResetPasswordProps { }
 
 export interface ResetPasswordResponsiveProps {
   resetPasswordProps: ResetPasswordState;

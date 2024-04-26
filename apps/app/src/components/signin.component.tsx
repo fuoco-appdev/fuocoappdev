@@ -2,7 +2,7 @@
 import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
 import { AuthError } from '@supabase/supabase-js';
-import React from 'react';
+import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -35,7 +35,7 @@ export interface SigninResponsiveProps {
   passwordError: string;
 }
 
-export interface SigninProps {}
+export interface SigninProps { }
 
 export default function SigninComponent(): JSX.Element {
   const location = useLocation();

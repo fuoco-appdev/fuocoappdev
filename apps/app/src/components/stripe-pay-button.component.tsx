@@ -4,7 +4,7 @@ import {
   StripeCardNumberElement,
   StripeElementsOptions,
 } from '@stripe/stripe-js';
-import React from 'react';
+import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import CheckoutController from '../controllers/checkout.controller';
 import { RoutePathsType, useQuery } from '../route-paths';

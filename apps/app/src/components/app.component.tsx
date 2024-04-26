@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import { AuthChangeEvent, Session } from '@supabase/supabase-js';
-import React from 'react';
+import * as React from 'react';
 import { useCookies } from 'react-cookie';
 import { useLocation } from 'react-router-dom';
 import AppController from '../controllers/app.controller';
@@ -10,9 +10,9 @@ import MedusaService from '../services/medusa.service';
 import SupabaseService from '../services/supabase.service';
 import WindowComponent from './window.component';
 
-export interface AppProps {}
+export interface AppProps { }
 
-function AppComponent({}: AppProps): JSX.Element {
+function AppComponent({ }: AppProps): JSX.Element {
   const location = useLocation();
   const [cookies, setCookie, removeCookie] = useCookies();
   const renderCountRef = React.useRef<number>(0);

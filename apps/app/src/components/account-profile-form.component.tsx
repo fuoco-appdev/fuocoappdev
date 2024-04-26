@@ -1,6 +1,6 @@
 import { CountryDataProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/input-phone-number/country-data';
 import { lazy } from '@loadable/component';
-import React from 'react';
+import * as React from 'react';
 import { StoreState } from '../models/store.model';
 import { AccountProfileFormSuspenseDesktopComponent } from './desktop/suspense/account-profile-form.suspense.desktop.component';
 import { AccountProfileFormSuspenseMobileComponent } from './mobile/suspense/account-profile-form.suspense.mobile.component';

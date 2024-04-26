@@ -1,6 +1,6 @@
 import { Auth } from '@fuoco.appdev/core-ui';
 import { AuthError } from '@supabase/supabase-js';
-import React from 'react';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { animated, config, useTransition } from 'react-spring';
@@ -9,6 +9,7 @@ import { RoutePathsType, useQuery } from '../../route-paths';
 import { ForgotPasswordResponsiveProps } from '../forgot-password.component';
 import styles from '../forgot-password.module.scss';
 import { ResponsiveTablet, useTabletEffect } from '../responsive.component';
+;
 
 export default function ForgotPasswordTabletComponent({
   forgotPasswordProps,

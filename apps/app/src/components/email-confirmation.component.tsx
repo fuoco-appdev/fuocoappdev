@@ -1,6 +1,6 @@
 import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
-import React from 'react';
+import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import EmailConfirmationController from '../controllers/email-confirmation.controller';
@@ -17,7 +17,7 @@ const EmailConfirmationMobileComponent = lazy(
   () => import('./mobile/email-confirmation.mobile.component')
 );
 
-export interface EmailConfirmationProps {}
+export interface EmailConfirmationProps { }
 
 export interface EmailConfirmationResponsiveProps {
   emailConfirmationProps: EmailConfirmationState;

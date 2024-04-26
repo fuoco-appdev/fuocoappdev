@@ -1,6 +1,6 @@
 import { Button, Dropdown, Input, Line, Solid } from '@fuoco.appdev/core-ui';
 import { Discount, LineItem } from '@medusajs/medusa';
-import React from 'react';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import CartController from '../../controllers/cart.controller';

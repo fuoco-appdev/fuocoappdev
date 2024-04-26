@@ -1,6 +1,6 @@
 import { lazy } from '@loadable/component';
 import { Address } from '@medusajs/medusa';
-import React from 'react';
+import * as React from 'react';
 import { AddressItemSuspenseDesktopComponent } from './desktop/suspense/address-item.suspense.desktop.component';
 import { AddressItemSuspenseMobileComponent } from './mobile/suspense/address-item.suspense.mobile.component';
 import { AddressItemSuspenseTabletComponent } from './tablet/suspense/address-item.suspense.tablet.component';

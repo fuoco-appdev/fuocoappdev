@@ -14,7 +14,7 @@ import styles from '../product.module.scss';
 import loadable from '@loadable/component';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
 import { formatAmount } from 'medusa-react';
-import React from 'react';
+import * as React from 'react';
 import ReactDOM from 'react-dom';
 import Skeleton from 'react-loading-skeleton';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
@@ -24,6 +24,7 @@ import { MedusaProductTypeNames } from '../../types/medusa.type';
 import { ProductResponsiveProps } from '../product.component';
 import { ResponsiveTablet, useTabletEffect } from '../responsive.component';
 import StockLocationItemComponent from '../stock-location-item.component';
+;
 
 const ReactMarkdown = loadable(
   async () => {
@@ -364,22 +365,22 @@ export default function ProductTabletComponent({
                   classNames: {
                     enter:
                       productProps.transitionKeyIndex <
-                      productProps.prevTransitionKeyIndex
+                        productProps.prevTransitionKeyIndex
                         ? styles['left-to-right-enter']
                         : styles['right-to-left-enter'],
                     enterActive:
                       productProps.transitionKeyIndex <
-                      productProps.prevTransitionKeyIndex
+                        productProps.prevTransitionKeyIndex
                         ? styles['left-to-right-enter-active']
                         : styles['right-to-left-enter-active'],
                     exit:
                       productProps.transitionKeyIndex <
-                      productProps.prevTransitionKeyIndex
+                        productProps.prevTransitionKeyIndex
                         ? styles['left-to-right-exit']
                         : styles['right-to-left-exit'],
                     exitActive:
                       productProps.transitionKeyIndex <
-                      productProps.prevTransitionKeyIndex
+                        productProps.prevTransitionKeyIndex
                         ? styles['left-to-right-exit-active']
                         : styles['right-to-left-exit-active'],
                   },
@@ -392,22 +393,22 @@ export default function ProductTabletComponent({
                 classNames={{
                   enter:
                     productProps.transitionKeyIndex >
-                    productProps.prevTransitionKeyIndex
+                      productProps.prevTransitionKeyIndex
                       ? styles['left-to-right-enter']
                       : styles['right-to-left-enter'],
                   enterActive:
                     productProps.transitionKeyIndex >
-                    productProps.prevTransitionKeyIndex
+                      productProps.prevTransitionKeyIndex
                       ? styles['left-to-right-enter-active']
                       : styles['right-to-left-enter-active'],
                   exit:
                     productProps.transitionKeyIndex >
-                    productProps.prevTransitionKeyIndex
+                      productProps.prevTransitionKeyIndex
                       ? styles['left-to-right-exit']
                       : styles['right-to-left-exit'],
                   exitActive:
                     productProps.transitionKeyIndex >
-                    productProps.prevTransitionKeyIndex
+                      productProps.prevTransitionKeyIndex
                       ? styles['left-to-right-exit-active']
                       : styles['right-to-left-exit-active'],
                 }}
@@ -437,29 +438,29 @@ export default function ProductTabletComponent({
                           <>
                             {selectedVariant?.original_price !==
                               selectedVariant?.calculated_price && (
-                              <div
-                                className={[
-                                  styles['calculated-price'],
-                                  styles['calculated-price-tablet'],
-                                ].join(' ')}
-                              >
-                                {storeProps.selectedRegion &&
-                                  formatAmount({
-                                    amount:
-                                      selectedVariant?.calculated_price ?? 0,
-                                    region: storeProps.selectedRegion,
-                                    includeTaxes: false,
-                                  })}
-                              </div>
-                            )}
+                                <div
+                                  className={[
+                                    styles['calculated-price'],
+                                    styles['calculated-price-tablet'],
+                                  ].join(' ')}
+                                >
+                                  {storeProps.selectedRegion &&
+                                    formatAmount({
+                                      amount:
+                                        selectedVariant?.calculated_price ?? 0,
+                                      region: storeProps.selectedRegion,
+                                      includeTaxes: false,
+                                    })}
+                                </div>
+                              )}
                             &nbsp;
                             <div
                               className={[
                                 styles['original-price'],
                                 styles['original-price-tablet'],
                                 selectedVariant?.original_price !==
-                                  selectedVariant?.calculated_price &&
-                                  styles['original-price-crossed'],
+                                selectedVariant?.calculated_price &&
+                                styles['original-price-crossed'],
                               ].join(' ')}
                             >
                               {storeProps.selectedRegion &&
@@ -824,7 +825,7 @@ export default function ProductTabletComponent({
                           max={
                             !productProps.selectedVariant?.allow_backorder
                               ? productProps.selectedVariant
-                                  ?.inventory_quantity ?? 0
+                                ?.inventory_quantity ?? 0
                               : undefined
                           }
                           onChange={(e) => {
@@ -965,7 +966,7 @@ export default function ProductTabletComponent({
                                     ].join(' ')}
                                   >
                                     {productProps.metadata?.weight &&
-                                    productProps.metadata.weight > 0
+                                      productProps.metadata.weight > 0
                                       ? `${productProps.metadata.weight} g`
                                       : '-'}
                                   </div>
@@ -1015,8 +1016,8 @@ export default function ProductTabletComponent({
                                     ].join(' ')}
                                   >
                                     {productProps.metadata?.length &&
-                                    productProps.metadata.width &&
-                                    productProps.metadata.height
+                                      productProps.metadata.width &&
+                                      productProps.metadata.height
                                       ? `${productProps.metadata.length}L x ${productProps.metadata.width}W x ${productProps.metadata.height}H`
                                       : '-'}
                                   </div>
@@ -1062,10 +1063,10 @@ export default function ProductTabletComponent({
                                   <div
                                     className={[
                                       styles[
-                                        'shipping-returns-title-container'
+                                      'shipping-returns-title-container'
                                       ],
                                       styles[
-                                        'shipping-returns-title-container-tablet'
+                                      'shipping-returns-title-container-tablet'
                                       ],
                                     ].join(' ')}
                                   >
@@ -1086,7 +1087,7 @@ export default function ProductTabletComponent({
                                     className={[
                                       styles['shipping-returns-description'],
                                       styles[
-                                        'shipping-returns-description-tablet'
+                                      'shipping-returns-description-tablet'
                                       ],
                                     ].join(' ')}
                                   >
@@ -1102,10 +1103,10 @@ export default function ProductTabletComponent({
                                   <div
                                     className={[
                                       styles[
-                                        'shipping-returns-title-container'
+                                      'shipping-returns-title-container'
                                       ],
                                       styles[
-                                        'shipping-returns-title-container-tablet'
+                                      'shipping-returns-title-container-tablet'
                                       ],
                                     ].join(' ')}
                                   >
@@ -1123,7 +1124,7 @@ export default function ProductTabletComponent({
                                     className={[
                                       styles['shipping-returns-description'],
                                       styles[
-                                        'shipping-returns-description-tablet'
+                                      'shipping-returns-description-tablet'
                                       ],
                                     ].join(' ')}
                                   >
@@ -1255,7 +1256,7 @@ export default function ProductTabletComponent({
                           style={{
                             maxHeight:
                               productProps.hasMoreSearchedStockLocations ||
-                              productProps.areSearchedStockLocationsLoading
+                                productProps.areSearchedStockLocationsLoading
                                 ? 24
                                 : 0,
                           }}
@@ -1266,7 +1267,7 @@ export default function ProductTabletComponent({
                               className={[
                                 styles['no-searched-stock-locations-container'],
                                 styles[
-                                  'no-searched-stock-locations-container-tablet'
+                                'no-searched-stock-locations-container-tablet'
                                 ],
                               ].join(' ')}
                             >

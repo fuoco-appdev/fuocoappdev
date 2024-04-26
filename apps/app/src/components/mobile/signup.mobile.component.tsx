@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import { Auth } from '@fuoco.appdev/core-ui';
 import { AuthError } from '@supabase/supabase-js';
-import React from 'react';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { animated, config, useTransition } from 'react-spring';
@@ -10,6 +10,7 @@ import { RoutePathsType, useQuery } from '../../route-paths';
 import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 import { SignupResponsiveProps } from '../signup.component';
 import styles from '../signup.module.scss';
+;
 
 export default function SignupMobileComponent({
   signupProps,

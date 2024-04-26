@@ -1,12 +1,13 @@
 import { Line } from '@fuoco.appdev/core-ui';
 import moment from 'moment';
-import React from 'react';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AccountNotificationResponse } from '../../protobuf/account-notification_pb';
 import NotificationItemComponent from '../notification-item.component';
 import { NotificationsResponsiveProps } from '../notifications.component';
 import styles from '../notifications.module.scss';
 import { ResponsiveTablet } from '../responsive.component';
+;
 
 export default function NotificationsTabletComponent({
   notificationsProps,
@@ -110,7 +111,7 @@ export default function NotificationsTabletComponent({
             style={{
               maxHeight:
                 notificationsProps.hasMoreNotifications ||
-                notificationsProps.isLoading
+                  notificationsProps.isLoading
                   ? 24
                   : 0,
             }}

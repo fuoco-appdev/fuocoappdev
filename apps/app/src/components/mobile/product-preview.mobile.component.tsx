@@ -1,7 +1,8 @@
 import { Button, Card, Line } from '@fuoco.appdev/core-ui';
-import React from 'react';
+import * as React from 'react';
 import { animated, useSpring } from 'react-spring';
 import styles from '../product-preview.module.scss';
+;
 // @ts-ignore
 import { easings } from '@react-spring/web';
 import Skeleton from 'react-loading-skeleton';

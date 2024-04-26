@@ -1,6 +1,6 @@
 import { Button } from '@fuoco.appdev/core-ui';
 import { Order } from '@medusajs/medusa';
-import React from 'react';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import AccountController from '../../controllers/account.controller';
@@ -10,6 +10,7 @@ import styles from '../account-order-history.module.scss';
 import { useAccountOutletContext } from '../account.component';
 import OrderItemComponent from '../order-item.component';
 import { ResponsiveTablet } from '../responsive.component';
+;
 
 export default function AccountOrderHistoryTabletComponent({
   accountProps,

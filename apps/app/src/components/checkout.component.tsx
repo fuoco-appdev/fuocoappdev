@@ -2,7 +2,7 @@ import { RadioProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/radio/
 import { Cart, Customer, PaymentSession } from '@medusajs/medusa';
 import { PricedShippingOption } from '@medusajs/medusa/dist/types/pricing';
 import { useObservable } from '@ngneat/use-observable';
-import React from 'react';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import CartController from '../controllers/cart.controller';
 import CheckoutController from '../controllers/checkout.controller';
@@ -58,9 +58,9 @@ export interface CheckoutResponsiveProps {
   isPayOpen: boolean;
   stripeOptions: StripeElementsOptions;
   stripeElementOptions:
-    | StripeCardNumberElementOptions
-    | StripeCardExpiryElementOptions
-    | StripeCardCvcElementOptions;
+  | StripeCardNumberElementOptions
+  | StripeCardExpiryElementOptions
+  | StripeCardCvcElementOptions;
   setIsAddAddressOpen: (value: boolean) => void;
   setIsPayOpen: (value: boolean) => void;
   onContinueToDeliveryFromShippingAddress: () => void;
@@ -375,13 +375,13 @@ export default function CheckoutComponent(): JSX.Element {
     | StripeCardNumberElementOptions
     | StripeCardExpiryElementOptions
     | StripeCardCvcElementOptions = React.useMemo(() => {
-    return {
-      classes: {
-        base: styles['stripe-input-base'],
-      },
-      showIcon: true,
-    };
-  }, []);
+      return {
+        classes: {
+          base: styles['stripe-input-base'],
+        },
+        showIcon: true,
+      };
+    }, []);
   return (
     <>
       <Helmet>

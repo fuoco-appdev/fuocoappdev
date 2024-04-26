@@ -1,6 +1,6 @@
 import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
-import React from 'react';
+import * as React from 'react';
 import AccountController from '../controllers/account.controller';
 import { AccountState } from '../models/account.model';
 import { AuthenticatedComponent } from './authenticated.component';

@@ -1,6 +1,7 @@
 import { Button, Card, Line } from '@fuoco.appdev/core-ui';
-import React from 'react';
+import * as React from 'react';
 import styles from '../product-preview.module.scss';
+;
 // @ts-ignore
 import Skeleton from 'react-loading-skeleton';
 import { MedusaProductTypeNames } from '../../types/medusa.type';

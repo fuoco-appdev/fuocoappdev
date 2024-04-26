@@ -14,7 +14,7 @@ import styles from '../product.module.scss';
 import loadable from '@loadable/component';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
 import { formatAmount } from 'medusa-react';
-import React from 'react';
+import * as React from 'react';
 import ReactDOM from 'react-dom';
 import Skeleton from 'react-loading-skeleton';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
@@ -365,22 +365,22 @@ export default function ProductDesktopComponent({
                   classNames: {
                     enter:
                       productProps.transitionKeyIndex <
-                      productProps.prevTransitionKeyIndex
+                        productProps.prevTransitionKeyIndex
                         ? styles['left-to-right-enter']
                         : styles['right-to-left-enter'],
                     enterActive:
                       productProps.transitionKeyIndex <
-                      productProps.prevTransitionKeyIndex
+                        productProps.prevTransitionKeyIndex
                         ? styles['left-to-right-enter-active']
                         : styles['right-to-left-enter-active'],
                     exit:
                       productProps.transitionKeyIndex <
-                      productProps.prevTransitionKeyIndex
+                        productProps.prevTransitionKeyIndex
                         ? styles['left-to-right-exit']
                         : styles['right-to-left-exit'],
                     exitActive:
                       productProps.transitionKeyIndex <
-                      productProps.prevTransitionKeyIndex
+                        productProps.prevTransitionKeyIndex
                         ? styles['left-to-right-exit-active']
                         : styles['right-to-left-exit-active'],
                   },
@@ -393,22 +393,22 @@ export default function ProductDesktopComponent({
                 classNames={{
                   enter:
                     productProps.transitionKeyIndex >
-                    productProps.prevTransitionKeyIndex
+                      productProps.prevTransitionKeyIndex
                       ? styles['left-to-right-enter']
                       : styles['right-to-left-enter'],
                   enterActive:
                     productProps.transitionKeyIndex >
-                    productProps.prevTransitionKeyIndex
+                      productProps.prevTransitionKeyIndex
                       ? styles['left-to-right-enter-active']
                       : styles['right-to-left-enter-active'],
                   exit:
                     productProps.transitionKeyIndex >
-                    productProps.prevTransitionKeyIndex
+                      productProps.prevTransitionKeyIndex
                       ? styles['left-to-right-exit']
                       : styles['right-to-left-exit'],
                   exitActive:
                     productProps.transitionKeyIndex >
-                    productProps.prevTransitionKeyIndex
+                      productProps.prevTransitionKeyIndex
                       ? styles['left-to-right-exit-active']
                       : styles['right-to-left-exit-active'],
                 }}
@@ -438,29 +438,29 @@ export default function ProductDesktopComponent({
                           <>
                             {selectedVariant?.original_price !==
                               selectedVariant?.calculated_price && (
-                              <div
-                                className={[
-                                  styles['calculated-price'],
-                                  styles['calculated-price-desktop'],
-                                ].join(' ')}
-                              >
-                                {storeProps.selectedRegion &&
-                                  formatAmount({
-                                    amount:
-                                      selectedVariant?.calculated_price ?? 0,
-                                    region: storeProps.selectedRegion,
-                                    includeTaxes: false,
-                                  })}
-                              </div>
-                            )}
+                                <div
+                                  className={[
+                                    styles['calculated-price'],
+                                    styles['calculated-price-desktop'],
+                                  ].join(' ')}
+                                >
+                                  {storeProps.selectedRegion &&
+                                    formatAmount({
+                                      amount:
+                                        selectedVariant?.calculated_price ?? 0,
+                                      region: storeProps.selectedRegion,
+                                      includeTaxes: false,
+                                    })}
+                                </div>
+                              )}
                             &nbsp;
                             <div
                               className={[
                                 styles['original-price'],
                                 styles['original-price-desktop'],
                                 selectedVariant?.original_price !==
-                                  selectedVariant?.calculated_price &&
-                                  styles['original-price-crossed'],
+                                selectedVariant?.calculated_price &&
+                                styles['original-price-crossed'],
                               ].join(' ')}
                             >
                               {storeProps.selectedRegion &&
@@ -825,7 +825,7 @@ export default function ProductDesktopComponent({
                           max={
                             !productProps.selectedVariant?.allow_backorder
                               ? productProps.selectedVariant
-                                  ?.inventory_quantity ?? 0
+                                ?.inventory_quantity ?? 0
                               : undefined
                           }
                           onChange={(e) => {
@@ -966,7 +966,7 @@ export default function ProductDesktopComponent({
                                     ].join(' ')}
                                   >
                                     {productProps.metadata?.weight &&
-                                    productProps.metadata.weight > 0
+                                      productProps.metadata.weight > 0
                                       ? `${productProps.metadata.weight} g`
                                       : '-'}
                                   </div>
@@ -1016,8 +1016,8 @@ export default function ProductDesktopComponent({
                                     ].join(' ')}
                                   >
                                     {productProps.metadata?.length &&
-                                    productProps.metadata.width &&
-                                    productProps.metadata.height
+                                      productProps.metadata.width &&
+                                      productProps.metadata.height
                                       ? `${productProps.metadata.length}L x ${productProps.metadata.width}W x ${productProps.metadata.height}H`
                                       : '-'}
                                   </div>
@@ -1063,10 +1063,10 @@ export default function ProductDesktopComponent({
                                   <div
                                     className={[
                                       styles[
-                                        'shipping-returns-title-container'
+                                      'shipping-returns-title-container'
                                       ],
                                       styles[
-                                        'shipping-returns-title-container-desktop'
+                                      'shipping-returns-title-container-desktop'
                                       ],
                                     ].join(' ')}
                                   >
@@ -1078,7 +1078,7 @@ export default function ProductDesktopComponent({
                                       className={[
                                         styles['shipping-returns-title'],
                                         styles[
-                                          'shipping-returns-title-desktop'
+                                        'shipping-returns-title-desktop'
                                         ],
                                       ].join(' ')}
                                     >
@@ -1089,7 +1089,7 @@ export default function ProductDesktopComponent({
                                     className={[
                                       styles['shipping-returns-description'],
                                       styles[
-                                        'shipping-returns-description-desktop'
+                                      'shipping-returns-description-desktop'
                                       ],
                                     ].join(' ')}
                                   >
@@ -1105,10 +1105,10 @@ export default function ProductDesktopComponent({
                                   <div
                                     className={[
                                       styles[
-                                        'shipping-returns-title-container'
+                                      'shipping-returns-title-container'
                                       ],
                                       styles[
-                                        'shipping-returns-title-container-desktop'
+                                      'shipping-returns-title-container-desktop'
                                       ],
                                     ].join(' ')}
                                   >
@@ -1117,7 +1117,7 @@ export default function ProductDesktopComponent({
                                       className={[
                                         styles['shipping-returns-title'],
                                         styles[
-                                          'shipping-returns-title-desktop'
+                                        'shipping-returns-title-desktop'
                                         ],
                                       ].join(' ')}
                                     >
@@ -1128,7 +1128,7 @@ export default function ProductDesktopComponent({
                                     className={[
                                       styles['shipping-returns-description'],
                                       styles[
-                                        'shipping-returns-description-desktop'
+                                      'shipping-returns-description-desktop'
                                       ],
                                     ].join(' ')}
                                   >
@@ -1260,7 +1260,7 @@ export default function ProductDesktopComponent({
                           style={{
                             maxHeight:
                               productProps.hasMoreSearchedStockLocations ||
-                              productProps.areSearchedStockLocationsLoading
+                                productProps.areSearchedStockLocationsLoading
                                 ? 24
                                 : 0,
                           }}
@@ -1271,7 +1271,7 @@ export default function ProductDesktopComponent({
                               className={[
                                 styles['no-searched-stock-locations-container'],
                                 styles[
-                                  'no-searched-stock-locations-container-desktop'
+                                'no-searched-stock-locations-container-desktop'
                                 ],
                               ].join(' ')}
                             >

@@ -3,7 +3,7 @@ import { lazy } from '@loadable/component';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import { Store } from '@ngneat/elf';
 import { useObservable } from '@ngneat/use-observable';
-import React from 'react';
+import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 import CartController from '../controllers/cart.controller';
@@ -79,7 +79,7 @@ export default function CartComponent(): JSX.Element {
       ProductController.addToCartAsync(
         id,
         quantity,
-        () => {},
+        () => { },
         (error) => console.error(error)
       );
     }

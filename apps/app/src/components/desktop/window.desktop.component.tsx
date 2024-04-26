@@ -12,7 +12,7 @@ import {
 } from '@fuoco.appdev/core-ui';
 import { Customer } from '@medusajs/medusa';
 import { LanguageCode } from 'iso-639-1';
-import React from 'react';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';

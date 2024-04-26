@@ -1,7 +1,7 @@
 import { lazy } from '@loadable/component';
 import { Cart } from '@medusajs/medusa';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
-import React from 'react';
+import * as React from 'react';
 import { StorageFolderType } from '../protobuf/common_pb';
 import BucketService from '../services/bucket.service';
 import { StockLocationCartItemSuspenseDesktopComponent } from './desktop/suspense/stock-location-cart-item.suspense.desktop.component';

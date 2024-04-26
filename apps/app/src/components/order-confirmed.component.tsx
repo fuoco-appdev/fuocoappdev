@@ -2,7 +2,7 @@ import { OptionProps } from '@fuoco.appdev/core-ui';
 import { lazy } from '@loadable/component';
 import { LineItem, ReturnReason } from '@medusajs/medusa';
 import { useObservable } from '@ngneat/use-observable';
-import React from 'react';
+import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useParams } from 'react-router-dom';
 import OrderConfirmedController from '../controllers/order-confirmed.controller';
@@ -24,7 +24,7 @@ const OrderConfirmedMobileComponent = lazy(
   () => import('./mobile/order-confirmed.mobile.component')
 );
 
-export interface OrderConfirmedProps {}
+export interface OrderConfirmedProps { }
 
 export interface OrderConfirmedResponsiveProps {
   orderConfirmedProps: OrderConfirmedState;

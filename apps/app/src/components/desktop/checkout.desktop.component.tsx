@@ -9,7 +9,7 @@ import {
   Solid,
 } from '@fuoco.appdev/core-ui';
 import { Customer, Discount, GiftCard } from '@medusajs/medusa';
-import React from 'react';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import CartController from '../../controllers/cart.controller';
 import CheckoutController from '../../controllers/checkout.controller';

@@ -1,6 +1,6 @@
 import { lazy } from '@loadable/component';
 import { LineItem, Order } from '@medusajs/medusa';
-import React from 'react';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { OrderItemSuspenseDesktopComponent } from './desktop/suspense/order-item.suspense.desktop.component';
 import { OrderItemSuspenseMobileComponent } from './mobile/suspense/order-item.suspense.mobile.component';

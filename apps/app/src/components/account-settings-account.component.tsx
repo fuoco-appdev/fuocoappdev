@@ -1,7 +1,7 @@
 import { lazy } from '@loadable/component';
 import { Store } from '@ngneat/elf';
 import { useObservable } from '@ngneat/use-observable';
-import React from 'react';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import AccountController from '../controllers/account.controller';
 import StoreController from '../controllers/store.controller';

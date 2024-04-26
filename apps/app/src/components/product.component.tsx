@@ -9,7 +9,7 @@ import {
 } from '@medusajs/medusa';
 import { PricedVariant } from '@medusajs/medusa/dist/types/pricing';
 import { useObservable } from '@ngneat/use-observable';
-import React from 'react';
+import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { RouteObject, useParams } from 'react-router-dom';
@@ -89,7 +89,7 @@ export interface ProductResponsiveProps {
   onCancelLocation: () => void;
 }
 
-function ProductComponent({}: ProductProps): JSX.Element {
+function ProductComponent({ }: ProductProps): JSX.Element {
   const [productProps] = useObservable(ProductController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
   const [accountProps] = useObservable(AccountController.model.store);

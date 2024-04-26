@@ -12,7 +12,7 @@ import {
 } from '@fuoco.appdev/core-ui';
 import { Customer } from '@medusajs/medusa';
 import { LanguageCode } from 'iso-639-1';
-import React from 'react';
+import * as React from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
@@ -24,6 +24,7 @@ import { RoutePathsType, useQuery } from '../../route-paths';
 import { ResponsiveTablet, useDesktopEffect } from '../responsive.component';
 import { WindowResponsiveProps } from '../window.component';
 import styles from '../window.module.scss';
+;
 
 export default function WindowTabletComponent({
   windowProps,

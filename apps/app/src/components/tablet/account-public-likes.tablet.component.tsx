@@ -1,6 +1,6 @@
 import { Button, Line, Modal } from '@fuoco.appdev/core-ui';
 import { Product } from '@medusajs/medusa';
-import React from 'react';
+import * as React from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { ProductLikesMetadataResponse } from '../../protobuf/product-like_pb';
@@ -11,6 +11,7 @@ import { useAccountPublicOutletContext } from '../account-public.component';
 import CartVariantItemComponent from '../cart-variant-item.component';
 import ProductPreviewComponent from '../product-preview.component';
 import { ResponsiveTablet } from '../responsive.component';
+;
 
 export default function AccountLikesTabletComponent({
   storeProps,
@@ -94,7 +95,7 @@ export default function AccountLikesTabletComponent({
             style={{
               maxHeight:
                 accountPublicProps.areLikedProductsLoading ||
-                accountPublicProps.hasMoreLikes
+                  accountPublicProps.hasMoreLikes
                   ? 24
                   : 0,
             }}

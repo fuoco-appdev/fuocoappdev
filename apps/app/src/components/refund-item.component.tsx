@@ -1,7 +1,7 @@
 import { OptionProps } from '@fuoco.appdev/core-ui';
 import { lazy } from '@loadable/component';
 import { LineItem, ProductOptionValue } from '@medusajs/medusa';
-import React from 'react';
+import * as React from 'react';
 import { ProductOptions } from '../models/product.model';
 import {
   ResponsiveDesktop,

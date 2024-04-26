@@ -1,6 +1,6 @@
 import { Button, Input, Line, Tabs } from '@fuoco.appdev/core-ui';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
-import React from 'react';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import Map, { Marker, Popup } from 'react-map-gl';
 import Slider from 'react-slick';
@@ -15,6 +15,7 @@ import { ExploreResponsiveProps } from '../explore.component';
 import styles from '../explore.module.scss';
 import { ResponsiveTablet } from '../responsive.component';
 import StockLocationItemComponent from '../stock-location-item.component';
+;
 
 export default function ExploreTabletComponent({
   exploreProps,
@@ -176,7 +177,7 @@ export default function ExploreTabletComponent({
               style={{
                 maxHeight:
                   exploreProps.hasMoreSearchedStockLocations ||
-                  exploreProps.areSearchedStockLocationsLoading
+                    exploreProps.areSearchedStockLocationsLoading
                     ? 24
                     : 0,
               }}
@@ -251,7 +252,7 @@ export default function ExploreTabletComponent({
                       <img
                         src={
                           exploreProps.selectedInventoryLocation?.id !==
-                          point.id
+                            point.id
                             ? '../assets/images/unselected-cellar.png'
                             : '../assets/images/selected-cellar.png'
                         }
@@ -265,7 +266,7 @@ export default function ExploreTabletComponent({
                       <img
                         src={
                           exploreProps.selectedInventoryLocation?.id !==
-                          point.id
+                            point.id
                             ? '../assets/images/unselected-restaurant.png'
                             : '../assets/images/selected-restaurant.png'
                         }

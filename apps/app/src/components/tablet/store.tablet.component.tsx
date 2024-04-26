@@ -8,7 +8,7 @@ import {
   Tabs,
 } from '@fuoco.appdev/core-ui';
 import { Product } from '@medusajs/medusa';
-import React from 'react';
+import * as React from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -23,6 +23,7 @@ import ProductPreviewComponent from '../product-preview.component';
 import { ResponsiveTablet } from '../responsive.component';
 import { StoreResponsiveProps } from '../store.component';
 import styles from '../store.module.scss';
+;
 
 export default function StoreTabletComponent({
   storeProps,

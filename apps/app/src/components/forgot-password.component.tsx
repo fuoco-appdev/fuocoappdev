@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
-import React from 'react';
+import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import ForgotPasswordController from '../controllers/forgot-password.controller';
 import { ForgotPasswordState } from '../models/forgot-password.model';

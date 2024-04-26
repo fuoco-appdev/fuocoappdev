@@ -2,7 +2,7 @@
 import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
 import { AuthError } from '@supabase/supabase-js';
-import React from 'react';
+import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -28,7 +28,7 @@ const SignupMobileComponent = lazy(
   () => import('./mobile/signup.mobile.component')
 );
 
-export interface SignupProps {}
+export interface SignupProps { }
 
 export interface SignupResponsiveProps {
   signupProps: SignupState;

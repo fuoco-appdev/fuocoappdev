@@ -1,6 +1,6 @@
 import { lazy } from '@loadable/component';
 import { LineItem, ProductOptionValue } from '@medusajs/medusa';
-import React from 'react';
+import * as React from 'react';
 import { ProductOptions } from '../models/product.model';
 import { StoreState } from '../models/store.model';
 import { ShippingItemSuspenseDesktopComponent } from './desktop/suspense/shipping-item.suspense.desktop.component';

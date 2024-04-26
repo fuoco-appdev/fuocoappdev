@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import { Auth } from '@fuoco.appdev/core-ui';
-import React from 'react';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { animated, config, useTransition } from 'react-spring';
@@ -9,6 +9,7 @@ import { RoutePathsType, useQuery } from '../../route-paths';
 import { ResetPasswordResponsiveProps } from '../reset-password.component';
 import styles from '../reset-password.module.scss';
 import { ResponsiveTablet, useTabletEffect } from '../responsive.component';
+;
 
 export default function ResetPasswordTabletComponent({
   resetPasswordProps,
