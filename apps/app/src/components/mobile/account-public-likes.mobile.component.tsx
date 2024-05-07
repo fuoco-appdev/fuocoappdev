@@ -93,8 +93,7 @@ export default function AccountPublicLikesMobileComponent({
             className={styles['loading-ring']}
             style={{
               maxHeight:
-                accountPublicProps.areLikedProductsLoading ||
-                  accountPublicProps.hasMoreLikes
+                accountPublicProps.areLikedProductsLoading
                   ? 24
                   : 0,
             }}

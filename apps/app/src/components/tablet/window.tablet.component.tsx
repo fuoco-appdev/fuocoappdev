@@ -397,8 +397,8 @@ export default function WindowTabletComponent({
                               !WindowController.isLocationAccountWithId(
                                 location.pathname
                               )
-                              ? 'rgba(252, 245, 227, 1)'
-                              : 'rgba(252, 245, 227, .8)'
+                              ? '#85267A'
+                              : '#2A2A5F'
                           }
                         />
                       ) : (
@@ -482,233 +482,212 @@ export default function WindowTabletComponent({
               styles['right-content-tablet'],
             ].join(' ')}
           >
-            <CSSTransition
-              nodeRef={navigationBackRef}
-              in={
-                windowProps.showNavigateBack &&
-                Boolean(navigationBackRef.current)
-              }
-              timeout={150}
-              classNames={{
-                appear: styles['navigation-back-appear'],
-                appearActive: styles['navigation-back-appear-active'],
-                appearDone: styles['navigation-back-appear-done'],
-                enter: styles['navigation-back-enter'],
-                enterActive: styles['navigation-back-enter-active'],
-                enterDone: styles['navigation-back-enter-done'],
-                exit: styles['navigation-back-exit'],
-                exitActive: styles['navigation-back-exit-active'],
-                exitDone: styles['navigation-back-exit-done'],
-              }}
+            {windowProps.showNavigateBack && (<div
+              className={[
+                styles['navigation-back-container'],
+                styles['navigation-back-container-tablet'],
+              ].join(' ')}
             >
               <div
                 className={[
-                  styles['navigation-back-container'],
-                  styles['navigation-back-container-tablet'],
+                  styles['navigation-back-left-content'],
+                  styles['navigation-back-left-content-tablet'],
                 ].join(' ')}
-                ref={navigationBackRef}
               >
-                <div
-                  className={[
-                    styles['navigation-back-left-content'],
-                    styles['navigation-back-left-content-tablet'],
-                  ].join(' ')}
-                >
-                  <Button
-                    touchScreen={true}
-                    classNames={{
-                      button: styles['button'],
-                    }}
-                    rippleProps={{
-                      color: 'rgba(252, 245, 227, .35)',
-                    }}
-                    rounded={true}
-                    size={'tiny'}
-                    disabled={!windowProps.showNavigateBack}
-                    onClick={onNavigateBack}
-                    type={'text'}
-                    icon={<Line.ArrowBack size={24} color={'#2A2A5F'} />}
-                  />
-                </div>
-                <div
-                  className={[
-                    styles['navigation-back-center-content'],
-                    styles['navigation-back-center-content-tablet'],
-                  ].join(' ')}
-                >
-                  {windowProps.activeRoute?.startsWith(
-                    `${RoutePathsType.Store}/`
-                  ) &&
-                    (<>{exploreProps.selectedInventoryLocation && (
-                      <Avatar
-                        classNames={{
-                          container: !exploreProps
-                            .selectedInventoryLocation?.avatar
-                            ? [
-                              styles['no-avatar-container'],
-                              styles['no-avatar-container-tablet'],
-                            ].join(' ')
-                            : [
-                              styles['avatar-container'],
-                              styles['avatar-container-tablet'],
-                            ].join(' '),
-                        }}
-                        size={'custom'}
-                        text={
-                          exploreProps.selectedInventoryLocation
-                            ?.company ?? ''
-                        }
-                        src={
-                          exploreProps.selectedInventoryLocation?.avatar
-                        }
-                        touchScreen={true}
-                      />)}
-                      <div
-                        className={[styles['navigation-back-title']].join(
-                          ' '
-                        )}
-                      >
-                        {exploreProps.selectedInventoryLocation && `${exploreProps.selectedInventoryLocation
-                          ?.company ?? ''} - `}
-                        {productProps.metadata?.subtitle}
-                      </div>
-                    </>)}
-                  {windowProps.activeRoute ===
-                    RoutePathsType.EmailConfirmation && (
-                      <>
-                        <Line.Email size={24} />
-                        <div
-                          className={[styles['navigation-back-title']].join(' ')}
-                        >
-                          {t('emailConfirmation')}
-                        </div>
-                      </>
-                    )}
-                  {windowProps.activeRoute ===
-                    RoutePathsType.AccountAddFriends && (
-                      <>
-                        <Line.PersonAddAlt1 size={24} />
-                        <div
-                          className={[styles['navigation-back-title']].join(' ')}
-                        >
-                          {t('addFriends')}
-                        </div>
-                      </>
-                    )}
-                  {WindowController.isLocationAccountWithId(
-                    location.pathname ?? ''
-                  ) && (
-                      <div
-                        className={[styles['navigation-back-title']].join(' ')}
-                        style={{ textTransform: 'lowercase' }}
-                      >
-                        {accountPublicProps.account?.username ?? ''}
-                      </div>
-                    )}
-                  {WindowController.isLocationAccountStatusWithId(
-                    location.pathname ?? ''
-                  ) && (
-                      <div
-                        className={[styles['navigation-back-title']].join(' ')}
-                        style={{ textTransform: 'lowercase' }}
-                      >
-                        {accountPublicProps.account?.username ?? ''}
-                      </div>
-                    )}
-                  {windowProps.activeRoute?.startsWith(
-                    RoutePathsType.AccountSettings
-                  ) && (
-                      <>
-                        <Line.Settings size={24} />
-                        <div
-                          className={[styles['navigation-back-title']].join(' ')}
-                        >
-                          {t('settings')}
-                        </div>
-                      </>
-                    )}
-                  {windowProps.activeRoute === RoutePathsType.Checkout && (
+                <Button
+                  touchScreen={true}
+                  classNames={{
+                    button: styles['button'],
+                  }}
+                  rippleProps={{
+                    color: 'rgba(252, 245, 227, .35)',
+                  }}
+                  rounded={true}
+                  size={'tiny'}
+                  disabled={!windowProps.showNavigateBack}
+                  onClick={onNavigateBack}
+                  type={'text'}
+                  icon={<Line.ArrowBack size={24} color={'#2A2A5F'} />}
+                />
+              </div>
+              <div
+                className={[
+                  styles['navigation-back-center-content'],
+                  styles['navigation-back-center-content-tablet'],
+                ].join(' ')}
+              >
+                {windowProps.activeRoute?.startsWith(
+                  `${RoutePathsType.Store}/`
+                ) &&
+                  (<>{exploreProps.selectedInventoryLocation && (
+                    <Avatar
+                      classNames={{
+                        container: !exploreProps
+                          .selectedInventoryLocation?.avatar
+                          ? [
+                            styles['no-avatar-container'],
+                            styles['no-avatar-container-tablet'],
+                          ].join(' ')
+                          : [
+                            styles['avatar-container'],
+                            styles['avatar-container-tablet'],
+                          ].join(' '),
+                      }}
+                      size={'custom'}
+                      text={
+                        exploreProps.selectedInventoryLocation
+                          ?.company ?? ''
+                      }
+                      src={
+                        exploreProps.selectedInventoryLocation?.avatar
+                      }
+                      touchScreen={true}
+                    />)}
+                    <div
+                      className={[styles['navigation-back-title']].join(
+                        ' '
+                      )}
+                    >
+                      {exploreProps.selectedInventoryLocation && `${exploreProps.selectedInventoryLocation
+                        ?.company ?? ''} - `}
+                      {productProps.metadata?.subtitle}
+                    </div>
+                  </>)}
+                {windowProps.activeRoute ===
+                  RoutePathsType.EmailConfirmation && (
                     <>
-                      <Line.ShoppingCart size={24} />
+                      <Line.Email size={24} />
                       <div
                         className={[styles['navigation-back-title']].join(' ')}
                       >
-                        {t('checkout')}
+                        {t('emailConfirmation')}
                       </div>
                     </>
                   )}
-                  {windowProps.activeRoute ===
-                    RoutePathsType.TermsOfService && (
-                      <>
-                        <Line.Gavel size={24} />
-                        <div
-                          className={[styles['navigation-back-title']].join(' ')}
-                        >
-                          {t('termsOfService')}
-                        </div>
-                      </>
-                    )}
-                  {windowProps.activeRoute === RoutePathsType.PrivacyPolicy && (
+                {windowProps.activeRoute ===
+                  RoutePathsType.AccountAddFriends && (
+                    <>
+                      <Line.PersonAddAlt1 size={24} />
+                      <div
+                        className={[styles['navigation-back-title']].join(' ')}
+                      >
+                        {t('addFriends')}
+                      </div>
+                    </>
+                  )}
+                {WindowController.isLocationAccountWithId(
+                  location.pathname ?? ''
+                ) && (
+                    <div
+                      className={[styles['navigation-back-title']].join(' ')}
+                      style={{ textTransform: 'lowercase' }}
+                    >
+                      {accountPublicProps.account?.username ?? ''}
+                    </div>
+                  )}
+                {WindowController.isLocationAccountStatusWithId(
+                  location.pathname ?? ''
+                ) && (
+                    <div
+                      className={[styles['navigation-back-title']].join(' ')}
+                      style={{ textTransform: 'lowercase' }}
+                    >
+                      {accountPublicProps.account?.username ?? ''}
+                    </div>
+                  )}
+                {windowProps.activeRoute?.startsWith(
+                  RoutePathsType.AccountSettings
+                ) && (
+                    <>
+                      <Line.Settings size={24} />
+                      <div
+                        className={[styles['navigation-back-title']].join(' ')}
+                      >
+                        {t('settings')}
+                      </div>
+                    </>
+                  )}
+                {windowProps.activeRoute === RoutePathsType.Checkout && (
+                  <>
+                    <Line.ShoppingCart size={24} />
+                    <div
+                      className={[styles['navigation-back-title']].join(' ')}
+                    >
+                      {t('checkout')}
+                    </div>
+                  </>
+                )}
+                {windowProps.activeRoute ===
+                  RoutePathsType.TermsOfService && (
                     <>
                       <Line.Gavel size={24} />
                       <div
                         className={[styles['navigation-back-title']].join(' ')}
                       >
-                        {t('privacyPolicy')}
+                        {t('termsOfService')}
                       </div>
                     </>
                   )}
-                  {windowProps.activeRoute === RoutePathsType.Cart && (
+                {windowProps.activeRoute === RoutePathsType.PrivacyPolicy && (
+                  <>
+                    <Line.Gavel size={24} />
+                    <div
+                      className={[styles['navigation-back-title']].join(' ')}
+                    >
+                      {t('privacyPolicy')}
+                    </div>
+                  </>
+                )}
+                {windowProps.activeRoute === RoutePathsType.Cart && (
+                  <>
+                    <Line.ShoppingCart size={22} />
+                    <div
+                      className={[styles['navigation-back-title']].join(
+                        ' '
+                      )}
+                    >
+                      {t('shoppingCarts')}
+                    </div>
+                  </>
+                )}
+                {windowProps.activeRoute?.startsWith(
+                  RoutePathsType.OrderConfirmed
+                ) && (
                     <>
-                      <Line.ShoppingCart size={22} />
+                      <Line.ShoppingCart size={24} />
                       <div
-                        className={[styles['navigation-back-title']].join(
-                          ' '
-                        )}
+                        className={[styles['navigation-back-title']].join(' ')}
                       >
-                        {t('shoppingCarts')}
+                        {t('orderConfirmed')}
                       </div>
                     </>
                   )}
-                  {windowProps.activeRoute?.startsWith(
-                    RoutePathsType.OrderConfirmed
-                  ) && (
-                      <>
-                        <Line.ShoppingCart size={24} />
-                        <div
-                          className={[styles['navigation-back-title']].join(' ')}
-                        >
-                          {t('orderConfirmed')}
-                        </div>
-                      </>
-                    )}
-                </div>
-                <div
-                  className={[
-                    styles['navigation-back-right-content'],
-                    styles['navigation-back-right-content-tablet'],
-                  ].join(' ')}
-                >
-                  {windowProps.activeRoute?.startsWith(
-                    RoutePathsType.AccountSettings
-                  ) && (
-                      <Button
-                        touchScreen={true}
-                        classNames={{
-                          button: styles['button'],
-                        }}
-                        rippleProps={{
-                          color: 'rgba(252, 245, 227, .35)',
-                        }}
-                        rounded={true}
-                        onClick={() => AccountController.logoutAsync()}
-                        type={'text'}
-                        icon={<Line.Logout size={24} color={'#2A2A5F'} />}
-                      />
-                    )}
-                </div>
               </div>
-            </CSSTransition>
+              <div
+                className={[
+                  styles['navigation-back-right-content'],
+                  styles['navigation-back-right-content-tablet'],
+                ].join(' ')}
+              >
+                {windowProps.activeRoute?.startsWith(
+                  RoutePathsType.AccountSettings
+                ) && (
+                    <Button
+                      touchScreen={true}
+                      classNames={{
+                        button: styles['button'],
+                      }}
+                      rippleProps={{
+                        color: 'rgba(252, 245, 227, .35)',
+                      }}
+                      rounded={true}
+                      onClick={() => AccountController.logoutAsync()}
+                      type={'text'}
+                      icon={<Line.Logout size={24} color={'#2A2A5F'} />}
+                    />
+                  )}
+              </div>
+            </div>)}
             <Outlet />
           </div>
         </div>

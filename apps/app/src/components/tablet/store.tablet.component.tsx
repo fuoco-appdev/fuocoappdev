@@ -102,7 +102,7 @@ export default function StoreTabletComponent({
                       }}
                       onClick={onRemoveSalesChannel}
                       rippleProps={{
-                        color: 'rgba(233, 33, 66, .35)',
+                        color: 'rgba(42, 42, 95, .35)',
                       }}
                       type={'text'}
                       block={true}
@@ -221,7 +221,7 @@ export default function StoreTabletComponent({
                   }}
                   onClick={() => setOpenFilter(!openFilter)}
                   rippleProps={{
-                    color: 'rgba(233, 33, 66, .35)',
+                    color: 'rgba(42, 42, 95, .35)',
                   }}
                   block={true}
                   icon={

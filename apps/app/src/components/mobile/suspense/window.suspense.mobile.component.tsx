@@ -39,62 +39,48 @@ export function WindowSuspenseMobileComponent(): JSX.Element {
             >
               <div
                 className={[
-                  styles['left-tab-container'],
-                  styles['left-tab-container-mobile'],
+                  styles['tab-button-container'],
+                  styles['tab-button-container-mobile'],
                 ].join(' ')}
               >
-                <div
-                  className={[
-                    styles['tab-button-container'],
-                    styles['tab-button-container-mobile'],
-                  ].join(' ')}
-                >
-                  <Skeleton
-                    style={{ width: 40, height: 40 }}
-                    borderRadius={40}
-                  />
-                </div>
-                <div
-                  className={[
-                    styles['tab-button-container'],
-                    styles['tab-button-container-mobile'],
-                  ].join(' ')}
-                >
-                  <Skeleton
-                    style={{ width: 40, height: 40 }}
-                    borderRadius={40}
-                  />
-                </div>
+                <Skeleton
+                  style={{ width: 40, height: 40 }}
+                  borderRadius={40}
+                />
               </div>
               <div
                 className={[
-                  styles['right-tab-container'],
-                  styles['right-tab-container-mobile'],
+                  styles['tab-button-container'],
+                  styles['tab-button-container-mobile'],
                 ].join(' ')}
               >
-                <div
-                  className={[
-                    styles['tab-button-container'],
-                    styles['tab-button-container-mobile'],
-                  ].join(' ')}
-                >
-                  <Skeleton
-                    style={{ width: 40, height: 40 }}
-                    borderRadius={40}
-                  />
-                </div>
-                <div
-                  className={[
-                    styles['tab-button-container'],
-                    styles['tab-button-container-mobile'],
-                  ].join(' ')}
-                >
-                  <Skeleton
-                    style={{ width: 40, height: 40 }}
-                    borderRadius={40}
-                  />
-                </div>
+                <Skeleton
+                  style={{ width: 40, height: 40 }}
+                  borderRadius={40}
+                />
               </div>
+            </div>
+            <div
+              className={[
+                styles['tab-button-container'],
+                styles['tab-button-container-mobile'],
+              ].join(' ')}
+            >
+              <Skeleton
+                style={{ width: 40, height: 40 }}
+                borderRadius={40}
+              />
+            </div>
+            <div
+              className={[
+                styles['tab-button-container'],
+                styles['tab-button-container-mobile'],
+              ].join(' ')}
+            >
+              <Skeleton
+                style={{ width: 40, height: 40 }}
+                borderRadius={40}
+              />
             </div>
           </div>
         </div>

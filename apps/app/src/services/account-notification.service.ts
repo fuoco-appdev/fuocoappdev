@@ -12,6 +12,13 @@ import {
 import { Service } from "../service";
 import SupabaseService from "./supabase.service";
 
+export interface AccountData {
+  id: string;
+  customer_id: string;
+  profile_url: string;
+  username: string;
+}
+
 class AccountNotificationService extends Service {
   private readonly _notificationCreatedBehaviorSubject: BehaviorSubject<
     Record<string, any>
@@ -33,23 +40,32 @@ class AccountNotificationService extends Service {
     client: SupabaseClient<any, "public", any>,
     accountId: string,
   ): void {
+    this._realtimeChannel?.unsubscribe();
     this._realtimeChannel = client
-      .channel(`account-notification-${accountId}`)
+      .channel('db-changes')
       .on(
-        "broadcast",
+        'postgres_changes',
         {
-          event: "CREATED",
+          event: 'INSERT',
+          schema: 'public',
+          table: 'account_notification'
         },
         (payload: Record<string, any>) => {
           this._notificationCreatedBehaviorSubject.next(payload);
         },
       );
-    this._realtimeChannel.subscribe();
+    this._realtimeChannel.subscribe((status, error) => {
+      if (error) {
+        console.error(error);
+      }
+
+      console.log(status);
+    });
   }
 
   public disposeRealtime(client: SupabaseClient<any, "public", any>): void {
     if (this._realtimeChannel) {
-      client.removeChannel(this._realtimeChannel);
+      this._realtimeChannel?.unsubscribe();
     }
   }
 

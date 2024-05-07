@@ -632,6 +632,10 @@
     color: $brand-900 !important;
 }
 
+.rounded-button:hover {
+    background-color: rgba(42, 42, 95, .15) !important;
+}
+
 .category-button {
     background-color: transparent !important;
     color: $brand-900 !important;

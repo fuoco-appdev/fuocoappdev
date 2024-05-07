@@ -12,7 +12,7 @@ import { ExploreState } from "../models/explore.model";
 import { WindowModel } from "../models/window.model";
 import { AccountResponse } from "../protobuf/account_pb";
 import { RoutePathsType } from "../route-paths";
-import AccountNotificationService from "../services/account-notification.service";
+import AccountNotificationService, { AccountData } from "../services/account-notification.service";
 import AccountService from "../services/account.service";
 import MedusaService from "../services/medusa.service";
 import SupabaseService from "../services/supabase.service";
@@ -137,6 +137,14 @@ class WindowController extends Controller {
     this._model.orderCanceledNotificationData = value;
   }
 
+  public updateAccountFollowerAcceptedNotificationData(value: AccountData | undefined): void {
+    this._model.accountFollowerAcceptedNotificationData = value;
+  }
+
+  public updateAccountFollowerFollowingNotificationData(value: AccountData | undefined): void {
+    this._model.accountFollowerFollowingNotificationData = value;
+  }
+
   public updateNotificationsCount(value: number): void {
     this._model.unseenNotificationsCount = value;
   }
@@ -199,6 +207,18 @@ class WindowController extends Controller {
       this._model.transitionKeyIndex = 1;
       this._model.scaleKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.Cart;
+      this._model.activeTabsId = undefined;
+      this._model.showNavigateBack = true;
+    } else if (location.pathname === RoutePathsType.Chats) {
+      this._model.transitionKeyIndex = 1;
+      this._model.scaleKeyIndex = 0;
+      this._model.activeRoute = RoutePathsType.Chats;
+      this._model.activeTabsId = undefined;
+      this._model.showNavigateBack = true;
+    } else if (location.pathname.startsWith(`${RoutePathsType.Chats}/`)) {
+      this._model.transitionKeyIndex = 1;
+      this._model.scaleKeyIndex = 0;
+      this._model.activeRoute = RoutePathsType.ChatsWithId;
       this._model.activeTabsId = undefined;
       this._model.showNavigateBack = true;
     } else if (location.pathname === RoutePathsType.Checkout) {
@@ -448,10 +468,11 @@ class WindowController extends Controller {
       return;
     }
 
-    const payload = value["payload"];
-    const resourceType = payload["resource_type"];
-    const eventName = payload["event_name"];
-    const data = payload["data"];
+    const newData = value['new'];
+    const payload = newData["payload"];
+    const resourceType = newData["resource_type"];
+    const eventName = newData["event_name"];
+    const data = newData["data"];
     if (resourceType === "order") {
       if (eventName === "order.placed") {
         this.onOrderPlaced(data);
@@ -461,6 +482,13 @@ class WindowController extends Controller {
         this.onOrderReturned(data);
       } else if (eventName === "order.canceled") {
         this.onOrderCanceled(data);
+      }
+    }
+    else if (resourceType === "account") {
+      if (eventName === "account.accepted") {
+        this.onAccountFollowerAccepted(data);
+      } else if (eventName === "account.following") {
+        this.onAccountFollowerFollowing(data);
       }
     }
 
@@ -487,6 +515,17 @@ class WindowController extends Controller {
   private onOrderCanceled(data: Record<string, any>): void {
     const order = data as Order;
     this._model.orderCanceledNotificationData = order;
+  }
+
+  private onAccountFollowerAccepted(data: Record<string, any>): void {
+    const account = data as AccountData;
+    this._model.accountFollowerAcceptedNotificationData = account;
+  }
+
+  private onAccountFollowerFollowing(data: Record<string, any>): void {
+    const account = data as AccountData;
+    console.log(account);
+    this._model.accountFollowerFollowingNotificationData = account;
   }
 
   private onCartChanged(

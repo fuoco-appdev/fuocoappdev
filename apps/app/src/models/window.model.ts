@@ -5,6 +5,7 @@ import { AuthChangeEvent } from "@supabase/supabase-js";
 import { Model } from "../model";
 import { AccountResponse } from "../protobuf/account_pb";
 import { RoutePathsType } from "../route-paths";
+import { AccountData } from "../services/account-notification.service";
 import { InventoryLocation } from "./explore.model";
 
 export interface WindowState {
@@ -18,6 +19,8 @@ export interface WindowState {
   orderShippedNotificationData: Order | undefined;
   orderReturnedNotificationData: Order | undefined;
   orderCanceledNotificationData: Order | undefined;
+  accountFollowerAcceptedNotificationData: AccountData | undefined;
+  accountFollowerFollowingNotificationData: AccountData | undefined;
   authState: AuthChangeEvent | undefined;
   isLoading: boolean;
   toast: ToastProps | undefined;
@@ -53,6 +56,8 @@ export class WindowModel extends Model {
           orderShippedNotificationData: undefined,
           orderReturnedNotificationData: undefined,
           orderCanceledNotificationData: undefined,
+          accountFollowerAcceptedNotificationData: undefined,
+          accountFollowerFollowingNotificationData: undefined,
           authState: undefined,
           isLoading: false,
           toast: undefined,
@@ -213,6 +218,38 @@ export class WindowModel extends Model {
       this.store.update((state) => ({
         ...state,
         orderCanceledNotificationData: value,
+      }));
+    }
+  }
+
+  public get accountFollowerAcceptedNotificationData(): AccountData | undefined {
+    return this.store.getValue().accountFollowerAcceptedNotificationData;
+  }
+
+  public set accountFollowerAcceptedNotificationData(value: AccountData | undefined) {
+    if (
+      JSON.stringify(this.accountFollowerAcceptedNotificationData) !==
+      JSON.stringify(value)
+    ) {
+      this.store.update((state) => ({
+        ...state,
+        accountFollowerAcceptedNotificationData: value,
+      }));
+    }
+  }
+
+  public get accountFollowerFollowingNotificationData(): AccountData | undefined {
+    return this.store.getValue().accountFollowerFollowingNotificationData;
+  }
+
+  public set accountFollowerFollowingNotificationData(value: AccountData | undefined) {
+    if (
+      JSON.stringify(this.accountFollowerFollowingNotificationData) !==
+      JSON.stringify(value)
+    ) {
+      this.store.update((state) => ({
+        ...state,
+        accountFollowerFollowingNotificationData: value,
       }));
     }
   }

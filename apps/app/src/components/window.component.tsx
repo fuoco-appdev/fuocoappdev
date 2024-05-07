@@ -1,4 +1,4 @@
-import { Line } from '@fuoco.appdev/core-ui';
+import { Avatar, Line } from '@fuoco.appdev/core-ui';
 import { lazy } from '@loadable/component';
 import { PriceList } from '@medusajs/medusa';
 import { Store } from '@ngneat/elf';
@@ -6,6 +6,7 @@ import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { StorageFolderType } from 'src/protobuf/common_pb';
 import AccountPublicController from '../controllers/account-public.controller';
 import AccountController from '../controllers/account.controller';
 import ExploreController from '../controllers/explore.controller';
@@ -17,7 +18,8 @@ import { ExploreState } from '../models/explore.model';
 import { ProductState } from '../models/product.model';
 import { WindowLocalState, WindowState } from '../models/window.model';
 import { RoutePathsType, useQuery } from '../route-paths';
-import AccountNotificationService from '../services/account-notification.service';
+import AccountNotificationService, { AccountData } from '../services/account-notification.service';
+import BucketService from '../services/bucket.service';
 import SupabaseService from '../services/supabase.service';
 import { WindowSuspenseDesktopComponent } from './desktop/suspense/window.suspense.desktop.component';
 import { WindowSuspenseMobileComponent } from './mobile/suspense/window.suspense.mobile.component';
@@ -124,6 +126,21 @@ export default function WindowComponent(): JSX.Element {
 
     if (
       windowProps.loadedLocationPath &&
+      windowProps.loadedLocationPath.startsWith(RoutePathsType.Chats)
+    ) {
+      setTimeout(
+        () =>
+          navigate({
+            pathname: RoutePathsType.Account,
+            search: query.toString(),
+          }),
+        150
+      );
+      return;
+    }
+
+    if (
+      windowProps.loadedLocationPath &&
       windowProps.loadedLocationPath === RoutePathsType.EmailConfirmation
     ) {
       setTimeout(
@@ -138,8 +155,7 @@ export default function WindowComponent(): JSX.Element {
     }
 
     if (
-      windowProps.loadedLocationPath &&
-      windowProps.loadedLocationPath?.startsWith(`${RoutePathsType.Store}/`)
+      location.pathname?.startsWith(`${RoutePathsType.Store}/`)
     ) {
       setTimeout(
         () =>
@@ -462,6 +478,72 @@ export default function WindowComponent(): JSX.Element {
     });
     WindowController.updateOrderCanceledNotificationData(undefined);
   }, [windowProps.orderCanceledNotificationData]);
+
+  React.useEffect(() => {
+    const accountData = windowProps.accountFollowerAcceptedNotificationData as AccountData | undefined;
+    if (!accountData) {
+      return;
+    }
+
+    const addToastAsync = async () => {
+      const publicProfileUrl = await BucketService.getPublicUrlAsync(StorageFolderType.Avatars, accountData.profile_url);
+
+      WindowController.addToast({
+        key: `account-follower-accepted-${accountData.id}`,
+        icon: (
+          <Avatar
+            classNames={{
+              container: styles['toast-avatar-icon']
+            }}
+            text={accountData.username}
+            src={publicProfileUrl}
+            size={'custom'}
+          />
+        ),
+        message: accountData.username ?? '',
+        description:
+          t('accountFollowerAcceptedDescription', {
+            username: accountData.username,
+          }) ?? '',
+      });
+      WindowController.updateAccountFollowerAcceptedNotificationData(undefined);
+    };
+
+    addToastAsync();
+  }, [windowProps.accountFollowerAcceptedNotificationData]);
+
+  React.useEffect(() => {
+    const accountData = windowProps.accountFollowerFollowingNotificationData as AccountData | undefined;
+    if (!accountData) {
+      return;
+    }
+
+    const addToastAsync = async () => {
+      const publicProfileUrl = await BucketService.getPublicUrlAsync(StorageFolderType.Avatars, accountData.profile_url);
+
+      WindowController.addToast({
+        key: `account-follower-following-${accountData.id}`,
+        icon: (
+          <Avatar
+            classNames={{
+              container: styles['toast-avatar-icon']
+            }}
+            text={accountData.username}
+            src={publicProfileUrl}
+            size={'custom'}
+          />
+        ),
+        message: accountData.username ?? '',
+        description:
+          t('accountFollowerFollowingDescription', {
+            username: accountData.username,
+          }) ?? '',
+      });
+      WindowController.updateAccountFollowerFollowingNotificationData(undefined);
+    };
+
+    addToastAsync();
+  }, [windowProps.accountFollowerFollowingNotificationData]);
 
   React.useEffect(() => {
     if (!accountProps.account) {

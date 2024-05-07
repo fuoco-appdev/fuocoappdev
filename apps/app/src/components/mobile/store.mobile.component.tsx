@@ -124,7 +124,7 @@ export default function StoreMobileComponent({
                 }}
                 onClick={() => setOpenFilter(true)}
                 rippleProps={{
-                  color: 'rgba(233, 33, 66, .35)',
+                  color: 'rgba(42, 42, 95, .35)',
                 }}
                 type={'text'}
                 block={true}
@@ -144,7 +144,7 @@ export default function StoreMobileComponent({
                   button: styles['rounded-button'],
                 }}
                 rippleProps={{
-                  color: 'rgba(233, 33, 66, .35)',
+                  color: 'rgba(42, 42, 95, .35)',
                 }}
                 onClick={() =>
                   setTimeout(
@@ -384,7 +384,7 @@ export default function StoreMobileComponent({
                 }}
                 onClick={onRemoveSalesChannel}
                 rippleProps={{
-                  color: 'rgba(233, 33, 66, .35)',
+                  color: 'rgba(42, 42, 95, .35)',
                 }}
                 type={'text'}
                 block={true}

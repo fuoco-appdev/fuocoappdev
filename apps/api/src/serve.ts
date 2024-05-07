@@ -1,14 +1,15 @@
-import { Core } from "./index.ts";
 import {
   AccountController,
   AccountFollowersController,
   AccountNotificationController,
+  ChatController,
   DeepLController,
   DeviceController,
   InterestController,
   MedusaController,
-  ProductLikesController,
+  ProductLikesController
 } from "./controllers/index.ts";
+import { Core } from "./index.ts";
 
 const app = Core.registerApp([
   new AccountController(),
@@ -19,5 +20,6 @@ const app = Core.registerApp([
   new DeepLController(),
   new DeviceController(),
   new InterestController(),
+  new ChatController()
 ]);
 app.listen({ port: 8001 });

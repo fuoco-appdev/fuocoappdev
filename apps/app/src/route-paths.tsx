@@ -14,6 +14,8 @@ import AccountSettingsComponent from './components/account-settings.component';
 import AccountComponent from './components/account.component';
 import AppComponent from './components/app.component';
 import CartComponent from './components/cart.component';
+import ChatComponent from './components/chat.component';
+import ChatsComponent from './components/chats.component';
 import CheckoutComponent from './components/checkout.component';
 import EmailConfirmationComponent from './components/email-confirmation.component';
 import EventsComponent from './components/events.component';
@@ -48,6 +50,8 @@ export enum RoutePathsType {
   Events = '/events',
   Notifications = '/notifications',
   Cart = '/cart',
+  Chats = '/chats',
+  ChatsWithId = '/chats/:id',
   Checkout = '/checkout',
   Account = '/account',
   AccountWithId = '/account/:id',
@@ -132,6 +136,20 @@ export const getRoutePaths = (): RouteObject[] => [
       {
         path: RoutePathsType.Cart,
         element: <CartComponent />,
+      },
+      {
+        path: RoutePathsType.Chats,
+        element: <ChatsComponent />,
+        children: [
+          {
+            index: true,
+            element: <ChatComponent />,
+          },
+          {
+            path: RoutePathsType.ChatsWithId,
+            element: <ChatComponent />
+          }
+        ]
       },
       {
         path: RoutePathsType.Checkout,

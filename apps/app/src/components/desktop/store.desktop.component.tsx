@@ -101,7 +101,7 @@ export default function StoreDesktopComponent({
                       }}
                       onClick={onRemoveSalesChannel}
                       rippleProps={{
-                        color: 'rgba(233, 33, 66, .35)',
+                        color: 'rgba(42, 42, 95, .35)',
                       }}
                       type={'text'}
                       block={true}
@@ -219,7 +219,7 @@ export default function StoreDesktopComponent({
                   }}
                   onClick={() => setOpenFilter(!openFilter)}
                   rippleProps={{
-                    color: 'rgba(233, 33, 66, .35)',
+                    color: 'rgba(42, 42, 95, .35)',
                   }}
                   icon={
                     openFilter ? (

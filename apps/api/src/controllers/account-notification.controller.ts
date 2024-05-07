@@ -1,10 +1,9 @@
-import { ContentType, Controller, Guard, Post } from "../index.ts";
+import { readAll } from "https://deno.land/std@0.105.0/io/util.ts";
+import * as HttpError from "https://deno.land/x/http_errors@3.0.0/mod.ts";
 import * as Oak from "https://deno.land/x/oak@v11.1.0/mod.ts";
 import { AuthGuard } from "../guards/index.ts";
+import { ContentType, Controller, Guard, Post } from "../index.ts";
 import { AccountNotificationsRequest } from "../protobuf/account-notification_pb.js";
-import * as HttpError from "https://deno.land/x/http_errors@3.0.0/mod.ts";
-import { readAll } from "https://deno.land/std@0.105.0/io/util.ts";
-import SupabaseService from "../services/supabase.service.ts";
 import AccountNotificationService from "../services/account-notification.service.ts";
 
 @Controller("/account-notification")
@@ -20,7 +19,29 @@ export class AccountNotificationController {
   ): Promise<void> {
     const body = await context.request.body().value;
     const order = body["record"];
-    await AccountNotificationService.createOrderNotificationAsync(order);
+    const type = body['type'];
+    if (type === 'INSERT') {
+      await AccountNotificationService.createOrderNotificationAsync(order);
+    }
+
+    context.response.status = 200;
+  }
+
+  @Post("/webhook/account-followers")
+  @ContentType("application/json")
+  public async handleWebhookAccountFollowersAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >,
+  ): Promise<void> {
+    const body = await context.request.body().value;
+    const accountFollower = body["record"];
+    const type = body['type'];
+    if (type === 'UPDATE') {
+      await AccountNotificationService.createAccountFollowerNotificationAsync(accountFollower);
+    }
 
     context.response.status = 200;
   }

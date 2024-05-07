@@ -1,0 +1,454 @@
+@import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
+
+.root {
+    display: flex;
+    width: 100%;
+    height: 100%;
+
+    & .search-container {
+        position: relative;
+
+        & .top-bar-container {
+            display: flex;
+            flex-direction: column;
+            border-bottom: 1px solid rgba(42, 42, 95, .6);
+            background-color: #fff;
+            width: stretch;
+            gap: $mp-4;
+
+            & .logo-container {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                gap: $mp-2;
+                width: 100%;
+                height: 32px;
+
+                & .logo {
+                    width: 32px;
+                    height: 32px;
+                }
+
+                & .logo-text {
+                    height: 28px;
+                    padding: $mp-2 0;
+                }
+            }
+
+
+            & .search-container {
+                display: flex;
+                flex-direction: row;
+                width: 100%;
+                height: fit-content;
+                border-color: transparent !important;
+                gap: $mp-4;
+
+                & .search-input-root {
+                    display: flex;
+                    flex-direction: column;
+                    flex: 1;
+
+                    & .search-input-container {
+                        background-color: transparent;
+                        border-color: $brand-900;
+                        border-radius: $rounded-full;
+                    }
+
+                    & .search-input-container-skeleton {
+                        margin-bottom: $mp-4;
+                    }
+
+                    & .search-input {
+                        color: $brand-900;
+                    }
+
+                    & .search-input::-webkit-input-placeholder {
+                        color: $brand-900;
+                    }
+
+                    & .search-input::-moz-placeholder {
+                        color: $brand-900;
+                    }
+
+                    & .search-input:-ms-input-placeholder {
+                        color: $brand-900;
+                    }
+
+                    & .search-input::-ms-input-placeholder {
+                        color: $brand-900;
+                    }
+
+                    & .search-input::placeholder {
+                        color: $brand-900;
+                    }
+
+                    & .search-input:-ms-input-placeholder {
+                        color: $brand-900;
+                    }
+
+                    & .search-input::-ms-input-placeholder {
+                        color: $brand-900;
+                    }
+                }
+            }
+
+            & .tab-container {
+                overflow-x: auto;
+                -ms-overflow-style: none;
+                /* IE and Edge */
+                scrollbar-width: none;
+                /* Firefox */
+            }
+
+            & .tab-container-skeleton {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                gap: $mp-4;
+                margin-bottom: $mp-4;
+            }
+
+            & .tab-container::-webkit-scrollbar {
+                display: none;
+            }
+        }
+
+        & .scroll-container {
+            display: flex;
+            align-content: flex-start;
+            flex-direction: column;
+            justify-content: flex-start;
+            width: 100%;
+            overflow-y: auto;
+            overscroll-behavior: none;
+            scroll-behavior: smooth;
+
+            & .loading-ring {
+                width: 100%;
+                transition: max-height 150ms $transition-standard-easing;
+            }
+
+            & .no-searched-stock-locations-container {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                width: 100%;
+
+                & .no-items-text {
+                    margin-top: $mp-4;
+                    color: $brand-900;
+                    font-size: $font-size-sm;
+                    text-align: center;
+                }
+
+                & .no-items-container {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: center;
+                    margin-top: $mp-8;
+                    margin-bottom: $mp-4;
+                }
+            }
+        }
+    }
+}
+
+.root-desktop {
+    padding-top: 56px;
+    flex-direction: row;
+
+    & .search-container-desktop {
+        min-width: 380px;
+        max-width: 380px;
+        height: 100%;
+        border-right-width: 1px;
+        border-left-width: 0px;
+        border-top-width: 0px;
+        border-bottom-width: 0px;
+        border-color: rgba(42, 42, 95, .6);
+        border-style: solid;
+
+        & .top-bar-container-desktop {
+            padding-top: $mp-4;
+            flex-direction: row;
+
+            & .top-bar-left-content-desktop {
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+                align-items: center;
+            }
+
+            & .top-bar-right-content-desktop {
+                padding-right: $mp-4;
+            }
+
+            & .search-container-desktop {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                padding-left: $mp-4;
+                padding-right: $mp-4;
+
+                & .search-input-root-desktop {
+                    max-width: 556px;
+
+                    & .search-input-container-desktop {}
+
+                    & .search-input-desktop {}
+
+                    & .search-input-desktop::-webkit-input-placeholder {}
+
+                    & .search-input-desktop::-moz-placeholder {}
+
+                    & .search-input-desktop:-ms-input-placeholder {}
+
+                    & .search-input-desktop::-ms-input-placeholder {}
+
+                    & .search-input-desktop::placeholder {}
+
+                    & .search-input-desktop:-ms-input-placeholder {}
+
+                    & .search-input-desktop::-ms-input-placeholder {}
+                }
+
+                & .filter-button-desktop {}
+            }
+
+            & .tab-container-desktop {
+                width: 100%;
+
+                & .tab-button-desktop {}
+
+                & .hovered-tab-button-desktop {}
+
+                & .tab-slider-pill-desktop {}
+            }
+
+            & .tab-container-desktop::-webkit-scrollbar {}
+        }
+
+        & .scroll-container-desktop {
+            padding-top: calc(141px + 16px);
+
+            & .loading-ring-desktop {}
+
+            & .no-searched-stock-locations-container-desktop {
+
+                & .no-items-text-desktop {}
+
+                & .no-items-container-desktop {}
+            }
+        }
+    }
+
+    & .map-container-desktop {}
+}
+
+.root-tablet {
+    flex-direction: row;
+
+    & .search-container-tablet {
+        width: 460px;
+        height: 100%;
+        border-right-width: 0px;
+        border-left-width: 0px;
+        border-top-width: 0px;
+        border-bottom-width: 0px;
+        border-color: rgba(42, 42, 95, .6);
+        border-style: solid;
+
+        & .top-bar-container-tablet {
+            padding-top: $mp-4;
+            flex-direction: row;
+            width: 100%;
+
+            & .top-bar-left-content-tablet {
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+                align-items: center;
+            }
+
+            & .top-bar-right-content-tablet {
+                padding-right: $mp-4;
+            }
+
+            & .search-container-tablet {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                padding-left: $mp-4;
+                padding-right: $mp-4;
+
+                & .search-input-root-tablet {
+                    max-width: 556px;
+
+                    & .search-input-container-tablet {}
+
+                    & .search-input-tablet {}
+
+                    & .search-input-tablet::-webkit-input-placeholder {}
+
+                    & .search-input-tablet::-moz-placeholder {}
+
+                    & .search-input-tablet:-ms-input-placeholder {}
+
+                    & .search-input-tablet::-ms-input-placeholder {}
+
+                    & .search-input-tablet::placeholder {}
+
+                    & .search-input-tablet:-ms-input-placeholder {}
+
+                    & .search-input-tablet::-ms-input-placeholder {}
+                }
+
+                & .filter-button-tablet {}
+            }
+
+            & .tab-container-tablet {
+                width: fit-content;
+
+                & .tab-button-tablet {}
+
+                & .hovered-tab-button-tablet {}
+
+                & .tab-slider-pill-tablet {}
+            }
+
+            & .tab-container-tablet::-webkit-scrollbar {}
+        }
+
+        & .scroll-container-tablet {
+            padding-top: calc(141px + 16px);
+
+            & .loading-ring-tablet {}
+
+            & .no-searched-stock-locations-container-tablet {
+
+                & .no-items-text-tablet {}
+
+                & .no-items-container-tablet {}
+            }
+        }
+    }
+}
+
+.root-mobile {
+    flex-direction: column;
+
+    & .search-container-mobile {
+        min-width: 100%;
+        border-right-width: 0px;
+        border-left-width: 0px;
+        border-top-width: 0px;
+        border-bottom-width: 0px;
+        border-color: rgba(42, 42, 95, .6);
+        border-style: solid;
+
+        & .top-bar-container-mobile {
+            width: 100%;
+            padding-top: $mp-4;
+
+            & .top-bar-left-content-mobile {
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+                align-items: center;
+            }
+
+            & .top-bar-right-content-mobile {
+                padding-right: $mp-4;
+            }
+
+            & .search-container-mobile {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                padding-left: $mp-4;
+                padding-right: $mp-4;
+
+                & .search-input-root-mobile {
+                    max-width: 556px;
+
+                    & .search-input-container-mobile {}
+
+                    & .search-input-mobile {}
+
+                    & .search-input-mobile::-webkit-input-placeholder {}
+
+                    & .search-input-mobile::-moz-placeholder {}
+
+                    & .search-input-mobile:-ms-input-placeholder {}
+
+                    & .search-input-mobile::-ms-input-placeholder {}
+
+                    & .search-input-mobile::placeholder {}
+
+                    & .search-input-mobile:-ms-input-placeholder {}
+
+                    & .search-input-mobile::-ms-input-placeholder {}
+                }
+
+                & .filter-button-mobile {}
+            }
+
+            & .tab-container-mobile {
+                width: -webkit-fit-content;
+                width: -moz-fit-content;
+                width: fit-content;
+
+                & .tab-button-mobile {}
+
+                & .hovered-tab-button-mobile {}
+
+                & .tab-slider-pill-mobile {}
+            }
+
+            & .tab-container-mobile::-webkit-scrollbar {}
+        }
+
+        & .scroll-container-mobile {
+            padding-top: calc(189px + 16px);
+
+            & .loading-ring-mobile {}
+
+            & .no-searched-stock-locations-container-mobile {
+
+                & .no-items-text-mobile {}
+
+                & .no-items-container-mobile {}
+            }
+        }
+    }
+}
+
+.tab-nav {
+    padding: 0;
+}
+
+.tab-button {
+    color: $brand-900 !important;
+    font-weight: $font-weight-bold;
+    text-transform: capitalize !important;
+    font-size: $font-size-sm !important;
+    margin-right: 0 !important;
+}
+
+.selected-tab-button {}
+
+.tab-outline {
+    background-color: $brand-900 !important;
+    margin-left: 2px;
+}
+
+.rounded-button {
+    background-color: transparent !important;
+    color: $brand-900 !important;
+}
+
+.rounded-button:hover {
+    background-color: rgba(42, 42, 95, .15) !important;
+}

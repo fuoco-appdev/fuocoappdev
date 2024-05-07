@@ -55,7 +55,7 @@ class AccountPublicController extends Controller {
       });
   }
 
-  public override load(_renderCount: number): void {}
+  public override load(_renderCount: number): void { }
 
   public override disposeInitialization(_renderCount: number): void {
     clearTimeout(this._followingTimerId as number | undefined);
@@ -69,7 +69,7 @@ class AccountPublicController extends Controller {
     this._cartSubscription?.unsubscribe();
   }
 
-  public override disposeLoad(_renderCount: number): void {}
+  public override disposeLoad(_renderCount: number): void { }
 
   public async loadLikedProductsAsync(id: string): Promise<void> {
     this._loadedAccountSubscription?.unsubscribe();
@@ -350,7 +350,7 @@ class AccountPublicController extends Controller {
     }
 
     try {
-      const otherAccountIds = this._model.followerAccounts.map(
+      const otherAccountIds = followerAccounts.map(
         (value) => value.id ?? ''
       );
       const followerResponse =
@@ -460,7 +460,7 @@ class AccountPublicController extends Controller {
     }
 
     try {
-      const otherAccountIds = this._model.followingAccounts.map(
+      const otherAccountIds = followingAccounts.map(
         (value) => value.id ?? ''
       );
       const followerResponse =

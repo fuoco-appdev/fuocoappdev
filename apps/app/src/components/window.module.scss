@@ -467,7 +467,7 @@
 
       & .navigation-back-container-desktop {
         position: absolute;
-        top: -56px;
+        top: 0;
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;
@@ -756,7 +756,7 @@
 
       & .navigation-back-container-tablet {
         position: absolute;
-        top: -56px;
+        top: 0px;
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;
@@ -1302,6 +1302,11 @@
   color: $brand-900;
   font-weight: $font-weight-bold;
   text-transform: capitalize;
+}
+
+.toast-avatar-icon {
+  height: 32px;
+  width: 32px;
 }
 
 .toast-order-icon {

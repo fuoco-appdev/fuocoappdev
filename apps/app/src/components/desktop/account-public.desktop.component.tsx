@@ -96,166 +96,6 @@ export default function AccountPublicDesktopComponent({
                       />
                     </div>
                   </div>
-                  <div
-                    className={[
-                      styles['followers-status-container'],
-                      styles['followers-status-container-desktop'],
-                    ].join(' ')}
-                  >
-                    {likeCount !== undefined && (
-                      <div
-                        className={[
-                          styles['followers-status-item'],
-                          styles['followers-status-item-desktop'],
-                        ].join(' ')}
-                        onClick={onLikesClick}
-                      >
-                        <div
-                          className={[
-                            styles['followers-status-value'],
-                            styles['followers-status-value-desktop'],
-                          ].join(' ')}
-                        >
-                          {likeCount}
-                        </div>
-                        <div
-                          className={[
-                            styles['followers-status-name'],
-                            styles['followers-status-name-desktop'],
-                          ].join(' ')}
-                        >
-                          {t('likes')}
-                        </div>
-                      </div>
-                    )}
-                    {likeCount === undefined && (
-                      <div
-                        className={[
-                          styles['followers-status-item'],
-                          styles['followers-status-item-desktop'],
-                        ].join(' ')}
-                      >
-                        <div
-                          className={[
-                            styles['followers-status-value'],
-                            styles['followers-status-value-desktop'],
-                          ].join(' ')}
-                        >
-                          <Skeleton width={30} height={19} borderRadius={19} />
-                        </div>
-                        <div
-                          className={[
-                            styles['followers-status-name'],
-                            styles['followers-status-name-desktop'],
-                          ].join(' ')}
-                        >
-                          <Skeleton width={55} height={19} borderRadius={19} />
-                        </div>
-                      </div>
-                    )}
-                    {followerCount !== undefined && (
-                      <div
-                        className={[
-                          styles['followers-status-item'],
-                          styles['followers-status-item-desktop'],
-                        ].join(' ')}
-                        onClick={onFollowersClick}
-                      >
-                        <div
-                          className={[
-                            styles['followers-status-value'],
-                            styles['followers-status-value-desktop'],
-                          ].join(' ')}
-                        >
-                          {followerCount}
-                        </div>
-                        <div
-                          className={[
-                            styles['followers-status-name'],
-                            styles['followers-status-name-desktop'],
-                          ].join(' ')}
-                        >
-                          {t('followers')}
-                        </div>
-                      </div>
-                    )}
-                    {followerCount === undefined && (
-                      <div
-                        className={[
-                          styles['followers-status-item'],
-                          styles['followers-status-item-desktop'],
-                        ].join(' ')}
-                      >
-                        <div
-                          className={[
-                            styles['followers-status-value'],
-                            styles['followers-status-value-desktop'],
-                          ].join(' ')}
-                        >
-                          <Skeleton width={30} height={19} borderRadius={19} />
-                        </div>
-                        <div
-                          className={[
-                            styles['followers-status-name'],
-                            styles['followers-status-name-desktop'],
-                          ].join(' ')}
-                        >
-                          <Skeleton width={55} height={19} borderRadius={19} />
-                        </div>
-                      </div>
-                    )}
-                    {followingCount !== undefined && (
-                      <div
-                        className={[
-                          styles['followers-status-item'],
-                          styles['followers-status-item-desktop'],
-                        ].join(' ')}
-                        onClick={onFollowingClick}
-                      >
-                        <div
-                          className={[
-                            styles['followers-status-value'],
-                            styles['followers-status-value-desktop'],
-                          ].join(' ')}
-                        >
-                          {followingCount}
-                        </div>
-                        <div
-                          className={[
-                            styles['followers-status-name'],
-                            styles['followers-status-name-desktop'],
-                          ].join(' ')}
-                        >
-                          {t('following')}
-                        </div>
-                      </div>
-                    )}
-                    {followingCount === undefined && (
-                      <div
-                        className={[
-                          styles['followers-status-item'],
-                          styles['followers-status-item-desktop'],
-                        ].join(' ')}
-                      >
-                        <div
-                          className={[
-                            styles['followers-status-value'],
-                            styles['followers-status-value-desktop'],
-                          ].join(' ')}
-                        >
-                          <Skeleton width={30} height={19} borderRadius={19} />
-                        </div>
-                        <div
-                          className={[
-                            styles['followers-status-name'],
-                            styles['followers-status-name-desktop'],
-                          ].join(' ')}
-                        >
-                          <Skeleton width={55} height={19} borderRadius={19} />
-                        </div>
-                      </div>
-                    )}
-                  </div>
                 </div>
                 <div
                   className={[
@@ -275,6 +115,166 @@ export default function AccountPublicDesktopComponent({
                         styles['skeleton-user-desktop'],
                       ].join(' ')}
                     />
+                  )}
+                </div>
+                <div
+                  className={[
+                    styles['followers-status-container'],
+                    styles['followers-status-container-desktop'],
+                  ].join(' ')}
+                >
+                  {likeCount !== undefined && (
+                    <div
+                      className={[
+                        styles['followers-status-item'],
+                        styles['followers-status-item-desktop'],
+                      ].join(' ')}
+                      onClick={onLikesClick}
+                    >
+                      <div
+                        className={[
+                          styles['followers-status-value'],
+                          styles['followers-status-value-desktop'],
+                        ].join(' ')}
+                      >
+                        {likeCount}
+                      </div>
+                      <div
+                        className={[
+                          styles['followers-status-name'],
+                          styles['followers-status-name-desktop'],
+                        ].join(' ')}
+                      >
+                        {t('likes')}
+                      </div>
+                    </div>
+                  )}
+                  {likeCount === undefined && (
+                    <div
+                      className={[
+                        styles['followers-status-item'],
+                        styles['followers-status-item-desktop'],
+                      ].join(' ')}
+                    >
+                      <div
+                        className={[
+                          styles['followers-status-value'],
+                          styles['followers-status-value-desktop'],
+                        ].join(' ')}
+                      >
+                        <Skeleton width={30} height={19} borderRadius={19} />
+                      </div>
+                      <div
+                        className={[
+                          styles['followers-status-name'],
+                          styles['followers-status-name-desktop'],
+                        ].join(' ')}
+                      >
+                        <Skeleton width={55} height={19} borderRadius={19} />
+                      </div>
+                    </div>
+                  )}
+                  {followerCount !== undefined && (
+                    <div
+                      className={[
+                        styles['followers-status-item'],
+                        styles['followers-status-item-desktop'],
+                      ].join(' ')}
+                      onClick={onFollowersClick}
+                    >
+                      <div
+                        className={[
+                          styles['followers-status-value'],
+                          styles['followers-status-value-desktop'],
+                        ].join(' ')}
+                      >
+                        {followerCount}
+                      </div>
+                      <div
+                        className={[
+                          styles['followers-status-name'],
+                          styles['followers-status-name-desktop'],
+                        ].join(' ')}
+                      >
+                        {t('followers')}
+                      </div>
+                    </div>
+                  )}
+                  {followerCount === undefined && (
+                    <div
+                      className={[
+                        styles['followers-status-item'],
+                        styles['followers-status-item-desktop'],
+                      ].join(' ')}
+                    >
+                      <div
+                        className={[
+                          styles['followers-status-value'],
+                          styles['followers-status-value-desktop'],
+                        ].join(' ')}
+                      >
+                        <Skeleton width={30} height={19} borderRadius={19} />
+                      </div>
+                      <div
+                        className={[
+                          styles['followers-status-name'],
+                          styles['followers-status-name-desktop'],
+                        ].join(' ')}
+                      >
+                        <Skeleton width={55} height={19} borderRadius={19} />
+                      </div>
+                    </div>
+                  )}
+                  {followingCount !== undefined && (
+                    <div
+                      className={[
+                        styles['followers-status-item'],
+                        styles['followers-status-item-desktop'],
+                      ].join(' ')}
+                      onClick={onFollowingClick}
+                    >
+                      <div
+                        className={[
+                          styles['followers-status-value'],
+                          styles['followers-status-value-desktop'],
+                        ].join(' ')}
+                      >
+                        {followingCount}
+                      </div>
+                      <div
+                        className={[
+                          styles['followers-status-name'],
+                          styles['followers-status-name-desktop'],
+                        ].join(' ')}
+                      >
+                        {t('following')}
+                      </div>
+                    </div>
+                  )}
+                  {followingCount === undefined && (
+                    <div
+                      className={[
+                        styles['followers-status-item'],
+                        styles['followers-status-item-desktop'],
+                      ].join(' ')}
+                    >
+                      <div
+                        className={[
+                          styles['followers-status-value'],
+                          styles['followers-status-value-desktop'],
+                        ].join(' ')}
+                      >
+                        <Skeleton width={30} height={19} borderRadius={19} />
+                      </div>
+                      <div
+                        className={[
+                          styles['followers-status-name'],
+                          styles['followers-status-name-desktop'],
+                        ].join(' ')}
+                      >
+                        <Skeleton width={55} height={19} borderRadius={19} />
+                      </div>
+                    </div>
                   )}
                 </div>
                 <div

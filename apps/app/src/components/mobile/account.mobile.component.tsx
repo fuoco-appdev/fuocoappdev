@@ -472,166 +472,6 @@ export default function AccountMobileComponent({
                       />
                     </div>
                   </div>
-                  <div
-                    className={[
-                      styles['followers-status-container'],
-                      styles['followers-status-container-mobile'],
-                    ].join(' ')}
-                  >
-                    {likeCount !== undefined && (
-                      <div
-                        className={[
-                          styles['followers-status-item'],
-                          styles['followers-status-item-mobile'],
-                        ].join(' ')}
-                        onClick={onLikesClick}
-                      >
-                        <div
-                          className={[
-                            styles['followers-status-value'],
-                            styles['followers-status-value-mobile'],
-                          ].join(' ')}
-                        >
-                          {likeCount}
-                        </div>
-                        <div
-                          className={[
-                            styles['followers-status-name'],
-                            styles['followers-status-name-mobile'],
-                          ].join(' ')}
-                        >
-                          {t('likes')}
-                        </div>
-                      </div>
-                    )}
-                    {likeCount === undefined && (
-                      <div
-                        className={[
-                          styles['followers-status-item'],
-                          styles['followers-status-item-mobile'],
-                        ].join(' ')}
-                      >
-                        <div
-                          className={[
-                            styles['followers-status-value'],
-                            styles['followers-status-value-mobile'],
-                          ].join(' ')}
-                        >
-                          <Skeleton width={30} height={19} borderRadius={19} />
-                        </div>
-                        <div
-                          className={[
-                            styles['followers-status-name'],
-                            styles['followers-status-name-mobile'],
-                          ].join(' ')}
-                        >
-                          <Skeleton width={55} height={19} borderRadius={19} />
-                        </div>
-                      </div>
-                    )}
-                    {followerCount !== undefined && (
-                      <div
-                        className={[
-                          styles['followers-status-item'],
-                          styles['followers-status-item-mobile'],
-                        ].join(' ')}
-                        onClick={onFollowersClick}
-                      >
-                        <div
-                          className={[
-                            styles['followers-status-value'],
-                            styles['followers-status-value-mobile'],
-                          ].join(' ')}
-                        >
-                          {followerCount}
-                        </div>
-                        <div
-                          className={[
-                            styles['followers-status-name'],
-                            styles['followers-status-name-mobile'],
-                          ].join(' ')}
-                        >
-                          {t('followers')}
-                        </div>
-                      </div>
-                    )}
-                    {followerCount === undefined && (
-                      <div
-                        className={[
-                          styles['followers-status-item'],
-                          styles['followers-status-item-mobile'],
-                        ].join(' ')}
-                      >
-                        <div
-                          className={[
-                            styles['followers-status-value'],
-                            styles['followers-status-value-mobile'],
-                          ].join(' ')}
-                        >
-                          <Skeleton width={30} height={19} borderRadius={19} />
-                        </div>
-                        <div
-                          className={[
-                            styles['followers-status-name'],
-                            styles['followers-status-name-mobile'],
-                          ].join(' ')}
-                        >
-                          <Skeleton width={55} height={19} borderRadius={19} />
-                        </div>
-                      </div>
-                    )}
-                    {followingCount !== undefined && (
-                      <div
-                        className={[
-                          styles['followers-status-item'],
-                          styles['followers-status-item-mobile'],
-                        ].join(' ')}
-                        onClick={onFollowingClick}
-                      >
-                        <div
-                          className={[
-                            styles['followers-status-value'],
-                            styles['followers-status-value-mobile'],
-                          ].join(' ')}
-                        >
-                          {followingCount}
-                        </div>
-                        <div
-                          className={[
-                            styles['followers-status-name'],
-                            styles['followers-status-name-mobile'],
-                          ].join(' ')}
-                        >
-                          {t('following')}
-                        </div>
-                      </div>
-                    )}
-                    {followingCount === undefined && (
-                      <div
-                        className={[
-                          styles['followers-status-item'],
-                          styles['followers-status-item-mobile'],
-                        ].join(' ')}
-                      >
-                        <div
-                          className={[
-                            styles['followers-status-value'],
-                            styles['followers-status-value-mobile'],
-                          ].join(' ')}
-                        >
-                          <Skeleton width={30} height={19} borderRadius={19} />
-                        </div>
-                        <div
-                          className={[
-                            styles['followers-status-name'],
-                            styles['followers-status-name-mobile'],
-                          ].join(' ')}
-                        >
-                          <Skeleton width={55} height={19} borderRadius={19} />
-                        </div>
-                      </div>
-                    )}
-                  </div>
                 </div>
                 <div
                   className={[
@@ -651,6 +491,166 @@ export default function AccountMobileComponent({
                         styles['skeleton-user-mobile'],
                       ].join(' ')}
                     />
+                  )}
+                </div>
+                <div
+                  className={[
+                    styles['followers-status-container'],
+                    styles['followers-status-container-mobile'],
+                  ].join(' ')}
+                >
+                  {likeCount !== undefined && (
+                    <div
+                      className={[
+                        styles['followers-status-item'],
+                        styles['followers-status-item-mobile'],
+                      ].join(' ')}
+                      onClick={onLikesClick}
+                    >
+                      <div
+                        className={[
+                          styles['followers-status-value'],
+                          styles['followers-status-value-mobile'],
+                        ].join(' ')}
+                      >
+                        {likeCount}
+                      </div>
+                      <div
+                        className={[
+                          styles['followers-status-name'],
+                          styles['followers-status-name-mobile'],
+                        ].join(' ')}
+                      >
+                        {t('likes')}
+                      </div>
+                    </div>
+                  )}
+                  {likeCount === undefined && (
+                    <div
+                      className={[
+                        styles['followers-status-item'],
+                        styles['followers-status-item-mobile'],
+                      ].join(' ')}
+                    >
+                      <div
+                        className={[
+                          styles['followers-status-value'],
+                          styles['followers-status-value-mobile'],
+                        ].join(' ')}
+                      >
+                        <Skeleton width={30} height={19} borderRadius={19} />
+                      </div>
+                      <div
+                        className={[
+                          styles['followers-status-name'],
+                          styles['followers-status-name-mobile'],
+                        ].join(' ')}
+                      >
+                        <Skeleton width={55} height={19} borderRadius={19} />
+                      </div>
+                    </div>
+                  )}
+                  {followerCount !== undefined && (
+                    <div
+                      className={[
+                        styles['followers-status-item'],
+                        styles['followers-status-item-mobile'],
+                      ].join(' ')}
+                      onClick={onFollowersClick}
+                    >
+                      <div
+                        className={[
+                          styles['followers-status-value'],
+                          styles['followers-status-value-mobile'],
+                        ].join(' ')}
+                      >
+                        {followerCount}
+                      </div>
+                      <div
+                        className={[
+                          styles['followers-status-name'],
+                          styles['followers-status-name-mobile'],
+                        ].join(' ')}
+                      >
+                        {t('followers')}
+                      </div>
+                    </div>
+                  )}
+                  {followerCount === undefined && (
+                    <div
+                      className={[
+                        styles['followers-status-item'],
+                        styles['followers-status-item-mobile'],
+                      ].join(' ')}
+                    >
+                      <div
+                        className={[
+                          styles['followers-status-value'],
+                          styles['followers-status-value-mobile'],
+                        ].join(' ')}
+                      >
+                        <Skeleton width={30} height={19} borderRadius={19} />
+                      </div>
+                      <div
+                        className={[
+                          styles['followers-status-name'],
+                          styles['followers-status-name-mobile'],
+                        ].join(' ')}
+                      >
+                        <Skeleton width={55} height={19} borderRadius={19} />
+                      </div>
+                    </div>
+                  )}
+                  {followingCount !== undefined && (
+                    <div
+                      className={[
+                        styles['followers-status-item'],
+                        styles['followers-status-item-mobile'],
+                      ].join(' ')}
+                      onClick={onFollowingClick}
+                    >
+                      <div
+                        className={[
+                          styles['followers-status-value'],
+                          styles['followers-status-value-mobile'],
+                        ].join(' ')}
+                      >
+                        {followingCount}
+                      </div>
+                      <div
+                        className={[
+                          styles['followers-status-name'],
+                          styles['followers-status-name-mobile'],
+                        ].join(' ')}
+                      >
+                        {t('following')}
+                      </div>
+                    </div>
+                  )}
+                  {followingCount === undefined && (
+                    <div
+                      className={[
+                        styles['followers-status-item'],
+                        styles['followers-status-item-mobile'],
+                      ].join(' ')}
+                    >
+                      <div
+                        className={[
+                          styles['followers-status-value'],
+                          styles['followers-status-value-mobile'],
+                        ].join(' ')}
+                      >
+                        <Skeleton width={30} height={19} borderRadius={19} />
+                      </div>
+                      <div
+                        className={[
+                          styles['followers-status-name'],
+                          styles['followers-status-name-mobile'],
+                        ].join(' ')}
+                      >
+                        <Skeleton width={55} height={19} borderRadius={19} />
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>

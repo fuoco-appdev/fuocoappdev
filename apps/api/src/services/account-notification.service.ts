@@ -1,11 +1,11 @@
-import SupabaseService from "./supabase.service.ts";
+import { RealtimeChannel } from "https://esm.sh/v107/@supabase/realtime-js@2.6.0/dist/module/index.js";
 import {
   AccountNotificationCountResponse,
   AccountNotificationResponse,
   AccountNotificationsRequest,
   AccountNotificationsResponse,
 } from "../protobuf/account-notification_pb.js";
-import { RealtimeChannel } from "https://esm.sh/v107/@supabase/realtime-js@2.6.0/dist/module/index.js";
+import SupabaseService from "./supabase.service.ts";
 
 export interface AccountNotificationProps {
   id?: string;
@@ -108,7 +108,8 @@ export class AccountNotificationService {
         seen: false,
       });
 
-      this.sendCreatedBroadcast(accountNotificationChannel, data);
+      const broadcast = await this.sendCreatedBroadcastAsync(accountNotificationChannel, data);
+      broadcast.unsubscribe();
     } else if (fulfillmentStatus === "partially_fulfilled") {
     } else if (fulfillmentStatus === "fulfilled") {
     } else if (fulfillmentStatus === "partially_shipped") {
@@ -122,7 +123,8 @@ export class AccountNotificationService {
         seen: false,
       });
 
-      this.sendCreatedBroadcast(accountNotificationChannel, data);
+      const broadcast = await this.sendCreatedBroadcastAsync(accountNotificationChannel, data);
+      broadcast.unsubscribe();
     } else if (fulfillmentStatus === "partially_returned") {
     } else if (fulfillmentStatus === "returned") {
       const data = await this.createNotificationAsync({
@@ -134,7 +136,8 @@ export class AccountNotificationService {
         seen: false,
       });
 
-      this.sendCreatedBroadcast(accountNotificationChannel, data);
+      const broadcast = await this.sendCreatedBroadcastAsync(accountNotificationChannel, data);
+      broadcast.unsubscribe();
     } else if (fulfillmentStatus === "canceled") {
       const data = await this.createNotificationAsync({
         event_name: "order.canceled",
@@ -145,26 +148,91 @@ export class AccountNotificationService {
         seen: false,
       });
 
-      this.sendCreatedBroadcast(accountNotificationChannel, data);
+      const broadcast = await this.sendCreatedBroadcastAsync(accountNotificationChannel, data);
+      broadcast.unsubscribe();
     } else if (fulfillmentStatus === "requires_action") {
     }
   }
 
-  private sendCreatedBroadcast(
+  public async createAccountFollowerNotificationAsync(
+    accountFollower: Record<string, any>,
+  ): Promise<void> {
+    const accountId = accountFollower['account_id'] as string;
+    const followerId = accountFollower['follower_id'] as string;
+    const accepted = accountFollower['accepted'] ?? false as boolean;
+    if (!accepted) {
+      return;
+    }
+
+    const accountData = await SupabaseService.client
+      .from("account")
+      .select("id, customer_id, profile_url, username")
+      .eq("id", accountId)
+      .eq("status", "Complete");
+
+    if (accountData.error) {
+      console.error(accountData.error);
+      return;
+    }
+
+    if (accountData.data.length <= 0) {
+      console.error("No account found!");
+      return;
+    }
+
+    const followerAccountData = await SupabaseService.client
+      .from("account")
+      .select("id, customer_id, profile_url, username")
+      .eq("id", followerId)
+      .eq("status", "Complete");
+
+    if (followerAccountData.error) {
+      console.error(followerAccountData.error);
+      return;
+    }
+
+    if (followerAccountData.data.length <= 0) {
+      console.error("No follower account found!");
+      return;
+    }
+
+    await this.createNotificationAsync({
+      event_name: "account.accepted",
+      resource_type: "account",
+      ...(followerId && { resource_id: followerId }),
+      ...(accountId && { account_id: accountId }),
+      data: followerAccountData.data[0],
+      seen: false,
+    });
+
+    await this.createNotificationAsync({
+      event_name: "account.following",
+      resource_type: "account",
+      ...(accountId && { resource_id: accountId }),
+      ...(followerId && { account_id: followerId }),
+      data: accountData.data[0],
+      seen: false,
+    });
+  }
+
+  private sendCreatedBroadcastAsync(
     channel: RealtimeChannel,
     data: Record<string, any>,
-  ): void {
-    const subscription = channel?.subscribe(async (status) => {
-      if (status !== "SUBSCRIBED") {
-        return;
-      }
-      await channel?.send({
-        type: "broadcast",
-        event: "CREATED",
-        payload: data,
-      });
+  ): Promise<RealtimeChannel> {
+    return new Promise<RealtimeChannel>((resolve, reject) => {
+      const subscription = channel?.subscribe(async (status) => {
+        if (status !== "SUBSCRIBED") {
+          reject(new Error(`Status ${status} is not SUBSCRIBED`));
+          return;
+        }
+        await channel?.send({
+          type: "broadcast",
+          event: "CREATED",
+          payload: data,
+        });
 
-      subscription?.unsubscribe();
+        resolve(subscription);
+      });
     });
   }
 

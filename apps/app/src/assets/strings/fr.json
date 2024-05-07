@@ -315,5 +315,8 @@
   "sex": "Sex",
   "interests": "Intérêts",
   "addInterest": "Ajouter un intérêt",
-  "radius": "Rayon"
+  "radius": "Rayon",
+  "chats": "Chats",
+  "accountFollowerAcceptedDescription": "La demande de suivi de {{username, string}} a été acceptée",
+  "accountFollowerFollowingDescription": "{{username, string}} vous suit"
 }
