@@ -48,7 +48,8 @@ class AccountNotificationService extends Service {
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'account_notification'
+          table: 'account_notification',
+          filter: `account_id=eq.${accountId}`
         },
         (payload: Record<string, any>) => {
           this._notificationCreatedBehaviorSubject.next(payload);
