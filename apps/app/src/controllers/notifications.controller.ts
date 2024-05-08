@@ -5,6 +5,7 @@ import { Controller } from "../controller";
 import { NotificationsModel } from "../models/notifications.model";
 import { AccountNotificationResponse } from "../protobuf/account-notification_pb";
 import { AccountResponse } from "../protobuf/account_pb";
+import AccountFollowersService from '../services/account-followers.service';
 import AccountNotificationService from "../services/account-notification.service";
 import AccountController from "./account.controller";
 import WindowController from "./window.controller";
@@ -25,13 +26,13 @@ class NotificationsController extends Controller {
     return this._model;
   }
 
-  public override initialize(_renderCount: number): void {}
+  public override initialize(_renderCount: number): void { }
 
   public override load(_renderCount: number): void {
     this.loadAccountNotifications();
   }
 
-  public override disposeInitialization(_renderCount: number): void {}
+  public override disposeInitialization(_renderCount: number): void { }
 
   public override disposeLoad(_renderCount: number): void {
     this._loadedAccountSubscription?.unsubscribe();
@@ -102,6 +103,48 @@ class NotificationsController extends Controller {
     await this.requestAccountNotificationsAsync(offset, this._limit);
   }
 
+  public async requestFollowAsync(id: string): Promise<void> {
+    const account = await firstValueFrom(AccountController.model.store.pipe(select((model) => model.account), filter((value) => value !== undefined), take(1)));
+    if (!account) {
+      return;
+    }
+
+    try {
+      const follower = await AccountFollowersService.requestAddAsync({
+        accountId: account.id,
+        followerId: id,
+      });
+      if (follower) {
+        const accountFollowers = { ...this._model.accountFollowers };
+        accountFollowers[follower.followerId] = follower;
+        this._model.accountFollowers = accountFollowers;
+      }
+    } catch (error: any) {
+      console.error(error);
+    }
+  }
+
+  public async requestUnfollowAsync(id: string): Promise<void> {
+    const account = await firstValueFrom(AccountController.model.store.pipe(select((model) => model.account), filter((value) => value !== undefined), take(1)));
+    if (!account) {
+      return;
+    }
+
+    try {
+      const follower = await AccountFollowersService.requestRemoveAsync({
+        accountId: account.id,
+        followerId: id,
+      });
+      if (follower) {
+        const accountFollowers = { ...this._model.accountFollowers };
+        accountFollowers[follower.followerId] = follower;
+        this._model.accountFollowers = accountFollowers;
+      }
+    } catch (error: any) {
+      console.error(error);
+    }
+  }
+
   private async requestUpdateSeenAllAsync(): Promise<void> {
     const account = await firstValueFrom(
       AccountController.model.store.pipe(
@@ -124,14 +167,14 @@ class NotificationsController extends Controller {
 
     this._model.isLoading = true;
 
+    const account = await firstValueFrom(
+      AccountController.model.store.pipe(
+        select((model) => model.account),
+        filter((value) => value !== undefined),
+        take(1),
+      ),
+    );
     try {
-      const account = await firstValueFrom(
-        AccountController.model.store.pipe(
-          select((model) => model.account),
-          filter((value) => value !== undefined),
-          take(1),
-        ),
-      );
       const accountNotificationsResponse = await AccountNotificationService
         .requestNotificationsAsync({
           accountId: account.id,
@@ -167,6 +210,32 @@ class NotificationsController extends Controller {
       console.error(error);
       this._model.isLoading = false;
       this._model.hasMoreNotifications = false;
+    }
+
+    const accountNotifications = this._model.accountNotifications.filter((value) => value.resourceType === 'account' && !Object.keys(this._model.accountFollowers).includes(value.resourceId));
+    let accountFollowerIds = accountNotifications.map((value) => value.resourceId);
+    accountFollowerIds = accountFollowerIds.filter((value,
+      index) => accountFollowerIds.indexOf(value) === index);
+
+    if (accountFollowerIds.length > 0) {
+      try {
+        const followerResponse =
+          await AccountFollowersService.requestFollowersAsync({
+            accountId: account?.id ?? '',
+            otherAccountIds: accountFollowerIds,
+          });
+
+        const accountFollowers = {
+          ...this._model.accountFollowers,
+        };
+        for (const follower of followerResponse?.followers ?? []) {
+          accountFollowers[follower.followerId] = follower;
+        }
+
+        this._model.accountFollowers = accountFollowers;
+      } catch (error: any) {
+        console.error(error);
+      }
     }
 
     this._model.isLoading = false;

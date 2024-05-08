@@ -15,8 +15,8 @@
             display: -ms-flexbox;
             display: flex;
             -webkit-box-pack: center;
-                -ms-flex-pack: center;
-                    justify-content: center;
+            -ms-flex-pack: center;
+            justify-content: center;
             height: 40px;
             width: 40px;
             border-radius: 40px;
@@ -70,14 +70,14 @@
             display: flex;
             -webkit-box-orient: horizontal;
             -webkit-box-direction: normal;
-                -ms-flex-direction: row;
-                    flex-direction: row;
+            -ms-flex-direction: row;
+            flex-direction: row;
             -webkit-box-pack: right;
-                -ms-flex-pack: right;
-                    justify-content: right;
+            -ms-flex-pack: right;
+            justify-content: right;
             -webkit-box-flex: 1;
-                -ms-flex: 1;
-                    flex: 1;
+            -ms-flex: 1;
+            flex: 1;
 
             & .right-details-content {
                 display: -webkit-box;
@@ -85,8 +85,8 @@
                 display: flex;
                 -webkit-box-orient: vertical;
                 -webkit-box-direction: normal;
-                    -ms-flex-direction: column;
-                        flex-direction: column;
+                -ms-flex-direction: column;
+                flex-direction: column;
 
                 & .pricing {
                     width: -webkit-fit-content;
@@ -97,7 +97,7 @@
                     font-size: $font-size-sm;
                 }
             }
-    
+
         }
 
         & .remove-container {
@@ -117,31 +117,26 @@
 .root-desktop {
     padding: $mp-2 $mp-6;
 
-    & .details-desktop {               
-        & .thumbnail-desktop {        
-            & .thumbnail-image-desktop {
-            }
+    & .details-desktop {
+        & .thumbnail-desktop {
+            & .thumbnail-image-desktop {}
         }
 
         & .title-container-desktop {
-            & .title-desktop {
-            }
+            & .title-desktop {}
 
-            & .status-desktop {
-            }
+            & .status-desktop {}
         }
 
         & .right-details-container-desktop {
             & .right-details-content-desktop {
-                & .pricing-desktop {
-                }
+                & .pricing-desktop {}
             }
-    
+
         }
 
         & .remove-container-desktop {
-            & .remove-button-desktop {
-            }
+            & .remove-button-desktop {}
         }
     }
 
@@ -153,32 +148,27 @@
 .root-tablet {
     padding: $mp-2 $mp-6;
 
-    & .details-tablet { 
-            
-        & .thumbnail-tablet {        
-            & .thumbnail-image-tablet {
-            }
+    & .details-tablet {
+
+        & .thumbnail-tablet {
+            & .thumbnail-image-tablet {}
         }
 
         & .title-container-tablet {
-            & .title-tablet {
-            }
+            & .title-tablet {}
 
-            & .status-tablet {
-            }
+            & .status-tablet {}
         }
 
         & .right-details-container-tablet {
             & .right-details-content-tablet {
-                & .pricing-tablet {
-                }
+                & .pricing-tablet {}
             }
-    
+
         }
 
         & .remove-container-tablet {
-            & .remove-button-tablet {
-            }
+            & .remove-button-tablet {}
         }
     }
 
@@ -190,31 +180,26 @@
 .root-mobile {
     padding: $mp-2 $mp-4;
 
-    & .details-mobile {   
-        & .thumbnail-mobile {        
-            & .thumbnail-image-mobile {
-            }
+    & .details-mobile {
+        & .thumbnail-mobile {
+            & .thumbnail-image-mobile {}
         }
 
         & .title-container-mobile {
-            & .title-mobile {
-            }
+            & .title-mobile {}
 
-            & .status-mobile {
-            }
+            & .status-mobile {}
         }
 
         & .right-details-container-mobile {
             & .right-details-content-mobile {
-                & .pricing-mobile {
-                }
+                & .pricing-mobile {}
             }
-    
+
         }
 
         & .remove-container-mobile {
-            & .remove-button-mobile {
-            }
+            & .remove-button-mobile {}
         }
     }
 
@@ -231,4 +216,19 @@
 
 .secondary-button:hover {
     background-color: rgba(42, 42, 95, .15) !important;
+}
+
+.avatar-icon {
+    width: 32px;
+    height: 32px;
+}
+
+.primary-button {
+    background-color: $brand-700 !important;
+}
+
+.secondary-button {
+    background-color: $gray-100 !important;
+    color: $brand-900 !important;
+    border: 1px solid $brand-900 !important;
 }

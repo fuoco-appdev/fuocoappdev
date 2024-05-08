@@ -98,6 +98,7 @@ export default function NotificationsDesktopComponent({
                   <NotificationItemComponent
                     key={notification.id}
                     notification={notification}
+                    notificationsProps={notificationsProps}
                     fromNow={fromNowCurrent}
                   />
                 </>

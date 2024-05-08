@@ -317,6 +317,6 @@
   "addInterest": "Add Interest",
   "radius": "Radius",
   "chats": "Chats",
-  "accountFollowerAcceptedDescription": "Request to follow {{username, string}} has been accepted",
-  "accountFollowerFollowingDescription": "{{username, string}} is following you"
+  "accountFollowerAcceptedDescription": "request to follow has been accepted",
+  "accountFollowerFollowingDescription": "is following you"
 }

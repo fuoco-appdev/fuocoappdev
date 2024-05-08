@@ -99,6 +99,7 @@ export default function NotificationsTabletComponent({
                   <NotificationItemComponent
                     key={notification.id}
                     notification={notification}
+                    notificationsProps={notificationsProps}
                     fromNow={fromNowCurrent}
                   />
                 </>

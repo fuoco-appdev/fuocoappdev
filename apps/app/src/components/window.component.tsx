@@ -502,9 +502,7 @@ export default function WindowComponent(): JSX.Element {
         ),
         message: accountData.username ?? '',
         description:
-          t('accountFollowerAcceptedDescription', {
-            username: accountData.username,
-          }) ?? '',
+          t('accountFollowerAcceptedDescription') ?? '',
       });
       WindowController.updateAccountFollowerAcceptedNotificationData(undefined);
     };
@@ -535,9 +533,7 @@ export default function WindowComponent(): JSX.Element {
         ),
         message: accountData.username ?? '',
         description:
-          t('accountFollowerFollowingDescription', {
-            username: accountData.username,
-          }) ?? '',
+          t('accountFollowerFollowingDescription') ?? '',
       });
       WindowController.updateAccountFollowerFollowingNotificationData(undefined);
     };

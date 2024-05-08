@@ -583,8 +583,9 @@ class AccountController extends Controller {
       };
       for (const follower of followerResponse?.followers ?? []) {
         addFriendsAccountFollowers[follower.followerId] = follower;
-        this._model.addFriendAccountFollowers = addFriendsAccountFollowers;
       }
+
+      this._model.addFriendAccountFollowers = addFriendsAccountFollowers;
     } catch (error: any) {
       console.error(error);
     }

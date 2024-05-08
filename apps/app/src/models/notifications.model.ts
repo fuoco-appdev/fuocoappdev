@@ -1,9 +1,11 @@
 import { createStore, withProps } from "@ngneat/elf";
 import { Model } from "../model";
+import { AccountFollowerResponse } from "../protobuf/account-follower_pb";
 import { AccountNotificationResponse } from "../protobuf/account-notification_pb";
 
 export interface NotificationsState {
   accountNotifications: AccountNotificationResponse[];
+  accountFollowers: Record<string, AccountFollowerResponse>;
   pagination: number;
   hasMoreNotifications: boolean;
   scrollPosition: number | undefined;
@@ -17,6 +19,7 @@ export class NotificationsModel extends Model {
         { name: "notifications" },
         withProps<NotificationsState>({
           accountNotifications: [],
+          accountFollowers: {},
           pagination: 1,
           hasMoreNotifications: true,
           scrollPosition: 0,
@@ -33,6 +36,16 @@ export class NotificationsModel extends Model {
   public set accountNotifications(value: AccountNotificationResponse[]) {
     if (JSON.stringify(this.accountNotifications) !== JSON.stringify(value)) {
       this.store.update((state) => ({ ...state, accountNotifications: value }));
+    }
+  }
+
+  public get accountFollowers(): Record<string, AccountFollowerResponse> {
+    return this.store.getValue().accountFollowers;
+  }
+
+  public set accountFollowers(value: Record<string, AccountFollowerResponse>) {
+    if (JSON.stringify(this.accountFollowers) !== JSON.stringify(value)) {
+      this.store.update((state) => ({ ...state, accountFollowers: value }));
     }
   }
 
