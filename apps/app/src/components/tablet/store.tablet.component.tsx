@@ -5,6 +5,7 @@ import {
   Line,
   Listbox,
   Modal,
+  Scroll,
   Tabs,
 } from '@fuoco.appdev/core-ui';
 import { Product } from '@medusajs/medusa';
@@ -236,25 +237,41 @@ export default function StoreTabletComponent({
               </div>
             </div>
           </div>
-          <div
-            className={[
-              styles['scroll-container'],
-              styles['scroll-container-tablet'],
-            ].join(' ')}
-            style={{ height: window.innerHeight }}
-            onScroll={(e) => {
-              onPreviewsScroll(e);
+          <Scroll
+            classNames={{
+              root: [styles['scroll-root'], styles['scroll-root-tablet']].join(' '),
+              reloadContainer: [styles['scroll-load-container'], styles['scroll-load-container-tablet']].join(' '),
+              loadContainer: [styles['scroll-load-container'], styles['scroll-load-container-tablet']].join(' ')
+            }}
+            touchScreen={true}
+            reloadComponent={
+              <img
+                src={'../assets/svg/ring-resize-dark.svg'}
+                className={styles['loading-ring']}
+              />
+            }
+            isReloading={storeProps.isReloading}
+            onReload={() => StoreController.reloadProductsAsync()}
+            loadComponent={
+              <img
+                src={'../assets/svg/ring-resize-dark.svg'}
+                className={styles['loading-ring']}
+              />
+            }
+            isLoading={storeProps.isLoading}
+            onLoad={() => StoreController.onNextScrollAsync()}
+            onScroll={(progress, scrollRef, contentRef) => {
               const elementHeight = topBarRef.current?.clientHeight ?? 0;
-              const scrollTop = e.currentTarget.scrollTop;
-              if (prevPreviewScrollTop >= scrollTop) {
-                yPosition += prevPreviewScrollTop - scrollTop;
+              const scrollTop = contentRef.current?.getBoundingClientRect().top ?? 0;
+              if (prevPreviewScrollTop <= scrollTop) {
+                yPosition -= prevPreviewScrollTop - scrollTop;
                 if (yPosition >= 0) {
                   yPosition = 0;
                 }
 
                 topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
               } else {
-                yPosition -= scrollTop - prevPreviewScrollTop;
+                yPosition += scrollTop - prevPreviewScrollTop;
                 if (yPosition <= -elementHeight) {
                   yPosition = -elementHeight;
                 }
@@ -262,78 +279,72 @@ export default function StoreTabletComponent({
                 topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
               }
 
-              prevPreviewScrollTop = e.currentTarget.scrollTop;
+              prevPreviewScrollTop = scrollTop;
             }}
-            ref={previewsContainerRef}
-            onLoad={onPreviewsLoad}
           >
-            {storeProps.products.map((product: Product, index: number) => {
-              const pricedProduct = Object.keys(
-                storeProps.pricedProducts
-              ).includes(product.id ?? '')
-                ? storeProps.pricedProducts[product.id ?? '']
-                : null;
-              const productLikesMetadata =
-                storeProps.productLikesMetadata?.find(
-                  (value) => value.productId === product.id
-                ) ?? null;
-              return (
-                <ProductPreviewComponent
-                  parentRef={rootRef}
-                  key={index}
-                  storeProps={storeProps}
-                  accountProps={accountProps}
-                  purchasable={true}
-                  showPricingDetails={storeProps.selectedSalesChannel !== undefined}
-                  thumbnail={product.thumbnail ?? undefined}
-                  title={product.title ?? undefined}
-                  subtitle={product.subtitle ?? undefined}
-                  description={product.description ?? undefined}
-                  type={product.type ?? undefined}
-                  pricedProduct={pricedProduct}
-                  isLoading={
-                    isPreviewLoading &&
-                    storeProps.selectedPricedProduct?.id === pricedProduct?.id
-                  }
-                  likesMetadata={
-                    productLikesMetadata ??
-                    ProductLikesMetadataResponse.prototype
-                  }
-                  onClick={() =>
-                    pricedProduct &&
-                    onProductPreviewClick(
-                      previewsContainerRef.current?.scrollTop ?? 0,
-                      pricedProduct,
-                      productLikesMetadata
-                    )
-                  }
-                  onRest={() => onProductPreviewRest(product)}
-                  onAddToCart={() =>
-                    pricedProduct &&
-                    onProductPreviewAddToCart(
-                      pricedProduct,
-                      productLikesMetadata
-                    )
-                  }
-                  onLikeChanged={(isLiked: boolean) =>
-                    pricedProduct &&
-                    onProductPreviewLikeChanged(isLiked, pricedProduct)
-                  }
-                />
-              );
-            })}
-            <img
-              src={'../assets/svg/ring-resize-dark.svg'}
-              className={styles['loading-ring']}
-              style={{
-                maxHeight:
-                  exploreLocalProps.selectedInventoryLocationId &&
-                    (storeProps.hasMorePreviews || storeProps.isLoading)
-                    ? 24
-                    : 0,
+            <div
+              className={[
+                styles['scroll-container'],
+                styles['scroll-container-tablet'],
+              ].join(' ')}
+              ref={previewsContainerRef}
+              onLoad={(e) => {
+                onPreviewsLoad(e);
               }}
-            />
-          </div>
+            >
+              {storeProps.products.map((product: Product, index: number) => {
+                const pricedProduct = Object.keys(
+                  storeProps.pricedProducts
+                ).includes(product.id ?? '')
+                  ? storeProps.pricedProducts[product.id ?? '']
+                  : null;
+                const productLikesMetadata =
+                  storeProps.productLikesMetadata?.find(
+                    (value) => value.productId === product.id
+                  ) ?? null;
+                return (
+                  <ProductPreviewComponent
+                    parentRef={rootRef}
+                    key={index}
+                    storeProps={storeProps}
+                    accountProps={accountProps}
+                    purchasable={true}
+                    showPricingDetails={storeProps.selectedSalesChannel !== undefined}
+                    thumbnail={product.thumbnail ?? undefined}
+                    title={product.title ?? undefined}
+                    subtitle={product.subtitle ?? undefined}
+                    description={product.description ?? undefined}
+                    type={product.type ?? undefined}
+                    pricedProduct={pricedProduct}
+                    isLoading={
+                      isPreviewLoading &&
+                      storeProps.selectedPricedProduct?.id === pricedProduct?.id
+                    }
+                    likesMetadata={
+                      productLikesMetadata ?? ProductLikesMetadataResponse.prototype
+                    }
+                    onClick={() =>
+                      pricedProduct &&
+                      onProductPreviewClick(
+                        previewsContainerRef.current?.scrollTop ?? 0,
+                        pricedProduct,
+                        productLikesMetadata
+                      )
+                    }
+                    onRest={() => onProductPreviewRest(product)}
+                    onAddToCart={() =>
+                      pricedProduct &&
+                      onProductPreviewAddToCart(pricedProduct, productLikesMetadata)
+                    }
+                    onLikeChanged={(isLiked: boolean) =>
+                      pricedProduct &&
+                      onProductPreviewLikeChanged(isLiked, pricedProduct)
+                    }
+                  />
+                );
+              })}
+            </div>
+          </Scroll>
         </div>
         <CSSTransition
           nodeRef={sideBarRef}

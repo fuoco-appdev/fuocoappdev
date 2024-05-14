@@ -25,6 +25,7 @@ export default function AccountPublicDesktopComponent({
   onLikesClick,
   onFollowersClick,
   onFollowingClick,
+  onMessage
 }: AccountPublicResponsiveProps): JSX.Element {
   const scrollContainerRef = React.createRef<HTMLDivElement>();
   const navigate = useNavigate();
@@ -349,6 +350,22 @@ export default function AccountPublicDesktopComponent({
                       width={120}
                     />
                   )}
+                  <Button
+                    classNames={{
+                      button: [
+                        styles['secondary-button'],
+                        styles['secondary-button-desktop'],
+                      ].join(' '),
+                    }}
+                    rippleProps={{
+                      color: 'rgba(42, 42, 95, .35)',
+                    }}
+                    size={'medium'}
+                    type={'secondary'}
+                    onClick={onMessage}
+                  >
+                    {t('message')}
+                  </Button>
                 </div>
               </div>
               <div

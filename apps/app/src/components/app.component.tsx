@@ -34,9 +34,17 @@ function AppComponent({ }: AppProps): JSX.Element {
           setCookie('sb-refresh-token', session.refresh_token);
           setCookie('sb-access-token', session.access_token);
         } else if (event === 'SIGNED_OUT') {
-          removeCookie('sb-refresh-token');
-          removeCookie('sb-access-token');
-          MedusaService.deleteSessionAsync();
+          const accessToken =
+            Object.keys(cookies).includes('sb-access-token') &&
+            cookies['sb-access-token'];
+          const refreshToken =
+            Object.keys(cookies).includes('sb-refresh-token') &&
+            cookies['sb-refresh-token'];
+          if (accessToken && refreshToken) {
+            removeCookie('sb-refresh-token');
+            removeCookie('sb-access-token');
+            MedusaService.deleteSessionAsync();
+          }
         }
       }
     );

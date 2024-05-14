@@ -51,6 +51,7 @@ export interface AccountPublicResponsiveProps {
   onLikesClick: () => void;
   onFollowersClick: () => void;
   onFollowingClick: () => void;
+  onMessage: () => void;
 }
 
 export default function AccountPublicComponent(): JSX.Element {
@@ -163,6 +164,10 @@ export default function AccountPublicComponent(): JSX.Element {
       }
     }
   };
+
+  const onMessage = () => {
+
+  }
 
   React.useEffect(() => {
     renderCountRef.current += 1;
@@ -287,6 +292,7 @@ export default function AccountPublicComponent(): JSX.Element {
           onLikesClick={onLikesClick}
           onFollowersClick={onFollowersClick}
           onFollowingClick={onFollowingClick}
+          onMessage={onMessage}
         />
         <AccountPublicTabletComponent
           accountPublicProps={accountPublicProps}
@@ -305,6 +311,7 @@ export default function AccountPublicComponent(): JSX.Element {
           onLikesClick={onLikesClick}
           onFollowersClick={onFollowersClick}
           onFollowingClick={onFollowingClick}
+          onMessage={onMessage}
         />
         <AccountPublicMobileComponent
           accountPublicProps={accountPublicProps}
@@ -323,6 +330,7 @@ export default function AccountPublicComponent(): JSX.Element {
           onLikesClick={onLikesClick}
           onFollowersClick={onFollowersClick}
           onFollowingClick={onFollowingClick}
+          onMessage={onMessage}
         />
       </React.Suspense>
     </>

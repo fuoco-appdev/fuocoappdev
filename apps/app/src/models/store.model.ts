@@ -49,6 +49,7 @@ export interface StoreState {
   hasMorePreviews: boolean;
   scrollPosition: number | undefined;
   isLoading: boolean;
+  isReloading: boolean;
   productTypes: ProductType[];
 }
 
@@ -72,6 +73,7 @@ export class StoreModel extends Model {
           hasMorePreviews: true,
           scrollPosition: undefined,
           isLoading: false,
+          isReloading: false,
           productTypes: [],
         }),
       ),
@@ -142,7 +144,7 @@ export class StoreModel extends Model {
   ) {
     if (
       JSON.stringify(this.selectedProductLikesMetadata) !==
-        JSON.stringify(value)
+      JSON.stringify(value)
     ) {
       this.store.update((state) => ({
         ...state,
@@ -251,6 +253,19 @@ export class StoreModel extends Model {
       this.store.update((state) => ({
         ...state,
         isLoading: value,
+      }));
+    }
+  }
+
+  public get isReloading(): boolean {
+    return this.store.getValue().isReloading;
+  }
+
+  public set isReloading(value: boolean) {
+    if (this.isReloading !== value) {
+      this.store.update((state) => ({
+        ...state,
+        isReloading: value,
       }));
     }
   }

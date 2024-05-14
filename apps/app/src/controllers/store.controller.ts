@@ -92,7 +92,7 @@ class StoreController extends Controller {
   }
 
   public async loadProductsAsync(): Promise<void> {
-    await this.searchAsync(this._model.input, 0, this._limit);
+    await this.searchAsync(this._model.input, 'loading', 0, this._limit);
   }
 
   public updateInput(value: string): void {
@@ -103,7 +103,7 @@ class StoreController extends Controller {
     this._model.hasMorePreviews = true;
     clearTimeout(this._timerId as number | undefined);
     this._timerId = setTimeout(() => {
-      this.searchAsync(value, 0, this._limit);
+      this.searchAsync(value, 'loading', 0, this._limit);
     }, 750);
   }
 
@@ -130,7 +130,7 @@ class StoreController extends Controller {
     this._model.pricedProducts = {};
     const offset = this._limit * (this._model.pagination - 1);
 
-    await this.searchAsync(this._model.input, offset, this._limit, true);
+    await this.searchAsync(this._model.input, 'loading', offset, this._limit, true);
   }
 
   public async onNextScrollAsync(): Promise<void> {
@@ -145,7 +145,7 @@ class StoreController extends Controller {
     this._model.pagination = this._model.pagination + 1;
 
     const offset = this._limit * (this._model.pagination - 1);
-    await this.searchAsync(this._model.input, offset, this._limit);
+    await this.searchAsync(this._model.input, 'loading', offset, this._limit);
   }
 
   public async reloadProductsAsync(): Promise<void> {
@@ -153,7 +153,7 @@ class StoreController extends Controller {
     this._model.pagination = 1;
     this._model.products = [];
     this._model.pricedProducts = {};
-    await this.searchAsync(this._model.input, 0, this._limit);
+    await this.searchAsync(this._model.input, 'reloading', 0, this._limit);
   }
 
   public async requestProductsAsync(
@@ -286,11 +286,12 @@ class StoreController extends Controller {
 
   public async searchAsync(
     query: string,
+    loadingType: 'loading' | 'reloading',
     offset: number = 0,
     limit: number = 10,
     force: boolean = false
   ): Promise<void> {
-    if (!force && this._model.isLoading) {
+    if (!force && (this._model.isLoading || this._model.isReloading)) {
       return;
     }
 
@@ -301,7 +302,12 @@ class StoreController extends Controller {
       )
     );
 
-    this._model.isLoading = true;
+    if (loadingType === 'loading') {
+      this._model.isLoading = true;
+    }
+    else if (loadingType === 'reloading') {
+      this._model.isReloading = true;
+    }
 
     const filterValue = this.getFilter(selectedInventoryLocation);
     const sortValue = this.getSorting(selectedInventoryLocation);
@@ -323,6 +329,7 @@ class StoreController extends Controller {
 
     if (hits && hits.length <= 0) {
       this._model.isLoading = false;
+      this._model.isReloading = false;
       this._model.hasMorePreviews = false;
       return;
     }
@@ -338,7 +345,12 @@ class StoreController extends Controller {
       this._model.products = hits;
     }
 
-    this._model.isLoading = false;
+    if (loadingType === 'loading') {
+      this._model.isLoading = false;
+    }
+    else if (loadingType === 'reloading') {
+      this._model.isReloading = false;
+    }
 
     const productIds: string[] = hits.map((value: Product) => value.id);
 

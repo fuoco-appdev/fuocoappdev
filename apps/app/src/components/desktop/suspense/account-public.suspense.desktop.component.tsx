@@ -143,6 +143,7 @@ export function AccountPublicSuspenseDesktopComponent(): JSX.Element {
               ].join(' ')}
             >
               <Skeleton count={1} borderRadius={6} height={38} width={120} />
+              <Skeleton count={1} borderRadius={6} height={38} width={120} />
             </div>
           </div>
           <div

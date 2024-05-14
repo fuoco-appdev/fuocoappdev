@@ -303,12 +303,13 @@ class AccountPublicController extends Controller {
 
     this._model.areFollowersLoading = true;
 
+    const account = await firstValueFrom(this._model.store.pipe(select((model) => model.account), filter((value) => value !== undefined), take(1)));
     let followerAccounts: AccountDocument[] = [];
     try {
       const accountsResponse = await AccountService.requestFollowersSearchAsync(
         {
           queryUsername: query,
-          accountId: this._model.account?.id ?? '',
+          accountId: account?.id ?? '',
           offset: offset,
           limit: limit,
         }
@@ -355,7 +356,7 @@ class AccountPublicController extends Controller {
       );
       const followerResponse =
         await AccountFollowersService.requestFollowersAsync({
-          accountId: this._model.account?.id ?? '',
+          accountId: account?.id ?? '',
           otherAccountIds: otherAccountIds,
         });
 
@@ -413,12 +414,13 @@ class AccountPublicController extends Controller {
 
     this._model.areFollowingLoading = true;
 
+    const account = await firstValueFrom(this._model.store.pipe(select((model) => model.account), filter((value) => value !== undefined), take(1)));
     let followingAccounts: AccountDocument[] = [];
     try {
       const accountsResponse = await AccountService.requestFollowingSearchAsync(
         {
           queryUsername: query,
-          accountId: this._model.account?.id ?? '',
+          accountId: account?.id ?? '',
           offset: offset,
           limit: limit,
         }
@@ -465,7 +467,7 @@ class AccountPublicController extends Controller {
       );
       const followerResponse =
         await AccountFollowersService.requestFollowersAsync({
-          accountId: this._model.account?.id ?? '',
+          accountId: account?.id ?? '',
           otherAccountIds: otherAccountIds,
         });
 
