@@ -1,4 +1,4 @@
-import { Button, Input, Line, Tabs } from '@fuoco.appdev/core-ui';
+import { Button, Input, Line, Scroll, Tabs } from '@fuoco.appdev/core-ui';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -38,8 +38,8 @@ export default function ExploreDesktopComponent({
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>
         <div
           className={[
-            styles['search-container'],
-            styles['search-container-desktop'],
+            styles['search-root'],
+            styles['search-root-desktop'],
           ].join(' ')}
         >
           <div
@@ -122,25 +122,27 @@ export default function ExploreDesktopComponent({
               </div>
             </div>
           </div>
-          <div
-            className={[
-              styles['scroll-container'],
-              styles['scroll-container-desktop'],
-            ].join(' ')}
-            style={{ height: window.innerHeight }}
-            onScroll={(e) => {
-              onScroll(e);
+          <Scroll
+            loadComponent={
+              <img
+                src={'../assets/svg/ring-resize-dark.svg'}
+                className={styles['loading-ring']}
+              />
+            }
+            isLoading={exploreProps.areSearchedStockLocationsLoading}
+            onLoad={() => ExploreController.onNextScrollAsync()}
+            onScroll={(progress, scrollRef, contentRef) => {
               const elementHeight = topBarRef.current?.clientHeight ?? 0;
-              const scrollTop = e.currentTarget.scrollTop;
-              if (prevScrollTop >= scrollTop) {
-                yPosition += prevScrollTop - scrollTop;
+              const scrollTop = contentRef.current?.getBoundingClientRect().top ?? 0;
+              if (prevScrollTop <= scrollTop) {
+                yPosition -= prevScrollTop - scrollTop;
                 if (yPosition >= 0) {
                   yPosition = 0;
                 }
 
                 topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
               } else {
-                yPosition -= scrollTop - prevScrollTop;
+                yPosition += scrollTop - prevScrollTop;
                 if (yPosition <= -elementHeight) {
                   yPosition = -elementHeight;
                 }
@@ -148,58 +150,54 @@ export default function ExploreDesktopComponent({
                 topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
               }
 
-              prevScrollTop = e.currentTarget.scrollTop;
+              prevScrollTop = scrollTop;
             }}
-            ref={scrollContainerRef}
-            onLoad={onScrollLoad}
           >
-            {exploreProps.searchedStockLocations.map(
-              (stockLocation: StockLocation, _index: number) => {
-                return (
-                  <StockLocationItemComponent
-                    key={stockLocation.id}
-                    stockLocation={stockLocation}
-                    onClick={async () =>
-                      onStockLocationClicked(
-                        await ExploreController.getInventoryLocationAsync(
-                          stockLocation
+            <div
+              className={[
+                styles['scroll-container'],
+                styles['scroll-container-desktop'],
+              ].join(' ')}
+              ref={scrollContainerRef}
+              onLoad={onScrollLoad}
+            >
+              {exploreProps.searchedStockLocations.map(
+                (stockLocation: StockLocation, _index: number) => {
+                  return (
+                    <StockLocationItemComponent
+                      key={stockLocation.id}
+                      stockLocation={stockLocation}
+                      onClick={async () =>
+                        onStockLocationClicked(
+                          await ExploreController.getInventoryLocationAsync(
+                            stockLocation
+                          )
                         )
-                      )
-                    }
-                  />
-                );
-              }
-            )}
-            <img
-              src={'../assets/svg/ring-resize-dark.svg'}
-              className={styles['loading-ring']}
-              style={{
-                maxHeight:
-                  exploreProps.hasMoreSearchedStockLocations ||
-                    exploreProps.areSearchedStockLocationsLoading
-                    ? 24
-                    : 0,
-              }}
-            />
-            {!exploreProps.areSearchedStockLocationsLoading &&
-              exploreProps.searchedStockLocations.length <= 0 && (
-                <div
-                  className={[
-                    styles['no-searched-stock-locations-container'],
-                    styles['no-searched-stock-locations-container-desktop'],
-                  ].join(' ')}
-                >
+                      }
+                    />
+                  );
+                }
+              )}
+              {!exploreProps.areSearchedStockLocationsLoading &&
+                exploreProps.searchedStockLocations.length <= 0 && (
                   <div
                     className={[
-                      styles['no-items-text'],
-                      styles['no-items-text-desktop'],
+                      styles['no-searched-stock-locations-container'],
+                      styles['no-searched-stock-locations-container-desktop'],
                     ].join(' ')}
                   >
-                    {t('noStockLocationsFound')}
+                    <div
+                      className={[
+                        styles['no-items-text'],
+                        styles['no-items-text-desktop'],
+                      ].join(' ')}
+                    >
+                      {t('noStockLocationsFound')}
+                    </div>
                   </div>
-                </div>
-              )}
-          </div>
+                )}
+            </div>
+          </Scroll>
         </div>
         <div
           className={[
@@ -220,9 +218,9 @@ export default function ExploreDesktopComponent({
               interactive={true}
               initialViewState={{
                 longitude:
-                  exploreProps.selectedInventoryLocation?.coordinates.lng ?? 0,
+                  exploreProps.longitude ?? 0,
                 latitude:
-                  exploreProps.selectedInventoryLocation?.coordinates.lat ?? 0,
+                  exploreProps.latitude ?? 0,
                 zoom: 15,
               }}
               longitude={exploreProps.longitude ?? 0}

@@ -1,4 +1,4 @@
-import { Button, Dropdown, Input, Line, Tabs } from '@fuoco.appdev/core-ui';
+import { Button, Dropdown, Input, Line, Scroll, Tabs } from '@fuoco.appdev/core-ui';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
 import * as React from 'react';
 import ReactDOM from 'react-dom';
@@ -59,8 +59,8 @@ export default function ExploreMobileComponent({
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
         <div
           className={[
-            styles['search-container'],
-            styles['search-container-mobile'],
+            styles['search-root'],
+            styles['search-root-mobile'],
           ].join(' ')}
         >
           <div
@@ -185,25 +185,41 @@ export default function ExploreMobileComponent({
             </div>
           </div>
           {isSearchFocused && (
-            <div
-              className={[
-                styles['scroll-container'],
-                styles['scroll-container-mobile'],
-              ].join(' ')}
-              style={{ height: window.innerHeight }}
-              onScroll={(e) => {
-                onScroll(e);
+            <Scroll
+              classNames={{
+                root: [styles['scroll-root'], styles['scroll-root-mobile']].join(' '),
+                reloadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' '),
+                loadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' ')
+              }}
+              touchScreen={true}
+              reloadComponent={
+                <img
+                  src={'../assets/svg/ring-resize-dark.svg'}
+                  className={styles['loading-ring']}
+                />
+              }
+              isReloading={exploreProps.areSearchedStockLocationsReloading}
+              onReload={() => ExploreController.reloadStockLocationsAsync()}
+              loadComponent={
+                <img
+                  src={'../assets/svg/ring-resize-dark.svg'}
+                  className={styles['loading-ring']}
+                />
+              }
+              isLoading={exploreProps.areSearchedStockLocationsLoading}
+              onLoad={() => ExploreController.onNextScrollAsync()}
+              onScroll={(progress, scrollRef, contentRef) => {
                 const elementHeight = topBarRef.current?.clientHeight ?? 0;
-                const scrollTop = e.currentTarget.scrollTop;
-                if (prevScrollTop >= scrollTop) {
-                  yPosition += prevScrollTop - scrollTop;
+                const scrollTop = contentRef.current?.getBoundingClientRect().top ?? 0;
+                if (prevScrollTop <= scrollTop) {
+                  yPosition -= prevScrollTop - scrollTop;
                   if (yPosition >= 0) {
                     yPosition = 0;
                   }
 
                   topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
                 } else {
-                  yPosition -= scrollTop - prevScrollTop;
+                  yPosition += scrollTop - prevScrollTop;
                   if (yPosition <= -elementHeight) {
                     yPosition = -elementHeight;
                   }
@@ -211,135 +227,131 @@ export default function ExploreMobileComponent({
                   topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
                 }
 
-                prevScrollTop = e.currentTarget.scrollTop;
+                prevScrollTop = scrollTop;
               }}
-              ref={scrollContainerRef}
-              onLoad={onScrollLoad}
             >
-              {exploreProps.searchedStockLocations.map(
-                (stockLocation: StockLocation, _index: number) => {
-                  return (
-                    <StockLocationItemComponent
-                      key={stockLocation.id}
-                      stockLocation={stockLocation}
-                      onClick={async () =>
-                        onStockLocationClicked(
-                          await ExploreController.getInventoryLocationAsync(
-                            stockLocation
+              <div
+                className={[
+                  styles['scroll-container'],
+                  styles['scroll-container-mobile'],
+                ].join(' ')}
+                ref={scrollContainerRef}
+                onLoad={onScrollLoad}
+              >
+                {exploreProps.searchedStockLocations.map(
+                  (stockLocation: StockLocation, _index: number) => {
+                    return (
+                      <StockLocationItemComponent
+                        key={stockLocation.id}
+                        stockLocation={stockLocation}
+                        onClick={async () =>
+                          onStockLocationClicked(
+                            await ExploreController.getInventoryLocationAsync(
+                              stockLocation
+                            )
                           )
-                        )
-                      }
-                    />
-                  );
-                }
-              )}
-              <img
-                src={'../assets/svg/ring-resize-dark.svg'}
-                className={styles['loading-ring']}
-                style={{
-                  maxHeight:
-                    exploreProps.hasMoreSearchedStockLocations ||
-                      exploreProps.areSearchedStockLocationsLoading
-                      ? 24
-                      : 0,
-                }}
-              />
-              {!exploreProps.areSearchedStockLocationsLoading &&
-                exploreProps.searchedStockLocations.length <= 0 && (
-                  <div
-                    className={[
-                      styles['no-searched-stock-locations-container'],
-                      styles['no-searched-stock-locations-container-mobile'],
-                    ].join(' ')}
-                  >
+                        }
+                      />
+                    );
+                  }
+                )}
+                {!exploreProps.areSearchedStockLocationsLoading &&
+                  exploreProps.searchedStockLocations.length <= 0 && (
                     <div
                       className={[
-                        styles['no-items-text'],
-                        styles['no-items-text-mobile'],
+                        styles['no-searched-stock-locations-container'],
+                        styles['no-searched-stock-locations-container-mobile'],
                       ].join(' ')}
                     >
-                      {t('noStockLocationsFound')}
+                      <div
+                        className={[
+                          styles['no-items-text'],
+                          styles['no-items-text-mobile'],
+                        ].join(' ')}
+                      >
+                        {t('noStockLocationsFound')}
+                      </div>
                     </div>
-                  </div>
-                )}
-            </div>
+                  )}
+              </div>
+            </Scroll>
           )}
-        </div>
-        <div
-          className={[
-            styles['map-container'],
-            styles['map-container-mobile'],
-          ].join(' ')}
-        >
-          <Map
-            style={{
-              minWidth: '100%',
-              minHeight: '100vh',
-              width: '100%',
-              height: '100%',
-            }}
-            mapboxAccessToken={process.env['MAPBOX_ACCESS_TOKEN']}
-            ref={mapRef}
-            interactive={true}
-            initialViewState={{
-              longitude:
-                exploreProps.selectedInventoryLocation?.coordinates.lng ?? 0,
-              latitude:
-                exploreProps.selectedInventoryLocation?.coordinates.lat ?? 0,
-              zoom: 15,
-            }}
-            longitude={exploreProps.longitude ?? 0}
-            latitude={exploreProps.latitude ?? 0}
-            zoom={exploreProps.zoom ?? 15}
-            mapStyle={ConfigService.mapbox.style_url}
-            onMove={(e) => ExploreController.onMapMove(e.viewState)}
-            onLoad={(e) => {
-              setMapStyleLoaded(e.target ? true : false);
-              e.target.resize();
-            }}
+          <div
+            className={[
+              styles['map-container'],
+              styles['map-container-mobile'],
+            ].join(' ')}
           >
-            {exploreProps.inventoryLocations?.map(
-              (point: InventoryLocation, index: number) => (
-                <Marker
-                  key={`marker-${index}`}
-                  latitude={point.coordinates.lat}
-                  longitude={point.coordinates.lng}
-                  anchor={'bottom'}
-                  onClick={(e) => {
-                    e.originalEvent.stopPropagation();
-                    setSelectedPoint(point);
-                  }}
-                >
-                  {point.type === InventoryLocationType.Cellar && (
-                    <img
-                      src={
-                        exploreProps.selectedInventoryLocation?.id !== point.id
-                          ? '../assets/images/unselected-cellar.png'
-                          : '../assets/images/selected-cellar.png'
-                      }
-                      className={[
-                        styles['marker'],
-                        styles['marker-mobile'],
-                      ].join(' ')}
-                    />
-                  )}
-                  {point.type === InventoryLocationType.Restaurant && (
-                    <img
-                      src={
-                        exploreProps.selectedInventoryLocation?.id !== point.id
-                          ? '../assets/images/unselected-restaurant.png'
-                          : '../assets/images/selected-restaurant.png'
-                      }
-                      className={[
-                        styles['marker'],
-                        styles['marker-mobile'],
-                      ].join(' ')}
-                    />
-                  )}
-                </Marker>
-              )
-            )}
-          </Map>
+            <Map
+              style={{
+                minWidth: '100%',
+                minHeight: '100vh',
+                width: '100%',
+                height: '100%',
+              }}
+              mapboxAccessToken={process.env['MAPBOX_ACCESS_TOKEN']}
+              ref={mapRef}
+              interactive={true}
+              initialViewState={{
+                longitude:
+                  exploreProps.longitude ?? 0,
+                latitude:
+                  exploreProps.latitude ?? 0,
+                zoom: 15,
+              }}
+              longitude={exploreProps.longitude ?? 0}
+              latitude={exploreProps.latitude ?? 0}
+              zoom={exploreProps.zoom ?? 15}
+              mapStyle={ConfigService.mapbox.style_url}
+              onMove={(e) => ExploreController.onMapMove(e.viewState)}
+              onLoad={(e) => {
+                setMapStyleLoaded(e.target ? true : false);
+                e.target.resize();
+              }}
+            >
+              {exploreProps.inventoryLocations?.map(
+                (point: InventoryLocation, index: number) => (
+                  <Marker
+                    key={`marker-${index}`}
+                    latitude={point.coordinates.lat}
+                    longitude={point.coordinates.lng}
+                    anchor={'bottom'}
+                    onClick={(e) => {
+                      e.originalEvent.stopPropagation();
+                      setSelectedPoint(point);
+                    }}
+                  >
+                    {point.type === InventoryLocationType.Cellar && (
+                      <img
+                        src={
+                          exploreProps.selectedInventoryLocation?.id !== point.id
+                            ? '../assets/images/unselected-cellar.png'
+                            : '../assets/images/selected-cellar.png'
+                        }
+                        className={[
+                          styles['marker'],
+                          styles['marker-mobile'],
+                        ].join(' ')}
+                      />
+                    )}
+                    {point.type === InventoryLocationType.Restaurant && (
+                      <img
+                        src={
+                          exploreProps.selectedInventoryLocation?.id !== point.id
+                            ? '../assets/images/unselected-restaurant.png'
+                            : '../assets/images/selected-restaurant.png'
+                        }
+                        className={[
+                          styles['marker'],
+                          styles['marker-mobile'],
+                        ].join(' ')}
+                      />
+                    )}
+                  </Marker>
+                )
+              )}
+            </Map>
+          </div>
         </div>
         <div
           className={[

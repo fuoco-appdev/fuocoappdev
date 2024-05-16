@@ -60,7 +60,17 @@ class ExploreController extends Controller {
   }
 
   public async loadStockLocationsAsync(): Promise<void> {
-    await this.searchStockLocationsAsync(this._model.input, 0, this._limit);
+    this._model.searchedStockLocationsPagination = 1;
+    this._model.searchedStockLocations = [];
+    this._model.hasMoreSearchedStockLocations = true;
+    await this.searchStockLocationsAsync(this._model.input, 'loading', 0, this._limit);
+  }
+
+  public async reloadStockLocationsAsync(): Promise<void> {
+    this._model.searchedStockLocationsPagination = 1;
+    this._model.searchedStockLocations = [];
+    this._model.hasMoreSearchedStockLocations = true;
+    await this.searchStockLocationsAsync(this._model.input, 'reloading', 0, this._limit);
   }
 
   public onMapMove(state: ViewState): void {
@@ -80,6 +90,7 @@ class ExploreController extends Controller {
       (this._model.searchedStockLocationsPagination - 1);
     await this.searchStockLocationsAsync(
       this._model.input,
+      'loading',
       offset,
       this._limit,
     );
@@ -92,7 +103,7 @@ class ExploreController extends Controller {
     this._model.hasMoreSearchedStockLocations = true;
     clearTimeout(this._timerId as number | undefined);
     this._timerId = setTimeout(() => {
-      this.searchStockLocationsAsync(value, 0, this._limit);
+      this.searchStockLocationsAsync(value, 'loading', 0, this._limit);
     }, 750);
   }
 
@@ -135,6 +146,7 @@ class ExploreController extends Controller {
 
     await this.searchStockLocationsAsync(
       this._model.input,
+      'loading',
       offset,
       this._limit,
       true,
@@ -177,6 +189,7 @@ class ExploreController extends Controller {
 
   public async searchStockLocationsAsync(
     query: string,
+    loadType: 'loading' | 'reloading',
     offset: number = 0,
     limit: number = 10,
     force: boolean = false,
@@ -185,7 +198,12 @@ class ExploreController extends Controller {
       return;
     }
 
-    this._model.areSearchedStockLocationsLoading = true;
+    if (loadType === 'loading') {
+      this._model.areSearchedStockLocationsLoading = true;
+    }
+    else if (loadType === 'reloading') {
+      this._model.areSearchedStockLocationsReloading = true;
+    }
 
     let filter = this.getFilter();
     const result = await this._stockLocationsIndex?.search(query, {
@@ -196,6 +214,7 @@ class ExploreController extends Controller {
 
     let hits = result?.hits as StockLocation[] | undefined;
     if (!hits) {
+      this._model.areSearchedStockLocationsReloading = false;
       this._model.areSearchedStockLocationsLoading = false;
       return;
     }
@@ -209,6 +228,7 @@ class ExploreController extends Controller {
     }
 
     if (hits.length <= 0) {
+      this._model.areSearchedStockLocationsReloading = false;
       this._model.areSearchedStockLocationsLoading = false;
       return;
     }
@@ -224,7 +244,18 @@ class ExploreController extends Controller {
       this._model.searchedStockLocations = hits;
     }
 
-    this._model.areSearchedStockLocationsLoading = false;
+    const firstLocation = this._model.searchedStockLocations[0];
+    const firstLocationGeo = JSON.parse(firstLocation.metadata?.['coordinates'] as string) as { longitude: number; latitude: number; } | undefined;
+    if (firstLocationGeo) {
+      this.updateCoordinates(new mapboxgl.LngLat(firstLocationGeo.longitude, firstLocationGeo.latitude));
+    }
+
+    if (loadType === 'loading') {
+      this._model.areSearchedStockLocationsLoading = false;
+    }
+    else if (loadType === 'reloading') {
+      this._model.areSearchedStockLocationsReloading = false;
+    }
   }
 
   public async getInventoryLocationAsync(

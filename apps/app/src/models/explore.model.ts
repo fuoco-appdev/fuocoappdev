@@ -36,6 +36,7 @@ export interface ExploreState {
   hasMoreSearchedStockLocations: boolean;
   searchedStockLocationScrollPosition: number | undefined;
   areSearchedStockLocationsLoading: boolean;
+  areSearchedStockLocationsReloading: boolean;
   selectedInventoryLocation: InventoryLocation | undefined;
   wineCount: number;
   isSelectedInventoryLocationLoaded: boolean;
@@ -63,6 +64,7 @@ export class ExploreModel extends Model {
           searchedStockLocationScrollPosition: 0,
           selectedInventoryLocation: undefined,
           areSearchedStockLocationsLoading: false,
+          areSearchedStockLocationsReloading: false,
           wineCount: 0,
           isSelectedInventoryLocationLoaded: false,
           longitude: undefined,
@@ -161,6 +163,19 @@ export class ExploreModel extends Model {
       this.store.update((state) => ({
         ...state,
         areSearchedStockLocationsLoading: value,
+      }));
+    }
+  }
+
+  public get areSearchedStockLocationsReloading(): boolean {
+    return this.store.getValue().areSearchedStockLocationsReloading;
+  }
+
+  public set areSearchedStockLocationsReloading(value: boolean) {
+    if (this.areSearchedStockLocationsReloading !== value) {
+      this.store.update((state) => ({
+        ...state,
+        areSearchedStockLocationsReloading: value,
       }));
     }
   }
