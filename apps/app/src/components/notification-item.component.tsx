@@ -9,13 +9,9 @@ import { AccountData } from '../services/account-notification.service';
 import BucketService from '../services/bucket.service';
 import { NotificationItemSuspenseDesktopComponent } from './desktop/suspense/notification-item.suspense.desktop.component';
 import { NotificationItemSuspenseMobileComponent } from './mobile/suspense/notification-item.suspense.mobile.component';
-import { NotificationItemSuspenseTabletComponent } from './tablet/suspense/notification-item.suspense.tablet.component';
 
 const NotificationItemDesktopComponent = lazy(
   () => import('./desktop/notification-item.desktop.component')
-);
-const NotificationItemTabletComponent = lazy(
-  () => import('./tablet/notification-item.tablet.component')
 );
 const NotificationItemMobileComponent = lazy(
   () => import('./mobile/notification-item.mobile.component')
@@ -24,18 +20,12 @@ const NotificationItemMobileComponent = lazy(
 const OrderNotificationItemDesktopComponent = lazy(
   () => import('./desktop/notification_items/order-notification-item.desktop.component')
 );
-const OrderNotificationItemTabletComponent = lazy(
-  () => import('./tablet/notification_items/order-notification-item.tablet.component')
-);
 const OrderNotificationItemMobileComponent = lazy(
   () => import('./mobile/notification_items/order-notification-item.mobile.component')
 );
 
 const AccountNotificationItemDesktopComponent = lazy(
   () => import('./desktop/notification_items/account-notification-item.desktop.component')
-);
-const AccountNotificationItemTabletComponent = lazy(
-  () => import('./tablet/notification_items/account-notification-item.tablet.component')
 );
 const AccountNotificationItemMobileComponent = lazy(
   () => import('./mobile/notification_items/account-notification-item.mobile.component')
@@ -74,7 +64,6 @@ export default function NotificationItemComponent({
   const suspenceComponent = (
     <>
       <NotificationItemSuspenseDesktopComponent />
-      <NotificationItemSuspenseTabletComponent />
       <NotificationItemSuspenseMobileComponent />
     </>
   );
@@ -88,12 +77,6 @@ export default function NotificationItemComponent({
     return (
       <React.Suspense fallback={suspenceComponent}>
         <OrderNotificationItemDesktopComponent
-          notification={notification}
-          notificationsProps={notificationsProps}
-          fromNow={fromNow}
-          order={order}
-        />
-        <OrderNotificationItemTabletComponent
           notification={notification}
           notificationsProps={notificationsProps}
           fromNow={fromNow}
@@ -144,22 +127,6 @@ export default function NotificationItemComponent({
             NotificationsController.requestUnfollowAsync(account?.id ?? '')
           }
         />
-        <AccountNotificationItemTabletComponent
-          notification={notification}
-          notificationsProps={notificationsProps}
-          fromNow={fromNow}
-          account={account}
-          publicProfileUrl={publicProfileUrl}
-          isAccepted={accountFollower?.accepted ?? false}
-          isFollowing={accountFollower?.isFollowing ?? false}
-          onFollow={() => NotificationsController.requestFollowAsync(account?.id ?? '')}
-          onRequested={() =>
-            NotificationsController.requestUnfollowAsync(account?.id ?? '')
-          }
-          onUnfollow={() =>
-            NotificationsController.requestUnfollowAsync(account?.id ?? '')
-          }
-        />
         <AccountNotificationItemMobileComponent
           notification={notification}
           notificationsProps={notificationsProps}
@@ -183,11 +150,6 @@ export default function NotificationItemComponent({
   return (
     <React.Suspense fallback={suspenceComponent}>
       <NotificationItemDesktopComponent
-        notification={notification}
-        notificationsProps={notificationsProps}
-        fromNow={fromNow}
-      />
-      <NotificationItemTabletComponent
         notification={notification}
         notificationsProps={notificationsProps}
         fromNow={fromNow}

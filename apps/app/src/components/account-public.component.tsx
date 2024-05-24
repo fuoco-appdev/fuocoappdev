@@ -14,13 +14,9 @@ import { WindowState } from '../models/window.model';
 import { RoutePathsType, useQuery } from '../route-paths';
 import { AccountPublicSuspenseDesktopComponent } from './desktop/suspense/account-public.suspense.desktop.component';
 import { AccountPublicSuspenseMobileComponent } from './mobile/suspense/account-public.suspense.mobile.component';
-import { AccountPublicSuspenseTabletComponent } from './tablet/suspense/account-public.suspense.tablet.component';
 
 const AccountPublicDesktopComponent = lazy(
   () => import('./desktop/account-public.desktop.component')
-);
-const AccountPublicTabletComponent = lazy(
-  () => import('./tablet/account-public.tablet.component')
 );
 const AccountPublicMobileComponent = lazy(
   () => import('./mobile/account-public.mobile.component')
@@ -237,7 +233,6 @@ export default function AccountPublicComponent(): JSX.Element {
   const suspenceComponent = (
     <>
       <AccountPublicSuspenseDesktopComponent />
-      <AccountPublicSuspenseTabletComponent />
       <AccountPublicSuspenseMobileComponent />
     </>
   );
@@ -276,25 +271,6 @@ export default function AccountPublicComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <AccountPublicDesktopComponent
-          accountPublicProps={accountPublicProps}
-          windowProps={windowProps}
-          storeProps={storeProps}
-          isFollowing={isFollowing}
-          isAccepted={isAccepted}
-          likeCount={likeCount}
-          followerCount={followerCount}
-          followingCount={followingCount}
-          onScroll={onScroll}
-          onScrollLoad={onScrollLoad}
-          onFollow={onFollow}
-          onUnfollow={onUnfollow}
-          onRequested={onRequested}
-          onLikesClick={onLikesClick}
-          onFollowersClick={onFollowersClick}
-          onFollowingClick={onFollowingClick}
-          onMessage={onMessage}
-        />
-        <AccountPublicTabletComponent
           accountPublicProps={accountPublicProps}
           windowProps={windowProps}
           storeProps={storeProps}

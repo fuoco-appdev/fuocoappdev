@@ -7,13 +7,9 @@ import { AccountState } from '../models/account.model';
 import { AuthenticatedComponent } from './authenticated.component';
 import { AccountAddFriendsSuspenseDesktopComponent } from './desktop/suspense/account-add-friends.suspense.desktop.component';
 import { AccountAddFriendsSuspenseMobileComponent } from './mobile/suspense/account-add-friends.suspense.mobile.component';
-import { AccountAddFriendsSuspenseTabletComponent } from './tablet/suspense/account-add-friends.suspense.tablet.component';
 
 const AccountAddFriendsDesktopComponent = lazy(
   () => import('./desktop/account-add-friends.desktop.component')
-);
-const AccountAddFriendsTabletComponent = lazy(
-  () => import('./tablet/account-add-friends.tablet.component')
 );
 const AccountAddFriendsMobileComponent = lazy(
   () => import('./mobile/account-add-friends.mobile.component')
@@ -37,7 +33,6 @@ export default function AccountAddFriendsComponent(): JSX.Element {
     <>
       <AccountAddFriendsSuspenseDesktopComponent />
       <AccountAddFriendsSuspenseMobileComponent />
-      <AccountAddFriendsSuspenseTabletComponent />
     </>
   );
 
@@ -76,11 +71,6 @@ export default function AccountAddFriendsComponent(): JSX.Element {
       <React.Suspense fallback={suspenceComponent}>
         <AuthenticatedComponent>
           <AccountAddFriendsDesktopComponent
-            accountProps={accountProps}
-            locationDropdownOpen={locationDropdownOpen}
-            setLocationDropdownOpen={setLocationDropdownOpen}
-          />
-          <AccountAddFriendsTabletComponent
             accountProps={accountProps}
             locationDropdownOpen={locationDropdownOpen}
             setLocationDropdownOpen={setLocationDropdownOpen}

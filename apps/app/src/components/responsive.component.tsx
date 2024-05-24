@@ -11,7 +11,7 @@ import styles from './responsive.module.scss';
 
 export function useIsDesktop(): boolean {
   const query = useMediaQuery({
-    minWidth: 992,
+    minWidth: 768,
   });
   return query && isBrowser;
 }
@@ -130,8 +130,7 @@ export function ResponsiveDesktop({ children }: ResponsiveProps) {
 }
 
 export function ResponsiveTablet({ children }: ResponsiveProps) {
-  const isTablet = useIsTablet();
-  return isTablet ? children : null;
+  return null;
 }
 
 export function ResponsiveMobile({ children }: ResponsiveProps) {

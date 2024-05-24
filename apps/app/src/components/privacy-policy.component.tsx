@@ -13,9 +13,6 @@ import {
 const PrivacyPolicyDesktopComponent = lazy(
   () => import('./desktop/privacy-policy.desktop.component')
 );
-const PrivacyPolicyTabletComponent = lazy(
-  () => import('./tablet/privacy-policy.tablet.component')
-);
 const PrivacyPolicyMobileComponent = lazy(
   () => import('./mobile/privacy-policy.mobile.component')
 );
@@ -93,10 +90,6 @@ export default function PrivacyPolicyComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <PrivacyPolicyDesktopComponent
-          privacyPolicyProps={privacyPolicyProps}
-          remarkPlugins={remarkPlugins}
-        />
-        <PrivacyPolicyTabletComponent
           privacyPolicyProps={privacyPolicyProps}
           remarkPlugins={remarkPlugins}
         />

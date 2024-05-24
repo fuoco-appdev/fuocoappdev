@@ -7,14 +7,9 @@ import { ChatState } from '../models/chat.model';
 import { AuthenticatedComponent } from './authenticated.component';
 import { ChatsSuspenseDesktopComponent } from './desktop/suspense/chats.suspense.desktop.component';
 import { ChatsSuspenseMobileComponent } from './mobile/suspense/chats.suspense.mobile.component';
-import { ResponsiveDesktop, ResponsiveMobile, ResponsiveTablet } from './responsive.component';
-import { ChatsSuspenseTabletComponent } from './tablet/suspense/chats.suspense.tablet.component';
 
 const ChatsDesktopComponent = lazy(
     () => import('./desktop/chats.desktop.component')
-);
-const ChatsTabletComponent = lazy(
-    () => import('./tablet/chats.tablet.component')
 );
 const ChatsMobileComponent = lazy(
     () => import('./mobile/chats.mobile.component')
@@ -31,7 +26,6 @@ export default function ChatsComponent(): JSX.Element {
         <>
             <ChatsSuspenseDesktopComponent />
             <ChatsSuspenseMobileComponent />
-            <ChatsSuspenseTabletComponent />
         </>
     );
 
@@ -69,15 +63,8 @@ export default function ChatsComponent(): JSX.Element {
             </Helmet>
             <React.Suspense fallback={suspenceComponent}>
                 <AuthenticatedComponent>
-                    <ResponsiveDesktop>
-                        <ChatsDesktopComponent chatProps={chatProps} />
-                    </ResponsiveDesktop>
-                    <ResponsiveTablet>
-                        <ChatsTabletComponent chatProps={chatProps} />
-                    </ResponsiveTablet>
-                    <ResponsiveMobile>
-                        <ChatsMobileComponent chatProps={chatProps} />
-                    </ResponsiveMobile>
+                    <ChatsDesktopComponent chatProps={chatProps} />
+                    <ChatsMobileComponent chatProps={chatProps} />
                 </AuthenticatedComponent>
             </React.Suspense>
         </>

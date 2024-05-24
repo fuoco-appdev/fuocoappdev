@@ -9,13 +9,9 @@ import { StoreState } from '../models/store.model';
 import { MedusaProductTypeNames } from '../types/medusa.type';
 import { CartVariantItemSuspenseDesktopComponent } from './desktop/suspense/cart-variant-item.suspense.desktop.component';
 import { CartVariantItemSuspenseMobileComponent } from './mobile/suspense/cart-variant-item.suspense.mobile.component';
-import { CartVariantItemSuspenseTabletComponent } from './tablet/suspense/cart-variant-item.suspense.tablet.component';
 
 const CartVariantItemDesktopComponent = lazy(
   () => import('./desktop/cart-variant-item.desktop.component')
-);
-const CartVariantItemTabletComponent = lazy(
-  () => import('./tablet/cart-variant-item.tablet.component')
 );
 const CartVariantItemMobileComponent = lazy(
   () => import('./mobile/cart-variant-item.mobile.component')
@@ -53,7 +49,6 @@ export default function CartVariantItemComponent({
   const suspenceComponent = (
     <>
       <CartVariantItemSuspenseDesktopComponent />
-      <CartVariantItemSuspenseTabletComponent />
       <CartVariantItemSuspenseMobileComponent />
     </>
   );
@@ -65,15 +60,6 @@ export default function CartVariantItemComponent({
   return (
     <React.Suspense fallback={suspenceComponent}>
       <CartVariantItemDesktopComponent
-        productType={productType}
-        product={product}
-        variant={variant}
-        storeProps={storeProps}
-        variantQuantities={variantQuantities}
-        setVariantQuantities={setVariantQuantities}
-        onQuantitiesChanged={onQuantitiesChanged}
-      />
-      <CartVariantItemTabletComponent
         productType={productType}
         product={product}
         variant={variant}

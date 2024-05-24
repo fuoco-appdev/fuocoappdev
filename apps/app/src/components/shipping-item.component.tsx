@@ -5,13 +5,9 @@ import { ProductOptions } from '../models/product.model';
 import { StoreState } from '../models/store.model';
 import { ShippingItemSuspenseDesktopComponent } from './desktop/suspense/shipping-item.suspense.desktop.component';
 import { ShippingItemSuspenseMobileComponent } from './mobile/suspense/shipping-item.suspense.mobile.component';
-import { ShippingItemSuspenseTabletComponent } from './tablet/suspense/shipping-item.suspense.tablet.component';
 
 const ShippingItemDesktopComponent = lazy(
   () => import('./desktop/shipping-item.desktop.component')
-);
-const ShippingItemTabletComponent = lazy(
-  () => import('./tablet/shipping-item.tablet.component')
 );
 const ShippingItemMobileComponent = lazy(
   () => import('./mobile/shipping-item.mobile.component')
@@ -42,7 +38,6 @@ export default function ShippingItemComponent({
   const suspenceComponent = (
     <>
       <ShippingItemSuspenseDesktopComponent />
-      <ShippingItemSuspenseTabletComponent />
       <ShippingItemSuspenseMobileComponent />
     </>
   );
@@ -71,13 +66,6 @@ export default function ShippingItemComponent({
   return (
     <React.Suspense fallback={suspenceComponent}>
       <ShippingItemDesktopComponent
-        storeProps={storeProps}
-        item={item}
-        vintage={vintage}
-        hasReducedPrice={hasReducedPrice}
-        discountPercentage={discountPercentage}
-      />
-      <ShippingItemTabletComponent
         storeProps={storeProps}
         item={item}
         vintage={vintage}

@@ -17,13 +17,9 @@ import { ProductLikesMetadataResponse } from '../protobuf/product-like_pb';
 import { RoutePathsType, useQuery } from '../route-paths';
 import { AccountPublicLikesSuspenseDesktopComponent } from './desktop/suspense/account-public-likes.suspense.desktop.component';
 import { AccountPublicLikesSuspenseMobileComponent } from './mobile/suspense/account-public-likes.suspense.mobile.component';
-import { AccountPublicLikesSuspenseTabletComponent } from './tablet/suspense/account-public-likes.suspense.tablet.component';
 
 const AccountPublicLikesDesktopComponent = lazy(
   () => import('./desktop/account-public-likes.desktop.component')
-);
-const AccountPublicLikesTabletComponent = lazy(
-  () => import('./tablet/account-public-likes.tablet.component')
 );
 const AccountPublicLikesMobileComponent = lazy(
   () => import('./mobile/account-public-likes.mobile.component')
@@ -159,7 +155,6 @@ export default function AccountPublicLikesComponent(): JSX.Element {
   const suspenceComponent = (
     <>
       <AccountPublicLikesSuspenseDesktopComponent />
-      <AccountPublicLikesSuspenseTabletComponent />
       <AccountPublicLikesSuspenseMobileComponent />
     </>
   );
@@ -171,22 +166,6 @@ export default function AccountPublicLikesComponent(): JSX.Element {
   return (
     <React.Suspense fallback={suspenceComponent}>
       <AccountPublicLikesDesktopComponent
-        storeProps={storeProps}
-        accountProps={accountProps}
-        accountPublicProps={accountPublicProps}
-        openCartVariants={openCartVariants}
-        variantQuantities={variantQuantities}
-        isPreviewLoading={isPreviewLoading}
-        setIsPreviewLoading={setIsPreviewLoading}
-        setOpenCartVariants={setOpenCartVariants}
-        setVariantQuantities={setVariantQuantities}
-        onAddToCart={onAddToCart}
-        onProductPreviewClick={onProductPreviewClick}
-        onProductPreviewRest={onProductPreviewRest}
-        onProductPreviewAddToCart={onProductPreviewAddToCart}
-        onProductPreviewLikeChanged={onProductPreviewLikeChanged}
-      />
-      <AccountPublicLikesTabletComponent
         storeProps={storeProps}
         accountProps={accountProps}
         accountPublicProps={accountPublicProps}

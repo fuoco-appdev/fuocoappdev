@@ -1,15 +1,11 @@
 import { lazy } from '@loadable/component';
+import React from 'react';
 import { Helmet } from 'react-helmet';
 import { ChatSuspenseDesktopComponent } from './desktop/suspense/chat.suspense.desktop.component';
 import { ChatSuspenseMobileComponent } from './mobile/suspense/chat.suspense.mobile.component';
-import { ResponsiveDesktop, ResponsiveMobile, ResponsiveTablet } from './responsive.component';
-import { ChatSuspenseTabletComponent } from './tablet/suspense/chat.suspense.tablet.component';
 
 const ChatDesktopComponent = lazy(
     () => import('./desktop/chat.desktop.component')
-);
-const ChatTabletComponent = lazy(
-    () => import('./tablet/chat.tablet.component')
 );
 const ChatMobileComponent = lazy(
     () => import('./mobile/chat.mobile.component')
@@ -24,7 +20,6 @@ export default function ChatComponent(): JSX.Element {
         <>
             <ChatSuspenseDesktopComponent />
             <ChatSuspenseMobileComponent />
-            <ChatSuspenseTabletComponent />
         </>
     );
 
@@ -60,15 +55,10 @@ export default function ChatComponent(): JSX.Element {
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content={window.location.href} />
             </Helmet>
-            <ResponsiveDesktop>
+            <React.Suspense fallback={suspenceComponent}>
                 <ChatDesktopComponent />
-            </ResponsiveDesktop>
-            <ResponsiveTablet>
-                <ChatTabletComponent />
-            </ResponsiveTablet>
-            <ResponsiveMobile>
                 <ChatMobileComponent />
-            </ResponsiveMobile>
+            </React.Suspense>
         </>
     );
 }

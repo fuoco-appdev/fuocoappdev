@@ -14,13 +14,9 @@ import { RoutePathsType, useQuery } from '../route-paths';
 import { AuthenticatedComponent } from './authenticated.component';
 import { AccountSuspenseDesktopComponent } from './desktop/suspense/account.suspense.desktop.component';
 import { AccountSuspenseMobileComponent } from './mobile/suspense/account.suspense.mobile.component';
-import { AccountSuspenseTabletComponent } from './tablet/suspense/account.suspense.tablet.component';
 
 const AccountDesktopComponent = lazy(
   () => import('./desktop/account.desktop.component')
-);
-const AccountTabletComponent = lazy(
-  () => import('./tablet/account.tablet.component')
 );
 const AccountMobileComponent = lazy(
   () => import('./mobile/account.mobile.component')
@@ -233,7 +229,6 @@ export default function AccountComponent(): JSX.Element {
   const suspenceComponent = (
     <>
       <AccountSuspenseDesktopComponent />
-      <AccountSuspenseTabletComponent />
       <AccountSuspenseMobileComponent />
     </>
   );
@@ -273,26 +268,6 @@ export default function AccountComponent(): JSX.Element {
       <React.Suspense fallback={suspenceComponent}>
         <AuthenticatedComponent>
           <AccountDesktopComponent
-            accountProps={accountProps}
-            windowProps={windowProps}
-            storeProps={storeProps}
-            isCropImageModalVisible={isCropImageModalVisible}
-            likeCount={likeCount}
-            followerCount={followerCount}
-            followingCount={followingCount}
-            isAddInterestOpen={isAddInterestOpen}
-            setIsAddInterestOpen={setIsAddInterestOpen}
-            setIsCropImageModalVisible={setIsCropImageModalVisible}
-            onUsernameChanged={onUsernameChanged}
-            onCompleteProfile={onCompleteProfile}
-            onScrollReload={onScrollReload}
-            onScrollLoad={onScrollLoad}
-            onAvatarChanged={onAvatarChanged}
-            onLikesClick={onLikesClick}
-            onFollowersClick={onFollowersClick}
-            onFollowingClick={onFollowingClick}
-          />
-          <AccountTabletComponent
             accountProps={accountProps}
             windowProps={windowProps}
             storeProps={storeProps}

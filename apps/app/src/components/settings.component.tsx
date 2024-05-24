@@ -11,9 +11,6 @@ import SettingsSuspenseMobileComponent from './mobile/suspense/settings.suspense
 const SettingsDesktopComponent = lazy(
   () => import('./desktop/settings.desktop.component')
 );
-const SettingsTabletComponent = lazy(
-  () => import('./tablet/settings.tablet.component')
-);
 const SettingsMobileComponent = lazy(
   () => import('./mobile/settings.mobile.component')
 );
@@ -67,7 +64,6 @@ export default function SettingsComponent(): JSX.Element {
       <React.Suspense fallback={suspenceComponent}>
         <AuthenticatedComponent>
           <SettingsDesktopComponent windowProps={windowProps} />
-          <SettingsTabletComponent windowProps={windowProps} />
           <SettingsMobileComponent windowProps={windowProps} />
         </AuthenticatedComponent>
       </React.Suspense>

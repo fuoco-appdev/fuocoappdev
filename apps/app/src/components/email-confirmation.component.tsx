@@ -10,9 +10,6 @@ import { EmailConfirmationState } from '../models/email-confirmation.model';
 const EmailConfirmationDesktopComponent = lazy(
   () => import('./desktop/email-confirmation.desktop.component')
 );
-const EmailConfirmationTabletComponent = lazy(
-  () => import('./tablet/email-confirmation.tablet.component')
-);
 const EmailConfirmationMobileComponent = lazy(
   () => import('./mobile/email-confirmation.mobile.component')
 );
@@ -102,10 +99,6 @@ export default function EmailConfirmationComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <EmailConfirmationDesktopComponent
-          emailConfirmationProps={emailConfirmationProps}
-          onResendConfirmationClick={onResendConfirmationClick}
-        />
-        <EmailConfirmationTabletComponent
           emailConfirmationProps={emailConfirmationProps}
           onResendConfirmationClick={onResendConfirmationClick}
         />

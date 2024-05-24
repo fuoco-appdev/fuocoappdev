@@ -16,13 +16,9 @@ import { RoutePathsType, useQuery } from '../route-paths';
 import { AuthenticatedComponent } from './authenticated.component';
 import { AccountLikesSuspenseDesktopComponent } from './desktop/suspense/account-likes.suspense.desktop.component';
 import { AccountLikesSuspenseMobileComponent } from './mobile/suspense/account-likes.suspense.mobile.component';
-import { AccountLikesSuspenseTabletComponent } from './tablet/suspense/account-likes.suspense.tablet.component';
 
 const AccountLikesDesktopComponent = lazy(
   () => import('./desktop/account-likes.desktop.component')
-);
-const AccountLikesTabletComponent = lazy(
-  () => import('./tablet/account-likes.tablet.component')
 );
 const AccountLikesMobileComponent = lazy(
   () => import('./mobile/account-likes.mobile.component')
@@ -149,7 +145,6 @@ export default function AccountLikesComponent(): JSX.Element {
   const suspenceComponent = (
     <>
       <AccountLikesSuspenseDesktopComponent />
-      <AccountLikesSuspenseTabletComponent />
       <AccountLikesSuspenseMobileComponent />
     </>
   );
@@ -162,21 +157,6 @@ export default function AccountLikesComponent(): JSX.Element {
     <React.Suspense fallback={suspenceComponent}>
       <AuthenticatedComponent>
         <AccountLikesDesktopComponent
-          storeProps={storeProps}
-          accountProps={accountProps}
-          openCartVariants={openCartVariants}
-          variantQuantities={variantQuantities}
-          isPreviewLoading={isPreviewLoading}
-          setIsPreviewLoading={setIsPreviewLoading}
-          setOpenCartVariants={setOpenCartVariants}
-          setVariantQuantities={setVariantQuantities}
-          onAddToCart={onAddToCart}
-          onProductPreviewClick={onProductPreviewClick}
-          onProductPreviewRest={onProductPreviewRest}
-          onProductPreviewAddToCart={onProductPreviewAddToCart}
-          onProductPreviewLikeChanged={onProductPreviewLikeChanged}
-        />
-        <AccountLikesTabletComponent
           storeProps={storeProps}
           accountProps={accountProps}
           openCartVariants={openCartVariants}

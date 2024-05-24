@@ -9,8 +9,8 @@ export function ExploreSuspenseDesktopComponent(): JSX.Element {
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>
         <div
           className={[
-            styles['search-container'],
-            styles['search-container-desktop'],
+            styles['search-root'],
+            styles['search-root-desktop'],
           ].join(' ')}
         >
           <div

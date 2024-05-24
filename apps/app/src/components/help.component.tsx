@@ -13,9 +13,6 @@ import {
 const HelpDesktopComponent = lazy(
   () => import('./desktop/help.desktop.component')
 );
-const HelpTabletComponent = lazy(
-  () => import('./tablet/help.tablet.component')
-);
 const HelpMobileComponent = lazy(
   () => import('./mobile/help.mobile.component')
 );
@@ -109,10 +106,6 @@ export default function HelpComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <HelpDesktopComponent
-          helpProps={helpProps}
-          remarkPlugins={remarkPlugins}
-        />
-        <HelpTabletComponent
           helpProps={helpProps}
           remarkPlugins={remarkPlugins}
         />

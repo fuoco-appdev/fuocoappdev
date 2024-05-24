@@ -22,13 +22,9 @@ import { WindowState } from '../models/window.model';
 import { RoutePathsType, useQuery } from '../route-paths';
 import { CartSuspenseDesktopComponent } from './desktop/suspense/cart.suspense.desktop.component';
 import { CartSuspenseMobileComponent } from './mobile/suspense/cart.suspense.mobile.component';
-import { CartSuspenseTabletComponent } from './tablet/suspense/cart.suspense.tablet.component';
 
 const CartDesktopComponent = lazy(
   () => import('./desktop/cart.desktop.component')
-);
-const CartTabletComponent = lazy(
-  () => import('./tablet/cart.tablet.component')
 );
 const CartMobileComponent = lazy(
   () => import('./mobile/cart.mobile.component')
@@ -144,7 +140,6 @@ export default function CartComponent(): JSX.Element {
   const suspenceComponent = (
     <>
       <CartSuspenseDesktopComponent />
-      <CartSuspenseTabletComponent />
       <CartSuspenseMobileComponent />
     </>
   );
@@ -183,21 +178,6 @@ export default function CartComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <CartDesktopComponent
-          cartProps={cartProps}
-          cartLocalProps={cartLocalProps}
-          exploreProps={exploreProps}
-          storeProps={storeProps}
-          windowProps={windowProps}
-          exploreLocalProps={exploreLocalProps}
-          salesChannelTabs={salesChannelTabs}
-          foodVariantQuantities={foodVariantQuantities}
-          setFoodVariantQuantities={setFoodVariantQuantities}
-          isFoodRequirementOpen={isFoodRequirementOpen}
-          setIsFoodRequirementOpen={setIsFoodRequirementOpen}
-          onCheckout={onCheckout}
-          onAddFoodToCart={onAddFoodToCart}
-        />
-        <CartTabletComponent
           cartProps={cartProps}
           cartLocalProps={cartLocalProps}
           exploreProps={exploreProps}

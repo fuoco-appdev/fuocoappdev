@@ -10,13 +10,9 @@ import { AccountState } from '../models/account.model';
 import { RoutePathsType, useQuery } from '../route-paths';
 import { AccountPublicFollowingSuspenseDesktopComponent } from './desktop/suspense/account-public-following.suspense.desktop.component';
 import { AccountPublicFollowingSuspenseMobileComponent } from './mobile/suspense/account-public-following.suspense.mobile.component';
-import { AccountPublicFollowingSuspenseTabletComponent } from './tablet/suspense/account-public-following.suspense.tablet.component copy';
 
 const AccountPublicFollowingDesktopComponent = lazy(
   () => import('./desktop/account-public-following.desktop.component')
-);
-const AccountPublicFollowingTabletComponent = lazy(
-  () => import('./tablet/account-public-following.tablet.component')
 );
 const AccountPublicFollowingMobileComponent = lazy(
   () => import('./mobile/account-public-following.mobile.component')
@@ -58,7 +54,6 @@ export default function AccountPublicFollowingComponent(): JSX.Element {
     <>
       <AccountPublicFollowingSuspenseDesktopComponent />
       <AccountPublicFollowingSuspenseMobileComponent />
-      <AccountPublicFollowingSuspenseTabletComponent />
     </>
   );
 
@@ -96,11 +91,6 @@ export default function AccountPublicFollowingComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <AccountPublicFollowingDesktopComponent
-          accountPublicProps={accountPublicProps}
-          accountProps={accountProps}
-          onItemClick={onItemClick}
-        />
-        <AccountPublicFollowingTabletComponent
           accountPublicProps={accountPublicProps}
           accountProps={accountProps}
           onItemClick={onItemClick}

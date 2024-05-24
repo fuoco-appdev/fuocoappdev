@@ -13,9 +13,6 @@ import { RoutePathsType, useQuery } from '../route-paths';
 const PermissionsDesktopComponent = lazy(
   () => import('./desktop/permissions.desktop.component')
 );
-const PermissionsTabletComponent = lazy(
-  () => import('./tablet/permissions.tablet.component')
-);
 const PermissionsMobileComponent = lazy(
   () => import('./mobile/permissions.mobile.component')
 );
@@ -125,12 +122,6 @@ export default function PermissionsComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <PermissionsDesktopComponent
-          permissionsProps={permissionsProps}
-          windowProps={windowProps}
-          onAccessLocationChecked={onAccessLocationChecked}
-          onContinueAsync={onContinueAsync}
-        />
-        <PermissionsTabletComponent
           permissionsProps={permissionsProps}
           windowProps={windowProps}
           onAccessLocationChecked={onAccessLocationChecked}

@@ -33,13 +33,9 @@ import { WindowState } from '../models/window.model';
 import { RoutePathsType, useQuery } from '../route-paths';
 import { CheckoutSuspenseDesktopComponent } from './desktop/suspense/checkout.suspense.desktop.component';
 import { CheckoutSuspenseMobileComponent } from './mobile/suspense/checkout.suspense.mobile.component';
-import { CheckoutSuspenseTabletComponent } from './tablet/suspense/checkout.suspense.tablet.component';
 
 const CheckoutDesktopComponent = lazy(
   () => import('./desktop/checkout.desktop.component')
-);
-const CheckoutTabletComponent = lazy(
-  () => import('./tablet/checkout.tablet.component')
 );
 const CheckoutMobileComponent = lazy(
   () => import('./mobile/checkout.mobile.component')
@@ -362,7 +358,6 @@ export default function CheckoutComponent(): JSX.Element {
   const suspenceComponent = (
     <>
       <CheckoutSuspenseDesktopComponent />
-      <CheckoutSuspenseTabletComponent />
       <CheckoutSuspenseMobileComponent />
     </>
   );
@@ -412,32 +407,6 @@ export default function CheckoutComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <CheckoutDesktopComponent
-          checkoutProps={checkoutProps}
-          accountProps={accountProps}
-          storeProps={storeProps}
-          cartProps={cartProps}
-          windowProps={windowProps}
-          shippingOptions={shippingOptions}
-          providerOptions={providerOptions}
-          shippingAddressOptions={shippingAddressOptions}
-          isAddAddressOpen={isAddAddressOpen}
-          isPayOpen={isPayOpen}
-          stripeOptions={stripeOptions}
-          stripeElementOptions={stripeElementOptions}
-          setIsAddAddressOpen={setIsAddAddressOpen}
-          setIsPayOpen={setIsPayOpen}
-          onContinueToDeliveryFromShippingAddress={
-            onContinueToDeliveryFromShippingAddress
-          }
-          onContinueToBillingFromShippingAddress={
-            onContinueToBillingFromShippingAddress
-          }
-          onContinueToDeliveryFromBillingAddress={
-            onContinueToDeliveryFromBillingAddress
-          }
-          onAddAddressAsync={onAddAddressAsync}
-        />
-        <CheckoutTabletComponent
           checkoutProps={checkoutProps}
           accountProps={accountProps}
           storeProps={storeProps}

@@ -16,9 +16,6 @@ import {
 const ResetPasswordDesktopComponent = lazy(
   () => import('./desktop/reset-password.desktop.component')
 );
-const ResetPasswordTabletComponent = lazy(
-  () => import('./tablet/reset-password.tablet.component')
-);
 const ResetPasswordMobileComponent = lazy(
   () => import('./mobile/reset-password.mobile.component')
 );
@@ -112,12 +109,6 @@ export default function ResetPasswordComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <ResetPasswordDesktopComponent
-          resetPasswordProps={resetPasswordProps}
-          passwordError={passwordError}
-          confirmPasswordError={confirmPasswordError}
-          setAuthError={setAuthError}
-        />
-        <ResetPasswordTabletComponent
           resetPasswordProps={resetPasswordProps}
           passwordError={passwordError}
           confirmPasswordError={confirmPasswordError}

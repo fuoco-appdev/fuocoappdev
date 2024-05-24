@@ -8,13 +8,9 @@ import { AccountState } from '../models/account.model';
 import { AuthenticatedComponent } from './authenticated.component';
 import { AccountAddressesSuspenseDesktopComponent } from './desktop/suspense/account-addresses.suspense.desktop.component';
 import { AccountAddressesSuspenseMobileComponent } from './mobile/suspense/account-addresses.suspense.mobile.component';
-import { AccountAddressesSuspenseTabletComponent } from './tablet/suspense/account-addresses.suspense.tablet.component';
 
 const AccountAddressesDesktopComponent = lazy(
   () => import('./desktop/account-addresses.desktop.component')
-);
-const AccountAddressesTabletComponent = lazy(
-  () => import('./tablet/account-addresses.tablet.component')
 );
 const AccountAddressesMobileComponent = lazy(
   () => import('./mobile/account-addresses.mobile.component')
@@ -147,7 +143,6 @@ export default function AccountAddressesComponent(): JSX.Element {
   const suspenceComponent = (
     <>
       <AccountAddressesSuspenseDesktopComponent />
-      <AccountAddressesSuspenseTabletComponent />
       <AccountAddressesSuspenseMobileComponent />
     </>
   );
@@ -160,20 +155,6 @@ export default function AccountAddressesComponent(): JSX.Element {
     <React.Suspense fallback={suspenceComponent}>
       <AuthenticatedComponent>
         <AccountAddressesDesktopComponent
-          accountProps={accountProps}
-          onAddAddressAsync={onAddAddressAsync}
-          onEditAddressAsync={onEditAddressAsync}
-          onDeleteAddressConfirmedAsync={onDeleteAddressConfirmedAsync}
-          onDeleteAddressCanceledAsync={onDeleteAddressCanceledAsync}
-          onEditAddressButtonClicked={onEditAddressButtonClicked}
-          onDeleteAddressButtonClicked={onDeleteAddressButtonClicked}
-          openAddDropdown={openAddDropdown}
-          openEditDropdown={openEditDropdown}
-          deleteModalVisible={deleteModalVisible}
-          setOpenAddDropdown={setOpenAddDropdown}
-          setOpenEditDropdown={setOpenEditDropdown}
-        />
-        <AccountAddressesTabletComponent
           accountProps={accountProps}
           onAddAddressAsync={onAddAddressAsync}
           onEditAddressAsync={onEditAddressAsync}

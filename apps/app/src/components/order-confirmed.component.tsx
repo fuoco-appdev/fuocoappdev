@@ -12,13 +12,9 @@ import { StoreState } from '../models/store.model';
 import { OrderConfirmedSuspenseDesktopComponent } from './desktop/suspense/order-confirmed.suspense.desktop.component';
 import { OrderConfirmedSuspenseMobileComponent } from './mobile/suspense/order-confirmed.suspense.mobile.component';
 import styles from './order-confirmed.module.scss';
-import { OrderConfirmedSuspenseTabletComponent } from './tablet/suspense/order-confirmed.suspense.tablet.component';
 
 const OrderConfirmedDesktopComponent = lazy(
   () => import('./desktop/order-confirmed.desktop.component')
-);
-const OrderConfirmedTabletComponent = lazy(
-  () => import('./tablet/order-confirmed.tablet.component')
 );
 const OrderConfirmedMobileComponent = lazy(
   () => import('./mobile/order-confirmed.mobile.component')
@@ -113,7 +109,6 @@ export default function OrderConfirmedComponent(): JSX.Element {
   const suspenceComponent = (
     <>
       <OrderConfirmedSuspenseDesktopComponent />
-      <OrderConfirmedSuspenseTabletComponent />
       <OrderConfirmedSuspenseMobileComponent />
     </>
   );
@@ -152,15 +147,6 @@ export default function OrderConfirmedComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <OrderConfirmedDesktopComponent
-          orderConfirmedProps={orderConfirmedProps}
-          storeProps={storeProps}
-          quantity={quantity}
-          openRefund={openRefund}
-          returnReasonOptions={returnReasonOptions}
-          setOpenRefund={setOpenRefund}
-          formatStatus={formatStatus}
-        />
-        <OrderConfirmedTabletComponent
           orderConfirmedProps={orderConfirmedProps}
           storeProps={storeProps}
           quantity={quantity}

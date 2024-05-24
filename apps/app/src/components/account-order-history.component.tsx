@@ -6,13 +6,9 @@ import { AccountState } from '../models/account.model';
 import { AuthenticatedComponent } from './authenticated.component';
 import { AccountOrderHistorySuspenseDesktopComponent } from './desktop/suspense/account-order-history.suspense.desktop.component';
 import { AccountOrderHistorySuspenseMobileComponent } from './mobile/suspense/account-order-history.suspense.mobile.component';
-import { AccountOrderHistorySuspenseTabletComponent } from './tablet/suspense/account-order-history.suspense.tablet.component';
 
 const AccountOrderHistoryDesktopComponent = lazy(
   () => import('./desktop/account-order-history.desktop.component')
-);
-const AccountOrderHistoryTabletComponent = lazy(
-  () => import('./tablet/account-order-history.tablet.component')
 );
 const AccountOrderHistoryMobileComponent = lazy(
   () => import('./mobile/account-order-history.mobile.component')
@@ -32,7 +28,6 @@ export default function AccountOrderHistoryComponent(): JSX.Element {
   const suspenceComponent = (
     <>
       <AccountOrderHistorySuspenseDesktopComponent />
-      <AccountOrderHistorySuspenseTabletComponent />
       <AccountOrderHistorySuspenseMobileComponent />
     </>
   );
@@ -45,7 +40,6 @@ export default function AccountOrderHistoryComponent(): JSX.Element {
     <React.Suspense fallback={suspenceComponent}>
       <AuthenticatedComponent>
         <AccountOrderHistoryDesktopComponent accountProps={accountProps} />
-        <AccountOrderHistoryTabletComponent accountProps={accountProps} />
         <AccountOrderHistoryMobileComponent accountProps={accountProps} />
       </AuthenticatedComponent>
     </React.Suspense>

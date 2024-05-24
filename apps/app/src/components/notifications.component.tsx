@@ -7,13 +7,9 @@ import { NotificationsState } from '../models/notifications.model';
 import { AuthenticatedComponent } from './authenticated.component';
 import { NotificationsSuspenseDesktopComponent } from './desktop/suspense/notifications.suspense.desktop.component';
 import { NotificationsSuspenseMobileComponent } from './mobile/suspense/notifications.suspense.mobile.component';
-import { NotificationsSuspenseTabletComponent } from './tablet/suspense/notifications.suspense.tablet.component';
 
 const NotificationsDesktopComponent = lazy(
   () => import('./desktop/notifications.desktop.component')
-);
-const NotificationsTabletComponent = lazy(
-  () => import('./tablet/notifications.tablet.component')
 );
 const NotificationsMobileComponent = lazy(
   () => import('./mobile/notifications.mobile.component')
@@ -60,7 +56,6 @@ export default function NotificationsComponent(): JSX.Element {
   const suspenceComponent = (
     <>
       <NotificationsSuspenseDesktopComponent />
-      <NotificationsSuspenseTabletComponent />
       <NotificationsSuspenseMobileComponent />
     </>
   );
@@ -109,12 +104,6 @@ export default function NotificationsComponent(): JSX.Element {
       <React.Suspense fallback={suspenceComponent}>
         <AuthenticatedComponent>
           <NotificationsDesktopComponent
-            notificationsProps={notificationsProps}
-            fromNowRef={fromNowRef}
-            onScroll={onScroll}
-            onLoad={onLoad}
-          />
-          <NotificationsTabletComponent
             notificationsProps={notificationsProps}
             fromNowRef={fromNowRef}
             onScroll={onScroll}

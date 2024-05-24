@@ -13,13 +13,9 @@ import { ProductLikesMetadataResponse } from '../protobuf/product-like_pb';
 import DeeplService from '../services/deepl.service';
 import { ProductPreviewSuspenseDesktopComponent } from './desktop/suspense/product-preview.suspense.desktop.component';
 import { ProductPreviewSuspenseMobileComponent } from './mobile/suspense/product-preview.suspense.mobile.component';
-import { ProductPreviewSuspenseTabletComponent } from './tablet/suspense/product-preview.suspense.tablet.component';
 
 const ProductPreviewDesktopComponent = lazy(
   () => import('./desktop/product-preview.desktop.component')
-);
-const ProductPreviewTabletComponent = lazy(
-  () => import('./tablet/product-preview.tablet.component')
 );
 const ProductPreviewMobileComponent = lazy(
   () => import('./mobile/product-preview.mobile.component')
@@ -201,7 +197,6 @@ export default function ProductPreviewComponent({
   const suspenceComponent = (
     <>
       <ProductPreviewSuspenseDesktopComponent />
-      <ProductPreviewSuspenseTabletComponent />
       <ProductPreviewSuspenseMobileComponent />
     </>
   );
@@ -213,36 +208,6 @@ export default function ProductPreviewComponent({
   return (
     <React.Suspense fallback={suspenceComponent}>
       <ProductPreviewDesktopComponent
-        accountProps={accountProps}
-        likesMetadata={likesMetadata}
-        parentRef={parentRef}
-        thumbnail={thumbnail}
-        purchasable={purchasable}
-        title={title}
-        subtitle={subtitle}
-        description={translatedDescription}
-        type={type}
-        isLoading={isLoading}
-        pricedProduct={pricedProduct}
-        onClick={onClick}
-        onRest={onRest}
-        originalPrice={originalPrice}
-        calculatedPrice={calculatedPrice}
-        selectedVariantId={selectedVariantId}
-        likeCount={likeCount}
-        isLiked={isLiked}
-        showPricingDetails={showPricingDetails}
-        setOriginalPrice={setOriginalPrice}
-        setCalculatedPrice={setCalculatedPrice}
-        setSelectedVariantId={setSelectedVariantId}
-        setLikeCount={setLikeCount}
-        formatPrice={formatPrice}
-        onAddToCart={onAddToCart}
-        onLikeChanged={onLikeChangedOverride}
-        formatNumberCompact={formatNumberCompact}
-        formatDescription={formatDescription}
-      />
-      <ProductPreviewTabletComponent
         accountProps={accountProps}
         likesMetadata={likesMetadata}
         parentRef={parentRef}

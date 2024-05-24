@@ -17,9 +17,6 @@ import {
 const StripePayButtonDesktopComponent = lazy(
   () => import('./desktop/stripe-pay-button.desktop.component')
 );
-const StripePayButtonTabletComponent = lazy(
-  () => import('./tablet/stripe-pay-button.tablet.component')
-);
 const StripePayButtonMobileComponent = lazy(
   () => import('./mobile/stripe-pay-button.mobile.component')
 );
@@ -90,7 +87,6 @@ export default function StripePayButtonComponent({
   return (
     <React.Suspense fallback={suspenceComponent}>
       <StripePayButtonDesktopComponent onPayAsync={onPayAsync} />
-      <StripePayButtonTabletComponent onPayAsync={onPayAsync} />
       <StripePayButtonMobileComponent onPayAsync={onPayAsync} />
     </React.Suspense>
   );

@@ -6,13 +6,9 @@ import { StorageFolderType } from '../protobuf/common_pb';
 import BucketService from '../services/bucket.service';
 import { AccountFollowItemSuspenseDesktopComponent } from './desktop/suspense/account-follow-item.suspense.desktop.component';
 import { AccountFollowItemSuspenseMobileComponent } from './mobile/suspense/account-follow-item.suspense.mobile.component';
-import { AccountFollowItemSuspenseTabletComponent } from './tablet/suspense/account-follow-item.suspense.tablet.component';
 
 const AccountFollowItemDesktopComponent = lazy(
   () => import('./desktop/account-follow-item.desktop.component')
-);
-const AccountFollowItemTabletComponent = lazy(
-  () => import('./tablet/account-follow-item.tablet.component')
 );
 const AccountFollowItemMobileComponent = lazy(
   () => import('./mobile/account-follow-item.mobile.component')
@@ -120,7 +116,6 @@ export default function AccountFollowItemComponent({
   const suspenceComponent = (
     <>
       <AccountFollowItemSuspenseDesktopComponent />
-      <AccountFollowItemSuspenseTabletComponent />
       <AccountFollowItemSuspenseMobileComponent />
     </>
   );
@@ -132,21 +127,6 @@ export default function AccountFollowItemComponent({
   return (
     <React.Suspense fallback={suspenceComponent}>
       <AccountFollowItemDesktopComponent
-        accountProps={accountProps}
-        account={account}
-        follower={follower}
-        isRequest={isRequest}
-        isFollowing={isFollowing}
-        isAccepted={isAccepted}
-        profileUrl={profileUrl}
-        onClick={onClickOverride}
-        onFollow={onFollowOverride}
-        onUnfollow={onUnfollowOverride}
-        onRequested={onRequestedOverride}
-        onConfirm={onConfirmOverride}
-        onRemove={onRemoveOverride}
-      />
-      <AccountFollowItemTabletComponent
         accountProps={accountProps}
         account={account}
         follower={follower}

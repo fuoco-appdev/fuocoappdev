@@ -13,9 +13,6 @@ import {
 const TermsOfServiceDesktopComponent = lazy(
   () => import('./desktop/terms-of-service.desktop.component')
 );
-const TermsOfServiceTabletComponent = lazy(
-  () => import('./tablet/terms-of-service.tablet.component')
-);
 const TermsOfServiceMobileComponent = lazy(
   () => import('./mobile/terms-of-service.mobile.component')
 );
@@ -92,10 +89,6 @@ export default function TermsOfServiceComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <TermsOfServiceDesktopComponent
-          termsOfServiceProps={termsOfServiceProps}
-          remarkPlugins={remarkPlugins}
-        />
-        <TermsOfServiceTabletComponent
           termsOfServiceProps={termsOfServiceProps}
           remarkPlugins={remarkPlugins}
         />

@@ -6,13 +6,9 @@ import { StorageFolderType } from '../protobuf/common_pb';
 import BucketService from '../services/bucket.service';
 import { StockLocationCartItemSuspenseDesktopComponent } from './desktop/suspense/stock-location-cart-item.suspense.desktop.component';
 import { StockLocationCartItemSuspenseMobileComponent } from './mobile/suspense/stock-location-cart-item.suspense.mobile.component';
-import { StockLocationCartItemSuspenseTabletComponent } from './tablet/suspense/stock-location-cart-item.suspense.tablet.component';
 
 const StockLocationCartItemDesktopComponent = lazy(
   () => import('./desktop/stock-location-cart-item.desktop.component')
-);
-const StockLocationCartItemTabletComponent = lazy(
-  () => import('./tablet/stock-location-cart-item.tablet.component')
 );
 const StockLocationCartItemMobileComponent = lazy(
   () => import('./mobile/stock-location-cart-item.mobile.component')
@@ -66,7 +62,6 @@ export default function StockLocationCartItemComponent({
   const suspenceComponent = (
     <>
       <StockLocationCartItemSuspenseDesktopComponent />
-      <StockLocationCartItemSuspenseTabletComponent />
       <StockLocationCartItemSuspenseMobileComponent />
     </>
   );
@@ -78,14 +73,6 @@ export default function StockLocationCartItemComponent({
   return (
     <React.Suspense fallback={suspenceComponent}>
       <StockLocationCartItemDesktopComponent
-        stockLocation={stockLocation}
-        cart={cart}
-        selected={selected}
-        avatar={avatar}
-        cartCount={cartCount}
-        onClick={onClick}
-      />
-      <StockLocationCartItemTabletComponent
         stockLocation={stockLocation}
         cart={cart}
         selected={selected}

@@ -17,13 +17,9 @@ import { RoutePathsType, useQuery } from '../route-paths';
 import DeeplService from '../services/deepl.service';
 import { ExploreSuspenseDesktopComponent } from './desktop/suspense/explore.suspense.desktop.component';
 import { ExploreSuspenseMobileComponent } from './mobile/suspense/explore.suspense.mobile.component';
-import { ExploreSuspenseTabletComponent } from './tablet/suspense/explore.suspense.tablet.component';
 
 const ExploreDesktopComponent = lazy(
   () => import('./desktop/explore.desktop.component')
-);
-const ExploreTabletComponent = lazy(
-  () => import('./tablet/explore.tablet.component')
 );
 const ExploreMobileComponent = lazy(
   () => import('./mobile/explore.mobile.component')
@@ -145,7 +141,6 @@ export default function ExploreComponent(): JSX.Element {
   const suspenceComponent = (
     <>
       <ExploreSuspenseDesktopComponent />
-      <ExploreSuspenseTabletComponent />
       <ExploreSuspenseMobileComponent />
     </>
   );
@@ -184,17 +179,6 @@ export default function ExploreComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <ExploreDesktopComponent
-          exploreProps={exploreProps}
-          exploreLocalProps={exploreLocalProps}
-          mapRef={mapRef}
-          selectedPoint={selectedPoint}
-          setMapStyleLoaded={setMapStyleLoaded}
-          setSelectedPoint={setSelectedPoint}
-          onScrollLoad={onScrollLoad}
-          onStockLocationClicked={onStockLocationClicked}
-          onGoToStore={onGoToStore}
-        />
-        <ExploreTabletComponent
           exploreProps={exploreProps}
           exploreLocalProps={exploreLocalProps}
           mapRef={mapRef}

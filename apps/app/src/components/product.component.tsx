@@ -33,13 +33,9 @@ import MedusaService from '../services/medusa.service';
 import SupabaseService from '../services/supabase.service';
 import { ProductSuspenseDesktopComponent } from './desktop/suspense/product.suspense.desktop.component';
 import { ProductSuspenseMobileComponent } from './mobile/suspense/product.suspense.mobile.component';
-import { ProductSuspenseTabletComponent } from './tablet/suspense/product.suspense.tablet.component';
 
 const ProductDesktopComponent = lazy(
   () => import('./desktop/product.desktop.component')
-);
-const ProductTabletComponent = lazy(
-  () => import('./tablet/product.tablet.component')
 );
 const ProductMobileComponent = lazy(
   () => import('./mobile/product.mobile.component')
@@ -389,7 +385,6 @@ function ProductComponent({ }: ProductProps): JSX.Element {
   const suspenceComponent = (
     <>
       <ProductSuspenseDesktopComponent />
-      <ProductSuspenseTabletComponent />
       <ProductSuspenseMobileComponent />
     </>
   );
@@ -435,45 +430,6 @@ function ProductComponent({ }: ProductProps): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <ProductDesktopComponent
-          productProps={productProps}
-          storeProps={storeProps}
-          accountProps={accountProps}
-          remarkPlugins={remarkPlugins}
-          translatedDescription={translatedDescription}
-          description={description}
-          sideBarTabs={sideBarTabs}
-          tabs={tabs}
-          tags={tags}
-          activeVariantId={activeVariantId}
-          activeDetails={activeDetails}
-          alcohol={alcohol}
-          brand={brand}
-          varietals={varietals}
-          producerBottler={producerBottler}
-          format={format}
-          region={region}
-          residualSugar={residualSugar}
-          type={type}
-          uvc={uvc}
-          vintage={vintage}
-          quantity={quantity}
-          isLiked={isLiked}
-          likeCount={likeCount}
-          selectedStockLocation={selectedStockLocation}
-          setActiveDetails={setActiveDetails}
-          setDescription={setDescription}
-          setQuantity={setQuantity}
-          setSelectedStockLocation={setSelectedStockLocation}
-          onAddToCart={onAddToCart}
-          onLikeChanged={onLikeChanged}
-          formatNumberCompact={formatNumberCompact}
-          onStockLocationClicked={onStockLocationClicked}
-          onSideBarScroll={onSideBarScroll}
-          onSideBarLoad={onSideBarLoad}
-          onSelectLocation={onSelectLocation}
-          onCancelLocation={onCancelLocation}
-        />
-        <ProductTabletComponent
           productProps={productProps}
           storeProps={storeProps}
           accountProps={accountProps}

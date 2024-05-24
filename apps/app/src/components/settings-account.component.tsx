@@ -19,9 +19,6 @@ import {
 const SettingsAccountDesktopComponent = lazy(
   () => import('./desktop/settings-account.desktop.component')
 );
-const SettingsAccountTabletComponent = lazy(
-  () => import('./tablet/settings-account.tablet.component')
-);
 const SettingsAccountMobileComponent = lazy(
   () => import('./mobile/settings-account.mobile.component')
 );
@@ -92,18 +89,6 @@ export default function SettingsAccountComponent(): JSX.Element {
     <React.Suspense fallback={suspenceComponent}>
       <AuthenticatedComponent>
         <SettingsAccountDesktopComponent
-          accountProps={accountProps}
-          storeProps={storeProps}
-          windowLocalProps={windowLocalProps}
-          updatePasswordError={updatePasswordError}
-          setUpdatePasswordError={setUpdatePasswordError}
-          confirmPasswordError={confirmPasswordError}
-          setConfirmPasswordError={setConfirmPasswordError}
-          isLanguageOpen={isLanguageOpen}
-          setIsLanguageOpen={setIsLanguageOpen}
-          onGeneralInformationSaveAsync={onGeneralInformationSaveAsync}
-        />
-        <SettingsAccountTabletComponent
           accountProps={accountProps}
           storeProps={storeProps}
           windowLocalProps={windowLocalProps}

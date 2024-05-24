@@ -32,13 +32,9 @@ import { RoutePathsType, useQuery } from '../route-paths';
 import { StoreSuspenseDesktopComponent } from './desktop/suspense/store.suspense.desktop.component';
 import { StoreSuspenseMobileComponent } from './mobile/suspense/store.suspense.mobile.component';
 import styles from './store.module.scss';
-import { StoreSuspenseTabletComponent } from './tablet/suspense/store.suspense.tablet.component';
 
 const StoreDesktopComponent = lazy(
   () => import('./desktop/store.desktop.component')
-);
-const StoreTabletComponent = lazy(
-  () => import('./tablet/store.tablet.component')
 );
 const StoreMobileComponent = lazy(
   () => import('./mobile/store.mobile.component')
@@ -450,7 +446,6 @@ export default function StoreComponent(): JSX.Element {
   const suspenceComponent = (
     <>
       <StoreSuspenseDesktopComponent />
-      <StoreSuspenseTabletComponent />
       <StoreSuspenseMobileComponent />
     </>
   );
@@ -489,38 +484,6 @@ export default function StoreComponent(): JSX.Element {
           storeProps={storeProps}
           exploreProps={exploreProps}
           accountProps={accountProps}
-          exploreLocalProps={exploreLocalProps}
-          openFilter={openFilter}
-          openCartVariants={openCartVariants}
-          countryOptions={countryOptions}
-          regionOptions={regionOptions}
-          salesLocationOptions={salesLocationOptions}
-          variantQuantities={variantQuantities}
-          selectedCountryId={selectedCountryId}
-          selectedRegionId={selectedRegionId}
-          selectedSalesLocationId={selectedSalesLocationId}
-          tabs={tabs}
-          isPreviewLoading={isPreviewLoading}
-          setIsPreviewLoading={setIsPreviewLoading}
-          setOpenFilter={setOpenFilter}
-          setOpenCartVariants={setOpenCartVariants}
-          setSelectedCountryId={setSelectedCountryId}
-          setSelectedRegionId={setSelectedRegionId}
-          setSelectedSalesLocationId={setSelectedSalesLocationId}
-          setVariantQuantities={setVariantQuantities}
-          onPreviewsLoad={onLoad}
-          onAddToCart={onAddToCart}
-          onProductPreviewAddToCart={onProductPreviewAddToCart}
-          onProductPreviewClick={onProductPreviewClick}
-          onProductPreviewLikeChanged={onProductPreviewLikeChanged}
-          onProductPreviewRest={onProductPreviewRest}
-          onRemoveSalesChannel={onRemoveSalesChannel}
-        />
-        <StoreTabletComponent
-          windowProps={windowProps}
-          storeProps={storeProps}
-          accountProps={accountProps}
-          exploreProps={exploreProps}
           exploreLocalProps={exploreLocalProps}
           openFilter={openFilter}
           openCartVariants={openCartVariants}

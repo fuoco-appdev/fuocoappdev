@@ -21,9 +21,6 @@ import {
 const SignupDesktopComponent = lazy(
   () => import('./desktop/signup.desktop.component')
 );
-const SignupTabletComponent = lazy(
-  () => import('./tablet/signup.tablet.component')
-);
 const SignupMobileComponent = lazy(
   () => import('./mobile/signup.mobile.component')
 );
@@ -139,17 +136,6 @@ export default function SignupComponent(): JSX.Element {
       <React.Suspense fallback={suspenceComponent}>
         <GuestComponent>
           <SignupDesktopComponent
-            signupProps={signupProps}
-            emailError={emailError}
-            passwordError={passwordError}
-            confirmPasswordError={confirmPasswordError}
-            setAuthError={setAuthError}
-            setEmailError={setEmailError}
-            setPasswordError={setPasswordError}
-            setConfirmPasswordError={setConfirmPasswordError}
-            onEmailConfirmationSent={onEmailConfirmationSent}
-          />
-          <SignupTabletComponent
             signupProps={signupProps}
             emailError={emailError}
             passwordError={passwordError}

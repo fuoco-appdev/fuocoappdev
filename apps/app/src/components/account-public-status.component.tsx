@@ -11,13 +11,9 @@ import { RoutePathsType } from '../route-paths';
 import { AuthenticatedComponent } from './authenticated.component';
 import { AccountPublicStatusSuspenseDesktopComponent } from './desktop/suspense/account-public-status.suspense.desktop.component';
 import { AccountPublicStatusSuspenseMobileComponent } from './mobile/suspense/account-public-status.suspense.mobile.component';
-import { AccountPublicStatusSuspenseTabletComponent } from './tablet/suspense/account-public-status.suspense.tablet.component';
 
 const AccountPublicStatusDesktopComponent = lazy(
   () => import('./desktop/account-public-status.desktop.component')
-);
-const AccountPublicStatusTabletComponent = lazy(
-  () => import('./tablet/account-public-status.tablet.component')
 );
 const AccountPublicStatusMobileComponent = lazy(
   () => import('./mobile/account-public-status.mobile.component')
@@ -128,7 +124,6 @@ export default function AccountFollowersFollowingComponent(): JSX.Element {
     <>
       <AccountPublicStatusSuspenseDesktopComponent />
       <AccountPublicStatusSuspenseMobileComponent />
-      <AccountPublicStatusSuspenseTabletComponent />
     </>
   );
 
@@ -167,13 +162,6 @@ export default function AccountFollowersFollowingComponent(): JSX.Element {
       <React.Suspense fallback={suspenceComponent}>
         <AuthenticatedComponent>
           <AccountPublicStatusDesktopComponent
-            accountPublicProps={accountPublicProps}
-            followerCount={followerCount}
-            followingCount={followingCount}
-            onScrollLoad={onScrollLoad}
-            onScrollReload={onScrollReload}
-          />
-          <AccountPublicStatusTabletComponent
             accountPublicProps={accountPublicProps}
             followerCount={followerCount}
             followingCount={followingCount}

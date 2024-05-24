@@ -21,9 +21,6 @@ import {
 const SigninDesktopComponent = lazy(
   () => import('./desktop/signin.desktop.component')
 );
-const SigninTabletComponent = lazy(
-  () => import('./tablet/signin.tablet.component')
-);
 const SigninMobileComponent = lazy(
   () => import('./mobile/signin.mobile.component')
 );
@@ -140,12 +137,6 @@ export default function SigninComponent(): JSX.Element {
       <React.Suspense fallback={suspenceComponent}>
         <GuestComponent>
           <SigninDesktopComponent
-            signInProps={signInProps}
-            setAuthError={setAuthError}
-            emailError={emailError}
-            passwordError={passwordError}
-          />
-          <SigninTabletComponent
             signInProps={signInProps}
             setAuthError={setAuthError}
             emailError={emailError}

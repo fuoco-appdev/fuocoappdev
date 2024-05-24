@@ -23,14 +23,10 @@ import BucketService from '../services/bucket.service';
 import SupabaseService from '../services/supabase.service';
 import { WindowSuspenseDesktopComponent } from './desktop/suspense/window.suspense.desktop.component';
 import { WindowSuspenseMobileComponent } from './mobile/suspense/window.suspense.mobile.component';
-import { WindowSuspenseTabletComponent } from './tablet/suspense/window.suspense.tablet.component';
 import styles from './window.module.scss';
 
 const WindowDesktopComponent = lazy(
   () => import('./desktop/window.desktop.component')
-);
-const WindowTabletComponent = lazy(
-  () => import('./tablet/window.tablet.component')
 );
 const WindowMobileComponent = lazy(
   () => import('./mobile/window.mobile.component')
@@ -583,7 +579,6 @@ export default function WindowComponent(): JSX.Element {
   const suspenseComponent = (
     <>
       <WindowSuspenseDesktopComponent />
-      <WindowSuspenseTabletComponent />
       <WindowSuspenseMobileComponent />
     </>
   );
@@ -595,24 +590,6 @@ export default function WindowComponent(): JSX.Element {
   return (
     <React.Suspense fallback={suspenseComponent}>
       <WindowDesktopComponent
-        windowProps={windowProps}
-        windowLocalProps={windowLocalProps}
-        accountPublicProps={accountPublicProps}
-        accountProps={accountProps}
-        exploreProps={exploreProps}
-        productProps={productProps}
-        openMore={openMore}
-        isLanguageOpen={isLanguageOpen}
-        setOpenMore={setOpenMore}
-        setIsLanguageOpen={setIsLanguageOpen}
-        showDeleteModal={showDeleteModal}
-        setShowDeleteModal={setShowDeleteModal}
-        onSelectLocation={onSelectLocation}
-        onCancelLocation={onCancelLocation}
-        onSidebarTabsChanged={onSidebarTabsChanged}
-        onNavigateBack={onNavigateBack}
-      />
-      <WindowTabletComponent
         windowProps={windowProps}
         windowLocalProps={windowLocalProps}
         accountPublicProps={accountPublicProps}

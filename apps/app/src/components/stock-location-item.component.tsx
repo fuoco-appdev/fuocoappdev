@@ -8,13 +8,9 @@ import BucketService from '../services/bucket.service';
 import DeeplService from '../services/deepl.service';
 import { StockLocationItemSuspenseDesktopComponent } from './desktop/suspense/stock-location-item.suspense.desktop.component';
 import { StockLocationItemSuspenseMobileComponent } from './mobile/suspense/stock-location-item.suspense.mobile.component';
-import { StockLocationItemSuspenseTabletComponent } from './tablet/suspense/stock-location-item.suspense.tablet.component';
 
 const StockLocationItemDesktopComponent = lazy(
   () => import('./desktop/stock-location-item.desktop.component')
-);
-const StockLocationItemTabletComponent = lazy(
-  () => import('./tablet/stock-location-item.tablet.component')
 );
 const StockLocationItemMobileComponent = lazy(
   () => import('./mobile/stock-location-item.mobile.component')
@@ -108,7 +104,6 @@ export default function StockLocationItemComponent({
   const suspenceComponent = (
     <>
       <StockLocationItemSuspenseDesktopComponent />
-      <StockLocationItemSuspenseTabletComponent />
       <StockLocationItemSuspenseMobileComponent />
     </>
   );
@@ -120,15 +115,6 @@ export default function StockLocationItemComponent({
   return (
     <React.Suspense fallback={suspenceComponent}>
       <StockLocationItemDesktopComponent
-        stockLocation={stockLocation}
-        selected={selected}
-        hideDescription={hideDescription}
-        placeName={placeName}
-        description={description}
-        avatar={avatar}
-        onClick={onClick}
-      />
-      <StockLocationItemTabletComponent
         stockLocation={stockLocation}
         selected={selected}
         hideDescription={hideDescription}

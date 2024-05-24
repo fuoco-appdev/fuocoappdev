@@ -4,13 +4,9 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { OrderItemSuspenseDesktopComponent } from './desktop/suspense/order-item.suspense.desktop.component';
 import { OrderItemSuspenseMobileComponent } from './mobile/suspense/order-item.suspense.mobile.component';
-import { OrderItemSuspenseTabletComponent } from './tablet/suspense/order-item.suspense.tablet.component';
 
 const OrderItemDesktopComponent = lazy(
   () => import('./desktop/order-item.desktop.component')
-);
-const OrderItemTabletComponent = lazy(
-  () => import('./tablet/order-item.tablet.component')
 );
 const OrderItemMobileComponent = lazy(
   () => import('./mobile/order-item.mobile.component')
@@ -63,7 +59,6 @@ export default function OrderItemComponent({
   const suspenceComponent = (
     <>
       <OrderItemSuspenseDesktopComponent />
-      <OrderItemSuspenseTabletComponent />
       <OrderItemSuspenseMobileComponent />
     </>
   );
@@ -75,12 +70,6 @@ export default function OrderItemComponent({
   return (
     <React.Suspense fallback={suspenceComponent}>
       <OrderItemDesktopComponent
-        order={order}
-        fulfillmentStatus={fulfillmentStatus}
-        getNumberOfItems={getNumberOfItems}
-        onClick={onClick}
-      />
-      <OrderItemTabletComponent
         order={order}
         fulfillmentStatus={fulfillmentStatus}
         getNumberOfItems={getNumberOfItems}

@@ -3,13 +3,9 @@ import { Address } from '@medusajs/medusa';
 import * as React from 'react';
 import { AddressItemSuspenseDesktopComponent } from './desktop/suspense/address-item.suspense.desktop.component';
 import { AddressItemSuspenseMobileComponent } from './mobile/suspense/address-item.suspense.mobile.component';
-import { AddressItemSuspenseTabletComponent } from './tablet/suspense/address-item.suspense.tablet.component';
 
 const AddressItemDesktopComponent = lazy(
   () => import('./desktop/address-item.desktop.component')
-);
-const AddressItemTabletComponent = lazy(
-  () => import('./tablet/address-item.tablet.component')
 );
 const AddressItemMobileComponent = lazy(
   () => import('./mobile/address-item.mobile.component')
@@ -27,7 +23,6 @@ export default function AddressItemComponent(
   const suspenceComponent = (
     <>
       <AddressItemSuspenseDesktopComponent />
-      <AddressItemSuspenseTabletComponent />
       <AddressItemSuspenseMobileComponent />
     </>
   );
@@ -39,7 +34,6 @@ export default function AddressItemComponent(
   return (
     <React.Suspense fallback={suspenceComponent}>
       <AddressItemDesktopComponent {...props} />
-      <AddressItemTabletComponent {...props} />
       <AddressItemMobileComponent {...props} />
     </React.Suspense>
   );
