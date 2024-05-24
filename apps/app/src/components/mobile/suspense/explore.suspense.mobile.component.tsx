@@ -8,8 +8,8 @@ export function ExploreSuspenseMobileComponent(): JSX.Element {
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
         <div
           className={[
-            styles['search-container'],
-            styles['search-container-mobile'],
+            styles['search-root'],
+            styles['search-root-mobile'],
           ].join(' ')}
         >
           <div

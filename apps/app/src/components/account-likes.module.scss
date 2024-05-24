@@ -3,9 +3,7 @@
 .root {
     display: flex;
     flex-direction: column;
-    height: 100%;
     min-width: 100%;
-    min-height: 100%;
 
     & .items-container {
         width: 100%;
@@ -66,7 +64,7 @@
     align-items: center;
 
     & .items-container-desktop {
-        gap: $mp-6;
+        gap: $mp-4;
         padding: $mp-6;
         -webkit-box-pack: center;
         -ms-flex-pack: center;
@@ -106,9 +104,7 @@
 
 .root-mobile {
     & .items-container-mobile {
-        gap: $mp-4;
-        padding: $mp-4;
-        padding-bottom: 56px;
+        gap: 2px;
 
         & .loading-ring-mobile {
 

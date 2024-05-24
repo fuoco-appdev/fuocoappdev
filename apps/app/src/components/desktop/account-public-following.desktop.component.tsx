@@ -1,6 +1,4 @@
-import { Input, Line } from '@fuoco.appdev/core-ui';
 import { useTranslation } from 'react-i18next';
-import AccountPublicController from '../../controllers/account-public.controller';
 import AccountController from '../../controllers/account.controller';
 import AccountFollowItemComponent from '../account-follow-item.component';
 import { AccountPublicFollowingResponsiveProps } from '../account-public-following.component';
@@ -17,38 +15,6 @@ export default function AccountPublicFollowingDesktopComponent({
   return (
     <ResponsiveDesktop>
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>
-        <div
-          className={[
-            styles['search-container'],
-            styles['search-container-desktop'],
-          ].join(' ')}
-        >
-          <div
-            className={[
-              styles['search-input-root'],
-              styles['search-input-root-desktop'],
-            ].join(' ')}
-          >
-            <Input
-              value={accountPublicProps.followingInput}
-              classNames={{
-                container: [
-                  styles['search-input-container'],
-                  styles['search-input-container-desktop'],
-                ].join(' '),
-                input: [
-                  styles['search-input'],
-                  styles['search-input-desktop'],
-                ].join(' '),
-              }}
-              placeholder={t('search') ?? ''}
-              icon={<Line.Search size={24} color={'#2A2A5F'} />}
-              onChange={(event) =>
-                AccountPublicController.updateFollowingInput(event.target.value)
-              }
-            />
-          </div>
-        </div>
         <div
           className={[
             styles['result-items-container'],
@@ -85,7 +51,7 @@ export default function AccountPublicFollowingDesktopComponent({
             style={{
               maxHeight:
                 accountPublicProps.hasMoreFollowing ||
-                accountPublicProps.areFollowingLoading
+                  accountPublicProps.areFollowingLoading
                   ? 24
                   : 0,
             }}
@@ -105,7 +71,7 @@ export default function AccountPublicFollowingDesktopComponent({
                   ].join(' ')}
                 >
                   {t('noFollowingFound', {
-                    username: accountPublicProps.followingInput,
+                    username: accountPublicProps.followersFollowingInput,
                   })}
                 </div>
               </div>

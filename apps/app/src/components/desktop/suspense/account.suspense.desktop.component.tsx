@@ -193,36 +193,36 @@ export function AccountSuspenseDesktopComponent(): JSX.Element {
                 ].join(' ')}
               />
             </div>
-          </div>
-          <div
-            className={[
-              styles['tabs-container-skeleton'],
-              styles['tabs-container-skeleton-desktop'],
-            ].join(' ')}
-          >
             <div
               className={[
-                styles['tab-button-skeleton'],
-                styles['tab-button-skeleton-desktop'],
-              ].join('')}
+                styles['tabs-container-skeleton'],
+                styles['tabs-container-skeleton-desktop'],
+              ].join(' ')}
             >
-              <Skeleton style={{ height: 48 }} borderRadius={6} />
-            </div>
-            <div
-              className={[
-                styles['tab-button-skeleton'],
-                styles['tab-button-skeleton-desktop'],
-              ].join('')}
-            >
-              <Skeleton style={{ height: 48 }} borderRadius={6} />
-            </div>
-            <div
-              className={[
-                styles['tab-button-skeleton'],
-                styles['tab-button-skeleton-desktop'],
-              ].join('')}
-            >
-              <Skeleton style={{ height: 48 }} borderRadius={6} />
+              <div
+                className={[
+                  styles['tab-button-skeleton'],
+                  styles['tab-button-skeleton-desktop'],
+                ].join('')}
+              >
+                <Skeleton style={{ height: 48 }} borderRadius={6} />
+              </div>
+              <div
+                className={[
+                  styles['tab-button-skeleton'],
+                  styles['tab-button-skeleton-desktop'],
+                ].join('')}
+              >
+                <Skeleton style={{ height: 48 }} borderRadius={6} />
+              </div>
+              <div
+                className={[
+                  styles['tab-button-skeleton'],
+                  styles['tab-button-skeleton-desktop'],
+                ].join('')}
+              >
+                <Skeleton style={{ height: 48 }} borderRadius={6} />
+              </div>
             </div>
           </div>
           <div

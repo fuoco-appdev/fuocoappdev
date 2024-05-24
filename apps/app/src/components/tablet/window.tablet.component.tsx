@@ -239,7 +239,7 @@ export default function WindowTabletComponent({
                     }}
                     onClick={() =>
                       navigate({
-                        pathname: RoutePathsType.AccountSettingsAccount,
+                        pathname: RoutePathsType.SettingsAccount,
                         search: query.toString(),
                       })
                     }
@@ -247,7 +247,7 @@ export default function WindowTabletComponent({
                     type={'text'}
                     rounded={true}
                     size={'tiny'}
-                    icon={!windowProps.activeRoute?.startsWith(RoutePathsType.AccountSettings) ? (
+                    icon={!windowProps.activeRoute?.startsWith(RoutePathsType.Settings) ? (
                       <Line.Settings
                         size={24}
                         color={'rgba(252, 245, 227, .8)'}
@@ -596,7 +596,7 @@ export default function WindowTabletComponent({
                     </div>
                   )}
                 {windowProps.activeRoute?.startsWith(
-                  RoutePathsType.AccountSettings
+                  RoutePathsType.Settings
                 ) && (
                     <>
                       <Line.Settings size={24} />
@@ -670,7 +670,7 @@ export default function WindowTabletComponent({
                 ].join(' ')}
               >
                 {windowProps.activeRoute?.startsWith(
-                  RoutePathsType.AccountSettings
+                  RoutePathsType.Settings
                 ) && (
                     <Button
                       touchScreen={true}

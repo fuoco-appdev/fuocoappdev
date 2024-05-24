@@ -23,7 +23,7 @@ export default function AccountFollowItemMobileComponent({
   const { t } = useTranslation();
   return (
     <ResponsiveMobile>
-      <Ripples color={'rgba(42, 42, 95, .35)'} onClick={onClick}>
+      <Ripples className={[styles['ripples'], styles['ripples-mobile']].join(' ')} color={'rgba(42, 42, 95, .35)'} onClick={onClick}>
         <div className={[styles['root'], styles['root-mobile']].join(' ')}>
           <div
             className={[

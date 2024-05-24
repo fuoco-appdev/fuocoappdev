@@ -17,7 +17,6 @@ import BucketService from '../services/bucket.service';
 import MedusaService from '../services/medusa.service';
 import ProductLikesService from '../services/product-likes.service';
 import AccountController from './account.controller';
-import CartController from './cart.controller';
 
 class AccountPublicController extends Controller {
   private readonly _model: AccountPublicModel;
@@ -72,33 +71,19 @@ class AccountPublicController extends Controller {
   public override disposeLoad(_renderCount: number): void { }
 
   public async loadLikedProductsAsync(id: string): Promise<void> {
-    this._loadedAccountSubscription?.unsubscribe();
-    this._loadedAccountSubscription = AccountController.model.store
-      .pipe(select((model) => model.account))
-      .subscribe({
-        next: async (account: AccountResponse | undefined) => {
-          this._model.likedProducts = [];
-          this._model.likesScrollPosition = 0;
-          this._model.likedProductPagination = 1;
-          this._model.productLikesMetadata = {};
+    const account = await firstValueFrom(AccountController.model.store
+      .pipe(select((model) => model.account), filter((value) => value !== undefined), take(1)));
+    this._model.likedProducts = [];
+    this._model.likesScrollPosition = 0;
+    this._model.likedProductPagination = 1;
+    this._model.productLikesMetadata = {};
 
-          const cart = await firstValueFrom(
-            CartController.model.store.pipe(
-              select((model) => model.cart),
-              filter((value) => value !== undefined),
-              take(1)
-            )
-          );
-          if (cart) {
-            await this.requestLikedProductsAsync(
-              id,
-              account?.id,
-              0,
-              this._limit
-            );
-          }
-        },
-      });
+    await this.requestLikedProductsAsync(
+      id,
+      account?.id,
+      0,
+      this._limit
+    );
   }
 
   public async loadFollowersAsync(): Promise<void> {
@@ -119,7 +104,7 @@ class AccountPublicController extends Controller {
       return;
     }
 
-    await this.followersSearchAsync(this._model.followersInput, 0, this._limit);
+    await this.followersSearchAsync(this._model.followersFollowingInput, 0, this._limit);
   }
 
   public async loadFollowingAsync(): Promise<void> {
@@ -141,7 +126,7 @@ class AccountPublicController extends Controller {
       return;
     }
 
-    await this.followingSearchAsync(this._model.followingInput, 0, this._limit);
+    await this.followingSearchAsync(this._model.followersFollowingInput, 0, this._limit);
   }
 
   public updateAccountId(id: string | undefined): void {
@@ -149,7 +134,7 @@ class AccountPublicController extends Controller {
   }
 
   public updateFollowersInput(value: string): void {
-    this._model.followersInput = value;
+    this._model.followersFollowingInput = value;
     this._model.followersPagination = 1;
     this._model.followerAccounts = [];
     this._model.hasMoreFollowers = true;
@@ -161,7 +146,7 @@ class AccountPublicController extends Controller {
   }
 
   public updateFollowingInput(value: string): void {
-    this._model.followingInput = value;
+    this._model.followersFollowingInput = value;
     this._model.followingPagination = 1;
     this._model.followingAccounts = [];
     this._model.hasMoreFollowing = true;
@@ -195,7 +180,7 @@ class AccountPublicController extends Controller {
     this._model.followersPagination = this._model.followersPagination + 1;
     const offset = this._limit * (this._model.followersPagination - 1);
     await this.followersSearchAsync(
-      this._model.followersInput,
+      this._model.followersFollowingInput,
       offset,
       this._limit
     );
@@ -209,7 +194,7 @@ class AccountPublicController extends Controller {
     this._model.followingPagination = this._model.followingPagination + 1;
     const offset = this._limit * (this._model.followingPagination - 1);
     await this.followingSearchAsync(
-      this._model.followingInput,
+      this._model.followersFollowingInput,
       offset,
       this._limit
     );
@@ -526,12 +511,11 @@ class AccountPublicController extends Controller {
     this._model.likesScrollPosition = 0;
     this._model.likedProductPagination = 1;
     this._model.productLikesMetadata = {};
-    this._model.followersInput = '';
+    this._model.followersFollowingInput = '';
     this._model.followerAccounts = [];
     this._model.followerScrollPosition = 0;
     this._model.followersPagination = 1;
     this._model.followerAccountFollowers = {};
-    this._model.followingInput = '';
     this._model.followingAccounts = [];
     this._model.followingScrollPosition = 0;
     this._model.followingPagination = 1;

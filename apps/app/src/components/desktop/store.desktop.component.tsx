@@ -48,7 +48,6 @@ export default function StoreDesktopComponent({
   setSelectedRegionId,
   setSelectedSalesLocationId,
   setVariantQuantities,
-  onPreviewsScroll,
   onPreviewsLoad,
   onAddToCart,
   onProductPreviewAddToCart,
@@ -244,6 +243,8 @@ export default function StoreDesktopComponent({
                 className={styles['loading-ring']}
               />
             }
+            loadingHeight={56}
+            isLoadable={storeProps.hasMorePreviews}
             isLoading={storeProps.isLoading}
             onLoad={() => StoreController.onNextScrollAsync()}
             onScroll={(progress, scrollRef, contentRef) => {

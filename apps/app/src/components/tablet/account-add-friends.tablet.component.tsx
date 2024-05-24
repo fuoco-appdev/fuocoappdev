@@ -15,8 +15,6 @@ export default function AccountAddFriendsTabletComponent({
   accountProps,
   locationDropdownOpen,
   setLocationDropdownOpen,
-  onAddFriendsLoad,
-  onAddFriendsScroll,
 }: AccountAddFriendsResponsiveProps): JSX.Element {
   const navigate = useNavigate();
   const query = useQuery();
@@ -138,7 +136,7 @@ export default function AccountAddFriendsTabletComponent({
                 classNames={{
                   button: [
                     styles['button'],
-                    accountProps.addFriendsSexes.includes('male') &&
+                    accountProps.addFriendsSex === 'any' &&
                     styles['button-selected'],
                   ].join(' '),
                 }}
@@ -147,7 +145,25 @@ export default function AccountAddFriendsTabletComponent({
                 rippleProps={{
                   color: 'rgba(133, 38, 122, 0.35)',
                 }}
-                onClick={() => AccountController.updateAddFriendsSexes('male')}
+                onClick={() => AccountController.updateAddFriendsSex('any')}
+              >
+                {t('any')}
+              </Button>
+              <Button
+                block={true}
+                classNames={{
+                  button: [
+                    styles['button'],
+                    accountProps.addFriendsSex === 'male' &&
+                    styles['button-selected'],
+                  ].join(' '),
+                }}
+                type={'primary'}
+                size={'large'}
+                rippleProps={{
+                  color: 'rgba(133, 38, 122, 0.35)',
+                }}
+                onClick={() => AccountController.updateAddFriendsSex('male')}
               >
                 {t('male')}
               </Button>
@@ -156,7 +172,7 @@ export default function AccountAddFriendsTabletComponent({
                 classNames={{
                   button: [
                     styles['button'],
-                    accountProps.addFriendsSexes.includes('female') &&
+                    accountProps.addFriendsSex === 'female' &&
                     styles['button-selected'],
                   ].join(' '),
                 }}
@@ -166,7 +182,7 @@ export default function AccountAddFriendsTabletComponent({
                   color: 'rgba(133, 38, 122, 0.35)',
                 }}
                 onClick={() =>
-                  AccountController.updateAddFriendsSexes('female')
+                  AccountController.updateAddFriendsSex('female')
                 }
               >
                 {t('female')}
@@ -180,8 +196,6 @@ export default function AccountAddFriendsTabletComponent({
             styles['scroll-container-tablet'],
           ].join(' ')}
           style={{ height: window.innerHeight }}
-          onScroll={onAddFriendsScroll}
-          onLoad={onAddFriendsLoad}
         >
           {accountProps.followRequestAccounts.length > 0 &&
             accountProps.addFriendsSearchInput.length <= 0 && (

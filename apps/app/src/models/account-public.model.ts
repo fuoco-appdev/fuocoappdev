@@ -33,17 +33,18 @@ export interface AccountPublicState {
   activeStatusTabId: string;
   prevStatusTabIndex: number;
   activeStatusTabIndex: number;
-  followersInput: string;
+  followersFollowingInput: string;
   followersPagination: number;
   hasMoreFollowers: boolean;
   areFollowersLoading: boolean;
+  areFollowersReloading: boolean;
   followerAccounts: AccountDocument[];
   followerScrollPosition: number | undefined;
   followerAccountFollowers: Record<string, AccountFollowerResponse>;
-  followingInput: string;
   followingPagination: number;
   hasMoreFollowing: boolean;
   areFollowingLoading: boolean;
+  areFollowingReloading: boolean;
   followingAccounts: AccountDocument[];
   followingScrollPosition: number | undefined;
   followingAccountFollowers: Record<string, AccountFollowerResponse>;
@@ -79,16 +80,17 @@ export class AccountPublicModel extends Model {
           activeStatusTabId: '/account/status/:id/followers',
           prevStatusTabIndex: 0,
           activeStatusTabIndex: 0,
-          followersInput: '',
+          followersFollowingInput: '',
           followersPagination: 1,
           hasMoreFollowers: true,
+          areFollowersReloading: false,
           areFollowersLoading: false,
           followerAccounts: [],
           followerScrollPosition: undefined,
           followerAccountFollowers: {},
-          followingInput: '',
           followingPagination: 1,
           hasMoreFollowing: true,
+          areFollowingReloading: false,
           areFollowingLoading: false,
           followingAccounts: [],
           followingScrollPosition: undefined,
@@ -345,19 +347,6 @@ export class AccountPublicModel extends Model {
     }
   }
 
-  public get followingInput(): string {
-    return this.store?.getValue().followingInput;
-  }
-
-  public set followingInput(value: string) {
-    if (this.followingInput !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        followingInput: value,
-      }));
-    }
-  }
-
   public get followingPagination(): number {
     return this.store.getValue().followingPagination;
   }
@@ -378,6 +367,19 @@ export class AccountPublicModel extends Model {
   public set hasMoreFollowing(value: boolean) {
     if (this.hasMoreFollowing !== value) {
       this.store?.update((state) => ({ ...state, hasMoreFollowing: value }));
+    }
+  }
+
+  public get areFollowingReloading(): boolean {
+    return this.store?.getValue().areFollowingReloading;
+  }
+
+  public set areFollowingReloading(value: boolean) {
+    if (this.areFollowingReloading !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        areFollowingReloading: value,
+      }));
     }
   }
 
@@ -453,15 +455,15 @@ export class AccountPublicModel extends Model {
     }
   }
 
-  public get followersInput(): string {
-    return this.store?.getValue().followersInput;
+  public get followersFollowingInput(): string {
+    return this.store?.getValue().followersFollowingInput;
   }
 
-  public set followersInput(value: string) {
-    if (this.followersInput !== value) {
+  public set followersFollowingInput(value: string) {
+    if (this.followersFollowingInput !== value) {
       this.store?.update((state) => ({
         ...state,
-        followersInput: value,
+        followersFollowingInput: value,
       }));
     }
   }
@@ -486,6 +488,19 @@ export class AccountPublicModel extends Model {
   public set hasMoreFollowers(value: boolean) {
     if (this.hasMoreFollowers !== value) {
       this.store?.update((state) => ({ ...state, hasMoreFollowers: value }));
+    }
+  }
+
+  public get areFollowersReloading(): boolean {
+    return this.store?.getValue().areFollowersReloading;
+  }
+
+  public set areFollowersReloading(value: boolean) {
+    if (this.areFollowersReloading !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        areFollowersReloading: value,
+      }));
     }
   }
 

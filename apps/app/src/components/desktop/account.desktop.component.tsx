@@ -6,6 +6,7 @@ import {
   FormLayout,
   Input,
   Line,
+  Scroll,
   Tabs,
 } from '@fuoco.appdev/core-ui';
 import { Customer } from '@medusajs/medusa';
@@ -36,7 +37,6 @@ export default function AccountDesktopComponent({
   setIsCropImageModalVisible,
   onUsernameChanged,
   onCompleteProfile,
-  onScroll,
   onScrollLoad,
   onAvatarChanged,
   onLikesClick,
@@ -151,25 +151,29 @@ export default function AccountDesktopComponent({
             )}
           </div>
         </div>
-        <div
-          className={[
-            styles['scroll-container'],
-            styles['scroll-container-desktop'],
-          ].join(' ')}
-          style={{ height: window.innerHeight }}
-          onScroll={(e) => {
-            onScroll(e);
+        <Scroll
+          loadComponent={
+            <img
+              src={'../assets/svg/ring-resize-dark.svg'}
+              className={styles['loading-ring']}
+            />
+          }
+          loadingHeight={56}
+          isLoadable={(accountProps.hasMoreLikes || accountProps.hasMoreOrders) && accountProps.activeTabId !== RoutePathsType.AccountAddresses}
+          isLoading={accountProps.areLikedProductsLoading || accountProps.areOrdersLoading}
+          onLoad={onScrollLoad}
+          onScroll={(progress, scrollRef, contentRef) => {
             const elementHeight = topBarRef.current?.clientHeight ?? 0;
-            const scrollTop = e.currentTarget.scrollTop;
-            if (prevPreviewScrollTop >= scrollTop) {
-              yPosition += prevPreviewScrollTop - scrollTop;
+            const scrollTop = contentRef.current?.getBoundingClientRect().top ?? 0;
+            if (prevPreviewScrollTop <= scrollTop) {
+              yPosition -= prevPreviewScrollTop - scrollTop;
               if (yPosition >= 0) {
                 yPosition = 0;
               }
 
               topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
             } else {
-              yPosition -= scrollTop - prevPreviewScrollTop;
+              yPosition += scrollTop - prevPreviewScrollTop;
               if (yPosition <= -elementHeight) {
                 yPosition = -elementHeight;
               }
@@ -177,549 +181,554 @@ export default function AccountDesktopComponent({
               topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
             }
 
-            prevPreviewScrollTop = e.currentTarget.scrollTop;
+            prevPreviewScrollTop = scrollTop;
           }}
-          onLoad={onScrollLoad}
-          ref={scrollContainerRef}
         >
-          {account?.status === 'Incomplete' && (
-            <div
-              className={[
-                styles['incomplete-form-container'],
-                styles['incomplete-form-container-desktop'],
-              ].join(' ')}
-            >
+          <div
+            className={[
+              styles['scroll-container'],
+              styles['scroll-container-desktop'],
+            ].join(' ')}
+          >
+            {account?.status === 'Incomplete' && (
               <div
                 className={[
-                  styles['incomplete-content'],
-                  styles['incomplete-content-desktop'],
+                  styles['incomplete-form-container'],
+                  styles['incomplete-form-container-desktop'],
                 ].join(' ')}
               >
                 <div
                   className={[
-                    styles['incomplete-form-title'],
-                    styles['incomplete-form-title-desktop'],
+                    styles['incomplete-content'],
+                    styles['incomplete-content-desktop'],
                   ].join(' ')}
                 >
-                  {t('generalInformation')}
-                </div>
-                <div
-                  className={[
-                    styles['form-container'],
-                    styles['form-container-desktop'],
-                  ].join(' ')}
-                >
-                  <AccountProfileFormComponent
-                    storeProps={storeProps}
-                    values={accountProps.profileForm}
-                    errors={accountProps.profileFormErrors}
-                    onChangeCallbacks={{
-                      firstName: (event) =>
-                        AccountController.updateProfile({
-                          firstName: event.target.value,
-                        }),
-                      lastName: (event) =>
-                        AccountController.updateProfile({
-                          lastName: event.target.value,
-                        }),
-                      username: (event) => {
-                        AccountController.updateProfile({
-                          username: event.target.value,
-                        });
-                        onUsernameChanged(event);
-                      },
-                      birthday: (event) => {
-                        AccountController.updateProfile({
-                          birthday: event.currentTarget.value,
-                        });
-                      },
-                      sex: (value) => {
-                        AccountController.updateProfile({
-                          sex: value,
-                        });
-                      },
-                      phoneNumber: (value, _event, _formattedValue) =>
-                        AccountController.updateProfile({
-                          phoneNumber: value,
-                        }),
-                    }}
-                  />
-                </div>
-                <div>
-                  <Button
-                    touchScreen={true}
-                    classNames={{
-                      container: [
-                        styles['submit-button-container'],
-                        styles['submit-button-container-desktop'],
-                      ].join(' '),
-                      button: [
-                        styles['submit-button'],
-                        styles['submit-button-desktop'],
-                      ].join(' '),
-                    }}
-                    block={true}
-                    size={'large'}
-                    icon={<Line.Done size={24} />}
-                    onClick={onCompleteProfile}
-                    loading={accountProps.isCreateCustomerLoading}
-                    loadingComponent={
-                      <img
-                        src={'../assets/svg/ring-resize-light.svg'}
-                        style={{ height: 24 }}
-                        className={[
-                          styles['loading-ring'],
-                          styles['loading-ring-desktop'],
-                        ].join(' ')}
-                      />
-                    }
-                  >
-                    {t('complete')}
-                  </Button>
-                </div>
-              </div>
-              <div
-                className={[
-                  styles['incomplete-content'],
-                  styles['incomplete-content-desktop'],
-                ].join(' ')}
-              >
-                <div
-                  className={[
-                    styles['incomplete-form-title'],
-                    styles['incomplete-form-title-desktop'],
-                  ].join(' ')}
-                >
-                  {t('optional')}
-                </div>
-                <div
-                  className={[
-                    styles['form-container'],
-                    styles['form-container-desktop'],
-                  ].join(' ')}
-                >
-                  <FormLayout
-                    classNames={{ label: styles['input-form-layout-label'] }}
-                    label={t('interests') ?? undefined}
-                  >
-                    <Button
-                      ref={interestButtonRef}
-                      block={true}
-                      classNames={{
-                        button: [styles['secondary-button']].join(' '),
-                      }}
-                      type={'primary'}
-                      size={'large'}
-                      rippleProps={{
-                        color: 'rgba(133, 38, 122, 0.35)',
-                      }}
-                      icon={<Line.Add size={24} />}
-                      onClick={() => setIsAddInterestOpen(true)}
-                    >
-                      {t('addInterest')}
-                    </Button>
-                  </FormLayout>
                   <div
                     className={[
-                      styles['selected-interests-container'],
-                      styles['selected-interests-container-desktop'],
+                      styles['incomplete-form-title'],
+                      styles['incomplete-form-title-desktop'],
                     ].join(' ')}
                   >
-                    {Object.values(accountProps.selectedInterests).map(
-                      (value: InterestResponse) => {
-                        return (
-                          <Button
-                            size={'tiny'}
-                            rounded={true}
-                            classNames={{
-                              button: [
-                                styles['secondary-button'],
-                                styles['interest-selected'],
-                              ].join(' '),
-                            }}
-                            rippleProps={{
-                              color: 'rgba(133, 38, 122, 0.35)',
-                            }}
-                            onClick={() =>
-                              AccountController.updateSelectedInterest(value)
-                            }
-                          >
-                            {value.name}
-                          </Button>
-                        );
+                    {t('generalInformation')}
+                  </div>
+                  <div
+                    className={[
+                      styles['form-container'],
+                      styles['form-container-desktop'],
+                    ].join(' ')}
+                  >
+                    <AccountProfileFormComponent
+                      storeProps={storeProps}
+                      values={accountProps.profileForm}
+                      errors={accountProps.profileFormErrors}
+                      onChangeCallbacks={{
+                        firstName: (event) =>
+                          AccountController.updateProfile({
+                            firstName: event.target.value,
+                          }),
+                        lastName: (event) =>
+                          AccountController.updateProfile({
+                            lastName: event.target.value,
+                          }),
+                        username: (event) => {
+                          AccountController.updateProfile({
+                            username: event.target.value,
+                          });
+                          onUsernameChanged(event);
+                        },
+                        birthday: (event) => {
+                          AccountController.updateProfile({
+                            birthday: event.currentTarget.value,
+                          });
+                        },
+                        sex: (value) => {
+                          AccountController.updateProfile({
+                            sex: value,
+                          });
+                        },
+                        phoneNumber: (value, _event, _formattedValue) =>
+                          AccountController.updateProfile({
+                            phoneNumber: value,
+                          }),
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <Button
+                      touchScreen={true}
+                      classNames={{
+                        container: [
+                          styles['submit-button-container'],
+                          styles['submit-button-container-desktop'],
+                        ].join(' '),
+                        button: [
+                          styles['submit-button'],
+                          styles['submit-button-desktop'],
+                        ].join(' '),
+                      }}
+                      block={true}
+                      size={'large'}
+                      icon={<Line.Done size={24} />}
+                      onClick={onCompleteProfile}
+                      loading={accountProps.isCreateCustomerLoading}
+                      loadingComponent={
+                        <img
+                          src={'../assets/svg/ring-resize-light.svg'}
+                          style={{ height: 24 }}
+                          className={[
+                            styles['loading-ring'],
+                            styles['loading-ring-desktop'],
+                          ].join(' ')}
+                        />
                       }
+                    >
+                      {t('complete')}
+                    </Button>
+                  </div>
+                </div>
+                <div
+                  className={[
+                    styles['incomplete-content'],
+                    styles['incomplete-content-desktop'],
+                  ].join(' ')}
+                >
+                  <div
+                    className={[
+                      styles['incomplete-form-title'],
+                      styles['incomplete-form-title-desktop'],
+                    ].join(' ')}
+                  >
+                    {t('optional')}
+                  </div>
+                  <div
+                    className={[
+                      styles['form-container'],
+                      styles['form-container-desktop'],
+                    ].join(' ')}
+                  >
+                    <FormLayout
+                      classNames={{ label: styles['input-form-layout-label'] }}
+                      label={t('interests') ?? undefined}
+                    >
+                      <Button
+                        ref={interestButtonRef}
+                        block={true}
+                        classNames={{
+                          button: [styles['secondary-button']].join(' '),
+                        }}
+                        type={'primary'}
+                        size={'large'}
+                        rippleProps={{
+                          color: 'rgba(133, 38, 122, 0.35)',
+                        }}
+                        icon={<Line.Add size={24} />}
+                        onClick={() => setIsAddInterestOpen(true)}
+                      >
+                        {t('addInterest')}
+                      </Button>
+                    </FormLayout>
+                    <div
+                      className={[
+                        styles['selected-interests-container'],
+                        styles['selected-interests-container-desktop'],
+                      ].join(' ')}
+                    >
+                      {Object.values(accountProps.selectedInterests).map(
+                        (value: InterestResponse) => {
+                          return (
+                            <Button
+                              size={'tiny'}
+                              rounded={true}
+                              classNames={{
+                                button: [
+                                  styles['secondary-button'],
+                                  styles['interest-selected'],
+                                ].join(' '),
+                              }}
+                              rippleProps={{
+                                color: 'rgba(133, 38, 122, 0.35)',
+                              }}
+                              onClick={() =>
+                                AccountController.updateSelectedInterest(value)
+                              }
+                            >
+                              {value.name}
+                            </Button>
+                          );
+                        }
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            {account?.status === 'Complete' && (
+              <>
+                <div
+                  className={[
+                    styles['top-content'],
+                    styles['top-content-desktop'],
+                  ].join(' ')}
+                >
+                  <div
+                    className={[
+                      styles['status-container'],
+                      styles['status-container-desktop'],
+                    ].join(' ')}
+                  >
+                    <div
+                      className={[
+                        styles['avatar-content'],
+                        styles['avatar-content-desktop'],
+                      ].join(' ')}
+                    >
+                      <div
+                        className={[
+                          styles['avatar-container'],
+                          styles['avatar-container-desktop'],
+                        ].join(' ')}
+                      >
+                        <Avatar
+                          classNames={{
+                            button: {
+                              button: [
+                                styles['avatar-button'],
+                                styles['avatar-button-desktop'],
+                              ].join(' '),
+                            },
+                            cropImage: {
+                              overlay: {
+                                background: [
+                                  styles['avatar-overlay-background'],
+                                  styles['avatar-overlay-background-desktop'],
+                                ].join(' '),
+                              },
+                              saveButton: {
+                                button: [styles['avatar-save-button']].join(' '),
+                              },
+                            },
+                          }}
+                          text={customer?.first_name}
+                          src={accountProps.profileUrl}
+                          editMode={true}
+                          onChange={onAvatarChanged}
+                          loading={accountProps.isAvatarUploadLoading}
+                          loadingComponent={
+                            <img
+                              src={'../assets/svg/ring-resize-light.svg'}
+                              style={{ height: 24 }}
+                              className={[
+                                styles['loading-ring'],
+                                styles['loading-ring-desktop'],
+                              ].join(' ')}
+                            />
+                          }
+                          onLoading={(value) =>
+                            AccountController.updateIsAvatarUploadLoading(value)
+                          }
+                          size={'large'}
+                          isModalVisible={isCropImageModalVisible}
+                          onModalVisible={(value) =>
+                            setIsCropImageModalVisible(value)
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    className={[
+                      styles['username'],
+                      styles['username-desktop'],
+                    ].join(' ')}
+                  >
+                    {customer ? (
+                      `${customer?.first_name} ${customer?.last_name}`
+                    ) : (
+                      <Skeleton
+                        count={1}
+                        borderRadius={9999}
+                        width={120}
+                        className={[
+                          styles['skeleton-user'],
+                          styles['skeleton-user-desktop'],
+                        ].join(' ')}
+                      />
                     )}
                   </div>
-                </div>
-              </div>
-            </div>
-          )}
-          {account?.status === 'Complete' && (
-            <>
-              <div
-                className={[
-                  styles['top-content'],
-                  styles['top-content-desktop'],
-                ].join(' ')}
-              >
-                <div
-                  className={[
-                    styles['status-container'],
-                    styles['status-container-desktop'],
-                  ].join(' ')}
-                >
                   <div
                     className={[
-                      styles['avatar-content'],
-                      styles['avatar-content-desktop'],
+                      styles['followers-status-container'],
+                      styles['followers-status-container-desktop'],
                     ].join(' ')}
                   >
-                    <div
-                      className={[
-                        styles['avatar-container'],
-                        styles['avatar-container-desktop'],
-                      ].join(' ')}
-                    >
-                      <Avatar
-                        classNames={{
-                          button: {
-                            button: [
-                              styles['avatar-button'],
-                              styles['avatar-button-desktop'],
-                            ].join(' '),
-                          },
-                          cropImage: {
-                            overlay: {
-                              background: [
-                                styles['avatar-overlay-background'],
-                                styles['avatar-overlay-background-desktop'],
-                              ].join(' '),
-                            },
-                            saveButton: {
-                              button: [styles['avatar-save-button']].join(' '),
-                            },
-                          },
-                        }}
-                        text={customer?.first_name}
-                        src={accountProps.profileUrl}
-                        editMode={true}
-                        onChange={onAvatarChanged}
-                        loading={accountProps.isAvatarUploadLoading}
-                        loadingComponent={
-                          <img
-                            src={'../assets/svg/ring-resize-light.svg'}
-                            style={{ height: 24 }}
-                            className={[
-                              styles['loading-ring'],
-                              styles['loading-ring-desktop'],
-                            ].join(' ')}
-                          />
-                        }
-                        onLoading={(value) =>
-                          AccountController.updateIsAvatarUploadLoading(value)
-                        }
-                        size={'large'}
-                        isModalVisible={isCropImageModalVisible}
-                        onModalVisible={(value) =>
-                          setIsCropImageModalVisible(value)
-                        }
-                      />
-                    </div>
+                    {likeCount !== undefined && (
+                      <div
+                        className={[
+                          styles['followers-status-item'],
+                          styles['followers-status-item-desktop'],
+                        ].join(' ')}
+                        onClick={onLikesClick}
+                      >
+                        <div
+                          className={[
+                            styles['followers-status-value'],
+                            styles['followers-status-value-desktop'],
+                          ].join(' ')}
+                        >
+                          {likeCount}
+                        </div>
+                        <div
+                          className={[
+                            styles['followers-status-name'],
+                            styles['followers-status-name-desktop'],
+                          ].join(' ')}
+                        >
+                          {t('likes')}
+                        </div>
+                      </div>
+                    )}
+                    {likeCount === undefined && (
+                      <div
+                        className={[
+                          styles['followers-status-item'],
+                          styles['followers-status-item-desktop'],
+                        ].join(' ')}
+                      >
+                        <div
+                          className={[
+                            styles['followers-status-value'],
+                            styles['followers-status-value-desktop'],
+                          ].join(' ')}
+                        >
+                          <Skeleton width={30} height={19} borderRadius={19} />
+                        </div>
+                        <div
+                          className={[
+                            styles['followers-status-name'],
+                            styles['followers-status-name-desktop'],
+                          ].join(' ')}
+                        >
+                          <Skeleton width={55} height={19} borderRadius={19} />
+                        </div>
+                      </div>
+                    )}
+                    {followerCount !== undefined && (
+                      <div
+                        className={[
+                          styles['followers-status-item'],
+                          styles['followers-status-item-desktop'],
+                        ].join(' ')}
+                        onClick={onFollowersClick}
+                      >
+                        <div
+                          className={[
+                            styles['followers-status-value'],
+                            styles['followers-status-value-desktop'],
+                          ].join(' ')}
+                        >
+                          {followerCount}
+                        </div>
+                        <div
+                          className={[
+                            styles['followers-status-name'],
+                            styles['followers-status-name-desktop'],
+                          ].join(' ')}
+                        >
+                          {t('followers')}
+                        </div>
+                      </div>
+                    )}
+                    {followerCount === undefined && (
+                      <div
+                        className={[
+                          styles['followers-status-item'],
+                          styles['followers-status-item-desktop'],
+                        ].join(' ')}
+                      >
+                        <div
+                          className={[
+                            styles['followers-status-value'],
+                            styles['followers-status-value-desktop'],
+                          ].join(' ')}
+                        >
+                          <Skeleton width={30} height={19} borderRadius={19} />
+                        </div>
+                        <div
+                          className={[
+                            styles['followers-status-name'],
+                            styles['followers-status-name-desktop'],
+                          ].join(' ')}
+                        >
+                          <Skeleton width={55} height={19} borderRadius={19} />
+                        </div>
+                      </div>
+                    )}
+                    {followingCount !== undefined && (
+                      <div
+                        className={[
+                          styles['followers-status-item'],
+                          styles['followers-status-item-desktop'],
+                        ].join(' ')}
+                        onClick={onFollowingClick}
+                      >
+                        <div
+                          className={[
+                            styles['followers-status-value'],
+                            styles['followers-status-value-desktop'],
+                          ].join(' ')}
+                        >
+                          {followingCount}
+                        </div>
+                        <div
+                          className={[
+                            styles['followers-status-name'],
+                            styles['followers-status-name-desktop'],
+                          ].join(' ')}
+                        >
+                          {t('following')}
+                        </div>
+                      </div>
+                    )}
+                    {followingCount === undefined && (
+                      <div
+                        className={[
+                          styles['followers-status-item'],
+                          styles['followers-status-item-desktop'],
+                        ].join(' ')}
+                      >
+                        <div
+                          className={[
+                            styles['followers-status-value'],
+                            styles['followers-status-value-desktop'],
+                          ].join(' ')}
+                        >
+                          <Skeleton width={30} height={19} borderRadius={19} />
+                        </div>
+                        <div
+                          className={[
+                            styles['followers-status-name'],
+                            styles['followers-status-name-desktop'],
+                          ].join(' ')}
+                        >
+                          <Skeleton width={55} height={19} borderRadius={19} />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div
+                    className={[
+                      styles['tabs-container'],
+                      styles['tabs-container-desktop'],
+                    ].join(' ')}
+                  >
+                    <Tabs
+                      flex={true}
+                      touchScreen={true}
+                      activeId={accountProps.activeTabId}
+                      classNames={{
+                        nav: [styles['tab-nav'], styles['tab-nav-desktop']].join(
+                          ' '
+                        ),
+                        tabButton: [
+                          styles['tab-button'],
+                          styles['tab-button-desktop'],
+                        ].join(''),
+                        tabOutline: [
+                          styles['tab-outline'],
+                          styles['tab-outline-desktop'],
+                        ].join(' '),
+                      }}
+                      onChange={(id) => {
+                        AccountController.updateActiveTabId(id);
+                        navigate({ pathname: id, search: query.toString() });
+                      }}
+                      type={'underlined'}
+                      tabs={[
+                        {
+                          id: RoutePathsType.AccountLikes,
+                          icon: <Line.FavoriteBorder size={24} />,
+                        },
+                        {
+                          id: RoutePathsType.AccountOrderHistory,
+                          icon: <Line.History size={24} />,
+                        },
+                        {
+                          id: RoutePathsType.AccountAddresses,
+                          icon: <Line.LocationOn size={24} />,
+                        },
+                      ]}
+                    />
                   </div>
                 </div>
                 <div
                   className={[
-                    styles['username'],
-                    styles['username-desktop'],
+                    styles['outlet-container'],
+                    styles['outlet-container-desktop'],
                   ].join(' ')}
                 >
-                  {customer ? (
-                    `${customer?.first_name} ${customer?.last_name}`
-                  ) : (
-                    <Skeleton
-                      count={1}
-                      borderRadius={9999}
-                      width={120}
-                      className={[
-                        styles['skeleton-user'],
-                        styles['skeleton-user-desktop'],
-                      ].join(' ')}
-                    />
-                  )}
-                </div>
-                <div
-                  className={[
-                    styles['followers-status-container'],
-                    styles['followers-status-container-desktop'],
-                  ].join(' ')}
-                >
-                  {likeCount !== undefined && (
-                    <div
-                      className={[
-                        styles['followers-status-item'],
-                        styles['followers-status-item-desktop'],
-                      ].join(' ')}
-                      onClick={onLikesClick}
-                    >
-                      <div
-                        className={[
-                          styles['followers-status-value'],
-                          styles['followers-status-value-desktop'],
-                        ].join(' ')}
-                      >
-                        {likeCount}
-                      </div>
-                      <div
-                        className={[
-                          styles['followers-status-name'],
-                          styles['followers-status-name-desktop'],
-                        ].join(' ')}
-                      >
-                        {t('likes')}
-                      </div>
-                    </div>
-                  )}
-                  {likeCount === undefined && (
-                    <div
-                      className={[
-                        styles['followers-status-item'],
-                        styles['followers-status-item-desktop'],
-                      ].join(' ')}
-                    >
-                      <div
-                        className={[
-                          styles['followers-status-value'],
-                          styles['followers-status-value-desktop'],
-                        ].join(' ')}
-                      >
-                        <Skeleton width={30} height={19} borderRadius={19} />
-                      </div>
-                      <div
-                        className={[
-                          styles['followers-status-name'],
-                          styles['followers-status-name-desktop'],
-                        ].join(' ')}
-                      >
-                        <Skeleton width={55} height={19} borderRadius={19} />
-                      </div>
-                    </div>
-                  )}
-                  {followerCount !== undefined && (
-                    <div
-                      className={[
-                        styles['followers-status-item'],
-                        styles['followers-status-item-desktop'],
-                      ].join(' ')}
-                      onClick={onFollowersClick}
-                    >
-                      <div
-                        className={[
-                          styles['followers-status-value'],
-                          styles['followers-status-value-desktop'],
-                        ].join(' ')}
-                      >
-                        {followerCount}
-                      </div>
-                      <div
-                        className={[
-                          styles['followers-status-name'],
-                          styles['followers-status-name-desktop'],
-                        ].join(' ')}
-                      >
-                        {t('followers')}
-                      </div>
-                    </div>
-                  )}
-                  {followerCount === undefined && (
-                    <div
-                      className={[
-                        styles['followers-status-item'],
-                        styles['followers-status-item-desktop'],
-                      ].join(' ')}
-                    >
-                      <div
-                        className={[
-                          styles['followers-status-value'],
-                          styles['followers-status-value-desktop'],
-                        ].join(' ')}
-                      >
-                        <Skeleton width={30} height={19} borderRadius={19} />
-                      </div>
-                      <div
-                        className={[
-                          styles['followers-status-name'],
-                          styles['followers-status-name-desktop'],
-                        ].join(' ')}
-                      >
-                        <Skeleton width={55} height={19} borderRadius={19} />
-                      </div>
-                    </div>
-                  )}
-                  {followingCount !== undefined && (
-                    <div
-                      className={[
-                        styles['followers-status-item'],
-                        styles['followers-status-item-desktop'],
-                      ].join(' ')}
-                      onClick={onFollowingClick}
-                    >
-                      <div
-                        className={[
-                          styles['followers-status-value'],
-                          styles['followers-status-value-desktop'],
-                        ].join(' ')}
-                      >
-                        {followingCount}
-                      </div>
-                      <div
-                        className={[
-                          styles['followers-status-name'],
-                          styles['followers-status-name-desktop'],
-                        ].join(' ')}
-                      >
-                        {t('following')}
-                      </div>
-                    </div>
-                  )}
-                  {followingCount === undefined && (
-                    <div
-                      className={[
-                        styles['followers-status-item'],
-                        styles['followers-status-item-desktop'],
-                      ].join(' ')}
-                    >
-                      <div
-                        className={[
-                          styles['followers-status-value'],
-                          styles['followers-status-value-desktop'],
-                        ].join(' ')}
-                      >
-                        <Skeleton width={30} height={19} borderRadius={19} />
-                      </div>
-                      <div
-                        className={[
-                          styles['followers-status-name'],
-                          styles['followers-status-name-desktop'],
-                        ].join(' ')}
-                      >
-                        <Skeleton width={55} height={19} borderRadius={19} />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div
-                className={[
-                  styles['tabs-container'],
-                  styles['tabs-container-desktop'],
-                ].join(' ')}
-              >
-                <Tabs
-                  flex={true}
-                  touchScreen={true}
-                  activeId={accountProps.activeTabId}
-                  classNames={{
-                    nav: [styles['tab-nav'], styles['tab-nav-desktop']].join(
-                      ' '
-                    ),
-                    tabButton: [
-                      styles['tab-button'],
-                      styles['tab-button-desktop'],
-                    ].join(''),
-                    tabOutline: [
-                      styles['tab-outline'],
-                      styles['tab-outline-desktop'],
-                    ].join(' '),
-                  }}
-                  onChange={(id) => {
-                    AccountController.updateActiveTabId(id);
-                    navigate({ pathname: id, search: query.toString() });
-                  }}
-                  type={'underlined'}
-                  tabs={[
-                    {
-                      id: RoutePathsType.AccountLikes,
-                      icon: <Line.FavoriteBorder size={24} />,
-                    },
-                    {
-                      id: RoutePathsType.AccountOrderHistory,
-                      icon: <Line.History size={24} />,
-                    },
-                    {
-                      id: RoutePathsType.AccountAddresses,
-                      icon: <Line.LocationOn size={24} />,
-                    },
-                  ]}
-                />
-              </div>
-              <div
-                className={[
-                  styles['outlet-container'],
-                  styles['outlet-container-desktop'],
-                ].join(' ')}
-              >
-                <TransitionGroup
-                  component={null}
-                  childFactory={(child) =>
-                    React.cloneElement(child, {
-                      classNames: {
+                  <TransitionGroup
+                    component={null}
+                    childFactory={(child) =>
+                      React.cloneElement(child, {
+                        classNames: {
+                          enter:
+                            accountProps.activeTabIndex >
+                              accountProps.prevTabIndex
+                              ? styles['left-to-right-enter']
+                              : styles['right-to-left-enter'],
+                          enterActive:
+                            accountProps.activeTabIndex >
+                              accountProps.prevTabIndex
+                              ? styles['left-to-right-enter-active']
+                              : styles['right-to-left-enter-active'],
+                          exit:
+                            accountProps.activeTabIndex >
+                              accountProps.prevTabIndex
+                              ? styles['left-to-right-exit']
+                              : styles['right-to-left-exit'],
+                          exitActive:
+                            accountProps.activeTabIndex >
+                              accountProps.prevTabIndex
+                              ? styles['left-to-right-exit-active']
+                              : styles['right-to-left-exit-active'],
+                        },
+                        timeout: 250,
+                      })
+                    }
+                  >
+                    <CSSTransition
+                      key={accountProps.activeTabIndex}
+                      classNames={{
                         enter:
-                          accountProps.activeTabIndex >
-                            accountProps.prevTabIndex
+                          accountProps.activeTabIndex < accountProps.prevTabIndex
                             ? styles['left-to-right-enter']
                             : styles['right-to-left-enter'],
                         enterActive:
-                          accountProps.activeTabIndex >
-                            accountProps.prevTabIndex
+                          accountProps.activeTabIndex < accountProps.prevTabIndex
                             ? styles['left-to-right-enter-active']
                             : styles['right-to-left-enter-active'],
                         exit:
-                          accountProps.activeTabIndex >
-                            accountProps.prevTabIndex
+                          accountProps.activeTabIndex < accountProps.prevTabIndex
                             ? styles['left-to-right-exit']
                             : styles['right-to-left-exit'],
                         exitActive:
-                          accountProps.activeTabIndex >
-                            accountProps.prevTabIndex
+                          accountProps.activeTabIndex < accountProps.prevTabIndex
                             ? styles['left-to-right-exit-active']
                             : styles['right-to-left-exit-active'],
-                      },
-                      timeout: 250,
-                    })
-                  }
-                >
-                  <CSSTransition
-                    key={accountProps.activeTabIndex}
-                    classNames={{
-                      enter:
-                        accountProps.activeTabIndex < accountProps.prevTabIndex
-                          ? styles['left-to-right-enter']
-                          : styles['right-to-left-enter'],
-                      enterActive:
-                        accountProps.activeTabIndex < accountProps.prevTabIndex
-                          ? styles['left-to-right-enter-active']
-                          : styles['right-to-left-enter-active'],
-                      exit:
-                        accountProps.activeTabIndex < accountProps.prevTabIndex
-                          ? styles['left-to-right-exit']
-                          : styles['right-to-left-exit'],
-                      exitActive:
-                        accountProps.activeTabIndex < accountProps.prevTabIndex
-                          ? styles['left-to-right-exit-active']
-                          : styles['right-to-left-exit-active'],
-                    }}
-                    timeout={250}
-                    unmountOnExit={false}
-                  >
-                    <div style={{ minWidth: '100%', minHeight: '100%' }}>
-                      <Outlet context={{ scrollContainerRef }} />
-                    </div>
-                  </CSSTransition>
-                </TransitionGroup>
-              </div>
-            </>
-          )}
-        </div>
+                      }}
+                      timeout={250}
+                      unmountOnExit={false}
+                    >
+                      <div style={{ minWidth: '100%', minHeight: '100%' }}>
+                        <Outlet context={{ scrollContainerRef }} />
+                      </div>
+                    </CSSTransition>
+                  </TransitionGroup>
+                </div>
+              </>
+            )}
+          </div>
+        </Scroll>
       </div>
       {ReactDOM.createPortal(
         <>

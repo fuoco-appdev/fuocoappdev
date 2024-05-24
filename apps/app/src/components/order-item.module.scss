@@ -1,6 +1,9 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
 .root {
+    background-color: #fff;
+    border-radius: 6px;
+    
     & .ripples {
         width: 100%;
         height: 100%;
@@ -10,19 +13,13 @@
         width: 100%;
     
         & .details {
-            display: -webkit-box;
-            display: -ms-flexbox;
             display: flex;
             margin-bottom: $mp-1;
     
             & .thumbnail {
                 position: relative;
-                display: -webkit-box;
-                display: -ms-flexbox;
                 display: flex;
-                -webkit-box-pack: center;
-                    -ms-flex-pack: center;
-                        justify-content: center;
+                justify-content: center;
                 height: 56px;
                 width: 56px;
                 background-color: $gray-100;

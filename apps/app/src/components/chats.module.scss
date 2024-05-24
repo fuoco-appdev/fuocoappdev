@@ -51,8 +51,8 @@
                     flex: 1;
 
                     & .search-input-container {
-                        background-color: transparent;
-                        border-color: $brand-900;
+                        border-color: transparent !important;
+                        background-color: rgba(42, 42, 95, .05);
                         border-radius: $rounded-full;
                     }
 

@@ -2,6 +2,8 @@
 
 .root {
     width: 100%;
+    background-color: #fff;
+    border-radius: 6px;
     
     & .ripples {
         width: 100%;
@@ -217,7 +219,7 @@
     }
 
     & .container-mobile {   
-        padding: $mp-2 $mp-4;
+        padding: $mp-4;
 
         & .details-mobile {       
             & .thumbnail-mobile {        

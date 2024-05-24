@@ -41,6 +41,7 @@ class NotificationsController extends Controller {
   public loadAccountNotifications(): void {
     this._model.accountNotifications = [];
     this._model.hasMoreNotifications = true;
+    this._model.isReloading = false;
     this._model.isLoading = false;
     this._model.pagination = 1;
 
@@ -53,7 +54,7 @@ class NotificationsController extends Controller {
             return;
           }
 
-          await this.requestAccountNotificationsAsync(0, this._limit);
+          await this.requestAccountNotificationsAsync('loading', 0, this._limit);
           await this.requestUpdateSeenAllAsync();
         },
       });
@@ -92,6 +93,15 @@ class NotificationsController extends Controller {
     );
   }
 
+  public async reloadNotificationsAsync(): Promise<void> {
+    this._model.hasMoreNotifications = true;
+    this._model.isReloading = false;
+    this._model.isLoading = false;
+    this._model.pagination = 1;
+
+    await this.requestAccountNotificationsAsync('reloading', 0, this._limit);
+  }
+
   public async onNextScrollAsync(): Promise<void> {
     if (this._model.isLoading) {
       return;
@@ -100,7 +110,7 @@ class NotificationsController extends Controller {
     this._model.pagination = this._model.pagination + 1;
 
     const offset = this._limit * (this._model.pagination - 1);
-    await this.requestAccountNotificationsAsync(offset, this._limit);
+    await this.requestAccountNotificationsAsync('loading', offset, this._limit);
   }
 
   public async requestFollowAsync(id: string): Promise<void> {
@@ -158,14 +168,19 @@ class NotificationsController extends Controller {
   }
 
   private async requestAccountNotificationsAsync(
+    loadType: 'loading' | 'reloading',
     offset: number = 0,
     limit: number = 10,
   ): Promise<void> {
-    if (this._model.isLoading) {
+    if (this._model.isLoading || this._model.isReloading) {
       return;
     }
 
-    this._model.isLoading = true;
+    if (loadType === 'loading') {
+      this._model.isLoading = true;
+    } else if (loadType === 'reloading') {
+      this._model.isReloading = true;
+    }
 
     const account = await firstValueFrom(
       AccountController.model.store.pipe(
@@ -188,6 +203,7 @@ class NotificationsController extends Controller {
       ) {
         this._model.hasMoreNotifications = false;
         this._model.isLoading = false;
+        this._model.isReloading = false;
         return;
       }
 
@@ -209,6 +225,7 @@ class NotificationsController extends Controller {
     } catch (error: any) {
       console.error(error);
       this._model.isLoading = false;
+      this._model.isReloading = false;
       this._model.hasMoreNotifications = false;
     }
 
@@ -238,7 +255,11 @@ class NotificationsController extends Controller {
       }
     }
 
-    this._model.isLoading = false;
+    if (loadType === 'loading') {
+      this._model.isLoading = false;
+    } else if (loadType === 'reloading') {
+      this._model.isReloading = false;
+    }
   }
 }
 

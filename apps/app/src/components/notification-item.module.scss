@@ -3,6 +3,8 @@
 .root {
     display: flex;
     flex-direction: row;
+    background-color: #fff;
+    border-radius: 6px;
 
     & .details {
         display: flex;
@@ -11,14 +13,10 @@
 
         & .thumbnail {
             position: relative;
-            display: -webkit-box;
-            display: -ms-flexbox;
             display: flex;
-            -webkit-box-pack: center;
-            -ms-flex-pack: center;
             justify-content: center;
-            height: 40px;
-            width: 40px;
+            height: 32px;
+            width: 32px;
             border-radius: 40px;
             background-color: $gray-100;
             margin-right: $mp-4;
@@ -49,9 +47,6 @@
                 font-size: $font-size-sm;
 
                 & .message-content {
-                    display: flex;
-                    flex-direction: row;
-
                     & .message-bold {
                         font-weight: $font-weight-bold;
                     }
@@ -115,7 +110,7 @@
 }
 
 .root-desktop {
-    padding: $mp-2 $mp-6;
+    padding: $mp-4 $mp-6;
 
     & .details-desktop {
         & .thumbnail-desktop {
@@ -146,7 +141,7 @@
 }
 
 .root-tablet {
-    padding: $mp-2 $mp-6;
+    padding: $mp-4 $mp-6;
 
     & .details-tablet {
 
@@ -178,7 +173,7 @@
 }
 
 .root-mobile {
-    padding: $mp-2 $mp-4;
+    padding: $mp-4;
 
     & .details-mobile {
         & .thumbnail-mobile {

@@ -5,40 +5,30 @@ import { Helmet } from 'react-helmet';
 import WindowController from '../controllers/window.controller';
 import { WindowState } from '../models/window.model';
 import { AuthenticatedComponent } from './authenticated.component';
-import {
-  ResponsiveDesktop,
-  ResponsiveMobile,
-  ResponsiveTablet,
-} from './responsive.component';
+import SettingsSuspenseDesktopComponent from './desktop/suspense/settings.suspense.desktop';
+import SettingsSuspenseMobileComponent from './mobile/suspense/settings.suspense.mobile';
 
-const AccountSettingsDesktopComponent = lazy(
-  () => import('./desktop/account-settings.desktop.component')
+const SettingsDesktopComponent = lazy(
+  () => import('./desktop/settings.desktop.component')
 );
-const AccountSettingsTabletComponent = lazy(
-  () => import('./tablet/account-settings.tablet.component')
+const SettingsTabletComponent = lazy(
+  () => import('./tablet/settings.tablet.component')
 );
-const AccountSettingsMobileComponent = lazy(
-  () => import('./mobile/account-settings.mobile.component')
+const SettingsMobileComponent = lazy(
+  () => import('./mobile/settings.mobile.component')
 );
 
-export interface AccountSettingsResponsiveProps {
+export interface SettingsResponsiveProps {
   windowProps: WindowState;
 }
 
-export default function AccountSettingsComponent(): JSX.Element {
+export default function SettingsComponent(): JSX.Element {
   const [windowProps] = useObservable(WindowController.model.store);
 
   const suspenceComponent = (
     <>
-      <ResponsiveDesktop>
-        <div />
-      </ResponsiveDesktop>
-      <ResponsiveTablet>
-        <div />
-      </ResponsiveTablet>
-      <ResponsiveMobile>
-        <div />
-      </ResponsiveMobile>
+      <SettingsSuspenseDesktopComponent />
+      <SettingsSuspenseMobileComponent />
     </>
   );
 
@@ -76,9 +66,9 @@ export default function AccountSettingsComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <AuthenticatedComponent>
-          <AccountSettingsDesktopComponent windowProps={windowProps} />
-          <AccountSettingsTabletComponent windowProps={windowProps} />
-          <AccountSettingsMobileComponent windowProps={windowProps} />
+          <SettingsDesktopComponent windowProps={windowProps} />
+          <SettingsTabletComponent windowProps={windowProps} />
+          <SettingsMobileComponent windowProps={windowProps} />
         </AuthenticatedComponent>
       </React.Suspense>
     </>

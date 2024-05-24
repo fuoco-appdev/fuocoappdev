@@ -16,17 +16,17 @@ import {
   ResponsiveTablet,
 } from './responsive.component';
 
-const AccountSettingsAccountDesktopComponent = lazy(
-  () => import('./desktop/account-settings-account.desktop.component')
+const SettingsAccountDesktopComponent = lazy(
+  () => import('./desktop/settings-account.desktop.component')
 );
-const AccountSettingsAccountTabletComponent = lazy(
-  () => import('./tablet/account-settings-account.tablet.component')
+const SettingsAccountTabletComponent = lazy(
+  () => import('./tablet/settings-account.tablet.component')
 );
-const AccountSettingsAccountMobileComponent = lazy(
-  () => import('./mobile/account-settings-account.mobile.component')
+const SettingsAccountMobileComponent = lazy(
+  () => import('./mobile/settings-account.mobile.component')
 );
 
-export interface AccountSettingsAccountResponsiveProps {
+export interface SettingsAccountResponsiveProps {
   accountProps: AccountState;
   storeProps: StoreState;
   windowLocalProps: WindowLocalState;
@@ -34,14 +34,12 @@ export interface AccountSettingsAccountResponsiveProps {
   setUpdatePasswordError: (value: string | undefined) => void;
   confirmPasswordError: string | undefined;
   setConfirmPasswordError: (value: string | undefined) => void;
-  showDeleteModal: boolean;
-  setShowDeleteModal: (value: boolean) => void;
   isLanguageOpen: boolean;
   setIsLanguageOpen: (value: boolean) => void;
   onGeneralInformationSaveAsync: () => void;
 }
 
-export default function AccountSettingsAccountComponent(): JSX.Element {
+export default function SettingsAccountComponent(): JSX.Element {
   const [windowLocalProps] = useObservable(
     WindowController.model.localStore ?? Store.prototype
   );
@@ -53,7 +51,6 @@ export default function AccountSettingsAccountComponent(): JSX.Element {
   const [confirmPasswordError, setConfirmPasswordError] = React.useState<
     string | undefined
   >(undefined);
-  const [showDeleteModal, setShowDeleteModal] = React.useState<boolean>(false);
   const [isLanguageOpen, setIsLanguageOpen] = React.useState<boolean>(false);
   const { t } = useTranslation();
 
@@ -94,7 +91,7 @@ export default function AccountSettingsAccountComponent(): JSX.Element {
   return (
     <React.Suspense fallback={suspenceComponent}>
       <AuthenticatedComponent>
-        <AccountSettingsAccountDesktopComponent
+        <SettingsAccountDesktopComponent
           accountProps={accountProps}
           storeProps={storeProps}
           windowLocalProps={windowLocalProps}
@@ -102,13 +99,11 @@ export default function AccountSettingsAccountComponent(): JSX.Element {
           setUpdatePasswordError={setUpdatePasswordError}
           confirmPasswordError={confirmPasswordError}
           setConfirmPasswordError={setConfirmPasswordError}
-          showDeleteModal={showDeleteModal}
-          setShowDeleteModal={setShowDeleteModal}
           isLanguageOpen={isLanguageOpen}
           setIsLanguageOpen={setIsLanguageOpen}
           onGeneralInformationSaveAsync={onGeneralInformationSaveAsync}
         />
-        <AccountSettingsAccountTabletComponent
+        <SettingsAccountTabletComponent
           accountProps={accountProps}
           storeProps={storeProps}
           windowLocalProps={windowLocalProps}
@@ -116,13 +111,11 @@ export default function AccountSettingsAccountComponent(): JSX.Element {
           setUpdatePasswordError={setUpdatePasswordError}
           confirmPasswordError={confirmPasswordError}
           setConfirmPasswordError={setConfirmPasswordError}
-          showDeleteModal={showDeleteModal}
-          setShowDeleteModal={setShowDeleteModal}
           isLanguageOpen={isLanguageOpen}
           setIsLanguageOpen={setIsLanguageOpen}
           onGeneralInformationSaveAsync={onGeneralInformationSaveAsync}
         />
-        <AccountSettingsAccountMobileComponent
+        <SettingsAccountMobileComponent
           accountProps={accountProps}
           storeProps={storeProps}
           windowLocalProps={windowLocalProps}
@@ -130,8 +123,6 @@ export default function AccountSettingsAccountComponent(): JSX.Element {
           setUpdatePasswordError={setUpdatePasswordError}
           confirmPasswordError={confirmPasswordError}
           setConfirmPasswordError={setConfirmPasswordError}
-          showDeleteModal={showDeleteModal}
-          setShowDeleteModal={setShowDeleteModal}
           isLanguageOpen={isLanguageOpen}
           setIsLanguageOpen={setIsLanguageOpen}
           onGeneralInformationSaveAsync={onGeneralInformationSaveAsync}

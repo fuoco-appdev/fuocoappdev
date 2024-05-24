@@ -1,13 +1,8 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
 .root {
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
+    flex-direction: column;
     width: 100%;
     min-width: 100%;
     height: 100%;
@@ -19,12 +14,8 @@
             width: 100%;
 
             & .header-container-skeleton {
-                display: -webkit-box;
-                display: -ms-flexbox;
                 display: flex;
-                -webkit-box-align: center;
-                    -ms-flex-align: center;
-                        align-items: center;
+                align-items: center;
                 height: 56px;
                 width: 100%;
                 gap: $mp-2;
@@ -32,12 +23,8 @@
             }
 
             & .header-container {
-                display: -webkit-box;
-                display: -ms-flexbox;
                 display: flex;
-                -webkit-box-align: center;
-                    -ms-flex-align: center;
-                        align-items: center;
+                align-items: center;
                 height: 56px;
                 width: 100%;
                 margin-bottom: $mp-4;
@@ -52,9 +39,7 @@
                     width: 32px;
                     height: 32px;
                     color: #fff;
-                    -webkit-box-pack: center;
-                        -ms-flex-pack: center;
-                            justify-content: center;
+                    justify-content: center;
                     display: -webkit-box;
                     display: -ms-flexbox;
                     display: flex;
@@ -67,19 +52,10 @@
                 }
 
                 & .header-right-content {
-                    -webkit-box-flex: 1;
-                        -ms-flex: 1;
-                            flex: 1;
-                    display: -webkit-box;
-                    display: -ms-flexbox;
+                    flex: 1;
                     display: flex;
-                    -webkit-box-orient: horizontal;
-                    -webkit-box-direction: normal;
-                        -ms-flex-direction: row;
-                            flex-direction: row;
-                    -webkit-box-pack: end;
-                        -ms-flex-pack: end;
-                            justify-content: flex-end;
+                    flex-direction: row;
+                    justify-content: flex-end;
                     height: 100%;
                 }
             }
@@ -262,56 +238,35 @@
 }
 
 .root-desktop {
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: row;
-            flex-direction: row;
-    -webkit-box-pack: center;
-        -ms-flex-pack: center;
-            justify-content: center;
-    gap: $mp-6;
+    flex-direction: row;
+    justify-content: center;
+    gap: $mp-4;
     padding: $mp-10;
     padding-top: calc(56px + 40px);
 
     & .left-content-desktop {
-        display: -webkit-box;
-        display: -ms-flexbox;
         display: flex;
-        -webkit-box-orient: vertical;
-        -webkit-box-direction: normal;
-            -ms-flex-direction: column;
-                flex-direction: column;
-        gap: $mp-6;
+        flex-direction: column;
+        gap: $mp-4;
         width: 500px;
-        height: -webkit-fit-content;
-        height: -moz-fit-content;
         height: fit-content;
         padding-bottom: $mp-10;
     }
 
     & .right-content-desktop {
-        display: -webkit-box;
-        display: -ms-flexbox;
         display: flex;
-        -webkit-box-orient: vertical;
-        -webkit-box-direction: normal;
-            -ms-flex-direction: column;
-                flex-direction: column;
-        gap: $mp-6;
+        flex-direction: column;
+        gap: $mp-4;
         width: 500px;
-        height: -webkit-fit-content;
-        height: -moz-fit-content;
         height: fit-content;
         padding-bottom: $mp-10;
     }
 
     & .card-container-desktop {
-        border: 1px solid rgba(42, 42, 95, .6);
+        border: 1px solid rgba(42, 42, 95, .15);
+        background-color: #fff;
         border-radius: 6px;
-        margin-bottom: $mp-2;
         padding: $mp-6;
         width: 100%;
 
@@ -463,8 +418,9 @@
 
 .root-mobile {
     & .card-container-mobile {
-        border-bottom: 1px solid rgba(42, 42, 95, .6);
-        margin-bottom: $mp-2;
+        background-color: #fff;
+        border-radius: 6px;
+        margin-bottom: 2px;
         padding-top: $mp-2;
         padding-bottom: $mp-4;
         width: 100%;
@@ -568,7 +524,8 @@
 }
   
 .input-container {
-    border-color: $brand-900 !important;
+    border-color: transparent !important;
+    background-color: rgba(42, 42, 95, .05);
 }
 
 .listbox-form-layout-label {
@@ -576,7 +533,8 @@
 }
 
 .listbox {
-    border-color: $brand-900 !important;
+    border-color: transparent !important;
+    background-color: rgba(42, 42, 95, .05);
 }
   
 .listbox-chevron {

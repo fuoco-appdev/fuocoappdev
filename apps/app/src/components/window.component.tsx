@@ -45,6 +45,8 @@ export interface WindowResponsiveProps {
   productProps: ProductState;
   openMore: boolean;
   isLanguageOpen: boolean;
+  showDeleteModal: boolean;
+  setShowDeleteModal: (value: boolean) => void;
   setOpenMore: (value: boolean) => void;
   setIsLanguageOpen: (value: boolean) => void;
   onSelectLocation: () => void;
@@ -71,6 +73,7 @@ export default function WindowComponent(): JSX.Element {
   const { i18n, t } = useTranslation();
   const [openMore, setOpenMore] = React.useState<boolean>(false);
   const [isLanguageOpen, setIsLanguageOpen] = React.useState<boolean>(false);
+  const [showDeleteModal, setShowDeleteModal] = React.useState<boolean>(false);
   const [windowLocalProps] = useObservable(
     WindowController.model.localStore ?? Store.prototype
   );
@@ -94,6 +97,21 @@ export default function WindowComponent(): JSX.Element {
   };
 
   const onNavigateBack = () => {
+    if (
+      windowProps.loadedLocationPath &&
+      windowProps.loadedLocationPath === RoutePathsType.Cart
+    ) {
+      setTimeout(
+        () =>
+          navigate({
+            pathname: RoutePathsType.Store,
+            search: query.toString(),
+          }),
+        150
+      );
+      return;
+    }
+
     if (
       windowProps.loadedLocationPath &&
       windowProps.loadedLocationPath === RoutePathsType.Cart
@@ -587,6 +605,8 @@ export default function WindowComponent(): JSX.Element {
         isLanguageOpen={isLanguageOpen}
         setOpenMore={setOpenMore}
         setIsLanguageOpen={setIsLanguageOpen}
+        showDeleteModal={showDeleteModal}
+        setShowDeleteModal={setShowDeleteModal}
         onSelectLocation={onSelectLocation}
         onCancelLocation={onCancelLocation}
         onSidebarTabsChanged={onSidebarTabsChanged}
@@ -603,6 +623,8 @@ export default function WindowComponent(): JSX.Element {
         isLanguageOpen={isLanguageOpen}
         setOpenMore={setOpenMore}
         setIsLanguageOpen={setIsLanguageOpen}
+        showDeleteModal={showDeleteModal}
+        setShowDeleteModal={setShowDeleteModal}
         onSelectLocation={onSelectLocation}
         onCancelLocation={onCancelLocation}
         onSidebarTabsChanged={onSidebarTabsChanged}
@@ -619,6 +641,8 @@ export default function WindowComponent(): JSX.Element {
         isLanguageOpen={isLanguageOpen}
         setOpenMore={setOpenMore}
         setIsLanguageOpen={setIsLanguageOpen}
+        showDeleteModal={showDeleteModal}
+        setShowDeleteModal={setShowDeleteModal}
         onSelectLocation={onSelectLocation}
         onCancelLocation={onCancelLocation}
         onSidebarTabsChanged={onSidebarTabsChanged}

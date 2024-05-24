@@ -27,8 +27,8 @@ export interface AccountFollowersFollowingResponsiveProps {
   accountPublicProps: AccountPublicState;
   followerCount: string | undefined;
   followingCount: string | undefined;
-  onScroll: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
-  onLoad: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
+  onScrollLoad: () => void;
+  onScrollReload: () => void;
 }
 
 export default function AccountFollowersFollowingComponent(): JSX.Element {
@@ -45,56 +45,30 @@ export default function AccountFollowersFollowingComponent(): JSX.Element {
   >(undefined);
   const scrollOffsetTriggerGap = 16;
 
-  const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    const scrollTop = e.currentTarget?.scrollTop ?? 0;
-    const scrollHeight = e.currentTarget?.scrollHeight ?? 0;
-    const clientHeight = e.currentTarget?.clientHeight ?? 0;
-    const scrollOffset = scrollHeight - scrollTop - clientHeight;
-
+  const onScrollLoad = () => {
     if (
       AccountPublicController.model.activeStatusTabId ===
       RoutePathsType.AccountStatusWithIdFollowers
     ) {
-      if (
-        scrollOffset > scrollOffsetTriggerGap ||
-        !AccountPublicController.model.hasMoreFollowers
-      ) {
-        return;
-      }
       AccountPublicController.onFollowersScrollAsync();
     } else if (
       AccountPublicController.model.activeStatusTabId ===
       RoutePathsType.AccountStatusWithIdFollowing
     ) {
-      if (
-        scrollOffset > scrollOffsetTriggerGap ||
-        !AccountPublicController.model.hasMoreFollowing
-      ) {
-        return;
-      }
       AccountPublicController.onFollowingScrollAsync();
     }
   };
 
-  const onLoad = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
+  const onScrollReload = () => {
     if (
       AccountPublicController.model.activeStatusTabId ===
       RoutePathsType.AccountStatusWithIdFollowers
     ) {
-      if (AccountPublicController.model.followerScrollPosition) {
-        e.currentTarget.scrollTop = AccountPublicController.model
-          .followerScrollPosition as number;
-        AccountPublicController.updateFollowerScrollPosition(undefined);
-      }
+
     } else if (
       AccountPublicController.model.activeStatusTabId ===
       RoutePathsType.AccountStatusWithIdFollowing
     ) {
-      if (AccountPublicController.model.followingScrollPosition) {
-        e.currentTarget.scrollTop = AccountPublicController.model
-          .followingScrollPosition as number;
-        AccountPublicController.updateFollowingScrollPosition(undefined);
-      }
     }
   };
 
@@ -196,22 +170,22 @@ export default function AccountFollowersFollowingComponent(): JSX.Element {
             accountPublicProps={accountPublicProps}
             followerCount={followerCount}
             followingCount={followingCount}
-            onScroll={onScroll}
-            onLoad={onLoad}
+            onScrollLoad={onScrollLoad}
+            onScrollReload={onScrollReload}
           />
           <AccountPublicStatusTabletComponent
             accountPublicProps={accountPublicProps}
             followerCount={followerCount}
             followingCount={followingCount}
-            onScroll={onScroll}
-            onLoad={onLoad}
+            onScrollLoad={onScrollLoad}
+            onScrollReload={onScrollReload}
           />
           <AccountPublicStatusMobileComponent
             accountPublicProps={accountPublicProps}
             followerCount={followerCount}
             followingCount={followingCount}
-            onScroll={onScroll}
-            onLoad={onLoad}
+            onScrollLoad={onScrollLoad}
+            onScrollReload={onScrollReload}
           />
         </AuthenticatedComponent>
       </React.Suspense>

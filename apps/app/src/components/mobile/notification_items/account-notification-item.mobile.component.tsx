@@ -49,32 +49,32 @@ export default function AccountNotificationItemMobileComponent({
                             )}
                         >
                             {notification.eventName === 'account.accepted' && (
-                                <div
+                                <span
                                     className={[
                                         styles['message-content'],
                                         styles['message-content-mobile'],
                                     ].join(' ')}
                                 >
-                                    <div className={[styles['message-bold']].join(' ')}>
+                                    <span className={[styles['message-bold']].join(' ')}>
                                         {account?.username}
-                                    </div>
+                                    </span>
                                     &nbsp;
-                                    {t('accountFollowerAcceptedDescription')}
-                                </div>
+                                    <span>{t('accountFollowerAcceptedDescription')}</span>
+                                </span>
                             )}
                             {notification.eventName === 'account.following' && (
-                                <div
+                                <span
                                     className={[
                                         styles['message-content'],
                                         styles['message-content-mobile'],
                                     ].join(' ')}
                                 >
-                                    <div className={[styles['message-bold']].join(' ')}>
+                                    <span className={[styles['message-bold']].join(' ')}>
                                         {account?.username}
-                                    </div>
+                                    </span>
                                     &nbsp;
-                                    {t('accountFollowerFollowingDescription')}
-                                </div>
+                                    <span>{t('accountFollowerFollowingDescription')}</span>
+                                </span>
                             )}
                         </div>
                         <div

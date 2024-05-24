@@ -1,6 +1,4 @@
-import { Input, Line } from '@fuoco.appdev/core-ui';
 import { useTranslation } from 'react-i18next';
-import AccountPublicController from '../../controllers/account-public.controller';
 import AccountController from '../../controllers/account.controller';
 import AccountFollowItemComponent from '../account-follow-item.component';
 import { AccountPublicFollowingResponsiveProps } from '../account-public-following.component';
@@ -17,38 +15,6 @@ export default function AccountPublicFollowingMobileComponent({
   return (
     <ResponsiveMobile>
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
-        <div
-          className={[
-            styles['search-container'],
-            styles['search-container-mobile'],
-          ].join(' ')}
-        >
-          <div
-            className={[
-              styles['search-input-root'],
-              styles['search-input-root-mobile'],
-            ].join(' ')}
-          >
-            <Input
-              value={accountPublicProps.followingInput}
-              classNames={{
-                container: [
-                  styles['search-input-container'],
-                  styles['search-input-container-mobile'],
-                ].join(' '),
-                input: [
-                  styles['search-input'],
-                  styles['search-input-mobile'],
-                ].join(' '),
-              }}
-              placeholder={t('search') ?? ''}
-              icon={<Line.Search size={24} color={'#2A2A5F'} />}
-              onChange={(event) =>
-                AccountPublicController.updateFollowingInput(event.target.value)
-              }
-            />
-          </div>
-        </div>
         <div
           className={[
             styles['result-items-container'],
@@ -79,17 +45,6 @@ export default function AccountPublicFollowingMobileComponent({
               />
             );
           })}
-          <img
-            src={'../assets/svg/ring-resize-dark.svg'}
-            className={styles['loading-ring']}
-            style={{
-              maxHeight:
-                accountPublicProps.hasMoreFollowing ||
-                accountPublicProps.areFollowingLoading
-                  ? 24
-                  : 0,
-            }}
-          />
           {!accountPublicProps.hasMoreFollowing &&
             accountPublicProps.followingAccounts.length <= 0 && (
               <div
@@ -105,7 +60,7 @@ export default function AccountPublicFollowingMobileComponent({
                   ].join(' ')}
                 >
                   {t('noFollowingFound', {
-                    username: accountPublicProps.followingInput,
+                    username: accountPublicProps.followersFollowingInput,
                   })}
                 </div>
               </div>

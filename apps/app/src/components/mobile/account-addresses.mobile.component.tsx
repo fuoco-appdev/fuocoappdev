@@ -90,6 +90,10 @@ export default function AccountAddressesMobileComponent({
               classNames={{
                 touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
               }}
+              defaultHeightPercent={98}
+              extendThresholdPercent={98}
+              extendedHeightPercent={98}
+              dropThresholdPercent={80}
               open={openAddDropdown}
               touchScreen={true}
               onClose={() => setOpenAddDropdown(false)}
@@ -178,6 +182,10 @@ export default function AccountAddressesMobileComponent({
                 touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
               }}
               open={openEditDropdown}
+              defaultHeightPercent={98}
+              extendThresholdPercent={98}
+              extendedHeightPercent={98}
+              dropThresholdPercent={80}
               touchScreen={true}
               onClose={() => setOpenEditDropdown(false)}
             >

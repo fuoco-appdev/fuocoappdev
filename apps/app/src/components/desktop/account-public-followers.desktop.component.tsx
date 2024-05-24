@@ -1,6 +1,4 @@
-import { Input, Line } from '@fuoco.appdev/core-ui';
 import { useTranslation } from 'react-i18next';
-import AccountPublicController from '../../controllers/account-public.controller';
 import AccountController from '../../controllers/account.controller';
 import AccountFollowItemComponent from '../account-follow-item.component';
 import { AccountPublicFollowersResponsiveProps } from '../account-public-followers.component';
@@ -17,38 +15,6 @@ export default function AccountPublicFollowersDesktopComponent({
   return (
     <ResponsiveDesktop>
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>
-        <div
-          className={[
-            styles['search-container'],
-            styles['search-container-desktop'],
-          ].join(' ')}
-        >
-          <div
-            className={[
-              styles['search-input-root'],
-              styles['search-input-root-desktop'],
-            ].join(' ')}
-          >
-            <Input
-              value={accountPublicProps.followersInput}
-              classNames={{
-                container: [
-                  styles['search-input-container'],
-                  styles['search-input-container-desktop'],
-                ].join(' '),
-                input: [
-                  styles['search-input'],
-                  styles['search-input-desktop'],
-                ].join(' '),
-              }}
-              placeholder={t('search') ?? ''}
-              icon={<Line.Search size={24} color={'#2A2A5F'} />}
-              onChange={(event) =>
-                AccountPublicController.updateFollowersInput(event.target.value)
-              }
-            />
-          </div>
-        </div>
         <div
           className={[
             styles['result-items-container'],
@@ -85,7 +51,7 @@ export default function AccountPublicFollowersDesktopComponent({
             style={{
               maxHeight:
                 accountPublicProps.hasMoreFollowers ||
-                accountPublicProps.areFollowersLoading
+                  accountPublicProps.areFollowersLoading
                   ? 24
                   : 0,
             }}
@@ -105,7 +71,7 @@ export default function AccountPublicFollowersDesktopComponent({
                   ].join(' ')}
                 >
                   {t('noFollowersFound', {
-                    username: accountPublicProps.followersInput,
+                    username: accountPublicProps.followersFollowingInput,
                   })}
                 </div>
               </div>

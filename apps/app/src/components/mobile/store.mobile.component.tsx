@@ -50,7 +50,6 @@ export default function StoreMobileComponent({
   setSelectedCountryId,
   setSelectedRegionId,
   setSelectedSalesLocationId,
-  onPreviewsScroll,
   onPreviewsLoad,
   onAddToCart,
   onProductPreviewAddToCart,
@@ -217,6 +216,8 @@ export default function StoreMobileComponent({
             loadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' ')
           }}
           touchScreen={true}
+          loadingHeight={56}
+          isLoadable={storeProps.hasMorePreviews}
           reloadComponent={
             <img
               src={'../assets/svg/ring-resize-dark.svg'}

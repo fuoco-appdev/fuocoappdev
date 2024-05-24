@@ -358,15 +358,15 @@ class WindowController extends Controller {
       this._model.scaleKeyIndex = 0;
       this._model.activeRoute = RoutePathsType.AccountStatusWithIdFollowing;
       this._model.showNavigateBack = true;
-    } else if (location.pathname === RoutePathsType.AccountSettings) {
+    } else if (location.pathname === RoutePathsType.Settings) {
       this._model.transitionKeyIndex = 1;
       this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.AccountSettings;
+      this._model.activeRoute = RoutePathsType.Settings;
       this._model.showNavigateBack = true;
-    } else if (location.pathname === RoutePathsType.AccountSettingsAccount) {
+    } else if (location.pathname === RoutePathsType.SettingsAccount) {
       this._model.transitionKeyIndex = 2;
       this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.AccountSettingsAccount;
+      this._model.activeRoute = RoutePathsType.SettingsAccount;
       this._model.showNavigateBack = true;
     } else if (
       location.pathname.startsWith(`${RoutePathsType.OrderConfirmed}/`)
@@ -524,7 +524,6 @@ class WindowController extends Controller {
 
   private onAccountFollowerFollowing(data: Record<string, any>): void {
     const account = data as AccountData;
-    console.log(account);
     this._model.accountFollowerFollowingNotificationData = account;
   }
 

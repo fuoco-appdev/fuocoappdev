@@ -104,67 +104,65 @@ class AccountController extends Controller {
 
   public override disposeLoad(_renderCount: number): void { }
 
+  public reloadLikedProducts(): void {
+    this.requestLikedProductsAsync('reloading');
+  }
+
   public loadLikedProducts(): void {
-    if (this._model.likedProducts.length > 0) {
-      return;
-    }
+    this.requestLikedProductsAsync('loading');
+  }
 
-    this._loadedAccountSubscription?.unsubscribe();
-    this._loadedAccountSubscription = this._model.store
-      .pipe(select((model) => model.account))
-      .subscribe({
-        next: (account: AccountResponse | null) => {
-          if (!account) {
-            return;
-          }
-
-          this.requestLikedProductsAsync();
-        },
-      });
+  public reloadOrders(): void {
+    this.requestOrdersAsync('reloading');
   }
 
   public loadOrders(): void {
-    if (this._model.orders.length > 0) {
-      return;
-    }
-
-    this._loadedAccountSubscription?.unsubscribe();
-    this._loadedAccountSubscription = this._model.store
-      .pipe(select((model) => model.account))
-      .subscribe({
-        next: (account: AccountResponse | null) => {
-          if (!account) {
-            return;
-          }
-
-          this.requestOrdersAsync();
-        },
-      });
+    this.requestOrdersAsync('loading');
   }
 
-  public loadFollowRequestsAndFriendsAccounts(): void {
-    if (this._model.followRequestAccounts.length > 0) {
+  public async loadFollowRequestsAndFriendsAccountsAsync(): Promise<void> {
+    this._model.areAddFriendsLoading = false;
+    this._model.areAddFriendsReloading = false;
+    this._model.addFriendsPagination = 1;
+    this._model.addFriendAccounts = [];
+    this._model.hasMoreAddFriends = true;
+
+    const account = await firstValueFrom(this._model.store
+      .pipe(select((model) => model.account), filter((value) => value !== undefined), take(1)));
+    if (!account) {
       return;
     }
 
-    this._loadedAccountSubscription?.unsubscribe();
-    this._loadedAccountSubscription = this._model.store
-      .pipe(select((model) => model.account))
-      .subscribe({
-        next: async (account: AccountResponse | null) => {
-          if (!account) {
-            return;
-          }
+    await this.addFriendsSearchAsync(
+      this._model.addFriendsSearchInput,
+      'loading',
+      0,
+      this._limit,
+      true
+    );
+    await this.requestFollowerRequestsAsync(account.id, 0, 100, true);
+  }
 
-          await this.addFriendsSearchAsync(
-            this._model.addFriendsSearchInput,
-            0,
-            this._limit,
-            true
-          );
-          await this.requestFollowerRequestsAsync(account.id, 0, 100, true);
-        },
-      });
+  public async reloadFollowRequestsAndFriendsAccountsAsync(): Promise<void> {
+    this._model.areAddFriendsLoading = false;
+    this._model.areAddFriendsReloading = false;
+    this._model.addFriendsPagination = 1;
+    this._model.hasMoreAddFriends = true;
+
+    const account = await firstValueFrom(this._model.store
+      .pipe(select((model) => model.account), filter((value) => value !== undefined), take(1)));
+    if (!account) {
+      return;
+    }
+
+    await this.addFriendsSearchAsync(
+      this._model.addFriendsSearchInput,
+      'reloading',
+      0,
+      this._limit,
+      true
+    );
+    await this.requestFollowerRequestsAsync(account.id, 0, 100, true);
   }
 
   public async onNextOrderScrollAsync(): Promise<void> {
@@ -175,7 +173,7 @@ class AccountController extends Controller {
     this._model.orderPagination = this._model.orderPagination + 1;
 
     const offset = this._limit * (this._model.orderPagination - 1);
-    await this.requestOrdersAsync(offset, this._limit);
+    await this.requestOrdersAsync('loading', offset, this._limit);
   }
 
   public async onNextLikedProductScrollAsync(): Promise<void> {
@@ -185,7 +183,7 @@ class AccountController extends Controller {
 
     this._model.likedProductPagination = this._model.likedProductPagination + 1;
     const offset = this._limit * (this._model.likedProductPagination - 1);
-    await this.requestLikedProductsAsync(offset, this._limit);
+    await this.requestLikedProductsAsync('loading', offset, this._limit);
   }
 
   public async onNextAddFriendsScrollAsync(): Promise<void> {
@@ -197,6 +195,7 @@ class AccountController extends Controller {
     const offset = this._limit * (this._model.addFriendsPagination - 1);
     await this.addFriendsSearchAsync(
       this._model.addFriendsSearchInput,
+      'loading',
       offset,
       this._limit
     );
@@ -292,7 +291,7 @@ class AccountController extends Controller {
 
     clearTimeout(this._addFriendsTimerId as number | undefined);
     this._addFriendsTimerId = setTimeout(() => {
-      this.addFriendsSearchAsync(value, 0, this._limit);
+      this.addFriendsSearchAsync(value, 'loading', 0, this._limit);
     }, 750);
   }
 
@@ -310,24 +309,16 @@ class AccountController extends Controller {
 
     clearTimeout(this._addFriendsTimerId as number | undefined);
     this._addFriendsTimerId = setTimeout(() => {
-      this.addFriendsSearchAsync(this._model.addFriendsSearchInput, 0, this._limit);
+      this.addFriendsSearchAsync(this._model.addFriendsSearchInput, 'loading', 0, this._limit);
     }, 750);
   }
 
-  public updateAddFriendsSexes(value: 'male' | 'female'): void {
-    if (this._model.addFriendsSexes.includes(value)) {
-      const addFriendsSexes = this._model.addFriendsSexes.filter(
-        (sex) => sex !== value
-      );
-      this._model.addFriendsSexes = addFriendsSexes;
-    } else {
-      const addFriendsSexes = [...this._model.addFriendsSexes, value];
-      this._model.addFriendsSexes = addFriendsSexes;
-    }
+  public updateAddFriendsSex(value: 'any' | 'male' | 'female'): void {
+    this._model.addFriendsSex = value;
 
     clearTimeout(this._addFriendsTimerId as number | undefined);
     this._addFriendsTimerId = setTimeout(() => {
-      this.addFriendsSearchAsync(this._model.addFriendsSearchInput, 0, this._limit);
+      this.addFriendsSearchAsync(this._model.addFriendsSearchInput, 'loading', 0, this._limit);
     }, 750);
   }
 
@@ -517,20 +508,28 @@ class AccountController extends Controller {
 
   public async addFriendsSearchAsync(
     query: string,
+    loadType: 'loading' | 'reloading',
     offset = 0,
     limit = 10,
     force = false
   ): Promise<void> {
-    if (!force && this._model.areAddFriendsLoading) {
+    if (!force && (this._model.areAddFriendsLoading || this._model.areAddFriendsReloading)) {
       return;
     }
 
-    this._model.areAddFriendsLoading = true;
+    if (loadType === 'loading') {
+      this._model.areAddFriendsLoading = true;
+    } else if (loadType === 'reloading') {
+      this._model.areAddFriendsReloading = true;
+    }
 
-    const { lat, lng } = this._model.addFriendsLocationCoordinates;
+    const { lat, lng } = await firstValueFrom<{
+      lat: number;
+      lng: number;
+    }>(this._model.store.pipe(select((model) => model.addFriendsLocationCoordinates), filter((value) => value !== undefined), take(1)));
     let filterValue = `id != ${this._model.account?.id} AND status = 'Complete' AND _geoRadius(${lat}, ${lng}, ${this._model.addFriendsRadiusMeters})`;
-    if (this._model.addFriendsSexes.length > 0) {
-      filterValue += ` AND sex IN [${this._model.addFriendsSexes.toString()}]`
+    if (this._model.addFriendsSex !== 'any') {
+      filterValue += ` AND sex = '${this._model.addFriendsSex.toString()}'`
     }
     try {
       const result = await this._accountsIndex?.search(query, {
@@ -549,6 +548,7 @@ class AccountController extends Controller {
       }
 
       if (hits && hits.length <= 0) {
+        this._model.areAddFriendsReloading = false;
         this._model.areAddFriendsLoading = false;
         this._model.hasMoreAddFriends = false;
         return;
@@ -590,7 +590,11 @@ class AccountController extends Controller {
       console.error(error);
     }
 
-    this._model.areAddFriendsLoading = false;
+    if (loadType === 'loading') {
+      this._model.areAddFriendsLoading = false;
+    } else if (loadType === 'reloading') {
+      this._model.areAddFriendsReloading = false;
+    }
   }
 
   public updateSelectedInterest(interest: InterestResponse): void {
@@ -618,7 +622,7 @@ class AccountController extends Controller {
 
     clearTimeout(this._addFriendsTimerId as number | undefined);
     this._addFriendsTimerId = setTimeout(() => {
-      this.addFriendsSearchAsync(this._model.addFriendsSearchInput, 0, this._limit);
+      this.addFriendsSearchAsync(this._model.addFriendsSearchInput, 'loading', 0, this._limit);
     }, 750);
   }
 
@@ -994,7 +998,7 @@ class AccountController extends Controller {
     }
 
     this._model.productLikesMetadata = productLikesMetadata;
-    this.requestLikedProductsAsync(0, this._limit);
+    this.requestLikedProductsAsync('loading', 0, this._limit);
   }
 
   public async requestFollowAsync(id: string): Promise<void> {
@@ -1078,18 +1082,24 @@ class AccountController extends Controller {
   }
 
   private async requestOrdersAsync(
+    loadType: 'loading' | 'reloading',
     offset: number = 0,
     limit: number = 10
   ): Promise<void> {
-    if (this._model.areOrdersLoading || !this._model.customer) {
+    if (this._model.areOrdersLoading || this._model.areOrdersReloading) {
       return;
     }
 
-    this._model.areOrdersLoading = true;
+    if (loadType === 'loading') {
+      this._model.areOrdersLoading = true;
+    } else if (loadType === 'reloading') {
+      this._model.areOrdersReloading = true;
+    }
 
+    const customer = await firstValueFrom(this._model.store.pipe(select((model) => model.customer), filter((value) => value !== undefined), take(1)));
     try {
       const orders = await MedusaService.requestOrdersAsync(
-        this._model.customer.id,
+        customer.id,
         {
           offset: offset,
           limit: limit,
@@ -1098,6 +1108,7 @@ class AccountController extends Controller {
 
       if (!orders || orders.length <= 0) {
         this._model.hasMoreOrders = false;
+        this._model.areOrdersReloading = false;
         this._model.areOrdersLoading = false;
         return;
       }
@@ -1116,10 +1127,15 @@ class AccountController extends Controller {
     } catch (error: any) {
       console.error(error);
       this._model.hasMoreOrders = false;
+      this._model.areOrdersReloading = false;
       this._model.areOrdersLoading = false;
     }
 
-    this._model.areOrdersLoading = false;
+    if (loadType === 'loading') {
+      this._model.areOrdersLoading = false;
+    } else if (loadType === 'reloading') {
+      this._model.areOrdersReloading = false;
+    }
   }
 
   private async requestDoesUsernameExistAsync(
@@ -1134,20 +1150,27 @@ class AccountController extends Controller {
   }
 
   private async requestLikedProductsAsync(
+    loadType: 'loading' | 'reloading',
     offset: number = 0,
     limit: number = 10
   ): Promise<void> {
-    if (this._model.areLikedProductsLoading || !this._model.account) {
+    if (this._model.areLikedProductsLoading || this._model.areLikedProductsReloading) {
       return;
     }
 
-    this._model.areLikedProductsLoading = true;
+    if (loadType === 'loading') {
+      this._model.areLikedProductsLoading = true;
+    } else if (loadType === 'reloading') {
+      this._model.areLikedProductsReloading = true;
+    }
+
+    const account = await firstValueFrom(this._model.store.pipe(select((model) => model.account), filter((value) => value !== undefined), take(1)));
 
     let productIds: string[] = [];
     try {
       const productLikesMetadataResponse =
         await ProductLikesService.requestAccountLikesMetadataAsync({
-          accountId: this._model.account.id,
+          accountId: account.id,
           offset: offset,
           limit: limit,
         });
@@ -1158,6 +1181,7 @@ class AccountController extends Controller {
       ) {
         this._model.hasMoreLikes = false;
         this._model.areLikedProductsLoading = false;
+        this._model.areLikedProductsReloading = false;
         return;
       }
 
@@ -1179,11 +1203,13 @@ class AccountController extends Controller {
     } catch (error: any) {
       console.error(error);
       this._model.areLikedProductsLoading = false;
+      this._model.areLikedProductsReloading = false;
       this._model.hasMoreLikes = false;
     }
 
     if (productIds.length <= 0) {
       this._model.areLikedProductsLoading = false;
+      this._model.areLikedProductsReloading = false;
       this._model.hasMoreLikes = false;
       this._model.productLikesMetadata = {};
       this._model.likedProducts = [];
@@ -1200,10 +1226,15 @@ class AccountController extends Controller {
     } catch (error: any) {
       console.error(error);
       this._model.areLikedProductsLoading = false;
+      this._model.areLikedProductsReloading = false;
       this._model.hasMoreLikes = false;
     }
 
-    this._model.areLikedProductsLoading = false;
+    if (loadType === 'loading') {
+      this._model.areLikedProductsLoading = false;
+    } else if (loadType === 'reloading') {
+      this._model.areLikedProductsReloading = false;
+    }
   }
 
   private async requestLikeCountAsync(accountId: string): Promise<void> {

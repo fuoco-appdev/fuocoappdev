@@ -22,7 +22,6 @@ export default function ExploreDesktopComponent({
   selectedPoint,
   setMapStyleLoaded,
   setSelectedPoint,
-  onScroll,
   onScrollLoad,
   onStockLocationClicked,
   onGoToStore,
@@ -129,6 +128,8 @@ export default function ExploreDesktopComponent({
                 className={styles['loading-ring']}
               />
             }
+            loadingHeight={56}
+            isLoadable={exploreProps.hasMoreSearchedStockLocations}
             isLoading={exploreProps.areSearchedStockLocationsLoading}
             onLoad={() => ExploreController.onNextScrollAsync()}
             onScroll={(progress, scrollRef, contentRef) => {
@@ -178,7 +179,7 @@ export default function ExploreDesktopComponent({
                   );
                 }
               )}
-              {!exploreProps.areSearchedStockLocationsLoading &&
+              {(!exploreProps.areSearchedStockLocationsLoading && !exploreProps.areSearchedStockLocationsReloading) &&
                 exploreProps.searchedStockLocations.length <= 0 && (
                   <div
                     className={[
@@ -212,6 +213,7 @@ export default function ExploreDesktopComponent({
                 minHeight: '100%',
                 width: '100%',
                 height: '100%',
+                borderRadius: '6px'
               }}
               mapboxAccessToken={process.env['MAPBOX_ACCESS_TOKEN']}
               ref={mapRef}

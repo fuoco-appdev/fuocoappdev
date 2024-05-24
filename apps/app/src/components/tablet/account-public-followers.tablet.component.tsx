@@ -30,7 +30,7 @@ export default function AccountPublicFollowersTabletComponent({
             ].join(' ')}
           >
             <Input
-              value={accountPublicProps.followersInput}
+              value={accountPublicProps.followersFollowingInput}
               classNames={{
                 container: [
                   styles['search-input-container'],
@@ -85,7 +85,7 @@ export default function AccountPublicFollowersTabletComponent({
             style={{
               maxHeight:
                 accountPublicProps.hasMoreFollowers ||
-                accountPublicProps.areFollowersLoading
+                  accountPublicProps.areFollowersLoading
                   ? 24
                   : 0,
             }}
@@ -105,7 +105,7 @@ export default function AccountPublicFollowersTabletComponent({
                   ].join(' ')}
                 >
                   {t('noFollowersFound', {
-                    username: accountPublicProps.followersInput,
+                    username: accountPublicProps.followersFollowingInput,
                   })}
                 </div>
               </div>

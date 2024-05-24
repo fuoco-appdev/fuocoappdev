@@ -344,7 +344,7 @@ export default function WindowMobileComponent({
                             {accountPublicProps.account?.username ?? ''}
                           </div>
                         )}
-                      {activeRoute === RoutePathsType.AccountSettings && (
+                      {activeRoute === RoutePathsType.Settings && (
                         <>
                           <Line.Settings size={22} />
                           <div
@@ -357,7 +357,7 @@ export default function WindowMobileComponent({
                         </>
                       )}
                       {activeRoute ===
-                        RoutePathsType.AccountSettingsAccount && (
+                        RoutePathsType.SettingsAccount && (
                           <>
                             <Line.Person size={22} />
                             <div

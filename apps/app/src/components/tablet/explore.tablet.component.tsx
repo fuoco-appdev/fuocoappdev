@@ -23,7 +23,6 @@ export default function ExploreTabletComponent({
   selectedPoint,
   setMapStyleLoaded,
   setSelectedPoint,
-  onScroll,
   onScrollLoad,
   onStockLocationClicked,
   onGoToStore,
@@ -130,12 +129,14 @@ export default function ExploreTabletComponent({
               reloadContainer: [styles['scroll-load-container'], styles['scroll-load-container-tablet']].join(' '),
               loadContainer: [styles['scroll-load-container'], styles['scroll-load-container-tablet']].join(' ')
             }}
+            isLoadable={exploreProps.hasMoreSearchedStockLocations}
             reloadComponent={
               <img
                 src={'../assets/svg/ring-resize-dark.svg'}
                 className={styles['loading-ring']}
               />
             }
+            loadingHeight={56}
             isReloading={exploreProps.areSearchedStockLocationsReloading}
             onReload={() => ExploreController.reloadStockLocationsAsync()}
             loadComponent={
@@ -193,7 +194,7 @@ export default function ExploreTabletComponent({
                   );
                 }
               )}
-              {!exploreProps.areSearchedStockLocationsLoading &&
+              {(!exploreProps.areSearchedStockLocationsLoading && !exploreProps.areSearchedStockLocationsReloading) &&
                 exploreProps.searchedStockLocations.length <= 0 && (
                   <div
                     className={[

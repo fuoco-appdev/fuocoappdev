@@ -60,19 +60,6 @@ export default function AccountOrderHistoryDesktopComponent({
                   }}
                 />
               ))}
-          <img
-            src={'../assets/svg/ring-resize-dark.svg'}
-            className={[
-              styles['loading-ring'],
-              styles['loading-ring-desktop'],
-            ].join(' ')}
-            style={{
-              maxHeight:
-                accountProps.hasMoreOrders || accountProps.areOrdersLoading
-                  ? 24
-                  : 0,
-            }}
-          />
           {!accountProps.areOrdersLoading && orders.length <= 0 && (
             <>
               <div

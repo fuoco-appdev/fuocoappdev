@@ -1,4 +1,4 @@
-import { Tabs } from '@fuoco.appdev/core-ui';
+import { Input, Line, Scroll, Tabs } from '@fuoco.appdev/core-ui';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import Skeleton from 'react-loading-skeleton';
@@ -14,104 +14,183 @@ export default function AccountPublicStatusMobileComponent({
   accountPublicProps,
   followerCount,
   followingCount,
-  onScroll,
-  onLoad,
+  onScrollLoad,
+  onScrollReload,
 }: AccountFollowersFollowingResponsiveProps): JSX.Element {
   const scrollContainerRef = React.createRef<HTMLDivElement>();
+  const topBarRef = React.useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const query = useQuery();
   const { t } = useTranslation();
+  let prevPreviewScrollTop = 0;
+  let yPosition = 0;
 
   return (
     <ResponsiveMobile>
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
-        <div
-          className={[
-            styles['scroll-container'],
-            styles['scroll-container-mobile'],
-          ].join(' ')}
-          style={{ height: window.innerHeight }}
-          onScroll={onScroll}
-          onLoad={onLoad}
-          ref={scrollContainerRef}
+        {followerCount && followingCount && (
+          <div
+            className={[
+              styles['tabs-container'],
+              styles['tabs-container-mobile'],
+            ].join(' ')}
+            ref={topBarRef}
+          >
+            <Tabs
+              flex={true}
+              touchScreen={true}
+              activeId={accountPublicProps.activeStatusTabId}
+              classNames={{
+                nav: [styles['tab-nav'], styles['tab-nav-mobile']].join(' '),
+                tabButton: [
+                  styles['tab-button'],
+                  styles['tab-button-mobile'],
+                ].join(''),
+                tabOutline: [
+                  styles['tab-outline'],
+                  styles['tab-outline-mobile'],
+                ].join(' '),
+              }}
+              onChange={(id) => {
+                AccountPublicController.updateActiveStatusTabId(id);
+                if (id === RoutePathsType.AccountStatusWithIdFollowers) {
+                  navigate({
+                    pathname: `${RoutePathsType.AccountStatus}/${accountPublicProps.account?.id}/followers`,
+                    search: query.toString(),
+                  });
+                } else if (
+                  id === RoutePathsType.AccountStatusWithIdFollowing
+                ) {
+                  navigate({
+                    pathname: `${RoutePathsType.AccountStatus}/${accountPublicProps.account?.id}/following`,
+                    search: query.toString(),
+                  });
+                }
+              }}
+              type={'underlined'}
+              tabs={[
+                {
+                  id: RoutePathsType.AccountStatusWithIdFollowers,
+                  label: `${followerCount} ${t('followers')}`,
+                },
+                {
+                  id: RoutePathsType.AccountStatusWithIdFollowing,
+                  label: `${followingCount} ${t('following')}`,
+                },
+              ]}
+            />
+            <div
+              className={[
+                styles['search-container'],
+                styles['search-container-mobile'],
+              ].join(' ')}
+            >
+              <div
+                className={[
+                  styles['search-input-root'],
+                  styles['search-input-root-mobile'],
+                ].join(' ')}
+              >
+                <Input
+                  value={accountPublicProps.followersFollowingInput}
+                  classNames={{
+                    container: [
+                      styles['search-input-container'],
+                      styles['search-input-container-mobile'],
+                    ].join(' '),
+                    input: [
+                      styles['search-input'],
+                      styles['search-input-mobile'],
+                    ].join(' '),
+                  }}
+                  placeholder={t('search') ?? ''}
+                  icon={<Line.Search size={24} color={'#2A2A5F'} />}
+                  onChange={(event) => {
+                    if (accountPublicProps.activeStatusTabId === RoutePathsType.AccountStatusWithIdFollowing) {
+                      AccountPublicController.updateFollowingInput(event.target.value)
+                    } else if (
+                      accountPublicProps.activeStatusTabId === RoutePathsType.AccountStatusWithIdFollowers
+                    ) {
+                      AccountPublicController.updateFollowersInput(event.target.value)
+                    }
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+        {(!followerCount || !followingCount) && (
+          <div
+            className={[
+              styles['tabs-container-skeleton'],
+              styles['tabs-container-skeleton-mobile'],
+            ].join(' ')}
+          >
+            <div
+              className={[
+                styles['tab-button-skeleton'],
+                styles['tab-button-skeleton-mobile'],
+              ].join('')}
+            >
+              <Skeleton style={{ height: 48 }} borderRadius={6} />
+            </div>
+            <div
+              className={[
+                styles['tab-button-skeleton'],
+                styles['tab-button-skeleton-mobile'],
+              ].join('')}
+            >
+              <Skeleton style={{ height: 48 }} borderRadius={6} />
+            </div>
+          </div>
+        )}
+        <Scroll
+          touchScreen={true}
+          classNames={{
+            root: [styles['scroll-root'], styles['scroll-root-mobile']].join(' '),
+            reloadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' '),
+            loadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' ')
+          }}
+          reloadComponent={
+            <img
+              src={'../assets/svg/ring-resize-dark.svg'}
+              className={styles['loading-ring']}
+            />
+          }
+          loadComponent={
+            <img
+              src={'../assets/svg/ring-resize-dark.svg'}
+              className={styles['loading-ring']}
+            />
+          }
+          loadingHeight={56}
+          isLoadable={accountPublicProps.hasMoreFollowers || accountPublicProps.hasMoreFollowing}
+          isReloading={accountPublicProps.areFollowersReloading || accountPublicProps.areFollowingReloading}
+          isLoading={accountPublicProps.areFollowersLoading || accountPublicProps.areFollowingLoading}
+          onReload={onScrollReload}
+          onLoad={onScrollLoad}
+          onScroll={(progress, scrollRef, contentRef) => {
+            const elementHeight = topBarRef.current?.clientHeight ?? 0;
+            const scrollTop = contentRef.current?.getBoundingClientRect().top ?? 0;
+            if (prevPreviewScrollTop <= scrollTop) {
+              yPosition -= prevPreviewScrollTop - scrollTop;
+              if (yPosition >= 0) {
+                yPosition = 0;
+              }
+
+              topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
+            } else {
+              yPosition += scrollTop - prevPreviewScrollTop;
+              if (yPosition <= -elementHeight) {
+                yPosition = -elementHeight;
+              }
+
+              topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
+            }
+
+            prevPreviewScrollTop = scrollTop;
+          }}
         >
-          {followerCount && followingCount && (
-            <div
-              className={[
-                styles['tabs-container'],
-                styles['tabs-container-mobile'],
-              ].join(' ')}
-            >
-              <Tabs
-                flex={true}
-                touchScreen={true}
-                activeId={accountPublicProps.activeStatusTabId}
-                classNames={{
-                  nav: [styles['tab-nav'], styles['tab-nav-mobile']].join(' '),
-                  tabButton: [
-                    styles['tab-button'],
-                    styles['tab-button-mobile'],
-                  ].join(''),
-                  tabOutline: [
-                    styles['tab-outline'],
-                    styles['tab-outline-mobile'],
-                  ].join(' '),
-                }}
-                onChange={(id) => {
-                  AccountPublicController.updateActiveStatusTabId(id);
-                  if (id === RoutePathsType.AccountStatusWithIdFollowers) {
-                    navigate({
-                      pathname: `${RoutePathsType.AccountStatus}/${accountPublicProps.account?.id}/followers`,
-                      search: query.toString(),
-                    });
-                  } else if (
-                    id === RoutePathsType.AccountStatusWithIdFollowing
-                  ) {
-                    navigate({
-                      pathname: `${RoutePathsType.AccountStatus}/${accountPublicProps.account?.id}/following`,
-                      search: query.toString(),
-                    });
-                  }
-                }}
-                type={'underlined'}
-                tabs={[
-                  {
-                    id: RoutePathsType.AccountStatusWithIdFollowers,
-                    label: `${followerCount} ${t('followers')}`,
-                  },
-                  {
-                    id: RoutePathsType.AccountStatusWithIdFollowing,
-                    label: `${followingCount} ${t('following')}`,
-                  },
-                ]}
-              />
-            </div>
-          )}
-          {(!followerCount || !followingCount) && (
-            <div
-              className={[
-                styles['tabs-container-skeleton'],
-                styles['tabs-container-skeleton-mobile'],
-              ].join(' ')}
-            >
-              <div
-                className={[
-                  styles['tab-button-skeleton'],
-                  styles['tab-button-skeleton-mobile'],
-                ].join('')}
-              >
-                <Skeleton style={{ height: 48 }} borderRadius={6} />
-              </div>
-              <div
-                className={[
-                  styles['tab-button-skeleton'],
-                  styles['tab-button-skeleton-mobile'],
-                ].join('')}
-              >
-                <Skeleton style={{ height: 48 }} borderRadius={6} />
-              </div>
-            </div>
-          )}
           <div
             className={[
               styles['outlet-container'],
@@ -181,7 +260,7 @@ export default function AccountPublicStatusMobileComponent({
               </CSSTransition>
             </TransitionGroup>
           </div>
-        </div>
+        </Scroll>
       </div>
     </ResponsiveMobile>
   );

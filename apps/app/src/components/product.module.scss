@@ -6,12 +6,8 @@
 
   & .thumbnail-container {
     position: relative;
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-box-pack: center;
-        -ms-flex-pack: center;
-            justify-content: center;
+    justify-content: center;
     background-color: $gray-100;
     align-items: center;
 
@@ -147,11 +143,8 @@
   }
 
   & .tags-container {
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
-    -ms-flex-wrap: wrap;
-        flex-wrap: wrap;
+    flex-wrap: wrap;
     margin-bottom: $mp-2;
     gap: $mp-1;
     -webkit-touch-callout: text; /* iOS Safari */
@@ -179,7 +172,7 @@
   & .top-bar-container {
     width: 100%;
     background-color: #fff;
-    border-bottom: 1px solid rgba(42, 42, 95, .6);
+    border-radius: 6px;
   }
 
   & .price-container {
@@ -404,12 +397,15 @@
     display: flex;
     flex-direction: column;
     overflow: none;
+    gap: 2px;
+    background-color: #fff;
+    border-radius: 6px;
+
 
     & .locations-top-bar-container {
       z-index: 6;
       display: flex;
       flex-direction: column;
-      background-color: #fff;
       width: stretch;
       gap: $mp-4;
 
@@ -435,34 +431,20 @@
 
       
       & .search-container {
-          display: -webkit-box;
-          display: -ms-flexbox;
           display: flex;
-          -webkit-box-orient: horizontal;
-          -webkit-box-direction: normal;
-              -ms-flex-direction: row;
-                  flex-direction: row;
+          flex-direction: row;
           width: 100%;
-          height: -webkit-fit-content;
-          height: -moz-fit-content;
           height: fit-content;
           border-color: transparent !important;
       
           & .search-input-root {
-              display: -webkit-box;
-              display: -ms-flexbox;
               display: flex;
-              -webkit-box-orient: vertical;
-              -webkit-box-direction: normal;
-                  -ms-flex-direction: column;
-                      flex-direction: column;
-              -webkit-box-flex: 1;
-                  -ms-flex: 1;
-                      flex: 1;
+              flex-direction: column;
+              flex: 1;
               
               & .search-input-container {
-                  background-color: transparent;
-                  border-color: $brand-900;
+                  border-color: transparent !important;
+                  background-color: rgba(42, 42, 95, .05);
                   border-radius: $rounded-full;
               }
 
@@ -505,18 +487,12 @@
       }
   
       & .tab-container {
-          -ms-overflow-style: none;  /* IE and Edge */
           scrollbar-width: none;  /* Firefox */
       }
 
       & .tab-container-skeleton {
-          display: -webkit-box;
-          display: -ms-flexbox;
           display: flex;
-          -webkit-box-orient: horizontal;
-          -webkit-box-direction: normal;
-              -ms-flex-direction: row;
-                  flex-direction: row;
+          flex-direction: row;
           gap: $mp-4;
           margin-bottom: $mp-4;
       }
@@ -538,16 +514,9 @@
       }
 
       & .no-searched-stock-locations-container {
-          display: -webkit-box;
-          display: -ms-flexbox;
           display: flex;
-          -webkit-box-orient: vertical;
-          -webkit-box-direction: normal;
-              -ms-flex-direction: column;
-                  flex-direction: column;
-          -webkit-box-pack: center;
-              -ms-flex-pack: center;
-                  justify-content: center;
+          flex-direction: column;
+          justify-content: center;
           width: 100%;
 
           & .no-items-text {
@@ -558,16 +527,9 @@
           }
       
           & .no-items-container {
-              display: -webkit-box;
-              display: -ms-flexbox;
               display: flex;
-              -webkit-box-orient: horizontal;
-              -webkit-box-direction: normal;
-                  -ms-flex-direction: row;
-                      flex-direction: row;
-              -webkit-box-pack: center;
-                  -ms-flex-pack: center;
-                      justify-content: center;
+              flex-direction: row;
+              justify-content: center;
               margin-top: $mp-8;
               margin-bottom: $mp-4;
           }
@@ -577,12 +539,11 @@
 }
 
 .root-desktop {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
   flex-direction: row;
   height: 100%;
-  padding-top: 56px;
+  padding-top: calc(56px + 2px);
+  gap: 2px;
 
   & .content-desktop {
     
@@ -590,8 +551,6 @@
 
   
   & .content-container-desktop {
-    width: -webkit-fit-content;
-    width: -moz-fit-content;
     width: fit-content;
     padding-top: $mp-6;
   }
@@ -604,6 +563,8 @@
     gap: $mp-6;
     overflow-y: auto;
     overscroll-behavior: none;
+    background-color: #fff;
+    border-radius: 6px;
   }
 
   & .middle-content-desktop {
@@ -615,10 +576,12 @@
 
   & .right-content-desktop {
     position: relative;
+    display: flex;
+    flex-direction: column;
     max-width: 360px;
     height: 100%;
-            flex: 1;
-    border-left: 1px solid rgba(42, 42, 95, .6);
+    flex: 1;
+    gap: 2px;
 
     & .top-bar-container-desktop {
 
@@ -629,8 +592,10 @@
       overflow-y: auto;
       overscroll-behavior: none;
       overflow-x: hidden;
-      padding-bottom: $mp-4;
-      padding-top: $mp-4;
+      padding-top: 2px;
+      background-color: #fff;
+      border-radius: 6px;
+      height: 100%;
     }
   }
 
@@ -680,8 +645,7 @@
   }
 
   & .price-container-desktop {
-    padding-left: $mp-4;
-    padding-right: $mp-4;
+    padding: $mp-4;
 
     & .price-desktop {
       & .inventory-quantity-desktop {
@@ -731,7 +695,8 @@
 
   & .locations-container-desktop {
     & .locations-top-bar-container-desktop {
-      padding: 0 $mp-4;
+      padding: $mp-4;
+      justify-content: center;
       
       & .logo-container-desktop {
           & .logo-desktop {
@@ -813,12 +778,10 @@
 }
 
 .root-tablet {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
   flex-direction: row;
   height: 100%;
-  padding-top: 56px;
+  padding-top: calc(56px + 2px);
 
   & .content-tablet {
     
@@ -1049,12 +1012,16 @@
 }
 
 .root-mobile {
+  display: flex;
+  flex-direction: column;
   overflow-y: auto;
   overscroll-behavior: none;
   height: 100%;
+  gap: 2px;
   
   & .thumbnail-container-mobile {
-    height: 382px;
+    min-height: 382px;
+    border-radius: 6px;
 
     & .thumbnail-image-mobile {
     }
@@ -1066,7 +1033,8 @@
   }
 
   & .content-mobile {
-    
+    background-color: #fff;
+    border-radius: 6px;
   }
 
   & .header-container-mobile {
@@ -1096,6 +1064,8 @@
 
   & .price-container-mobile {
     padding: $mp-4;
+    background-color: #fff;
+    border-radius: 6px;
 
     & .price-mobile {
       & .inventory-quantity-mobile {
@@ -1151,6 +1121,7 @@
   & .locations-container-mobile {
     & .locations-top-bar-container-mobile {
       padding: $mp-4;
+      justify-content: center;
       
       & .logo-container-mobile {
           & .logo-mobile {
@@ -1215,6 +1186,7 @@
   }
 
   & .location-items-container-mobile {
+    gap: 2px;
     min-height: 50vh;
 
       & .loading-ring-mobile {
@@ -1253,7 +1225,8 @@
 }
     
 .input-container {
-  border-color: $brand-900 !important;
+  border-color: transparent !important;
+  background-color: rgba(42, 42, 95, .05);
 }
 
 .input-button-desktop:hover {
@@ -1397,4 +1370,8 @@
   background-color: $brand-700 !important;
   padding-left: $mp-4 !important;
   padding-right: $mp-4 !important;
+}
+
+.search-input-form-layout-root {
+  margin: 0;
 }

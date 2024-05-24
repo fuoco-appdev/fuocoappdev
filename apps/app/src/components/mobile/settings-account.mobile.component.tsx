@@ -4,22 +4,23 @@ import {
   Auth,
   Button,
   LanguageSwitch,
-  Line,
-  Modal,
+  Line
 } from '@fuoco.appdev/core-ui';
 import { AuthError, User } from '@supabase/supabase-js';
 import { LanguageCode } from 'iso-639-1';
+import ReactCountryFlag from 'react-country-flag';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
+import Ripples from 'react-ripples';
 import AccountController from '../../controllers/account.controller';
 import WindowController from '../../controllers/window.controller';
 import SupabaseService from '../../services/supabase.service';
 import AccountProfileFormComponent from '../account-profile-form.component';
-import { AccountSettingsAccountResponsiveProps } from '../account-settings-account.component';
-import styles from '../account-settings-account.module.scss';
-import { ResponsiveTablet } from '../responsive.component';
+import { ResponsiveMobile } from '../responsive.component';
+import { SettingsAccountResponsiveProps } from '../settings-account.component';
+import styles from '../settings-account.module.scss';
 
-export default function AccountSettingsAccountTabletComponent({
+export default function SettingsAccountMobileComponent({
   storeProps,
   accountProps,
   windowLocalProps,
@@ -27,18 +28,16 @@ export default function AccountSettingsAccountTabletComponent({
   setUpdatePasswordError,
   confirmPasswordError,
   setConfirmPasswordError,
-  showDeleteModal,
-  setShowDeleteModal,
   isLanguageOpen,
   setIsLanguageOpen,
   onGeneralInformationSaveAsync,
-}: AccountSettingsAccountResponsiveProps): JSX.Element {
+}: SettingsAccountResponsiveProps): JSX.Element {
   const { t } = useTranslation();
 
   const accordionItemClassNames: AccordionItemClasses = {
     topBar: [
       styles['accordion-top-bar'],
-      styles['accordion-top-bar-tablet'],
+      styles['accordion-top-bar-mobile'],
     ].join(' '),
     panel: styles['accordion-panel'],
     topBarLabel: styles['accordion-top-bar-label'],
@@ -50,63 +49,67 @@ export default function AccountSettingsAccountTabletComponent({
   const user = accountProps.user as User | null;
   const provider = user?.app_metadata['provider'];
   return (
-    <ResponsiveTablet>
-      <div className={[styles['root'], styles['root-tablet']].join(' ')}>
+    <ResponsiveMobile>
+      <div className={[styles['root'], styles['root-mobile']].join(' ')}>
         <div
           className={[
             styles['setting-container'],
-            styles['setting-container-tablet'],
+            styles['setting-container-mobile'],
           ].join(' ')}
         >
-          <div
+          <Ripples
             className={[
-              styles['setting-button-content'],
-              styles['setting-button-content-tablet'],
+              styles['setting-button-container'],
+              styles['setting-button-container-mobile'],
             ].join(' ')}
+            color={'rgba(42, 42, 95, .35)'}
+            onClick={() => setIsLanguageOpen(true)}
           >
             <div
               className={[
-                styles['setting-icon'],
-                styles['setting-icon-tablet'],
+                styles['setting-button-content'],
+                styles['setting-button-content-mobile'],
               ].join(' ')}
             >
-              <Line.Language size={24} />
+              <div
+                className={[
+                  styles['setting-icon'],
+                  styles['setting-icon-mobile'],
+                ].join(' ')}
+              >
+                <Line.Language size={24} />
+              </div>
+              <div
+                className={[
+                  styles['setting-text'],
+                  styles['setting-text-mobile'],
+                ].join(' ')}
+              >
+                {t('language')}
+              </div>
+              <div
+                className={[
+                  styles['setting-icon-right'],
+                  styles['setting-icon-right-mobile'],
+                ].join(' ')}
+              >
+                <ReactCountryFlag
+                  countryCode={
+                    windowLocalProps.languageInfo?.info?.countryCode ?? ''
+                  }
+                  style={{ width: 24 }}
+                  svg
+                />
+              </div>
             </div>
-            <div
-              className={[
-                styles['setting-text'],
-                styles['setting-text-tablet'],
-              ].join(' ')}
-            >
-              {t('language')}
-            </div>
-            <div
-              className={[
-                styles['setting-icon-right'],
-                styles['setting-icon-right-tablet'],
-              ].join(' ')}
-            >
-              <LanguageSwitch
-                type={'button'}
-                classNames={{
-                  button: {
-                    button: styles['button'],
-                  },
-                }}
-                language={windowLocalProps.languageCode as LanguageCode}
-                open={isLanguageOpen}
-                supportedLanguages={[
-                  { isoCode: 'en', countryCode: 'GB' },
-                  { isoCode: 'fr', countryCode: 'FR' },
-                ]}
-                onChange={(code, info) =>
-                  AccountController.updateAccountLanguageAsync(code, info)
-                }
-                onOpen={() => setIsLanguageOpen(true)}
-                onClose={() => setIsLanguageOpen(false)}
-              />
-            </div>
-          </div>
+          </Ripples>
+        </div>
+        <div
+          className={[
+            styles['setting-container'],
+            styles['setting-container-mobile'],
+          ].join(' ')}
+        >
           <Accordion
             defaultActiveId={['general-information', 'password-reset']}
           >
@@ -121,7 +124,7 @@ export default function AccountSettingsAccountTabletComponent({
                 <div
                   className={[
                     styles['profile-form-container'],
-                    styles['profile-form-container-tablet'],
+                    styles['profile-form-container-mobile'],
                   ].join(' ')}
                 >
                   <AccountProfileFormComponent
@@ -151,7 +154,7 @@ export default function AccountSettingsAccountTabletComponent({
                 <div
                   className={[
                     styles['save-button-container'],
-                    styles['save-button-container-tablet'],
+                    styles['save-button-container-mobile'],
                   ].join(' ')}
                 >
                   <Button
@@ -171,7 +174,7 @@ export default function AccountSettingsAccountTabletComponent({
                         style={{ height: 24 }}
                         className={[
                           styles['loading-ring'],
-                          styles['loading-ring-tablet'],
+                          styles['loading-ring-mobile'],
                         ].join(' ')}
                       />
                     }
@@ -237,48 +240,32 @@ export default function AccountSettingsAccountTabletComponent({
             )}
           </Accordion>
         </div>
-        <div
-          className={[
-            styles['bottom-content-container'],
-            styles['bottom-content-container-tablet'],
-          ].join(' ')}
-        >
-          <Button
-            block={true}
-            size={'large'}
-            classNames={{
-              container: styles['delete-button-container'],
-              button: styles['delete-button'],
-            }}
-            rippleProps={{
-              color: 'rgba(133, 38, 122, .35)',
-            }}
-            onClick={() => setShowDeleteModal(true)}
-          >
-            {t('deleteAccount')}
-          </Button>
-        </div>
         {ReactDOM.createPortal(
-          <Modal
-            title={t('deleteYourAccount') ?? ''}
-            description={t('deleteYourAccountDescription') ?? ''}
-            confirmText={t('delete') ?? ''}
-            cancelText={t('cancel') ?? ''}
-            variant={'danger'}
-            size={'small'}
-            classNames={{
-              modal: styles['delete-modal'],
-            }}
-            visible={showDeleteModal}
-            onCancel={() => setShowDeleteModal(false)}
-            onConfirm={async () => {
-              await AccountController.deleteAsync();
-              setShowDeleteModal(false);
-            }}
-          ></Modal>,
+          <>
+            <LanguageSwitch
+              dropdownProps={{
+                classNames: {
+                  touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
+                },
+              }}
+              type={'none'}
+              touchScreen={true}
+              language={windowLocalProps.languageCode as LanguageCode}
+              open={isLanguageOpen}
+              supportedLanguages={[
+                { isoCode: 'en', countryCode: 'GB' },
+                { isoCode: 'fr', countryCode: 'FR' },
+              ]}
+              onChange={(code, info) =>
+                AccountController.updateAccountLanguageAsync(code, info)
+              }
+              onOpen={() => setIsLanguageOpen(true)}
+              onClose={() => setIsLanguageOpen(false)}
+            />
+          </>,
           document.body
         )}
       </div>
-    </ResponsiveTablet>
+    </ResponsiveMobile>
   );
 }

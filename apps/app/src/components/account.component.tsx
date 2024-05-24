@@ -47,8 +47,8 @@ export interface AccountResponsiveProps {
   setIsCropImageModalVisible: (value: boolean) => void;
   onUsernameChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onCompleteProfile: () => void;
-  onScroll: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
-  onScrollLoad: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
+  onScrollReload: () => void;
+  onScrollLoad: () => void;
   onAvatarChanged: (index: number, blob: Blob) => void;
   onLikesClick: () => void;
   onFollowersClick: () => void;
@@ -76,52 +76,28 @@ export default function AccountComponent(): JSX.Element {
   const [isAddInterestOpen, setIsAddInterestOpen] =
     React.useState<boolean>(false);
   const renderCountRef = React.useRef<number>(0);
-  const scrollOffsetTriggerGap = 16;
 
-  const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    const scrollTop = e.currentTarget?.scrollTop ?? 0;
-    const scrollHeight = e.currentTarget?.scrollHeight ?? 0;
-    const clientHeight = e.currentTarget?.clientHeight ?? 0;
-    const scrollOffset = scrollHeight - scrollTop - clientHeight;
-
+  const onScrollReload = () => {
     if (AccountController.model.activeTabId === RoutePathsType.AccountLikes) {
-      if (
-        scrollOffset > scrollOffsetTriggerGap ||
-        !AccountController.model.hasMoreLikes
-      ) {
-        return;
-      }
+      AccountController.reloadLikedProducts();
+    } else if (
+      AccountController.model.activeTabId === RoutePathsType.AccountOrderHistory
+    ) {
+      AccountController.reloadOrders();
+    } else if (AccountController.model.activeTabId === RoutePathsType.AccountAddresses) {
 
+    }
+  };
+
+  const onScrollLoad = () => {
+    if (AccountController.model.activeTabId === RoutePathsType.AccountLikes) {
       AccountController.onNextLikedProductScrollAsync();
     } else if (
       AccountController.model.activeTabId === RoutePathsType.AccountOrderHistory
     ) {
-      if (
-        scrollOffset > scrollOffsetTriggerGap ||
-        !AccountController.model.hasMoreOrders
-      ) {
-        return;
-      }
-
       AccountController.onNextOrderScrollAsync();
-    }
-  };
+    } else if (AccountController.model.activeTabId === RoutePathsType.AccountAddresses) {
 
-  const onScrollLoad = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
-    if (AccountController.model.activeTabId === RoutePathsType.AccountLikes) {
-      if (AccountController.model.likesScrollPosition) {
-        e.currentTarget.scrollTop = AccountController.model
-          .likesScrollPosition as number;
-        AccountController.updateLikesScrollPosition(undefined);
-      }
-    } else if (
-      AccountController.model.activeTabId === RoutePathsType.AccountOrderHistory
-    ) {
-      if (AccountController.model.ordersScrollPosition) {
-        e.currentTarget.scrollTop = AccountController.model
-          .ordersScrollPosition as number;
-        AccountController.updateOrdersScrollPosition(undefined);
-      }
     }
   };
 
@@ -225,13 +201,13 @@ export default function AccountComponent(): JSX.Element {
       if (
         loadedLocation.startsWith(RoutePathsType.Account) &&
         !WindowController.isLocationAccountWithId(loadedLocation) &&
-        !loadedLocation.startsWith(RoutePathsType.AccountSettings)
+        !loadedLocation.startsWith(RoutePathsType.Settings)
       ) {
         AccountController.updateActiveTabId(loadedLocation);
       }
       WindowController.updateLoadedLocationPath(undefined);
     } else {
-      if (!loadedLocation?.startsWith(RoutePathsType.AccountSettings)) {
+      if (!loadedLocation?.startsWith(RoutePathsType.Settings)) {
         navigate({
           pathname: accountProps.activeTabId,
           search: query.toString(),
@@ -309,7 +285,7 @@ export default function AccountComponent(): JSX.Element {
             setIsCropImageModalVisible={setIsCropImageModalVisible}
             onUsernameChanged={onUsernameChanged}
             onCompleteProfile={onCompleteProfile}
-            onScroll={onScroll}
+            onScrollReload={onScrollReload}
             onScrollLoad={onScrollLoad}
             onAvatarChanged={onAvatarChanged}
             onLikesClick={onLikesClick}
@@ -329,7 +305,7 @@ export default function AccountComponent(): JSX.Element {
             setIsCropImageModalVisible={setIsCropImageModalVisible}
             onUsernameChanged={onUsernameChanged}
             onCompleteProfile={onCompleteProfile}
-            onScroll={onScroll}
+            onScrollReload={onScrollReload}
             onScrollLoad={onScrollLoad}
             onAvatarChanged={onAvatarChanged}
             onLikesClick={onLikesClick}
@@ -349,7 +325,7 @@ export default function AccountComponent(): JSX.Element {
             setIsCropImageModalVisible={setIsCropImageModalVisible}
             onUsernameChanged={onUsernameChanged}
             onCompleteProfile={onCompleteProfile}
-            onScroll={onScroll}
+            onScrollReload={onScrollReload}
             onScrollLoad={onScrollLoad}
             onAvatarChanged={onAvatarChanged}
             onLikesClick={onLikesClick}

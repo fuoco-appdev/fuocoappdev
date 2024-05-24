@@ -4,39 +4,38 @@ import {
   Auth,
   Button,
   LanguageSwitch,
-  Line,
-  Modal,
+  Line
 } from '@fuoco.appdev/core-ui';
 import { AuthError, User } from '@supabase/supabase-js';
 import { LanguageCode } from 'iso-639-1';
-import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import AccountController from '../../controllers/account.controller';
 import WindowController from '../../controllers/window.controller';
 import SupabaseService from '../../services/supabase.service';
 import AccountProfileFormComponent from '../account-profile-form.component';
-import { AccountSettingsAccountResponsiveProps } from '../account-settings-account.component';
-import styles from '../account-settings-account.module.scss';
-import { ResponsiveDesktop } from '../responsive.component';
+import { ResponsiveTablet } from '../responsive.component';
+import { SettingsAccountResponsiveProps } from '../settings-account.component';
+import styles from '../settings-account.module.scss';
 
-export default function AccountSettingsAccountDesktopComponent({
-  accountProps,
+export default function SettingsAccountTabletComponent({
   storeProps,
+  accountProps,
   windowLocalProps,
   updatePasswordError,
   setUpdatePasswordError,
   confirmPasswordError,
   setConfirmPasswordError,
-  showDeleteModal,
-  setShowDeleteModal,
   isLanguageOpen,
   setIsLanguageOpen,
   onGeneralInformationSaveAsync,
-}: AccountSettingsAccountResponsiveProps): JSX.Element {
+}: SettingsAccountResponsiveProps): JSX.Element {
   const { t } = useTranslation();
 
   const accordionItemClassNames: AccordionItemClasses = {
-    topBar: styles['accordion-top-bar'],
+    topBar: [
+      styles['accordion-top-bar'],
+      styles['accordion-top-bar-tablet'],
+    ].join(' '),
     panel: styles['accordion-panel'],
     topBarLabel: styles['accordion-top-bar-label'],
     button: {
@@ -47,24 +46,24 @@ export default function AccountSettingsAccountDesktopComponent({
   const user = accountProps.user as User | null;
   const provider = user?.app_metadata['provider'];
   return (
-    <ResponsiveDesktop>
-      <div className={[styles['root'], styles['root-desktop']].join(' ')}>
+    <ResponsiveTablet>
+      <div className={[styles['root'], styles['root-tablet']].join(' ')}>
         <div
           className={[
             styles['setting-container'],
-            styles['setting-container-desktop'],
+            styles['setting-container-tablet'],
           ].join(' ')}
         >
           <div
             className={[
               styles['setting-button-content'],
-              styles['setting-button-content-desktop'],
+              styles['setting-button-content-tablet'],
             ].join(' ')}
           >
             <div
               className={[
                 styles['setting-icon'],
-                styles['setting-icon-desktop'],
+                styles['setting-icon-tablet'],
               ].join(' ')}
             >
               <Line.Language size={24} />
@@ -72,7 +71,7 @@ export default function AccountSettingsAccountDesktopComponent({
             <div
               className={[
                 styles['setting-text'],
-                styles['setting-text-desktop'],
+                styles['setting-text-tablet'],
               ].join(' ')}
             >
               {t('language')}
@@ -80,7 +79,7 @@ export default function AccountSettingsAccountDesktopComponent({
             <div
               className={[
                 styles['setting-icon-right'],
-                styles['setting-icon-right-desktop'],
+                styles['setting-icon-right-tablet'],
               ].join(' ')}
             >
               <LanguageSwitch
@@ -112,12 +111,13 @@ export default function AccountSettingsAccountDesktopComponent({
               id={'general-information'}
               label={t('generalInformation')}
               classNames={accordionItemClassNames}
+              touchScreen={true}
             >
               <>
                 <div
                   className={[
                     styles['profile-form-container'],
-                    styles['profile-form-container-desktop'],
+                    styles['profile-form-container-tablet'],
                   ].join(' ')}
                 >
                   <AccountProfileFormComponent
@@ -147,7 +147,7 @@ export default function AccountSettingsAccountDesktopComponent({
                 <div
                   className={[
                     styles['save-button-container'],
-                    styles['save-button-container-desktop'],
+                    styles['save-button-container-tablet'],
                   ].join(' ')}
                 >
                   <Button
@@ -155,7 +155,7 @@ export default function AccountSettingsAccountDesktopComponent({
                       button: styles['save-button'],
                     }}
                     rippleProps={{
-                      color: 'rgba(252, 245, 227, .35)',
+                      color: 'rgba(233, 33, 66, .35)',
                     }}
                     block={true}
                     size={'large'}
@@ -164,12 +164,10 @@ export default function AccountSettingsAccountDesktopComponent({
                     loadingComponent={
                       <img
                         src={'../assets/svg/ring-resize-light.svg'}
-                        style={{
-                          height: 24,
-                        }}
+                        style={{ height: 24 }}
                         className={[
                           styles['loading-ring'],
-                          styles['loading-ring-desktop'],
+                          styles['loading-ring-tablet'],
                         ].join(' ')}
                       />
                     }
@@ -181,10 +179,10 @@ export default function AccountSettingsAccountDesktopComponent({
             </Accordion.Item>
             {provider === 'email' && (
               <Accordion.Item
-                key={'password-reset'}
                 id={'password-reset'}
                 label={t('passwordReset')}
                 classNames={accordionItemClassNames}
+                touchScreen={true}
               >
                 {SupabaseService.supabaseClient && (
                   <Auth.UpdatePassword
@@ -235,48 +233,7 @@ export default function AccountSettingsAccountDesktopComponent({
             )}
           </Accordion>
         </div>
-        <div
-          className={[
-            styles['bottom-content-container'],
-            styles['bottom-content-container-desktop'],
-          ].join(' ')}
-        >
-          <Button
-            block={true}
-            size={'large'}
-            classNames={{
-              container: styles['delete-button-container'],
-              button: styles['delete-button'],
-            }}
-            rippleProps={{
-              color: 'rgba(133, 38, 122, .35)',
-            }}
-            onClick={() => setShowDeleteModal(true)}
-          >
-            {t('deleteAccount')}
-          </Button>
-        </div>
-        {ReactDOM.createPortal(
-          <Modal
-            title={t('deleteYourAccount') ?? ''}
-            description={t('deleteYourAccountDescription') ?? ''}
-            confirmText={t('delete') ?? ''}
-            cancelText={t('cancel') ?? ''}
-            variant={'danger'}
-            size={'small'}
-            classNames={{
-              modal: styles['delete-modal'],
-            }}
-            visible={showDeleteModal}
-            onCancel={() => setShowDeleteModal(false)}
-            onConfirm={async () => {
-              await AccountController.deleteAsync();
-              setShowDeleteModal(false);
-            }}
-          ></Modal>,
-          document.body
-        )}
       </div>
-    </ResponsiveDesktop>
+    </ResponsiveTablet>
   );
 }

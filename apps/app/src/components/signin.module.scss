@@ -1,19 +1,15 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
+.root {
+  background-color: #fff;
+  border-radius: 6px;
+}
+
 .root-desktop {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   min-height: 100%;
 
@@ -23,19 +19,10 @@
 }
 
 .root-tablet {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   min-height: 100%;
 
@@ -45,16 +32,9 @@
 }
 
 .root-mobile {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  flex-direction: column;
+  justify-content: center;
   width: 100%;
 
   & .content-mobile {
@@ -69,16 +49,9 @@
   height: 100%;
   
   & .content {
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-box-pack: center;
-        -ms-flex-pack: center;
-            justify-content: center;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
+    justify-content: center;
+    flex-direction: column;
 
     & .signin-container {
       margin-top: calc(56px + $mp-8);
@@ -114,7 +87,8 @@
 }
 
 .auth-input-container {
-  border-color: $brand-900 !important;
+  border-color: transparent !important;
+  background-color: rgba(42, 42, 95, .05);
 }
 
 .auth-checkbox {

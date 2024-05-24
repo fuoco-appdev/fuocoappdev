@@ -2,22 +2,22 @@ import { Line, Tabs } from '@fuoco.appdev/core-ui';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { RoutePathsType, useQuery } from '../../route-paths';
-import { AccountSettingsResponsiveProps } from '../account-settings.component';
-import styles from '../account-settings.module.scss';
-import { ResponsiveDesktop } from '../responsive.component';
+import { ResponsiveTablet } from '../responsive.component';
+import { SettingsResponsiveProps } from '../settings.component';
+import styles from '../settings.module.scss';
 
-export default function AccountSettingsDesktopComponent({
+export default function SettingsTabletComponent({
   windowProps,
-}: AccountSettingsResponsiveProps): JSX.Element {
+}: SettingsResponsiveProps): JSX.Element {
   const navigate = useNavigate();
   const query = useQuery();
   const { t } = useTranslation();
 
   return (
-    <ResponsiveDesktop>
-      <div className={[styles['root'], styles['root-desktop']].join(' ')}>
+    <ResponsiveTablet>
+      <div className={[styles['root'], styles['root-tablet']].join(' ')}>
         <div
-          className={[styles['side-bar'], styles['side-bar-desktop']].join(' ')}
+          className={[styles['side-bar'], styles['side-bar-tablet']].join(' ')}
         >
           <Tabs
             activeId={windowProps.activeRoute}
@@ -36,7 +36,7 @@ export default function AccountSettingsDesktopComponent({
             }}
             tabs={[
               {
-                id: RoutePathsType.AccountSettingsAccount,
+                id: RoutePathsType.SettingsAccount,
                 icon: <Line.Person size={24} />,
                 label: t('account') ?? '',
               },
@@ -46,12 +46,12 @@ export default function AccountSettingsDesktopComponent({
         <div
           className={[
             styles['outlet-container'],
-            styles['outlet-container-desktop'],
+            styles['outlet-container-tablet'],
           ].join(' ')}
         >
           <Outlet />
         </div>
       </div>
-    </ResponsiveDesktop>
+    </ResponsiveTablet>
   );
 }

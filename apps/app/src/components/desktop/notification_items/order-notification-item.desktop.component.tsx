@@ -53,68 +53,68 @@ export default function OrderNotificationItemDesktopComponent({ notification, fr
                             )}
                         >
                             {notification.eventName === 'order.placed' && (
-                                <div
+                                <span
                                     className={[
                                         styles['message-content'],
                                         styles['message-content-desktop'],
                                     ].join(' ')}
                                 >
-                                    <div className={[styles['message-bold']].join(' ')}>
+                                    <span className={[styles['message-bold']].join(' ')}>
                                         {t('orderPlacedName', {
                                             displayId: order?.display_id ?? 0,
                                         })}
-                                    </div>
+                                    </span>
                                     &nbsp;
                                     {t('orderPlacedDescription')}
-                                </div>
+                                </span>
                             )}
                             {notification.eventName === 'order.shipped' && (
-                                <div
+                                <span
                                     className={[
                                         styles['message-content'],
                                         styles['message-content-desktop'],
                                     ].join(' ')}
                                 >
-                                    <div className={[styles['message-bold']].join(' ')}>
+                                    <span className={[styles['message-bold']].join(' ')}>
                                         {t('orderShippedName', {
                                             displayId: order?.display_id ?? 0,
                                         })}
-                                    </div>
+                                    </span>
                                     &nbsp;
                                     {t('orderShippedDescription')}
-                                </div>
+                                </span>
                             )}
                             {notification.eventName === 'order.returned' && (
-                                <div
+                                <span
                                     className={[
                                         styles['message-content'],
                                         styles['message-content-desktop'],
                                     ].join(' ')}
                                 >
-                                    <div className={[styles['message-bold']].join(' ')}>
+                                    <span className={[styles['message-bold']].join(' ')}>
                                         {t('orderReturnedName', {
                                             displayId: order?.display_id ?? 0,
                                         })}
-                                    </div>
+                                    </span>
                                     &nbsp;
                                     {t('orderReturnedDescription')}
-                                </div>
+                                </span>
                             )}
                             {notification.eventName === 'order.canceled' && (
-                                <div
+                                <span
                                     className={[
                                         styles['message-content'],
                                         styles['message-content-desktop'],
                                     ].join(' ')}
                                 >
-                                    <div className={[styles['message-bold']].join(' ')}>
+                                    <span className={[styles['message-bold']].join(' ')}>
                                         {t('orderCanceledName', {
                                             displayId: order?.display_id ?? 0,
                                         })}
-                                    </div>
+                                    </span>
                                     &nbsp;
                                     {t('orderCanceledDescription')}
-                                </div>
+                                </span>
                             )}
                         </div>
                         <div

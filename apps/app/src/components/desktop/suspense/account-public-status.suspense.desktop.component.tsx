@@ -9,16 +9,11 @@ export function AccountPublicStatusSuspenseDesktopComponent(): JSX.Element {
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>
         <div
           className={[
-            styles['scroll-container'],
-            styles['scroll-container-desktop'],
+            styles['tabs-container-skeleton'],
+            styles['tabs-container-skeleton-desktop'],
           ].join(' ')}
         >
-          <div
-            className={[
-              styles['tabs-container-skeleton'],
-              styles['tabs-container-skeleton-desktop'],
-            ].join(' ')}
-          >
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
             <div
               className={[
                 styles['tab-button-skeleton'],
@@ -36,15 +31,20 @@ export function AccountPublicStatusSuspenseDesktopComponent(): JSX.Element {
               <Skeleton style={{ height: 48, width: 250 }} borderRadius={6} />
             </div>
           </div>
-          <div
-            className={[
-              styles['outlet-container'],
-              styles['outlet-container-desktop'],
-            ].join(' ')}
-          >
-            <div style={{ minWidth: '100%', minHeight: '100%' }}>
-              <Outlet />
-            </div>
+          <Skeleton
+            height={46}
+            width={556}
+            borderRadius={46}
+          />
+        </div>
+        <div
+          className={[
+            styles['outlet-container'],
+            styles['outlet-container-desktop'],
+          ].join(' ')}
+        >
+          <div style={{ minWidth: '100%', minHeight: '100%' }}>
+            <Outlet />
           </div>
         </div>
       </div>

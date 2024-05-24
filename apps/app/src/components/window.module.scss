@@ -2,17 +2,11 @@
 
 .root {
   position: relative;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
   height: 100%;
   width: 100vw;
   min-width: 100%;
-  background: #fff;
   overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -ms-flex-direction: column;
   flex-direction: column;
   /* Prevent native touch events on Windows */
   -ms-touch-action: none;
@@ -39,8 +33,6 @@
   }
 
   & .content {
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
     height: 100%;
     width: 100%;
@@ -107,6 +99,8 @@
 }
 
 .root-mobile {
+  background: linear-gradient(rgba(42, 42, 95, .1), rgba(42, 42, 95, .2));
+
   & .content-mobile {
     padding-bottom: 56px;
   }
@@ -121,12 +115,8 @@
 
   & .bottom-bar-mobile {
     position: relative;
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
     background-color: $brand-900;
-    -webkit-box-shadow: $shadow-6;
-    box-shadow: $shadow-6;
     height: 56px;
 
     & .shopping-cart-container-mobile {
@@ -166,15 +156,8 @@
     }
 
     & .navigation-back-container-mobile {
-      display: -webkit-box;
-      display: -ms-flexbox;
       display: flex;
-      -webkit-box-orient: horizontal;
-      -webkit-box-direction: normal;
-      -ms-flex-direction: row;
       flex-direction: row;
-      -webkit-box-align: center;
-      -ms-flex-align: center;
       align-items: center;
       padding: 0 $mp-2;
       height: 100%;
@@ -184,9 +167,6 @@
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;
-        -webkit-box-orient: horizontal;
-        -webkit-box-direction: normal;
-        -ms-flex-direction: row;
         flex-direction: row;
         font-size: $font-size-sm;
         text-transform: capitalize;
@@ -195,13 +175,9 @@
         font-weight: $font-weight-bold;
         padding-right: 40px;
         width: 100%;
-        -webkit-box-flex: 1;
-        -ms-flex: 1;
         flex: 1;
         gap: $mp-2;
         text-align: center;
-        -webkit-box-pack: center;
-        -ms-flex-pack: center;
         justify-content: center;
       }
     }
@@ -218,35 +194,18 @@
 }
 
 .root-tablet {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -ms-flex-direction: column;
   flex-direction: column;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
   justify-content: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
   align-items: center;
   height: 100%;
   min-width: 100%;
+  background: linear-gradient(rgba(42, 42, 95, .1), rgba(42, 42, 95, .05));
 
   & .content-container-tablet {
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: column;
     flex-direction: column;
-    -webkit-box-pack: center;
-    -ms-flex-pack: center;
     justify-content: center;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
     align-items: center;
 
     & .logo-tablet {
@@ -267,53 +226,30 @@
 }
 
 .root-desktop {
+  background: linear-gradient(rgba(42, 42, 95, .1), rgba(42, 42, 95, .05));
+
   & .top-bar-desktop {
     position: relative;
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: row;
     flex-direction: row;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
     justify-content: space-between;
     min-height: 56px;
     width: 100%;
     background-color: $brand-900;
-    -webkit-box-shadow: $shadow-1;
-    box-shadow: $shadow-1;
     padding: 0 $mp-6;
     z-index: 20;
 
     & .top-bar-left-content-desktop {
-      display: -webkit-box;
-      display: -ms-flexbox;
       display: flex;
-      -webkit-box-pack: center;
-      -ms-flex-pack: center;
       justify-content: center;
-      -webkit-box-orient: horizontal;
-      -webkit-box-direction: normal;
-      -ms-flex-direction: row;
       flex-direction: row;
-      -webkit-box-align: center;
-      -ms-flex-align: center;
       align-items: center;
       height: 100%;
       gap: $mp-4;
 
       & .logo-container-desktop {
-        display: -webkit-box;
-        display: -ms-flexbox;
         display: flex;
-        -webkit-box-orient: horizontal;
-        -webkit-box-direction: normal;
-        -ms-flex-direction: row;
         flex-direction: row;
-        -webkit-box-pack: center;
-        -ms-flex-pack: center;
         justify-content: center;
         height: 28px;
         gap: $mp-3;
@@ -326,18 +262,9 @@
     }
 
     & .top-bar-right-content-desktop {
-      display: -webkit-box;
-      display: -ms-flexbox;
       display: flex;
-      -webkit-box-pack: center;
-      -ms-flex-pack: center;
       justify-content: center;
-      -webkit-box-orient: horizontal;
-      -webkit-box-direction: normal;
-      -ms-flex-direction: row;
       flex-direction: row;
-      -webkit-box-align: center;
-      -ms-flex-align: center;
       align-items: center;
       height: 100%;
       gap: $mp-4;
@@ -359,40 +286,22 @@
   }
 
   & .content-desktop {
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: row;
     flex-direction: row;
+    gap: 2px;
 
     & .side-bar-desktop {
-      display: -webkit-box;
-      display: -ms-flexbox;
       display: flex;
-      -webkit-box-orient: vertical;
-      -webkit-box-direction: normal;
-      -ms-flex-direction: column;
       flex-direction: column;
-      -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
       justify-content: space-between;
-      border-right-width: 1px;
-      border-left-width: 0px;
-      border-top-width: 0px;
-      border-bottom-width: 0px;
-      border-color: rgba(42, 42, 95, .6);
-      border-style: solid;
       padding: 0 $mp-4;
       width: 88px;
       min-width: 88px;
       height: 100%;
+      background-color: #fff;
+      border-radius: 6px;
 
       & .skeleton-tabs-desktop {
-        display: -webkit-box;
-        display: -ms-flexbox;
         display: flex;
-        -webkit-box-orient: vertical;
-        -webkit-box-direction: normal;
-        -ms-flex-direction: column;
         flex-direction: column;
         padding: $mp-4 0;
         gap: $mp-2;
@@ -408,25 +317,14 @@
         padding: $mp-4 0;
 
         & .side-bar-link-container-desktop {
-          display: -webkit-box;
-          display: -ms-flexbox;
           display: flex;
-          -webkit-box-orient: horizontal;
-          -webkit-box-direction: normal;
-          -ms-flex-direction: row;
           flex-direction: row;
-          -webkit-box-pack: justify;
-          -ms-flex-pack: justify;
           justify-content: space-between;
           text-align: center;
         }
 
         & .copyright-text-desktop {
-          display: -webkit-box;
-          display: -ms-flexbox;
           display: flex;
-          -webkit-box-pack: center;
-          -ms-flex-pack: center;
           justify-content: center;
           width: 100%;
           padding: $mp-4;
@@ -439,12 +337,8 @@
 
     & .right-content-desktop {
       position: relative;
-      display: -webkit-box;
-      display: -ms-flexbox;
       display: flex;
-      -webkit-box-orient: vertical;
-      -webkit-box-direction: normal;
-      -ms-flex-direction: column;
+      gap: 2px;
       flex-direction: column;
       overflow: hidden;
       /* Prevent native touch events on Windows */
@@ -468,15 +362,8 @@
       & .navigation-back-container-desktop {
         position: absolute;
         top: 0;
-        display: -webkit-box;
-        display: -ms-flexbox;
         display: flex;
-        -webkit-box-pack: justify;
-        -ms-flex-pack: justify;
         justify-content: space-between;
-        -webkit-box-orient: horizontal;
-        -webkit-box-direction: normal;
-        -ms-flex-direction: row;
         flex-direction: row;
         width: -moz-available;
         /* WebKit-based browsers will ignore this. */
@@ -485,15 +372,10 @@
         width: stretch;
         height: 56px;
         min-height: 56px;
-        border-right-width: 0px;
-        border-left-width: 0px;
-        border-top-width: 0px;
-        border-bottom-width: 1px;
-        border-color: rgba(42, 42, 95, .6);
-        border-style: solid;
         padding: 0 $mp-4;
         z-index: 19;
         background-color: #fff;
+        border-radius: 6px;
 
         & .navigation-back-left-content-desktop {
           display: -webkit-box;
@@ -529,18 +411,12 @@
         }
 
         & .navigation-back-right-content-desktop {
-          display: -webkit-box;
-          display: -ms-flexbox;
           display: flex;
-          -webkit-box-orient: vertical;
-          -webkit-box-direction: normal;
-          -ms-flex-direction: column;
-          flex-direction: column;
-          -webkit-box-pack: center;
-          -ms-flex-pack: center;
+          flex-direction: row;
           justify-content: center;
+          align-items: center;
           height: 100%;
-          width: 46px;
+          gap: $mp-2;
         }
       }
     }
@@ -556,39 +432,23 @@
 }
 
 .root-tablet {
+  background: linear-gradient(rgba(42, 42, 95, .2), rgba(42, 42, 95, .3));
+
   & .top-bar-tablet {
     position: relative;
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: row;
     flex-direction: row;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
     justify-content: space-between;
     min-height: 56px;
     width: 100%;
     background-color: $brand-900;
-    -webkit-box-shadow: $shadow-1;
-    box-shadow: $shadow-1;
     padding: 0 $mp-6;
     z-index: 20;
 
     & .top-bar-left-content-tablet {
-      display: -webkit-box;
-      display: -ms-flexbox;
       display: flex;
-      -webkit-box-pack: center;
-      -ms-flex-pack: center;
       justify-content: center;
-      -webkit-box-orient: horizontal;
-      -webkit-box-direction: normal;
-      -ms-flex-direction: row;
       flex-direction: row;
-      -webkit-box-align: center;
-      -ms-flex-align: center;
       align-items: center;
       height: 100%;
       gap: $mp-4;
@@ -615,18 +475,9 @@
     }
 
     & .top-bar-right-content-tablet {
-      display: -webkit-box;
-      display: -ms-flexbox;
       display: flex;
-      -webkit-box-pack: center;
-      -ms-flex-pack: center;
       justify-content: center;
-      -webkit-box-orient: horizontal;
-      -webkit-box-direction: normal;
-      -ms-flex-direction: row;
       flex-direction: row;
-      -webkit-box-align: center;
-      -ms-flex-align: center;
       align-items: center;
       height: 100%;
       gap: $mp-4;
@@ -654,22 +505,9 @@
     flex-direction: row;
 
     & .side-bar-tablet {
-      display: -webkit-box;
-      display: -ms-flexbox;
       display: flex;
-      -webkit-box-orient: vertical;
-      -webkit-box-direction: normal;
-      -ms-flex-direction: column;
       flex-direction: column;
-      -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
       justify-content: space-between;
-      border-right-width: 1px;
-      border-left-width: 0px;
-      border-top-width: 0px;
-      border-bottom-width: 0px;
-      border-color: rgba(42, 42, 95, .6);
-      border-style: solid;
       padding: 0 $mp-4;
       width: 88px;
       min-width: 88px;
@@ -870,19 +708,18 @@
 }
 
 .modal-footer-button-container-desktop {
-  height: 100%;
+  height: fit-content;
   padding: 0 !important;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
   align-items: center;
+  padding-top: $mp-4 !important;
+
 }
 
 .modal-footer-button-container-tablet {
-  height: 100%;
+  height: fit-content;
   padding: 0 !important;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
   align-items: center;
+  padding-top: $mp-4 !important;
 }
 
 .modal-address-footer-button-container-desktop {}
@@ -898,6 +735,7 @@
   background-color: $brand-700 !important;
   padding-left: $mp-4 !important;
   padding-right: $mp-4 !important;
+  border: 0 !important;
 }
 
 .dropdown-touchscreen-overlay {

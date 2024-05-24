@@ -25,6 +25,9 @@
       flex-direction: column;
       align-items: center;
       gap: $mp-2;
+      background-color: #fff;
+      border-radius: 6px;
+      padding-top: $mp-4;
 
       & .status-container {
         display: flex;
@@ -108,7 +111,6 @@
 
     & .tabs-container {
       padding: 0 $mp-4;
-      border-bottom: 1px solid rgba(42, 42, 95, 0.6);
     }
 
     & .tabs-container-skeleton {
@@ -132,7 +134,7 @@
   min-height: 100%;
 
   & .scroll-container-desktop {
-    padding-top: calc(56px + 24px);
+    padding-top: calc(56px + 2px);
 
     & .incomplete-profile-container-desktop {
       display: -webkit-box;
@@ -152,8 +154,6 @@
       height: 100%;
 
       & .incomplete-content-desktop {
-        height: -webkit-fit-content;
-        height: -moz-fit-content;
         height: fit-content;
         width: 500px;
         padding: $mp-6;
@@ -304,7 +304,7 @@
   }
 
   & .scroll-container-tablet {
-    padding-top: calc(56px + 16px);
+    padding-top: calc(56px + 2px);
 
     & .incomplete-profile-container-tablet {
       display: -webkit-box;
@@ -432,7 +432,7 @@
 
 .root-mobile {
   & .scroll-container-mobile {
-    padding-top: $mp-6;
+    padding-top: 2px;
 
     & .incomplete-profile-container-mobile {
       height: 100%;

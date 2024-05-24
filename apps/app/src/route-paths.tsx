@@ -9,8 +9,6 @@ import AccountPublicFollowingComponent from './components/account-public-followi
 import AccountPublicLikesComponent from './components/account-public-likes.component';
 import AccountPublicStatusComponent from './components/account-public-status.component';
 import AccountPublicComponent from './components/account-public.component';
-import AccountSettingsAccountComponent from './components/account-settings-account.component';
-import AccountSettingsComponent from './components/account-settings.component';
 import AccountComponent from './components/account.component';
 import AppComponent from './components/app.component';
 import CartComponent from './components/cart.component';
@@ -28,6 +26,8 @@ import PermissionsComponent from './components/permissions.component';
 import PrivacyPolicyComponent from './components/privacy-policy.component';
 import ProductComponent from './components/product.component';
 import ResetPasswordComponent from './components/reset-password.component';
+import AccountSettingsAccountComponent from './components/settings-account.component';
+import AccountSettingsComponent from './components/settings.component';
 import SigninComponent from './components/signin.component';
 import SignupComponent from './components/signup.component';
 import StoreComponent from './components/store.component';
@@ -66,8 +66,8 @@ export enum RoutePathsType {
   AccountLikes = '/account/likes',
   AccountHelp = '/account/help',
   AccountAddFriends = '/account/add-friends',
-  AccountSettings = '/account/settings',
-  AccountSettingsAccount = '/account/settings/account',
+  Settings = '/settings',
+  SettingsAccount = '/settings/account',
   OrderConfirmed = '/order/confirmed',
   OrderConfirmedWithId = '/order/confirmed/:id',
 }
@@ -226,7 +226,7 @@ export const getRoutePaths = (): RouteObject[] => [
         element: <AccountAddFriendsComponent />,
       },
       {
-        path: RoutePathsType.AccountSettings,
+        path: RoutePathsType.Settings,
         element: <AccountSettingsComponent />,
         children: [
           {
@@ -234,7 +234,7 @@ export const getRoutePaths = (): RouteObject[] => [
             element: <AccountSettingsAccountComponent />,
           },
           {
-            path: RoutePathsType.AccountSettingsAccount,
+            path: RoutePathsType.SettingsAccount,
             element: <AccountSettingsAccountComponent />,
           },
         ],

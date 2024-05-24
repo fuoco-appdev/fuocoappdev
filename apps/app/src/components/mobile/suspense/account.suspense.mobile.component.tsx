@@ -74,8 +74,8 @@ export function AccountSuspenseMobileComponent(): JSX.Element {
         </div>
         <div
           className={[
-            styles['scroll-container'],
-            styles['scroll-container-mobile'],
+            styles['scroll-container-skeleton'],
+            styles['scroll-container-skeleton-mobile'],
           ].join(' ')}
         >
           <div
@@ -201,36 +201,36 @@ export function AccountSuspenseMobileComponent(): JSX.Element {
                 </div>
               </div>
             </div>
-          </div>
-          <div
-            className={[
-              styles['tabs-container-skeleton'],
-              styles['tabs-container-skeleton-mobile'],
-            ].join(' ')}
-          >
             <div
               className={[
-                styles['tab-button-skeleton'],
-                styles['tab-button-skeleton-mobile'],
-              ].join('')}
+                styles['tabs-container-skeleton'],
+                styles['tabs-container-skeleton-mobile'],
+              ].join(' ')}
             >
-              <Skeleton style={{ height: 48 }} borderRadius={6} />
-            </div>
-            <div
-              className={[
-                styles['tab-button-skeleton'],
-                styles['tab-button-skeleton-mobile'],
-              ].join('')}
-            >
-              <Skeleton style={{ height: 48 }} borderRadius={6} />
-            </div>
-            <div
-              className={[
-                styles['tab-button-skeleton'],
-                styles['tab-button-skeleton-mobile'],
-              ].join('')}
-            >
-              <Skeleton style={{ height: 48 }} borderRadius={6} />
+              <div
+                className={[
+                  styles['tab-button-skeleton'],
+                  styles['tab-button-skeleton-mobile'],
+                ].join('')}
+              >
+                <Skeleton style={{ height: 48 }} borderRadius={6} />
+              </div>
+              <div
+                className={[
+                  styles['tab-button-skeleton'],
+                  styles['tab-button-skeleton-mobile'],
+                ].join('')}
+              >
+                <Skeleton style={{ height: 48 }} borderRadius={6} />
+              </div>
+              <div
+                className={[
+                  styles['tab-button-skeleton'],
+                  styles['tab-button-skeleton-mobile'],
+                ].join('')}
+              >
+                <Skeleton style={{ height: 48 }} borderRadius={6} />
+              </div>
             </div>
           </div>
           <div

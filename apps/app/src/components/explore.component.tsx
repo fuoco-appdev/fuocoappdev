@@ -36,7 +36,6 @@ export interface ExploreResponsiveProps {
   selectedPoint: InventoryLocation | null;
   setMapStyleLoaded: (value: boolean) => void;
   setSelectedPoint: (value: InventoryLocation | null) => void;
-  onScroll: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
   onScrollLoad: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
   onStockLocationClicked: (stockLocation: InventoryLocation | null) => void;
   onGoToStore: (stockLocation: InventoryLocation) => void;
@@ -56,22 +55,6 @@ export default function ExploreComponent(): JSX.Element {
   const renderCountRef = React.useRef<number>(0);
   const location = useLocation();
   const { i18n } = useTranslation();
-
-  const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    const scrollTop = e.currentTarget?.scrollTop ?? 0;
-    const scrollHeight = e.currentTarget?.scrollHeight ?? 0;
-    const clientHeight = e.currentTarget?.clientHeight ?? 0;
-    const scrollOffset = scrollHeight - scrollTop - clientHeight;
-
-    if (
-      scrollOffset > 16 ||
-      !ExploreController.model.hasMoreSearchedStockLocations
-    ) {
-      return;
-    }
-
-    ExploreController.onNextScrollAsync();
-  };
 
   const onScrollLoad = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
     if (exploreProps.searchedStockLocationScrollPosition) {
@@ -207,7 +190,6 @@ export default function ExploreComponent(): JSX.Element {
           selectedPoint={selectedPoint}
           setMapStyleLoaded={setMapStyleLoaded}
           setSelectedPoint={setSelectedPoint}
-          onScroll={onScroll}
           onScrollLoad={onScrollLoad}
           onStockLocationClicked={onStockLocationClicked}
           onGoToStore={onGoToStore}
@@ -219,7 +201,6 @@ export default function ExploreComponent(): JSX.Element {
           selectedPoint={selectedPoint}
           setMapStyleLoaded={setMapStyleLoaded}
           setSelectedPoint={setSelectedPoint}
-          onScroll={onScroll}
           onScrollLoad={onScrollLoad}
           onStockLocationClicked={onStockLocationClicked}
           onGoToStore={onGoToStore}
@@ -231,7 +212,6 @@ export default function ExploreComponent(): JSX.Element {
           selectedPoint={selectedPoint}
           setMapStyleLoaded={setMapStyleLoaded}
           setSelectedPoint={setSelectedPoint}
-          onScroll={onScroll}
           onScrollLoad={onScrollLoad}
           onStockLocationClicked={onStockLocationClicked}
           onGoToStore={onGoToStore}

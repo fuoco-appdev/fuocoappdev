@@ -1,13 +1,13 @@
-import { Line } from '@fuoco.appdev/core-ui';
+import { Line, Scroll } from '@fuoco.appdev/core-ui';
 import moment from 'moment';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import NotificationsController from '../../controllers/notifications.controller';
 import { AccountNotificationResponse } from '../../protobuf/account-notification_pb';
 import NotificationItemComponent from '../notification-item.component';
 import { NotificationsResponsiveProps } from '../notifications.component';
 import styles from '../notifications.module.scss';
 import { ResponsiveMobile } from '../responsive.component';
-;
 
 export default function NotificationsMobileComponent({
   notificationsProps,
@@ -42,25 +42,43 @@ export default function NotificationsMobileComponent({
             </div>
           </div>
         </div>
-        <div
-          className={[
-            styles['scroll-container'],
-            styles['scroll-container-mobile'],
-          ].join(' ')}
-          style={{ height: window.innerHeight }}
-          onScroll={(e) => {
-            onScroll(e);
+        <Scroll
+          classNames={{
+            root: [styles['scroll-root'], styles['scroll-root-mobile']].join(' '),
+            reloadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' '),
+            loadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' ')
+          }}
+          touchScreen={true}
+          loadingHeight={56}
+          reloadComponent={
+            <img
+              src={'../assets/svg/ring-resize-dark.svg'}
+              className={styles['loading-ring']}
+            />
+          }
+          isLoadable={notificationsProps.hasMoreNotifications}
+          isReloading={notificationsProps.isReloading}
+          onReload={() => NotificationsController.reloadNotificationsAsync()}
+          loadComponent={
+            <img
+              src={'../assets/svg/ring-resize-dark.svg'}
+              className={styles['loading-ring']}
+            />
+          }
+          isLoading={notificationsProps.isLoading}
+          onLoad={() => NotificationsController.onNextScrollAsync()}
+          onScroll={(progress, scrollRef, contentRef) => {
             const elementHeight = topBarRef.current?.clientHeight ?? 0;
-            const scrollTop = e.currentTarget.scrollTop;
-            if (prevPreviewScrollTop >= scrollTop) {
-              yPosition += prevPreviewScrollTop - scrollTop;
+            const scrollTop = contentRef.current?.getBoundingClientRect().top ?? 0;
+            if (prevPreviewScrollTop <= scrollTop) {
+              yPosition -= prevPreviewScrollTop - scrollTop;
               if (yPosition >= 0) {
                 yPosition = 0;
               }
 
               topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
             } else {
-              yPosition -= scrollTop - prevPreviewScrollTop;
+              yPosition += scrollTop - prevPreviewScrollTop;
               if (yPosition <= -elementHeight) {
                 yPosition = -elementHeight;
               }
@@ -68,74 +86,70 @@ export default function NotificationsMobileComponent({
               topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
             }
 
-            prevPreviewScrollTop = e.currentTarget.scrollTop;
+            prevPreviewScrollTop = scrollTop;
           }}
-          ref={scrollContainerRef}
-          onLoad={onLoad}
         >
-          {notificationsProps.accountNotifications.map(
-            (notification: AccountNotificationResponse, _index: number) => {
-              const fromNowCurrent = moment(notification?.createdAt)
-                .locale(i18n.language)
-                .startOf('day')
-                .fromNow();
-              let showDate = false;
-              if (fromNowRef.current !== fromNowCurrent) {
-                showDate = true;
-                fromNowRef.current = fromNowCurrent;
+          <div
+            className={[
+              styles['scroll-container'],
+              styles['scroll-container-mobile'],
+            ].join(' ')}
+            ref={scrollContainerRef}
+            onLoad={onLoad}
+          >
+            {notificationsProps.accountNotifications.map(
+              (notification: AccountNotificationResponse, _index: number) => {
+                const fromNowCurrent = moment(notification?.createdAt)
+                  .locale(i18n.language)
+                  .startOf('day')
+                  .fromNow();
+                let showDate = false;
+                if (fromNowRef.current !== fromNowCurrent) {
+                  showDate = true;
+                  fromNowRef.current = fromNowCurrent;
+                }
+                return (
+                  <>
+                    {showDate && (
+                      <div
+                        className={[
+                          styles['from-now-date'],
+                          styles['from-now-date-mobile'],
+                        ].join(' ')}
+                      >
+                        {fromNowCurrent}
+                      </div>
+                    )}
+                    <NotificationItemComponent
+                      key={notification.id}
+                      notification={notification}
+                      notificationsProps={notificationsProps}
+                      fromNow={fromNowCurrent}
+                    />
+                  </>
+                );
               }
-              return (
-                <>
-                  {showDate && (
-                    <div
-                      className={[
-                        styles['from-now-date'],
-                        styles['from-now-date-mobile'],
-                      ].join(' ')}
-                    >
-                      {fromNowCurrent}
-                    </div>
-                  )}
-                  <NotificationItemComponent
-                    key={notification.id}
-                    notification={notification}
-                    notificationsProps={notificationsProps}
-                    fromNow={fromNowCurrent}
-                  />
-                </>
-              );
-            }
-          )}
-          <img
-            src={'../assets/svg/ring-resize-dark.svg'}
-            className={styles['loading-ring']}
-            style={{
-              maxHeight:
-                notificationsProps.hasMoreNotifications ||
-                  notificationsProps.isLoading
-                  ? 24
-                  : 0,
-            }}
-          />
-          {!notificationsProps.isLoading &&
-            notificationsProps.accountNotifications.length <= 0 && (
-              <div
-                className={[
-                  styles['no-notifications-container'],
-                  styles['no-notifications-container-mobile'],
-                ].join(' ')}
-              >
+            )}
+            {!notificationsProps.isLoading &&
+              notificationsProps.accountNotifications.length <= 0 && (
                 <div
                   className={[
-                    styles['no-items-text'],
-                    styles['no-items-text-mobile'],
+                    styles['no-notifications-container'],
+                    styles['no-notifications-container-mobile'],
                   ].join(' ')}
                 >
-                  {t('noNotifications')}
+                  <div
+                    className={[
+                      styles['no-items-text'],
+                      styles['no-items-text-mobile'],
+                    ].join(' ')}
+                  >
+                    {t('noNotifications')}
+                  </div>
                 </div>
-              </div>
-            )}
-        </div>
+              )}
+          </div>
+        </Scroll>
       </div>
     </ResponsiveMobile>
   );

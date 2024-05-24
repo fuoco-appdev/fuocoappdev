@@ -67,6 +67,7 @@ export interface AccountState {
   selectedAddress: Address | undefined;
   editShippingForm: AddressFormValues;
   editShippingFormErrors: AddressFormErrors;
+  areOrdersReloading: boolean;
   areOrdersLoading: boolean;
   activeTabId: string;
   prevTabIndex: number;
@@ -79,6 +80,7 @@ export interface AccountState {
   likedProducts: Product[];
   productLikesMetadata: Record<string, ProductLikesMetadataResponse>;
   likedProductPagination: number;
+  areLikedProductsReloading: boolean;
   areLikedProductsLoading: boolean;
   selectedLikedProduct: PricedProduct | undefined;
   selectedProductLikes: ProductLikesMetadataResponse | undefined;
@@ -92,9 +94,10 @@ export interface AccountState {
     lng: number;
   };
   addFriendsRadiusMeters: number;
-  addFriendsSexes: ('male' | 'female')[];
+  addFriendsSex: 'any' | 'male' | 'female';
   addFriendsPagination: number;
   hasMoreAddFriends: boolean;
+  areAddFriendsReloading: boolean;
   areAddFriendsLoading: boolean;
   addFriendAccounts: AccountDocument[];
   addFriendsScrollPosition: number | undefined;
@@ -164,7 +167,8 @@ export class AccountModel extends Model {
             region: '',
             phoneNumber: '',
           },
-          areOrdersLoading: true,
+          areOrdersReloading: false,
+          areOrdersLoading: false,
           editShippingFormErrors: {},
           activeTabId: '/account/likes',
           prevTabIndex: 0,
@@ -177,6 +181,7 @@ export class AccountModel extends Model {
           likedProducts: [],
           productLikesMetadata: {},
           likedProductPagination: 1,
+          areLikedProductsReloading: false,
           areLikedProductsLoading: false,
           selectedLikedProduct: undefined,
           selectedProductLikes: undefined,
@@ -190,9 +195,10 @@ export class AccountModel extends Model {
             lng: 0,
           },
           addFriendsRadiusMeters: 100000,
-          addFriendsSexes: [],
+          addFriendsSex: 'any',
           addFriendsPagination: 1,
           hasMoreAddFriends: true,
+          areAddFriendsReloading: false,
           areAddFriendsLoading: false,
           addFriendAccounts: [],
           addFriendsScrollPosition: undefined,
@@ -467,6 +473,19 @@ export class AccountModel extends Model {
     }
   }
 
+  public get areOrdersReloading(): boolean {
+    return this.store.getValue().areOrdersReloading;
+  }
+
+  public set areOrdersReloading(value: boolean) {
+    if (this.areOrdersReloading !== value) {
+      this.store.update((state) => ({
+        ...state,
+        areOrdersReloading: value,
+      }));
+    }
+  }
+
   public get areOrdersLoading(): boolean {
     return this.store.getValue().areOrdersLoading;
   }
@@ -563,6 +582,19 @@ export class AccountModel extends Model {
       this.store?.update((state) => ({
         ...state,
         likedProductPagination: value,
+      }));
+    }
+  }
+
+  public get areLikedProductsReloading(): boolean {
+    return this.store?.getValue().areLikedProductsReloading;
+  }
+
+  public set areLikedProductsReloading(value: boolean) {
+    if (this.areLikedProductsReloading !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        areLikedProductsReloading: value,
       }));
     }
   }
@@ -699,13 +731,13 @@ export class AccountModel extends Model {
     }
   }
 
-  public get addFriendsSexes(): ('male' | 'female')[] {
-    return this.store?.getValue().addFriendsSexes;
+  public get addFriendsSex(): 'any' | 'male' | 'female' {
+    return this.store?.getValue().addFriendsSex;
   }
 
-  public set addFriendsSexes(value: ('male' | 'female')[]) {
-    if (JSON.stringify(this.addFriendsSexes) !== JSON.stringify(value)) {
-      this.store?.update((state) => ({ ...state, addFriendsSexes: value }));
+  public set addFriendsSex(value: 'any' | 'male' | 'female') {
+    if (JSON.stringify(this.addFriendsSex) !== JSON.stringify(value)) {
+      this.store?.update((state) => ({ ...state, addFriendsSex: value }));
     }
   }
 
@@ -729,6 +761,19 @@ export class AccountModel extends Model {
   public set hasMoreAddFriends(value: boolean) {
     if (this.hasMoreAddFriends !== value) {
       this.store?.update((state) => ({ ...state, hasMoreAddFriends: value }));
+    }
+  }
+
+  public get areAddFriendsReloading(): boolean {
+    return this.store?.getValue().areAddFriendsReloading;
+  }
+
+  public set areAddFriendsReloading(value: boolean) {
+    if (this.areAddFriendsReloading !== value) {
+      this.store?.update((state) => ({
+        ...state,
+        areAddFriendsReloading: value,
+      }));
     }
   }
 

@@ -367,45 +367,45 @@ export default function AccountPublicDesktopComponent({
                     {t('message')}
                   </Button>
                 </div>
-              </div>
-              <div
-                className={[
-                  styles['tabs-container'],
-                  styles['tabs-container-desktop'],
-                ].join(' ')}
-              >
-                <Tabs
-                  flex={true}
-                  touchScreen={true}
-                  activeId={accountPublicProps.activeTabId}
-                  classNames={{
-                    nav: [styles['tab-nav'], styles['tab-nav-desktop']].join(
-                      ' '
-                    ),
-                    tabButton: [
-                      styles['tab-button'],
-                      styles['tab-button-desktop'],
-                    ].join(''),
-                    tabOutline: [
-                      styles['tab-outline'],
-                      styles['tab-outline-desktop'],
-                    ].join(' '),
-                  }}
-                  onChange={(id) => {
-                    AccountPublicController.updateActiveTabId(id);
-                    navigate({
-                      pathname: `${RoutePathsType.Account}/${id}/likes`,
-                      search: query.toString(),
-                    });
-                  }}
-                  type={'underlined'}
-                  tabs={[
-                    {
-                      id: RoutePathsType.AccountWithIdLikes,
-                      icon: <Line.FavoriteBorder size={24} />,
-                    },
-                  ]}
-                />
+                <div
+                  className={[
+                    styles['tabs-container'],
+                    styles['tabs-container-desktop'],
+                  ].join(' ')}
+                >
+                  <Tabs
+                    flex={true}
+                    touchScreen={true}
+                    activeId={accountPublicProps.activeTabId}
+                    classNames={{
+                      nav: [styles['tab-nav'], styles['tab-nav-desktop']].join(
+                        ' '
+                      ),
+                      tabButton: [
+                        styles['tab-button'],
+                        styles['tab-button-desktop'],
+                      ].join(''),
+                      tabOutline: [
+                        styles['tab-outline'],
+                        styles['tab-outline-desktop'],
+                      ].join(' '),
+                    }}
+                    onChange={(id) => {
+                      AccountPublicController.updateActiveTabId(id);
+                      navigate({
+                        pathname: `${RoutePathsType.Account}/${id}/likes`,
+                        search: query.toString(),
+                      });
+                    }}
+                    type={'underlined'}
+                    tabs={[
+                      {
+                        id: RoutePathsType.AccountWithIdLikes,
+                        icon: <Line.FavoriteBorder size={24} />,
+                      },
+                    ]}
+                  />
+                </div>
               </div>
               <div
                 className={[

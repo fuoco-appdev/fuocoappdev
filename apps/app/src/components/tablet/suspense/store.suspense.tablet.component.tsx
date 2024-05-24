@@ -73,8 +73,8 @@ export function StoreSuspenseTabletComponent(): JSX.Element {
           </div>
           <div
             className={[
-              styles['scroll-container'],
-              styles['scroll-container-tablet'],
+              styles['scroll-container-skeleton'],
+              styles['scroll-container-skeleton-tablet'],
             ].join(' ')}
           >
             {[1, 2, 3, 4, 5, 6, 7, 8].map(() => (

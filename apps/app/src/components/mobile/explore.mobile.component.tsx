@@ -25,7 +25,6 @@ export default function ExploreMobileComponent({
   selectedPoint,
   setMapStyleLoaded,
   setSelectedPoint,
-  onScroll,
   onScrollLoad,
   onStockLocationClicked,
   onGoToStore,
@@ -192,6 +191,7 @@ export default function ExploreMobileComponent({
                 loadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' ')
               }}
               touchScreen={true}
+              loadingHeight={56}
               reloadComponent={
                 <img
                   src={'../assets/svg/ring-resize-dark.svg'}
@@ -199,6 +199,7 @@ export default function ExploreMobileComponent({
                 />
               }
               isReloading={exploreProps.areSearchedStockLocationsReloading}
+              isLoadable={exploreProps.hasMoreSearchedStockLocations}
               onReload={() => ExploreController.reloadStockLocationsAsync()}
               loadComponent={
                 <img
@@ -255,7 +256,7 @@ export default function ExploreMobileComponent({
                     );
                   }
                 )}
-                {!exploreProps.areSearchedStockLocationsLoading &&
+                {(!exploreProps.areSearchedStockLocationsLoading && !exploreProps.areSearchedStockLocationsReloading) &&
                   exploreProps.searchedStockLocations.length <= 0 && (
                     <div
                       className={[

@@ -1,6 +1,5 @@
+import { useCookies } from 'react-cookie';
 import { Navigate } from 'react-router-dom';
-import { useObservable } from '@ngneat/use-observable';
-import WindowController from '../controllers/window.controller';
 import { RoutePathsType } from '../route-paths';
 
 export interface AuthenticatedProps {
@@ -10,8 +9,14 @@ export interface AuthenticatedProps {
 export function AuthenticatedComponent({
   children,
 }: AuthenticatedProps): React.ReactElement {
-  const [props] = useObservable(WindowController.model.store);
-  return props.isAuthenticated ? (
+  const [cookies] = useCookies();
+  const accessToken =
+    Object.keys(cookies).includes('sb-access-token') &&
+    cookies['sb-access-token'];
+  const refreshToken =
+    Object.keys(cookies).includes('sb-refresh-token') &&
+    cookies['sb-refresh-token'];
+  return accessToken && refreshToken ? (
     children
   ) : (
     <Navigate to={RoutePathsType.Signin} />

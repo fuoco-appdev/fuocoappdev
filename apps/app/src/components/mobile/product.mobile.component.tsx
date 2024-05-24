@@ -25,7 +25,6 @@ import { MedusaProductTypeNames } from '../../types/medusa.type';
 import { ProductResponsiveProps } from '../product.component';
 import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 import StockLocationItemComponent from '../stock-location-item.component';
-;
 
 const ReactMarkdown = loadable(
   async () => {
@@ -1212,6 +1211,9 @@ export default function ProductMobileComponent({
                                 styles['search-input'],
                                 styles['search-input-mobile'],
                               ].join(' '),
+                              formLayout: {
+                                root: styles['search-input-form-layout-root']
+                              }
                             }}
                             placeholder={t('search') ?? ''}
                             icon={<Line.Search size={24} color={'#2A2A5F'} />}

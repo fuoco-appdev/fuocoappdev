@@ -151,7 +151,6 @@ class StoreController extends Controller {
   public async reloadProductsAsync(): Promise<void> {
     this._model.selectedTab = undefined;
     this._model.pagination = 1;
-    this._model.products = [];
     this._model.pricedProducts = {};
     await this.searchAsync(this._model.input, 'reloading', 0, this._limit);
   }

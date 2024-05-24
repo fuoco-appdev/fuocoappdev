@@ -59,8 +59,6 @@ class AccountNotificationService extends Service {
       if (error) {
         console.error(error);
       }
-
-      console.log(status);
     });
   }
 

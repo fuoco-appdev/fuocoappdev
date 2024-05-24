@@ -37,7 +37,6 @@ export default function AccountTabletComponent({
   setIsCropImageModalVisible,
   onUsernameChanged,
   onCompleteProfile,
-  onScroll,
   onScrollLoad,
   onAvatarChanged,
   onLikesClick,
@@ -157,7 +156,6 @@ export default function AccountTabletComponent({
           ].join(' ')}
           style={{ height: window.innerHeight }}
           onScroll={(e) => {
-            onScroll(e);
             const elementHeight = topBarRef.current?.clientHeight ?? 0;
             const scrollTop = e.currentTarget.scrollTop;
             if (prevPreviewScrollTop >= scrollTop) {

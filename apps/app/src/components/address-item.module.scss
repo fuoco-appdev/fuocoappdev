@@ -1,13 +1,16 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
+.root {
+    background-color: #fff;
+    border-radius: 6px;
+}
+
 .root-desktop {
     & .container-desktop {
-        padding: $mp-2 $mp-6;
+        padding: $mp-4 $mp-6;
         width: 100%;
         
         & .details-desktop {
-            display: -webkit-box;
-            display: -ms-flexbox;
             display: flex;
             margin-bottom: $mp-1;
         
@@ -26,28 +29,14 @@
             }
         
             & .right-details-container-desktop {
-                display: -webkit-box;
-                display: -ms-flexbox;
                 display: flex;
-                -webkit-box-orient: horizontal;
-                -webkit-box-direction: normal;
-                    -ms-flex-direction: row;
-                        flex-direction: row;
-                -webkit-box-pack: right;
-                    -ms-flex-pack: right;
-                        justify-content: right;
-                -webkit-box-flex: 1;
-                    -ms-flex: 1;
-                        flex: 1;
+                flex-direction: row;
+                justify-content: right;
+                flex: 1;
 
                 & .right-details-content-desktop {
-                    display: -webkit-box;
-                    display: -ms-flexbox;
                     display: flex;
-                    -webkit-box-orient: horizontal;
-                    -webkit-box-direction: normal;
-                        -ms-flex-direction: row;
-                            flex-direction: row;
+                    flex-direction: row;
                     gap: $mp-2;
                 }
             
@@ -58,12 +47,10 @@
 
 .root-mobile {
     & .container-mobile {
-        padding: $mp-2 0;
+        padding: $mp-2 $mp-4;
         width: 100%;
         
         & .details-mobile {
-            display: -webkit-box;
-            display: -ms-flexbox;
             display: flex;
             margin-bottom: $mp-1;
         
@@ -82,28 +69,14 @@
             }
         
             & .right-details-container-mobile {
-                display: -webkit-box;
-                display: -ms-flexbox;
                 display: flex;
-                -webkit-box-orient: horizontal;
-                -webkit-box-direction: normal;
-                    -ms-flex-direction: row;
-                        flex-direction: row;
-                -webkit-box-pack: right;
-                    -ms-flex-pack: right;
-                        justify-content: right;
-                -webkit-box-flex: 1;
-                    -ms-flex: 1;
-                        flex: 1;
+                flex-direction: row;
+                justify-content: right;
+                flex: 1;
 
                 & .right-details-content-mobile {
-                    display: -webkit-box;
-                    display: -ms-flexbox;
                     display: flex;
-                    -webkit-box-orient: horizontal;
-                    -webkit-box-direction: normal;
-                        -ms-flex-direction: row;
-                            flex-direction: row;
+                    flex-direction: row;
                 }
             
                 }
@@ -117,8 +90,6 @@
         width: 100%;
         
         & .details-tablet {
-            display: -webkit-box;
-            display: -ms-flexbox;
             display: flex;
             margin-bottom: $mp-1;
         
@@ -137,28 +108,14 @@
             }
         
             & .right-details-container-tablet {
-                display: -webkit-box;
-                display: -ms-flexbox;
                 display: flex;
-                -webkit-box-orient: horizontal;
-                -webkit-box-direction: normal;
-                    -ms-flex-direction: row;
-                        flex-direction: row;
-                -webkit-box-pack: right;
-                    -ms-flex-pack: right;
-                        justify-content: right;
-                -webkit-box-flex: 1;
-                    -ms-flex: 1;
-                        flex: 1;
+                flex-direction: row;
+                justify-content: right;
+                flex: 1;
 
                 & .right-details-content-tablet {
-                    display: -webkit-box;
-                    display: -ms-flexbox;
                     display: flex;
-                    -webkit-box-orient: horizontal;
-                    -webkit-box-direction: normal;
-                        -ms-flex-direction: row;
-                            flex-direction: row;
+                    flex-direction: row;
                 }
             
                 }

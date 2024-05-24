@@ -10,6 +10,7 @@ export interface NotificationsState {
   hasMoreNotifications: boolean;
   scrollPosition: number | undefined;
   isLoading: boolean;
+  isReloading: boolean;
 }
 
 export class NotificationsModel extends Model {
@@ -24,6 +25,7 @@ export class NotificationsModel extends Model {
           hasMoreNotifications: true,
           scrollPosition: 0,
           isLoading: false,
+          isReloading: false,
         }),
       ),
     );
@@ -86,6 +88,16 @@ export class NotificationsModel extends Model {
   public set isLoading(value: boolean) {
     if (this.isLoading !== value) {
       this.store.update((state) => ({ ...state, isLoading: value }));
+    }
+  }
+
+  public get isReloading(): boolean {
+    return this.store.getValue().isReloading;
+  }
+
+  public set isReloading(value: boolean) {
+    if (this.isReloading !== value) {
+      this.store.update((state) => ({ ...state, isReloading: value }));
     }
   }
 }

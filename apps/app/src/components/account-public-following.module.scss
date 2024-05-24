@@ -4,76 +4,6 @@
     width: 100%;
     min-width: 100%;
 
-    & .search-container {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-orient: horizontal;
-        -webkit-box-direction: normal;
-            -ms-flex-direction: row;
-                flex-direction: row;
-        width: 100%;
-        height: -webkit-fit-content;
-        height: -moz-fit-content;
-        height: fit-content;
-        border-color: transparent !important;
-
-        & .search-input-root {
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            -webkit-box-orient: vertical;
-            -webkit-box-direction: normal;
-                -ms-flex-direction: column;
-                    flex-direction: column;
-            -webkit-box-flex: 1;
-                -ms-flex: 1;
-                    flex: 1;
-            
-            & .search-input-container {
-                background-color: transparent;
-                border-color: $brand-900;
-                border-radius: $rounded-full;
-            }
-    
-            & .search-input-container-skeleton {
-                margin-bottom: $mp-4;
-            }
-    
-            & .search-input {
-                color: $brand-900;
-            }
-    
-            & .search-input::-webkit-input-placeholder {
-                color: $brand-900;
-            }
-    
-            & .search-input::-moz-placeholder {
-                color: $brand-900;
-            }
-    
-            & .search-input:-ms-input-placeholder {
-                color: $brand-900;
-            }
-    
-            & .search-input::-ms-input-placeholder {
-                color: $brand-900;
-            }
-    
-            & .search-input::placeholder {
-                color: $brand-900;
-            }
-    
-            & .search-input:-ms-input-placeholder {
-                color: $brand-900;
-            }
-    
-            & .search-input::-ms-input-placeholder {
-                color: $brand-900;
-            }
-        }
-    }
-
     & .title {
         color: $brand-900;
         font-size: $font-size-sm;
@@ -84,9 +14,6 @@
         width: 100%;
         display: flex;
         flex-direction: column;
-        overflow-y: auto;
-        scroll-behavior: smooth;
-        overscroll-behavior: none;
 
         & .loading-ring {
             width: 100%;
@@ -119,26 +46,7 @@
 .root-desktop {
     height: 100%;
     min-height: 100%;
-    padding-top: $mp-6;
-
-    & .search-container-desktop {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-orient: horizontal;
-        -webkit-box-direction: normal;
-            -ms-flex-direction: row;
-                flex-direction: row;
-        -webkit-box-pack: center;
-            -ms-flex-pack: center;
-                justify-content: center;
-        padding-left: $mp-4;
-        padding-right: $mp-4;
-
-        & .search-input-root-desktop {
-            max-width: 556px;
-        }
-    }
+    padding-top: 2px;
 
     & .title-desktop {
         padding: $mp-4 $mp-6;
@@ -148,26 +56,7 @@
 .root-tablet {
     height: 100%;
     min-height: 100%;
-    padding-top: $mp-6;
-
-    & .search-container-tablet {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-orient: horizontal;
-        -webkit-box-direction: normal;
-            -ms-flex-direction: row;
-                flex-direction: row;
-        -webkit-box-pack: center;
-            -ms-flex-pack: center;
-                justify-content: center;
-        padding-left: $mp-4;
-        padding-right: $mp-4;
-
-        & .search-input-root-tablet {
-            max-width: 556px;
-        }
-    }
+    padding-top: 2px;
 
     & .title-tablet {
         padding: $mp-4 $mp-6;
@@ -177,16 +66,7 @@
 .root-mobile {
     height: 100%;
     min-height: 100%;
-    padding-top: $mp-4;
-
-    & .search-container-mobile {
-        padding-left: $mp-4;
-        padding-right: $mp-4;
-
-        & .search-input-root-mobile {
-        
-        }
-    }
+    padding-top: 2px;
 
     & .title-mobile {
         padding: $mp-4;

@@ -2,6 +2,10 @@
 
 .root {
     & .address-list-container {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+
         & .no-addresses-text {
             color: $brand-900;
             font-size: $font-size-sm;
@@ -13,7 +17,7 @@
     & .addresses-add-button-container {
         position: fixed;
         display: flex;
-        top: 0;
+        top: -56px;
         left: 0;
         pointer-events: none;
         width: 100%;
@@ -23,8 +27,6 @@
 
 .root-desktop {  
     & .address-list-container-desktop {
-        padding: $mp-6 0;
-
         & .no-addresses-text-desktop {
         }
     }
@@ -38,8 +40,6 @@
 
 .root-tablet { 
     & .address-list-container-tablet {
-        padding: $mp-6 0;
-
         & .no-addresses-text-tablet {
         }
     }
@@ -53,8 +53,6 @@
 
 .root-mobile { 
     & .address-list-container-mobile {
-        padding: $mp-4;
-
         & .no-addresses-text-mobile {
         }
     }

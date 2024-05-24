@@ -29,7 +29,8 @@
 }
 
 .input-container {
-    border-color: $brand-900 !important;
+    border-color: transparent !important;
+    background-color: rgba(42, 42, 95, .05);
 }
 
 .input-phone-number-dropdown {
@@ -47,7 +48,8 @@
 }
 
 .listbox {
-    border-color: $brand-900 !important;
+    border-color: transparent !important;
+    background-color: rgba(42, 42, 95, .05);
 }
 
 .listbox-chevron {

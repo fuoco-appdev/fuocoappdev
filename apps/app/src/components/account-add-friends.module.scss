@@ -1,13 +1,18 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 
 .root {
+    display: flex;
+    gap: 2px;
     width: 100%;
     min-width: 100%;
+    height: 100%;
 
     & .side-bar-container {
         display: flex;
         flex-direction: column;
         gap: $mp-4;
+        background-color: #fff;
+        border-radius: 6px;
     }
 
     & .filter-title {
@@ -18,7 +23,7 @@
     }
 
     & .scroll-container {
-        width: 100%;
+
     }
 
     & .title {
@@ -31,7 +36,7 @@
         width: 100%;
         display: flex;
         flex-direction: column;
-        border-bottom: 1px solid rgba(42, 42, 95, .6);
+        border-bottom: 1px solid rgba(42, 42, 95, .16);
         padding-bottom: $mp-4;
     }
 
@@ -39,9 +44,6 @@
         width: 100%;
         display: flex;
         flex-direction: column;
-        overflow-y: auto;
-        scroll-behavior: smooth;
-        overscroll-behavior: none;
 
         & .loading-ring {
             width: 100%;
@@ -84,8 +86,8 @@
         flex: 1;
 
         & .search-input-container {
-            background-color: transparent;
-            border-color: $brand-900;
+            border-color: transparent !important;
+            background-color: rgba(42, 42, 95, .05);
             border-radius: $rounded-full;
         }
 
@@ -132,12 +134,11 @@
     flex-direction: row;
     height: 100%;
     min-height: 100%;
+    padding-top: calc(56px + 2px);
 
     & .side-bar-container-desktop {
-        padding: 0 $mp-4;
-        padding-top: calc(56px + 16px);
+        padding: $mp-4;
         min-width: 356px;
-        border-right: 1px solid rgba(42, 42, 95, .6);
     }
 
     & .filter-title-desktop {
@@ -146,7 +147,9 @@
     }
 
     & .scroll-container-desktop {
-        padding-top: calc(56px + 24px);
+        width: 100%;
+        background-color: #fff;
+        border-radius: 6px;
 
         & .title-desktop {
             padding: $mp-4 $mp-6;
@@ -198,20 +201,21 @@
 }
 
 .root-mobile {
+    flex-direction: column;
     height: 100%;
     min-height: 100%;
-    padding-top: $mp-4;
 
     & .search-container-mobile {
+        position: absolute;
         padding-left: $mp-4;
         padding-right: $mp-4;
         gap: $mp-4;
+        background-color: #fff;
+        border-radius: 6px;
+        padding-top: $mp-4;
+        z-index: 6;
 
         & .search-input-root-mobile {}
-    }
-
-    & .title-mobile {
-        padding: 0 $mp-4;
     }
 }
 
@@ -223,13 +227,39 @@
 }
 
 .scroll-container-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
     & .title-mobile {
-        padding: $mp-4;
+        padding: $mp-2 $mp-4;
+        background-color: #fff;
+        border-radius: 6px;
     }
 }
 
 .dropdown-touchscreen-overlay {
     background-color: rgba(42, 42, 95, .15) !important;
+}
+
+.scroll-root {
+
+}
+
+.scroll-root-tablet {
+   
+}
+
+.scroll-root-mobile {
+  padding-top: calc(78px + 2px);
+}
+
+.scroll-content-mobile {
+
+}
+
+.scroll-load-container {
+    padding: $mp-4;
 }
 
 .input-root {}
@@ -251,7 +281,8 @@
 }
 
 .input-container {
-    border-color: $brand-900 !important;
+    border-color: transparent !important;
+    background-color: rgba(42, 42, 95, .05);
 }
 
 .input-phone-number-dropdown {
@@ -277,7 +308,8 @@
 }
 
 .filter-button {
-    background-color: $brand-700 !important;
+    background-color: transparent !important;
+    color: $brand-900;
 }
 
 .slider-thumb:hover {

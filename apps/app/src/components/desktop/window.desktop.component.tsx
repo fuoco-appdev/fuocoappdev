@@ -13,6 +13,7 @@ import {
 import { Customer } from '@medusajs/medusa';
 import { LanguageCode } from 'iso-639-1';
 import * as React from 'react';
+import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
@@ -32,6 +33,8 @@ export default function WindowDesktopComponent({
   exploreProps,
   productProps,
   isLanguageOpen,
+  showDeleteModal,
+  setShowDeleteModal,
   setIsLanguageOpen,
   onSelectLocation,
   onCancelLocation,
@@ -291,7 +294,7 @@ export default function WindowDesktopComponent({
                     }}
                     onClick={() =>
                       navigate({
-                        pathname: RoutePathsType.AccountSettingsAccount,
+                        pathname: RoutePathsType.SettingsAccount,
                         search: query.toString(),
                       })
                     }
@@ -299,7 +302,7 @@ export default function WindowDesktopComponent({
                     type={'text'}
                     rounded={true}
                     size={'tiny'}
-                    icon={!windowProps.activeRoute?.startsWith(RoutePathsType.AccountSettings) ? (
+                    icon={!windowProps.activeRoute?.startsWith(RoutePathsType.Settings) ? (
                       <Line.Settings
                         size={24}
                         color={'rgba(252, 245, 227, .8)'}
@@ -559,7 +562,7 @@ export default function WindowDesktopComponent({
                   onClick={() => {
                     if (
                       windowProps.activeRoute?.startsWith(
-                        RoutePathsType.AccountSettings
+                        RoutePathsType.Settings
                       )
                     ) {
                       setTimeout(
@@ -643,7 +646,7 @@ export default function WindowDesktopComponent({
                     </div>
                   )}
                 {windowProps.activeRoute?.startsWith(
-                  RoutePathsType.AccountSettings
+                  RoutePathsType.Settings
                 ) && (
                     <>
                       <Line.Settings size={24} />
@@ -751,74 +754,42 @@ export default function WindowDesktopComponent({
                 ].join(' ')}
               >
                 {windowProps.activeRoute?.startsWith(
-                  RoutePathsType.AccountSettings
+                  RoutePathsType.Settings
                 ) && (
-                    <Button
-                      classNames={{
-                        button: styles['button'],
-                      }}
-                      rippleProps={{
-                        color: 'rgba(252, 245, 227, .35)',
-                      }}
-                      rounded={true}
-                      onClick={() => AccountController.logoutAsync()}
-                      floatingLabel={t('signOut') ?? ''}
-                      type={'text'}
-                      icon={<Line.Logout size={24} color={'#2A2A5F'} />}
-                    />
+                    <>
+                      <Button
+                        classNames={{
+                          button: styles['button'],
+                        }}
+                        rippleProps={{
+                          color: 'rgba(252, 245, 227, .35)',
+                        }}
+                        type={'text'}
+                        rounded={true}
+                        onClick={() => setShowDeleteModal(true)}
+                        floatingLabel={t('deleteAccount') ?? ''}
+                        icon={<Line.Delete size={24} color={'#2A2A5F'} />}
+                      />
+                      <Button
+                        classNames={{
+                          button: styles['button'],
+                        }}
+                        rippleProps={{
+                          color: 'rgba(252, 245, 227, .35)',
+                        }}
+                        rounded={true}
+                        onClick={() => AccountController.logoutAsync()}
+                        floatingLabel={t('signOut') ?? ''}
+                        type={'text'}
+                        icon={<Line.Logout size={24} color={'#2A2A5F'} />}
+                      />
+                    </>
                   )}
               </div>
             </div>}
             <Outlet />
           </div>
         </div>
-        <Modal
-          classNames={{
-            overlay: [
-              styles['modal-overlay'],
-              styles['modal-overlay-desktop'],
-            ].join(' '),
-            modal: [styles['modal'], styles['modal-desktop']].join(' '),
-            text: [styles['modal-text'], styles['modal-text-desktop']].join(
-              ' '
-            ),
-            title: [styles['modal-title'], styles['modal-title-desktop']].join(
-              ' '
-            ),
-            description: [
-              styles['modal-description'],
-              styles['modal-description-desktop'],
-            ].join(' '),
-            footerButtonContainer: [
-              styles['modal-footer-button-container'],
-              styles['modal-footer-button-container-desktop'],
-              styles['modal-address-footer-button-container-desktop'],
-            ].join(' '),
-            cancelButton: {
-              button: [
-                styles['modal-cancel-button'],
-                styles['modal-cancel-button-desktop'],
-              ].join(' '),
-            },
-            confirmButton: {
-              button: [
-                styles['modal-confirm-button'],
-                styles['modal-confirm-button-desktop'],
-              ].join(' '),
-            },
-          }}
-          title={t('selectLocation') ?? ''}
-          description={
-            t('selectLocationDescription', {
-              address: `${windowProps.queryInventoryLocation?.company}, ${windowProps.queryInventoryLocation?.placeName}`,
-            }) ?? ''
-          }
-          confirmText={t('select') ?? ''}
-          cancelText={t('cancel') ?? ''}
-          visible={windowProps.queryInventoryLocation !== undefined}
-          onConfirm={onSelectLocation}
-          onCancel={onCancelLocation}
-        />
         <ToastOverlay
           classNames={{
             root: [
@@ -859,6 +830,105 @@ export default function WindowDesktopComponent({
           align={'right'}
           banners={windowProps.banner ? [windowProps.banner] : []}
         />
+        {ReactDOM.createPortal(
+          <>
+            <Modal
+              classNames={{
+                overlay: [
+                  styles['modal-overlay'],
+                  styles['modal-overlay-desktop'],
+                ].join(' '),
+                modal: [styles['modal'], styles['modal-desktop']].join(' '),
+                text: [styles['modal-text'], styles['modal-text-desktop']].join(
+                  ' '
+                ),
+                title: [styles['modal-title'], styles['modal-title-desktop']].join(
+                  ' '
+                ),
+                description: [
+                  styles['modal-description'],
+                  styles['modal-description-desktop'],
+                ].join(' '),
+                footerButtonContainer: [
+                  styles['modal-footer-button-container'],
+                  styles['modal-footer-button-container-desktop'],
+                  styles['modal-address-footer-button-container-desktop'],
+                ].join(' '),
+                cancelButton: {
+                  button: [
+                    styles['modal-cancel-button'],
+                    styles['modal-cancel-button-desktop'],
+                  ].join(' '),
+                },
+                confirmButton: {
+                  button: [
+                    styles['modal-confirm-button'],
+                    styles['modal-confirm-button-desktop'],
+                  ].join(' '),
+                },
+              }}
+              title={t('selectLocation') ?? ''}
+              description={
+                t('selectLocationDescription', {
+                  address: `${windowProps.queryInventoryLocation?.company}, ${windowProps.queryInventoryLocation?.placeName}`,
+                }) ?? ''
+              }
+              confirmText={t('select') ?? ''}
+              cancelText={t('cancel') ?? ''}
+              visible={windowProps.queryInventoryLocation !== undefined}
+              onConfirm={onSelectLocation}
+              onCancel={onCancelLocation}
+            />
+            <Modal
+              title={t('deleteYourAccount') ?? ''}
+              description={t('deleteYourAccountDescription') ?? ''}
+              confirmText={t('delete') ?? ''}
+              cancelText={t('cancel') ?? ''}
+              variant={'danger'}
+              size={'small'}
+              classNames={{
+                overlay: [
+                  styles['modal-overlay'],
+                  styles['modal-overlay-desktop'],
+                ].join(' '),
+                modal: [styles['modal'], styles['modal-desktop']].join(' '),
+                text: [styles['modal-text'], styles['modal-text-desktop']].join(
+                  ' '
+                ),
+                title: [styles['modal-title'], styles['modal-title-desktop']].join(
+                  ' '
+                ),
+                description: [
+                  styles['modal-description'],
+                  styles['modal-description-desktop'],
+                ].join(' '),
+                footerButtonContainer: [
+                  styles['modal-footer-button-container'],
+                  styles['modal-footer-button-container-desktop'],
+                ].join(' '),
+                cancelButton: {
+                  button: [
+                    styles['modal-cancel-button'],
+                    styles['modal-cancel-button-desktop'],
+                  ].join(' '),
+                },
+                confirmButton: {
+                  button: [
+                    styles['modal-confirm-button'],
+                    styles['modal-confirm-button-desktop'],
+                  ].join(' '),
+                },
+              }}
+              visible={showDeleteModal}
+              onCancel={() => setShowDeleteModal(false)}
+              onConfirm={async () => {
+                await AccountController.deleteAsync();
+                setShowDeleteModal(false);
+              }}
+            ></Modal>
+          </>,
+          document.body
+        )}
       </div>
     </ResponsiveDesktop>
   );

@@ -2,14 +2,13 @@
 
 .root {
     display: flex;
-    flex-direction: column;
+    width: 100%;
 
     & .bottom-content-container {
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
         flex: 1;
-        padding: 0 $mp-4;
     }
 
     & .profile-form-container {}
@@ -23,11 +22,17 @@
 }
 
 .root-desktop {
-    min-height: 60vh;
-    width: 500px;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: $mp-4;
+    padding: $mp-6;
 
     & .setting-container-desktop {
         padding: $mp-6;
+        background-color: #fff;
+        border-radius: 6px;
+        height: fit-content;
+        min-width: 500px;
 
         & .bottom-content-container-desktop {}
     }
@@ -63,9 +68,15 @@
     height: 100%;
     width: 100%;
     min-width: 100%;
-    padding: $mp-4 0;
+    flex-direction: column;
+    gap: 2px;
 
     & .setting-container-mobile {
+        padding: $mp-4 0;
+        background-color: #fff;
+        border-radius: 6px;
+        height: fit-content;
+
         & .bottom-content-container-mobile {}
     }
 
@@ -74,17 +85,18 @@
     }
 
     & .save-button-container-mobile {
+        margin-bottom: $mp-4;
         padding: 0 $mp-4;
-        margin-bottom: $mp-10;
     }
 }
 
 .accordion-top-bar {
     margin: 0;
+    padding: 0 $mp-4;
 }
 
 .accordion-top-bar-mobile {
-    padding: 0 $mp-4;
+
 }
 
 .accordion-panel {
@@ -123,7 +135,8 @@
 }
 
 .auth-input-container {
-    border-color: $brand-900 !important;
+    border-color: transparent !important;
+    background-color: rgba(42, 42, 95, .05);
 }
 
 .auth-button {
@@ -143,10 +156,11 @@
 .setting-button-container {
     width: 100%;
     height: 48px;
+    padding: 0 $mp-4;
 }
 
 .setting-button-container-mobile {
-    padding: 0 $mp-4;
+ 
 }
 
 .setting-button-content {

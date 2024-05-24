@@ -88,13 +88,6 @@ export default function AccountLikesDesktopComponent({
               />
             );
           })}
-          <img
-            src={'../assets/svg/ring-resize-dark.svg'}
-            className={styles['loading-ring']}
-            style={{
-              maxHeight: accountProps.areLikedProductsLoading ? 24 : 0,
-            }}
-          />
           {!accountProps.areLikedProductsLoading &&
             accountProps.likedProducts.length <= 0 && (
               <div

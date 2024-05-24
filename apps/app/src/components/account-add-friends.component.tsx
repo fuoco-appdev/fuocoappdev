@@ -23,41 +23,14 @@ export interface AccountAddFriendsResponsiveProps {
   accountProps: AccountState;
   locationDropdownOpen: boolean;
   setLocationDropdownOpen: (value: boolean) => void;
-  onAddFriendsScroll: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
-  onAddFriendsLoad: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
 }
 
 export default function AccountAddFriendsComponent(): JSX.Element {
   const [accountProps] = useObservable(AccountController.model.store);
   const [locationDropdownOpen, setLocationDropdownOpen] = React.useState<boolean>(false);
-  const scrollOffsetTriggerGap = 16;
-
-  const onAddFriendsScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    const scrollTop = e.currentTarget?.scrollTop ?? 0;
-    const scrollHeight = e.currentTarget?.scrollHeight ?? 0;
-    const clientHeight = e.currentTarget?.clientHeight ?? 0;
-    const scrollOffset = scrollHeight - scrollTop - clientHeight;
-
-    if (
-      scrollOffset > scrollOffsetTriggerGap ||
-      !AccountController.model.hasMoreAddFriends
-    ) {
-      return;
-    }
-
-    AccountController.onNextAddFriendsScrollAsync();
-  };
-
-  const onAddFriendsLoad = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
-    if (accountProps.addFriendsScrollPosition) {
-      e.currentTarget.scrollTop =
-        accountProps.addFriendsScrollPosition as number;
-      AccountController.updateAddFriendsScrollPosition(undefined);
-    }
-  };
 
   React.useEffect(() => {
-    AccountController.loadFollowRequestsAndFriendsAccounts();
+    AccountController.loadFollowRequestsAndFriendsAccountsAsync();
   }, []);
 
   const suspenceComponent = (
@@ -106,22 +79,16 @@ export default function AccountAddFriendsComponent(): JSX.Element {
             accountProps={accountProps}
             locationDropdownOpen={locationDropdownOpen}
             setLocationDropdownOpen={setLocationDropdownOpen}
-            onAddFriendsLoad={onAddFriendsLoad}
-            onAddFriendsScroll={onAddFriendsScroll}
           />
           <AccountAddFriendsTabletComponent
             accountProps={accountProps}
             locationDropdownOpen={locationDropdownOpen}
             setLocationDropdownOpen={setLocationDropdownOpen}
-            onAddFriendsLoad={onAddFriendsLoad}
-            onAddFriendsScroll={onAddFriendsScroll}
           />
           <AccountAddFriendsMobileComponent
             accountProps={accountProps}
             locationDropdownOpen={locationDropdownOpen}
             setLocationDropdownOpen={setLocationDropdownOpen}
-            onAddFriendsLoad={onAddFriendsLoad}
-            onAddFriendsScroll={onAddFriendsScroll}
           />
         </AuthenticatedComponent>
       </React.Suspense>

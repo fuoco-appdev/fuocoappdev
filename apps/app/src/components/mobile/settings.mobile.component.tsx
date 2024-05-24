@@ -4,20 +4,20 @@ import Ripples from 'react-ripples';
 import { Outlet, useNavigate } from 'react-router-dom';
 import AccountController from '../../controllers/account.controller';
 import { RoutePathsType, useQuery } from '../../route-paths';
-import { AccountSettingsResponsiveProps } from '../account-settings.component';
-import styles from '../account-settings.module.scss';
 import { ResponsiveMobile } from '../responsive.component';
+import { SettingsResponsiveProps } from '../settings.component';
+import styles from '../settings.module.scss';
 
-export default function AccountSettingsMobileComponent({
+export default function SettingsMobileComponent({
   windowProps,
-}: AccountSettingsResponsiveProps): JSX.Element {
+}: SettingsResponsiveProps): JSX.Element {
   const navigate = useNavigate();
   const query = useQuery();
   const { t } = useTranslation();
 
   return (
     <ResponsiveMobile>
-      {windowProps.activeRoute === RoutePathsType.AccountSettings ? (
+      {windowProps.activeRoute === RoutePathsType.Settings ? (
         <div className={[styles['root'], styles['root-mobile']].join(' ')}>
           <Ripples
             className={[
@@ -29,7 +29,7 @@ export default function AccountSettingsMobileComponent({
               setTimeout(
                 () =>
                   navigate({
-                    pathname: RoutePathsType.AccountSettingsAccount,
+                    pathname: RoutePathsType.SettingsAccount,
                     search: query.toString(),
                   }),
                 75

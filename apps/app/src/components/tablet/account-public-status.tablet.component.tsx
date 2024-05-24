@@ -15,8 +15,8 @@ export default function AccountPublicStatusTabletComponent({
   accountPublicProps,
   followerCount,
   followingCount,
-  onScroll,
-  onLoad,
+  onScrollLoad,
+  onScrollReload,
 }: AccountFollowersFollowingResponsiveProps): JSX.Element {
   const scrollContainerRef = React.createRef<HTMLDivElement>();
   const navigate = useNavigate();
@@ -32,8 +32,6 @@ export default function AccountPublicStatusTabletComponent({
             styles['scroll-container-tablet'],
           ].join(' ')}
           style={{ height: window.innerHeight }}
-          onScroll={onScroll}
-          onLoad={onLoad}
           ref={scrollContainerRef}
         >
           {followerCount && followingCount && (

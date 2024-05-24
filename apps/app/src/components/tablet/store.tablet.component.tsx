@@ -49,7 +49,6 @@ export default function StoreTabletComponent({
   setSelectedRegionId,
   setSelectedSalesLocationId,
   setVariantQuantities,
-  onPreviewsScroll,
   onPreviewsLoad,
   onAddToCart,
   onProductPreviewAddToCart,
@@ -250,7 +249,9 @@ export default function StoreTabletComponent({
                 className={styles['loading-ring']}
               />
             }
+            loadingHeight={56}
             isReloading={storeProps.isReloading}
+            isLoadable={storeProps.hasMorePreviews}
             onReload={() => StoreController.reloadProductsAsync()}
             loadComponent={
               <img

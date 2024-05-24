@@ -40,32 +40,32 @@ export default function AccountNotificationItemDesktopComponent({ notification, 
                             )}
                         >
                             {notification.eventName === 'account.accepted' && (
-                                <div
+                                <span
                                     className={[
                                         styles['message-content'],
                                         styles['message-content-desktop'],
                                     ].join(' ')}
                                 >
-                                    <div className={[styles['message-bold']].join(' ')}>
+                                    <span className={[styles['message-bold']].join(' ')}>
                                         {account?.username}
-                                    </div>
+                                    </span>
                                     &nbsp;
                                     {t('accountFollowerAcceptedDescription')}
-                                </div>
+                                </span>
                             )}
                             {notification.eventName === 'account.following' && (
-                                <div
+                                <span
                                     className={[
                                         styles['message-content'],
                                         styles['message-content-desktop'],
                                     ].join(' ')}
                                 >
-                                    <div className={[styles['message-bold']].join(' ')}>
+                                    <span className={[styles['message-bold']].join(' ')}>
                                         {account?.username}
-                                    </div>
+                                    </span>
                                     &nbsp;
                                     {t('accountFollowerFollowingDescription')}
-                                </div>
+                                </span>
                             )}
                         </div>
                         <div

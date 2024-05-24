@@ -61,14 +61,12 @@ class ExploreController extends Controller {
 
   public async loadStockLocationsAsync(): Promise<void> {
     this._model.searchedStockLocationsPagination = 1;
-    this._model.searchedStockLocations = [];
     this._model.hasMoreSearchedStockLocations = true;
     await this.searchStockLocationsAsync(this._model.input, 'loading', 0, this._limit);
   }
 
   public async reloadStockLocationsAsync(): Promise<void> {
     this._model.searchedStockLocationsPagination = 1;
-    this._model.searchedStockLocations = [];
     this._model.hasMoreSearchedStockLocations = true;
     await this.searchStockLocationsAsync(this._model.input, 'reloading', 0, this._limit);
   }
@@ -194,7 +192,7 @@ class ExploreController extends Controller {
     limit: number = 10,
     force: boolean = false,
   ): Promise<void> {
-    if (!force && this._model.areSearchedStockLocationsLoading) {
+    if (!force && (this._model.areSearchedStockLocationsLoading || this._model.areSearchedStockLocationsReloading)) {
       return;
     }
 

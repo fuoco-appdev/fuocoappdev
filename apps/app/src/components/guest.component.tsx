@@ -1,16 +1,22 @@
-import { useObservable } from '@ngneat/use-observable';
+import { useCookies } from 'react-cookie';
 import { Navigate } from 'react-router-dom';
-import WindowController from '../controllers/window.controller';
+import { RoutePathsType } from 'src/route-paths';
 
 export interface GuestProps {
   children: any;
 }
 
 export function GuestComponent({ children }: GuestProps): React.ReactElement {
-  const [windowProps] = useObservable(WindowController.model.store);
-  return !windowProps.isAuthenticated ? (
+  const [cookies] = useCookies();
+  const accessToken =
+    Object.keys(cookies).includes('sb-access-token') &&
+    cookies['sb-access-token'];
+  const refreshToken =
+    Object.keys(cookies).includes('sb-refresh-token') &&
+    cookies['sb-refresh-token'];
+  return !accessToken && !refreshToken ? (
     children
   ) : (
-    <Navigate to={windowProps.loadedLocationPath} />
+    <Navigate to={RoutePathsType.AccountLikes} />
   );
 }

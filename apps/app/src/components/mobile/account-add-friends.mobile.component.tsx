@@ -1,4 +1,4 @@
-import { Button, Dropdown, DropdownAlignment, FormLayout, Input, Line, Slider } from '@fuoco.appdev/core-ui';
+import { Button, Dropdown, DropdownAlignment, FormLayout, Input, Line, Scroll, Slider } from '@fuoco.appdev/core-ui';
 import convert from 'convert';
 import { useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
@@ -15,28 +15,28 @@ export default function AccountAddFriendsMobileComponent({
   accountProps,
   locationDropdownOpen,
   setLocationDropdownOpen,
-  onAddFriendsLoad,
-  onAddFriendsScroll,
 }: AccountAddFriendsResponsiveProps): JSX.Element {
   const navigate = useNavigate();
   const query = useQuery();
   const { t } = useTranslation();
+  const topBarRef = useRef<HTMLDivElement | null>(null);
   const locationSearchInputRef = useRef<HTMLInputElement | null>(null);
   const [openFilter, setOpenFilter] = useState<boolean>(false);
+  let prevPreviewScrollTop = 0;
+  let yPosition = 0;
 
   return (
     <ResponsiveMobile>
-      <div
-        className={[styles['root'], styles['root-mobile']].join(' ')}
-        style={{ height: window.innerHeight }}
-        onScroll={onAddFriendsScroll}
-        onLoad={onAddFriendsLoad}
-      >
+      <div className={[
+        styles['root'],
+        styles['root-mobile'],
+      ].join(' ')}>
         <div
           className={[
             styles['search-container'],
             styles['search-container-mobile'],
           ].join(' ')}
+          ref={topBarRef}
         >
           <div
             className={[
@@ -75,133 +75,175 @@ export default function AccountAddFriendsMobileComponent({
                 color: 'rgba(233, 33, 66, .35)',
               }}
               block={true}
-              icon={<Line.FilterList size={24} color={'#fff'} />}
+              icon={<Line.FilterList size={24} />}
               rounded={true}
             />
           </div>
         </div>
-        {accountProps.followRequestAccounts.length > 0 &&
-          accountProps.addFriendsSearchInput.length <= 0 && (
+        <Scroll
+          touchScreen={true}
+          classNames={{
+            root: [styles['scroll-root'], styles['scroll-root-mobile']].join(' '),
+            reloadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' '),
+            loadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' ')
+          }}
+          reloadComponent={
+            <img
+              src={'../assets/svg/ring-resize-dark.svg'}
+              className={styles['loading-ring']}
+            />
+          }
+          loadComponent={
+            <img
+              src={'../assets/svg/ring-resize-dark.svg'}
+              className={styles['loading-ring']}
+            />
+          }
+          isLoadable={accountProps.hasMoreAddFriends}
+          loadingHeight={56}
+          isReloading={accountProps.areAddFriendsReloading}
+          isLoading={accountProps.areAddFriendsLoading}
+          onReload={() => AccountController.reloadFollowRequestsAndFriendsAccountsAsync()}
+          onLoad={() => AccountController.onNextAddFriendsScrollAsync()}
+          onScroll={(progress, scrollRef, contentRef) => {
+            const elementHeight = topBarRef.current?.clientHeight ?? 0;
+            const scrollTop = contentRef.current?.getBoundingClientRect().top ?? 0;
+            if (prevPreviewScrollTop <= scrollTop) {
+              yPosition -= prevPreviewScrollTop - scrollTop;
+              if (yPosition >= 0) {
+                yPosition = 0;
+              }
+
+              topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
+            } else {
+              yPosition += scrollTop - prevPreviewScrollTop;
+              if (yPosition <= -elementHeight) {
+                yPosition = -elementHeight;
+              }
+
+              topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
+            }
+
+            prevPreviewScrollTop = scrollTop;
+          }}
+        >
+          <div className={[
+            styles['scroll-container'],
+            styles['scroll-container-mobile'],
+          ].join(' ')}>
+            {accountProps.followRequestAccounts.length > 0 &&
+              accountProps.addFriendsSearchInput.length <= 0 && (
+                <div
+                  className={[
+                    styles['follower-request-items-container'],
+                    styles['follower-request-items-container-mobile'],
+                  ].join(' ')}
+                >
+                  <div
+                    className={[styles['title'], styles['title-mobile']].join(' ')}
+                  >
+                    {t('followerRequests')}
+                  </div>
+                  {accountProps.followRequestAccounts.map((value) => {
+                    const accountFollowerRequest = Object.keys(
+                      accountProps.followRequestAccountFollowers
+                    ).includes(value.id ?? '')
+                      ? accountProps.followRequestAccountFollowers[value.id ?? '']
+                      : null;
+                    return (
+                      <AccountFollowItemComponent
+                        key={value.id}
+                        accountProps={accountProps}
+                        account={value}
+                        follower={accountFollowerRequest}
+                        isRequest={true}
+                        onClick={() =>
+                          navigate({
+                            pathname: `${RoutePathsType.Account}/${value.id}/likes`,
+                            search: query.toString(),
+                          })
+                        }
+                        onConfirm={() =>
+                          AccountController.confirmFollowRequestAsync(
+                            accountFollowerRequest?.accountId ?? '',
+                            accountFollowerRequest?.followerId ?? ''
+                          )
+                        }
+                        onRemove={() =>
+                          AccountController.removeFollowRequestAsync(
+                            accountFollowerRequest?.accountId ?? '',
+                            accountFollowerRequest?.followerId ?? ''
+                          )
+                        }
+                      />
+                    );
+                  })}
+                </div>
+              )}
+
+            <div className={[styles['title'], styles['title-mobile']].join(' ')}>
+              {t('results')}
+            </div>
             <div
               className={[
-                styles['follower-request-items-container'],
-                styles['follower-request-items-container-mobile'],
+                styles['result-items-container'],
+                styles['result-items-container-mobile'],
               ].join(' ')}
             >
-              <div
-                className={[styles['title'], styles['title-mobile']].join(' ')}
-              >
-                {t('followerRequests')}
-              </div>
-              {accountProps.followRequestAccounts.map((value) => {
-                const accountFollowerRequest = Object.keys(
-                  accountProps.followRequestAccountFollowers
+              {accountProps.addFriendAccounts.map((value) => {
+                const accountFollower = Object.keys(
+                  accountProps.addFriendAccountFollowers
                 ).includes(value.id ?? '')
-                  ? accountProps.followRequestAccountFollowers[value.id ?? '']
+                  ? accountProps.addFriendAccountFollowers[value.id ?? '']
                   : null;
                 return (
                   <AccountFollowItemComponent
                     key={value.id}
                     accountProps={accountProps}
                     account={value}
-                    follower={accountFollowerRequest}
-                    isRequest={true}
+                    follower={accountFollower}
+                    isRequest={false}
                     onClick={() =>
                       navigate({
                         pathname: `${RoutePathsType.Account}/${value.id}/likes`,
                         search: query.toString(),
                       })
                     }
-                    onConfirm={() =>
-                      AccountController.confirmFollowRequestAsync(
-                        accountFollowerRequest?.accountId ?? '',
-                        accountFollowerRequest?.followerId ?? ''
-                      )
+                    onFollow={() =>
+                      AccountController.requestFollowAsync(value.id ?? '')
                     }
-                    onRemove={() =>
-                      AccountController.removeFollowRequestAsync(
-                        accountFollowerRequest?.accountId ?? '',
-                        accountFollowerRequest?.followerId ?? ''
-                      )
+                    onRequested={() =>
+                      AccountController.requestUnfollowAsync(value.id ?? '')
+                    }
+                    onUnfollow={() =>
+                      AccountController.requestUnfollowAsync(value.id ?? '')
                     }
                   />
                 );
               })}
+              {!accountProps.hasMoreAddFriends &&
+                accountProps.addFriendAccounts.length <= 0 && (
+                  <div
+                    className={[
+                      styles['no-items-container'],
+                      styles['no-items-container-mobile'],
+                    ].join(' ')}
+                  >
+                    <div
+                      className={[
+                        styles['no-items-text'],
+                        styles['no-items-text-mobile'],
+                      ].join(' ')}
+                    >
+                      {t('noFriendsFound', {
+                        username: accountProps.addFriendsSearchInput,
+                      })}
+                    </div>
+                  </div>
+                )}
             </div>
-          )}
-
-        <div className={[styles['title'], styles['title-mobile']].join(' ')}>
-          {t('results')}
-        </div>
-        <div
-          className={[
-            styles['result-items-container'],
-            styles['result-items-container-mobile'],
-          ].join(' ')}
-        >
-          {accountProps.addFriendAccounts.map((value) => {
-            const accountFollower = Object.keys(
-              accountProps.addFriendAccountFollowers
-            ).includes(value.id ?? '')
-              ? accountProps.addFriendAccountFollowers[value.id ?? '']
-              : null;
-            return (
-              <AccountFollowItemComponent
-                key={value.id}
-                accountProps={accountProps}
-                account={value}
-                follower={accountFollower}
-                isRequest={false}
-                onClick={() =>
-                  navigate({
-                    pathname: `${RoutePathsType.Account}/${value.id}/likes`,
-                    search: query.toString(),
-                  })
-                }
-                onFollow={() =>
-                  AccountController.requestFollowAsync(value.id ?? '')
-                }
-                onRequested={() =>
-                  AccountController.requestUnfollowAsync(value.id ?? '')
-                }
-                onUnfollow={() =>
-                  AccountController.requestUnfollowAsync(value.id ?? '')
-                }
-              />
-            );
-          })}
-          <img
-            src={'../assets/svg/ring-resize-dark.svg'}
-            className={styles['loading-ring']}
-            style={{
-              maxHeight:
-                accountProps.hasMoreAddFriends ||
-                  accountProps.areAddFriendsLoading
-                  ? 24
-                  : 0,
-            }}
-          />
-          {!accountProps.hasMoreAddFriends &&
-            accountProps.addFriendAccounts.length <= 0 && (
-              <div
-                className={[
-                  styles['no-items-container'],
-                  styles['no-items-container-mobile'],
-                ].join(' ')}
-              >
-                <div
-                  className={[
-                    styles['no-items-text'],
-                    styles['no-items-text-mobile'],
-                  ].join(' ')}
-                >
-                  {t('noFriendsFound', {
-                    username: accountProps.addFriendsSearchInput,
-                  })}
-                </div>
-              </div>
-            )}
-        </div>
+          </div>
+        </Scroll>
       </div>
       {ReactDOM.createPortal(
         <>
@@ -279,7 +321,7 @@ export default function AccountAddFriendsMobileComponent({
                     classNames={{
                       button: [
                         styles['button'],
-                        accountProps.addFriendsSexes.includes('male') &&
+                        accountProps.addFriendsSex === 'any' &&
                         styles['button-selected'],
                       ].join(' '),
                     }}
@@ -288,7 +330,25 @@ export default function AccountAddFriendsMobileComponent({
                     rippleProps={{
                       color: 'rgba(133, 38, 122, 0.35)',
                     }}
-                    onClick={() => AccountController.updateAddFriendsSexes('male')}
+                    onClick={() => AccountController.updateAddFriendsSex('any')}
+                  >
+                    {t('any')}
+                  </Button>
+                  <Button
+                    block={true}
+                    classNames={{
+                      button: [
+                        styles['button'],
+                        accountProps.addFriendsSex === 'male' &&
+                        styles['button-selected'],
+                      ].join(' '),
+                    }}
+                    type={'primary'}
+                    size={'large'}
+                    rippleProps={{
+                      color: 'rgba(133, 38, 122, 0.35)',
+                    }}
+                    onClick={() => AccountController.updateAddFriendsSex('male')}
                   >
                     {t('male')}
                   </Button>
@@ -297,7 +357,7 @@ export default function AccountAddFriendsMobileComponent({
                     classNames={{
                       button: [
                         styles['button'],
-                        accountProps.addFriendsSexes.includes('female') &&
+                        accountProps.addFriendsSex === 'female' &&
                         styles['button-selected'],
                       ].join(' '),
                     }}
@@ -307,7 +367,7 @@ export default function AccountAddFriendsMobileComponent({
                       color: 'rgba(133, 38, 122, 0.35)',
                     }}
                     onClick={() =>
-                      AccountController.updateAddFriendsSexes('female')
+                      AccountController.updateAddFriendsSex('female')
                     }
                   >
                     {t('female')}

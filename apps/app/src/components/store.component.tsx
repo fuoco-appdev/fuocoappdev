@@ -68,7 +68,6 @@ export interface StoreResponsiveProps {
   setSelectedRegionId: (value: string) => void;
   setSelectedSalesLocationId: (value: string) => void;
   setVariantQuantities: (value: Record<string, number>) => void;
-  onPreviewsScroll: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
   onPreviewsLoad: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
   onAddToCart: () => void;
   onProductPreviewClick: (
@@ -118,19 +117,6 @@ export default function StoreComponent(): JSX.Element {
     React.useState<boolean>(false);
   const renderCountRef = React.useRef<number>(0);
   const { t } = useTranslation();
-
-  const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    const scrollTop = e.currentTarget?.scrollTop ?? 0;
-    const scrollHeight = e.currentTarget?.scrollHeight ?? 0;
-    const clientHeight = e.currentTarget?.clientHeight ?? 0;
-    const scrollOffset = scrollHeight - scrollTop - clientHeight;
-
-    if (scrollOffset > 16 || !StoreController.model.hasMorePreviews) {
-      return;
-    }
-
-    StoreController.onNextScrollAsync();
-  };
 
   const onLoad = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
     if (StoreController.model.scrollPosition) {
@@ -522,7 +508,6 @@ export default function StoreComponent(): JSX.Element {
           setSelectedRegionId={setSelectedRegionId}
           setSelectedSalesLocationId={setSelectedSalesLocationId}
           setVariantQuantities={setVariantQuantities}
-          onPreviewsScroll={onScroll}
           onPreviewsLoad={onLoad}
           onAddToCart={onAddToCart}
           onProductPreviewAddToCart={onProductPreviewAddToCart}
@@ -555,7 +540,6 @@ export default function StoreComponent(): JSX.Element {
           setSelectedRegionId={setSelectedRegionId}
           setSelectedSalesLocationId={setSelectedSalesLocationId}
           setVariantQuantities={setVariantQuantities}
-          onPreviewsScroll={onScroll}
           onPreviewsLoad={onLoad}
           onAddToCart={onAddToCart}
           onProductPreviewAddToCart={onProductPreviewAddToCart}
@@ -588,7 +572,6 @@ export default function StoreComponent(): JSX.Element {
           setSelectedRegionId={setSelectedRegionId}
           setSelectedSalesLocationId={setSelectedSalesLocationId}
           setVariantQuantities={setVariantQuantities}
-          onPreviewsScroll={onScroll}
           onPreviewsLoad={onLoad}
           onAddToCart={onAddToCart}
           onProductPreviewAddToCart={onProductPreviewAddToCart}
