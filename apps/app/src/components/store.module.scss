@@ -547,7 +547,7 @@
 
     & .scroll-container-mobile {
         gap: 2px;
-        padding: 2px;
+        padding-top: calc(156px + 2px);
     }
 
     & .scroll-container-skeleton-mobile {
@@ -584,7 +584,7 @@
 }
 
 .scroll-root-mobile {
-    padding-top: 156px;
+
 }
 
 .scroll-content-mobile {

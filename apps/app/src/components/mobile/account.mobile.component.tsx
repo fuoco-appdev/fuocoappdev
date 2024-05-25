@@ -265,154 +265,165 @@ export default function AccountMobileComponent({
                   styles['incomplete-form-container-mobile'],
                 ].join(' ')}
               >
-                <div
-                  className={[
-                    styles['incomplete-form-title'],
-                    styles['incomplete-form-title-mobile'],
-                  ].join(' ')}
-                >
-                  {t('generalInformation')}
-                </div>
-                <div
-                  className={[
-                    styles['form-container'],
-                    styles['form-container-mobile'],
-                  ].join(' ')}
-                >
-                  <AccountProfileFormComponent
-                    storeProps={storeProps}
-                    values={accountProps.profileForm}
-                    errors={accountProps.profileFormErrors}
-                    onChangeCallbacks={{
-                      firstName: (event) =>
-                        AccountController.updateProfile({
-                          firstName: event.target.value,
-                        }),
-                      lastName: (event) =>
-                        AccountController.updateProfile({
-                          lastName: event.target.value,
-                        }),
-                      username: (event) => {
-                        AccountController.updateProfile({
-                          username: event.target.value,
-                        });
-                        onUsernameChanged(event);
-                      },
-                      birthday: (event) => {
-                        AccountController.updateProfile({
-                          birthday: event.currentTarget.value,
-                        });
-                      },
-                      sex: (value) => {
-                        AccountController.updateProfile({
-                          sex: value,
-                        });
-                      },
-                      phoneNumber: (value, _event, _formattedValue) =>
-                        AccountController.updateProfile({
-                          phoneNumber: value,
-                        }),
-                    }}
-                  />
-                </div>
-                <div
-                  className={[
-                    styles['incomplete-form-title'],
-                    styles['incomplete-form-title-desktop'],
-                  ].join(' ')}
-                >
-                  {t('optional')}
-                </div>
-                <div
-                  className={[
-                    styles['form-container'],
-                    styles['form-container-desktop'],
-                  ].join(' ')}
-                >
-                  <FormLayout
-                    classNames={{ label: styles['input-form-layout-label'] }}
-                    label={t('interests') ?? undefined}
-                  >
-                    <Button
-                      ref={interestButtonRef}
-                      block={true}
-                      classNames={{
-                        button: [styles['secondary-button']].join(' '),
-                      }}
-                      type={'primary'}
-                      size={'large'}
-                      rippleProps={{
-                        color: 'rgba(133, 38, 122, 0.35)',
-                      }}
-                      icon={<Line.Add size={24} />}
-                      onClick={() => setIsAddInterestOpen(true)}
-                    >
-                      {t('addInterest')}
-                    </Button>
-                  </FormLayout>
+                <div className={[
+                  styles['incomplete-content'],
+                  styles['incomplete-content-mobile'],
+                ].join(' ')}>
                   <div
                     className={[
-                      styles['selected-interests-container'],
-                      styles['selected-interests-container-desktop'],
+                      styles['incomplete-form-title'],
+                      styles['incomplete-form-title-mobile'],
                     ].join(' ')}
                   >
-                    {Object.values(accountProps.selectedInterests).map(
-                      (value: InterestResponse) => {
-                        return (
-                          <Button
-                            size={'tiny'}
-                            rounded={true}
-                            classNames={{
-                              button: [
-                                styles['secondary-button'],
-                                styles['interest-selected'],
-                              ].join(' '),
-                            }}
-                            rippleProps={{
-                              color: 'rgba(133, 38, 122, 0.35)',
-                            }}
-                            onClick={() =>
-                              AccountController.updateSelectedInterest(value)
-                            }
-                          >
-                            {value.name}
-                          </Button>
-                        );
-                      }
-                    )}
+                    {t('generalInformation')}
+                  </div>
+                  <div
+                    className={[
+                      styles['form-container'],
+                      styles['form-container-mobile'],
+                    ].join(' ')}
+                  >
+                    <AccountProfileFormComponent
+                      storeProps={storeProps}
+                      values={accountProps.profileForm}
+                      errors={accountProps.profileFormErrors}
+                      onChangeCallbacks={{
+                        firstName: (event) =>
+                          AccountController.updateProfile({
+                            firstName: event.target.value,
+                          }),
+                        lastName: (event) =>
+                          AccountController.updateProfile({
+                            lastName: event.target.value,
+                          }),
+                        username: (event) => {
+                          AccountController.updateProfile({
+                            username: event.target.value,
+                          });
+                          onUsernameChanged(event);
+                        },
+                        birthday: (event) => {
+                          AccountController.updateProfile({
+                            birthday: event.currentTarget.value,
+                          });
+                        },
+                        sex: (value) => {
+                          AccountController.updateProfile({
+                            sex: value,
+                          });
+                        },
+                        phoneNumber: (value, _event, _formattedValue) =>
+                          AccountController.updateProfile({
+                            phoneNumber: value,
+                          }),
+                      }}
+                    />
                   </div>
                 </div>
-                <div>
-                  <Button
-                    classNames={{
-                      container: [
-                        styles['submit-button-container'],
-                        styles['submit-button-container-mobile'],
-                      ].join(' '),
-                      button: [
-                        styles['submit-button'],
-                        styles['submit-button-mobile'],
-                      ].join(' '),
-                    }}
-                    block={true}
-                    size={'large'}
-                    icon={<Line.Done size={24} />}
-                    onClick={onCompleteProfile}
-                    loading={accountProps.isCreateCustomerLoading}
-                    loadingComponent={
-                      <img
-                        src={'../assets/svg/ring-resize-light.svg'}
-                        style={{ height: 24 }}
-                        className={[
-                          styles['loading-ring'],
-                          styles['loading-ring-mobile'],
-                        ].join(' ')}
-                      />
-                    }
+                <div className={[
+                  styles['incomplete-content'],
+                  styles['incomplete-content-mobile'],
+                ].join(' ')}>
+                  <div
+                    className={[
+                      styles['incomplete-form-title'],
+                      styles['incomplete-form-title-desktop'],
+                    ].join(' ')}
                   >
-                    {t('complete')}
-                  </Button>
+                    {t('optional')}
+                  </div>
+                  <div
+                    className={[
+                      styles['form-container'],
+                      styles['form-container-desktop'],
+                    ].join(' ')}
+                  >
+                    <FormLayout
+                      classNames={{ label: styles['input-form-layout-label'] }}
+                      label={t('interests') ?? undefined}
+                    >
+                      <Button
+                        ref={interestButtonRef}
+                        block={true}
+                        classNames={{
+                          button: [styles['secondary-button']].join(' '),
+                        }}
+                        type={'primary'}
+                        size={'large'}
+                        rippleProps={{
+                          color: 'rgba(133, 38, 122, 0.35)',
+                        }}
+                        icon={<Line.Add size={24} />}
+                        onClick={() => setIsAddInterestOpen(true)}
+                      >
+                        {t('addInterest')}
+                      </Button>
+                    </FormLayout>
+                    <div
+                      className={[
+                        styles['selected-interests-container'],
+                        styles['selected-interests-container-desktop'],
+                      ].join(' ')}
+                    >
+                      {Object.values(accountProps.selectedInterests).map(
+                        (value: InterestResponse) => {
+                          return (
+                            <Button
+                              size={'tiny'}
+                              rounded={true}
+                              classNames={{
+                                button: [
+                                  styles['secondary-button'],
+                                  styles['interest-selected'],
+                                ].join(' '),
+                              }}
+                              rippleProps={{
+                                color: 'rgba(133, 38, 122, 0.35)',
+                              }}
+                              onClick={() =>
+                                AccountController.updateSelectedInterest(value)
+                              }
+                            >
+                              {value.name}
+                            </Button>
+                          );
+                        }
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <Button
+                      classNames={{
+                        container: [
+                          styles['submit-button-container'],
+                          styles['submit-button-container-mobile'],
+                        ].join(' '),
+                        button: [
+                          styles['submit-button'],
+                          styles['submit-button-mobile'],
+                        ].join(' '),
+                      }}
+                      block={true}
+                      size={'large'}
+                      icon={<Line.Done size={24} />}
+                      onClick={onCompleteProfile}
+                      loading={accountProps.isCreateCustomerLoading}
+                      loadingComponent={
+                        <img
+                          src={'../assets/svg/ring-resize-light.svg'}
+                          style={{ height: 24 }}
+                          className={[
+                            styles['loading-ring'],
+                            styles['loading-ring-mobile'],
+                          ].join(' ')}
+                        />
+                      }
+                    >
+                      {t('complete')}
+                    </Button>
+                  </div>
                 </div>
+
               </div>
             )}
             {account?.status === 'Complete' && (

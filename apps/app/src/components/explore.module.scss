@@ -456,7 +456,7 @@
         }
 
         & .scroll-container-mobile {
-            padding-top: 2px;
+            padding-top: calc(189px + 2px);
             gap: 2px;
             
             & .loading-ring-mobile {}
@@ -494,7 +494,7 @@
 }
 
 .scroll-root-mobile {
-    padding-top: 189px;
+   
 }
 
 .scroll-content-mobile {

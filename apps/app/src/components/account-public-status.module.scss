@@ -184,6 +184,10 @@
 }
 
 .root-mobile {
+    & .scroll-container-mobile {
+      padding-top: calc(148px + 2px);
+    }
+
     & .tabs-container-mobile {
       padding-top: $mp-4;
 
@@ -375,7 +379,7 @@
 }
 
 .scroll-root-mobile {
-  padding-top: calc(148px + 2px);
+  
 }
 
 .scroll-content-mobile {

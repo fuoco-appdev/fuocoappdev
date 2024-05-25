@@ -54,7 +54,7 @@
     "@capacitor/cli": "^4.6.3",
     "@capacitor/core": "^4.6.3",
     "@capacitor/ios": "^4.6.3",
-    "@fuoco.appdev/core-ui": "^0.18.7",
+    "@fuoco.appdev/core-ui": "^0.18.8",
     "@loadable/babel-plugin": "^5.16.1",
     "@loadable/component": "^5.15.3",
     "@loadable/server": "^5.16.1",

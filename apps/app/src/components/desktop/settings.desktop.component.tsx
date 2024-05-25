@@ -1,4 +1,4 @@
-import { Line, Tabs } from '@fuoco.appdev/core-ui';
+import { Line, Scroll, Tabs } from '@fuoco.appdev/core-ui';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { RoutePathsType, useQuery } from '../../route-paths';
@@ -43,14 +43,16 @@ export default function SettingsDesktopComponent({
             ]}
           />
         </div>
-        <div
-          className={[
-            styles['outlet-container'],
-            styles['outlet-container-desktop'],
-          ].join(' ')}
-        >
-          <Outlet />
-        </div>
+        <Scroll isLoadable={false}>
+          <div
+            className={[
+              styles['outlet-container'],
+              styles['outlet-container-desktop'],
+            ].join(' ')}
+          >
+            <Outlet />
+          </div>
+        </Scroll>
       </div>
     </ResponsiveDesktop>
   );

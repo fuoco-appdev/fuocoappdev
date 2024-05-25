@@ -159,7 +159,7 @@ export default function AccountDesktopComponent({
             />
           }
           loadingHeight={56}
-          isLoadable={(accountProps.hasMoreLikes || accountProps.hasMoreOrders) && accountProps.activeTabId !== RoutePathsType.AccountAddresses}
+          isLoadable={accountProps.activeTabId !== RoutePathsType.AccountAddresses}
           isLoading={accountProps.areLikedProductsLoading || accountProps.areOrdersLoading}
           onLoad={onScrollLoad}
           onScroll={(progress, scrollRef, contentRef) => {
