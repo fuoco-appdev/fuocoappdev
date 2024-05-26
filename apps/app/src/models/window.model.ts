@@ -11,6 +11,7 @@ import { InventoryLocation } from "./explore.model";
 export interface WindowState {
   account: AccountResponse | null;
   isAuthenticated: boolean | undefined;
+  isAccountComplete: boolean;
   activeRoute: RoutePathsType | undefined;
   activeTabsId: RoutePathsType | undefined;
   cartCount: number;
@@ -48,6 +49,7 @@ export class WindowModel extends Model {
         withProps<WindowState>({
           account: null,
           isAuthenticated: undefined,
+          isAccountComplete: false,
           activeRoute: undefined,
           activeTabsId: undefined,
           cartCount: 0,
@@ -117,14 +119,28 @@ export class WindowModel extends Model {
     return this.store.getValue().isAuthenticated;
   }
 
-  public set isAuthenticated(isAuthenticated: boolean | undefined) {
-    if (this.isAuthenticated !== isAuthenticated) {
+  public set isAuthenticated(value: boolean | undefined) {
+    if (this.isAuthenticated !== value) {
       this.store.update((state) => ({
         ...state,
-        isAuthenticated: isAuthenticated,
+        isAuthenticated: value,
       }));
     }
   }
+
+  public get isAccountComplete(): boolean {
+    return this.store.getValue().isAccountComplete;
+  }
+
+  public set isAccountComplete(value: boolean) {
+    if (this.isAccountComplete !== value) {
+      this.store.update((state) => ({
+        ...state,
+        isAccountComplete: value,
+      }));
+    }
+  }
+
 
   public get activeRoute(): RoutePathsType | undefined {
     return this.store.getValue().activeRoute;

@@ -442,19 +442,9 @@ export default function WindowDesktopComponent({
                   {
                     id: RoutePathsType.Account,
                     icon:
-                      account?.status === 'Incomplete' ? (
+                      !windowProps.isAccountComplete ? (
                         <Line.AccountCircle
                           size={24}
-                          color={
-                            windowProps.activeRoute?.startsWith(
-                              RoutePathsType.Account
-                            ) &&
-                              !WindowController.isLocationAccountWithId(
-                                location.pathname
-                              )
-                              ? '#85267A'
-                              : '#2A2A5F'
-                          }
                         />
                       ) : (
                         <Avatar
@@ -475,7 +465,7 @@ export default function WindowDesktopComponent({
                           touchScreen={true}
                         />
                       ),
-                    label: windowLocalProps.isSideBarOpen ? account?.status !== 'Incomplete'
+                    label: windowLocalProps.isSideBarOpen ? windowProps.isAccountComplete
                       ? account.username
                       : t('profile') ?? undefined : undefined,
                   },

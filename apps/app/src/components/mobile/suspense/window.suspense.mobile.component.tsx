@@ -1,4 +1,3 @@
-import Skeleton from 'react-loading-skeleton';
 import { Outlet } from 'react-router-dom';
 import { ResponsiveSuspenseMobile } from '../../responsive.component';
 import styles from '../../window.module.scss';
@@ -16,39 +15,7 @@ export function WindowSuspenseMobileComponent(): JSX.Element {
         </div>
         <div className={[styles['bottom-bar-container-mobile']].join(' ')}>
           <div className={[styles['bottom-bar-mobile']].join(' ')}>
-            <div
-              className={[
-                styles['tab-button-container'],
-                styles['tab-button-container-mobile'],
-              ].join(' ')}
-            >
-              <Skeleton
-                style={{ width: 40, height: 40 }}
-                borderRadius={40}
-              />
-            </div>
-            <div
-              className={[
-                styles['tab-button-container'],
-                styles['tab-button-container-mobile'],
-              ].join(' ')}
-            >
-              <Skeleton
-                style={{ width: 40, height: 40 }}
-                borderRadius={40}
-              />
-            </div>
-            <div
-              className={[
-                styles['tab-button-container'],
-                styles['tab-button-container-mobile'],
-              ].join(' ')}
-            >
-              <Skeleton
-                style={{ width: 40, height: 40 }}
-                borderRadius={40}
-              />
-            </div>
+
           </div>
         </div>
       </div>

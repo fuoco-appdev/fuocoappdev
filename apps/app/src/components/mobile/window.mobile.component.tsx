@@ -583,7 +583,7 @@ export default function WindowMobileComponent({
                           size={'full'}
                           touchScreen={true}
                           icon={
-                            account?.status === 'Incomplete' ? (
+                            !windowProps.isAccountComplete ? (
                               <Line.AccountCircle
                                 size={24}
                                 color={

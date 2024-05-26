@@ -575,11 +575,12 @@ class WindowController extends Controller {
   private async onActiveAccountChangedAsync(
     value: AccountResponse | null,
   ): Promise<void> {
+    this._model.account = value;
+    this._model.isAccountComplete = value?.status === 'Complete';
+
     if (this._model.account?.id === value?.id) {
       return;
     }
-
-    this._model.account = value;
 
     if (!value) {
       return;
