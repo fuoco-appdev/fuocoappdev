@@ -249,7 +249,7 @@ export default function WindowDesktopComponent({
             </div>
             {windowProps.account && (
               <>
-                {/* <div
+                <div
                   className={[
                     styles['top-bar-button-container'],
                     styles['top-bar-button-container-desktop'],
@@ -281,7 +281,7 @@ export default function WindowDesktopComponent({
                       />
                     )}
                   />
-                </div> */}
+                </div>
                 <div
                   className={[
                     styles['top-bar-button-container'],

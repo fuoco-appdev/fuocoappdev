@@ -17,7 +17,10 @@ export default function SettingsMobileComponent({
 
   return (
     <ResponsiveMobile>
-      <Scroll isLoadable={true}>
+      <Scroll classNames={{
+        scrollContent: styles['scroll-content-mobile'],
+        children: styles['scroll-children-mobile']
+      }} isLoadable={true}>
         {windowProps.activeRoute === RoutePathsType.Settings ? (
           <div className={[styles['root'], styles['root-mobile']].join(' ')}>
             <Ripples

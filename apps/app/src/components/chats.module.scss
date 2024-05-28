@@ -11,8 +11,8 @@
         & .top-bar-container {
             display: flex;
             flex-direction: column;
-            border-bottom: 1px solid rgba(42, 42, 95, .6);
             background-color: #fff;
+            border-radius: 6px;
             width: stretch;
             gap: $mp-4;
 
@@ -156,19 +156,14 @@
 }
 
 .root-desktop {
-    padding-top: 56px;
+    padding-top: calc(56px + 2px);
     flex-direction: row;
 
     & .search-container-desktop {
         min-width: 380px;
         max-width: 380px;
         height: 100%;
-        border-right-width: 1px;
-        border-left-width: 0px;
-        border-top-width: 0px;
-        border-bottom-width: 0px;
-        border-color: rgba(42, 42, 95, .6);
-        border-style: solid;
+        border-radius: 6px;
 
         & .top-bar-container-desktop {
             padding-top: $mp-4;
