@@ -25,8 +25,8 @@ export function NotificationsSuspenseDesktopComponent(): JSX.Element {
         </div>
         <div
           className={[
-            styles['scroll-container'],
-            styles['scroll-container-desktop'],
+            styles['scroll-content'],
+            styles['scroll-content-desktop'],
           ].join(' ')}
         >
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(

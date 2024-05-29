@@ -140,7 +140,7 @@
         }
     }
 
-    & .scroll-container {
+    & .scroll-content {
         width: 100%;
         height: fit-content;
         display: flex;
@@ -148,7 +148,7 @@
         align-content: flex-start;
     }
 
-    & .scroll-container-skeleton {
+    & .scroll-content-skeleton {
         width: 100%;
         height: fit-content;
         display: flex;
@@ -337,7 +337,7 @@
             & .tab-container-desktop::-webkit-scrollbar {}
         }
 
-        & .scroll-container-desktop {
+        & .scroll-content-desktop {
             justify-content: center;
             gap: $mp-4;
             padding: $mp-6;
@@ -348,7 +348,7 @@
 
         & .wine-previews-container-desktop {}
 
-        & .scroll-container-skeleton-desktop {
+        & .scroll-content-skeleton-desktop {
             padding-top: calc(157px + 24px);
             justify-content: center;
             gap: $mp-4;
@@ -450,13 +450,13 @@
             & .tab-container-tablet::-webkit-scrollbar {}
         }
 
-        & .scroll-container-tablet {
+        & .scroll-content-tablet {
             justify-content: center;
             gap: $mp-6;
             padding: $mp-6;
         }
 
-        & .scroll-container-skeleton-tablet {
+        & .scroll-content-skeleton-tablet {
             padding-top: 157px;
             justify-content: center;
             gap: $mp-6;
@@ -545,12 +545,11 @@
         }
     }
 
-    & .scroll-container-mobile {
+    & .scroll-content-mobile {
         gap: 2px;
-        padding-top: calc(156px + 2px);
     }
 
-    & .scroll-container-skeleton-mobile {
+    & .scroll-content-skeleton-mobile {
         padding-top: calc(156px + 2px);
         gap: 2px;
     }
@@ -583,8 +582,30 @@
     padding-top: 157px;
 }
 
-.scroll-root-mobile {
+.scroll-container-mobile {
+    padding-top: calc(156px + 2px);
+}
 
+.pull-indicator-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 40px;
+    width: 40px;
+    height: 40px;
+}
+
+.pull-indicator {
+    color: $brand-900;
+}
+
+.pull-indicator * {
+  transform-origin: 50% 50%;
+}
+
+.pull-indicator-mobile {
+    top: calc(156px + 16px);
 }
 
 .scroll-content-mobile {

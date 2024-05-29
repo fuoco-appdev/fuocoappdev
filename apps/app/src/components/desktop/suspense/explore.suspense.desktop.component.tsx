@@ -91,8 +91,8 @@ export function ExploreSuspenseDesktopComponent(): JSX.Element {
           </div>
           <div
             className={[
-              styles['scroll-container'],
-              styles['scroll-container-desktop'],
+              styles['scroll-content'],
+              styles['scroll-content-desktop'],
             ].join(' ')}
           >
             {[1, 2, 3, 4, 5].map(() => {

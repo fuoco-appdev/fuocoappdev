@@ -33,7 +33,7 @@ export default function OrderConfirmedMobileComponent({
   return (
     <ResponsiveMobile>
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
-        <Scroll isLoadable={false} touchScreen={true} loadingHeight={0}>
+        <Scroll isLoadable={false} isReloadable={false} touchScreen={true} loadingHeight={0}>
           <div className={[styles['scroll-container'], styles['scroll-container-mobile']].join(' ')}>
             <div
               className={[

@@ -96,8 +96,8 @@ export function StoreSuspenseDesktopComponent(): JSX.Element {
           </div>
           <div
             className={[
-              styles['scroll-container-skeleton'],
-              styles['scroll-container-skeleton-desktop'],
+              styles['scroll-content-skeleton'],
+              styles['scroll-content-skeleton-desktop'],
             ].join(' ')}
           >
             {[1, 2, 3, 4, 5, 6, 7, 8].map(() => (

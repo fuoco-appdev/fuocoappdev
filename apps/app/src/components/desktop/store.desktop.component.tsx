@@ -244,6 +244,9 @@ export default function StoreDesktopComponent({
               />
             }
             loadingHeight={56}
+            showIndicatorThreshold={56}
+            reloadThreshold={96}
+            pullIndicatorComponent={<div className={[styles['pull-indicator-container']].join(' ')}><Line.ArrowDownward size={24} /></div>}
             isLoadable={storeProps.hasMorePreviews}
             isLoading={storeProps.isLoading}
             onLoad={() => StoreController.onNextScrollAsync()}
@@ -271,8 +274,8 @@ export default function StoreDesktopComponent({
           >
             <div
               className={[
-                styles['scroll-container'],
-                styles['scroll-container-desktop'],
+                styles['scroll-content'],
+                styles['scroll-content-desktop'],
               ].join(' ')}
               ref={previewsContainerRef}
               onLoad={onPreviewsLoad}

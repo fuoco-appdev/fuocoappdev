@@ -186,9 +186,10 @@ export default function ExploreMobileComponent({
           {isSearchFocused && (
             <Scroll
               classNames={{
-                root: [styles['scroll-root'], styles['scroll-root-mobile']].join(' '),
+                scrollContainer: [styles['scroll-container'], styles['scroll-container-mobile']].join(' '),
                 reloadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' '),
-                loadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' ')
+                loadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' '),
+                pullIndicator: [styles['pull-indicator'], styles['pull-indicator-mobile']].join(' ')
               }}
               touchScreen={true}
               loadingHeight={56}
@@ -200,6 +201,9 @@ export default function ExploreMobileComponent({
               }
               isReloading={exploreProps.areSearchedStockLocationsReloading}
               isLoadable={exploreProps.hasMoreSearchedStockLocations}
+              showIndicatorThreshold={56}
+              reloadThreshold={96}
+              pullIndicatorComponent={<div className={[styles['pull-indicator-container']].join(' ')}><Line.ArrowDownward size={24} /></div>}
               onReload={() => ExploreController.reloadStockLocationsAsync()}
               loadComponent={
                 <img
@@ -233,8 +237,8 @@ export default function ExploreMobileComponent({
             >
               <div
                 className={[
-                  styles['scroll-container'],
-                  styles['scroll-container-mobile'],
+                  styles['scroll-content'],
+                  styles['scroll-content-mobile'],
                 ].join(' ')}
                 ref={scrollContainerRef}
                 onLoad={onScrollLoad}

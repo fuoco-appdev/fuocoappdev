@@ -9,8 +9,8 @@ export function AccountPublicSuspenseMobileComponent(): JSX.Element {
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
         <div
           className={[
-            styles['scroll-container'],
-            styles['scroll-container-mobile'],
+            styles['scroll-content'],
+            styles['scroll-content-mobile'],
           ].join(' ')}
         >
           <div

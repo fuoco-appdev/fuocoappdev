@@ -190,8 +190,8 @@ export default function AccountAddFriendsDesktopComponent({
         </div>
         <div
           className={[
-            styles['scroll-container'],
-            styles['scroll-container-desktop'],
+            styles['scroll-content'],
+            styles['scroll-content-desktop'],
           ].join(' ')}
         >
           {accountProps.followRequestAccounts.length > 0 &&

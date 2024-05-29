@@ -147,9 +147,10 @@ export default function AccountPublicStatusMobileComponent({
         <Scroll
           touchScreen={true}
           classNames={{
-            root: [styles['scroll-root'], styles['scroll-root-mobile']].join(' '),
+            scrollContainer: [styles['scroll-container'], styles['scroll-container-mobile']].join(' '),
             reloadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' '),
-            loadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' ')
+            loadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' '),
+            pullIndicator: [styles['pull-indicator'], styles['pull-indicator-mobile']].join(' ')
           }}
           reloadComponent={
             <img
@@ -164,6 +165,9 @@ export default function AccountPublicStatusMobileComponent({
             />
           }
           loadingHeight={56}
+          showIndicatorThreshold={56}
+          reloadThreshold={96}
+          pullIndicatorComponent={<div className={[styles['pull-indicator-container']].join(' ')}><Line.ArrowDownward size={24} /></div>}
           isLoadable={accountPublicProps.hasMoreFollowers || accountPublicProps.hasMoreFollowing}
           isReloading={accountPublicProps.areFollowersReloading || accountPublicProps.areFollowingReloading}
           isLoading={accountPublicProps.areFollowersLoading || accountPublicProps.areFollowingLoading}

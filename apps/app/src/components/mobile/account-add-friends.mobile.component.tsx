@@ -83,9 +83,10 @@ export default function AccountAddFriendsMobileComponent({
         <Scroll
           touchScreen={true}
           classNames={{
-            root: [styles['scroll-root'], styles['scroll-root-mobile']].join(' '),
+            scrollContainer: [styles['scroll-container'], styles['scroll-container-mobile']].join(' '),
             reloadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' '),
-            loadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' ')
+            loadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' '),
+            pullIndicator: [styles['pull-indicator'], styles['pull-indicator-mobile']].join(' ')
           }}
           reloadComponent={
             <img
@@ -101,6 +102,9 @@ export default function AccountAddFriendsMobileComponent({
           }
           isLoadable={accountProps.hasMoreAddFriends}
           loadingHeight={56}
+          showIndicatorThreshold={56}
+          reloadThreshold={96}
+          pullIndicatorComponent={<div className={[styles['pull-indicator-container']].join(' ')}><Line.ArrowDownward size={24} /></div>}
           isReloading={accountProps.areAddFriendsReloading}
           isLoading={accountProps.areAddFriendsLoading}
           onReload={() => AccountController.reloadFollowRequestsAndFriendsAccountsAsync()}
@@ -128,8 +132,8 @@ export default function AccountAddFriendsMobileComponent({
           }}
         >
           <div className={[
-            styles['scroll-container'],
-            styles['scroll-container-mobile'],
+            styles['scroll-content'],
+            styles['scroll-content-mobile'],
           ].join(' ')}>
             {accountProps.followRequestAccounts.length > 0 &&
               accountProps.addFriendsSearchInput.length <= 0 && (

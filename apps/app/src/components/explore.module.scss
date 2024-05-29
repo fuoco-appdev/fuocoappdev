@@ -120,7 +120,7 @@
             }
         }
 
-        & .scroll-container {
+        & .scroll-content {
             display: flex;
             align-content: flex-start;
             flex-direction: column;
@@ -263,7 +263,7 @@
             & .tab-container-desktop::-webkit-scrollbar {}
         }
 
-        & .scroll-container-desktop {
+        & .scroll-content-desktop {
             padding-top: calc(141px + 2px);
 
             & .loading-ring-desktop {}
@@ -364,7 +364,7 @@
             & .tab-container-tablet::-webkit-scrollbar {}
         }
 
-        & .scroll-container-tablet {
+        & .scroll-content-tablet {
 
             & .loading-ring-tablet {}
 
@@ -455,8 +455,7 @@
             & .tab-container-mobile::-webkit-scrollbar {}
         }
 
-        & .scroll-container-mobile {
-            padding-top: calc(189px + 2px);
+        & .scroll-content-mobile {
             gap: 2px;
             
             & .loading-ring-mobile {}
@@ -493,8 +492,30 @@
     padding-top: 141px;
 }
 
-.scroll-root-mobile {
-   
+.scroll-container-mobile {
+    padding-top: calc(189px + 2px);
+}
+
+.pull-indicator-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 40px;
+    width: 40px;
+    height: 40px;
+}
+
+.pull-indicator {
+    color: $brand-900;
+}
+
+.pull-indicator * {
+  transform-origin: 50% 50%;
+}
+
+.pull-indicator-mobile {
+    top: calc(189px + 16px);
 }
 
 .scroll-content-mobile {

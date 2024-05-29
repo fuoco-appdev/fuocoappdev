@@ -13,7 +13,7 @@
   min-width: 100%;
   min-height: 100%;
 
-  & .scroll-container {
+  & .scroll-content {
     flex-direction: column;
     height: 100%;
     overflow-y: auto;
@@ -133,7 +133,7 @@
   height: 100%;
   min-height: 100%;
 
-  & .scroll-container-desktop {
+  & .scroll-content-desktop {
     padding-top: calc(56px + 2px);
 
     & .incomplete-profile-container-desktop {
@@ -303,7 +303,7 @@
     }
   }
 
-  & .scroll-container-tablet {
+  & .scroll-content-tablet {
     padding-top: calc(56px + 2px);
 
     & .incomplete-profile-container-tablet {
@@ -431,7 +431,7 @@
 }
 
 .root-mobile {
-  & .scroll-container-mobile {
+  & .scroll-content-mobile {
     padding-top: 2px;
 
     & .incomplete-profile-container-mobile {

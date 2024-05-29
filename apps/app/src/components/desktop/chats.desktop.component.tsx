@@ -123,8 +123,8 @@ export default function ChatsDesktopComponent({
                     </div>
                     <div
                         className={[
-                            styles['scroll-container'],
-                            styles['scroll-container-desktop'],
+                            styles['scroll-content'],
+                            styles['scroll-content-desktop'],
                         ].join(' ')}
                         style={{ height: window.innerHeight }}
                     // onScroll={(e) => {

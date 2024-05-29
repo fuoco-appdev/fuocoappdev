@@ -74,8 +74,8 @@ export function AccountSuspenseMobileComponent(): JSX.Element {
         </div>
         <div
           className={[
-            styles['scroll-container-skeleton'],
-            styles['scroll-container-skeleton-mobile'],
+            styles['scroll-content-skeleton'],
+            styles['scroll-content-skeleton-mobile'],
           ].join(' ')}
         >
           <div

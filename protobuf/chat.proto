@@ -2,3 +2,35 @@ syntax = "proto3";
 
 package chat;
 
+message CreateChatRequest {
+    string type = 1;
+}
+
+message ChatSubscriptionResponse {
+    string chat_id = 1;
+    string request_at = 2;
+    string account_id = 3;
+    string joined_at = 4;
+    string public_key_encrypted = 5;
+    string private_key_encrypted = 6;
+    string last_seen_at = 7;
+}
+
+message ChatMessageResponse {
+    string id = 1;
+    string created_at = 2;
+    string message_encrypted = 3;
+    string nonce = 4;
+}
+
+message ChatPrivateResponse {
+    string chat_id = 1;
+    repeated string user_ids = 2;
+}
+
+message ChatResponse {
+    string id = 1;
+    string created_at = 2;
+    string type = 3;
+    string updated_at = 4;
+}

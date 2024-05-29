@@ -50,6 +50,9 @@ export default function NotificationsDesktopComponent({
             />
           }
           loadingHeight={56}
+          showIndicatorThreshold={56}
+          reloadThreshold={96}
+          pullIndicatorComponent={<div className={[styles['pull-indicator-container']].join(' ')}><Line.ArrowDownward size={24} /></div>}
           isLoadable={notificationsProps.hasMoreNotifications}
           isLoading={notificationsProps.isLoading}
           onLoad={() => NotificationsController.onNextScrollAsync()}
@@ -77,8 +80,8 @@ export default function NotificationsDesktopComponent({
         >
           <div
             className={[
-              styles['scroll-container'],
-              styles['scroll-container-desktop'],
+              styles['scroll-content'],
+              styles['scroll-content-desktop'],
             ].join(' ')}
             ref={scrollContainerRef}
             onLoad={onLoad}

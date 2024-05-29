@@ -56,36 +56,40 @@ export default function AccountAddressesMobileComponent({
             </div>
           )}
         </div>
-        <div
-          className={[
-            styles['addresses-add-button-container'],
-            styles['addresses-add-button-container-mobile'],
-          ].join(' ')}
-        >
-          <Button
-            rounded={true}
-            classNames={{
-              container: [
-                styles['floating-button-container'],
-                styles['floating-button-container-mobile'],
-              ].join(' '),
-              button: [
-                styles['floating-button'],
-                styles['floating-button-mobile'],
-              ].join(' '),
-            }}
-            icon={<Line.Add size={24} color={'#2A2A5F'} />}
-            type={'primary'}
-            size={'small'}
-            rippleProps={{
-              color: 'rgba(42, 42, 95, .35)',
-            }}
-            touchScreen={true}
-            onClick={() => setOpenAddDropdown(true)}
-          />
-        </div>
         {ReactDOM.createPortal(
           <>
+            <div
+              className={[
+                styles['addresses-add-button-container'],
+                styles['addresses-add-button-container-mobile'],
+              ].join(' ')}
+              style={{
+                height: window.innerHeight,
+                width: window.innerWidth
+              }}
+            >
+              <Button
+                rounded={true}
+                classNames={{
+                  container: [
+                    styles['floating-button-container'],
+                    styles['floating-button-container-mobile'],
+                  ].join(' '),
+                  button: [
+                    styles['floating-button'],
+                    styles['floating-button-mobile'],
+                  ].join(' '),
+                }}
+                icon={<Line.Add size={24} color={'#2A2A5F'} />}
+                type={'primary'}
+                size={'small'}
+                rippleProps={{
+                  color: 'rgba(42, 42, 95, .35)',
+                }}
+                touchScreen={true}
+                onClick={() => setOpenAddDropdown(true)}
+              />
+            </div>
             <Dropdown
               classNames={{
                 touchscreenOverlay: styles['dropdown-touchscreen-overlay'],

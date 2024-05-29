@@ -37,8 +37,8 @@ export default function AccountPublicDesktopComponent({
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>
         <div
           className={[
-            styles['scroll-container'],
-            styles['scroll-container-desktop'],
+            styles['scroll-content'],
+            styles['scroll-content-desktop'],
           ].join(' ')}
           style={{ height: window.innerHeight }}
           onScroll={onScroll}

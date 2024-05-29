@@ -33,8 +33,8 @@ export default function OrderConfirmedDesktopComponent({
   return (
     <ResponsiveDesktop>
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>
-        <Scroll isLoadable={false} touchScreen={true} loadingHeight={0}>
-          <div className={[styles['scroll-container'], styles['scroll-container-desktop']].join(' ')}>
+        <Scroll isLoadable={false} isReloadable={false} touchScreen={true} loadingHeight={0}>
+          <div className={[styles['scroll-content'], styles['scroll-content-desktop']].join(' ')}>
             <div
               className={[
                 styles['left-content'],

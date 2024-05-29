@@ -67,8 +67,8 @@ export function AccountSuspenseDesktopComponent(): JSX.Element {
         </div>
         <div
           className={[
-            styles['scroll-container'],
-            styles['scroll-container-desktop'],
+            styles['scroll-content'],
+            styles['scroll-content-desktop'],
           ].join(' ')}
         >
           <div

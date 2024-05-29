@@ -146,7 +146,8 @@ export default function AccountPublicStatusDesktopComponent({
           classNames={{
             root: [styles['scroll-root'], styles['scroll-root-desktop']].join(' '),
             reloadContainer: [styles['scroll-load-container'], styles['scroll-load-container-desktop']].join(' '),
-            loadContainer: [styles['scroll-load-container'], styles['scroll-load-container-desktop']].join(' ')
+            loadContainer: [styles['scroll-load-container'], styles['scroll-load-container-desktop']].join(' '),
+            pullIndicator: [styles['pull-indicator'], styles['pull-indicator-desktop']].join(' ')
           }}
           loadComponent={
             <img
@@ -155,6 +156,9 @@ export default function AccountPublicStatusDesktopComponent({
             />
           }
           loadingHeight={56}
+          showIndicatorThreshold={56}
+          reloadThreshold={96}
+          pullIndicatorComponent={<div className={[styles['pull-indicator-container']].join(' ')}><Line.ArrowDownward size={24} /></div>}
           isLoadable={accountPublicProps.hasMoreFollowers || accountPublicProps.hasMoreFollowing}
           isReloading={accountPublicProps.areFollowersReloading || accountPublicProps.areFollowingReloading}
           isLoading={accountPublicProps.areFollowersLoading || accountPublicProps.areFollowingLoading}

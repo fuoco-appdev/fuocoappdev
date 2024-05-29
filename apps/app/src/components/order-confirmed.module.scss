@@ -5,7 +5,7 @@
     min-width: 100%;
     height: 100%;
 
-    & .scroll-container {
+    & .scroll-content {
         display: flex;
         width: 100%;
     }
@@ -200,7 +200,7 @@
 .root-desktop {
     padding-top: calc(56px + 24px);
 
-    & .scroll-container-desktop {
+    & .scroll-content-desktop {
         flex-direction: row;
         justify-content: center;
         gap: $mp-4;
@@ -388,7 +388,7 @@
 }
 
 .root-mobile {
-    & .scroll-container-mobile {
+    & .scroll-content-mobile {
         flex-direction: column;
         gap: 2px;
     }

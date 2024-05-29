@@ -43,7 +43,7 @@ export default function SettingsDesktopComponent({
             ]}
           />
         </div>
-        <Scroll isLoadable={false}>
+        <Scroll isLoadable={false} isReloadable={false}>
           <div
             className={[
               styles['outlet-container'],

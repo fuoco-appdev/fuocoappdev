@@ -7,7 +7,7 @@ export function OrderConfirmedSuspenseDesktopComponent(): JSX.Element {
   return (
     <ResponsiveSuspenseDesktop>
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>
-        <div className={[styles['scroll-container'], styles['scroll-container-desktop']].join(' ')}>
+        <div className={[styles['scroll-content'], styles['scroll-content-desktop']].join(' ')}>
           <div
             className={[
               styles['left-content'],

@@ -36,8 +36,8 @@ export default function AccountPublicMobileComponent({
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
         <div
           className={[
-            styles['scroll-container'],
-            styles['scroll-container-mobile'],
+            styles['scroll-content'],
+            styles['scroll-content-mobile'],
           ].join(' ')}
           style={{ height: window.innerHeight }}
           onScroll={onScroll}

@@ -159,6 +159,9 @@ export default function AccountDesktopComponent({
             />
           }
           loadingHeight={56}
+          showIndicatorThreshold={56}
+          reloadThreshold={96}
+          pullIndicatorComponent={<div className={[styles['pull-indicator-container']].join(' ')}><Line.ArrowDownward size={24} /></div>}
           isLoadable={accountProps.activeTabId !== RoutePathsType.AccountAddresses}
           isLoading={accountProps.areLikedProductsLoading || accountProps.areOrdersLoading}
           onLoad={onScrollLoad}
@@ -186,8 +189,8 @@ export default function AccountDesktopComponent({
         >
           <div
             className={[
-              styles['scroll-container'],
-              styles['scroll-container-desktop'],
+              styles['scroll-content'],
+              styles['scroll-content-desktop'],
             ].join(' ')}
           >
             {account?.status === 'Incomplete' && (

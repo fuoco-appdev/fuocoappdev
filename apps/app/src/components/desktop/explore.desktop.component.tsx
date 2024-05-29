@@ -129,6 +129,9 @@ export default function ExploreDesktopComponent({
               />
             }
             loadingHeight={56}
+            showIndicatorThreshold={56}
+            reloadThreshold={96}
+            pullIndicatorComponent={<div className={[styles['pull-indicator-container']].join(' ')}><Line.ArrowDownward size={24} /></div>}
             isLoadable={exploreProps.hasMoreSearchedStockLocations}
             isLoading={exploreProps.areSearchedStockLocationsLoading}
             onLoad={() => ExploreController.onNextScrollAsync()}
@@ -156,8 +159,8 @@ export default function ExploreDesktopComponent({
           >
             <div
               className={[
-                styles['scroll-container'],
-                styles['scroll-container-desktop'],
+                styles['scroll-content'],
+                styles['scroll-content-desktop'],
               ].join(' ')}
               ref={scrollContainerRef}
               onLoad={onScrollLoad}
