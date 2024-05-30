@@ -7,39 +7,76 @@ import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialM
 import { Message, proto3 } from "@bufbuild/protobuf";
 
 /**
- * @generated from message chat.CreateChatRequest
+ * @generated from message chat.CreatePrivateChatRequest
  */
-export class CreateChatRequest extends Message<CreateChatRequest> {
+export class CreatePrivateChatRequest extends Message<CreatePrivateChatRequest> {
   /**
-   * @generated from field: string type = 1;
+   * @generated from field: repeated string account_ids = 1;
    */
-  type = "";
+  accountIds: string[] = [];
 
-  constructor(data?: PartialMessage<CreateChatRequest>) {
+  constructor(data?: PartialMessage<CreatePrivateChatRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime = proto3;
-  static readonly typeName = "chat.CreateChatRequest";
+  static readonly typeName = "chat.CreatePrivateChatRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "type", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: "account_ids", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateChatRequest {
-    return new CreateChatRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreatePrivateChatRequest {
+    return new CreatePrivateChatRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateChatRequest {
-    return new CreateChatRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreatePrivateChatRequest {
+    return new CreatePrivateChatRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateChatRequest {
-    return new CreateChatRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreatePrivateChatRequest {
+    return new CreatePrivateChatRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: CreateChatRequest | PlainMessage<CreateChatRequest> | undefined, b: CreateChatRequest | PlainMessage<CreateChatRequest> | undefined): boolean {
-    return proto3.util.equals(CreateChatRequest, a, b);
+  static equals(a: CreatePrivateChatRequest | PlainMessage<CreatePrivateChatRequest> | undefined, b: CreatePrivateChatRequest | PlainMessage<CreatePrivateChatRequest> | undefined): boolean {
+    return proto3.util.equals(CreatePrivateChatRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message chat.UpdatePrivateChatRequest
+ */
+export class UpdatePrivateChatRequest extends Message<UpdatePrivateChatRequest> {
+  /**
+   * @generated from field: repeated string account_ids = 1;
+   */
+  accountIds: string[] = [];
+
+  constructor(data?: PartialMessage<UpdatePrivateChatRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "chat.UpdatePrivateChatRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "account_ids", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdatePrivateChatRequest {
+    return new UpdatePrivateChatRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdatePrivateChatRequest {
+    return new UpdatePrivateChatRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdatePrivateChatRequest {
+    return new UpdatePrivateChatRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdatePrivateChatRequest | PlainMessage<UpdatePrivateChatRequest> | undefined, b: UpdatePrivateChatRequest | PlainMessage<UpdatePrivateChatRequest> | undefined): boolean {
+    return proto3.util.equals(UpdatePrivateChatRequest, a, b);
   }
 }
 
@@ -181,9 +218,9 @@ export class ChatPrivateResponse extends Message<ChatPrivateResponse> {
   chatId = "";
 
   /**
-   * @generated from field: repeated string user_ids = 2;
+   * @generated from field: repeated string account_ids = 2;
    */
-  userIds: string[] = [];
+  accountIds: string[] = [];
 
   constructor(data?: PartialMessage<ChatPrivateResponse>) {
     super();
@@ -194,7 +231,7 @@ export class ChatPrivateResponse extends Message<ChatPrivateResponse> {
   static readonly typeName = "chat.ChatPrivateResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "chat_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "user_ids", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 2, name: "account_ids", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ChatPrivateResponse {
@@ -238,6 +275,11 @@ export class ChatResponse extends Message<ChatResponse> {
    */
   updatedAt = "";
 
+  /**
+   * @generated from field: chat.ChatPrivateResponse private = 5;
+   */
+  private?: ChatPrivateResponse;
+
   constructor(data?: PartialMessage<ChatResponse>) {
     super();
     proto3.util.initPartial(data, this);
@@ -250,6 +292,7 @@ export class ChatResponse extends Message<ChatResponse> {
     { no: 2, name: "created_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "type", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "updated_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "private", kind: "message", T: ChatPrivateResponse },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ChatResponse {

@@ -318,5 +318,7 @@
   "radius": "Rayon",
   "chats": "Chats",
   "accountFollowerAcceptedDescription": "La demande de suivi de {{username, string}} a été acceptée",
-  "accountFollowerFollowingDescription": "{{username, string}} vous suit"
+  "accountFollowerFollowingDescription": "{{username, string}} vous suit",
+  "noMessages": "Aucun message",
+  "noMessagesDescription": "Créez ou sélectionnez un chat privé, un chat de groupe ou un canal et commencez à envoyer des messages"
 }

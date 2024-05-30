@@ -1,6 +1,7 @@
 @import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
 @import 'slick-carousel/slick/slick.css';
 @import 'slick-carousel/slick/slick-theme.css';
+@import url('https://fonts.cdnfonts.com/css/instagram-sans-script');
 
 /* cyrillic-ext */
 @font-face {
@@ -200,7 +201,7 @@ body {
   --rounded-xl: 0.625rem /* */;
   --rounded-full: 9999px;
 
-  --font-family: 'Noto Sans';
+  --font-family: 'Instagram Sans', sans-serif;
 
   --font-weight-normal: 400;
   --font-weight-medium: 500;

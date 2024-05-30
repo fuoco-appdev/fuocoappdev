@@ -1,8 +1,10 @@
-import { Button, Input, Line, Tabs } from '@fuoco.appdev/core-ui';
+import { Button, Input, Line, Scroll, Tabs } from '@fuoco.appdev/core-ui';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import ChatController from '../../controllers/chat.controller';
 import { ChatTabs } from '../../models/chat.model';
+import { ChatResponse } from '../../protobuf/chat_pb';
 import { useQuery } from '../../route-paths';
 import { ChatsResponsiveProps } from '../chats.component';
 import styles from '../chats.module.scss';
@@ -14,6 +16,10 @@ export default function ChatsDesktopComponent({
     const navigate = useNavigate();
     const query = useQuery();
     const { t } = useTranslation();
+    const { id } = useParams();
+    const topBarRef = React.useRef<HTMLDivElement | null>(null);
+    let prevPreviewScrollTop = 0;
+    let yPosition = 0;
 
     return (
         <ResponsiveDesktop>
@@ -31,6 +37,7 @@ export default function ChatsDesktopComponent({
                             styles['top-bar-container'],
                             styles['top-bar-container-desktop'],
                         ].join(' ')}
+                        ref={topBarRef}
                     >
                         <div
                             className={[
@@ -121,56 +128,94 @@ export default function ChatsDesktopComponent({
                             </div>
                         </div>
                     </div>
+                    <Scroll
+                        loadComponent={
+                            <img
+                                src={'../assets/svg/ring-resize-dark.svg'}
+                                className={styles['loading-ring']}
+                            />
+                        }
+                        loadingHeight={56}
+                        showIndicatorThreshold={56}
+                        reloadThreshold={96}
+                        pullIndicatorComponent={<div className={[styles['pull-indicator-container']].join(' ')}><Line.ArrowDownward size={24} /></div>}
+                        isLoadable={chatProps.hasMoreChats}
+                        isLoading={chatProps.areChatsLoading}
+                        onLoad={() => ChatController.onChatsNextScrollAsync()}
+                        onScroll={(progress, scrollRef, contentRef) => {
+                            const elementHeight = topBarRef.current?.clientHeight ?? 0;
+                            const scrollTop = contentRef.current?.getBoundingClientRect().top ?? 0;
+                            if (prevPreviewScrollTop <= scrollTop) {
+                                yPosition -= prevPreviewScrollTop - scrollTop;
+                                if (yPosition >= 0) {
+                                    yPosition = 0;
+                                }
+
+                                topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
+                            } else {
+                                yPosition += scrollTop - prevPreviewScrollTop;
+                                if (yPosition <= -elementHeight) {
+                                    yPosition = -elementHeight;
+                                }
+
+                                topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
+                            }
+
+                            prevPreviewScrollTop = scrollTop;
+                        }}
+                    >
+                        <div
+                            className={[
+                                styles['side-bar-scroll-content'],
+                                styles['side-bar-scroll-content-desktop'],
+                            ].join(' ')}
+                        >
+                            {chatProps.chats.map(
+                                (chat: ChatResponse, _index: number) => {
+                                    return (
+                                        <div />
+                                    );
+                                }
+                            )}
+                            {chatProps.chats.length <= 0 && (<div className={[styles['no-chats-container'], styles['no-chats-container-desktop']].join(' ')}>
+                                <div
+                                    className={[
+                                        styles['no-chats-text'],
+                                        styles['no-chats-text-desktop'],
+                                    ].join(' ')}
+                                >
+                                    {t('noMessagesCount')}
+                                </div>
+                            </div>)}
+                        </div>
+                    </Scroll>
+
+                </div>
+                {!id && (<div className={[styles['empty-chat-container'], styles['empty-chat-container-desktop']].join(' ')}>
                     <div
                         className={[
-                            styles['scroll-content'],
-                            styles['scroll-content-desktop'],
+                            styles['no-messages-container'],
+                            styles['no-messages-container-desktop'],
                         ].join(' ')}
-                        style={{ height: window.innerHeight }}
-                    // onScroll={(e) => {
-                    //     onScroll(e);
-                    //     const elementHeight = topBarRef.current?.clientHeight ?? 0;
-                    //     const scrollTop = e.currentTarget.scrollTop;
-                    //     if (prevScrollTop >= scrollTop) {
-                    //         yPosition += prevScrollTop - scrollTop;
-                    //         if (yPosition >= 0) {
-                    //             yPosition = 0;
-                    //         }
-
-                    //         topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
-                    //     } else {
-                    //         yPosition -= scrollTop - prevScrollTop;
-                    //         if (yPosition <= -elementHeight) {
-                    //             yPosition = -elementHeight;
-                    //         }
-
-                    //         topBarRef.current!.style.transform = `translateY(${yPosition}px)`;
-                    //     }
-
-                    //     prevScrollTop = e.currentTarget.scrollTop;
-                    // }}
-                    // ref={scrollContainerRef}
-                    // onLoad={onScrollLoad}
                     >
-                        {/* {exploreProps.searchedStockLocations.map(
-                            (stockLocation: StockLocation, _index: number) => {
-                                return (
-                                    <StockLocationItemComponent
-                                        key={stockLocation.id}
-                                        stockLocation={stockLocation}
-                                        onClick={async () =>
-                                            onStockLocationClicked(
-                                                await ExploreController.getInventoryLocationAsync(
-                                                    stockLocation
-                                                )
-                                            )
-                                        }
-                                    />
-                                );
-                            }
-                        )} */}
+                        <div
+                            className={[
+                                styles['no-messages-text'],
+                                styles['no-messages-text-desktop'],
+                            ].join(' ')}
+                        >
+                            {t('noMessages')}
+                        </div>
+                        <div
+                            className={[
+                                styles['no-messages-description'],
+                                styles['no-messages-description-desktop'],
+                            ].join(' ')}
+                        >
+                            {t('noMessagesDescription')}
+                        </div>
                     </div>
-                </div>
+                </div>)}
             </div>
         </ResponsiveDesktop>
     );

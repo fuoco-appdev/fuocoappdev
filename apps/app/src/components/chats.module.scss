@@ -2,8 +2,10 @@
 
 .root {
     display: flex;
+    flex-direction: row;
     width: 100%;
     height: 100%;
+    gap: 2px;
 
     & .search-container {
         position: relative;
@@ -129,27 +131,50 @@
                 width: 100%;
                 transition: max-height 150ms $transition-standard-easing;
             }
+        }
 
-            & .no-searched-stock-locations-container {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                width: 100%;
+        & .no-chats-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 100%;
 
-                & .no-items-text {
-                    margin-top: $mp-4;
-                    color: $brand-900;
-                    font-size: $font-size-sm;
-                    text-align: center;
-                }
+            & .no-chats-text {
+                margin-top: $mp-6;
+                color: $brand-900;
+                font-size: $font-size-sm;
+                text-align: center;
+            }
+        }
+    }
 
-                & .no-items-container {
-                    display: flex;
-                    flex-direction: row;
-                    justify-content: center;
-                    margin-top: $mp-8;
-                    margin-bottom: $mp-4;
-                }
+    & .empty-chat-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        background-color: #fff;
+        border-radius: 6px;
+
+        & .no-messages-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: $mp-4;
+
+            & .no-messages-text {
+                color: $brand-900;
+                font-size: $font-size-lg;
+                font-weight: $font-weight-bold;
+            }
+
+            & .no-messages-description {
+                color: $brand-900;
+                font-size: $font-size-sm;
+                max-width: 350px;
+                text-align: center;
             }
         }
     }

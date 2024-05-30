@@ -64,7 +64,7 @@ class AccountService {
     }
 
     customer['orders'] = null;
-    const metadata = JSON.parse(account.metadata);
+    const metadata = JSON.parse(account?.metadata ?? '');
     const geo = metadata?.['geo'];
     const document = {
       ...account,
@@ -86,7 +86,7 @@ class AccountService {
     }
 
     customer['orders'] = null;
-    const metadata = JSON.parse(account.metadata);
+    const metadata = JSON.parse(account?.metadata ?? '');
     const geo = metadata?.['geo'];
     const document = {
       ...account,

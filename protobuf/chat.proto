@@ -2,8 +2,12 @@ syntax = "proto3";
 
 package chat;
 
-message CreateChatRequest {
-    string type = 1;
+message CreatePrivateChatRequest {
+    repeated string account_ids = 1;
+}
+
+message UpdatePrivateChatRequest {
+    repeated string account_ids = 1;
 }
 
 message ChatSubscriptionResponse {
@@ -25,7 +29,7 @@ message ChatMessageResponse {
 
 message ChatPrivateResponse {
     string chat_id = 1;
-    repeated string user_ids = 2;
+    repeated string account_ids = 2;
 }
 
 message ChatResponse {
@@ -33,4 +37,5 @@ message ChatResponse {
     string created_at = 2;
     string type = 3;
     string updated_at = 4;
+    ChatPrivateResponse private = 5;
 }
