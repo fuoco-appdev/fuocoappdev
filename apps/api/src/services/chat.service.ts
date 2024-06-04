@@ -5,7 +5,7 @@ import {
     CreatePrivateChatRequest,
     UpdatePrivateChatRequest,
 } from '../protobuf/chat_pb.js';
-import { AccountProps } from './account.service.ts';
+import AccountService from './account.service.ts';
 import MeiliSearchService from './meilisearch.service.ts';
 import SupabaseService from './supabase.service.ts';
 
@@ -21,13 +21,9 @@ export interface ChatPrivateProps {
     account_ids?: string[];
 }
 
-export interface User extends AccountProps {
-    customer?: object;
-}
-
 export interface ChatDocument extends ChatProps {
     private?: ChatPrivateProps;
-    users?: User[];
+    accounts?: object[];
 }
 
 class ChatService {
@@ -46,7 +42,7 @@ class ChatService {
                     {
                         searchableAttributes: ['*'],
                         displayedAttributes: ['*'],
-                        filterableAttributes: ['private'],
+                        filterableAttributes: [],
                         sortableAttributes: ['created_at', 'updated_at']
                     }
                 );
@@ -54,57 +50,40 @@ class ChatService {
         );
     }
 
-    public async addDocumentAsync(account: ChatProps): Promise<void> {
-        // const customer = (await MedusaService.getCustomerAsync(
-        //     account?.customer_id ?? ''
-        // )) as any;
-        // if (!customer) {
-        //     return;
-        // }
+    public async addPrivateDocumentAsync(chatPrivate: ChatPrivateProps): Promise<void> {
+        try {
+            const chat = await this.findChatAsync(chatPrivate?.chat_id ?? '');
+            const document: ChatDocument = { ...chat, private: chatPrivate };
 
-        // customer['orders'] = null;
-        // const metadata = JSON.parse(account.metadata);
-        // const geo = metadata?.['geo'];
-        // const document = {
-        //     ...account,
-        //     customer: customer,
-        //     _geo: {
-        //         lat: geo?.lat ?? 0,
-        //         lng: geo?.lng ?? 0,
-        //     },
-        // };
-        // await MeiliSearchService.addDocumentAsync(this._meiliIndexName, document);
+            const accountDocuments = await AccountService.getDocumentsByIdsAsync(chatPrivate?.account_ids ?? []);
+            document.accounts = accountDocuments ?? [];
+            await MeiliSearchService.addDocumentAsync(this._meiliIndexName, document);
+        }
+        catch (error: any) {
+            console.error(error);
+            return;
+        }
     }
 
-    public async updateDocumentAsync(account: ChatProps): Promise<void> {
-        // const customer = (await MedusaService.getCustomerAsync(
-        //     account?.customer_id ?? ''
-        // )) as any;
-        // if (!customer) {
-        //     return;
-        // }
+    public async updatePrivateDocumentAsync(chatPrivate: ChatPrivateProps): Promise<void> {
+        try {
+            const chat = await this.findChatAsync(chatPrivate?.chat_id ?? '');
+            const document: ChatDocument = { ...chat, private: chatPrivate };
 
-        // customer['orders'] = null;
-        // const metadata = JSON.parse(account.metadata);
-        // const geo = metadata?.['geo'];
-        // const document = {
-        //     ...account,
-        //     customer: customer,
-        //     _geo: {
-        //         lat: geo?.lat ?? 0,
-        //         lng: geo?.lng ?? 0,
-        //     },
-        // };
-        // await MeiliSearchService.updateDocumentAsync(
-        //     this._meiliIndexName,
-        //     document
-        // );
+            const accountDocuments = await AccountService.getDocumentsByIdsAsync(chatPrivate?.account_ids ?? []);
+            document.accounts = accountDocuments ?? [];
+            await MeiliSearchService.updateDocumentAsync(this._meiliIndexName, document);
+        }
+        catch (error: any) {
+            console.error(error);
+            return;
+        }
     }
 
-    public async deleteDocumentAsync(account: ChatProps): Promise<void> {
+    public async deletePrivateDocumentAsync(privateChat: ChatPrivateProps): Promise<void> {
         await MeiliSearchService.deleteDocumentAsync(
             this._meiliIndexName,
-            account?.id ?? ''
+            privateChat?.chat_id ?? ''
         );
     }
 
@@ -122,7 +101,7 @@ class ChatService {
         return data.length > 0 ? data[0] : null;
     }
 
-    public async findPrivateChatAsync(id: string): Promise<ChatProps | null> {
+    public async findPrivateChatAsync(id: string): Promise<ChatPrivateProps | null> {
         const { data, error } = await SupabaseService.client
             .from('chat_privates')
             .select()
@@ -238,11 +217,23 @@ class ChatService {
         return chatResponse;
     }
 
-    public async deleteAsync(supabaseId: string): Promise<void> {
+    public async deleteChatAsync(id: string): Promise<void> {
+        const chatResponse = await this.findChatAsync(id);
+        if (chatResponse?.type === 'private') {
+            const { error } = await SupabaseService.client
+                .from('chat_privates')
+                .delete()
+                .match({ chat_id: id });
+
+            if (error) {
+                console.error(error);
+            }
+        }
+
         const { error } = await SupabaseService.client
-            .from('account')
+            .from('chat')
             .delete()
-            .match({ supabase_id: supabaseId });
+            .match({ id: id });
 
         if (error) {
             console.error(error);

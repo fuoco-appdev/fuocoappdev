@@ -1,3 +1,6 @@
+import { IRequest } from 'https://deno.land/x/axiod@0.26.2/interfaces.ts';
+import 'https://deno.land/x/dotenv@v3.2.0/load.ts';
+import { Redis } from 'https://deno.land/x/redis@v0.32.3/mod.ts';
 import {
   AccountExistsRequest,
   AccountExistsResponse,
@@ -7,9 +10,16 @@ import {
   AccountsRequest,
   AccountsResponse,
 } from '../protobuf/account_pb.js';
-import MedusaService from './medusa.service.ts';
+import MedusaService, { CustomerProps } from './medusa.service.ts';
 import MeiliSearchService from './meilisearch.service.ts';
+import RedisService from './redis.service.ts';
 import SupabaseService from './supabase.service.ts';
+
+enum RedisAccountIndexKey {
+  Default = 'account:queue:indexing',
+  Created = 'account:queue:indexing:created',
+  Loaded = 'account:queue:indexing:loaded'
+}
 
 export interface AccountProps {
   id?: string;
@@ -33,26 +43,74 @@ export interface AccountDocument extends AccountProps {
 
 class AccountService {
   private readonly _meiliIndexName: string;
+  private readonly _apiUrl: string;
+  private readonly _indexLimit: number;
   constructor() {
     this._meiliIndexName = 'account';
+    this._apiUrl = Deno.env.get('API_URL') ?? 'http://localhost:9001';
+    this._indexLimit = 100;
 
-    MeiliSearchService.getIndexAsync(this._meiliIndexName).then(
-      async (response: any) => {
-        if (!response) {
-          await MeiliSearchService.createIndexAsync(this._meiliIndexName);
+    this.onRedisConnection = this.onRedisConnection.bind(this);
+
+    RedisService.addConnectionCallback(this.onRedisConnection);
+  }
+
+  public async indexDocumentsAsync(data: { limit: number; offset: number; }): Promise<void> {
+    const accountsResponse = await SupabaseService.client
+      .from('account')
+      .select()
+      .neq("status", "Incomplete")
+      .limit(data.limit)
+      .range(data.offset, data.offset + data.limit);
+
+    if (accountsResponse.error) {
+      console.error(accountsResponse.error);
+      return;
+    }
+
+    const accounts = accountsResponse.data as AccountProps[];
+    const customerIds = accounts.map((value) => value.customer_id ?? '');
+    const customers = (await MedusaService.getCustomersByIdAsync(
+      customerIds
+    ));
+    if (!customers) {
+      return;
+    }
+
+    const customerRecord: Record<string, CustomerProps> = {};
+    customers.map((value) => customerRecord[value.id] = value);
+
+    const documents = [];
+    for (const account of accounts) {
+      const metadata = JSON.parse(account?.metadata ?? '');
+      const geo = metadata?.['geo'];
+      const customer = customerRecord[account.customer_id ?? ''];
+      delete customer['password_hash'];
+      delete customer['metadata'];
+      documents.push({
+        ...account,
+        customer: customer,
+        _geo: {
+          lat: geo?.lat ?? 0,
+          lng: geo?.lng ?? 0,
         }
+      });
+    }
 
-        await MeiliSearchService.updateSettingsAsync(
-          this._meiliIndexName,
-          {
-            searchableAttributes: ['*'],
-            displayedAttributes: ['*'],
-            filterableAttributes: ['_geo', 'sex', 'status', 'id'],
-            sortableAttributes: []
-          }
-        );
-      }
-    );
+    await MeiliSearchService.addDocumentsAsync(this._meiliIndexName, documents);
+
+    const queueData = await RedisService.lPopAsync(RedisAccountIndexKey.Default) as string | undefined;
+    if (!queueData) {
+      await RedisService.setAsync(RedisAccountIndexKey.Loaded, 'true');
+    }
+
+    await this.publishAccountIndexing(queueData);
+  }
+
+  public async getDocumentsByIdsAsync(accountIds: string[]): Promise<object[] | null> {
+    return await MeiliSearchService.getDocumentsAsync(this._meiliIndexName, {
+      filter: `id IN [${accountIds.join(", ")}]`
+    })
   }
 
   public async addDocumentAsync(account: AccountProps): Promise<void> {
@@ -74,7 +132,7 @@ class AccountService {
         lng: geo?.lng ?? 0,
       },
     };
-    await MeiliSearchService.addDocumentAsync(this._meiliIndexName, document);
+    await MeiliSearchService.addDocumentsAsync(this._meiliIndexName, [document]);
   }
 
   public async updateDocumentAsync(account: AccountProps): Promise<void> {
@@ -96,9 +154,9 @@ class AccountService {
         lng: geo?.lng ?? 0,
       },
     };
-    await MeiliSearchService.updateDocumentAsync(
+    await MeiliSearchService.updateDocumentsAsync(
       this._meiliIndexName,
-      document
+      [document]
     );
   }
 
@@ -383,6 +441,72 @@ class AccountService {
       ...(props.metadata && { metadata: props.metadata }),
       updated_at: date.toUTCString(),
     };
+  }
+
+  private async onRedisConnection(redis: Redis): Promise<void> {
+    const indexCreated = await RedisService.getAsync(RedisAccountIndexKey.Created);
+    if (!indexCreated || indexCreated !== 'true') {
+      await MeiliSearchService.createIndexAsync(this._meiliIndexName);
+      await MeiliSearchService.updateSettingsAsync(
+        this._meiliIndexName,
+        {
+          searchableAttributes: ['*'],
+          displayedAttributes: ['*'],
+          filterableAttributes: ['_geo', 'sex', 'status', 'id'],
+          sortableAttributes: []
+        }
+      );
+      await RedisService.setAsync(RedisAccountIndexKey.Created, 'true');
+    }
+
+
+    const indexLoaded = await RedisService.getAsync(RedisAccountIndexKey.Loaded);
+    if (indexLoaded) {
+      return;
+    }
+
+    const queueLength = await RedisService.lLenAsync(RedisAccountIndexKey.Default);
+    if (queueLength !== undefined && queueLength <= 0) {
+      await this.queueIndexDocumentsAsync();
+    }
+
+    const queueData = await RedisService.lPopAsync(RedisAccountIndexKey.Default) as string | undefined;
+    await this.publishAccountIndexing(queueData);
+  }
+
+  private async queueIndexDocumentsAsync(): Promise<void> {
+    const accountsResponse = await SupabaseService.client
+      .from('account')
+      .select("", { count: "exact" })
+      .neq("status", "Incomplete");
+
+    if (accountsResponse.error) {
+      console.error(accountsResponse.error);
+      return;
+    }
+
+    const count = accountsResponse?.count ?? 0;
+    for (let i = 0; i < count; i += this._indexLimit) {
+      await RedisService.rPushAsync(RedisAccountIndexKey.Default, JSON.stringify({ limit: this._indexLimit, offset: i }));
+    }
+  }
+
+  private async publishAccountIndexing(data: string | undefined): Promise<void> {
+    if (!data) {
+      return;
+    }
+
+    const axiosConfig = JSON.stringify({
+      method: 'post',
+      url: `${this._apiUrl}/account/indexing`,
+      data: data,
+      headers: {
+        'Authorization': `Bearer ${SupabaseService.key}`,
+        'Content-Type': 'application/json'
+      },
+      responseType: 'json'
+    } as IRequest);
+    await RedisService.publishAsync('axios:request', axiosConfig);
   }
 
   private async checkUsernameExistsAsync(username: string): Promise<boolean> {

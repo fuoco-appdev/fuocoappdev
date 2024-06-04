@@ -3,7 +3,7 @@
 import { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import * as React from 'react';
 import { useCookies } from 'react-cookie';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import AppController from '../controllers/app.controller';
 import WindowController from '../controllers/window.controller';
 import MedusaService from '../services/medusa.service';
@@ -14,6 +14,7 @@ export interface AppProps { }
 
 function AppComponent({ }: AppProps): JSX.Element {
   const location = useLocation();
+  const navigate = useNavigate();
   const [cookies, setCookie, removeCookie] = useCookies();
   const renderCountRef = React.useRef<number>(0);
   const memoCountRef = React.useRef<number>(0);
@@ -23,7 +24,7 @@ function AppComponent({ }: AppProps): JSX.Element {
 
     AppController.initializeServices(renderCountRef.current);
     const subscription = SupabaseService.subscribeToAuthStateChanged(
-      (event: AuthChangeEvent, session: Session | null) => {
+      async (event: AuthChangeEvent, session: Session | null) => {
         if (event === 'TOKEN_REFRESHED' && session) {
           setCookie('sb-refresh-token', session.refresh_token);
           setCookie('sb-access-token', session.access_token);
@@ -34,17 +35,9 @@ function AppComponent({ }: AppProps): JSX.Element {
           setCookie('sb-refresh-token', session.refresh_token);
           setCookie('sb-access-token', session.access_token);
         } else if (event === 'SIGNED_OUT') {
-          const accessToken =
-            Object.keys(cookies).includes('sb-access-token') &&
-            cookies['sb-access-token'];
-          const refreshToken =
-            Object.keys(cookies).includes('sb-refresh-token') &&
-            cookies['sb-refresh-token'];
-          if (accessToken && refreshToken) {
-            removeCookie('sb-refresh-token');
-            removeCookie('sb-access-token');
-            MedusaService.deleteSessionAsync();
-          }
+          removeCookie('sb-refresh-token');
+          removeCookie('sb-access-token');
+          await MedusaService.deleteSessionAsync();
         }
       }
     );

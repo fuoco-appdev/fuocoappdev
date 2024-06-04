@@ -1,14 +1,32 @@
 import { createStore, withProps } from "@ngneat/elf";
 import { Model } from "../model";
 import { ChatResponse } from "../protobuf/chat_pb";
+import { AccountDocument } from "./account.model";
 
 export enum ChatTabs {
     Messages = 'messages',
     Requests = 'requests'
 }
 
+export interface PrivateChatDocument {
+    chat_id?: string;
+    account_ids?: string[];
+}
+
+export interface ChatDocument {
+    id?: string;
+    created_at?: string;
+    type?: string;
+    updated_at?: string;
+    accounts?: AccountDocument[];
+    private?: PrivateChatDocument;
+}
+
 export interface ChatState {
     searchInput: string;
+    searchAccountsInput: string;
+    areAccountsLoading: boolean;
+    searchedAccounts: AccountDocument[];
     selectedTab: ChatTabs;
     hasMoreMessageChannels: boolean;
     areMessageChannelsLoading: boolean;
@@ -26,6 +44,9 @@ export class ChatModel extends Model {
                 { name: "cart" },
                 withProps<ChatState>({
                     searchInput: '',
+                    searchAccountsInput: '',
+                    areAccountsLoading: false,
+                    searchedAccounts: [],
                     selectedTab: ChatTabs.Messages,
                     hasMoreMessageChannels: true,
                     areMessageChannelsLoading: false,
@@ -46,6 +67,36 @@ export class ChatModel extends Model {
     public set searchInput(value: string) {
         if (this.searchInput !== value) {
             this.store.update((state) => ({ ...state, searchInput: value }));
+        }
+    }
+
+    public get searchAccountsInput(): string {
+        return this.store.getValue().searchAccountsInput;
+    }
+
+    public set searchAccountsInput(value: string) {
+        if (this.searchAccountsInput !== value) {
+            this.store.update((state) => ({ ...state, searchAccountsInput: value }));
+        }
+    }
+
+    public get searchedAccounts(): AccountDocument[] {
+        return this.store.getValue().searchedAccounts;
+    }
+
+    public set searchedAccounts(value: AccountDocument[]) {
+        if (JSON.stringify(this.searchedAccounts) !== JSON.stringify(value)) {
+            this.store.update((state) => ({ ...state, searchedAccounts: value }));
+        }
+    }
+
+    public get areAccountsLoading(): boolean {
+        return this.store.getValue().areAccountsLoading;
+    }
+
+    public set areAccountsLoading(value: boolean) {
+        if (this.areAccountsLoading !== value) {
+            this.store.update((state) => ({ ...state, areAccountsLoading: value }));
         }
     }
 

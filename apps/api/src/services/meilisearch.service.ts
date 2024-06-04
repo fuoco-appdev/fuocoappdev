@@ -88,9 +88,37 @@ class MeiliSearchService {
     }
   }
 
-  public async addDocumentAsync(
+  public async getDocumentsAsync(
     indexName: string,
-    data: object
+    queryParameters: {
+      offset?: string;
+      limit?: string;
+      fields?: string;
+      filter?: string;
+    }
+  ): Promise<object[] | null> {
+    try {
+      const params = new URLSearchParams(queryParameters).toString();
+      const response = await axiod.get(
+        `${this._url}/indexes/${indexName}/documents?${params}`,
+        {
+          headers: {
+            Authorization: `Bearer ${this._apiKey}`,
+          },
+        }
+      );
+
+      return response.data.results;
+    }
+    catch (error: any) {
+      console.error(error);
+      return null;
+    }
+  }
+
+  public async addDocumentsAsync(
+    indexName: string,
+    data: object[]
   ): Promise<object | null> {
     try {
       const response = await axiod.post(
@@ -99,6 +127,7 @@ class MeiliSearchService {
         {
           headers: {
             Authorization: `Bearer ${this._apiKey}`,
+            'Content-Type': 'application/json'
           },
         }
       );
@@ -110,9 +139,9 @@ class MeiliSearchService {
     }
   }
 
-  public async updateDocumentAsync(
+  public async updateDocumentsAsync(
     indexName: string,
-    data: object
+    data: object[]
   ): Promise<object | null> {
     try {
       const response = await axiod.put(

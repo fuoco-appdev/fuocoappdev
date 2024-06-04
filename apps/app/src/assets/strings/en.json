@@ -321,5 +321,6 @@
   "accountFollowerFollowingDescription": "is following you",
   "noMessages": "No messages",
   "noMessagesDescription": "Create or select a private chat, group chat or channel and start messaging",
-  "noMessagesCount": "0 messages"
+  "noMessagesCount": "0 messages",
+  "newPrivate": "New private"
 }

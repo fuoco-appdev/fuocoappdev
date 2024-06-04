@@ -4,6 +4,7 @@ import { Controller } from '../controller';
 import AccountPublicController from '../controllers/account-public.controller';
 import AccountController from '../controllers/account.controller';
 import CartController from '../controllers/cart.controller';
+import ChatController from '../controllers/chat.controller';
 import CheckoutController from '../controllers/checkout.controller';
 import EventsController from '../controllers/events.controller';
 import HelpController from '../controllers/help.controller';
@@ -35,7 +36,7 @@ class AppController extends Controller {
     this.initializeAsync(renderCount);
   }
 
-  public override load(_renderCount: number): void {}
+  public override load(_renderCount: number): void { }
 
   public override disposeInitialization(renderCount: number): void {
     AccountPublicController.disposeInitialization(renderCount);
@@ -43,6 +44,7 @@ class AppController extends Controller {
     ExploreController.disposeInitialization(renderCount);
     StoreController.disposeInitialization(renderCount);
     EventsController.disposeInitialization(renderCount);
+    ChatController.disposeInitialization(renderCount);
     CartController.disposeInitialization(renderCount);
     NotificationsController.disposeInitialization(renderCount);
     ProductController.disposeInitialization(renderCount);
@@ -60,7 +62,7 @@ class AppController extends Controller {
     WindowController.disposeInitialization(renderCount);
   }
 
-  public override disposeLoad(_renderCount: number): void {}
+  public override disposeLoad(_renderCount: number): void { }
 
   public async initializeAsync(renderCount: number): Promise<void> {
     WindowController.initialize(renderCount);
@@ -70,6 +72,7 @@ class AppController extends Controller {
     StoreController.initialize(renderCount);
     EventsController.initialize(renderCount);
     CartController.initialize(renderCount);
+    ChatController.initialize(renderCount);
     NotificationsController.initialize(renderCount);
     ProductController.initialize(renderCount);
     SigninController.initialize(renderCount);

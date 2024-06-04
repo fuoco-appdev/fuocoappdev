@@ -1,13 +1,13 @@
 {
   "supabase": {
     "url": "http://localhost:8000",
-    "functions_url": "http://192.168.3.162:8001"
+    "functions_url": "http://192.168.2.52:8001"
   },
   "medusa": {
     "url": "http://localhost:9000"
   },
   "meilisearch": {
-    "url": "http://192.168.3.162:7700"
+    "url": "http://192.168.2.52:7700"
   },
   "mapbox": {
     "style_url": "mapbox://styles/lucasfuoco/cli44l6r902mw01qyaoqoa46t"

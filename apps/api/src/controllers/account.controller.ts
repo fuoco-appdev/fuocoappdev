@@ -1,6 +1,7 @@
 import { readAll } from 'https://deno.land/std@0.105.0/io/util.ts';
 import * as HttpError from 'https://deno.land/x/http_errors@3.0.0/mod.ts';
 import * as Oak from 'https://deno.land/x/oak@v11.1.0/mod.ts';
+import { AdminGuard } from '../guards/admin.guard.ts';
 import { AuthGuard } from '../guards/index.ts';
 import { ContentType, Controller, Guard, Post } from '../index.ts';
 import {
@@ -37,7 +38,23 @@ export class AccountController {
     context.response.status = 200;
   }
 
+  @Post('/indexing')
+  @Guard(AdminGuard)
+  @ContentType('application/json')
+  public async handleIndexingAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >
+  ): Promise<void> {
+    const data = await context.request.body().value;
+    await AccountService.indexDocumentsAsync(data);
+    context.response.status = 200;
+  }
+
   @Post('/accounts')
+  @Guard(AuthGuard)
   @ContentType('application/x-protobuf')
   public async getAccountsAsync(
     context: Oak.RouterContext<

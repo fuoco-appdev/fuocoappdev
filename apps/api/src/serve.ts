@@ -10,6 +10,7 @@ import {
   ProductLikesController
 } from "./controllers/index.ts";
 import { Core } from "./index.ts";
+import RedisService from "./services/redis.service.ts";
 
 const app = Core.registerApp([
   new AccountController(),
@@ -23,3 +24,5 @@ const app = Core.registerApp([
   new ChatController()
 ]);
 app.listen({ port: 8001 });
+
+RedisService.connectAsync();

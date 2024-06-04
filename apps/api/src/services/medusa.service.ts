@@ -32,6 +32,21 @@ import AccountService from './account.service.ts';
 import MapboxService, { GeocodingFeature } from './mapbox.service.ts';
 import SupabaseService from './supabase.service.ts';
 
+export interface CustomerProps {
+  id: string;
+  email?: string;
+  first_name?: string;
+  last_name?: string;
+  billing_address_id?: string;
+  password_hash?: string;
+  phone?: string;
+  has_account: boolean;
+  created_at?: string;
+  updated_at?: string;
+  deleted_at?: string;
+  metadata?: string;
+}
+
 class MedusaService {
   private _url: string | undefined;
   private _token: string | undefined;
@@ -200,12 +215,8 @@ class MedusaService {
     return customer;
   }
 
-  public async getCustomersAsync(
-    request: InstanceType<typeof CustomersRequest>
-  ): Promise<InstanceType<typeof CustomersResponse>> {
-    const customerIds = request.getCustomerIdsList();
-    const response = new CustomersResponse();
-    const formattedIds = customerIds.toString();
+  public async getCustomersByIdAsync(ids: string[]): Promise<CustomerProps[] | null> {
+    const formattedIds = ids.toString();
     const customersResponse = await SupabaseService.client
       .from('customer')
       .select()
@@ -213,10 +224,23 @@ class MedusaService {
 
     if (customersResponse.error) {
       console.error(customersResponse.error);
+      return null;
+    }
+
+    return customersResponse.data as CustomerProps[];
+  }
+
+  public async getCustomersAsync(
+    request: InstanceType<typeof CustomersRequest>
+  ): Promise<InstanceType<typeof CustomersResponse>> {
+    const customerIds = request.getCustomerIdsList();
+    const response = new CustomersResponse();
+    const customers = await this.getCustomersByIdAsync(customerIds);
+    if (!customers) {
       return response;
     }
 
-    for (const customer of customersResponse.data) {
+    for (const customer of customers) {
       const customerResponse = new CustomerResponse();
       customer?.id && customerResponse.setId(customer.id);
       customer?.email && customerResponse.setEmail(customer.email);
