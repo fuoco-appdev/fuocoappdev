@@ -267,7 +267,21 @@ class AccountService {
     request: InstanceType<typeof AccountsRequest>
   ): Promise<InstanceType<typeof AccountsResponse> | null> {
     const response = new AccountsResponse();
-    const formattedIds = request.getAccountIdsList().toString();
+    const accounts = await this.findAccountsByIdAsync(request.getAccountIdsList());
+    if (!accounts) {
+      console.error('No accounts found');
+      return response;
+    }
+    for (const account of accounts) {
+      const accountResponse = this.assignAndGetAccountProtocol(account);
+      response.addAccounts(accountResponse);
+    }
+
+    return response;
+  }
+
+  public async findAccountsByIdAsync(ids: string[]): Promise<AccountProps[] | null> {
+    const formattedIds = ids.toString();
     const { data, error } = await SupabaseService.client
       .from('account')
       .select()
@@ -278,12 +292,7 @@ class AccountService {
       return null;
     }
 
-    for (const account of data) {
-      const accountResponse = this.assignAndGetAccountProtocol(account);
-      response.addAccounts(accountResponse);
-    }
-
-    return response;
+    return data;
   }
 
   public async deleteAsync(supabaseId: string): Promise<void> {

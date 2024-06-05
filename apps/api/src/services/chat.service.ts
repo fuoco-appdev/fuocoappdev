@@ -1,4 +1,6 @@
+import { IRequest } from 'https://deno.land/x/axiod@0.26.2/interfaces.ts';
 import * as HttpError from 'https://deno.land/x/http_errors@3.0.0/mod.ts';
+import { Redis } from 'https://deno.land/x/redis@v0.32.3/mod.ts';
 import {
     ChatPrivateResponse,
     ChatResponse,
@@ -6,8 +8,16 @@ import {
     UpdatePrivateChatRequest,
 } from '../protobuf/chat_pb.js';
 import AccountService from './account.service.ts';
+import MedusaService, { CustomerProps } from './medusa.service.ts';
 import MeiliSearchService from './meilisearch.service.ts';
+import RedisService from './redis.service.ts';
 import SupabaseService from './supabase.service.ts';
+
+enum RedisChatIndexKey {
+    Default = 'chat:queue:indexing',
+    Created = 'chat:queue:indexing:created',
+    Loaded = 'chat:queue:indexing:loaded'
+}
 
 export interface ChatProps {
     id?: string;
@@ -22,42 +32,61 @@ export interface ChatPrivateProps {
 }
 
 export interface ChatDocument extends ChatProps {
-    private?: ChatPrivateProps;
-    accounts?: object[];
+    tags?: string[];
 }
 
 class ChatService {
     private readonly _meiliIndexName: string;
+    private readonly _apiUrl: string;
+    private readonly _indexLimit: number;
+
     constructor() {
         this._meiliIndexName = 'chat';
+        this._apiUrl = Deno.env.get('API_URL') ?? 'http://localhost:9001';
+        this._indexLimit = 100;
 
-        MeiliSearchService.getIndexAsync(this._meiliIndexName).then(
-            async (response: any) => {
-                if (!response) {
-                    await MeiliSearchService.createIndexAsync(this._meiliIndexName);
-                }
+        this.onRedisConnection = this.onRedisConnection.bind(this);
 
-                await MeiliSearchService.updateSettingsAsync(
-                    this._meiliIndexName,
-                    {
-                        searchableAttributes: ['*'],
-                        displayedAttributes: ['*'],
-                        filterableAttributes: [],
-                        sortableAttributes: ['created_at', 'updated_at']
-                    }
-                );
+        RedisService.addConnectionCallback(this.onRedisConnection);
+    }
+
+    public async indexDocumentsAsync(data: { limit: number, offset: number }): Promise<void> {
+        const chatResponse = await SupabaseService.client
+            .from('chat')
+            .select()
+            .limit(data.limit)
+            .range(data.offset, data.offset + data.limit);
+
+        if (chatResponse.error) {
+            console.error(chatResponse.error);
+            return;
+        }
+
+        const chats = chatResponse.data as ChatProps[];
+        const privateChatIds: string[] = [];
+        for (const chat of chats) {
+            if (chat.type === 'private') {
+                privateChatIds.push(chat.id ?? '');
             }
-        );
+        }
+
+        const privateChats = await this.findPrivateChatsByIdAsync(privateChatIds);
+        console.log(privateChats);
+
+        //await MeiliSearchService.addDocumentsAsync(this._meiliIndexName, documents);
+
+        // const queueData = await RedisService.lPopAsync(RedisChatIndexKey.Default) as string | undefined;
+        // if (!queueData) {
+        //     //await RedisService.setAsync(RedisChatIndexKey.Loaded, 'true');
+        // }
+
+        // await this.publishAccountIndexing(queueData);
     }
 
     public async addPrivateDocumentAsync(chatPrivate: ChatPrivateProps): Promise<void> {
         try {
-            const chat = await this.findChatAsync(chatPrivate?.chat_id ?? '');
-            const document: ChatDocument = { ...chat, private: chatPrivate };
-
-            const accountDocuments = await AccountService.getDocumentsByIdsAsync(chatPrivate?.account_ids ?? []);
-            document.accounts = accountDocuments ?? [];
-            await MeiliSearchService.addDocumentAsync(this._meiliIndexName, document);
+            const document = await this.createPrivateChatDocumentAsync(chatPrivate);
+            await MeiliSearchService.addDocumentsAsync(this._meiliIndexName, [document]);
         }
         catch (error: any) {
             console.error(error);
@@ -67,12 +96,8 @@ class ChatService {
 
     public async updatePrivateDocumentAsync(chatPrivate: ChatPrivateProps): Promise<void> {
         try {
-            const chat = await this.findChatAsync(chatPrivate?.chat_id ?? '');
-            const document: ChatDocument = { ...chat, private: chatPrivate };
-
-            const accountDocuments = await AccountService.getDocumentsByIdsAsync(chatPrivate?.account_ids ?? []);
-            document.accounts = accountDocuments ?? [];
-            await MeiliSearchService.updateDocumentAsync(this._meiliIndexName, document);
+            const document = await this.createPrivateChatDocumentAsync(chatPrivate);
+            await MeiliSearchService.updateDocumentsAsync(this._meiliIndexName, [document]);
         }
         catch (error: any) {
             console.error(error);
@@ -99,6 +124,34 @@ class ChatService {
         }
 
         return data.length > 0 ? data[0] : null;
+    }
+
+    public async findChatsByIdAsync(ids: string[]): Promise<ChatProps[] | null> {
+        const { data, error } = await SupabaseService.client
+            .from('chat')
+            .select()
+            .contains('id', ids);
+
+        if (error) {
+            console.error(error);
+            return null;
+        }
+
+        return data;
+    }
+
+    public async findPrivateChatsByIdAsync(ids: string[]): Promise<ChatProps[] | null> {
+        const { data, error } = await SupabaseService.client
+            .from('chat_privates')
+            .select()
+            .contains('id', ids);
+
+        if (error) {
+            console.error(error);
+            return null;
+        }
+
+        return data;
     }
 
     public async findPrivateChatAsync(id: string): Promise<ChatPrivateProps | null> {
@@ -240,6 +293,32 @@ class ChatService {
         }
     }
 
+    private async createPrivateChatDocumentAsync(chatPrivate: ChatPrivateProps): Promise<ChatDocument> {
+        const chat = await this.findChatAsync(chatPrivate?.chat_id ?? '');
+        const document: ChatDocument = { ...chat };
+
+        const tags: string[] = [];
+        const accounts = await AccountService.findAccountsByIdAsync(chatPrivate?.account_ids ?? []) ?? [];
+        const customerIds = accounts.map((value) => value.customer_id ?? '');
+        const customers = await MedusaService.getCustomersByIdAsync(customerIds);
+        const customerRecord: Record<string, CustomerProps> = {};
+        customers?.map((value) => customerRecord[value.id] = value);
+
+        for (const account of accounts) {
+            const customer = customerRecord[account.customer_id ?? ''];
+            account.username && tags.push(account.username);
+
+            if (customer) {
+                customer.email && tags.push(customer.email);
+                customer.first_name && tags.push(customer.first_name);
+                customer.last_name && tags.push(customer.last_name);
+            }
+        }
+
+        document.tags = tags;
+        return document;
+    }
+
     private async findPrivateChatByAccountsAsync(account_ids: string[]): Promise<ChatProps | null> {
         const { data, error } = await SupabaseService.client
             .from('chat_privates')
@@ -252,6 +331,70 @@ class ChatService {
         }
 
         return data.length > 0 ? data[0] : null;
+    }
+
+    private async onRedisConnection(redis: Redis): Promise<void> {
+        const indexCreated = await RedisService.getAsync(RedisChatIndexKey.Created);
+        if (!indexCreated || indexCreated !== 'true') {
+            await MeiliSearchService.createIndexAsync(this._meiliIndexName);
+            await MeiliSearchService.updateSettingsAsync(
+                this._meiliIndexName,
+                {
+                    searchableAttributes: ['*'],
+                    displayedAttributes: ['*'],
+                    filterableAttributes: [],
+                    sortableAttributes: ['created_at', 'updated_at']
+                }
+            );
+            await RedisService.setAsync(RedisChatIndexKey.Created, 'true');
+        }
+
+        const indexLoaded = await RedisService.getAsync(RedisChatIndexKey.Loaded);
+        if (indexLoaded) {
+            return;
+        }
+
+        const queueLength = await RedisService.lLenAsync(RedisChatIndexKey.Default);
+        if (queueLength !== undefined && queueLength <= 0) {
+            await this.queueIndexDocumentsAsync();
+        }
+
+        const queueData = await RedisService.lPopAsync(RedisChatIndexKey.Default) as string | undefined;
+        await this.publishAccountIndexing(queueData);
+    }
+
+    private async queueIndexDocumentsAsync(): Promise<void> {
+        const chatResponse = await SupabaseService.client
+            .from('chat')
+            .select("", { count: "exact" });
+
+        if (chatResponse.error) {
+            console.error(chatResponse.error);
+            return;
+        }
+
+        const count = chatResponse?.count ?? 0;
+        for (let i = 0; i < count; i += this._indexLimit) {
+            await RedisService.rPushAsync(RedisChatIndexKey.Default, JSON.stringify({ limit: this._indexLimit, offset: i }));
+        }
+    }
+
+    private async publishAccountIndexing(data: string | undefined): Promise<void> {
+        if (!data) {
+            return;
+        }
+
+        const axiosConfig = JSON.stringify({
+            method: 'post',
+            url: `${this._apiUrl}/chat/indexing`,
+            data: data,
+            headers: {
+                'Authorization': `Bearer ${SupabaseService.key}`,
+                'Content-Type': 'application/json'
+            },
+            responseType: 'json'
+        } as IRequest);
+        await RedisService.publishAsync('axios:request', axiosConfig);
     }
 }
 

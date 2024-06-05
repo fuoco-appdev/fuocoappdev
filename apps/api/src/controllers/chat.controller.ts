@@ -1,6 +1,7 @@
 import { readAll } from "https://deno.land/std@0.105.0/io/util.ts";
 import { HttpError } from "https://deno.land/x/oak@v11.1.0/deps.ts";
 import * as Oak from "https://deno.land/x/oak@v11.1.0/mod.ts";
+import { AdminGuard } from "../guards/admin.guard.ts";
 import { AuthGuard } from "../guards/index.ts";
 import { ContentType, Controller, Guard, Post } from "../index.ts";
 import { CreatePrivateChatRequest } from '../protobuf/chat_pb.js';
@@ -28,6 +29,21 @@ export class ChatController {
             await ChatService.deletePrivateDocumentAsync(privateChat);
         }
 
+        context.response.status = 200;
+    }
+
+    @Post('/indexing')
+    @Guard(AdminGuard)
+    @ContentType('application/json')
+    public async handleIndexingAsync(
+        context: Oak.RouterContext<
+            string,
+            Oak.RouteParams<string>,
+            Record<string, any>
+        >
+    ): Promise<void> {
+        const data = await context.request.body().value;
+        await ChatService.indexDocumentsAsync(data);
         context.response.status = 200;
     }
 
