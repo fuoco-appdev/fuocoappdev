@@ -20,6 +20,7 @@ import AccountMessageItemComponent from '../account-message-item.component';
 import { ChatsResponsiveProps } from '../chats.component';
 import styles from '../chats.module.scss';
 import { ResponsiveDesktop } from '../responsive.component';
+import ChatMessageItemDesktopComponent from './chat-message-item.desktop.component';
 
 export default function ChatsDesktopComponent({
     chatProps,
@@ -196,7 +197,7 @@ export default function ChatsDesktopComponent({
                             ].join(' ')}
                         >
                             {chatProps.chats.map((chat: ChatResponse, _index: number) => {
-                                return <div />;
+                                return <ChatMessageItemDesktopComponent key={chat.id} chatProps={chatProps} chat={chat} profileUrls={[]} onClick={() => { }} />;
                             })}
                             {chatProps.chats.length <= 0 && (
                                 <div

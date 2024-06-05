@@ -12,7 +12,8 @@ import AccountController from './account.controller';
 
 class ChatController extends Controller {
     private readonly _model: ChatModel;
-    private _accountsIndex: Index<Record<string, any>> | undefined;
+    private _chatIndex: Index<Record<string, any>> | undefined;
+    private _accountIndex: Index<Record<string, any>> | undefined;
     private _accountsTimerId: NodeJS.Timeout | number | undefined;
     private _limit: number;
 
@@ -28,7 +29,8 @@ class ChatController extends Controller {
     }
 
     public override initialize(renderCount: number): void {
-        this._accountsIndex = MeiliSearchService.client?.index('account');
+        this._chatIndex = MeiliSearchService.client?.index('chat');
+        this._accountIndex = MeiliSearchService.client?.index('account');
 
         this.initializeAsync(renderCount);
     }
@@ -105,7 +107,7 @@ class ChatController extends Controller {
         );
         const filterValue = `id != ${account?.id}`;
         try {
-            const result = await this._accountsIndex?.search(query, {
+            const result = await this._accountIndex?.search(query, {
                 filter: [filterValue],
                 offset: offset,
                 limit: limit,
