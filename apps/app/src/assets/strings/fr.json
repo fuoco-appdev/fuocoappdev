@@ -322,5 +322,6 @@
   "noMessages": "Aucun message",
   "noMessagesDescription": "Créez ou sélectionnez un chat privé, un chat de groupe ou un canal et commencez à envoyer des messages",
   "noMessagesCount": "0 message",
-  "newPrivate": "Nouveau privé"
+  "newPrivate": "Nouveau privé",
+  "startMessaging": "Vous pouvez maintenant commencer à envoyer des messages"
 }

@@ -4,8 +4,16 @@ import { Index } from 'meilisearch';
 import { filter, firstValueFrom, take } from 'rxjs';
 import { Controller } from '../controller';
 import { AccountDocument } from '../models/account.model';
-import { ChatModel, ChatTabs } from '../models/chat.model';
+import {
+    ChatDocument,
+    ChatModel,
+    ChatSubscription,
+    ChatTabs,
+    DecryptedChatMessage,
+    EncryptedChatMessage,
+} from '../models/chat.model';
 import { AccountResponse } from '../protobuf/account_pb';
+import { ChatMessageResponse } from '../protobuf/chat_pb';
 import ChatService from '../services/chat.service';
 import MeiliSearchService from '../services/meilisearch.service';
 import AccountController from './account.controller';
@@ -14,6 +22,7 @@ class ChatController extends Controller {
     private readonly _model: ChatModel;
     private _chatIndex: Index<Record<string, any>> | undefined;
     private _accountIndex: Index<Record<string, any>> | undefined;
+    private _chatTimerId: NodeJS.Timeout | number | undefined;
     private _accountsTimerId: NodeJS.Timeout | number | undefined;
     private _limit: number;
 
@@ -39,11 +48,32 @@ class ChatController extends Controller {
 
     public override disposeInitialization(_renderCount: number): void {
         clearTimeout(this._accountsTimerId as number | undefined);
+        clearTimeout(this._chatTimerId as number | undefined);
     }
 
     public override disposeLoad(_renderCount: number): void { }
 
-    public async loadSearchedAccounts(): Promise<void> {
+    public async loadChatsAsync(): Promise<void> {
+        await this.searchChatsAsync(
+            this._model.searchInput,
+            'loading',
+            0,
+            this._limit,
+            true
+        );
+    }
+
+    public async reloadChatsAsync(): Promise<void> {
+        await this.searchChatsAsync(
+            this._model.searchInput,
+            'reloading',
+            0,
+            this._limit,
+            true
+        );
+    }
+
+    public async loadSearchedAccountsAsync(): Promise<void> {
         await this.searchAccountsAsync(
             this._model.searchAccountsInput,
             0,
@@ -54,6 +84,12 @@ class ChatController extends Controller {
 
     public updateSearchInput(value: string): void {
         this._model.searchInput = value;
+        this._model.chats = [];
+
+        clearTimeout(this._chatTimerId as number | undefined);
+        this._chatTimerId = setTimeout(() => {
+            this.searchChatsAsync(value, 'loading', 0, this._limit);
+        }, 750);
     }
 
     public updateSearchAccountsInput(value: string): void {
@@ -78,12 +114,133 @@ class ChatController extends Controller {
         this._model.chatsPagination = this._model.chatsPagination + 1;
 
         const offset = this._limit * (this._model.chatsPagination - 1);
-        await this.requestChatsAsync(
+        await this.searchChatsAsync(
             this._model.searchInput,
             'loading',
             offset,
             this._limit
         );
+    }
+
+    public async searchChatsAsync(
+        query: string,
+        loadType: 'loading' | 'reloading',
+        offset = 0,
+        limit = 10,
+        force = false
+    ): Promise<void> {
+        if (
+            (!force && this._model.areChatsLoading) ||
+            this._model.areChatsReloading
+        ) {
+            return;
+        }
+
+        if (loadType === 'loading') {
+            this._model.areChatsLoading = true;
+        } else if (loadType === 'reloading') {
+            this._model.areChatsReloading = true;
+        }
+
+        const account: AccountResponse | undefined = await firstValueFrom(
+            AccountController.model.store.pipe(
+                select((model) => model.account),
+                filter((value) => value !== undefined),
+                take(1)
+            )
+        );
+        const filterValue = `(private EXISTS AND private.account_ids = ${account?.id})`;
+        let missingAccountIds: string[] = [];
+        let chatIds: string[] = [];
+        try {
+            const result = await this._chatIndex?.search(query, {
+                filter: [filterValue],
+                offset: offset,
+                limit: limit,
+            });
+            const hits = result?.hits as ChatDocument[];
+            if (hits && hits.length <= 0 && offset <= 0) {
+                this._model.chats = [];
+            }
+
+            if (hits && hits.length <= 0) {
+                this._model.areChatsLoading = false;
+                return;
+            }
+
+            const accountIds = Object.keys(this._model.accounts);
+            for (const chat of hits) {
+                if (chat.type === 'private') {
+                    missingAccountIds =
+                        chat.private?.account_ids?.filter(
+                            (value) => !accountIds.includes(value)
+                        ) ?? [];
+                }
+            }
+
+            if (offset > 0) {
+                const chats = this._model.chats;
+                this._model.chats = chats.concat(hits);
+            } else {
+                this._model.chats = hits;
+            }
+
+            chatIds = hits.map((value) => value.id ?? '');
+        } catch (error: any) {
+            console.error(error);
+        }
+
+        try {
+            const accountDocuments = await this._accountIndex?.getDocuments({
+                limit: missingAccountIds.length,
+                filter: `id IN [${missingAccountIds.join(', ')}]`,
+            });
+            const accountResults = accountDocuments?.results as AccountDocument[];
+            const accounts = this._model.accounts;
+            for (const account of accountResults) {
+                if (!account.id) {
+                    continue;
+                }
+
+                accounts[account.id] = account;
+            }
+            this._model.accounts = accounts;
+        } catch (error: any) {
+            console.error(error);
+        }
+
+        try {
+            const lastChatMessagesResponse =
+                await ChatService.requestLastMessagesAsync({
+                    chatIds: chatIds,
+                });
+            const lastChatMessages: Record<string, DecryptedChatMessage | undefined> =
+                {};
+            for (const lastChatMessageResponse of lastChatMessagesResponse ?? []) {
+                if (
+                    !Object.keys(this._model.chatSubscriptions).includes(
+                        lastChatMessageResponse.chatId
+                    )
+                ) {
+                    continue;
+                }
+
+                lastChatMessages[lastChatMessageResponse.id] =
+                    this.decryptChatMessage(
+                        lastChatMessageResponse,
+                        this._model.chatSubscriptions[lastChatMessageResponse.chatId ?? '']
+                    ) ?? undefined;
+            }
+            this._model.lastChatMessages = lastChatMessages;
+        } catch (error: any) {
+            console.error(error);
+        }
+
+        if (loadType === 'loading') {
+            this._model.areChatsLoading = false;
+        } else if (loadType === 'reloading') {
+            this._model.areChatsReloading = false;
+        }
     }
 
     public async searchAccountsAsync(
@@ -154,10 +311,54 @@ class ChatController extends Controller {
                 return;
             }
 
-            this._model.chats = [chatResponse, ...this._model.chats]
+            await this.reloadChatsAsync();
         } catch (error: any) {
             console.error(error);
         }
+    }
+
+    private decryptChatMessage(
+        messageResponse: ChatMessageResponse,
+        chatSubscriptions: Record<string, ChatSubscription>
+    ): DecryptedChatMessage | null {
+        if (!Object.keys(chatSubscriptions).includes(messageResponse.accountId)) {
+            return null;
+        }
+        const chatSubscription = chatSubscriptions[messageResponse.accountId];
+        const decryptedMessage = ChatService.decryptMessage(
+            messageResponse.messageEncrypted,
+            messageResponse.nonce,
+            chatSubscription.publicKey ?? '',
+            chatSubscription.privateKey ?? ''
+        );
+        return {
+            id: messageResponse.id,
+            createdAt: messageResponse.createdAt,
+            accountId: messageResponse.accountId,
+            message: decryptedMessage,
+        };
+    }
+
+    private encryptChatMessage(
+        message: string,
+        accountId: string,
+        chatSubscriptions: Record<string, ChatSubscription>
+    ): EncryptedChatMessage | null {
+        if (!Object.keys(chatSubscriptions).includes(accountId)) {
+            return null;
+        }
+
+        const chatSubscription = chatSubscriptions[accountId];
+        const encryptedMessage = ChatService.encryptMessage(
+            message,
+            chatSubscription.publicKey ?? '',
+            chatSubscription.privateKey ?? ''
+        );
+        return {
+            encryptedMessage: encryptedMessage?.encryptedMessage,
+            accountId: accountId,
+            nonce: encryptedMessage?.nonce,
+        };
     }
 
     private async requestChatsAsync(

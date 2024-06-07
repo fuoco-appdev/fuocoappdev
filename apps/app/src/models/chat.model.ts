@@ -1,6 +1,6 @@
 import { createStore, withProps } from "@ngneat/elf";
 import { Model } from "../model";
-import { ChatResponse } from "../protobuf/chat_pb";
+import { ChatSeenMessageResponse } from "../protobuf/chat_pb";
 import { AccountDocument } from "./account.model";
 
 export enum ChatTabs {
@@ -18,8 +18,32 @@ export interface ChatDocument {
     created_at?: string;
     type?: string;
     updated_at?: string;
-    accounts?: AccountDocument[];
+    tags?: string[];
     private?: PrivateChatDocument;
+}
+
+export interface DecryptedChatMessage {
+    id?: string;
+    createdAt?: string;
+    accountId?: string;
+    message?: string | null;
+    seenBy?: ChatSeenMessageResponse[];
+}
+
+export interface EncryptedChatMessage {
+    encryptedMessage?: string;
+    accountId?: string;
+    nonce?: string;
+}
+
+export interface ChatSubscription {
+    chatId?: string;
+    requestAt?: string;
+    accountId?: string;
+    joinedAt?: string;
+    publicKey?: string;
+    privateKey?: string;
+    lastSeenAt?: string;
 }
 
 export interface ChatState {
@@ -30,11 +54,14 @@ export interface ChatState {
     selectedTab: ChatTabs;
     hasMoreMessageChannels: boolean;
     areMessageChannelsLoading: boolean;
-    chats: ChatResponse[];
+    chats: ChatDocument[];
     hasMoreChats: boolean;
     areChatsReloading: boolean;
     areChatsLoading: boolean;
     chatsPagination: number;
+    accounts: Record<string, AccountDocument>;
+    chatSubscriptions: Record<string, Record<string, ChatSubscription>>;
+    lastChatMessages: Record<string, DecryptedChatMessage | undefined>;
 }
 
 export class ChatModel extends Model {
@@ -54,7 +81,10 @@ export class ChatModel extends Model {
                     hasMoreChats: true,
                     areChatsReloading: false,
                     areChatsLoading: false,
-                    chatsPagination: 1
+                    chatsPagination: 1,
+                    accounts: {},
+                    chatSubscriptions: {},
+                    lastChatMessages: {}
                 }),
             ),
         );
@@ -110,11 +140,11 @@ export class ChatModel extends Model {
         }
     }
 
-    public get chats(): ChatResponse[] {
+    public get chats(): ChatDocument[] {
         return this.store.getValue().chats;
     }
 
-    public set chats(value: ChatResponse[]) {
+    public set chats(value: ChatDocument[]) {
         if (JSON.stringify(this.chats) !== JSON.stringify(value)) {
             this.store.update((state) => ({ ...state, chats: value }));
         }
@@ -157,6 +187,36 @@ export class ChatModel extends Model {
     public set chatsPagination(value: number) {
         if (this.chatsPagination !== value) {
             this.store.update((state) => ({ ...state, chatsPagination: value }));
+        }
+    }
+
+    public get accounts(): Record<string, AccountDocument> {
+        return this.store.getValue().accounts;
+    }
+
+    public set accounts(value: Record<string, AccountDocument>) {
+        if (JSON.stringify(this.accounts) !== JSON.stringify(value)) {
+            this.store.update((state) => ({ ...state, accounts: value }));
+        }
+    }
+
+    public get chatSubscriptions(): Record<string, Record<string, ChatSubscription>> {
+        return this.store.getValue().chatSubscriptions;
+    }
+
+    public set chatSubscriptions(value: Record<string, Record<string, ChatSubscription>>) {
+        if (JSON.stringify(this.chatSubscriptions) !== JSON.stringify(value)) {
+            this.store.update((state) => ({ ...state, chatSubscriptions: value }));
+        }
+    }
+
+    public get lastChatMessages(): Record<string, DecryptedChatMessage | undefined> {
+        return this.store.getValue().lastChatMessages;
+    }
+
+    public set lastChatMessages(value: Record<string, DecryptedChatMessage | undefined>) {
+        if (JSON.stringify(this.lastChatMessages) !== JSON.stringify(value)) {
+            this.store.update((state) => ({ ...state, lastChatMessages: value }));
         }
     }
 }

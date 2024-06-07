@@ -1,6 +1,7 @@
 import { lazy } from '@loadable/component';
 import * as React from 'react';
-import { ChatDocument, ChatState } from '../models/chat.model';
+import { AccountDocument, AccountState } from '../models/account.model';
+import { ChatDocument, DecryptedChatMessage } from '../models/chat.model';
 import { StorageFolderType } from '../protobuf/common_pb';
 import BucketService from '../services/bucket.service';
 import { ChatMessageItemSuspenseDesktopComponent } from './desktop/suspense/chat-message-item.suspense.desktop.component';
@@ -14,26 +15,32 @@ const ChatMessageItemDesktopComponent = lazy(
 // );
 
 export interface ChatMessageItemProps {
-    chatProps: ChatState;
+    accountProps: AccountState;
     chat: ChatDocument;
+    accounts: AccountDocument[];
+    lastMessage?: DecryptedChatMessage;
     onClick: () => void;
 }
 
 export interface ChatMessageItemResponsiveProps
     extends ChatMessageItemProps {
     profileUrls: Record<string, string>;
+    seen: boolean;
 }
 
 export default function ChatMessageItemComponent({
-    chatProps,
+    accountProps,
+    accounts,
     chat,
+    lastMessage,
     onClick,
 }: ChatMessageItemProps): JSX.Element {
     const [profileUrls, setProfileUrls] = React.useState<Record<string, string>>({});
+    const [seen, setSeen] = React.useState<boolean>(false);
 
     React.useEffect(() => {
         const urls: Record<string, string> = {};
-        for (const account of chat.accounts ?? []) {
+        for (const account of accounts ?? []) {
             if (!account.profile_url) {
                 return;
             }
@@ -51,7 +58,12 @@ export default function ChatMessageItemComponent({
         }
 
         setProfileUrls(urls);
-    }, [chat]);
+    }, [accounts]);
+
+    React.useEffect(() => {
+        const seenChatMessage = lastMessage?.seenBy?.find((value) => value.accountId === accountProps.account?.id);
+        setSeen(seenChatMessage !== undefined);
+    }, [lastMessage]);
 
     const onClickOverride = () => {
         setTimeout(() => {
@@ -73,9 +85,12 @@ export default function ChatMessageItemComponent({
     return (
         <React.Suspense fallback={suspenceComponent}>
             <ChatMessageItemDesktopComponent
-                chatProps={chatProps}
+                accountProps={accountProps}
                 chat={chat}
+                accounts={accounts}
+                lastMessage={lastMessage}
                 profileUrls={profileUrls}
+                seen={seen}
                 onClick={onClickOverride}
             />
             {/* <ChatMessageItemMobileComponent

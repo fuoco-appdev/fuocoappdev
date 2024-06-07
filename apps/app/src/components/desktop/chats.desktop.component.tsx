@@ -5,36 +5,38 @@ import {
     Input,
     Line,
     Modal,
-    Scroll,
-    Tabs,
+    Scroll
 } from '@fuoco.appdev/core-ui';
+import { useObservable } from '@ngneat/use-observable';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useParams } from 'react-router-dom';
+import AccountController from '../../controllers/account.controller';
 import ChatController from '../../controllers/chat.controller';
-import { ChatTabs } from '../../models/chat.model';
-import { ChatResponse } from '../../protobuf/chat_pb';
+import { ChatDocument } from '../../models/chat.model';
 import { useQuery } from '../../route-paths';
 import AccountMessageItemComponent from '../account-message-item.component';
+import ChatMessageItemComponent from '../chat-message-item.component';
 import { ChatsResponsiveProps } from '../chats.component';
 import styles from '../chats.module.scss';
 import { ResponsiveDesktop } from '../responsive.component';
-import ChatMessageItemDesktopComponent from './chat-message-item.desktop.component';
 
 export default function ChatsDesktopComponent({
     chatProps,
     openEditDropdown,
     openNewPrivate,
+    chatAccounts,
     setOpenEditDropdown,
     setOpenNewPrivate,
     onNewPrivateClick,
     onAccountMessageItemClick,
-    onPrivateMessageClick
+    onPrivateMessageClick,
 }: ChatsResponsiveProps): JSX.Element {
     const query = useQuery();
     const { t } = useTranslation();
     const { id } = useParams();
+    const [accountProps] = useObservable(AccountController.model.store);
     const topBarRef = React.useRef<HTMLDivElement | null>(null);
     const editButtonRef = React.useRef<HTMLDivElement | null>(null);
     const searchAccountsInputRef = React.useRef<HTMLInputElement | null>(null);
@@ -114,39 +116,6 @@ export default function ChatsDesktopComponent({
                                     />
                                 </div>
                             </div>
-                            <div
-                                className={[
-                                    styles['tab-container'],
-                                    styles['tab-container-desktop'],
-                                ].join(' ')}
-                            >
-                                <Tabs
-                                    classNames={{
-                                        nav: styles['tab-nav'],
-                                        tabButton: styles['tab-button'],
-                                        selectedTabButton: styles['selected-tab-button'],
-                                        tabOutline: styles['tab-outline'],
-                                    }}
-                                    removable={true}
-                                    type={'underlined'}
-                                    activeId={chatProps.selectedTab}
-                                    onChange={(id: string) =>
-                                        ChatController.updateSelectedTabAsync(
-                                            id.length > 0 ? (id as ChatTabs) : ChatTabs.Messages
-                                        )
-                                    }
-                                    tabs={[
-                                        {
-                                            id: ChatTabs.Messages,
-                                            label: t('messages') ?? 'Messages',
-                                        },
-                                        {
-                                            id: ChatTabs.Requests,
-                                            label: t('requests') ?? 'Requests',
-                                        },
-                                    ]}
-                                />
-                            </div>
                         </div>
                     </div>
                     <Scroll
@@ -196,8 +165,18 @@ export default function ChatsDesktopComponent({
                                 styles['side-bar-scroll-content-desktop'],
                             ].join(' ')}
                         >
-                            {chatProps.chats.map((chat: ChatResponse, _index: number) => {
-                                return <ChatMessageItemDesktopComponent key={chat.id} chatProps={chatProps} chat={chat} profileUrls={[]} onClick={() => { }} />;
+                            {chatProps.chats.map((chat: ChatDocument, _index: number) => {
+                                const lastMessage = chatProps.lastChatMessages[chat.id ?? ''];
+                                return (
+                                    <ChatMessageItemComponent
+                                        key={chat.id}
+                                        accountProps={accountProps}
+                                        accounts={chatAccounts[chat.id ?? '']}
+                                        chat={chat}
+                                        lastMessage={lastMessage}
+                                        onClick={() => { }}
+                                    />
+                                );
                             })}
                             {chatProps.chats.length <= 0 && (
                                 <div

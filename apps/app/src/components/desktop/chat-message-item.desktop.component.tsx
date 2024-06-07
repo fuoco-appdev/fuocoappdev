@@ -1,97 +1,113 @@
 import { Avatar } from '@fuoco.appdev/core-ui';
+import moment from 'moment';
 import { useTranslation } from 'react-i18next';
+import Ripples from 'react-ripples';
 import { ChatMessageItemResponsiveProps } from '../chat-message-item.component';
 import styles from '../chat-message-item.module.scss';
 import { ResponsiveDesktop } from '../responsive.component';
 
 export default function ChatMessageItemDesktopComponent({
-  chatProps,
+  accountProps,
   chat,
+  accounts,
+  lastMessage,
   profileUrls,
+  seen,
   onClick,
 }: ChatMessageItemResponsiveProps): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   return (
     <ResponsiveDesktop>
-      <div
-        className={[styles['root'], styles['root-desktop']].join(' ')}
+      <Ripples
+        color={'rgba(42, 42, 95, .35)'}
+        className={[styles['ripples'], styles['ripples-desktop']].join(' ')}
         onClick={onClick}
       >
-        <div
-          className={[
-            styles['left-content'],
-            styles['left-content-desktop'],
-          ].join(' ')}
-        >
-          <div className={[styles['avatars'], styles['avatars-desktop']].join(' ')}>
-            {chat.accounts?.map((account) => {
-              const profileUrl = profileUrls[account.id ?? ''];
-              return (
-                <Avatar
-                  classNames={{
-                    container: [
-                      styles['avatar-container'],
-                      styles['avatar-container-desktop'],
-                    ].join(' '),
-                  }}
-                  size={'custom'}
-                  text={account.customer?.first_name}
-                  src={profileUrl}
-                />
-              )
-            })}
-          </div>
+        <div className={[styles['root'], styles['root-desktop']].join(' ')}>
           <div
             className={[
-              styles['user-info-container'],
-              styles['user-info-container-desktop'],
+              styles['left-content'],
+              styles['left-content-desktop'],
             ].join(' ')}
           >
             <div
-              className={[styles['username'], styles['username-desktop']].join(
+              className={[styles['avatars'], styles['avatars-desktop']].join(
                 ' '
               )}
             >
-              {/* {account.username && account.username}
-              {!account.username && (
-                <Skeleton
-                  count={1}
-                  borderRadius={20}
-                  height={20}
-                  width={80}
-                  className={[
-                    styles['skeleton-user'],
-                    styles['skeleton-user-desktop'],
-                  ].join(' ')}
-                />
-              )} */}
+              {accounts?.map((account) => {
+                const profileUrl = profileUrls[account.id ?? ''];
+                return (
+                  <Avatar
+                    classNames={{
+                      container: [
+                        styles['avatar-container'],
+                        styles['avatar-container-desktop'],
+                      ].join(' '),
+                    }}
+                    size={'custom'}
+                    text={account.customer?.first_name}
+                    src={profileUrl}
+                  />
+                );
+              })}
             </div>
-            {/* {account.customer && (
+            <div
+              className={[
+                styles['message-info-container'],
+                styles['message-info-container-desktop'],
+              ].join(' ')}
+            >
+              {
+                <div
+                  className={[
+                    styles['username'],
+                    styles['username-desktop'],
+                  ].join(' ')}
+                >
+                  {accounts?.length > 0 && chat.type === 'private' && (
+                    <div
+                      className={[
+                        styles['full-name'],
+                        styles['full-name-desktop'],
+                      ].join(' ')}
+                    >
+                      {`${accounts[0]?.customer?.first_name} ${accounts[0]?.customer?.last_name}`}
+                    </div>
+                  )}
+                </div>
+              }
               <div
                 className={[
-                  styles['full-name'],
-                  styles['full-name-desktop'],
+                  styles['last-message'],
+                  styles['last-message-desktop'],
+                  !seen && styles['last-message-unseen'],
                 ].join(' ')}
               >
-                {`${account.customer?.first_name} ${account.customer?.last_name}`}
+                {lastMessage ? lastMessage.message : t('startMessaging')}
               </div>
-            )} */}
-            {/* {!account.customer && (
-              <Skeleton
-                count={1}
-                borderRadius={16}
-                height={16}
-                width={120}
+            </div>
+          </div>
+          <div
+            className={[
+              styles['right-content'],
+              styles['right-content-desktop'],
+            ].join(' ')}
+          >
+            {lastMessage && (
+              <div
                 className={[
-                  styles['full-name'],
-                  styles['full-name-desktop'],
+                  styles['message-date'],
+                  styles['message-date-desktop'],
                 ].join(' ')}
-              />
-            )} */}
+              >
+                {moment(lastMessage?.createdAt).locale(i18n.language).fromNow(true)}
+              </div>
+            )}
           </div>
         </div>
-      </div>
+      </Ripples>
     </ResponsiveDesktop>
   );
 }

@@ -106,7 +106,7 @@ export default function NotificationsMobileComponent({
                 const fromNowCurrent = moment(notification?.createdAt)
                   .locale(i18n.language)
                   .startOf('day')
-                  .fromNow();
+                  .fromNow(true);
                 let showDate = false;
                 if (fromNowRef.current !== fromNowCurrent) {
                   showDate = true;

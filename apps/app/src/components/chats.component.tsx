@@ -1,11 +1,12 @@
 import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
-import ChatController from 'src/controllers/chat.controller';
+import AccountController from '../controllers/account.controller';
+import ChatController from '../controllers/chat.controller';
 import { AccountDocument } from '../models/account.model';
-import { ChatState } from '../models/chat.model';
+import { ChatDocument, ChatState } from '../models/chat.model';
 import { RoutePathsType } from '../route-paths';
 import { AuthenticatedComponent } from './authenticated.component';
 import { ChatsSuspenseDesktopComponent } from './desktop/suspense/chats.suspense.desktop.component';
@@ -22,6 +23,7 @@ export interface ChatsResponsiveProps {
     chatProps: ChatState;
     openEditDropdown: boolean;
     openNewPrivate: boolean;
+    chatAccounts: Record<string, AccountDocument[]>;
     setOpenNewPrivate: (value: boolean) => void;
     setOpenEditDropdown: (value: boolean) => void;
     onNewPrivateClick: () => void;
@@ -32,13 +34,15 @@ export interface ChatsResponsiveProps {
 export default function ChatsComponent(): JSX.Element {
     const navigate = useNavigate();
     const [chatProps] = useObservable(ChatController.model.store);
+    const [accountProps] = useObservable(AccountController.model.store);
     const [openEditDropdown, setOpenEditDropdown] = useState<boolean>(false);
     const [openNewPrivate, setOpenNewPrivate] = useState<boolean>(false);
+    const [chatAccounts, setChatAccounts] = useState<Record<string, AccountDocument[]>>({});
 
     const onNewPrivateClick = () => {
         setOpenEditDropdown(false);
         setOpenNewPrivate(true);
-        ChatController.loadSearchedAccounts();
+        ChatController.loadSearchedAccountsAsync();
     }
 
     const onAccountMessageItemClick = (account: AccountDocument) => {
@@ -61,6 +65,30 @@ export default function ChatsComponent(): JSX.Element {
     if (process.env['DEBUG_SUSPENSE'] === 'true') {
         return suspenceComponent;
     }
+
+    useEffect(() => {
+        ChatController.loadChatsAsync();
+    }, []);
+
+    useEffect(() => {
+        const chatAccountRecord: Record<string, AccountDocument[]> = {};
+        const accounts = Object.values(chatProps.accounts) as AccountDocument[];
+        for (const chat of chatProps.chats as ChatDocument[]) {
+            if (!chat.id) {
+                return;
+            }
+
+            if (chat.type === 'private') {
+                const privateAccounts = accounts.filter((value) => chat.private?.account_ids?.includes(value?.id ?? ''));
+                const privateAccountIds = privateAccounts.map((value) => value.id);
+                const accountIndex = privateAccountIds.indexOf(accountProps.account.id);
+                privateAccounts.splice(accountIndex, 1);
+                chatAccountRecord[chat.id] = privateAccounts;
+            }
+        }
+
+        setChatAccounts(chatAccountRecord);
+    }, [chatProps.accounts, chatProps.chats]);
 
     return (
         <>
@@ -96,6 +124,7 @@ export default function ChatsComponent(): JSX.Element {
                         chatProps={chatProps}
                         openEditDropdown={openEditDropdown}
                         openNewPrivate={openNewPrivate}
+                        chatAccounts={chatAccounts}
                         setOpenNewPrivate={setOpenNewPrivate}
                         setOpenEditDropdown={setOpenEditDropdown}
                         onNewPrivateClick={onNewPrivateClick}
@@ -106,6 +135,7 @@ export default function ChatsComponent(): JSX.Element {
                         chatProps={chatProps}
                         openEditDropdown={openEditDropdown}
                         openNewPrivate={openNewPrivate}
+                        chatAccounts={chatAccounts}
                         setOpenNewPrivate={setOpenNewPrivate}
                         setOpenEditDropdown={setOpenEditDropdown}
                         onNewPrivateClick={onNewPrivateClick}

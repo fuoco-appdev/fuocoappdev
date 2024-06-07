@@ -9,6 +9,9 @@
 
   & .search-container {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 
     & .top-bar-container {
       display: flex;
@@ -398,12 +401,6 @@
 
   & .search-container-mobile {
     min-width: 100%;
-    border-right-width: 0px;
-    border-left-width: 0px;
-    border-top-width: 0px;
-    border-bottom-width: 0px;
-    border-color: rgba(42, 42, 95, 0.6);
-    border-style: solid;
 
     & .top-bar-container-mobile {
       width: 100%;

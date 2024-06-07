@@ -349,7 +349,7 @@
         & .wine-previews-container-desktop {}
 
         & .scroll-content-skeleton-desktop {
-            padding-top: calc(156px + 24px);
+            padding-top: calc(156px + 24px) !important;
             justify-content: center;
             gap: $mp-4;
             padding: $mp-6;

@@ -81,6 +81,129 @@ export class UpdatePrivateChatRequest extends Message<UpdatePrivateChatRequest> 
 }
 
 /**
+ * @generated from message chat.LastChatMessagesRequest
+ */
+export class LastChatMessagesRequest extends Message<LastChatMessagesRequest> {
+  /**
+   * @generated from field: repeated string chat_ids = 1;
+   */
+  chatIds: string[] = [];
+
+  constructor(data?: PartialMessage<LastChatMessagesRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "chat.LastChatMessagesRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "chat_ids", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): LastChatMessagesRequest {
+    return new LastChatMessagesRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): LastChatMessagesRequest {
+    return new LastChatMessagesRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): LastChatMessagesRequest {
+    return new LastChatMessagesRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: LastChatMessagesRequest | PlainMessage<LastChatMessagesRequest> | undefined, b: LastChatMessagesRequest | PlainMessage<LastChatMessagesRequest> | undefined): boolean {
+    return proto3.util.equals(LastChatMessagesRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message chat.ChatSeenMessageRequest
+ */
+export class ChatSeenMessageRequest extends Message<ChatSeenMessageRequest> {
+  /**
+   * @generated from field: string account_id = 1;
+   */
+  accountId = "";
+
+  /**
+   * @generated from field: string message_id = 2;
+   */
+  messageId = "";
+
+  /**
+   * @generated from field: string chat_id = 3;
+   */
+  chatId = "";
+
+  constructor(data?: PartialMessage<ChatSeenMessageRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "chat.ChatSeenMessageRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "message_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "chat_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ChatSeenMessageRequest {
+    return new ChatSeenMessageRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ChatSeenMessageRequest {
+    return new ChatSeenMessageRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ChatSeenMessageRequest {
+    return new ChatSeenMessageRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ChatSeenMessageRequest | PlainMessage<ChatSeenMessageRequest> | undefined, b: ChatSeenMessageRequest | PlainMessage<ChatSeenMessageRequest> | undefined): boolean {
+    return proto3.util.equals(ChatSeenMessageRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message chat.ChatSeenMessagesRequest
+ */
+export class ChatSeenMessagesRequest extends Message<ChatSeenMessagesRequest> {
+  /**
+   * @generated from field: repeated string message_ids = 1;
+   */
+  messageIds: string[] = [];
+
+  constructor(data?: PartialMessage<ChatSeenMessagesRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "chat.ChatSeenMessagesRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "message_ids", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ChatSeenMessagesRequest {
+    return new ChatSeenMessagesRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ChatSeenMessagesRequest {
+    return new ChatSeenMessagesRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ChatSeenMessagesRequest {
+    return new ChatSeenMessagesRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ChatSeenMessagesRequest | PlainMessage<ChatSeenMessagesRequest> | undefined, b: ChatSeenMessagesRequest | PlainMessage<ChatSeenMessagesRequest> | undefined): boolean {
+    return proto3.util.equals(ChatSeenMessagesRequest, a, b);
+  }
+}
+
+/**
  * @generated from message chat.ChatSubscriptionResponse
  */
 export class ChatSubscriptionResponse extends Message<ChatSubscriptionResponse> {
@@ -163,19 +286,34 @@ export class ChatMessageResponse extends Message<ChatMessageResponse> {
   id = "";
 
   /**
-   * @generated from field: string created_at = 2;
+   * @generated from field: string chat_id = 2;
+   */
+  chatId = "";
+
+  /**
+   * @generated from field: string account_id = 3;
+   */
+  accountId = "";
+
+  /**
+   * @generated from field: string created_at = 4;
    */
   createdAt = "";
 
   /**
-   * @generated from field: string message_encrypted = 3;
+   * @generated from field: string message_encrypted = 5;
    */
   messageEncrypted = "";
 
   /**
-   * @generated from field: string nonce = 4;
+   * @generated from field: string nonce = 6;
    */
   nonce = "";
+
+  /**
+   * @generated from field: repeated chat.ChatSeenMessageResponse seen_by = 7;
+   */
+  seenBy: ChatSeenMessageResponse[] = [];
 
   constructor(data?: PartialMessage<ChatMessageResponse>) {
     super();
@@ -186,9 +324,12 @@ export class ChatMessageResponse extends Message<ChatMessageResponse> {
   static readonly typeName = "chat.ChatMessageResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "created_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "message_encrypted", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "nonce", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "chat_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "created_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "message_encrypted", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "nonce", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 7, name: "seen_by", kind: "message", T: ChatSeenMessageResponse, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ChatMessageResponse {
@@ -205,6 +346,43 @@ export class ChatMessageResponse extends Message<ChatMessageResponse> {
 
   static equals(a: ChatMessageResponse | PlainMessage<ChatMessageResponse> | undefined, b: ChatMessageResponse | PlainMessage<ChatMessageResponse> | undefined): boolean {
     return proto3.util.equals(ChatMessageResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message chat.ChatMessagesResponse
+ */
+export class ChatMessagesResponse extends Message<ChatMessagesResponse> {
+  /**
+   * @generated from field: repeated chat.ChatMessageResponse messages = 1;
+   */
+  messages: ChatMessageResponse[] = [];
+
+  constructor(data?: PartialMessage<ChatMessagesResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "chat.ChatMessagesResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "messages", kind: "message", T: ChatMessageResponse, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ChatMessagesResponse {
+    return new ChatMessagesResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ChatMessagesResponse {
+    return new ChatMessagesResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ChatMessagesResponse {
+    return new ChatMessagesResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ChatMessagesResponse | PlainMessage<ChatMessagesResponse> | undefined, b: ChatMessagesResponse | PlainMessage<ChatMessagesResponse> | undefined): boolean {
+    return proto3.util.equals(ChatMessagesResponse, a, b);
   }
 }
 
@@ -248,6 +426,98 @@ export class ChatPrivateResponse extends Message<ChatPrivateResponse> {
 
   static equals(a: ChatPrivateResponse | PlainMessage<ChatPrivateResponse> | undefined, b: ChatPrivateResponse | PlainMessage<ChatPrivateResponse> | undefined): boolean {
     return proto3.util.equals(ChatPrivateResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message chat.ChatSeenMessageResponse
+ */
+export class ChatSeenMessageResponse extends Message<ChatSeenMessageResponse> {
+  /**
+   * @generated from field: string message_id = 1;
+   */
+  messageId = "";
+
+  /**
+   * @generated from field: string seen_at = 2;
+   */
+  seenAt = "";
+
+  /**
+   * @generated from field: string account_id = 3;
+   */
+  accountId = "";
+
+  /**
+   * @generated from field: string chat_id = 4;
+   */
+  chatId = "";
+
+  constructor(data?: PartialMessage<ChatSeenMessageResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "chat.ChatSeenMessageResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "message_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "seen_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "chat_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ChatSeenMessageResponse {
+    return new ChatSeenMessageResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ChatSeenMessageResponse {
+    return new ChatSeenMessageResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ChatSeenMessageResponse {
+    return new ChatSeenMessageResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ChatSeenMessageResponse | PlainMessage<ChatSeenMessageResponse> | undefined, b: ChatSeenMessageResponse | PlainMessage<ChatSeenMessageResponse> | undefined): boolean {
+    return proto3.util.equals(ChatSeenMessageResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message chat.ChatSeenMessagesResponse
+ */
+export class ChatSeenMessagesResponse extends Message<ChatSeenMessagesResponse> {
+  /**
+   * @generated from field: repeated chat.ChatSeenMessageResponse seen_messages = 1;
+   */
+  seenMessages: ChatSeenMessageResponse[] = [];
+
+  constructor(data?: PartialMessage<ChatSeenMessagesResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "chat.ChatSeenMessagesResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "seen_messages", kind: "message", T: ChatSeenMessageResponse, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ChatSeenMessagesResponse {
+    return new ChatSeenMessagesResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ChatSeenMessagesResponse {
+    return new ChatSeenMessagesResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ChatSeenMessagesResponse {
+    return new ChatSeenMessagesResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ChatSeenMessagesResponse | PlainMessage<ChatSeenMessagesResponse> | undefined, b: ChatSeenMessagesResponse | PlainMessage<ChatSeenMessagesResponse> | undefined): boolean {
+    return proto3.util.equals(ChatSeenMessagesResponse, a, b);
   }
 }
 

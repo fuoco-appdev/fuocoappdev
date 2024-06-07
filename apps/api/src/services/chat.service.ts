@@ -2,12 +2,17 @@ import { IRequest } from 'https://deno.land/x/axiod@0.26.2/interfaces.ts';
 import * as HttpError from 'https://deno.land/x/http_errors@3.0.0/mod.ts';
 import { Redis } from 'https://deno.land/x/redis@v0.32.3/mod.ts';
 import {
+    ChatMessageResponse,
+    ChatMessagesResponse,
     ChatPrivateResponse,
     ChatResponse,
+    ChatSeenMessageResponse,
     CreatePrivateChatRequest,
-    UpdatePrivateChatRequest,
+    LastChatMessagesRequest,
+    UpdatePrivateChatRequest
 } from '../protobuf/chat_pb.js';
 import AccountService, { AccountProps } from './account.service.ts';
+import CryptoService from './crypto.service.ts';
 import MedusaService, { CustomerProps } from './medusa.service.ts';
 import MeiliSearchService from './meilisearch.service.ts';
 import RedisService from './redis.service.ts';
@@ -16,7 +21,7 @@ import SupabaseService from './supabase.service.ts';
 enum RedisChatIndexKey {
     Default = 'chat:queue:indexing',
     Created = 'chat:queue:indexing:created',
-    Loaded = 'chat:queue:indexing:loaded'
+    Loaded = 'chat:queue:indexing:loaded',
 }
 
 export interface ChatProps {
@@ -33,6 +38,7 @@ export interface ChatPrivateProps {
 
 export interface ChatDocument extends ChatProps {
     tags?: string[];
+    private?: ChatPrivateProps;
 }
 
 class ChatService {
@@ -50,7 +56,10 @@ class ChatService {
         RedisService.addConnectionCallback(this.onRedisConnection);
     }
 
-    public async indexDocumentsAsync(data: { limit: number, offset: number }): Promise<void> {
+    public async indexDocumentsAsync(data: {
+        limit: number;
+        offset: number;
+    }): Promise<void> {
         let documents: ChatDocument[] = [];
         const chatResponse = await SupabaseService.client
             .from('chat')
@@ -77,14 +86,20 @@ class ChatService {
 
         const privateChatIds = Object.keys(privateTypeChats);
         if (privateChatIds.length > 0) {
-            const privateChats = await this.findPrivateChatsByIdAsync(privateChatIds) ?? [];
-            const privateDocuments = await this.createPrivateChatDocumentsAsync(privateTypeChats, privateChats);
+            const privateChats =
+                (await this.findPrivateChatsByIdAsync(privateChatIds)) ?? [];
+            const privateDocuments = await this.createPrivateChatDocumentsAsync(
+                privateTypeChats,
+                privateChats
+            );
             documents = documents.concat(privateDocuments);
         }
 
         await MeiliSearchService.addDocumentsAsync(this._meiliIndexName, documents);
 
-        const queueData = await RedisService.lPopAsync(RedisChatIndexKey.Default) as string | undefined;
+        const queueData = (await RedisService.lPopAsync(
+            RedisChatIndexKey.Default
+        )) as string | undefined;
         if (!queueData) {
             await RedisService.setAsync(RedisChatIndexKey.Loaded, 'true');
         }
@@ -92,29 +107,37 @@ class ChatService {
         await this.publishAccountIndexing(queueData);
     }
 
-    public async addPrivateDocumentAsync(chatPrivate: ChatPrivateProps): Promise<void> {
+    public async addPrivateDocumentAsync(
+        chatPrivate: ChatPrivateProps
+    ): Promise<void> {
         try {
             const document = await this.createPrivateChatDocumentAsync(chatPrivate);
-            await MeiliSearchService.addDocumentsAsync(this._meiliIndexName, [document]);
-        }
-        catch (error: any) {
+            await MeiliSearchService.addDocumentsAsync(this._meiliIndexName, [
+                document,
+            ]);
+        } catch (error: any) {
             console.error(error);
             return;
         }
     }
 
-    public async updatePrivateDocumentAsync(chatPrivate: ChatPrivateProps): Promise<void> {
+    public async updatePrivateDocumentAsync(
+        chatPrivate: ChatPrivateProps
+    ): Promise<void> {
         try {
             const document = await this.createPrivateChatDocumentAsync(chatPrivate);
-            await MeiliSearchService.updateDocumentsAsync(this._meiliIndexName, [document]);
-        }
-        catch (error: any) {
+            await MeiliSearchService.updateDocumentsAsync(this._meiliIndexName, [
+                document,
+            ]);
+        } catch (error: any) {
             console.error(error);
             return;
         }
     }
 
-    public async deletePrivateDocumentAsync(privateChat: ChatPrivateProps): Promise<void> {
+    public async deletePrivateDocumentAsync(
+        privateChat: ChatPrivateProps
+    ): Promise<void> {
         await MeiliSearchService.deleteDocumentAsync(
             this._meiliIndexName,
             privateChat?.chat_id ?? ''
@@ -149,7 +172,9 @@ class ChatService {
         return data;
     }
 
-    public async findPrivateChatsByIdAsync(ids: string[]): Promise<ChatPrivateProps[] | null> {
+    public async findPrivateChatsByIdAsync(
+        ids: string[]
+    ): Promise<ChatPrivateProps[] | null> {
         const { data, error } = await SupabaseService.client
             .from('chat_privates')
             .select()
@@ -163,7 +188,9 @@ class ChatService {
         return data;
     }
 
-    public async findPrivateChatAsync(id: string): Promise<ChatPrivateProps | null> {
+    public async findPrivateChatAsync(
+        id: string
+    ): Promise<ChatPrivateProps | null> {
         const { data, error } = await SupabaseService.client
             .from('chat_privates')
             .select()
@@ -188,7 +215,7 @@ class ChatService {
         }
 
         const chatDataProps: ChatProps = {
-            type: 'private'
+            type: 'private',
         };
         const chatDataResponse = await SupabaseService.client
             .from('chat')
@@ -200,12 +227,13 @@ class ChatService {
             return null;
         }
 
-        const chatData = chatDataResponse.data.length > 0 ? chatDataResponse.data[0] : null;
+        const chatData =
+            chatDataResponse.data.length > 0 ? chatDataResponse.data[0] : null;
 
         const chatPrivateResponse = new ChatPrivateResponse();
         const chatPrivateDataProps: ChatPrivateProps = {
             chat_id: chatData?.id,
-            account_ids: accountIds
+            account_ids: accountIds,
         };
         const chatPrivateDataResponse = await SupabaseService.client
             .from('chat_privates')
@@ -217,7 +245,10 @@ class ChatService {
             return null;
         }
 
-        const chatPrivateData = chatPrivateDataResponse.data.length > 0 ? chatPrivateDataResponse.data[0] : null;
+        const chatPrivateData =
+            chatPrivateDataResponse.data.length > 0
+                ? chatPrivateDataResponse.data[0]
+                : null;
         chatPrivateResponse.setChatId(chatPrivateData?.id);
         chatPrivateResponse.setAccountIdsList(chatPrivateData?.account_ids);
 
@@ -236,7 +267,7 @@ class ChatService {
         const chatPrivateResponse = new ChatPrivateResponse();
         const accountIds = request.getAccountIdsList();
         const chatPrivateDataProps: ChatPrivateProps = {
-            account_ids: accountIds
+            account_ids: accountIds,
         };
         const chatPrivateDataResponse = await SupabaseService.client
             .from('chat_privates')
@@ -249,13 +280,16 @@ class ChatService {
             return null;
         }
 
-        const chatPrivateData = chatPrivateDataResponse.data.length > 0 ? chatPrivateDataResponse.data[0] : null;
+        const chatPrivateData =
+            chatPrivateDataResponse.data.length > 0
+                ? chatPrivateDataResponse.data[0]
+                : null;
         chatPrivateResponse.setChatId(chatPrivateData?.id);
         chatPrivateResponse.setAccountIdsList(chatPrivateData?.account_ids);
 
         const date = new Date(Date.now());
         const chatDataProps: ChatProps = {
-            updated_at: date.toUTCString()
+            updated_at: date.toUTCString(),
         };
         const chatDataResponse = await SupabaseService.client
             .from('chat')
@@ -268,7 +302,8 @@ class ChatService {
             return null;
         }
 
-        const chatData = chatDataResponse.data.length > 0 ? chatDataResponse.data[0] : null;
+        const chatData =
+            chatDataResponse.data.length > 0 ? chatDataResponse.data[0] : null;
         const chatResponse = new ChatResponse();
         chatResponse.setId(chatData?.id);
         chatResponse.setCreatedAt(chatData?.created_at);
@@ -302,16 +337,62 @@ class ChatService {
         }
     }
 
-    private async createPrivateChatDocumentAsync(chatPrivate: ChatPrivateProps): Promise<ChatDocument> {
+    public async getLastChatMessagesAsync(
+        request: InstanceType<typeof LastChatMessagesRequest>
+    ): Promise<InstanceType<typeof ChatMessagesResponse>> {
+        const response = new ChatMessagesResponse();
+        const chatIds = request.getChatIdsList();
+        for (const id of chatIds) {
+            const message = new ChatMessageResponse();
+            const { data, error } = await SupabaseService.client
+                .from('chat_message')
+                .select('*, seen_by:chat_seen_messages!public_chat_seen_messages_message_id_fkey (*)')
+                .order('created_at', { ascending: true })
+                .match({ chat_id: id })
+                .single();
+            if (error) {
+                console.error(error);
+                continue;
+            }
+
+            message.setId(data.id);
+            message.setChatId(data.chat_id);
+            message.setAccountId(data.account_id);
+            message.setCreatedAt(data.created_at);
+            message.setNonce(data.nonce);
+            const encryptedMessage = CryptoService.encrypt(data.message);
+            message.setMessageEncrypted(encryptedMessage);
+
+            for (const seenMessage of data.seen_by) {
+                const chatSeenMessageResponse = new ChatSeenMessageResponse();
+                chatSeenMessageResponse.setMessageId(seenMessage.message_id);
+                chatSeenMessageResponse.setAccountId(seenMessage.account_id);
+                chatSeenMessageResponse.setChatId(seenMessage.chat_id);
+                chatSeenMessageResponse.setSeenAt(seenMessage.seen_at);
+                message.addSeenBy(chatSeenMessageResponse);
+            }
+
+            response.addMessages(message);
+        }
+
+        return response;
+    }
+
+    private async createPrivateChatDocumentAsync(
+        chatPrivate: ChatPrivateProps
+    ): Promise<ChatDocument> {
         const chat = await this.findChatAsync(chatPrivate?.chat_id ?? '');
-        const document: ChatDocument = { ...chat };
+        const document: ChatDocument = { ...chat, private: chatPrivate };
 
         const tags: string[] = [];
-        const accounts = await AccountService.findAccountsByIdAsync(chatPrivate?.account_ids ?? []) ?? [];
+        const accounts =
+            (await AccountService.findAccountsByIdAsync(
+                chatPrivate?.account_ids ?? []
+            )) ?? [];
         const customerIds = accounts.map((value) => value.customer_id ?? '');
         const customers = await MedusaService.getCustomersByIdAsync(customerIds);
         const customerRecord: Record<string, CustomerProps> = {};
-        customers?.map((value) => customerRecord[value.id] = value);
+        customers?.map((value) => (customerRecord[value.id] = value));
 
         for (const account of accounts) {
             const customer = customerRecord[account.customer_id ?? ''];
@@ -328,7 +409,10 @@ class ChatService {
         return document;
     }
 
-    private async createPrivateChatDocumentsAsync(chats: Record<string, ChatProps>, chatPrivates: ChatPrivateProps[]): Promise<ChatDocument[]> {
+    private async createPrivateChatDocumentsAsync(
+        chats: Record<string, ChatProps>,
+        chatPrivates: ChatPrivateProps[]
+    ): Promise<ChatDocument[]> {
         const documents: ChatDocument[] = [];
         const accountRecord: Record<string, AccountProps | null> = {};
         const customerRecord: Record<string, CustomerProps | null> = {};
@@ -337,14 +421,17 @@ class ChatService {
                 accountRecord[id] = null;
             }
         }
-        const accounts = await AccountService.findAccountsByIdAsync(Object.keys(accountRecord)) ?? [];
+        const accounts =
+            (await AccountService.findAccountsByIdAsync(
+                Object.keys(accountRecord)
+            )) ?? [];
         const customerIds = accounts.map((value) => value.customer_id ?? '');
         const customers = await MedusaService.getCustomersByIdAsync(customerIds);
-        customers?.map((value) => customerRecord[value.id] = value);
+        customers?.map((value) => (customerRecord[value.id] = value));
 
         for (const chatPrivate of chatPrivates) {
             const chat = chats[chatPrivate.chat_id ?? ''];
-            const document: ChatDocument = { ...chat };
+            const document: ChatDocument = { ...chat, private: chatPrivate };
             const tags: string[] = [];
 
             for (const account of accounts) {
@@ -365,7 +452,9 @@ class ChatService {
         return documents;
     }
 
-    private async findPrivateChatByAccountsAsync(account_ids: string[]): Promise<ChatProps | null> {
+    private async findPrivateChatByAccountsAsync(
+        account_ids: string[]
+    ): Promise<ChatProps | null> {
         const { data, error } = await SupabaseService.client
             .from('chat_privates')
             .select()
@@ -383,15 +472,12 @@ class ChatService {
         const indexCreated = await RedisService.getAsync(RedisChatIndexKey.Created);
         if (!indexCreated || indexCreated !== 'true') {
             await MeiliSearchService.createIndexAsync(this._meiliIndexName);
-            await MeiliSearchService.updateSettingsAsync(
-                this._meiliIndexName,
-                {
-                    searchableAttributes: ['*'],
-                    displayedAttributes: ['*'],
-                    filterableAttributes: [],
-                    sortableAttributes: ['created_at', 'updated_at']
-                }
-            );
+            await MeiliSearchService.updateSettingsAsync(this._meiliIndexName, {
+                searchableAttributes: ['*'],
+                displayedAttributes: ['*'],
+                filterableAttributes: ['private'],
+                sortableAttributes: ['created_at', 'updated_at'],
+            });
             await RedisService.setAsync(RedisChatIndexKey.Created, 'true');
         }
 
@@ -405,14 +491,16 @@ class ChatService {
             await this.queueIndexDocumentsAsync();
         }
 
-        const queueData = await RedisService.lPopAsync(RedisChatIndexKey.Default) as string | undefined;
+        const queueData = (await RedisService.lPopAsync(
+            RedisChatIndexKey.Default
+        )) as string | undefined;
         await this.publishAccountIndexing(queueData);
     }
 
     private async queueIndexDocumentsAsync(): Promise<void> {
         const chatResponse = await SupabaseService.client
             .from('chat')
-            .select("", { count: "exact" });
+            .select('', { count: 'exact' });
 
         if (chatResponse.error) {
             console.error(chatResponse.error);
@@ -421,11 +509,16 @@ class ChatService {
 
         const count = chatResponse?.count ?? 0;
         for (let i = 0; i < count; i += this._indexLimit) {
-            await RedisService.rPushAsync(RedisChatIndexKey.Default, JSON.stringify({ limit: this._indexLimit, offset: i }));
+            await RedisService.rPushAsync(
+                RedisChatIndexKey.Default,
+                JSON.stringify({ limit: this._indexLimit, offset: i })
+            );
         }
     }
 
-    private async publishAccountIndexing(data: string | undefined): Promise<void> {
+    private async publishAccountIndexing(
+        data: string | undefined
+    ): Promise<void> {
         if (!data) {
             return;
         }
@@ -435,10 +528,10 @@ class ChatService {
             url: `${this._apiUrl}/chat/indexing`,
             data: data,
             headers: {
-                'Authorization': `Bearer ${SupabaseService.key}`,
-                'Content-Type': 'application/json'
+                Authorization: `Bearer ${SupabaseService.key}`,
+                'Content-Type': 'application/json',
             },
-            responseType: 'json'
+            responseType: 'json',
         } as IRequest);
         await RedisService.publishAsync('axios:request', axiosConfig);
     }
