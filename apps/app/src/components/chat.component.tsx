@@ -1,6 +1,9 @@
 import { lazy } from '@loadable/component';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
+import { useParams } from 'react-router-dom';
+import ChatController from '../controllers/chat.controller';
+import { AccountDocument } from '../models/account.model';
 import { ChatSuspenseDesktopComponent } from './desktop/suspense/chat.suspense.desktop.component';
 import { ChatSuspenseMobileComponent } from './mobile/suspense/chat.suspense.mobile.component';
 
@@ -12,10 +15,15 @@ const ChatMobileComponent = lazy(
 );
 
 export interface ChatResponsiveProps {
-
+    accounts: AccountDocument[];
+    profileUrls: Record<string, string>;
 }
 
 export default function ChatComponent(): JSX.Element {
+    const { id } = useParams();
+    const [profileUrls, setProfileUrls] = React.useState<Record<string, string>>({});
+    const [accounts, setAccounts] = React.useState<AccountDocument[]>([]);
+
     const suspenceComponent = (
         <>
             <ChatSuspenseDesktopComponent />
@@ -26,6 +34,14 @@ export default function ChatComponent(): JSX.Element {
     if (process.env['DEBUG_SUSPENSE'] === 'true') {
         return suspenceComponent;
     }
+
+    useEffect(() => {
+        if (!id) {
+            return;
+        }
+
+        ChatController.loadChat(id);
+    }, [id]);
 
     return (
         <>
@@ -56,8 +72,8 @@ export default function ChatComponent(): JSX.Element {
                 <meta property="og:url" content={window.location.href} />
             </Helmet>
             <React.Suspense fallback={suspenceComponent}>
-                <ChatDesktopComponent />
-                <ChatMobileComponent />
+                <ChatDesktopComponent accounts={accounts} profileUrls={profileUrls} />
+                <ChatMobileComponent accounts={accounts} profileUrls={profileUrls} />
             </React.Suspense>
         </>
     );

@@ -1,0 +1,144 @@
+@import '@fuoco.appdev/core-ui/dist/cjs/styles.scss';
+
+.root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  gap: 2px;
+
+  & .top-bar {
+    height: 56px;
+    width: 100%;
+    border-radius: 6px;
+    background-color: #fff;
+  }
+}
+
+.root-desktop {
+
+}
+
+.root-mobile {
+ 
+}
+
+.tab-nav {
+  padding: 0;
+}
+
+.tab-button {
+  color: $brand-900 !important;
+  font-weight: $font-weight-bold;
+  text-transform: capitalize !important;
+  font-size: $font-size-sm !important;
+  margin-right: 0 !important;
+}
+
+.selected-tab-button {
+}
+
+.tab-outline {
+  background-color: $brand-900 !important;
+  margin-left: 2px;
+}
+
+.rounded-button {
+  background-color: transparent !important;
+  color: $brand-900 !important;
+}
+
+.rounded-button:hover {
+  background-color: rgba(42, 42, 95, 0.15) !important;
+}
+
+.dropdown-touchscreen-overlay {
+  background-color: rgba(42, 42, 95, 0.15) !important;
+}
+
+.dropdown-item-container-interests svg {
+  color: $brand-900 !important;
+}
+
+.dropdown-item-button-interests {
+  color: $brand-900 !important;
+  width: 100%;
+}
+
+.dropdown-item-button-children-interests {
+  display: flex;
+  width: 100%;
+}
+.modal-overlay {
+  z-index: 24;
+  background-color: rgba(42, 42, 95, 0.15);
+}
+
+.modal {
+  max-height: 95vh;
+  overflow-y: auto;
+  overscroll-behavior: none;
+  min-width: 500px;
+}
+
+.modal-desktop {
+  padding: $mp-8;
+}
+
+.modal-text-desktop {
+  padding: 0 !important;
+  padding-bottom: $mp-6 !important;
+  max-width: 500px;
+}
+
+.modal-title {
+  color: $brand-900 !important;
+  text-align: center;
+  text-transform: capitalize;
+}
+
+.modal-description {
+  color: $brand-900 !important;
+}
+
+.modal-footer-button-container-desktop {
+  height: 100%;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.modal-address-footer-button-container-desktop {
+  border-top: 1px solid rgba(42, 42, 95, 0.6);
+}
+
+.modal-footer-button-container-tablet {
+  height: 100%;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.modal-address-footer-button-container-tablet {
+  border-top: 1px solid rgba(42, 42, 95, 0.6);
+}
+
+.modal-cancel-button {
+  background-color: transparent !important;
+  border: 1px solid $brand-900 !important;
+  padding-left: $mp-4 !important;
+  padding-right: $mp-4 !important;
+}
+
+.modal-confirm-button {
+  background-color: $brand-700 !important;
+  padding-left: $mp-4 !important;
+  padding-right: $mp-4 !important;
+}
+
+.loading-container {
+    display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: min-height 75ms $transition-standard-easing;
+}

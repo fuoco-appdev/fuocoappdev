@@ -11,16 +11,16 @@ import { useObservable } from '@ngneat/use-observable';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import { Outlet, useParams } from 'react-router-dom';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import AccountController from '../../controllers/account.controller';
 import ChatController from '../../controllers/chat.controller';
 import { ChatDocument } from '../../models/chat.model';
-import { useQuery } from '../../route-paths';
+import { RoutePathsType, useQuery } from '../../route-paths';
 import AccountMessageItemComponent from '../account-message-item.component';
 import ChatMessageItemComponent from '../chat-message-item.component';
 import { ChatsResponsiveProps } from '../chats.component';
 import styles from '../chats.module.scss';
-import { ResponsiveDesktop } from '../responsive.component';
+import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
 
 export default function ChatsDesktopComponent({
     chatProps,
@@ -36,12 +36,22 @@ export default function ChatsDesktopComponent({
     const query = useQuery();
     const { t } = useTranslation();
     const { id } = useParams();
+    const navigate = useNavigate();
     const [accountProps] = useObservable(AccountController.model.store);
     const topBarRef = React.useRef<HTMLDivElement | null>(null);
     const editButtonRef = React.useRef<HTMLDivElement | null>(null);
     const searchAccountsInputRef = React.useRef<HTMLInputElement | null>(null);
     let prevPreviewScrollTop = 0;
     let yPosition = 0;
+
+    useDesktopEffect(() => {
+        if (id || chatProps.chats.length <= 0) {
+            return;
+        }
+
+        const firstChat = chatProps.chats.at(0);
+        navigate(`${RoutePathsType.Chats}/${firstChat?.id}`);
+    }, [chatProps.chats]);
 
     return (
         <ResponsiveDesktop>

@@ -62,6 +62,7 @@ export interface ChatState {
     accounts: Record<string, AccountDocument>;
     chatSubscriptions: Record<string, Record<string, ChatSubscription>>;
     lastChatMessages: Record<string, DecryptedChatMessage | undefined>;
+    selectedChat: ChatDocument | undefined;
 }
 
 export class ChatModel extends Model {
@@ -84,7 +85,8 @@ export class ChatModel extends Model {
                     chatsPagination: 1,
                     accounts: {},
                     chatSubscriptions: {},
-                    lastChatMessages: {}
+                    lastChatMessages: {},
+                    selectedChat: undefined
                 }),
             ),
         );
@@ -217,6 +219,16 @@ export class ChatModel extends Model {
     public set lastChatMessages(value: Record<string, DecryptedChatMessage | undefined>) {
         if (JSON.stringify(this.lastChatMessages) !== JSON.stringify(value)) {
             this.store.update((state) => ({ ...state, lastChatMessages: value }));
+        }
+    }
+
+    public get selectedChat(): ChatDocument | undefined {
+        return this.store.getValue().selectedChat;
+    }
+
+    public set selectedChat(value: ChatDocument | undefined) {
+        if (JSON.stringify(this.selectedChat) !== JSON.stringify(value)) {
+            this.store.update((state) => ({ ...state, selectedChat: value }));
         }
     }
 }

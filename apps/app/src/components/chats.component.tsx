@@ -2,7 +2,7 @@ import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import AccountController from '../controllers/account.controller';
 import ChatController from '../controllers/chat.controller';
 import { AccountDocument } from '../models/account.model';
@@ -32,6 +32,7 @@ export interface ChatsResponsiveProps {
 }
 
 export default function ChatsComponent(): JSX.Element {
+    const { id } = useParams();
     const navigate = useNavigate();
     const [chatProps] = useObservable(ChatController.model.store);
     const [accountProps] = useObservable(AccountController.model.store);
@@ -71,11 +72,15 @@ export default function ChatsComponent(): JSX.Element {
     }, []);
 
     useEffect(() => {
+        if (Object.keys(chatProps.accounts).length <= 0) {
+            return;
+        }
+
         const chatAccountRecord: Record<string, AccountDocument[]> = {};
         const accounts = Object.values(chatProps.accounts) as AccountDocument[];
         for (const chat of chatProps.chats as ChatDocument[]) {
             if (!chat.id) {
-                return;
+                continue;
             }
 
             if (chat.type === 'private') {

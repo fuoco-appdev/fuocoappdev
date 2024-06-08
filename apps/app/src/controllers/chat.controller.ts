@@ -82,6 +82,58 @@ class ChatController extends Controller {
         );
     }
 
+    public async loadChat(id: string): Promise<void> {
+        const cachedChat = this._model.chats.find((value) => value.id === id);
+        if (!cachedChat) {
+            try {
+                const chat = await this.requestChatAsync(id);
+                if (!chat) {
+                    return;
+                }
+
+                this._model.selectedChat = chat;
+            }
+            catch (error: any) {
+                console.error(error);
+            }
+        }
+        else {
+            this._model.selectedChat = cachedChat;
+        }
+
+        const missingAccountIds: string[] = [];
+        if (this._model.selectedChat?.type === 'private') {
+            for (const id of this._model.selectedChat.private?.account_ids ?? []) {
+                if (Object.keys(this._model.accounts).includes(id)) {
+                    continue;
+                }
+
+                missingAccountIds.push(id);
+            }
+        }
+
+        if (missingAccountIds.length > 0) {
+            try {
+                const accountDocuments = await this._accountIndex?.getDocuments({
+                    limit: missingAccountIds.length,
+                    filter: `id IN [${missingAccountIds.join(', ')}]`,
+                });
+                const accountResults = accountDocuments?.results as AccountDocument[];
+                const accounts = { ...this._model.accounts };
+                for (const account of accountResults) {
+                    if (!account.id) {
+                        continue;
+                    }
+
+                    accounts[account.id] = account;
+                }
+                this._model.accounts = accounts;
+            } catch (error: any) {
+                console.error(error);
+            }
+        }
+    }
+
     public updateSearchInput(value: string): void {
         this._model.searchInput = value;
         this._model.chats = [];
@@ -149,7 +201,7 @@ class ChatController extends Controller {
                 take(1)
             )
         );
-        const filterValue = `(private EXISTS AND private.account_ids = ${account?.id})`;
+        const filterValue = `private EXISTS AND private.account_ids = ${account?.id}`;
         let missingAccountIds: string[] = [];
         let chatIds: string[] = [];
         try {
@@ -190,23 +242,25 @@ class ChatController extends Controller {
             console.error(error);
         }
 
-        try {
-            const accountDocuments = await this._accountIndex?.getDocuments({
-                limit: missingAccountIds.length,
-                filter: `id IN [${missingAccountIds.join(', ')}]`,
-            });
-            const accountResults = accountDocuments?.results as AccountDocument[];
-            const accounts = this._model.accounts;
-            for (const account of accountResults) {
-                if (!account.id) {
-                    continue;
-                }
+        if (missingAccountIds.length > 0) {
+            try {
+                const accountDocuments = await this._accountIndex?.getDocuments({
+                    limit: missingAccountIds.length,
+                    filter: `id IN [${missingAccountIds.join(', ')}]`,
+                });
+                const accountResults = accountDocuments?.results as AccountDocument[];
+                const accounts = { ...this._model.accounts };
+                for (const account of accountResults) {
+                    if (!account.id) {
+                        continue;
+                    }
 
-                accounts[account.id] = account;
+                    accounts[account.id] = account;
+                }
+                this._model.accounts = accounts;
+            } catch (error: any) {
+                console.error(error);
             }
-            this._model.accounts = accounts;
-        } catch (error: any) {
-            console.error(error);
         }
 
         try {
@@ -359,6 +413,30 @@ class ChatController extends Controller {
             accountId: accountId,
             nonce: encryptedMessage?.nonce,
         };
+    }
+
+    private async requestChatAsync(id: string): Promise<ChatDocument | null> {
+        const account: AccountResponse | undefined = await firstValueFrom(
+            AccountController.model.store.pipe(
+                select((model) => model.account),
+                filter((value) => value !== undefined),
+                take(1)
+            )
+        );
+        try {
+            const result = await this._chatIndex?.getDocument(id);
+            const chat = result as ChatDocument;
+            if (chat.type === 'private') {
+                if (!chat.private?.account_ids?.includes(account?.id ?? '')) {
+                    return null;
+                }
+            }
+            return chat;
+        }
+        catch (error: any) {
+            console.error(error);
+            return null;
+        }
     }
 
     private async requestChatsAsync(

@@ -39,10 +39,14 @@ export default function ChatMessageItemComponent({
     const [seen, setSeen] = React.useState<boolean>(false);
 
     React.useEffect(() => {
+        if (!accounts) {
+            return;
+        }
+
         const urls: Record<string, string> = {};
-        for (const account of accounts ?? []) {
+        for (const account of accounts) {
             if (!account.profile_url) {
-                return;
+                continue;
             }
 
             BucketService.getPublicUrlAsync(

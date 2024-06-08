@@ -1,4 +1,3 @@
-import { IRequest } from 'https://deno.land/x/axiod@0.26.2/interfaces.ts';
 import * as HttpError from 'https://deno.land/x/http_errors@3.0.0/mod.ts';
 import { Redis } from 'https://deno.land/x/redis@v0.32.3/mod.ts';
 import {
@@ -15,13 +14,12 @@ import AccountService, { AccountProps } from './account.service.ts';
 import CryptoService from './crypto.service.ts';
 import MedusaService, { CustomerProps } from './medusa.service.ts';
 import MeiliSearchService from './meilisearch.service.ts';
-import RedisService from './redis.service.ts';
+import RedisService, { RedisIndexKey } from './redis.service.ts';
 import SupabaseService from './supabase.service.ts';
 
 enum RedisChatIndexKey {
-    Default = 'chat:queue:indexing',
-    Created = 'chat:queue:indexing:created',
-    Loaded = 'chat:queue:indexing:loaded',
+    Created = 'chat:indexing:created',
+    Loaded = 'chat:indexing:loaded',
 }
 
 export interface ChatProps {
@@ -43,12 +41,10 @@ export interface ChatDocument extends ChatProps {
 
 class ChatService {
     private readonly _meiliIndexName: string;
-    private readonly _apiUrl: string;
     private readonly _indexLimit: number;
 
     constructor() {
         this._meiliIndexName = 'chat';
-        this._apiUrl = Deno.env.get('API_URL') ?? 'http://localhost:9001';
         this._indexLimit = 100;
 
         this.onRedisConnection = this.onRedisConnection.bind(this);
@@ -98,13 +94,13 @@ class ChatService {
         await MeiliSearchService.addDocumentsAsync(this._meiliIndexName, documents);
 
         const queueData = (await RedisService.lPopAsync(
-            RedisChatIndexKey.Default
+            RedisIndexKey.Queue
         )) as string | undefined;
         if (!queueData) {
             await RedisService.setAsync(RedisChatIndexKey.Loaded, 'true');
         }
 
-        await this.publishAccountIndexing(queueData);
+        await RedisService.publishIndexing(queueData);
     }
 
     public async addPrivateDocumentAsync(
@@ -486,15 +482,15 @@ class ChatService {
             return;
         }
 
-        const queueLength = await RedisService.lLenAsync(RedisChatIndexKey.Default);
+        const queueLength = await RedisService.lLenAsync(RedisIndexKey.Queue);
         if (queueLength !== undefined && queueLength <= 0) {
             await this.queueIndexDocumentsAsync();
         }
 
         const queueData = (await RedisService.lPopAsync(
-            RedisChatIndexKey.Default
+            RedisIndexKey.Queue
         )) as string | undefined;
-        await this.publishAccountIndexing(queueData);
+        await RedisService.publishIndexing(queueData);
     }
 
     private async queueIndexDocumentsAsync(): Promise<void> {
@@ -510,30 +506,10 @@ class ChatService {
         const count = chatResponse?.count ?? 0;
         for (let i = 0; i < count; i += this._indexLimit) {
             await RedisService.rPushAsync(
-                RedisChatIndexKey.Default,
-                JSON.stringify({ limit: this._indexLimit, offset: i })
+                RedisIndexKey.Queue,
+                JSON.stringify({ pathname: 'chat/indexing', data: { limit: this._indexLimit, offset: i } })
             );
         }
-    }
-
-    private async publishAccountIndexing(
-        data: string | undefined
-    ): Promise<void> {
-        if (!data) {
-            return;
-        }
-
-        const axiosConfig = JSON.stringify({
-            method: 'post',
-            url: `${this._apiUrl}/chat/indexing`,
-            data: data,
-            headers: {
-                Authorization: `Bearer ${SupabaseService.key}`,
-                'Content-Type': 'application/json',
-            },
-            responseType: 'json',
-        } as IRequest);
-        await RedisService.publishAsync('axios:request', axiosConfig);
     }
 }
 

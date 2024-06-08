@@ -139,8 +139,9 @@ export default function WindowComponent(): JSX.Element {
     }
 
     if (
-      windowProps.loadedLocationPath &&
-      windowProps.loadedLocationPath.startsWith(RoutePathsType.Chats)
+      (windowProps.loadedLocationPath &&
+        windowProps.loadedLocationPath.startsWith(RoutePathsType.Chats)) ||
+      location.pathname.startsWith(RoutePathsType.Chats)
     ) {
       setTimeout(
         () =>

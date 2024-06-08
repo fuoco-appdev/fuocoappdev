@@ -1,4 +1,3 @@
-import { IRequest } from 'https://deno.land/x/axiod@0.26.2/interfaces.ts';
 import 'https://deno.land/x/dotenv@v3.2.0/load.ts';
 import { Redis } from 'https://deno.land/x/redis@v0.32.3/mod.ts';
 import {
@@ -12,13 +11,12 @@ import {
 } from '../protobuf/account_pb.js';
 import MedusaService, { CustomerProps } from './medusa.service.ts';
 import MeiliSearchService from './meilisearch.service.ts';
-import RedisService from './redis.service.ts';
+import RedisService, { RedisIndexKey } from './redis.service.ts';
 import SupabaseService from './supabase.service.ts';
 
 enum RedisAccountIndexKey {
-  Default = 'account:queue:indexing',
-  Created = 'account:queue:indexing:created',
-  Loaded = 'account:queue:indexing:loaded'
+  Created = 'account:indexing:created',
+  Loaded = 'account:indexing:loaded'
 }
 
 export interface AccountProps {
@@ -99,12 +97,12 @@ class AccountService {
 
     await MeiliSearchService.addDocumentsAsync(this._meiliIndexName, documents);
 
-    const queueData = await RedisService.lPopAsync(RedisAccountIndexKey.Default) as string | undefined;
+    const queueData = await RedisService.lPopAsync(RedisIndexKey.Queue) as string | undefined;
     if (!queueData) {
       await RedisService.setAsync(RedisAccountIndexKey.Loaded, 'true');
     }
 
-    await this.publishAccountIndexing(queueData);
+    await RedisService.publishIndexing(queueData);
   }
 
   public async getDocumentsByIdsAsync(accountIds: string[]): Promise<object[] | null> {
@@ -474,13 +472,13 @@ class AccountService {
       return;
     }
 
-    const queueLength = await RedisService.lLenAsync(RedisAccountIndexKey.Default);
+    const queueLength = await RedisService.lLenAsync(RedisIndexKey.Queue);
     if (queueLength !== undefined && queueLength <= 0) {
       await this.queueIndexDocumentsAsync();
     }
 
-    const queueData = await RedisService.lPopAsync(RedisAccountIndexKey.Default) as string | undefined;
-    await this.publishAccountIndexing(queueData);
+    const queueData = await RedisService.lPopAsync(RedisIndexKey.Queue) as string | undefined;
+    await RedisService.publishIndexing(queueData);
   }
 
   private async queueIndexDocumentsAsync(): Promise<void> {
@@ -496,26 +494,8 @@ class AccountService {
 
     const count = accountsResponse?.count ?? 0;
     for (let i = 0; i < count; i += this._indexLimit) {
-      await RedisService.rPushAsync(RedisAccountIndexKey.Default, JSON.stringify({ limit: this._indexLimit, offset: i }));
+      await RedisService.rPushAsync(RedisIndexKey.Queue, JSON.stringify({ pathname: 'account/indexing', data: { limit: this._indexLimit, offset: i } }));
     }
-  }
-
-  private async publishAccountIndexing(data: string | undefined): Promise<void> {
-    if (!data) {
-      return;
-    }
-
-    const axiosConfig = JSON.stringify({
-      method: 'post',
-      url: `${this._apiUrl}/account/indexing`,
-      data: data,
-      headers: {
-        'Authorization': `Bearer ${SupabaseService.key}`,
-        'Content-Type': 'application/json'
-      },
-      responseType: 'json'
-    } as IRequest);
-    await RedisService.publishAsync('axios:request', axiosConfig);
   }
 
   private async checkUsernameExistsAsync(username: string): Promise<boolean> {
