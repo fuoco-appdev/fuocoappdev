@@ -14,6 +14,7 @@ class RedisService {
     private readonly _password: string | undefined;
     private _redis: Redis | undefined;
     private _connectionCallbacks: ((redis: Redis) => void)[];
+    private _indexingCompleteCallbacks: (() => void)[];
     private readonly _apiUrl: string;
 
     constructor() {
@@ -22,6 +23,7 @@ class RedisService {
         this._tsl = Deno.env.get('REDIS_TSL');
         this._password = Deno.env.get('REDIS_PASSWORD');
         this._connectionCallbacks = [];
+        this._indexingCompleteCallbacks = [];
         this._apiUrl = Deno.env.get('API_URL') ?? 'http://localhost:9001';
 
         if (!this._hostname) {
@@ -34,6 +36,10 @@ class RedisService {
 
     public addConnectionCallback(callback: (redis: Redis) => void): void {
         this._connectionCallbacks.push(callback);
+    }
+
+    public addIndexingCompleteCallback(callback: () => void): void {
+        this._indexingCompleteCallbacks.push(callback);
     }
 
     public async connectAsync(): Promise<void> {
@@ -85,18 +91,20 @@ class RedisService {
         return await this._redis?.publish(channel, message);
     }
 
-    public async publishIndexing(
-        data: string | undefined
-    ): Promise<void> {
-        if (!data) {
+    public async popIndex(): Promise<void> {
+        const queueData = await this.lPopAsync(RedisIndexKey.Queue) as string | undefined;
+        if (!queueData) {
+            for (const callback of this._indexingCompleteCallbacks) {
+                callback();
+            }
             return;
         }
 
-        const queueData = JSON.parse(data) as { pathname: string, data: any };
+        const queueDataJSON = JSON.parse(queueData) as { pathname: string, data: any };
         const axiosConfig = JSON.stringify({
             method: 'post',
-            url: `${this._apiUrl}/${queueData.pathname}`,
-            data: queueData.data,
+            url: `${this._apiUrl}/${queueDataJSON.pathname}`,
+            data: queueDataJSON.data,
             headers: {
                 Authorization: `Bearer ${SupabaseService.key}`,
                 'Content-Type': 'application/json',

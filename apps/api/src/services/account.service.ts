@@ -49,8 +49,10 @@ class AccountService {
     this._indexLimit = 100;
 
     this.onRedisConnection = this.onRedisConnection.bind(this);
+    this.onIndexingComplete = this.onIndexingComplete.bind(this);
 
     RedisService.addConnectionCallback(this.onRedisConnection);
+    RedisService.addIndexingCompleteCallback(this.onIndexingComplete);
   }
 
   public async indexDocumentsAsync(data: { limit: number; offset: number; }): Promise<void> {
@@ -96,13 +98,7 @@ class AccountService {
     }
 
     await MeiliSearchService.addDocumentsAsync(this._meiliIndexName, documents);
-
-    const queueData = await RedisService.lPopAsync(RedisIndexKey.Queue) as string | undefined;
-    if (!queueData) {
-      await RedisService.setAsync(RedisAccountIndexKey.Loaded, 'true');
-    }
-
-    await RedisService.publishIndexing(queueData);
+    await RedisService.popIndex();
   }
 
   public async getDocumentsByIdsAsync(accountIds: string[]): Promise<object[] | null> {
@@ -477,8 +473,11 @@ class AccountService {
       await this.queueIndexDocumentsAsync();
     }
 
-    const queueData = await RedisService.lPopAsync(RedisIndexKey.Queue) as string | undefined;
-    await RedisService.publishIndexing(queueData);
+    await RedisService.popIndex();
+  }
+
+  private async onIndexingComplete(): Promise<void> {
+    await RedisService.setAsync(RedisAccountIndexKey.Loaded, 'true');
   }
 
   private async queueIndexDocumentsAsync(): Promise<void> {
