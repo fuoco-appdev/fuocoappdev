@@ -98,7 +98,7 @@ class AccountService {
     }
 
     await MeiliSearchService.addDocumentsAsync(this._meiliIndexName, documents);
-    await RedisService.popIndex();
+    await RedisService.popIndexAsync();
   }
 
   public async getDocumentsByIdsAsync(accountIds: string[]): Promise<object[] | null> {
@@ -473,7 +473,7 @@ class AccountService {
       await this.queueIndexDocumentsAsync();
     }
 
-    await RedisService.popIndex();
+    await RedisService.popIndexAsync();
   }
 
   private async onIndexingComplete(): Promise<void> {

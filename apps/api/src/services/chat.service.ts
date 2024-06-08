@@ -94,7 +94,7 @@ class ChatService {
         }
 
         await MeiliSearchService.addDocumentsAsync(this._meiliIndexName, documents);
-        await RedisService.popIndex();
+        await RedisService.popIndexAsync();
     }
 
     public async addPrivateDocumentAsync(
@@ -481,7 +481,7 @@ class ChatService {
             await this.queueIndexDocumentsAsync();
         }
 
-        await RedisService.popIndex();
+        await RedisService.popIndexAsync();
     }
 
     private async onIndexingComplete(): Promise<void> {

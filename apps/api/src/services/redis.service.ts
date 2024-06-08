@@ -91,7 +91,7 @@ class RedisService {
         return await this._redis?.publish(channel, message);
     }
 
-    public async popIndex(): Promise<void> {
+    public async popIndexAsync(): Promise<void> {
         const queueData = await this.lPopAsync(RedisIndexKey.Queue) as string | undefined;
         if (!queueData) {
             for (const callback of this._indexingCompleteCallbacks) {
