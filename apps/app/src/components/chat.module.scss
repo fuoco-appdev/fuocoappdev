@@ -8,10 +8,48 @@
   gap: 2px;
 
   & .top-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
     height: 56px;
     width: 100%;
     border-radius: 6px;
     background-color: #fff;
+    gap: $mp-2;
+
+
+    & .avatars {
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: flex-end;
+      min-width: 40px;
+
+      & .avatar-container {
+          margin-right: -1.5em;
+          z-index: 1;
+      }
+    }
+
+    & .top-bar-text-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      gap: $mp-1;
+
+      & .top-bar-title {
+        color: $brand-900;
+        font-size: $font-size-sm;
+        font-weight: $font-weight-bold;
+      }
+
+      & .top-bar-subtitle {
+        color: $brand-900;
+        font-size: $font-size-xs;
+      }
+    }
   }
 }
 
@@ -23,24 +61,10 @@
  
 }
 
-.tab-nav {
-  padding: 0;
-}
-
-.tab-button {
-  color: $brand-900 !important;
-  font-weight: $font-weight-bold;
-  text-transform: capitalize !important;
-  font-size: $font-size-sm !important;
-  margin-right: 0 !important;
-}
-
-.selected-tab-button {
-}
-
-.tab-outline {
-  background-color: $brand-900 !important;
-  margin-left: 2px;
+.avatar-container {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #fff;
 }
 
 .rounded-button {
@@ -69,6 +93,7 @@
   display: flex;
   width: 100%;
 }
+
 .modal-overlay {
   z-index: 24;
   background-color: rgba(42, 42, 95, 0.15);

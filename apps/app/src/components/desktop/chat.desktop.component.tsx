@@ -8,6 +8,7 @@ import styles from '../chat.module.scss';
 import { ResponsiveDesktop } from '../responsive.component';
 
 export default function ChatDesktopComponent({
+    chatProps,
     accounts,
     profileUrls
 }: ChatResponsiveProps): JSX.Element {
@@ -40,6 +41,25 @@ export default function ChatDesktopComponent({
                                 />
                             );
                         })}
+                    </div>
+                    <div className={[styles['top-bar-text-container'], styles['top-bar-text-container-desktop']].join(' ')}>
+
+                        <div
+                            className={[
+                                styles['top-bar-title'],
+                                styles['top-bar-title-desktop'],
+                            ].join(' ')}
+                        >
+                            {accounts?.length > 0 && chatProps.selectedChat?.type === 'private' && (
+                                accounts[0]?.username
+                            )}
+                        </div>
+                        <div className={[
+                            styles['top-bar-subtitle'],
+                            styles['top-bar-subtitle-desktop'],
+                        ].join(' ')}>
+                            {t('lastSeen', { time: '' })}
+                        </div>
                     </div>
                 </div>
             </div>

@@ -19,6 +19,7 @@ import { ProductState } from '../models/product.model';
 import { WindowLocalState, WindowState } from '../models/window.model';
 import { RoutePathsType, useQuery } from '../route-paths';
 import AccountNotificationService, { AccountData } from '../services/account-notification.service';
+import AccountService from '../services/account.service';
 import BucketService from '../services/bucket.service';
 import SupabaseService from '../services/supabase.service';
 import { WindowSuspenseDesktopComponent } from './desktop/suspense/window.suspense.desktop.component';
@@ -272,6 +273,28 @@ export default function WindowComponent(): JSX.Element {
       });
     }
   }, [windowProps.authState]);
+
+  React.useEffect(() => {
+    const updateAccountPresenceAsync = async (isOnline: boolean) => {
+      if (!accountProps.account) {
+        return;
+      }
+
+      await AccountService.requestUpdateAccountPresenceAsync(accountProps.account.id, isOnline);
+    }
+
+    const handleBeforeUnloadChangeAsync = async () => {
+      await updateAccountPresenceAsync(false);
+    }
+
+    updateAccountPresenceAsync(true);
+
+    window.addEventListener('beforeunload', handleBeforeUnloadChangeAsync);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnloadChangeAsync);
+    };
+  }, [windowProps.account])
 
   React.useEffect(() => {
     i18n.changeLanguage(windowLocalProps.languageInfo?.isoCode);

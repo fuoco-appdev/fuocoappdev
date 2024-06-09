@@ -128,6 +128,28 @@
     text-size-adjust: none;
   }
 
+  & .product-description {
+      font-family: 'Open Sans', sans-serif;
+      line-height: 1.6;
+      color: $brand-900;
+      font-size: $font-size-sm;
+      -o-text-overflow: ellipsis;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      /* Prevent native touch events on Windows */
+      -ms-touch-action: none;
+
+      /* Prevent the callout on tap-hold and text selection */
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      text-size-adjust: none;
+      height: fit-content;
+      flex: 1;
+  }
+
   & .product-price {
     color: $brand-900;
   }
@@ -394,33 +416,6 @@
 
       & .product-description-desktop {
         margin-top: $mp-2;
-        color: $brand-900;
-        font-size: $font-size-sm;
-        -o-text-overflow: ellipsis;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        /* Prevent native touch events on Windows */
-        -ms-touch-action: none;
-
-        /* Prevent the callout on tap-hold and text selection */
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-
-        /* Prevent text resize on orientation change, useful for web-apps */
-        -webkit-text-size-adjust: none;
-        -moz-text-size-adjust: none;
-        -ms-text-size-adjust: none;
-        -o-text-size-adjust: none;
-        text-size-adjust: none;
-        height: -webkit-fit-content;
-        height: -moz-fit-content;
-        height: fit-content;
-        -webkit-box-flex: 1;
-        -ms-flex: 1;
-        flex: 1;
         max-height: 114px;
       }
 
@@ -628,33 +623,6 @@
 
       & .product-description-tablet {
         margin-top: $mp-2;
-        color: $brand-900;
-        font-size: $font-size-sm;
-        -o-text-overflow: ellipsis;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        /* Prevent native touch events on Windows */
-        -ms-touch-action: none;
-
-        /* Prevent the callout on tap-hold and text selection */
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-
-        /* Prevent text resize on orientation change, useful for web-apps */
-        -webkit-text-size-adjust: none;
-        -moz-text-size-adjust: none;
-        -ms-text-size-adjust: none;
-        -o-text-size-adjust: none;
-        text-size-adjust: none;
-        height: -webkit-fit-content;
-        height: -moz-fit-content;
-        height: fit-content;
-        -webkit-box-flex: 1;
-        -ms-flex: 1;
-        flex: 1;
         max-height: 114px;
       }
 
@@ -792,26 +760,6 @@
 
   & .product-description-mobile {
     color: $brand-900;
-    font-size: $font-size-sm;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    /* Prevent native touch events on Windows */
-    -ms-touch-action: none;
-
-    /* Prevent the callout on tap-hold and text selection */
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-
-    /* Prevent text resize on orientation change, useful for web-apps */
-    -webkit-text-size-adjust: none;
-    -moz-text-size-adjust: none;
-    -ms-text-size-adjust: none;
-    -o-text-size-adjust: none;
-    text-size-adjust: none;
-    flex: 1;
     max-height: 114px;
   }
 

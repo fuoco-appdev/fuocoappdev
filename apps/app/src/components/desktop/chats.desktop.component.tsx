@@ -175,16 +175,17 @@ export default function ChatsDesktopComponent({
                                 styles['side-bar-scroll-content-desktop'],
                             ].join(' ')}
                         >
-                            {chatProps.chats.map((chat: ChatDocument, _index: number) => {
+                            {chatAccounts && chatProps.chats.map((chat: ChatDocument, _index: number) => {
                                 const lastMessage = chatProps.lastChatMessages[chat.id ?? ''];
+                                const accounts = chatAccounts[chat.id ?? ''];
                                 return (
                                     <ChatMessageItemComponent
                                         key={chat.id}
                                         accountProps={accountProps}
-                                        accounts={chatAccounts[chat.id ?? '']}
+                                        accounts={accounts}
                                         chat={chat}
                                         lastMessage={lastMessage}
-                                        onClick={() => { }}
+                                        onClick={() => navigate(`${RoutePathsType.Chats}/${chat.id}`)}
                                     />
                                 );
                             })}

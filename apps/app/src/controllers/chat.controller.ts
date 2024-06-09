@@ -82,7 +82,7 @@ class ChatController extends Controller {
         );
     }
 
-    public async loadChat(id: string): Promise<void> {
+    public async loadChatAsync(id: string): Promise<void> {
         const cachedChat = this._model.chats.find((value) => value.id === id);
         if (!cachedChat) {
             try {
@@ -127,6 +127,7 @@ class ChatController extends Controller {
 
                     accounts[account.id] = account;
                 }
+
                 this._model.accounts = accounts;
             } catch (error: any) {
                 console.error(error);

@@ -332,6 +332,26 @@ class AccountService extends Service {
     const accountsResponse = AccountsResponse.fromBinary(arrayBuffer);
     return accountsResponse;
   }
+
+  public async requestUpdateAccountPresenceAsync(
+    accountId: string,
+    isOnline: boolean
+  ): Promise<void> {
+    const date = new Date(Date.now());
+    const response = await SupabaseService.supabaseClient
+      ?.from('account_presence')
+      .upsert({
+        account_id: accountId,
+        is_online: isOnline,
+        last_seen: date.toUTCString(),
+      });
+
+    if (response?.error) {
+      console.error("Can't update account presence:", response.error);
+    }
+  }
+
+
 }
 
 export default new AccountService();

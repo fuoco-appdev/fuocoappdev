@@ -1,9 +1,14 @@
 import { lazy } from '@loadable/component';
+import { useObservable } from '@ngneat/use-observable';
 import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { useParams } from 'react-router-dom';
+import AccountController from '../controllers/account.controller';
 import ChatController from '../controllers/chat.controller';
 import { AccountDocument } from '../models/account.model';
+import { ChatState } from '../models/chat.model';
+import { StorageFolderType } from '../protobuf/common_pb';
+import BucketService from '../services/bucket.service';
 import { ChatSuspenseDesktopComponent } from './desktop/suspense/chat.suspense.desktop.component';
 import { ChatSuspenseMobileComponent } from './mobile/suspense/chat.suspense.mobile.component';
 
@@ -15,13 +20,18 @@ const ChatMobileComponent = lazy(
 );
 
 export interface ChatResponsiveProps {
+    chatProps: ChatState;
     accounts: AccountDocument[];
     profileUrls: Record<string, string>;
 }
 
 export default function ChatComponent(): JSX.Element {
     const { id } = useParams();
-    const [profileUrls, setProfileUrls] = React.useState<Record<string, string>>({});
+    const [accountProps] = useObservable(AccountController.model.store);
+    const [chatProps] = useObservable(ChatController.model.store);
+    const [profileUrls, setProfileUrls] = React.useState<Record<string, string>>(
+        {}
+    );
     const [accounts, setAccounts] = React.useState<AccountDocument[]>([]);
 
     const suspenceComponent = (
@@ -40,8 +50,51 @@ export default function ChatComponent(): JSX.Element {
             return;
         }
 
-        ChatController.loadChat(id);
+        ChatController.loadChatAsync(id);
     }, [id]);
+
+    useEffect(() => {
+        if (
+            !chatProps.selectedChat ||
+            Object.keys(chatProps.accounts).length <= 0
+        ) {
+            return;
+        }
+
+        const accountIds = chatProps.selectedChat?.private?.account_ids ?? [];
+        const accountIndex = accountIds.indexOf(accountProps.account.id);
+        accountIds.splice(accountIndex, 1);
+        const accounts = Object.values(
+            chatProps.accounts as Record<string, AccountDocument>
+        ).filter((value) => accountIds.includes(value?.id));
+        setAccounts(accounts);
+    }, [chatProps.accounts, chatProps.selectedChat]);
+
+    React.useEffect(() => {
+        if (!accounts) {
+            return;
+        }
+
+        const urls: Record<string, string> = {};
+        for (const account of accounts) {
+            if (!account.profile_url) {
+                continue;
+            }
+
+            BucketService.getPublicUrlAsync(
+                StorageFolderType.Avatars,
+                account.profile_url
+            ).then((value) => {
+                if (!account.id || !value) {
+                    return;
+                }
+
+                urls[account.id] = value;
+            });
+        }
+
+        setProfileUrls(urls);
+    }, [accounts]);
 
     return (
         <>
@@ -72,8 +125,16 @@ export default function ChatComponent(): JSX.Element {
                 <meta property="og:url" content={window.location.href} />
             </Helmet>
             <React.Suspense fallback={suspenceComponent}>
-                <ChatDesktopComponent accounts={accounts} profileUrls={profileUrls} />
-                <ChatMobileComponent accounts={accounts} profileUrls={profileUrls} />
+                <ChatDesktopComponent
+                    chatProps={chatProps}
+                    accounts={accounts}
+                    profileUrls={profileUrls}
+                />
+                <ChatMobileComponent
+                    chatProps={chatProps}
+                    accounts={accounts}
+                    profileUrls={profileUrls}
+                />
             </React.Suspense>
         </>
     );

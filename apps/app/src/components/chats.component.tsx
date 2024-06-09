@@ -72,28 +72,25 @@ export default function ChatsComponent(): JSX.Element {
     }, []);
 
     useEffect(() => {
-        if (Object.keys(chatProps.accounts).length <= 0) {
+        const account = accountProps.account;
+        if (!account) {
             return;
         }
 
         const chatAccountRecord: Record<string, AccountDocument[]> = {};
         const accounts = Object.values(chatProps.accounts) as AccountDocument[];
-        for (const chat of chatProps.chats as ChatDocument[]) {
-            if (!chat.id) {
-                continue;
-            }
-
+        const chats = chatProps.chats as ChatDocument[];
+        for (const chat of chats) {
             if (chat.type === 'private') {
-                const privateAccounts = accounts.filter((value) => chat.private?.account_ids?.includes(value?.id ?? ''));
-                const privateAccountIds = privateAccounts.map((value) => value.id);
-                const accountIndex = privateAccountIds.indexOf(accountProps.account.id);
-                privateAccounts.splice(accountIndex, 1);
-                chatAccountRecord[chat.id] = privateAccounts;
+                const privateChat = chat.private;
+                const privateAccounts = accounts.filter((value) => privateChat?.account_ids?.includes(value?.id ?? '') && value.id !== account.id);
+                chatAccountRecord[chat.id ?? ''] = privateAccounts;
+
             }
         }
 
         setChatAccounts(chatAccountRecord);
-    }, [chatProps.accounts, chatProps.chats]);
+    }, [chatProps.accounts, chatProps.chats, accountProps.account]);
 
     return (
         <>

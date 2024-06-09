@@ -323,5 +323,6 @@
   "noMessagesDescription": "Create or select a private chat, group chat or channel and start messaging",
   "noMessagesCount": "0 messages",
   "newPrivate": "New private",
-  "startMessaging": "You can now start messaging"
+  "startMessaging": "You can now start messaging",
+  "lastSeen": "last seen {{time, string}}"
 }
