@@ -1,9 +1,12 @@
 import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
+import moment from 'moment';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { useTranslation } from 'react-i18next';
 import NotificationsController from '../controllers/notifications.controller';
 import { NotificationsState } from '../models/notifications.model';
+import { AccountNotificationResponse } from '../protobuf/account-notification_pb';
 import { AuthenticatedComponent } from './authenticated.component';
 import { NotificationsSuspenseDesktopComponent } from './desktop/suspense/notifications.suspense.desktop.component';
 import { NotificationsSuspenseMobileComponent } from './mobile/suspense/notifications.suspense.mobile.component';
@@ -17,17 +20,18 @@ const NotificationsMobileComponent = lazy(
 
 export interface NotificationsResponsiveProps {
   notificationsProps: NotificationsState;
-  fromNowRef: React.MutableRefObject<string | null>;
+  notifications: Record<string, AccountNotificationResponse[]>;
   onScroll: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
   onLoad: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
 }
 
 export default function NotificationsComponent(): JSX.Element {
   const renderCountRef = React.useRef<number>(0);
+  const { t, i18n } = useTranslation();
   const [notificationsProps] = useObservable(
     NotificationsController.model.store
   );
-  const fromNowRef = React.useRef<string | null>(null);
+  const [notifications, setNotifications] = React.useState<Record<string, AccountNotificationResponse[]>>({});
 
   const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const scrollTop = e.currentTarget?.scrollTop ?? 0;
@@ -73,6 +77,28 @@ export default function NotificationsComponent(): JSX.Element {
     };
   }, []);
 
+  React.useEffect(() => {
+    let lastFromNow = '';
+    const newNotifications: Record<string, AccountNotificationResponse[]> = {};
+    for (const notification of notificationsProps.accountNotifications as AccountNotificationResponse[]) {
+      const fromNowCurrent = moment(notification?.createdAt)
+        .locale(i18n.language)
+        .startOf('day')
+        .fromNow(true);
+      if (lastFromNow !== fromNowCurrent) {
+        if (!Object.keys(newNotifications).includes(fromNowCurrent)) {
+          console.log(fromNowCurrent);
+          newNotifications[fromNowCurrent] = [];
+        }
+
+        lastFromNow = fromNowCurrent;
+      }
+
+      newNotifications[fromNowCurrent].push(notification);
+    }
+    setNotifications(newNotifications);
+  }, [notificationsProps.accountNotifications])
+
   return (
     <>
       <Helmet>
@@ -105,13 +131,13 @@ export default function NotificationsComponent(): JSX.Element {
         <AuthenticatedComponent>
           <NotificationsDesktopComponent
             notificationsProps={notificationsProps}
-            fromNowRef={fromNowRef}
+            notifications={notifications}
             onScroll={onScroll}
             onLoad={onLoad}
           />
           <NotificationsMobileComponent
             notificationsProps={notificationsProps}
-            fromNowRef={fromNowRef}
+            notifications={notifications}
             onScroll={onScroll}
             onLoad={onLoad}
           />

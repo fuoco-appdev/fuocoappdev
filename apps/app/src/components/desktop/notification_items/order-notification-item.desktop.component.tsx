@@ -125,7 +125,7 @@ export default function OrderNotificationItemDesktopComponent({ notification, fr
                         >
                             {moment(notification.createdAt)
                                 .locale(i18n.language)
-                                .calendar()}
+                                .subtract(6, 'days').calendar()}
                         </div>
                     </div>
                 </div>

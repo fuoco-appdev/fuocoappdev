@@ -57,12 +57,15 @@
             transition: max-height 150ms $transition-standard-easing;
         }
 
-        & .from-now-date {
-           color: $brand-900;
-           font-weight: $font-weight-bold;
-           font-size: $font-size-sm;
-           background-color: #fff;
-           border-radius: 6px;
+        & .notifications-item {
+            background-color: #fff;
+            border-radius: 6px;
+
+            & .from-now-date {
+                color: $brand-900;
+                font-weight: $font-weight-bold;
+                font-size: $font-size-sm;
+             }
         }
 
         & .no-notifications-container {

@@ -76,7 +76,7 @@ export default function AccountNotificationItemDesktopComponent({ notification, 
                         >
                             {moment(notification.createdAt)
                                 .locale(i18n.language)
-                                .calendar()}
+                                .subtract(6, 'days').calendar()}
                         </div>
                     </div>
                 </div>

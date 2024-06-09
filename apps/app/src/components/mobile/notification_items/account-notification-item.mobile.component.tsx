@@ -83,7 +83,7 @@ export default function AccountNotificationItemMobileComponent({
                                 styles['message-date-mobile'],
                             ].join(' ')}
                         >
-                            {moment(notification.createdAt).locale(i18n.language).calendar()}
+                            {moment(notification.createdAt).locale(i18n.language).subtract(6, 'days').calendar()}
                         </div>
                     </div>
                 </div>

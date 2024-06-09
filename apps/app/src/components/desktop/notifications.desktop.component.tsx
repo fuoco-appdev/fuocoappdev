@@ -1,9 +1,7 @@
 import { Line, Scroll } from '@fuoco.appdev/core-ui';
-import moment from 'moment';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import NotificationsController from '../../controllers/notifications.controller';
-import { AccountNotificationResponse } from '../../protobuf/account-notification_pb';
 import NotificationItemComponent from '../notification-item.component';
 import { NotificationsResponsiveProps } from '../notifications.component';
 import styles from '../notifications.module.scss';
@@ -11,7 +9,7 @@ import { ResponsiveDesktop } from '../responsive.component';
 
 export default function NotificationsDesktopComponent({
   notificationsProps,
-  fromNowRef,
+  notifications,
   onScroll,
   onLoad,
 }: NotificationsResponsiveProps): JSX.Element {
@@ -86,36 +84,26 @@ export default function NotificationsDesktopComponent({
             ref={scrollContainerRef}
             onLoad={onLoad}
           >
-            {notificationsProps.accountNotifications.map(
-              (notification: AccountNotificationResponse, _index: number) => {
-                const fromNowCurrent = moment(notification?.createdAt)
-                  .locale(i18n.language)
-                  .startOf('day')
-                  .fromNow(true);
-                let showDate = false;
-                if (fromNowRef.current !== fromNowCurrent) {
-                  showDate = true;
-                  fromNowRef.current = fromNowCurrent;
-                }
+            {Object.keys(notifications).map(
+              (key: string) => {
+                const notificationList = notifications[key];
                 return (
-                  <>
-                    {showDate && (
-                      <div
-                        className={[
-                          styles['from-now-date'],
-                          styles['from-now-date-desktop'],
-                        ].join(' ')}
-                      >
-                        {fromNowCurrent}
-                      </div>
-                    )}
-                    <NotificationItemComponent
+                  <div className={[styles['notifications-item'], styles['notifications-item-desktop']].join(' ')}>
+                    <div
+                      className={[
+                        styles['from-now-date'],
+                        styles['from-now-date-desktop'],
+                      ].join(' ')}
+                    >
+                      {key}
+                    </div>
+                    {notificationList.map((notification) => (<NotificationItemComponent
                       key={notification.id}
                       notification={notification}
                       notificationsProps={notificationsProps}
-                      fromNow={fromNowCurrent}
-                    />
-                  </>
+                      fromNow={key}
+                    />))}
+                  </div>
                 );
               }
             )}
