@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 import AccountController from '../controllers/account.controller';
 import ChatController from '../controllers/chat.controller';
 import { AccountDocument } from '../models/account.model';
-import { ChatState } from '../models/chat.model';
+import { ChatDocument, ChatState } from '../models/chat.model';
 import { StorageFolderType } from '../protobuf/common_pb';
 import BucketService from '../services/bucket.service';
 import { ChatSuspenseDesktopComponent } from './desktop/suspense/chat.suspense.desktop.component';
@@ -54,21 +54,21 @@ export default function ChatComponent(): JSX.Element {
     }, [id]);
 
     useEffect(() => {
+        const selectedChat = chatProps.selectedChat as ChatDocument | undefined;
         if (
-            !chatProps.selectedChat ||
-            Object.keys(chatProps.accounts).length <= 0
+            !selectedChat
         ) {
             return;
         }
 
-        const accountIds = chatProps.selectedChat?.private?.account_ids ?? [];
-        const accountIndex = accountIds.indexOf(accountProps.account.id);
-        accountIds.splice(accountIndex, 1);
-        const accounts = Object.values(
-            chatProps.accounts as Record<string, AccountDocument>
-        ).filter((value) => accountIds.includes(value?.id));
-        setAccounts(accounts);
-    }, [chatProps.accounts, chatProps.selectedChat]);
+        const account = accountProps.account as AccountDocument | undefined;
+        if (selectedChat.type === 'private') {
+            const accountIds = selectedChat?.private?.account_ids ?? [];
+            const documents = Object.values(chatProps.accounts) as AccountDocument[];
+            const accounts = documents.filter((value) => accountIds.includes(value?.id ?? '') && value.id !== account?.id);
+            setAccounts(accounts);
+        }
+    }, [chatProps.accounts, chatProps.selectedChat, accountProps.account]);
 
     React.useEffect(() => {
         if (!accounts) {
