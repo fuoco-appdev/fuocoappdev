@@ -8,6 +8,7 @@ import ChatController from '../controllers/chat.controller';
 import { AccountDocument } from '../models/account.model';
 import { ChatDocument, ChatState } from '../models/chat.model';
 import { RoutePathsType } from '../route-paths';
+import AccountService from '../services/account.service';
 import { AuthenticatedComponent } from './authenticated.component';
 import { ChatsSuspenseDesktopComponent } from './desktop/suspense/chats.suspense.desktop.component';
 import { ChatsSuspenseMobileComponent } from './mobile/suspense/chats.suspense.mobile.component';
@@ -91,6 +92,18 @@ export default function ChatsComponent(): JSX.Element {
 
         setChatAccounts(chatAccountRecord);
     }, [chatProps.accounts, chatProps.chats, accountProps.account]);
+
+    useEffect(() => {
+        const accounts = chatProps.accounts as Record<string, AccountDocument>;
+        const accountIds = Object.values(accounts)?.map((value) => value.id ?? '') ?? [];
+        const subscription = AccountService.subscribeAccountPresence(accountIds, (payload: Record<string, any>) => {
+            ChatController.updateAccountPresence(payload['new']);
+        });
+
+        return () => {
+            subscription?.unsubscribe();
+        }
+    }, [chatProps.accounts]);
 
     return (
         <>

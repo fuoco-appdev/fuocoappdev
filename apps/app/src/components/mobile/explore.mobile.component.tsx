@@ -187,7 +187,7 @@ export default function ExploreMobileComponent({
             <Scroll
               classNames={{
                 scrollContainer: [styles['scroll-container'], styles['scroll-container-mobile']].join(' '),
-                reloadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' '),
+                reloadContainer: [styles['scroll-reload-container'], styles['scroll-reload-container-mobile']].join(' '),
                 loadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' '),
                 pullIndicator: [styles['pull-indicator'], styles['pull-indicator-mobile']].join(' ')
               }}
@@ -202,7 +202,6 @@ export default function ExploreMobileComponent({
               isReloading={exploreProps.areSearchedStockLocationsReloading}
               isLoadable={exploreProps.hasMoreSearchedStockLocations}
               showIndicatorThreshold={56}
-              reloadThreshold={96}
               pullIndicatorComponent={<div className={[styles['pull-indicator-container']].join(' ')}><Line.ArrowDownward size={24} /></div>}
               onReload={() => ExploreController.reloadStockLocationsAsync()}
               loadComponent={
@@ -400,9 +399,6 @@ export default function ExploreMobileComponent({
             classNames={{
               touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
             }}
-            extendThresholdPercent={70}
-            dropThresholdPercent={60}
-            defaultHeightPercent={90}
             open={Boolean(selectedPoint)}
             touchScreen={true}
             onClose={() => setSelectedPoint(null)}

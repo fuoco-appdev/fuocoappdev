@@ -130,7 +130,6 @@
 
             & .loading-ring {
                 width: 100%;
-                transition: max-height 150ms $transition-standard-easing;
             }
 
             & .no-searched-stock-locations-container {
@@ -493,33 +492,27 @@
 }
 
 .scroll-container-mobile {
-    padding-top: calc(189px + 2px);
+    padding-top: calc(189px + 1px);
 }
 
 .pull-indicator-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #fff;
-    border-radius: 40px;
-    width: 40px;
-    height: 40px;
+   
 }
 
 .pull-indicator {
     color: $brand-900;
 }
 
-.pull-indicator * {
-  transform-origin: 50% 50%;
-}
-
 .pull-indicator-mobile {
-    top: calc(189px + 16px);
+
 }
 
 .scroll-content-mobile {
 
+}
+
+.scroll-reload-container-mobile {
+ 
 }
 
 .scroll-load-container {

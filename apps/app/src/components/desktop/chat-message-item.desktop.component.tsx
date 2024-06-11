@@ -11,6 +11,7 @@ export default function ChatMessageItemDesktopComponent({
   chat,
   accounts,
   lastMessage,
+  accountPresence,
   profileUrls,
   seen,
   onClick,
@@ -38,18 +39,34 @@ export default function ChatMessageItemDesktopComponent({
             >
               {accounts?.map((account) => {
                 const profileUrl = profileUrls[account.id ?? ''];
+                const presence = accountPresence?.find((value) => value.account_id === account.id);
                 return (
-                  <Avatar
-                    classNames={{
-                      container: [
-                        styles['avatar-container'],
-                        styles['avatar-container-desktop'],
-                      ].join(' '),
-                    }}
-                    size={'custom'}
-                    text={account.customer?.first_name}
-                    src={profileUrl}
-                  />
+                  <div
+                    className={[
+                      styles['avatar-status-container'],
+                      styles['avatar-status-container-desktop'],
+                    ].join(' ')}
+                  >
+                    <Avatar
+                      classNames={{
+                        container: [
+                          styles['avatar-container'],
+                          styles['avatar-container-desktop'],
+                        ].join(' '),
+                      }}
+                      size={'custom'}
+                      text={account.customer?.first_name}
+                      src={profileUrl}
+                    />
+                    {presence && presence.is_online && (
+                      <div
+                        className={[
+                          styles['avatar-online-status'],
+                          styles['avatar-online-status-desktop'],
+                        ].join(' ')}
+                      />
+                    )}
+                  </div>
                 );
               })}
             </div>
@@ -102,7 +119,9 @@ export default function ChatMessageItemDesktopComponent({
                   styles['message-date-desktop'],
                 ].join(' ')}
               >
-                {moment(lastMessage?.createdAt).locale(i18n.language).fromNow(true)}
+                {moment(lastMessage?.createdAt)
+                  .locale(i18n.language)
+                  .fromNow(true)}
               </div>
             )}
           </div>

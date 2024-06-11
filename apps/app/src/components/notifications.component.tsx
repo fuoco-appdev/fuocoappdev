@@ -87,7 +87,6 @@ export default function NotificationsComponent(): JSX.Element {
         .fromNow(true);
       if (lastFromNow !== fromNowCurrent) {
         if (!Object.keys(newNotifications).includes(fromNowCurrent)) {
-          console.log(fromNowCurrent);
           newNotifications[fromNowCurrent] = [];
         }
 

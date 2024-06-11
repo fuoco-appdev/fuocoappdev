@@ -41,6 +41,12 @@ export interface AccountDocument {
   customer?: Partial<Customer>;
 }
 
+export interface AccountPresence {
+  account_id: string;
+  last_seen: string;
+  is_online: boolean;
+}
+
 export interface ProfileFormErrorStrings {
   empty?: string;
   exists?: string;

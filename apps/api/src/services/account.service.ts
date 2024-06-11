@@ -4,10 +4,13 @@ import {
   AccountExistsRequest,
   AccountExistsResponse,
   AccountLikeRequest,
+  AccountPresenceRequest,
+  AccountPresenceResponse,
+  AccountPresencesResponse,
   AccountRequest,
   AccountResponse,
   AccountsRequest,
-  AccountsResponse,
+  AccountsResponse
 } from '../protobuf/account_pb.js';
 import MedusaService, { CustomerProps } from './medusa.service.ts';
 import MeiliSearchService from './meilisearch.service.ts';
@@ -173,6 +176,30 @@ class AccountService {
     }
 
     return data.length > 0 ? data[0] : null;
+  }
+
+  public async findPresenceAsync(request: InstanceType<typeof AccountPresenceRequest>): Promise<AccountPresencesResponse | null> {
+    const accountPresencesResponse = new AccountPresencesResponse();
+    const accountIds = request.getAccountIdsList();
+    const { data, error } = await SupabaseService.client
+      .from('account_presence')
+      .select()
+      .in('account_id', accountIds);
+
+    if (error) {
+      console.error(error);
+      return null;
+    }
+
+    for (const presence of data) {
+      const accountPresenceResponse = new AccountPresenceResponse();
+      accountPresenceResponse.setAccountId(presence.account_id);
+      accountPresenceResponse.setLastSeen(presence.last_seen);
+      accountPresenceResponse.setIsOnline(presence.is_online);
+      accountPresencesResponse.addAccountPresences(accountPresenceResponse);
+    }
+
+    return accountPresencesResponse;
   }
 
   public async createAsync(

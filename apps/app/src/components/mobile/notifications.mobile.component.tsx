@@ -103,11 +103,11 @@ export default function NotificationsMobileComponent({
               (key: string) => {
                 const notificationList = notifications[key];
                 return (
-                  <div className={[styles['notifications-item'], styles['notifications-item-desktop']].join(' ')}>
+                  <div className={[styles['notifications-item'], styles['notifications-item-mobile']].join(' ')}>
                     <div
                       className={[
                         styles['from-now-date'],
-                        styles['from-now-date-desktop'],
+                        styles['from-now-date-mobile'],
                       ].join(' ')}
                     >
                       {key}

@@ -409,3 +409,126 @@ export class AccountLikeRequest extends Message<AccountLikeRequest> {
   }
 }
 
+/**
+ * @generated from message account.AccountPresenceRequest
+ */
+export class AccountPresenceRequest extends Message<AccountPresenceRequest> {
+  /**
+   * @generated from field: repeated string account_ids = 1;
+   */
+  accountIds: string[] = [];
+
+  constructor(data?: PartialMessage<AccountPresenceRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "account.AccountPresenceRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "account_ids", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountPresenceRequest {
+    return new AccountPresenceRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AccountPresenceRequest {
+    return new AccountPresenceRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AccountPresenceRequest {
+    return new AccountPresenceRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AccountPresenceRequest | PlainMessage<AccountPresenceRequest> | undefined, b: AccountPresenceRequest | PlainMessage<AccountPresenceRequest> | undefined): boolean {
+    return proto3.util.equals(AccountPresenceRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message account.AccountPresenceResponse
+ */
+export class AccountPresenceResponse extends Message<AccountPresenceResponse> {
+  /**
+   * @generated from field: string account_id = 1;
+   */
+  accountId = "";
+
+  /**
+   * @generated from field: string last_seen = 2;
+   */
+  lastSeen = "";
+
+  /**
+   * @generated from field: bool is_online = 3;
+   */
+  isOnline = false;
+
+  constructor(data?: PartialMessage<AccountPresenceResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "account.AccountPresenceResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "last_seen", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "is_online", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountPresenceResponse {
+    return new AccountPresenceResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AccountPresenceResponse {
+    return new AccountPresenceResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AccountPresenceResponse {
+    return new AccountPresenceResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AccountPresenceResponse | PlainMessage<AccountPresenceResponse> | undefined, b: AccountPresenceResponse | PlainMessage<AccountPresenceResponse> | undefined): boolean {
+    return proto3.util.equals(AccountPresenceResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message account.AccountPresencesResponse
+ */
+export class AccountPresencesResponse extends Message<AccountPresencesResponse> {
+  /**
+   * @generated from field: repeated account.AccountPresenceResponse account_presences = 1;
+   */
+  accountPresences: AccountPresenceResponse[] = [];
+
+  constructor(data?: PartialMessage<AccountPresencesResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "account.AccountPresencesResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "account_presences", kind: "message", T: AccountPresenceResponse, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountPresencesResponse {
+    return new AccountPresencesResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AccountPresencesResponse {
+    return new AccountPresencesResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AccountPresencesResponse {
+    return new AccountPresencesResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AccountPresencesResponse | PlainMessage<AccountPresencesResponse> | undefined, b: AccountPresencesResponse | PlainMessage<AccountPresencesResponse> | undefined): boolean {
+    return proto3.util.equals(AccountPresencesResponse, a, b);
+  }
+}
+

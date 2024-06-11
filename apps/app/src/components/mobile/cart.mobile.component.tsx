@@ -139,10 +139,6 @@ export default function CartMobileComponent({
             title={
               exploreProps?.selectedInventoryLocation?.company ?? undefined
             }
-            extendedHeightPercent={90}
-            defaultHeightPercent={90}
-            extendThresholdPercent={70}
-            dropThresholdPercent={60}
             touchScreen={true}
             onClose={() => setOpenCheckout(false)}
           >

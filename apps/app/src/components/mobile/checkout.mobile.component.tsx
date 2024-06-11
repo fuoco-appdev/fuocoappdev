@@ -969,9 +969,6 @@ export default function CheckoutMobileComponent({
               }}
               open={isAddAddressOpen}
               touchScreen={true}
-              defaultHeightPercent={98}
-              extendedHeightPercent={98}
-              dropThresholdPercent={80}
               onClose={() => setIsAddAddressOpen(false)}
             >
               <div

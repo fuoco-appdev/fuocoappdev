@@ -2,8 +2,9 @@
 import { select } from '@ngneat/elf';
 import { Index } from 'meilisearch';
 import { filter, firstValueFrom, take } from 'rxjs';
+import AccountService from 'src/services/account.service';
 import { Controller } from '../controller';
-import { AccountDocument } from '../models/account.model';
+import { AccountDocument, AccountPresence } from '../models/account.model';
 import {
     ChatDocument,
     ChatModel,
@@ -132,6 +133,25 @@ class ChatController extends Controller {
             } catch (error: any) {
                 console.error(error);
             }
+
+            try {
+                const accountPresenceResponse = await AccountService.requestPresenceAsync({
+                    accountIds: missingAccountIds
+                });
+                const accountPresence = { ...this._model.accountPresence };
+                for (const presence of accountPresenceResponse) {
+                    accountPresence[presence.accountId] = {
+                        account_id: presence.accountId,
+                        last_seen: presence.lastSeen,
+                        is_online: presence.isOnline
+                    }
+                }
+
+                this._model.accountPresence = accountPresence;
+            }
+            catch (error: any) {
+                console.error(error);
+            }
         }
     }
 
@@ -157,6 +177,12 @@ class ChatController extends Controller {
 
     public async updateSelectedTabAsync(value: ChatTabs): Promise<void> {
         this._model.selectedTab = value;
+    }
+
+    public updateAccountPresence(value: AccountPresence): void {
+        const accountPresence = { ...this._model.accountPresence };
+        accountPresence[value.account_id] = value;
+        this._model.accountPresence = accountPresence;
     }
 
     public async onChatsNextScrollAsync(): Promise<void> {
@@ -260,6 +286,25 @@ class ChatController extends Controller {
                 }
                 this._model.accounts = accounts;
             } catch (error: any) {
+                console.error(error);
+            }
+
+            try {
+                const accountPresenceResponse = await AccountService.requestPresenceAsync({
+                    accountIds: missingAccountIds
+                });
+                const accountPresence = { ...this._model.accountPresence };
+                for (const presence of accountPresenceResponse) {
+                    accountPresence[presence.accountId] = {
+                        account_id: presence.accountId,
+                        last_seen: presence.lastSeen,
+                        is_online: presence.isOnline
+                    }
+                }
+
+                this._model.accountPresence = accountPresence;
+            }
+            catch (error: any) {
                 console.error(error);
             }
         }

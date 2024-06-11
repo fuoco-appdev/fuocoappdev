@@ -7,8 +7,9 @@ import { ContentType, Controller, Guard, Post } from '../index.ts';
 import {
   AccountExistsRequest,
   AccountLikeRequest,
+  AccountPresenceRequest,
   AccountRequest,
-  AccountsRequest,
+  AccountsRequest
 } from '../protobuf/account_pb.js';
 import AccountService from '../services/account.service.ts';
 import SupabaseService from '../services/supabase.service.ts';
@@ -144,6 +145,29 @@ export class AccountController {
     const response = await AccountService.findLikeAsync(accountLikeRequest);
     if (!response) {
       throw HttpError.createError(404, `No accounts were found`);
+    }
+
+    context.response.type = 'application/x-protobuf';
+    context.response.body = response.serializeBinary();
+  }
+
+  @Post('/presence')
+  @Guard(AuthGuard)
+  @ContentType('application/x-protobuf')
+  public async getPresenceAsync(
+    context: Oak.RouterContext<
+      string,
+      Oak.RouteParams<string>,
+      Record<string, any>
+    >
+  ): Promise<void> {
+    const body = await context.request.body({ type: 'reader' });
+    const requestValue = await readAll(body.value);
+    const accountPresenceRequest =
+      AccountPresenceRequest.deserializeBinary(requestValue);
+    const response = await AccountService.findPresenceAsync(accountPresenceRequest);
+    if (!response) {
+      throw HttpError.createError(404, `No account presence were found`);
     }
 
     context.response.type = 'application/x-protobuf';

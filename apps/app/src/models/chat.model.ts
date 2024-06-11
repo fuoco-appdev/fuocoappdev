@@ -1,7 +1,7 @@
 import { createStore, withProps } from "@ngneat/elf";
 import { Model } from "../model";
 import { ChatSeenMessageResponse } from "../protobuf/chat_pb";
-import { AccountDocument } from "./account.model";
+import { AccountDocument, AccountPresence } from "./account.model";
 
 export enum ChatTabs {
     Messages = 'messages',
@@ -63,6 +63,7 @@ export interface ChatState {
     chatSubscriptions: Record<string, Record<string, ChatSubscription>>;
     lastChatMessages: Record<string, DecryptedChatMessage | undefined>;
     selectedChat: ChatDocument | undefined;
+    accountPresence: Record<string, AccountPresence>;
 }
 
 export class ChatModel extends Model {
@@ -86,7 +87,8 @@ export class ChatModel extends Model {
                     accounts: {},
                     chatSubscriptions: {},
                     lastChatMessages: {},
-                    selectedChat: undefined
+                    selectedChat: undefined,
+                    accountPresence: {}
                 }),
             ),
         );
@@ -229,6 +231,16 @@ export class ChatModel extends Model {
     public set selectedChat(value: ChatDocument | undefined) {
         if (JSON.stringify(this.selectedChat) !== JSON.stringify(value)) {
             this.store.update((state) => ({ ...state, selectedChat: value }));
+        }
+    }
+
+    public get accountPresence(): Record<string, AccountPresence> {
+        return this.store.getValue().accountPresence;
+    }
+
+    public set accountPresence(value: Record<string, AccountPresence>) {
+        if (JSON.stringify(this.accountPresence) !== JSON.stringify(value)) {
+            this.store.update((state) => ({ ...state, accountPresence: value }));
         }
     }
 }

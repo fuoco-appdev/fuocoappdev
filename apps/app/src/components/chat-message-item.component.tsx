@@ -1,6 +1,6 @@
 import { lazy } from '@loadable/component';
 import * as React from 'react';
-import { AccountDocument, AccountState } from '../models/account.model';
+import { AccountDocument, AccountPresence, AccountState } from '../models/account.model';
 import { ChatDocument, DecryptedChatMessage } from '../models/chat.model';
 import { StorageFolderType } from '../protobuf/common_pb';
 import BucketService from '../services/bucket.service';
@@ -19,6 +19,7 @@ export interface ChatMessageItemProps {
     chat: ChatDocument;
     accounts: AccountDocument[];
     lastMessage?: DecryptedChatMessage;
+    accountPresence?: AccountPresence[];
     onClick: () => void;
 }
 
@@ -33,6 +34,7 @@ export default function ChatMessageItemComponent({
     accounts,
     chat,
     lastMessage,
+    accountPresence,
     onClick,
 }: ChatMessageItemProps): JSX.Element {
     const [profileUrls, setProfileUrls] = React.useState<Record<string, string>>({});
@@ -93,6 +95,7 @@ export default function ChatMessageItemComponent({
                 chat={chat}
                 accounts={accounts}
                 lastMessage={lastMessage}
+                accountPresence={accountPresence}
                 profileUrls={profileUrls}
                 seen={seen}
                 onClick={onClickOverride}

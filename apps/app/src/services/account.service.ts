@@ -1,10 +1,13 @@
-import { Session } from '@supabase/supabase-js';
+import { RealtimeChannel, Session } from '@supabase/supabase-js';
 import axios from 'axios';
 import { BehaviorSubject, Observable } from 'rxjs';
 import {
   AccountExistsRequest,
   AccountExistsResponse,
   AccountLikeRequest,
+  AccountPresenceRequest,
+  AccountPresenceResponse,
+  AccountPresencesResponse,
   AccountRequest,
   AccountResponse,
   AccountsRequest,
@@ -333,6 +336,31 @@ class AccountService extends Service {
     return accountsResponse;
   }
 
+  public async requestPresenceAsync(props: {
+    accountIds: string[]
+  }): Promise<AccountPresenceResponse[]> {
+    const session = await SupabaseService.requestSessionAsync();
+    const request = new AccountPresenceRequest({
+      accountIds: props.accountIds
+    });
+    const response = await axios({
+      method: 'post',
+      url: `${this.endpointUrl}/account/presence`,
+      headers: {
+        ...this.headers,
+        'Session-Token': `${session?.access_token}`,
+      },
+      data: request.toBinary(),
+      responseType: 'arraybuffer',
+    });
+
+    const arrayBuffer = new Uint8Array(response.data);
+    this.assertResponse(arrayBuffer);
+
+    const accountPresencesResponse = AccountPresencesResponse.fromBinary(arrayBuffer);
+    return accountPresencesResponse.accountPresences;
+  }
+
   public async requestUpdateAccountPresenceAsync(
     accountId: string,
     isOnline: boolean
@@ -351,7 +379,20 @@ class AccountService extends Service {
     }
   }
 
-
+  public subscribeAccountPresence(accountIds: string[], onPayload: (payload: Record<string, any>) => void): RealtimeChannel | undefined {
+    return SupabaseService.supabaseClient?.channel('db-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'account_presence',
+          filter: `account_id=in.(${accountIds.join(',')})`
+        },
+        onPayload,
+      )
+      .subscribe();
+  }
 }
 
 export default new AccountService();

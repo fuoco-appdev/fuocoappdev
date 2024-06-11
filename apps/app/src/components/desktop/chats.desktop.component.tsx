@@ -5,7 +5,7 @@ import {
     Input,
     Line,
     Modal,
-    Scroll
+    Scroll,
 } from '@fuoco.appdev/core-ui';
 import { useObservable } from '@ngneat/use-observable';
 import React from 'react';
@@ -175,20 +175,28 @@ export default function ChatsDesktopComponent({
                                 styles['side-bar-scroll-content-desktop'],
                             ].join(' ')}
                         >
-                            {chatAccounts && chatProps.chats.map((chat: ChatDocument, _index: number) => {
-                                const lastMessage = chatProps.lastChatMessages[chat.id ?? ''];
-                                const accounts = chatAccounts[chat.id ?? ''];
-                                return (
-                                    <ChatMessageItemComponent
-                                        key={chat.id}
-                                        accountProps={accountProps}
-                                        accounts={accounts}
-                                        chat={chat}
-                                        lastMessage={lastMessage}
-                                        onClick={() => navigate(`${RoutePathsType.Chats}/${chat.id}`)}
-                                    />
-                                );
-                            })}
+                            {chatAccounts &&
+                                chatProps.chats.map((chat: ChatDocument, _index: number) => {
+                                    const lastMessage = chatProps.lastChatMessages[chat.id ?? ''];
+                                    const accounts = chatAccounts[chat.id ?? ''];
+                                    const accountIds = accounts?.map((value) => value.id);
+                                    const accountPresence = Object.values(
+                                        chatProps.accountPresence
+                                    ).filter((value) => accountIds?.includes(value.account_id));
+                                    return (
+                                        <ChatMessageItemComponent
+                                            key={chat.id}
+                                            accountProps={accountProps}
+                                            accounts={accounts}
+                                            chat={chat}
+                                            lastMessage={lastMessage}
+                                            accountPresence={accountPresence}
+                                            onClick={() =>
+                                                navigate(`${RoutePathsType.Chats}/${chat.id}`)
+                                            }
+                                        />
+                                    );
+                                })}
                             {chatProps.chats.length <= 0 && (
                                 <div
                                     className={[

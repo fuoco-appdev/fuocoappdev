@@ -283,16 +283,16 @@ export default function WindowComponent(): JSX.Element {
       await AccountService.requestUpdateAccountPresenceAsync(accountProps.account.id, isOnline);
     }
 
-    const handleBeforeUnloadChangeAsync = async () => {
-      await updateAccountPresenceAsync(false);
+    const handleVisibilityChangeAsync = async () => {
+      await updateAccountPresenceAsync(!document.hidden);
     }
 
     updateAccountPresenceAsync(true);
 
-    window.addEventListener('beforeunload', handleBeforeUnloadChangeAsync);
+    window.addEventListener('visibilitychange', handleVisibilityChangeAsync);
 
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnloadChangeAsync);
+      window.removeEventListener('visibilitychange', handleVisibilityChangeAsync);
     };
   }, [windowProps.account])
 

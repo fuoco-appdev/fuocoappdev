@@ -324,5 +324,7 @@
   "noMessagesCount": "0 messages",
   "newPrivate": "New private",
   "startMessaging": "You can now start messaging",
-  "lastSeen": "last seen {{time, string}}"
+  "lastSeen": "last seen {{time, string}}",
+  "notActive": "not active",
+  "activeNow": "active now"
 }

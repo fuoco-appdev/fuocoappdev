@@ -9,7 +9,6 @@
 
 .root {
   background-color: #fff;
-  border: 1px solid rgba(42, 42, 95, .15);
   border-radius: $mp-2;
 
   & .thumbnail-container {
@@ -233,6 +232,7 @@
 .root-desktop {
   width: 344px;
   height: 382px;
+  border: 1px solid rgba(42, 42, 95, .15);
 
   & .thumbnail-container-desktop {
     min-height: 194px;

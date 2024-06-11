@@ -5,10 +5,11 @@ import { Helmet } from 'react-helmet';
 import { useParams } from 'react-router-dom';
 import AccountController from '../controllers/account.controller';
 import ChatController from '../controllers/chat.controller';
-import { AccountDocument } from '../models/account.model';
+import { AccountDocument, AccountPresence } from '../models/account.model';
 import { ChatDocument, ChatState } from '../models/chat.model';
 import { StorageFolderType } from '../protobuf/common_pb';
 import BucketService from '../services/bucket.service';
+import { AuthenticatedComponent } from './authenticated.component';
 import { ChatSuspenseDesktopComponent } from './desktop/suspense/chat.suspense.desktop.component';
 import { ChatSuspenseMobileComponent } from './mobile/suspense/chat.suspense.mobile.component';
 
@@ -23,6 +24,7 @@ export interface ChatResponsiveProps {
     chatProps: ChatState;
     accounts: AccountDocument[];
     profileUrls: Record<string, string>;
+    accountPresence: AccountPresence[];
 }
 
 export default function ChatComponent(): JSX.Element {
@@ -33,6 +35,9 @@ export default function ChatComponent(): JSX.Element {
         {}
     );
     const [accounts, setAccounts] = React.useState<AccountDocument[]>([]);
+    const [accountPresence, setAccountPresence] = React.useState<
+        AccountPresence[]
+    >([]);
 
     const suspenceComponent = (
         <>
@@ -55,9 +60,7 @@ export default function ChatComponent(): JSX.Element {
 
     useEffect(() => {
         const selectedChat = chatProps.selectedChat as ChatDocument | undefined;
-        if (
-            !selectedChat
-        ) {
+        if (!selectedChat) {
             return;
         }
 
@@ -65,7 +68,10 @@ export default function ChatComponent(): JSX.Element {
         if (selectedChat.type === 'private') {
             const accountIds = selectedChat?.private?.account_ids ?? [];
             const documents = Object.values(chatProps.accounts) as AccountDocument[];
-            const accounts = documents.filter((value) => accountIds.includes(value?.id ?? '') && value.id !== account?.id);
+            const accounts = documents.filter(
+                (value) =>
+                    accountIds.includes(value?.id ?? '') && value.id !== account?.id
+            );
             setAccounts(accounts);
         }
     }, [chatProps.accounts, chatProps.selectedChat, accountProps.account]);
@@ -96,6 +102,18 @@ export default function ChatComponent(): JSX.Element {
         setProfileUrls(urls);
     }, [accounts]);
 
+    useEffect(() => {
+        if (!accounts) {
+            return;
+        }
+
+        const accountIds = accounts.map((value) => value.id);
+        const presence = Object.values(
+            chatProps.accountPresence as Record<string, AccountPresence>
+        ).filter((value) => accountIds.includes(value.account_id));
+        setAccountPresence(presence);
+    }, [chatProps.accountPresence, accounts]);
+
     return (
         <>
             <Helmet>
@@ -125,16 +143,20 @@ export default function ChatComponent(): JSX.Element {
                 <meta property="og:url" content={window.location.href} />
             </Helmet>
             <React.Suspense fallback={suspenceComponent}>
-                <ChatDesktopComponent
-                    chatProps={chatProps}
-                    accounts={accounts}
-                    profileUrls={profileUrls}
-                />
-                <ChatMobileComponent
-                    chatProps={chatProps}
-                    accounts={accounts}
-                    profileUrls={profileUrls}
-                />
+                <AuthenticatedComponent>
+                    <ChatDesktopComponent
+                        chatProps={chatProps}
+                        accounts={accounts}
+                        profileUrls={profileUrls}
+                        accountPresence={accountPresence}
+                    />
+                    <ChatMobileComponent
+                        chatProps={chatProps}
+                        accounts={accounts}
+                        profileUrls={profileUrls}
+                        accountPresence={accountPresence}
+                    />
+                </AuthenticatedComponent>
             </React.Suspense>
         </>
     );
