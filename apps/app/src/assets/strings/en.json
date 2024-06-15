@@ -326,5 +326,7 @@
   "startMessaging": "You can now start messaging",
   "lastSeen": "last seen {{time, string}}",
   "notActive": "not active",
-  "activeNow": "active now"
+  "activeNow": "active now",
+  "message": "Message",
+  "sayHiTo": "Say hi to {{name, string}}"
 }

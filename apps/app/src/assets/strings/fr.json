@@ -326,5 +326,7 @@
   "startMessaging": "Vous pouvez maintenant commencer à envoyer des messages",
   "lastSeen": "dernière visite {{time, string}}",
   "notActive": "inactif",
-  "activeNow": "actif maintenant"
+  "activeNow": "actif maintenant",
+  "message": "Message",
+  "sayHiTo": "Dites bonjour à {{name, string}}"
 }

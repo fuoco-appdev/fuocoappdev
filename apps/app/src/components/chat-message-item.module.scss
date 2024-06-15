@@ -41,7 +41,10 @@
 
                 & .avatar-container {
                     margin-right: -1.5em;
-                    z-index: 1;
+                }
+
+                & .avatar-container-margin {
+                    margin-right: -1.5em;
                 }
 
                 & .avatar-online-status {

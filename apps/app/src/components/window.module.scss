@@ -24,6 +24,7 @@
   -ms-text-size-adjust: none;
   -o-text-size-adjust: none;
   text-size-adjust: none;
+  background: linear-gradient(rgba(42, 42, 95, .1), rgba(42, 42, 95, .05));
 
   & .alert {
     position: absolute;
@@ -99,8 +100,6 @@
 }
 
 .root-mobile {
-  background: linear-gradient(rgba(42, 42, 95, .1), rgba(42, 42, 95, .2));
-
   & .content-mobile {
     padding-bottom: 56px;
   }
@@ -193,41 +192,7 @@
   }
 }
 
-.root-tablet {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  min-width: 100%;
-  background: linear-gradient(rgba(42, 42, 95, .1), rgba(42, 42, 95, .05));
-
-  & .content-container-tablet {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    & .logo-tablet {
-      width: 25%;
-      height: auto;
-      margin-bottom: $mp-4;
-    }
-
-    & .not-supported-text-tablet {
-      color: white;
-      font-size: 12pt;
-    }
-  }
-
-  & .notification-container-details-tablet {
-    & .notification-status-container-tablet {}
-  }
-}
-
 .root-desktop {
-  background: linear-gradient(rgba(42, 42, 95, .1), rgba(42, 42, 95, .05));
-
   & .top-bar-desktop {
     position: relative;
     display: flex;
@@ -308,12 +273,6 @@
       }
 
       & .side-bar-bottom-content-desktop {
-        border-right-width: 0px;
-        border-left-width: 0px;
-        border-top-width: 1px;
-        border-bottom-width: 0px;
-        border-color: rgba(42, 42, 95, .6);
-        border-style: solid;
         padding: $mp-4 0;
 
         & .side-bar-link-container-desktop {
@@ -427,253 +386,6 @@
   }
 
   & .toast-container-desktop {
-    max-width: 400px;
-  }
-}
-
-.root-tablet {
-  background: linear-gradient(rgba(42, 42, 95, .2), rgba(42, 42, 95, .3));
-
-  & .top-bar-tablet {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    min-height: 56px;
-    width: 100%;
-    background-color: $brand-900;
-    padding: 0 $mp-6;
-    z-index: 20;
-
-    & .top-bar-left-content-tablet {
-      display: flex;
-      justify-content: center;
-      flex-direction: row;
-      align-items: center;
-      height: 100%;
-      gap: $mp-4;
-
-      & .logo-container-tablet {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-orient: horizontal;
-        -webkit-box-direction: normal;
-        -ms-flex-direction: row;
-        flex-direction: row;
-        -webkit-box-pack: center;
-        -ms-flex-pack: center;
-        justify-content: center;
-        height: 28px;
-        gap: $mp-3;
-
-        & .logo-text-tablet {
-          height: 28px;
-          padding: $mp-2 0;
-        }
-      }
-    }
-
-    & .top-bar-right-content-tablet {
-      display: flex;
-      justify-content: center;
-      flex-direction: row;
-      align-items: center;
-      height: 100%;
-      gap: $mp-4;
-
-      & .shopping-cart-container-details-tablet {
-        & .cart-number-container-tablet {
-          height: 18px;
-          width: 18px;
-          top: -2px;
-          right: -2px;
-
-          .cart-number-tablet {
-            font-size: 10px;
-            line-height: 18px;
-          }
-        }
-      }
-    }
-  }
-
-  & .content-tablet {
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: row;
-    flex-direction: row;
-
-    & .side-bar-tablet {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 0 $mp-4;
-      width: 88px;
-      min-width: 88px;
-      height: 100%;
-
-      & .skeleton-tabs-tablet {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-orient: vertical;
-        -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-        flex-direction: column;
-        padding: $mp-4 0;
-        gap: $mp-2;
-      }
-
-      & .side-bar-bottom-content-tablet {
-        border-right-width: 0px;
-        border-left-width: 0px;
-        border-top-width: 1px;
-        border-bottom-width: 0px;
-        border-color: rgba(42, 42, 95, .6);
-        border-style: solid;
-        padding: $mp-4 0;
-
-        & .side-bar-link-container-tablet {
-          display: -webkit-box;
-          display: -ms-flexbox;
-          display: flex;
-          -webkit-box-orient: horizontal;
-          -webkit-box-direction: normal;
-          -ms-flex-direction: row;
-          flex-direction: row;
-          -webkit-box-pack: justify;
-          -ms-flex-pack: justify;
-          justify-content: space-between;
-          text-align: center;
-        }
-
-        & .copyright-text-tablet {
-          display: -webkit-box;
-          display: -ms-flexbox;
-          display: flex;
-          -webkit-box-pack: center;
-          -ms-flex-pack: center;
-          justify-content: center;
-          width: 100%;
-          padding: $mp-4;
-          font-size: $font-size-xs;
-          color: $brand-900;
-          text-align: center;
-        }
-      }
-    }
-
-    & .right-content-tablet {
-      position: relative;
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-box-orient: vertical;
-      -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-      flex-direction: column;
-      overflow: hidden;
-      /* Prevent native touch events on Windows */
-      -ms-touch-action: none;
-
-      /* Prevent the callout on tap-hold and text selection */
-      -webkit-touch-callout: none;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-
-      /* Prevent text resize on orientation change, useful for web-apps */
-      -webkit-text-size-adjust: none;
-      -moz-text-size-adjust: none;
-      -ms-text-size-adjust: none;
-      -o-text-size-adjust: none;
-      text-size-adjust: none;
-      width: 100%;
-
-      & .navigation-back-container-tablet {
-        position: absolute;
-        top: 0px;
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-pack: justify;
-        -ms-flex-pack: justify;
-        justify-content: space-between;
-        -webkit-box-orient: horizontal;
-        -webkit-box-direction: normal;
-        -ms-flex-direction: row;
-        flex-direction: row;
-        width: -moz-available;
-        /* WebKit-based browsers will ignore this. */
-        width: -webkit-fill-available;
-        /* Mozilla-based browsers will ignore this. */
-        width: stretch;
-        height: 56px;
-        min-height: 56px;
-        border-right-width: 0px;
-        border-left-width: 0px;
-        border-top-width: 0px;
-        border-bottom-width: 1px;
-        border-color: rgba(42, 42, 95, .6);
-        border-style: solid;
-        padding: 0 $mp-4;
-        z-index: 19;
-        background-color: #fff;
-
-        & .navigation-back-left-content-tablet {
-          display: -webkit-box;
-          display: -ms-flexbox;
-          display: flex;
-          -webkit-box-orient: vertical;
-          -webkit-box-direction: normal;
-          -ms-flex-direction: column;
-          flex-direction: column;
-          -webkit-box-pack: center;
-          -ms-flex-pack: center;
-          justify-content: center;
-          height: 100%;
-          width: -webkit-fit-content;
-          width: -moz-fit-content;
-          width: fit-content;
-        }
-
-        & .navigation-back-center-content-tablet {
-          display: -webkit-box;
-          display: -ms-flexbox;
-          display: flex;
-          -webkit-box-pack: center;
-          -ms-flex-pack: center;
-          justify-content: center;
-          -webkit-box-align: center;
-          -ms-flex-align: center;
-          align-items: center;
-          font-weight: $font-weight-bold;
-          color: $brand-900;
-          gap: $mp-2;
-          height: 100%;
-        }
-
-        & .navigation-back-right-content-tablet {
-          display: -webkit-box;
-          display: -ms-flexbox;
-          display: flex;
-          -webkit-box-orient: vertical;
-          -webkit-box-direction: normal;
-          -ms-flex-direction: column;
-          flex-direction: column;
-          -webkit-box-pack: center;
-          -ms-flex-pack: center;
-          justify-content: center;
-          height: 100%;
-          width: 46px;
-        }
-      }
-    }
-  }
-
-  & .toast-container-tablet {
     max-width: 400px;
   }
 }

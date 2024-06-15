@@ -64,6 +64,10 @@ export interface ChatState {
     lastChatMessages: Record<string, DecryptedChatMessage | undefined>;
     selectedChat: ChatDocument | undefined;
     accountPresence: Record<string, AccountPresence>;
+    messages: DecryptedChatMessage[],
+    hasMoreMessages: boolean;
+    areMessagesLoading: boolean;
+    messageInput: string;
 }
 
 export class ChatModel extends Model {
@@ -88,7 +92,11 @@ export class ChatModel extends Model {
                     chatSubscriptions: {},
                     lastChatMessages: {},
                     selectedChat: undefined,
-                    accountPresence: {}
+                    accountPresence: {},
+                    messages: [],
+                    hasMoreMessages: true,
+                    areMessagesLoading: false,
+                    messageInput: ''
                 }),
             ),
         );
@@ -241,6 +249,46 @@ export class ChatModel extends Model {
     public set accountPresence(value: Record<string, AccountPresence>) {
         if (JSON.stringify(this.accountPresence) !== JSON.stringify(value)) {
             this.store.update((state) => ({ ...state, accountPresence: value }));
+        }
+    }
+
+    public get messages(): DecryptedChatMessage[] {
+        return this.store.getValue().messages;
+    }
+
+    public set messages(value: DecryptedChatMessage[]) {
+        if (JSON.stringify(this.messages) !== JSON.stringify(value)) {
+            this.store.update((state) => ({ ...state, messages: value }));
+        }
+    }
+
+    public get hasMoreMessages(): boolean {
+        return this.store.getValue().hasMoreMessages;
+    }
+
+    public set hasMoreMessages(value: boolean) {
+        if (this.hasMoreMessages !== value) {
+            this.store.update((state) => ({ ...state, hasMoreMessages: value }));
+        }
+    }
+
+    public get areMessagesLoading(): boolean {
+        return this.store.getValue().areMessagesLoading;
+    }
+
+    public set areMessagesLoading(value: boolean) {
+        if (this.areMessagesLoading !== value) {
+            this.store.update((state) => ({ ...state, areMessagesLoading: value }));
+        }
+    }
+
+    public get messageInput(): string {
+        return this.store.getValue().messageInput;
+    }
+
+    public set messageInput(value: string) {
+        if (this.messageInput !== value) {
+            this.store.update((state) => ({ ...state, messageInput: value }));
         }
     }
 }

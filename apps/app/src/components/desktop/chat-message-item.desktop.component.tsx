@@ -37,7 +37,7 @@ export default function ChatMessageItemDesktopComponent({
                 ' '
               )}
             >
-              {accounts?.map((account) => {
+              {accounts?.map((account, index) => {
                 const profileUrl = profileUrls[account.id ?? ''];
                 const presence = accountPresence?.find((value) => value.account_id === account.id);
                 return (
@@ -52,6 +52,7 @@ export default function ChatMessageItemDesktopComponent({
                         container: [
                           styles['avatar-container'],
                           styles['avatar-container-desktop'],
+                          index > 0 && styles['avatar-container-margin']
                         ].join(' '),
                       }}
                       size={'custom'}

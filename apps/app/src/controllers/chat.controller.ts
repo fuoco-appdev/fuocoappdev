@@ -179,6 +179,10 @@ class ChatController extends Controller {
         this._model.selectedTab = value;
     }
 
+    public updateMessageInput(value: string): void {
+        this._model.messageInput = value;
+    }
+
     public updateAccountPresence(value: AccountPresence): void {
         const accountPresence = { ...this._model.accountPresence };
         accountPresence[value.account_id] = value;

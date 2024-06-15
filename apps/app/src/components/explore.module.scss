@@ -263,7 +263,7 @@
         }
 
         & .scroll-content-desktop {
-            padding-top: calc(141px + 2px);
+            padding-top: calc(141px + 1px);
 
             & .loading-ring-desktop {}
 
@@ -277,106 +277,6 @@
     }
 
     & .map-container-desktop {}
-}
-
-.root-tablet {
-    flex-direction: row;
-
-    & .search-root-tablet {
-        width: 460px;
-        height: 100%;
-        border-right-width: 0px;
-        border-left-width: 0px;
-        border-top-width: 0px;
-        border-bottom-width: 0px;
-        border-color: rgba(42, 42, 95, .6);
-        border-style: solid;
-
-        & .top-bar-container-tablet {
-            padding-top: $mp-4;
-            -webkit-box-orient: horizontal;
-            -webkit-box-direction: normal;
-            -ms-flex-direction: row;
-            flex-direction: row;
-            width: 100%;
-
-            & .top-bar-left-content-tablet {
-                display: flex;
-                -webkit-box-orient: vertical;
-                -webkit-box-direction: normal;
-                -ms-flex-direction: column;
-                flex-direction: column;
-                -webkit-box-flex: 1;
-                -ms-flex: 1;
-                flex: 1;
-                -webkit-box-align: center;
-                -ms-flex-align: center;
-                align-items: center;
-            }
-
-            & .top-bar-right-content-tablet {
-                padding-right: $mp-4;
-            }
-
-            & .search-container-tablet {
-                display: flex;
-                flex-direction: row;
-                justify-content: center;
-                padding-left: $mp-4;
-                padding-right: $mp-4;
-
-                & .search-input-root-tablet {
-                    max-width: 556px;
-
-                    & .search-input-container-tablet {}
-
-                    & .search-input-tablet {}
-
-                    & .search-input-tablet::-webkit-input-placeholder {}
-
-                    & .search-input-tablet::-moz-placeholder {}
-
-                    & .search-input-tablet:-ms-input-placeholder {}
-
-                    & .search-input-tablet::-ms-input-placeholder {}
-
-                    & .search-input-tablet::placeholder {}
-
-                    & .search-input-tablet:-ms-input-placeholder {}
-
-                    & .search-input-tablet::-ms-input-placeholder {}
-                }
-
-                & .filter-button-tablet {}
-            }
-
-            & .tab-container-tablet {
-                width: fit-content;
-
-                & .tab-button-tablet {}
-
-                & .hovered-tab-button-tablet {}
-
-                & .tab-slider-pill-tablet {}
-            }
-
-            & .tab-container-tablet::-webkit-scrollbar {}
-        }
-
-        & .scroll-content-tablet {
-
-            & .loading-ring-tablet {}
-
-            & .no-searched-stock-locations-container-tablet {
-
-                & .no-items-text-tablet {}
-
-                & .no-items-container-tablet {}
-            }
-        }
-    }
-
-    & .map-container-tablet {}
 }
 
 .root-mobile {
@@ -492,7 +392,7 @@
 }
 
 .scroll-container-mobile {
-    padding-top: calc(189px + 1px);
+    margin-top: calc(189px + 1px);
 }
 
 .pull-indicator-container {
