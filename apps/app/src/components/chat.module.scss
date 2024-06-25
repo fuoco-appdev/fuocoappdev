@@ -15,9 +15,9 @@
     width: 100%;
     border-radius: 6px;
     background-color: #fff;
-    min-height: 78px;
+    min-height: 70px;
     gap: $mp-2;
-    padding: $mp-4;
+    padding: $mp-3;
 
 
     & .avatars {
@@ -43,7 +43,7 @@
             position: absolute;
             height: 16px;
             width: 16px;
-            background-color: #00FF00;
+            background-color: #00C853;
             border-radius: 16px;
             right: -2px;
             bottom: -2px;
@@ -80,12 +80,17 @@
     height: 100%;
     width: 100%;
 
+    & .message-items-container {
+
+    }
+
     & .no-message-container {
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       min-width: 100%;
+      padding: 200px 0 ;
 
       & .no-message-avatars {
         display: flex;
@@ -146,7 +151,12 @@
 }
 
 .root-desktop {
-
+  & .message-container {
+    & .message-items-container {
+      padding-top: $mp-6;
+      padding-bottom: $mp-6;
+    }
+  }
 }
 
 .root-mobile {

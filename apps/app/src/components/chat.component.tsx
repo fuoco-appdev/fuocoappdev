@@ -5,11 +5,12 @@ import { Helmet } from 'react-helmet';
 import { useParams } from 'react-router-dom';
 import AccountController from '../controllers/account.controller';
 import ChatController from '../controllers/chat.controller';
-import { AccountDocument, AccountPresence } from '../models/account.model';
-import { ChatDocument, ChatState } from '../models/chat.model';
+import { AccountDocument, AccountPresence, AccountState } from '../models/account.model';
+import { ChatDocument, ChatState, DecryptedChatMessage } from '../models/chat.model';
 import { StorageFolderType } from '../protobuf/common_pb';
 import BucketService from '../services/bucket.service';
 import { AuthenticatedComponent } from './authenticated.component';
+import { ChatConversation } from './conversation-item.component';
 import { ChatSuspenseDesktopComponent } from './desktop/suspense/chat.suspense.desktop.component';
 import { ChatSuspenseMobileComponent } from './mobile/suspense/chat.suspense.mobile.component';
 
@@ -22,9 +23,12 @@ const ChatMobileComponent = lazy(
 
 export interface ChatResponsiveProps {
     chatProps: ChatState;
+    accountProps: AccountState;
     accounts: AccountDocument[];
     profileUrls: Record<string, string>;
     accountPresence: AccountPresence[];
+    onMessageSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+    splitMessagesByUserAndTime: (messages: DecryptedChatMessage[]) => ChatConversation[];
 }
 
 export default function ChatComponent(): JSX.Element {
@@ -48,6 +52,53 @@ export default function ChatComponent(): JSX.Element {
 
     if (process.env['DEBUG_SUSPENSE'] === 'true') {
         return suspenceComponent;
+    }
+
+    const onMessageSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        ChatController.submitMessageAsync();
+    }
+
+    const splitMessagesByUserAndTime = (messages: DecryptedChatMessage[]) => {
+        const timeThreshold = 30 * 60 * 1000; // 30 minutes in milliseconds
+        const result: ChatConversation[] = [];
+        let currentGroup: ChatConversation | null = null;
+        let lastTimestampThreshold = new Date(+0);
+
+        messages.forEach((message) => {
+            const messageTimestamp = new Date(message.createdAt ?? '');
+            const timeDifference = (messageTimestamp.getTime() - lastTimestampThreshold.getTime());
+            if (
+                !currentGroup ||
+                currentGroup.account?.id !== message.accountId ||
+                timeDifference > timeThreshold
+            ) {
+                if (currentGroup) {
+                    result.push(currentGroup);
+                }
+
+                const account = Object.keys(ChatController.model.accounts).includes(message.accountId ?? '') ? ChatController.model.accounts[message.accountId ?? ''] : undefined;
+                const seenBy = Object.keys(ChatController.model.seenBy).includes(message.id ?? '') ? ChatController.model.seenBy[message.id ?? ''] : undefined;
+                const timestampThreshold = timeDifference > timeThreshold ? messageTimestamp : undefined;
+                currentGroup = {
+                    account: account,
+                    messages: [message],
+                    seenBy: seenBy,
+                    timestampThreshold: timestampThreshold?.getTime()
+                };
+
+                if (timestampThreshold) {
+                    lastTimestampThreshold = timestampThreshold;
+                }
+            } else {
+                currentGroup.messages.push(message);
+            }
+        });
+
+        if (currentGroup) {
+            result.push(currentGroup);
+        }
+
+        return result;
     }
 
     useEffect(() => {
@@ -146,15 +197,21 @@ export default function ChatComponent(): JSX.Element {
                 <AuthenticatedComponent>
                     <ChatDesktopComponent
                         chatProps={chatProps}
+                        accountProps={accountProps}
                         accounts={accounts}
                         profileUrls={profileUrls}
                         accountPresence={accountPresence}
+                        onMessageSubmit={onMessageSubmit}
+                        splitMessagesByUserAndTime={splitMessagesByUserAndTime}
                     />
                     <ChatMobileComponent
                         chatProps={chatProps}
+                        accountProps={accountProps}
                         accounts={accounts}
                         profileUrls={profileUrls}
                         accountPresence={accountPresence}
+                        onMessageSubmit={onMessageSubmit}
+                        splitMessagesByUserAndTime={splitMessagesByUserAndTime}
                     />
                 </AuthenticatedComponent>
             </React.Suspense>

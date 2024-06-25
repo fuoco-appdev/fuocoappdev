@@ -1,8 +1,8 @@
 import Skeleton from 'react-loading-skeleton';
-import styles from '../../chat-message-item.module.scss';
+import styles from '../../chat-item.module.scss';
 import { ResponsiveSuspenseDesktop } from '../../responsive.component';
 
-export function ChatMessageItemSuspenseDesktopComponent(): JSX.Element {
+export function ChatItemSuspenseDesktopComponent(): JSX.Element {
   return (
     <ResponsiveSuspenseDesktop>
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>

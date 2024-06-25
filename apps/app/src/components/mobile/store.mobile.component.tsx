@@ -212,7 +212,7 @@ export default function StoreMobileComponent({
         <Scroll
           classNames={{
             scrollContainer: [styles['scroll-container'], styles['scroll-container-mobile']].join(' '),
-            reloadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' '),
+            reloadContainer: [styles['scroll-reload-container'], styles['scroll-reload-container-mobile']].join(' '),
             loadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' '),
             pullIndicator: [styles['pull-indicator'], styles['pull-indicator-mobile']].join(' ')
           }}

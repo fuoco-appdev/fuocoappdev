@@ -51,7 +51,7 @@
                     position: absolute;
                     height: 16px;
                     width: 16px;
-                    background-color: #00FF00;
+                    background-color: #00C853;
                     border-radius: 16px;
                     right: -2px;
                     bottom: -2px;
@@ -75,6 +75,10 @@
             & .last-message {
                 color: $brand-900;
                 font-size: $font-size-xs;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+
             }
 
             & .last-message-unseen {
@@ -86,11 +90,34 @@
     & .right-content {
         display: flex;
         flex-direction: column;
+        align-items: flex-end;
+        width: fit-content;
+        gap: $mp-1;
 
         & .message-date {
             font-size: $font-size-xs;
-            font-weight: $font-weight-bold;
             color: $brand-900;
+            white-space: nowrap;
+        }
+
+        & .message-date-unseen {
+            font-weight: $font-weight-bold;
+        }
+
+        & .message-not-seen-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 24px;
+            height: 24px;
+
+            & .message-not-seen {
+                width: 8px;
+                height: 8px;
+                border-radius: 8px;
+                background-color: $brand-500;
+            }
         }
     }
 
@@ -120,6 +147,14 @@
 
 .root-desktop {
     padding: $mp-4;
+
+    & .left-content-desktop {
+        & .message-info-container-desktop {
+            & .last-message-desktop {
+                width: 200px;
+            }
+        }
+    }
 }
 
 .root-mobile {

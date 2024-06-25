@@ -263,6 +263,12 @@ module.exports = composePlugins(withNx(), (config, { options, context }) => {
         'process.env.MEDUSA_API_TOKEN': JSON.stringify(process.env.MEDUSA_API_TOKEN),
         'process.env.MEDUSA_PUBLIC_KEY': JSON.stringify(process.env.MEDUSA_PUBLIC_KEY),
         'process.env.MEILISEARCH_PUBLIC_KEY': JSON.stringify(process.env.MEILISEARCH_PUBLIC_KEY),
+        'process.env.CRYPTO_ENCRYPTION_KEY': JSON.stringify(
+            process.env.CRYPTO_ENCRYPTION_KEY
+          ),
+          'process.env.CRYPTO_IV': JSON.stringify(
+            process.env.CRYPTO_IV
+          ),
       })
     ],
   });

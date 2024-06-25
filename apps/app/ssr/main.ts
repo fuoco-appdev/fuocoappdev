@@ -18,9 +18,9 @@ global["navigator"] = mock.getNavigator();
 global["localStorage"] = mock.getLocalStorage();
 global["sessionStorage"] = mock.getSessionStorage();
 
-const mainPath = path.resolve(__dirname, "../server/main.js");
 router.use(express.static(path.resolve(__dirname, "../client")));
 router.get("*", (req, res) => {
+  const mainPath = path.resolve(__dirname, "../server/main.js");
   delete __non_webpack_require__.cache[mainPath];
   Object.defineProperty(window, "location", {
     value: {

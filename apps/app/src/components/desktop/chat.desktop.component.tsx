@@ -8,13 +8,17 @@ import { useRef } from 'react';
 import ChatController from '../../controllers/chat.controller';
 import { ChatResponsiveProps } from '../chat.component';
 import styles from '../chat.module.scss';
+import ConversationItemComponent from '../conversation-item.component';
 import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
 
 export default function ChatDesktopComponent({
     chatProps,
+    accountProps,
     accounts,
     profileUrls,
     accountPresence,
+    onMessageSubmit,
+    splitMessagesByUserAndTime,
 }: ChatResponsiveProps): JSX.Element {
     const navigate = useNavigate();
     const query = useQuery();
@@ -26,9 +30,17 @@ export default function ChatDesktopComponent({
         messageInputRef.current?.focus();
     }, [messageInputRef?.current]);
 
+    const chatId = chatProps.selectedChat?.id ?? '';
+    const decryptedMessages = Object.keys(chatProps.messages).includes(chatId)
+        ? chatProps.messages[chatId].messages
+        : [];
+    const conversations = splitMessagesByUserAndTime(decryptedMessages);
     return (
         <ResponsiveDesktop>
-            <div className={[styles['root'], styles['root-desktop']].join(' ')} onClick={() => messageInputRef?.current?.focus()}>
+            <div
+                className={[styles['root'], styles['root-desktop']].join(' ')}
+                onClick={() => messageInputRef?.current?.focus()}
+            >
                 <div
                     className={[styles['top-bar'], styles['top-bar-desktop']].join(' ')}
                 >
@@ -52,7 +64,7 @@ export default function ChatDesktopComponent({
                                             container: [
                                                 styles['avatar-container'],
                                                 styles['avatar-container-desktop'],
-                                                index > 0 && styles['avatar-container-margin']
+                                                index > 0 && styles['avatar-container-margin'],
                                             ].join(' '),
                                         }}
                                         size={'custom'}
@@ -142,59 +154,99 @@ export default function ChatDesktopComponent({
                         isLoadable={chatProps.hasMoreMessages}
                         isLoading={chatProps.areMessagesLoading}
                     >
-                        <div className={[styles['message-items-container'], styles['message-items-container-desktop']].join(' ')}>
-                            {chatProps.messages.length <= 0 && (
-                                <div className={[styles['no-message-container'], styles['no-message-container-desktop']].join(' ')} style={{
-                                    height: messageContainerRef.current?.clientHeight
-                                }}>
+                        <div
+                            className={[
+                                styles['message-items-container'],
+                                styles['message-items-container-desktop'],
+                            ].join(' ')}
+                        >
+                            {!chatProps.isSelectedChatLoading &&
+                                decryptedMessages.length <= 0 && (
                                     <div
                                         className={[
-                                            styles['no-message-avatars'],
-                                            styles['no-message-avatars-desktop'],
+                                            styles['no-message-container'],
+                                            styles['no-message-container-desktop'],
                                         ].join(' ')}
                                     >
-                                        {accounts?.map((account, index) => {
-                                            const profileUrl = profileUrls[account.id ?? ''];
-                                            return (
-
-                                                <Avatar
-                                                    classNames={{
-                                                        container: [
-                                                            styles['no-message-avatar-container'],
-                                                            styles['no-message-avatar-container-desktop'],
-                                                            index > 0 && styles['no-message-avatar-margin']
-                                                        ].join(' '),
-                                                    }}
-                                                    size={'custom'}
-                                                    text={account.username}
-                                                    src={profileUrl}
-                                                />
-                                            )
-                                        })}
+                                        <div
+                                            className={[
+                                                styles['no-message-avatars'],
+                                                styles['no-message-avatars-desktop'],
+                                            ].join(' ')}
+                                        >
+                                            {accounts?.map((account, index) => {
+                                                const profileUrl = profileUrls[account.id ?? ''];
+                                                return (
+                                                    <Avatar
+                                                        classNames={{
+                                                            container: [
+                                                                styles['no-message-avatar-container'],
+                                                                styles['no-message-avatar-container-desktop'],
+                                                                index > 0 && styles['no-message-avatar-margin'],
+                                                            ].join(' '),
+                                                        }}
+                                                        size={'custom'}
+                                                        text={account.username}
+                                                        src={profileUrl}
+                                                    />
+                                                );
+                                            })}
+                                        </div>
+                                        <div
+                                            className={[
+                                                styles['no-message-text-container'],
+                                                styles['no-message-text-container-desktop'],
+                                            ].join(' ')}
+                                        >
+                                            {accounts.length === 1 && (
+                                                <div
+                                                    className={[
+                                                        styles['no-message-full-name'],
+                                                        styles['no-message-full-name-desktop'],
+                                                    ].join(' ')}
+                                                >
+                                                    {`${accounts[0].customer?.first_name} ${accounts[0].customer?.last_name}`}
+                                                </div>
+                                            )}
+                                            {accounts.length === 1 && (
+                                                <div
+                                                    className={[
+                                                        styles['no-message-description'],
+                                                        styles['no-message-description-desktop'],
+                                                    ].join(' ')}
+                                                >
+                                                    {t('sayHiTo', {
+                                                        name: accounts[0].customer?.first_name,
+                                                    })}
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
-                                    <div className={[styles['no-message-text-container'], styles['no-message-text-container-desktop']].join(' ')}>
-                                        {accounts.length === 1 && <div className={[styles['no-message-full-name'], styles['no-message-full-name-desktop']].join(' ')}>
-                                            {`${accounts[0].customer?.first_name} ${accounts[0].customer?.last_name}`}
-                                        </div>}
-                                        {accounts.length === 1 && (<div className={[styles['no-message-description'], styles['no-message-description-desktop']].join(' ')}>
-                                            {t('sayHiTo', { name: accounts[0].customer?.first_name })}
-                                        </div>)}
-                                    </div>
-                                </div>
-                            )}
+                                )}
+                            {conversations.map((conversation) => {
+                                return (
+                                    <ConversationItemComponent
+                                        conversation={conversation}
+                                        profileUrls={profileUrls}
+                                        activeAccountId={accountProps.account?.id}
+                                    />
+                                );
+                            })}
                         </div>
                     </Scroll>
                 </div>
-                <div className={[styles['bottom-bar'], styles['bottom-bar-desktop']].join(' ')}>
+                <div
+                    className={[styles['bottom-bar'], styles['bottom-bar-desktop']].join(
+                        ' '
+                    )}
+                >
                     <div>
                         <Button
                             classNames={{
                                 container: styles['rounded-container'],
                                 button: styles['rounded-button'],
                             }}
-                            onClick={() => {
-
-                            }}
+                            onClick={() => { }}
                             rippleProps={{
                                 color: 'rgba(42, 42, 95, .35)',
                             }}
@@ -204,12 +256,22 @@ export default function ChatDesktopComponent({
                             rounded={true}
                         />
                     </div>
-                    <form className={[styles['message-form'], styles['message-form-desktop']].join(' ')} onSubmit={(e) => {
-                        e.preventDefault();
-                        console.log(e.currentTarget);
-                    }}>
-                        <div className={[styles['message-input-root'],
-                        styles['message-input-root-desktop'],].join(' ')}>
+                    <form
+                        className={[
+                            styles['message-form'],
+                            styles['message-form-desktop'],
+                        ].join(' ')}
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            onMessageSubmit(e);
+                        }}
+                    >
+                        <div
+                            className={[
+                                styles['message-input-root'],
+                                styles['message-input-root-desktop'],
+                            ].join(' ')}
+                        >
                             <Input
                                 inputRef={messageInputRef}
                                 value={chatProps.messageInput}
@@ -218,7 +280,7 @@ export default function ChatDesktopComponent({
                                         root: [
                                             styles['message-form-layout'],
                                             styles['message-form-layout-desktop'],
-                                        ].join(' ')
+                                        ].join(' '),
                                     },
                                     container: [
                                         styles['message-input-container'],
@@ -242,9 +304,7 @@ export default function ChatDesktopComponent({
                                     container: styles['rounded-container'],
                                     button: styles['rounded-button'],
                                 }}
-                                onClick={() => {
-
-                                }}
+                                onClick={() => { }}
                                 rippleProps={{
                                     color: 'rgba(42, 42, 95, .35)',
                                 }}

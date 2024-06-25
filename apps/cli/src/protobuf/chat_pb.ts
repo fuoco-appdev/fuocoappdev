@@ -118,6 +118,55 @@ export class LastChatMessagesRequest extends Message<LastChatMessagesRequest> {
 }
 
 /**
+ * @generated from message chat.ChatMessagesRequest
+ */
+export class ChatMessagesRequest extends Message<ChatMessagesRequest> {
+  /**
+   * @generated from field: string chat_id = 1;
+   */
+  chatId = "";
+
+  /**
+   * @generated from field: uint32 limit = 2;
+   */
+  limit = 0;
+
+  /**
+   * @generated from field: uint32 offset = 3;
+   */
+  offset = 0;
+
+  constructor(data?: PartialMessage<ChatMessagesRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "chat.ChatMessagesRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "chat_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "limit", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 3, name: "offset", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ChatMessagesRequest {
+    return new ChatMessagesRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ChatMessagesRequest {
+    return new ChatMessagesRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ChatMessagesRequest {
+    return new ChatMessagesRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ChatMessagesRequest | PlainMessage<ChatMessagesRequest> | undefined, b: ChatMessagesRequest | PlainMessage<ChatMessagesRequest> | undefined): boolean {
+    return proto3.util.equals(ChatMessagesRequest, a, b);
+  }
+}
+
+/**
  * @generated from message chat.ChatSeenMessageRequest
  */
 export class ChatSeenMessageRequest extends Message<ChatSeenMessageRequest> {
@@ -204,43 +253,178 @@ export class ChatSeenMessagesRequest extends Message<ChatSeenMessagesRequest> {
 }
 
 /**
- * @generated from message chat.ChatSubscriptionResponse
+ * @generated from message chat.ChatSubscriptionRequest
  */
-export class ChatSubscriptionResponse extends Message<ChatSubscriptionResponse> {
+export class ChatSubscriptionRequest extends Message<ChatSubscriptionRequest> {
   /**
    * @generated from field: string chat_id = 1;
    */
   chatId = "";
 
   /**
-   * @generated from field: string request_at = 2;
+   * @generated from field: string account_id = 2;
+   */
+  accountId = "";
+
+  constructor(data?: PartialMessage<ChatSubscriptionRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "chat.ChatSubscriptionRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "chat_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ChatSubscriptionRequest {
+    return new ChatSubscriptionRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ChatSubscriptionRequest {
+    return new ChatSubscriptionRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ChatSubscriptionRequest {
+    return new ChatSubscriptionRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ChatSubscriptionRequest | PlainMessage<ChatSubscriptionRequest> | undefined, b: ChatSubscriptionRequest | PlainMessage<ChatSubscriptionRequest> | undefined): boolean {
+    return proto3.util.equals(ChatSubscriptionRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message chat.ChatSubscriptionsRequest
+ */
+export class ChatSubscriptionsRequest extends Message<ChatSubscriptionsRequest> {
+  /**
+   * @generated from field: repeated string chat_ids = 1;
+   */
+  chatIds: string[] = [];
+
+  /**
+   * @generated from field: repeated string account_ids = 2;
+   */
+  accountIds: string[] = [];
+
+  constructor(data?: PartialMessage<ChatSubscriptionsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "chat.ChatSubscriptionsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "chat_ids", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 2, name: "account_ids", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ChatSubscriptionsRequest {
+    return new ChatSubscriptionsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ChatSubscriptionsRequest {
+    return new ChatSubscriptionsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ChatSubscriptionsRequest {
+    return new ChatSubscriptionsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ChatSubscriptionsRequest | PlainMessage<ChatSubscriptionsRequest> | undefined, b: ChatSubscriptionsRequest | PlainMessage<ChatSubscriptionsRequest> | undefined): boolean {
+    return proto3.util.equals(ChatSubscriptionsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message chat.ChatPrivateSubscriptionRequest
+ */
+export class ChatPrivateSubscriptionRequest extends Message<ChatPrivateSubscriptionRequest> {
+  /**
+   * @generated from field: string chat_id = 1;
+   */
+  chatId = "";
+
+  /**
+   * @generated from field: string active_account_id = 2;
+   */
+  activeAccountId = "";
+
+  /**
+   * @generated from field: string other_account_id = 3;
+   */
+  otherAccountId = "";
+
+  constructor(data?: PartialMessage<ChatPrivateSubscriptionRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "chat.ChatPrivateSubscriptionRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "chat_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "active_account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "other_account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ChatPrivateSubscriptionRequest {
+    return new ChatPrivateSubscriptionRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ChatPrivateSubscriptionRequest {
+    return new ChatPrivateSubscriptionRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ChatPrivateSubscriptionRequest {
+    return new ChatPrivateSubscriptionRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ChatPrivateSubscriptionRequest | PlainMessage<ChatPrivateSubscriptionRequest> | undefined, b: ChatPrivateSubscriptionRequest | PlainMessage<ChatPrivateSubscriptionRequest> | undefined): boolean {
+    return proto3.util.equals(ChatPrivateSubscriptionRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message chat.ChatSubscriptionResponse
+ */
+export class ChatSubscriptionResponse extends Message<ChatSubscriptionResponse> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: string chat_id = 2;
+   */
+  chatId = "";
+
+  /**
+   * @generated from field: string request_at = 3;
    */
   requestAt = "";
 
   /**
-   * @generated from field: string account_id = 3;
+   * @generated from field: string account_id = 4;
    */
   accountId = "";
 
   /**
-   * @generated from field: string joined_at = 4;
+   * @generated from field: string joined_at = 5;
    */
   joinedAt = "";
 
   /**
-   * @generated from field: string public_key_encrypted = 5;
+   * @generated from field: string public_key_encrypted = 6;
    */
   publicKeyEncrypted = "";
 
   /**
-   * @generated from field: string private_key_encrypted = 6;
+   * @generated from field: string private_key_encrypted = 7;
    */
   privateKeyEncrypted = "";
-
-  /**
-   * @generated from field: string last_seen_at = 7;
-   */
-  lastSeenAt = "";
 
   constructor(data?: PartialMessage<ChatSubscriptionResponse>) {
     super();
@@ -250,13 +434,13 @@ export class ChatSubscriptionResponse extends Message<ChatSubscriptionResponse> 
   static readonly runtime = proto3;
   static readonly typeName = "chat.ChatSubscriptionResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "chat_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "request_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "joined_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 5, name: "public_key_encrypted", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 6, name: "private_key_encrypted", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 7, name: "last_seen_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "chat_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "request_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "joined_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "public_key_encrypted", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 7, name: "private_key_encrypted", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ChatSubscriptionResponse {
@@ -273,6 +457,80 @@ export class ChatSubscriptionResponse extends Message<ChatSubscriptionResponse> 
 
   static equals(a: ChatSubscriptionResponse | PlainMessage<ChatSubscriptionResponse> | undefined, b: ChatSubscriptionResponse | PlainMessage<ChatSubscriptionResponse> | undefined): boolean {
     return proto3.util.equals(ChatSubscriptionResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message chat.ChatSubscriptionsResponse
+ */
+export class ChatSubscriptionsResponse extends Message<ChatSubscriptionsResponse> {
+  /**
+   * @generated from field: repeated chat.ChatSubscriptionResponse subscriptions = 1;
+   */
+  subscriptions: ChatSubscriptionResponse[] = [];
+
+  constructor(data?: PartialMessage<ChatSubscriptionsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "chat.ChatSubscriptionsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "subscriptions", kind: "message", T: ChatSubscriptionResponse, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ChatSubscriptionsResponse {
+    return new ChatSubscriptionsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ChatSubscriptionsResponse {
+    return new ChatSubscriptionsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ChatSubscriptionsResponse {
+    return new ChatSubscriptionsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ChatSubscriptionsResponse | PlainMessage<ChatSubscriptionsResponse> | undefined, b: ChatSubscriptionsResponse | PlainMessage<ChatSubscriptionsResponse> | undefined): boolean {
+    return proto3.util.equals(ChatSubscriptionsResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message chat.ChatAccountSubscriptionIdsResponse
+ */
+export class ChatAccountSubscriptionIdsResponse extends Message<ChatAccountSubscriptionIdsResponse> {
+  /**
+   * @generated from field: repeated string chat_ids = 1;
+   */
+  chatIds: string[] = [];
+
+  constructor(data?: PartialMessage<ChatAccountSubscriptionIdsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "chat.ChatAccountSubscriptionIdsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "chat_ids", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ChatAccountSubscriptionIdsResponse {
+    return new ChatAccountSubscriptionIdsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ChatAccountSubscriptionIdsResponse {
+    return new ChatAccountSubscriptionIdsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ChatAccountSubscriptionIdsResponse {
+    return new ChatAccountSubscriptionIdsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ChatAccountSubscriptionIdsResponse | PlainMessage<ChatAccountSubscriptionIdsResponse> | undefined, b: ChatAccountSubscriptionIdsResponse | PlainMessage<ChatAccountSubscriptionIdsResponse> | undefined): boolean {
+    return proto3.util.equals(ChatAccountSubscriptionIdsResponse, a, b);
   }
 }
 
@@ -301,17 +559,42 @@ export class ChatMessageResponse extends Message<ChatMessageResponse> {
   createdAt = "";
 
   /**
-   * @generated from field: string message_encrypted = 5;
+   * @generated from field: string text_encrypted = 5;
    */
-  messageEncrypted = "";
+  textEncrypted = "";
 
   /**
-   * @generated from field: string nonce = 6;
+   * @generated from field: string link_encrypted = 6;
+   */
+  linkEncrypted = "";
+
+  /**
+   * @generated from field: repeated string video_url_encrypted = 7;
+   */
+  videoUrlEncrypted: string[] = [];
+
+  /**
+   * @generated from field: repeated string photo_url_encrypted = 8;
+   */
+  photoUrlEncrypted: string[] = [];
+
+  /**
+   * @generated from field: repeated string file_url_encrypted = 9;
+   */
+  fileUrlEncrypted: string[] = [];
+
+  /**
+   * @generated from field: string nonce = 10;
    */
   nonce = "";
 
   /**
-   * @generated from field: repeated chat.ChatSeenMessageResponse seen_by = 7;
+   * @generated from field: string reply_to = 11;
+   */
+  replyTo = "";
+
+  /**
+   * @generated from field: repeated chat.ChatSeenMessageResponse seen_by = 12;
    */
   seenBy: ChatSeenMessageResponse[] = [];
 
@@ -327,9 +610,14 @@ export class ChatMessageResponse extends Message<ChatMessageResponse> {
     { no: 2, name: "chat_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "created_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 5, name: "message_encrypted", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 6, name: "nonce", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 7, name: "seen_by", kind: "message", T: ChatSeenMessageResponse, repeated: true },
+    { no: 5, name: "text_encrypted", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "link_encrypted", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 7, name: "video_url_encrypted", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 8, name: "photo_url_encrypted", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 9, name: "file_url_encrypted", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 10, name: "nonce", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 11, name: "reply_to", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 12, name: "seen_by", kind: "message", T: ChatSeenMessageResponse, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ChatMessageResponse {

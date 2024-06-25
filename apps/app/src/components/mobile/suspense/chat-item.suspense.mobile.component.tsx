@@ -1,8 +1,8 @@
 import Skeleton from 'react-loading-skeleton';
-import styles from '../../chat-message-item.module.scss';
+import styles from '../../chat-item.module.scss';
 import { ResponsiveSuspenseMobile } from '../../responsive.component';
 
-export function ChatMessageItemSuspenseMobileComponent(): JSX.Element {
+export function ChatItemSuspenseMobileComponent(): JSX.Element {
   return (
     <ResponsiveSuspenseMobile>
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>

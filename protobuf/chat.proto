@@ -14,6 +14,12 @@ message LastChatMessagesRequest {
     repeated string chat_ids = 1;
 }
 
+message ChatMessagesRequest {
+    string chat_id = 1;
+    uint32 limit = 2;
+    uint32 offset = 3;
+}
+
 message ChatSeenMessageRequest {
     string account_id = 1;
     string message_id = 2;
@@ -24,14 +30,38 @@ message ChatSeenMessagesRequest {
     repeated string message_ids = 1;
 }
 
-message ChatSubscriptionResponse {
+message ChatSubscriptionRequest {
     string chat_id = 1;
-    string request_at = 2;
-    string account_id = 3;
-    string joined_at = 4;
-    string public_key_encrypted = 5;
-    string private_key_encrypted = 6;
-    string last_seen_at = 7;
+    string account_id = 2;
+}
+
+message ChatSubscriptionsRequest {
+    repeated string chat_ids = 1;
+    repeated string account_ids = 2;
+}
+
+message ChatPrivateSubscriptionRequest {
+    string chat_id = 1;
+    string active_account_id = 2;
+    string other_account_id = 3;
+}
+
+message ChatSubscriptionResponse {
+    string id = 1;
+    string chat_id = 2;
+    string request_at = 3;
+    string account_id = 4;
+    string joined_at = 5;
+    string public_key_encrypted = 6;
+    string private_key_encrypted = 7;
+}
+
+message ChatSubscriptionsResponse {
+    repeated ChatSubscriptionResponse subscriptions = 1;
+}
+
+message ChatAccountSubscriptionIdsResponse {
+    repeated string chat_ids = 1;
 }
 
 message ChatMessageResponse {
@@ -39,9 +69,14 @@ message ChatMessageResponse {
     string chat_id = 2;
     string account_id = 3;
     string created_at = 4;
-    string message_encrypted = 5;
-    string nonce = 6;
-    repeated ChatSeenMessageResponse seen_by = 7;
+    string text_encrypted = 5;
+    string link_encrypted = 6;
+    repeated string video_url_encrypted = 7;
+    repeated string photo_url_encrypted = 8;
+    repeated string file_url_encrypted = 9;
+    string nonce = 10;
+    string reply_to = 11;
+    repeated ChatSeenMessageResponse seen_by = 12;
 }
 
 message ChatMessagesResponse {

@@ -17,7 +17,7 @@ import ChatController from '../../controllers/chat.controller';
 import { ChatDocument } from '../../models/chat.model';
 import { RoutePathsType, useQuery } from '../../route-paths';
 import AccountMessageItemComponent from '../account-message-item.component';
-import ChatMessageItemComponent from '../chat-message-item.component';
+import ChatMessageItemComponent from '../chat-item.component';
 import { ChatsResponsiveProps } from '../chats.component';
 import styles from '../chats.module.scss';
 import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
@@ -90,6 +90,9 @@ export default function ChatsDesktopComponent({
                                     <Input
                                         value={chatProps.searchInput}
                                         classNames={{
+                                            formLayout: {
+                                                root: [styles['search-input-form-layout-root']].join(' ')
+                                            },
                                             container: [
                                                 styles['search-input-container'],
                                                 styles['search-input-container-desktop'],
@@ -178,6 +181,7 @@ export default function ChatsDesktopComponent({
                             {chatAccounts &&
                                 chatProps.chats.map((chat: ChatDocument, _index: number) => {
                                     const lastMessage = chatProps.lastChatMessages[chat.id ?? ''];
+                                    const seenBy = chatProps.seenBy[lastMessage?.id ?? ''];
                                     const accounts = chatAccounts[chat.id ?? ''];
                                     const accountIds = accounts?.map((value) => value.id);
                                     const accountPresence = Object.values(
@@ -188,6 +192,7 @@ export default function ChatsDesktopComponent({
                                             key={chat.id}
                                             accountProps={accountProps}
                                             accounts={accounts}
+                                            seenBy={seenBy}
                                             chat={chat}
                                             lastMessage={lastMessage}
                                             accountPresence={accountPresence}

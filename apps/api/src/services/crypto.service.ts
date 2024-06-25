@@ -1,16 +1,15 @@
-import { Aes } from "https://deno.land/x/crypto/aes.ts";
-import { Cbc, Padding } from "https://deno.land/x/crypto/block-modes.ts";
-import "https://deno.land/x/dotenv@v3.2.0/load.ts";
+import 'https://deno.land/x/dotenv@v3.2.0/load.ts';
+import { crypto } from 'jsr:@std/crypto@^0.224.0';
 
 class CryptoService {
     private readonly _textEncoder: TextEncoder;
     private readonly _textDecoder: TextDecoder;
-    private _encryptionKey: string | undefined;
-    private _iv: string | undefined;
+    private _encryptionKey: string;
+    private _iv: string;
 
     constructor() {
-        this._encryptionKey = Deno.env.get("CRYPTO_ENCRYPTION_KEY");
-        this._iv = Deno.env.get("CRYPTO_IV");
+        this._encryptionKey = Deno.env.get('CRYPTO_ENCRYPTION_KEY') ?? '';
+        this._iv = Deno.env.get('CRYPTO_IV') ?? '';
         this._textEncoder = new TextEncoder();
         this._textDecoder = new TextDecoder();
 
@@ -23,16 +22,54 @@ class CryptoService {
         }
     }
 
-    public encrypt(data: string): string {
-        const cipher = new Cbc(Aes, this._textEncoder.encode(this._encryptionKey), this._textEncoder.encode(this._iv), Padding.PKCS7);
-        const encrypted = cipher.encrypt(this._textEncoder.encode(data));
-        return this._textDecoder.decode(encrypted);
+    public async encryptAsync(data: string): Promise<string | null> {
+        const encryptionKeyHash = await crypto.subtle.digest('SHA-256', this._textEncoder.encode(this._encryptionKey));
+        const iv = new Uint8Array(this._iv.match(/.{2}/g)?.map(byte => parseInt(byte, 16)) ?? []);
+        const key: CryptoKey = await crypto.subtle.importKey(
+            'raw',
+            encryptionKeyHash,
+            { name: 'AES-CBC' },
+            true,
+            ['decrypt', 'encrypt']
+        );
+        const encrypted = await crypto.subtle.encrypt(
+            {
+                name: 'AES-CBC',
+                iv: iv,
+            },
+            key,
+            this._textEncoder.encode(data)
+        );
+        const ctArray = Array.from(new Uint8Array(encrypted));
+        const ctStr = ctArray.map(byte => String.fromCharCode(byte)).join('');
+        return btoa(ctStr);
     }
 
-    public decrypt(data: string): string {
-        const encryptedText = this._textEncoder.encode(data);
-        const decipher = new Cbc(Aes, this._textEncoder.encode(this._encryptionKey), this._textEncoder.encode(this._iv), Padding.PKCS7);
-        const decrypted = decipher.decrypt(encryptedText);
+    public async decryptAsync(data: string): Promise<string> {
+        const encryptedKeyHash = await crypto.subtle.digest('SHA-256', this._textEncoder.encode(this._encryptionKey));
+        const iv = new Uint8Array(this._iv.match(/.{2}/g)?.map(byte => parseInt(byte, 16)) ?? []);
+        const binaryString = atob(data);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+
+        const key = await crypto.subtle.importKey(
+            'raw',
+            encryptedKeyHash,
+            { name: 'AES-CBC' },
+            true,
+            ['decrypt', 'encrypt']
+        );
+        const decrypted = await crypto.subtle.decrypt(
+            {
+                name: 'AES-CBC',
+                iv: iv,
+            },
+            key,
+            bytes.buffer
+        );
+
         return this._textDecoder.decode(decrypted);
     }
 }

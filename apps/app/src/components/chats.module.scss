@@ -198,7 +198,7 @@
     border-radius: 6px;
 
     & .top-bar-container-desktop {
-      padding-top: $mp-4;
+      padding-top: $mp-3;
       flex-direction: row;
 
       & .top-bar-left-content-desktop {
@@ -493,6 +493,10 @@
 
   & .search-input-mobile::-ms-input-placeholder {
   }
+}
+
+.search-input-form-layout-root {
+  margin-bottom: $mp-3 !important;
 }
 
 .tab-nav {

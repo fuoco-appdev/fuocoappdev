@@ -63,7 +63,7 @@
       "defaultConfiguration": "production",
       "options": {
         "target": "node",
-        "compiler": "babel",
+        "compiler": "tsc",
         "tsConfig": "apps/app/tsconfig.server.json",
         "outputPath": "dist/apps/app/server",
         "index": "apps/app/src/index.html",
@@ -107,7 +107,7 @@
       "executor": "@nx/webpack:webpack",
       "defaultConfiguration": "production",
       "options": {
-        "compiler": "babel",
+        "compiler": "tsc",
         "target": "node",
         "outputPath": "dist/apps/app/ssr",
         "main": "apps/app/ssr/main.ts",

@@ -1,11 +1,20 @@
+import { Buffer } from "https://deno.land/std@0.139.0/node/buffer.ts";
 import * as HttpError from 'https://deno.land/x/http_errors@3.0.0/mod.ts';
 import { Redis } from 'https://deno.land/x/redis@v0.32.3/mod.ts';
+import * as tweetnaclBox from 'https://deno.land/x/tweetnacl_deno@v1.0.3/src/box.ts';
 import {
+    ChatAccountSubscriptionIdsResponse,
     ChatMessageResponse,
+    ChatMessagesRequest,
     ChatMessagesResponse,
     ChatPrivateResponse,
+    ChatPrivateSubscriptionRequest,
     ChatResponse,
     ChatSeenMessageResponse,
+    ChatSubscriptionRequest,
+    ChatSubscriptionResponse,
+    ChatSubscriptionsRequest,
+    ChatSubscriptionsResponse,
     CreatePrivateChatRequest,
     LastChatMessagesRequest,
     UpdatePrivateChatRequest
@@ -32,6 +41,30 @@ export interface ChatProps {
 export interface ChatPrivateProps {
     chat_id?: string;
     account_ids?: string[];
+}
+
+export interface ChatSubscriptionProps {
+    id?: string;
+    chat_id?: string;
+    requested_at?: string;
+    account_id?: string;
+    joined_at?: string;
+    public_key?: string;
+    private_key?: string;
+}
+
+export interface ChatMessageProps {
+    id?: string;
+    created_at?: string;
+    text?: string;
+    nonce?: string;
+    chat_id?: string;
+    account_id?: string;
+    link?: string;
+    video_url?: string[];
+    photo_url?: string[];
+    file_url?: string[];
+    reply_to?: string;
 }
 
 export interface ChatDocument extends ChatProps {
@@ -332,28 +365,40 @@ class ChatService {
     ): Promise<InstanceType<typeof ChatMessagesResponse>> {
         const response = new ChatMessagesResponse();
         const chatIds = request.getChatIdsList();
-        for (const id of chatIds) {
+        const chatMessagesData = await SupabaseService.client
+            .from('chat_message')
+            .select(
+                '*, chat_seen_messages:id(*)'
+            )
+            .in('chat_id', chatIds)
+            .order('created_at', { ascending: true });
+
+        if (chatMessagesData.error) {
+            console.error(chatMessagesData.error);
+            return response;
+        }
+
+        const messages: Partial<ChatMessageProps>[] | null = (chatMessagesData.data as Partial<ChatMessageProps>[] | null) ?? [];
+        for (const messageData of messages) {
             const message = new ChatMessageResponse();
-            const { data, error } = await SupabaseService.client
-                .from('chat_message')
-                .select('*, seen_by:chat_seen_messages!public_chat_seen_messages_message_id_fkey (*)')
-                .order('created_at', { ascending: true })
-                .match({ chat_id: id })
-                .single();
-            if (error) {
-                console.error(error);
-                continue;
-            }
+            message.setId(messageData.id);
+            message.setChatId(messageData.chat_id);
+            message.setAccountId(messageData.account_id);
+            message.setCreatedAt(messageData.created_at);
+            message.setNonce(messageData.nonce);
+            message.setReplyTo(messageData.reply_to);
+            const encryptedText = await CryptoService.encryptAsync(messageData.text) ?? '';
+            const encryptedLink = await CryptoService.encryptAsync(messageData.link) ?? '';
+            const encryptedVideoUrls: string[] = messageData.video_url ? messageData.video_url.map(async (value: string) => await CryptoService.encryptAsync(value) ?? '') : [];
+            const encryptedPhotoUrls: string[] = messageData.photo_url ? messageData.photo_url.map(async (value: string) => await CryptoService.encryptAsync(value) ?? '') : [];
+            const encryptedFileUrls: string[] = messageData.file_url ? messageData.file_url.map(async (value: string) => await CryptoService.encryptAsync(value) ?? '') : [];
+            message.setTextEncrypted(encryptedText);
+            message.setLinkEncrypted(encryptedLink);
+            message.setVideoUrlEncryptedList(encryptedVideoUrls);
+            message.setPhotoUrlEncryptedList(encryptedPhotoUrls);
+            message.setFileUrlEncryptedList(encryptedFileUrls);
 
-            message.setId(data.id);
-            message.setChatId(data.chat_id);
-            message.setAccountId(data.account_id);
-            message.setCreatedAt(data.created_at);
-            message.setNonce(data.nonce);
-            const encryptedMessage = CryptoService.encrypt(data.message);
-            message.setMessageEncrypted(encryptedMessage);
-
-            for (const seenMessage of data.seen_by) {
+            for (const seenMessage of messageData.seen_by ?? []) {
                 const chatSeenMessageResponse = new ChatSeenMessageResponse();
                 chatSeenMessageResponse.setMessageId(seenMessage.message_id);
                 chatSeenMessageResponse.setAccountId(seenMessage.account_id);
@@ -365,6 +410,326 @@ class ChatService {
             response.addMessages(message);
         }
 
+        return response;
+    }
+
+    public async getChatMessagesAsync(
+        request: InstanceType<typeof ChatMessagesRequest>
+    ): Promise<InstanceType<typeof ChatMessagesResponse>> {
+        const response = new ChatMessagesResponse();
+        const chatId = request.getChatId();
+        const limit = request.getLimit();
+        const offset = request.getOffset();
+        const chatMessagesData = await SupabaseService.client
+            .from('chat_message')
+            .select(
+                '*, chat_seen_messages:id(*)'
+            )
+            .eq('chat_id', chatId)
+            .limit(limit)
+            .range(offset, offset + limit)
+            .order('created_at', { ascending: true });
+
+        if (chatMessagesData.error) {
+            console.error(chatMessagesData.error);
+            return response;
+        }
+
+        const messages: Partial<ChatMessageProps>[] | null = (chatMessagesData.data as Partial<ChatMessageProps>[] | null) ?? [];
+        for (const messageData of messages) {
+            const message = new ChatMessageResponse();
+            message.setId(messageData.id);
+            message.setChatId(messageData.chat_id);
+            message.setAccountId(messageData.account_id);
+            message.setCreatedAt(messageData.created_at);
+            message.setNonce(messageData.nonce);
+            message.setReplyTo(messageData.reply_to);
+            const encryptedText = await CryptoService.encryptAsync(messageData.text) ?? '';
+            const encryptedLink = await CryptoService.encryptAsync(messageData.link) ?? '';
+            const encryptedVideoUrls: string[] = messageData.video_url ? messageData.video_url.map(async (value: string) => await CryptoService.encryptAsync(value) ?? '') : [];
+            const encryptedPhotoUrls: string[] = messageData.photo_url ? messageData.photo_url.map(async (value: string) => await CryptoService.encryptAsync(value) ?? '') : [];
+            const encryptedFileUrls: string[] = messageData.file_url ? messageData.file_url.map(async (value: string) => await CryptoService.encryptAsync(value) ?? '') : [];
+            message.setTextEncrypted(encryptedText);
+            message.setLinkEncrypted(encryptedLink);
+            message.setVideoUrlEncryptedList(encryptedVideoUrls);
+            message.setPhotoUrlEncryptedList(encryptedPhotoUrls);
+            message.setFileUrlEncryptedList(encryptedFileUrls);
+
+            for (const seenMessage of messageData.seen_by ?? []) {
+                const chatSeenMessageResponse = new ChatSeenMessageResponse();
+                chatSeenMessageResponse.setMessageId(seenMessage.message_id);
+                chatSeenMessageResponse.setAccountId(seenMessage.account_id);
+                chatSeenMessageResponse.setChatId(seenMessage.chat_id);
+                chatSeenMessageResponse.setSeenAt(seenMessage.seen_at);
+                message.addSeenBy(chatSeenMessageResponse);
+            }
+
+            response.addMessages(message);
+        }
+
+        return response;
+    }
+
+    public async requestSubscriptionsAsync(
+        request: InstanceType<typeof ChatSubscriptionsRequest>
+    ): Promise<InstanceType<typeof ChatSubscriptionsResponse> | null> {
+        const response = new ChatSubscriptionsResponse();
+        const chatIds = request.getChatIdsList();
+        const accountIds = request.getAccountIdsList();
+        const chatSubscriptions = await SupabaseService.client
+            .from('chat_subscription')
+            .select()
+            .in('chat_id', chatIds)
+            .in('account_id', accountIds);
+
+        if (chatSubscriptions.error) {
+            console.error(chatSubscriptions.error);
+            return null;
+        }
+
+        for (const data of chatSubscriptions.data as ChatSubscriptionProps[]) {
+            const subscription = new ChatSubscriptionResponse();
+            const encryptedPrivateKey =
+                data.private_key &&
+                await CryptoService.encryptAsync(data.private_key);
+            const encryptedPublicKey =
+                data.public_key &&
+                await CryptoService.encryptAsync(data.public_key);
+            data.id && subscription.setId(data.id);
+            data.chat_id && subscription.setChatId(data.chat_id);
+            data.account_id && subscription.setAccountId(data.account_id);
+            data.joined_at && subscription.setJoinedAt(data.joined_at);
+            data.requested_at && subscription.setRequestAt(data.requested_at);
+            encryptedPrivateKey && subscription.setPrivateKeyEncrypted(encryptedPrivateKey);
+            encryptedPublicKey && subscription.setPublicKeyEncrypted(encryptedPublicKey);
+            response.addSubscriptions(subscription);
+        }
+
+        return response;
+    }
+
+    public async requestAccountSubscriptionIdsAsync(
+        accountId: string
+    ): Promise<InstanceType<typeof ChatAccountSubscriptionIdsResponse> | null> {
+        const response = new ChatAccountSubscriptionIdsResponse();
+        const chatSubscriptions = await SupabaseService.client
+            .from('chat_subscription')
+            .select('chat_id')
+            .eq('account_id', accountId);
+
+        if (chatSubscriptions.error) {
+            console.error(chatSubscriptions.error);
+            return null;
+        }
+
+        const subscriptions = chatSubscriptions.data as ChatSubscriptionProps[] ?? [];
+        for (const data of subscriptions) {
+            if (!data.chat_id) {
+                continue;
+            }
+            response.addChatIds(data.chat_id);
+        }
+
+        return response;
+    }
+
+    public async requestPrivateSubscriptionAsync(
+        request: InstanceType<typeof ChatPrivateSubscriptionRequest>
+    ): Promise<InstanceType<typeof ChatSubscriptionResponse> | null> {
+        const chatId = request.getChatId();
+        const activeAccountId = request.getActiveAccountId();
+        const otherAccountId = request.getOtherAccountId();
+
+        const chat = await this.findChatAsync(chatId);
+        if (!chat) {
+            return null;
+        }
+
+        const activeAccountExistingSubscription = await this.findChatSubscriptionAsync({
+            chatId: chatId,
+            accountId: activeAccountId,
+        });
+        const otherAccountExistingSubscription = await this.findChatSubscriptionAsync({
+            chatId: chatId,
+            accountId: otherAccountId,
+        });
+
+        const date = new Date(Date.now());
+        if (otherAccountExistingSubscription) {
+            otherAccountExistingSubscription.joined_at = date.toUTCString();
+            const response = await this.upsertChatSubscriptionAsync(otherAccountExistingSubscription);
+            if (!response) {
+                console.error('Cannot update subscription');
+            }
+        }
+        else {
+            const { publicKey, secretKey } = tweetnaclBox.box_keyPair();
+            const publicKeyBase64 = Buffer.from(publicKey).toString('base64');
+            const privateKeyBase64 = Buffer.from(secretKey).toString('base64');
+            const chatSubscriptionProps: ChatSubscriptionProps = {
+                chat_id: chatId,
+                joined_at: date.toUTCString(),
+                account_id: otherAccountId,
+                private_key: privateKeyBase64,
+                public_key: publicKeyBase64,
+            };
+            const response = await this.upsertChatSubscriptionAsync(chatSubscriptionProps);
+            if (!response) {
+                console.error('Cannot update subscription');
+            }
+        }
+
+        if (activeAccountExistingSubscription) {
+            activeAccountExistingSubscription.requested_at = date.toUTCString();
+            return await this.upsertChatSubscriptionAsync(activeAccountExistingSubscription);
+        }
+
+        const { publicKey, secretKey } = tweetnaclBox.box_keyPair();
+        const publicKeyBase64 = Buffer.from(publicKey).toString('base64');
+        const privateKeyBase64 = Buffer.from(secretKey).toString('base64');
+        const chatSubscriptionProps: ChatSubscriptionProps = {
+            chat_id: chatId,
+            requested_at: date.toUTCString(),
+            account_id: activeAccountId,
+            private_key: privateKeyBase64,
+            public_key: publicKeyBase64
+        };
+        return await this.upsertChatSubscriptionAsync(chatSubscriptionProps);
+    }
+
+    public async requestSubscriptionAsync(
+        request: InstanceType<typeof ChatSubscriptionRequest>
+    ): Promise<InstanceType<typeof ChatSubscriptionResponse> | null> {
+        const chatId = request.getChatId();
+        const accountId = request.getAccountId();
+
+        const chat = await this.findChatAsync(chatId);
+        if (!chat) {
+            return null;
+        }
+
+        const existingSubscription = await this.findChatSubscriptionAsync({
+            chatId: chatId,
+            accountId: accountId,
+        });
+
+        const date = new Date(Date.now());
+        if (existingSubscription) {
+            existingSubscription.requested_at = date.toUTCString();
+            return await this.upsertChatSubscriptionAsync(existingSubscription);
+        }
+
+        const { publicKey, secretKey } = tweetnaclBox.box_keyPair();
+        const publicKeyBase64 = Buffer.from(publicKey).toString('base64');
+        const privateKeyBase64 = Buffer.from(secretKey).toString('base64');
+        const chatSubscriptionProps: ChatSubscriptionProps = {
+            chat_id: chatId,
+            requested_at: date.toUTCString(),
+            account_id: accountId,
+            private_key: privateKeyBase64,
+            public_key: publicKeyBase64
+        };
+        return await this.upsertChatSubscriptionAsync(chatSubscriptionProps);
+    }
+
+    public async joinSubscriptionAsync(
+        request: InstanceType<typeof ChatSubscriptionRequest>
+    ): Promise<InstanceType<typeof ChatSubscriptionResponse> | null> {
+        const chatId = request.getChatId();
+        const accountId = request.getAccountId();
+
+        const chat = await this.findChatAsync(chatId);
+        if (!chat) {
+            return null;
+        }
+
+        const existingSubscription = await this.findChatSubscriptionAsync({
+            chatId: chatId,
+            accountId: accountId,
+        });
+
+        const date = new Date(Date.now());
+        if (existingSubscription) {
+            existingSubscription.joined_at = date.toUTCString();
+            return await this.upsertChatSubscriptionAsync(existingSubscription);
+        }
+
+        const { publicKey, secretKey } = tweetnaclBox.box_keyPair();
+        const publicKeyBase64 = Buffer.from(publicKey).toString('base64');
+        const privateKeyBase64 = Buffer.from(secretKey).toString('base64');
+        const chatSubscriptionProps: ChatSubscriptionProps = {
+            chat_id: chatId,
+            joined_at: date.toUTCString(),
+            account_id: accountId,
+            private_key: privateKeyBase64,
+            public_key: publicKeyBase64
+        };
+        return await this.upsertChatSubscriptionAsync(chatSubscriptionProps);
+    }
+
+    public async removeSubscriptionAsync(
+        request: InstanceType<typeof ChatSubscriptionRequest>
+    ): Promise<InstanceType<typeof ChatSubscriptionResponse> | null> {
+        const response = new ChatSubscriptionResponse();
+        const chatId = request.getChatId();
+        const accountId = request.getAccountId();
+
+        const existingSubscription = await this.findChatSubscriptionAsync({
+            chatId: chatId,
+            accountId: accountId,
+        });
+
+        if (existingSubscription) {
+            const chatSubscriptionResponse = await SupabaseService.client
+                .from('chat_subscription')
+                .delete()
+                .eq('chat_id', chatId)
+                .eq('account_id', accountId)
+                .select();
+
+            if (chatSubscriptionResponse.error) {
+                console.error(chatSubscriptionResponse.error);
+                return null;
+            }
+
+            return response;
+        }
+
+        return null;
+    }
+
+    private async upsertChatSubscriptionAsync(props: ChatSubscriptionProps): Promise<InstanceType<typeof ChatSubscriptionResponse> | null> {
+        const response = new ChatSubscriptionResponse();
+        const chatSubscriptionResponse = await SupabaseService.client
+            .from('chat_subscription')
+            .upsert(props)
+            .select();
+
+        if (chatSubscriptionResponse.error) {
+            console.error(chatSubscriptionResponse.error);
+            return null;
+        }
+
+        const subscription: ChatSubscriptionProps | null =
+            chatSubscriptionResponse.data.length
+                ? chatSubscriptionResponse.data[0]
+                : null;
+        const encryptedPrivateKey =
+            subscription?.private_key &&
+            await CryptoService.encryptAsync(subscription.private_key);
+        const encryptedPublicKey =
+            subscription?.public_key &&
+            await CryptoService.encryptAsync(subscription.public_key);
+        subscription?.id && response.setId(subscription.id);
+        subscription?.chat_id && response.setChatId(subscription.chat_id);
+        subscription?.account_id &&
+            response.setAccountId(subscription.account_id);
+        subscription?.joined_at && response.setJoinedAt(subscription.joined_at);
+        subscription?.requested_at &&
+            response.setRequestAt(subscription.requested_at);
+        encryptedPrivateKey &&
+            response.setPrivateKeyEncrypted(encryptedPrivateKey);
+        encryptedPublicKey && response.setPublicKeyEncrypted(encryptedPublicKey);
         return response;
     }
 
@@ -458,6 +823,23 @@ class ChatService {
         return data.length > 0 ? data[0] : null;
     }
 
+    private async findChatSubscriptionAsync(props: {
+        chatId: string;
+        accountId: string;
+    }): Promise<ChatSubscriptionProps | null> {
+        const { data, error } = await SupabaseService.client
+            .from('chat_subscription')
+            .select()
+            .match({ chat_id: props.chatId, account_id: props.accountId });
+
+        if (error) {
+            console.error(error);
+            return null;
+        }
+
+        return data.length > 0 ? data[0] : null;
+    }
+
     private async onRedisConnection(redis: Redis): Promise<void> {
         const indexCreated = await RedisService.getAsync(RedisChatIndexKey.Created);
         if (!indexCreated || indexCreated !== 'true') {
@@ -502,7 +884,10 @@ class ChatService {
         for (let i = 0; i < count; i += this._indexLimit) {
             await RedisService.rPushAsync(
                 RedisIndexKey.Queue,
-                JSON.stringify({ pathname: 'chat/indexing', data: { limit: this._indexLimit, offset: i } })
+                JSON.stringify({
+                    pathname: 'chat/indexing',
+                    data: { limit: this._indexLimit, offset: i },
+                })
             );
         }
     }

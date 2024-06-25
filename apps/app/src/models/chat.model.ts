@@ -1,6 +1,6 @@
 import { createStore, withProps } from "@ngneat/elf";
 import { Model } from "../model";
-import { ChatSeenMessageResponse } from "../protobuf/chat_pb";
+import { ChatSubscription } from "../services/chat.service";
 import { AccountDocument, AccountPresence } from "./account.model";
 
 export enum ChatTabs {
@@ -13,37 +13,56 @@ export interface PrivateChatDocument {
     account_ids?: string[];
 }
 
-export interface ChatDocument {
+export interface Chat {
     id?: string;
     created_at?: string;
     type?: string;
     updated_at?: string;
+}
+
+export interface ChatDocument extends Chat {
     tags?: string[];
     private?: PrivateChatDocument;
+}
+
+export interface ChatSeenMessage {
+    messageId?: string;
+    seenAt?: string;
+    accountId?: string;
+    chatId?: string;
 }
 
 export interface DecryptedChatMessage {
     id?: string;
     createdAt?: string;
     accountId?: string;
-    message?: string | null;
-    seenBy?: ChatSeenMessageResponse[];
-}
-
-export interface EncryptedChatMessage {
-    encryptedMessage?: string;
-    accountId?: string;
-    nonce?: string;
-}
-
-export interface ChatSubscription {
     chatId?: string;
-    requestAt?: string;
-    accountId?: string;
-    joinedAt?: string;
-    publicKey?: string;
-    privateKey?: string;
-    lastSeenAt?: string;
+    text?: string;
+    link?: string;
+    videoUrl?: string[];
+    photoUrl?: string[];
+    fileUrl?: string[];
+    replyTo?: string;
+}
+
+export interface DecryptedChatMessages {
+    messages: DecryptedChatMessage[];
+    offset: number;
+    hasMore: boolean;
+}
+
+export interface ChatMessage {
+    id?: string;
+    created_at?: string;
+    text?: string;
+    nonce?: string;
+    chat_id?: string;
+    account_id?: string;
+    link?: string;
+    video_url?: string[];
+    photo_url?: string[];
+    file_url?: string[];
+    reply_to?: string;
 }
 
 export interface ChatState {
@@ -62,9 +81,11 @@ export interface ChatState {
     accounts: Record<string, AccountDocument>;
     chatSubscriptions: Record<string, Record<string, ChatSubscription>>;
     lastChatMessages: Record<string, DecryptedChatMessage | undefined>;
+    isSelectedChatLoading: boolean;
     selectedChat: ChatDocument | undefined;
     accountPresence: Record<string, AccountPresence>;
-    messages: DecryptedChatMessage[],
+    messages: Record<string, DecryptedChatMessages>;
+    seenBy: Record<string, ChatSeenMessage[]>;
     hasMoreMessages: boolean;
     areMessagesLoading: boolean;
     messageInput: string;
@@ -91,9 +112,11 @@ export class ChatModel extends Model {
                     accounts: {},
                     chatSubscriptions: {},
                     lastChatMessages: {},
+                    isSelectedChatLoading: false,
                     selectedChat: undefined,
                     accountPresence: {},
-                    messages: [],
+                    messages: {},
+                    seenBy: {},
                     hasMoreMessages: true,
                     areMessagesLoading: false,
                     messageInput: ''
@@ -232,6 +255,26 @@ export class ChatModel extends Model {
         }
     }
 
+    public get seenBy(): Record<string, ChatSeenMessage[]> {
+        return this.store.getValue().seenBy;
+    }
+
+    public set seenBy(value: Record<string, ChatSeenMessage[]>) {
+        if (JSON.stringify(this.seenBy) !== JSON.stringify(value)) {
+            this.store.update((state) => ({ ...state, seenBy: value }));
+        }
+    }
+
+    public get isSelectedChatLoading(): boolean {
+        return this.store.getValue().isSelectedChatLoading;
+    }
+
+    public set isSelectedChatLoading(value: boolean) {
+        if (this.isSelectedChatLoading !== value) {
+            this.store.update((state) => ({ ...state, isSelectedChatLoading: value }));
+        }
+    }
+
     public get selectedChat(): ChatDocument | undefined {
         return this.store.getValue().selectedChat;
     }
@@ -252,11 +295,11 @@ export class ChatModel extends Model {
         }
     }
 
-    public get messages(): DecryptedChatMessage[] {
+    public get messages(): Record<string, DecryptedChatMessages> {
         return this.store.getValue().messages;
     }
 
-    public set messages(value: DecryptedChatMessage[]) {
+    public set messages(value: Record<string, DecryptedChatMessages>) {
         if (JSON.stringify(this.messages) !== JSON.stringify(value)) {
             this.store.update((state) => ({ ...state, messages: value }));
         }

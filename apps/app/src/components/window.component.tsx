@@ -9,6 +9,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { StorageFolderType } from 'src/protobuf/common_pb';
 import AccountPublicController from '../controllers/account-public.controller';
 import AccountController from '../controllers/account.controller';
+import ChatController from '../controllers/chat.controller';
 import ExploreController from '../controllers/explore.controller';
 import ProductController from '../controllers/product.controller';
 import WindowController from '../controllers/window.controller';
@@ -21,6 +22,7 @@ import { RoutePathsType, useQuery } from '../route-paths';
 import AccountNotificationService, { AccountData } from '../services/account-notification.service';
 import AccountService from '../services/account.service';
 import BucketService from '../services/bucket.service';
+import ChatService from '../services/chat.service';
 import SupabaseService from '../services/supabase.service';
 import { WindowSuspenseDesktopComponent } from './desktop/suspense/window.suspense.desktop.component';
 import { WindowSuspenseMobileComponent } from './mobile/suspense/window.suspense.mobile.component';
@@ -63,6 +65,7 @@ export default function WindowComponent(): JSX.Element {
   const [accountPublicProps] = useObservable(
     AccountPublicController.model.store
   );
+  const [chatProps] = useObservable(ChatController.model.store);
   const [accountProps] = useObservable(AccountController.model.store);
   const [exploreProps] = useObservable(ExploreController.model.store);
   const [productProps] = useObservable(ProductController.model.store);
@@ -275,26 +278,36 @@ export default function WindowComponent(): JSX.Element {
   }, [windowProps.authState]);
 
   React.useEffect(() => {
-    const updateAccountPresenceAsync = async (isOnline: boolean) => {
+    const upsertAccountPresenceAsync = async (isOnline: boolean) => {
       if (!accountProps.account) {
         return;
       }
 
-      await AccountService.requestUpdateAccountPresenceAsync(accountProps.account.id, isOnline);
+      await AccountService.requestUpsertAccountPresenceAsync(accountProps.account.id, isOnline);
     }
 
-    const handleVisibilityChangeAsync = async () => {
-      await updateAccountPresenceAsync(!document.hidden);
+    const handleBeforeUnloadChangeAsync = async () => {
+      await upsertAccountPresenceAsync(false);
     }
 
-    updateAccountPresenceAsync(true);
+    upsertAccountPresenceAsync(true);
 
-    window.addEventListener('visibilitychange', handleVisibilityChangeAsync);
+    window.addEventListener('beforeunload', handleBeforeUnloadChangeAsync);
 
     return () => {
-      window.removeEventListener('visibilitychange', handleVisibilityChangeAsync);
+      window.removeEventListener('beforeunload', handleBeforeUnloadChangeAsync);
     };
-  }, [windowProps.account])
+  }, [windowProps.account]);
+
+  React.useEffect(() => {
+    const chatIds = Object.keys(chatProps.chatSubscriptions);
+    const subscription = ChatService.subscribeToMessages(chatIds, (payload) => {
+      ChatController.onMessageChangedAsync(payload);
+    });
+    return () => {
+      subscription?.unsubscribe();
+    }
+  }, [chatProps.chatSubscriptions]);
 
   React.useEffect(() => {
     i18n.changeLanguage(windowLocalProps.languageInfo?.isoCode);

@@ -1,5 +1,21 @@
 {
-    "compilerOptions": {
-        "experimentalDecorators": true
-    }
+  "compilerOptions": {
+    "experimentalDecorators": true
+  },
+  "imports": {
+    "crypto": "https://deno.land/std@0.84.0/node/crypto.ts",
+    "https://deno.land/x/tweetnacl_deno@v1.0.3/src/array": "https://deno.land/x/tweetnacl_deno@v1.0.3/src/array.ts",
+    "https://deno.land/x/tweetnacl_deno@v1.0.3/src/box": "https://deno.land/x/tweetnacl_deno@v1.0.3/src/box.ts",
+    "https://deno.land/x/tweetnacl_deno@v1.0.3/src/check": "https://deno.land/x/tweetnacl_deno@v1.0.3/src/check.ts",
+    "https://deno.land/x/tweetnacl_deno@v1.0.3/src/core": "https://deno.land/x/tweetnacl_deno@v1.0.3/src/core.ts",
+    "https://deno.land/x/tweetnacl_deno@v1.0.3/src/curve25519": "https://deno.land/x/tweetnacl_deno@v1.0.3/src/curve25519.ts",
+    "https://deno.land/x/tweetnacl_deno@v1.0.3/src/poly1305": "https://deno.land/x/tweetnacl_deno@v1.0.3/src/poly1305.ts",
+    "https://deno.land/x/tweetnacl_deno@v1.0.3/src/random": "https://deno.land/x/tweetnacl_deno@v1.0.3/src/random.ts",
+    "https://deno.land/x/tweetnacl_deno@v1.0.3/src/salsa20": "https://deno.land/x/tweetnacl_deno@v1.0.3/src/salsa20.ts",
+    "https://deno.land/x/tweetnacl_deno@v1.0.3/src/scalarmult": "https://deno.land/x/tweetnacl_deno@v1.0.3/src/scalarmult.ts",
+    "https://deno.land/x/tweetnacl_deno@v1.0.3/src/secretbox": "https://deno.land/x/tweetnacl_deno@v1.0.3/src/secretbox.ts",
+    "https://deno.land/x/tweetnacl_deno@v1.0.3/src/server/random": "https://deno.land/x/tweetnacl_deno@v1.0.3/src/server/random.ts",
+    "https://deno.land/x/tweetnacl_deno@v1.0.3/src/validate": "https://deno.land/x/tweetnacl_deno@v1.0.3/src/validate.ts",
+    "https://deno.land/x/tweetnacl_deno@v1.0.3/src/verify": "https://deno.land/x/tweetnacl_deno@v1.0.3/src/verify.ts"
+  }
 }

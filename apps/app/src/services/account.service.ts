@@ -361,7 +361,7 @@ class AccountService extends Service {
     return accountPresencesResponse.accountPresences;
   }
 
-  public async requestUpdateAccountPresenceAsync(
+  public async requestUpsertAccountPresenceAsync(
     accountId: string,
     isOnline: boolean
   ): Promise<void> {
@@ -375,12 +375,12 @@ class AccountService extends Service {
       });
 
     if (response?.error) {
-      console.error("Can't update account presence:", response.error);
+      console.error("Can't upsert account presence:", response.error);
     }
   }
 
   public subscribeAccountPresence(accountIds: string[], onPayload: (payload: Record<string, any>) => void): RealtimeChannel | undefined {
-    return SupabaseService.supabaseClient?.channel('db-changes')
+    return SupabaseService.supabaseClient?.channel('account-presence-changes')
       .on(
         'postgres_changes',
         {

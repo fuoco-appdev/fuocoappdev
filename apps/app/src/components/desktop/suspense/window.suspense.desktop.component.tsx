@@ -99,6 +99,8 @@ export function WindowSuspenseDesktopComponent(): JSX.Element {
             >
               <Skeleton style={{ width: 56, height: 56 }} borderRadius={6} />
               <Skeleton style={{ width: 56, height: 56 }} borderRadius={6} />
+              <Skeleton style={{ width: 56, height: 56 }} borderRadius={6} />
+              <Skeleton style={{ width: 56, height: 56 }} borderRadius={6} />
             </div>
           </div>
           <div

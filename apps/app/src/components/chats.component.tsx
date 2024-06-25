@@ -9,6 +9,7 @@ import { AccountDocument } from '../models/account.model';
 import { ChatDocument, ChatState } from '../models/chat.model';
 import { RoutePathsType } from '../route-paths';
 import AccountService from '../services/account.service';
+import ChatService from '../services/chat.service';
 import { AuthenticatedComponent } from './authenticated.component';
 import { ChatsSuspenseDesktopComponent } from './desktop/suspense/chats.suspense.desktop.component';
 import { ChatsSuspenseMobileComponent } from './mobile/suspense/chats.suspense.mobile.component';
@@ -104,6 +105,16 @@ export default function ChatsComponent(): JSX.Element {
             subscription?.unsubscribe();
         }
     }, [chatProps.accounts]);
+
+    useEffect(() => {
+        const chatIds = Object.keys(chatProps.chatSubscriptions);
+        const subscription = ChatService.subscribeToChats(chatIds, (payload) => {
+            ChatController.onChatChangedAsync(payload);
+        });
+        return () => {
+            subscription?.unsubscribe();
+        }
+    }, [chatProps.chatSubscriptions]);
 
     return (
         <>

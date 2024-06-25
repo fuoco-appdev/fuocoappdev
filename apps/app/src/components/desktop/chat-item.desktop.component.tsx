@@ -2,11 +2,11 @@ import { Avatar } from '@fuoco.appdev/core-ui';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import Ripples from 'react-ripples';
-import { ChatMessageItemResponsiveProps } from '../chat-message-item.component';
-import styles from '../chat-message-item.module.scss';
+import { ChatItemResponsiveProps } from '../chat-item.component';
+import styles from '../chat-item.module.scss';
 import { ResponsiveDesktop } from '../responsive.component';
 
-export default function ChatMessageItemDesktopComponent({
+export default function ChatItemDesktopComponent({
   accountProps,
   chat,
   accounts,
@@ -15,7 +15,7 @@ export default function ChatMessageItemDesktopComponent({
   profileUrls,
   seen,
   onClick,
-}: ChatMessageItemResponsiveProps): JSX.Element {
+}: ChatItemResponsiveProps): JSX.Element {
   const { t, i18n } = useTranslation();
 
   return (
@@ -39,7 +39,9 @@ export default function ChatMessageItemDesktopComponent({
             >
               {accounts?.map((account, index) => {
                 const profileUrl = profileUrls[account.id ?? ''];
-                const presence = accountPresence?.find((value) => value.account_id === account.id);
+                const presence = accountPresence?.find(
+                  (value) => value.account_id === account.id
+                );
                 return (
                   <div
                     className={[
@@ -52,11 +54,11 @@ export default function ChatMessageItemDesktopComponent({
                         container: [
                           styles['avatar-container'],
                           styles['avatar-container-desktop'],
-                          index > 0 && styles['avatar-container-margin']
+                          index > 0 && styles['avatar-container-margin'],
                         ].join(' '),
                       }}
                       size={'custom'}
-                      text={account.customer?.first_name}
+                      text={account.username}
                       src={profileUrl}
                     />
                     {presence && presence.is_online && (
@@ -103,7 +105,7 @@ export default function ChatMessageItemDesktopComponent({
                   !seen && styles['last-message-unseen'],
                 ].join(' ')}
               >
-                {lastMessage ? lastMessage.message : t('startMessaging')}
+                {lastMessage ? lastMessage.text : t('startMessaging')}
               </div>
             </div>
           </div>
@@ -114,16 +116,34 @@ export default function ChatMessageItemDesktopComponent({
             ].join(' ')}
           >
             {lastMessage && (
-              <div
-                className={[
-                  styles['message-date'],
-                  styles['message-date-desktop'],
-                ].join(' ')}
-              >
-                {moment(lastMessage?.createdAt)
-                  .locale(i18n.language)
-                  .fromNow(true)}
-              </div>
+              <>
+                <div
+                  className={[
+                    styles['message-date'],
+                    styles['message-date-desktop'],
+                    !seen && styles['message-date-unseen'],
+                  ].join(' ')}
+                >
+                  {moment(lastMessage?.createdAt)
+                    .locale(i18n.language)
+                    .fromNow(true)}
+                </div>
+                {!seen && (
+                  <div
+                    className={[
+                      styles['message-not-seen-container'],
+                      styles['message-not-seen-container-desktop'],
+                    ].join(' ')}
+                  >
+                    <div
+                      className={[
+                        styles['message-not-seen'],
+                        styles['message-not-seen-desktop'],
+                      ].join(' ')}
+                    />
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

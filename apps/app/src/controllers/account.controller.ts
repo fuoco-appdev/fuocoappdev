@@ -127,8 +127,13 @@ class AccountController extends Controller {
     this._model.addFriendAccounts = [];
     this._model.hasMoreAddFriends = true;
 
-    const account = await firstValueFrom(this._model.store
-      .pipe(select((model) => model.account), filter((value) => value !== undefined), take(1)));
+    const account = await firstValueFrom(
+      this._model.store.pipe(
+        select((model) => model.account),
+        filter((value) => value !== undefined),
+        take(1)
+      )
+    );
     if (!account) {
       return;
     }
@@ -149,8 +154,13 @@ class AccountController extends Controller {
     this._model.addFriendsPagination = 1;
     this._model.hasMoreAddFriends = true;
 
-    const account = await firstValueFrom(this._model.store
-      .pipe(select((model) => model.account), filter((value) => value !== undefined), take(1)));
+    const account = await firstValueFrom(
+      this._model.store.pipe(
+        select((model) => model.account),
+        filter((value) => value !== undefined),
+        take(1)
+      )
+    );
     if (!account) {
       return;
     }
@@ -309,7 +319,12 @@ class AccountController extends Controller {
 
     clearTimeout(this._addFriendsTimerId as number | undefined);
     this._addFriendsTimerId = setTimeout(() => {
-      this.addFriendsSearchAsync(this._model.addFriendsSearchInput, 'loading', 0, this._limit);
+      this.addFriendsSearchAsync(
+        this._model.addFriendsSearchInput,
+        'loading',
+        0,
+        this._limit
+      );
     }, 750);
   }
 
@@ -318,7 +333,12 @@ class AccountController extends Controller {
 
     clearTimeout(this._addFriendsTimerId as number | undefined);
     this._addFriendsTimerId = setTimeout(() => {
-      this.addFriendsSearchAsync(this._model.addFriendsSearchInput, 'loading', 0, this._limit);
+      this.addFriendsSearchAsync(
+        this._model.addFriendsSearchInput,
+        'loading',
+        0,
+        this._limit
+      );
     }, 750);
   }
 
@@ -451,24 +471,25 @@ class AccountController extends Controller {
         this._model.areFollowRequestAccountsLoading = false;
         return;
       }
-      const documents = accountsResponse.accounts.map((protobuf) => ({
-        id: protobuf.id,
-        customer_id: protobuf.customerId,
-        supabase_id: protobuf.supabaseId,
-        profile_url: protobuf.profileUrl,
-        status: protobuf.status,
-        updated_at: protobuf.updateAt,
-        language_code: protobuf.languageCode,
-        username: protobuf.username,
-        birthday: protobuf.birthday,
-        sex: protobuf.sex,
-        interests: protobuf.interests,
-        metadata: protobuf.metadata,
-      }) as AccountDocument);
+      const documents = accountsResponse.accounts.map(
+        (protobuf) =>
+        ({
+          id: protobuf.id,
+          customer_id: protobuf.customerId,
+          supabase_id: protobuf.supabaseId,
+          profile_url: protobuf.profileUrl,
+          status: protobuf.status,
+          updated_at: protobuf.updateAt,
+          language_code: protobuf.languageCode,
+          username: protobuf.username,
+          birthday: protobuf.birthday,
+          sex: protobuf.sex,
+          interests: protobuf.interests,
+          metadata: protobuf.metadata,
+        } as AccountDocument)
+      );
       if (offset > 0) {
-        followRequestAccounts = followRequestAccounts.concat(
-          documents
-        );;
+        followRequestAccounts = followRequestAccounts.concat(documents);
       } else {
         followRequestAccounts = documents;
       }
@@ -495,7 +516,7 @@ class AccountController extends Controller {
           billing_address_id: customer?.billingAddressId,
           phone: customer?.phone,
           has_account: customer?.hasAccount,
-          metadata: customer?.metadata
+          metadata: customer?.metadata,
         } as Partial<Customer>;
       }
     } catch (error: any) {
@@ -513,7 +534,10 @@ class AccountController extends Controller {
     limit = 10,
     force = false
   ): Promise<void> {
-    if (!force && (this._model.areAddFriendsLoading || this._model.areAddFriendsReloading)) {
+    if (
+      !force &&
+      (this._model.areAddFriendsLoading || this._model.areAddFriendsReloading)
+    ) {
       return;
     }
 
@@ -526,10 +550,16 @@ class AccountController extends Controller {
     const { lat, lng } = await firstValueFrom<{
       lat: number;
       lng: number;
-    }>(this._model.store.pipe(select((model) => model.addFriendsLocationCoordinates), filter((value) => value !== undefined), take(1)));
+    }>(
+      this._model.store.pipe(
+        select((model) => model.addFriendsLocationCoordinates),
+        filter((value) => value !== undefined),
+        take(1)
+      )
+    );
     let filterValue = `id != ${this._model.account?.id} AND status = 'Complete' AND _geoRadius(${lat}, ${lng}, ${this._model.addFriendsRadiusMeters})`;
     if (this._model.addFriendsSex !== 'any') {
-      filterValue += ` AND sex = '${this._model.addFriendsSex.toString()}'`
+      filterValue += ` AND sex = '${this._model.addFriendsSex.toString()}'`;
     }
     try {
       const result = await this._accountsIndex?.search(query, {
@@ -612,17 +642,24 @@ class AccountController extends Controller {
     this._model.searchedInterests = searchedInterests;
   }
 
-  public updateAddFriendsLocationFeature(value: GeocodingFeature | undefined): void {
+  public updateAddFriendsLocationFeature(
+    value: GeocodingFeature | undefined
+  ): void {
     this._model.addFriendsLocationFeature = value;
     this._model.addFriendsLocationCoordinates = {
       lng: value?.center[0] ?? 0,
-      lat: value?.center[1] ?? 0
+      lat: value?.center[1] ?? 0,
     };
     this._model.addFriendsLocationInput = value?.place_name ?? '';
 
     clearTimeout(this._addFriendsTimerId as number | undefined);
     this._addFriendsTimerId = setTimeout(() => {
-      this.addFriendsSearchAsync(this._model.addFriendsSearchInput, 'loading', 0, this._limit);
+      this.addFriendsSearchAsync(
+        this._model.addFriendsSearchInput,
+        'loading',
+        0,
+        this._limit
+      );
     }, 750);
   }
 
@@ -683,7 +720,11 @@ class AccountController extends Controller {
   }
 
   public async addFriendsSearchPlacesAsync(searchText: string): Promise<void> {
-    const response = await MapboxService.requestGeocodingPlacesAsync(searchText, this._model.account?.languageCode ?? 'en', ['place']);
+    const response = await MapboxService.requestGeocodingPlacesAsync(
+      searchText,
+      this._model.account?.languageCode ?? 'en',
+      ['place']
+    );
     this._model.addFriendsLocationGeocoding = response;
   }
 
@@ -691,7 +732,11 @@ class AccountController extends Controller {
     lat: number;
     lng: number;
   }): Promise<void> {
-    const response = await MapboxService.requestReverseGeocodingPlacesAsync(geo, this._model.account?.languageCode ?? 'en', ['place']);
+    const response = await MapboxService.requestReverseGeocodingPlacesAsync(
+      geo,
+      this._model.account?.languageCode ?? 'en',
+      ['place']
+    );
     this._model.addFriendsLocationGeocoding = response;
   }
 
@@ -1096,15 +1141,18 @@ class AccountController extends Controller {
       this._model.areOrdersReloading = true;
     }
 
-    const customer = await firstValueFrom(this._model.store.pipe(select((model) => model.customer), filter((value) => value !== undefined), take(1)));
+    const customer = await firstValueFrom(
+      this._model.store.pipe(
+        select((model) => model.customer),
+        filter((value) => value !== undefined),
+        take(1)
+      )
+    );
     try {
-      const orders = await MedusaService.requestOrdersAsync(
-        customer.id,
-        {
-          offset: offset,
-          limit: limit,
-        }
-      );
+      const orders = await MedusaService.requestOrdersAsync(customer.id, {
+        offset: offset,
+        limit: limit,
+      });
 
       if (!orders || orders.length <= 0) {
         this._model.hasMoreOrders = false;
@@ -1154,7 +1202,10 @@ class AccountController extends Controller {
     offset: number = 0,
     limit: number = 10
   ): Promise<void> {
-    if (this._model.areLikedProductsLoading || this._model.areLikedProductsReloading) {
+    if (
+      this._model.areLikedProductsLoading ||
+      this._model.areLikedProductsReloading
+    ) {
       return;
     }
 
@@ -1164,7 +1215,13 @@ class AccountController extends Controller {
       this._model.areLikedProductsReloading = true;
     }
 
-    const account = await firstValueFrom(this._model.store.pipe(select((model) => model.account), filter((value) => value !== undefined), take(1)));
+    const account = await firstValueFrom(
+      this._model.store.pipe(
+        select((model) => model.account),
+        filter((value) => value !== undefined),
+        take(1)
+      )
+    );
 
     let productIds: string[] = [];
     try {
@@ -1337,8 +1394,11 @@ class AccountController extends Controller {
 
   private async initializeAsync(_renderCount: number): Promise<void> {
     this._activeAccountSubscription?.unsubscribe();
-    this._activeAccountSubscription =
-      AccountService.activeAccountObservable.subscribe({
+    this._activeAccountSubscription = AccountService.activeAccountObservable
+      .pipe(
+        filter((value) => value !== null && this._model.account?.id !== value.id),
+      )
+      .subscribe({
         next: this.onActiveAccountChangedAsync,
       });
 
@@ -1378,8 +1438,7 @@ class AccountController extends Controller {
     value: AccountResponse | null
   ): Promise<void> {
     if (
-      !value ||
-      this._model.account?.toJsonString() === value?.toJsonString()
+      !value
     ) {
       return;
     }
@@ -1390,10 +1449,14 @@ class AccountController extends Controller {
     this._model.addFriendsLocationCoordinates = geo;
 
     await this.addFriendsSearchReversePlacesAsync(geo);
-    if (this._model.addFriendsLocationGeocoding?.features && this._model.addFriendsLocationGeocoding?.features.length > 0) {
-      this.updateAddFriendsLocationFeature(this._model.addFriendsLocationGeocoding?.features[0]);
+    if (
+      this._model.addFriendsLocationGeocoding?.features &&
+      this._model.addFriendsLocationGeocoding?.features.length > 0
+    ) {
+      this.updateAddFriendsLocationFeature(
+        this._model.addFriendsLocationGeocoding?.features[0]
+      );
     }
-
 
     try {
       this._model.customer = await MedusaService.requestCustomerAccountAsync(
