@@ -15,6 +15,7 @@ export default function ChatDesktopComponent({
     accounts,
     profileUrls,
     accountPresence,
+    seenBy,
     onMessageSubmit,
     splitMessagesByUserAndTime,
 }: ChatResponsiveProps): JSX.Element {
@@ -232,6 +233,7 @@ export default function ChatDesktopComponent({
                                         chatProps={chatProps}
                                         conversation={conversation}
                                         profileUrls={profileUrls}
+                                        seenBy={seenBy}
                                         activeAccountId={accountProps.account?.id}
                                     />
                                 );

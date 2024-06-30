@@ -2,7 +2,7 @@ import { Avatar } from '@fuoco.appdev/core-ui';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import { AccountDocument } from '../../models/account.model';
-import { ChatState, DecryptedChatMessage } from '../../models/chat.model';
+import { ChatSeenMessage, ChatState, DecryptedChatMessage } from '../../models/chat.model';
 import styles from './conversation-item.module.scss';
 
 export interface ChatConversation {
@@ -15,6 +15,7 @@ export interface ConversationItemProps {
     chatProps: ChatState;
     conversation: ChatConversation;
     profileUrls: Record<string, string>;
+    seenBy: Record<string, ChatSeenMessage[]>;
     activeAccountId?: string;
 }
 
@@ -22,6 +23,7 @@ export default function ConversationItemComponent({
     chatProps,
     conversation,
     profileUrls,
+    seenBy,
     activeAccountId,
 }: ConversationItemProps): JSX.Element {
     const { i18n } = useTranslation();
@@ -56,7 +58,7 @@ export default function ConversationItemComponent({
                 </div>)}
                 <div className={styles['messages']}>
                     {conversation.messages.map((message, index) => {
-                        const seenBy = Object.keys(chatProps.seenBy).includes(message.id ?? '') ? chatProps.seenBy[message.id ?? ''] : undefined;
+                        const messageSeenBy = seenBy[message.id ?? ''];
                         return (
                             <div key={index} className={styles['message-container']}>
                                 {message.text && (
@@ -64,13 +66,10 @@ export default function ConversationItemComponent({
                                         <p>{message.text}</p>
                                     </div>
                                 )}
-                                {activeAccountId === conversation.account?.id && seenBy && seenBy.length > 0 && (
+                                {activeAccountId === conversation.account?.id && messageSeenBy && messageSeenBy.length > 0 && (
                                     <div className={styles['seen-by-container']}>
-                                        {seenBy.map((seenMessage) => {
+                                        {messageSeenBy.map((seenMessage) => {
                                             const account = chatProps.accounts[seenMessage.accountId ?? ''];
-                                            if (seenMessage.accountId === activeAccountId) {
-                                                return (<></>)
-                                            }
                                             return (<Avatar
                                                 classNames={{
                                                     container: [

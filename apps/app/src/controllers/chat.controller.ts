@@ -413,11 +413,6 @@ class ChatController extends Controller {
             return;
         }
 
-        const account = await firstValueFrom(AccountController.model.store.pipe(select((model) => model.account), filter((value) => value !== undefined), take(1)));
-        if (!account) {
-            return;
-        }
-
         const seenBy = { ...this._model.seenBy };
         const result: ChatSeenMessage = {
             messageId: newSeenMessage.message_id,
