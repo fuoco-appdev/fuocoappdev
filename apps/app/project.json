@@ -22,15 +22,15 @@
         "compiler": "babel",
         "tsConfig": "apps/app/tsconfig.app.json",
         "outputPath": "dist/apps/app/client",
-        "index": "apps/app/src/index.html",
+        "index": "apps/app/src/web/index.html",
         "baseHref": "/",
-        "main": "apps/app/src/main.tsx",
+        "main": "apps/app/src/web/main.tsx",
         "assets": ["apps/app/src/favicon.ico", "apps/app/src/assets"],
         "styles": [
           "node_modules/@fuoco.appdev/core-ui/dist/cjs/index.css",
           "node_modules/mapbox-gl/src/css/mapbox-gl.css",
           "node_modules/react-loading-skeleton/dist/skeleton.css",
-          "apps/app/src/styles.scss"
+          "apps/app/src/web/styles.scss"
         ],
         "webpackConfig": "apps/app/webpack.config.js"
       },
@@ -66,15 +66,15 @@
         "compiler": "tsc",
         "tsConfig": "apps/app/tsconfig.server.json",
         "outputPath": "dist/apps/app/server",
-        "index": "apps/app/src/index.html",
+        "index": "apps/app/src/web/index.html",
         "baseHref": "/",
-        "main": "apps/app/src/main.server.tsx",
+        "main": "apps/app/src/web/main.server.tsx",
         "assets": ["apps/app/src/favicon.ico", "apps/app/src/assets"],
         "styles": [
           "node_modules/@fuoco.appdev/core-ui/dist/cjs/index.css",
           "node_modules/mapbox-gl/dist/mapbox-gl.css",
           "node_modules/react-loading-skeleton/dist/skeleton.css",
-          "apps/app/src/styles.scss"
+          "apps/app/src/web/styles.scss"
         ],
         "scripts": [],
         "webpackConfig": "apps/app/webpack.server.config.js"

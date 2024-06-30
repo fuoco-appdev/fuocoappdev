@@ -10,12 +10,12 @@ import { AccountDocument } from '../models/account.model';
 import { AccountResponse } from '../protobuf/account_pb';
 import { StorageFolderType } from '../protobuf/common_pb';
 import { ProductLikesMetadataResponse } from '../protobuf/product-like_pb';
-import { RoutePathsType } from '../route-paths';
 import AccountFollowersService from '../services/account-followers.service';
 import AccountService from '../services/account.service';
 import BucketService from '../services/bucket.service';
 import MedusaService from '../services/medusa.service';
 import ProductLikesService from '../services/product-likes.service';
+import { RoutePathsType } from '../web/route-paths';
 import AccountController from './account.controller';
 
 class AccountPublicController extends Controller {

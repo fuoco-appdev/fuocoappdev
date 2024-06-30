@@ -9,14 +9,6 @@ import { Index } from 'meilisearch';
 import mime from 'mime';
 import { Subscription, filter, firstValueFrom, take } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
-import {
-  ProfileFormErrors,
-  ProfileFormValues,
-} from '../components/account-profile-form.component';
-import {
-  AddressFormErrors,
-  AddressFormValues,
-} from '../components/address-form.component';
 import { Controller } from '../controller';
 import {
   AccountDocument,
@@ -28,7 +20,6 @@ import { AccountResponse } from '../protobuf/account_pb';
 import { StorageFolderType } from '../protobuf/common_pb';
 import { InterestResponse } from '../protobuf/interest_pb';
 import { ProductLikesMetadataResponse } from '../protobuf/product-like_pb';
-import { RoutePathsType } from '../route-paths';
 import AccountFollowersService from '../services/account-followers.service';
 import AccountService from '../services/account.service';
 import BucketService from '../services/bucket.service';
@@ -38,6 +29,15 @@ import MedusaService from '../services/medusa.service';
 import MeiliSearchService from '../services/meilisearch.service';
 import ProductLikesService from '../services/product-likes.service';
 import SupabaseService from '../services/supabase.service';
+import {
+  ProfileFormErrors,
+  ProfileFormValues,
+} from '../web/components/account-profile-form.component';
+import {
+  AddressFormErrors,
+  AddressFormValues,
+} from '../web/components/address-form.component';
+import { RoutePathsType } from '../web/route-paths';
 import ExploreController from './explore.controller';
 import WindowController from './window.controller';
 

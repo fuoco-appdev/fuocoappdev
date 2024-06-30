@@ -7,6 +7,7 @@ import { ContentType, Controller, Guard, Post } from '../index.ts';
 import {
     ChatMessagesRequest,
     ChatPrivateSubscriptionRequest,
+    ChatSeenMessagesRequest,
     ChatSubscriptionRequest,
     ChatSubscriptionsRequest,
     CreatePrivateChatRequest,
@@ -226,6 +227,28 @@ export class ChatController {
         const response = await ChatService.getChatMessagesAsync(request);
         if (!response) {
             throw HttpError.createError(409, 'Cannot get chat messages');
+        }
+
+        context.response.type = 'application/x-protobuf';
+        context.response.body = response.serializeBinary();
+    }
+
+    @Post('/seen-by')
+    @Guard(AuthGuard)
+    @ContentType('application/x-protobuf')
+    public async getSeenByMessageAsync(
+        context: Oak.RouterContext<
+            string,
+            Oak.RouteParams<string>,
+            Record<string, any>
+        >
+    ): Promise<void> {
+        const body = await context.request.body({ type: 'reader' });
+        const requestValue = await readAll(body.value);
+        const request = ChatSeenMessagesRequest.deserializeBinary(requestValue);
+        const response = await ChatService.getSeenByMessagesAsync(request);
+        if (!response) {
+            throw HttpError.createError(409, 'Cannot get seen messages');
         }
 
         context.response.type = 'application/x-protobuf';

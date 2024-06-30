@@ -136,6 +136,11 @@ export class ChatMessagesRequest extends Message<ChatMessagesRequest> {
    */
   offset = 0;
 
+  /**
+   * @generated from field: repeated string ignored_subscription_ids = 4;
+   */
+  ignoredSubscriptionIds: string[] = [];
+
   constructor(data?: PartialMessage<ChatMessagesRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -147,6 +152,7 @@ export class ChatMessagesRequest extends Message<ChatMessagesRequest> {
     { no: 1, name: "chat_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "limit", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
     { no: 3, name: "offset", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 4, name: "ignored_subscription_ids", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ChatMessagesRequest {
@@ -593,11 +599,6 @@ export class ChatMessageResponse extends Message<ChatMessageResponse> {
    */
   replyTo = "";
 
-  /**
-   * @generated from field: repeated chat.ChatSeenMessageResponse seen_by = 12;
-   */
-  seenBy: ChatSeenMessageResponse[] = [];
-
   constructor(data?: PartialMessage<ChatMessageResponse>) {
     super();
     proto3.util.initPartial(data, this);
@@ -617,7 +618,6 @@ export class ChatMessageResponse extends Message<ChatMessageResponse> {
     { no: 9, name: "file_url_encrypted", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
     { no: 10, name: "nonce", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 11, name: "reply_to", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 12, name: "seen_by", kind: "message", T: ChatSeenMessageResponse, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ChatMessageResponse {
@@ -646,6 +646,11 @@ export class ChatMessagesResponse extends Message<ChatMessagesResponse> {
    */
   messages: ChatMessageResponse[] = [];
 
+  /**
+   * @generated from field: repeated chat.ChatSubscriptionResponse subscriptions = 2;
+   */
+  subscriptions: ChatSubscriptionResponse[] = [];
+
   constructor(data?: PartialMessage<ChatMessagesResponse>) {
     super();
     proto3.util.initPartial(data, this);
@@ -655,6 +660,7 @@ export class ChatMessagesResponse extends Message<ChatMessagesResponse> {
   static readonly typeName = "chat.ChatMessagesResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "messages", kind: "message", T: ChatMessageResponse, repeated: true },
+    { no: 2, name: "subscriptions", kind: "message", T: ChatSubscriptionResponse, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ChatMessagesResponse {

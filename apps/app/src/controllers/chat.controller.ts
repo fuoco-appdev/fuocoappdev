@@ -3,7 +3,7 @@ import { select } from '@ngneat/elf';
 import { Index } from 'meilisearch';
 import { Subscription, filter, firstValueFrom, take } from 'rxjs';
 import { Controller } from '../controller';
-import { AccountDocument, AccountPresence } from '../models/account.model';
+import { AccountDocument, AccountPresence, AccountState } from '../models/account.model';
 import {
     Chat,
     ChatDocument,
@@ -181,9 +181,38 @@ class ChatController extends Controller {
             offset: 0,
             hasMore: true
         };
-        await this.requestChatMessagesAsync(id, chatMessages);
+        try {
+            await this.requestChatMessagesAsync(id, chatMessages);
+        }
+        catch (error: any) {
+            console.error(error);
+        }
 
         this._model.isSelectedChatLoading = false;
+    }
+
+    public async updateSeenMessageOfOtherAccountAsync(chatMessages: DecryptedChatMessages): Promise<void> {
+        const account = await firstValueFrom(AccountController.model.store.pipe(select((model: AccountState) => model.account), filter((value) => value !== undefined), take(1)));
+        if (!account) {
+            return;
+        }
+
+        const messagesReverse = [...chatMessages.messages].reverse();
+        const firstAccountMessage = messagesReverse.find((value) => value.accountId !== account?.id);
+        if (!firstAccountMessage) {
+            return;
+        }
+
+        try {
+            await ChatService.requestInsertSeenMessageAsync({
+                chatId: firstAccountMessage.chatId ?? '',
+                accountId: account.id,
+                messageId: firstAccountMessage.id ?? ''
+            });
+        }
+        catch (error: any) {
+            console.error(error);
+        }
     }
 
     public updateSearchInput(value: string): void {
@@ -222,6 +251,30 @@ class ChatController extends Controller {
         const accountPresence = { ...this._model.accountPresence };
         accountPresence[value.account_id] = value;
         this._model.accountPresence = accountPresence;
+    }
+
+    public async updateSeenMessageOfActiveAccountAsync(message: DecryptedChatMessage): Promise<void> {
+        const account: AccountResponse | undefined = await firstValueFrom(
+            AccountController.model.store.pipe(
+                select((model) => model.account),
+                filter((value) => value !== undefined),
+                take(1)
+            )
+        );
+        if (!account) {
+            return;
+        }
+
+        try {
+            await ChatService.requestInsertSeenMessageAsync({
+                chatId: message.chatId ?? '',
+                accountId: account.id,
+                messageId: message.id ?? ''
+            });
+        }
+        catch (error: any) {
+            console.error(error);
+        }
     }
 
     public async submitMessageAsync(): Promise<void> {
@@ -309,17 +362,15 @@ class ChatController extends Controller {
             return;
         }
 
-        // const offset = this._limit * (this._model.chatsPagination - 1);
-        // if (this._model.searchInput.length > 0) {
-        //     await this.searchChatsAsync(
-        //         this._model.searchInput,
-        //         'loading',
-        //         offset,
-        //         this._limit
-        //     );
-        // } else {
-        //     await this.requestChatsAsync('loading', offset, this._limit);
-        // }
+        const chatId = this._model.selectedChat?.id ?? '';
+        const chatMessages: DecryptedChatMessages = Object.keys(this._model.messages).includes(chatId) ? this._model.messages[chatId] : {
+            messages: [],
+            offset: 0,
+            hasMore: true
+        };
+        chatMessages.offset += (this._limit + 1);
+
+        await this.requestChatMessagesAsync(chatId, chatMessages);
     }
 
     public async onChatChangedAsync(payload: Record<string, any>): Promise<void> {
@@ -354,6 +405,37 @@ class ChatController extends Controller {
             chats.unshift(chat);
             this._model.chats = chats;
         }, 2000);
+    }
+
+    public async onSeenMessageChangedAsync(payload: Record<string, any>): Promise<void> {
+        const newSeenMessage = payload['new'];
+        if (!newSeenMessage || !newSeenMessage.chat_id) {
+            return;
+        }
+
+        const account = await firstValueFrom(AccountController.model.store.pipe(select((model) => model.account), filter((value) => value !== undefined), take(1)));
+        if (!account) {
+            return;
+        }
+
+        const seenBy = { ...this._model.seenBy };
+        const result: ChatSeenMessage = {
+            messageId: newSeenMessage.message_id,
+            seenAt: newSeenMessage.seen_at,
+            accountId: newSeenMessage.account_id,
+            chatId: newSeenMessage.chat_id
+        };
+        if (Object.keys(seenBy).includes(result.messageId ?? '')) {
+            const existingSeenBy = seenBy[result.messageId ?? ''].find((value) => value.accountId === result.accountId);
+            if (!existingSeenBy) {
+                seenBy[result.messageId ?? ''].push(result);
+            }
+        }
+        else {
+            seenBy[result.messageId ?? ''] = [result];
+        }
+
+        this._model.seenBy = seenBy;
     }
 
     public async onMessageChangedAsync(
@@ -649,45 +731,59 @@ class ChatController extends Controller {
     ): Promise<void> {
         this._model.areMessagesLoading = true;
 
+        let subscriptions = Object.keys(this._model.chatSubscriptions).includes(id) ? this._model.chatSubscriptions[id] : {};
+        const accountIds = Object.keys(subscriptions);
         try {
             const messagesResponse = await ChatService.requestMessagesAsync({
                 chatId: id,
                 limit: this._limit,
-                offset: chatMessages.offset
+                offset: chatMessages.offset,
+                ignoredSubscriptionIds: accountIds
             });
 
-            if (messagesResponse && messagesResponse.length <= 0 && chatMessages.offset <= 0) {
+            if (messagesResponse?.messages && messagesResponse.messages.length <= 0 && chatMessages.offset <= 0) {
                 chatMessages.messages = [];
             }
 
-            if (messagesResponse && messagesResponse.length < this._limit && chatMessages.hasMore) {
+            if (messagesResponse?.messages && messagesResponse.messages.length < this._limit && chatMessages.hasMore) {
                 chatMessages.hasMore = false;
             }
 
-            if (messagesResponse && messagesResponse.length <= 0) {
+            if (messagesResponse?.messages && messagesResponse.messages.length <= 0) {
                 this._model.areMessagesLoading = false;
                 chatMessages.hasMore = false;
+
+                const messages = { ...this._model.messages };
+                messages[id] = chatMessages;
+                this._model.messages = messages;
                 return;
             }
 
-            if (messagesResponse && messagesResponse.length >= this._limit && !chatMessages.hasMore) {
+            if (messagesResponse?.messages && messagesResponse.messages.length >= this._limit && !chatMessages.hasMore) {
                 chatMessages.hasMore = true;
             }
 
-            const accountIds = messagesResponse?.map((value) => value.accountId) ?? [];
             const decryptedMessages: DecryptedChatMessage[] = [];
-            let subscriptions = Object.keys(this._model.chatSubscriptions).includes(id) ? this._model.chatSubscriptions[id] : {};
-            const missingAccountIds = Object.keys(accountIds).filter((value) => Object.keys(subscriptions).includes(value));
-            if (missingAccountIds.length > 0) {
-                this._model.chatSubscriptions = await this.requestChatSubscriptionsAsync(
-                    [id],
-                    missingAccountIds,
-                    this._model.chatSubscriptions
-                );
-                subscriptions = this._model.chatSubscriptions[id];
+            if (messagesResponse?.subscriptions && messagesResponse.subscriptions.length > 0) {
+                for (const subscription of messagesResponse?.subscriptions) {
+                    const publicKey = await CryptoService.decryptAsync(subscription.publicKeyEncrypted);
+                    const privateKey = await CryptoService.decryptAsync(subscription.privateKeyEncrypted);
+                    subscriptions[subscription.accountId] = {
+                        chatId: subscription.chatId,
+                        requestAt: subscription.requestAt,
+                        accountId: subscription.accountId,
+                        joinedAt: subscription.joinedAt,
+                        publicKey: publicKey,
+                        privateKey: privateKey,
+                    };
+                }
+
+                const chatSubscriptions = { ...this._model.chatSubscriptions }
+                chatSubscriptions[id] = subscriptions;
+                this._model.chatSubscriptions = chatSubscriptions;
             }
 
-            for (const message of messagesResponse ?? []) {
+            for (const message of messagesResponse?.messages ?? []) {
                 const decryptedMessage = await this.decryptChatMessageWithCryptoAsync({
                     id: message.id,
                     createdAt: message.createdAt,
@@ -709,7 +805,7 @@ class ChatController extends Controller {
             }
 
             if (chatMessages.offset > 0) {
-                chatMessages.messages = chatMessages.messages.concat(decryptedMessages);
+                chatMessages.messages = [...decryptedMessages, ...chatMessages.messages];
             } else {
                 chatMessages.messages = decryptedMessages;
             }
@@ -717,12 +813,49 @@ class ChatController extends Controller {
             const messages = { ...this._model.messages };
             messages[id] = chatMessages;
             this._model.messages = messages;
-            console.log(messages);
         }
         catch (error: any) {
             console.error(error);
         }
 
+        const account: AccountResponse | undefined = await firstValueFrom(
+            AccountController.model.store.pipe(
+                select((model) => model.account),
+                filter((value) => value !== undefined),
+                take(1)
+            )
+        );
+        if (!account) {
+            return;
+        }
+
+        const seenBy: Record<string, ChatSeenMessage[]> = {};
+        const messageIds = this._model.messages[id].messages.map((value) => value.id ?? '');
+        try {
+            const seenByMessagesResponse = await ChatService.requestSeenByMessagesAsync(messageIds);
+            for (const seenByMessage of seenByMessagesResponse) {
+                if (Object.keys(seenBy).includes(seenByMessage.messageId)) {
+                    seenBy[seenByMessage.messageId].push({
+                        messageId: seenByMessage.messageId,
+                        seenAt: seenByMessage.seenAt,
+                        accountId: seenByMessage.accountId,
+                        chatId: seenByMessage.chatId
+                    })
+                    continue;
+                }
+                seenBy[seenByMessage.messageId] = [{
+                    messageId: seenByMessage.messageId,
+                    seenAt: seenByMessage.seenAt,
+                    accountId: seenByMessage.accountId,
+                    chatId: seenByMessage.chatId
+                }];
+            }
+        }
+        catch (error: any) {
+            console.error(error);
+        }
+
+        this._model.seenBy = { ...this._model.seenBy, ...seenBy };
         this._model.areMessagesLoading = false;
     }
 
@@ -859,7 +992,6 @@ class ChatController extends Controller {
                 });
             const lastChatMessages: Record<string, DecryptedChatMessage | undefined> =
                 { ...this._model.lastChatMessages };
-            const seenBy: Record<string, ChatSeenMessage[]> = { ...this._model.seenBy };
             for (const lastChatMessageResponse of lastChatMessagesResponse ?? []) {
                 if (
                     !Object.keys(this._model.chatSubscriptions).includes(
@@ -887,16 +1019,9 @@ class ChatController extends Controller {
                         },
                         subscription
                     ) ?? undefined;
-                seenBy[lastChatMessageResponse.id] = lastChatMessageResponse.seenBy.map((value) => ({
-                    messageId: value.messageId,
-                    seenAt: value.seenAt,
-                    accountId: value.accountId,
-                    chatId: value.chatId
-                }) as ChatSeenMessage);
             }
 
             this._model.lastChatMessages = lastChatMessages;
-            this._model.seenBy = seenBy;
         } catch (error: any) {
             console.error(error);
         }

@@ -113,7 +113,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.chat.ChatMessagesRequest = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.chat.ChatMessagesRequest.repeatedFields_, null);
 };
 goog.inherits(proto.chat.ChatMessagesRequest, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -886,6 +886,13 @@ proto.chat.LastChatMessagesRequest.prototype.clearChatIdsList = function() {
 
 
 
+/**
+ * List of repeated fields within this message type.
+ * @private {!Array<number>}
+ * @const
+ */
+proto.chat.ChatMessagesRequest.repeatedFields_ = [4];
+
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
@@ -919,7 +926,8 @@ proto.chat.ChatMessagesRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     chatId: jspb.Message.getFieldWithDefault(msg, 1, ""),
     limit: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    offset: jspb.Message.getFieldWithDefault(msg, 3, 0)
+    offset: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    ignoredSubscriptionIdsList: (f = jspb.Message.getRepeatedField(msg, 4)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -968,6 +976,10 @@ proto.chat.ChatMessagesRequest.deserializeBinaryFromReader = function(msg, reade
       var value = /** @type {number} */ (reader.readUint32());
       msg.setOffset(value);
       break;
+    case 4:
+      var value = /** @type {string} */ (reader.readString());
+      msg.addIgnoredSubscriptionIds(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -1015,6 +1027,13 @@ proto.chat.ChatMessagesRequest.serializeBinaryToWriter = function(message, write
   if (f !== 0) {
     writer.writeUint32(
       3,
+      f
+    );
+  }
+  f = message.getIgnoredSubscriptionIdsList();
+  if (f.length > 0) {
+    writer.writeRepeatedString(
+      4,
       f
     );
   }
@@ -1072,6 +1091,43 @@ proto.chat.ChatMessagesRequest.prototype.getOffset = function() {
  */
 proto.chat.ChatMessagesRequest.prototype.setOffset = function(value) {
   return jspb.Message.setProto3IntField(this, 3, value);
+};
+
+
+/**
+ * repeated string ignored_subscription_ids = 4;
+ * @return {!Array<string>}
+ */
+proto.chat.ChatMessagesRequest.prototype.getIgnoredSubscriptionIdsList = function() {
+  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 4));
+};
+
+
+/**
+ * @param {!Array<string>} value
+ * @return {!proto.chat.ChatMessagesRequest} returns this
+ */
+proto.chat.ChatMessagesRequest.prototype.setIgnoredSubscriptionIdsList = function(value) {
+  return jspb.Message.setField(this, 4, value || []);
+};
+
+
+/**
+ * @param {string} value
+ * @param {number=} opt_index
+ * @return {!proto.chat.ChatMessagesRequest} returns this
+ */
+proto.chat.ChatMessagesRequest.prototype.addIgnoredSubscriptionIds = function(value, opt_index) {
+  return jspb.Message.addToRepeatedField(this, 4, value, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.chat.ChatMessagesRequest} returns this
+ */
+proto.chat.ChatMessagesRequest.prototype.clearIgnoredSubscriptionIdsList = function() {
+  return this.setIgnoredSubscriptionIdsList([]);
 };
 
 
@@ -2608,7 +2664,7 @@ proto.chat.ChatAccountSubscriptionIdsResponse.prototype.clearChatIdsList = funct
  * @private {!Array<number>}
  * @const
  */
-proto.chat.ChatMessageResponse.repeatedFields_ = [7,8,9,12];
+proto.chat.ChatMessageResponse.repeatedFields_ = [7,8,9];
 
 
 
@@ -2651,9 +2707,7 @@ proto.chat.ChatMessageResponse.toObject = function(includeInstance, msg) {
     photoUrlEncryptedList: (f = jspb.Message.getRepeatedField(msg, 8)) == null ? undefined : f,
     fileUrlEncryptedList: (f = jspb.Message.getRepeatedField(msg, 9)) == null ? undefined : f,
     nonce: jspb.Message.getFieldWithDefault(msg, 10, ""),
-    replyTo: jspb.Message.getFieldWithDefault(msg, 11, ""),
-    seenByList: jspb.Message.toObjectList(msg.getSeenByList(),
-    proto.chat.ChatSeenMessageResponse.toObject, includeInstance)
+    replyTo: jspb.Message.getFieldWithDefault(msg, 11, "")
   };
 
   if (includeInstance) {
@@ -2733,11 +2787,6 @@ proto.chat.ChatMessageResponse.deserializeBinaryFromReader = function(msg, reade
     case 11:
       var value = /** @type {string} */ (reader.readString());
       msg.setReplyTo(value);
-      break;
-    case 12:
-      var value = new proto.chat.ChatSeenMessageResponse;
-      reader.readMessage(value,proto.chat.ChatSeenMessageResponse.deserializeBinaryFromReader);
-      msg.addSeenBy(value);
       break;
     default:
       reader.skipField();
@@ -2843,14 +2892,6 @@ proto.chat.ChatMessageResponse.serializeBinaryToWriter = function(message, write
     writer.writeString(
       11,
       f
-    );
-  }
-  f = message.getSeenByList();
-  if (f.length > 0) {
-    writer.writeRepeatedMessage(
-      12,
-      f,
-      proto.chat.ChatSeenMessageResponse.serializeBinaryToWriter
     );
   }
 };
@@ -3111,51 +3152,13 @@ proto.chat.ChatMessageResponse.prototype.setReplyTo = function(value) {
 };
 
 
-/**
- * repeated ChatSeenMessageResponse seen_by = 12;
- * @return {!Array<!proto.chat.ChatSeenMessageResponse>}
- */
-proto.chat.ChatMessageResponse.prototype.getSeenByList = function() {
-  return /** @type{!Array<!proto.chat.ChatSeenMessageResponse>} */ (
-    jspb.Message.getRepeatedWrapperField(this, proto.chat.ChatSeenMessageResponse, 12));
-};
-
-
-/**
- * @param {!Array<!proto.chat.ChatSeenMessageResponse>} value
- * @return {!proto.chat.ChatMessageResponse} returns this
-*/
-proto.chat.ChatMessageResponse.prototype.setSeenByList = function(value) {
-  return jspb.Message.setRepeatedWrapperField(this, 12, value);
-};
-
-
-/**
- * @param {!proto.chat.ChatSeenMessageResponse=} opt_value
- * @param {number=} opt_index
- * @return {!proto.chat.ChatSeenMessageResponse}
- */
-proto.chat.ChatMessageResponse.prototype.addSeenBy = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 12, opt_value, proto.chat.ChatSeenMessageResponse, opt_index);
-};
-
-
-/**
- * Clears the list making it empty but non-null.
- * @return {!proto.chat.ChatMessageResponse} returns this
- */
-proto.chat.ChatMessageResponse.prototype.clearSeenByList = function() {
-  return this.setSeenByList([]);
-};
-
-
 
 /**
  * List of repeated fields within this message type.
  * @private {!Array<number>}
  * @const
  */
-proto.chat.ChatMessagesResponse.repeatedFields_ = [1];
+proto.chat.ChatMessagesResponse.repeatedFields_ = [1,2];
 
 
 
@@ -3189,7 +3192,9 @@ proto.chat.ChatMessagesResponse.prototype.toObject = function(opt_includeInstanc
 proto.chat.ChatMessagesResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     messagesList: jspb.Message.toObjectList(msg.getMessagesList(),
-    proto.chat.ChatMessageResponse.toObject, includeInstance)
+    proto.chat.ChatMessageResponse.toObject, includeInstance),
+    subscriptionsList: jspb.Message.toObjectList(msg.getSubscriptionsList(),
+    proto.chat.ChatSubscriptionResponse.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -3231,6 +3236,11 @@ proto.chat.ChatMessagesResponse.deserializeBinaryFromReader = function(msg, read
       reader.readMessage(value,proto.chat.ChatMessageResponse.deserializeBinaryFromReader);
       msg.addMessages(value);
       break;
+    case 2:
+      var value = new proto.chat.ChatSubscriptionResponse;
+      reader.readMessage(value,proto.chat.ChatSubscriptionResponse.deserializeBinaryFromReader);
+      msg.addSubscriptions(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -3266,6 +3276,14 @@ proto.chat.ChatMessagesResponse.serializeBinaryToWriter = function(message, writ
       1,
       f,
       proto.chat.ChatMessageResponse.serializeBinaryToWriter
+    );
+  }
+  f = message.getSubscriptionsList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
+      2,
+      f,
+      proto.chat.ChatSubscriptionResponse.serializeBinaryToWriter
     );
   }
 };
@@ -3306,6 +3324,44 @@ proto.chat.ChatMessagesResponse.prototype.addMessages = function(opt_value, opt_
  */
 proto.chat.ChatMessagesResponse.prototype.clearMessagesList = function() {
   return this.setMessagesList([]);
+};
+
+
+/**
+ * repeated ChatSubscriptionResponse subscriptions = 2;
+ * @return {!Array<!proto.chat.ChatSubscriptionResponse>}
+ */
+proto.chat.ChatMessagesResponse.prototype.getSubscriptionsList = function() {
+  return /** @type{!Array<!proto.chat.ChatSubscriptionResponse>} */ (
+    jspb.Message.getRepeatedWrapperField(this, proto.chat.ChatSubscriptionResponse, 2));
+};
+
+
+/**
+ * @param {!Array<!proto.chat.ChatSubscriptionResponse>} value
+ * @return {!proto.chat.ChatMessagesResponse} returns this
+*/
+proto.chat.ChatMessagesResponse.prototype.setSubscriptionsList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 2, value);
+};
+
+
+/**
+ * @param {!proto.chat.ChatSubscriptionResponse=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.chat.ChatSubscriptionResponse}
+ */
+proto.chat.ChatMessagesResponse.prototype.addSubscriptions = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.chat.ChatSubscriptionResponse, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.chat.ChatMessagesResponse} returns this
+ */
+proto.chat.ChatMessagesResponse.prototype.clearSubscriptionsList = function() {
+  return this.setSubscriptionsList([]);
 };
 
 

@@ -4,8 +4,8 @@ import { createStore, withProps } from "@ngneat/elf";
 import { AuthChangeEvent } from "@supabase/supabase-js";
 import { Model } from "../model";
 import { AccountResponse } from "../protobuf/account_pb";
-import { RoutePathsType } from "../route-paths";
 import { AccountData } from "../services/account-notification.service";
+import { RoutePathsType } from "../web/route-paths";
 import { InventoryLocation } from "./explore.model";
 
 export interface WindowState {

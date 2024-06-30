@@ -1,10 +1,10 @@
 import { PricedShippingOption } from '@medusajs/medusa/dist/types/pricing';
 import { createStore, withProps } from '@ngneat/elf';
+import { Model } from '../model';
 import {
   AddressFormErrors,
   AddressFormValues,
-} from '../components/address-form.component';
-import { Model } from '../model';
+} from '../web/components/address-form.component';
 
 export enum ShippingType {
   Standard = 'Standard',

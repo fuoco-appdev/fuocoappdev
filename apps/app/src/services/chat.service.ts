@@ -9,11 +9,14 @@ import {
     ChatMessagesResponse,
     ChatPrivateSubscriptionRequest,
     ChatResponse,
+    ChatSeenMessageResponse,
+    ChatSeenMessagesRequest,
+    ChatSeenMessagesResponse,
     ChatSubscriptionResponse,
     ChatSubscriptionsRequest,
     ChatSubscriptionsResponse,
     CreatePrivateChatRequest,
-    LastChatMessagesRequest,
+    LastChatMessagesRequest
 } from '../protobuf/chat_pb';
 import { Service } from '../service';
 import SupabaseService from './supabase.service';
@@ -88,12 +91,14 @@ class ChatService extends Service {
         chatId: string;
         limit: number;
         offset: number;
-    }): Promise<ChatMessageResponse[] | null> {
+        ignoredSubscriptionIds: string[];
+    }): Promise<ChatMessagesResponse | null> {
         const session = await SupabaseService.requestSessionAsync();
         const chatMessagesRequest = new ChatMessagesRequest({
             chatId: props.chatId,
             limit: props.limit,
-            offset: props.offset
+            offset: props.offset,
+            ignoredSubscriptionIds: props.ignoredSubscriptionIds
         });
         const response = await axios({
             method: 'post',
@@ -110,7 +115,7 @@ class ChatService extends Service {
         this.assertResponse(arrayBuffer);
 
         const chatMessagesResponse = ChatMessagesResponse.fromBinary(arrayBuffer);
-        return chatMessagesResponse.messages;
+        return chatMessagesResponse;
     }
 
 
@@ -190,6 +195,30 @@ class ChatService extends Service {
         return chatAccountSubscriptionIdsResponse.chatIds;
     }
 
+    public async requestSeenByMessagesAsync(messageIds: string[]): Promise<ChatSeenMessageResponse[]> {
+        const session = await SupabaseService.requestSessionAsync();
+        const request = new ChatSeenMessagesRequest({
+            messageIds: messageIds
+        });
+        const response = await axios({
+            method: 'post',
+            url: `${this.endpointUrl}/chat/seen-by`,
+            headers: {
+                ...this.headers,
+                'Session-Token': `${session?.access_token}`,
+            },
+            data: request.toBinary(),
+            responseType: 'arraybuffer',
+        });
+
+        const arrayBuffer = new Uint8Array(response.data);
+        this.assertResponse(arrayBuffer);
+
+        const chatSeenMessageResponse = ChatSeenMessagesResponse.fromBinary(arrayBuffer);
+        return chatSeenMessageResponse.seenMessages;
+    }
+
+
     public async requestUpsertMessageAsync(subscription: ChatSubscription, props: {
         text?: string;
         link?: string;
@@ -226,6 +255,42 @@ class ChatService extends Service {
         }
     }
 
+    public async requestInsertSeenMessageAsync(props: {
+        chatId: string;
+        accountId: string;
+        messageId: string;
+    }): Promise<void> {
+
+        const existingResponse = await SupabaseService.supabaseClient?.from('chat_seen_messages')
+            .select()
+            .eq('message_id', props.messageId)
+            .eq('account_id', props.accountId);
+
+        if (existingResponse?.error) {
+            console.error('Error checking for existing record:', existingResponse?.error)
+            return
+        }
+
+        if (!existingResponse?.data || existingResponse?.data.length > 0) {
+            return;
+        }
+
+        const date = new Date(Date.now());
+        const response = await SupabaseService.supabaseClient
+            ?.from('chat_seen_messages')
+            .insert([{
+                chat_id: props.chatId,
+                account_id: props.accountId,
+                message_id: props.messageId,
+                seen_at: date.toUTCString()
+            }])
+            .select();
+
+        if (response?.error) {
+            console.error("Can't upsert chat seen message:", response.error);
+        }
+    }
+
     public subscribeToChats(chatIds: string[], onPayload: (payload: Record<string, any>) => void): RealtimeChannel | undefined {
         return SupabaseService.supabaseClient?.channel('chat-changes')
             .on(
@@ -249,6 +314,21 @@ class ChatService extends Service {
                     event: '*',
                     schema: 'public',
                     table: 'chat_message',
+                    filter: `chat_id=in.(${chatIds.join(',')})`
+                },
+                onPayload,
+            )
+            .subscribe();
+    }
+
+    public subscribeToSeenMessage(chatIds: string[], onPayload: (payload: Record<string, any>) => void): RealtimeChannel | undefined {
+        return SupabaseService.supabaseClient?.channel('chat-seen-message-changes')
+            .on(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'chat_seen_messages',
                     filter: `chat_id=in.(${chatIds.join(',')})`
                 },
                 onPayload,

@@ -8,14 +8,6 @@ import {
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import { createStore, withProps } from '@ngneat/elf';
 import { User } from '@supabase/supabase-js';
-import {
-  ProfileFormErrors,
-  ProfileFormValues,
-} from '../components/account-profile-form.component';
-import {
-  AddressFormErrors,
-  AddressFormValues,
-} from '../components/address-form.component';
 import { Model } from '../model';
 import { AccountFollowerResponse } from '../protobuf/account-follower_pb';
 import { AccountResponse } from '../protobuf/account_pb';
@@ -23,6 +15,14 @@ import { CustomerResponse } from '../protobuf/customer_pb';
 import { InterestResponse } from '../protobuf/interest_pb';
 import { ProductLikesMetadataResponse } from '../protobuf/product-like_pb';
 import { Geocoding, GeocodingFeature } from '../services/mapbox.service';
+import {
+  ProfileFormErrors,
+  ProfileFormValues,
+} from '../web/components/account-profile-form.component';
+import {
+  AddressFormErrors,
+  AddressFormValues,
+} from '../web/components/address-form.component';
 
 export interface AccountDocument {
   id?: string;

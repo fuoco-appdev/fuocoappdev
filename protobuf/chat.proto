@@ -18,6 +18,7 @@ message ChatMessagesRequest {
     string chat_id = 1;
     uint32 limit = 2;
     uint32 offset = 3;
+    repeated string ignored_subscription_ids = 4;
 }
 
 message ChatSeenMessageRequest {
@@ -76,11 +77,11 @@ message ChatMessageResponse {
     repeated string file_url_encrypted = 9;
     string nonce = 10;
     string reply_to = 11;
-    repeated ChatSeenMessageResponse seen_by = 12;
 }
 
 message ChatMessagesResponse {
     repeated ChatMessageResponse messages = 1;
+    repeated ChatSubscriptionResponse subscriptions = 2;
 }
 
 message ChatPrivateResponse {

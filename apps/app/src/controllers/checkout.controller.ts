@@ -11,14 +11,14 @@ import {
 } from "@stripe/stripe-js";
 import { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { Subscription, filter, firstValueFrom, take } from "rxjs";
-import {
-  AddressFormErrors,
-  AddressFormValues,
-} from "../components/address-form.component";
 import { Controller } from "../controller";
 import { CheckoutModel, ProviderType } from "../models/checkout.model";
 import MedusaService from "../services/medusa.service";
 import SupabaseService from "../services/supabase.service";
+import {
+  AddressFormErrors,
+  AddressFormValues,
+} from "../web/components/address-form.component";
 import AccountController from "./account.controller";
 import CartController from "./cart.controller";
 import ExploreController from "./explore.controller";
@@ -489,7 +489,7 @@ class CheckoutController extends Controller {
     return undefined;
   }
 
-  private async initializeAsync(_renderCount: number): Promise<void> {}
+  private async initializeAsync(_renderCount: number): Promise<void> { }
 
   private async loadAsync(_renderCount: number): Promise<void> {
     await this.requestShippingOptions();
@@ -578,9 +578,9 @@ class CheckoutController extends Controller {
       if (
         value?.shipping_address &&
         Object.keys(
-            (await this.getAddressFormErrorsAsync(this._model.shippingForm)) ??
-              {},
-          ).length <= 0
+          (await this.getAddressFormErrorsAsync(this._model.shippingForm)) ??
+          {},
+        ).length <= 0
       ) {
         this._model.shippingFormComplete = true;
       }
