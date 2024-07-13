@@ -1,7 +1,7 @@
 {
     "name": "ai",
     "$schema": "../../node_modules/nx/schemas/project-schema.json",
-    "sourceRoot": "apps/ai/server/src",
+    "sourceRoot": "apps/ai/server",
     "projectType": "application",
     "targets": {
       "install": {

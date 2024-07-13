@@ -9,6 +9,7 @@
     "build-web-server": "npx nx run app:build-server:development --watch",
     "build-web-ssr": "npx nx run app:build-ssr:development",
     "build-cli": "npx nx run cli:build:development --watch",
+    "start-ai-server": "cd ./apps/ai/server && python -m uvicorn main:app --reload",
     "start-api": "cd ./apps/api && deno run --allow-net --allow-env --allow-read --watch src/serve.ts",
     "start-electron": "npx nx run app:serve-electron",
     "start-ssr": "nodemon ./dist/apps/app/ssr/main.js",
