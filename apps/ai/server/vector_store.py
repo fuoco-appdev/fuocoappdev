@@ -30,12 +30,14 @@ except Exception as e:
     logger.error(f"faiss import failed with error: {e}")
 
 class VectorStore():
+    @classmethod
     def create_vector_store(cls, vector_store, document_embedder) -> langchain_core.vectorstores.VectorStore:
         if vector_store is None:
             return cls.create_vector_store_langchain(document_embedder)
         
         return vector_store
     
+    @classmethod
     def update_vector_store(cls, file_path, vector_client, embedder, config_name):
         # Attempt to create collection, catch exception if it already exists
         logger.info("[Step 1/4] Creating/loading vector store")
@@ -57,6 +59,7 @@ class VectorStore():
         vector_client.add_documents(documents)
         logger.info("[Step 4/4] Saved vector store!")
 
+    @classmethod
     def load_documents(file):
         raw_documents = []
 
@@ -76,6 +79,7 @@ class VectorStore():
             raw_documents.extend(unstructured_docs)  # 'extend' is used here to add elements of the list individually
         return raw_documents
 
+    @classmethod
     def split_text(documents):
         text_splitter = RecursiveCharacterTextSplitter(
             # Set a really small chunk size, just to show.
@@ -134,6 +138,7 @@ class VectorStore():
         logger.info("Vector store created and saved.")
         return vector_store
     
+    @classmethod
     def get_docs_vector_store_langchain(cls, vector_store: langchain_core.vectorstores.VectorStore) -> List[str]:
         config = ServerConfigWizard.get_config()
 
@@ -165,6 +170,7 @@ class VectorStore():
             logger.error(f"Error occurred while retrieving documents: {e}")
         return []
     
+    @classmethod
     def del_docs_vector_store_langchain(
         cls, 
         vector_store: langchain_core.vectorstores.VectorStore, 

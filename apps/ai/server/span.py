@@ -14,6 +14,7 @@ import os
 import time
 
 class Span():
+    @classmethod
     def create_attribute(cls, span: opentelemetry.trace.span.Span, span_attributes: Dict[str, Any], logger: Logger, span_end: bool = False) -> None:
         allowed_types = (bool, str, bytes, int, float)
 
@@ -33,9 +34,11 @@ class Span():
                 value = str(value)
             span.set_attribute(attribute, value)
     
+    @classmethod
     def create_event(cls, span: opentelemetry.trace.span.Span, event_name: str, span_event: Dict[str, Any]) -> None:
         span.add_event(str(event_name), span_event)
 
+    @classmethod
     def create_error(cls, span: opentelemetry.trace.span.Span, error: BaseException) -> None:
         span.set_status(Status(StatusCode.ERROR))
         span.record_exception(error)

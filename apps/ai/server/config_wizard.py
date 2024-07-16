@@ -166,7 +166,7 @@ class ConfigWizard(JSONWizard, YAMLWizard):
         # parse the file
         if data:
             try:
-                config = cls.from_dict(data)
+                config = cls.create_from_dict(data)
             except errors.MissingFields as err:
                 cls.logger.error(
                     "Configuration is missing required fields: \n%s", str(err)

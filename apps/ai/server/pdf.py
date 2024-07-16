@@ -12,6 +12,7 @@ from config_wizards.server_config_wizard import ServerConfigWizard
 from llm import LLM
 
 class PDF():
+    @classmethod
     def get_documents(cls, filepath):
         all_pdf_documents = []
         ongoing_tables = {}
@@ -70,6 +71,7 @@ class PDF():
         f.close()
         return all_pdf_documents
     
+    @classmethod
     def parse_via_ocr(cls, filename, page, page_number):
         ocr_docs = []
         ocr_image = page.to_image(resolution=109)
@@ -95,6 +97,7 @@ class PDF():
         ocr_docs.append(Document(page_content="This is a page with text: " + ocr_text, metadata=ocr_metadata))
         return ocr_docs
     
+    @classmethod
     def process_text_blocks(cls, text_blocks):
         char_count_threshold = 500
         current_group = []
@@ -121,6 +124,7 @@ class PDF():
 
         return grouped_blocks
     
+    @classmethod
     def parse_all_images(cls, filename, page, page_number, text_blocks):
         image_docs = []
         image_list = page.images
@@ -174,6 +178,7 @@ class PDF():
 
         return image_docs
     
+    @classmethod
     def extract_text_around_item(
             cls, 
             text_blocks, 
@@ -200,6 +205,7 @@ class PDF():
 
         return before_text, after_text
     
+    @classmethod
     def parse_all_tables(
         cls,
         filename, 
@@ -260,12 +266,14 @@ class PDF():
                         print(f"Skipping Table {table_num} due to Exception {e}")
         return table_docs, table_bboxes, ongoing_tables
     
+    @classmethod
     def is_bbox_overlapping(cls, bbox1, bbox2):
         return (bbox1[0]<bbox2[2] and bbox1[2]>bbox2[0] and bbox1[1]>bbox2[3] and bbox1[3]<bbox2[1])
     
+    @classmethod
     @langchain_instrumentation_method_wrapper
-    def is_graph(cls, cb_handler, image_path):
-        neva = LLM("ai-neva-22b", cb_handler=cb_handler)
+    def is_graph(cls, callback_handler, image_path):
+        neva = LLM("ai-neva-22b", callback_handler=callback_handler)
         b64_string = cls.get_b64_image(image_path)
         res = neva.multimodal_invoke(
             b64_string, 
@@ -278,9 +286,10 @@ class PDF():
             return True
         else:
             return False
-        
+
+    @classmethod   
     @langchain_instrumentation_method_wrapper
-    def process_graph(cls, cb_handler, image_path):
+    def process_graph(cls, callback_handler, image_path):
         deplot = LLM("ai-google-deplot")
         b64_string = cls.get_b64_image(image_path)
         res = deplot.multimodal_invoke(b64_string)
@@ -289,7 +298,7 @@ class PDF():
         mixtral = LLM(
             model_name=settings.llm.model_name, 
             is_response_generator=True, 
-            cb_handler=cb_handler
+            callback_handler=callback_handler
         )
         response = mixtral.chat_with_prompt(
             system_prompt="Your responsibility is to explain charts. You are an expert in describing the responses of linearized tables into plain English text for LLMs to use.",
@@ -300,6 +309,7 @@ class PDF():
             full_response += chunk
         return full_response
     
+    @classmethod
     def get_b64_image(cls, image_path):
         image = Image.open(image_path).convert("RGB")
         buffered = BytesIO()
@@ -307,6 +317,7 @@ class PDF():
         b64_string = base64.b64encode(buffered.getvalue()).decode("utf-8")
         return b64_string
     
+    @classmethod
     def text_to_table(cls, table_text):
         columns = []
         rows = []
@@ -322,6 +333,7 @@ class PDF():
             print(f"Exception occured while converting extracted table text to Dataframe object : {e}")
         return pd.DataFrame(rows,columns=columns)
     
+    @classmethod
     def extract_text_around_item(
         cls,
         text_blocks, 
@@ -348,6 +360,7 @@ class PDF():
 
         return before_text, after_text
     
+    @classmethod
     def stringify_table(cls, table_text):
         ans = ""
         for i in range(len(table_text)):

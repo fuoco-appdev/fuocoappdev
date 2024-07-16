@@ -6,6 +6,7 @@ from pptx import Presentation
 from pdf import PDF
 
 class PPT():
+    @classmethod
     def process_file(cls, ppt_path):
         pdf_path = os.path.join(os.getcwd(), "multimodal/ppt_references", os.path.basename(ppt_path).replace('.pptx', '.pdf').replace('.ppt', '.pdf'))
         cls.convert_ppt_to_pdf(ppt_path)
@@ -37,6 +38,7 @@ class PPT():
 
         return processed_data
     
+    @classmethod
     def convert_ppt_to_pdf(ppt_path):
         base_name = os.path.basename(ppt_path)
         ppt_name_without_ext = os.path.splitext(base_name)[0].replace(" ", "_")
@@ -61,6 +63,7 @@ class PPT():
 
         return pdf_path
     
+    @classmethod
     def convert_pdf_to_images(pdf_path):
         doc = pdf_open(pdf_path)
 
@@ -84,6 +87,7 @@ class PPT():
         doc.close()
         return image_paths
     
+    @classmethod
     def extract_text_and_notes_from_ppt(ppt_path):
         prs = Presentation(ppt_path)
         text_and_notes = []

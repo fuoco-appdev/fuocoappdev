@@ -1,3 +1,4 @@
+import os
 import torch
 import logging
 import langchain.llms.base
@@ -21,7 +22,7 @@ class LLM:
             model_name="mixtral_8x7b", 
             model_type="NVIDIA", 
             is_response_generator=False, 
-            cb_handler=BaseCallbackHandler, 
+            callback_handler=BaseCallbackHandler, 
             **kwargs
         ):
         self.llm = self.create_llm(
@@ -30,13 +31,13 @@ class LLM:
             is_response_generator, 
             **kwargs
         )
-        self.cb_handler = cb_handler
+        self.callback_handler = callback_handler
 
     def chat_with_prompt(self, system_prompt, prompt):
         langchain_prompt = ChatPromptTemplate.from_messages([("system", system_prompt), ("user", "{input}")])
         chain = langchain_prompt | self.llm | StrOutputParser()
         logger.info(f"Prompt used for response generation: {langchain_prompt.format(input=prompt)}")
-        response = chain.stream({"input": prompt}, config={"callbacks": [self.cb_handler]})
+        response = chain.stream({"input": prompt}, config={"callbacks": [self.callback_handler]})
         return response
 
     def multimodal_invoke(self, b64_string, steer=False, creativity=0, quality=9, complexity=0, verbosity=8):
@@ -47,12 +48,23 @@ class LLM:
             ]
         )
         if steer:
-            return self.llm.invoke([message], labels={"creativity": creativity, "quality": quality, "complexity": complexity, "verbosity": verbosity}, callbacks=[self.cb_handler])
+            return self.llm.invoke([message], labels={"creativity": creativity, "quality": quality, "complexity": complexity, "verbosity": verbosity}, callbacks=[self.callback_handler])
         else:
             return self.llm.invoke([message])
-        
-    def create_llm(cls, model_name, model_type="NVIDIA", is_response_generator=False, **kwargs):
-        # Use LLM to generate answer
+
+    @classmethod    
+    @convert_to_hashable_args_wrapper
+    @lru_cache()
+    def get_llm(cls, model_name, callback_handler, is_response_generator=False, **kwargs):
+        return LLM(
+            model_name=model_name, 
+            is_response_generator=is_response_generator, 
+            callback_handler=callback_handler,
+            **kwargs
+        )
+    
+    @classmethod
+    def create_llm(cls, model_name: str, model_type="NVIDIA", is_response_generator=False, **kwargs):
         if model_type == "NVIDIA":
             llm = cls.get_nvidia_llm(model_name, is_response_generator, **kwargs)
         elif model_type == "LOCAL":
@@ -63,7 +75,8 @@ class LLM:
 
         return llm
     
-    def get_nvidia_llm(cls, model_name, is_response_generator: bool = False, **kwargs):
+    @classmethod
+    def get_nvidia_llm(cls, model_name: str, is_response_generator: bool = False, **kwargs):
         if is_response_generator:
             return cls.get_nvidia_llm_with_settings(**kwargs)
         else:
@@ -71,9 +84,10 @@ class LLM:
                 model=model_name,
                 temperature = kwargs.get('temperature', None),
                 top_p = kwargs.get('top_p', None),
-                max_tokens = kwargs.get('max_tokens', None)
+                max_tokens = kwargs.get('max_tokens', None),
             )
-
+        
+    @classmethod
     def get_local_llm(cls, model_path, **kwargs):
         tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
         model = AutoModelForCausalLM.from_pretrained(
@@ -95,6 +109,7 @@ class LLM:
 
         return HuggingFacePipeline(pipeline=pipe)
     
+    @classmethod
     @convert_to_hashable_args_wrapper
     @lru_cache()
     def get_nvidia_llm_with_settings(cls, **kwargs) -> langchain.llms.base.LLM | langchain_core.language_models.chat_models.SimpleChatModel:
@@ -107,23 +122,27 @@ class LLM:
                 logger.warning(f"The following parameters from kwargs are not supported: {unused_params} for {settings.llm.model_engine}")
             if settings.llm.server_url:
                 logger.info(f"Using llm model {settings.llm.model_name} hosted at {settings.llm.server_url}")
-                return ChatNVIDIA(base_url=f"http://{settings.llm.server_url}/v1",
-                                model=settings.llm.model_name,
-                                temperature = kwargs.get('temperature', None),
-                                top_p = kwargs.get('top_p', None),
-                                max_tokens = kwargs.get('max_tokens', None))
+                return ChatNVIDIA(
+                    base_url=f"http://{settings.llm.server_url}/v1",
+                    model=settings.llm.model_name,
+                    temperature = kwargs.get('temperature', None),
+                    top_p = kwargs.get('top_p', None),
+                    max_tokens = kwargs.get('max_tokens', None),
+                )
             else:
                 logger.info(f"Using llm model {settings.llm.model_name} from api catalog")
-                return ChatNVIDIA(model=settings.llm.model_name,
-                                temperature = kwargs.get('temperature', None),
-                                top_p = kwargs.get('top_p', None),
-                                max_tokens = kwargs.get('max_tokens', None))
+                return ChatNVIDIA(
+                    model=settings.llm.model_name,
+                    temperature = kwargs.get('temperature', None),
+                    top_p = kwargs.get('top_p', None),
+                    max_tokens = kwargs.get('max_tokens', None),
+                )
         else:
             raise RuntimeError("Unable to find any supported Large Language Model server. Supported engine name is nvidia-ai-endpoints.")
         
 
 if __name__ == "__main__":
-    llm = LLM.create_llm("gpt2", "LOCAL")
+    llm = LLM.get_llm("gpt2", "LOCAL")
 
     from langchain_core.output_parsers import StrOutputParser
     from langchain_core.prompts import ChatPromptTemplate

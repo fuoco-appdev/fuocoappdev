@@ -3,12 +3,11 @@ from config_wizards.server_config_wizard import ServerConfigWizard
 from abc import ABC, abstractmethod
 from vector_store import VectorStore
 from embeddings import Embeddings
-from typing import Generator, List, Dict, Any
+from typing import Generator, List, Dict, Any, Iterator
 from llm import LLM
 import os
 import logging
 logger = logging.getLogger(__name__)
-
 
 @langchain_instrumentation_class_wrapper
 class RAG(ABC):
@@ -24,7 +23,6 @@ class RAG(ABC):
             self.doc_store = None
             logger.info(f"Unable to connect to vector store during initialization: {e}")
 
-        
     def ingest_docs(self, file_path: str, filename: str):
         if not filename.endswith((".pdf", ".pptx")):
             raise ValueError(f"{filename} is not a valid PDF/PPTX file. Only PDF/PPTX files are supported for document parsing.")
@@ -51,28 +49,26 @@ class RAG(ABC):
         query: str, 
         chat_history: List["Message"], 
         **kwargs
-    ):
-        # TODO integrate chat_history
-        logger.info("Using llm to generate response directly without knowledge base.")
-        response = LLM.create_llm(
-            model_name=self.settings.llm.model_name, 
-            cb_handler=self.cb_handler, 
+    ) -> Generator[str, None, None]:
+        model_name: str = self.settings.llm.model_name
+        response: LLM = LLM.get_llm(
+            model_name=model_name, 
+            callback_handler=self.callback_handler, 
             is_response_generator=True, 
             **kwargs
-        ).chat_with_prompt(
+        )
+        generator = response.chat_with_prompt(
             self.settings.prompts.chat_template, 
             query
         )
-        return response
+        return generator
 
     def get_rag_chain(
         self, 
         query: str, 
         chat_history: List["Message"], 
         **kwargs
-    ):
-        logger.info("Using rag to generate response from document")
-        # TODO integrate chat_history
+    ) -> Generator[str, None, None]:
         try:
             vector_store = VectorStore.create_vector_store(
                 self.doc_store, 
@@ -89,7 +85,7 @@ class RAG(ABC):
                         })
                     docs = retriever.invoke(
                         input=query, 
-                        config={"callbacks":[self.cb_handler]}
+                        config={"callbacks":[self.callback_handler]}
                     )
                     if not docs:
                         logger.warning("Retrieval failed to get any relevant context")
@@ -98,20 +94,21 @@ class RAG(ABC):
                     augmented_prompt = "Relevant documents:" + docs + "\n\n[[QUESTION]]\n\n" + query
                     system_prompt = self.settings.prompts.rag_template
                     logger.info(f"Formulated prompt for RAG chain: {system_prompt}\n{augmented_prompt}")
-                    response = LLM.create_llm(
+                    response: LLM = LLM.get_llm(
                         model_name=self.settings.llm.model_name, 
-                        cb_handler=self.cb_handler, 
+                        callback_handler=self.callback_handler, 
                         is_response_generator=True, 
                         **kwargs
-                    ).chat_with_prompt(
+                    )
+                    generator = response.chat_with_prompt(
                         self.settings.prompts.rag_template, 
                         augmented_prompt
                     )
-                    return response
+                    return generator
                 except Exception as e:
                     logger.info(f"Skipping similarity score as it's not supported by retriever")
                     retriever = vector_store.as_retriever()
-                    docs = retriever.invoke(input=query, config={"callbacks":[self.cb_handler]})
+                    docs = retriever.invoke(input=query, config={"callbacks":[self.callback_handler]})
                     if not docs:
                         logger.warning("Retrieval failed to get any relevant context")
                         return iter(["No response generated from LLM, make sure your query is relavent to the ingested document."])
@@ -120,16 +117,17 @@ class RAG(ABC):
                     augmented_prompt = "Relevant documents:" + docs + "\n\n[[QUESTION]]\n\n" + query
                     system_prompt = self.settings.prompts.rag_template
                     logger.info(f"Formulated prompt for RAG chain: {system_prompt}\n{augmented_prompt}")
-                    response = LLM.create_llm(
+                    response: LLM = LLM.get_llm(
                         model_name=self.settings.llm.model_name, 
-                        cb_handler=self.cb_handler, 
+                        callback_handler=self.callback_handler, 
                         is_response_generator=True, 
                         **kwargs
-                    ).chat_with_prompt(
+                    )
+                    generator = response.chat_with_prompt(
                         self.settings.prompts.rag_template, 
                         augmented_prompt
                     )
-                    return response
+                    return generator
         except Exception as e:
             logger.warning(f"Failed to generate response due to exception {e}")
         logger.warning(
@@ -151,7 +149,7 @@ class RAG(ABC):
             sources = retriever.invoke(
                 input=content, 
                 limit=self.settings.retriever.top_k, 
-                config={"callbacks":[self.cb_handler]}
+                config={"callbacks":[self.callback_handler]}
             )
             output = []
             for every_chunk in sources:

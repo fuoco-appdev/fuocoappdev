@@ -14,6 +14,7 @@ except ImportError:
     PSUTIL_AVAILABLE = False
 
 class SystemMetrics():
+    @classmethod
     def get_system_metrics(cls) -> Dict[str, Union[float, dict]]:
         global PSUTIL_AVAILABLE
         if not PSUTIL_AVAILABLE:

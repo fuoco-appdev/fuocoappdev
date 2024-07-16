@@ -140,9 +140,17 @@ async def generate_answer(request: Request, prompt: PromptModel) -> StreamingRes
         generator = None
         if prompt.use_knowledge_base:
             logger.info("Knowledge base is enabled. Using rag chain for response generation.")
-            generator = rag.rag_chain(query=last_user_message, chat_history=chat_history, **llm_settings)
+            generator = rag.get_rag_chain(
+                query=last_user_message, 
+                chat_history=chat_history, 
+                **llm_settings
+            )
         else:
-            generator = rag.llm_chain(query=last_user_message, chat_history=chat_history, **llm_settings)
+            generator = rag.get_llm_chain(
+                query=last_user_message,
+                chat_history=chat_history,
+                **llm_settings
+            )
 
         def response_generator():
             response_id = str(uuid4())

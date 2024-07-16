@@ -13,7 +13,7 @@ import os
 @dataclass(frozen=True)
 class ServerConfigWizard(ConfigWizard):
     vector_store: VectorStoreConfigWizard = config_field(
-        "vector_store",
+        "vector-store",
         env=False,
         help_text="The configuration of the vector db connection.",
         default=VectorStoreConfigWizard(),
@@ -25,7 +25,7 @@ class ServerConfigWizard(ConfigWizard):
         default=LLMConfigWizard(),
     )
     text_splitter: TextSplitterConfigWizard = config_field(
-        "text_splitter",
+        "text-splitter",
         env=False,
         help_text="The configuration for text splitter.",
         default=TextSplitterConfigWizard(),

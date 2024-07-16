@@ -5,7 +5,7 @@ from config_field import config_field
 @dataclass(frozen=True)
 class PromptsConfigWizard(ConfigWizard):
     chat_template: str = config_field(
-        "chat_template",
+        "chat-template",
         default=(
             "You are a helpful, respectful and honest assistant."
             "Always answer as helpfully as possible, while being safe."
@@ -14,7 +14,7 @@ class PromptsConfigWizard(ConfigWizard):
         help_text="Prompt template for chat.",
     )
     rag_template: str = config_field(
-        "rag_template",
+        "rag-template",
         default=(
             "<s>[INST] <<SYS>>"
             "Use the following context to answer the user's question. If you don't know the answer,"
@@ -26,7 +26,7 @@ class PromptsConfigWizard(ConfigWizard):
         help_text="Prompt template for rag.",
     )
     multi_turn_rag_template: str = config_field(
-        "multi_turn_rag_template",
+        "multi-turn-rag-template",
         default=(
             "You are a document chatbot. Help the user as they ask questions about documents."
             " User message just asked: {input}\n\n"

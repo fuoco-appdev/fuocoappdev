@@ -6,7 +6,7 @@ vector_store:
 
 llm:
   server_url: ''
-  model_name: 'ensemble'
+  model_name: 'mixtral_8x7b'
   model_engine: 'nvidia-ai-endpoints'
   model_name_pandas_ai: 'ai-mixtral-8x7b-instruct'
 
