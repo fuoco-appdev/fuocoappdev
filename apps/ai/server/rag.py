@@ -51,15 +51,17 @@ class RAG(ABC):
         **kwargs
     ) -> Generator[str, None, None]:
         model_name: str = self.settings.llm.model_name
-        response: LLM = LLM.get_llm(
+        llm: LLM = LLM.get_llm(
             model_name=model_name, 
             callback_handler=self.callback_handler, 
             is_response_generator=True, 
             **kwargs
         )
-        generator = response.chat_with_prompt(
+        generator = llm.chat_with_prompt(
             self.settings.prompts.chat_template, 
-            query
+            {
+                "input": query
+            }
         )
         return generator
 
@@ -77,15 +79,13 @@ class RAG(ABC):
             if vector_store:
                 try:
                     logger.info(f"Getting retrieved top k values: {self.settings.retriever.top_k} with confidence threshold: {self.settings.retriever.score_threshold}")
-                    retriever = vector_store.as_retriever(
-                        search_type="similarity_score_threshold",
-                        search_kwargs={
+                    docs = vector_store.similarity_search_with_score(
+                        input=query, 
+                        config={"callbacks":[self.callback_handler]},
+                        kwargs={
                             "score_threshold": self.settings.retriever.score_threshold,
                             "k": self.settings.retriever.top_k
-                        })
-                    docs = retriever.invoke(
-                        input=query, 
-                        config={"callbacks":[self.callback_handler]}
+                        }
                     )
                     if not docs:
                         logger.warning("Retrieval failed to get any relevant context")
@@ -94,42 +94,54 @@ class RAG(ABC):
                     augmented_prompt = "Relevant documents:" + docs + "\n\n[[QUESTION]]\n\n" + query
                     system_prompt = self.settings.prompts.rag_template
                     logger.info(f"Formulated prompt for RAG chain: {system_prompt}\n{augmented_prompt}")
-                    response: LLM = LLM.get_llm(
+                    llm: LLM = LLM.get_llm(
                         model_name=self.settings.llm.model_name, 
                         callback_handler=self.callback_handler, 
                         is_response_generator=True, 
                         **kwargs
                     )
-                    generator = response.chat_with_prompt(
+                    generator = llm.chat_with_prompt(
                         self.settings.prompts.rag_template, 
-                        augmented_prompt
+                        {
+                            "input": augmented_prompt,
+                            "query": query,
+                            "context": docs
+                        }
                     )
                     return generator
                 except Exception as e:
                     logger.info(f"Skipping similarity score as it's not supported by retriever")
                     retriever = vector_store.as_retriever()
                     docs = retriever.invoke(input=query, config={"callbacks":[self.callback_handler]})
+
                     if not docs:
                         logger.warning("Retrieval failed to get any relevant context")
                         return iter(["No response generated from LLM, make sure your query is relavent to the ingested document."])
+                    
                     docs=[doc.page_content for doc in docs]
                     docs = " ".join(docs)
                     augmented_prompt = "Relevant documents:" + docs + "\n\n[[QUESTION]]\n\n" + query
                     system_prompt = self.settings.prompts.rag_template
                     logger.info(f"Formulated prompt for RAG chain: {system_prompt}\n{augmented_prompt}")
-                    response: LLM = LLM.get_llm(
+                    llm: LLM = LLM.get_llm(
                         model_name=self.settings.llm.model_name, 
                         callback_handler=self.callback_handler, 
                         is_response_generator=True, 
                         **kwargs
                     )
-                    generator = response.chat_with_prompt(
+                    generator = llm.chat_with_prompt(
                         self.settings.prompts.rag_template, 
-                        augmented_prompt
+                        {
+                            "input": augmented_prompt,
+                            "query": query,
+                            "context": docs
+                        }
                     )
+
                     return generator
         except Exception as e:
             logger.warning(f"Failed to generate response due to exception {e}")
+
         logger.warning(
             "No response generated from LLM, make sure you've ingested document."
         )

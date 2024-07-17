@@ -30,8 +30,6 @@ class ChatService:
         }
         headers = {
             **carrier,
-            "accept": "application/json",
-            "Content-Type": "application/json"
         }
         url = f"{self._server_url}/search"
         logger.debug(
@@ -53,7 +51,7 @@ class ChatService:
                 response = request.json()
                 return cast(List[Dict[str, Union[str, float]]], response)
         except Exception as e:
-            logger.error(f"Failed to get response from /documentSearch endpoint of chain-server. Error details: {e}. Refer to chain-server logs for details.")
+            logger.error(f"Failed to get response from /search endpoint of chain-server. Error details: {e}. Refer to chain-server logs for details.")
             return cast(List[Dict[str, Union[str, float]]], [])
         
     @tracer_predict_instrumentation_wrapper
@@ -191,10 +189,10 @@ class ChatService:
                 timeout=600
             )
             json_response = json.loads(response.content)
-            if json_response.status_code == 500:
-                raise ValueError(f"{json_response.json().get('message', 'Failed to get uploaded documents')}")
+            if response.status_code == 500:
+                raise ValueError(f"{response.json().get('message', 'Failed to get uploaded documents')}")
             else:
-                uploaded_files=response['documents']
+                uploaded_files=json_response['documents']
         except ConnectionError as e:
             # Avoid playground crash when chain server starts after rag-playground
             logger.error(f"Failed to connect /documents endpoint of chain-server. Error details: {e}.")

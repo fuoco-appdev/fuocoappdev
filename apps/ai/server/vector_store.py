@@ -60,7 +60,7 @@ class VectorStore():
         logger.info("[Step 4/4] Saved vector store!")
 
     @classmethod
-    def load_documents(file):
+    def load_documents(cls, file):
         raw_documents = []
 
         logger.info(f"Loading document: {file}")
@@ -80,7 +80,7 @@ class VectorStore():
         return raw_documents
 
     @classmethod
-    def split_text(documents):
+    def split_text(cls, documents):
         text_splitter = RecursiveCharacterTextSplitter(
             # Set a really small chunk size, just to show.
             chunk_size = 1000,
@@ -122,7 +122,7 @@ class VectorStore():
             )
         elif config.vector_store.name == "milvus":
             if not collection_name:
-                collection_name = os.getenv("COLLECTION_NAME", "vector_db")
+                collection_name = os.getenv("COLLECTION_NAME", "nvidia_api_catalog")
             
             logger.info(f"Using milvus collection: {collection_name}")
             url = urlparse(config.vector_store.url)
@@ -144,10 +144,9 @@ class VectorStore():
 
         try:
             # No API availbe in LangChain for listing the docs, thus usig its private _dict
-            extract_filename = lambda metadata : os.path.splitext(os.path.basename(metadata['source']))[0]
             if config.vector_store.name == "faiss":
                 in_memory_doc_store = vector_store.docstore._dict
-                filenames = [extract_filename(doc.metadata) for doc in in_memory_doc_store.values()]
+                filenames = [doc.metadata['source'] for doc in in_memory_doc_store.values()]
                 filenames = list(set(filenames))
                 return filenames
             elif config.vector_store.name == "pgvector":
@@ -158,13 +157,13 @@ class VectorStore():
                         vector_store.EmbeddingStore.document, 
                         vector_store.EmbeddingStore.cmetadata
                     ).all()
-                    filenames = set([extract_filename(metadata) for _, _, metadata in embedding_doc_store if metadata])
+                    filenames = set([metadata['source'] for _, _, metadata in embedding_doc_store if metadata])
                     return filenames
             elif config.vector_store.name == "milvus":
                 # Getting all the ID's > 0
                 if vector_store.col:
                     milvus_data = vector_store.col.query(expr="pk >= 0", output_fields=["pk","source", "text"])
-                    filenames = set([extract_filename(metadata) for metadata in milvus_data])
+                    filenames = set([metadata['source'] for metadata in milvus_data])
                     return filenames
         except Exception as e:
             logger.error(f"Error occurred while retrieving documents: {e}")

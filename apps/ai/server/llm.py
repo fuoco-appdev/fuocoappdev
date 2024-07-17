@@ -6,6 +6,7 @@ import langchain_core.language_models.chat_models
 logger = logging.getLogger(__name__)
 
 from functools import lru_cache, wraps
+from typing import TYPE_CHECKING, Callable, List, Optional, Dict
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 from langchain_community.llms import HuggingFacePipeline
 from langchain.callbacks.base import BaseCallbackHandler
@@ -19,7 +20,7 @@ from config_wizards.server_config_wizard import ServerConfigWizard
 class LLM:
     def __init__(
             self, 
-            model_name="mixtral_8x7b", 
+            model_name="mistralai/mixtral-8x7b-instruct-v0.1", 
             model_type="NVIDIA", 
             is_response_generator=False, 
             callback_handler=BaseCallbackHandler, 
@@ -33,11 +34,10 @@ class LLM:
         )
         self.callback_handler = callback_handler
 
-    def chat_with_prompt(self, system_prompt, prompt):
+    def chat_with_prompt(self, system_prompt, input: Dict):
         langchain_prompt = ChatPromptTemplate.from_messages([("system", system_prompt), ("user", "{input}")])
         chain = langchain_prompt | self.llm | StrOutputParser()
-        logger.info(f"Prompt used for response generation: {langchain_prompt.format(input=prompt)}")
-        response = chain.stream({"input": prompt}, config={"callbacks": [self.callback_handler]})
+        response = chain.stream(input, config={"callbacks": [self.callback_handler]})
         return response
 
     def multimodal_invoke(self, b64_string, steer=False, creativity=0, quality=9, complexity=0, verbosity=8):
@@ -76,7 +76,7 @@ class LLM:
         return llm
     
     @classmethod
-    def get_nvidia_llm(cls, model_name: str, is_response_generator: bool = False, **kwargs):
+    def get_nvidia_llm(cls, model_name: str, is_response_generator: bool = False, **kwargs) -> langchain.llms.base.LLM | langchain_core.language_models.chat_models.SimpleChatModel:
         if is_response_generator:
             return cls.get_nvidia_llm_with_settings(**kwargs)
         else:
@@ -122,6 +122,7 @@ class LLM:
                 logger.warning(f"The following parameters from kwargs are not supported: {unused_params} for {settings.llm.model_engine}")
             if settings.llm.server_url:
                 logger.info(f"Using llm model {settings.llm.model_name} hosted at {settings.llm.server_url}")
+                
                 return ChatNVIDIA(
                     base_url=f"http://{settings.llm.server_url}/v1",
                     model=settings.llm.model_name,
@@ -131,6 +132,7 @@ class LLM:
                 )
             else:
                 logger.info(f"Using llm model {settings.llm.model_name} from api catalog")
+                
                 return ChatNVIDIA(
                     model=settings.llm.model_name,
                     temperature = kwargs.get('temperature', None),

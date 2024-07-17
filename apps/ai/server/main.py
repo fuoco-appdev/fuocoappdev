@@ -239,7 +239,10 @@ async def document_search(request: Request, data: DocumentSearchModel) -> Dict[s
                     score=score
                 )
                 chunks.append(chunk)
-            return NotImplementedError("Example class has not implemented the document_search method.")
+            
+            return DocumentSearchResponseModel(chunks=chunks)
+        
+        raise NotImplementedError("Rag class has not implemented the document_search method.")
 
     except Exception as e:
         logger.error(f"Error from POST /search endpoint. Error details: {e}")

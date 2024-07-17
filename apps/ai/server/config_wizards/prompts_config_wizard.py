@@ -20,7 +20,7 @@ class PromptsConfigWizard(ConfigWizard):
             "Use the following context to answer the user's question. If you don't know the answer,"
             "just say that you don't know, don't try to make up an answer."
             "<</SYS>>"
-            "<s>[INST] Context: {context_str} Question: {query_str} Only return the helpful"
+            "<s>[INST] Context: {context} Question: {query} Only return the helpful"
             " answer below and nothing else. Helpful answer:[/INST]"
         ),
         help_text="Prompt template for rag.",

@@ -11,7 +11,7 @@ class LLMConfigWizard(ConfigWizard):
     )
     model_name: str = config_field(
         "model-name",
-        default="ensemble",
+        default="mistralai/mixtral-8x7b-instruct-v0.1",
         help_text="The name of the hosted model.",
     )
     model_engine: str = config_field(

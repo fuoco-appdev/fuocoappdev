@@ -10,6 +10,7 @@ from pdfplumber import open as pdf_open
 from wrappers.langchain_instrumentation_method_wrapper import langchain_instrumentation_method_wrapper
 from config_wizards.server_config_wizard import ServerConfigWizard
 from llm import LLM
+from tracer import Tracer
 
 class PDF():
     @classmethod
@@ -32,15 +33,15 @@ class PDF():
                 footer_threshold = page_height * 0.9
 
                 # Crop out page to remove footers and headers
-                page_crop = page.crop([0,header_threshold,page.width,footer_threshold])
-                text_blocks = [obj for obj in page_crop.chars if obj['object_type'] == 'char']
+                #page_crop = page.crop([0,header_threshold,page.width,footer_threshold])
+                text_blocks = [obj for obj in page.chars if obj['object_type'] == 'char']
                 grouped_text_blocks = cls.process_text_blocks(
                     text_blocks
                 )
 
                 if len(grouped_text_blocks) == 0:
                     # Perform OCR on PDF pages
-                    ocr_docs = cls.parse_via_ocr(filepath, page_crop, page_number)
+                    ocr_docs = cls.parse_via_ocr(filepath, page, page_number)
                     page_docs.extend(ocr_docs) 
                 # Extract tables and their bounding boxes
                 table_docs, table_bboxes, ongoing_tables = cls.parse_all_tables(filepath, page, page_number, text_blocks, ongoing_tables)
@@ -271,9 +272,8 @@ class PDF():
         return (bbox1[0]<bbox2[2] and bbox1[2]>bbox2[0] and bbox1[1]>bbox2[3] and bbox1[3]<bbox2[1])
     
     @classmethod
-    @langchain_instrumentation_method_wrapper
-    def is_graph(cls, callback_handler, image_path):
-        neva = LLM("ai-neva-22b", callback_handler=callback_handler)
+    def is_graph(cls, image_path):
+        neva = LLM("nvidia/neva-22b", callback_handler=Tracer.langchain_callback_handler)
         b64_string = cls.get_b64_image(image_path)
         res = neva.multimodal_invoke(
             b64_string, 
@@ -288,9 +288,8 @@ class PDF():
             return False
 
     @classmethod   
-    @langchain_instrumentation_method_wrapper
-    def process_graph(cls, callback_handler, image_path):
-        deplot = LLM("ai-google-deplot")
+    def process_graph(cls, image_path):
+        deplot = LLM("google/deplot")
         b64_string = cls.get_b64_image(image_path)
         res = deplot.multimodal_invoke(b64_string)
         deplot_description = res.content
@@ -298,11 +297,15 @@ class PDF():
         mixtral = LLM(
             model_name=settings.llm.model_name, 
             is_response_generator=True, 
-            callback_handler=callback_handler
+            callback_handler=Tracer.langchain_callback_handler
         )
+        prompt="Explain the following linearized table. " + deplot_description
+        system_prompt="Your responsibility is to explain charts. You are an expert in describing the responses of linearized tables into plain English text for LLMs to use."
         response = mixtral.chat_with_prompt(
-            system_prompt="Your responsibility is to explain charts. You are an expert in describing the responses of linearized tables into plain English text for LLMs to use.",
-            prompt="Explain the following linearized table. " + deplot_description
+            system_prompt,
+            {
+                "input": prompt
+            }
         )
         full_response = ""
         for chunk in response:

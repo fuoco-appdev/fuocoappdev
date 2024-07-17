@@ -6,7 +6,7 @@ vector_store:
 
 llm:
   server_url: ''
-  model_name: 'mixtral_8x7b'
+  model_name: 'mistralai/mixtral-8x7b-instruct-v0.1'
   model_engine: 'nvidia-ai-endpoints'
   model_name_pandas_ai: 'ai-mixtral-8x7b-instruct'
 
@@ -35,8 +35,7 @@ prompts:
     Use the following context to answer the user's question. If you don't know the answer,\
     just say that you don't know, don't try to make up an answer.\
     <</SYS>>\
-    <s>[INST] Context: {context_str} Question: {query_str} Only return the helpful\
-    answer below and nothing else. Helpful answer:[/INST]"
+    <s>[INST] Context: {context} Question: {query} Only return the helpful answer below and nothing else. Helpful answer:[/INST]"
   multi_turn_rag_template:
     "You are a document chatbot. Help the user as they ask questions about documents.\
     User message just asked: {input}\n\n\
