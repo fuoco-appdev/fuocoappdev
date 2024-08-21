@@ -1,4 +1,4 @@
-import { RadioProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/radio/radio';
+import { RadioProps } from '@fuoco.appdev/web-components/dist/cjs/src/components/radio/radio';
 import { Cart, Customer, PaymentSession } from '@medusajs/medusa';
 import { PricedShippingOption } from '@medusajs/medusa/dist/types/pricing';
 import { useObservable } from '@ngneat/use-observable';

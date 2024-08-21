@@ -3,6 +3,15 @@ import express from "express";
 import * as path from "path";
 const MockBrowser = require("mock-browser").mocks.MockBrowser;
 const cookiesMiddleware = require("universal-cookie-express");
+const livereload = require("livereload");
+const connectLiveReload = require("connect-livereload");
+
+const liveReloadServer = livereload.createServer();
+liveReloadServer.server.once("connection", () => {
+  setTimeout(() => {
+    liveReloadServer.refresh("/");
+  }, 100);
+});
 
 declare const __non_webpack_require__: any;
 
@@ -33,6 +42,7 @@ router.get("*", (req, res) => {
   main.render(req, res);
 });
 
+app.use(connectLiveReload());
 app.use(cors());
 app.use(cookiesMiddleware());
 app.use(router);

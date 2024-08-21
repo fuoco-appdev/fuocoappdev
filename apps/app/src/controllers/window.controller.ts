@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { BannerProps, LanguageInfo, ToastProps } from "@fuoco.appdev/core-ui";
+import { BannerProps, LanguageInfo, ToastProps } from "@fuoco.appdev/web-components";
 import { Cart, Customer, CustomerGroup, Order } from "@medusajs/medusa";
 import { select } from "@ngneat/elf";
 import { AuthChangeEvent, Session } from "@supabase/supabase-js";

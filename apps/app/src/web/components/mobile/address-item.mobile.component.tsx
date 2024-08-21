@@ -1,4 +1,4 @@
-import { Button, Line } from '@fuoco.appdev/core-ui';
+import { Button, Line } from '@fuoco.appdev/web-components';
 import styles from '../address-item.module.scss';
 // @ts-ignore
 import { AddressItemProps } from '../address-item.component';

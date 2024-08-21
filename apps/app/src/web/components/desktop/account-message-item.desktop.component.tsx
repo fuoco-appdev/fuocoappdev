@@ -1,4 +1,4 @@
-import { Avatar, Button } from '@fuoco.appdev/core-ui';
+import { Avatar, Button } from '@fuoco.appdev/web-components';
 import { useTranslation } from 'react-i18next';
 import Skeleton from 'react-loading-skeleton';
 import { AccountMessageItemResponsiveProps } from '../account-message-item.component';

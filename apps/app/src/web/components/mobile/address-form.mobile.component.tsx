@@ -4,7 +4,7 @@ import {
   InputPhoneNumber,
   Line,
   Listbox,
-} from '@fuoco.appdev/core-ui';
+} from '@fuoco.appdev/web-components';
 import { useTranslation } from 'react-i18next';
 import { AddressFormResponsiveProps } from '../address-form.component';
 import styles from '../address-form.module.scss';

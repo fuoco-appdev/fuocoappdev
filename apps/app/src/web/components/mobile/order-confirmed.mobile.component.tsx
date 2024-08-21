@@ -4,7 +4,7 @@ import OrderConfirmedController from '../../../controllers/order-confirmed.contr
 import styles from '../order-confirmed.module.scss';
 import ShippingItemComponent from '../shipping-item.component';
 // @ts-ignore
-import { Button, Dropdown, Scroll } from '@fuoco.appdev/core-ui';
+import { Button, Dropdown, Scroll } from '@fuoco.appdev/web-components';
 import { formatAmount } from 'medusa-react';
 import { createPortal } from 'react-dom';
 import WindowController from '../../../controllers/window.controller';

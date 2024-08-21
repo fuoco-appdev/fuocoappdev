@@ -1,4 +1,4 @@
-import { Button, Checkbox, Line } from '@fuoco.appdev/core-ui';
+import { Button, Checkbox, Line } from '@fuoco.appdev/web-components';
 import { useTranslation } from 'react-i18next';
 import { PermissionsResponsiveProps } from '../permissions.component';
 import styles from '../permissions.module.scss';

@@ -1,4 +1,4 @@
-import { Avatar, Line } from '@fuoco.appdev/core-ui';
+import { Avatar, Line } from '@fuoco.appdev/web-components';
 import { lazy } from '@loadable/component';
 import { PriceList } from '@medusajs/medusa';
 import { Store } from '@ngneat/elf';

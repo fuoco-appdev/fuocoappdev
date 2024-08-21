@@ -6,7 +6,7 @@ import {
     Line,
     Modal,
     Scroll,
-} from '@fuoco.appdev/core-ui';
+} from '@fuoco.appdev/web-components';
 import { useObservable } from '@ngneat/use-observable';
 import React from 'react';
 import ReactDOM from 'react-dom';

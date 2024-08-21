@@ -1,4 +1,4 @@
-import { CountryDataProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/input-phone-number/country-data';
+import { CountryDataProps } from '@fuoco.appdev/web-components/dist/cjs/src/components/input-phone-number/country-data';
 import { lazy } from '@loadable/component';
 import * as React from 'react';
 import { StoreState } from '../../models/store.model';

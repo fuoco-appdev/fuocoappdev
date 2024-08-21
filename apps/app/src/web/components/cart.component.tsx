@@ -1,4 +1,4 @@
-import { TabProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/tabs/tabs';
+import { TabProps } from '@fuoco.appdev/web-components/dist/cjs/src/components/tabs/tabs';
 import { lazy } from '@loadable/component';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import { Store } from '@ngneat/elf';

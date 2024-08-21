@@ -1,4 +1,4 @@
-import { Button, Line } from '@fuoco.appdev/core-ui';
+import { Button, Line } from '@fuoco.appdev/web-components';
 import { useTranslation } from 'react-i18next';
 import { EmailConfirmationResponsiveProps } from '../email-confirmation.component';
 import styles from '../email-confirmation.module.scss';

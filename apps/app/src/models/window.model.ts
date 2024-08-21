@@ -1,4 +1,4 @@
-import { BannerProps, LanguageInfo, ToastProps } from "@fuoco.appdev/core-ui";
+import { BannerProps, LanguageInfo, ToastProps } from "@fuoco.appdev/web-components";
 import { Order, PriceList } from "@medusajs/medusa";
 import { createStore, withProps } from "@ngneat/elf";
 import { AuthChangeEvent } from "@supabase/supabase-js";

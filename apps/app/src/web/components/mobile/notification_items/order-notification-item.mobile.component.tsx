@@ -1,4 +1,4 @@
-import { Button } from '@fuoco.appdev/core-ui';
+import { Button } from '@fuoco.appdev/web-components';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';

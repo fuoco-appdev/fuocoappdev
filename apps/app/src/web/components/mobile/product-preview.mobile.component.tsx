@@ -1,4 +1,4 @@
-import { Button, Card, Line } from '@fuoco.appdev/core-ui';
+import { Button, Card, Line } from '@fuoco.appdev/web-components';
 import * as React from 'react';
 import { animated, useSpring } from 'react-spring';
 import styles from '../product-preview.module.scss';

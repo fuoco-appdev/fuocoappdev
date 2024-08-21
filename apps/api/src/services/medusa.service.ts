@@ -277,6 +277,7 @@ class MedusaService {
 
     const updateCustomer = new UpdateCustomerResponse();
     const existingCustomers = await this.findCustomersAsync(email);
+    console.log(existingCustomers)
     if (existingCustomers.length > 0) {
       for (const existingCustomer of existingCustomers) {
         if (!existingCustomer.has_account) {
@@ -331,8 +332,10 @@ class MedusaService {
         }
       );
       const data = customerResponse.data['customer'];
+
       updateCustomer.setData(JSON.stringify(data));
       updateCustomer.setPassword(sessionToken);
+      console.log(updateCustomer)
     } catch (error: any) {
       console.error(error);
     }
@@ -750,6 +753,7 @@ class MedusaService {
         },
       }
     );
+    console.log(customerListResponse)
     return customerListResponse.data['customers'];
   }
 

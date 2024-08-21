@@ -1,4 +1,4 @@
-import { Auth, Button, Typography } from '@fuoco.appdev/core-ui';
+import { Auth, Button, Typography } from '@fuoco.appdev/web-components';
 import loadable from '@loadable/component';
 import { useTranslation } from 'react-i18next';
 import ConfigService from '../../../services/config.service';

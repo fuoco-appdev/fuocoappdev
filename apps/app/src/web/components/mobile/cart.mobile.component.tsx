@@ -1,4 +1,4 @@
-import { Button, Dropdown, Input, Line, Solid } from '@fuoco.appdev/core-ui';
+import { Button, Dropdown, Input, Line, Solid } from '@fuoco.appdev/web-components';
 import { Discount, LineItem } from '@medusajs/medusa';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';

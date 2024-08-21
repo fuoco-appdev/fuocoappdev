@@ -1,4 +1,4 @@
-import { Button, Line, Modal } from '@fuoco.appdev/core-ui';
+import { Button, Line, Modal } from '@fuoco.appdev/web-components';
 import { Product } from '@medusajs/medusa';
 import * as React from 'react';
 import ReactDOM from 'react-dom';

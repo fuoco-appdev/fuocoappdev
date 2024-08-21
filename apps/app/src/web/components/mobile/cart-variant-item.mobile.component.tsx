@@ -1,4 +1,4 @@
-import { InputNumber, Line } from '@fuoco.appdev/core-ui';
+import { InputNumber, Line } from '@fuoco.appdev/web-components';
 import { useTranslation } from 'react-i18next';
 import styles from '../cart-variant-item.module.scss';
 // @ts-ignore

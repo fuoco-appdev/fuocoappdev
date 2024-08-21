@@ -7,7 +7,7 @@ import {
   Listbox,
   Scroll,
   Tabs
-} from '@fuoco.appdev/core-ui';
+} from '@fuoco.appdev/web-components';
 import { Product } from '@medusajs/medusa';
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';

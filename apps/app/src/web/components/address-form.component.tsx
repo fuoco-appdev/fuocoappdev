@@ -1,5 +1,5 @@
-import { OptionProps } from '@fuoco.appdev/core-ui';
-import { CountryDataProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/input-phone-number/country-data';
+import { OptionProps } from '@fuoco.appdev/web-components';
+import { CountryDataProps } from '@fuoco.appdev/web-components/dist/cjs/src/components/input-phone-number/country-data';
 import { lazy } from '@loadable/component';
 import { Country, Region } from '@medusajs/medusa';
 import { useObservable } from '@ngneat/use-observable';

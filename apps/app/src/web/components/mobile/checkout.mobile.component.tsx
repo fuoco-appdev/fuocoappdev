@@ -7,7 +7,7 @@ import {
   Line,
   Radio,
   Solid,
-} from '@fuoco.appdev/core-ui';
+} from '@fuoco.appdev/web-components';
 import { Customer, Discount, GiftCard } from '@medusajs/medusa';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';

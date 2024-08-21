@@ -1,4 +1,4 @@
-import { Avatar } from '@fuoco.appdev/core-ui';
+import { Avatar } from '@fuoco.appdev/web-components';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import { AccountDocument } from '../../models/account.model';

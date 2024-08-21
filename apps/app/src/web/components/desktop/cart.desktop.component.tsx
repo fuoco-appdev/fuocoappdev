@@ -1,4 +1,4 @@
-import { Button, Input, Line, Modal, Solid } from '@fuoco.appdev/core-ui';
+import { Button, Input, Line, Modal, Solid } from '@fuoco.appdev/web-components';
 import { Discount, LineItem } from '@medusajs/medusa';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';

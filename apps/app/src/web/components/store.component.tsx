@@ -1,5 +1,5 @@
-import { OptionProps } from '@fuoco.appdev/core-ui';
-import { TabProps } from '@fuoco.appdev/core-ui/dist/cjs/src/components/tabs/tabs';
+import { OptionProps } from '@fuoco.appdev/web-components';
+import { TabProps } from '@fuoco.appdev/web-components/dist/cjs/src/components/tabs/tabs';
 import { lazy } from '@loadable/component';
 import { Country, Product, Region } from '@medusajs/medusa';
 import {

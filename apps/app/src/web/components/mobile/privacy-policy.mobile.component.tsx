@@ -1,4 +1,4 @@
-import { Auth, Typography } from '@fuoco.appdev/core-ui';
+import { Auth, Typography } from '@fuoco.appdev/web-components';
 import loadable from '@loadable/component';
 import { PrivacyPolicyResponsiveProps } from '../privacy-policy.component';
 import styles from '../privacy-policy.module.scss';

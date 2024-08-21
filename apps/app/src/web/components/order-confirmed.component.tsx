@@ -1,4 +1,4 @@
-import { OptionProps } from '@fuoco.appdev/core-ui';
+import { OptionProps } from '@fuoco.appdev/web-components';
 import { lazy } from '@loadable/component';
 import { LineItem, ReturnReason } from '@medusajs/medusa';
 import { useObservable } from '@ngneat/use-observable';

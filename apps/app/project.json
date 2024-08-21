@@ -27,7 +27,7 @@
         "main": "apps/app/src/web/main.tsx",
         "assets": ["apps/app/src/favicon.ico", "apps/app/src/assets"],
         "styles": [
-          "node_modules/@fuoco.appdev/core-ui/dist/cjs/index.css",
+          "node_modules/@fuoco.appdev/web-components/dist/cjs/index.css",
           "node_modules/mapbox-gl/src/css/mapbox-gl.css",
           "node_modules/react-loading-skeleton/dist/skeleton.css",
           "apps/app/src/web/styles.scss"
@@ -71,7 +71,7 @@
         "main": "apps/app/src/web/main.server.tsx",
         "assets": ["apps/app/src/favicon.ico", "apps/app/src/assets"],
         "styles": [
-          "node_modules/@fuoco.appdev/core-ui/dist/cjs/index.css",
+          "node_modules/@fuoco.appdev/web-components/dist/cjs/index.css",
           "node_modules/mapbox-gl/dist/mapbox-gl.css",
           "node_modules/react-loading-skeleton/dist/skeleton.css",
           "apps/app/src/web/styles.scss"

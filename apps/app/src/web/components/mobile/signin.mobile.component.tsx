@@ -1,4 +1,4 @@
-import { Auth } from '@fuoco.appdev/core-ui';
+import { Auth } from '@fuoco.appdev/web-components';
 import { AuthError } from '@supabase/supabase-js';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';

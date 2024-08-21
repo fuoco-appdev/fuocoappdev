@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 // @ts-ignore
-import { Avatar, Button, Input, Line, Scroll } from '@fuoco.appdev/core-ui';
+import { Avatar, Button, Input, Line, Scroll } from '@fuoco.appdev/web-components';
 import moment from 'moment';
 import { useRef } from 'react';
 import ChatController from '../../../controllers/chat.controller';

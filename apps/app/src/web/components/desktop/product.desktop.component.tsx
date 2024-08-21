@@ -5,7 +5,7 @@ import {
   Line,
   Modal,
   Tabs,
-} from '@fuoco.appdev/core-ui';
+} from '@fuoco.appdev/web-components';
 import { ProductTag } from '@medusajs/medusa';
 import { useTranslation } from 'react-i18next';
 import ProductController from '../../../controllers/product.controller';

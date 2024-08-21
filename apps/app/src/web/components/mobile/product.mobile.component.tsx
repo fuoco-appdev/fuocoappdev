@@ -6,7 +6,7 @@ import {
   Modal,
   Tabs,
   Typography,
-} from '@fuoco.appdev/core-ui';
+} from '@fuoco.appdev/web-components';
 import { ProductTag } from '@medusajs/medusa';
 import { useTranslation } from 'react-i18next';
 import ExploreController from '../../../controllers/explore.controller';

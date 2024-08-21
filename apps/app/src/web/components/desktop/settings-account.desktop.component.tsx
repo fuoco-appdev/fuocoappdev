@@ -5,7 +5,7 @@ import {
   Button,
   LanguageSwitch,
   Line
-} from '@fuoco.appdev/core-ui';
+} from '@fuoco.appdev/web-components';
 import { AuthError, User } from '@supabase/supabase-js';
 import { LanguageCode } from 'iso-639-1';
 import { useTranslation } from 'react-i18next';

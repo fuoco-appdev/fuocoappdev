@@ -1,4 +1,4 @@
-import { Button, Line, Scroll } from '@fuoco.appdev/core-ui';
+import { Button, Line, Scroll } from '@fuoco.appdev/web-components';
 import { useTranslation } from 'react-i18next';
 import Ripples from 'react-ripples';
 import { Outlet, useNavigate } from 'react-router-dom';

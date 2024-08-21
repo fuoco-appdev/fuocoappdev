@@ -1,4 +1,4 @@
-import { Button, Dropdown, DropdownAlignment, FormLayout, Input, Line, Slider } from '@fuoco.appdev/core-ui';
+import { Button, Dropdown, DropdownAlignment, FormLayout, Input, Line, Slider } from '@fuoco.appdev/web-components';
 import convert from 'convert';
 import { useRef } from 'react';
 import ReactDOM from 'react-dom';

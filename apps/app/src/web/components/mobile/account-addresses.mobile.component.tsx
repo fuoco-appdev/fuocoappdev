@@ -1,4 +1,4 @@
-import { Button, Dropdown, Line, Modal } from '@fuoco.appdev/core-ui';
+import { Button, Dropdown, Line, Modal } from '@fuoco.appdev/web-components';
 import { Address, Customer } from '@medusajs/medusa';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';

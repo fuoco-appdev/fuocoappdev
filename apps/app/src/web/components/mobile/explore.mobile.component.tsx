@@ -1,4 +1,4 @@
-import { Button, Dropdown, Input, Line, Scroll, Tabs } from '@fuoco.appdev/core-ui';
+import { Button, Dropdown, Input, Line, Scroll, Tabs } from '@fuoco.appdev/web-components';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
 import * as React from 'react';
 import ReactDOM from 'react-dom';

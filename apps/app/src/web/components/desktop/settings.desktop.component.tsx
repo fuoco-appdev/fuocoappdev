@@ -1,4 +1,4 @@
-import { Line, Scroll, Tabs } from '@fuoco.appdev/core-ui';
+import { Line, Scroll, Tabs } from '@fuoco.appdev/web-components';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { RoutePathsType, useQuery } from '../../route-paths';

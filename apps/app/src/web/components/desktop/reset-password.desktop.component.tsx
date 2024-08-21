@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import { Auth } from '@fuoco.appdev/core-ui';
+import { Auth } from '@fuoco.appdev/web-components';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';

@@ -1,4 +1,4 @@
-import { Button, Line, Modal } from '@fuoco.appdev/core-ui';
+import { Button, Line, Modal } from '@fuoco.appdev/web-components';
 import { useTranslation } from 'react-i18next';
 import styles from '../cart-item.module.scss';
 // @ts-ignore

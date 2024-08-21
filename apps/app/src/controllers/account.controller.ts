@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { LanguageInfo } from '@fuoco.appdev/core-ui';
+import { LanguageInfo } from '@fuoco.appdev/web-components';
 import { Address, Customer } from '@medusajs/medusa';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import { select } from '@ngneat/elf';

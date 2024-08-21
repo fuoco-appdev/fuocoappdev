@@ -1,4 +1,4 @@
-import { Line, Scroll } from '@fuoco.appdev/core-ui';
+import { Line, Scroll } from '@fuoco.appdev/web-components';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import NotificationsController from '../../../controllers/notifications.controller';

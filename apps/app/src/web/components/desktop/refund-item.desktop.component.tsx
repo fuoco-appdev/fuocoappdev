@@ -1,4 +1,4 @@
-import { Button, Input, Line, Listbox } from '@fuoco.appdev/core-ui';
+import { Button, Input, Line, Listbox } from '@fuoco.appdev/web-components';
 import { useTranslation } from 'react-i18next';
 import { RefundItemResponsiveProps } from '../refund-item.component';
 import styles from '../refund-item.module.scss';

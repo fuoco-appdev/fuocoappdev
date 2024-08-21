@@ -1,4 +1,4 @@
-import { Button } from '@fuoco.appdev/core-ui';
+import { Button } from '@fuoco.appdev/web-components';
 import { Order } from '@medusajs/medusa';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';

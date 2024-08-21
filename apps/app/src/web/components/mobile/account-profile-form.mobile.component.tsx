@@ -3,7 +3,7 @@ import {
   FormLayout,
   Input,
   InputPhoneNumber,
-} from '@fuoco.appdev/core-ui';
+} from '@fuoco.appdev/web-components';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import { AccountProfileFormResponsiveProps } from '../account-profile-form.component';

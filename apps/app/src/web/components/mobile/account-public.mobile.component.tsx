@@ -1,4 +1,4 @@
-import { Avatar, Button, Line, Tabs } from '@fuoco.appdev/core-ui';
+import { Avatar, Button, Line, Tabs } from '@fuoco.appdev/web-components';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import Skeleton from 'react-loading-skeleton';

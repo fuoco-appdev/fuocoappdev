@@ -8,7 +8,7 @@ import {
   Modal,
   Solid,
   ToastOverlay
-} from '@fuoco.appdev/core-ui';
+} from '@fuoco.appdev/web-components';
 import { Customer } from '@medusajs/medusa';
 import { LanguageCode } from 'iso-639-1';
 import * as React from 'react';

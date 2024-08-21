@@ -1,4 +1,4 @@
-import { Auth, Typography } from '@fuoco.appdev/core-ui';
+import { Auth, Typography } from '@fuoco.appdev/web-components';
 import loadable from '@loadable/component';
 import { ResponsiveMobile } from '../responsive.component';
 import { TermsOfServiceResponsiveProps } from '../terms-of-service.component';
