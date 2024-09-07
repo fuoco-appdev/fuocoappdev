@@ -1,4 +1,3 @@
-import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -11,14 +10,15 @@ import WindowController from '../../controllers/window.controller';
 import { AccountPublicState } from '../../models/account-public.model';
 import { StoreState } from '../../models/store.model';
 import { WindowState } from '../../models/window.model';
-import { RoutePathsType, useQuery } from '../route-paths';
+import { RoutePathsType } from '../../route-paths-type';
+import { useQuery } from '../route-paths';
 import { AccountPublicSuspenseDesktopComponent } from './desktop/suspense/account-public.suspense.desktop.component';
 import { AccountPublicSuspenseMobileComponent } from './mobile/suspense/account-public.suspense.mobile.component';
 
-const AccountPublicDesktopComponent = lazy(
+const AccountPublicDesktopComponent = React.lazy(
   () => import('./desktop/account-public.desktop.component')
 );
-const AccountPublicMobileComponent = lazy(
+const AccountPublicMobileComponent = React.lazy(
   () => import('./mobile/account-public.mobile.component')
 );
 
@@ -161,9 +161,7 @@ export default function AccountPublicComponent(): JSX.Element {
     }
   };
 
-  const onMessage = () => {
-
-  }
+  const onMessage = () => {};
 
   React.useEffect(() => {
     renderCountRef.current += 1;
@@ -237,7 +235,7 @@ export default function AccountPublicComponent(): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
 import { AuthError } from '@supabase/supabase-js';
 import * as React from 'react';
@@ -10,7 +9,7 @@ import EmailConfirmationController from '../../controllers/email-confirmation.co
 import SigninController from '../../controllers/signin.controller';
 import WindowController from '../../controllers/window.controller';
 import { SigninState } from '../../models/signin.model';
-import { RoutePathsType } from '../route-paths';
+import { RoutePathsType } from '../../route-paths-type';
 import { GuestComponent } from './guest.component';
 import {
   ResponsiveDesktop,
@@ -18,10 +17,10 @@ import {
   ResponsiveTablet,
 } from './responsive.component';
 
-const SigninDesktopComponent = lazy(
+const SigninDesktopComponent = React.lazy(
   () => import('./desktop/signin.desktop.component')
 );
-const SigninMobileComponent = lazy(
+const SigninMobileComponent = React.lazy(
   () => import('./mobile/signin.mobile.component')
 );
 
@@ -32,7 +31,7 @@ export interface SigninResponsiveProps {
   passwordError: string;
 }
 
-export interface SigninProps { }
+export interface SigninProps {}
 
 export default function SigninComponent(): JSX.Element {
   const location = useLocation();
@@ -102,7 +101,7 @@ export default function SigninComponent(): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

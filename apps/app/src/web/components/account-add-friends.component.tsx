@@ -1,4 +1,3 @@
-import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -8,10 +7,10 @@ import { AuthenticatedComponent } from './authenticated.component';
 import { AccountAddFriendsSuspenseDesktopComponent } from './desktop/suspense/account-add-friends.suspense.desktop.component';
 import { AccountAddFriendsSuspenseMobileComponent } from './mobile/suspense/account-add-friends.suspense.mobile.component';
 
-const AccountAddFriendsDesktopComponent = lazy(
+const AccountAddFriendsDesktopComponent = React.lazy(
   () => import('./desktop/account-add-friends.desktop.component')
 );
-const AccountAddFriendsMobileComponent = lazy(
+const AccountAddFriendsMobileComponent = React.lazy(
   () => import('./mobile/account-add-friends.mobile.component')
 );
 
@@ -23,7 +22,8 @@ export interface AccountAddFriendsResponsiveProps {
 
 export default function AccountAddFriendsComponent(): JSX.Element {
   const [accountProps] = useObservable(AccountController.model.store);
-  const [locationDropdownOpen, setLocationDropdownOpen] = React.useState<boolean>(false);
+  const [locationDropdownOpen, setLocationDropdownOpen] =
+    React.useState<boolean>(false);
 
   React.useEffect(() => {
     AccountController.loadFollowRequestsAndFriendsAccountsAsync();
@@ -36,7 +36,7 @@ export default function AccountAddFriendsComponent(): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -12,10 +11,10 @@ import {
   ResponsiveTablet,
 } from './responsive.component';
 
-const ForgotPasswordDesktopComponent = lazy(
+const ForgotPasswordDesktopComponent = React.lazy(
   () => import('./desktop/forgot-password.desktop.component')
 );
-const ForgotPasswordMobileComponent = lazy(
+const ForgotPasswordMobileComponent = React.lazy(
   () => import('./mobile/forgot-password.mobile.component')
 );
 
@@ -43,7 +42,7 @@ export default function ForgotPasswordComponent(): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

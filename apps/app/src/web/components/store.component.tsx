@@ -1,6 +1,5 @@
 import { OptionProps } from '@fuoco.appdev/web-components';
 import { TabProps } from '@fuoco.appdev/web-components/dist/cjs/src/components/tabs/tabs';
-import { lazy } from '@loadable/component';
 import { Country, Product, Region } from '@medusajs/medusa';
 import {
   PricedProduct,
@@ -28,15 +27,16 @@ import {
 } from '../../models/explore.model';
 import { ProductTabs, StoreState } from '../../models/store.model';
 import { ProductLikesMetadataResponse } from '../../protobuf/product-like_pb';
-import { RoutePathsType, useQuery } from '../route-paths';
+import { RoutePathsType } from '../../route-paths-type';
+import { useQuery } from '../route-paths';
 import { StoreSuspenseDesktopComponent } from './desktop/suspense/store.suspense.desktop.component';
 import { StoreSuspenseMobileComponent } from './mobile/suspense/store.suspense.mobile.component';
 import styles from './store.module.scss';
 
-const StoreDesktopComponent = lazy(
+const StoreDesktopComponent = React.lazy(
   () => import('./desktop/store.desktop.component')
 );
-const StoreMobileComponent = lazy(
+const StoreMobileComponent = React.lazy(
   () => import('./mobile/store.mobile.component')
 );
 
@@ -226,11 +226,14 @@ export default function StoreComponent(): JSX.Element {
   const onRemoveSalesChannel = () => {
     setTimeout(async () => {
       ExploreController.updateSelectedInventoryLocationId(undefined);
-      await WindowController.updateQueryInventoryLocationAsync(undefined, query);
+      await WindowController.updateQueryInventoryLocationAsync(
+        undefined,
+        query
+      );
       await StoreController.reloadProductsAsync();
       navigate({ pathname: RoutePathsType.Store, search: query.toString() });
     }, 150);
-  }
+  };
 
   React.useEffect(() => {
     renderCountRef.current += 1;
@@ -420,8 +423,7 @@ export default function StoreComponent(): JSX.Element {
           label: t('wines') ?? 'Wines',
         },
       ]);
-    }
-    else {
+    } else {
       setTabs([
         {
           id: ProductTabs.White,
@@ -450,7 +452,7 @@ export default function StoreComponent(): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

@@ -14,7 +14,6 @@ import {
 } from '../../models/checkout.model';
 import styles from './checkout.module.scss';
 // @ts-ignore
-import { lazy } from '@loadable/component';
 import {
   StripeCardCvcElementOptions,
   StripeCardExpiryElementOptions,
@@ -30,14 +29,15 @@ import { AccountState } from '../../models/account.model';
 import { CartState } from '../../models/cart.model';
 import { StoreState } from '../../models/store.model';
 import { WindowState } from '../../models/window.model';
-import { RoutePathsType, useQuery } from '../route-paths';
+import { RoutePathsType } from '../../route-paths-type';
+import { useQuery } from '../route-paths';
 import { CheckoutSuspenseDesktopComponent } from './desktop/suspense/checkout.suspense.desktop.component';
 import { CheckoutSuspenseMobileComponent } from './mobile/suspense/checkout.suspense.mobile.component';
 
-const CheckoutDesktopComponent = lazy(
+const CheckoutDesktopComponent = React.lazy(
   () => import('./desktop/checkout.desktop.component')
 );
-const CheckoutMobileComponent = lazy(
+const CheckoutMobileComponent = React.lazy(
   () => import('./mobile/checkout.mobile.component')
 );
 
@@ -54,9 +54,9 @@ export interface CheckoutResponsiveProps {
   isPayOpen: boolean;
   stripeOptions: StripeElementsOptions;
   stripeElementOptions:
-  | StripeCardNumberElementOptions
-  | StripeCardExpiryElementOptions
-  | StripeCardCvcElementOptions;
+    | StripeCardNumberElementOptions
+    | StripeCardExpiryElementOptions
+    | StripeCardCvcElementOptions;
   setIsAddAddressOpen: (value: boolean) => void;
   setIsPayOpen: (value: boolean) => void;
   onContinueToDeliveryFromShippingAddress: () => void;
@@ -169,7 +169,7 @@ export default function CheckoutComponent(): JSX.Element {
       let description = '';
       let name = '';
       if (session.provider_id === ProviderType.Manual) {
-        if (process.env['NODE_ENV'] === 'production') {
+        if (import.meta.env['MODE'] === 'production') {
           continue;
         }
         name = t('manualProviderName');
@@ -362,7 +362,7 @@ export default function CheckoutComponent(): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 
@@ -370,13 +370,13 @@ export default function CheckoutComponent(): JSX.Element {
     | StripeCardNumberElementOptions
     | StripeCardExpiryElementOptions
     | StripeCardCvcElementOptions = React.useMemo(() => {
-      return {
-        classes: {
-          base: styles['stripe-input-base'],
-        },
-        showIcon: true,
-      };
-    }, []);
+    return {
+      classes: {
+        base: styles['stripe-input-base'],
+      },
+      showIcon: true,
+    };
+  }, []);
   return (
     <>
       <Helmet>

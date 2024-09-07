@@ -1,12 +1,10 @@
 import { Avatar, Line } from '@fuoco.appdev/web-components';
-import { lazy } from '@loadable/component';
 import { PriceList } from '@medusajs/medusa';
 import { Store } from '@ngneat/elf';
 import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { StorageFolderType } from 'src/protobuf/common_pb';
 import AccountPublicController from '../../controllers/account-public.controller';
 import AccountController from '../../controllers/account.controller';
 import ChatController from '../../controllers/chat.controller';
@@ -18,20 +16,24 @@ import { AccountState } from '../../models/account.model';
 import { ExploreState } from '../../models/explore.model';
 import { ProductState } from '../../models/product.model';
 import { WindowLocalState, WindowState } from '../../models/window.model';
-import AccountNotificationService, { AccountData } from '../../services/account-notification.service';
+import { StorageFolderType } from '../../protobuf/common_pb';
+import { RoutePathsType } from '../../route-paths-type';
+import AccountNotificationService, {
+  AccountData,
+} from '../../services/account-notification.service';
 import AccountService from '../../services/account.service';
 import BucketService from '../../services/bucket.service';
 import ChatService from '../../services/chat.service';
 import SupabaseService from '../../services/supabase.service';
-import { RoutePathsType, useQuery } from '../route-paths';
+import { useQuery } from '../route-paths';
 import { WindowSuspenseDesktopComponent } from './desktop/suspense/window.suspense.desktop.component';
 import { WindowSuspenseMobileComponent } from './mobile/suspense/window.suspense.mobile.component';
 import styles from './window.module.scss';
 
-const WindowDesktopComponent = lazy(
+const WindowDesktopComponent = React.lazy(
   () => import('./desktop/window.desktop.component')
 );
-const WindowMobileComponent = lazy(
+const WindowMobileComponent = React.lazy(
   () => import('./mobile/window.mobile.component')
 );
 
@@ -173,9 +175,7 @@ export default function WindowComponent(): JSX.Element {
       return;
     }
 
-    if (
-      location.pathname?.startsWith(`${RoutePathsType.Store}/`)
-    ) {
+    if (location.pathname?.startsWith(`${RoutePathsType.Store}/`)) {
       setTimeout(
         () =>
           navigate({
@@ -283,12 +283,15 @@ export default function WindowComponent(): JSX.Element {
         return;
       }
 
-      await AccountService.requestUpsertAccountPresenceAsync(accountProps.account.id, isOnline);
-    }
+      await AccountService.requestUpsertAccountPresenceAsync(
+        accountProps.account.id,
+        isOnline
+      );
+    };
 
     const handleBeforeUnloadChangeAsync = async () => {
       await upsertAccountPresenceAsync(false);
-    }
+    };
 
     upsertAccountPresenceAsync(true);
 
@@ -306,7 +309,7 @@ export default function WindowComponent(): JSX.Element {
     });
     return () => {
       subscription?.unsubscribe();
-    }
+    };
   }, [chatProps.chatSubscriptions]);
 
   React.useEffect(() => {
@@ -531,20 +534,25 @@ export default function WindowComponent(): JSX.Element {
   }, [windowProps.orderCanceledNotificationData]);
 
   React.useEffect(() => {
-    const accountData = windowProps.accountFollowerAcceptedNotificationData as AccountData | undefined;
+    const accountData = windowProps.accountFollowerAcceptedNotificationData as
+      | AccountData
+      | undefined;
     if (!accountData) {
       return;
     }
 
     const addToastAsync = async () => {
-      const publicProfileUrl = await BucketService.getPublicUrlAsync(StorageFolderType.Avatars, accountData.profile_url);
+      const publicProfileUrl = await BucketService.getPublicUrlAsync(
+        StorageFolderType.Avatars,
+        accountData.profile_url
+      );
 
       WindowController.addToast({
         key: `account-follower-accepted-${accountData.id}`,
         icon: (
           <Avatar
             classNames={{
-              container: styles['toast-avatar-icon']
+              container: styles['toast-avatar-icon'],
             }}
             text={accountData.username}
             src={publicProfileUrl}
@@ -552,8 +560,7 @@ export default function WindowComponent(): JSX.Element {
           />
         ),
         message: accountData.username ?? '',
-        description:
-          t('accountFollowerAcceptedDescription') ?? '',
+        description: t('accountFollowerAcceptedDescription') ?? '',
       });
       WindowController.updateAccountFollowerAcceptedNotificationData(undefined);
     };
@@ -562,20 +569,25 @@ export default function WindowComponent(): JSX.Element {
   }, [windowProps.accountFollowerAcceptedNotificationData]);
 
   React.useEffect(() => {
-    const accountData = windowProps.accountFollowerFollowingNotificationData as AccountData | undefined;
+    const accountData = windowProps.accountFollowerFollowingNotificationData as
+      | AccountData
+      | undefined;
     if (!accountData) {
       return;
     }
 
     const addToastAsync = async () => {
-      const publicProfileUrl = await BucketService.getPublicUrlAsync(StorageFolderType.Avatars, accountData.profile_url);
+      const publicProfileUrl = await BucketService.getPublicUrlAsync(
+        StorageFolderType.Avatars,
+        accountData.profile_url
+      );
 
       WindowController.addToast({
         key: `account-follower-following-${accountData.id}`,
         icon: (
           <Avatar
             classNames={{
-              container: styles['toast-avatar-icon']
+              container: styles['toast-avatar-icon'],
             }}
             text={accountData.username}
             src={publicProfileUrl}
@@ -583,10 +595,11 @@ export default function WindowComponent(): JSX.Element {
           />
         ),
         message: accountData.username ?? '',
-        description:
-          t('accountFollowerFollowingDescription') ?? '',
+        description: t('accountFollowerFollowingDescription') ?? '',
       });
-      WindowController.updateAccountFollowerFollowingNotificationData(undefined);
+      WindowController.updateAccountFollowerFollowingNotificationData(
+        undefined
+      );
     };
 
     addToastAsync();
@@ -620,7 +633,7 @@ export default function WindowComponent(): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenseComponent;
   }
 

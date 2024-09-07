@@ -1,4 +1,3 @@
-import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
 import moment from 'moment';
 import * as React from 'react';
@@ -11,10 +10,10 @@ import { AuthenticatedComponent } from './authenticated.component';
 import { NotificationsSuspenseDesktopComponent } from './desktop/suspense/notifications.suspense.desktop.component';
 import { NotificationsSuspenseMobileComponent } from './mobile/suspense/notifications.suspense.mobile.component';
 
-const NotificationsDesktopComponent = lazy(
+const NotificationsDesktopComponent = React.lazy(
   () => import('./desktop/notifications.desktop.component')
 );
-const NotificationsMobileComponent = lazy(
+const NotificationsMobileComponent = React.lazy(
   () => import('./mobile/notifications.mobile.component')
 );
 
@@ -31,7 +30,9 @@ export default function NotificationsComponent(): JSX.Element {
   const [notificationsProps] = useObservable(
     NotificationsController.model.store
   );
-  const [notifications, setNotifications] = React.useState<Record<string, AccountNotificationResponse[]>>({});
+  const [notifications, setNotifications] = React.useState<
+    Record<string, AccountNotificationResponse[]>
+  >({});
 
   const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const scrollTop = e.currentTarget?.scrollTop ?? 0;
@@ -64,7 +65,7 @@ export default function NotificationsComponent(): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 
@@ -96,7 +97,7 @@ export default function NotificationsComponent(): JSX.Element {
       newNotifications[fromNowCurrent].push(notification);
     }
     setNotifications(newNotifications);
-  }, [notificationsProps.accountNotifications])
+  }, [notificationsProps.accountNotifications]);
 
   return (
     <>

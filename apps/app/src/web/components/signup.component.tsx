@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
 import { AuthError } from '@supabase/supabase-js';
 import * as React from 'react';
@@ -10,7 +9,7 @@ import EmailConfirmationController from '../../controllers/email-confirmation.co
 import SignupController from '../../controllers/signup.controller';
 import WindowController from '../../controllers/window.controller';
 import { SignupState } from '../../models';
-import { RoutePathsType } from '../route-paths';
+import { RoutePathsType } from '../../route-paths-type';
 import { GuestComponent } from './guest.component';
 import {
   ResponsiveDesktop,
@@ -18,14 +17,14 @@ import {
   ResponsiveTablet,
 } from './responsive.component';
 
-const SignupDesktopComponent = lazy(
+const SignupDesktopComponent = React.lazy(
   () => import('./desktop/signup.desktop.component')
 );
-const SignupMobileComponent = lazy(
+const SignupMobileComponent = React.lazy(
   () => import('./mobile/signup.mobile.component')
 );
 
-export interface SignupProps { }
+export interface SignupProps {}
 
 export interface SignupResponsiveProps {
   signupProps: SignupState;
@@ -105,7 +104,7 @@ export default function SignupComponent(): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

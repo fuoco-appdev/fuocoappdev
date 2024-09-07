@@ -1,25 +1,31 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { BannerProps, LanguageInfo, ToastProps } from "@fuoco.appdev/web-components";
-import { Cart, Customer, CustomerGroup, Order } from "@medusajs/medusa";
-import { select } from "@ngneat/elf";
-import { AuthChangeEvent, Session } from "@supabase/supabase-js";
-import { Location as RouterLocation } from "react-router-dom";
-import { Subscription, filter, firstValueFrom, take } from "rxjs";
-import { Controller } from "../controller";
-import { AccountState } from "../models/account.model";
-import { ExploreState } from "../models/explore.model";
-import { WindowModel } from "../models/window.model";
-import { AccountResponse } from "../protobuf/account_pb";
-import AccountNotificationService, { AccountData } from "../services/account-notification.service";
-import AccountService from "../services/account.service";
-import MedusaService from "../services/medusa.service";
-import SupabaseService from "../services/supabase.service";
-import { RoutePathsType } from "../web/route-paths";
-import AccountController from "./account.controller";
-import CartController from "./cart.controller";
-import ExploreController from "./explore.controller";
-import NotificationsController from "./notifications.controller";
+import {
+  BannerProps,
+  LanguageInfo,
+  ToastProps,
+} from '@fuoco.appdev/web-components';
+import { Cart, Customer, CustomerGroup, Order } from '@medusajs/medusa';
+import { select } from '@ngneat/elf';
+import { AuthChangeEvent, Session } from '@supabase/supabase-js';
+import { Location as RouterLocation } from 'react-router-dom';
+import { Subscription, filter, firstValueFrom, take } from 'rxjs';
+import { Controller } from '../controller';
+import { AccountState } from '../models/account.model';
+import { ExploreState } from '../models/explore.model';
+import { WindowModel } from '../models/window.model';
+import { AccountResponse } from '../protobuf/account_pb';
+import { RoutePathsType } from '../route-paths-type';
+import AccountNotificationService, {
+  AccountData,
+} from '../services/account-notification.service';
+import AccountService from '../services/account.service';
+import MedusaService from '../services/medusa.service';
+import SupabaseService from '../services/supabase.service';
+import AccountController from './account.controller';
+import CartController from './cart.controller';
+import ExploreController from './explore.controller';
+import NotificationsController from './notifications.controller';
 
 class WindowController extends Controller {
   private readonly _model: WindowModel;
@@ -40,14 +46,12 @@ class WindowController extends Controller {
 
     this.onAuthStateChanged = this.onAuthStateChanged.bind(this);
     this.onCartChanged = this.onCartChanged.bind(this);
-    this.onActiveAccountChangedAsync = this.onActiveAccountChangedAsync.bind(
-      this,
-    );
+    this.onActiveAccountChangedAsync =
+      this.onActiveAccountChangedAsync.bind(this);
     this.onSessionChangedAsync = this.onSessionChangedAsync.bind(this);
     this.onCustomerChanged = this.onCustomerChanged.bind(this);
-    this.onCustomerGroupChangedAsync = this.onCustomerGroupChangedAsync.bind(
-      this,
-    );
+    this.onCustomerGroupChangedAsync =
+      this.onCustomerGroupChangedAsync.bind(this);
     this.onNotificationCreated = this.onNotificationCreated.bind(this);
   }
 
@@ -68,13 +72,13 @@ class WindowController extends Controller {
   public override initialize(renderCount: number): void {
     this.initializeAsync(renderCount);
 
-    this._notificationCreatedSubscription = AccountNotificationService
-      .notificationCreatedObservable.subscribe({
+    this._notificationCreatedSubscription =
+      AccountNotificationService.notificationCreatedObservable.subscribe({
         next: this.onNotificationCreated,
       });
   }
 
-  public override load(_renderCount: number): void { }
+  public override load(_renderCount: number): void {}
 
   public override disposeInitialization(_renderCount: number): void {
     this._notificationCreatedSubscription?.unsubscribe();
@@ -86,7 +90,7 @@ class WindowController extends Controller {
     this._cartSubscription?.unsubscribe();
   }
 
-  public override disposeLoad(_renderCount: number): void { }
+  public override disposeLoad(_renderCount: number): void {}
 
   public updateIsLoading(value: boolean): void {
     this._model.isLoading = value;
@@ -137,11 +141,15 @@ class WindowController extends Controller {
     this._model.orderCanceledNotificationData = value;
   }
 
-  public updateAccountFollowerAcceptedNotificationData(value: AccountData | undefined): void {
+  public updateAccountFollowerAcceptedNotificationData(
+    value: AccountData | undefined
+  ): void {
     this._model.accountFollowerAcceptedNotificationData = value;
   }
 
-  public updateAccountFollowerFollowingNotificationData(value: AccountData | undefined): void {
+  public updateAccountFollowerFollowingNotificationData(
+    value: AccountData | undefined
+  ): void {
     this._model.accountFollowerFollowingNotificationData = value;
   }
 
@@ -153,7 +161,10 @@ class WindowController extends Controller {
     this._model.isSideBarOpen = value;
   }
 
-  public async updateQueryInventoryLocationAsync(id: string | undefined, query: URLSearchParams) {
+  public async updateQueryInventoryLocationAsync(
+    id: string | undefined,
+    query: URLSearchParams
+  ) {
     if (!id) {
       query.delete('sales_location');
       this._model.queryInventoryLocation = undefined;
@@ -165,18 +176,21 @@ class WindowController extends Controller {
       ExploreController.model.store.pipe(
         select((model: ExploreState) => model.inventoryLocations),
         filter((value) => value !== undefined),
-        take(1),
-      ),
+        take(1)
+      )
     );
     const inventoryLocation = inventoryLocations.find(
-      (location) => location.id == id,
+      (location) => location.id == id
     );
     if (inventoryLocation) {
       this._model.queryInventoryLocation = inventoryLocation;
     }
   }
 
-  public updateOnLocationChanged(location: RouterLocation, query: URLSearchParams): void {
+  public updateOnLocationChanged(
+    location: RouterLocation,
+    query: URLSearchParams
+  ): void {
     this._model.prevTransitionKeyIndex = this._model.transitionKeyIndex;
 
     if (location.pathname === RoutePathsType.Explore) {
@@ -326,7 +340,7 @@ class WindowController extends Controller {
     } else if (
       this.isLocationAccountWithId(
         location.pathname,
-        RoutePathsType.AccountWithIdLikes,
+        RoutePathsType.AccountWithIdLikes
       )
     ) {
       this._model.transitionKeyIndex = 2;
@@ -341,7 +355,7 @@ class WindowController extends Controller {
     } else if (
       this.isLocationAccountStatusWithId(
         location.pathname,
-        RoutePathsType.AccountStatusWithIdFollowers,
+        RoutePathsType.AccountStatusWithIdFollowers
       )
     ) {
       this._model.transitionKeyIndex = 1;
@@ -351,7 +365,7 @@ class WindowController extends Controller {
     } else if (
       this.isLocationAccountStatusWithId(
         location.pathname,
-        RoutePathsType.AccountStatusWithIdFollowing,
+        RoutePathsType.AccountStatusWithIdFollowing
       )
     ) {
       this._model.transitionKeyIndex = 1;
@@ -381,20 +395,19 @@ class WindowController extends Controller {
 
   public isLocationAccountWithId(
     pathname: string,
-    childPath?: RoutePathsType,
+    childPath?: RoutePathsType
   ): boolean {
-    const splittedPath = pathname.split("/").filter((value) => value !== "");
+    const splittedPath = pathname.split('/').filter((value) => value !== '');
     if (splittedPath.length < 2) {
       return false;
     }
 
-    const childPathFormatted = childPath?.split("/").slice(-1) ?? [];
+    const childPathFormatted = childPath?.split('/').slice(-1) ?? [];
     if (
-      splittedPath[0] === RoutePathsType.Account.replace("/", "") &&
-      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
-        .test(
-          splittedPath[1],
-        )
+      splittedPath[0] === RoutePathsType.Account.replace('/', '') &&
+      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
+        splittedPath[1]
+      )
     ) {
       if (childPath && splittedPath[2] !== childPathFormatted?.[0]) {
         return false;
@@ -408,21 +421,20 @@ class WindowController extends Controller {
 
   public isLocationAccountStatusWithId(
     pathname: string,
-    childPath?: RoutePathsType,
+    childPath?: RoutePathsType
   ): boolean {
-    const splittedPath = pathname.split("/").filter((value) => value !== "");
+    const splittedPath = pathname.split('/').filter((value) => value !== '');
     if (splittedPath.length < 3) {
       return false;
     }
 
-    const childPathFormatted = childPath?.split("/").slice(-1) ?? [];
+    const childPathFormatted = childPath?.split('/').slice(-1) ?? [];
     if (
       `${splittedPath[0]}/${splittedPath[1]}` ===
-      RoutePathsType.AccountStatus.replace("/", "") &&
-      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
-        .test(
-          splittedPath[2],
-        )
+        RoutePathsType.AccountStatus.replace('/', '') &&
+      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
+        splittedPath[2]
+      )
     ) {
       if (childPath && splittedPath[3] !== childPathFormatted?.[0]) {
         return false;
@@ -441,8 +453,8 @@ class WindowController extends Controller {
       .subscribe({ next: this.onCartChanged });
 
     this._accountSubscription?.unsubscribe();
-    this._accountSubscription = AccountService.activeAccountObservable
-      .subscribe({
+    this._accountSubscription =
+      AccountService.activeAccountObservable.subscribe({
         next: this.onActiveAccountChangedAsync,
       });
 
@@ -459,7 +471,7 @@ class WindowController extends Controller {
       });
 
     SupabaseService.supabaseClient?.auth.onAuthStateChange(
-      this.onAuthStateChanged,
+      this.onAuthStateChanged
     );
   }
 
@@ -469,25 +481,24 @@ class WindowController extends Controller {
     }
 
     const newData = value['new'];
-    const payload = newData["payload"];
-    const resourceType = newData["resource_type"];
-    const eventName = newData["event_name"];
-    const data = newData["data"];
-    if (resourceType === "order") {
-      if (eventName === "order.placed") {
+    const payload = newData['payload'];
+    const resourceType = newData['resource_type'];
+    const eventName = newData['event_name'];
+    const data = newData['data'];
+    if (resourceType === 'order') {
+      if (eventName === 'order.placed') {
         this.onOrderPlaced(data);
-      } else if (eventName === "order.shipped") {
+      } else if (eventName === 'order.shipped') {
         this.onOrderShipped(data);
-      } else if (eventName === "order.returned") {
+      } else if (eventName === 'order.returned') {
         this.onOrderReturned(data);
-      } else if (eventName === "order.canceled") {
+      } else if (eventName === 'order.canceled') {
         this.onOrderCanceled(data);
       }
-    }
-    else if (resourceType === "account") {
-      if (eventName === "account.accepted") {
+    } else if (resourceType === 'account') {
+      if (eventName === 'account.accepted') {
         this.onAccountFollowerAccepted(data);
-      } else if (eventName === "account.following") {
+      } else if (eventName === 'account.following') {
         this.onAccountFollowerFollowing(data);
       }
     }
@@ -528,25 +539,25 @@ class WindowController extends Controller {
   }
 
   private onCartChanged(
-    value: Omit<Cart, "refundable_amount" | "refunded_total"> | undefined,
+    value: Omit<Cart, 'refundable_amount' | 'refunded_total'> | undefined
   ): void {
     this._model.cartCount = value?.items.length ?? 0;
   }
 
   private onAuthStateChanged(
     event: AuthChangeEvent,
-    session: Session | null,
+    session: Session | null
   ): void {
-    if (event === "SIGNED_IN") {
+    if (event === 'SIGNED_IN') {
       this._model.isLoading = true;
       this._model.isAuthenticated = true;
-    } else if (event === "SIGNED_OUT") {
+    } else if (event === 'SIGNED_OUT') {
       this._model.priceLists = [];
       this._model.account = null;
       this._model.isAuthenticated = false;
-    } else if (event === "INITIAL_SESSION" && !session) {
+    } else if (event === 'INITIAL_SESSION' && !session) {
       this._model.isAuthenticated = false;
-    } else if (event === "INITIAL_SESSION" && session) {
+    } else if (event === 'INITIAL_SESSION' && session) {
       this._model.isAuthenticated = true;
     }
 
@@ -573,7 +584,7 @@ class WindowController extends Controller {
   }
 
   private async onActiveAccountChangedAsync(
-    value: AccountResponse | null,
+    value: AccountResponse | null
   ): Promise<void> {
     this._model.account = value;
     this._model.isAccountComplete = value?.status === 'Complete';
@@ -590,7 +601,7 @@ class WindowController extends Controller {
   }
 
   private async requestActiveAccountAsync(
-    session: Session,
+    session: Session
   ): Promise<AccountResponse | null> {
     try {
       return await AccountService.requestActiveAsync(session);
@@ -610,11 +621,11 @@ class WindowController extends Controller {
   }
 
   private async requestNotificationUnseenCount(
-    accountId: string,
+    accountId: string
   ): Promise<void> {
     try {
       const response = await AccountNotificationService.requestUnseenCountAsync(
-        accountId,
+        accountId
       );
       this._model.unseenNotificationsCount = response.count ?? 0;
     } catch (error: any) {
@@ -636,7 +647,7 @@ class WindowController extends Controller {
   }
 
   private async onCustomerGroupChangedAsync(
-    customerGroup: CustomerGroup | undefined,
+    customerGroup: CustomerGroup | undefined
   ): Promise<void> {
     if (!customerGroup) {
       this._model.priceLists = [];
@@ -644,8 +655,8 @@ class WindowController extends Controller {
     }
 
     this._model.priceLists = await MedusaService.requestGetPriceListsAsync({
-      status: ["active"],
-      customerGroups: [customerGroup?.id ?? ""],
+      status: ['active'],
+      customerGroups: [customerGroup?.id ?? ''],
     });
   }
 }

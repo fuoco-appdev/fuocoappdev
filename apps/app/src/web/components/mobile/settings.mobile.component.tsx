@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 import Ripples from 'react-ripples';
 import { Outlet, useNavigate } from 'react-router-dom';
 import AccountController from '../../../controllers/account.controller';
-import { RoutePathsType, useQuery } from '../../route-paths';
+import { RoutePathsType } from '../../../route-paths-type';
+import { useQuery } from '../../route-paths';
 import { ResponsiveMobile } from '../responsive.component';
 import { SettingsResponsiveProps } from '../settings.component';
 import styles from '../settings.module.scss';
@@ -17,10 +18,14 @@ export default function SettingsMobileComponent({
 
   return (
     <ResponsiveMobile>
-      <Scroll classNames={{
-        scrollContent: styles['scroll-content-mobile'],
-        children: styles['scroll-children-mobile']
-      }} isLoadable={false} isReloadable={false}>
+      <Scroll
+        classNames={{
+          scrollContent: styles['scroll-content-mobile'],
+          children: styles['scroll-children-mobile'],
+        }}
+        isLoadable={false}
+        isReloadable={false}
+      >
         {windowProps.activeRoute === RoutePathsType.Settings ? (
           <div className={[styles['root'], styles['root-mobile']].join(' ')}>
             <Ripples

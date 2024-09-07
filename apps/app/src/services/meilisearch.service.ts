@@ -13,7 +13,7 @@ class MeiliSearchService {
   public initializeMeiliSearch(): void {
     this._client = new MeiliSearch({
       host: ConfigService.meilisearch.url,
-      apiKey: process.env['MEILISEARCH_PUBLIC_KEY'] ?? '',
+      apiKey: import.meta.env['MEILISEARCH_PUBLIC_KEY'] ?? '',
     });
   }
 }

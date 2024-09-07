@@ -1,4 +1,3 @@
-import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
 import AccountController from '../../controllers/account.controller';
@@ -7,10 +6,10 @@ import { AuthenticatedComponent } from './authenticated.component';
 import { AccountOrderHistorySuspenseDesktopComponent } from './desktop/suspense/account-order-history.suspense.desktop.component';
 import { AccountOrderHistorySuspenseMobileComponent } from './mobile/suspense/account-order-history.suspense.mobile.component';
 
-const AccountOrderHistoryDesktopComponent = lazy(
+const AccountOrderHistoryDesktopComponent = React.lazy(
   () => import('./desktop/account-order-history.desktop.component')
 );
-const AccountOrderHistoryMobileComponent = lazy(
+const AccountOrderHistoryMobileComponent = React.lazy(
   () => import('./mobile/account-order-history.mobile.component')
 );
 
@@ -32,7 +31,7 @@ export default function AccountOrderHistoryComponent(): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

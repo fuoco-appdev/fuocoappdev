@@ -1,11 +1,20 @@
-import { Button, Dropdown, DropdownAlignment, FormLayout, Input, Line, Slider } from '@fuoco.appdev/web-components';
+import {
+  Button,
+  Dropdown,
+  DropdownAlignment,
+  FormLayout,
+  Input,
+  Line,
+  Slider,
+} from '@fuoco.appdev/web-components';
 import convert from 'convert';
 import { useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import AccountController from '../../../controllers/account.controller';
-import { RoutePathsType, useQuery } from '../../route-paths';
+import { RoutePathsType } from '../../../route-paths-type';
+import { useQuery } from '../../route-paths';
 import { AccountAddFriendsResponsiveProps } from '../account-add-friends.component';
 import styles from '../account-add-friends.module.scss';
 import AccountFollowItemComponent from '../account-follow-item.component';
@@ -135,7 +144,7 @@ export default function AccountAddFriendsDesktopComponent({
                   button: [
                     styles['button'],
                     accountProps.addFriendsSex === 'any' &&
-                    styles['button-selected'],
+                      styles['button-selected'],
                   ].join(' '),
                 }}
                 type={'primary'}
@@ -153,7 +162,7 @@ export default function AccountAddFriendsDesktopComponent({
                   button: [
                     styles['button'],
                     accountProps.addFriendsSex === 'male' &&
-                    styles['button-selected'],
+                      styles['button-selected'],
                   ].join(' '),
                 }}
                 type={'primary'}
@@ -171,7 +180,7 @@ export default function AccountAddFriendsDesktopComponent({
                   button: [
                     styles['button'],
                     accountProps.addFriendsSex === 'female' &&
-                    styles['button-selected'],
+                      styles['button-selected'],
                   ].join(' '),
                 }}
                 type={'primary'}
@@ -179,9 +188,7 @@ export default function AccountAddFriendsDesktopComponent({
                 rippleProps={{
                   color: 'rgba(133, 38, 122, 0.35)',
                 }}
-                onClick={() =>
-                  AccountController.updateAddFriendsSex('female')
-                }
+                onClick={() => AccountController.updateAddFriendsSex('female')}
               >
                 {t('female')}
               </Button>
@@ -292,7 +299,7 @@ export default function AccountAddFriendsDesktopComponent({
               style={{
                 maxHeight:
                   accountProps.hasMoreAddFriends ||
-                    accountProps.areAddFriendsLoading
+                  accountProps.areAddFriendsLoading
                     ? 24
                     : 0,
               }}
@@ -334,24 +341,33 @@ export default function AccountAddFriendsDesktopComponent({
               locationInputRef.current?.focus();
             }}
           >
-            {accountProps.addFriendsLocationGeocoding?.features.map((feature) => (
-              <Dropdown.Item
-                classNames={{
-                  container: styles['dropdown-item-container'],
-                  button: {
-                    button: styles['dropdown-item-button'],
-                  },
-                }}
-                onClick={() => {
-                  AccountController.updateAddFriendsLocationFeature(feature);
-                  locationInputRef.current?.blur();
-                  setLocationDropdownOpen(false);
-                }}
-                rippleProps={{ color: 'rgba(133, 38, 122, 0.35)' }}
-              >
-                <div className={[styles['place-name'], styles['place-name-desktop']].join(' ')}>{feature.place_name}</div>
-              </Dropdown.Item>
-            ))}
+            {accountProps.addFriendsLocationGeocoding?.features.map(
+              (feature) => (
+                <Dropdown.Item
+                  classNames={{
+                    container: styles['dropdown-item-container'],
+                    button: {
+                      button: styles['dropdown-item-button'],
+                    },
+                  }}
+                  onClick={() => {
+                    AccountController.updateAddFriendsLocationFeature(feature);
+                    locationInputRef.current?.blur();
+                    setLocationDropdownOpen(false);
+                  }}
+                  rippleProps={{ color: 'rgba(133, 38, 122, 0.35)' }}
+                >
+                  <div
+                    className={[
+                      styles['place-name'],
+                      styles['place-name-desktop'],
+                    ].join(' ')}
+                  >
+                    {feature.place_name}
+                  </div>
+                </Dropdown.Item>
+              )
+            )}
           </Dropdown>
         </>,
         document.body

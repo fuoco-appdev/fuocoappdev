@@ -1,4 +1,3 @@
-import { lazy } from '@loadable/component';
 import { Order } from '@medusajs/medusa';
 import * as React from 'react';
 import NotificationsController from '../../controllers/notifications.controller';
@@ -10,25 +9,37 @@ import BucketService from '../../services/bucket.service';
 import { NotificationItemSuspenseDesktopComponent } from './desktop/suspense/notification-item.suspense.desktop.component';
 import { NotificationItemSuspenseMobileComponent } from './mobile/suspense/notification-item.suspense.mobile.component';
 
-const NotificationItemDesktopComponent = lazy(
+const NotificationItemDesktopComponent = React.lazy(
   () => import('./desktop/notification-item.desktop.component')
 );
-const NotificationItemMobileComponent = lazy(
+const NotificationItemMobileComponent = React.lazy(
   () => import('./mobile/notification-item.mobile.component')
 );
 
-const OrderNotificationItemDesktopComponent = lazy(
-  () => import('./desktop/notification_items/order-notification-item.desktop.component')
+const OrderNotificationItemDesktopComponent = React.lazy(
+  () =>
+    import(
+      './desktop/notification_items/order-notification-item.desktop.component'
+    )
 );
-const OrderNotificationItemMobileComponent = lazy(
-  () => import('./mobile/notification_items/order-notification-item.mobile.component')
+const OrderNotificationItemMobileComponent = React.lazy(
+  () =>
+    import(
+      './mobile/notification_items/order-notification-item.mobile.component'
+    )
 );
 
-const AccountNotificationItemDesktopComponent = lazy(
-  () => import('./desktop/notification_items/account-notification-item.desktop.component')
+const AccountNotificationItemDesktopComponent = React.lazy(
+  () =>
+    import(
+      './desktop/notification_items/account-notification-item.desktop.component'
+    )
 );
-const AccountNotificationItemMobileComponent = lazy(
-  () => import('./mobile/notification_items/account-notification-item.mobile.component')
+const AccountNotificationItemMobileComponent = React.lazy(
+  () =>
+    import(
+      './mobile/notification_items/account-notification-item.mobile.component'
+    )
 );
 
 export interface NotificationItemProps {
@@ -38,7 +49,7 @@ export interface NotificationItemProps {
 }
 
 export interface NotificationItemResponsiveProps
-  extends NotificationItemProps { }
+  extends NotificationItemProps {}
 
 export interface OrderNotificationItemProps
   extends NotificationItemResponsiveProps {
@@ -68,7 +79,7 @@ export default function NotificationItemComponent({
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 
@@ -119,7 +130,9 @@ export default function NotificationItemComponent({
           publicProfileUrl={publicProfileUrl}
           isAccepted={accountFollower?.accepted ?? false}
           isFollowing={accountFollower?.isFollowing ?? false}
-          onFollow={() => NotificationsController.requestFollowAsync(account?.id ?? '')}
+          onFollow={() =>
+            NotificationsController.requestFollowAsync(account?.id ?? '')
+          }
           onRequested={() =>
             NotificationsController.requestUnfollowAsync(account?.id ?? '')
           }
@@ -135,7 +148,9 @@ export default function NotificationItemComponent({
           publicProfileUrl={publicProfileUrl}
           isAccepted={accountFollower?.accepted ?? false}
           isFollowing={accountFollower?.isFollowing ?? false}
-          onFollow={() => NotificationsController.requestFollowAsync(account?.id ?? '')}
+          onFollow={() =>
+            NotificationsController.requestFollowAsync(account?.id ?? '')
+          }
           onRequested={() =>
             NotificationsController.requestUnfollowAsync(account?.id ?? '')
           }

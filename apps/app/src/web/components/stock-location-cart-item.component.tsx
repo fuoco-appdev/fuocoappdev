@@ -1,4 +1,3 @@
-import { lazy } from '@loadable/component';
 import { Cart } from '@medusajs/medusa';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
 import * as React from 'react';
@@ -7,10 +6,10 @@ import BucketService from '../../services/bucket.service';
 import { StockLocationCartItemSuspenseDesktopComponent } from './desktop/suspense/stock-location-cart-item.suspense.desktop.component';
 import { StockLocationCartItemSuspenseMobileComponent } from './mobile/suspense/stock-location-cart-item.suspense.mobile.component';
 
-const StockLocationCartItemDesktopComponent = lazy(
+const StockLocationCartItemDesktopComponent = React.lazy(
   () => import('./desktop/stock-location-cart-item.desktop.component')
 );
-const StockLocationCartItemMobileComponent = lazy(
+const StockLocationCartItemMobileComponent = React.lazy(
   () => import('./mobile/stock-location-cart-item.mobile.component')
 );
 
@@ -66,7 +65,7 @@ export default function StockLocationCartItemComponent({
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

@@ -1,4 +1,3 @@
-import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -10,10 +9,10 @@ import {
   ResponsiveSuspenseTablet,
 } from './responsive.component';
 
-const TermsOfServiceDesktopComponent = lazy(
+const TermsOfServiceDesktopComponent = React.lazy(
   () => import('./desktop/terms-of-service.desktop.component')
 );
-const TermsOfServiceMobileComponent = lazy(
+const TermsOfServiceMobileComponent = React.lazy(
   () => import('./mobile/terms-of-service.mobile.component')
 );
 
@@ -55,7 +54,7 @@ export default function TermsOfServiceComponent(): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

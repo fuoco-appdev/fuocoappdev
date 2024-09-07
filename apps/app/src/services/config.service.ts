@@ -36,7 +36,7 @@ class ConfigService {
   private readonly _discord!: DiscordConfig;
 
   constructor() {
-    if (process.env['NODE_ENV'] === 'development') {
+    if (import.meta.env['MODE'] === 'development') {
       this._supabase = DevelopmentConfig.supabase;
       this._medusa = DevelopmentConfig.medusa;
       this._meiliSearch = DevelopmentConfig.meilisearch;
@@ -45,7 +45,7 @@ class ConfigService {
       this._discord = DevelopmentConfig.discord;
     }
     // eslint-disable-next-line no-empty
-    else if (process.env['NODE_ENV'] === 'production') {
+    else if (import.meta.env['MODE'] === 'production') {
       this._supabase = ProductionConfig.supabase;
       this._medusa = ProductionConfig.medusa;
       this._meiliSearch = ProductionConfig.meilisearch;

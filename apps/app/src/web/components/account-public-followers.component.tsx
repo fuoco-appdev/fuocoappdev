@@ -1,4 +1,3 @@
-import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -7,14 +6,15 @@ import AccountPublicController from '../../controllers/account-public.controller
 import AccountController from '../../controllers/account.controller';
 import { AccountPublicState } from '../../models/account-public.model';
 import { AccountState } from '../../models/account.model';
-import { RoutePathsType, useQuery } from '../route-paths';
+import { RoutePathsType } from '../../route-paths-type';
+import { useQuery } from '../route-paths';
 import { AccountPublicFollowersSuspenseDesktopComponent } from './desktop/suspense/account-public-followers.suspense.desktop.component';
 import { AccountPublicFollowersSuspenseMobileComponent } from './mobile/suspense/account-public-followers.suspense.mobile.component';
 
-const AccountPublicFollowersDesktopComponent = lazy(
+const AccountPublicFollowersDesktopComponent = React.lazy(
   () => import('./desktop/account-public-followers.desktop.component')
 );
-const AccountPublicFollowersMobileComponent = lazy(
+const AccountPublicFollowersMobileComponent = React.lazy(
   () => import('./mobile/account-public-followers.mobile.component')
 );
 
@@ -57,7 +57,7 @@ export default function AccountPublicFollowersComponent(): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

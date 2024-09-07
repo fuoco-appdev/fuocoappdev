@@ -4,7 +4,6 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import ProductController from '../../controllers/product.controller';
 // @ts-ignore
-import { lazy } from '@loadable/component';
 import { formatAmount } from 'medusa-react';
 import { AccountState } from '../../models/account.model';
 import { StoreState } from '../../models/store.model';
@@ -14,10 +13,10 @@ import DeeplService from '../../services/deepl.service';
 import { ProductPreviewSuspenseDesktopComponent } from './desktop/suspense/product-preview.suspense.desktop.component';
 import { ProductPreviewSuspenseMobileComponent } from './mobile/suspense/product-preview.suspense.mobile.component';
 
-const ProductPreviewDesktopComponent = lazy(
+const ProductPreviewDesktopComponent = React.lazy(
   () => import('./desktop/product-preview.desktop.component')
 );
-const ProductPreviewMobileComponent = lazy(
+const ProductPreviewMobileComponent = React.lazy(
   () => import('./mobile/product-preview.mobile.component')
 );
 
@@ -201,7 +200,7 @@ export default function ProductPreviewComponent({
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

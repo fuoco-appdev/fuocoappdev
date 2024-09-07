@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { RouteObject, useLocation } from 'react-router-dom';
+import { RoutePathsType } from '../route-paths-type';
 import AccountAddFriendsComponent from './components/account-add-friends.component';
 import AccountAddressesComponent from './components/account-addresses.component';
 import AccountEditComponent from './components/account-likes.component';
@@ -32,45 +33,6 @@ import SigninComponent from './components/signin.component';
 import SignupComponent from './components/signup.component';
 import StoreComponent from './components/store.component';
 import TermsOfServiceComponent from './components/terms-of-service.component';
-
-export enum RoutePathsType {
-  Default = '/',
-  Explore = '/explore',
-  Signin = '/signin',
-  Signup = '/signup',
-  EmailConfirmation = '/email-confirmation',
-  ForgotPassword = '/forgot-password',
-  TermsOfService = '/terms-of-service',
-  PrivacyPolicy = '/privacy-policy',
-  Permissions = '/permissions',
-  Help = '/help',
-  ResetPassword = '/reset-password',
-  Store = '/store',
-  StoreWithId = '/store/:id',
-  Events = '/events',
-  Notifications = '/notifications',
-  Cart = '/cart',
-  Chats = '/chats',
-  ChatsWithId = '/chats/:id',
-  Checkout = '/checkout',
-  Account = '/account',
-  AccountWithId = '/account/:id',
-  AccountWithIdLikes = '/account/:id/likes',
-  AccountStatus = '/account/status',
-  AccountStatusWithId = '/account/status/:id',
-  AccountStatusWithIdFollowers = '/account/status/:id/followers',
-  AccountStatusWithIdFollowing = '/account/status/:id/following',
-  AccountEvents = '/account/events',
-  AccountOrderHistory = '/account/order-history',
-  AccountAddresses = '/account/addresses',
-  AccountLikes = '/account/likes',
-  AccountHelp = '/account/help',
-  AccountAddFriends = '/account/add-friends',
-  Settings = '/settings',
-  SettingsAccount = '/settings/account',
-  OrderConfirmed = '/order/confirmed',
-  OrderConfirmedWithId = '/order/confirmed/:id',
-}
 
 export const getRoutePaths = (): RouteObject[] => [
   {
@@ -147,9 +109,9 @@ export const getRoutePaths = (): RouteObject[] => [
           },
           {
             path: RoutePathsType.ChatsWithId,
-            element: <ChatComponent />
-          }
-        ]
+            element: <ChatComponent />,
+          },
+        ],
       },
       {
         path: RoutePathsType.Checkout,

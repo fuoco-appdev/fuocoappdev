@@ -1,4 +1,3 @@
-import { lazy } from '@loadable/component';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,10 +8,10 @@ import DeeplService from '../../services/deepl.service';
 import { StockLocationItemSuspenseDesktopComponent } from './desktop/suspense/stock-location-item.suspense.desktop.component';
 import { StockLocationItemSuspenseMobileComponent } from './mobile/suspense/stock-location-item.suspense.mobile.component';
 
-const StockLocationItemDesktopComponent = lazy(
+const StockLocationItemDesktopComponent = React.lazy(
   () => import('./desktop/stock-location-item.desktop.component')
 );
-const StockLocationItemMobileComponent = lazy(
+const StockLocationItemMobileComponent = React.lazy(
   () => import('./mobile/stock-location-item.mobile.component')
 );
 
@@ -108,7 +107,7 @@ export default function StockLocationItemComponent({
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

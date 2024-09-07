@@ -1,4 +1,3 @@
-import { lazy } from '@loadable/component';
 import { useElements, useStripe } from '@stripe/react-stripe-js';
 import {
   StripeCardNumberElement,
@@ -7,17 +6,18 @@ import {
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import CheckoutController from '../../controllers/checkout.controller';
-import { RoutePathsType, useQuery } from '../route-paths';
+import { RoutePathsType } from '../../route-paths-type';
+import { useQuery } from '../route-paths';
 import {
   ResponsiveSuspenseDesktop,
   ResponsiveSuspenseMobile,
   ResponsiveSuspenseTablet,
 } from './responsive.component';
 
-const StripePayButtonDesktopComponent = lazy(
+const StripePayButtonDesktopComponent = React.lazy(
   () => import('./desktop/stripe-pay-button.desktop.component')
 );
-const StripePayButtonMobileComponent = lazy(
+const StripePayButtonMobileComponent = React.lazy(
   () => import('./mobile/stripe-pay-button.mobile.component')
 );
 
@@ -80,7 +80,7 @@ export default function StripePayButtonComponent({
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

@@ -1,4 +1,3 @@
-import { lazy } from '@loadable/component';
 import * as React from 'react';
 import { AccountDocument, AccountState } from '../../models/account.model';
 import { AccountFollowerResponse } from '../../protobuf/account-follower_pb';
@@ -7,10 +6,10 @@ import BucketService from '../../services/bucket.service';
 import { AccountFollowItemSuspenseDesktopComponent } from './desktop/suspense/account-follow-item.suspense.desktop.component';
 import { AccountFollowItemSuspenseMobileComponent } from './mobile/suspense/account-follow-item.suspense.mobile.component';
 
-const AccountFollowItemDesktopComponent = lazy(
+const AccountFollowItemDesktopComponent = React.lazy(
   () => import('./desktop/account-follow-item.desktop.component')
 );
-const AccountFollowItemMobileComponent = lazy(
+const AccountFollowItemMobileComponent = React.lazy(
   () => import('./mobile/account-follow-item.mobile.component')
 );
 
@@ -120,7 +119,7 @@ export default function AccountFollowItemComponent({
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

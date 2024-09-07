@@ -10,12 +10,12 @@ import { AccountDocument } from '../models/account.model';
 import { AccountResponse } from '../protobuf/account_pb';
 import { StorageFolderType } from '../protobuf/common_pb';
 import { ProductLikesMetadataResponse } from '../protobuf/product-like_pb';
+import { RoutePathsType } from '../route-paths-type';
 import AccountFollowersService from '../services/account-followers.service';
 import AccountService from '../services/account.service';
 import BucketService from '../services/bucket.service';
 import MedusaService from '../services/medusa.service';
 import ProductLikesService from '../services/product-likes.service';
-import { RoutePathsType } from '../web/route-paths';
 import AccountController from './account.controller';
 
 class AccountPublicController extends Controller {
@@ -54,7 +54,7 @@ class AccountPublicController extends Controller {
       });
   }
 
-  public override load(_renderCount: number): void { }
+  public override load(_renderCount: number): void {}
 
   public override disposeInitialization(_renderCount: number): void {
     clearTimeout(this._followingTimerId as number | undefined);
@@ -68,22 +68,22 @@ class AccountPublicController extends Controller {
     this._cartSubscription?.unsubscribe();
   }
 
-  public override disposeLoad(_renderCount: number): void { }
+  public override disposeLoad(_renderCount: number): void {}
 
   public async loadLikedProductsAsync(id: string): Promise<void> {
-    const account = await firstValueFrom(AccountController.model.store
-      .pipe(select((model) => model.account), filter((value) => value !== undefined), take(1)));
+    const account = await firstValueFrom(
+      AccountController.model.store.pipe(
+        select((model) => model.account),
+        filter((value) => value !== undefined),
+        take(1)
+      )
+    );
     this._model.likedProducts = [];
     this._model.likesScrollPosition = 0;
     this._model.likedProductPagination = 1;
     this._model.productLikesMetadata = {};
 
-    await this.requestLikedProductsAsync(
-      id,
-      account?.id,
-      0,
-      this._limit
-    );
+    await this.requestLikedProductsAsync(id, account?.id, 0, this._limit);
   }
 
   public async loadFollowersAsync(): Promise<void> {
@@ -104,7 +104,11 @@ class AccountPublicController extends Controller {
       return;
     }
 
-    await this.followersSearchAsync(this._model.followersFollowingInput, 0, this._limit);
+    await this.followersSearchAsync(
+      this._model.followersFollowingInput,
+      0,
+      this._limit
+    );
   }
 
   public async loadFollowingAsync(): Promise<void> {
@@ -126,7 +130,11 @@ class AccountPublicController extends Controller {
       return;
     }
 
-    await this.followingSearchAsync(this._model.followersFollowingInput, 0, this._limit);
+    await this.followingSearchAsync(
+      this._model.followersFollowingInput,
+      0,
+      this._limit
+    );
   }
 
   public updateAccountId(id: string | undefined): void {
@@ -288,7 +296,13 @@ class AccountPublicController extends Controller {
 
     this._model.areFollowersLoading = true;
 
-    const account = await firstValueFrom(this._model.store.pipe(select((model) => model.account), filter((value) => value !== undefined), take(1)));
+    const account = await firstValueFrom(
+      this._model.store.pipe(
+        select((model) => model.account),
+        filter((value) => value !== undefined),
+        take(1)
+      )
+    );
     let followerAccounts: AccountDocument[] = [];
     try {
       const accountsResponse = await AccountService.requestFollowersSearchAsync(
@@ -312,20 +326,23 @@ class AccountPublicController extends Controller {
         this._model.hasMoreFollowers = true;
       }
 
-      const documents = accountsResponse.accounts.map((protobuf) => ({
-        id: protobuf.id,
-        customer_id: protobuf.customerId,
-        supabase_id: protobuf.supabaseId,
-        profile_url: protobuf.profileUrl,
-        status: protobuf.status,
-        updated_at: protobuf.updateAt,
-        language_code: protobuf.languageCode,
-        username: protobuf.username,
-        birthday: protobuf.birthday,
-        sex: protobuf.sex,
-        interests: protobuf.interests,
-        metadata: protobuf.metadata,
-      }) as AccountDocument);
+      const documents = accountsResponse.accounts.map(
+        (protobuf) =>
+          ({
+            id: protobuf.id,
+            customer_id: protobuf.customerId,
+            supabase_id: protobuf.supabaseId,
+            profile_url: protobuf.profileUrl,
+            status: protobuf.status,
+            updated_at: protobuf.updateAt,
+            language_code: protobuf.languageCode,
+            username: protobuf.username,
+            birthday: protobuf.birthday,
+            sex: protobuf.sex,
+            interests: protobuf.interests,
+            metadata: protobuf.metadata,
+          } as AccountDocument)
+      );
       if (offset > 0) {
         followerAccounts = this._model.followerAccounts.concat(documents);
       } else {
@@ -336,9 +353,7 @@ class AccountPublicController extends Controller {
     }
 
     try {
-      const otherAccountIds = followerAccounts.map(
-        (value) => value.id ?? ''
-      );
+      const otherAccountIds = followerAccounts.map((value) => value.id ?? '');
       const followerResponse =
         await AccountFollowersService.requestFollowersAsync({
           accountId: account?.id ?? '',
@@ -376,7 +391,7 @@ class AccountPublicController extends Controller {
           billing_address_id: customer?.billingAddressId,
           phone: customer?.phone,
           has_account: customer?.hasAccount,
-          metadata: customer?.metadata
+          metadata: customer?.metadata,
         } as Partial<Customer>;
       }
     } catch (error: any) {
@@ -399,7 +414,13 @@ class AccountPublicController extends Controller {
 
     this._model.areFollowingLoading = true;
 
-    const account = await firstValueFrom(this._model.store.pipe(select((model) => model.account), filter((value) => value !== undefined), take(1)));
+    const account = await firstValueFrom(
+      this._model.store.pipe(
+        select((model) => model.account),
+        filter((value) => value !== undefined),
+        take(1)
+      )
+    );
     let followingAccounts: AccountDocument[] = [];
     try {
       const accountsResponse = await AccountService.requestFollowingSearchAsync(
@@ -423,20 +444,23 @@ class AccountPublicController extends Controller {
         this._model.hasMoreFollowing = true;
       }
 
-      const documents = accountsResponse.accounts.map((protobuf) => ({
-        id: protobuf.id,
-        customer_id: protobuf.customerId,
-        supabase_id: protobuf.supabaseId,
-        profile_url: protobuf.profileUrl,
-        status: protobuf.status,
-        updated_at: protobuf.updateAt,
-        language_code: protobuf.languageCode,
-        username: protobuf.username,
-        birthday: protobuf.birthday,
-        sex: protobuf.sex,
-        interests: protobuf.interests,
-        metadata: protobuf.metadata,
-      }) as AccountDocument);
+      const documents = accountsResponse.accounts.map(
+        (protobuf) =>
+          ({
+            id: protobuf.id,
+            customer_id: protobuf.customerId,
+            supabase_id: protobuf.supabaseId,
+            profile_url: protobuf.profileUrl,
+            status: protobuf.status,
+            updated_at: protobuf.updateAt,
+            language_code: protobuf.languageCode,
+            username: protobuf.username,
+            birthday: protobuf.birthday,
+            sex: protobuf.sex,
+            interests: protobuf.interests,
+            metadata: protobuf.metadata,
+          } as AccountDocument)
+      );
       if (offset > 0) {
         followingAccounts = this._model.followingAccounts.concat(documents);
       } else {
@@ -447,9 +471,7 @@ class AccountPublicController extends Controller {
     }
 
     try {
-      const otherAccountIds = followingAccounts.map(
-        (value) => value.id ?? ''
-      );
+      const otherAccountIds = followingAccounts.map((value) => value.id ?? '');
       const followerResponse =
         await AccountFollowersService.requestFollowersAsync({
           accountId: account?.id ?? '',
@@ -486,7 +508,7 @@ class AccountPublicController extends Controller {
           billing_address_id: customer?.billingAddressId,
           phone: customer?.phone,
           has_account: customer?.hasAccount,
-          metadata: customer?.metadata
+          metadata: customer?.metadata,
         } as Partial<Customer>;
       }
     } catch (error: any) {

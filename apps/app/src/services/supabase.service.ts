@@ -57,10 +57,10 @@ class SupabaseService {
   }
 
   public async initializeSupabase(): Promise<void> {
-    this._anonKey = process.env['SUPABASE_ANON_KEY'] ?? '';
+    this._anonKey = import.meta.env['SUPABASE_ANON_KEY'] ?? '';
     this._supabaseClient = createClient(
       ConfigService.supabase.url,
-      this._anonKey
+      this._anonKey ?? ''
     );
 
     this._supabaseClientBehaviorSubject.next(this._supabaseClient);

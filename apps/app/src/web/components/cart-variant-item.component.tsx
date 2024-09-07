@@ -1,5 +1,4 @@
 // @ts-ignore
-import { lazy } from '@loadable/component';
 import {
   PricedProduct,
   PricedVariant,
@@ -10,10 +9,10 @@ import { MedusaProductTypeNames } from '../../types/medusa.type';
 import { CartVariantItemSuspenseDesktopComponent } from './desktop/suspense/cart-variant-item.suspense.desktop.component';
 import { CartVariantItemSuspenseMobileComponent } from './mobile/suspense/cart-variant-item.suspense.mobile.component';
 
-const CartVariantItemDesktopComponent = lazy(
+const CartVariantItemDesktopComponent = React.lazy(
   () => import('./desktop/cart-variant-item.desktop.component')
 );
-const CartVariantItemMobileComponent = lazy(
+const CartVariantItemMobileComponent = React.lazy(
   () => import('./mobile/cart-variant-item.mobile.component')
 );
 
@@ -53,7 +52,7 @@ export default function CartVariantItemComponent({
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

@@ -1,4 +1,3 @@
-import { lazy } from '@loadable/component';
 import { Address } from '@medusajs/medusa';
 import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
@@ -9,10 +8,10 @@ import { AuthenticatedComponent } from './authenticated.component';
 import { AccountAddressesSuspenseDesktopComponent } from './desktop/suspense/account-addresses.suspense.desktop.component';
 import { AccountAddressesSuspenseMobileComponent } from './mobile/suspense/account-addresses.suspense.mobile.component';
 
-const AccountAddressesDesktopComponent = lazy(
+const AccountAddressesDesktopComponent = React.lazy(
   () => import('./desktop/account-addresses.desktop.component')
 );
-const AccountAddressesMobileComponent = lazy(
+const AccountAddressesMobileComponent = React.lazy(
   () => import('./mobile/account-addresses.mobile.component')
 );
 
@@ -147,7 +146,7 @@ export default function AccountAddressesComponent(): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

@@ -20,6 +20,7 @@ import { AccountResponse } from '../protobuf/account_pb';
 import { StorageFolderType } from '../protobuf/common_pb';
 import { InterestResponse } from '../protobuf/interest_pb';
 import { ProductLikesMetadataResponse } from '../protobuf/product-like_pb';
+import { RoutePathsType } from '../route-paths-type';
 import AccountFollowersService from '../services/account-followers.service';
 import AccountService from '../services/account.service';
 import BucketService from '../services/bucket.service';
@@ -37,7 +38,6 @@ import {
   AddressFormErrors,
   AddressFormValues,
 } from '../web/components/address-form.component';
-import { RoutePathsType } from '../web/route-paths';
 import ExploreController from './explore.controller';
 import WindowController from './window.controller';
 
@@ -87,7 +87,7 @@ class AccountController extends Controller {
       });
   }
 
-  public override load(_renderCount: number): void { }
+  public override load(_renderCount: number): void {}
 
   public override disposeInitialization(_renderCount: number): void {
     clearTimeout(this._addInterestTimerId as number | undefined);
@@ -102,7 +102,7 @@ class AccountController extends Controller {
     this._userSubscription?.unsubscribe();
   }
 
-  public override disposeLoad(_renderCount: number): void { }
+  public override disposeLoad(_renderCount: number): void {}
 
   public reloadLikedProducts(): void {
     this.requestLikedProductsAsync('reloading');
@@ -473,20 +473,20 @@ class AccountController extends Controller {
       }
       const documents = accountsResponse.accounts.map(
         (protobuf) =>
-        ({
-          id: protobuf.id,
-          customer_id: protobuf.customerId,
-          supabase_id: protobuf.supabaseId,
-          profile_url: protobuf.profileUrl,
-          status: protobuf.status,
-          updated_at: protobuf.updateAt,
-          language_code: protobuf.languageCode,
-          username: protobuf.username,
-          birthday: protobuf.birthday,
-          sex: protobuf.sex,
-          interests: protobuf.interests,
-          metadata: protobuf.metadata,
-        } as AccountDocument)
+          ({
+            id: protobuf.id,
+            customer_id: protobuf.customerId,
+            supabase_id: protobuf.supabaseId,
+            profile_url: protobuf.profileUrl,
+            status: protobuf.status,
+            updated_at: protobuf.updateAt,
+            language_code: protobuf.languageCode,
+            username: protobuf.username,
+            birthday: protobuf.birthday,
+            sex: protobuf.sex,
+            interests: protobuf.interests,
+            metadata: protobuf.metadata,
+          } as AccountDocument)
       );
       if (offset > 0) {
         followRequestAccounts = followRequestAccounts.concat(documents);
@@ -1396,7 +1396,9 @@ class AccountController extends Controller {
     this._activeAccountSubscription?.unsubscribe();
     this._activeAccountSubscription = AccountService.activeAccountObservable
       .pipe(
-        filter((value) => value !== null && this._model.account?.id !== value.id),
+        filter(
+          (value) => value !== null && this._model.account?.id !== value.id
+        )
       )
       .subscribe({
         next: this.onActiveAccountChangedAsync,
@@ -1437,9 +1439,7 @@ class AccountController extends Controller {
   private async onActiveAccountChangedAsync(
     value: AccountResponse | null
   ): Promise<void> {
-    if (
-      !value
-    ) {
+    if (!value) {
       return;
     }
 

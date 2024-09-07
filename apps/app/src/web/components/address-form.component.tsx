@@ -1,6 +1,5 @@
 import { OptionProps } from '@fuoco.appdev/web-components';
 import { CountryDataProps } from '@fuoco.appdev/web-components/dist/cjs/src/components/input-phone-number/country-data';
-import { lazy } from '@loadable/component';
 import { Country, Region } from '@medusajs/medusa';
 import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
@@ -10,10 +9,10 @@ import styles from './address-form.module.scss';
 import { AddressFormSuspenseDesktopComponent } from './desktop/suspense/address-form.suspense.desktop.component';
 import { AddressFormSuspenseMobileComponent } from './mobile/suspense/address-form.suspense.mobile.component';
 
-const AddressFormDesktopComponent = lazy(
+const AddressFormDesktopComponent = React.lazy(
   () => import('./desktop/address-form.desktop.component')
 );
-const AddressFormMobileComponent = lazy(
+const AddressFormMobileComponent = React.lazy(
   () => import('./mobile/address-form.mobile.component')
 );
 
@@ -262,7 +261,7 @@ export default function AddressFormComponent({
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

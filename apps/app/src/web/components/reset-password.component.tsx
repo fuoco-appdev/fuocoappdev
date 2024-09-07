@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
 import { AuthError } from '@supabase/supabase-js';
 import * as React from 'react';
@@ -13,14 +12,14 @@ import {
   ResponsiveSuspenseTablet,
 } from './responsive.component';
 
-const ResetPasswordDesktopComponent = lazy(
+const ResetPasswordDesktopComponent = React.lazy(
   () => import('./desktop/reset-password.desktop.component')
 );
-const ResetPasswordMobileComponent = lazy(
+const ResetPasswordMobileComponent = React.lazy(
   () => import('./mobile/reset-password.mobile.component')
 );
 
-export interface ResetPasswordProps { }
+export interface ResetPasswordProps {}
 
 export interface ResetPasswordResponsiveProps {
   resetPasswordProps: ResetPasswordState;
@@ -75,7 +74,7 @@ export default function ResetPasswordComponent(): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

@@ -1,12 +1,16 @@
-import { BannerProps, LanguageInfo, ToastProps } from "@fuoco.appdev/web-components";
-import { Order, PriceList } from "@medusajs/medusa";
-import { createStore, withProps } from "@ngneat/elf";
-import { AuthChangeEvent } from "@supabase/supabase-js";
-import { Model } from "../model";
-import { AccountResponse } from "../protobuf/account_pb";
-import { AccountData } from "../services/account-notification.service";
-import { RoutePathsType } from "../web/route-paths";
-import { InventoryLocation } from "./explore.model";
+import {
+  BannerProps,
+  LanguageInfo,
+  ToastProps,
+} from '@fuoco.appdev/web-components';
+import { Order, PriceList } from '@medusajs/medusa';
+import { createStore, withProps } from '@ngneat/elf';
+import { AuthChangeEvent } from '@supabase/supabase-js';
+import { Model } from '../model';
+import { AccountResponse } from '../protobuf/account_pb';
+import { RoutePathsType } from '../route-paths-type';
+import { AccountData } from '../services/account-notification.service';
+import { InventoryLocation } from './explore.model';
 
 export interface WindowState {
   account: AccountResponse | null;
@@ -45,7 +49,7 @@ export class WindowModel extends Model {
   constructor() {
     super(
       createStore(
-        { name: "window" },
+        { name: 'window' },
         withProps<WindowState>({
           account: null,
           isAuthenticated: undefined,
@@ -71,17 +75,17 @@ export class WindowModel extends Model {
           scaleKeyIndex: 0,
           queryInventoryLocation: undefined,
           priceLists: [],
-        }),
+        })
       ),
       undefined,
       createStore(
-        { name: "window-local" },
+        { name: 'window-local' },
         withProps<WindowLocalState>({
           isSideBarOpen: true,
-          languageCode: "en",
+          languageCode: 'en',
           languageInfo: undefined,
-        }),
-      ),
+        })
+      )
     );
   }
 
@@ -140,7 +144,6 @@ export class WindowModel extends Model {
       }));
     }
   }
-
 
   public get activeRoute(): RoutePathsType | undefined {
     return this.store.getValue().activeRoute;
@@ -238,11 +241,15 @@ export class WindowModel extends Model {
     }
   }
 
-  public get accountFollowerAcceptedNotificationData(): AccountData | undefined {
+  public get accountFollowerAcceptedNotificationData():
+    | AccountData
+    | undefined {
     return this.store.getValue().accountFollowerAcceptedNotificationData;
   }
 
-  public set accountFollowerAcceptedNotificationData(value: AccountData | undefined) {
+  public set accountFollowerAcceptedNotificationData(
+    value: AccountData | undefined
+  ) {
     if (
       JSON.stringify(this.accountFollowerAcceptedNotificationData) !==
       JSON.stringify(value)
@@ -254,11 +261,15 @@ export class WindowModel extends Model {
     }
   }
 
-  public get accountFollowerFollowingNotificationData(): AccountData | undefined {
+  public get accountFollowerFollowingNotificationData():
+    | AccountData
+    | undefined {
     return this.store.getValue().accountFollowerFollowingNotificationData;
   }
 
-  public set accountFollowerFollowingNotificationData(value: AccountData | undefined) {
+  public set accountFollowerFollowingNotificationData(
+    value: AccountData | undefined
+  ) {
     if (
       JSON.stringify(this.accountFollowerFollowingNotificationData) !==
       JSON.stringify(value)
@@ -456,7 +467,7 @@ export class WindowModel extends Model {
   }
 
   public set languageInfo(
-    value: { isoCode: string; info: LanguageInfo } | undefined,
+    value: { isoCode: string; info: LanguageInfo } | undefined
   ) {
     if (JSON.stringify(this.languageInfo) !== JSON.stringify(value)) {
       this.localStore?.update((state) => ({

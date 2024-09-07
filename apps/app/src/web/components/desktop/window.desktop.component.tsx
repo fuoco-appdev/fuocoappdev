@@ -20,7 +20,8 @@ import { CSSTransition } from 'react-transition-group';
 import AccountController from '../../../controllers/account.controller';
 import WindowController from '../../../controllers/window.controller';
 import { AccountResponse } from '../../../protobuf/account_pb';
-import { RoutePathsType, useQuery } from '../../route-paths';
+import { RoutePathsType } from '../../../route-paths-type';
+import { useQuery } from '../../route-paths';
 import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
 import { WindowResponsiveProps } from '../window.component';
 import styles from '../window.module.scss';
@@ -216,7 +217,7 @@ export default function WindowDesktopComponent({
                 size={'tiny'}
                 icon={
                   windowProps.activeRoute !== RoutePathsType.Cart &&
-                    windowProps.activeRoute !== RoutePathsType.Checkout ? (
+                  windowProps.activeRoute !== RoutePathsType.Checkout ? (
                     <Line.ShoppingCart
                       size={24}
                       color={'rgba(252, 245, 227, .8)'}
@@ -269,17 +270,21 @@ export default function WindowDesktopComponent({
                     type={'text'}
                     rounded={true}
                     size={'tiny'}
-                    icon={!windowProps.activeRoute?.startsWith(RoutePathsType.Chats) ? (
-                      <Line.ChatBubbleOutline
-                        size={24}
-                        color={'rgba(252, 245, 227, .8)'}
-                      />
-                    ) : (
-                      <Line.ChatBubble
-                        size={24}
-                        color={'rgba(252, 245, 227, 1)'}
-                      />
-                    )}
+                    icon={
+                      !windowProps.activeRoute?.startsWith(
+                        RoutePathsType.Chats
+                      ) ? (
+                        <Line.ChatBubbleOutline
+                          size={24}
+                          color={'rgba(252, 245, 227, .8)'}
+                        />
+                      ) : (
+                        <Line.ChatBubble
+                          size={24}
+                          color={'rgba(252, 245, 227, 1)'}
+                        />
+                      )
+                    }
                   />
                 </div>
                 <div
@@ -302,17 +307,21 @@ export default function WindowDesktopComponent({
                     type={'text'}
                     rounded={true}
                     size={'tiny'}
-                    icon={!windowProps.activeRoute?.startsWith(RoutePathsType.Settings) ? (
-                      <Line.Settings
-                        size={24}
-                        color={'rgba(252, 245, 227, .8)'}
-                      />
-                    ) : (
-                      <Solid.Settings
-                        size={24}
-                        color={'rgba(252, 245, 227, 1)'}
-                      />
-                    )}
+                    icon={
+                      !windowProps.activeRoute?.startsWith(
+                        RoutePathsType.Settings
+                      ) ? (
+                        <Line.Settings
+                          size={24}
+                          color={'rgba(252, 245, 227, .8)'}
+                        />
+                      ) : (
+                        <Solid.Settings
+                          size={24}
+                          color={'rgba(252, 245, 227, 1)'}
+                        />
+                      )
+                    }
                   />
                 </div>
               </>
@@ -387,89 +396,102 @@ export default function WindowDesktopComponent({
                       ? t('store') ?? ''
                       : undefined,
                   },
-                  ...(!windowProps.account ? [{
-                    id: RoutePathsType.Signup,
-                    icon:
-                      windowProps.activeRoute === RoutePathsType.Signup ? (
-                        <Solid.PersonAdd size={24} />
-                      ) : (
-                        <Line.PersonAdd size={24} />
-                      ),
-                    label: windowLocalProps.isSideBarOpen
-                      ? t('signup') ?? ''
-                      : undefined,
-                  }, {
-                    id: RoutePathsType.Signin,
-                    icon:
-                      windowProps.activeRoute === RoutePathsType.Signin ? (
-                        <Line.Login size={24} />
-                      ) : (
-                        <Line.Login size={24} />
-                      ),
-                    label: windowLocalProps.isSideBarOpen
-                      ? t('signin') ?? ''
-                      : undefined,
-                  }] : []),
-                  ...(windowProps.account ? [{
-                    id: RoutePathsType.Notifications,
-                    icon: <div
-                      className={[
-                        styles['notification-container-details'],
-                        styles['notification-container-details-desktop'],
-                      ].join(' ')}
-                    >{windowProps.activeRoute !== RoutePathsType.Notifications ? (
-                      <Line.Notifications
-                        size={24}
-                      />
-                    ) : (
-                      <Solid.Notifications
-                        size={24}
-                      />
-                    )}
-                      {windowProps.unseenNotificationsCount > 0 && (
-                        <div
-                          className={[
-                            styles['notification-status-container'],
-                            styles['notification-status-container-desktop'],
-                          ].join(' ')}
-                        />
-                      )}
-                    </div>,
-                    label: windowLocalProps.isSideBarOpen
-                      ? t('notifications') ?? ''
-                      : undefined,
-                  },
-                  {
-                    id: RoutePathsType.Account,
-                    icon:
-                      !windowProps.isAccountComplete ? (
-                        <Line.AccountCircle
-                          size={24}
-                        />
-                      ) : (
-                        <Avatar
-                          classNames={{
-                            container: accountProps?.profileUrl
-                              ? [
-                                styles['avatar-container'],
-                                styles['avatar-container-desktop'],
-                              ].join(' ')
-                              : [
-                                styles['no-avatar-container'],
-                                styles['no-avatar-container-desktop'],
-                              ].join(' '),
-                          }}
-                          size={'custom'}
-                          text={customer?.first_name}
-                          src={accountProps?.profileUrl}
-                          touchScreen={true}
-                        />
-                      ),
-                    label: windowLocalProps.isSideBarOpen ? windowProps.isAccountComplete
-                      ? account.username
-                      : t('profile') ?? undefined : undefined,
-                  },
-                  ] : []),
+                  ...(!windowProps.account
+                    ? [
+                        {
+                          id: RoutePathsType.Signup,
+                          icon:
+                            windowProps.activeRoute ===
+                            RoutePathsType.Signup ? (
+                              <Solid.PersonAdd size={24} />
+                            ) : (
+                              <Line.PersonAdd size={24} />
+                            ),
+                          label: windowLocalProps.isSideBarOpen
+                            ? t('signup') ?? ''
+                            : undefined,
+                        },
+                        {
+                          id: RoutePathsType.Signin,
+                          icon:
+                            windowProps.activeRoute ===
+                            RoutePathsType.Signin ? (
+                              <Line.Login size={24} />
+                            ) : (
+                              <Line.Login size={24} />
+                            ),
+                          label: windowLocalProps.isSideBarOpen
+                            ? t('signin') ?? ''
+                            : undefined,
+                        },
+                      ]
+                    : []),
+                  ...(windowProps.account
+                    ? [
+                        {
+                          id: RoutePathsType.Notifications,
+                          icon: (
+                            <div
+                              className={[
+                                styles['notification-container-details'],
+                                styles[
+                                  'notification-container-details-desktop'
+                                ],
+                              ].join(' ')}
+                            >
+                              {windowProps.activeRoute !==
+                              RoutePathsType.Notifications ? (
+                                <Line.Notifications size={24} />
+                              ) : (
+                                <Solid.Notifications size={24} />
+                              )}
+                              {windowProps.unseenNotificationsCount > 0 && (
+                                <div
+                                  className={[
+                                    styles['notification-status-container'],
+                                    styles[
+                                      'notification-status-container-desktop'
+                                    ],
+                                  ].join(' ')}
+                                />
+                              )}
+                            </div>
+                          ),
+                          label: windowLocalProps.isSideBarOpen
+                            ? t('notifications') ?? ''
+                            : undefined,
+                        },
+                        {
+                          id: RoutePathsType.Account,
+                          icon: !windowProps.isAccountComplete ? (
+                            <Line.AccountCircle size={24} />
+                          ) : (
+                            <Avatar
+                              classNames={{
+                                container: accountProps?.profileUrl
+                                  ? [
+                                      styles['avatar-container'],
+                                      styles['avatar-container-desktop'],
+                                    ].join(' ')
+                                  : [
+                                      styles['no-avatar-container'],
+                                      styles['no-avatar-container-desktop'],
+                                    ].join(' '),
+                              }}
+                              size={'custom'}
+                              text={customer?.first_name}
+                              src={accountProps?.profileUrl}
+                              touchScreen={true}
+                            />
+                          ),
+                          label: windowLocalProps.isSideBarOpen
+                            ? windowProps.isAccountComplete
+                              ? account.username
+                              : t('profile') ?? undefined
+                            : undefined,
+                        },
+                      ]
+                    : []),
                 ]}
               />
               {windowLocalProps.isSideBarOpen && (
@@ -527,97 +549,100 @@ export default function WindowDesktopComponent({
               styles['right-content-desktop'],
             ].join(' ')}
           >
-            {windowProps.showNavigateBack && <div
-              className={[
-                styles['navigation-back-container'],
-                styles['navigation-back-container-desktop'],
-              ].join(' ')}
-            >
+            {windowProps.showNavigateBack && (
               <div
                 className={[
-                  styles['navigation-back-left-content'],
-                  styles['navigation-back-left-content-desktop'],
+                  styles['navigation-back-container'],
+                  styles['navigation-back-container-desktop'],
                 ].join(' ')}
               >
-                <Button
-                  classNames={{
-                    button: styles['button'],
-                  }}
-                  rippleProps={{
-                    color: 'rgba(252, 245, 227, .35)',
-                  }}
-                  rounded={true}
-                  size={'tiny'}
-                  disabled={!windowProps.showNavigateBack}
-                  onClick={() => {
-                    if (
-                      windowProps.activeRoute?.startsWith(
-                        RoutePathsType.Settings
-                      )
-                    ) {
-                      setTimeout(
-                        () =>
-                          navigate({
-                            pathname: RoutePathsType.Account,
-                            search: query.toString(),
-                          }),
-                        150
-                      );
-                      return;
-                    }
+                <div
+                  className={[
+                    styles['navigation-back-left-content'],
+                    styles['navigation-back-left-content-desktop'],
+                  ].join(' ')}
+                >
+                  <Button
+                    classNames={{
+                      button: styles['button'],
+                    }}
+                    rippleProps={{
+                      color: 'rgba(252, 245, 227, .35)',
+                    }}
+                    rounded={true}
+                    size={'tiny'}
+                    disabled={!windowProps.showNavigateBack}
+                    onClick={() => {
+                      if (
+                        windowProps.activeRoute?.startsWith(
+                          RoutePathsType.Settings
+                        )
+                      ) {
+                        setTimeout(
+                          () =>
+                            navigate({
+                              pathname: RoutePathsType.Account,
+                              search: query.toString(),
+                            }),
+                          150
+                        );
+                        return;
+                      }
 
-                    onNavigateBack();
-                  }}
-                  type={'text'}
-                  icon={<Line.ArrowBack size={24} color={'#2A2A5F'} />}
-                />
-              </div>
-              <div
-                className={[
-                  styles['navigation-back-center-content'],
-                  styles['navigation-back-center-content-desktop'],
-                ].join(' ')}
-              >
-                {windowProps.activeRoute?.startsWith(
-                  `${RoutePathsType.Store}/`
-                ) &&
-                  (<>{exploreProps.selectedInventoryLocation && (
-                    <Avatar
-                      classNames={{
-                        container: !exploreProps
-                          .selectedInventoryLocation?.avatar
-                          ? [
-                            styles['no-avatar-container'],
-                            styles['no-avatar-container-desktop'],
-                          ].join(' ')
-                          : [
-                            styles['avatar-container'],
-                            styles['avatar-container-desktop'],
-                          ].join(' '),
-                      }}
-                      size={'custom'}
-                      text={
-                        exploreProps.selectedInventoryLocation
-                          ?.company ?? ''
-                      }
-                      src={
-                        exploreProps.selectedInventoryLocation?.avatar
-                      }
-                      touchScreen={true}
-                    />)}
-                    <div
-                      className={[styles['navigation-back-title']].join(
-                        ' '
+                      onNavigateBack();
+                    }}
+                    type={'text'}
+                    icon={<Line.ArrowBack size={24} color={'#2A2A5F'} />}
+                  />
+                </div>
+                <div
+                  className={[
+                    styles['navigation-back-center-content'],
+                    styles['navigation-back-center-content-desktop'],
+                  ].join(' ')}
+                >
+                  {windowProps.activeRoute?.startsWith(
+                    `${RoutePathsType.Store}/`
+                  ) && (
+                    <>
+                      {exploreProps.selectedInventoryLocation && (
+                        <Avatar
+                          classNames={{
+                            container: !exploreProps.selectedInventoryLocation
+                              ?.avatar
+                              ? [
+                                  styles['no-avatar-container'],
+                                  styles['no-avatar-container-desktop'],
+                                ].join(' ')
+                              : [
+                                  styles['avatar-container'],
+                                  styles['avatar-container-desktop'],
+                                ].join(' '),
+                          }}
+                          size={'custom'}
+                          text={
+                            exploreProps.selectedInventoryLocation?.company ??
+                            ''
+                          }
+                          src={exploreProps.selectedInventoryLocation?.avatar}
+                          touchScreen={true}
+                        />
                       )}
-                    >
-                      {exploreProps.selectedInventoryLocation && `${exploreProps.selectedInventoryLocation
-                        ?.company ?? ''} - `}
-                      {productProps.metadata?.subtitle}
-                    </div>
-                  </>)}
-                {WindowController.isLocationAccountWithId(
-                  location.pathname ?? ''
-                ) && (
+                      <div
+                        className={[styles['navigation-back-title']].join(' ')}
+                      >
+                        {exploreProps.selectedInventoryLocation &&
+                          `${
+                            exploreProps.selectedInventoryLocation?.company ??
+                            ''
+                          } - `}
+                        {productProps.metadata?.subtitle}
+                      </div>
+                    </>
+                  )}
+                  {WindowController.isLocationAccountWithId(
+                    location.pathname ?? ''
+                  ) && (
                     <div
                       className={[styles['navigation-back-title']].join(' ')}
                       style={{ textTransform: 'lowercase' }}
@@ -625,9 +650,9 @@ export default function WindowDesktopComponent({
                       {accountPublicProps.account?.username ?? ''}
                     </div>
                   )}
-                {WindowController.isLocationAccountStatusWithId(
-                  location.pathname ?? ''
-                ) && (
+                  {WindowController.isLocationAccountStatusWithId(
+                    location.pathname ?? ''
+                  ) && (
                     <div
                       className={[styles['navigation-back-title']].join(' ')}
                       style={{ textTransform: 'lowercase' }}
@@ -635,9 +660,9 @@ export default function WindowDesktopComponent({
                       {accountPublicProps.account?.username ?? ''}
                     </div>
                   )}
-                {windowProps.activeRoute?.startsWith(
-                  RoutePathsType.Settings
-                ) && (
+                  {windowProps.activeRoute?.startsWith(
+                    RoutePathsType.Settings
+                  ) && (
                     <>
                       <Line.Settings size={24} />
                       <div
@@ -647,8 +672,8 @@ export default function WindowDesktopComponent({
                       </div>
                     </>
                   )}
-                {windowProps.activeRoute ===
-                  RoutePathsType.EmailConfirmation && (
+                  {windowProps.activeRoute ===
+                    RoutePathsType.EmailConfirmation && (
                     <>
                       <Line.Email size={24} />
                       <div
@@ -658,8 +683,8 @@ export default function WindowDesktopComponent({
                       </div>
                     </>
                   )}
-                {windowProps.activeRoute ===
-                  RoutePathsType.AccountAddFriends && (
+                  {windowProps.activeRoute ===
+                    RoutePathsType.AccountAddFriends && (
                     <>
                       <Line.PersonAddAlt1 size={24} />
                       <div
@@ -669,18 +694,18 @@ export default function WindowDesktopComponent({
                       </div>
                     </>
                   )}
-                {windowProps.activeRoute === RoutePathsType.Checkout && (
-                  <>
-                    <Line.ShoppingCart size={24} />
-                    <div
-                      className={[styles['navigation-back-title']].join(' ')}
-                    >
-                      {t('checkout')}
-                    </div>
-                  </>
-                )}
-                {windowProps.activeRoute ===
-                  RoutePathsType.TermsOfService && (
+                  {windowProps.activeRoute === RoutePathsType.Checkout && (
+                    <>
+                      <Line.ShoppingCart size={24} />
+                      <div
+                        className={[styles['navigation-back-title']].join(' ')}
+                      >
+                        {t('checkout')}
+                      </div>
+                    </>
+                  )}
+                  {windowProps.activeRoute ===
+                    RoutePathsType.TermsOfService && (
                     <>
                       <Line.Gavel size={24} />
                       <div
@@ -690,43 +715,41 @@ export default function WindowDesktopComponent({
                       </div>
                     </>
                   )}
-                {windowProps.activeRoute === RoutePathsType.Cart && (
-                  <>
-                    <Line.ShoppingCart size={22} />
-                    <div
-                      className={[styles['navigation-back-title']].join(
-                        ' '
-                      )}
-                    >
-                      {t('shoppingCarts')}
-                    </div>
-                  </>
-                )}
-                {windowProps.activeRoute?.startsWith(RoutePathsType.Chats) && (
-                  <>
-                    <Line.ChatBubbleOutline size={22} />
-                    <div
-                      className={[styles['navigation-back-title']].join(
-                        ' '
-                      )}
-                    >
-                      {t('chats')}
-                    </div>
-                  </>
-                )}
-                {windowProps.activeRoute === RoutePathsType.PrivacyPolicy && (
-                  <>
-                    <Line.Gavel size={24} />
-                    <div
-                      className={[styles['navigation-back-title']].join(' ')}
-                    >
-                      {t('privacyPolicy')}
-                    </div>
-                  </>
-                )}
-                {windowProps.activeRoute?.startsWith(
-                  RoutePathsType.OrderConfirmed
-                ) && (
+                  {windowProps.activeRoute === RoutePathsType.Cart && (
+                    <>
+                      <Line.ShoppingCart size={22} />
+                      <div
+                        className={[styles['navigation-back-title']].join(' ')}
+                      >
+                        {t('shoppingCarts')}
+                      </div>
+                    </>
+                  )}
+                  {windowProps.activeRoute?.startsWith(
+                    RoutePathsType.Chats
+                  ) && (
+                    <>
+                      <Line.ChatBubbleOutline size={22} />
+                      <div
+                        className={[styles['navigation-back-title']].join(' ')}
+                      >
+                        {t('chats')}
+                      </div>
+                    </>
+                  )}
+                  {windowProps.activeRoute === RoutePathsType.PrivacyPolicy && (
+                    <>
+                      <Line.Gavel size={24} />
+                      <div
+                        className={[styles['navigation-back-title']].join(' ')}
+                      >
+                        {t('privacyPolicy')}
+                      </div>
+                    </>
+                  )}
+                  {windowProps.activeRoute?.startsWith(
+                    RoutePathsType.OrderConfirmed
+                  ) && (
                     <>
                       <Line.ShoppingCart size={24} />
                       <div
@@ -736,16 +759,16 @@ export default function WindowDesktopComponent({
                       </div>
                     </>
                   )}
-              </div>
-              <div
-                className={[
-                  styles['navigation-back-right-content'],
-                  styles['navigation-back-right-content-desktop'],
-                ].join(' ')}
-              >
-                {windowProps.activeRoute?.startsWith(
-                  RoutePathsType.Settings
-                ) && (
+                </div>
+                <div
+                  className={[
+                    styles['navigation-back-right-content'],
+                    styles['navigation-back-right-content-desktop'],
+                  ].join(' ')}
+                >
+                  {windowProps.activeRoute?.startsWith(
+                    RoutePathsType.Settings
+                  ) && (
                     <>
                       <Button
                         classNames={{
@@ -775,8 +798,9 @@ export default function WindowDesktopComponent({
                       />
                     </>
                   )}
+                </div>
               </div>
-            </div>}
+            )}
             <Outlet />
           </div>
         </div>
@@ -832,9 +856,10 @@ export default function WindowDesktopComponent({
                 text: [styles['modal-text'], styles['modal-text-desktop']].join(
                   ' '
                 ),
-                title: [styles['modal-title'], styles['modal-title-desktop']].join(
-                  ' '
-                ),
+                title: [
+                  styles['modal-title'],
+                  styles['modal-title-desktop'],
+                ].join(' '),
                 description: [
                   styles['modal-description'],
                   styles['modal-description-desktop'],
@@ -885,9 +910,10 @@ export default function WindowDesktopComponent({
                 text: [styles['modal-text'], styles['modal-text-desktop']].join(
                   ' '
                 ),
-                title: [styles['modal-title'], styles['modal-title-desktop']].join(
-                  ' '
-                ),
+                title: [
+                  styles['modal-title'],
+                  styles['modal-title-desktop'],
+                ].join(' '),
                 description: [
                   styles['modal-description'],
                   styles['modal-description-desktop'],

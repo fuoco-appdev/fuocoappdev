@@ -1,4 +1,3 @@
-import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -7,15 +6,15 @@ import { useParams } from 'react-router-dom';
 import AccountPublicController from '../../controllers/account-public.controller';
 import WindowController from '../../controllers/window.controller';
 import { AccountPublicState } from '../../models/account-public.model';
-import { RoutePathsType } from '../route-paths';
+import { RoutePathsType } from '../../route-paths-type';
 import { AuthenticatedComponent } from './authenticated.component';
 import { AccountPublicStatusSuspenseDesktopComponent } from './desktop/suspense/account-public-status.suspense.desktop.component';
 import { AccountPublicStatusSuspenseMobileComponent } from './mobile/suspense/account-public-status.suspense.mobile.component';
 
-const AccountPublicStatusDesktopComponent = lazy(
+const AccountPublicStatusDesktopComponent = React.lazy(
   () => import('./desktop/account-public-status.desktop.component')
 );
-const AccountPublicStatusMobileComponent = lazy(
+const AccountPublicStatusMobileComponent = React.lazy(
   () => import('./mobile/account-public-status.mobile.component')
 );
 
@@ -60,7 +59,6 @@ export default function AccountFollowersFollowingComponent(): JSX.Element {
       AccountPublicController.model.activeStatusTabId ===
       RoutePathsType.AccountStatusWithIdFollowers
     ) {
-
     } else if (
       AccountPublicController.model.activeStatusTabId ===
       RoutePathsType.AccountStatusWithIdFollowing
@@ -127,7 +125,7 @@ export default function AccountFollowersFollowingComponent(): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

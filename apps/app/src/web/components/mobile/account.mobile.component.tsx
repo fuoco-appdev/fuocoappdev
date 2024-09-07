@@ -19,7 +19,8 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import AccountController from '../../../controllers/account.controller';
 import { AccountResponse } from '../../../protobuf/account_pb';
 import { InterestResponse } from '../../../protobuf/interest_pb';
-import { RoutePathsType, useQuery } from '../../route-paths';
+import { RoutePathsType } from '../../../route-paths-type';
+import { useQuery } from '../../route-paths';
 import AccountProfileFormComponent from '../account-profile-form.component';
 import { AccountResponsiveProps } from '../account.component';
 import styles from '../account.module.scss';
@@ -94,21 +95,23 @@ export default function AccountMobileComponent({
               styles['center-tab-container-mobile'],
             ].join(' ')}
           >
-            {accountProps.account?.status === 'Incomplete' && (<div
-              className={[
-                styles['top-bar-text-container'],
-                styles['top-bar-text-container-mobile'],
-              ].join(' ')}
-            >
+            {accountProps.account?.status === 'Incomplete' && (
               <div
                 className={[
-                  styles['top-bar-text'],
-                  styles['top-bar-text-mobile'],
+                  styles['top-bar-text-container'],
+                  styles['top-bar-text-container-mobile'],
                 ].join(' ')}
               >
-                {t('completeProfile')}
+                <div
+                  className={[
+                    styles['top-bar-text'],
+                    styles['top-bar-text-mobile'],
+                  ].join(' ')}
+                >
+                  {t('completeProfile')}
+                </div>
               </div>
-            </div>)}
+            )}
           </div>
           <div
             className={[
@@ -208,10 +211,22 @@ export default function AccountMobileComponent({
         <Scroll
           touchScreen={true}
           classNames={{
-            scrollContainer: [styles['scroll-container'], styles['scroll-container-mobile']].join(' '),
-            reloadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' '),
-            loadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' '),
-            pullIndicator: [styles['pull-indicator'], styles['pull-indicator-mobile']].join(' ')
+            scrollContainer: [
+              styles['scroll-container'],
+              styles['scroll-container-mobile'],
+            ].join(' '),
+            reloadContainer: [
+              styles['scroll-load-container'],
+              styles['scroll-load-container-mobile'],
+            ].join(' '),
+            loadContainer: [
+              styles['scroll-load-container'],
+              styles['scroll-load-container-mobile'],
+            ].join(' '),
+            pullIndicator: [
+              styles['pull-indicator'],
+              styles['pull-indicator-mobile'],
+            ].join(' '),
           }}
           reloadComponent={
             <img
@@ -226,17 +241,31 @@ export default function AccountMobileComponent({
             />
           }
           loadingHeight={56}
-          isLoadable={(accountProps.hasMoreLikes || accountProps.hasMoreOrders) && accountProps.activeTabId !== RoutePathsType.AccountAddresses}
+          isLoadable={
+            (accountProps.hasMoreLikes || accountProps.hasMoreOrders) &&
+            accountProps.activeTabId !== RoutePathsType.AccountAddresses
+          }
           showIndicatorThreshold={56}
           reloadThreshold={96}
-          pullIndicatorComponent={<div className={[styles['pull-indicator-container']].join(' ')}><Line.ArrowDownward size={24} /></div>}
-          isReloading={accountProps.areLikedProductsReloading || accountProps.areOrdersReloading}
-          isLoading={accountProps.areLikedProductsLoading || accountProps.areOrdersLoading}
+          pullIndicatorComponent={
+            <div className={[styles['pull-indicator-container']].join(' ')}>
+              <Line.ArrowDownward size={24} />
+            </div>
+          }
+          isReloading={
+            accountProps.areLikedProductsReloading ||
+            accountProps.areOrdersReloading
+          }
+          isLoading={
+            accountProps.areLikedProductsLoading ||
+            accountProps.areOrdersLoading
+          }
           onReload={onScrollReload}
           onLoad={onScrollLoad}
           onScroll={(progress, scrollRef, contentRef) => {
             const elementHeight = topBarRef.current?.clientHeight ?? 0;
-            const scrollTop = contentRef.current?.getBoundingClientRect().top ?? 0;
+            const scrollTop =
+              contentRef.current?.getBoundingClientRect().top ?? 0;
             if (prevPreviewScrollTop <= scrollTop) {
               yPosition -= prevPreviewScrollTop - scrollTop;
               if (yPosition >= 0) {
@@ -269,10 +298,12 @@ export default function AccountMobileComponent({
                   styles['incomplete-form-container-mobile'],
                 ].join(' ')}
               >
-                <div className={[
-                  styles['incomplete-content'],
-                  styles['incomplete-content-mobile'],
-                ].join(' ')}>
+                <div
+                  className={[
+                    styles['incomplete-content'],
+                    styles['incomplete-content-mobile'],
+                  ].join(' ')}
+                >
                   <div
                     className={[
                       styles['incomplete-form-title'],
@@ -324,10 +355,12 @@ export default function AccountMobileComponent({
                     />
                   </div>
                 </div>
-                <div className={[
-                  styles['incomplete-content'],
-                  styles['incomplete-content-mobile'],
-                ].join(' ')}>
+                <div
+                  className={[
+                    styles['incomplete-content'],
+                    styles['incomplete-content-mobile'],
+                  ].join(' ')}
+                >
                   <div
                     className={[
                       styles['incomplete-form-title'],
@@ -427,7 +460,6 @@ export default function AccountMobileComponent({
                     </Button>
                   </div>
                 </div>
-
               </div>
             )}
             {account?.status === 'Complete' && (
@@ -472,14 +504,18 @@ export default function AccountMobileComponent({
                                 ].join(' '),
                               },
                               topBar: [styles['avatar-top-bar']].join(' '),
-                              topBarTitle: [styles['avatar-top-bar-title']].join(
-                                ' '
-                              ),
+                              topBarTitle: [
+                                styles['avatar-top-bar-title'],
+                              ].join(' '),
                               closeButton: {
-                                button: [styles['avatar-close-button']].join(' '),
+                                button: [styles['avatar-close-button']].join(
+                                  ' '
+                                ),
                               },
                               saveButton: {
-                                button: [styles['avatar-save-button']].join(' '),
+                                button: [styles['avatar-save-button']].join(
+                                  ' '
+                                ),
                               },
                             },
                           }}
@@ -749,22 +785,22 @@ export default function AccountMobileComponent({
                         classNames: {
                           enter:
                             accountProps.activeTabIndex >
-                              accountProps.prevTabIndex
+                            accountProps.prevTabIndex
                               ? styles['left-to-right-enter']
                               : styles['right-to-left-enter'],
                           enterActive:
                             accountProps.activeTabIndex >
-                              accountProps.prevTabIndex
+                            accountProps.prevTabIndex
                               ? styles['left-to-right-enter-active']
                               : styles['right-to-left-enter-active'],
                           exit:
                             accountProps.activeTabIndex >
-                              accountProps.prevTabIndex
+                            accountProps.prevTabIndex
                               ? styles['left-to-right-exit']
                               : styles['right-to-left-exit'],
                           exitActive:
                             accountProps.activeTabIndex >
-                              accountProps.prevTabIndex
+                            accountProps.prevTabIndex
                               ? styles['left-to-right-exit-active']
                               : styles['right-to-left-exit-active'],
                         },
@@ -776,19 +812,23 @@ export default function AccountMobileComponent({
                       key={accountProps.activeTabIndex}
                       classNames={{
                         enter:
-                          accountProps.activeTabIndex < accountProps.prevTabIndex
+                          accountProps.activeTabIndex <
+                          accountProps.prevTabIndex
                             ? styles['left-to-right-enter']
                             : styles['right-to-left-enter'],
                         enterActive:
-                          accountProps.activeTabIndex < accountProps.prevTabIndex
+                          accountProps.activeTabIndex <
+                          accountProps.prevTabIndex
                             ? styles['left-to-right-enter-active']
                             : styles['right-to-left-enter-active'],
                         exit:
-                          accountProps.activeTabIndex < accountProps.prevTabIndex
+                          accountProps.activeTabIndex <
+                          accountProps.prevTabIndex
                             ? styles['left-to-right-exit']
                             : styles['right-to-left-exit'],
                         exitActive:
-                          accountProps.activeTabIndex < accountProps.prevTabIndex
+                          accountProps.activeTabIndex <
+                          accountProps.prevTabIndex
                             ? styles['left-to-right-exit-active']
                             : styles['right-to-left-exit-active'],
                       }}

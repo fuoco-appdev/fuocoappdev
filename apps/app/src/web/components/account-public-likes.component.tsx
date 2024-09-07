@@ -1,4 +1,3 @@
-import { lazy } from '@loadable/component';
 import { Product } from '@medusajs/medusa';
 import { PricedVariant } from '@medusajs/medusa/dist/types/pricing';
 import { useObservable } from '@ngneat/use-observable';
@@ -14,14 +13,15 @@ import { AccountPublicState } from '../../models/account-public.model';
 import { AccountState } from '../../models/account.model';
 import { StoreState } from '../../models/store.model';
 import { ProductLikesMetadataResponse } from '../../protobuf/product-like_pb';
-import { RoutePathsType, useQuery } from '../route-paths';
+import { RoutePathsType } from '../../route-paths-type';
+import { useQuery } from '../route-paths';
 import { AccountPublicLikesSuspenseDesktopComponent } from './desktop/suspense/account-public-likes.suspense.desktop.component';
 import { AccountPublicLikesSuspenseMobileComponent } from './mobile/suspense/account-public-likes.suspense.mobile.component';
 
-const AccountPublicLikesDesktopComponent = lazy(
+const AccountPublicLikesDesktopComponent = React.lazy(
   () => import('./desktop/account-public-likes.desktop.component')
 );
-const AccountPublicLikesMobileComponent = lazy(
+const AccountPublicLikesMobileComponent = React.lazy(
   () => import('./mobile/account-public-likes.mobile.component')
 );
 
@@ -159,7 +159,7 @@ export default function AccountPublicLikesComponent(): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

@@ -5,7 +5,8 @@ import Skeleton from 'react-loading-skeleton';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import AccountPublicController from '../../../controllers/account-public.controller';
-import { RoutePathsType, useQuery } from '../../route-paths';
+import { RoutePathsType } from '../../../route-paths-type';
+import { useQuery } from '../../route-paths';
 import { AccountFollowersFollowingResponsiveProps } from '../account-public-status.component';
 import styles from '../account-public-status.module.scss';
 import { ResponsiveMobile } from '../responsive.component';
@@ -58,9 +59,7 @@ export default function AccountPublicStatusMobileComponent({
                     pathname: `${RoutePathsType.AccountStatus}/${accountPublicProps.account?.id}/followers`,
                     search: query.toString(),
                   });
-                } else if (
-                  id === RoutePathsType.AccountStatusWithIdFollowing
-                ) {
+                } else if (id === RoutePathsType.AccountStatusWithIdFollowing) {
                   navigate({
                     pathname: `${RoutePathsType.AccountStatus}/${accountPublicProps.account?.id}/following`,
                     search: query.toString(),
@@ -106,12 +105,20 @@ export default function AccountPublicStatusMobileComponent({
                   placeholder={t('search') ?? ''}
                   icon={<Line.Search size={24} color={'#2A2A5F'} />}
                   onChange={(event) => {
-                    if (accountPublicProps.activeStatusTabId === RoutePathsType.AccountStatusWithIdFollowing) {
-                      AccountPublicController.updateFollowingInput(event.target.value)
-                    } else if (
-                      accountPublicProps.activeStatusTabId === RoutePathsType.AccountStatusWithIdFollowers
+                    if (
+                      accountPublicProps.activeStatusTabId ===
+                      RoutePathsType.AccountStatusWithIdFollowing
                     ) {
-                      AccountPublicController.updateFollowersInput(event.target.value)
+                      AccountPublicController.updateFollowingInput(
+                        event.target.value
+                      );
+                    } else if (
+                      accountPublicProps.activeStatusTabId ===
+                      RoutePathsType.AccountStatusWithIdFollowers
+                    ) {
+                      AccountPublicController.updateFollowersInput(
+                        event.target.value
+                      );
                     }
                   }}
                 />
@@ -147,10 +154,22 @@ export default function AccountPublicStatusMobileComponent({
         <Scroll
           touchScreen={true}
           classNames={{
-            scrollContainer: [styles['scroll-container'], styles['scroll-container-mobile']].join(' '),
-            reloadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' '),
-            loadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' '),
-            pullIndicator: [styles['pull-indicator'], styles['pull-indicator-mobile']].join(' ')
+            scrollContainer: [
+              styles['scroll-container'],
+              styles['scroll-container-mobile'],
+            ].join(' '),
+            reloadContainer: [
+              styles['scroll-load-container'],
+              styles['scroll-load-container-mobile'],
+            ].join(' '),
+            loadContainer: [
+              styles['scroll-load-container'],
+              styles['scroll-load-container-mobile'],
+            ].join(' '),
+            pullIndicator: [
+              styles['pull-indicator'],
+              styles['pull-indicator-mobile'],
+            ].join(' '),
           }}
           reloadComponent={
             <img
@@ -167,15 +186,29 @@ export default function AccountPublicStatusMobileComponent({
           loadingHeight={56}
           showIndicatorThreshold={56}
           reloadThreshold={96}
-          pullIndicatorComponent={<div className={[styles['pull-indicator-container']].join(' ')}><Line.ArrowDownward size={24} /></div>}
-          isLoadable={accountPublicProps.hasMoreFollowers || accountPublicProps.hasMoreFollowing}
-          isReloading={accountPublicProps.areFollowersReloading || accountPublicProps.areFollowingReloading}
-          isLoading={accountPublicProps.areFollowersLoading || accountPublicProps.areFollowingLoading}
+          pullIndicatorComponent={
+            <div className={[styles['pull-indicator-container']].join(' ')}>
+              <Line.ArrowDownward size={24} />
+            </div>
+          }
+          isLoadable={
+            accountPublicProps.hasMoreFollowers ||
+            accountPublicProps.hasMoreFollowing
+          }
+          isReloading={
+            accountPublicProps.areFollowersReloading ||
+            accountPublicProps.areFollowingReloading
+          }
+          isLoading={
+            accountPublicProps.areFollowersLoading ||
+            accountPublicProps.areFollowingLoading
+          }
           onReload={onScrollReload}
           onLoad={onScrollLoad}
           onScroll={(progress, scrollRef, contentRef) => {
             const elementHeight = topBarRef.current?.clientHeight ?? 0;
-            const scrollTop = contentRef.current?.getBoundingClientRect().top ?? 0;
+            const scrollTop =
+              contentRef.current?.getBoundingClientRect().top ?? 0;
             if (prevPreviewScrollTop <= scrollTop) {
               yPosition -= prevPreviewScrollTop - scrollTop;
               if (yPosition >= 0) {
@@ -208,22 +241,22 @@ export default function AccountPublicStatusMobileComponent({
                   classNames: {
                     enter:
                       accountPublicProps.activeTabIndex >
-                        accountPublicProps.prevTabIndex
+                      accountPublicProps.prevTabIndex
                         ? styles['left-to-right-enter']
                         : styles['right-to-left-enter'],
                     enterActive:
                       accountPublicProps.activeTabIndex >
-                        accountPublicProps.prevTabIndex
+                      accountPublicProps.prevTabIndex
                         ? styles['left-to-right-enter-active']
                         : styles['right-to-left-enter-active'],
                     exit:
                       accountPublicProps.activeTabIndex >
-                        accountPublicProps.prevTabIndex
+                      accountPublicProps.prevTabIndex
                         ? styles['left-to-right-exit']
                         : styles['right-to-left-exit'],
                     exitActive:
                       accountPublicProps.activeTabIndex >
-                        accountPublicProps.prevTabIndex
+                      accountPublicProps.prevTabIndex
                         ? styles['left-to-right-exit-active']
                         : styles['right-to-left-exit-active'],
                   },
@@ -236,22 +269,22 @@ export default function AccountPublicStatusMobileComponent({
                 classNames={{
                   enter:
                     accountPublicProps.activeTabIndex <
-                      accountPublicProps.prevTabIndex
+                    accountPublicProps.prevTabIndex
                       ? styles['left-to-right-enter']
                       : styles['right-to-left-enter'],
                   enterActive:
                     accountPublicProps.activeTabIndex <
-                      accountPublicProps.prevTabIndex
+                    accountPublicProps.prevTabIndex
                       ? styles['left-to-right-enter-active']
                       : styles['right-to-left-enter-active'],
                   exit:
                     accountPublicProps.activeTabIndex <
-                      accountPublicProps.prevTabIndex
+                    accountPublicProps.prevTabIndex
                       ? styles['left-to-right-exit']
                       : styles['right-to-left-exit'],
                   exitActive:
                     accountPublicProps.activeTabIndex <
-                      accountPublicProps.prevTabIndex
+                    accountPublicProps.prevTabIndex
                       ? styles['left-to-right-exit-active']
                       : styles['right-to-left-exit-active'],
                 }}

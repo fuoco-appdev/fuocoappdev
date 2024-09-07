@@ -5,11 +5,11 @@ import {
   PriceList,
   Product,
   SalesChannel,
-} from "@medusajs/medusa";
-import Medusa from "@medusajs/medusa-js";
-import { StockLocation } from "@medusajs/stock-location/dist/models";
-import axios from "axios";
-import { BehaviorSubject, Observable } from "rxjs";
+} from '@medusajs/medusa';
+import Medusa from '@medusajs/medusa-js';
+import { StockLocation } from '@medusajs/stock-location/dist/models';
+import axios from 'axios';
+import { BehaviorSubject, Observable } from 'rxjs';
 import {
   AddCustomerToGroupRequest,
   CustomerGroupResponse,
@@ -20,26 +20,26 @@ import {
   RemoveCustomerFromGroupRequest,
   UpdateCustomerRequest,
   UpdateCustomerResponse,
-} from "../protobuf/customer_pb";
-import { OrdersRequest, OrdersResponse } from "../protobuf/order_pb";
+} from '../protobuf/customer_pb';
+import { OrdersRequest, OrdersResponse } from '../protobuf/order_pb';
 import {
   PriceListsRequest,
   PriceListsResponse,
-} from "../protobuf/price-list_pb";
+} from '../protobuf/price-list_pb';
 import {
   ProductCountRequest,
   ProductCountResponse,
   ProductMetadataResponse,
   ProductsRequest,
   ProductsResponse,
-} from "../protobuf/product_pb";
+} from '../protobuf/product_pb';
 import {
   StockLocationsRequest,
   StockLocationsResponse,
-} from "../protobuf/stock-location_pb";
-import { Service } from "../service";
-import ConfigService from "./config.service";
-import SupabaseService from "./supabase.service";
+} from '../protobuf/stock-location_pb';
+import { Service } from '../service';
+import ConfigService from './config.service';
+import SupabaseService from './supabase.service';
 
 class MedusaService extends Service {
   private _medusa: Medusa | undefined;
@@ -50,7 +50,7 @@ class MedusaService extends Service {
     super();
 
     this._accessTokenBehaviorSubject = new BehaviorSubject<string | undefined>(
-      undefined,
+      undefined
     );
     this._accessToken = undefined;
   }
@@ -70,49 +70,46 @@ class MedusaService extends Service {
   public intializeMedusa(): void {
     this._medusa = new Medusa({
       baseUrl: ConfigService.medusa.url,
-      apiKey: process.env["MEDUSA_PUBLIC_KEY"] ?? "",
+      apiKey: import.meta.env['MEDUSA_PUBLIC_KEY'] ?? '',
       maxRetries: 3,
     });
   }
 
   public async requestProductMetadataAsync(
-    productId: string,
+    productId: string
   ): Promise<ProductMetadataResponse | undefined> {
     const response = await axios({
-      method: "post",
+      method: 'post',
       url: `${this.endpointUrl}/medusa/product-metadata/${productId}`,
       headers: {
         ...this.headers,
       },
-      data: "",
-      responseType: "arraybuffer",
+      data: '',
+      responseType: 'arraybuffer',
     });
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const productMetadataResponse = ProductMetadataResponse.fromBinary(
-      arrayBuffer,
-    );
+    const productMetadataResponse =
+      ProductMetadataResponse.fromBinary(arrayBuffer);
     return productMetadataResponse;
   }
 
   public async requestProductCountAsync(type: string): Promise<number> {
     const productCountRequest = new ProductCountRequest({ type: type });
     const response = await axios({
-      method: "post",
+      method: 'post',
       url: `${this.endpointUrl}/medusa/products/count`,
       headers: {
         ...this.headers,
       },
       data: productCountRequest.toBinary(),
-      responseType: "arraybuffer",
+      responseType: 'arraybuffer',
     });
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const productCountResponse = ProductCountResponse.fromBinary(
-      arrayBuffer,
-    );
+    const productCountResponse = ProductCountResponse.fromBinary(arrayBuffer);
     return productCountResponse.count;
   }
 
@@ -120,21 +117,19 @@ class MedusaService extends Service {
     const session = await SupabaseService.requestSessionAsync();
     const request = new ProductsRequest({ ids: ids });
     const response = await axios({
-      method: "post",
+      method: 'post',
       url: `${this.endpointUrl}/medusa/products`,
       headers: {
         ...this.headers,
-        "Session-Token": `${session?.access_token}`,
+        'Session-Token': `${session?.access_token}`,
       },
       data: request.toBinary(),
-      responseType: "arraybuffer",
+      responseType: 'arraybuffer',
     });
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const productsResponse = ProductsResponse.fromBinary(
-      arrayBuffer,
-    );
+    const productsResponse = ProductsResponse.fromBinary(arrayBuffer);
 
     const products: Product[] = [];
     for (const json of productsResponse.products) {
@@ -144,23 +139,22 @@ class MedusaService extends Service {
   }
 
   public async requestCustomerMetadataAsync(
-    customerId: string,
+    customerId: string
   ): Promise<CustomerMetadataResponse | undefined> {
     const response = await axios({
-      method: "post",
+      method: 'post',
       url: `${this.endpointUrl}/medusa/customer/metadata/${customerId}`,
       headers: {
         ...this.headers,
       },
-      data: "",
-      responseType: "arraybuffer",
+      data: '',
+      responseType: 'arraybuffer',
     });
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const customerMetadataResponse = CustomerMetadataResponse.fromBinary(
-      arrayBuffer,
-    );
+    const customerMetadataResponse =
+      CustomerMetadataResponse.fromBinary(arrayBuffer);
     if (!customerMetadataResponse) {
       return undefined;
     }
@@ -169,25 +163,23 @@ class MedusaService extends Service {
   }
 
   public async requestCustomerAccountAsync(
-    supabaseId: string,
+    supabaseId: string
   ): Promise<Customer | undefined> {
     const session = await SupabaseService.requestSessionAsync();
     const response = await axios({
-      method: "post",
+      method: 'post',
       url: `${this.endpointUrl}/medusa/customer/${supabaseId}`,
       headers: {
         ...this.headers,
-        "Session-Token": `${session?.access_token}`,
+        'Session-Token': `${session?.access_token}`,
       },
-      data: "",
-      responseType: "arraybuffer",
+      data: '',
+      responseType: 'arraybuffer',
     });
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const customerResponse = UpdateCustomerResponse.fromBinary(
-      arrayBuffer,
-    );
+    const customerResponse = UpdateCustomerResponse.fromBinary(arrayBuffer);
     if (customerResponse.data.length <= 0) {
       return undefined;
     }
@@ -222,14 +214,14 @@ class MedusaService extends Service {
       customerIds: props.customerIds,
     });
     const response = await axios({
-      method: "post",
+      method: 'post',
       url: `${this.endpointUrl}/medusa/customers`,
       headers: {
         ...this.headers,
-        "Session-Token": `${session?.access_token}`,
+        'Session-Token': `${session?.access_token}`,
       },
       data: request.toBinary(),
-      responseType: "arraybuffer",
+      responseType: 'arraybuffer',
     });
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
@@ -258,21 +250,19 @@ class MedusaService extends Service {
       metadata: props.metadata,
     });
     const response = await axios({
-      method: "post",
+      method: 'post',
       url: `${this.endpointUrl}/medusa/customer/update-account`,
       headers: {
         ...this.headers,
-        "Session-Token": `${session?.access_token}`,
+        'Session-Token': `${session?.access_token}`,
       },
       data: customerRequest.toBinary(),
-      responseType: "arraybuffer",
+      responseType: 'arraybuffer',
     });
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const customerResponse = UpdateCustomerResponse.fromBinary(
-      arrayBuffer,
-    );
+    const customerResponse = UpdateCustomerResponse.fromBinary(arrayBuffer);
     if (customerResponse.data.length <= 0) {
       return undefined;
     }
@@ -295,25 +285,23 @@ class MedusaService extends Service {
   }
 
   public async requestCustomerGroupAsync(
-    salesLocationId: string,
+    salesLocationId: string
   ): Promise<CustomerGroup | undefined> {
     const session = await SupabaseService.requestSessionAsync();
     const response = await axios({
-      method: "post",
+      method: 'post',
       url: `${this.endpointUrl}/medusa/customer-group/${salesLocationId}`,
       headers: {
         ...this.headers,
-        "Session-Token": `${session?.access_token}`,
+        'Session-Token': `${session?.access_token}`,
       },
-      data: "",
-      responseType: "arraybuffer",
+      data: '',
+      responseType: 'arraybuffer',
     });
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const customerGroupResponse = CustomerGroupResponse.fromBinary(
-      arrayBuffer,
-    );
+    const customerGroupResponse = CustomerGroupResponse.fromBinary(arrayBuffer);
     if (customerGroupResponse.data.length <= 0) {
       return undefined;
     }
@@ -332,21 +320,19 @@ class MedusaService extends Service {
       customerId: props.customerId,
     });
     const response = await axios({
-      method: "post",
+      method: 'post',
       url: `${this.endpointUrl}/medusa/customer-group/add-customer`,
       headers: {
         ...this.headers,
-        "Session-Token": `${session?.access_token}`,
+        'Session-Token': `${session?.access_token}`,
       },
       data: addCustomerToGroupRequest.toBinary(),
-      responseType: "arraybuffer",
+      responseType: 'arraybuffer',
     });
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const customerGroupResponse = CustomerGroupResponse.fromBinary(
-      arrayBuffer,
-    );
+    const customerGroupResponse = CustomerGroupResponse.fromBinary(arrayBuffer);
     if (customerGroupResponse.data.length <= 0) {
       return undefined;
     }
@@ -365,21 +351,19 @@ class MedusaService extends Service {
       customerId: props.customerId,
     });
     const response = await axios({
-      method: "post",
+      method: 'post',
       url: `${this.endpointUrl}/medusa/customer-group/remove-customer`,
       headers: {
         ...this.headers,
-        "Session-Token": `${session?.access_token}`,
+        'Session-Token': `${session?.access_token}`,
       },
       data: removeCustomerFromGroupRequest.toBinary(),
-      responseType: "arraybuffer",
+      responseType: 'arraybuffer',
     });
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const customerGroupResponse = CustomerGroupResponse.fromBinary(
-      arrayBuffer,
-    );
+    const customerGroupResponse = CustomerGroupResponse.fromBinary(arrayBuffer);
     if (customerGroupResponse.data.length <= 0) {
       return undefined;
     }
@@ -404,50 +388,50 @@ class MedusaService extends Service {
       type: props.type,
     });
     const response = await axios({
-      method: "post",
+      method: 'post',
       url: `${this.endpointUrl}/medusa/price-lists`,
       headers: {
         ...this.headers,
-        "Session-Token": `${session?.access_token}`,
+        'Session-Token': `${session?.access_token}`,
       },
       data: priceListsRequest.toBinary(),
-      responseType: "arraybuffer",
+      responseType: 'arraybuffer',
     });
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
     const priceListsResponse = PriceListsResponse.fromBinary(arrayBuffer);
-    const priceListsData = priceListsResponse.data.length > 0
-      ? JSON.parse(priceListsResponse.data)
-      : {};
+    const priceListsData =
+      priceListsResponse.data.length > 0
+        ? JSON.parse(priceListsResponse.data)
+        : {};
     if (Object.keys(priceListsData).length > 0) {
-      return priceListsData?.["price_lists"] ?? [];
+      return priceListsData?.['price_lists'] ?? [];
     }
 
     return [];
   }
 
-  public async requestStockLocationsAsync(ids: string[]): Promise<
-    StockLocation[]
-  > {
+  public async requestStockLocationsAsync(
+    ids: string[]
+  ): Promise<StockLocation[]> {
     const request = new StockLocationsRequest({
       ids: ids,
     });
     const response = await axios({
-      method: "post",
+      method: 'post',
       url: `${this.endpointUrl}/medusa/stock-locations`,
       headers: {
         ...this.headers,
       },
       data: request.toBinary(),
-      responseType: "arraybuffer",
+      responseType: 'arraybuffer',
     });
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const stockLocationsResponse = StockLocationsResponse.fromBinary(
-      arrayBuffer,
-    );
+    const stockLocationsResponse =
+      StockLocationsResponse.fromBinary(arrayBuffer);
     const locations: StockLocation[] = [];
     for (const stockLocation of stockLocationsResponse.locations) {
       const json = JSON.parse(stockLocation) as StockLocation;
@@ -465,20 +449,19 @@ class MedusaService extends Service {
     (StockLocation & { sales_channels: SalesChannel[] })[]
   > {
     const response = await axios({
-      method: "post",
+      method: 'post',
       url: `${this.endpointUrl}/medusa/stock-locations/all`,
       headers: {
         ...this.headers,
       },
-      data: "",
-      responseType: "arraybuffer",
+      data: '',
+      responseType: 'arraybuffer',
     });
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);
 
-    const stockLocationsResponse = StockLocationsResponse.fromBinary(
-      arrayBuffer,
-    );
+    const stockLocationsResponse =
+      StockLocationsResponse.fromBinary(arrayBuffer);
     const locations: any[] = [];
     for (const stockLocation of stockLocationsResponse.locations) {
       const json = JSON.parse(stockLocation);
@@ -497,7 +480,7 @@ class MedusaService extends Service {
     props: {
       offset: number;
       limit: number;
-    },
+    }
   ): Promise<Order[] | undefined> {
     const session = await SupabaseService.requestSessionAsync();
     const ordersRequest = new OrdersRequest({
@@ -505,14 +488,14 @@ class MedusaService extends Service {
       limit: props.limit,
     });
     const response = await axios({
-      method: "post",
+      method: 'post',
       url: `${this.endpointUrl}/medusa/orders/${customerId}`,
       headers: {
         ...this.headers,
-        "Session-Token": `${session?.access_token}`,
+        'Session-Token': `${session?.access_token}`,
       },
       data: ordersRequest.toBinary(),
-      responseType: "arraybuffer",
+      responseType: 'arraybuffer',
     });
     const arrayBuffer = new Uint8Array(response.data);
     this.assertResponse(arrayBuffer);

@@ -1,5 +1,4 @@
 import { OptionProps } from '@fuoco.appdev/web-components';
-import { lazy } from '@loadable/component';
 import { LineItem, ReturnReason } from '@medusajs/medusa';
 import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
@@ -13,14 +12,14 @@ import { OrderConfirmedSuspenseDesktopComponent } from './desktop/suspense/order
 import { OrderConfirmedSuspenseMobileComponent } from './mobile/suspense/order-confirmed.suspense.mobile.component';
 import styles from './order-confirmed.module.scss';
 
-const OrderConfirmedDesktopComponent = lazy(
+const OrderConfirmedDesktopComponent = React.lazy(
   () => import('./desktop/order-confirmed.desktop.component')
 );
-const OrderConfirmedMobileComponent = lazy(
+const OrderConfirmedMobileComponent = React.lazy(
   () => import('./mobile/order-confirmed.mobile.component')
 );
 
-export interface OrderConfirmedProps { }
+export interface OrderConfirmedProps {}
 
 export interface OrderConfirmedResponsiveProps {
   orderConfirmedProps: OrderConfirmedState;
@@ -113,7 +112,7 @@ export default function OrderConfirmedComponent(): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

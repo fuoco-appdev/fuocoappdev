@@ -1,4 +1,10 @@
-import { Button, Input, Line, Scroll, Tabs } from '@fuoco.appdev/web-components';
+import {
+  Button,
+  Input,
+  Line,
+  Scroll,
+  Tabs,
+} from '@fuoco.appdev/web-components';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -131,13 +137,18 @@ export default function ExploreDesktopComponent({
             loadingHeight={56}
             showIndicatorThreshold={56}
             reloadThreshold={96}
-            pullIndicatorComponent={<div className={[styles['pull-indicator-container']].join(' ')}><Line.ArrowDownward size={24} /></div>}
+            pullIndicatorComponent={
+              <div className={[styles['pull-indicator-container']].join(' ')}>
+                <Line.ArrowDownward size={24} />
+              </div>
+            }
             isLoadable={exploreProps.hasMoreSearchedStockLocations}
             isLoading={exploreProps.areSearchedStockLocationsLoading}
             onLoad={() => ExploreController.onNextScrollAsync()}
             onScroll={(progress, scrollRef, contentRef) => {
               const elementHeight = topBarRef.current?.clientHeight ?? 0;
-              const scrollTop = contentRef.current?.getBoundingClientRect().top ?? 0;
+              const scrollTop =
+                contentRef.current?.getBoundingClientRect().top ?? 0;
               if (prevScrollTop <= scrollTop) {
                 yPosition -= prevScrollTop - scrollTop;
                 if (yPosition >= 0) {
@@ -182,7 +193,8 @@ export default function ExploreDesktopComponent({
                   );
                 }
               )}
-              {(!exploreProps.areSearchedStockLocationsLoading && !exploreProps.areSearchedStockLocationsReloading) &&
+              {!exploreProps.areSearchedStockLocationsLoading &&
+                !exploreProps.areSearchedStockLocationsReloading &&
                 exploreProps.searchedStockLocations.length <= 0 && (
                   <div
                     className={[
@@ -216,16 +228,14 @@ export default function ExploreDesktopComponent({
                 minHeight: '100%',
                 width: '100%',
                 height: '100%',
-                borderRadius: '6px'
+                borderRadius: '6px',
               }}
-              mapboxAccessToken={process.env['MAPBOX_ACCESS_TOKEN']}
+              mapboxAccessToken={import.meta.env['MAPBOX_ACCESS_TOKEN']}
               ref={mapRef}
               interactive={true}
               initialViewState={{
-                longitude:
-                  exploreProps.longitude ?? 0,
-                latitude:
-                  exploreProps.latitude ?? 0,
+                longitude: exploreProps.longitude ?? 0,
+                latitude: exploreProps.latitude ?? 0,
                 zoom: 15,
               }}
               longitude={exploreProps.longitude ?? 0}
@@ -254,7 +264,7 @@ export default function ExploreDesktopComponent({
                       <img
                         src={
                           exploreProps.selectedInventoryLocation?.id !==
-                            point.id
+                          point.id
                             ? '../assets/images/unselected-cellar.png'
                             : '../assets/images/selected-cellar.png'
                         }
@@ -268,7 +278,7 @@ export default function ExploreDesktopComponent({
                       <img
                         src={
                           exploreProps.selectedInventoryLocation?.id !==
-                            point.id
+                          point.id
                             ? '../assets/images/unselected-restaurant.png'
                             : '../assets/images/selected-restaurant.png'
                         }

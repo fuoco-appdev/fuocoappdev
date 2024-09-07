@@ -1,4 +1,3 @@
-import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -8,10 +7,10 @@ import { AuthenticatedComponent } from './authenticated.component';
 import SettingsSuspenseDesktopComponent from './desktop/suspense/settings.suspense.desktop';
 import SettingsSuspenseMobileComponent from './mobile/suspense/settings.suspense.mobile';
 
-const SettingsDesktopComponent = lazy(
+const SettingsDesktopComponent = React.lazy(
   () => import('./desktop/settings.desktop.component')
 );
-const SettingsMobileComponent = lazy(
+const SettingsMobileComponent = React.lazy(
   () => import('./mobile/settings.mobile.component')
 );
 
@@ -29,7 +28,7 @@ export default function SettingsComponent(): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

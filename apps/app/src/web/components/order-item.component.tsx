@@ -1,14 +1,13 @@
-import { lazy } from '@loadable/component';
 import { LineItem, Order } from '@medusajs/medusa';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { OrderItemSuspenseDesktopComponent } from './desktop/suspense/order-item.suspense.desktop.component';
 import { OrderItemSuspenseMobileComponent } from './mobile/suspense/order-item.suspense.mobile.component';
 
-const OrderItemDesktopComponent = lazy(
+const OrderItemDesktopComponent = React.lazy(
   () => import('./desktop/order-item.desktop.component')
 );
-const OrderItemMobileComponent = lazy(
+const OrderItemMobileComponent = React.lazy(
   () => import('./mobile/order-item.mobile.component')
 );
 
@@ -63,7 +62,7 @@ export default function OrderItemComponent({
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

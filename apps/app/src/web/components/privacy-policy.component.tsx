@@ -1,4 +1,3 @@
-import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -10,10 +9,10 @@ import {
   ResponsiveTablet,
 } from './responsive.component';
 
-const PrivacyPolicyDesktopComponent = lazy(
+const PrivacyPolicyDesktopComponent = React.lazy(
   () => import('./desktop/privacy-policy.desktop.component')
 );
-const PrivacyPolicyMobileComponent = lazy(
+const PrivacyPolicyMobileComponent = React.lazy(
   () => import('./mobile/privacy-policy.mobile.component')
 );
 
@@ -56,7 +55,7 @@ export default function PrivacyPolicyComponent(): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

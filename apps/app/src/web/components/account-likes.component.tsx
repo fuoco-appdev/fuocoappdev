@@ -1,4 +1,3 @@
-import { lazy } from '@loadable/component';
 import { Product } from '@medusajs/medusa';
 import { PricedVariant } from '@medusajs/medusa/dist/types/pricing';
 import { useObservable } from '@ngneat/use-observable';
@@ -12,15 +11,16 @@ import WindowController from '../../controllers/window.controller';
 import { AccountState } from '../../models/account.model';
 import { StoreState } from '../../models/store.model';
 import { ProductLikesMetadataResponse } from '../../protobuf/product-like_pb';
-import { RoutePathsType, useQuery } from '../route-paths';
+import { RoutePathsType } from '../../route-paths-type';
+import { useQuery } from '../route-paths';
 import { AuthenticatedComponent } from './authenticated.component';
 import { AccountLikesSuspenseDesktopComponent } from './desktop/suspense/account-likes.suspense.desktop.component';
 import { AccountLikesSuspenseMobileComponent } from './mobile/suspense/account-likes.suspense.mobile.component';
 
-const AccountLikesDesktopComponent = lazy(
+const AccountLikesDesktopComponent = React.lazy(
   () => import('./desktop/account-likes.desktop.component')
 );
-const AccountLikesMobileComponent = lazy(
+const AccountLikesMobileComponent = React.lazy(
   () => import('./mobile/account-likes.mobile.component')
 );
 
@@ -149,7 +149,7 @@ export default function AccountLikesComponent(): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

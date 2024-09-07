@@ -1,4 +1,3 @@
-import { lazy } from '@loadable/component';
 import { Store } from '@ngneat/elf';
 import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
@@ -13,15 +12,16 @@ import {
   InventoryLocation,
 } from '../../models/explore.model';
 import { DeepLTranslationsResponse } from '../../protobuf/deepl_pb';
+import { RoutePathsType } from '../../route-paths-type';
 import DeeplService from '../../services/deepl.service';
-import { RoutePathsType, useQuery } from '../route-paths';
+import { useQuery } from '../route-paths';
 import { ExploreSuspenseDesktopComponent } from './desktop/suspense/explore.suspense.desktop.component';
 import { ExploreSuspenseMobileComponent } from './mobile/suspense/explore.suspense.mobile.component';
 
-const ExploreDesktopComponent = lazy(
+const ExploreDesktopComponent = React.lazy(
   () => import('./desktop/explore.desktop.component')
 );
-const ExploreMobileComponent = lazy(
+const ExploreMobileComponent = React.lazy(
   () => import('./mobile/explore.mobile.component')
 );
 
@@ -145,7 +145,7 @@ export default function ExploreComponent(): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

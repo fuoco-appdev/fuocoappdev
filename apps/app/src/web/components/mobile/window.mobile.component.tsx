@@ -7,7 +7,7 @@ import {
   Line,
   Modal,
   Solid,
-  ToastOverlay
+  ToastOverlay,
 } from '@fuoco.appdev/web-components';
 import { Customer } from '@medusajs/medusa';
 import { LanguageCode } from 'iso-639-1';
@@ -19,11 +19,11 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import WindowController from '../../../controllers/window.controller';
 import { AccountResponse } from '../../../protobuf/account_pb';
-import { RoutePathsType, useQuery } from '../../route-paths';
+import { RoutePathsType } from '../../../route-paths-type';
+import { useQuery } from '../../route-paths';
 import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 import { WindowResponsiveProps } from '../window.component';
 import styles from '../window.module.scss';
-;
 
 export default function WindowMobileComponent({
   windowProps,
@@ -73,22 +73,22 @@ export default function WindowMobileComponent({
                 classNames: {
                   enter:
                     windowProps.transitionKeyIndex <
-                      windowProps.prevTransitionKeyIndex
+                    windowProps.prevTransitionKeyIndex
                       ? styles['left-to-right-enter']
                       : styles['right-to-left-enter'],
                   enterActive:
                     windowProps.transitionKeyIndex <
-                      windowProps.prevTransitionKeyIndex
+                    windowProps.prevTransitionKeyIndex
                       ? styles['left-to-right-enter-active']
                       : styles['right-to-left-enter-active'],
                   exit:
                     windowProps.transitionKeyIndex <
-                      windowProps.prevTransitionKeyIndex
+                    windowProps.prevTransitionKeyIndex
                       ? styles['left-to-right-exit']
                       : styles['right-to-left-exit'],
                   exitActive:
                     windowProps.transitionKeyIndex <
-                      windowProps.prevTransitionKeyIndex
+                    windowProps.prevTransitionKeyIndex
                       ? styles['left-to-right-exit-active']
                       : styles['right-to-left-exit-active'],
                 },
@@ -101,22 +101,22 @@ export default function WindowMobileComponent({
               classNames={{
                 enter:
                   windowProps.transitionKeyIndex >
-                    windowProps.prevTransitionKeyIndex
+                  windowProps.prevTransitionKeyIndex
                     ? styles['left-to-right-enter']
                     : styles['right-to-left-enter'],
                 enterActive:
                   windowProps.transitionKeyIndex >
-                    windowProps.prevTransitionKeyIndex
+                  windowProps.prevTransitionKeyIndex
                     ? styles['left-to-right-enter-active']
                     : styles['right-to-left-enter-active'],
                 exit:
                   windowProps.transitionKeyIndex >
-                    windowProps.prevTransitionKeyIndex
+                  windowProps.prevTransitionKeyIndex
                     ? styles['left-to-right-exit']
                     : styles['right-to-left-exit'],
                 exitActive:
                   windowProps.transitionKeyIndex >
-                    windowProps.prevTransitionKeyIndex
+                  windowProps.prevTransitionKeyIndex
                     ? styles['left-to-right-exit-active']
                     : styles['right-to-left-exit-active'],
               }}
@@ -187,42 +187,47 @@ export default function WindowMobileComponent({
                         styles['navigation-back-text-container-mobile'],
                       ].join(' ')}
                     >
-                      {activeRoute?.startsWith(`${RoutePathsType.Store}/`) &&
-                        (<>{exploreProps.selectedInventoryLocation && (
-                          <Avatar
-                            classNames={{
-                              container: !exploreProps
-                                .selectedInventoryLocation?.avatar
-                                ? [
-                                  styles['no-avatar-container'],
-                                  styles['no-avatar-container-mobile'],
-                                ].join(' ')
-                                : [
-                                  styles['avatar-container'],
-                                  styles['avatar-container-mobile'],
-                                ].join(' '),
-                            }}
-                            size={'custom'}
-                            text={
-                              exploreProps.selectedInventoryLocation
-                                ?.company ?? ''
-                            }
-                            src={
-                              exploreProps.selectedInventoryLocation?.avatar
-                            }
-                            touchScreen={true}
-                          />)}
+                      {activeRoute?.startsWith(`${RoutePathsType.Store}/`) && (
+                        <>
+                          {exploreProps.selectedInventoryLocation && (
+                            <Avatar
+                              classNames={{
+                                container: !exploreProps
+                                  .selectedInventoryLocation?.avatar
+                                  ? [
+                                      styles['no-avatar-container'],
+                                      styles['no-avatar-container-mobile'],
+                                    ].join(' ')
+                                  : [
+                                      styles['avatar-container'],
+                                      styles['avatar-container-mobile'],
+                                    ].join(' '),
+                              }}
+                              size={'custom'}
+                              text={
+                                exploreProps.selectedInventoryLocation
+                                  ?.company ?? ''
+                              }
+                              src={
+                                exploreProps.selectedInventoryLocation?.avatar
+                              }
+                              touchScreen={true}
+                            />
+                          )}
                           <div
                             className={[styles['navigation-back-title']].join(
                               ' '
                             )}
                           >
-                            {exploreProps.selectedInventoryLocation && `${exploreProps.selectedInventoryLocation
-                              ?.company ?? ''} - `}
+                            {exploreProps.selectedInventoryLocation &&
+                              `${
+                                exploreProps.selectedInventoryLocation
+                                  ?.company ?? ''
+                              } - `}
                             {productProps.metadata?.subtitle}
                           </div>
-                        </>)
-                      }
+                        </>
+                      )}
                       {activeRoute === RoutePathsType.AccountHelp && (
                         <>
                           <Line.HelpOutline size={22} />
@@ -297,17 +302,17 @@ export default function WindowMobileComponent({
                       )}
                       {windowProps.activeRoute ===
                         RoutePathsType.EmailConfirmation && (
-                          <>
-                            <Line.Email size={24} />
-                            <div
-                              className={[styles['navigation-back-title']].join(
-                                ' '
-                              )}
-                            >
-                              {t('emailConfirmation')}
-                            </div>
-                          </>
-                        )}
+                        <>
+                          <Line.Email size={24} />
+                          <div
+                            className={[styles['navigation-back-title']].join(
+                              ' '
+                            )}
+                          >
+                            {t('emailConfirmation')}
+                          </div>
+                        </>
+                      )}
                       {activeRoute === RoutePathsType.AccountAddFriends && (
                         <>
                           <Line.PersonAddAlt1 size={22} />
@@ -323,27 +328,27 @@ export default function WindowMobileComponent({
                       {WindowController.isLocationAccountWithId(
                         location.pathname ?? ''
                       ) && (
-                          <div
-                            className={[styles['navigation-back-title']].join(
-                              ' '
-                            )}
-                            style={{ textTransform: 'lowercase' }}
-                          >
-                            {accountPublicProps.account?.username ?? ''}
-                          </div>
-                        )}
+                        <div
+                          className={[styles['navigation-back-title']].join(
+                            ' '
+                          )}
+                          style={{ textTransform: 'lowercase' }}
+                        >
+                          {accountPublicProps.account?.username ?? ''}
+                        </div>
+                      )}
                       {WindowController.isLocationAccountStatusWithId(
                         location.pathname ?? ''
                       ) && (
-                          <div
-                            className={[styles['navigation-back-title']].join(
-                              ' '
-                            )}
-                            style={{ textTransform: 'lowercase' }}
-                          >
-                            {accountPublicProps.account?.username ?? ''}
-                          </div>
-                        )}
+                        <div
+                          className={[styles['navigation-back-title']].join(
+                            ' '
+                          )}
+                          style={{ textTransform: 'lowercase' }}
+                        >
+                          {accountPublicProps.account?.username ?? ''}
+                        </div>
+                      )}
                       {activeRoute === RoutePathsType.Settings && (
                         <>
                           <Line.Settings size={22} />
@@ -356,19 +361,18 @@ export default function WindowMobileComponent({
                           </div>
                         </>
                       )}
-                      {activeRoute ===
-                        RoutePathsType.SettingsAccount && (
-                          <>
-                            <Line.Person size={22} />
-                            <div
-                              className={[styles['navigation-back-title']].join(
-                                ' '
-                              )}
-                            >
-                              {t('account')}
-                            </div>
-                          </>
-                        )}
+                      {activeRoute === RoutePathsType.SettingsAccount && (
+                        <>
+                          <Line.Person size={22} />
+                          <div
+                            className={[styles['navigation-back-title']].join(
+                              ' '
+                            )}
+                          >
+                            {t('account')}
+                          </div>
+                        </>
+                      )}
                     </div>
                   )}
                 </div>
@@ -402,7 +406,7 @@ export default function WindowMobileComponent({
                       touchScreen={true}
                       icon={
                         windowProps.activeRoute === RoutePathsType.Explore ||
-                          windowProps.activeRoute === RoutePathsType.Default ? (
+                        windowProps.activeRoute === RoutePathsType.Default ? (
                           <Solid.Explore
                             size={24}
                             color={'rgba(252, 245, 227, 1)'}
@@ -495,8 +499,7 @@ export default function WindowMobileComponent({
                             <Line.MoreVert
                               size={24}
                               color={
-                                windowProps.activeRoute ===
-                                  RoutePathsType.Cart
+                                windowProps.activeRoute === RoutePathsType.Cart
                                   ? 'rgba(252, 245, 227, .6)'
                                   : 'rgba(252, 245, 227, 1)'
                               }
@@ -540,7 +543,7 @@ export default function WindowMobileComponent({
                           floatingLabel={t('notifications') ?? ''}
                           icon={
                             windowProps.activeRoute !==
-                              RoutePathsType.Notifications ? (
+                            RoutePathsType.Notifications ? (
                               <Line.Notifications
                                 size={24}
                                 color={'rgba(252, 245, 227, .8)'}
@@ -590,9 +593,9 @@ export default function WindowMobileComponent({
                                   windowProps.activeRoute?.startsWith(
                                     `${RoutePathsType.Account}/`
                                   ) &&
-                                    !WindowController.isLocationAccountWithId(
-                                      location.pathname
-                                    )
+                                  !WindowController.isLocationAccountWithId(
+                                    location.pathname
+                                  )
                                     ? 'rgba(252, 245, 227, 1)'
                                     : 'rgba(252, 245, 227, .6)'
                                 }
@@ -603,15 +606,15 @@ export default function WindowMobileComponent({
                                   windowProps.activeRoute?.startsWith(
                                     `${RoutePathsType.Account}/`
                                   ) &&
-                                    !WindowController.isLocationAccountWithId(
-                                      location.pathname
-                                    )
+                                  !WindowController.isLocationAccountWithId(
+                                    location.pathname
+                                  )
                                     ? [
-                                      styles['avatar-container-selected'],
-                                      styles[
-                                      'avatar-container-selected-mobile'
-                                      ],
-                                    ].join(' ')
+                                        styles['avatar-container-selected'],
+                                        styles[
+                                          'avatar-container-selected-mobile'
+                                        ],
+                                      ].join(' ')
                                     : undefined
                                 }
                               >
@@ -619,15 +622,13 @@ export default function WindowMobileComponent({
                                   classNames={{
                                     container: accountProps?.profileUrl
                                       ? [
-                                        styles['avatar-container'],
-                                        styles['avatar-container-mobile'],
-                                      ].join(' ')
+                                          styles['avatar-container'],
+                                          styles['avatar-container-mobile'],
+                                        ].join(' ')
                                       : [
-                                        styles['no-avatar-container'],
-                                        styles[
-                                        'no-avatar-container-mobile'
-                                        ],
-                                      ].join(' '),
+                                          styles['no-avatar-container'],
+                                          styles['no-avatar-container-mobile'],
+                                        ].join(' '),
                                   }}
                                   size={'custom'}
                                   text={customer?.first_name}
@@ -734,12 +735,16 @@ export default function WindowMobileComponent({
               touchScreen={true}
               onClose={() => setOpenMore(false)}
             >
-              <Dropdown.Item onClick={() => {
-                setIsLanguageOpen(true);
-              }}>
+              <Dropdown.Item
+                onClick={() => {
+                  setIsLanguageOpen(true);
+                }}
+              >
                 <Dropdown.Icon>
                   <ReactCountryFlag
-                    countryCode={windowLocalProps.languageInfo?.info.countryCode ?? ''}
+                    countryCode={
+                      windowLocalProps.languageInfo?.info.countryCode ?? ''
+                    }
                     style={{ width: 24, height: 24 }}
                     svg
                   />
@@ -821,8 +826,8 @@ export default function WindowMobileComponent({
               type={'none'}
               dropdownProps={{
                 classNames: {
-                  touchscreenOverlay: styles['dropdown-touchscreen-overlay']
-                }
+                  touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
+                },
               }}
               open={isLanguageOpen}
               onOpen={() => setIsLanguageOpen(true)}

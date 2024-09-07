@@ -14,25 +14,14 @@
       }
     },
     "build-client": {
-      "executor": "@nx/webpack:webpack",
+      "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
-      "defaultConfiguration": "production",
       "options": {
-        "target": "web",
-        "compiler": "babel",
+        "outputPath": "../../dist/apps/app/client",
+        "defaultConfiguration": "production",
         "tsConfig": "apps/app/tsconfig.app.json",
-        "outputPath": "dist/apps/app/client",
-        "index": "apps/app/src/web/index.html",
-        "baseHref": "/",
-        "main": "apps/app/src/web/main.tsx",
-        "assets": ["apps/app/src/favicon.ico", "apps/app/src/assets"],
-        "styles": [
-          "node_modules/@fuoco.appdev/web-components/dist/cjs/index.css",
-          "node_modules/mapbox-gl/src/css/mapbox-gl.css",
-          "node_modules/react-loading-skeleton/dist/skeleton.css",
-          "apps/app/src/web/styles.scss"
-        ],
-        "webpackConfig": "apps/app/webpack.config.js"
+        "configFile": "apps/app/vite.config.ts",
+        "ssrManifest": true
       },
       "configurations": {
         "development": {
@@ -42,12 +31,6 @@
           "vendorChunk": true
         },
         "production": {
-          "fileReplacements": [
-            {
-              "replace": "apps/app/src/environments/environment.ts",
-              "with": "apps/app/src/environments/environment.prod.ts"
-            }
-          ],
           "optimization": true,
           "sourceMap": false,
           "namedChunks": false,
@@ -58,105 +41,29 @@
       }
     },
     "build-server": {
-      "executor": "@nx/webpack:webpack",
+      "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
-      "defaultConfiguration": "production",
       "options": {
-        "target": "node",
-        "compiler": "tsc",
-        "tsConfig": "apps/app/tsconfig.server.json",
-        "outputPath": "dist/apps/app/server",
-        "index": "apps/app/src/web/index.html",
-        "baseHref": "/",
-        "main": "apps/app/src/web/main.server.tsx",
-        "assets": ["apps/app/src/favicon.ico", "apps/app/src/assets"],
-        "styles": [
-          "node_modules/@fuoco.appdev/web-components/dist/cjs/index.css",
-          "node_modules/mapbox-gl/dist/mapbox-gl.css",
-          "node_modules/react-loading-skeleton/dist/skeleton.css",
-          "apps/app/src/web/styles.scss"
-        ],
-        "scripts": [],
-        "webpackConfig": "apps/app/webpack.server.config.js"
+        "outputPath": "../../dist/apps/app/server",
+        "defaultConfiguration": "production",
+        "tsConfig": "apps/app/tsconfig.app.json",
+        "configFile": "apps/app/vite.config.ts",
+        "ssr": "server.ts"
       },
       "configurations": {
         "development": {
           "extractLicenses": false,
           "optimization": false,
           "sourceMap": true,
-          "namedChunks": false,
-          "vendorChunk": false
+          "vendorChunk": true
         },
         "production": {
-          "fileReplacements": [
-            {
-              "replace": "apps/app/src/environments/environment.ts",
-              "with": "apps/app/src/environments/environment.prod.ts"
-            }
-          ],
           "optimization": true,
           "sourceMap": false,
           "namedChunks": false,
           "extractLicenses": true,
           "vendorChunk": false,
           "extractCss": true
-        }
-      }
-    },
-    "build-ssr": {
-      "executor": "@nx/webpack:webpack",
-      "defaultConfiguration": "production",
-      "options": {
-        "compiler": "tsc",
-        "target": "node",
-        "outputPath": "dist/apps/app/ssr",
-        "main": "apps/app/ssr/main.ts",
-        "tsConfig": "apps/app/tsconfig.server.json",
-        "webpackConfig": "apps/app/webpack.ssr.config.js",
-        "assets": []
-      },
-      "configurations": {
-        "development": {
-          "extractLicenses": false,
-          "optimization": false,
-          "sourceMap": true,
-          "namedChunks": false,
-          "vendorChunk": false
-        },
-        "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
-        }
-      }
-    },
-    "build-deno": {
-      "executor": "nx:run-commands",
-      "defaultConfiguration": "production",
-      "configurations": {
-        "options": {
-          "cwd": "apps/app",
-          "commands": [
-            "npx tsc",
-            "npx denoify"
-          ],
-          "parallel": false
-        },
-        "development": {
-          "cwd": "apps/app",
-          "commands": [
-            "npx tsc",
-            "npx denoify"
-          ],
-          "parallel": false
-        },
-        "production": {
-          "cwd": "apps/app",
-          "commands": [
-            "npx tsc",
-            "npx denoify"
-          ],
-          "parallel": false
         }
       }
     },
@@ -167,76 +74,16 @@
         "development": {
           "commands": [
             "nx run app:build-server:development",
-            "nx run app:build-client:development",
-            "nx run app:build-ssr:development"
+            "nx run app:build-client:development"
           ],
           "parallel": true
         },
         "production": {
           "commands": [
             "nx run app:build-server:production",
-            "nx run app:build-client:production",
-            "nx run app:build-ssr:production"
+            "nx run app:build-client:production"
           ],
           "parallel": true
-        }
-      }
-    },
-    "serve-client": {
-      "executor": "@nx/webpack:dev-server",
-      "defaultConfiguration": "development",
-      "options": {
-        "buildTarget": "app:build-client",
-        "hmr": true,
-        "proxyConfig": "apps/app/proxy.conf.json"
-      },
-      "configurations": {
-        "development": {
-          "buildTarget": "app:build-client:development"
-        },
-        "production": {
-          "buildTarget": "app:build-client:production",
-          "hmr": false
-        }
-      }
-    },
-    "serve-server": {
-      "executor": "@nx/webpack:dev-server",
-      "defaultConfiguration": "development",
-      "options": {
-        "buildTarget": "app:build-server",
-        "hmr": true,
-        "proxyConfig": "apps/app/proxy.conf.json"
-      },
-      "configurations": {
-        "development": {
-          "buildTarget": "app:build-server:development"
-        },
-        "production": {
-          "buildTarget": "app:build-server:production",
-          "hmr": false
-        }
-      }
-    },
-    "serve-ssr": {
-      "executor": "nx:run-commands",
-      "defaultConfiguration": "development",
-      "options": {},
-      "configurations": {
-        "development": {
-          "commands": [
-            "nx run app:build-ssr:development",
-            "nodemon ./dist/apps/app/ssr/main.js"
-          ],
-          "parallel": false
-        },
-        "production": {
-          "commands": [
-            "nx run app:build-ssr:production",
-            "nodemon ./dist/apps/app/ssr/main.js"
-          ],
-          "parallel": false,
-          "hmr": false
         }
       }
     },

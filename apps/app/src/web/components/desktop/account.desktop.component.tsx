@@ -19,7 +19,8 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import AccountController from '../../../controllers/account.controller';
 import { AccountResponse } from '../../../protobuf/account_pb';
 import { InterestResponse } from '../../../protobuf/interest_pb';
-import { RoutePathsType, useQuery } from '../../route-paths';
+import { RoutePathsType } from '../../../route-paths-type';
+import { useQuery } from '../../route-paths';
 import AccountProfileFormComponent from '../account-profile-form.component';
 import { AccountResponsiveProps } from '../account.component';
 import styles from '../account.module.scss';
@@ -161,13 +162,23 @@ export default function AccountDesktopComponent({
           loadingHeight={56}
           showIndicatorThreshold={56}
           reloadThreshold={96}
-          pullIndicatorComponent={<div className={[styles['pull-indicator-container']].join(' ')}><Line.ArrowDownward size={24} /></div>}
-          isLoadable={accountProps.activeTabId !== RoutePathsType.AccountAddresses}
-          isLoading={accountProps.areLikedProductsLoading || accountProps.areOrdersLoading}
+          pullIndicatorComponent={
+            <div className={[styles['pull-indicator-container']].join(' ')}>
+              <Line.ArrowDownward size={24} />
+            </div>
+          }
+          isLoadable={
+            accountProps.activeTabId !== RoutePathsType.AccountAddresses
+          }
+          isLoading={
+            accountProps.areLikedProductsLoading ||
+            accountProps.areOrdersLoading
+          }
           onLoad={onScrollLoad}
           onScroll={(progress, scrollRef, contentRef) => {
             const elementHeight = topBarRef.current?.clientHeight ?? 0;
-            const scrollTop = contentRef.current?.getBoundingClientRect().top ?? 0;
+            const scrollTop =
+              contentRef.current?.getBoundingClientRect().top ?? 0;
             if (prevPreviewScrollTop <= scrollTop) {
               yPosition -= prevPreviewScrollTop - scrollTop;
               if (yPosition >= 0) {
@@ -407,7 +418,9 @@ export default function AccountDesktopComponent({
                                 ].join(' '),
                               },
                               saveButton: {
-                                button: [styles['avatar-save-button']].join(' '),
+                                button: [styles['avatar-save-button']].join(
+                                  ' '
+                                ),
                               },
                             },
                           }}
@@ -629,9 +642,10 @@ export default function AccountDesktopComponent({
                       touchScreen={true}
                       activeId={accountProps.activeTabId}
                       classNames={{
-                        nav: [styles['tab-nav'], styles['tab-nav-desktop']].join(
-                          ' '
-                        ),
+                        nav: [
+                          styles['tab-nav'],
+                          styles['tab-nav-desktop'],
+                        ].join(' '),
                         tabButton: [
                           styles['tab-button'],
                           styles['tab-button-desktop'],
@@ -676,22 +690,22 @@ export default function AccountDesktopComponent({
                         classNames: {
                           enter:
                             accountProps.activeTabIndex >
-                              accountProps.prevTabIndex
+                            accountProps.prevTabIndex
                               ? styles['left-to-right-enter']
                               : styles['right-to-left-enter'],
                           enterActive:
                             accountProps.activeTabIndex >
-                              accountProps.prevTabIndex
+                            accountProps.prevTabIndex
                               ? styles['left-to-right-enter-active']
                               : styles['right-to-left-enter-active'],
                           exit:
                             accountProps.activeTabIndex >
-                              accountProps.prevTabIndex
+                            accountProps.prevTabIndex
                               ? styles['left-to-right-exit']
                               : styles['right-to-left-exit'],
                           exitActive:
                             accountProps.activeTabIndex >
-                              accountProps.prevTabIndex
+                            accountProps.prevTabIndex
                               ? styles['left-to-right-exit-active']
                               : styles['right-to-left-exit-active'],
                         },
@@ -703,19 +717,23 @@ export default function AccountDesktopComponent({
                       key={accountProps.activeTabIndex}
                       classNames={{
                         enter:
-                          accountProps.activeTabIndex < accountProps.prevTabIndex
+                          accountProps.activeTabIndex <
+                          accountProps.prevTabIndex
                             ? styles['left-to-right-enter']
                             : styles['right-to-left-enter'],
                         enterActive:
-                          accountProps.activeTabIndex < accountProps.prevTabIndex
+                          accountProps.activeTabIndex <
+                          accountProps.prevTabIndex
                             ? styles['left-to-right-enter-active']
                             : styles['right-to-left-enter-active'],
                         exit:
-                          accountProps.activeTabIndex < accountProps.prevTabIndex
+                          accountProps.activeTabIndex <
+                          accountProps.prevTabIndex
                             ? styles['left-to-right-exit']
                             : styles['right-to-left-exit'],
                         exitActive:
-                          accountProps.activeTabIndex < accountProps.prevTabIndex
+                          accountProps.activeTabIndex <
+                          accountProps.prevTabIndex
                             ? styles['left-to-right-exit-active']
                             : styles['right-to-left-exit-active'],
                       }}

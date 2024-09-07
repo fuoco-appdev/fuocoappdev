@@ -1,10 +1,17 @@
-import { Button, Dropdown, Input, Line, Solid } from '@fuoco.appdev/web-components';
+import {
+  Button,
+  Dropdown,
+  Input,
+  Line,
+  Solid,
+} from '@fuoco.appdev/web-components';
 import { Discount, LineItem } from '@medusajs/medusa';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import CartController from '../../../controllers/cart.controller';
-import { RoutePathsType, useQuery } from '../../route-paths';
+import { RoutePathsType } from '../../../route-paths-type';
+import { useQuery } from '../../route-paths';
 import CartItemComponent from '../cart-item.component';
 import styles from '../cart.module.scss';
 // @ts-ignore

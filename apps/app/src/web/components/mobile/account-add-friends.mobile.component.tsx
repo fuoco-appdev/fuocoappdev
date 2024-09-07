@@ -1,11 +1,21 @@
-import { Button, Dropdown, DropdownAlignment, FormLayout, Input, Line, Scroll, Slider } from '@fuoco.appdev/web-components';
+import {
+  Button,
+  Dropdown,
+  DropdownAlignment,
+  FormLayout,
+  Input,
+  Line,
+  Scroll,
+  Slider,
+} from '@fuoco.appdev/web-components';
 import convert from 'convert';
 import { useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import AccountController from '../../../controllers/account.controller';
-import { RoutePathsType, useQuery } from '../../route-paths';
+import { RoutePathsType } from '../../../route-paths-type';
+import { useQuery } from '../../route-paths';
 import { AccountAddFriendsResponsiveProps } from '../account-add-friends.component';
 import styles from '../account-add-friends.module.scss';
 import AccountFollowItemComponent from '../account-follow-item.component';
@@ -27,10 +37,7 @@ export default function AccountAddFriendsMobileComponent({
 
   return (
     <ResponsiveMobile>
-      <div className={[
-        styles['root'],
-        styles['root-mobile'],
-      ].join(' ')}>
+      <div className={[styles['root'], styles['root-mobile']].join(' ')}>
         <div
           className={[
             styles['search-container'],
@@ -83,10 +90,22 @@ export default function AccountAddFriendsMobileComponent({
         <Scroll
           touchScreen={true}
           classNames={{
-            scrollContainer: [styles['scroll-container'], styles['scroll-container-mobile']].join(' '),
-            reloadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' '),
-            loadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' '),
-            pullIndicator: [styles['pull-indicator'], styles['pull-indicator-mobile']].join(' ')
+            scrollContainer: [
+              styles['scroll-container'],
+              styles['scroll-container-mobile'],
+            ].join(' '),
+            reloadContainer: [
+              styles['scroll-load-container'],
+              styles['scroll-load-container-mobile'],
+            ].join(' '),
+            loadContainer: [
+              styles['scroll-load-container'],
+              styles['scroll-load-container-mobile'],
+            ].join(' '),
+            pullIndicator: [
+              styles['pull-indicator'],
+              styles['pull-indicator-mobile'],
+            ].join(' '),
           }}
           reloadComponent={
             <img
@@ -104,14 +123,21 @@ export default function AccountAddFriendsMobileComponent({
           loadingHeight={56}
           showIndicatorThreshold={56}
           reloadThreshold={96}
-          pullIndicatorComponent={<div className={[styles['pull-indicator-container']].join(' ')}><Line.ArrowDownward size={24} /></div>}
+          pullIndicatorComponent={
+            <div className={[styles['pull-indicator-container']].join(' ')}>
+              <Line.ArrowDownward size={24} />
+            </div>
+          }
           isReloading={accountProps.areAddFriendsReloading}
           isLoading={accountProps.areAddFriendsLoading}
-          onReload={() => AccountController.reloadFollowRequestsAndFriendsAccountsAsync()}
+          onReload={() =>
+            AccountController.reloadFollowRequestsAndFriendsAccountsAsync()
+          }
           onLoad={() => AccountController.onNextAddFriendsScrollAsync()}
           onScroll={(progress, scrollRef, contentRef) => {
             const elementHeight = topBarRef.current?.clientHeight ?? 0;
-            const scrollTop = contentRef.current?.getBoundingClientRect().top ?? 0;
+            const scrollTop =
+              contentRef.current?.getBoundingClientRect().top ?? 0;
             if (prevPreviewScrollTop <= scrollTop) {
               yPosition -= prevPreviewScrollTop - scrollTop;
               if (yPosition >= 0) {
@@ -131,10 +157,12 @@ export default function AccountAddFriendsMobileComponent({
             prevPreviewScrollTop = scrollTop;
           }}
         >
-          <div className={[
-            styles['scroll-content'],
-            styles['scroll-content-mobile'],
-          ].join(' ')}>
+          <div
+            className={[
+              styles['scroll-content'],
+              styles['scroll-content-mobile'],
+            ].join(' ')}
+          >
             {accountProps.followRequestAccounts.length > 0 &&
               accountProps.addFriendsSearchInput.length <= 0 && (
                 <div
@@ -144,7 +172,9 @@ export default function AccountAddFriendsMobileComponent({
                   ].join(' ')}
                 >
                   <div
-                    className={[styles['title'], styles['title-mobile']].join(' ')}
+                    className={[styles['title'], styles['title-mobile']].join(
+                      ' '
+                    )}
                   >
                     {t('followerRequests')}
                   </div>
@@ -152,7 +182,9 @@ export default function AccountAddFriendsMobileComponent({
                     const accountFollowerRequest = Object.keys(
                       accountProps.followRequestAccountFollowers
                     ).includes(value.id ?? '')
-                      ? accountProps.followRequestAccountFollowers[value.id ?? '']
+                      ? accountProps.followRequestAccountFollowers[
+                          value.id ?? ''
+                        ]
                       : null;
                     return (
                       <AccountFollowItemComponent
@@ -185,7 +217,9 @@ export default function AccountAddFriendsMobileComponent({
                 </div>
               )}
 
-            <div className={[styles['title'], styles['title-mobile']].join(' ')}>
+            <div
+              className={[styles['title'], styles['title-mobile']].join(' ')}
+            >
               {t('results')}
             </div>
             <div
@@ -261,10 +295,12 @@ export default function AccountAddFriendsMobileComponent({
             touchScreen={true}
             title={t('filter') ?? ''}
           >
-            <div className={[
-              styles['filter-container'],
-              styles['filter-container-mobile'],
-            ].join(' ')}>
+            <div
+              className={[
+                styles['filter-container'],
+                styles['filter-container-mobile'],
+              ].join(' ')}
+            >
               <Input
                 classNames={{
                   root: styles['input-root'],
@@ -326,7 +362,7 @@ export default function AccountAddFriendsMobileComponent({
                       button: [
                         styles['button'],
                         accountProps.addFriendsSex === 'any' &&
-                        styles['button-selected'],
+                          styles['button-selected'],
                       ].join(' '),
                     }}
                     type={'primary'}
@@ -344,7 +380,7 @@ export default function AccountAddFriendsMobileComponent({
                       button: [
                         styles['button'],
                         accountProps.addFriendsSex === 'male' &&
-                        styles['button-selected'],
+                          styles['button-selected'],
                       ].join(' '),
                     }}
                     type={'primary'}
@@ -352,7 +388,9 @@ export default function AccountAddFriendsMobileComponent({
                     rippleProps={{
                       color: 'rgba(133, 38, 122, 0.35)',
                     }}
-                    onClick={() => AccountController.updateAddFriendsSex('male')}
+                    onClick={() =>
+                      AccountController.updateAddFriendsSex('male')
+                    }
                   >
                     {t('male')}
                   </Button>
@@ -362,7 +400,7 @@ export default function AccountAddFriendsMobileComponent({
                       button: [
                         styles['button'],
                         accountProps.addFriendsSex === 'female' &&
-                        styles['button-selected'],
+                          styles['button-selected'],
                       ].join(' '),
                     }}
                     type={'primary'}
@@ -439,25 +477,34 @@ export default function AccountAddFriendsMobileComponent({
                 </div>
               </div>
             </Dropdown.Item>
-            {accountProps.addFriendsLocationGeocoding?.features.map((feature) => (
-              <Dropdown.Item
-                classNames={{
-                  container: styles['dropdown-item-container'],
-                  button: {
-                    button: styles['dropdown-item-button'],
-                  },
-                }}
-                onClick={() => {
-                  AccountController.updateAddFriendsLocationFeature(feature);
-                  locationSearchInputRef.current?.blur();
-                  setLocationDropdownOpen(false);
-                }}
-                rippleProps={{ color: 'rgba(133, 38, 122, 0.35)' }}
-                touchScreen={true}
-              >
-                <div className={[styles['place-name'], styles['place-name-mobile']].join(' ')}>{feature.place_name}</div>
-              </Dropdown.Item>
-            ))}
+            {accountProps.addFriendsLocationGeocoding?.features.map(
+              (feature) => (
+                <Dropdown.Item
+                  classNames={{
+                    container: styles['dropdown-item-container'],
+                    button: {
+                      button: styles['dropdown-item-button'],
+                    },
+                  }}
+                  onClick={() => {
+                    AccountController.updateAddFriendsLocationFeature(feature);
+                    locationSearchInputRef.current?.blur();
+                    setLocationDropdownOpen(false);
+                  }}
+                  rippleProps={{ color: 'rgba(133, 38, 122, 0.35)' }}
+                  touchScreen={true}
+                >
+                  <div
+                    className={[
+                      styles['place-name'],
+                      styles['place-name-mobile'],
+                    ].join(' ')}
+                  >
+                    {feature.place_name}
+                  </div>
+                </Dropdown.Item>
+              )
+            )}
           </Dropdown>
         </>,
         document.body

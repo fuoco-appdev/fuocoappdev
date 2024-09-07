@@ -6,12 +6,11 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { animated, config, useTransition } from 'react-spring';
 import SignupController from '../../../controllers/signup.controller';
-import { RoutePathsType, useQuery } from '../../route-paths';
+import { RoutePathsType } from '../../../route-paths-type';
+import { useQuery } from '../../route-paths';
 import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 import { SignupResponsiveProps } from '../signup.component';
 import styles from '../signup.module.scss';
-;
-
 export default function SignupMobileComponent({
   signupProps,
   emailError,

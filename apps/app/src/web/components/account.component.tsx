@@ -1,4 +1,3 @@
-import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -10,15 +9,16 @@ import WindowController from '../../controllers/window.controller';
 import { AccountState } from '../../models/account.model';
 import { StoreState } from '../../models/store.model';
 import { WindowState } from '../../models/window.model';
-import { RoutePathsType, useQuery } from '../route-paths';
+import { RoutePathsType } from '../../route-paths-type';
+import { useQuery } from '../route-paths';
 import { AuthenticatedComponent } from './authenticated.component';
 import { AccountSuspenseDesktopComponent } from './desktop/suspense/account.suspense.desktop.component';
 import { AccountSuspenseMobileComponent } from './mobile/suspense/account.suspense.mobile.component';
 
-const AccountDesktopComponent = lazy(
+const AccountDesktopComponent = React.lazy(
   () => import('./desktop/account.desktop.component')
 );
-const AccountMobileComponent = lazy(
+const AccountMobileComponent = React.lazy(
   () => import('./mobile/account.mobile.component')
 );
 
@@ -80,8 +80,9 @@ export default function AccountComponent(): JSX.Element {
       AccountController.model.activeTabId === RoutePathsType.AccountOrderHistory
     ) {
       AccountController.reloadOrders();
-    } else if (AccountController.model.activeTabId === RoutePathsType.AccountAddresses) {
-
+    } else if (
+      AccountController.model.activeTabId === RoutePathsType.AccountAddresses
+    ) {
     }
   };
 
@@ -92,8 +93,9 @@ export default function AccountComponent(): JSX.Element {
       AccountController.model.activeTabId === RoutePathsType.AccountOrderHistory
     ) {
       AccountController.onNextOrderScrollAsync();
-    } else if (AccountController.model.activeTabId === RoutePathsType.AccountAddresses) {
-
+    } else if (
+      AccountController.model.activeTabId === RoutePathsType.AccountAddresses
+    ) {
     }
   };
 
@@ -233,7 +235,7 @@ export default function AccountComponent(): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

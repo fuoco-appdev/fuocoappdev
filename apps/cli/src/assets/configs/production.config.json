@@ -1,7 +1,0 @@
-{
-    "supabase": {
-        "url": "https://supabase.cruthology.com",
-        "functions_url": "https://api.cruthology.com",
-        "anon_key": ""
-    }
-}

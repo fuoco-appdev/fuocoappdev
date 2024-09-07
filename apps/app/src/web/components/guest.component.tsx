@@ -1,6 +1,6 @@
 import { useCookies } from 'react-cookie';
 import { Navigate } from 'react-router-dom';
-import { RoutePathsType } from '../route-paths';
+import { RoutePathsType } from '../../route-paths-type';
 
 export interface GuestProps {
   children: any;

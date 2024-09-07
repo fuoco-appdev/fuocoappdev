@@ -16,7 +16,6 @@ import CheckoutController from '../../../controllers/checkout.controller';
 import { ProviderType } from '../../../models/checkout.model';
 import AddressFormComponent from '../address-form.component';
 import styles from '../checkout.module.scss';
-;
 // @ts-ignore
 import {
   CardCvcElement,
@@ -28,7 +27,8 @@ import { loadStripe } from '@stripe/stripe-js';
 import { formatAmount } from 'medusa-react';
 import ReactDOM from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { RoutePathsType, useQuery } from '../../route-paths';
+import { RoutePathsType } from '../../../route-paths-type';
+import { useQuery } from '../../route-paths';
 import { CheckoutResponsiveProps } from '../checkout.component';
 import { ResponsiveMobile } from '../responsive.component';
 import StripePayButtonComponent from '../stripe-pay-button.component';
@@ -53,7 +53,9 @@ export default function CheckoutMobileComponent({
   onContinueToDeliveryFromBillingAddress,
   onAddAddressAsync,
 }: CheckoutResponsiveProps): JSX.Element {
-  const stripePromise = loadStripe(process.env['STRIPE_PUBLISHABLE_KEY'] ?? '');
+  const stripePromise = loadStripe(
+    import.meta.env['STRIPE_PUBLISHABLE_KEY'] ?? ''
+  );
   const rootRef = React.useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const query = useQuery();

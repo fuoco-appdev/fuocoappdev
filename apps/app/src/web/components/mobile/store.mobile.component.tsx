@@ -6,7 +6,7 @@ import {
   Line,
   Listbox,
   Scroll,
-  Tabs
+  Tabs,
 } from '@fuoco.appdev/web-components';
 import { Product } from '@medusajs/medusa';
 import React, { useState } from 'react';
@@ -18,8 +18,9 @@ import { CSSTransition } from 'react-transition-group';
 import StoreController from '../../../controllers/store.controller';
 import { ProductTabs } from '../../../models/store.model';
 import { ProductLikesMetadataResponse } from '../../../protobuf/product-like_pb';
+import { RoutePathsType } from '../../../route-paths-type';
 import { MedusaProductTypeNames } from '../../../types/medusa.type';
-import { RoutePathsType, useQuery } from '../../route-paths';
+import { useQuery } from '../../route-paths';
 import CartVariantItemComponent from '../cart-variant-item.component';
 import ProductPreviewComponent from '../product-preview.component';
 import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
@@ -56,7 +57,7 @@ export default function StoreMobileComponent({
   onProductPreviewClick,
   onProductPreviewLikeChanged,
   onProductPreviewRest,
-  onRemoveSalesChannel
+  onRemoveSalesChannel,
 }: StoreResponsiveProps): JSX.Element {
   const previewsContainerRef = React.createRef<HTMLDivElement>();
   const rootRef = React.createRef<HTMLDivElement>();
@@ -70,7 +71,9 @@ export default function StoreMobileComponent({
   let yPosition = 0;
 
   useMobileEffect(() => {
-    setShowBottomBar(exploreLocalProps.selectedInventoryLocationId !== undefined);
+    setShowBottomBar(
+      exploreLocalProps.selectedInventoryLocationId !== undefined
+    );
   }, [exploreLocalProps.selectedInventoryLocationId]);
   return (
     <ResponsiveMobile>
@@ -160,11 +163,7 @@ export default function StoreMobileComponent({
                 touchScreen={true}
                 rounded={true}
                 size={'tiny'}
-                icon={
-                  <Line.ShoppingCart
-                    size={24}
-                  />
-                }
+                icon={<Line.ShoppingCart size={24} />}
               />
               {windowProps.cartCount > 0 && (
                 <div
@@ -211,17 +210,33 @@ export default function StoreMobileComponent({
         </div>
         <Scroll
           classNames={{
-            scrollContainer: [styles['scroll-container'], styles['scroll-container-mobile']].join(' '),
-            reloadContainer: [styles['scroll-reload-container'], styles['scroll-reload-container-mobile']].join(' '),
-            loadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' '),
-            pullIndicator: [styles['pull-indicator'], styles['pull-indicator-mobile']].join(' ')
+            scrollContainer: [
+              styles['scroll-container'],
+              styles['scroll-container-mobile'],
+            ].join(' '),
+            reloadContainer: [
+              styles['scroll-reload-container'],
+              styles['scroll-reload-container-mobile'],
+            ].join(' '),
+            loadContainer: [
+              styles['scroll-load-container'],
+              styles['scroll-load-container-mobile'],
+            ].join(' '),
+            pullIndicator: [
+              styles['pull-indicator'],
+              styles['pull-indicator-mobile'],
+            ].join(' '),
           }}
           touchScreen={true}
           loadingHeight={56}
           isLoadable={storeProps.hasMorePreviews}
           showIndicatorThreshold={56}
           reloadThreshold={96}
-          pullIndicatorComponent={<div className={[styles['pull-indicator-container']].join(' ')}><Line.ArrowDownward size={24} /></div>}
+          pullIndicatorComponent={
+            <div className={[styles['pull-indicator-container']].join(' ')}>
+              <Line.ArrowDownward size={24} />
+            </div>
+          }
           reloadComponent={
             <img
               src={'../assets/svg/ring-resize-dark.svg'}
@@ -240,7 +255,8 @@ export default function StoreMobileComponent({
           onLoad={() => StoreController.onNextScrollAsync()}
           onScroll={(progress, scrollRef, contentRef) => {
             const elementHeight = topBarRef.current?.clientHeight ?? 0;
-            const scrollTop = contentRef.current?.getBoundingClientRect().top ?? 0;
+            const scrollTop =
+              contentRef.current?.getBoundingClientRect().top ?? 0;
             if (prevPreviewScrollTop <= scrollTop) {
               yPosition -= prevPreviewScrollTop - scrollTop;
               if (yPosition >= 0) {
@@ -287,7 +303,9 @@ export default function StoreMobileComponent({
                   storeProps={storeProps}
                   accountProps={accountProps}
                   purchasable={true}
-                  showPricingDetails={storeProps.selectedSalesChannel !== undefined}
+                  showPricingDetails={
+                    storeProps.selectedSalesChannel !== undefined
+                  }
                   thumbnail={product.thumbnail ?? undefined}
                   title={product.title ?? undefined}
                   subtitle={product.subtitle ?? undefined}
@@ -299,7 +317,8 @@ export default function StoreMobileComponent({
                     storeProps.selectedPricedProduct?.id === pricedProduct?.id
                   }
                   likesMetadata={
-                    productLikesMetadata ?? ProductLikesMetadataResponse.prototype
+                    productLikesMetadata ??
+                    ProductLikesMetadataResponse.prototype
                   }
                   onClick={() =>
                     pricedProduct &&
@@ -312,7 +331,10 @@ export default function StoreMobileComponent({
                   onRest={() => onProductPreviewRest(product)}
                   onAddToCart={() =>
                     pricedProduct &&
-                    onProductPreviewAddToCart(pricedProduct, productLikesMetadata)
+                    onProductPreviewAddToCart(
+                      pricedProduct,
+                      productLikesMetadata
+                    )
                   }
                   onLikeChanged={(isLiked: boolean) =>
                     pricedProduct &&
@@ -356,13 +378,13 @@ export default function StoreMobileComponent({
                     classNames={{
                       container: !exploreProps.selectedInventoryLocation?.avatar
                         ? [
-                          styles['no-avatar-container'],
-                          styles['no-avatar-container-mobile'],
-                        ].join(' ')
+                            styles['no-avatar-container'],
+                            styles['no-avatar-container-mobile'],
+                          ].join(' ')
                         : [
-                          styles['avatar-container'],
-                          styles['avatar-container-mobile'],
-                        ].join(' '),
+                            styles['avatar-container'],
+                            styles['avatar-container-mobile'],
+                          ].join(' '),
                     }}
                     size={'custom'}
                     text={exploreProps.selectedInventoryLocation?.company ?? ''}

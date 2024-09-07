@@ -1,4 +1,3 @@
-import { lazy } from '@loadable/component';
 import * as React from 'react';
 import { AccountDocument } from '../../models/account.model';
 import { ChatState } from '../../models/chat.model';
@@ -7,10 +6,10 @@ import BucketService from '../../services/bucket.service';
 import { AccountMessageItemSuspenseDesktopComponent } from './desktop/suspense/account-message-item.suspense.desktop.component';
 import { AccountMessageItemSuspenseMobileComponent } from './mobile/suspense/account-message-item.suspense.mobile.component';
 
-const AccountMessageItemDesktopComponent = lazy(
+const AccountMessageItemDesktopComponent = React.lazy(
   () => import('./desktop/account-message-item.desktop.component')
 );
-const AccountMessageItemMobileComponent = lazy(
+const AccountMessageItemMobileComponent = React.lazy(
   () => import('./mobile/account-message-item.mobile.component')
 );
 
@@ -30,7 +29,7 @@ export default function AccountMessageItemComponent({
   chatProps,
   account,
   onClick,
-  onMessage
+  onMessage,
 }: AccountMessageItemProps): JSX.Element {
   const [profileUrl, setProfileUrl] = React.useState<string | undefined>(
     undefined
@@ -59,7 +58,7 @@ export default function AccountMessageItemComponent({
     setTimeout(() => {
       onMessage();
     }, 150);
-  }
+  };
 
   const suspenceComponent = (
     <>
@@ -68,7 +67,7 @@ export default function AccountMessageItemComponent({
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

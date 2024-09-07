@@ -1,4 +1,3 @@
-import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -7,14 +6,14 @@ import EmailConfirmationController from '../../controllers/email-confirmation.co
 import WindowController from '../../controllers/window.controller';
 import { EmailConfirmationState } from '../../models/email-confirmation.model';
 
-const EmailConfirmationDesktopComponent = lazy(
+const EmailConfirmationDesktopComponent = React.lazy(
   () => import('./desktop/email-confirmation.desktop.component')
 );
-const EmailConfirmationMobileComponent = lazy(
+const EmailConfirmationMobileComponent = React.lazy(
   () => import('./mobile/email-confirmation.mobile.component')
 );
 
-export interface EmailConfirmationProps { }
+export interface EmailConfirmationProps {}
 
 export interface EmailConfirmationResponsiveProps {
   emailConfirmationProps: EmailConfirmationState;
@@ -65,7 +64,7 @@ export default function EmailConfirmationComponent(): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

@@ -1,4 +1,3 @@
-import { lazy } from '@loadable/component';
 import { LineItem, ProductOptionValue } from '@medusajs/medusa';
 import * as React from 'react';
 import { ProductOptions } from '../../models/product.model';
@@ -6,10 +5,10 @@ import { StoreState } from '../../models/store.model';
 import { ShippingItemSuspenseDesktopComponent } from './desktop/suspense/shipping-item.suspense.desktop.component';
 import { ShippingItemSuspenseMobileComponent } from './mobile/suspense/shipping-item.suspense.mobile.component';
 
-const ShippingItemDesktopComponent = lazy(
+const ShippingItemDesktopComponent = React.lazy(
   () => import('./desktop/shipping-item.desktop.component')
 );
-const ShippingItemMobileComponent = lazy(
+const ShippingItemMobileComponent = React.lazy(
   () => import('./mobile/shipping-item.mobile.component')
 );
 
@@ -42,7 +41,7 @@ export default function ShippingItemComponent({
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

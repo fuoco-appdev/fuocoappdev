@@ -1,4 +1,11 @@
-import { Button, Dropdown, Input, Line, Scroll, Tabs } from '@fuoco.appdev/web-components';
+import {
+  Button,
+  Dropdown,
+  Input,
+  Line,
+  Scroll,
+  Tabs,
+} from '@fuoco.appdev/web-components';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
 import * as React from 'react';
 import ReactDOM from 'react-dom';
@@ -17,8 +24,6 @@ import { ExploreResponsiveProps } from '../explore.component';
 import styles from '../explore.module.scss';
 import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 import StockLocationItemComponent from '../stock-location-item.component';
-;
-
 export default function ExploreMobileComponent({
   exploreProps,
   mapRef,
@@ -57,10 +62,9 @@ export default function ExploreMobileComponent({
     <ResponsiveMobile>
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
         <div
-          className={[
-            styles['search-root'],
-            styles['search-root-mobile'],
-          ].join(' ')}
+          className={[styles['search-root'], styles['search-root-mobile']].join(
+            ' '
+          )}
         >
           <div
             ref={topBarRef}
@@ -186,10 +190,22 @@ export default function ExploreMobileComponent({
           {isSearchFocused && (
             <Scroll
               classNames={{
-                scrollContainer: [styles['scroll-container'], styles['scroll-container-mobile']].join(' '),
-                reloadContainer: [styles['scroll-reload-container'], styles['scroll-reload-container-mobile']].join(' '),
-                loadContainer: [styles['scroll-load-container'], styles['scroll-load-container-mobile']].join(' '),
-                pullIndicator: [styles['pull-indicator'], styles['pull-indicator-mobile']].join(' ')
+                scrollContainer: [
+                  styles['scroll-container'],
+                  styles['scroll-container-mobile'],
+                ].join(' '),
+                reloadContainer: [
+                  styles['scroll-reload-container'],
+                  styles['scroll-reload-container-mobile'],
+                ].join(' '),
+                loadContainer: [
+                  styles['scroll-load-container'],
+                  styles['scroll-load-container-mobile'],
+                ].join(' '),
+                pullIndicator: [
+                  styles['pull-indicator'],
+                  styles['pull-indicator-mobile'],
+                ].join(' '),
               }}
               touchScreen={true}
               loadingHeight={56}
@@ -202,7 +218,11 @@ export default function ExploreMobileComponent({
               isReloading={exploreProps.areSearchedStockLocationsReloading}
               isLoadable={exploreProps.hasMoreSearchedStockLocations}
               showIndicatorThreshold={56}
-              pullIndicatorComponent={<div className={[styles['pull-indicator-container']].join(' ')}><Line.ArrowDownward size={24} /></div>}
+              pullIndicatorComponent={
+                <div className={[styles['pull-indicator-container']].join(' ')}>
+                  <Line.ArrowDownward size={24} />
+                </div>
+              }
               onReload={() => ExploreController.reloadStockLocationsAsync()}
               loadComponent={
                 <img
@@ -214,7 +234,8 @@ export default function ExploreMobileComponent({
               onLoad={() => ExploreController.onNextScrollAsync()}
               onScroll={(progress, scrollRef, contentRef) => {
                 const elementHeight = topBarRef.current?.clientHeight ?? 0;
-                const scrollTop = contentRef.current?.getBoundingClientRect().top ?? 0;
+                const scrollTop =
+                  contentRef.current?.getBoundingClientRect().top ?? 0;
                 if (prevScrollTop <= scrollTop) {
                   yPosition -= prevScrollTop - scrollTop;
                   if (yPosition >= 0) {
@@ -259,7 +280,8 @@ export default function ExploreMobileComponent({
                     );
                   }
                 )}
-                {(!exploreProps.areSearchedStockLocationsLoading && !exploreProps.areSearchedStockLocationsReloading) &&
+                {!exploreProps.areSearchedStockLocationsLoading &&
+                  !exploreProps.areSearchedStockLocationsReloading &&
                   exploreProps.searchedStockLocations.length <= 0 && (
                     <div
                       className={[
@@ -293,14 +315,12 @@ export default function ExploreMobileComponent({
                 width: '100%',
                 height: '100%',
               }}
-              mapboxAccessToken={process.env['MAPBOX_ACCESS_TOKEN']}
+              mapboxAccessToken={import.meta.env['MAPBOX_ACCESS_TOKEN']}
               ref={mapRef}
               interactive={true}
               initialViewState={{
-                longitude:
-                  exploreProps.longitude ?? 0,
-                latitude:
-                  exploreProps.latitude ?? 0,
+                longitude: exploreProps.longitude ?? 0,
+                latitude: exploreProps.latitude ?? 0,
                 zoom: 15,
               }}
               longitude={exploreProps.longitude ?? 0}
@@ -328,7 +348,8 @@ export default function ExploreMobileComponent({
                     {point.type === InventoryLocationType.Cellar && (
                       <img
                         src={
-                          exploreProps.selectedInventoryLocation?.id !== point.id
+                          exploreProps.selectedInventoryLocation?.id !==
+                          point.id
                             ? '../assets/images/unselected-cellar.png'
                             : '../assets/images/selected-cellar.png'
                         }
@@ -341,7 +362,8 @@ export default function ExploreMobileComponent({
                     {point.type === InventoryLocationType.Restaurant && (
                       <img
                         src={
-                          exploreProps.selectedInventoryLocation?.id !== point.id
+                          exploreProps.selectedInventoryLocation?.id !==
+                          point.id
                             ? '../assets/images/unselected-restaurant.png'
                             : '../assets/images/selected-restaurant.png'
                         }

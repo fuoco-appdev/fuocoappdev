@@ -1,18 +1,22 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-empty-interface */
+import '@fuoco.appdev/web-components/dist/esm/index.css';
 import { AuthChangeEvent, Session } from '@supabase/supabase-js';
+import 'mapbox-gl/src/css/mapbox-gl.css';
 import * as React from 'react';
 import { useCookies } from 'react-cookie';
+import 'react-loading-skeleton/dist/skeleton.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AppController from '../../controllers/app.controller';
 import WindowController from '../../controllers/window.controller';
 import MedusaService from '../../services/medusa.service';
 import SupabaseService from '../../services/supabase.service';
+import '../styles.scss';
 import WindowComponent from './window.component';
 
-export interface AppProps { }
+export interface AppProps {}
 
-function AppComponent({ }: AppProps): JSX.Element {
+function AppComponent({}: AppProps): JSX.Element {
   const location = useLocation();
   const navigate = useNavigate();
   const [cookies, setCookie, removeCookie] = useCookies();

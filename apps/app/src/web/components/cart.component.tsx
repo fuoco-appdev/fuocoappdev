@@ -1,5 +1,4 @@
 import { TabProps } from '@fuoco.appdev/web-components/dist/cjs/src/components/tabs/tabs';
-import { lazy } from '@loadable/component';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import { Store } from '@ngneat/elf';
 import { useObservable } from '@ngneat/use-observable';
@@ -19,14 +18,15 @@ import {
 } from '../../models/explore.model';
 import { StoreState } from '../../models/store.model';
 import { WindowState } from '../../models/window.model';
-import { RoutePathsType, useQuery } from '../route-paths';
+import { RoutePathsType } from '../../route-paths-type';
+import { useQuery } from '../route-paths';
 import { CartSuspenseDesktopComponent } from './desktop/suspense/cart.suspense.desktop.component';
 import { CartSuspenseMobileComponent } from './mobile/suspense/cart.suspense.mobile.component';
 
-const CartDesktopComponent = lazy(
+const CartDesktopComponent = React.lazy(
   () => import('./desktop/cart.desktop.component')
 );
-const CartMobileComponent = lazy(
+const CartMobileComponent = React.lazy(
   () => import('./mobile/cart.mobile.component')
 );
 
@@ -75,7 +75,7 @@ export default function CartComponent(): JSX.Element {
       ProductController.addToCartAsync(
         id,
         quantity,
-        () => { },
+        () => {},
         (error) => console.error(error)
       );
     }
@@ -144,7 +144,7 @@ export default function CartComponent(): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

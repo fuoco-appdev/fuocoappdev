@@ -1,5 +1,4 @@
 import { OptionProps } from '@fuoco.appdev/web-components';
-import { lazy } from '@loadable/component';
 import { LineItem, ProductOptionValue } from '@medusajs/medusa';
 import * as React from 'react';
 import { ProductOptions } from '../../models/product.model';
@@ -9,10 +8,10 @@ import {
   ResponsiveTablet,
 } from './responsive.component';
 
-const RefundItemDesktopComponent = lazy(
+const RefundItemDesktopComponent = React.lazy(
   () => import('./desktop/refund-item.desktop.component')
 );
-const RefundItemMobileComponent = lazy(
+const RefundItemMobileComponent = React.lazy(
   () => import('./mobile/refund-item.mobile.component')
 );
 
@@ -97,7 +96,7 @@ export default function RefundItemComponent({
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

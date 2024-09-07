@@ -5,12 +5,11 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { animated, config, useTransition } from 'react-spring';
 import WindowController from '../../../controllers/window.controller';
-import { RoutePathsType, useQuery } from '../../route-paths';
+import { RoutePathsType } from '../../../route-paths-type';
+import { useQuery } from '../../route-paths';
 import { ResetPasswordResponsiveProps } from '../reset-password.component';
 import styles from '../reset-password.module.scss';
 import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
-;
-
 export default function ResetPasswordMobileComponent({
   resetPasswordProps,
   passwordError,

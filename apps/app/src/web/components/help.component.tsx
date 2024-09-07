@@ -1,4 +1,3 @@
-import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -10,10 +9,10 @@ import {
   ResponsiveTablet,
 } from './responsive.component';
 
-const HelpDesktopComponent = lazy(
+const HelpDesktopComponent = React.lazy(
   () => import('./desktop/help.desktop.component')
 );
-const HelpMobileComponent = lazy(
+const HelpMobileComponent = React.lazy(
   () => import('./mobile/help.mobile.component')
 );
 
@@ -58,7 +57,7 @@ export default function HelpComponent(): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

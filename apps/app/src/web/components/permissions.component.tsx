@@ -1,4 +1,3 @@
-import { lazy } from '@loadable/component';
 import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -8,12 +7,13 @@ import PermissionsController from '../../controllers/permissions.controller';
 import WindowController from '../../controllers/window.controller';
 import { PermissionsState } from '../../models/permissions.model';
 import { WindowState } from '../../models/window.model';
-import { RoutePathsType, useQuery } from '../route-paths';
+import { RoutePathsType } from '../../route-paths-type';
+import { useQuery } from '../route-paths';
 
-const PermissionsDesktopComponent = lazy(
+const PermissionsDesktopComponent = React.lazy(
   () => import('./desktop/permissions.desktop.component')
 );
-const PermissionsMobileComponent = lazy(
+const PermissionsMobileComponent = React.lazy(
   () => import('./mobile/permissions.mobile.component')
 );
 
@@ -88,7 +88,7 @@ export default function PermissionsComponent(): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

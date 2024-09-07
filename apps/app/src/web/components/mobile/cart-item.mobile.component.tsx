@@ -4,8 +4,9 @@ import styles from '../cart-item.module.scss';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
 import { useNavigate } from 'react-router-dom';
+import { RoutePathsType } from '../../../route-paths-type';
 import { MedusaProductTypeNames } from '../../../types/medusa.type';
-import { RoutePathsType, useQuery } from '../../route-paths';
+import { useQuery } from '../../route-paths';
 import { CartItemResponsiveProps } from '../cart-item.component';
 import { ResponsiveMobile } from '../responsive.component';
 

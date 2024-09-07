@@ -1,6 +1,5 @@
 import { Line } from '@fuoco.appdev/web-components';
 import { TabProps } from '@fuoco.appdev/web-components/dist/cjs/src/components/tabs/tabs';
-import { lazy } from '@loadable/component';
 import {
   ProductOption,
   ProductOptionValue,
@@ -34,10 +33,10 @@ import SupabaseService from '../../services/supabase.service';
 import { ProductSuspenseDesktopComponent } from './desktop/suspense/product.suspense.desktop.component';
 import { ProductSuspenseMobileComponent } from './mobile/suspense/product.suspense.mobile.component';
 
-const ProductDesktopComponent = lazy(
+const ProductDesktopComponent = React.lazy(
   () => import('./desktop/product.desktop.component')
 );
-const ProductMobileComponent = lazy(
+const ProductMobileComponent = React.lazy(
   () => import('./mobile/product.mobile.component')
 );
 
@@ -85,7 +84,7 @@ export interface ProductResponsiveProps {
   onCancelLocation: () => void;
 }
 
-function ProductComponent({ }: ProductProps): JSX.Element {
+function ProductComponent({}: ProductProps): JSX.Element {
   const [productProps] = useObservable(ProductController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
   const [accountProps] = useObservable(AccountController.model.store);
@@ -389,7 +388,7 @@ function ProductComponent({ }: ProductProps): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

@@ -1,17 +1,16 @@
 import { LineItem, ProductOptionValue } from '@medusajs/medusa';
 import { ProductOptions } from '../../models/product.model';
 // @ts-ignore
-import { lazy } from '@loadable/component';
 import * as React from 'react';
 import { StoreState } from '../../models/store.model';
 import { MedusaProductTypeNames } from '../../types/medusa.type';
 import { CartItemSuspenseDesktopComponent } from './desktop/suspense/cart-item.suspense.desktop.component';
 import { CartItemSuspenseMobileComponent } from './mobile/suspense/cart-item.suspense.mobile.component';
 
-const CartItemDesktopComponent = lazy(
+const CartItemDesktopComponent = React.lazy(
   () => import('./desktop/cart-item.desktop.component')
 );
-const CartItemMobileComponent = lazy(
+const CartItemMobileComponent = React.lazy(
   () => import('./mobile/cart-item.mobile.component')
 );
 
@@ -116,7 +115,7 @@ export default function CartItemComponent({
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 

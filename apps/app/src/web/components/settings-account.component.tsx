@@ -1,4 +1,3 @@
-import { lazy } from '@loadable/component';
 import { Store } from '@ngneat/elf';
 import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
@@ -16,10 +15,10 @@ import {
   ResponsiveTablet,
 } from './responsive.component';
 
-const SettingsAccountDesktopComponent = lazy(
+const SettingsAccountDesktopComponent = React.lazy(
   () => import('./desktop/settings-account.desktop.component')
 );
-const SettingsAccountMobileComponent = lazy(
+const SettingsAccountMobileComponent = React.lazy(
   () => import('./mobile/settings-account.mobile.component')
 );
 
@@ -81,7 +80,7 @@ export default function SettingsAccountComponent(): JSX.Element {
     </>
   );
 
-  if (process.env['DEBUG_SUSPENSE'] === 'true') {
+  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
     return suspenceComponent;
   }
 
