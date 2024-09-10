@@ -1,5 +1,5 @@
 import Skeleton from 'react-loading-skeleton';
-import styles from '../../account-follow-item.module.scss';
+import styles from '../../../modules/account-follow-item.module.scss';
 import { ResponsiveSuspenseMobile } from '../../responsive.component';
 
 export function AccountFollowItemSuspenseMobileComponent(): JSX.Element {

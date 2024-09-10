@@ -2,8 +2,8 @@ import { Auth, Button, Typography } from '@fuoco.appdev/web-components';
 import loadable from '@loadable/component';
 import { useTranslation } from 'react-i18next';
 import ConfigService from '../../../services/config.service';
+import styles from '../../modules/help.module.scss';
 import { DiscordIcon, HelpResponsiveProps } from '../help.component';
-import styles from '../help.module.scss';
 import { ResponsiveMobile } from '../responsive.component';
 
 const ReactMarkdown = loadable(

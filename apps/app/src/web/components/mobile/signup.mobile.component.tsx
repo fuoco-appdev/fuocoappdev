@@ -7,10 +7,10 @@ import { useNavigate } from 'react-router-dom';
 import { animated, config, useTransition } from 'react-spring';
 import SignupController from '../../../controllers/signup.controller';
 import { RoutePathsType } from '../../../route-paths-type';
+import styles from '../../modules/signup.module.scss';
 import { useQuery } from '../../route-paths';
 import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 import { SignupResponsiveProps } from '../signup.component';
-import styles from '../signup.module.scss';
 export default function SignupMobileComponent({
   signupProps,
   emailError,
@@ -92,13 +92,11 @@ export default function SignupMobileComponent({
                           color: 'rgba(233, 33, 66, .35)',
                         },
                       }}
-                      defaultIconColor={'#2A2A5F'}
                       emailValue={signupProps?.email ?? ''}
                       passwordValue={signupProps?.password ?? ''}
                       confirmPasswordValue={
                         signupProps?.confirmationPassword ?? ''
                       }
-                      litIconColor={'#2A2A5F'}
                       providers={['google']}
                       view={'sign_up'}
                       socialColors={false}

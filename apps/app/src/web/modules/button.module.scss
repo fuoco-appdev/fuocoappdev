@@ -1,0 +1,9 @@
+@import '@fuoco.appdev/web-components/dist/esm/styles.scss';
+
+.rounded-button {
+    color: $brand-600 !important;
+}
+  
+.rounded-button:hover {
+    background-color: rgba(29, 53, 87, .13) !important;
+}

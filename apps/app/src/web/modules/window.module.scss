@@ -26,6 +26,13 @@
   text-size-adjust: none;
   background: linear-gradient(rgba(42, 42, 95, .1), rgba(42, 42, 95, .05));
 
+  & .logo-container {
+    & .logo-title {
+      font-family: "Pacifico", cursive;
+      color: $brand-600;
+    }
+  }
+  
   & .alert {
     position: absolute;
     left: 10%;
@@ -193,15 +200,16 @@
 }
 
 .root-desktop {
+  position: relative;
+
   & .top-bar-desktop {
-    position: relative;
+    position: absolute;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    min-height: 56px;
-    width: 100%;
-    background-color: $brand-900;
-    padding: 0 $mp-6;
+    align-items: center;
+    width: 100%;  
+    padding: $mp-4 $mp-6;
     z-index: 20;
 
     & .top-bar-left-content-desktop {

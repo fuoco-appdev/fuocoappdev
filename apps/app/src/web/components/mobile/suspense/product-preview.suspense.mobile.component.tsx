@@ -1,5 +1,5 @@
 import Skeleton from 'react-loading-skeleton';
-import styles from '../../product-preview.module.scss';
+import styles from '../../../modules/product-preview.module.scss';
 import { ResponsiveSuspenseMobile } from '../../responsive.component';
 
 export function ProductPreviewSuspenseMobileComponent(): JSX.Element {

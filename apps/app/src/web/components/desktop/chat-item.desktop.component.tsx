@@ -2,8 +2,8 @@ import { Avatar } from '@fuoco.appdev/web-components';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import Ripples from 'react-ripples';
+import styles from '../../modules/chat-item.module.scss';
 import { ChatItemResponsiveProps } from '../chat-item.component';
-import styles from '../chat-item.module.scss';
 import { ResponsiveDesktop } from '../responsive.component';
 
 export default function ChatItemDesktopComponent({

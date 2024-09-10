@@ -43,9 +43,9 @@ export default function AccountAddFriendsComponent(): JSX.Element {
   return (
     <>
       <Helmet>
-        <title>Add Friends | Cruthology</title>
+        <title>Add Friends | fuoco.appdev</title>
         <link rel="canonical" href={window.location.href} />
-        <meta name="title" content={'Add Friends | Cruthology'} />
+        <meta name="title" content={'Add Friends | fuoco.appdev'} />
         <meta
           name="description"
           content={
@@ -56,7 +56,7 @@ export default function AccountAddFriendsComponent(): JSX.Element {
           property="og:image"
           content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
         />
-        <meta property="og:title" content={'Add Friends | Cruthology'} />
+        <meta property="og:title" content={'Add Friends | fuoco.appdev'} />
         <meta
           property="og:description"
           content={

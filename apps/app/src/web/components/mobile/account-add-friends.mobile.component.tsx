@@ -15,9 +15,9 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import AccountController from '../../../controllers/account.controller';
 import { RoutePathsType } from '../../../route-paths-type';
+import styles from '../../modules/account-add-friends.module.scss';
 import { useQuery } from '../../route-paths';
 import { AccountAddFriendsResponsiveProps } from '../account-add-friends.component';
-import styles from '../account-add-friends.module.scss';
 import AccountFollowItemComponent from '../account-follow-item.component';
 import { ResponsiveMobile } from '../responsive.component';
 
@@ -333,16 +333,13 @@ export default function AccountAddFriendsMobileComponent({
                   .toFixed()} ${t('km')}`}
               >
                 <Slider
-                  classNames={{
-                    sliderThumb: styles['slider-thumb'],
-                  }}
-                  marks={0}
                   min={1000}
                   max={1000000}
-                  defaultValue={10000}
                   value={accountProps.addFriendsRadiusMeters}
-                  onChange={(value: number) =>
-                    AccountController.updateAddFriendsRadiusMeters(value)
+                  onChange={(e) =>
+                    AccountController.updateAddFriendsRadiusMeters(
+                      Number(e.currentTarget.value)
+                    )
                   }
                 />
               </FormLayout>

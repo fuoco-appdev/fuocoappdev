@@ -6,8 +6,8 @@ import {
 } from '@fuoco.appdev/web-components';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
+import styles from '../../modules/account-profile-form.module.scss';
 import { AccountProfileFormResponsiveProps } from '../account-profile-form.component';
-import styles from '../account-profile-form.module.scss';
 import { ResponsiveDesktop } from '../responsive.component';
 
 export default function AccountProfileFormDesktopComponent({
@@ -72,7 +72,11 @@ export default function AccountProfileFormDesktopComponent({
         }}
         label={t('birthday') ?? ''}
         type={'date'}
-        value={values?.birthday && values.birthday.length > 0 ? values.birthday : moment(new Date(Date.now())).format("YYYY-MM-DD")}
+        value={
+          values?.birthday && values.birthday.length > 0
+            ? values.birthday
+            : moment(new Date(Date.now())).format('YYYY-MM-DD')
+        }
         error={errors?.birthday}
         onChange={onChangeCallbacks?.birthday}
       />
@@ -131,7 +135,6 @@ export default function AccountProfileFormDesktopComponent({
           inputContainer: styles['input-container'],
           countryName: styles['option-name'],
         }}
-        iconColor={'#2A2A5F'}
         label={t('phoneNumber') ?? ''}
         error={errors?.phoneNumber}
         country={selectedCountry}

@@ -1,6 +1,6 @@
 import Skeleton from 'react-loading-skeleton';
+import styles from '../../../modules/store.module.scss';
 import { ResponsiveSuspenseMobile } from '../../responsive.component';
-import styles from '../../store.module.scss';
 import { ProductPreviewSuspenseMobileComponent } from './product-preview.suspense.mobile.component';
 
 export function StoreSuspenseMobileComponent(): JSX.Element {

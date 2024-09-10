@@ -1,6 +1,6 @@
 import Skeleton from 'react-loading-skeleton';
 import { Outlet } from 'react-router-dom';
-import styles from '../../account.module.scss';
+import styles from '../../../modules/account.module.scss';
 import { ResponsiveSuspenseDesktop } from '../../responsive.component';
 
 export function AccountSuspenseDesktopComponent(): JSX.Element {

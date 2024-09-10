@@ -1,6 +1,6 @@
 import Skeleton from 'react-loading-skeleton';
 import { Outlet } from 'react-router-dom';
-import styles from '../../account-public-status.module.scss';
+import styles from '../../../modules/account-public-status.module.scss';
 import { ResponsiveSuspenseMobile } from '../../responsive.component';
 
 export function AccountPublicStatusSuspenseMobileComponent(): JSX.Element {
@@ -31,11 +31,7 @@ export function AccountPublicStatusSuspenseMobileComponent(): JSX.Element {
               <Skeleton style={{ height: 48 }} borderRadius={6} />
             </div>
           </div>
-          <Skeleton
-            height={46}
-            width={'100%'}
-            borderRadius={46}
-          />
+          <Skeleton height={46} width={'100%'} borderRadius={46} />
         </div>
         <div
           className={[

@@ -395,7 +395,7 @@ function ProductComponent({}: ProductProps): JSX.Element {
   const fullNameMetadata = `${formatName(
     productProps.metadata?.title ?? '',
     productProps.metadata?.subtitle ?? ''
-  )} | Cruthology`;
+  )} | fuoco.appdev`;
   const descriptionMetadata =
     formatDescription(productProps.metadata?.description ?? '').substring(
       0,

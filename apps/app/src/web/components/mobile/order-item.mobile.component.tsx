@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import styles from '../order-item.module.scss';
+import styles from '../../modules/order-item.module.scss';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
 import Ripples from 'react-ripples';

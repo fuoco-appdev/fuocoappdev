@@ -8,9 +8,9 @@ import OrderConfirmedController from '../../controllers/order-confirmed.controll
 import StoreController from '../../controllers/store.controller';
 import { OrderConfirmedState } from '../../models/order-confirmed.model';
 import { StoreState } from '../../models/store.model';
+import styles from '../modules/order-confirmed.module.scss';
 import { OrderConfirmedSuspenseDesktopComponent } from './desktop/suspense/order-confirmed.suspense.desktop.component';
 import { OrderConfirmedSuspenseMobileComponent } from './mobile/suspense/order-confirmed.suspense.mobile.component';
-import styles from './order-confirmed.module.scss';
 
 const OrderConfirmedDesktopComponent = React.lazy(
   () => import('./desktop/order-confirmed.desktop.component')
@@ -121,7 +121,7 @@ export default function OrderConfirmedComponent(): JSX.Element {
       <Helmet>
         <title>Cruthology</title>
         <link rel="canonical" href={window.location.href} />
-        <meta name="title" content={'Home | Cruthology'} />
+        <meta name="title" content={'Home | fuoco.appdev'} />
         <meta
           name="description"
           content={

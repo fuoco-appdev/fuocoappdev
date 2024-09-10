@@ -20,10 +20,10 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import WindowController from '../../../controllers/window.controller';
 import { AccountResponse } from '../../../protobuf/account_pb';
 import { RoutePathsType } from '../../../route-paths-type';
+import styles from '../../modules/window.module.scss';
 import { useQuery } from '../../route-paths';
 import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 import { WindowResponsiveProps } from '../window.component';
-import styles from '../window.module.scss';
 
 export default function WindowMobileComponent({
   windowProps,

@@ -1,4 +1,4 @@
-import styles from '../../account-addresses.module.scss';
+import styles from '../../../modules/account-addresses.module.scss';
 import { ResponsiveSuspenseDesktop } from '../../responsive.component';
 import { AddressItemSuspenseDesktopComponent } from './address-item.suspense.desktop.component';
 

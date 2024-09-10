@@ -2,9 +2,9 @@ import { Line, Scroll } from '@fuoco.appdev/web-components';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import NotificationsController from '../../../controllers/notifications.controller';
+import styles from '../../modules/notifications.module.scss';
 import NotificationItemComponent from '../notification-item.component';
 import { NotificationsResponsiveProps } from '../notifications.component';
-import styles from '../notifications.module.scss';
 import { ResponsiveDesktop } from '../responsive.component';
 
 export default function NotificationsDesktopComponent({
@@ -50,13 +50,18 @@ export default function NotificationsDesktopComponent({
           loadingHeight={56}
           showIndicatorThreshold={56}
           reloadThreshold={96}
-          pullIndicatorComponent={<div className={[styles['pull-indicator-container']].join(' ')}><Line.ArrowDownward size={24} /></div>}
+          pullIndicatorComponent={
+            <div className={[styles['pull-indicator-container']].join(' ')}>
+              <Line.ArrowDownward size={24} />
+            </div>
+          }
           isLoadable={notificationsProps.hasMoreNotifications}
           isLoading={notificationsProps.isLoading}
           onLoad={() => NotificationsController.onNextScrollAsync()}
           onScroll={(progress, scrollRef, contentRef) => {
             const elementHeight = topBarRef.current?.clientHeight ?? 0;
-            const scrollTop = contentRef.current?.getBoundingClientRect().top ?? 0;
+            const scrollTop =
+              contentRef.current?.getBoundingClientRect().top ?? 0;
             if (prevPreviewScrollTop <= scrollTop) {
               yPosition -= prevPreviewScrollTop - scrollTop;
               if (yPosition >= 0) {
@@ -84,29 +89,34 @@ export default function NotificationsDesktopComponent({
             ref={scrollContainerRef}
             onLoad={onLoad}
           >
-            {Object.keys(notifications).map(
-              (key: string) => {
-                const notificationList = notifications[key];
-                return (
-                  <div className={[styles['notifications-item'], styles['notifications-item-desktop']].join(' ')}>
-                    <div
-                      className={[
-                        styles['from-now-date'],
-                        styles['from-now-date-desktop'],
-                      ].join(' ')}
-                    >
-                      {key}
-                    </div>
-                    {notificationList.map((notification) => (<NotificationItemComponent
+            {Object.keys(notifications).map((key: string) => {
+              const notificationList = notifications[key];
+              return (
+                <div
+                  className={[
+                    styles['notifications-item'],
+                    styles['notifications-item-desktop'],
+                  ].join(' ')}
+                >
+                  <div
+                    className={[
+                      styles['from-now-date'],
+                      styles['from-now-date-desktop'],
+                    ].join(' ')}
+                  >
+                    {key}
+                  </div>
+                  {notificationList.map((notification) => (
+                    <NotificationItemComponent
                       key={notification.id}
                       notification={notification}
                       notificationsProps={notificationsProps}
                       fromNow={key}
-                    />))}
-                  </div>
-                );
-              }
-            )}
+                    />
+                  ))}
+                </div>
+              );
+            })}
             {!notificationsProps.isLoading &&
               notificationsProps.accountNotifications.length <= 0 && (
                 <div

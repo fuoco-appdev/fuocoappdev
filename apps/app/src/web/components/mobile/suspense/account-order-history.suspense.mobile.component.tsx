@@ -1,4 +1,4 @@
-import styles from '../../account-order-history.module.scss';
+import styles from '../../../modules/account-order-history.module.scss';
 import { ResponsiveSuspenseMobile } from '../../responsive.component';
 import { OrderItemSuspenseMobileComponent } from './order-item.suspense.mobile.component';
 

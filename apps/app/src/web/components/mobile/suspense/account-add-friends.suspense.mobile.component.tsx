@@ -1,5 +1,5 @@
 import Skeleton from 'react-loading-skeleton';
-import styles from '../../account-add-friends.module.scss';
+import styles from '../../../modules/account-add-friends.module.scss';
 import { ResponsiveSuspenseMobile } from '../../responsive.component';
 import { AccountFollowItemSuspenseMobileComponent } from './account-follow-item.suspense.mobile.component';
 
@@ -28,11 +28,7 @@ export function AccountAddFriendsSuspenseMobileComponent(): JSX.Element {
               borderRadius={46}
             />
           </div>
-          <Skeleton
-            height={46}
-            width={46}
-            borderRadius={46}
-          />
+          <Skeleton height={46} width={46} borderRadius={46} />
         </div>
         <div className={[styles['title'], styles['title-mobile']].join(' ')}>
           <Skeleton count={1} borderRadius={14} height={14} width={80} />

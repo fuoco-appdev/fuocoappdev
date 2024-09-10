@@ -71,9 +71,9 @@ export default function EmailConfirmationComponent(): JSX.Element {
   return (
     <>
       <Helmet>
-        <title>Email Confirmation | Cruthology</title>
+        <title>Email Confirmation | fuoco.appdev</title>
         <link rel="canonical" href={window.location.href} />
-        <meta name="title" content={'Email Confirmation | Cruthology'} />
+        <meta name="title" content={'Email Confirmation | fuoco.appdev'} />
         <meta
           name="description"
           content={
@@ -84,7 +84,10 @@ export default function EmailConfirmationComponent(): JSX.Element {
           property="og:image"
           content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
         />
-        <meta property="og:title" content={'Email Confirmation | Cruthology'} />
+        <meta
+          property="og:title"
+          content={'Email Confirmation | fuoco.appdev'}
+        />
         <meta
           property="og:description"
           content={

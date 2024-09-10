@@ -1,5 +1,5 @@
 import Skeleton from 'react-loading-skeleton';
-import styles from '../../order-item.module.scss';
+import styles from '../../../modules/order-item.module.scss';
 import { ResponsiveSuspenseDesktop } from '../../responsive.component';
 
 export function OrderItemSuspenseDesktopComponent(): JSX.Element {

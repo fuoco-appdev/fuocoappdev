@@ -1,5 +1,5 @@
 import Skeleton from 'react-loading-skeleton';
-import styles from '../../account-public-likes.module.scss';
+import styles from '../../../modules/account-public-likes.module.scss';
 import { ResponsiveSuspenseDesktop } from '../../responsive.component';
 import { ProductPreviewSuspenseDesktopComponent } from './product-preview.suspense.desktop.component';
 

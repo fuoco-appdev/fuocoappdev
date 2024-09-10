@@ -102,9 +102,9 @@ export default function NotificationsComponent(): JSX.Element {
   return (
     <>
       <Helmet>
-        <title>Notifications | Cruthology</title>
+        <title>Notifications | fuoco.appdev</title>
         <link rel="canonical" href={window.location.href} />
-        <meta name="title" content={'Notifications | Cruthology'} />
+        <meta name="title" content={'Notifications | fuoco.appdev'} />
         <meta
           name="description"
           content={
@@ -115,7 +115,7 @@ export default function NotificationsComponent(): JSX.Element {
           property="og:image"
           content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
         />
-        <meta property="og:title" content={'Notifications | Cruthology'} />
+        <meta property="og:title" content={'Notifications | fuoco.appdev'} />
         <meta
           property="og:description"
           content={

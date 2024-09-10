@@ -1,5 +1,5 @@
 import { Button, Line } from '@fuoco.appdev/web-components';
-import styles from '../address-item.module.scss';
+import styles from '../../modules/address-item.module.scss';
 // @ts-ignore
 import { AddressItemProps } from '../address-item.component';
 import { ResponsiveMobile } from '../responsive.component';

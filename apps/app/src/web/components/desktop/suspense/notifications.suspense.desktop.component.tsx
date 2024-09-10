@@ -1,5 +1,5 @@
 import Skeleton from 'react-loading-skeleton';
-import styles from '../../notifications.module.scss';
+import styles from '../../../modules/notifications.module.scss';
 import { ResponsiveSuspenseDesktop } from '../../responsive.component';
 import { NotificationItemSuspenseDesktopComponent } from './notification-item.suspense.desktop.component';
 

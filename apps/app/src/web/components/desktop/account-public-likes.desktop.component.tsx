@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { ProductLikesMetadataResponse } from '../../../protobuf/product-like_pb';
 import { MedusaProductTypeNames } from '../../../types/medusa.type';
-import styles from '../account-likes.module.scss';
+import styles from '../../modules/account-likes.module.scss';
 import { AccountPublicLikesResponsiveProps } from '../account-public-likes.component';
 import { useAccountPublicOutletContext } from '../account-public.component';
 import CartVariantItemComponent from '../cart-variant-item.component';
@@ -92,10 +92,7 @@ export default function AccountPublicLikesDesktopComponent({
             src={'../assets/svg/ring-resize-dark.svg'}
             className={styles['loading-ring']}
             style={{
-              maxHeight:
-                accountPublicProps.areLikedProductsLoading
-                  ? 24
-                  : 0,
+              maxHeight: accountPublicProps.areLikedProductsLoading ? 24 : 0,
             }}
           />
           {!accountPublicProps.areLikedProductsLoading &&

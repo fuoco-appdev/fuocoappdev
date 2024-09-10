@@ -1,4 +1,4 @@
-import styles from '../../account-likes.module.scss';
+import styles from '../../../modules/account-likes.module.scss';
 import { ResponsiveSuspenseMobile } from '../../responsive.component';
 import { ProductPreviewSuspenseMobileComponent } from './product-preview.suspense.mobile.component';
 

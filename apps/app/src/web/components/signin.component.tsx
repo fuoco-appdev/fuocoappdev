@@ -108,9 +108,9 @@ export default function SigninComponent(): JSX.Element {
   return (
     <>
       <Helmet>
-        <title>Sign In | Cruthology</title>
+        <title>Sign In | fuoco.appdev</title>
         <link rel="canonical" href={window.location.href} />
-        <meta name="title" content={'Sign In | Cruthology'} />
+        <meta name="title" content={'Sign In | fuoco.appdev'} />
         <meta
           name="description"
           content={
@@ -121,7 +121,7 @@ export default function SigninComponent(): JSX.Element {
           property="og:image"
           content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
         />
-        <meta property="og:title" content={'Sign In | Cruthology'} />
+        <meta property="og:title" content={'Sign In | fuoco.appdev'} />
         <meta
           property="og:description"
           content={

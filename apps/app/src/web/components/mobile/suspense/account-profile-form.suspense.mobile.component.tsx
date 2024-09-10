@@ -1,5 +1,5 @@
 import Skeleton from 'react-loading-skeleton';
-import styles from '../../account-profile-form.module.scss';
+import styles from '../../../modules/account-profile-form.module.scss';
 import { ResponsiveSuspenseMobile } from '../../responsive.component';
 
 export function AccountProfileFormSuspenseMobileComponent(): JSX.Element {

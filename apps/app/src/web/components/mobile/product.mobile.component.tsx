@@ -11,7 +11,7 @@ import { ProductTag } from '@medusajs/medusa';
 import { useTranslation } from 'react-i18next';
 import ExploreController from '../../../controllers/explore.controller';
 import ProductController from '../../../controllers/product.controller';
-import styles from '../product.module.scss';
+import styles from '../../modules/product.module.scss';
 // @ts-ignore
 import loadable from '@loadable/component';
 import { StockLocation } from '@medusajs/stock-location/dist/models';
@@ -375,22 +375,22 @@ export default function ProductMobileComponent({
               classNames: {
                 enter:
                   productProps.transitionKeyIndex <
-                    productProps.prevTransitionKeyIndex
+                  productProps.prevTransitionKeyIndex
                     ? styles['left-to-right-enter']
                     : styles['right-to-left-enter'],
                 enterActive:
                   productProps.transitionKeyIndex <
-                    productProps.prevTransitionKeyIndex
+                  productProps.prevTransitionKeyIndex
                     ? styles['left-to-right-enter-active']
                     : styles['right-to-left-enter-active'],
                 exit:
                   productProps.transitionKeyIndex <
-                    productProps.prevTransitionKeyIndex
+                  productProps.prevTransitionKeyIndex
                     ? styles['left-to-right-exit']
                     : styles['right-to-left-exit'],
                 exitActive:
                   productProps.transitionKeyIndex <
-                    productProps.prevTransitionKeyIndex
+                  productProps.prevTransitionKeyIndex
                     ? styles['left-to-right-exit-active']
                     : styles['right-to-left-exit-active'],
               },
@@ -403,22 +403,22 @@ export default function ProductMobileComponent({
             classNames={{
               enter:
                 productProps.transitionKeyIndex >
-                  productProps.prevTransitionKeyIndex
+                productProps.prevTransitionKeyIndex
                   ? styles['left-to-right-enter']
                   : styles['right-to-left-enter'],
               enterActive:
                 productProps.transitionKeyIndex >
-                  productProps.prevTransitionKeyIndex
+                productProps.prevTransitionKeyIndex
                   ? styles['left-to-right-enter-active']
                   : styles['right-to-left-enter-active'],
               exit:
                 productProps.transitionKeyIndex >
-                  productProps.prevTransitionKeyIndex
+                productProps.prevTransitionKeyIndex
                   ? styles['left-to-right-exit']
                   : styles['right-to-left-exit'],
               exitActive:
                 productProps.transitionKeyIndex >
-                  productProps.prevTransitionKeyIndex
+                productProps.prevTransitionKeyIndex
                   ? styles['left-to-right-exit-active']
                   : styles['right-to-left-exit-active'],
             }}
@@ -448,28 +448,28 @@ export default function ProductMobileComponent({
                       <>
                         {selectedVariant?.original_price !==
                           selectedVariant?.calculated_price && (
-                            <div
-                              className={[
-                                styles['calculated-price'],
-                                styles['calculated-price-mobile'],
-                              ].join(' ')}
-                            >
-                              {storeProps.selectedRegion &&
-                                formatAmount({
-                                  amount: selectedVariant?.calculated_price ?? 0,
-                                  region: storeProps.selectedRegion,
-                                  includeTaxes: false,
-                                })}
-                            </div>
-                          )}
+                          <div
+                            className={[
+                              styles['calculated-price'],
+                              styles['calculated-price-mobile'],
+                            ].join(' ')}
+                          >
+                            {storeProps.selectedRegion &&
+                              formatAmount({
+                                amount: selectedVariant?.calculated_price ?? 0,
+                                region: storeProps.selectedRegion,
+                                includeTaxes: false,
+                              })}
+                          </div>
+                        )}
                         &nbsp;
                         <div
                           className={[
                             styles['original-price'],
                             styles['original-price-mobile'],
                             selectedVariant?.original_price !==
-                            selectedVariant?.calculated_price &&
-                            styles['original-price-crossed'],
+                              selectedVariant?.calculated_price &&
+                              styles['original-price-crossed'],
                           ].join(' ')}
                         >
                           {storeProps.selectedRegion &&
@@ -833,7 +833,7 @@ export default function ProductMobileComponent({
                       max={
                         !productProps.selectedVariant?.allow_backorder
                           ? productProps.selectedVariant?.inventory_quantity ??
-                          0
+                            0
                           : undefined
                       }
                       onChange={(e) => {
@@ -974,7 +974,7 @@ export default function ProductMobileComponent({
                                 ].join(' ')}
                               >
                                 {productProps.metadata?.weight &&
-                                  productProps.metadata.weight > 0
+                                productProps.metadata.weight > 0
                                   ? `${productProps.metadata.weight} g`
                                   : '-'}
                               </div>
@@ -1023,8 +1023,8 @@ export default function ProductMobileComponent({
                                 ].join(' ')}
                               >
                                 {productProps.metadata?.length &&
-                                  productProps.metadata.width &&
-                                  productProps.metadata.height
+                                productProps.metadata.width &&
+                                productProps.metadata.height
                                   ? `${productProps.metadata.length}L x ${productProps.metadata.width}W x ${productProps.metadata.height}H`
                                   : '-'}
                               </div>
@@ -1071,7 +1071,7 @@ export default function ProductMobileComponent({
                                 className={[
                                   styles['shipping-returns-title-container'],
                                   styles[
-                                  'shipping-returns-title-container-mobile'
+                                    'shipping-returns-title-container-mobile'
                                   ],
                                 ].join(' ')}
                               >
@@ -1107,7 +1107,7 @@ export default function ProductMobileComponent({
                                 className={[
                                   styles['shipping-returns-title-container'],
                                   styles[
-                                  'shipping-returns-title-container-mobile'
+                                    'shipping-returns-title-container-mobile'
                                   ],
                                 ].join(' ')}
                               >
@@ -1212,8 +1212,8 @@ export default function ProductMobileComponent({
                                 styles['search-input-mobile'],
                               ].join(' '),
                               formLayout: {
-                                root: styles['search-input-form-layout-root']
-                              }
+                                root: styles['search-input-form-layout-root'],
+                              },
                             }}
                             placeholder={t('search') ?? ''}
                             icon={<Line.Search size={24} color={'#2A2A5F'} />}
@@ -1257,7 +1257,7 @@ export default function ProductMobileComponent({
                       style={{
                         maxHeight:
                           productProps.hasMoreSearchedStockLocations ||
-                            productProps.areSearchedStockLocationsLoading
+                          productProps.areSearchedStockLocationsLoading
                             ? 24
                             : 0,
                       }}
@@ -1269,7 +1269,7 @@ export default function ProductMobileComponent({
                           className={[
                             styles['no-searched-stock-locations-container'],
                             styles[
-                            'no-searched-stock-locations-container-mobile'
+                              'no-searched-stock-locations-container-mobile'
                             ],
                           ].join(' ')}
                         >

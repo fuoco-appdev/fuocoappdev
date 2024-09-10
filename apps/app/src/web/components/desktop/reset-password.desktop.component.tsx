@@ -6,9 +6,9 @@ import { useNavigate } from 'react-router-dom';
 import { animated, config, useTransition } from 'react-spring';
 import WindowController from '../../../controllers/window.controller';
 import { RoutePathsType } from '../../../route-paths-type';
+import styles from '../../modules/reset-password.module.scss';
 import { useQuery } from '../../route-paths';
 import { ResetPasswordResponsiveProps } from '../reset-password.component';
-import styles from '../reset-password.module.scss';
 import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
 
 export default function ResetPasswordDesktopComponent({
@@ -51,8 +51,6 @@ export default function ResetPasswordDesktopComponent({
                     <Auth.ResetPassword
                       passwordErrorMessage={passwordError}
                       confirmPasswordErrorMessage={confirmPasswordError}
-                      defaultIconColor={'#2A2A5F'}
-                      litIconColor={'#2A2A5F'}
                       classNames={{
                         input: {
                           formLayout: {

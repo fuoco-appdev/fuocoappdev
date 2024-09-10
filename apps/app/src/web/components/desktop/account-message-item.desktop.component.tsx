@@ -1,8 +1,8 @@
 import { Avatar, Button } from '@fuoco.appdev/web-components';
 import { useTranslation } from 'react-i18next';
 import Skeleton from 'react-loading-skeleton';
+import styles from '../../modules/account-message-item.module.scss';
 import { AccountMessageItemResponsiveProps } from '../account-message-item.component';
-import styles from '../account-message-item.module.scss';
 import { ResponsiveDesktop } from '../responsive.component';
 
 export default function AccountMessageItemDesktopComponent({
@@ -10,7 +10,7 @@ export default function AccountMessageItemDesktopComponent({
   account,
   profileUrl,
   onClick,
-  onMessage
+  onMessage,
 }: AccountMessageItemResponsiveProps): JSX.Element {
   const { t } = useTranslation();
 

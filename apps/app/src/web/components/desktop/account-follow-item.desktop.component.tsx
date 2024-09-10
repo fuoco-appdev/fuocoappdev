@@ -1,8 +1,8 @@
 import { Avatar, Button } from '@fuoco.appdev/web-components';
 import { useTranslation } from 'react-i18next';
 import Skeleton from 'react-loading-skeleton';
+import styles from '../../modules/account-follow-item.module.scss';
 import { AccountFollowItemResponsiveProps } from '../account-follow-item.component';
-import styles from '../account-follow-item.module.scss';
 import { ResponsiveDesktop } from '../responsive.component';
 
 export default function AccountFollowItemDesktopComponent({

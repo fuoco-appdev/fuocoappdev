@@ -1,5 +1,5 @@
 import { Avatar } from '@fuoco.appdev/web-components';
-import styles from '../stock-location-cart-item.module.scss';
+import styles from '../../modules/stock-location-cart-item.module.scss';
 // @ts-ignore
 import Ripples from 'react-ripples';
 import { ResponsiveDesktop } from '../responsive.component';
@@ -44,13 +44,13 @@ export default function StockLocationCartItemDesktopComponent({
                   classNames={{
                     container: !avatar
                       ? [
-                        styles['no-avatar-container'],
-                        styles['no-avatar-container-desktop'],
-                      ].join(' ')
+                          styles['no-avatar-container'],
+                          styles['no-avatar-container-desktop'],
+                        ].join(' ')
                       : [
-                        styles['avatar-container'],
-                        styles['avatar-container-desktop'],
-                      ].join(' '),
+                          styles['avatar-container'],
+                          styles['avatar-container-desktop'],
+                        ].join(' '),
                   }}
                   size={'custom'}
                   text={stockLocation.name}

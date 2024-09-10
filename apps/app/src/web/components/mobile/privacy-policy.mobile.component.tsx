@@ -1,7 +1,7 @@
 import { Auth, Typography } from '@fuoco.appdev/web-components';
 import loadable from '@loadable/component';
+import styles from '../../modules/privacy-policy.module.scss';
 import { PrivacyPolicyResponsiveProps } from '../privacy-policy.component';
-import styles from '../privacy-policy.module.scss';
 import { ResponsiveMobile } from '../responsive.component';
 const ReactMarkdown = loadable(
   async () => {

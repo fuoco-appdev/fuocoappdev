@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import AccountController from '../../../controllers/account.controller';
+import styles from '../../modules/account-public-following.module.scss';
 import AccountFollowItemComponent from '../account-follow-item.component';
 import { AccountPublicFollowingResponsiveProps } from '../account-public-following.component';
-import styles from '../account-public-following.module.scss';
 import { ResponsiveDesktop } from '../responsive.component';
 
 export default function AccountPublicFollowingDesktopComponent({
@@ -35,7 +35,9 @@ export default function AccountPublicFollowingDesktopComponent({
                 follower={accountFollower}
                 isRequest={false}
                 onClick={() => onItemClick(value.id ?? '')}
-                onFollow={() => AccountController.requestFollowAsync(value.id ?? '')}
+                onFollow={() =>
+                  AccountController.requestFollowAsync(value.id ?? '')
+                }
                 onRequested={() =>
                   AccountController.requestUnfollowAsync(value.id ?? '')
                 }
@@ -51,7 +53,7 @@ export default function AccountPublicFollowingDesktopComponent({
             style={{
               maxHeight:
                 accountPublicProps.hasMoreFollowing ||
-                  accountPublicProps.areFollowingLoading
+                accountPublicProps.areFollowingLoading
                   ? 24
                   : 0,
             }}

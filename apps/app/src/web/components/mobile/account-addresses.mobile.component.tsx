@@ -3,8 +3,8 @@ import { Address, Customer } from '@medusajs/medusa';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import AccountController from '../../../controllers/account.controller';
+import styles from '../../modules/account-addresses.module.scss';
 import { AccountAddressResponsiveProps } from '../account-addresses.component';
-import styles from '../account-addresses.module.scss';
 import AddressFormComponent from '../address-form.component';
 import AddressItemComponent from '../address-item.component';
 import { ResponsiveMobile } from '../responsive.component';
@@ -65,7 +65,7 @@ export default function AccountAddressesMobileComponent({
               ].join(' ')}
               style={{
                 height: window.innerHeight,
-                width: window.innerWidth
+                width: window.innerWidth,
               }}
             >
               <Button

@@ -78,9 +78,9 @@ export default function HelpComponent(): JSX.Element {
   return (
     <>
       <Helmet>
-        <title>Help | Cruthology</title>
+        <title>Help | fuoco.appdev</title>
         <link rel="canonical" href={window.location.href} />
-        <meta name="title" content={'Help | Cruthology'} />
+        <meta name="title" content={'Help | fuoco.appdev'} />
         <meta
           name="description"
           content={
@@ -91,7 +91,7 @@ export default function HelpComponent(): JSX.Element {
           property="og:image"
           content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
         />
-        <meta property="og:title" content={'Help | Cruthology'} />
+        <meta property="og:title" content={'Help | fuoco.appdev'} />
         <meta
           property="og:description"
           content={

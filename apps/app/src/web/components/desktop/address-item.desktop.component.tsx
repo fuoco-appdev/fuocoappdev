@@ -1,7 +1,7 @@
 import { Button, Line } from '@fuoco.appdev/web-components';
 import { useTranslation } from 'react-i18next';
+import styles from '../../modules/address-item.module.scss';
 import { AddressItemProps } from '../address-item.component';
-import styles from '../address-item.module.scss';
 import { ResponsiveDesktop } from '../responsive.component';
 
 export default function AddressItemDesktopComponent({

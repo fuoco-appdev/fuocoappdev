@@ -1,5 +1,6 @@
 export enum RoutePathsType {
   Default = '/',
+  Landing = '/landing',
   Explore = '/explore',
   Signin = '/signin',
   Signup = '/signup',

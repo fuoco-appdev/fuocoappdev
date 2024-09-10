@@ -95,9 +95,9 @@ export default function PermissionsComponent(): JSX.Element {
   return (
     <>
       <Helmet>
-        <title>Permissions | Cruthology</title>
+        <title>Permissions | fuoco.appdev</title>
         <link rel="canonical" href={window.location.href} />
-        <meta name="title" content={'Permissions | Cruthology'} />
+        <meta name="title" content={'Permissions | fuoco.appdev'} />
         <meta
           name="description"
           content={
@@ -108,7 +108,7 @@ export default function PermissionsComponent(): JSX.Element {
           property="og:image"
           content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
         />
-        <meta property="og:title" content={'Permissions | Cruthology'} />
+        <meta property="og:title" content={'Permissions | fuoco.appdev'} />
         <meta
           property="og:description"
           content={

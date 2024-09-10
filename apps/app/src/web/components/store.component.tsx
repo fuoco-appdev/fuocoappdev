@@ -28,10 +28,10 @@ import {
 import { ProductTabs, StoreState } from '../../models/store.model';
 import { ProductLikesMetadataResponse } from '../../protobuf/product-like_pb';
 import { RoutePathsType } from '../../route-paths-type';
+import styles from '../modules/store.module.scss';
 import { useQuery } from '../route-paths';
 import { StoreSuspenseDesktopComponent } from './desktop/suspense/store.suspense.desktop.component';
 import { StoreSuspenseMobileComponent } from './mobile/suspense/store.suspense.mobile.component';
-import styles from './store.module.scss';
 
 const StoreDesktopComponent = React.lazy(
   () => import('./desktop/store.desktop.component')
@@ -459,9 +459,9 @@ export default function StoreComponent(): JSX.Element {
   return (
     <>
       <Helmet>
-        <title>Store | Cruthology</title>
+        <title>Store | fuoco.appdev</title>
         <link rel="canonical" href={window.location.href} />
-        <meta name="title" content={'Store | Cruthology'} />
+        <meta name="title" content={'Store | fuoco.appdev'} />
         <meta
           name="description"
           content={`Elevate your wine journey to the next level. Explore, select, and savor the extraordinary with Cruthology's exclusive wine selection.`}
@@ -470,7 +470,7 @@ export default function StoreComponent(): JSX.Element {
           property="og:image"
           content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
         />
-        <meta property="og:title" content={'Store | Cruthology'} />
+        <meta property="og:title" content={'Store | fuoco.appdev'} />
         <meta
           property="og:description"
           content={`Elevate your wine journey to the next level. Explore, select, and savor the extraordinary with Cruthology's exclusive wine selection.`}

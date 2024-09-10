@@ -4,10 +4,10 @@ import Ripples from 'react-ripples';
 import { Outlet, useNavigate } from 'react-router-dom';
 import AccountController from '../../../controllers/account.controller';
 import { RoutePathsType } from '../../../route-paths-type';
+import styles from '../../modules/settings.module.scss';
 import { useQuery } from '../../route-paths';
 import { ResponsiveMobile } from '../responsive.component';
 import { SettingsResponsiveProps } from '../settings.component';
-import styles from '../settings.module.scss';
 
 export default function SettingsMobileComponent({
   windowProps,

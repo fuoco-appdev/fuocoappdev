@@ -1,5 +1,5 @@
 import Skeleton from 'react-loading-skeleton';
-import styles from '../../address-item.module.scss';
+import styles from '../../../modules/address-item.module.scss';
 import { ResponsiveSuspenseDesktop } from '../../responsive.component';
 
 export function AddressItemSuspenseDesktopComponent(): JSX.Element {

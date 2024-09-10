@@ -1,7 +1,7 @@
 import { Button, Input, Line, Listbox } from '@fuoco.appdev/web-components';
 import { useTranslation } from 'react-i18next';
+import styles from '../../modules/refund-item.module.scss';
 import { RefundItemResponsiveProps } from '../refund-item.component';
-import styles from '../refund-item.module.scss';
 import { ResponsiveMobile } from '../responsive.component';
 
 export default function RefundItemMobileComponent({

@@ -25,10 +25,10 @@ import AccountService from '../../services/account.service';
 import BucketService from '../../services/bucket.service';
 import ChatService from '../../services/chat.service';
 import SupabaseService from '../../services/supabase.service';
+import styles from '../modules/window.module.scss';
 import { useQuery } from '../route-paths';
 import { WindowSuspenseDesktopComponent } from './desktop/suspense/window.suspense.desktop.component';
 import { WindowSuspenseMobileComponent } from './mobile/suspense/window.suspense.mobile.component';
-import styles from './window.module.scss';
 
 const WindowDesktopComponent = React.lazy(
   () => import('./desktop/window.desktop.component')

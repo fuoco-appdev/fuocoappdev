@@ -1,5 +1,5 @@
 import Skeleton from 'react-loading-skeleton';
-import styles from '../../order-confirmed.module.scss';
+import styles from '../../../modules/order-confirmed.module.scss';
 import { ResponsiveSuspenseDesktop } from '../../responsive.component';
 import { ShippingItemSuspenseDesktopComponent } from './shipping-item.suspense.desktop.component';
 
@@ -7,7 +7,12 @@ export function OrderConfirmedSuspenseDesktopComponent(): JSX.Element {
   return (
     <ResponsiveSuspenseDesktop>
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>
-        <div className={[styles['scroll-content'], styles['scroll-content-desktop']].join(' ')}>
+        <div
+          className={[
+            styles['scroll-content'],
+            styles['scroll-content-desktop'],
+          ].join(' ')}
+        >
           <div
             className={[
               styles['left-content'],

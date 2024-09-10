@@ -1,6 +1,6 @@
 import { InputNumber, Line } from '@fuoco.appdev/web-components';
 import { useTranslation } from 'react-i18next';
-import styles from '../cart-variant-item.module.scss';
+import styles from '../../modules/cart-variant-item.module.scss';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
 import { MedusaProductTypeNames } from '../../../types/medusa.type';
@@ -142,9 +142,9 @@ export default function CartItemMobileComponent({
             style={{
               ...(variant.id && variantQuantities[variant.id] > 0
                 ? {
-                  backgroundColor: '#85267A',
-                  borderWidth: 0,
-                }
+                    backgroundColor: '#85267A',
+                    borderWidth: 0,
+                  }
                 : { borderWidth: 1 }),
             }}
           >

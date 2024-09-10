@@ -58,9 +58,9 @@ export default function ForgotPasswordComponent(): JSX.Element {
   return (
     <>
       <Helmet>
-        <title>Forgot Password | Cruthology</title>
+        <title>Forgot Password | fuoco.appdev</title>
         <link rel="canonical" href={window.location.href} />
-        <meta name="title" content={'Forgot Password | Cruthology'} />
+        <meta name="title" content={'Forgot Password | fuoco.appdev'} />
         <meta
           name="description"
           content={`Don't worry; we've got you covered. If you've forgotten your Cruthology password, we're here to help you regain access to your exclusive wine world.`}
@@ -69,7 +69,7 @@ export default function ForgotPasswordComponent(): JSX.Element {
           property="og:image"
           content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
         />
-        <meta property="og:title" content={'Forgot Password | Cruthology'} />
+        <meta property="og:title" content={'Forgot Password | fuoco.appdev'} />
         <meta
           property="og:description"
           content={`Don't worry; we've got you covered. If you've forgotten your Cruthology password, we're here to help you regain access to your exclusive wine world.`}

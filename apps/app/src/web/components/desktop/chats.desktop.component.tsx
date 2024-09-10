@@ -16,11 +16,11 @@ import AccountController from '../../../controllers/account.controller';
 import ChatController from '../../../controllers/chat.controller';
 import { ChatDocument } from '../../../models/chat.model';
 import { RoutePathsType } from '../../../route-paths-type';
+import styles from '../../modules/chats.module.scss';
 import { useQuery } from '../../route-paths';
 import AccountMessageItemComponent from '../account-message-item.component';
 import ChatMessageItemComponent from '../chat-item.component';
 import { ChatsResponsiveProps } from '../chats.component';
-import styles from '../chats.module.scss';
 import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
 
 export default function ChatsDesktopComponent({

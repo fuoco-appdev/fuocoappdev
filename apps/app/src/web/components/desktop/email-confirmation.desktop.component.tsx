@@ -1,7 +1,7 @@
 import { Button, Line } from '@fuoco.appdev/web-components';
 import { useTranslation } from 'react-i18next';
+import styles from '../../modules/email-confirmation.module.scss';
 import { EmailConfirmationResponsiveProps } from '../email-confirmation.component';
-import styles from '../email-confirmation.module.scss';
 import { ResponsiveDesktop } from '../responsive.component';
 
 export default function EmailConfirmationDesktopComponent({

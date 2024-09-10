@@ -18,9 +18,10 @@ import ChatsComponent from './components/chats.component';
 import CheckoutComponent from './components/checkout.component';
 import EmailConfirmationComponent from './components/email-confirmation.component';
 import EventsComponent from './components/events.component';
-import HomeComponent from './components/explore.component';
+import ExploreComponent from './components/explore.component';
 import ForgotPasswordComponent from './components/forgot-password.component';
 import HelpComponent from './components/help.component';
+import LandingComponent from './components/landing.component';
 import NotificationsComponent from './components/notifications.component';
 import OrderConfirmedComponent from './components/order-confirmed.component';
 import PermissionsComponent from './components/permissions.component';
@@ -41,11 +42,15 @@ export const getRoutePaths = (): RouteObject[] => [
     children: [
       {
         index: true,
-        element: <HomeComponent />,
+        element: <LandingComponent />,
+      },
+      {
+        path: RoutePathsType.Landing,
+        element: <LandingComponent />,
       },
       {
         path: RoutePathsType.Explore,
-        element: <HomeComponent />,
+        element: <ExploreComponent />,
       },
       {
         path: RoutePathsType.Signin,

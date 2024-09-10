@@ -64,9 +64,9 @@ export default function AccountPublicFollowingComponent(): JSX.Element {
   return (
     <>
       <Helmet>
-        <title>Following | Cruthology</title>
+        <title>Following | fuoco.appdev</title>
         <link rel="canonical" href={window.location.href} />
-        <meta name="title" content={'Following | Cruthology'} />
+        <meta name="title" content={'Following | fuoco.appdev'} />
         <meta
           name="description"
           content={
@@ -77,7 +77,7 @@ export default function AccountPublicFollowingComponent(): JSX.Element {
           property="og:image"
           content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
         />
-        <meta property="og:title" content={'Following | Cruthology'} />
+        <meta property="og:title" content={'Following | fuoco.appdev'} />
         <meta
           property="og:description"
           content={

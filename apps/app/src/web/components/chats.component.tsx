@@ -137,9 +137,9 @@ export default function ChatsComponent(): JSX.Element {
   return (
     <>
       <Helmet>
-        <title>Chats | Cruthology</title>
+        <title>Chats | fuoco.appdev</title>
         <link rel="canonical" href={window.location.href} />
-        <meta name="title" content={'Chats | Cruthology'} />
+        <meta name="title" content={'Chats | fuoco.appdev'} />
         <meta
           name="description"
           content={
@@ -150,7 +150,7 @@ export default function ChatsComponent(): JSX.Element {
           property="og:image"
           content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
         />
-        <meta property="og:title" content={'Chats | Cruthology'} />
+        <meta property="og:title" content={'Chats | fuoco.appdev'} />
         <meta
           property="og:description"
           content={

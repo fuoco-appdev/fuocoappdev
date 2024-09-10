@@ -17,8 +17,8 @@ import {
   InventoryLocationType,
 } from '../../../models/explore.model';
 import ConfigService from '../../../services/config.service';
+import styles from '../../modules/explore.module.scss';
 import { ExploreResponsiveProps } from '../explore.component';
-import styles from '../explore.module.scss';
 import { ResponsiveDesktop } from '../responsive.component';
 import StockLocationItemComponent from '../stock-location-item.component';
 

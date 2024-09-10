@@ -1,5 +1,5 @@
 import Skeleton from 'react-loading-skeleton';
-import styles from '../../cart-item.module.scss';
+import styles from '../../../modules/cart-item.module.scss';
 import { ResponsiveSuspenseDesktop } from '../../responsive.component';
 
 export function CartItemSuspenseDesktopComponent(): JSX.Element {

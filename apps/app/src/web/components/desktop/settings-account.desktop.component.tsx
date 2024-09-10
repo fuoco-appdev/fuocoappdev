@@ -4,7 +4,7 @@ import {
   Auth,
   Button,
   LanguageSwitch,
-  Line
+  Line,
 } from '@fuoco.appdev/web-components';
 import { AuthError, User } from '@supabase/supabase-js';
 import { LanguageCode } from 'iso-639-1';
@@ -16,7 +16,7 @@ import AccountProfileFormComponent from '../account-profile-form.component';
 import { ResponsiveDesktop } from '../responsive.component';
 import { SettingsAccountResponsiveProps } from '../settings-account.component';
 //@ts-ignore
-import styles from '../settings-account.module.scss';
+import styles from '../../modules/settings-account.module.scss';
 
 export default function SettingsAccountDesktopComponent({
   accountProps,
@@ -137,8 +137,6 @@ export default function SettingsAccountDesktopComponent({
                 {SupabaseService.supabaseClient && (
                   <Auth.UpdatePassword
                     supabaseClient={SupabaseService.supabaseClient}
-                    defaultIconColor={'#2A2A5F'}
-                    litIconColor={'#2A2A5F'}
                     passwordErrorMessage={updatePasswordError}
                     confirmPasswordErrorMessage={confirmPasswordError}
                     classNames={{
@@ -183,10 +181,12 @@ export default function SettingsAccountDesktopComponent({
             )}
           </Accordion>
         </div>
-        <div className={[
-          styles['setting-container'],
-          styles['setting-container-desktop'],
-        ].join(' ')}>
+        <div
+          className={[
+            styles['setting-container'],
+            styles['setting-container-desktop'],
+          ].join(' ')}
+        >
           <div
             className={[
               styles['setting-button-content'],

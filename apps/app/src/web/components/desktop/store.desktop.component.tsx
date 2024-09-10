@@ -18,12 +18,12 @@ import StoreController from '../../../controllers/store.controller';
 import { ProductTabs } from '../../../models/store.model';
 import { ProductLikesMetadataResponse } from '../../../protobuf/product-like_pb';
 import { MedusaProductTypeNames } from '../../../types/medusa.type';
+import styles from '../../modules/store.module.scss';
 import { useQuery } from '../../route-paths';
 import CartVariantItemComponent from '../cart-variant-item.component';
 import ProductPreviewComponent from '../product-preview.component';
 import { ResponsiveDesktop } from '../responsive.component';
 import { StoreResponsiveProps } from '../store.component';
-import styles from '../store.module.scss';
 
 export default function StoreDesktopComponent({
   storeProps,
@@ -120,13 +120,13 @@ export default function StoreDesktopComponent({
                         container: !exploreProps.selectedInventoryLocation
                           ?.avatar
                           ? [
-                            styles['no-avatar-container'],
-                            styles['no-avatar-container-desktop'],
-                          ].join(' ')
+                              styles['no-avatar-container'],
+                              styles['no-avatar-container-desktop'],
+                            ].join(' ')
                           : [
-                            styles['avatar-container'],
-                            styles['avatar-container-desktop'],
-                          ].join(' '),
+                              styles['avatar-container'],
+                              styles['avatar-container-desktop'],
+                            ].join(' '),
                       }}
                       size={'custom'}
                       text={
@@ -246,13 +246,18 @@ export default function StoreDesktopComponent({
             loadingHeight={56}
             showIndicatorThreshold={56}
             reloadThreshold={96}
-            pullIndicatorComponent={<div className={[styles['pull-indicator-container']].join(' ')}><Line.ArrowDownward size={24} /></div>}
+            pullIndicatorComponent={
+              <div className={[styles['pull-indicator-container']].join(' ')}>
+                <Line.ArrowDownward size={24} />
+              </div>
+            }
             isLoadable={storeProps.hasMorePreviews}
             isLoading={storeProps.isLoading}
             onLoad={() => StoreController.onNextScrollAsync()}
             onScroll={(progress, scrollRef, contentRef) => {
               const elementHeight = topBarRef.current?.clientHeight ?? 0;
-              const scrollTop = contentRef.current?.getBoundingClientRect().top ?? 0;
+              const scrollTop =
+                contentRef.current?.getBoundingClientRect().top ?? 0;
               if (prevPreviewScrollTop <= scrollTop) {
                 yPosition -= prevPreviewScrollTop - scrollTop;
                 if (yPosition >= 0) {

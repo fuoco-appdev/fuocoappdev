@@ -1,6 +1,6 @@
 import Skeleton from 'react-loading-skeleton';
+import styles from '../../../modules/stock-location-item.module.scss';
 import { ResponsiveSuspenseMobile } from '../../responsive.component';
-import styles from '../../stock-location-item.module.scss';
 
 export function StockLocationItemSuspenseMobileComponent(): JSX.Element {
   return (

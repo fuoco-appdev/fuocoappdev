@@ -14,8 +14,8 @@ import { useTranslation } from 'react-i18next';
 import CartController from '../../../controllers/cart.controller';
 import CheckoutController from '../../../controllers/checkout.controller';
 import { ProviderType } from '../../../models/checkout.model';
+import styles from '../../modules/checkout.module.scss';
 import AddressFormComponent from '../address-form.component';
-import styles from '../checkout.module.scss';
 // @ts-ignore
 import {
   CardCvcElement,

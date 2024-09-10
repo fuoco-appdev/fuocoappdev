@@ -4,7 +4,7 @@ import {
   Auth,
   Button,
   LanguageSwitch,
-  Line
+  Line,
 } from '@fuoco.appdev/web-components';
 import { AuthError, User } from '@supabase/supabase-js';
 import { LanguageCode } from 'iso-639-1';
@@ -15,10 +15,10 @@ import Ripples from 'react-ripples';
 import AccountController from '../../../controllers/account.controller';
 import WindowController from '../../../controllers/window.controller';
 import SupabaseService from '../../../services/supabase.service';
+import styles from '../../modules/settings-account.module.scss';
 import AccountProfileFormComponent from '../account-profile-form.component';
 import { ResponsiveMobile } from '../responsive.component';
 import { SettingsAccountResponsiveProps } from '../settings-account.component';
-import styles from '../settings-account.module.scss';
 
 export default function SettingsAccountMobileComponent({
   storeProps,
@@ -194,8 +194,6 @@ export default function SettingsAccountMobileComponent({
                 {SupabaseService.supabaseClient && (
                   <Auth.UpdatePassword
                     supabaseClient={SupabaseService.supabaseClient}
-                    defaultIconColor={'#2A2A5F'}
-                    litIconColor={'#2A2A5F'}
                     passwordErrorMessage={updatePasswordError}
                     confirmPasswordErrorMessage={confirmPasswordError}
                     classNames={{

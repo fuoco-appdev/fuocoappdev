@@ -2,8 +2,8 @@ import { Avatar, Button } from '@fuoco.appdev/web-components';
 import { useTranslation } from 'react-i18next';
 import Skeleton from 'react-loading-skeleton';
 import Ripples from 'react-ripples';
+import styles from '../../modules/account-follow-item.module.scss';
 import { AccountFollowItemResponsiveProps } from '../account-follow-item.component';
-import styles from '../account-follow-item.module.scss';
 import { ResponsiveMobile } from '../responsive.component';
 
 export default function AccountFollowItemMobileComponent({
@@ -23,7 +23,11 @@ export default function AccountFollowItemMobileComponent({
   const { t } = useTranslation();
   return (
     <ResponsiveMobile>
-      <Ripples className={[styles['ripples'], styles['ripples-mobile']].join(' ')} color={'rgba(42, 42, 95, .35)'} onClick={onClick}>
+      <Ripples
+        className={[styles['ripples'], styles['ripples-mobile']].join(' ')}
+        color={'rgba(42, 42, 95, .35)'}
+        onClick={onClick}
+      >
         <div className={[styles['root'], styles['root-mobile']].join(' ')}>
           <div
             className={[

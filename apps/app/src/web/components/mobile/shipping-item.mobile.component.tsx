@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import styles from '../shipping-item.module.scss';
+import styles from '../../modules/shipping-item.module.scss';
 // @ts-ignore
 import { formatAmount } from 'medusa-react';
 import { ResponsiveMobile } from '../responsive.component';

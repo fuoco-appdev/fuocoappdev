@@ -6,10 +6,10 @@ import { useNavigate } from 'react-router-dom';
 import { animated, config, useTransition } from 'react-spring';
 import SigninController from '../../../controllers/signin.controller';
 import { RoutePathsType } from '../../../route-paths-type';
+import styles from '../../modules/signin.module.scss';
 import { useQuery } from '../../route-paths';
 import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
 import { SigninResponsiveProps } from '../signin.component';
-import styles from '../signin.module.scss';
 
 export default function SigninDesktopComponent({
   signInProps,
@@ -90,8 +90,6 @@ export default function SigninDesktopComponent({
                       }}
                       emailValue={signInProps.email ?? ''}
                       passwordValue={signInProps.password ?? ''}
-                      defaultIconColor={'#2A2A5F'}
-                      litIconColor={'#2A2A5F'}
                       providers={['google']}
                       view={'sign_in'}
                       socialColors={false}

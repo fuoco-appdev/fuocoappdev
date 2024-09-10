@@ -1,5 +1,5 @@
 import Skeleton from 'react-loading-skeleton';
-import styles from '../../explore.module.scss';
+import styles from '../../../modules/explore.module.scss';
 import { ResponsiveSuspenseDesktop } from '../../responsive.component';
 import { StockLocationItemSuspenseDesktopComponent } from './stock-location-item.suspense.desktop.component';
 

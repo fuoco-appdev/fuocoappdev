@@ -21,10 +21,11 @@ import AccountController from '../../../controllers/account.controller';
 import WindowController from '../../../controllers/window.controller';
 import { AccountResponse } from '../../../protobuf/account_pb';
 import { RoutePathsType } from '../../../route-paths-type';
+import buttonStyles from '../../modules/button.module.scss';
+import styles from '../../modules/window.module.scss';
 import { useQuery } from '../../route-paths';
 import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
 import { WindowResponsiveProps } from '../window.component';
-import styles from '../window.module.scss';
 
 export default function WindowDesktopComponent({
   windowProps,
@@ -68,26 +69,30 @@ export default function WindowDesktopComponent({
             ].join(' ')}
           >
             <div className={[styles['top-bar-button-container']].join(' ')}>
-              <Button
-                classNames={{
-                  floatingLabelContainer: [
-                    styles['floating-label-container'],
-                  ].join(' '),
-                }}
-                rippleProps={{
-                  color: 'rgba(252, 245, 227, .35)',
-                }}
-                floatingLabel={t('menu') ?? ''}
-                onClick={() =>
-                  WindowController.updateIsSideBarOpen(
-                    !windowLocalProps.isSideBarOpen
-                  )
-                }
-                type={'text'}
-                rounded={true}
-                size={'tiny'}
-                icon={<Line.Menu size={24} color={'rgba(252, 245, 227, 1)'} />}
-              />
+              {windowProps.isAuthenticated && (
+                <Button
+                  classNames={{
+                    floatingLabelContainer: [
+                      styles['floating-label-container'],
+                    ].join(' '),
+                  }}
+                  rippleProps={{
+                    color: 'rgba(252, 245, 227, .35)',
+                  }}
+                  floatingLabel={t('menu') ?? ''}
+                  onClick={() =>
+                    WindowController.updateIsSideBarOpen(
+                      !windowLocalProps.isSideBarOpen
+                    )
+                  }
+                  type={'text'}
+                  rounded={true}
+                  size={'tiny'}
+                  icon={
+                    <Line.Menu size={24} color={'rgba(252, 245, 227, 1)'} />
+                  }
+                />
+              )}
             </div>
             <div
               className={[
@@ -96,13 +101,16 @@ export default function WindowDesktopComponent({
               ].join(' ')}
             >
               <img src={'../assets/svg/logo.svg'} />
-              <img
+
+              <Typography.Title
                 className={[
-                  styles['logo-text'],
-                  styles['logo-text-desktop'],
+                  styles['logo-title'],
+                  styles['logo-title-desktop'],
                 ].join(' ')}
-                src={'../assets/svg/logo-text-light.svg'}
-              />
+                level={3}
+              >
+                fuoco.appdev
+              </Typography.Title>
             </div>
           </div>
           <div
@@ -112,142 +120,146 @@ export default function WindowDesktopComponent({
             ].join(' ')}
           >
             {!windowProps.account && (
-              <div
-                className={[
-                  styles['top-bar-button-container'],
-                  styles['top-bar-button-container-desktop'],
-                ].join(' ')}
-              >
-                <LanguageSwitch
-                  classNames={{
-                    button: {
-                      floatingLabelContainer: [
-                        styles['floating-label-container'],
-                      ].join(' '),
-                    },
-                  }}
-                  open={isLanguageOpen}
-                  onOpen={() => setIsLanguageOpen(true)}
-                  onClose={() => setIsLanguageOpen(false)}
-                  floatingLabel={t('language') ?? ''}
-                  supportedLanguages={[
-                    { isoCode: 'en', countryCode: 'GB' },
-                    { isoCode: 'fr', countryCode: 'FR' },
-                  ]}
-                  rippleProps={{
-                    color: 'rgba(252, 245, 227, .35)',
-                  }}
-                  hideText={true}
-                  language={windowLocalProps.languageCode as LanguageCode}
-                  onChange={(isoCode: string, info) =>
-                    WindowController.updateLanguageInfo(isoCode, info)
-                  }
-                />
-              </div>
-            )}
-            <div
-              className={[
-                styles['top-bar-button-container'],
-                styles['top-bar-button-container-desktop'],
-              ].join(' ')}
-            >
-              <Button
-                classNames={{
-                  floatingLabelContainer: [
-                    styles['floating-label-container'],
-                  ].join(' '),
-                }}
-                rippleProps={{
-                  color: 'rgba(252, 245, 227, .35)',
-                }}
-                onClick={() =>
-                  navigate({
-                    pathname: RoutePathsType.Help,
-                    search: query.toString(),
-                  })
-                }
-                type={'text'}
-                floatingLabel={t('help') ?? ''}
-                rounded={true}
-                size={'tiny'}
-                icon={
-                  windowProps.activeRoute !== RoutePathsType.Help ? (
-                    <Line.HelpOutline
-                      size={24}
-                      color={'rgba(252, 245, 227, .8)'}
-                    />
-                  ) : (
-                    <Solid.Help size={24} color={'rgba(252, 245, 227, 1)'} />
-                  )
-                }
-              />
-            </div>
-            <div
-              className={[
-                styles['shopping-cart-container-details'],
-                styles['shopping-cart-container-details-desktop'],
-              ].join(' ')}
-            >
-              <Button
-                classNames={{
-                  container: [
-                    styles['top-bar-button-container'],
-                    styles['top-bar-button-container-desktop'],
-                  ].join(' '),
-                  floatingLabelContainer: [
-                    styles['floating-label-container'],
-                  ].join(' '),
-                }}
-                rippleProps={{
-                  color: 'rgba(252, 245, 227, .35)',
-                }}
-                onClick={() =>
-                  setTimeout(
-                    () =>
-                      navigate({
-                        pathname: RoutePathsType.Cart,
-                        search: query.toString(),
-                      }),
-                    75
-                  )
-                }
-                type={'text'}
-                floatingLabel={t('shoppingCart') ?? ''}
-                rounded={true}
-                size={'tiny'}
-                icon={
-                  windowProps.activeRoute !== RoutePathsType.Cart &&
-                  windowProps.activeRoute !== RoutePathsType.Checkout ? (
-                    <Line.ShoppingCart
-                      size={24}
-                      color={'rgba(252, 245, 227, .8)'}
-                    />
-                  ) : (
-                    <Solid.ShoppingCart
-                      size={24}
-                      color={'rgba(252, 245, 227, 1)'}
-                    />
-                  )
-                }
-              />
-              {windowProps.cartCount > 0 && (
+              <>
                 <div
                   className={[
-                    styles['cart-number-container'],
-                    styles['cart-number-container-desktop'],
+                    styles['top-bar-button-container'],
+                    styles['top-bar-button-container-desktop'],
                   ].join(' ')}
                 >
-                  <span
-                    className={[
-                      styles['cart-number'],
-                      styles['cart-number-desktop'],
-                    ].join(' ')}
-                  >
-                    {windowProps.cartCount}
-                  </span>
+                  <LanguageSwitch
+                    classNames={{
+                      button: {
+                        button: buttonStyles['rounded-button'],
+                        floatingLabelContainer: [
+                          styles['floating-label-container'],
+                        ].join(' '),
+                      },
+                    }}
+                    open={isLanguageOpen}
+                    onOpen={() => setIsLanguageOpen(true)}
+                    onClose={() => setIsLanguageOpen(false)}
+                    floatingLabel={t('language') ?? ''}
+                    supportedLanguages={[
+                      { isoCode: 'en', countryCode: 'GB' },
+                      { isoCode: 'fr', countryCode: 'FR' },
+                    ]}
+                    rippleProps={{
+                      color: 'rgba(29, 53, 87, .35)',
+                    }}
+                    hideText={true}
+                    language={windowLocalProps.languageCode as LanguageCode}
+                    onChange={(isoCode: string, info) =>
+                      WindowController.updateLanguageInfo(isoCode, info)
+                    }
+                  />
                 </div>
-              )}
-            </div>
+                <div
+                  className={[
+                    styles['top-bar-button-container'],
+                    styles['top-bar-button-container-desktop'],
+                  ].join(' ')}
+                >
+                  <Button
+                    classNames={{
+                      button: buttonStyles['rounded-button'],
+                    }}
+                    rippleProps={{
+                      color: 'rgba(29, 53, 87, .35)',
+                    }}
+                    onClick={() => {}}
+                    floatingLabel={t('github') ?? ''}
+                    type={'text'}
+                    rounded={true}
+                    size={'small'}
+                    icon={
+                      <img
+                        src={'../../assets/svg/github.svg'}
+                        width={21}
+                        height={21}
+                      />
+                    }
+                  />
+                </div>
+                <div
+                  className={[
+                    styles['top-bar-button-container'],
+                    styles['top-bar-button-container-desktop'],
+                  ].join(' ')}
+                >
+                  <Button
+                    classNames={{
+                      button: buttonStyles['rounded-button'],
+                    }}
+                    rippleProps={{
+                      color: 'rgba(29, 53, 87, .35)',
+                    }}
+                    onClick={() => {}}
+                    floatingLabel={t('x') ?? ''}
+                    type={'text'}
+                    rounded={true}
+                    size={'small'}
+                    icon={
+                      <img
+                        src={'../../assets/svg/x.svg'}
+                        width={21}
+                        height={21}
+                      />
+                    }
+                  />
+                </div>
+                <div
+                  className={[
+                    styles['top-bar-button-container'],
+                    styles['top-bar-button-container-desktop'],
+                  ].join(' ')}
+                >
+                  <Button
+                    classNames={{
+                      button: buttonStyles['rounded-button'],
+                    }}
+                    rippleProps={{
+                      color: 'rgba(29, 53, 87, .35)',
+                    }}
+                    floatingLabel={t('linkedin') ?? ''}
+                    type={'text'}
+                    rounded={true}
+                    size={'small'}
+                    icon={
+                      <img
+                        src={'../../assets/svg/linkedin.svg'}
+                        width={21}
+                        height={21}
+                      />
+                    }
+                  />
+                </div>
+                <div
+                  className={[
+                    styles['top-bar-button-container'],
+                    styles['top-bar-button-container-desktop'],
+                  ].join(' ')}
+                >
+                  <Button
+                    rippleProps={{
+                      color: 'rgba(252, 245, 227, .35)',
+                    }}
+                    onClick={() => {}}
+                    floatingLabel={t('google') ?? ''}
+                    type={'text'}
+                    rounded={true}
+                    size={'small'}
+                    icon={
+                      <img
+                        src={'../../assets/svg/google.svg'}
+                        width={21}
+                        height={21}
+                      />
+                    }
+                  />
+                </div>
+              </>
+            )}
             {windowProps.account && (
               <>
                 <div
@@ -331,218 +343,221 @@ export default function WindowDesktopComponent({
         <div
           className={[styles['content'], styles['content-desktop']].join(' ')}
         >
-          <CSSTransition
-            nodeRef={sideBarRef}
-            in={windowLocalProps.isSideBarOpen && Boolean(sideBarRef.current)}
-            timeout={300}
-            classNames={{
-              appear: styles['side-bar-appear'],
-              appearActive: styles['side-bar-appear-active'],
-              appearDone: styles['side-bar-appear-done'],
-              enter: styles['side-bar-enter'],
-              enterActive: styles['side-bar-enter-active'],
-              enterDone: styles['side-bar-enter-done'],
-              exit: styles['side-bar-exit'],
-              exitActive: styles['side-bar-exit-active'],
-              exitDone: styles['side-bar-exit-done'],
-            }}
-          >
-            <div
-              ref={sideBarRef}
-              className={[styles['side-bar'], styles['side-bar-desktop']].join(
-                ' '
-              )}
+          {windowProps.isAuthenticated && (
+            <CSSTransition
+              nodeRef={sideBarRef}
+              in={windowLocalProps.isSideBarOpen && Boolean(sideBarRef.current)}
+              timeout={300}
+              classNames={{
+                appear: styles['side-bar-appear'],
+                appearActive: styles['side-bar-appear-active'],
+                appearDone: styles['side-bar-appear-done'],
+                enter: styles['side-bar-enter'],
+                enterActive: styles['side-bar-enter-active'],
+                enterDone: styles['side-bar-enter-done'],
+                exit: styles['side-bar-exit'],
+                exitActive: styles['side-bar-exit-active'],
+                exitDone: styles['side-bar-exit-done'],
+              }}
             >
-              <Tabs
-                activeId={windowProps.activeTabsId}
-                direction={'vertical'}
-                type={'nav'}
-                onChange={onSidebarTabsChanged}
-                classNames={{
-                  tabOutline: [
-                    styles['tab-outline'],
-                    windowLocalProps.isSideBarOpen
-                      ? styles['tab-outline-open']
-                      : styles['tab-outline-close'],
-                  ].join(' '),
-                  tabSlider: styles['tab-slider'],
-                  tabIcon: styles['tab-icon'],
-                  tabButton: styles['tab-button'],
-                  hoveredTabIcon: styles['hovered-tab-icon'],
-                  hoveredTabButton: styles['hovered-tab-button'],
-                }}
-                tabs={[
-                  {
-                    id: RoutePathsType.Explore,
-                    icon:
-                      windowProps.activeRoute === RoutePathsType.Explore ? (
-                        <Solid.Explore size={24} />
-                      ) : (
-                        <Line.Explore size={24} />
-                      ),
-                    label: windowLocalProps.isSideBarOpen
-                      ? t('explore') ?? ''
-                      : undefined,
-                  },
-                  {
-                    id: RoutePathsType.Store,
-                    icon:
-                      windowProps.activeRoute === RoutePathsType.Store ? (
-                        <Solid.Store size={24} />
-                      ) : (
-                        <Line.Store size={24} />
-                      ),
-                    label: windowLocalProps.isSideBarOpen
-                      ? t('store') ?? ''
-                      : undefined,
-                  },
-                  ...(!windowProps.account
-                    ? [
-                        {
-                          id: RoutePathsType.Signup,
-                          icon:
-                            windowProps.activeRoute ===
-                            RoutePathsType.Signup ? (
-                              <Solid.PersonAdd size={24} />
-                            ) : (
-                              <Line.PersonAdd size={24} />
-                            ),
-                          label: windowLocalProps.isSideBarOpen
-                            ? t('signup') ?? ''
-                            : undefined,
-                        },
-                        {
-                          id: RoutePathsType.Signin,
-                          icon:
-                            windowProps.activeRoute ===
-                            RoutePathsType.Signin ? (
-                              <Line.Login size={24} />
-                            ) : (
-                              <Line.Login size={24} />
-                            ),
-                          label: windowLocalProps.isSideBarOpen
-                            ? t('signin') ?? ''
-                            : undefined,
-                        },
-                      ]
-                    : []),
-                  ...(windowProps.account
-                    ? [
-                        {
-                          id: RoutePathsType.Notifications,
-                          icon: (
-                            <div
-                              className={[
-                                styles['notification-container-details'],
-                                styles[
-                                  'notification-container-details-desktop'
-                                ],
-                              ].join(' ')}
-                            >
-                              {windowProps.activeRoute !==
-                              RoutePathsType.Notifications ? (
-                                <Line.Notifications size={24} />
+              <div
+                ref={sideBarRef}
+                className={[
+                  styles['side-bar'],
+                  styles['side-bar-desktop'],
+                ].join(' ')}
+              >
+                <Tabs
+                  activeId={windowProps.activeTabsId}
+                  direction={'vertical'}
+                  type={'nav'}
+                  onChange={onSidebarTabsChanged}
+                  classNames={{
+                    tabOutline: [
+                      styles['tab-outline'],
+                      windowLocalProps.isSideBarOpen
+                        ? styles['tab-outline-open']
+                        : styles['tab-outline-close'],
+                    ].join(' '),
+                    tabSlider: styles['tab-slider'],
+                    tabIcon: styles['tab-icon'],
+                    tabButton: styles['tab-button'],
+                    hoveredTabIcon: styles['hovered-tab-icon'],
+                    hoveredTabButton: styles['hovered-tab-button'],
+                  }}
+                  tabs={[
+                    {
+                      id: RoutePathsType.Explore,
+                      icon:
+                        windowProps.activeRoute === RoutePathsType.Explore ? (
+                          <Solid.Explore size={24} />
+                        ) : (
+                          <Line.Explore size={24} />
+                        ),
+                      label: windowLocalProps.isSideBarOpen
+                        ? t('explore') ?? ''
+                        : undefined,
+                    },
+                    {
+                      id: RoutePathsType.Store,
+                      icon:
+                        windowProps.activeRoute === RoutePathsType.Store ? (
+                          <Solid.Store size={24} />
+                        ) : (
+                          <Line.Store size={24} />
+                        ),
+                      label: windowLocalProps.isSideBarOpen
+                        ? t('store') ?? ''
+                        : undefined,
+                    },
+                    ...(!windowProps.account
+                      ? [
+                          {
+                            id: RoutePathsType.Signup,
+                            icon:
+                              windowProps.activeRoute ===
+                              RoutePathsType.Signup ? (
+                                <Solid.PersonAdd size={24} />
                               ) : (
-                                <Solid.Notifications size={24} />
-                              )}
-                              {windowProps.unseenNotificationsCount > 0 && (
-                                <div
-                                  className={[
-                                    styles['notification-status-container'],
-                                    styles[
-                                      'notification-status-container-desktop'
-                                    ],
-                                  ].join(' ')}
-                                />
-                              )}
-                            </div>
-                          ),
-                          label: windowLocalProps.isSideBarOpen
-                            ? t('notifications') ?? ''
-                            : undefined,
-                        },
-                        {
-                          id: RoutePathsType.Account,
-                          icon: !windowProps.isAccountComplete ? (
-                            <Line.AccountCircle size={24} />
-                          ) : (
-                            <Avatar
-                              classNames={{
-                                container: accountProps?.profileUrl
-                                  ? [
-                                      styles['avatar-container'],
-                                      styles['avatar-container-desktop'],
-                                    ].join(' ')
-                                  : [
-                                      styles['no-avatar-container'],
-                                      styles['no-avatar-container-desktop'],
-                                    ].join(' '),
-                              }}
-                              size={'custom'}
-                              text={customer?.first_name}
-                              src={accountProps?.profileUrl}
-                              touchScreen={true}
-                            />
-                          ),
-                          label: windowLocalProps.isSideBarOpen
-                            ? windowProps.isAccountComplete
-                              ? account.username
-                              : t('profile') ?? undefined
-                            : undefined,
-                        },
-                      ]
-                    : []),
-                ]}
-              />
-              {windowLocalProps.isSideBarOpen && (
-                <div
-                  className={[
-                    styles['side-bar-bottom-content'],
-                    styles['side-bar-bottom-content-desktop'],
-                  ].join(' ')}
-                >
+                                <Line.PersonAdd size={24} />
+                              ),
+                            label: windowLocalProps.isSideBarOpen
+                              ? t('signup') ?? ''
+                              : undefined,
+                          },
+                          {
+                            id: RoutePathsType.Signin,
+                            icon:
+                              windowProps.activeRoute ===
+                              RoutePathsType.Signin ? (
+                                <Line.Login size={24} />
+                              ) : (
+                                <Line.Login size={24} />
+                              ),
+                            label: windowLocalProps.isSideBarOpen
+                              ? t('signin') ?? ''
+                              : undefined,
+                          },
+                        ]
+                      : []),
+                    ...(windowProps.account
+                      ? [
+                          {
+                            id: RoutePathsType.Notifications,
+                            icon: (
+                              <div
+                                className={[
+                                  styles['notification-container-details'],
+                                  styles[
+                                    'notification-container-details-desktop'
+                                  ],
+                                ].join(' ')}
+                              >
+                                {windowProps.activeRoute !==
+                                RoutePathsType.Notifications ? (
+                                  <Line.Notifications size={24} />
+                                ) : (
+                                  <Solid.Notifications size={24} />
+                                )}
+                                {windowProps.unseenNotificationsCount > 0 && (
+                                  <div
+                                    className={[
+                                      styles['notification-status-container'],
+                                      styles[
+                                        'notification-status-container-desktop'
+                                      ],
+                                    ].join(' ')}
+                                  />
+                                )}
+                              </div>
+                            ),
+                            label: windowLocalProps.isSideBarOpen
+                              ? t('notifications') ?? ''
+                              : undefined,
+                          },
+                          {
+                            id: RoutePathsType.Account,
+                            icon: !windowProps.isAccountComplete ? (
+                              <Line.AccountCircle size={24} />
+                            ) : (
+                              <Avatar
+                                classNames={{
+                                  container: accountProps?.profileUrl
+                                    ? [
+                                        styles['avatar-container'],
+                                        styles['avatar-container-desktop'],
+                                      ].join(' ')
+                                    : [
+                                        styles['no-avatar-container'],
+                                        styles['no-avatar-container-desktop'],
+                                      ].join(' '),
+                                }}
+                                size={'custom'}
+                                text={customer?.first_name}
+                                src={accountProps?.profileUrl}
+                                touchScreen={true}
+                              />
+                            ),
+                            label: windowLocalProps.isSideBarOpen
+                              ? windowProps.isAccountComplete
+                                ? account.username
+                                : t('profile') ?? undefined
+                              : undefined,
+                          },
+                        ]
+                      : []),
+                  ]}
+                />
+                {windowLocalProps.isSideBarOpen && (
                   <div
                     className={[
-                      styles['side-bar-link-container'],
-                      styles['side-bar-link-container-desktop'],
+                      styles['side-bar-bottom-content'],
+                      styles['side-bar-bottom-content-desktop'],
                     ].join(' ')}
                   >
-                    <Typography.Link
-                      onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
-                        navigate({
-                          pathname: RoutePathsType.TermsOfService,
-                          search: query.toString(),
-                        });
-                        e.preventDefault();
-                      }}
+                    <div
+                      className={[
+                        styles['side-bar-link-container'],
+                        styles['side-bar-link-container-desktop'],
+                      ].join(' ')}
                     >
-                      {t('termsOfService')}
-                    </Typography.Link>
-                    <Typography.Link
-                      onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
-                        navigate({
-                          pathname: RoutePathsType.PrivacyPolicy,
-                          search: query.toString(),
-                        });
-                        e.preventDefault();
-                      }}
+                      <Typography.Link
+                        onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+                          navigate({
+                            pathname: RoutePathsType.TermsOfService,
+                            search: query.toString(),
+                          });
+                          e.preventDefault();
+                        }}
+                      >
+                        {t('termsOfService')}
+                      </Typography.Link>
+                      <Typography.Link
+                        onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+                          navigate({
+                            pathname: RoutePathsType.PrivacyPolicy,
+                            search: query.toString(),
+                          });
+                          e.preventDefault();
+                        }}
+                      >
+                        {t('privacyPolicy')}
+                      </Typography.Link>
+                    </div>
+                    <div
+                      className={[
+                        styles['copyright-text'],
+                        styles['copyright-text-desktop'],
+                      ].join(' ')}
                     >
-                      {t('privacyPolicy')}
-                    </Typography.Link>
+                      Cruthology <Line.Copyright size={16} />{' '}
+                      {date?.getFullYear()}
+                    </div>
                   </div>
-                  <div
-                    className={[
-                      styles['copyright-text'],
-                      styles['copyright-text-desktop'],
-                    ].join(' ')}
-                  >
-                    Cruthology <Line.Copyright size={16} />{' '}
-                    {date?.getFullYear()}
-                  </div>
-                </div>
-              )}
-            </div>
-          </CSSTransition>
+                )}
+              </div>
+            </CSSTransition>
+          )}
           <div
             className={[
               styles['right-content'],

@@ -1,6 +1,6 @@
 import { Button, Line } from '@fuoco.appdev/web-components';
 import { useTranslation } from 'react-i18next';
-import styles from '../checkout.module.scss';
+import styles from '../../modules/checkout.module.scss';
 import { ResponsiveMobile } from '../responsive.component';
 import { StripePayButtonResponsiveProps } from '../stripe-pay-button.component';
 

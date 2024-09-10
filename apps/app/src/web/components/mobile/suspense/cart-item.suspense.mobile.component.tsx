@@ -1,5 +1,5 @@
 import Skeleton from 'react-loading-skeleton';
-import styles from '../../cart-item.module.scss';
+import styles from '../../../modules/cart-item.module.scss';
 import { ResponsiveSuspenseMobile } from '../../responsive.component';
 
 export function CartItemSuspenseMobileComponent(): JSX.Element {

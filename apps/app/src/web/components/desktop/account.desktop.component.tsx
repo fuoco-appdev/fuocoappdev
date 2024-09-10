@@ -20,10 +20,10 @@ import AccountController from '../../../controllers/account.controller';
 import { AccountResponse } from '../../../protobuf/account_pb';
 import { InterestResponse } from '../../../protobuf/interest_pb';
 import { RoutePathsType } from '../../../route-paths-type';
+import styles from '../../modules/account.module.scss';
 import { useQuery } from '../../route-paths';
 import AccountProfileFormComponent from '../account-profile-form.component';
 import { AccountResponsiveProps } from '../account.component';
-import styles from '../account.module.scss';
 import { ResponsiveDesktop } from '../responsive.component';
 
 export default function AccountDesktopComponent({

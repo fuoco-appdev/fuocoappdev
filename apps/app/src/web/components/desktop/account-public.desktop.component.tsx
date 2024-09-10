@@ -6,9 +6,9 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import AccountPublicController from '../../../controllers/account-public.controller';
 import { RoutePathsType } from '../../../route-paths-type';
+import styles from '../../modules/account-public.module.scss';
 import { useQuery } from '../../route-paths';
 import { AccountPublicResponsiveProps } from '../account-public.component';
-import styles from '../account-public.module.scss';
 import { ResponsiveDesktop } from '../responsive.component';
 
 export default function AccountPublicDesktopComponent({

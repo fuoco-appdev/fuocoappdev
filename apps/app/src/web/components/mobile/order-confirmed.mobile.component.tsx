@@ -1,7 +1,7 @@
 import { LineItem } from '@medusajs/medusa';
 import { useTranslation } from 'react-i18next';
 import OrderConfirmedController from '../../../controllers/order-confirmed.controller';
-import styles from '../order-confirmed.module.scss';
+import styles from '../../modules/order-confirmed.module.scss';
 import ShippingItemComponent from '../shipping-item.component';
 // @ts-ignore
 import { Button, Dropdown, Scroll } from '@fuoco.appdev/web-components';
@@ -33,8 +33,18 @@ export default function OrderConfirmedMobileComponent({
   return (
     <ResponsiveMobile>
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
-        <Scroll isLoadable={false} isReloadable={false} touchScreen={true} loadingHeight={0}>
-          <div className={[styles['scroll-container'], styles['scroll-container-mobile']].join(' ')}>
+        <Scroll
+          isLoadable={false}
+          isReloadable={false}
+          touchScreen={true}
+          loadingHeight={0}
+        >
+          <div
+            className={[
+              styles['scroll-container'],
+              styles['scroll-container-mobile'],
+            ].join(' ')}
+          >
             <div
               className={[
                 styles['card-container'],
@@ -78,9 +88,10 @@ export default function OrderConfirmedMobileComponent({
                   ].join(' ')}
                 >
                   <div
-                    className={[styles['date-text'], styles['date-text-mobile']].join(
-                      ' '
-                    )}
+                    className={[
+                      styles['date-text'],
+                      styles['date-text-mobile'],
+                    ].join(' ')}
                   >
                     {new Date(order.created_at ?? Date.now()).toDateString()}
                   </div>
@@ -89,7 +100,9 @@ export default function OrderConfirmedMobileComponent({
                       styles['item-count-text'],
                       styles['item-count-text-mobile'],
                     ].join(' ')}
-                  >{`${quantity} ${quantity !== 1 ? t('items') : t('item')}`}</div>
+                  >{`${quantity} ${
+                    quantity !== 1 ? t('items') : t('item')
+                  }`}</div>
                 </div>
                 <div>
                   <Button
@@ -228,9 +241,10 @@ export default function OrderConfirmedMobileComponent({
                     styles['detail-text'],
                     styles['detail-text-mobile'],
                   ].join(' ')}
-                >{`${order?.shipping_address?.address_1}${order?.shipping_address?.address_2 &&
+                >{`${order?.shipping_address?.address_1}${
+                  order?.shipping_address?.address_2 &&
                   ', ' + order?.shipping_address.address_2
-                  }`}</div>
+                }`}</div>
                 <div
                   className={[
                     styles['detail-text'],
@@ -260,17 +274,18 @@ export default function OrderConfirmedMobileComponent({
                 >
                   {t('deliveryMethod')}
                 </div>
-                {order?.shipping_methods && order?.shipping_methods?.length > 0 && (
-                  <div
-                    className={[
-                      styles['detail-text'],
-                      styles['detail-text-mobile'],
-                    ].join(' ')}
-                    key={order?.shipping_methods[0].id}
-                  >
-                    {order?.shipping_methods[0].shipping_option.name}
-                  </div>
-                )}
+                {order?.shipping_methods &&
+                  order?.shipping_methods?.length > 0 && (
+                    <div
+                      className={[
+                        styles['detail-text'],
+                        styles['detail-text-mobile'],
+                      ].join(' ')}
+                      key={order?.shipping_methods[0].id}
+                    >
+                      {order?.shipping_methods[0].shipping_option.name}
+                    </div>
+                  )}
               </div>
             </div>
             <div
@@ -384,7 +399,8 @@ export default function OrderConfirmedMobileComponent({
                     >
                       {storeProps.selectedRegion &&
                         formatAmount({
-                          amount: orderConfirmedProps.order?.shipping_total ?? 0,
+                          amount:
+                            orderConfirmedProps.order?.shipping_total ?? 0,
                           region: storeProps.selectedRegion,
                           includeTaxes: false,
                         })}
@@ -452,68 +468,72 @@ export default function OrderConfirmedMobileComponent({
           </div>
         </Scroll>
       </div>
-      {createPortal(<>
-        <Dropdown
-          classNames={{
-            touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
-          }}
-          open={openRefund}
-          touchScreen={true}
-          onClose={() => setOpenRefund(false)}
-        >
-          <div
-            className={[
-              styles['refund-items-container'],
-              styles['refund-items-container-mobile'],
-            ].join(' ')}
+      {createPortal(
+        <>
+          <Dropdown
+            classNames={{
+              touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
+            }}
+            open={openRefund}
+            touchScreen={true}
+            onClose={() => setOpenRefund(false)}
           >
-            {order?.items?.map((item: LineItem) => (
-              <RefundItemComponent
-                item={item}
-                refundItem={orderConfirmedProps.refundItems[item.id]}
-                returnReasonOptions={returnReasonOptions}
-                onChanged={(value) =>
-                  OrderConfirmedController.updateRefundItem(item.id, value)
-                }
-              />
-            ))}
-          </div>
-          <div
-            className={[
-              styles['request-refund-button-container'],
-              styles['request-refund-button-container-mobile'],
-            ].join(' ')}
-          >
-            <Button
-              block={true}
-              size={'large'}
-              classNames={{
-                button: styles['refund-button'],
-              }}
-              rippleProps={{
-                color: 'rgba(233, 33, 66, .35)',
-              }}
-              disabled={
-                Object.values(
-                  orderConfirmedProps.refundItems ?? ([] as RefundItem[])
-                ).find((value: RefundItem) => value.quantity > 0) === undefined
-              }
-              onClick={async () => {
-                await OrderConfirmedController.createReturnAsync();
-                setOpenRefund(false);
-                WindowController.addToast({
-                  key: `refund-request-success-${Math.random()}`,
-                  message: t('requestRefund') ?? '',
-                  description: t('requestRefundSuccessMessage') ?? '',
-                  type: 'success',
-                });
-              }}
+            <div
+              className={[
+                styles['refund-items-container'],
+                styles['refund-items-container-mobile'],
+              ].join(' ')}
             >
-              {t('requestRefund')}
-            </Button>
-          </div>
-        </Dropdown>
-      </>, document.body)}
+              {order?.items?.map((item: LineItem) => (
+                <RefundItemComponent
+                  item={item}
+                  refundItem={orderConfirmedProps.refundItems[item.id]}
+                  returnReasonOptions={returnReasonOptions}
+                  onChanged={(value) =>
+                    OrderConfirmedController.updateRefundItem(item.id, value)
+                  }
+                />
+              ))}
+            </div>
+            <div
+              className={[
+                styles['request-refund-button-container'],
+                styles['request-refund-button-container-mobile'],
+              ].join(' ')}
+            >
+              <Button
+                block={true}
+                size={'large'}
+                classNames={{
+                  button: styles['refund-button'],
+                }}
+                rippleProps={{
+                  color: 'rgba(233, 33, 66, .35)',
+                }}
+                disabled={
+                  Object.values(
+                    orderConfirmedProps.refundItems ?? ([] as RefundItem[])
+                  ).find((value: RefundItem) => value.quantity > 0) ===
+                  undefined
+                }
+                onClick={async () => {
+                  await OrderConfirmedController.createReturnAsync();
+                  setOpenRefund(false);
+                  WindowController.addToast({
+                    key: `refund-request-success-${Math.random()}`,
+                    message: t('requestRefund') ?? '',
+                    description: t('requestRefundSuccessMessage') ?? '',
+                    type: 'success',
+                  });
+                }}
+              >
+                {t('requestRefund')}
+              </Button>
+            </div>
+          </Dropdown>
+        </>,
+        document.body
+      )}
     </ResponsiveMobile>
   );
 }

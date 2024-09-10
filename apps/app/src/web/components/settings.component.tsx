@@ -48,7 +48,7 @@ export default function SettingsComponent(): JSX.Element {
           property="og:image"
           content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
         />
-        <meta property="og:title" content={'Home | Cruthology'} />
+        <meta property="og:title" content={'Home | fuoco.appdev'} />
         <meta
           property="og:description"
           content={

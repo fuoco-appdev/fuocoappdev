@@ -1,4 +1,4 @@
-import styles from '../../account-public-followers.module.scss';
+import styles from '../../../modules/account-public-followers.module.scss';
 import { ResponsiveSuspenseMobile } from '../../responsive.component';
 import { AccountFollowItemSuspenseMobileComponent } from './account-follow-item.suspense.mobile.component';
 

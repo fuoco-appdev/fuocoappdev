@@ -1,6 +1,6 @@
 import Skeleton from 'react-loading-skeleton';
+import styles from '../../../modules/stock-location-cart-item.module.scss';
 import { ResponsiveSuspenseDesktop } from '../../responsive.component';
-import styles from '../../stock-location-cart-item.module.scss';
 
 export function StockLocationCartItemSuspenseMobileComponent(): JSX.Element {
   return (

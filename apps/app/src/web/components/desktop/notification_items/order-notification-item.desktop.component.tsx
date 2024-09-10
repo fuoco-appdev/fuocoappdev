@@ -3,8 +3,8 @@ import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { RoutePathsType } from '../../../../route-paths-type';
+import styles from '../../../modules/notification-item.module.scss';
 import { OrderNotificationItemProps } from '../../notification-item.component';
-import styles from '../../notification-item.module.scss';
 import { ResponsiveDesktop } from '../../responsive.component';
 
 export default function OrderNotificationItemDesktopComponent({

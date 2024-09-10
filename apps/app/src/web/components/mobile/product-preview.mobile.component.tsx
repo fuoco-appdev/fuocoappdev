@@ -1,8 +1,7 @@
 import { Button, Card, Line } from '@fuoco.appdev/web-components';
 import * as React from 'react';
 import { animated, useSpring } from 'react-spring';
-import styles from '../product-preview.module.scss';
-;
+import styles from '../../modules/product-preview.module.scss';
 // @ts-ignore
 import { easings } from '@react-spring/web';
 import Skeleton from 'react-loading-skeleton';
@@ -135,9 +134,9 @@ export default function ProductPreviewMobileComponent({
             style={
               expanded
                 ? {
-                  height: '100%',
-                  width: '100%',
-                }
+                    height: '100%',
+                    width: '100%',
+                  }
                 : {}
             }
           >
@@ -149,9 +148,9 @@ export default function ProductPreviewMobileComponent({
               style={
                 expanded
                   ? {
-                    height: '100%',
-                    width: '100%',
-                  }
+                      height: '100%',
+                      width: '100%',
+                    }
                   : {}
               }
             >
@@ -163,9 +162,9 @@ export default function ProductPreviewMobileComponent({
                 style={
                   expanded
                     ? {
-                      height: '100%',
-                      width: '100%',
-                    }
+                        height: '100%',
+                        width: '100%',
+                      }
                     : {}
                 }
               >
@@ -259,7 +258,8 @@ export default function ProductPreviewMobileComponent({
                 {description &&
                   description?.length > 0 &&
                   formatDescription(
-                    `${description?.slice(0, 130)}${description.length > 130 ? '...' : ''
+                    `${description?.slice(0, 130)}${
+                      description.length > 130 ? '...' : ''
                     }`
                   )}
               </div>
@@ -272,51 +272,53 @@ export default function ProductPreviewMobileComponent({
                 styles['right-content-mobile'],
               ].join(' ')}
             >
-              {showPricingDetails && (<div
-                className={[
-                  styles['price-container'],
-                  styles['price-container-mobile'],
-                ].join(' ')}
-              >
+              {showPricingDetails && (
                 <div
                   className={[
-                    styles['label-container'],
-                    styles['label-container-mobile'],
+                    styles['price-container'],
+                    styles['price-container-mobile'],
                   ].join(' ')}
                 >
-                  {originalPrice !== calculatedPrice && (
-                    <div
+                  <div
+                    className={[
+                      styles['label-container'],
+                      styles['label-container-mobile'],
+                    ].join(' ')}
+                  >
+                    {originalPrice !== calculatedPrice && (
+                      <div
+                        className={[
+                          styles['calculated-price'],
+                          styles['calculated-price-mobile'],
+                        ].join(' ')}
+                      >
+                        {calculatedPrice}
+                      </div>
+                    )}
+                  </div>
+                  {originalPrice.length > 0 ? (
+                    <span
                       className={[
-                        styles['calculated-price'],
-                        styles['calculated-price-mobile'],
+                        styles['product-price'],
+                        styles['product-price-mobile'],
+                        originalPrice !== calculatedPrice &&
+                          styles['product-price-crossed'],
                       ].join(' ')}
                     >
-                      {calculatedPrice}
+                      {originalPrice}
+                    </span>
+                  ) : (
+                    <div
+                      className={[
+                        styles['product-limit-icon'],
+                        styles['product-limit-icon-mobile'],
+                      ].join(' ')}
+                    >
+                      <Line.ProductionQuantityLimits size={20} />
                     </div>
                   )}
                 </div>
-                {originalPrice.length > 0 ? (
-                  <span
-                    className={[
-                      styles['product-price'],
-                      styles['product-price-mobile'],
-                      originalPrice !== calculatedPrice &&
-                      styles['product-price-crossed'],
-                    ].join(' ')}
-                  >
-                    {originalPrice}
-                  </span>
-                ) : (
-                  <div
-                    className={[
-                      styles['product-limit-icon'],
-                      styles['product-limit-icon-mobile'],
-                    ].join(' ')}
-                  >
-                    <Line.ProductionQuantityLimits size={20} />
-                  </div>
-                )}
-              </div>)}
+              )}
               <div
                 className={[
                   styles['status-content-container'],
@@ -386,28 +388,31 @@ export default function ProductPreviewMobileComponent({
                   )}
                 </div>
               </div>
-              {showPricingDetails && purchasable && pricedProduct && selectedVariantId && (
-                <Button
-                  classNames={{ button: styles['floating-button'] }}
-                  rippleProps={{
-                    color: 'rgba(133, 38, 122, .35)',
-                  }}
-                  rounded={true}
-                  onClick={onAddToCart}
-                  icon={<Line.AddShoppingCart size={24} />}
-                  loadingComponent={
-                    <img
-                      src={'../assets/svg/ring-resize-dark.svg'}
-                      style={{ height: 24 }}
-                      className={[
-                        styles['loading-ring'],
-                        styles['loading-ring-mobile'],
-                      ].join(' ')}
-                    />
-                  }
-                  loading={isLoading}
-                />
-              )}
+              {showPricingDetails &&
+                purchasable &&
+                pricedProduct &&
+                selectedVariantId && (
+                  <Button
+                    classNames={{ button: styles['floating-button'] }}
+                    rippleProps={{
+                      color: 'rgba(133, 38, 122, .35)',
+                    }}
+                    rounded={true}
+                    onClick={onAddToCart}
+                    icon={<Line.AddShoppingCart size={24} />}
+                    loadingComponent={
+                      <img
+                        src={'../assets/svg/ring-resize-dark.svg'}
+                        style={{ height: 24 }}
+                        className={[
+                          styles['loading-ring'],
+                          styles['loading-ring-mobile'],
+                        ].join(' ')}
+                      />
+                    }
+                    loading={isLoading}
+                  />
+                )}
               {showPricingDetails && purchasable && !pricedProduct && (
                 <Skeleton width={46} height={46} borderRadius={46} />
               )}

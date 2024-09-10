@@ -6,9 +6,9 @@ import { useNavigate } from 'react-router-dom';
 import { animated, config, useTransition } from 'react-spring';
 import WindowController from '../../../controllers/window.controller';
 import { RoutePathsType } from '../../../route-paths-type';
+import styles from '../../modules/forgot-password.module.scss';
 import { useQuery } from '../../route-paths';
 import { ForgotPasswordResponsiveProps } from '../forgot-password.component';
-import styles from '../forgot-password.module.scss';
 import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 export default function ForgotPasswordMobileComponent({
   forgotPasswordProps,
@@ -61,8 +61,6 @@ export default function ForgotPasswordMobileComponent({
                       rippleProps={{
                         color: 'rgba(233, 33, 66, .35)',
                       }}
-                      defaultIconColor={'#2A2A5F'}
-                      litIconColor={'#2A2A5F'}
                       strings={{
                         emailAddress: t('emailAddress') ?? '',
                         yourEmailAddress: t('yourEmailAddress') ?? '',

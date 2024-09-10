@@ -1,5 +1,5 @@
 import Skeleton from 'react-loading-skeleton';
-import styles from '../../account-add-friends.module.scss';
+import styles from '../../../modules/account-add-friends.module.scss';
 import { ResponsiveSuspenseDesktop } from '../../responsive.component';
 import { AccountFollowItemSuspenseDesktopComponent } from './account-follow-item.suspense.desktop.component';
 

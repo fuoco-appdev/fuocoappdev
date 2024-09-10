@@ -12,7 +12,7 @@ import {
   ProviderType,
   ShippingType,
 } from '../../models/checkout.model';
-import styles from './checkout.module.scss';
+import styles from '../modules/checkout.module.scss';
 // @ts-ignore
 import {
   StripeCardCvcElementOptions,
@@ -393,7 +393,7 @@ export default function CheckoutComponent(): JSX.Element {
           property="og:image"
           content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
         />
-        <meta property="og:title" content={'Home | Cruthology'} />
+        <meta property="og:title" content={'Home | fuoco.appdev'} />
         <meta
           property="og:description"
           content={

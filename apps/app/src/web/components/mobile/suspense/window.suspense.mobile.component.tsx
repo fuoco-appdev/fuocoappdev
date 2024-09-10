@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
+import styles from '../../../modules/window.module.scss';
 import { ResponsiveSuspenseMobile } from '../../responsive.component';
-import styles from '../../window.module.scss';
 
 export function WindowSuspenseMobileComponent(): JSX.Element {
   return (
@@ -14,9 +14,7 @@ export function WindowSuspenseMobileComponent(): JSX.Element {
           </div>
         </div>
         <div className={[styles['bottom-bar-container-mobile']].join(' ')}>
-          <div className={[styles['bottom-bar-mobile']].join(' ')}>
-
-          </div>
+          <div className={[styles['bottom-bar-mobile']].join(' ')}></div>
         </div>
       </div>
     </ResponsiveSuspenseMobile>

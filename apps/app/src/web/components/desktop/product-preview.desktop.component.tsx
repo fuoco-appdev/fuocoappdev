@@ -1,6 +1,6 @@
 import { Button, Card, Line } from '@fuoco.appdev/web-components';
 import * as React from 'react';
-import styles from '../product-preview.module.scss';
+import styles from '../../modules/product-preview.module.scss';
 // @ts-ignore
 import Skeleton from 'react-loading-skeleton';
 import { MedusaProductTypeNames } from '../../../types/medusa.type';
@@ -155,27 +155,31 @@ export default function ProductPreviewDesktopComponent({
                 </div>
               )}
             </div>
-            {showPricingDetails && <>{originalPrice.length > 0 ? (
-              <span
-                className={[
-                  styles['product-price'],
-                  styles['product-price-desktop'],
-                  originalPrice !== calculatedPrice &&
-                  styles['product-price-crossed'],
-                ].join(' ')}
-              >
-                {originalPrice}
-              </span>
-            ) : (
-              <div
-                className={[
-                  styles['product-limit-icon'],
-                  styles['product-limit-icon-desktop'],
-                ].join(' ')}
-              >
-                <Line.ProductionQuantityLimits size={20} />
-              </div>
-            )}</>}
+            {showPricingDetails && (
+              <>
+                {originalPrice.length > 0 ? (
+                  <span
+                    className={[
+                      styles['product-price'],
+                      styles['product-price-desktop'],
+                      originalPrice !== calculatedPrice &&
+                        styles['product-price-crossed'],
+                    ].join(' ')}
+                  >
+                    {originalPrice}
+                  </span>
+                ) : (
+                  <div
+                    className={[
+                      styles['product-limit-icon'],
+                      styles['product-limit-icon-desktop'],
+                    ].join(' ')}
+                  >
+                    <Line.ProductionQuantityLimits size={20} />
+                  </div>
+                )}
+              </>
+            )}
           </div>
           <div
             className={[
@@ -192,7 +196,8 @@ export default function ProductPreviewDesktopComponent({
               {description &&
                 description?.length > 0 &&
                 formatDescription(
-                  `${description?.slice(0, 205)}${description.length > 205 ? '...' : ''
+                  `${description?.slice(0, 205)}${
+                    description.length > 205 ? '...' : ''
                   }`
                 )}
             </div>
@@ -270,28 +275,31 @@ export default function ProductPreviewDesktopComponent({
                   )}
                 </div>
               </div>
-              {showPricingDetails && purchasable && pricedProduct && selectedVariantId && (
-                <Button
-                  classNames={{ button: styles['floating-button'] }}
-                  rippleProps={{
-                    color: 'rgba(133, 38, 122, .35)',
-                  }}
-                  rounded={true}
-                  onClick={onAddToCart}
-                  icon={<Line.AddShoppingCart size={24} />}
-                  loadingComponent={
-                    <img
-                      src={'../assets/svg/ring-resize-dark.svg'}
-                      style={{ height: 24 }}
-                      className={[
-                        styles['loading-ring'],
-                        styles['loading-ring-desktop'],
-                      ].join(' ')}
-                    />
-                  }
-                  loading={isLoading}
-                />
-              )}
+              {showPricingDetails &&
+                purchasable &&
+                pricedProduct &&
+                selectedVariantId && (
+                  <Button
+                    classNames={{ button: styles['floating-button'] }}
+                    rippleProps={{
+                      color: 'rgba(133, 38, 122, .35)',
+                    }}
+                    rounded={true}
+                    onClick={onAddToCart}
+                    icon={<Line.AddShoppingCart size={24} />}
+                    loadingComponent={
+                      <img
+                        src={'../assets/svg/ring-resize-dark.svg'}
+                        style={{ height: 24 }}
+                        className={[
+                          styles['loading-ring'],
+                          styles['loading-ring-desktop'],
+                        ].join(' ')}
+                      />
+                    }
+                    loading={isLoading}
+                  />
+                )}
               {showPricingDetails && purchasable && !pricedProduct && (
                 <Skeleton width={46} height={46} borderRadius={46} />
               )}

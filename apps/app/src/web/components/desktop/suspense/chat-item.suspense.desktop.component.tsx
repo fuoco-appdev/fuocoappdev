@@ -1,5 +1,5 @@
 import Skeleton from 'react-loading-skeleton';
-import styles from '../../chat-item.module.scss';
+import styles from '../../../modules/chat-item.module.scss';
 import { ResponsiveSuspenseDesktop } from '../../responsive.component';
 
 export function ChatItemSuspenseDesktopComponent(): JSX.Element {

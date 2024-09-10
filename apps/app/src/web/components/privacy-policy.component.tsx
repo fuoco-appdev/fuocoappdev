@@ -62,9 +62,9 @@ export default function PrivacyPolicyComponent(): JSX.Element {
   return (
     <>
       <Helmet>
-        <title>Privacy Policy | Cruthology</title>
+        <title>Privacy Policy | fuoco.appdev</title>
         <link rel="canonical" href={window.location.href} />
-        <meta name="title" content={'Privacy Policy | Cruthology'} />
+        <meta name="title" content={'Privacy Policy | fuoco.appdev'} />
         <meta
           name="description"
           content={
@@ -75,7 +75,7 @@ export default function PrivacyPolicyComponent(): JSX.Element {
           property="og:image"
           content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
         />
-        <meta property="og:title" content={'Privacy Policy | Cruthology'} />
+        <meta property="og:title" content={'Privacy Policy | fuoco.appdev'} />
         <meta
           property="og:description"
           content={

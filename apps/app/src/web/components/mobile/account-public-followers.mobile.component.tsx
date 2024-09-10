@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import AccountController from '../../../controllers/account.controller';
+import styles from '../../modules/account-public-followers.module.scss';
 import AccountFollowItemComponent from '../account-follow-item.component';
 import { AccountPublicFollowersResponsiveProps } from '../account-public-followers.component';
-import styles from '../account-public-followers.module.scss';
 import { ResponsiveMobile } from '../responsive.component';
 
 export default function AccountPublicFollowersMobileComponent({
@@ -35,7 +35,9 @@ export default function AccountPublicFollowersMobileComponent({
                 follower={accountFollower}
                 isRequest={false}
                 onClick={() => onItemClick(value.id ?? '')}
-                onFollow={() => AccountController.requestFollowAsync(value.id ?? '')}
+                onFollow={() =>
+                  AccountController.requestFollowAsync(value.id ?? '')
+                }
                 onRequested={() =>
                   AccountController.requestUnfollowAsync(value.id ?? '')
                 }

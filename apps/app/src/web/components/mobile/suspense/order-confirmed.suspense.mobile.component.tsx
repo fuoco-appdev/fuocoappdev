@@ -1,5 +1,5 @@
 import Skeleton from 'react-loading-skeleton';
-import styles from '../../order-confirmed.module.scss';
+import styles from '../../../modules/order-confirmed.module.scss';
 import { ResponsiveSuspenseMobile } from '../../responsive.component';
 import { ShippingItemSuspenseMobileComponent } from './shipping-item.suspense.mobile.component';
 
@@ -7,7 +7,12 @@ export function OrderConfirmedSuspenseMobileComponent(): JSX.Element {
   return (
     <ResponsiveSuspenseMobile>
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
-        <div className={[styles['scroll-container'], styles['scroll-container-mobile']].join(' ')}>
+        <div
+          className={[
+            styles['scroll-container'],
+            styles['scroll-container-mobile'],
+          ].join(' ')}
+        >
           <div
             className={[
               styles['card-container'],
@@ -51,9 +56,10 @@ export function OrderConfirmedSuspenseMobileComponent(): JSX.Element {
                 ].join(' ')}
               >
                 <Skeleton
-                  className={[styles['date-text'], styles['date-text-mobile']].join(
-                    ' '
-                  )}
+                  className={[
+                    styles['date-text'],
+                    styles['date-text-mobile'],
+                  ].join(' ')}
                   width={180}
                   borderRadius={20}
                 />

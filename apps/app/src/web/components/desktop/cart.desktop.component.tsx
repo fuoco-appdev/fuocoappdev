@@ -11,9 +11,9 @@ import { useNavigate } from 'react-router-dom';
 import CartController from '../../../controllers/cart.controller';
 import ExploreController from '../../../controllers/explore.controller';
 import { RoutePathsType } from '../../../route-paths-type';
+import styles from '../../modules/cart.module.scss';
 import { useQuery } from '../../route-paths';
 import CartItemComponent from '../cart-item.component';
-import styles from '../cart.module.scss';
 // @ts-ignore
 import { StockLocation } from '@medusajs/stock-location/dist/models';
 import { formatAmount } from 'medusa-react';

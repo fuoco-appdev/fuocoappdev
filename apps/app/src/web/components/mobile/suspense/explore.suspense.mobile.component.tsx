@@ -1,5 +1,5 @@
 import Skeleton from 'react-loading-skeleton';
-import styles from '../../explore.module.scss';
+import styles from '../../../modules/explore.module.scss';
 import { ResponsiveSuspenseMobile } from '../../responsive.component';
 
 export function ExploreSuspenseMobileComponent(): JSX.Element {
@@ -7,10 +7,9 @@ export function ExploreSuspenseMobileComponent(): JSX.Element {
     <ResponsiveSuspenseMobile>
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
         <div
-          className={[
-            styles['search-root'],
-            styles['search-root-mobile'],
-          ].join(' ')}
+          className={[styles['search-root'], styles['search-root-mobile']].join(
+            ' '
+          )}
         >
           <div
             className={[

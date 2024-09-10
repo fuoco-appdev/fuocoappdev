@@ -1,6 +1,6 @@
 import Skeleton from 'react-loading-skeleton';
 import { Outlet } from 'react-router-dom';
-import styles from '../../account-public.module.scss';
+import styles from '../../../modules/account-public.module.scss';
 import { ResponsiveSuspenseMobile } from '../../responsive.component';
 
 export function AccountPublicSuspenseMobileComponent(): JSX.Element {

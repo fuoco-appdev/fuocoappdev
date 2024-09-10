@@ -6,8 +6,8 @@ import {
   Listbox,
 } from '@fuoco.appdev/web-components';
 import { useTranslation } from 'react-i18next';
+import styles from '../../modules/address-form.module.scss';
 import { AddressFormResponsiveProps } from '../address-form.component';
-import styles from '../address-form.module.scss';
 import { ResponsiveDesktop } from '../responsive.component';
 
 export default function AddressFormDesktopComponent({
@@ -190,7 +190,6 @@ export default function AddressFormDesktopComponent({
               inputContainer: styles['input-container'],
               countryName: styles['option-name'],
             }}
-            iconColor={'#2A2A5F'}
             label={t('phoneNumber') ?? ''}
             error={errors?.phoneNumber}
             country={'ca'}

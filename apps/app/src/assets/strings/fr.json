@@ -1,4 +1,8 @@
 {
+  "github": "Github",
+  "x": "X",
+  "linkedin": "Linked in",
+  "google": "Google",
   "addVariant": "Add variant",
   "locale": "Français",
   "signin": "Se connecter",

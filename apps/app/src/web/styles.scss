@@ -1,6 +1,7 @@
 @import '@fuoco.appdev/web-components/dist/esm/styles.scss';
 @import 'slick-carousel/slick/slick.css';
 @import 'slick-carousel/slick/slick-theme.css';
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
 
 :root {
   // Mobile
@@ -87,24 +88,22 @@ html, body {
    overflow-x: hidden;
 }
 
-
 body {
-  --gray-100: #F9F9F9;
-  --brand-100: #FCF5E3;
-  --brand-200: #F7C0BB;
-  --brand-300: #F38B93;
-  --brand-400: #EE566A;
-  --brand-500: #E92142;
-  --brand-600: #B7245E;
-  --brand-700: #85267A;
-  --brand-800: #58286D;
-  --brand-900: #2A2A5F;
+  --brand-100: #F1FAEE;
+  --brand-200: #ADB5BD;
+  --brand-300: #FF6B6B;
+  --brand-400: #4CAF50;
+  --brand-500: #457B9D;
+  --brand-600: #1D3557;
+  --brand-700: #343A40;
+  --brand-800: #2C2C2C;
+  --brand-900: #212529;
 
-  --rounded-sm:2px;
-  --rounded-base: 3px;
-  --rounded-md: 5px;
-  --rounded-lg: 8px;
-  --rounded-xl: 13px;
+  --rounded-sm:3px;
+  --rounded-base: 5px;
+  --rounded-md: 8px;
+  --rounded-lg: 13px;
+  --rounded-xl: 21px;
   --rounded-full: 9999px;
 
   --font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
@@ -113,15 +112,17 @@ body {
   --font-weight-medium: 500;
   --font-weight-bold: 600;
 
-  --font-size-xs: 0.75rem /* 12px */;
-  --font-size-sm: 0.875rem /* 14px */;
-  --font-size-base: 1rem;
-  --font-size-lg: 1.125 /* 24px */;
+  --font-size-xs: 8px;
+  --font-size-sm: 13px;
+  --font-size-base: 21px;
+  --font-size-lg: 34px;
+  --font-size-xl: 55px;
 
-  --font-line-height-xs: 1rem /* 16px */;
-  --font-line-height-sm: 1.25rem /* 20px */;
-  --font-line-height-base: 1.5rem;
-  --font-line-height-lg: 1.75rem /* 28px */;
+  --font-line-height-xs: 13px;
+  --font-line-height-sm: 21px;
+  --font-line-height-base: 34px;
+  --font-line-height-lg: 55px;
+  --font-line-height-xl: 90px;
 
   --shadow-1: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   --shadow-2: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);

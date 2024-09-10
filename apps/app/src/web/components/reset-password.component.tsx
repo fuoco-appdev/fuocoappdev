@@ -81,9 +81,9 @@ export default function ResetPasswordComponent(): JSX.Element {
   return (
     <>
       <Helmet>
-        <title>Reset Password | Cruthology</title>
+        <title>Reset Password | fuoco.appdev</title>
         <link rel="canonical" href={window.location.href} />
-        <meta name="title" content={'Reset Password | Cruthology'} />
+        <meta name="title" content={'Reset Password | fuoco.appdev'} />
         <meta
           name="description"
           content={
@@ -94,7 +94,7 @@ export default function ResetPasswordComponent(): JSX.Element {
           property="og:image"
           content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
         />
-        <meta property="og:title" content={'Reset Password | Cruthology'} />
+        <meta property="og:title" content={'Reset Password | fuoco.appdev'} />
         <meta
           property="og:description"
           content={

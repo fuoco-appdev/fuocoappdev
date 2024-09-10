@@ -7,7 +7,7 @@ import {
   isTablet,
 } from 'react-device-detect';
 import { useMediaQuery } from 'react-responsive';
-import styles from './responsive.module.scss';
+import styles from '../modules/responsive.module.scss';
 
 export function useIsDesktop(): boolean {
   const query = useMediaQuery({

@@ -1,4 +1,4 @@
-import styles from '../../cart.module.scss';
+import styles from '../../../modules/cart.module.scss';
 import { ResponsiveSuspenseMobile } from '../../responsive.component';
 import { StockLocationCartItemSuspenseMobileComponent } from './stock-location-cart-item.suspense.mobile.component';
 

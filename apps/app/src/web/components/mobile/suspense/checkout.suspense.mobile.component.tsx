@@ -1,5 +1,5 @@
 import Skeleton from 'react-loading-skeleton';
-import styles from '../../checkout.module.scss';
+import styles from '../../../modules/checkout.module.scss';
 import { ResponsiveSuspenseMobile } from '../../responsive.component';
 import { AddressFormSuspenseMobileComponent } from './address-form.suspense.mobile.component';
 

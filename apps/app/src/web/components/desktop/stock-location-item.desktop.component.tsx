@@ -1,6 +1,6 @@
 import { Line } from '@fuoco.appdev/web-components';
 import { useTranslation } from 'react-i18next';
-import styles from '../stock-location-item.module.scss';
+import styles from '../../modules/stock-location-item.module.scss';
 // @ts-ignore
 import Ripples from 'react-ripples';
 import { InventoryLocationType } from '../../../models/explore.model';
@@ -113,7 +113,7 @@ export default function StockLocationItemDesktopComponent({
                         'type'
                       ) &&
                       (stockLocation?.metadata?.['type'] as string) ===
-                      InventoryLocationType.Cellar && (
+                        InventoryLocationType.Cellar && (
                         <img
                           className={[
                             styles['no-thumbnail-image'],
@@ -127,7 +127,7 @@ export default function StockLocationItemDesktopComponent({
                         'type'
                       ) &&
                       (stockLocation?.metadata?.['type'] as string) ===
-                      InventoryLocationType.Restaurant && (
+                        InventoryLocationType.Restaurant && (
                         <img
                           className={[
                             styles['no-thumbnail-image'],

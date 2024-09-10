@@ -20,12 +20,12 @@ import { ProductTabs } from '../../../models/store.model';
 import { ProductLikesMetadataResponse } from '../../../protobuf/product-like_pb';
 import { RoutePathsType } from '../../../route-paths-type';
 import { MedusaProductTypeNames } from '../../../types/medusa.type';
+import styles from '../../modules/store.module.scss';
 import { useQuery } from '../../route-paths';
 import CartVariantItemComponent from '../cart-variant-item.component';
 import ProductPreviewComponent from '../product-preview.component';
 import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 import { StoreResponsiveProps } from '../store.component';
-import styles from '../store.module.scss';
 
 export default function StoreMobileComponent({
   storeProps,

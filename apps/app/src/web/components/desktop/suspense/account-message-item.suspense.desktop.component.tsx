@@ -1,5 +1,5 @@
 import Skeleton from 'react-loading-skeleton';
-import styles from '../../account-message-item.module.scss';
+import styles from '../../../modules/account-message-item.module.scss';
 import { ResponsiveSuspenseDesktop } from '../../responsive.component';
 
 export function AccountMessageItemSuspenseDesktopComponent(): JSX.Element {

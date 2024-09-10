@@ -1,7 +1,7 @@
 import { Button, Checkbox, Line } from '@fuoco.appdev/web-components';
 import { useTranslation } from 'react-i18next';
+import styles from '../../modules/permissions.module.scss';
 import { PermissionsResponsiveProps } from '../permissions.component';
-import styles from '../permissions.module.scss';
 import { ResponsiveDesktop } from '../responsive.component';
 
 export default function PermissionsDesktopComponent({

@@ -2,10 +2,10 @@ import { Line, Scroll, Tabs } from '@fuoco.appdev/web-components';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { RoutePathsType } from '../../../route-paths-type';
+import styles from '../../modules/settings.module.scss';
 import { useQuery } from '../../route-paths';
 import { ResponsiveDesktop } from '../responsive.component';
 import { SettingsResponsiveProps } from '../settings.component';
-import styles from '../settings.module.scss';
 
 export default function SettingsDesktopComponent({
   windowProps,

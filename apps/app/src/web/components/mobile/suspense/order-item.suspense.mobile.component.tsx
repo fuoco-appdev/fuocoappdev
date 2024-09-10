@@ -1,5 +1,5 @@
 import Skeleton from 'react-loading-skeleton';
-import styles from '../../order-item.module.scss';
+import styles from '../../../modules/order-item.module.scss';
 import { ResponsiveSuspenseMobile } from '../../responsive.component';
 
 export function OrderItemSuspenseMobileComponent(): JSX.Element {

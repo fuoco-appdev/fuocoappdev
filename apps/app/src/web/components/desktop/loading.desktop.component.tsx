@@ -1,4 +1,4 @@
-import styles from '../loading.module.scss';
+import styles from '../../modules/loading.module.scss';
 
 export default function LoadingDesktopComponent(): JSX.Element {
   return (

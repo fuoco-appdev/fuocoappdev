@@ -1,6 +1,6 @@
 import Skeleton from 'react-loading-skeleton';
+import styles from '../../../modules/store.module.scss';
 import { ResponsiveSuspenseDesktop } from '../../responsive.component';
-import styles from '../../store.module.scss';
 import { ProductPreviewSuspenseDesktopComponent } from './product-preview.suspense.desktop.component';
 
 export function StoreSuspenseDesktopComponent(): JSX.Element {

@@ -1,4 +1,4 @@
-import styles from '../../account-likes.module.scss';
+import styles from '../../../modules/account-likes.module.scss';
 import { ResponsiveSuspenseDesktop } from '../../responsive.component';
 import { ProductPreviewSuspenseDesktopComponent } from './product-preview.suspense.desktop.component';
 

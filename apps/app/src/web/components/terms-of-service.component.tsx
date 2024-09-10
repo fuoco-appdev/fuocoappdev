@@ -61,9 +61,9 @@ export default function TermsOfServiceComponent(): JSX.Element {
   return (
     <>
       <Helmet>
-        <title>Terms of Service | Cruthology</title>
+        <title>Terms of Service | fuoco.appdev</title>
         <link rel="canonical" href={window.location.href} />
-        <meta name="title" content={'Terms of Service | Cruthology'} />
+        <meta name="title" content={'Terms of Service | fuoco.appdev'} />
         <meta
           name="description"
           content={
@@ -74,7 +74,7 @@ export default function TermsOfServiceComponent(): JSX.Element {
           property="og:image"
           content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
         />
-        <meta property="og:title" content={'Terms of Service | Cruthology'} />
+        <meta property="og:title" content={'Terms of Service | fuoco.appdev'} />
         <meta
           property="og:description"
           content={

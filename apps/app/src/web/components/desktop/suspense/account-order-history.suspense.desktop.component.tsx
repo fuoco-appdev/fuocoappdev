@@ -1,4 +1,4 @@
-import styles from '../../account-order-history.module.scss';
+import styles from '../../../modules/account-order-history.module.scss';
 import { ResponsiveSuspenseDesktop } from '../../responsive.component';
 import { OrderItemSuspenseDesktopComponent } from './order-item.suspense.desktop.component';
 

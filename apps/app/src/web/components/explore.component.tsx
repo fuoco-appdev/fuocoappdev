@@ -152,9 +152,9 @@ export default function ExploreComponent(): JSX.Element {
   return (
     <>
       <Helmet>
-        <title>Explore | Cruthology</title>
+        <title>Explore | fuoco.appdev</title>
         <link rel="canonical" href={window.location.href} />
-        <meta name="title" content={'Explore | Cruthology'} />
+        <meta name="title" content={'Explore | fuoco.appdev'} />
         <meta
           name="description"
           content={
@@ -165,7 +165,7 @@ export default function ExploreComponent(): JSX.Element {
           property="og:image"
           content={'https://cruthology.com/assets/opengraph/opengraph.jpg'}
         />
-        <meta property="og:title" content={'Explore | Cruthology'} />
+        <meta property="og:title" content={'Explore | fuoco.appdev'} />
         <meta
           property="og:description"
           content={
