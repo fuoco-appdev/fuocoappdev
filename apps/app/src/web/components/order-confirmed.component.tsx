@@ -36,6 +36,9 @@ export default function OrderConfirmedComponent(): JSX.Element {
   const [orderConfirmedProps] = useObservable(
     OrderConfirmedController.model.store
   );
+  const [orderConfirmedDebugProps] = useObservable(
+    OrderConfirmedController.model.debugStore
+  );
   const [storeProps] = useObservable(StoreController.model.store);
   const [quantity, setQuantity] = React.useState<number>(0);
   const [openRefund, setOpenRefund] = React.useState<boolean>(false);
@@ -112,7 +115,7 @@ export default function OrderConfirmedComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (orderConfirmedDebugProps.suspense) {
     return suspenceComponent;
   }
 

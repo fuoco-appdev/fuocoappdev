@@ -32,6 +32,9 @@ export default function AccountFollowersFollowingComponent(): JSX.Element {
   const [accountPublicProps] = useObservable(
     AccountPublicController.model.store
   );
+  const [accountPublicDebugProps] = useObservable(
+    AccountPublicController.model.debugStore
+  );
   const [followerCount, setFollowerCount] = React.useState<string | undefined>(
     undefined
   );
@@ -125,7 +128,7 @@ export default function AccountFollowersFollowingComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (accountPublicDebugProps.suspense) {
     return suspenceComponent;
   }
 

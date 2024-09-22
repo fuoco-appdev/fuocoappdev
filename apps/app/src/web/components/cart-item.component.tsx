@@ -1,7 +1,9 @@
 import { LineItem, ProductOptionValue } from '@medusajs/medusa';
 import { ProductOptions } from '../../models/product.model';
 // @ts-ignore
+import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
+import StoreController from '../../controllers/store.controller';
 import { StoreState } from '../../models/store.model';
 import { MedusaProductTypeNames } from '../../types/medusa.type';
 import { CartItemSuspenseDesktopComponent } from './desktop/suspense/cart-item.suspense.desktop.component';
@@ -40,6 +42,7 @@ export default function CartItemComponent({
   onQuantityChanged,
   onRemove,
 }: CartItemProps): JSX.Element {
+  const [storeDebugProps] = useObservable(StoreController.model.debugStore);
   const [productType, setProductType] = React.useState<
     MedusaProductTypeNames | undefined
   >();
@@ -115,7 +118,7 @@ export default function CartItemComponent({
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (storeDebugProps.suspense) {
     return suspenceComponent;
   }
 

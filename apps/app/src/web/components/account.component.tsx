@@ -56,6 +56,7 @@ export default function AccountComponent(): JSX.Element {
   const navigate = useNavigate();
   const query = useQuery();
   const [accountProps] = useObservable(AccountController.model.store);
+  const [accountDebugProps] = useObservable(AccountController.model.debugStore);
   const [windowProps] = useObservable(WindowController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
   const [isCropImageModalVisible, setIsCropImageModalVisible] =
@@ -235,7 +236,7 @@ export default function AccountComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (accountDebugProps.suspense) {
     return suspenceComponent;
   }
 

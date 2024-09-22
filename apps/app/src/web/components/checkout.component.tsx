@@ -68,6 +68,9 @@ export interface CheckoutResponsiveProps {
 export default function CheckoutComponent(): JSX.Element {
   const query = useQuery();
   const [checkoutProps] = useObservable(CheckoutController.model.store);
+  const [checkoutDebugProps] = useObservable(
+    CheckoutController.model.debugStore
+  );
   const [accountProps] = useObservable(AccountController.model.store);
   const [cartProps] = useObservable(CartController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
@@ -362,7 +365,7 @@ export default function CheckoutComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (checkoutDebugProps.suspense) {
     return suspenceComponent;
   }
 

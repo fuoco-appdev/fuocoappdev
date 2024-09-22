@@ -1,4 +1,6 @@
+import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
+import ChatController from 'src/controllers/chat.controller';
 import {
   AccountDocument,
   AccountPresence,
@@ -45,6 +47,7 @@ export default function ChatItemComponent({
   accountPresence,
   onClick,
 }: ChatItemProps): JSX.Element {
+  const [chatDebugProps] = useObservable(ChatController.model.debugStore);
   const [profileUrls, setProfileUrls] = React.useState<Record<string, string>>(
     {}
   );
@@ -99,7 +102,7 @@ export default function ChatItemComponent({
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (chatDebugProps.suspense) {
     return suspenceComponent;
   }
 

@@ -26,6 +26,9 @@ export interface PermissionsResponsiveProps {
 
 export default function PermissionsComponent(): JSX.Element {
   const [permissionsProps] = useObservable(PermissionsController.model.store);
+  const [permissionsDebugProps] = useObservable(
+    PermissionsController.model.debugStore
+  );
   const [windowProps] = useObservable(WindowController.model.store);
   const renderCountRef = React.useRef<number>(0);
   const navigate = useNavigate();
@@ -88,7 +91,7 @@ export default function PermissionsComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (permissionsDebugProps.suspense) {
     return suspenceComponent;
   }
 

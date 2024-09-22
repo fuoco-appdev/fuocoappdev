@@ -25,6 +25,9 @@ export default function EmailConfirmationComponent(): JSX.Element {
   const [emailConfirmationProps] = useObservable(
     EmailConfirmationController.model.store
   );
+  const [emailConfirmationDebugProps] = useObservable(
+    EmailConfirmationController.model.debugStore
+  );
   const renderCountRef = React.useRef<number>(0);
 
   const onResendConfirmationClick = () => {
@@ -64,7 +67,7 @@ export default function EmailConfirmationComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (emailConfirmationDebugProps.suspense) {
     return suspenceComponent;
   }
 

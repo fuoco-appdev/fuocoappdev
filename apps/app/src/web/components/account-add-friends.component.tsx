@@ -22,6 +22,7 @@ export interface AccountAddFriendsResponsiveProps {
 
 export default function AccountAddFriendsComponent(): JSX.Element {
   const [accountProps] = useObservable(AccountController.model.store);
+  const [accountDebugProps] = useObservable(AccountController.model.debugStore);
   const [locationDropdownOpen, setLocationDropdownOpen] =
     React.useState<boolean>(false);
 
@@ -36,7 +37,7 @@ export default function AccountAddFriendsComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (accountDebugProps.suspense) {
     return suspenceComponent;
   }
 

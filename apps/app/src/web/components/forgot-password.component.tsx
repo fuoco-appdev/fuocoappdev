@@ -26,6 +26,9 @@ export default function ForgotPasswordComponent(): JSX.Element {
   const [forgotPasswordProps] = useObservable(
     ForgotPasswordController.model.store
   );
+  const [forgotPasswordDebugProps] = useObservable(
+    ForgotPasswordController.model.debugStore
+  );
   const renderCountRef = React.useRef<number>(0);
 
   const suspenceComponent = (
@@ -42,7 +45,7 @@ export default function ForgotPasswordComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (forgotPasswordDebugProps.suspense) {
     return suspenceComponent;
   }
 

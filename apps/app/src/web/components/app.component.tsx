@@ -22,6 +22,23 @@ function AppComponent({}: AppProps): JSX.Element {
   const [cookies, setCookie, removeCookie] = useCookies();
   const renderCountRef = React.useRef<number>(0);
   const memoCountRef = React.useRef<number>(0);
+  const handleKeyPress = React.useCallback((event: KeyboardEvent) => {
+    if (import.meta.env['MODE'] !== 'development' || event.key !== 'F2') {
+      return;
+    }
+
+    AppController.debugSuspense(!AppController.model.suspense);
+  }, []);
+
+  React.useEffect(() => {
+    // attach the event listener
+    document.addEventListener('keydown', handleKeyPress);
+
+    // remove the event listener
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [handleKeyPress]);
 
   React.useEffect(() => {
     renderCountRef.current += 1;

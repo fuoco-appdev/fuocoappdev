@@ -39,6 +39,7 @@ export default function SigninComponent(): JSX.Element {
   SigninController.model.location = location;
   const { t } = useTranslation();
   const [signInProps] = useObservable(SigninController.model.store);
+  const [signInDebugProps] = useObservable(SigninController.model.debugStore);
   const [authError, setAuthError] = React.useState<AuthError | null>(null);
   const [emailError, setEmailError] = React.useState<string>('');
   const [passwordError, setPasswordError] = React.useState<string>('');
@@ -101,7 +102,7 @@ export default function SigninComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (signInDebugProps.suspense) {
     return suspenceComponent;
   }
 

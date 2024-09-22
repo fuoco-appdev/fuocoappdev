@@ -88,6 +88,7 @@ export default function StoreComponent(): JSX.Element {
   const query = useQuery();
   const [windowProps] = useObservable(WindowController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
+  const [storeDebugProps] = useObservable(StoreController.model.debugStore);
   const [exploreProps] = useObservable(ExploreController.model.store);
   const [accountProps] = useObservable(AccountController.model.store);
   const [exploreLocalProps] = useObservable(
@@ -452,7 +453,7 @@ export default function StoreComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (storeDebugProps.suspense) {
     return suspenceComponent;
   }
 

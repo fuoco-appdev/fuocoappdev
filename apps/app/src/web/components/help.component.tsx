@@ -40,6 +40,7 @@ export interface HelpResponsiveProps {
 
 export default function HelpComponent(): JSX.Element {
   const [helpProps] = useObservable(HelpController.model.store);
+  const [helpDebugProps] = useObservable(HelpController.model.debugStore);
   const [remarkPlugins, setRemarkPlugins] = React.useState<any[]>([]);
   const renderCountRef = React.useRef<number>(0);
 
@@ -57,7 +58,7 @@ export default function HelpComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (helpDebugProps.suspense) {
     return suspenceComponent;
   }
 

@@ -1,3 +1,4 @@
+import { Typography } from '@fuoco.appdev/web-components';
 import Skeleton from 'react-loading-skeleton';
 import { Outlet } from 'react-router-dom';
 import styles from '../../../modules/window.module.scss';
@@ -16,9 +17,6 @@ export function WindowSuspenseDesktopComponent(): JSX.Element {
               styles['top-bar-left-content-desktop'],
             ].join(' ')}
           >
-            <div className={[styles['top-bar-button-container']].join(' ')}>
-              <Skeleton style={{ width: 40, height: 40 }} borderRadius={40} />
-            </div>
             <div
               className={[
                 styles['logo-container'],
@@ -26,13 +24,15 @@ export function WindowSuspenseDesktopComponent(): JSX.Element {
               ].join(' ')}
             >
               <img src={'../assets/svg/logo.svg'} />
-              <img
+              <Typography.Title
                 className={[
-                  styles['logo-text'],
-                  styles['logo-text-desktop'],
+                  styles['logo-title'],
+                  styles['logo-title-desktop'],
                 ].join(' ')}
-                src={'../assets/svg/logo-text-light.svg'}
-              />
+                level={3}
+              >
+                fuoco.appdev
+              </Typography.Title>
             </div>
           </div>
           <div
@@ -47,7 +47,7 @@ export function WindowSuspenseDesktopComponent(): JSX.Element {
                 styles['shopping-cart-container-details-desktop'],
               ].join(' ')}
             >
-              <Skeleton style={{ width: 40, height: 40 }} borderRadius={40} />
+              <Skeleton style={{ width: 49, height: 49 }} borderRadius={49} />
             </div>
             <div
               className={[
@@ -55,7 +55,7 @@ export function WindowSuspenseDesktopComponent(): JSX.Element {
                 styles['top-bar-button-container-desktop'],
               ].join(' ')}
             >
-              <Skeleton style={{ width: 40, height: 40 }} borderRadius={40} />
+              <Skeleton style={{ width: 49, height: 49 }} borderRadius={49} />
             </div>
             <div
               className={[
@@ -63,7 +63,7 @@ export function WindowSuspenseDesktopComponent(): JSX.Element {
                 styles['top-bar-button-container-desktop'],
               ].join(' ')}
             >
-              <Skeleton style={{ width: 40, height: 40 }} borderRadius={40} />
+              <Skeleton style={{ width: 49, height: 49 }} borderRadius={49} />
             </div>
             <div
               className={[
@@ -71,7 +71,7 @@ export function WindowSuspenseDesktopComponent(): JSX.Element {
                 styles['top-bar-button-container-desktop'],
               ].join(' ')}
             >
-              <Skeleton style={{ width: 40, height: 40 }} borderRadius={40} />
+              <Skeleton style={{ width: 49, height: 49 }} borderRadius={49} />
             </div>
             <div
               className={[
@@ -79,30 +79,13 @@ export function WindowSuspenseDesktopComponent(): JSX.Element {
                 styles['top-bar-button-container-desktop'],
               ].join(' ')}
             >
-              <Skeleton style={{ width: 40, height: 40 }} borderRadius={40} />
+              <Skeleton style={{ width: 49, height: 49 }} borderRadius={49} />
             </div>
           </div>
         </div>
         <div
           className={[styles['content'], styles['content-desktop']].join(' ')}
         >
-          <div
-            className={[styles['side-bar'], styles['side-bar-desktop']].join(
-              ' '
-            )}
-          >
-            <div
-              className={[
-                styles['skeleton-tabs'],
-                styles['skeleton-tabs-desktop'],
-              ].join(' ')}
-            >
-              <Skeleton style={{ width: 56, height: 56 }} borderRadius={6} />
-              <Skeleton style={{ width: 56, height: 56 }} borderRadius={6} />
-              <Skeleton style={{ width: 56, height: 56 }} borderRadius={6} />
-              <Skeleton style={{ width: 56, height: 56 }} borderRadius={6} />
-            </div>
-          </div>
           <div
             className={[
               styles['right-content'],

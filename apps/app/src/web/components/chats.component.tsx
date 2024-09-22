@@ -36,6 +36,7 @@ export default function ChatsComponent(): JSX.Element {
   const { id } = useParams();
   const navigate = useNavigate();
   const [chatProps] = useObservable(ChatController.model.store);
+  const [chatDebugProps] = useObservable(ChatController.model.debugStore);
   const [accountProps] = useObservable(AccountController.model.store);
   const [openEditDropdown, setOpenEditDropdown] = useState<boolean>(false);
   const [openNewPrivate, setOpenNewPrivate] = useState<boolean>(false);
@@ -66,7 +67,7 @@ export default function ChatsComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (chatDebugProps.suspense) {
     return suspenceComponent;
   }
 

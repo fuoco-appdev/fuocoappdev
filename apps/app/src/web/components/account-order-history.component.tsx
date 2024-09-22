@@ -19,6 +19,7 @@ export interface AccountOrderHistoryResponsiveProps {
 
 export default function AccountOrderHistoryComponent(): JSX.Element {
   const [accountProps] = useObservable(AccountController.model.store);
+  const [accountDebugProps] = useObservable(AccountController.model.debugStore);
 
   React.useEffect(() => {
     AccountController.loadOrders();
@@ -31,7 +32,7 @@ export default function AccountOrderHistoryComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (accountDebugProps.suspense) {
     return suspenceComponent;
   }
 

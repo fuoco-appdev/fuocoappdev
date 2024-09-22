@@ -40,6 +40,7 @@ export default function SettingsAccountComponent(): JSX.Element {
     WindowController.model.localStore ?? Store.prototype
   );
   const [accountProps] = useObservable(AccountController.model.store);
+  const [accountDebugProps] = useObservable(AccountController.model.debugStore);
   const [storeProps] = useObservable(StoreController.model.store);
   const [updatePasswordError, setUpdatePasswordError] = React.useState<
     string | undefined
@@ -80,7 +81,7 @@ export default function SettingsAccountComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (accountDebugProps.suspense) {
     return suspenceComponent;
   }
 

@@ -1,5 +1,7 @@
 import { LineItem, ProductOptionValue } from '@medusajs/medusa';
+import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
+import StoreController from '../../controllers/store.controller';
 import { ProductOptions } from '../../models/product.model';
 import { StoreState } from '../../models/store.model';
 import { ShippingItemSuspenseDesktopComponent } from './desktop/suspense/shipping-item.suspense.desktop.component';
@@ -27,6 +29,7 @@ export default function ShippingItemComponent({
   storeProps,
   item,
 }: ShippingItemProps): JSX.Element {
+  const [storeDebugProps] = useObservable(StoreController.model.debugStore);
   const [vintage, setVintage] = React.useState<string>('');
   const [hasReducedPrice, setHasReducedPrice] = React.useState<boolean>(
     (item.discount_total ?? 0) > 0
@@ -41,7 +44,7 @@ export default function ShippingItemComponent({
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (storeDebugProps.suspense) {
     return suspenceComponent;
   }
 

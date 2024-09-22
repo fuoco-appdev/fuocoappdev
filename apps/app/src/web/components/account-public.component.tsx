@@ -58,6 +58,9 @@ export default function AccountPublicComponent(): JSX.Element {
   const [accountPublicProps] = useObservable(
     AccountPublicController.model.store
   );
+  const [accountPublicDebugProps] = useObservable(
+    AccountPublicController.model.debugStore
+  );
   const [windowProps] = useObservable(WindowController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
   const [isFollowing, setIsFollowing] = React.useState<boolean>(false);
@@ -235,7 +238,7 @@ export default function AccountPublicComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (accountPublicDebugProps.suspense) {
     return suspenceComponent;
   }
 

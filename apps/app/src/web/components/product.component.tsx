@@ -86,6 +86,7 @@ export interface ProductResponsiveProps {
 
 function ProductComponent({}: ProductProps): JSX.Element {
   const [productProps] = useObservable(ProductController.model.store);
+  const [productDebugProps] = useObservable(ProductController.model.debugStore);
   const [storeProps] = useObservable(StoreController.model.store);
   const [accountProps] = useObservable(AccountController.model.store);
   const { id } = useParams();
@@ -388,7 +389,7 @@ function ProductComponent({}: ProductProps): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (productDebugProps.suspense) {
     return suspenceComponent;
   }
 

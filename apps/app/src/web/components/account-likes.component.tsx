@@ -50,6 +50,7 @@ export default function AccountLikesComponent(): JSX.Element {
   const query = useQuery();
   const [storeProps] = useObservable(StoreController.model.store);
   const [accountProps] = useObservable(AccountController.model.store);
+  const [accountDebugProps] = useObservable(AccountController.model.debugStore);
   const [openCartVariants, setOpenCartVariants] =
     React.useState<boolean>(false);
   const [variantQuantities, setVariantQuantities] = React.useState<
@@ -149,7 +150,7 @@ export default function AccountLikesComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (accountDebugProps.suspense) {
     return suspenceComponent;
   }
 

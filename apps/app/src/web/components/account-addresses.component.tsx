@@ -33,6 +33,7 @@ export interface AccountAddressResponsiveProps {
 export default function AccountAddressesComponent(): JSX.Element {
   const { t, i18n } = useTranslation();
   const [accountProps] = useObservable(AccountController.model.store);
+  const [accountDebugProps] = useObservable(AccountController.model.debugStore);
   const [openAddDropdown, setOpenAddDropdown] = React.useState<boolean>(false);
   const [openEditDropdown, setOpenEditDropdown] =
     React.useState<boolean>(false);
@@ -146,7 +147,7 @@ export default function AccountAddressesComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (accountDebugProps.suspense) {
     return suspenceComponent;
   }
 

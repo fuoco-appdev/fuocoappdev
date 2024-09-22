@@ -1,6 +1,188 @@
 @import '@fuoco.appdev/web-components/dist/esm/styles.scss';
 
 .root {
-    background-color: $brand-100;
-    height: 100vh;
+    overflow-y: auto;
+
+    & .first-section {
+        display: flex;
+        flex-direction: column;
+        background-color: $brand-100;
+        height: 100vh;
+
+        & .first-content {
+            display: flex;
+            flex-direction: row;
+            padding: $mp-8;
+            gap: $mp-8;
+            height: 100%;
+            justify-content: center;
+            align-items: center;
+
+            & .first-content-left {
+                display: flex;
+                flex-direction: column;
+                gap: $mp-6;
+                max-width: 995px;
+
+                & .landing-title-1 {
+                    color: $brand-600;
+                }
+
+                & .landing-title-2 {
+                    color: $brand-500;
+                }
+
+                & .landing-description {
+                    color: $brand-900;
+                    font-size: $font-size-base;
+                    line-height: $font-line-height-base;
+                    max-width: 615px;
+                }
+            }
+
+            & .first-content-right {
+                width: 30%;
+            }
+        }
+
+        & .first-banner {
+            display: flex;
+            flex-direction: row;
+            background-color: $brand-600;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+
+    & .about-me-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: white;
+    }
+
+    & .why-work-with-me-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(#457B9D, 0.13);
+    }
+
+    & .how-it-works-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: $brand-100;
+    }
+
+    & .section-title-dark {
+        text-align: center;
+        align-self: center;
+        color: $gray-900;
+    }
+
+    & .section-text-dark {
+        font-size: $font-size-base;
+        line-height: $font-line-height-base;
+        font-weight: $font-weight-normal;
+        white-space: pre-line;
+        text-align: center;
+        align-self: center;
+        color: $gray-900;
+        font-family: 'Arial', sans-serif;
+    }
+
+    & .section-title-light {
+        text-align: center;
+        align-self: center;
+        color: $gray-100;
+    }
+
+    & .section-text-light {
+        font-size: $font-size-base;
+        line-height: $font-line-height-base;
+        font-weight: $font-weight-normal;
+        white-space: pre-line;
+        text-align: center;
+        align-self: center;
+        color: $gray-100;
+        font-family: 'Arial', sans-serif;
+    }
+}
+
+.root-desktop {
+    & .first-section-desktop {
+        padding-top: 65px;
+
+        & .first-content-desktop {
+            padding: $mp-8;
+            gap: $mp-6;
+
+            & .first-content-left-desktop {
+                & .landing-title-1-desktop {
+     
+                }
+
+                & .landing-title-2-desktop {
+      
+                }
+            }
+
+            & .first-content-right-desktop {
+                position: relative;
+                min-width: 495px;
+                min-height: 495px;
+                border-radius: 55px;
+                background: linear-gradient($brand-600, $brand-200);
+                overflow: hidden;
+
+                & .landing-image-desktop {
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                }
+            }
+        }
+
+        & .first-banner-desktop {
+            padding: $mp-7;
+            gap: $mp-7;
+        }
+    }
+
+    & .about-me-container-desktop {
+        padding: $mp-10;
+        min-height: 100vh;
+    }
+
+    & .why-work-with-me-container-desktop {
+        padding: $mp-10;
+        min-height: 100vh;
+    }
+
+    & .how-it-works-container-desktop {
+        padding: $mp-10;
+        min-height: 100vh;
+    }
+
+    & .section-title-dark-desktop {
+        padding-bottom: $mp-4;
+    }
+
+    & .section-title-light-desktop {
+        padding-bottom: $mp-4;
+    }
+
+    & .section-text-dark-desktop {
+        max-width: 665px;
+        padding-bottom: $mp-8;
+    }
+
+    & .section-text-light-desktop {
+        max-width: 665px;
+        padding-bottom: $mp-8;
+    }
 }

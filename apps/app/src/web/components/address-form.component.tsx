@@ -97,6 +97,7 @@ export default function AddressFormComponent({
   onEdit,
 }: AddressFormProps): JSX.Element {
   const [storeProps] = useObservable(StoreController.model.store);
+  const [storeDebugProps] = useObservable(StoreController.model.debugStore);
   const [countryOptions, setCountryOptions] = React.useState<OptionProps[]>([]);
   const [regionOptions, setRegionOptions] = React.useState<OptionProps[]>([]);
   const [selectedCountryId, setSelectedCountryId] = React.useState<string>('');
@@ -261,7 +262,7 @@ export default function AddressFormComponent({
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (storeDebugProps.suspense) {
     return suspenceComponent;
   }
 

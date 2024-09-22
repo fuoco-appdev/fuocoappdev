@@ -1,4 +1,6 @@
+import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
+import ChatController from '../../controllers/chat.controller';
 import { AccountDocument } from '../../models/account.model';
 import { ChatState } from '../../models/chat.model';
 import { StorageFolderType } from '../../protobuf/common_pb';
@@ -31,6 +33,7 @@ export default function AccountMessageItemComponent({
   onClick,
   onMessage,
 }: AccountMessageItemProps): JSX.Element {
+  const [chatDebugProps] = useObservable(ChatController.model.store);
   const [profileUrl, setProfileUrl] = React.useState<string | undefined>(
     undefined
   );
@@ -67,7 +70,7 @@ export default function AccountMessageItemComponent({
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (chatDebugProps.suspense) {
     return suspenceComponent;
   }
 

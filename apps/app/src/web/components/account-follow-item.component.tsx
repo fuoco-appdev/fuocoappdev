@@ -1,4 +1,6 @@
+import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
+import AccountController from '../../controllers/account.controller';
 import { AccountDocument, AccountState } from '../../models/account.model';
 import { AccountFollowerResponse } from '../../protobuf/account-follower_pb';
 import { StorageFolderType } from '../../protobuf/common_pb';
@@ -45,6 +47,7 @@ export default function AccountFollowItemComponent({
   onConfirm,
   onRemove,
 }: AccountFollowItemProps): JSX.Element {
+  const [accountDebugProps] = useObservable(AccountController.model.debugStore);
   const [profileUrl, setProfileUrl] = React.useState<string | undefined>(
     undefined
   );
@@ -119,7 +122,7 @@ export default function AccountFollowItemComponent({
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (accountDebugProps.suspense) {
     return suspenceComponent;
   }
 

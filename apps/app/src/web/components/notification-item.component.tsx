@@ -1,4 +1,5 @@
 import { Order } from '@medusajs/medusa';
+import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
 import NotificationsController from '../../controllers/notifications.controller';
 import { NotificationsState } from '../../models/notifications.model';
@@ -72,6 +73,9 @@ export default function NotificationItemComponent({
   notificationsProps,
   fromNow,
 }: NotificationItemProps): JSX.Element {
+  const [notificationsDebugProps] = useObservable(
+    NotificationsController.model.debugStore
+  );
   const suspenceComponent = (
     <>
       <NotificationItemSuspenseDesktopComponent />
@@ -79,7 +83,7 @@ export default function NotificationItemComponent({
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (notificationsDebugProps.suspense) {
     return suspenceComponent;
   }
 

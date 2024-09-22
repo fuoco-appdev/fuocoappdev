@@ -36,6 +36,9 @@ export default function ResetPasswordComponent(): JSX.Element {
   const [resetPasswordProps] = useObservable(
     ResetPasswordController.model.store
   );
+  const [resetDebugPasswordProps] = useObservable(
+    ResetPasswordController.model.debugStore
+  );
   const renderCountRef = React.useRef<number>(0);
 
   React.useEffect(() => {
@@ -74,7 +77,7 @@ export default function ResetPasswordComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (resetDebugPasswordProps.suspense) {
     return suspenceComponent;
   }
 

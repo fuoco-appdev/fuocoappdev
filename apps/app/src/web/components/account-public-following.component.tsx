@@ -30,6 +30,9 @@ export default function AccountPublicFollowingComponent(): JSX.Element {
   const [accountPublicProps] = useObservable(
     AccountPublicController.model.store
   );
+  const [accountPublicDebugProps] = useObservable(
+    AccountPublicController.model.debugStore
+  );
   const [accountProps] = useObservable(AccountController.model.store);
 
   const onItemClick = (followerId: string) => {
@@ -57,7 +60,7 @@ export default function AccountPublicFollowingComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (accountPublicDebugProps.suspense) {
     return suspenceComponent;
   }
 

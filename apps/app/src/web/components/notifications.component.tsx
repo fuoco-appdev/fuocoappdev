@@ -30,6 +30,9 @@ export default function NotificationsComponent(): JSX.Element {
   const [notificationsProps] = useObservable(
     NotificationsController.model.store
   );
+  const [notificationsDebugProps] = useObservable(
+    NotificationsController.model.debugStore
+  );
   const [notifications, setNotifications] = React.useState<
     Record<string, AccountNotificationResponse[]>
   >({});
@@ -65,7 +68,7 @@ export default function NotificationsComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (notificationsDebugProps.suspense) {
     return suspenceComponent;
   }
 

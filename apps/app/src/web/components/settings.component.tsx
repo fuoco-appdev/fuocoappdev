@@ -20,6 +20,7 @@ export interface SettingsResponsiveProps {
 
 export default function SettingsComponent(): JSX.Element {
   const [windowProps] = useObservable(WindowController.model.store);
+  const [windowDebugProps] = useObservable(WindowController.model.debugStore);
 
   const suspenceComponent = (
     <>
@@ -28,7 +29,7 @@ export default function SettingsComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (windowDebugProps.suspense) {
     return suspenceComponent;
   }
 

@@ -56,6 +56,9 @@ export default function AccountPublicLikesComponent(): JSX.Element {
   const [accountPublicProps] = useObservable(
     AccountPublicController.model.store
   );
+  const [accountPublicDebugProps] = useObservable(
+    AccountPublicController.model.debugStore
+  );
   const [openCartVariants, setOpenCartVariants] =
     React.useState<boolean>(false);
   const [variantQuantities, setVariantQuantities] = React.useState<
@@ -159,7 +162,7 @@ export default function AccountPublicLikesComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (accountPublicDebugProps.suspense) {
     return suspenceComponent;
   }
 

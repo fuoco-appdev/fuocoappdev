@@ -47,6 +47,7 @@ export default function ChatComponent(): JSX.Element {
   const { id } = useParams();
   const [accountProps] = useObservable(AccountController.model.store);
   const [chatProps] = useObservable(ChatController.model.store);
+  const [chatDebugProps] = useObservable(ChatController.model.debugStore);
   const [profileUrls, setProfileUrls] = React.useState<Record<string, string>>(
     {}
   );
@@ -65,7 +66,7 @@ export default function ChatComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (chatDebugProps.suspense) {
     return suspenceComponent;
   }
 

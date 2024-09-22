@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { createStore, withProps } from '@ngneat/elf';
 import { Controller } from '../controller';
 import AccountPublicController from '../controllers/account-public.controller';
 import AccountController from '../controllers/account.controller';
@@ -18,6 +19,7 @@ import SignupController from '../controllers/signup.controller';
 import StoreController from '../controllers/store.controller';
 import TermsOfServiceController from '../controllers/terms-of-service.controller';
 import WindowController from '../controllers/window.controller';
+import { Model } from '../model';
 import BucketService from '../services/bucket.service';
 import MedusaService from '../services/medusa.service';
 import MeilisearchService from '../services/meilisearch.service';
@@ -28,15 +30,24 @@ import ForgotPasswordController from './forgot-password.controller';
 import PermissionsController from './permissions.controller';
 
 class AppController extends Controller {
+  private readonly _model: Model;
   constructor() {
     super();
+
+    this._model = new Model(
+      createStore({ name: 'application' }, withProps<{}>({}))
+    );
+  }
+
+  public get model(): Model {
+    return this._model;
   }
 
   public override initialize(renderCount: number): void {
     this.initializeAsync(renderCount);
   }
 
-  public override load(_renderCount: number): void { }
+  public override load(_renderCount: number): void {}
 
   public override disposeInitialization(renderCount: number): void {
     AccountPublicController.disposeInitialization(renderCount);
@@ -62,7 +73,7 @@ class AppController extends Controller {
     WindowController.disposeInitialization(renderCount);
   }
 
-  public override disposeLoad(_renderCount: number): void { }
+  public override disposeLoad(_renderCount: number): void {}
 
   public async initializeAsync(renderCount: number): Promise<void> {
     WindowController.initialize(renderCount);
@@ -97,6 +108,31 @@ class AppController extends Controller {
     } catch (error: any) {
       console.error(error);
     }
+  }
+
+  public debugSuspense(value: boolean): void {
+    this.updateSuspense(value);
+    WindowController.updateSuspense(value);
+    AccountPublicController.updateSuspense(value);
+    AccountController.updateSuspense(value);
+    ExploreController.updateSuspense(value);
+    StoreController.updateSuspense(value);
+    EventsController.updateSuspense(value);
+    CartController.updateSuspense(value);
+    ChatController.updateSuspense(value);
+    NotificationsController.updateSuspense(value);
+    ProductController.updateSuspense(value);
+    SigninController.updateSuspense(value);
+    SignupController.updateSuspense(value);
+    EmailConfirmationController.updateSuspense(value);
+    ForgotPasswordController.updateSuspense(value);
+    CheckoutController.updateSuspense(value);
+    OrderConfirmedController.updateSuspense(value);
+    TermsOfServiceController.updateSuspense(value);
+    PrivacyPolicyController.updateSuspense(value);
+    PermissionsController.updateSuspense(value);
+    HelpController.updateSuspense(value);
+    ResetPasswordController.updateSuspense(value);
   }
 }
 

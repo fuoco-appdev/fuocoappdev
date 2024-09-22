@@ -27,6 +27,8 @@ import { useQuery } from '../../route-paths';
 import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
 import { WindowResponsiveProps } from '../window.component';
 
+export const WindowDesktopTopBarRef = React.createRef<HTMLDivElement>();
+
 export default function WindowDesktopComponent({
   windowProps,
   windowLocalProps,
@@ -46,6 +48,7 @@ export default function WindowDesktopComponent({
   const { t } = useTranslation();
   const navigate = useNavigate();
   const query = useQuery();
+  const topBarRef = React.useRef<HTMLDivElement | null>(null);
   const sideBarRef = React.useRef<HTMLDivElement | null>(null);
   const navigationBackRef = React.useRef<HTMLDivElement | null>(null);
   const [date, setDate] = React.useState<Date | null>(null);
@@ -60,6 +63,7 @@ export default function WindowDesktopComponent({
     <ResponsiveDesktop>
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>
         <div
+          ref={WindowDesktopTopBarRef}
           className={[styles['top-bar'], styles['top-bar-desktop']].join(' ')}
         >
           <div

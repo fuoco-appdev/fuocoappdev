@@ -41,6 +41,7 @@ export default function ExploreComponent(): JSX.Element {
   const navigate = useNavigate();
   const query = useQuery();
   const [exploreProps] = useObservable(ExploreController.model.store);
+  const [exploreDebugProps] = useObservable(ExploreController.model.debugStore);
   const [exploreLocalProps] = useObservable(
     ExploreController.model.localStore ?? Store.prototype
   );
@@ -145,7 +146,7 @@ export default function ExploreComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (exploreDebugProps.suspense) {
     return suspenceComponent;
   }
 

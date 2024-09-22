@@ -61,6 +61,7 @@ export default function WindowComponent(): JSX.Element {
   const query = useQuery();
   const navigate = useNavigate();
   const [windowProps] = useObservable(WindowController.model.store);
+  const [windowDebugProps] = useObservable(WindowController.model.debugStore);
   const [exploreLocalProps] = useObservable(
     ExploreController.model.localStore ?? Store.prototype
   );
@@ -633,7 +634,7 @@ export default function WindowComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (windowDebugProps.suspense) {
     return suspenseComponent;
   }
 

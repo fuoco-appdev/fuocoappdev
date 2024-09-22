@@ -25,6 +25,9 @@ export default function PrivacyPolicyComponent(): JSX.Element {
   const [privacyPolicyProps] = useObservable(
     PrivacyPolicyController.model.store
   );
+  const [privacyDebugPolicyProps] = useObservable(
+    PrivacyPolicyController.model.debugStore
+  );
   const [remarkPlugins, setRemarkPlugins] = React.useState<any[]>([]);
   const renderCountRef = React.useRef<number>(0);
 
@@ -55,7 +58,7 @@ export default function PrivacyPolicyComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (privacyDebugPolicyProps.suspense) {
     return suspenceComponent;
   }
 

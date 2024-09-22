@@ -50,6 +50,7 @@ export default function CartComponent(): JSX.Element {
   const navigate = useNavigate();
   const query = useQuery();
   const [cartProps] = useObservable(CartController.model.store);
+  const [cartDebugProps] = useObservable(CartController.model.debugStore);
   const [exploreProps] = useObservable(ExploreController.model.store);
   const [storeProps] = useObservable(StoreController.model.store);
   const [windowProps] = useObservable(WindowController.model.store);
@@ -144,7 +145,7 @@ export default function CartComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (cartDebugProps.suspense) {
     return suspenceComponent;
   }
 

@@ -3,7 +3,9 @@ import {
   PricedProduct,
   PricedVariant,
 } from '@medusajs/medusa/dist/types/pricing';
+import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
+import CartController from '../../controllers/cart.controller';
 import { StoreState } from '../../models/store.model';
 import { MedusaProductTypeNames } from '../../types/medusa.type';
 import { CartVariantItemSuspenseDesktopComponent } from './desktop/suspense/cart-variant-item.suspense.desktop.component';
@@ -37,6 +39,7 @@ export default function CartVariantItemComponent({
   variantQuantities,
   setVariantQuantities,
 }: CartVariantItemProps): JSX.Element {
+  const [cartDebugProps] = useObservable(CartController.model.debugStore);
   const onQuantitiesChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     const quantities = { ...variantQuantities };
     if (variant?.id) {
@@ -52,7 +55,7 @@ export default function CartVariantItemComponent({
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (cartDebugProps.suspense) {
     return suspenceComponent;
   }
 

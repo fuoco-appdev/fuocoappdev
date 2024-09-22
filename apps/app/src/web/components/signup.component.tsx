@@ -43,6 +43,7 @@ export default function SignupComponent(): JSX.Element {
   const navigate = useNavigate();
   SignupController.model.location = location;
   const [signupProps] = useObservable(SignupController.model.store);
+  const [signupDebugProps] = useObservable(SignupController.model.debugStore);
   const [authError, setAuthError] = React.useState<AuthError | null>(null);
   const [emailError, setEmailError] = React.useState<string>('');
   const [passwordError, setPasswordError] = React.useState<string>('');
@@ -104,7 +105,7 @@ export default function SignupComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (signupDebugProps.suspense) {
     return suspenceComponent;
   }
 

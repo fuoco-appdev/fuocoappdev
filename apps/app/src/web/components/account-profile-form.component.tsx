@@ -1,5 +1,7 @@
 import { CountryDataProps } from '@fuoco.appdev/web-components/dist/cjs/src/components/input-phone-number/country-data';
+import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
+import StoreController from '../../controllers/store.controller';
 import { StoreState } from '../../models/store.model';
 import { AccountProfileFormSuspenseDesktopComponent } from './desktop/suspense/account-profile-form.suspense.desktop.component';
 import { AccountProfileFormSuspenseMobileComponent } from './mobile/suspense/account-profile-form.suspense.mobile.component';
@@ -63,6 +65,7 @@ export default function AccountProfileFormComponent({
   errors,
   onChangeCallbacks,
 }: AccountProfileFormProps): JSX.Element {
+  const [storeDebugProps] = useObservable(StoreController.model.debugStore);
   const [selectedCountry, setSelectedCountry] = React.useState<string>('');
   React.useEffect(() => {
     if (!storeProps.selectedRegion) {
@@ -81,7 +84,7 @@ export default function AccountProfileFormComponent({
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (storeDebugProps.suspense) {
     return suspenceComponent;
   }
 
