@@ -8,12 +8,12 @@ export default ({ mode }: any) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
 
   return defineConfig({
-    root: 'apps/app/src/web',
+    root: 'apps/app/web',
     css: {
       preprocessorOptions: {
         scss: {
           additionalData: `
-            @import "apps/app/src/web/styles.scss";
+            @import "apps/app/web/styles.scss";
           `,
         },
       },
@@ -47,8 +47,8 @@ export default ({ mode }: any) => {
       nxViteTsPaths(),
       replaceFiles([
         {
-          replace: 'apps/app/src/environments/environment.ts',
-          with: 'apps/app/src/environments/environment.prod.ts',
+          replace: 'apps/app/environments/environment.ts',
+          with: 'apps/app/environments/environment.prod.ts',
         },
       ]),
     ],
@@ -59,12 +59,15 @@ export default ({ mode }: any) => {
         reportsDirectory: '../../coverage/apps/app',
         provider: 'v8',
       },
-      setupFiles: ['src/setupTests.ts'],
+      setupFiles: ['shared/setupTests.ts'],
       cache: {
         dir: '../../node_modules/.vitest/apps/app',
       },
       environment: 'jsdom',
-      include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+      include: [
+        'shared/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
+        'web/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
+      ],
       watch: false,
     },
   });
