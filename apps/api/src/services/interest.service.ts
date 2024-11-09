@@ -1,11 +1,13 @@
-import SupabaseService from "./supabase.service.ts";
+import { Service } from 'https://deno.land/x/di@v0.1.1/mod.ts';
 import {
   CreateInterestRequest,
   InterestResponse,
   InterestsRequest,
   InterestsResponse,
   SearchInterestsRequest,
-} from "../protobuf/interest_pb.js";
+} from '../protobuf/interest_pb.js';
+import serviceCollection, { serviceTypes } from '../service_collection.ts';
+import SupabaseService from './supabase.service.ts';
 
 export interface InterestProps {
   id?: string;
@@ -13,17 +15,22 @@ export interface InterestProps {
   name?: string;
 }
 
-export class InterestService {
+@Service()
+export default class InterestService {
+  private readonly _supabaseService: SupabaseService;
+  constructor() {
+    this._supabaseService = serviceCollection.get(serviceTypes.SupabaseService);
+  }
   public async findAsync(
-    request: InstanceType<typeof InterestsRequest>,
+    request: InstanceType<typeof InterestsRequest>
   ): Promise<InstanceType<typeof InterestsResponse> | null> {
     const ids = request.getIdsList();
     const response = new InterestsResponse();
 
-    const { data, error } = await SupabaseService.client
-      .from("interest")
+    const { data, error } = await this._supabaseService.client
+      .from('interest')
       .select()
-      .in("id", ids);
+      .in('id', ids);
 
     if (error) {
       console.error(error);
@@ -42,21 +49,21 @@ export class InterestService {
   }
 
   public async upsertAsync(
-    request: InstanceType<typeof CreateInterestRequest>,
+    request: InstanceType<typeof CreateInterestRequest>
   ): Promise<InstanceType<typeof InterestResponse> | null> {
     const name = request.getName().toLowerCase();
     const response = new InterestResponse();
 
     if (!name || name.length <= 0) {
-      console.error("name cannot be undefined");
+      console.error('name cannot be undefined');
       return null;
     }
 
     const props: InterestProps = {
       name: name,
     };
-    const { data, error } = await SupabaseService.client
-      .from("interest")
+    const { data, error } = await this._supabaseService.client
+      .from('interest')
       .upsert(props)
       .select();
 
@@ -77,19 +84,19 @@ export class InterestService {
   }
 
   public async searchAsync(
-    request: InstanceType<typeof SearchInterestsRequest>,
+    request: InstanceType<typeof SearchInterestsRequest>
   ): Promise<InstanceType<typeof InterestsResponse> | null> {
     const query = request.getQuery();
     const offset = request.getOffset();
     const limit = request.getLimit();
     const response = new InterestsResponse();
 
-    const { data, error } = await SupabaseService.client
-      .from("interest")
+    const { data, error } = await this._supabaseService.client
+      .from('interest')
       .select()
       .limit(limit)
       .range(offset, offset + limit)
-      .ilike("name", `%${query}%`);
+      .ilike('name', `%${query}%`);
 
     if (error) {
       console.error(error);
@@ -107,5 +114,3 @@ export class InterestService {
     return response;
   }
 }
-
-export default new InterestService();

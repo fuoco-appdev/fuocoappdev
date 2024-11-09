@@ -1,18 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  BannerProps,
-  LanguageInfo,
-  ToastProps,
-} from '@fuoco.appdev/web-components';
-import { Cart, Customer, CustomerGroup, Order } from '@medusajs/medusa';
-import { select } from '@ngneat/elf';
+import { LanguageInfo } from '@fuoco.appdev/web-components';
+import { HttpTypes } from '@medusajs/types';
+import { Subscription as SupabaseSubscription } from '@supabase/gotrue-js/dist/main';
 import { AuthChangeEvent, Session } from '@supabase/supabase-js';
+import { IValueDidChange, Lambda, observe, when } from 'mobx';
 import { Location as RouterLocation } from 'react-router-dom';
-import { Subscription, filter, firstValueFrom, take } from 'rxjs';
+import { DIContainer } from 'rsdi';
 import { Controller } from '../controller';
-import { AccountState } from '../models/account.model';
-import { ExploreState } from '../models/explore.model';
 import { WindowModel } from '../models/window.model';
 import { AccountResponse } from '../protobuf/account_pb';
 import { RoutePathsType } from '../route-paths-type';
@@ -22,37 +17,49 @@ import AccountNotificationService, {
 import AccountService from '../services/account.service';
 import MedusaService from '../services/medusa.service';
 import SupabaseService from '../services/supabase.service';
+import { StoreOptions } from '../store-options';
 import AccountController from './account.controller';
 import CartController from './cart.controller';
 import ExploreController from './explore.controller';
 import NotificationsController from './notifications.controller';
 
-class WindowController extends Controller {
+export default class WindowController extends Controller {
   private readonly _model: WindowModel;
-  private _customerGroupSubscription: Subscription | undefined;
+  private _supabaseSubscription: SupabaseSubscription | undefined;
+  private _customerGroupDisposer: Lambda | undefined;
   private _scrollRef: HTMLDivElement | null;
-  private _accountSubscription: Subscription | undefined;
-  private _customerSubscription: Subscription | undefined;
-  private _cartSubscription: Subscription | undefined;
-  private _sessionSubscription: Subscription | undefined;
-  private _notificationCreatedSubscription: Subscription | undefined;
-  private _medusaAccessTokenSubscription: Subscription | undefined;
+  private _accountDisposer: Lambda | undefined;
+  private _customerDisposer: Lambda | undefined;
+  private _cartDisposer: Lambda | undefined;
+  private _sessionDisposer: Lambda | undefined;
+  private _notificationCreatedDisposer: Lambda | undefined;
+  private _medusaAccessTokenDisposer: Lambda | undefined;
 
-  constructor() {
+  constructor(
+    private readonly _container: DIContainer<{
+      AccountController: AccountController;
+      MedusaService: MedusaService;
+      CartController: CartController;
+      ExploreController: ExploreController;
+      SupabaseService: SupabaseService;
+      AccountService: AccountService;
+      AccountNotificationService: AccountNotificationService;
+      NotificationsController: NotificationsController;
+    }>,
+    private readonly _storeOptions: StoreOptions
+  ) {
     super();
 
-    this._model = new WindowModel();
+    this._model = new WindowModel(this._storeOptions);
+
     this._scrollRef = null;
 
-    this.onAuthStateChanged = this.onAuthStateChanged.bind(this);
     this.onCartChanged = this.onCartChanged.bind(this);
-    this.onActiveAccountChangedAsync =
-      this.onActiveAccountChangedAsync.bind(this);
-    this.onSessionChangedAsync = this.onSessionChangedAsync.bind(this);
     this.onCustomerChanged = this.onCustomerChanged.bind(this);
     this.onCustomerGroupChangedAsync =
       this.onCustomerGroupChangedAsync.bind(this);
     this.onNotificationCreated = this.onNotificationCreated.bind(this);
+    this.onSessionChangedAsync = this.onSessionChangedAsync.bind(this);
   }
 
   public get model(): WindowModel {
@@ -69,25 +76,52 @@ class WindowController extends Controller {
     }
   }
 
-  public override initialize(renderCount: number): void {
-    this.initializeAsync(renderCount);
+  public override initialize = (renderCount: number): void => {
+    const supabaseService = this._container.get('SupabaseService');
+    const cartController = this._container.get('CartController');
+    const accountService = this._container.get('AccountService');
+    const accountController = this._container.get('AccountController');
+    const accountNotificationService = this._container.get(
+      'AccountNotificationService'
+    );
 
-    this._notificationCreatedSubscription =
-      AccountNotificationService.notificationCreatedObservable.subscribe({
-        next: this.onNotificationCreated,
-      });
-  }
+    this._sessionDisposer = observe(
+      supabaseService,
+      'session',
+      this.onSessionChangedAsync
+    );
+
+    // this._cartDisposer = observe(
+    //   cartController.model,
+    //   'cart',
+    //   this.onCartChanged
+    // );
+
+    // this._customerDisposer = observe(
+    //   accountController.model,
+    //   'customer',
+    //   this.onCustomerChanged
+    // );
+
+    // this._notificationCreatedDisposer = observe(
+    //   accountNotificationService,
+    //   'notificationCreated',
+    //   this.onNotificationCreated
+    // );
+  };
 
   public override load(_renderCount: number): void {}
 
   public override disposeInitialization(_renderCount: number): void {
-    this._notificationCreatedSubscription?.unsubscribe();
-    this._medusaAccessTokenSubscription?.unsubscribe();
-    this._customerSubscription?.unsubscribe();
-    this._customerGroupSubscription?.unsubscribe();
-    this._sessionSubscription?.unsubscribe();
-    this._accountSubscription?.unsubscribe();
-    this._cartSubscription?.unsubscribe();
+    this._notificationCreatedDisposer?.();
+    this._medusaAccessTokenDisposer?.();
+    this._customerDisposer?.();
+    this._customerGroupDisposer?.();
+    this._sessionDisposer?.();
+    this._accountDisposer?.();
+    this._cartDisposer?.();
+    this._supabaseSubscription?.unsubscribe();
+    this._model.dispose();
   }
 
   public override disposeLoad(_renderCount: number): void {}
@@ -98,14 +132,6 @@ class WindowController extends Controller {
 
   public updateAuthState(value: AuthChangeEvent): void {
     this._model.authState = value;
-  }
-
-  public addToast(toast: ToastProps | undefined): void {
-    this._model.toast = toast;
-  }
-
-  public addBanner(banner: BannerProps | undefined): void {
-    this._model.banner = banner;
   }
 
   public updateLanguageCode(code: string): void {
@@ -125,19 +151,27 @@ class WindowController extends Controller {
     this._model.showNavigateBack = value;
   }
 
-  public updateOrderPlacedNotificationData(value: Order | undefined): void {
+  public updateOrderPlacedNotificationData(
+    value: HttpTypes.StoreOrder | undefined
+  ): void {
     this._model.orderPlacedNotificationData = value;
   }
 
-  public updateOrderShippedNotificationData(value: Order | undefined): void {
+  public updateOrderShippedNotificationData(
+    value: HttpTypes.StoreOrder | undefined
+  ): void {
     this._model.orderShippedNotificationData = value;
   }
 
-  public updateOrderReturnedNotificationData(value: Order | undefined): void {
+  public updateOrderReturnedNotificationData(
+    value: HttpTypes.StoreOrder | undefined
+  ): void {
     this._model.orderReturnedNotificationData = value;
   }
 
-  public updateOrderCanceledNotificationData(value: Order | undefined): void {
+  public updateOrderCanceledNotificationData(
+    value: HttpTypes.StoreOrder | undefined
+  ): void {
     this._model.orderCanceledNotificationData = value;
   }
 
@@ -172,13 +206,9 @@ class WindowController extends Controller {
     }
 
     query.set('sales_location', id);
-    const inventoryLocations = await firstValueFrom(
-      ExploreController.model.store.pipe(
-        select((model: ExploreState) => model.inventoryLocations),
-        filter((value) => value !== undefined),
-        take(1)
-      )
-    );
+    const exploreController = this._container.get('ExploreController');
+    await when(() => exploreController.model.inventoryLocations !== undefined);
+    const inventoryLocations = exploreController.model.inventoryLocations;
     const inventoryLocation = inventoryLocations.find(
       (location) => location.id == id
     );
@@ -193,11 +223,11 @@ class WindowController extends Controller {
   ): void {
     this._model.prevTransitionKeyIndex = this._model.transitionKeyIndex;
 
-    if (location.pathname === RoutePathsType.Explore) {
+    if (location.pathname === RoutePathsType.Home) {
       this._model.transitionKeyIndex = 0;
       this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.Explore;
-      this._model.activeTabsId = RoutePathsType.Explore;
+      this._model.activeRoute = RoutePathsType.Home;
+      this._model.activeTabsId = RoutePathsType.Home;
       this._model.showNavigateBack = false;
     } else if (location.pathname === RoutePathsType.Store) {
       this._model.transitionKeyIndex = 0;
@@ -446,34 +476,54 @@ class WindowController extends Controller {
     return false;
   }
 
-  private async initializeAsync(_renderCount: number): Promise<void> {
-    this._cartSubscription?.unsubscribe();
-    this._cartSubscription = CartController.model.store
-      .pipe(select((model) => model.cart))
-      .subscribe({ next: this.onCartChanged });
+  public async onSessionChangedAsync(
+    value: IValueDidChange<Session | null>
+  ): Promise<void> {
+    const session = value.newValue;
+    const accountService = this._container.get('AccountService');
+    if (!session) {
+      accountService.clearActiveAccount();
+      this._model.updateIsAuthenticated(undefined);
+      this._model.updateIsLoading(false);
+      return;
+    }
 
-    this._accountSubscription?.unsubscribe();
-    this._accountSubscription =
-      AccountService.activeAccountObservable.subscribe({
-        next: this.onActiveAccountChangedAsync,
-      });
+    this._model.updateIsAccountComplete(true);
+    const account = await this.requestActiveAccountAsync(session);
+    this._model.updateAccount(account);
+    this._model.updateIsAccountComplete(account?.status === 'Complete');
 
-    this._sessionSubscription?.unsubscribe();
-    this._sessionSubscription = SupabaseService.sessionObservable.subscribe({
-      next: this.onSessionChangedAsync,
-    });
+    if (account) {
+      this._model.updateIsAuthenticated(true);
+    } else {
+      accountService.clearActiveAccount();
+      this._model.updateIsAuthenticated(undefined);
+    }
 
-    this._customerSubscription?.unsubscribe();
-    this._customerSubscription = AccountController.model.store
-      .pipe(select((model) => model.customer))
-      .subscribe({
-        next: this.onCustomerChanged,
-      });
-
-    SupabaseService.supabaseClient?.auth.onAuthStateChange(
-      this.onAuthStateChanged
-    );
+    this._model.updateIsLoading(false);
   }
+
+  public handleAuthStateChanged(
+    event: AuthChangeEvent,
+    session: Session | null
+  ): void {
+    if (event === 'SIGNED_IN') {
+      this._model.updateIsLoading(true);
+      this._model.updateIsAuthenticated(true);
+    } else if (event === 'SIGNED_OUT') {
+      this._model.priceLists = [];
+      this._model.updateAccount(null);
+      this._model.updateIsAuthenticated(false);
+    } else if (event === 'INITIAL_SESSION' && !session) {
+      this._model.updateIsAuthenticated(false);
+    } else if (event === 'INITIAL_SESSION' && session) {
+      this._model.updateIsAuthenticated(true);
+    }
+
+    this._model.updateAuthState(event);
+  }
+
+  private async initializeAsync(_renderCount: number): Promise<void> {}
 
   private onNotificationCreated(value: Record<string, any>): void {
     if (Object.keys(value).length <= 0) {
@@ -503,28 +553,31 @@ class WindowController extends Controller {
       }
     }
 
+    const notificationsController = this._container.get(
+      'NotificationsController'
+    );
     this._model.unseenNotificationsCount =
       this._model.unseenNotificationsCount + 1;
-    NotificationsController.addAccountNotification(value);
+    notificationsController.addAccountNotification(value);
   }
 
   private onOrderPlaced(data: Record<string, any>): void {
-    const order = data as Order;
+    const order = data as HttpTypes.StoreOrder;
     this._model.orderPlacedNotificationData = order;
   }
 
   private onOrderShipped(data: Record<string, any>): void {
-    const order = data as Order;
+    const order = data as HttpTypes.StoreOrder;
     this._model.orderShippedNotificationData = order;
   }
 
   private onOrderReturned(data: Record<string, any>): void {
-    const order = data as Order;
+    const order = data as HttpTypes.StoreOrder;
     this._model.orderReturnedNotificationData = order;
   }
 
   private onOrderCanceled(data: Record<string, any>): void {
-    const order = data as Order;
+    const order = data as HttpTypes.StoreOrder;
     this._model.orderCanceledNotificationData = order;
   }
 
@@ -539,72 +592,17 @@ class WindowController extends Controller {
   }
 
   private onCartChanged(
-    value: Omit<Cart, 'refundable_amount' | 'refunded_total'> | undefined
+    value: IValueDidChange<HttpTypes.StoreCart | undefined>
   ): void {
-    this._model.cartCount = value?.items.length ?? 0;
-  }
-
-  private onAuthStateChanged(
-    event: AuthChangeEvent,
-    session: Session | null
-  ): void {
-    if (event === 'SIGNED_IN') {
-      this._model.isLoading = true;
-      this._model.isAuthenticated = true;
-    } else if (event === 'SIGNED_OUT') {
-      this._model.priceLists = [];
-      this._model.account = null;
-      this._model.isAuthenticated = false;
-    } else if (event === 'INITIAL_SESSION' && !session) {
-      this._model.isAuthenticated = false;
-    } else if (event === 'INITIAL_SESSION' && session) {
-      this._model.isAuthenticated = true;
-    }
-
-    this._model.authState = event;
-  }
-
-  private async onSessionChangedAsync(value: Session | null): Promise<void> {
-    if (!value) {
-      AccountService.clearActiveAccount();
-      this._model.isAuthenticated = undefined;
-      this._model.isLoading = false;
-      return;
-    }
-
-    const account = await this.requestActiveAccountAsync(value);
-    if (account) {
-      this._model.isAuthenticated = true;
-    } else {
-      AccountService.clearActiveAccount();
-      this._model.isAuthenticated = undefined;
-    }
-
-    this._model.isLoading = false;
-  }
-
-  private async onActiveAccountChangedAsync(
-    value: AccountResponse | null
-  ): Promise<void> {
-    this._model.account = value;
-    this._model.isAccountComplete = value?.status === 'Complete';
-
-    if (this._model.account?.id === value?.id) {
-      return;
-    }
-
-    if (!value) {
-      return;
-    }
-
-    await this.requestNotificationUnseenCount(value.id);
+    this._model.cartCount = value.newValue?.items?.length ?? 0;
   }
 
   private async requestActiveAccountAsync(
     session: Session
   ): Promise<AccountResponse | null> {
+    const accountService = this._container.get('AccountService');
     try {
-      return await AccountService.requestActiveAsync(session);
+      return await accountService.requestActiveAsync(session);
     } catch (error: any) {
       if (error.status !== 404) {
         console.error(error);
@@ -612,7 +610,7 @@ class WindowController extends Controller {
       }
 
       try {
-        return await AccountService.requestCreateAsync(session);
+        return await accountService.requestCreateAsync(session);
       } catch (error: any) {
         console.error(error);
         return null;
@@ -623,8 +621,11 @@ class WindowController extends Controller {
   private async requestNotificationUnseenCount(
     accountId: string
   ): Promise<void> {
+    const accountNotificationService = this._container.get(
+      'AccountNotificationService'
+    );
     try {
-      const response = await AccountNotificationService.requestUnseenCountAsync(
+      const response = await accountNotificationService.requestUnseenCountAsync(
         accountId
       );
       this._model.unseenNotificationsCount = response.count ?? 0;
@@ -633,32 +634,37 @@ class WindowController extends Controller {
     }
   }
 
-  private onCustomerChanged(customer: Customer | undefined): void {
-    if (!customer || !MedusaService.accessToken) {
+  private onCustomerChanged(
+    value: IValueDidChange<HttpTypes.StoreCustomer | undefined>
+  ): void {
+    const medusaService = this._container.get('MedusaService');
+    const accountController = this._container.get('AccountController');
+    const customer = value.newValue;
+    if (!customer || !medusaService.accessToken) {
       return;
     }
 
-    this._customerGroupSubscription?.unsubscribe();
-    this._customerGroupSubscription = AccountController.model.store
-      .pipe(select((model: AccountState) => model.customerGroup))
-      .subscribe({
-        next: this.onCustomerGroupChangedAsync,
-      });
+    this._customerGroupDisposer?.();
+    this._customerGroupDisposer = observe(
+      accountController.model,
+      'customerGroup',
+      this.onCustomerGroupChangedAsync
+    );
   }
 
   private async onCustomerGroupChangedAsync(
-    customerGroup: CustomerGroup | undefined
+    value: IValueDidChange<HttpTypes.AdminCustomerGroup | undefined>
   ): Promise<void> {
+    const customerGroup = value.newValue;
     if (!customerGroup) {
       this._model.priceLists = [];
       return;
     }
 
-    this._model.priceLists = await MedusaService.requestGetPriceListsAsync({
+    const medusaService = this._container.get('MedusaService');
+    this._model.priceLists = await medusaService.requestGetPriceListsAsync({
       status: ['active'],
       customerGroups: [customerGroup?.id ?? ''],
     });
   }
 }
-
-export default new WindowController();

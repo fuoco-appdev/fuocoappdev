@@ -1,8 +1,7 @@
-import { SalesChannel } from '@medusajs/medusa';
-import { StockLocation } from '@medusajs/stock-location/dist/models';
-import { createStore, withProps } from '@ngneat/elf';
-import mapboxgl from 'mapbox-gl';
+import { HttpTypes } from '@medusajs/types';
+import { makeObservable, observable } from 'mobx';
 import { Model } from '../model';
+import { StoreOptions } from '../store-options';
 
 export enum InventoryLocationType {
   Cellar = 'cellar',
@@ -16,258 +15,171 @@ export enum ExploreTabs {
 
 export interface InventoryLocation {
   id: string;
-  coordinates: mapboxgl.LngLat;
+  coordinates: { lng: number; lat: number };
   placeName: string;
   company: string;
   description: string;
   region: string;
-  salesChannels: Partial<SalesChannel>[];
+  salesChannels: Partial<HttpTypes.AdminSalesChannel>[];
   type?: InventoryLocationType;
   avatar?: string;
   thumbnails?: string[];
 }
 
-export interface ExploreState {
-  input: string;
-  selectedTab: ExploreTabs | undefined;
-  inventoryLocations: InventoryLocation[];
-  searchedStockLocations: StockLocation[];
-  searchedStockLocationsPagination: number;
-  hasMoreSearchedStockLocations: boolean;
-  searchedStockLocationScrollPosition: number | undefined;
-  areSearchedStockLocationsLoading: boolean;
-  areSearchedStockLocationsReloading: boolean;
-  selectedInventoryLocation: InventoryLocation | undefined;
-  wineCount: number;
-  isSelectedInventoryLocationLoaded: boolean;
-  longitude: number | undefined;
-  latitude: number | undefined;
-  zoom: number | undefined;
-}
-
-export interface ExploreLocalState {
-  selectedInventoryLocationId: string | undefined;
-}
-
 export class ExploreModel extends Model {
-  constructor() {
-    super(
-      createStore(
-        { name: 'explore' },
-        withProps<ExploreState>({
-          input: '',
-          selectedTab: undefined,
-          inventoryLocations: [],
-          searchedStockLocations: [],
-          searchedStockLocationsPagination: 1,
-          hasMoreSearchedStockLocations: true,
-          searchedStockLocationScrollPosition: 0,
-          selectedInventoryLocation: undefined,
-          areSearchedStockLocationsLoading: false,
-          areSearchedStockLocationsReloading: false,
-          wineCount: 0,
-          isSelectedInventoryLocationLoaded: false,
-          longitude: undefined,
-          latitude: undefined,
-          zoom: undefined,
-        })
-      ),
-      undefined,
-      createStore(
-        { name: 'explore-local' },
-        withProps<ExploreLocalState>({
-          selectedInventoryLocationId: undefined,
-        })
-      )
-    );
+  @observable
+  public input: string;
+  @observable
+  public selectedTab: ExploreTabs | undefined;
+  @observable
+  public inventoryLocations: InventoryLocation[];
+  @observable
+  public searchedStockLocations: HttpTypes.AdminStockLocation[];
+  @observable
+  public searchedStockLocationsPagination: number;
+  @observable
+  public hasMoreSearchedStockLocations: boolean;
+  @observable
+  public searchedStockLocationScrollPosition: number | undefined;
+  @observable
+  public areSearchedStockLocationsLoading: boolean;
+  @observable
+  public areSearchedStockLocationsReloading: boolean;
+  @observable
+  public selectedInventoryLocation: InventoryLocation | undefined;
+  @observable
+  public wineCount: number;
+  @observable
+  public isSelectedInventoryLocationLoaded: boolean;
+  @observable
+  public longitude: number | undefined;
+  @observable
+  public latitude: number | undefined;
+  @observable
+  public zoom: number | undefined;
+  @observable
+  public selectedInventoryLocationId: string | undefined;
+
+  constructor(options?: StoreOptions) {
+    super({
+      ...options,
+      ...{ persistableProperties: { local: ['_selectedInventoryLocationId'] } },
+    });
+    makeObservable(this);
+
+    this.input = '';
+    this.selectedTab = undefined;
+    this.inventoryLocations = [];
+    this.searchedStockLocations = [];
+    this.searchedStockLocationsPagination = 1;
+    this.hasMoreSearchedStockLocations = true;
+    this.searchedStockLocationScrollPosition = 0;
+    this.selectedInventoryLocation = undefined;
+    this.areSearchedStockLocationsLoading = false;
+    this.areSearchedStockLocationsReloading = false;
+    this.wineCount = 0;
+    this.isSelectedInventoryLocationLoaded = false;
+    this.longitude = undefined;
+    this.latitude = undefined;
+    this.zoom = undefined;
+    this.selectedInventoryLocationId = undefined;
   }
 
-  public get selectedTab(): ExploreTabs | undefined {
-    return this.store.getValue().selectedTab;
-  }
-
-  public set selectedTab(value: ExploreTabs | undefined) {
+  public updateSelectedTab(value: ExploreTabs | undefined) {
     if (this.selectedTab !== value) {
-      this.store.update((state) => ({ ...state, selectedTab: value }));
+      this.selectedTab = value;
     }
   }
 
-  public get selectedInventoryLocationId(): string | undefined {
-    return this.localStore?.getValue().selectedInventoryLocationId;
-  }
-
-  public set selectedInventoryLocationId(value: string | undefined) {
+  public updateSelectedInventoryLocationId(value: string | undefined) {
     if (this.selectedInventoryLocationId !== value) {
-      this.localStore?.update((state) => ({
-        ...state,
-        selectedInventoryLocationId: value,
-      }));
+      this.selectedInventoryLocationId = value;
     }
   }
 
-  public get searchedStockLocations(): StockLocation[] {
-    return this.store.getValue().searchedStockLocations;
-  }
-
-  public set searchedStockLocations(value: StockLocation[]) {
+  public updateSearchedStockLocations(value: HttpTypes.AdminStockLocation[]) {
     if (JSON.stringify(this.searchedStockLocations) !== JSON.stringify(value)) {
-      this.store.update((state) => ({
-        ...state,
-        searchedStockLocations: value,
-      }));
+      this.searchedStockLocations = value;
     }
   }
 
-  public get searchedStockLocationsPagination(): number {
-    return this.store.getValue().searchedStockLocationsPagination;
-  }
-
-  public set searchedStockLocationsPagination(value: number) {
+  public updateSearchedStockLocationsPagination(value: number) {
     if (this.searchedStockLocationsPagination !== value) {
-      this.store.update((state) => ({
-        ...state,
-        searchedStockLocationsPagination: value,
-      }));
+      this.searchedStockLocationsPagination = value;
     }
   }
 
-  public get hasMoreSearchedStockLocations(): boolean {
-    return this.store.getValue().hasMoreSearchedStockLocations;
-  }
-
-  public set hasMoreSearchedStockLocations(value: boolean) {
+  public updateHasMoreSearchedStockLocations(value: boolean) {
     if (this.hasMoreSearchedStockLocations !== value) {
-      this.store.update((state) => ({
-        ...state,
-        hasMoreSearchedStockLocations: value,
-      }));
+      this.hasMoreSearchedStockLocations = value;
     }
   }
 
-  public get searchedStockLocationScrollPosition(): number | undefined {
-    return this.store.getValue().searchedStockLocationScrollPosition;
-  }
-
-  public set searchedStockLocationScrollPosition(value: number | undefined) {
+  public updateSearchedStockLocationScrollPosition(value: number | undefined) {
     if (this.searchedStockLocationScrollPosition !== value) {
       this.searchedStockLocationScrollPosition = value;
     }
   }
 
-  public get areSearchedStockLocationsLoading(): boolean {
-    return this.store.getValue().areSearchedStockLocationsLoading;
-  }
-
-  public set areSearchedStockLocationsLoading(value: boolean) {
+  public updateAreSearchedStockLocationsLoading(value: boolean) {
     if (this.areSearchedStockLocationsLoading !== value) {
-      this.store.update((state) => ({
-        ...state,
-        areSearchedStockLocationsLoading: value,
-      }));
+      this.areSearchedStockLocationsLoading = value;
     }
   }
 
-  public get areSearchedStockLocationsReloading(): boolean {
-    return this.store.getValue().areSearchedStockLocationsReloading;
-  }
-
-  public set areSearchedStockLocationsReloading(value: boolean) {
+  public updateAreSearchedStockLocationsReloading(value: boolean) {
     if (this.areSearchedStockLocationsReloading !== value) {
-      this.store.update((state) => ({
-        ...state,
-        areSearchedStockLocationsReloading: value,
-      }));
+      this.areSearchedStockLocationsReloading = value;
     }
   }
 
-  public get input(): string {
-    return this.store.getValue().input;
-  }
-
-  public set input(value: string) {
+  public updateInput(value: string) {
     if (this.input !== value) {
-      this.store.update((state) => ({
-        ...state,
-        input: value,
-      }));
+      this.input = value;
     }
   }
 
-  public get inventoryLocations(): InventoryLocation[] {
-    return this.store.getValue().inventoryLocations;
-  }
-
-  public set inventoryLocations(value: InventoryLocation[]) {
+  public updateInventoryLocations(value: InventoryLocation[]) {
     if (JSON.stringify(this.inventoryLocations) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, inventoryLocations: value }));
+      this.inventoryLocations = value;
     }
   }
 
-  public get wineCount(): number {
-    return this.store.getValue().wineCount;
-  }
-
-  public set wineCount(value: number) {
+  public updateWineCount(value: number) {
     if (this.wineCount !== value) {
-      this.store.update((state) => ({ ...state, wineCount: value }));
+      this.wineCount = value;
     }
   }
 
-  public get selectedInventoryLocation(): InventoryLocation | undefined {
-    return this.store.getValue().selectedInventoryLocation;
-  }
-
-  public set selectedInventoryLocation(value: InventoryLocation | undefined) {
+  public updateSelectedInventoryLocation(value: InventoryLocation | undefined) {
     if (
       JSON.stringify(this.selectedInventoryLocation) !== JSON.stringify(value)
     ) {
-      this.store.update((state) => ({
-        ...state,
-        selectedInventoryLocation: value,
-      }));
+      this.selectedInventoryLocation = value;
     }
   }
 
-  public get isSelectedInventoryLocationLoaded(): boolean {
-    return this.store?.getValue().isSelectedInventoryLocationLoaded;
-  }
-
-  public set isSelectedInventoryLocationLoaded(value: boolean) {
+  public updateIsSelectedInventoryLocationLoaded(value: boolean) {
     if (this.isSelectedInventoryLocationLoaded !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        isSelectedInventoryLocationLoaded: value,
-      }));
+      this.isSelectedInventoryLocationLoaded = value;
     }
   }
 
-  public get longitude(): number | undefined {
-    return this.store.getValue().longitude;
-  }
-
-  public set longitude(value: number | undefined) {
+  public updateLongitude(value: number | undefined) {
     if (this.longitude !== value) {
-      this.store.update((state) => ({ ...state, longitude: value }));
+      this.longitude = value;
     }
   }
 
-  public get latitude(): number | undefined {
-    return this.store.getValue().latitude;
-  }
-
-  public set latitude(value: number | undefined) {
+  public updateLatitude(value: number | undefined) {
     if (this.latitude !== value) {
-      this.store.update((state) => ({ ...state, latitude: value }));
+      this.latitude = value;
     }
   }
 
-  public get zoom(): number | undefined {
-    return this.store.getValue().zoom;
-  }
-
-  public set zoom(value: number | undefined) {
+  public updateZoom(value: number | undefined) {
     if (this.zoom !== value) {
-      this.store.update((state) => ({ ...state, zoom: value }));
+      this.zoom = value;
     }
   }
 }

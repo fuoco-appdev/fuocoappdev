@@ -1,5 +1,6 @@
 import DevelopmentConfig from '../assets/configs/development.config.json';
 import ProductionConfig from '../assets/configs/production.config.json';
+import { StoreOptions } from '../store-options';
 
 export interface SupabaseConfig {
   url: string;
@@ -27,7 +28,7 @@ export interface DiscordConfig {
   url: string;
 }
 
-class ConfigService {
+export default class ConfigService {
   private readonly _supabase!: SupabaseConfig;
   private readonly _medusa!: MedusaConfig;
   private readonly _meiliSearch!: MeiliSearchConfig;
@@ -35,17 +36,44 @@ class ConfigService {
   private readonly _s3!: S3Config;
   private readonly _discord!: DiscordConfig;
 
-  constructor() {
-    if (import.meta.env['MODE'] === 'development') {
+  constructor(
+    private readonly _mode: string,
+    private readonly _host: string,
+    private readonly _supabaseAnonKey: string,
+    private readonly _storeOptions: StoreOptions
+  ) {
+    if (this._mode === 'development') {
       this._supabase = DevelopmentConfig.supabase;
       this._medusa = DevelopmentConfig.medusa;
       this._meiliSearch = DevelopmentConfig.meilisearch;
       this._mapbox = DevelopmentConfig.mapbox;
       this._s3 = DevelopmentConfig.s3;
       this._discord = DevelopmentConfig.discord;
+
+      if (this._host) {
+        this._supabase = {
+          url: DevelopmentConfig.supabase.url.replace(
+            '{localhost}',
+            this._host
+          ),
+          functions_url: DevelopmentConfig.supabase.functions_url.replace(
+            '{localhost}',
+            this._host
+          ),
+        };
+        this._medusa = {
+          url: DevelopmentConfig.medusa.url.replace('{localhost}', this._host),
+        };
+        this._meiliSearch = {
+          url: DevelopmentConfig.meilisearch.url.replace(
+            '{localhost}',
+            this._host
+          ),
+        };
+      }
     }
     // eslint-disable-next-line no-empty
-    else if (import.meta.env['MODE'] === 'production') {
+    else if (this._mode === 'production') {
       this._supabase = ProductionConfig.supabase;
       this._medusa = ProductionConfig.medusa;
       this._meiliSearch = ProductionConfig.meilisearch;
@@ -79,5 +107,3 @@ class ConfigService {
     return this._discord;
   }
 }
-
-export default new ConfigService();

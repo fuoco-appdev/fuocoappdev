@@ -1,14 +1,16 @@
-import SupabaseService from "./supabase.service.ts";
+import { Service } from 'https://deno.land/x/di@v0.1.1/mod.ts';
+import { RealtimeChannel } from 'https://esm.sh/@supabase/supabase-js@2.7.0';
 import {
   CreateDeviceRequest,
   DeviceResponse,
   DevicesRequest,
   DevicesResponse,
   UpdateDeviceRequest,
-} from "../protobuf/device_pb.js";
-import AccountService from "./account.service.ts";
-import MedusaService from "./medusa.service.ts";
-import { RealtimeChannel } from "https://esm.sh/@supabase/supabase-js@2.7.0";
+} from '../protobuf/device_pb.js';
+import serviceCollection, { serviceTypes } from '../service_collection.ts';
+import AccountService from './account.service.ts';
+import MedusaService from './medusa.service.ts';
+import SupabaseService from './supabase.service.ts';
 
 export interface DeviceProps {
   id?: string;
@@ -21,22 +23,31 @@ export interface DeviceProps {
   active: string;
 }
 
-class DeviceService {
+@Service()
+export default class DeviceService {
+  private readonly _medusaService: MedusaService;
+  private readonly _supabaseService: SupabaseService;
+  private readonly _accountService: AccountService;
+  constructor() {
+    this._medusaService = serviceCollection.get(serviceTypes.MedusaService);
+    this._supabaseService = serviceCollection.get(serviceTypes.SupabaseService);
+    this._accountService = serviceCollection.get(serviceTypes.AccountService);
+  }
   public async createOrderBroadcastAsync(
-    fulfillment: Record<string, any>,
+    fulfillment: Record<string, any>
   ): Promise<void> {
-    const orderId = fulfillment["order_id"] as string;
-    const locationId = fulfillment["location_id"] as string;
-    const orderResponse = await MedusaService.getOrderAsync(orderId);
+    const orderId = fulfillment['order_id'] as string;
+    const locationId = fulfillment['location_id'] as string;
+    const orderResponse = await this._medusaService.getOrderAsync(orderId);
     const devicesRequest = new DevicesRequest();
     devicesRequest.setStockLocationId(locationId);
     const devicesResponse = await this.getDevicesAsync(devicesRequest);
     for (const device of devicesResponse?.getDevicesList() ?? []) {
-      const channel = SupabaseService.client.channel(
-        `device-${device.getId()}`,
+      const channel = this._supabaseService.client.channel(
+        `device-${device.getId()}`
       );
       this.sendCreatedBroadcast(channel, {
-        type: "order",
+        type: 'order',
         data: orderResponse,
       });
     }
@@ -44,11 +55,11 @@ class DeviceService {
 
   public async createAsync(
     supabaseId: string,
-    request: InstanceType<typeof CreateDeviceRequest>,
+    request: InstanceType<typeof CreateDeviceRequest>
   ): Promise<InstanceType<typeof DeviceResponse> | null> {
-    const accountResponse = await AccountService.findAsync(supabaseId);
+    const accountResponse = await this._accountService.findAsync(supabaseId);
     if (!accountResponse) {
-      console.error("No account associated to supabase id");
+      console.error('No account associated to supabase id');
       return null;
     }
 
@@ -58,25 +69,26 @@ class DeviceService {
     const name = request.getName();
     const metadata = request.getMetadata();
 
-    const stockLocationResponse = await MedusaService.getStockLocationAsync(
-      stockLocationId,
-    );
+    const stockLocationResponse =
+      await this._medusaService.getStockLocationAsync(stockLocationId);
     const stockLocation = JSON.parse(stockLocationResponse.getData());
     const stockLocationMetadata = stockLocation.metadata;
     const adminAccountId = stockLocationMetadata.admin_account_id;
     if (accountResponse.id !== adminAccountId) {
-      console.error("Account is not admin to the stock location");
+      console.error('Account is not admin to the stock location');
       return null;
     }
 
-    const deviceData = await SupabaseService.client
-      .from("device")
-      .insert([{
-        type: type,
-        stock_location_id: stockLocationId,
-        name: name,
-        metadata: metadata,
-      }])
+    const deviceData = await this._supabaseService.client
+      .from('device')
+      .insert([
+        {
+          type: type,
+          stock_location_id: stockLocationId,
+          name: name,
+          metadata: metadata,
+        },
+      ])
       .select();
 
     if (deviceData.error) {
@@ -86,7 +98,7 @@ class DeviceService {
 
     const data = deviceData.data.length > 0 ? deviceData.data[0] : null;
     if (!data) {
-      console.error("Created device returned null");
+      console.error('Created device returned null');
       return null;
     }
     response.setId(data.id);
@@ -103,11 +115,11 @@ class DeviceService {
   public async updateAsync(
     supabaseId: string,
     deviceId: string,
-    request: InstanceType<typeof UpdateDeviceRequest>,
+    request: InstanceType<typeof UpdateDeviceRequest>
   ): Promise<InstanceType<typeof DeviceResponse> | null> {
-    const accountResponse = await AccountService.findAsync(supabaseId);
+    const accountResponse = await this._accountService.findAsync(supabaseId);
     if (!accountResponse) {
-      console.error("No account associated to supabase id");
+      console.error('No account associated to supabase id');
       return null;
     }
 
@@ -116,24 +128,23 @@ class DeviceService {
     const name = request.getName();
     const metadata = request.getMetadata();
 
-    const stockLocationResponse = await MedusaService.getStockLocationAsync(
-      stockLocationId,
-    );
+    const stockLocationResponse =
+      await this._medusaService.getStockLocationAsync(stockLocationId);
     const stockLocation = JSON.parse(stockLocationResponse.getData());
     const stockLocationMetadata = stockLocation.metadata;
     const adminAccountId = stockLocationMetadata.admin_account_id;
     if (accountResponse.id !== adminAccountId) {
-      console.error("Account is not admin to the stock location");
+      console.error('Account is not admin to the stock location');
       return null;
     }
 
-    const deviceData = await SupabaseService.client
-      .from("device")
+    const deviceData = await this._supabaseService.client
+      .from('device')
       .update({
         ...(name && { name: name }),
         ...(metadata && { metadata: metadata }),
       })
-      .eq("id", deviceId)
+      .eq('id', deviceId)
       .select();
 
     if (deviceData.error) {
@@ -143,7 +154,7 @@ class DeviceService {
 
     const data = deviceData.data.length > 0 ? deviceData.data[0] : null;
     if (!data) {
-      console.error("Updated device returned null");
+      console.error('Updated device returned null');
       return null;
     }
     response.setId(data.id);
@@ -158,14 +169,14 @@ class DeviceService {
   }
 
   public async getDevicesAsync(
-    request: InstanceType<typeof DevicesRequest>,
+    request: InstanceType<typeof DevicesRequest>
   ): Promise<InstanceType<typeof DevicesResponse> | null> {
     const response = new DevicesResponse();
     const stockLocationId = request.getStockLocationId();
-    const devicesData = await SupabaseService.client
-      .from("device")
+    const devicesData = await this._supabaseService.client
+      .from('device')
       .select()
-      .eq("stock_location_id", stockLocationId);
+      .eq('stock_location_id', stockLocationId);
 
     if (devicesData.error) {
       console.error(devicesData.error);
@@ -189,15 +200,15 @@ class DeviceService {
 
   private sendCreatedBroadcast(
     channel: RealtimeChannel,
-    data: Record<string, any>,
+    data: Record<string, any>
   ): void {
     const subscription = channel?.subscribe(async (status) => {
-      if (status !== "SUBSCRIBED") {
+      if (status !== 'SUBSCRIBED') {
         return;
       }
       await channel?.send({
-        type: "broadcast",
-        event: "CREATED",
+        type: 'broadcast',
+        event: 'CREATED',
         payload: data,
       });
 
@@ -205,5 +216,3 @@ class DeviceService {
     });
   }
 }
-
-export default new DeviceService();

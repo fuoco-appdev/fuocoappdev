@@ -1,63 +1,63 @@
-import axios from "axios";
 import {
   CreateInterestRequest,
   InterestResponse,
   InterestsRequest,
   InterestsResponse,
   SearchInterestsRequest,
-} from "../protobuf/interest_pb";
-import { Service } from "../service";
-import SupabaseService from "./supabase.service";
+} from '../protobuf/interest_pb';
+import { Service } from '../service';
+import { StoreOptions } from '../store-options';
+import ConfigService from './config.service';
+import SupabaseService from './supabase.service';
 
-class InterestService extends Service {
-  constructor() {
-    super();
+export default class InterestService extends Service {
+  constructor(
+    private readonly _supabaseService: SupabaseService,
+    private readonly _configService: ConfigService,
+    private readonly _supabaseAnonKey: string,
+    private readonly _storeOptions: StoreOptions
+  ) {
+    super(_configService, _supabaseAnonKey, _storeOptions);
   }
 
-  public async requestFindAsync(
-    ids: string[],
-  ): Promise<InterestsResponse> {
-    const session = await SupabaseService.requestSessionAsync();
+  public override dispose(): void {}
+
+  public async requestFindAsync(ids: string[]): Promise<InterestsResponse> {
+    const session = await this._supabaseService.requestSessionAsync();
     const request = new InterestsRequest({
       ids: ids,
     });
-    const response = await axios({
-      method: "post",
-      url: `${this.endpointUrl}/interest/interests`,
+    const response = await fetch(`${this.endpointUrl}/interest/interests`, {
+      method: 'post',
       headers: {
         ...this.headers,
-        "Session-Token": `${session?.access_token}`,
+        'Session-Token': `${session?.access_token}`,
       },
-      data: request.toBinary(),
-      responseType: "arraybuffer",
+      body: request.toBinary(),
     });
 
-    const arrayBuffer = new Uint8Array(response.data);
+    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
     this.assertResponse(arrayBuffer);
 
     const interestsResponse = InterestsResponse.fromBinary(arrayBuffer);
     return interestsResponse;
   }
 
-  public async requestCreateAsync(
-    name: string,
-  ): Promise<InterestResponse> {
-    const session = await SupabaseService.requestSessionAsync();
+  public async requestCreateAsync(name: string): Promise<InterestResponse> {
+    const session = await this._supabaseService.requestSessionAsync();
     const request = new CreateInterestRequest({
       name: name,
     });
-    const response = await axios({
-      method: "post",
-      url: `${this.endpointUrl}/interest/create`,
+    const response = await fetch(`${this.endpointUrl}/interest/create`, {
+      method: 'post',
       headers: {
         ...this.headers,
-        "Session-Token": `${session?.access_token}`,
+        'Session-Token': `${session?.access_token}`,
       },
-      data: request.toBinary(),
-      responseType: "arraybuffer",
+      body: request.toBinary(),
     });
 
-    const arrayBuffer = new Uint8Array(response.data);
+    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
     this.assertResponse(arrayBuffer);
 
     const interestResponse = InterestResponse.fromBinary(arrayBuffer);
@@ -69,29 +69,25 @@ class InterestService extends Service {
     limit?: number;
     offset?: number;
   }): Promise<InterestsResponse> {
-    const session = await SupabaseService.requestSessionAsync();
+    const session = await this._supabaseService.requestSessionAsync();
     const request = new SearchInterestsRequest({
       query: props.query,
       offset: props.offset,
       limit: props.limit,
     });
-    const response = await axios({
-      method: "post",
-      url: `${this.endpointUrl}/interest/search`,
+    const response = await fetch(`${this.endpointUrl}/interest/search`, {
+      method: 'post',
       headers: {
         ...this.headers,
-        "Session-Token": `${session?.access_token}`,
+        'Session-Token': `${session?.access_token}`,
       },
-      data: request.toBinary(),
-      responseType: "arraybuffer",
+      body: request.toBinary(),
     });
 
-    const arrayBuffer = new Uint8Array(response.data);
+    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
     this.assertResponse(arrayBuffer);
 
     const interestsResponse = InterestsResponse.fromBinary(arrayBuffer);
     return interestsResponse;
   }
 }
-
-export default new InterestService();

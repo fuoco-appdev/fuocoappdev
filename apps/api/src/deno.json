@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "emitDecoratorMetadata": true,
     "experimentalDecorators": true
   },
   "imports": {
@@ -17,5 +18,10 @@
     "https://deno.land/x/tweetnacl_deno@v1.0.3/src/server/random": "https://deno.land/x/tweetnacl_deno@v1.0.3/src/server/random.ts",
     "https://deno.land/x/tweetnacl_deno@v1.0.3/src/validate": "https://deno.land/x/tweetnacl_deno@v1.0.3/src/validate.ts",
     "https://deno.land/x/tweetnacl_deno@v1.0.3/src/verify": "https://deno.land/x/tweetnacl_deno@v1.0.3/src/verify.ts"
+  },
+  "scopes": {
+    "https://deno.land/x/inject@v0.1.2/": {
+      "https://deno.land/x/reflect_metadata@v0.1.12-2/mod.ts": "https://deno.land/x/deno_reflect@v0.2.1/mod.ts"
+    }
   }
 }

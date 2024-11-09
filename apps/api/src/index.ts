@@ -1,8 +1,8 @@
 export {
-  Core,
-  Controller,
-  Post,
-  Guard,
   ContentType,
+  Controller,
+  Core,
+  Guard,
   GuardExecuter,
-} from 'https://fuoco-appdev-core-api-p2php61zwd5g.deno.dev/core/src/index.ts';
+  Post,
+} from 'https://fuoco-appdev-core-api-22p1mxbq9mrk.deno.dev/libs/core/src/index.ts';

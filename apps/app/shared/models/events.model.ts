@@ -1,10 +1,10 @@
-import { createStore, withProps } from '@ngneat/elf';
+import { makeObservable } from 'mobx';
 import { Model } from '../model';
-
-export interface EventsState {}
+import { StoreOptions } from '../store-options';
 
 export class EventsModel extends Model {
-  constructor() {
-    super(createStore({ name: 'events' }, withProps<EventsState>({})));
+  constructor(options?: StoreOptions) {
+    super(options);
+    makeObservable(this);
   }
 }

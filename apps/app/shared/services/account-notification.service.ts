@@ -1,16 +1,14 @@
-import {
-  RealtimeChannel,
-  SupabaseClient
-} from "@supabase/supabase-js";
-import axios from "axios";
-import { BehaviorSubject, Observable } from "rxjs";
+import { RealtimeChannel, SupabaseClient } from '@supabase/supabase-js';
+import { makeObservable, observable, runInAction } from 'mobx';
 import {
   AccountNotificationCountResponse,
   AccountNotificationsRequest,
   AccountNotificationsResponse,
-} from "../protobuf/account-notification_pb";
-import { Service } from "../service";
-import SupabaseService from "./supabase.service";
+} from '../protobuf/account-notification_pb';
+import { Service } from '../service';
+import { StoreOptions } from '../store-options';
+import ConfigService from './config.service';
+import SupabaseService from './supabase.service';
 
 export interface AccountData {
   id: string;
@@ -19,42 +17,42 @@ export interface AccountData {
   username: string;
 }
 
-class AccountNotificationService extends Service {
-  private readonly _notificationCreatedBehaviorSubject: BehaviorSubject<
-    Record<string, any>
-  >;
+export default class AccountNotificationService extends Service {
+  @observable
+  public notificationCreated!: Record<string, any>;
   private _realtimeChannel: RealtimeChannel | undefined;
-  constructor() {
-    super();
 
-    this._notificationCreatedBehaviorSubject = new BehaviorSubject<
-      Record<string, any>
-    >({});
+  constructor(
+    private readonly _supabaseService: SupabaseService,
+    private readonly _configService: ConfigService,
+    private readonly _supabaseAnonKey: string,
+    private readonly _storeOptions: StoreOptions
+  ) {
+    super(_configService, _supabaseAnonKey, _storeOptions);
+    makeObservable(this);
+
+    runInAction(() => (this.notificationCreated = {}));
   }
 
-  public get notificationCreatedObservable(): Observable<Record<string, any>> {
-    return this._notificationCreatedBehaviorSubject.asObservable();
-  }
+  public override dispose(): void {}
 
   public initializeRealtime(
-    client: SupabaseClient<any, "public", any>,
-    accountId: string,
+    client: SupabaseClient<any, 'public', any>,
+    accountId: string
   ): void {
     this._realtimeChannel?.unsubscribe();
-    this._realtimeChannel = client
-      .channel('db-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'account_notification',
-          filter: `account_id=eq.${accountId}`
-        },
-        (payload: Record<string, any>) => {
-          this._notificationCreatedBehaviorSubject.next(payload);
-        },
-      );
+    this._realtimeChannel = client.channel('db-changes').on(
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'account_notification',
+        filter: `account_id=eq.${accountId}`,
+      },
+      (payload: Record<string, any>) => {
+        runInAction(() => (this.notificationCreated = payload));
+      }
+    );
     this._realtimeChannel.subscribe((status, error) => {
       if (error) {
         console.error(error);
@@ -62,7 +60,7 @@ class AccountNotificationService extends Service {
     });
   }
 
-  public disposeRealtime(client: SupabaseClient<any, "public", any>): void {
+  public disposeRealtime(client: SupabaseClient<any, 'public', any>): void {
     if (this._realtimeChannel) {
       this._realtimeChannel?.unsubscribe();
     }
@@ -82,71 +80,72 @@ class AccountNotificationService extends Service {
       limit: limit,
       offset: offset,
     });
-    const session = await SupabaseService.requestSessionAsync();
-    const response = await axios({
-      method: "post",
-      url: `${this.endpointUrl}/account-notification/notifications`,
-      headers: {
-        ...this.headers,
-        "Session-Token": `${session?.access_token}`,
-      },
-      data: request.toBinary(),
-      responseType: "arraybuffer",
-    });
+    const session = await this._supabaseService.requestSessionAsync();
+    const response = await fetch(
+      `${this.endpointUrl}/account-notification/notifications`,
+      {
+        method: 'post',
+        headers: {
+          ...this.headers,
+          'Session-Token': `${session?.access_token}`,
+        },
+        body: request.toBinary(),
+      }
+    );
 
-    const arrayBuffer = new Uint8Array(response.data);
+    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
     this.assertResponse(arrayBuffer);
 
-    const accountNotificationsResponse = AccountNotificationsResponse
-      .fromBinary(arrayBuffer);
+    const accountNotificationsResponse =
+      AccountNotificationsResponse.fromBinary(arrayBuffer);
     return accountNotificationsResponse;
   }
 
   public async requestUnseenCountAsync(
-    accountId: string,
+    accountId: string
   ): Promise<AccountNotificationCountResponse> {
-    const session = await SupabaseService.requestSessionAsync();
-    const response = await axios({
-      method: "post",
-      url: `${this.endpointUrl}/account-notification/unseen-count/${accountId}`,
-      headers: {
-        ...this.headers,
-        "Session-Token": `${session?.access_token}`,
-      },
-      data: "",
-      responseType: "arraybuffer",
-    });
+    const session = await this._supabaseService.requestSessionAsync();
+    const response = await fetch(
+      `${this.endpointUrl}/account-notification/unseen-count/${accountId}`,
+      {
+        method: 'post',
+        headers: {
+          ...this.headers,
+          'Session-Token': `${session?.access_token}`,
+        },
+        body: '',
+      }
+    );
 
-    const arrayBuffer = new Uint8Array(response.data);
+    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
     this.assertResponse(arrayBuffer);
 
-    const accountNotificationCountResponse = AccountNotificationCountResponse
-      .fromBinary(arrayBuffer);
+    const accountNotificationCountResponse =
+      AccountNotificationCountResponse.fromBinary(arrayBuffer);
     return accountNotificationCountResponse;
   }
 
   public async requestUpdateSeenAsync(
-    accountId: string,
+    accountId: string
   ): Promise<AccountNotificationCountResponse> {
-    const session = await SupabaseService.requestSessionAsync();
-    const response = await axios({
-      method: "post",
-      url: `${this.endpointUrl}/account-notification/seen-all/${accountId}`,
-      headers: {
-        ...this.headers,
-        "Session-Token": `${session?.access_token}`,
-      },
-      data: "",
-      responseType: "arraybuffer",
-    });
+    const session = await this._supabaseService.requestSessionAsync();
+    const response = await fetch(
+      `${this.endpointUrl}/account-notification/seen-all/${accountId}`,
+      {
+        method: 'post',
+        headers: {
+          ...this.headers,
+          'Session-Token': `${session?.access_token}`,
+        },
+        body: '',
+      }
+    );
 
-    const arrayBuffer = new Uint8Array(response.data);
+    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
     this.assertResponse(arrayBuffer);
 
-    const accountNotificationCountResponse = AccountNotificationCountResponse
-      .fromBinary(arrayBuffer);
+    const accountNotificationCountResponse =
+      AccountNotificationCountResponse.fromBinary(arrayBuffer);
     return accountNotificationCountResponse;
   }
 }
-
-export default new AccountNotificationService();

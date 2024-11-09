@@ -1,337 +1,275 @@
-import { createStore, withProps } from "@ngneat/elf";
-import { Model } from "../model";
-import { ChatSubscription } from "../services/chat.service";
-import { AccountDocument, AccountPresence } from "./account.model";
+import { makeObservable, observable } from 'mobx';
+import { Model } from '../model';
+import { ChatSubscription } from '../services/chat.service';
+import { StoreOptions } from '../store-options';
+import { AccountDocument, AccountPresence } from './account.model';
 
 export enum ChatTabs {
-    Messages = 'messages',
-    Requests = 'requests'
+  Messages = 'messages',
+  Requests = 'requests',
 }
 
 export interface PrivateChatDocument {
-    chat_id?: string;
-    account_ids?: string[];
+  chat_id?: string;
+  account_ids?: string[];
 }
 
 export interface Chat {
-    id?: string;
-    created_at?: string;
-    type?: string;
-    updated_at?: string;
+  id?: string;
+  created_at?: string;
+  type?: string;
+  updated_at?: string;
 }
 
 export interface ChatDocument extends Chat {
-    tags?: string[];
-    private?: PrivateChatDocument;
+  tags?: string[];
+  private?: PrivateChatDocument;
 }
 
 export interface ChatSeenMessage {
-    messageId?: string;
-    seenAt?: string;
-    accountId?: string;
-    chatId?: string;
+  messageId?: string;
+  seenAt?: string;
+  accountId?: string;
+  chatId?: string;
 }
 
 export interface DecryptedChatMessage {
-    id?: string;
-    createdAt?: string;
-    accountId?: string;
-    chatId?: string;
-    text?: string;
-    link?: string;
-    videoUrl?: string[];
-    photoUrl?: string[];
-    fileUrl?: string[];
-    replyTo?: string;
+  id?: string;
+  createdAt?: string;
+  accountId?: string;
+  chatId?: string;
+  text?: string;
+  link?: string;
+  videoUrl?: string[];
+  photoUrl?: string[];
+  fileUrl?: string[];
+  replyTo?: string;
 }
 
 export interface DecryptedChatMessages {
-    messages: DecryptedChatMessage[];
-    offset: number;
-    hasMore: boolean;
+  messages: DecryptedChatMessage[];
+  offset: number;
+  hasMore: boolean;
 }
 
 export interface ChatMessage {
-    id?: string;
-    created_at?: string;
-    text?: string;
-    nonce?: string;
-    chat_id?: string;
-    account_id?: string;
-    link?: string;
-    video_url?: string[];
-    photo_url?: string[];
-    file_url?: string[];
-    reply_to?: string;
-}
-
-export interface ChatState {
-    searchInput: string;
-    searchAccountsInput: string;
-    areAccountsLoading: boolean;
-    searchedAccounts: AccountDocument[];
-    selectedTab: ChatTabs;
-    hasMoreMessageChannels: boolean;
-    areMessageChannelsLoading: boolean;
-    chats: ChatDocument[];
-    hasMoreChats: boolean;
-    areChatsReloading: boolean;
-    areChatsLoading: boolean;
-    chatsPagination: number;
-    accounts: Record<string, AccountDocument>;
-    chatSubscriptions: Record<string, Record<string, ChatSubscription>>;
-    lastChatMessages: Record<string, DecryptedChatMessage | undefined>;
-    isSelectedChatLoading: boolean;
-    selectedChat: ChatDocument | undefined;
-    accountPresence: Record<string, AccountPresence>;
-    messages: Record<string, DecryptedChatMessages>;
-    seenBy: Record<string, ChatSeenMessage[]>;
-    hasMoreMessages: boolean;
-    areMessagesLoading: boolean;
-    messageInput: string;
+  id?: string;
+  created_at?: string;
+  text?: string;
+  nonce?: string;
+  chat_id?: string;
+  account_id?: string;
+  link?: string;
+  video_url?: string[];
+  photo_url?: string[];
+  file_url?: string[];
+  reply_to?: string;
 }
 
 export class ChatModel extends Model {
-    constructor() {
-        super(
-            createStore(
-                { name: "cart" },
-                withProps<ChatState>({
-                    searchInput: '',
-                    searchAccountsInput: '',
-                    areAccountsLoading: false,
-                    searchedAccounts: [],
-                    selectedTab: ChatTabs.Messages,
-                    hasMoreMessageChannels: true,
-                    areMessageChannelsLoading: false,
-                    chats: [],
-                    hasMoreChats: true,
-                    areChatsReloading: false,
-                    areChatsLoading: false,
-                    chatsPagination: 1,
-                    accounts: {},
-                    chatSubscriptions: {},
-                    lastChatMessages: {},
-                    isSelectedChatLoading: false,
-                    selectedChat: undefined,
-                    accountPresence: {},
-                    messages: {},
-                    seenBy: {},
-                    hasMoreMessages: true,
-                    areMessagesLoading: false,
-                    messageInput: ''
-                }),
-            ),
-        );
-    }
+  @observable
+  public searchInput: string;
+  @observable
+  public searchAccountsInput: string;
+  @observable
+  public areAccountsLoading: boolean;
+  @observable
+  public searchedAccounts: AccountDocument[];
+  @observable
+  public selectedTab: ChatTabs;
+  @observable
+  public hasMoreMessageChannels: boolean;
+  @observable
+  public areMessageChannelsLoading: boolean;
+  @observable
+  public chats: ChatDocument[];
+  @observable
+  public hasMoreChats: boolean;
+  @observable
+  public areChatsReloading: boolean;
+  @observable
+  public areChatsLoading: boolean;
+  @observable
+  public chatsPagination: number;
+  @observable
+  public accounts: Record<string, AccountDocument>;
+  @observable
+  public chatSubscriptions: Record<string, Record<string, ChatSubscription>>;
+  @observable
+  public lastChatMessages: Record<string, DecryptedChatMessage | undefined>;
+  @observable
+  public isSelectedChatLoading: boolean;
+  @observable
+  public selectedChat: ChatDocument | undefined;
+  @observable
+  public accountPresence: Record<string, AccountPresence>;
+  @observable
+  public messages: Record<string, DecryptedChatMessages>;
+  @observable
+  public seenBy: Record<string, ChatSeenMessage[]>;
+  @observable
+  public hasMoreMessages: boolean;
+  @observable
+  public areMessagesLoading: boolean;
+  @observable
+  public messageInput: string;
 
-    public get searchInput(): string {
-        return this.store.getValue().searchInput;
-    }
+  constructor(options?: StoreOptions) {
+    super(options);
+    makeObservable(this);
 
-    public set searchInput(value: string) {
-        if (this.searchInput !== value) {
-            this.store.update((state) => ({ ...state, searchInput: value }));
-        }
-    }
+    this.searchInput = '';
+    this.searchAccountsInput = '';
+    this.areAccountsLoading = false;
+    this.searchedAccounts = [];
+    this.selectedTab = ChatTabs.Messages;
+    this.hasMoreMessageChannels = true;
+    this.areMessageChannelsLoading = false;
+    this.chats = [];
+    this.hasMoreChats = true;
+    this.areChatsReloading = false;
+    this.areChatsLoading = false;
+    this.chatsPagination = 1;
+    this.accounts = {};
+    this.chatSubscriptions = {};
+    this.lastChatMessages = {};
+    this.isSelectedChatLoading = false;
+    this.selectedChat = undefined;
+    this.accountPresence = {};
+    this.messages = {};
+    this.seenBy = {};
+    this.hasMoreMessages = true;
+    this.areMessagesLoading = false;
+    this.messageInput = '';
+  }
 
-    public get searchAccountsInput(): string {
-        return this.store.getValue().searchAccountsInput;
+  public updateSearchInput(value: string) {
+    if (this.searchInput !== value) {
+      this.searchInput = value;
     }
+  }
 
-    public set searchAccountsInput(value: string) {
-        if (this.searchAccountsInput !== value) {
-            this.store.update((state) => ({ ...state, searchAccountsInput: value }));
-        }
+  public updateSearchAccountsInput(value: string) {
+    if (this.searchAccountsInput !== value) {
+      this.searchAccountsInput = value;
     }
+  }
 
-    public get searchedAccounts(): AccountDocument[] {
-        return this.store.getValue().searchedAccounts;
+  public updateSearchedAccounts(value: AccountDocument[]) {
+    if (JSON.stringify(this.searchedAccounts) !== JSON.stringify(value)) {
+      this.searchedAccounts = value;
     }
+  }
 
-    public set searchedAccounts(value: AccountDocument[]) {
-        if (JSON.stringify(this.searchedAccounts) !== JSON.stringify(value)) {
-            this.store.update((state) => ({ ...state, searchedAccounts: value }));
-        }
+  public updateAreAccountsLoading(value: boolean) {
+    if (this.areAccountsLoading !== value) {
+      this.areAccountsLoading = value;
     }
+  }
 
-    public get areAccountsLoading(): boolean {
-        return this.store.getValue().areAccountsLoading;
+  public updateSelectedTab(value: ChatTabs) {
+    if (this.selectedTab !== value) {
+      this.selectedTab = value;
     }
+  }
 
-    public set areAccountsLoading(value: boolean) {
-        if (this.areAccountsLoading !== value) {
-            this.store.update((state) => ({ ...state, areAccountsLoading: value }));
-        }
+  public updateChats(value: ChatDocument[]) {
+    if (JSON.stringify(this.chats) !== JSON.stringify(value)) {
+      this.chats = value;
     }
+  }
 
-    public get selectedTab(): ChatTabs {
-        return this.store.getValue().selectedTab;
+  public updateHasMoreChats(value: boolean) {
+    if (this.hasMoreChats !== value) {
+      this.hasMoreChats = value;
     }
+  }
 
-    public set selectedTab(value: ChatTabs) {
-        if (this.selectedTab !== value) {
-            this.store.update((state) => ({ ...state, selectedTab: value }));
-        }
+  public updateAreChatsReloading(value: boolean) {
+    if (this.areChatsReloading !== value) {
+      this.areChatsReloading = value;
     }
+  }
 
-    public get chats(): ChatDocument[] {
-        return this.store.getValue().chats;
+  public updateAreChatsLoading(value: boolean) {
+    if (this.areChatsLoading !== value) {
+      this.areChatsLoading = value;
     }
+  }
 
-    public set chats(value: ChatDocument[]) {
-        if (JSON.stringify(this.chats) !== JSON.stringify(value)) {
-            this.store.update((state) => ({ ...state, chats: value }));
-        }
+  public updateChatsPagination(value: number) {
+    if (this.chatsPagination !== value) {
+      this.chatsPagination = value;
     }
+  }
 
-    public get hasMoreChats(): boolean {
-        return this.store.getValue().hasMoreChats;
+  public updateAccounts(value: Record<string, AccountDocument>) {
+    if (JSON.stringify(this.accounts) !== JSON.stringify(value)) {
+      this.accounts = value;
     }
+  }
 
-    public set hasMoreChats(value: boolean) {
-        if (this.hasMoreChats !== value) {
-            this.store.update((state) => ({ ...state, hasMoreChats: value }));
-        }
+  public updateChatSubscriptions(
+    value: Record<string, Record<string, ChatSubscription>>
+  ) {
+    if (JSON.stringify(this.chatSubscriptions) !== JSON.stringify(value)) {
+      this.chatSubscriptions = value;
     }
+  }
 
-    public get areChatsReloading(): boolean {
-        return this.store.getValue().areChatsReloading;
+  public updateLastChatMessages(
+    value: Record<string, DecryptedChatMessage | undefined>
+  ) {
+    if (JSON.stringify(this.lastChatMessages) !== JSON.stringify(value)) {
+      this.lastChatMessages = value;
     }
+  }
 
-    public set areChatsReloading(value: boolean) {
-        if (this.areChatsReloading !== value) {
-            this.store.update((state) => ({ ...state, areChatsReloading: value }));
-        }
+  public updateSeenBy(value: Record<string, ChatSeenMessage[]>) {
+    if (JSON.stringify(this.seenBy) !== JSON.stringify(value)) {
+      this.seenBy = value;
     }
+  }
 
-    public get areChatsLoading(): boolean {
-        return this.store.getValue().areChatsLoading;
+  public updateIsSelectedChatLoading(value: boolean) {
+    if (this.isSelectedChatLoading !== value) {
+      this.isSelectedChatLoading = value;
     }
+  }
 
-    public set areChatsLoading(value: boolean) {
-        if (this.areChatsLoading !== value) {
-            this.store.update((state) => ({ ...state, areChatsLoading: value }));
-        }
+  public updateSelectedChat(value: ChatDocument | undefined) {
+    if (JSON.stringify(this.selectedChat) !== JSON.stringify(value)) {
+      this.selectedChat = value;
     }
+  }
 
-    public get chatsPagination(): number {
-        return this.store.getValue().chatsPagination;
+  public updateAccountPresence(value: Record<string, AccountPresence>) {
+    if (JSON.stringify(this.accountPresence) !== JSON.stringify(value)) {
+      this.accountPresence = value;
     }
+  }
 
-    public set chatsPagination(value: number) {
-        if (this.chatsPagination !== value) {
-            this.store.update((state) => ({ ...state, chatsPagination: value }));
-        }
+  public updateMessages(value: Record<string, DecryptedChatMessages>) {
+    if (JSON.stringify(this.messages) !== JSON.stringify(value)) {
+      this.messages = value;
     }
+  }
 
-    public get accounts(): Record<string, AccountDocument> {
-        return this.store.getValue().accounts;
+  public updateHasMoreMessages(value: boolean) {
+    if (this.hasMoreMessages !== value) {
+      this.hasMoreMessages = value;
     }
+  }
 
-    public set accounts(value: Record<string, AccountDocument>) {
-        if (JSON.stringify(this.accounts) !== JSON.stringify(value)) {
-            this.store.update((state) => ({ ...state, accounts: value }));
-        }
+  public updateAreMessagesLoading(value: boolean) {
+    if (this.areMessagesLoading !== value) {
+      this.areMessagesLoading = value;
     }
+  }
 
-    public get chatSubscriptions(): Record<string, Record<string, ChatSubscription>> {
-        return this.store.getValue().chatSubscriptions;
+  public updateMessageInput(value: string) {
+    if (this.messageInput !== value) {
+      this.messageInput = value;
     }
-
-    public set chatSubscriptions(value: Record<string, Record<string, ChatSubscription>>) {
-        if (JSON.stringify(this.chatSubscriptions) !== JSON.stringify(value)) {
-            this.store.update((state) => ({ ...state, chatSubscriptions: value }));
-        }
-    }
-
-    public get lastChatMessages(): Record<string, DecryptedChatMessage | undefined> {
-        return this.store.getValue().lastChatMessages;
-    }
-
-    public set lastChatMessages(value: Record<string, DecryptedChatMessage | undefined>) {
-        if (JSON.stringify(this.lastChatMessages) !== JSON.stringify(value)) {
-            this.store.update((state) => ({ ...state, lastChatMessages: value }));
-        }
-    }
-
-    public get seenBy(): Record<string, ChatSeenMessage[]> {
-        return this.store.getValue().seenBy;
-    }
-
-    public set seenBy(value: Record<string, ChatSeenMessage[]>) {
-        if (JSON.stringify(this.seenBy) !== JSON.stringify(value)) {
-            this.store.update((state) => ({ ...state, seenBy: value }));
-        }
-    }
-
-    public get isSelectedChatLoading(): boolean {
-        return this.store.getValue().isSelectedChatLoading;
-    }
-
-    public set isSelectedChatLoading(value: boolean) {
-        if (this.isSelectedChatLoading !== value) {
-            this.store.update((state) => ({ ...state, isSelectedChatLoading: value }));
-        }
-    }
-
-    public get selectedChat(): ChatDocument | undefined {
-        return this.store.getValue().selectedChat;
-    }
-
-    public set selectedChat(value: ChatDocument | undefined) {
-        if (JSON.stringify(this.selectedChat) !== JSON.stringify(value)) {
-            this.store.update((state) => ({ ...state, selectedChat: value }));
-        }
-    }
-
-    public get accountPresence(): Record<string, AccountPresence> {
-        return this.store.getValue().accountPresence;
-    }
-
-    public set accountPresence(value: Record<string, AccountPresence>) {
-        if (JSON.stringify(this.accountPresence) !== JSON.stringify(value)) {
-            this.store.update((state) => ({ ...state, accountPresence: value }));
-        }
-    }
-
-    public get messages(): Record<string, DecryptedChatMessages> {
-        return this.store.getValue().messages;
-    }
-
-    public set messages(value: Record<string, DecryptedChatMessages>) {
-        if (JSON.stringify(this.messages) !== JSON.stringify(value)) {
-            this.store.update((state) => ({ ...state, messages: value }));
-        }
-    }
-
-    public get hasMoreMessages(): boolean {
-        return this.store.getValue().hasMoreMessages;
-    }
-
-    public set hasMoreMessages(value: boolean) {
-        if (this.hasMoreMessages !== value) {
-            this.store.update((state) => ({ ...state, hasMoreMessages: value }));
-        }
-    }
-
-    public get areMessagesLoading(): boolean {
-        return this.store.getValue().areMessagesLoading;
-    }
-
-    public set areMessagesLoading(value: boolean) {
-        if (this.areMessagesLoading !== value) {
-            this.store.update((state) => ({ ...state, areMessagesLoading: value }));
-        }
-    }
-
-    public get messageInput(): string {
-        return this.store.getValue().messageInput;
-    }
-
-    public set messageInput(value: string) {
-        if (this.messageInput !== value) {
-            this.store.update((state) => ({ ...state, messageInput: value }));
-        }
-    }
+  }
 }

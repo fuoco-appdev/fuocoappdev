@@ -1,604 +1,371 @@
-import { Product } from '@medusajs/medusa';
-import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
-import { createStore, withProps } from '@ngneat/elf';
+import { HttpTypes } from '@medusajs/types';
+import { makeObservable, observable } from 'mobx';
 import { Model } from '../model';
 import { AccountFollowerResponse } from '../protobuf/account-follower_pb';
 import { AccountResponse } from '../protobuf/account_pb';
-import {
-  CustomerMetadataResponse,
-  CustomerResponse,
-} from '../protobuf/customer_pb';
+import { CustomerMetadataResponse } from '../protobuf/customer_pb';
 import { ProductLikesMetadataResponse } from '../protobuf/product-like_pb';
+import { StoreOptions } from '../store-options';
 import { AccountDocument } from './account.model';
 
-export interface AccountPublicState {
-  accountId: string | undefined;
-  account: AccountResponse | undefined;
-  customerMetadata: CustomerMetadataResponse | undefined;
-  accountFollower: AccountFollowerResponse | undefined;
-  showFollowButton: boolean | undefined;
-  profileUrl: string | undefined;
-  username: string;
-  activeTabId: string;
-  prevTabIndex: number;
-  activeTabIndex: number;
-  hasMoreLikes: boolean;
-  likesScrollPosition: number | undefined;
-  likedProducts: Product[];
-  productLikesMetadata: Record<string, ProductLikesMetadataResponse>;
-  likedProductPagination: number;
-  areLikedProductsLoading: boolean;
-  selectedLikedProduct: PricedProduct | undefined;
-  selectedProductLikes: ProductLikesMetadataResponse | undefined;
-  activeStatusTabId: string;
-  prevStatusTabIndex: number;
-  activeStatusTabIndex: number;
-  followersFollowingInput: string;
-  followersPagination: number;
-  hasMoreFollowers: boolean;
-  areFollowersLoading: boolean;
-  areFollowersReloading: boolean;
-  followerAccounts: AccountDocument[];
-  followerScrollPosition: number | undefined;
-  followerAccountFollowers: Record<string, AccountFollowerResponse>;
-  followingPagination: number;
-  hasMoreFollowing: boolean;
-  areFollowingLoading: boolean;
-  areFollowingReloading: boolean;
-  followingAccounts: AccountDocument[];
-  followingScrollPosition: number | undefined;
-  followingAccountFollowers: Record<string, AccountFollowerResponse>;
-  likeCount: number | undefined;
-  followerCount: number | undefined;
-  followingCount: number | undefined;
-}
-
 export class AccountPublicModel extends Model {
-  constructor() {
-    super(
-      createStore(
-        { name: 'account-public' },
-        withProps<AccountPublicState>({
-          accountId: undefined,
-          account: undefined,
-          customerMetadata: undefined,
-          accountFollower: undefined,
-          showFollowButton: undefined,
-          profileUrl: undefined,
-          username: '',
-          activeTabId: '/account/:id/likes',
-          prevTabIndex: 0,
-          activeTabIndex: 0,
-          hasMoreLikes: true,
-          likesScrollPosition: undefined,
-          likedProducts: [],
-          productLikesMetadata: {},
-          likedProductPagination: 1,
-          areLikedProductsLoading: false,
-          selectedLikedProduct: undefined,
-          selectedProductLikes: undefined,
-          activeStatusTabId: '/account/status/:id/followers',
-          prevStatusTabIndex: 0,
-          activeStatusTabIndex: 0,
-          followersFollowingInput: '',
-          followersPagination: 1,
-          hasMoreFollowers: true,
-          areFollowersReloading: false,
-          areFollowersLoading: false,
-          followerAccounts: [],
-          followerScrollPosition: undefined,
-          followerAccountFollowers: {},
-          followingPagination: 1,
-          hasMoreFollowing: true,
-          areFollowingReloading: false,
-          areFollowingLoading: false,
-          followingAccounts: [],
-          followingScrollPosition: undefined,
-          followingAccountFollowers: {},
-          likeCount: undefined,
-          followerCount: undefined,
-          followingCount: undefined,
-        })
-      )
-    );
+  @observable
+  public accountId: string | undefined;
+  @observable
+  public account: AccountResponse | undefined;
+  @observable
+  public customerMetadata: CustomerMetadataResponse | undefined;
+  @observable
+  public accountFollower: AccountFollowerResponse | undefined;
+  @observable
+  public showFollowButton: boolean | undefined;
+  @observable
+  public profileUrl: string | undefined;
+  @observable
+  public username: string;
+  @observable
+  public activeTabId: string;
+  @observable
+  public prevTabIndex: number;
+  @observable
+  public activeTabIndex: number;
+  @observable
+  public hasMoreLikes: boolean;
+  @observable
+  public likesScrollPosition: number | undefined;
+  @observable
+  public likedProducts: HttpTypes.StoreProduct[];
+  @observable
+  public productLikesMetadata: Record<string, ProductLikesMetadataResponse>;
+  @observable
+  public likedProductPagination: number;
+  @observable
+  public areLikedProductsLoading: boolean;
+  @observable
+  public selectedLikedProduct: HttpTypes.StoreProduct | undefined;
+  @observable
+  public selectedProductLikes: ProductLikesMetadataResponse | undefined;
+  @observable
+  public activeStatusTabId: string;
+  @observable
+  public prevStatusTabIndex: number;
+  @observable
+  public activeStatusTabIndex: number;
+  @observable
+  public followersFollowingInput: string;
+  @observable
+  public followersPagination: number;
+  @observable
+  public hasMoreFollowers: boolean;
+  @observable
+  public areFollowersLoading: boolean;
+  @observable
+  public areFollowersReloading: boolean;
+  @observable
+  public followerAccounts: AccountDocument[];
+  @observable
+  public followerScrollPosition: number | undefined;
+  @observable
+  public followerAccountFollowers: Record<string, AccountFollowerResponse>;
+  @observable
+  public followingPagination: number;
+  @observable
+  public hasMoreFollowing: boolean;
+  @observable
+  public areFollowingLoading: boolean;
+  @observable
+  public areFollowingReloading: boolean;
+  @observable
+  public followingAccounts: AccountDocument[];
+  @observable
+  public followingScrollPosition: number | undefined;
+  @observable
+  public followingAccountFollowers: Record<string, AccountFollowerResponse>;
+  @observable
+  public likeCount: number | undefined;
+  @observable
+  public followerCount: number | undefined;
+  @observable
+  public followingCount: number | undefined;
+
+  constructor(options?: StoreOptions) {
+    super(options);
+    makeObservable(this);
+
+    this.accountId = undefined;
+    this.account = undefined;
+    this.customerMetadata = undefined;
+    this.accountFollower = undefined;
+    this.showFollowButton = undefined;
+    this.profileUrl = undefined;
+    this.username = '';
+    this.activeTabId = '/account/:id/likes';
+    this.prevTabIndex = 0;
+    this.activeTabIndex = 0;
+    this.hasMoreLikes = true;
+    this.likesScrollPosition = undefined;
+    this.likedProducts = [];
+    this.productLikesMetadata = {};
+    this.likedProductPagination = 1;
+    this.areLikedProductsLoading = false;
+    this.selectedLikedProduct = undefined;
+    this.selectedProductLikes = undefined;
+    this.activeStatusTabId = '/account/status/:id/followers';
+    this.prevStatusTabIndex = 0;
+    this.activeStatusTabIndex = 0;
+    this.followersFollowingInput = '';
+    this.followersPagination = 1;
+    this.hasMoreFollowers = true;
+    this.areFollowersReloading = false;
+    this.areFollowersLoading = false;
+    this.followerAccounts = [];
+    this.followerScrollPosition = undefined;
+    this.followerAccountFollowers = {};
+    this.followingPagination = 1;
+    this.hasMoreFollowing = true;
+    this.areFollowingReloading = false;
+    this.areFollowingLoading = false;
+    this.followingAccounts = [];
+    this.followingScrollPosition = undefined;
+    this.followingAccountFollowers = {};
+    this.likeCount = undefined;
+    this.followerCount = undefined;
+    this.followingCount = undefined;
   }
 
-  public get accountId(): string | undefined {
-    return this.store.getValue().accountId;
-  }
-
-  public set accountId(value: string | undefined) {
+  public updateAccountId(value: string | undefined) {
     if (this.accountId !== value) {
-      this.store.update((state) => ({ ...state, accountId: value }));
+      this.accountId = value;
     }
   }
 
-  public get profileUrl(): string | undefined {
-    return this.store.getValue().profileUrl;
-  }
-
-  public set profileUrl(value: string | undefined) {
+  public updateProfileUrl(value: string | undefined) {
     if (this.profileUrl !== value) {
-      this.store.update((state) => ({ ...state, profileUrl: value }));
+      this.profileUrl = value;
     }
   }
 
-  public get customerMetadata(): CustomerMetadataResponse | undefined {
-    return this.store.getValue().customerMetadata;
-  }
-
-  public set customerMetadata(value: CustomerMetadataResponse | undefined) {
+  public updateCustomerMetadata(value: CustomerMetadataResponse | undefined) {
     if (JSON.stringify(this.customerMetadata) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, customerMetadata: value }));
+      this.customerMetadata = value;
     }
   }
 
-  public get accountFollower(): AccountFollowerResponse | undefined {
-    return this.store.getValue().accountFollower;
-  }
-
-  public set accountFollower(value: AccountFollowerResponse | undefined) {
+  public updateAccountFollower(value: AccountFollowerResponse | undefined) {
     if (JSON.stringify(this.accountFollower) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, accountFollower: value }));
+      this.accountFollower = value;
     }
   }
 
-  public get showFollowButton(): boolean | undefined {
-    return this.store.getValue().showFollowButton;
-  }
-
-  public set showFollowButton(value: boolean | undefined) {
+  public updateShowFollowButton(value: boolean | undefined) {
     if (this.showFollowButton !== value) {
-      this.store.update((state) => ({ ...state, showFollowButton: value }));
+      this.showFollowButton = value;
     }
   }
 
-  public get account(): AccountResponse | undefined {
-    return this.store.getValue().account;
-  }
-
-  public set account(value: AccountResponse | undefined) {
+  public updateAccount(value: AccountResponse | undefined) {
     if (JSON.stringify(this.account) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, account: value }));
+      this.account = value;
     }
   }
 
-  public get username(): string {
-    return this.store.getValue().username;
-  }
-
-  public set username(value: string) {
+  public updateUsername(value: string) {
     if (this.username !== value) {
-      this.store.update((state) => ({ ...state, username: value }));
+      this.username = value;
     }
   }
 
-  public get activeTabId(): string {
-    return this.store.getValue().activeTabId;
-  }
-
-  public set activeTabId(value: string) {
+  public updateActiveTabId(value: string) {
     if (this.activeTabId !== value) {
-      this.store.update((state) => ({
-        ...state,
-        activeTabId: value,
-      }));
+      this.activeTabId = value;
     }
   }
 
-  public get prevTabIndex(): number {
-    return this.store.getValue().prevTabIndex;
-  }
-
-  public set prevTabIndex(value: number) {
+  public updatePrevTabIndex(value: number) {
     if (this.prevTabIndex !== value) {
-      this.store.update((state) => ({
-        ...state,
-        prevTabIndex: value,
-      }));
+      this.prevTabIndex = value;
     }
   }
 
-  public get activeTabIndex(): number {
-    return this.store.getValue().activeTabIndex;
-  }
-
-  public set activeTabIndex(value: number) {
+  public updateActiveTabIndex(value: number) {
     if (this.activeTabIndex !== value) {
-      this.store.update((state) => ({
-        ...state,
-        activeTabIndex: value,
-      }));
+      this.activeTabIndex = value;
     }
   }
 
-  public get hasMoreLikes(): boolean {
-    return this.store?.getValue().hasMoreLikes;
-  }
-
-  public set hasMoreLikes(value: boolean) {
+  public updateHasMoreLikes(value: boolean) {
     if (this.hasMoreLikes !== value) {
-      this.store?.update((state) => ({ ...state, hasMoreLikes: value }));
+      this.hasMoreLikes = value;
     }
   }
 
-  public get likesScrollPosition(): number | undefined {
-    return this.store?.getValue().likesScrollPosition;
-  }
-
-  public set likesScrollPosition(value: number | undefined) {
+  public updateLikesScrollPosition(value: number | undefined) {
     if (this.likesScrollPosition !== value) {
-      this.store?.update((state) => ({ ...state, likesScrollPosition: value }));
+      this.likesScrollPosition = value;
     }
   }
 
-  public get likedProducts(): Product[] {
-    return this.store?.getValue().likedProducts;
-  }
-
-  public set likedProducts(value: Product[]) {
+  public updateLikedProducts(value: HttpTypes.StoreProduct[]) {
     if (JSON.stringify(this.likedProducts) !== JSON.stringify(value)) {
-      this.store?.update((state) => ({ ...state, likedProducts: value }));
+      this.likedProducts = value;
     }
   }
 
-  public get productLikesMetadata(): Record<
-    string,
-    ProductLikesMetadataResponse
-  > {
-    return this.store?.getValue().productLikesMetadata;
-  }
-
-  public set productLikesMetadata(
+  public updateProductLikesMetadata(
     value: Record<string, ProductLikesMetadataResponse>
   ) {
     if (JSON.stringify(this.productLikesMetadata) !== JSON.stringify(value)) {
-      this.store?.update((state) => ({
-        ...state,
-        productLikesMetadata: value,
-      }));
+      this.productLikesMetadata = value;
     }
   }
 
-  public get likedProductPagination(): number {
-    return this.store?.getValue().likedProductPagination;
-  }
-
-  public set likedProductPagination(value: number) {
+  public updateLikedProductPagination(value: number) {
     if (this.likedProductPagination !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        likedProductPagination: value,
-      }));
+      this.likedProductPagination = value;
     }
   }
 
-  public get areLikedProductsLoading(): boolean {
-    return this.store?.getValue().areLikedProductsLoading;
-  }
-
-  public set areLikedProductsLoading(value: boolean) {
+  public updateAreLikedProductsLoading(value: boolean) {
     if (this.areLikedProductsLoading !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        areLikedProductsLoading: value,
-      }));
+      this.areLikedProductsLoading = value;
     }
   }
 
-  public get selectedLikedProduct(): PricedProduct | undefined {
-    return this.store.getValue().selectedLikedProduct;
-  }
-
-  public set selectedLikedProduct(value: PricedProduct | undefined) {
+  public updateSelectedLikedProduct(value: HttpTypes.StoreProduct | undefined) {
     if (JSON.stringify(this.selectedLikedProduct) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, selectedLikedProduct: value }));
+      this.selectedLikedProduct = value;
     }
   }
 
-  public get selectedProductLikes(): ProductLikesMetadataResponse | undefined {
-    return this.store.getValue().selectedProductLikes;
-  }
-
-  public set selectedProductLikes(
+  public updateSelectedProductLikes(
     value: ProductLikesMetadataResponse | undefined
   ) {
     if (JSON.stringify(this.selectedProductLikes) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, selectedProductLikes: value }));
+      this.selectedProductLikes = value;
     }
   }
 
-  public get activeStatusTabId(): string {
-    return this.store.getValue().activeStatusTabId;
-  }
-
-  public set activeStatusTabId(value: string) {
+  public updateActiveStatusTabId(value: string) {
     if (this.activeStatusTabId !== value) {
-      this.store.update((state) => ({
-        ...state,
-        activeStatusTabId: value,
-      }));
+      this.activeStatusTabId = value;
     }
   }
 
-  public get prevStatusTabIndex(): number {
-    return this.store.getValue().prevStatusTabIndex;
-  }
-
-  public set prevStatusTabIndex(value: number) {
+  public updatePrevStatusTabIndex(value: number) {
     if (this.prevStatusTabIndex !== value) {
-      this.store.update((state) => ({
-        ...state,
-        prevStatusTabIndex: value,
-      }));
+      this.prevStatusTabIndex = value;
     }
   }
 
-  public get activeStatusTabIndex(): number {
-    return this.store.getValue().activeStatusTabIndex;
-  }
-
-  public set activeStatusTabIndex(value: number) {
+  public updateActiveStatusTabIndex(value: number) {
     if (this.activeStatusTabIndex !== value) {
-      this.store.update((state) => ({
-        ...state,
-        activeStatusTabIndex: value,
-      }));
+      this.activeStatusTabIndex = value;
     }
   }
 
-  public get followingPagination(): number {
-    return this.store.getValue().followingPagination;
-  }
-
-  public set followingPagination(value: number) {
+  public updateFollowingPagination(value: number) {
     if (this.followingPagination !== value) {
-      this.store.update((state) => ({
-        ...state,
-        followingPagination: value,
-      }));
+      this.followingPagination = value;
     }
   }
 
-  public get hasMoreFollowing(): boolean {
-    return this.store?.getValue().hasMoreFollowing;
-  }
-
-  public set hasMoreFollowing(value: boolean) {
+  public updateHasMoreFollowing(value: boolean) {
     if (this.hasMoreFollowing !== value) {
-      this.store?.update((state) => ({ ...state, hasMoreFollowing: value }));
+      this.hasMoreFollowing = value;
     }
   }
 
-  public get areFollowingReloading(): boolean {
-    return this.store?.getValue().areFollowingReloading;
-  }
-
-  public set areFollowingReloading(value: boolean) {
+  public updateAreFollowingReloading(value: boolean) {
     if (this.areFollowingReloading !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        areFollowingReloading: value,
-      }));
+      this.areFollowingReloading = value;
     }
   }
 
-  public get areFollowingLoading(): boolean {
-    return this.store?.getValue().areFollowingLoading;
-  }
-
-  public set areFollowingLoading(value: boolean) {
+  public updateAreFollowingLoading(value: boolean) {
     if (this.areFollowingLoading !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        areFollowingLoading: value,
-      }));
+      this.areFollowingLoading = value;
     }
   }
 
-  public get followingAccounts(): AccountDocument[] {
-    return this.store?.getValue().followingAccounts;
-  }
-
-  public set followingAccounts(value: AccountDocument[]) {
+  public updateFollowingAccounts(value: AccountDocument[]) {
     if (JSON.stringify(this.followingAccounts) !== JSON.stringify(value)) {
-      this.store?.update((state) => ({
-        ...state,
-        followingAccounts: value,
-      }));
+      this.followingAccounts = value;
     }
   }
 
-  public get followingCustomers(): Record<string, CustomerResponse> {
-    return this.store?.getValue().followingCustomers;
-  }
-
-  public set followingCustomers(value: Record<string, CustomerResponse>) {
-    if (JSON.stringify(this.followingCustomers) !== JSON.stringify(value)) {
-      this.store?.update((state) => ({
-        ...state,
-        followingCustomers: value,
-      }));
-    }
-  }
-
-  public get followingScrollPosition(): number | undefined {
-    return this.store.getValue().followingScrollPosition;
-  }
-
-  public set followingScrollPosition(value: number | undefined) {
+  public updateFollowingScrollPosition(value: number | undefined) {
     if (this.followingScrollPosition !== value) {
-      this.store.update((state) => ({
-        ...state,
-        followingScrollPosition: value,
-      }));
+      this.followingScrollPosition = value;
     }
   }
 
-  public get followingAccountFollowers(): Record<
-    string,
-    AccountFollowerResponse
-  > {
-    return this.store.getValue().followingAccountFollowers;
-  }
-
-  public set followingAccountFollowers(
-    value: Record<string, AccountFollowerResponse>
-  ) {
-    if (
-      JSON.stringify(this.followingAccountFollowers) !== JSON.stringify(value)
-    ) {
-      this.store.update((state) => ({
-        ...state,
-        followingAccountFollowers: value,
-      }));
-    }
-  }
-
-  public get followersFollowingInput(): string {
-    return this.store?.getValue().followersFollowingInput;
-  }
-
-  public set followersFollowingInput(value: string) {
+  public updateFollowersFollowingInput(value: string) {
     if (this.followersFollowingInput !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        followersFollowingInput: value,
-      }));
+      this.followersFollowingInput = value;
     }
   }
 
-  public get followersPagination(): number {
-    return this.store.getValue().followersPagination;
-  }
-
-  public set followersPagination(value: number) {
+  public updateFollowersPagination(value: number) {
     if (this.followersPagination !== value) {
-      this.store.update((state) => ({
-        ...state,
-        followersPagination: value,
-      }));
+      this.followersPagination = value;
     }
   }
 
-  public get hasMoreFollowers(): boolean {
-    return this.store?.getValue().hasMoreFollowers;
-  }
-
-  public set hasMoreFollowers(value: boolean) {
+  public updateHasMoreFollowers(value: boolean) {
     if (this.hasMoreFollowers !== value) {
-      this.store?.update((state) => ({ ...state, hasMoreFollowers: value }));
+      this.hasMoreFollowers = value;
     }
   }
 
-  public get areFollowersReloading(): boolean {
-    return this.store?.getValue().areFollowersReloading;
-  }
-
-  public set areFollowersReloading(value: boolean) {
+  public updateAreFollowersReloading(value: boolean) {
     if (this.areFollowersReloading !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        areFollowersReloading: value,
-      }));
+      this.areFollowersReloading = value;
     }
   }
 
-  public get areFollowersLoading(): boolean {
-    return this.store?.getValue().areFollowersLoading;
-  }
-
-  public set areFollowersLoading(value: boolean) {
+  public updateAreFollowersLoading(value: boolean) {
     if (this.areFollowersLoading !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        areFollowersLoading: value,
-      }));
+      this.areFollowersLoading = value;
     }
   }
 
-  public get followerAccounts(): AccountDocument[] {
-    return this.store?.getValue().followerAccounts;
-  }
-
-  public set followerAccounts(value: AccountDocument[]) {
+  public updateFollowerAccounts(value: AccountDocument[]) {
     if (JSON.stringify(this.followerAccounts) !== JSON.stringify(value)) {
-      this.store?.update((state) => ({
-        ...state,
-        followerAccounts: value,
-      }));
+      this.followerAccounts = value;
     }
   }
 
-  public get followerScrollPosition(): number | undefined {
-    return this.store.getValue().followerScrollPosition;
-  }
-
-  public set followerScrollPosition(value: number | undefined) {
+  public updateFollowerScrollPosition(value: number | undefined) {
     if (this.followerScrollPosition !== value) {
-      this.store.update((state) => ({
-        ...state,
-        followerScrollPosition: value,
-      }));
+      this.followerScrollPosition = value;
     }
   }
 
-  public get followerAccountFollowers(): Record<
-    string,
-    AccountFollowerResponse
-  > {
-    return this.store.getValue().followerAccountFollowers;
-  }
-
-  public set followerAccountFollowers(
+  public updateFollowerAccountFollowers(
     value: Record<string, AccountFollowerResponse>
   ) {
     if (
       JSON.stringify(this.followerAccountFollowers) !== JSON.stringify(value)
     ) {
-      this.store.update((state) => ({
-        ...state,
-        followerAccountFollowers: value,
-      }));
+      this.followerAccountFollowers = value;
     }
   }
 
-  public get likeCount(): number | undefined {
-    return this.store.getValue().likeCount;
-  }
-
-  public set likeCount(value: number | undefined) {
+  public updateLikeCount(value: number | undefined) {
     if (this.likeCount !== value) {
-      this.store.update((state) => ({
-        ...state,
-        likeCount: value,
-      }));
+      this.likeCount = value;
     }
   }
 
-  public get followerCount(): number | undefined {
-    return this.store.getValue().followerCount;
-  }
-
-  public set followerCount(value: number | undefined) {
+  public updateFollowerCount(value: number | undefined) {
     if (this.followerCount !== value) {
-      this.store.update((state) => ({
-        ...state,
-        followerCount: value,
-      }));
+      this.followerCount = value;
     }
   }
 
-  public get followingCount(): number | undefined {
-    return this.store.getValue().followingCount;
-  }
-
-  public set followingCount(value: number | undefined) {
+  public updateFollowingCount(value: number | undefined) {
     if (this.followingCount !== value) {
-      this.store.update((state) => ({
-        ...state,
-        followingCount: value,
-      }));
+      this.followingCount = value;
     }
   }
 }

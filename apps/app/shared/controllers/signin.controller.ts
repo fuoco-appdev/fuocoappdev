@@ -4,20 +4,28 @@ import {
   Session,
   SupabaseClient,
 } from '@supabase/supabase-js';
-import { Subscription } from 'rxjs';
+import { IValueDidChange, Lambda, observe } from 'mobx';
+import { DIContainer } from 'rsdi';
 import { Controller } from '../controller';
 import { SigninModel } from '../models/signin.model';
 import SupabaseService from '../services/supabase.service';
+import { StoreOptions } from '../store-options';
 import WindowController from './window.controller';
 
-class SigninController extends Controller {
+export default class SigninController extends Controller {
   private readonly _model: SigninModel;
-  private _supabaseClientSubscription: Subscription | undefined;
+  private _supabaseClientDisposer: Lambda | undefined;
 
-  constructor() {
+  constructor(
+    private readonly _container: DIContainer<{
+      SupabaseService: SupabaseService;
+      WindowController: WindowController;
+    }>,
+    private readonly _storeOptions: StoreOptions
+  ) {
     super();
 
-    this._model = new SigninModel();
+    this._model = new SigninModel(this._storeOptions);
 
     this.onAuthStateChanged = this.onAuthStateChanged.bind(this);
   }
@@ -26,25 +34,30 @@ class SigninController extends Controller {
     return this._model;
   }
 
-  public override initialize(_renderCount: number): void {}
+  public override initialize = (_renderCount: number): void => {
+    const supabaseService = this._container.get('SupabaseService');
+    this._supabaseClientDisposer = observe(
+      supabaseService,
+      'client',
+      (value: IValueDidChange<SupabaseClient | undefined>) => {
+        this._model.supabaseClient = value.newValue;
+      }
+    );
+  };
 
   public override load(_renderCount: number): void {
-    SupabaseService.supabaseClient?.auth.onAuthStateChange(
+    const supabaseService = this._container.get('SupabaseService');
+    supabaseService.supabaseClient?.auth.onAuthStateChange(
       this.onAuthStateChanged
     );
-
-    this._supabaseClientSubscription =
-      SupabaseService.supabaseClientObservable.subscribe({
-        next: (value: SupabaseClient | undefined) => {
-          this._model.supabaseClient = value;
-        },
-      });
   }
 
-  public override disposeInitialization(_renderCount: number): void {}
+  public override disposeInitialization(_renderCount: number): void {
+    this._model.dispose();
+  }
 
   public override disposeLoad(_renderCount: number): void {
-    this._supabaseClientSubscription?.unsubscribe();
+    this._supabaseClientDisposer?.();
   }
 
   public updateEmail(value: string) {
@@ -59,17 +72,19 @@ class SigninController extends Controller {
     email: string,
     onEmailSent?: () => void
   ): Promise<void> {
-    const response = await SupabaseService.supabaseClient?.auth.resend({
+    const supabaseService = this._container.get('SupabaseService');
+    const windowController = this._container.get('WindowController');
+    const response = await supabaseService.supabaseClient?.auth.resend({
       type: 'signup',
       email: email,
     });
     if (response?.error) {
-      WindowController.addToast({
-        key: `signup-resend-email-${Math.random()}`,
-        message: response.error.name,
-        description: response.error.message,
-        type: 'error',
-      });
+      // windowController.addToast({
+      //   key: `signup-resend-email-${Math.random()}`,
+      //   message: response.error.name,
+      //   description: response.error.message,
+      //   type: 'error',
+      // });
     }
 
     onEmailSent?.();
@@ -88,5 +103,3 @@ class SigninController extends Controller {
     }
   }
 }
-
-export default new SigninController();

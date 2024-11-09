@@ -1,27 +1,20 @@
-import { createStore, withProps } from '@ngneat/elf';
+import { makeObservable, observable, runInAction } from 'mobx';
 import { Model } from '../model';
-
-export interface PrivacyPolicyState {
-    markdown: string;
-}
+import { StoreOptions } from '../store-options';
 
 export class PrivacyPolicyModel extends Model {
-    constructor() {
-        super(createStore(
-            {name: 'privacy-policy'},
-            withProps<PrivacyPolicyState>({
-                markdown: '',
-            }),
-        ));
-    }
+  @observable
+  public markdown!: string;
+  constructor(options?: StoreOptions) {
+    super(options);
+    makeObservable(this);
 
-    public get markdown(): string {
-        return this.store.getValue().markdown;
-    }
+    runInAction(() => (this.markdown = ''));
+  }
 
-    public set markdown(value: string) {
-        if (this.markdown !== value) {
-            this.store.update((state) => ({...state, markdown: value}));
-        }
+  public updateMarkdown(value: string) {
+    if (this.markdown !== value) {
+      this.markdown = value;
     }
+  }
 }

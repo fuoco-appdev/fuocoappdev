@@ -1,33 +1,40 @@
-import { LineItem, Order } from '@medusajs/medusa';
-import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+import { DIContainer } from 'rsdi';
 import { Controller } from '../controller';
 import {
   OrderConfirmedModel,
   RefundItem,
 } from '../models/order-confirmed.model';
 import MedusaService from '../services/medusa.service';
+import { StoreOptions } from '../store-options';
 
-class OrderConfirmedController extends Controller {
+export default class OrderConfirmedController extends Controller {
   private readonly _model: OrderConfirmedModel;
-  constructor() {
+  constructor(
+    private readonly _container: DIContainer<{
+      MedusaService: MedusaService;
+    }>,
+    private readonly _storeOptions: StoreOptions
+  ) {
     super();
 
-    this._model = new OrderConfirmedModel();
+    this._model = new OrderConfirmedModel(this._storeOptions);
   }
 
   public get model(): OrderConfirmedModel {
     return this._model;
   }
 
-  public override initialize(_renderCount: number): void {
+  public override initialize = (_renderCount: number): void => {
     this.initializeAsync();
-  }
+  };
 
   public override load(_renderCount: number): void {
     this.requestReturnReasonsAsync();
   }
 
-  public override disposeInitialization(_renderCount: number): void {}
+  public override disposeInitialization(_renderCount: number): void {
+    this._model.dispose();
+  }
 
   public override disposeLoad(_renderCount: number): void {}
 
@@ -36,13 +43,10 @@ class OrderConfirmedController extends Controller {
     this._model.refundItems = {};
     this._model.returnReasons = [];
 
+    const medusaService = this._container.get('MedusaService');
+
     try {
-      const orderResponse = await MedusaService.medusa?.orders.retrieve(
-        orderId
-      );
-      if (orderResponse?.order) {
-        await this.updateLocalOrderAsync(orderResponse.order);
-      }
+      this._model.order = await medusaService.requestStoreOrderAsync(orderId);
     } catch (error: any) {
       console.error(error);
     }
@@ -67,8 +71,9 @@ class OrderConfirmedController extends Controller {
       }
     }
 
+    const medusaService = this._container.get('MedusaService');
     try {
-      await MedusaService.medusa?.returns.create({
+      await medusaService.requestStoreCreateReturn({
         order_id: this._model.order?.id,
         items: items,
       });
@@ -80,56 +85,12 @@ class OrderConfirmedController extends Controller {
   private async initializeAsync(): Promise<void> {}
 
   private async requestReturnReasonsAsync(): Promise<void> {
+    const medusaService = this._container.get('MedusaService');
     try {
-      const returnReasonsResponse =
-        await MedusaService.medusa?.returnReasons.list();
-      this._model.returnReasons = returnReasonsResponse?.return_reasons ?? [];
+      const returnReasons = await medusaService.requestStoreReturnReasons();
+      this._model.returnReasons = returnReasons ?? [];
     } catch (error: any) {
       throw error;
     }
   }
-
-  private async updateLocalOrderAsync(value: Order): Promise<void> {
-    const items: LineItem[] = [];
-    for (const item of value.items) {
-      const itemCache = this._model.order?.items?.find(
-        (value) => value.id === item.id
-      );
-      let product: PricedProduct | undefined = itemCache?.variant.product as
-        | PricedProduct
-        | undefined;
-      if (!product) {
-        try {
-          const productResponse = await MedusaService.medusa?.products.retrieve(
-            item.variant.product_id
-          );
-          product = productResponse?.product;
-        } catch (error: any) {
-          console.error(error);
-        }
-      }
-
-      const variant = product?.variants.find(
-        (value) => value.id === item.variant_id
-      );
-      if (variant) {
-        items.push({
-          ...item,
-          // @ts-ignore
-          variant: {
-            ...variant,
-            // @ts-ignore
-            product: product,
-          },
-        });
-      }
-    }
-
-    this._model.order = {
-      ...value,
-      items: items,
-    };
-  }
 }
-
-export default new OrderConfirmedController();

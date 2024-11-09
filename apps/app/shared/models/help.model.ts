@@ -1,29 +1,19 @@
-import { createStore, withProps } from '@ngneat/elf';
+import { makeObservable, observable } from 'mobx';
 import { Model } from '../model';
-
-export interface HelpState {
-  markdown: string;
-}
+import { StoreOptions } from '../store-options';
 
 export class HelpModel extends Model {
-  constructor() {
-    super(
-      createStore(
-        { name: 'help' },
-        withProps<HelpState>({
-          markdown: '',
-        })
-      )
-    );
+  @observable
+  public markdown: string;
+  constructor(options?: StoreOptions) {
+    super(options);
+    makeObservable(this);
+    this.markdown = '';
   }
 
-  public get markdown(): string {
-    return this.store.getValue().markdown;
-  }
-
-  public set markdown(value: string) {
+  public updateMarkdown(value: string) {
     if (this.markdown !== value) {
-      this.store.update((state) => ({ ...state, markdown: value }));
+      this.markdown = value;
     }
   }
 }

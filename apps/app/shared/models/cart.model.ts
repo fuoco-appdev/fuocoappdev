@@ -1,136 +1,78 @@
-import { Cart } from "@medusajs/medusa";
-import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
-import { StockLocation } from "@medusajs/stock-location/dist/models";
-import { createStore, withProps } from "@ngneat/elf";
-import { Model } from "../model";
-
-export interface CartState {
-  stockLocations: StockLocation[];
-  carts: Record<
-    string,
-    Omit<Cart, "refundable_amount" | "refunded_total"> | undefined
-  >;
-  cart: Omit<Cart, "refundable_amount" | "refunded_total"> | undefined;
-  requiredFoodProducts: PricedProduct[];
-  isFoodInCartRequired: boolean | undefined;
-  discountCode: string;
-}
-
-export interface CartLocalState {
-  cartIds: Record<string, string | undefined>;
-}
+import { HttpTypes } from '@medusajs/types';
+import { makeObservable, observable, runInAction } from 'mobx';
+import { Model } from '../model';
+import { StoreOptions } from '../store-options';
 
 export class CartModel extends Model {
-  constructor() {
-    super(
-      createStore(
-        { name: "cart" },
-        withProps<CartState>({
-          stockLocations: [],
-          carts: {},
-          cart: undefined,
-          requiredFoodProducts: [],
-          isFoodInCartRequired: undefined,
-          discountCode: "",
-        }),
-      ),
-      undefined,
-      createStore(
-        { name: "cart-local" },
-        withProps<CartLocalState>({
-          cartIds: {},
-        }),
-      ),
-    );
+  @observable
+  public stockLocations!: HttpTypes.AdminStockLocation[];
+  @observable
+  public carts!: Record<string, HttpTypes.StoreCart | undefined>;
+  @observable
+  public cart: HttpTypes.StoreCart | undefined;
+  @observable
+  public requiredFoodProducts!: HttpTypes.StoreProduct[];
+  @observable
+  public isFoodInCartRequired: boolean | undefined;
+  @observable
+  public discountCode!: string;
+  @observable
+  public cartIds!: Record<string, string | undefined>;
+
+  constructor(options?: StoreOptions) {
+    super(options);
+    makeObservable(this);
+
+    runInAction(() => {
+      this.stockLocations = [];
+      this.carts = {};
+      this.cart = undefined;
+      this.requiredFoodProducts = [];
+      this.isFoodInCartRequired = undefined;
+      this.discountCode = '';
+      this.cartIds = {};
+    });
   }
 
-  public get stockLocations(): StockLocation[] {
-    return this.store?.getValue().stockLocations;
-  }
-
-  public set stockLocations(
-    value: StockLocation[],
-  ) {
+  public updateStockLocations(value: HttpTypes.AdminStockLocation[]) {
     if (JSON.stringify(this.stockLocations) !== JSON.stringify(value)) {
-      this.store?.update((state) => ({ ...state, stockLocations: value }));
+      this.stockLocations = value;
     }
   }
 
-  public get carts(): Record<
-    string,
-    Omit<Cart, "refundable_amount" | "refunded_total"> | undefined
-  > {
-    return this.store?.getValue().carts;
-  }
-
-  public set carts(
-    value: Record<
-      string,
-      Omit<Cart, "refundable_amount" | "refunded_total"> | undefined
-    >,
-  ) {
+  public updateCarts(value: Record<string, HttpTypes.StoreCart | undefined>) {
     if (JSON.stringify(this.carts) !== JSON.stringify(value)) {
-      this.store?.update((state) => ({ ...state, carts: value }));
+      this.carts = value;
     }
   }
 
-  public get cart():
-    | Omit<Cart, "refundable_amount" | "refunded_total">
-    | undefined {
-    return this.store?.getValue().cart;
-  }
-
-  public set cart(
-    value: Omit<Cart, "refundable_amount" | "refunded_total"> | undefined,
-  ) {
+  public updateCart(value: HttpTypes.StoreCart | undefined) {
     if (JSON.stringify(this.cart) !== JSON.stringify(value)) {
-      this.store?.update((state) => ({ ...state, cart: value }));
+      this.cart = value;
     }
   }
 
-  public get requiredFoodProducts(): PricedProduct[] {
-    return this.store?.getValue().requiredFoodProducts;
-  }
-
-  public set requiredFoodProducts(value: PricedProduct[]) {
+  public updateRequiredFoodProducts(value: HttpTypes.StoreProduct[]) {
     if (JSON.stringify(this.requiredFoodProducts) !== JSON.stringify(value)) {
-      this.store?.update((state) => ({
-        ...state,
-        requiredFoodProducts: value,
-      }));
+      this.requiredFoodProducts = value;
     }
   }
 
-  public get isFoodInCartRequired(): boolean | undefined {
-    return this.store?.getValue().isFoodInCartRequired;
-  }
-
-  public set isFoodInCartRequired(value: boolean | undefined) {
+  public updateIsFoodInCartRequired(value: boolean | undefined) {
     if (this.isFoodInCartRequired !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        isFoodInCartRequired: value,
-      }));
+      this.isFoodInCartRequired = value;
     }
   }
 
-  public get discountCode(): string {
-    return this.store?.getValue().discountCode;
-  }
-
-  public set discountCode(value: string) {
+  public updateDiscountCode(value: string) {
     if (this.discountCode !== value) {
-      this.store?.update((state) => ({ ...state, discountCode: value }));
+      this.discountCode = value;
     }
   }
 
-  public get cartIds(): Record<string, string | undefined> {
-    return this.localStore?.getValue().cartIds;
-  }
-
-  public set cartIds(value: Record<string, string | undefined>) {
+  public updateCartIds(value: Record<string, string | undefined>) {
     if (JSON.stringify(this.cartIds) !== JSON.stringify(value)) {
-      this.localStore?.update((state) => ({ ...state, cartIds: value }));
+      this.cartIds = value;
     }
   }
 }

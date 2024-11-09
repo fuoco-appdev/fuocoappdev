@@ -1,4 +1,4 @@
-import SupabaseService from "./supabase.service.ts";
+import { Service } from 'https://deno.land/x/di@v0.1.1/mod.ts';
 import {
   AccountFollowerCountMetadataResponse,
   AccountFollowerRequest,
@@ -6,7 +6,9 @@ import {
   AccountFollowerResponse,
   AccountFollowersRequest,
   AccountFollowersResponse,
-} from "../protobuf/account-follower_pb.js";
+} from '../protobuf/account-follower_pb.js';
+import serviceCollection, { serviceTypes } from '../service_collection.ts';
+import SupabaseService from './supabase.service.ts';
 
 export interface AccountFollowersProps {
   account_id?: string;
@@ -14,42 +16,48 @@ export interface AccountFollowersProps {
   accepted?: boolean;
 }
 
-export class AccountFollowersService {
+@Service()
+export default class AccountFollowersService {
+  private readonly _supabaseService: SupabaseService;
+  constructor() {
+    this._supabaseService = serviceCollection.get(serviceTypes.SupabaseService);
+  }
+
   public async getCountMetadataAsync(
-    accountId: string,
+    accountId: string
   ): Promise<InstanceType<typeof AccountFollowerCountMetadataResponse> | null> {
     const metadataResponse = await this.findCountMetadataAsync(accountId);
     return metadataResponse;
   }
 
   public async getFollowersAsync(
-    request: InstanceType<typeof AccountFollowersRequest>,
+    request: InstanceType<typeof AccountFollowersRequest>
   ): Promise<InstanceType<typeof AccountFollowersResponse> | null> {
     const response = await this.findFollowersAsync(request);
     return response;
   }
 
   public async getRequestsAsync(
-    request: InstanceType<typeof AccountFollowerRequestsRequest>,
+    request: InstanceType<typeof AccountFollowerRequestsRequest>
   ): Promise<InstanceType<typeof AccountFollowersResponse> | null> {
     const response = await this.findRequestsAsync(request);
     return response;
   }
 
   public async upsertAsync(
-    request: InstanceType<typeof AccountFollowerRequest>,
+    request: InstanceType<typeof AccountFollowerRequest>
   ): Promise<InstanceType<typeof AccountFollowerResponse> | null> {
     const accountId = request.getAccountId();
     const followerId = request.getFollowerId();
     const response = new AccountFollowerResponse();
 
     if (!accountId || accountId.length <= 0) {
-      console.error("Account id cannot be undefined");
+      console.error('Account id cannot be undefined');
       return null;
     }
 
     if (!followerId || followerId.length <= 0) {
-      console.error("Follower id cannot be undefined");
+      console.error('Follower id cannot be undefined');
       return null;
     }
 
@@ -58,8 +66,8 @@ export class AccountFollowersService {
       follower_id: followerId,
       accepted: false,
     };
-    const { data, error } = await SupabaseService.client
-      .from("account_followers")
+    const { data, error } = await this._supabaseService.client
+      .from('account_followers')
       .upsert(props)
       .select();
 
@@ -83,19 +91,19 @@ export class AccountFollowersService {
   }
 
   public async deleteAsync(
-    request: InstanceType<typeof AccountFollowerRequest>,
+    request: InstanceType<typeof AccountFollowerRequest>
   ): Promise<InstanceType<typeof AccountFollowerResponse> | null> {
     const accountId = request.getAccountId();
     const followerId = request.getFollowerId();
     const response = new AccountFollowerResponse();
 
     if (!accountId || accountId.length <= 0) {
-      console.error("Account id cannot be undefined");
+      console.error('Account id cannot be undefined');
       return null;
     }
 
     if (!followerId || followerId.length <= 0) {
-      console.error("Follower id cannot be undefined");
+      console.error('Follower id cannot be undefined');
       return null;
     }
 
@@ -104,8 +112,8 @@ export class AccountFollowersService {
       follower_id: followerId,
     };
 
-    const { error } = await SupabaseService.client
-      .from("account_followers")
+    const { error } = await this._supabaseService.client
+      .from('account_followers')
       .delete()
       .match(props as Record<string, any>);
 
@@ -122,27 +130,27 @@ export class AccountFollowersService {
   }
 
   public async confirmAsync(
-    request: InstanceType<typeof AccountFollowerRequest>,
+    request: InstanceType<typeof AccountFollowerRequest>
   ): Promise<InstanceType<typeof AccountFollowerResponse> | null> {
     const accountId = request.getAccountId();
     const followerId = request.getFollowerId();
     const response = new AccountFollowerResponse();
 
     if (!accountId || accountId.length <= 0) {
-      console.error("Account id cannot be undefined");
+      console.error('Account id cannot be undefined');
       return null;
     }
 
     if (!followerId || followerId.length <= 0) {
-      console.error("Follower id cannot be undefined");
+      console.error('Follower id cannot be undefined');
       return null;
     }
 
-    const { data, error } = await SupabaseService.client
-      .from("account_followers")
+    const { data, error } = await this._supabaseService.client
+      .from('account_followers')
       .update({ accepted: true })
-      .eq("account_id", accountId)
-      .eq("follower_id", followerId)
+      .eq('account_id', accountId)
+      .eq('follower_id', followerId)
       .select();
 
     if (error) {
@@ -165,21 +173,21 @@ export class AccountFollowersService {
   }
 
   private async findCountMetadataAsync(
-    accountId: string,
+    accountId: string
   ): Promise<InstanceType<typeof AccountFollowerCountMetadataResponse> | null> {
     const metadataResponse = new AccountFollowerCountMetadataResponse();
 
     if (accountId.length <= 0) {
-      console.error("Account id cannot be empty");
+      console.error('Account id cannot be empty');
       return null;
     }
 
     try {
-      const followingData = await SupabaseService.client
-        .from("account_followers")
-        .select("", { count: "exact" })
-        .not("accepted", "in", "(false)")
-        .eq("account_id", accountId);
+      const followingData = await this._supabaseService.client
+        .from('account_followers')
+        .select('', { count: 'exact' })
+        .not('accepted', 'in', '(false)')
+        .eq('account_id', accountId);
 
       if (followingData.error) {
         console.error(followingData.error);
@@ -191,11 +199,11 @@ export class AccountFollowersService {
     }
 
     try {
-      const followersData = await SupabaseService.client
-        .from("account_followers")
-        .select("", { count: "exact" })
-        .not("accepted", "in", "(false)")
-        .eq("follower_id", accountId);
+      const followersData = await this._supabaseService.client
+        .from('account_followers')
+        .select('', { count: 'exact' })
+        .not('accepted', 'in', '(false)')
+        .eq('follower_id', accountId);
 
       if (followersData.error) {
         console.error(followersData.error);
@@ -210,23 +218,23 @@ export class AccountFollowersService {
   }
 
   private async findFollowersAsync(
-    request: InstanceType<typeof AccountFollowersRequest>,
+    request: InstanceType<typeof AccountFollowersRequest>
   ): Promise<InstanceType<typeof AccountFollowersResponse> | null> {
     const accountId = request.getAccountId();
     const otherAccountIds = request.getOtherAccountIdsList();
     const followersResponse = new AccountFollowersResponse();
 
     if (otherAccountIds.length <= 0) {
-      console.error("Other account ids cannot be empty");
+      console.error('Other account ids cannot be empty');
       return null;
     }
 
-    const followersData = await SupabaseService.client
-      .from("account_followers")
+    const followersData = await this._supabaseService.client
+      .from('account_followers')
       .select()
-      .in("follower_id", otherAccountIds)
-      .order("created_at", { ascending: false })
-      .eq("account_id", accountId);
+      .in('follower_id', otherAccountIds)
+      .order('created_at', { ascending: false })
+      .eq('account_id', accountId);
 
     if (followersData.error) {
       console.error(followersData.error);
@@ -255,7 +263,7 @@ export class AccountFollowersService {
   }
 
   private async findRequestsAsync(
-    request: InstanceType<typeof AccountFollowerRequestsRequest>,
+    request: InstanceType<typeof AccountFollowerRequestsRequest>
   ): Promise<InstanceType<typeof AccountFollowersResponse> | null> {
     const accountId = request.getAccountId();
     const offset = request.getOffset();
@@ -263,19 +271,19 @@ export class AccountFollowersService {
     const followersResponse = new AccountFollowersResponse();
 
     if (!accountId) {
-      console.error("Account id cannot be empty");
+      console.error('Account id cannot be empty');
       return null;
     }
 
     try {
-      const followerRequestsData = await SupabaseService.client
-        .from("account_followers")
+      const followerRequestsData = await this._supabaseService.client
+        .from('account_followers')
         .select()
-        .order("created_at", { ascending: false })
+        .order('created_at', { ascending: false })
         .range(offset, offset + limit)
         .limit(limit)
-        .eq("follower_id", accountId)
-        .eq("accepted", false);
+        .eq('follower_id', accountId)
+        .eq('accepted', false);
 
       if (followerRequestsData.error) {
         console.error(followerRequestsData.error);
@@ -299,5 +307,3 @@ export class AccountFollowersService {
     return followersResponse;
   }
 }
-
-export default new AccountFollowersService();

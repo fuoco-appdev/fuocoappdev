@@ -15,10 +15,17 @@ import {
   ProductsRequest,
 } from '../protobuf/product_pb.js';
 import { StockLocationsRequest } from '../protobuf/stock-location_pb.js';
+import serviceCollection, { serviceTypes } from '../service_collection.ts';
 import MedusaService from '../services/medusa.service.ts';
 
 @Controller('/medusa')
 export class MedusaController {
+  private readonly _medusaService: MedusaService;
+
+  constructor() {
+    this._medusaService = serviceCollection.get(serviceTypes.MedusaService);
+  }
+
   @Post('/webhook/stock-location')
   @ContentType('application/x-protobuf')
   public async handleWebhookStockLocationAsync(
@@ -30,7 +37,7 @@ export class MedusaController {
   ): Promise<void> {
     const body = await context.request.body().value;
     const stockLocation = body['record'];
-    await MedusaService.updateStockLocationMetadataAsync(stockLocation);
+    await this._medusaService.updateStockLocationMetadataAsync(stockLocation);
 
     context.response.status = 200;
   }
@@ -47,7 +54,7 @@ export class MedusaController {
     const body = await context.request.body({ type: 'reader' });
     const requestValue = await readAll(body.value);
     const request = StockLocationsRequest.deserializeBinary(requestValue);
-    const response = await MedusaService.getStockLocationsAsync(request);
+    const response = await this._medusaService.getStockLocationsAsync(request);
     context.response.type = 'application/x-protobuf';
     context.response.body = response.serializeBinary();
   }
@@ -61,7 +68,7 @@ export class MedusaController {
       Record<string, any>
     >
   ): Promise<void> {
-    const response = await MedusaService.getStockLocationsAllAsync();
+    const response = await this._medusaService.getStockLocationsAllAsync();
     context.response.type = 'application/x-protobuf';
     context.response.body = response.serializeBinary();
   }
@@ -78,7 +85,7 @@ export class MedusaController {
     const body = await context.request.body({ type: 'reader' });
     const requestValue = await readAll(body.value);
     const request = ProductCountRequest.deserializeBinary(requestValue);
-    const response = await MedusaService.getProductCountAsync(request);
+    const response = await this._medusaService.getProductCountAsync(request);
     context.response.type = 'application/x-protobuf';
     context.response.body = response.serializeBinary();
   }
@@ -96,7 +103,7 @@ export class MedusaController {
     const body = await context.request.body({ type: 'reader' });
     const requestValue = await readAll(body.value);
     const request = ProductsRequest.deserializeBinary(requestValue);
-    const response = await MedusaService.getProductsAsync(request);
+    const response = await this._medusaService.getProductsAsync(request);
     context.response.type = 'application/x-protobuf';
     context.response.body = response.serializeBinary();
   }
@@ -111,13 +118,11 @@ export class MedusaController {
       Record<string, any>
     >
   ): Promise<void> {
-    const token = context.request.headers.get('session-token') ?? '';
     const body = await context.request.body({ type: 'reader' });
     const requestValue = await readAll(body.value);
     const updateCustomerRequest =
       UpdateCustomerRequest.deserializeBinary(requestValue);
-    const response = await MedusaService.updateCustomerAccountAsync(
-      token,
+    const response = await this._medusaService.updateCustomerAccountAsync(
       updateCustomerRequest
     );
     context.response.type = 'application/x-protobuf';
@@ -138,7 +143,7 @@ export class MedusaController {
     const requestValue = await readAll(body.value);
     const addCustomerToGroupRequest =
       AddCustomerToGroupRequest.deserializeBinary(requestValue);
-    const response = await MedusaService.addCustomerToGroupAsync(
+    const response = await this._medusaService.addCustomerToGroupAsync(
       addCustomerToGroupRequest
     );
     context.response.type = 'application/x-protobuf';
@@ -159,7 +164,7 @@ export class MedusaController {
     const requestValue = await readAll(body.value);
     const removeCustomerFromGroupRequest =
       RemoveCustomerFromGroupRequest.deserializeBinary(requestValue);
-    const response = await MedusaService.removeCustomerFromGroupAsync(
+    const response = await this._medusaService.removeCustomerFromGroupAsync(
       removeCustomerFromGroupRequest
     );
     context.response.type = 'application/x-protobuf';
@@ -179,7 +184,9 @@ export class MedusaController {
     const body = await context.request.body({ type: 'reader' });
     const requestValue = await readAll(body.value);
     const priceListsRequest = PriceListsRequest.deserializeBinary(requestValue);
-    const response = await MedusaService.getPriceListsAsync(priceListsRequest);
+    const response = await this._medusaService.getPriceListsAsync(
+      priceListsRequest
+    );
     context.response.type = 'application/x-protobuf';
     context.response.body = response.serializeBinary();
   }
@@ -197,7 +204,9 @@ export class MedusaController {
     const body = await context.request.body({ type: 'reader' });
     const requestValue = await readAll(body.value);
     const customersRequest = CustomersRequest.deserializeBinary(requestValue);
-    const response = await MedusaService.getCustomersAsync(customersRequest);
+    const response = await this._medusaService.getCustomersAsync(
+      customersRequest
+    );
     context.response.type = 'application/x-protobuf';
     context.response.body = response.serializeBinary();
   }
@@ -212,7 +221,7 @@ export class MedusaController {
     >
   ): Promise<void> {
     const paramsProductId = context.params['productId'];
-    const response = await MedusaService.getProductMetadataAsync(
+    const response = await this._medusaService.getProductMetadataAsync(
       paramsProductId
     );
     context.response.type = 'application/x-protobuf';
@@ -229,7 +238,7 @@ export class MedusaController {
     >
   ): Promise<void> {
     const paramsCustomerId = context.params['customerId'];
-    const response = await MedusaService.getCustomerMetadataAsync(
+    const response = await this._medusaService.getCustomerMetadataAsync(
       paramsCustomerId
     );
     context.response.type = 'application/x-protobuf';
@@ -247,7 +256,7 @@ export class MedusaController {
     >
   ): Promise<void> {
     const paramsSalesLocationId = context.params['salesLocationId'];
-    const response = await MedusaService.findCustomerGroupAsync(
+    const response = await this._medusaService.findCustomerGroupAsync(
       paramsSalesLocationId
     );
     context.response.type = 'application/x-protobuf';
@@ -264,10 +273,8 @@ export class MedusaController {
       Record<string, any>
     >
   ): Promise<void> {
-    const token = context.request.headers.get('session-token') ?? '';
     const paramsSupabaseId = context.params['supabaseId'];
-    const response = await MedusaService.getCustomerBySupabaseIdAsync(
-      token,
+    const response = await this._medusaService.getCustomerBySupabaseIdAsync(
       paramsSupabaseId
     );
     context.response.type = 'application/x-protobuf';
@@ -288,7 +295,7 @@ export class MedusaController {
     const body = await context.request.body({ type: 'reader' });
     const requestValue = await readAll(body.value);
     const ordersRequest = OrdersRequest.deserializeBinary(requestValue);
-    const response = await MedusaService.getOrdersAsync(
+    const response = await this._medusaService.getOrdersAsync(
       paramsCustomerId,
       ordersRequest
     );
@@ -307,7 +314,7 @@ export class MedusaController {
     >
   ): Promise<void> {
     const paramsStockLocationId = context.params['stockLocationId'];
-    const response = await MedusaService.getStockLocationAsync(
+    const response = await this._medusaService.getStockLocationAsync(
       paramsStockLocationId
     );
     context.response.type = 'application/x-protobuf';

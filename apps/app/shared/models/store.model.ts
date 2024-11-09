@@ -1,285 +1,197 @@
-import { Product, ProductType, Region, SalesChannel } from "@medusajs/medusa";
-import { PricedProduct } from "@medusajs/medusa/dist/types/pricing";
-import { createStore, withProps } from "@ngneat/elf";
-import { Model } from "../model";
-import { ProductLikesMetadataResponse } from "../protobuf/product-like_pb";
+import { HttpTypes } from '@medusajs/types';
+import { makeObservable, observable } from 'mobx';
+import { Model } from '../model';
+import { ProductLikesMetadataResponse } from '../protobuf/product-like_pb';
+import { StoreOptions } from '../store-options';
 
 export enum ProductTabs {
   // Restaurant
-  Appetizers = "Appetizers",
-  MainCourses = "MainCourses",
-  Desserts = "Desserts",
-  Extras = "Extras",
-  Wines = "Wines",
+  Appetizers = 'Appetizers',
+  MainCourses = 'MainCourses',
+  Desserts = 'Desserts',
+  Extras = 'Extras',
+  Wines = 'Wines',
   // Cellar
-  White = "White",
-  Red = "Red",
-  Rose = "Rose",
-  Spirits = "Spirits",
+  White = 'White',
+  Red = 'Red',
+  Rose = 'Rose',
+  Spirits = 'Spirits',
   // Market
-  Produce = "Produce",
-  Fruit = "Fruits",
-  Bread = "Bread",
-  Grains = "Grains",
-  Meats = "Meats",
-  Fish = "Fish",
-  Condiments = "Condiments",
-  Beverages = "Beverages",
-  Snacks = "Snacks",
-  Dairy = "Dairy",
-  Oils = "Oils",
-  Baking = "Baking",
-  Spices = "Spices",
-  Frozen = "Frozen",
-  CannedGoods = "CannedGoods",
-}
-
-export interface StoreState {
-  products: (Product & { sales_channel_ids: string[] })[];
-  pricedProducts: Record<string, PricedProduct>;
-  productLikesMetadata: ProductLikesMetadataResponse[];
-  input: string;
-  selectedPricedProduct: PricedProduct | undefined;
-  selectedProductLikesMetadata: ProductLikesMetadataResponse | null;
-  regions: Region[];
-  selectedRegion: Region | undefined;
-  selectedTab: ProductTabs | undefined;
-  selectedSalesChannel: Partial<SalesChannel> | undefined;
-  pagination: number;
-  hasMorePreviews: boolean;
-  scrollPosition: number | undefined;
-  isLoading: boolean;
-  isReloading: boolean;
-  productTypes: ProductType[];
+  Produce = 'Produce',
+  Fruit = 'Fruits',
+  Bread = 'Bread',
+  Grains = 'Grains',
+  Meats = 'Meats',
+  Fish = 'Fish',
+  Condiments = 'Condiments',
+  Beverages = 'Beverages',
+  Snacks = 'Snacks',
+  Dairy = 'Dairy',
+  Oils = 'Oils',
+  Baking = 'Baking',
+  Spices = 'Spices',
+  Frozen = 'Frozen',
+  CannedGoods = 'CannedGoods',
 }
 
 export class StoreModel extends Model {
-  constructor() {
-    super(
-      createStore(
-        { name: "store" },
-        withProps<StoreState>({
-          products: [],
-          pricedProducts: {},
-          productLikesMetadata: [],
-          input: "",
-          selectedPricedProduct: undefined,
-          selectedProductLikesMetadata: null,
-          regions: [],
-          selectedRegion: undefined,
-          selectedTab: undefined,
-          selectedSalesChannel: undefined,
-          pagination: 1,
-          hasMorePreviews: true,
-          scrollPosition: undefined,
-          isLoading: false,
-          isReloading: false,
-          productTypes: [],
-        }),
-      ),
-    );
+  @observable
+  public products: HttpTypes.StoreProduct[];
+  @observable
+  public pricedProducts: Record<string, HttpTypes.StoreProduct>;
+  @observable
+  public productLikesMetadata: ProductLikesMetadataResponse[];
+  @observable
+  public input: string;
+  @observable
+  public selectedPricedProduct: HttpTypes.StoreProduct | undefined;
+  @observable
+  public selectedProductLikesMetadata: ProductLikesMetadataResponse | null;
+  @observable
+  public regions: HttpTypes.StoreRegion[];
+  @observable
+  public selectedRegion: HttpTypes.StoreRegion | undefined;
+  @observable
+  public selectedTab: ProductTabs | undefined;
+  @observable
+  public selectedSalesChannel: Partial<HttpTypes.AdminSalesChannel> | undefined;
+  @observable
+  public pagination: number;
+  @observable
+  public hasMorePreviews: boolean;
+  @observable
+  public scrollPosition: number | undefined;
+  @observable
+  public isLoading: boolean;
+  @observable
+  public isReloading: boolean;
+  @observable
+  public productTypes: HttpTypes.StoreProductType[];
+
+  constructor(options?: StoreOptions) {
+    super(options);
+    makeObservable(this);
+
+    this.products = [];
+    this.pricedProducts = {};
+    this.productLikesMetadata = [];
+    this.input = '';
+    this.selectedPricedProduct = undefined;
+    this.selectedProductLikesMetadata = null;
+    this.regions = [];
+    this.selectedRegion = undefined;
+    this.selectedTab = undefined;
+    this.selectedSalesChannel = undefined;
+    this.pagination = 1;
+    this.hasMorePreviews = true;
+    this.scrollPosition = undefined;
+    this.isLoading = false;
+    this.isReloading = false;
+    this.productTypes = [];
   }
 
-  public get products(): Product[] {
-    return this.store.getValue().products;
-  }
-
-  public set products(value: Product[]) {
+  public updateProducts(value: HttpTypes.StoreProduct[]) {
     if (JSON.stringify(this.products) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, products: value }));
+      this.products = value;
     }
   }
 
-  public get pricedProducts(): Record<string, PricedProduct> {
-    return this.store.getValue().pricedProducts;
-  }
-
-  public set pricedProducts(value: Record<string, PricedProduct>) {
+  public updatePricedProducts(value: Record<string, HttpTypes.StoreProduct>) {
     if (JSON.stringify(this.pricedProducts) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, pricedProducts: value }));
+      this.pricedProducts = value;
     }
   }
 
-  public get productLikesMetadata(): ProductLikesMetadataResponse[] {
-    return this.store.getValue().productLikesMetadata;
-  }
-
-  public set productLikesMetadata(value: ProductLikesMetadataResponse[]) {
+  public updateProductLikesMetadata(value: ProductLikesMetadataResponse[]) {
     if (JSON.stringify(this.productLikesMetadata) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, productLikesMetadata: value }));
+      this.productLikesMetadata = value;
     }
   }
 
-  public get input(): string {
-    return this.store.getValue().input;
-  }
-
-  public set input(value: string) {
+  public updateInput(value: string) {
     if (this.input !== value) {
-      this.store.update((state) => ({ ...state, input: value }));
+      this.input = value;
     }
   }
 
-  public get selectedPricedProduct(): PricedProduct | undefined {
-    return this.store.getValue().selectedPricedProduct;
-  }
-
-  public set selectedPricedProduct(value: PricedProduct | undefined) {
+  public updateSelectedPricedProduct(
+    value: HttpTypes.StoreProduct | undefined
+  ) {
     if (JSON.stringify(this.selectedPricedProduct) !== JSON.stringify(value)) {
-      this.store.update((state) => ({
-        ...state,
-        selectedPricedProduct: value,
-      }));
+      this.selectedPricedProduct = value;
     }
   }
 
-  public get selectedProductLikesMetadata():
-    | ProductLikesMetadataResponse
-    | null {
-    return this.store.getValue().selectedProductLikesMetadata;
-  }
-
-  public set selectedProductLikesMetadata(
-    value: ProductLikesMetadataResponse | null,
+  public updateSelectedProductLikesMetadata(
+    value: ProductLikesMetadataResponse | null
   ) {
     if (
       JSON.stringify(this.selectedProductLikesMetadata) !==
       JSON.stringify(value)
     ) {
-      this.store.update((state) => ({
-        ...state,
-        selectedProductLikesMetadata: value,
-      }));
+      this.selectedProductLikesMetadata = value;
     }
   }
 
-  public get regions(): Region[] {
-    return this.store.getValue().regions;
-  }
-
-  public set regions(value: Region[]) {
+  public updateRegions(value: HttpTypes.StoreRegion[]) {
     if (JSON.stringify(this.regions) !== JSON.stringify(value)) {
-      this.store.update((state) => ({
-        ...state,
-        regions: value,
-      }));
+      this.regions = value;
     }
   }
 
-  public get selectedRegion(): Region | undefined {
-    return this.store.getValue().selectedRegion;
-  }
-
-  public set selectedRegion(value: Region | undefined) {
+  public updateSelectedRegion(value: HttpTypes.StoreRegion | undefined) {
     if (JSON.stringify(this.selectedRegion) !== JSON.stringify(value)) {
-      this.store.update((state) => ({
-        ...state,
-        selectedRegion: value,
-      }));
+      this.selectedRegion = value;
     }
   }
 
-  public get selectedTab(): ProductTabs | undefined {
-    return this.store.getValue().selectedTab;
-  }
-
-  public set selectedTab(value: ProductTabs | undefined) {
+  public updateSelectedTab(value: ProductTabs | undefined) {
     if (this.selectedTab !== value) {
-      this.store.update((state) => ({
-        ...state,
-        selectedTab: value,
-      }));
+      this.selectedTab = value;
     }
   }
 
-  public get selectedSalesChannel(): Partial<SalesChannel> | undefined {
-    return this.store.getValue().selectedSalesChannel;
-  }
-
-  public set selectedSalesChannel(value: Partial<SalesChannel> | undefined) {
+  public updateSelectedSalesChannel(
+    value: Partial<HttpTypes.AdminSalesChannel> | undefined
+  ) {
     if (JSON.stringify(this.selectedSalesChannel) !== JSON.stringify(value)) {
-      this.store.update((state) => ({
-        ...state,
-        selectedSalesChannel: value,
-      }));
+      this.selectedSalesChannel = value;
     }
   }
 
-  public get pagination(): number {
-    return this.store.getValue().pagination;
-  }
-
-  public set pagination(value: number) {
+  public updatePagination(value: number) {
     if (this.pagination !== value) {
-      this.store.update((state) => ({
-        ...state,
-        pagination: value,
-      }));
+      this.pagination = value;
     }
   }
 
-  public get hasMorePreviews(): boolean {
-    return this.store.getValue().hasMorePreviews;
-  }
-
-  public set hasMorePreviews(value: boolean) {
+  public updateHasMorePreviews(value: boolean) {
     if (this.hasMorePreviews !== value) {
-      this.store.update((state) => ({
-        ...state,
-        hasMorePreviews: value,
-      }));
+      this.hasMorePreviews = value;
     }
   }
 
-  public get scrollPosition(): number | undefined {
-    return this.store.getValue().scrollPosition;
-  }
-
-  public set scrollPosition(value: number | undefined) {
+  public updateScrollPosition(value: number | undefined) {
     if (this.scrollPosition !== value) {
-      this.store.update((state) => ({
-        ...state,
-        scrollPosition: value,
-      }));
+      this.scrollPosition = value;
     }
   }
 
-  public get isLoading(): boolean {
-    return this.store.getValue().isLoading;
-  }
-
-  public set isLoading(value: boolean) {
+  public updateIsLoading(value: boolean) {
     if (this.isLoading !== value) {
-      this.store.update((state) => ({
-        ...state,
-        isLoading: value,
-      }));
+      this.isLoading = value;
     }
   }
 
-  public get isReloading(): boolean {
-    return this.store.getValue().isReloading;
-  }
-
-  public set isReloading(value: boolean) {
+  public updateIsReloading(value: boolean) {
     if (this.isReloading !== value) {
-      this.store.update((state) => ({
-        ...state,
-        isReloading: value,
-      }));
+      this.isReloading = value;
     }
   }
 
-  public get productTypes(): ProductType[] {
-    return this.store.getValue().productTypes;
-  }
-
-  public set productTypes(value: ProductType[]) {
+  public updateProductTypes(value: HttpTypes.StoreProductType[]) {
     if (JSON.stringify(this.productTypes) !== JSON.stringify(value)) {
-      this.store.update((state) => ({
-        ...state,
-        productTypes: value,
-      }));
+      this.productTypes = value;
     }
   }
 }

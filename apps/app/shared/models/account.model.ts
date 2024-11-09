@@ -1,28 +1,59 @@
-import {
-  Address,
-  Customer,
-  CustomerGroup,
-  Order,
-  Product,
-} from '@medusajs/medusa';
-import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
-import { createStore, withProps } from '@ngneat/elf';
+import { HttpTypes } from '@medusajs/types';
 import { User } from '@supabase/supabase-js';
-import {
-  ProfileFormErrors,
-  ProfileFormValues,
-} from '../../web/components/account-profile-form.component';
-import {
-  AddressFormErrors,
-  AddressFormValues,
-} from '../../web/components/address-form.component';
+import { makeObservable, observable, runInAction } from 'mobx';
 import { Model } from '../model';
 import { AccountFollowerResponse } from '../protobuf/account-follower_pb';
 import { AccountResponse } from '../protobuf/account_pb';
-import { CustomerResponse } from '../protobuf/customer_pb';
 import { InterestResponse } from '../protobuf/interest_pb';
 import { ProductLikesMetadataResponse } from '../protobuf/product-like_pb';
 import { Geocoding, GeocodingFeature } from '../services/mapbox.service';
+import { StoreOptions } from '../store-options';
+
+export interface AddressFormErrors {
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  company?: string;
+  address?: string;
+  apartments?: string;
+  postalCode?: string;
+  city?: string;
+  country?: string;
+  region?: string;
+  phoneNumber?: string;
+}
+
+export interface AddressFormValues {
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  company?: string;
+  address?: string;
+  apartments?: string;
+  postalCode?: string;
+  city?: string;
+  countryCode?: string;
+  region?: string;
+  phoneNumber?: string;
+}
+
+export interface ProfileFormErrors {
+  firstName?: string;
+  lastName?: string;
+  username?: string;
+  birthday?: string;
+  sex?: string;
+  phoneNumber?: string;
+}
+
+export interface ProfileFormValues {
+  firstName?: string;
+  lastName?: string;
+  username?: string;
+  birthday?: string;
+  sex?: 'male' | 'female';
+  phoneNumber?: string;
+}
 
 export interface AccountDocument {
   id?: string;
@@ -38,7 +69,7 @@ export interface AccountDocument {
   about_me?: string;
   interests?: string[];
   metadata?: string;
-  customer?: Partial<Customer>;
+  customer?: Partial<HttpTypes.StoreCustomer>;
 }
 
 export interface AccountPresence {
@@ -53,667 +84,496 @@ export interface ProfileFormErrorStrings {
   spaces?: string;
 }
 
-export interface AccountState {
-  user: User | null;
-  account: AccountResponse | undefined;
-  customer: Customer | undefined;
-  customerGroup: CustomerGroup | undefined;
-  isCustomerGroupLoading: boolean;
-  profileForm: ProfileFormValues;
-  profileFormErrors: ProfileFormErrors;
-  errorStrings: ProfileFormErrorStrings;
-  profileUrl: string | undefined;
-  username: string;
-  orders: Order[];
-  orderPagination: number;
-  hasMoreOrders: boolean;
-  shippingForm: AddressFormValues;
-  shippingFormErrors: AddressFormErrors;
-  addressErrorStrings: AddressFormErrors;
-  selectedAddress: Address | undefined;
-  editShippingForm: AddressFormValues;
-  editShippingFormErrors: AddressFormErrors;
-  areOrdersReloading: boolean;
-  areOrdersLoading: boolean;
-  activeTabId: string;
-  prevTabIndex: number;
-  activeTabIndex: number;
-  ordersScrollPosition: number | undefined;
-  isCreateCustomerLoading: boolean;
-  isUpdateGeneralInfoLoading: boolean;
-  hasMoreLikes: boolean;
-  likesScrollPosition: number | undefined;
-  likedProducts: Product[];
-  productLikesMetadata: Record<string, ProductLikesMetadataResponse>;
-  likedProductPagination: number;
-  areLikedProductsReloading: boolean;
-  areLikedProductsLoading: boolean;
-  selectedLikedProduct: PricedProduct | undefined;
-  selectedProductLikes: ProductLikesMetadataResponse | undefined;
-  isAvatarUploadLoading: boolean;
-  addFriendsSearchInput: string;
-  addFriendsLocationInput: string;
-  addFriendsLocationGeocoding: Geocoding | undefined;
-  addFriendsLocationFeature: GeocodingFeature | undefined;
-  addFriendsLocationCoordinates: {
+export class AccountModel extends Model {
+  @observable
+  public user!: User | null;
+  @observable
+  public account: AccountResponse | undefined;
+  @observable
+  public customer: HttpTypes.AdminCustomer | undefined;
+  @observable
+  public customerGroup: HttpTypes.AdminCustomerGroup | undefined;
+  @observable
+  public isCustomerGroupLoading!: boolean;
+  @observable
+  public profileForm!: ProfileFormValues;
+  @observable
+  public profileFormErrors!: ProfileFormErrors;
+  @observable
+  public errorStrings!: ProfileFormErrorStrings;
+  @observable
+  public profileUrl: string | undefined;
+  @observable
+  public username!: string;
+  @observable
+  public orders!: HttpTypes.StoreOrder[];
+  @observable
+  public orderPagination!: number;
+  @observable
+  public hasMoreOrders!: boolean;
+  @observable
+  public shippingForm!: AddressFormValues;
+  @observable
+  public shippingFormErrors!: AddressFormErrors;
+  @observable
+  public addressErrorStrings!: AddressFormErrors;
+  @observable
+  public selectedAddress: HttpTypes.AdminCustomerAddress | undefined;
+  @observable
+  public editShippingForm!: AddressFormValues;
+  @observable
+  public editShippingFormErrors!: AddressFormErrors;
+  @observable
+  public areOrdersReloading!: boolean;
+  @observable
+  public areOrdersLoading!: boolean;
+  @observable
+  public activeTabId!: string;
+  @observable
+  public prevTabIndex!: number;
+  @observable
+  public activeTabIndex!: number;
+  @observable
+  public ordersScrollPosition: number | undefined;
+  @observable
+  public isCreateCustomerLoading!: boolean;
+  @observable
+  public isUpdateGeneralInfoLoading!: boolean;
+  @observable
+  public hasMoreLikes!: boolean;
+  @observable
+  public likesScrollPosition: number | undefined;
+  @observable
+  public likedProducts!: HttpTypes.StoreProduct[];
+  @observable
+  public productLikesMetadata!: Record<string, ProductLikesMetadataResponse>;
+  @observable
+  public likedProductPagination!: number;
+  @observable
+  public areLikedProductsReloading!: boolean;
+  @observable
+  public areLikedProductsLoading!: boolean;
+  @observable
+  public selectedLikedProduct: HttpTypes.StoreProduct | undefined;
+  @observable
+  public selectedProductLikes: ProductLikesMetadataResponse | undefined;
+  @observable
+  public isAvatarUploadLoading!: boolean;
+  @observable
+  public addFriendsSearchInput!: string;
+  @observable
+  public addFriendsLocationInput!: string;
+  @observable
+  public addFriendsLocationGeocoding: Geocoding | undefined;
+  @observable
+  public addFriendsLocationFeature: GeocodingFeature | undefined;
+  @observable
+  public addFriendsLocationCoordinates!: {
     lat: number;
     lng: number;
   };
-  addFriendsRadiusMeters: number;
-  addFriendsSex: 'any' | 'male' | 'female';
-  addFriendsPagination: number;
-  hasMoreAddFriends: boolean;
-  areAddFriendsReloading: boolean;
-  areAddFriendsLoading: boolean;
-  addFriendAccounts: AccountDocument[];
-  addFriendsScrollPosition: number | undefined;
-  addFriendAccountFollowers: Record<string, AccountFollowerResponse>;
-  areFollowRequestAccountsLoading: boolean;
-  followRequestAccounts: AccountDocument[];
-  followRequestAccountFollowers: Record<string, AccountFollowerResponse>;
-  likeCount: number | undefined;
-  followerCount: number | undefined;
-  followingCount: number | undefined;
-  addInterestInput: string;
-  areAddInterestsLoading: boolean;
-  searchedInterests: InterestResponse[];
-  creatableInterest: string | undefined;
-  selectedInterests: Record<string, InterestResponse>;
-}
-
-export class AccountModel extends Model {
-  constructor() {
-    super(
-      createStore(
-        { name: 'account' },
-        withProps<AccountState>({
-          user: null,
-          account: undefined,
-          customer: undefined,
-          customerGroup: undefined,
-          isCustomerGroupLoading: false,
-          profileForm: {
-            firstName: '',
-            lastName: '',
-            username: '',
-          },
-          profileFormErrors: {},
-          errorStrings: {},
-          profileUrl: undefined,
-          username: '',
-          orders: [],
-          orderPagination: 1,
-          hasMoreOrders: true,
-          shippingForm: {
-            email: '',
-            firstName: '',
-            lastName: '',
-            company: '',
-            address: '',
-            apartments: '',
-            postalCode: '',
-            city: '',
-            countryCode: '',
-            region: '',
-            phoneNumber: '',
-          },
-          shippingFormErrors: {},
-          addressErrorStrings: {},
-          selectedAddress: undefined,
-          editShippingForm: {
-            email: '',
-            firstName: '',
-            lastName: '',
-            company: '',
-            address: '',
-            apartments: '',
-            postalCode: '',
-            city: '',
-            countryCode: '',
-            region: '',
-            phoneNumber: '',
-          },
-          areOrdersReloading: false,
-          areOrdersLoading: false,
-          editShippingFormErrors: {},
-          activeTabId: '/account/likes',
-          prevTabIndex: 0,
-          activeTabIndex: 0,
-          ordersScrollPosition: undefined,
-          isCreateCustomerLoading: false,
-          isUpdateGeneralInfoLoading: false,
-          hasMoreLikes: true,
-          likesScrollPosition: undefined,
-          likedProducts: [],
-          productLikesMetadata: {},
-          likedProductPagination: 1,
-          areLikedProductsReloading: false,
-          areLikedProductsLoading: false,
-          selectedLikedProduct: undefined,
-          selectedProductLikes: undefined,
-          isAvatarUploadLoading: false,
-          addFriendsSearchInput: '',
-          addFriendsLocationInput: '',
-          addFriendsLocationGeocoding: undefined,
-          addFriendsLocationFeature: undefined,
-          addFriendsLocationCoordinates: {
-            lat: 0,
-            lng: 0,
-          },
-          addFriendsRadiusMeters: 100000,
-          addFriendsSex: 'any',
-          addFriendsPagination: 1,
-          hasMoreAddFriends: true,
-          areAddFriendsReloading: false,
-          areAddFriendsLoading: false,
-          addFriendAccounts: [],
-          addFriendsScrollPosition: undefined,
-          addFriendAccountFollowers: {},
-          areFollowRequestAccountsLoading: false,
-          followRequestAccounts: [],
-          followRequestAccountFollowers: {},
-          likeCount: undefined,
-          followerCount: undefined,
-          followingCount: undefined,
-          addInterestInput: '',
-          areAddInterestsLoading: false,
-          searchedInterests: [],
-          creatableInterest: undefined,
-          selectedInterests: {},
-        })
-      )
-    );
-  }
-
-  public get user(): User | null {
-    return this.store.getValue().user;
-  }
-
-  public set user(value: User | null) {
-    if (JSON.stringify(this.user) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, user: value }));
-    }
-  }
-
-  public get profileForm(): ProfileFormValues {
-    return this.store.getValue().profileForm;
-  }
-
-  public set profileForm(value: ProfileFormValues) {
-    if (JSON.stringify(this.profileForm) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, profileForm: value }));
-    }
-  }
-
-  public get profileFormErrors(): ProfileFormErrors {
-    return this.store.getValue().ProfileFormErrors;
-  }
-
-  public set profileFormErrors(value: ProfileFormErrors) {
-    if (JSON.stringify(this.profileFormErrors) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, profileFormErrors: value }));
-    }
-  }
-
-  public get errorStrings(): ProfileFormErrorStrings {
-    return this.store.getValue().errorStrings;
-  }
-
-  public set errorStrings(value: ProfileFormErrorStrings) {
-    if (JSON.stringify(this.errorStrings) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, errorStrings: value }));
-    }
-  }
-
-  public get profileUrl(): string | undefined {
-    return this.store.getValue().profileUrl;
-  }
-
-  public set profileUrl(value: string | undefined) {
-    if (this.profileUrl !== value) {
-      this.store.update((state) => ({ ...state, profileUrl: value }));
-    }
-  }
-
-  public get customer(): Customer | undefined {
-    return this.store.getValue().customer;
-  }
-
-  public set customer(value: Customer | undefined) {
-    if (JSON.stringify(this.customer) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, customer: value }));
-    }
-  }
-
-  public get customerGroup(): CustomerGroup | undefined {
-    return this.store.getValue().customerGroup;
-  }
-
-  public set customerGroup(value: CustomerGroup | undefined) {
-    if (JSON.stringify(this.customerGroup) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, customerGroup: value }));
-    }
-  }
-
-  public get isCustomerGroupLoading(): boolean {
-    return this.store.getValue().isCustomerGroupLoading;
-  }
-
-  public set isCustomerGroupLoading(value: boolean) {
-    if (this.isCustomerGroupLoading !== value) {
-      this.store.update((state) => ({
-        ...state,
-        isCustomerGroupLoading: value,
-      }));
-    }
-  }
-
-  public get isUpdateGeneralInfoLoading(): boolean {
-    return this.store.getValue().isUpdateGeneralInfoLoading;
-  }
-
-  public set isUpdateGeneralInfoLoading(value: boolean) {
-    if (this.isUpdateGeneralInfoLoading !== value) {
-      this.store.update((state) => ({
-        ...state,
-        isUpdateGeneralInfoLoading: value,
-      }));
-    }
-  }
-
-  public get account(): AccountResponse | undefined {
-    return this.store.getValue().account;
-  }
-
-  public set account(value: AccountResponse | undefined) {
-    if (JSON.stringify(this.account) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, account: value }));
-    }
-  }
-
-  public get username(): string {
-    return this.store.getValue().username;
-  }
-
-  public set username(value: string) {
-    if (this.username !== value) {
-      this.store.update((state) => ({ ...state, username: value }));
-    }
-  }
-
-  public get orders(): Order[] {
-    return this.store.getValue().orders;
-  }
-
-  public set orders(value: Order[]) {
-    if (JSON.stringify(this.orders) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, orders: value }));
-    }
-  }
-
-  public get orderPagination(): number {
-    return this.store?.getValue().orderPagination;
-  }
-
-  public set orderPagination(value: number) {
-    if (this.orderPagination !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        orderPagination: value,
-      }));
-    }
-  }
-
-  public get hasMoreOrders(): boolean {
-    return this.store?.getValue().hasMoreOrders;
-  }
-
-  public set hasMoreOrders(value: boolean) {
-    if (this.hasMoreOrders !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        hasMoreOrders: value,
-      }));
-    }
-  }
-
-  public get shippingForm(): AddressFormValues {
-    return this.store.getValue().shippingForm;
-  }
-
-  public set shippingForm(value: AddressFormValues) {
-    if (JSON.stringify(this.shippingForm) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, shippingForm: value }));
-    }
-  }
-
-  public get shippingFormErrors(): AddressFormErrors {
-    return this.store.getValue().shippingFormErrors;
-  }
-
-  public set shippingFormErrors(value: AddressFormErrors) {
-    if (JSON.stringify(this.shippingFormErrors) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, shippingFormErrors: value }));
-    }
-  }
-
-  public get addressErrorStrings(): AddressFormErrors {
-    return this.store.getValue().addressErrorStrings;
-  }
-
-  public set addressErrorStrings(value: AddressFormErrors) {
-    if (JSON.stringify(this.addressErrorStrings) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, addressErrorStrings: value }));
-    }
-  }
-
-  public get selectedAddress(): Address | undefined {
-    return this.store.getValue().selectedAddress;
-  }
-
-  public set selectedAddress(value: Address | undefined) {
-    if (JSON.stringify(this.selectedAddress) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, selectedAddress: value }));
-    }
-  }
-
-  public get editShippingForm(): AddressFormValues {
-    return this.store.getValue().editShippingForm;
-  }
-
-  public set editShippingForm(value: AddressFormValues) {
-    if (JSON.stringify(this.editShippingForm) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, editShippingForm: value }));
-    }
-  }
-
-  public get editShippingFormErrors(): AddressFormErrors {
-    return this.store.getValue().editShippingFormErrors;
-  }
-
-  public set editShippingFormErrors(value: AddressFormErrors) {
-    if (JSON.stringify(this.editShippingFormErrors) !== JSON.stringify(value)) {
-      this.store.update((state) => ({
-        ...state,
-        editShippingFormErrors: value,
-      }));
-    }
-  }
-
-  public get activeTabId(): string {
-    return this.store.getValue().activeTabId;
-  }
-
-  public set activeTabId(value: string) {
-    if (this.activeTabId !== value) {
-      this.store.update((state) => ({
-        ...state,
-        activeTabId: value,
-      }));
-    }
-  }
-
-  public get prevTabIndex(): number {
-    return this.store.getValue().prevTabIndex;
-  }
-
-  public set prevTabIndex(value: number) {
-    if (this.prevTabIndex !== value) {
-      this.store.update((state) => ({
-        ...state,
-        prevTabIndex: value,
-      }));
-    }
-  }
-
-  public get activeTabIndex(): number {
-    return this.store.getValue().activeTabIndex;
-  }
-
-  public set activeTabIndex(value: number) {
-    if (this.activeTabIndex !== value) {
-      this.store.update((state) => ({
-        ...state,
-        activeTabIndex: value,
-      }));
-    }
-  }
-
-  public get areOrdersReloading(): boolean {
-    return this.store.getValue().areOrdersReloading;
-  }
-
-  public set areOrdersReloading(value: boolean) {
-    if (this.areOrdersReloading !== value) {
-      this.store.update((state) => ({
-        ...state,
-        areOrdersReloading: value,
-      }));
-    }
-  }
-
-  public get areOrdersLoading(): boolean {
-    return this.store.getValue().areOrdersLoading;
-  }
-
-  public set areOrdersLoading(value: boolean) {
-    if (this.areOrdersLoading !== value) {
-      this.store.update((state) => ({
-        ...state,
-        areOrdersLoading: value,
-      }));
-    }
-  }
-
-  public get ordersScrollPosition(): number | undefined {
-    return this.store.getValue().ordersScrollPosition;
-  }
-
-  public set ordersScrollPosition(value: number | undefined) {
-    if (this.ordersScrollPosition !== value) {
-      this.store.update((state) => ({
-        ...state,
-        ordersScrollPosition: value,
-      }));
-    }
-  }
-
-  public get isCreateCustomerLoading(): boolean {
-    return this.store?.getValue().isCreateCustomerLoading;
-  }
-
-  public set isCreateCustomerLoading(value: boolean) {
-    if (this.isCreateCustomerLoading !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        isCreateCustomerLoading: value,
-      }));
-    }
-  }
-
-  public get hasMoreLikes(): boolean {
-    return this.store?.getValue().hasMoreLikes;
-  }
-
-  public set hasMoreLikes(value: boolean) {
-    if (this.hasMoreLikes !== value) {
-      this.store?.update((state) => ({ ...state, hasMoreLikes: value }));
-    }
-  }
-
-  public get likesScrollPosition(): number | undefined {
-    return this.store?.getValue().likesScrollPosition;
-  }
-
-  public set likesScrollPosition(value: number | undefined) {
-    if (this.likesScrollPosition !== value) {
-      this.store?.update((state) => ({ ...state, likesScrollPosition: value }));
-    }
-  }
-
-  public get likedProducts(): Product[] {
-    return this.store?.getValue().likedProducts;
-  }
-
-  public set likedProducts(value: Product[]) {
-    if (JSON.stringify(this.likedProducts) !== JSON.stringify(value)) {
-      this.store?.update((state) => ({ ...state, likedProducts: value }));
-    }
-  }
-
-  public get productLikesMetadata(): Record<
+  @observable
+  public addFriendsRadiusMeters!: number;
+  @observable
+  public addFriendsSex!: 'any' | 'male' | 'female';
+  @observable
+  public addFriendsPagination!: number;
+  @observable
+  public hasMoreAddFriends!: boolean;
+  @observable
+  public areAddFriendsReloading!: boolean;
+  @observable
+  public areAddFriendsLoading!: boolean;
+  @observable
+  public addFriendAccounts!: AccountDocument[];
+  @observable
+  public addFriendsScrollPosition: number | undefined;
+  @observable
+  public addFriendAccountFollowers!: Record<string, AccountFollowerResponse>;
+  @observable
+  public areFollowRequestAccountsLoading!: boolean;
+  @observable
+  public followRequestAccounts!: AccountDocument[];
+  @observable
+  public followRequestAccountFollowers!: Record<
     string,
-    ProductLikesMetadataResponse
-  > {
-    return this.store?.getValue().productLikesMetadata;
+    AccountFollowerResponse
+  >;
+  @observable
+  public likeCount: number | undefined;
+  @observable
+  public followerCount: number | undefined;
+  @observable
+  public followingCount: number | undefined;
+  @observable
+  public addInterestInput!: string;
+  @observable
+  public areAddInterestsLoading!: boolean;
+  @observable
+  public searchedInterests!: InterestResponse[];
+  @observable
+  public creatableInterest: string | undefined;
+  @observable
+  public selectedInterests!: Record<string, InterestResponse>;
+
+  constructor(options?: StoreOptions) {
+    super(options);
+    makeObservable(this);
+
+    runInAction(() => {
+      this.user = null;
+      this.account = undefined;
+      this.customer = undefined;
+      this.customerGroup = undefined;
+      this.isCustomerGroupLoading = false;
+      this.profileForm = {
+        firstName: '',
+        lastName: '',
+        username: '',
+      };
+      this.profileFormErrors = {};
+      this.errorStrings = {};
+      this.profileUrl = undefined;
+      this.username = '';
+      this.orders = [];
+      this.orderPagination = 1;
+      this.hasMoreOrders = true;
+      this.shippingForm = {
+        email: '',
+        firstName: '',
+        lastName: '',
+        company: '',
+        address: '',
+        apartments: '',
+        postalCode: '',
+        city: '',
+        countryCode: '',
+        region: '',
+        phoneNumber: '',
+      };
+      this.shippingFormErrors = {};
+      this.addressErrorStrings = {};
+      this.selectedAddress = undefined;
+      this.editShippingForm = {
+        email: '',
+        firstName: '',
+        lastName: '',
+        company: '',
+        address: '',
+        apartments: '',
+        postalCode: '',
+        city: '',
+        countryCode: '',
+        region: '',
+        phoneNumber: '',
+      };
+      this.areOrdersReloading = false;
+      this.areOrdersLoading = false;
+      this.editShippingFormErrors = {};
+      this.activeTabId = '/account/likes';
+      this.prevTabIndex = 0;
+      this.activeTabIndex = 0;
+      this.ordersScrollPosition = undefined;
+      this.isCreateCustomerLoading = false;
+      this.isUpdateGeneralInfoLoading = false;
+      this.hasMoreLikes = true;
+      this.likesScrollPosition = undefined;
+      this.likedProducts = [];
+      this.productLikesMetadata = {};
+      this.likedProductPagination = 1;
+      this.areLikedProductsReloading = false;
+      this.areLikedProductsLoading = false;
+      this.selectedLikedProduct = undefined;
+      this.selectedProductLikes = undefined;
+      this.isAvatarUploadLoading = false;
+      this.addFriendsSearchInput = '';
+      this.addFriendsLocationInput = '';
+      this.addFriendsLocationGeocoding = undefined;
+      this.addFriendsLocationFeature = undefined;
+      this.addFriendsLocationCoordinates = {
+        lat: 0,
+        lng: 0,
+      };
+      this.addFriendsRadiusMeters = 100000;
+      this.addFriendsSex = 'any';
+      this.addFriendsPagination = 1;
+      this.hasMoreAddFriends = true;
+      this.areAddFriendsReloading = false;
+      this.areAddFriendsLoading = false;
+      this.addFriendAccounts = [];
+      this.addFriendsScrollPosition = undefined;
+      this.addFriendAccountFollowers = {};
+      this.areFollowRequestAccountsLoading = false;
+      this.followRequestAccounts = [];
+      this.followRequestAccountFollowers = {};
+      this.likeCount = undefined;
+      this.followerCount = undefined;
+      this.followingCount = undefined;
+      this.addInterestInput = '';
+      this.areAddInterestsLoading = false;
+      this.searchedInterests = [];
+      this.creatableInterest = undefined;
+      this.selectedInterests = {};
+    });
   }
 
-  public set productLikesMetadata(
+  public updateUser(value: User | null) {
+    if (JSON.stringify(this.user) !== JSON.stringify(value)) {
+      runInAction(() => (this.user = value));
+    }
+  }
+
+  public updateProfileForm(value: ProfileFormValues) {
+    if (JSON.stringify(this.profileForm) !== JSON.stringify(value)) {
+      runInAction(() => (this.profileForm = value));
+    }
+  }
+
+  public updateProfileFormErrors(value: ProfileFormErrors) {
+    if (JSON.stringify(this.profileFormErrors) !== JSON.stringify(value)) {
+      runInAction(() => (this.profileFormErrors = value));
+    }
+  }
+
+  public updateErrorStrings(value: ProfileFormErrorStrings) {
+    if (JSON.stringify(this.errorStrings) !== JSON.stringify(value)) {
+      runInAction(() => (this.errorStrings = value));
+    }
+  }
+
+  public updateProfileUrl(value: string | undefined) {
+    if (this.profileUrl !== value) {
+      runInAction(() => (this.profileUrl = value));
+    }
+  }
+
+  public updateCustomer(value: HttpTypes.AdminCustomer | undefined) {
+    if (JSON.stringify(this.customer) !== JSON.stringify(value)) {
+      runInAction(() => (this.customer = value));
+    }
+  }
+
+  public updateCustomerGroup(value: HttpTypes.AdminCustomerGroup | undefined) {
+    if (JSON.stringify(this.customerGroup) !== JSON.stringify(value)) {
+      runInAction(() => (this.customerGroup = value));
+    }
+  }
+
+  public updateIsCustomerGroupLoading(value: boolean) {
+    if (this.isCustomerGroupLoading !== value) {
+      runInAction(() => (this.isCustomerGroupLoading = value));
+    }
+  }
+
+  public updateIsUpdateGeneralInfoLoading(value: boolean) {
+    if (this.isUpdateGeneralInfoLoading !== value) {
+      runInAction(() => (this.isUpdateGeneralInfoLoading = value));
+    }
+  }
+
+  public updateAccount(value: AccountResponse | undefined) {
+    if (JSON.stringify(this.account) !== JSON.stringify(value)) {
+      runInAction(() => (this.account = value));
+    }
+  }
+
+  public updateUsername(value: string) {
+    if (this.username !== value) {
+      runInAction(() => (this.username = value));
+    }
+  }
+
+  public updateOrders(value: HttpTypes.StoreOrder[]) {
+    if (JSON.stringify(this.orders) !== JSON.stringify(value)) {
+      runInAction(() => (this.orders = value));
+    }
+  }
+
+  public updateOrderPagination(value: number) {
+    if (this.orderPagination !== value) {
+      runInAction(() => (this.orderPagination = value));
+    }
+  }
+
+  public updateHasMoreOrders(value: boolean) {
+    if (this.hasMoreOrders !== value) {
+      runInAction(() => (this.hasMoreOrders = value));
+    }
+  }
+
+  public updateShippingForm(value: AddressFormValues) {
+    if (JSON.stringify(this.shippingForm) !== JSON.stringify(value)) {
+      runInAction(() => (this.shippingForm = value));
+    }
+  }
+
+  public updateShippingFormErrors(value: AddressFormErrors) {
+    if (JSON.stringify(this.shippingFormErrors) !== JSON.stringify(value)) {
+      runInAction(() => (this.shippingFormErrors = value));
+    }
+  }
+
+  public updateAddressErrorStrings(value: AddressFormErrors) {
+    if (JSON.stringify(this.addressErrorStrings) !== JSON.stringify(value)) {
+      runInAction(() => (this.addressErrorStrings = value));
+    }
+  }
+
+  public updateSelectedAddress(
+    value: HttpTypes.AdminCustomerAddress | undefined
+  ) {
+    if (JSON.stringify(this.selectedAddress) !== JSON.stringify(value)) {
+      runInAction(() => (this.selectedAddress = value));
+    }
+  }
+
+  public updateEditShippingForm(value: AddressFormValues) {
+    if (JSON.stringify(this.editShippingForm) !== JSON.stringify(value)) {
+      this.editShippingForm = value;
+    }
+  }
+
+  public updateEditShippingFormErrors(value: AddressFormErrors) {
+    if (JSON.stringify(this.editShippingFormErrors) !== JSON.stringify(value)) {
+      this.editShippingFormErrors = value;
+    }
+  }
+
+  public updateActiveTabId(value: string) {
+    if (this.activeTabId !== value) {
+      this.activeTabId = value;
+    }
+  }
+
+  public updatePrevTabIndex(value: number) {
+    if (this.prevTabIndex !== value) {
+      this.prevTabIndex = value;
+    }
+  }
+
+  public updateActiveTabIndex(value: number) {
+    if (this.activeTabIndex !== value) {
+      this.activeTabIndex = value;
+    }
+  }
+
+  public updateAreOrdersReloading(value: boolean) {
+    if (this.areOrdersReloading !== value) {
+      this.areOrdersReloading = value;
+    }
+  }
+
+  public updateAreOrdersLoading(value: boolean) {
+    if (this.areOrdersLoading !== value) {
+      this.areOrdersLoading = value;
+    }
+  }
+
+  public updateOrdersScrollPosition(value: number | undefined) {
+    if (this.ordersScrollPosition !== value) {
+      this.ordersScrollPosition = value;
+    }
+  }
+
+  public updateIsCreateCustomerLoading(value: boolean) {
+    if (this.isCreateCustomerLoading !== value) {
+      this.isCreateCustomerLoading = value;
+    }
+  }
+
+  public updateHasMoreLikes(value: boolean) {
+    if (this.hasMoreLikes !== value) {
+      this.hasMoreLikes = value;
+    }
+  }
+
+  public updateLikesScrollPosition(value: number | undefined) {
+    if (this.likesScrollPosition !== value) {
+      this.likesScrollPosition = value;
+    }
+  }
+
+  public updateLikedProducts(value: HttpTypes.StoreProduct[]) {
+    if (JSON.stringify(this.likedProducts) !== JSON.stringify(value)) {
+      this.likedProducts = value;
+    }
+  }
+
+  public updateProductLikesMetadata(
     value: Record<string, ProductLikesMetadataResponse>
   ) {
     if (JSON.stringify(this.productLikesMetadata) !== JSON.stringify(value)) {
-      this.store?.update((state) => ({
-        ...state,
-        productLikesMetadata: value,
-      }));
+      this.productLikesMetadata = value;
     }
   }
 
-  public get likedProductPagination(): number {
-    return this.store?.getValue().likedProductPagination;
-  }
-
-  public set likedProductPagination(value: number) {
+  public updateLikedProductPagination(value: number) {
     if (this.likedProductPagination !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        likedProductPagination: value,
-      }));
+      this.likedProductPagination = value;
     }
   }
 
-  public get areLikedProductsReloading(): boolean {
-    return this.store?.getValue().areLikedProductsReloading;
-  }
-
-  public set areLikedProductsReloading(value: boolean) {
+  public updateAreLikedProductsReloading(value: boolean) {
     if (this.areLikedProductsReloading !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        areLikedProductsReloading: value,
-      }));
+      this.areLikedProductsReloading = value;
     }
   }
 
-  public get areLikedProductsLoading(): boolean {
-    return this.store?.getValue().areLikedProductsLoading;
-  }
-
-  public set areLikedProductsLoading(value: boolean) {
+  public updateAreLikedProductsLoading(value: boolean) {
     if (this.areLikedProductsLoading !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        areLikedProductsLoading: value,
-      }));
+      this.areLikedProductsLoading = value;
     }
   }
 
-  public get selectedLikedProduct(): PricedProduct | undefined {
-    return this.store.getValue().selectedLikedProduct;
-  }
-
-  public set selectedLikedProduct(value: PricedProduct | undefined) {
+  public updateSelectedLikedProduct(value: HttpTypes.StoreProduct | undefined) {
     if (JSON.stringify(this.selectedLikedProduct) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, selectedLikedProduct: value }));
+      this.selectedLikedProduct = value;
     }
   }
 
-  public get selectedProductLikes(): ProductLikesMetadataResponse | undefined {
-    return this.store.getValue().selectedProductLikes;
-  }
-
-  public set selectedProductLikes(
+  public updateSelectedProductLikes(
     value: ProductLikesMetadataResponse | undefined
   ) {
     if (JSON.stringify(this.selectedProductLikes) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, selectedProductLikes: value }));
+      this.selectedProductLikes = value;
     }
   }
 
-  public get isAvatarUploadLoading(): boolean {
-    return this.store?.getValue().isAvatarUploadLoading;
-  }
-
-  public set isAvatarUploadLoading(value: boolean) {
+  public updateIsAvatarUploadLoading(value: boolean) {
     if (this.isAvatarUploadLoading !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        isAvatarUploadLoading: value,
-      }));
+      this.isAvatarUploadLoading = value;
     }
   }
 
-  public get addFriendsSearchInput(): string {
-    return this.store?.getValue().addFriendsSearchInput;
-  }
-
-  public set addFriendsSearchInput(value: string) {
+  public updateAddFriendsSearchInput(value: string) {
     if (this.addFriendsSearchInput !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        addFriendsSearchInput: value,
-      }));
+      this.addFriendsSearchInput = value;
     }
   }
 
-  public get addFriendsLocationInput(): string {
-    return this.store?.getValue().addFriendsLocationInput;
-  }
-
-  public set addFriendsLocationInput(value: string) {
+  public updateAddFriendsLocationInput(value: string) {
     if (this.addFriendsLocationInput !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        addFriendsLocationInput: value,
-      }));
+      this.addFriendsLocationInput = value;
     }
   }
 
-  public get addFriendsLocationGeocoding(): Geocoding | undefined {
-    return this.store?.getValue().addFriendsLocationGeocoding;
-  }
-
-  public set addFriendsLocationGeocoding(value: Geocoding | undefined) {
+  public updateAddFriendsLocationGeocoding(value: Geocoding | undefined) {
     if (
       JSON.stringify(this.addFriendsLocationGeocoding) !== JSON.stringify(value)
     ) {
-      this.store?.update((state) => ({
-        ...state,
-        addFriendsLocationGeocoding: value,
-      }));
+      this.addFriendsLocationGeocoding = value;
     }
   }
 
-  public get addFriendsLocationFeature(): GeocodingFeature | undefined {
-    return this.store?.getValue().addFriendsLocationFeature;
-  }
-
-  public set addFriendsLocationFeature(value: GeocodingFeature | undefined) {
+  public updateAddFriendsLocationFeature(value: GeocodingFeature | undefined) {
     if (
       JSON.stringify(this.addFriendsLocationFeature) !== JSON.stringify(value)
     ) {
-      this.store?.update((state) => ({
-        ...state,
-        addFriendsLocationFeature: value,
-      }));
+      this.addFriendsLocationFeature = value;
     }
   }
 
-  public get addFriendsLocationCoordinates(): { lat: number; lng: number } {
-    return this.store?.getValue().addFriendsLocationCoordinates;
-  }
-
-  public set addFriendsLocationCoordinates(value: {
+  public updateAddFriendsLocationCoordinates(value: {
     lat: number;
     lng: number;
   }) {
@@ -721,292 +581,136 @@ export class AccountModel extends Model {
       JSON.stringify(this.addFriendsLocationCoordinates) !==
       JSON.stringify(value)
     ) {
-      this.store?.update((state) => ({
-        ...state,
-        addFriendsLocationCoordinates: value,
-      }));
+      this.addFriendsLocationCoordinates = value;
     }
   }
 
-  public get addFriendsRadiusMeters(): number {
-    return this.store?.getValue().addFriendsRadiusMeters;
-  }
-
-  public set addFriendsRadiusMeters(value: number) {
+  public updateAddFriendsRadiusMeters(value: number) {
     if (this.addFriendsRadiusMeters !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        addFriendsRadiusMeters: value,
-      }));
+      this.addFriendsRadiusMeters = value;
     }
   }
 
-  public get addFriendsSex(): 'any' | 'male' | 'female' {
-    return this.store?.getValue().addFriendsSex;
-  }
-
-  public set addFriendsSex(value: 'any' | 'male' | 'female') {
+  public updateAddFriendsSex(value: 'any' | 'male' | 'female') {
     if (JSON.stringify(this.addFriendsSex) !== JSON.stringify(value)) {
-      this.store?.update((state) => ({ ...state, addFriendsSex: value }));
+      this.addFriendsSex = value;
     }
   }
 
-  public get addFriendsPagination(): number {
-    return this.store.getValue().addFriendsPagination;
-  }
-
-  public set addFriendsPagination(value: number) {
+  public updateAddFriendsPagination(value: number) {
     if (this.addFriendsPagination !== value) {
-      this.store.update((state) => ({
-        ...state,
-        addFriendsPagination: value,
-      }));
+      this.addFriendsPagination = value;
     }
   }
 
-  public get hasMoreAddFriends(): boolean {
-    return this.store?.getValue().hasMoreAddFriends;
-  }
-
-  public set hasMoreAddFriends(value: boolean) {
+  public updateHasMoreAddFriends(value: boolean) {
     if (this.hasMoreAddFriends !== value) {
-      this.store?.update((state) => ({ ...state, hasMoreAddFriends: value }));
+      this.hasMoreAddFriends = value;
     }
   }
 
-  public get areAddFriendsReloading(): boolean {
-    return this.store?.getValue().areAddFriendsReloading;
-  }
-
-  public set areAddFriendsReloading(value: boolean) {
+  public updateAreAddFriendsReloading(value: boolean) {
     if (this.areAddFriendsReloading !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        areAddFriendsReloading: value,
-      }));
+      this.areAddFriendsReloading = value;
     }
   }
 
-  public get areAddFriendsLoading(): boolean {
-    return this.store?.getValue().areAddFriendsLoading;
-  }
-
-  public set areAddFriendsLoading(value: boolean) {
+  public updateAreAddFriendsLoading(value: boolean) {
     if (this.areAddFriendsLoading !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        areAddFriendsLoading: value,
-      }));
+      this.areAddFriendsLoading = value;
     }
   }
 
-  public get addFriendAccounts(): AccountDocument[] {
-    return this.store?.getValue().addFriendAccounts;
-  }
-
-  public set addFriendAccounts(value: AccountDocument[]) {
+  public updateAddFriendAccounts(value: AccountDocument[]) {
     if (JSON.stringify(this.addFriendAccounts) !== JSON.stringify(value)) {
-      this.store?.update((state) => ({
-        ...state,
-        addFriendAccounts: value,
-      }));
+      this.addFriendAccounts = value;
     }
   }
 
-  public get addFriendsScrollPosition(): number | undefined {
-    return this.store.getValue().addFriendsScrollPosition;
-  }
-
-  public set addFriendsScrollPosition(value: number | undefined) {
+  public updateAddFriendsScrollPosition(value: number | undefined) {
     if (this.addFriendsScrollPosition !== value) {
-      this.store.update((state) => ({
-        ...state,
-        addFriendsScrollPosition: value,
-      }));
+      this.addFriendsScrollPosition = value;
     }
   }
 
-  public get addFriendAccountFollowers(): Record<
-    string,
-    AccountFollowerResponse
-  > {
-    return this.store.getValue().addFriendAccountFollowers;
-  }
-
-  public set addFriendAccountFollowers(
+  public updateAddFriendAccountFollowers(
     value: Record<string, AccountFollowerResponse>
   ) {
     if (
       JSON.stringify(this.addFriendAccountFollowers) !== JSON.stringify(value)
     ) {
-      this.store.update((state) => ({
-        ...state,
-        addFriendAccountFollowers: value,
-      }));
+      this.addFriendAccountFollowers = value;
     }
   }
 
-  public get areFollowRequestAccountsLoading(): boolean {
-    return this.store?.getValue().areFollowRequestAccountsLoading;
-  }
-
-  public set areFollowRequestAccountsLoading(value: boolean) {
+  public updateAreFollowRequestAccountsLoading(value: boolean) {
     if (this.areFollowRequestAccountsLoading !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        areFollowRequestAccountsLoading: value,
-      }));
+      this.areFollowRequestAccountsLoading = value;
     }
   }
 
-  public get followRequestAccounts(): AccountDocument[] {
-    return this.store?.getValue().followRequestAccounts;
-  }
-
-  public set followRequestAccounts(value: AccountDocument[]) {
+  public updateFollowRequestAccounts(value: AccountDocument[]) {
     if (JSON.stringify(this.followRequestAccounts) !== JSON.stringify(value)) {
-      this.store?.update((state) => ({
-        ...state,
-        followRequestAccounts: value,
-      }));
+      this.followRequestAccounts = value;
     }
   }
 
-  public get followRequestCustomers(): Record<string, CustomerResponse> {
-    return this.store?.getValue().followRequestCustomers;
-  }
-
-  public set followRequestCustomers(value: Record<string, CustomerResponse>) {
-    if (JSON.stringify(this.followRequestCustomers) !== JSON.stringify(value)) {
-      this.store?.update((state) => ({
-        ...state,
-        followRequestCustomers: value,
-      }));
-    }
-  }
-
-  public get followRequestAccountFollowers(): Record<
-    string,
-    AccountFollowerResponse
-  > {
-    return this.store.getValue().followRequestAccountFollowers;
-  }
-
-  public set followRequestAccountFollowers(
+  public updateFollowRequestAccountFollowers(
     value: Record<string, AccountFollowerResponse>
   ) {
     if (
       JSON.stringify(this.followRequestAccountFollowers) !==
       JSON.stringify(value)
     ) {
-      this.store.update((state) => ({
-        ...state,
-        followRequestAccountFollowers: value,
-      }));
+      this.followRequestAccountFollowers = value;
     }
   }
 
-  public get likeCount(): number | undefined {
-    return this.store.getValue().likeCount;
-  }
-
-  public set likeCount(value: number | undefined) {
+  public updateLikeCount(value: number | undefined) {
     if (this.likeCount !== value) {
-      this.store.update((state) => ({
-        ...state,
-        likeCount: value,
-      }));
+      this.likeCount = value;
     }
   }
 
-  public get followerCount(): number | undefined {
-    return this.store.getValue().followerCount;
-  }
-
-  public set followerCount(value: number | undefined) {
+  public updateFollowerCount(value: number | undefined) {
     if (this.followerCount !== value) {
-      this.store.update((state) => ({
-        ...state,
-        followerCount: value,
-      }));
+      this.followerCount = value;
     }
   }
 
-  public get followingCount(): number | undefined {
-    return this.store.getValue().followingCount;
-  }
-
-  public set followingCount(value: number | undefined) {
+  public updateFollowingCount(value: number | undefined) {
     if (this.followingCount !== value) {
-      this.store.update((state) => ({
-        ...state,
-        followingCount: value,
-      }));
+      this.followingCount = value;
     }
   }
 
-  public get addInterestInput(): string {
-    return this.store.getValue().addInterestInput;
-  }
-
-  public set addInterestInput(value: string) {
+  public updateAddInterestInput(value: string) {
     if (this.addInterestInput !== value) {
-      this.store.update((state) => ({
-        ...state,
-        addInterestInput: value,
-      }));
+      this.addInterestInput = value;
     }
   }
 
-  public get areAddInterestsLoading(): boolean {
-    return this.store.getValue().areAddInterestsLoading;
-  }
-
-  public set areAddInterestsLoading(value: boolean) {
+  public updateAreAddInterestsLoading(value: boolean) {
     if (this.areAddInterestsLoading !== value) {
-      this.store.update((state) => ({
-        ...state,
-        areAddInterestsLoading: value,
-      }));
+      this.areAddInterestsLoading = value;
     }
   }
 
-  public get searchedInterests(): InterestResponse[] {
-    return this.store.getValue().searchedInterests;
-  }
-
-  public set searchedInterests(value: InterestResponse[]) {
+  public updateSearchedInterests(value: InterestResponse[]) {
     if (JSON.stringify(this.searchedInterests) !== JSON.stringify(value)) {
-      this.store.update((state) => ({
-        ...state,
-        searchedInterests: value,
-      }));
+      this.searchedInterests = value;
     }
   }
 
-  public get creatableInterest(): string | undefined {
-    return this.store.getValue().creatableInterest;
-  }
-
-  public set creatableInterest(value: string | undefined) {
+  public updateCreatableInterest(value: string | undefined) {
     if (this.creatableInterest !== value) {
-      this.store.update((state) => ({
-        ...state,
-        creatableInterest: value,
-      }));
+      this.creatableInterest = value;
     }
   }
 
-  public get selectedInterests(): Record<string, InterestResponse> {
-    return this.store.getValue().selectedInterests;
-  }
-
-  public set selectedInterests(value: Record<string, InterestResponse>) {
+  public updateSelectedInterests(value: Record<string, InterestResponse>) {
     if (JSON.stringify(this.selectedInterests) !== JSON.stringify(value)) {
-      this.store.update((state) => ({
-        ...state,
-        selectedInterests: value,
-      }));
+      this.selectedInterests = value;
     }
   }
 }

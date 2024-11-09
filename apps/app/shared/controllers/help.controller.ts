@@ -1,26 +1,28 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import { DIContainer } from 'rsdi';
 import { Controller } from '../controller';
 import { HelpModel } from '../models';
+import { StoreOptions } from '../store-options';
 
-class HelpController extends Controller {
+export default class HelpController extends Controller {
   private readonly _model: HelpModel;
 
-  constructor() {
+  constructor(
+    private readonly _container: DIContainer<{}>,
+    private readonly _storeOptions: StoreOptions
+  ) {
     super();
 
-    this._model = new HelpModel();
+    this._model = new HelpModel(this._storeOptions);
   }
 
   public get model(): HelpModel {
     return this._model;
   }
 
-  public override initialize(_renderCount: number): void {}
+  public override initialize = (_renderCount: number): void => {};
 
   public override load(renderCount: number): void {
-    if (renderCount > 1) {
-      return;
-    }
     fetch('../assets/markdown/help.md')
       .then((res) => res.text())
       .then((md) => {
@@ -28,9 +30,9 @@ class HelpController extends Controller {
       });
   }
 
-  public override disposeInitialization(_renderCount: number): void {}
+  public override disposeInitialization(_renderCount: number): void {
+    this._model.dispose();
+  }
 
   public override disposeLoad(_renderCount: number): void {}
 }
-
-export default new HelpController();

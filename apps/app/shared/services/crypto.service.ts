@@ -1,20 +1,26 @@
 import { Service } from '../service';
+import { StoreOptions } from '../store-options';
+import ConfigService from './config.service';
 const { subtle } = globalThis.crypto;
 
-class CryptoService extends Service {
+export default class CryptoService extends Service {
   private readonly _textEncoder: TextEncoder;
   private readonly _textDecoder: TextDecoder;
-  private readonly _encryptionKey: string;
-  private readonly _iv: string;
 
-  constructor() {
-    super();
+  constructor(
+    private readonly _encryptionKey: string,
+    private readonly _iv: string,
+    private readonly _configService: ConfigService,
+    private readonly _supabaseAnonKey: string,
+    private readonly _storeOptions: StoreOptions
+  ) {
+    super(_configService, _supabaseAnonKey, _storeOptions);
 
     this._textEncoder = new TextEncoder();
     this._textDecoder = new TextDecoder();
-    this._encryptionKey = import.meta.env['CRYPTO_ENCRYPTION_KEY'] ?? '';
-    this._iv = import.meta.env['CRYPTO_IV'] ?? '';
   }
+
+  public override dispose(): void {}
 
   public async encryptAsync(text: string): Promise<string> {
     const encryptionKey = await subtle.digest(
@@ -75,5 +81,3 @@ class CryptoService extends Service {
     return this._textDecoder.decode(decrypted);
   }
 }
-
-export default new CryptoService();

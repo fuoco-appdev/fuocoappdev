@@ -1,4 +1,3 @@
-import axios from "axios";
 import {
   AccountFollowerCountMetadataResponse,
   AccountFollowerRequest,
@@ -6,29 +5,39 @@ import {
   AccountFollowerResponse,
   AccountFollowersRequest,
   AccountFollowersResponse,
-} from "../protobuf/account-follower_pb";
-import { Service } from "../service";
-import SupabaseService from "./supabase.service";
+} from '../protobuf/account-follower_pb';
+import { Service } from '../service';
+import { StoreOptions } from '../store-options';
+import ConfigService from './config.service';
+import SupabaseService from './supabase.service';
 
-class AccountFollowersService extends Service {
-  constructor() {
-    super();
+export default class AccountFollowersService extends Service {
+  constructor(
+    private readonly _supabaseService: SupabaseService,
+    private readonly _configService: ConfigService,
+    private readonly _supabaseAnonKey: string,
+    private readonly _storeOptions: StoreOptions
+  ) {
+    super(_configService, _supabaseAnonKey, _storeOptions);
   }
 
-  public async requestCountMetadataAsync(
-    accountId: string,
-  ): Promise<AccountFollowerCountMetadataResponse> {
-    const response = await axios({
-      method: "post",
-      url: `${this.endpointUrl}/account-followers/count-metadata/${accountId}`,
-      headers: {
-        ...this.headers,
-      },
-      data: "",
-      responseType: "arraybuffer",
-    });
+  public override dispose(): void {}
 
-    const arrayBuffer = new Uint8Array(response.data);
+  public async requestCountMetadataAsync(
+    accountId: string
+  ): Promise<AccountFollowerCountMetadataResponse> {
+    const response = await fetch(
+      `${this.endpointUrl}/account-followers/count-metadata/${accountId}`,
+      {
+        method: 'post',
+        headers: {
+          ...this.headers,
+        },
+        body: '',
+      }
+    );
+
+    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
     this.assertResponse(arrayBuffer);
 
     const accountFollowerCountMetadataResponse =
@@ -40,28 +49,28 @@ class AccountFollowersService extends Service {
     accountId: string;
     otherAccountIds: string[];
   }): Promise<AccountFollowersResponse | null> {
-    const session = await SupabaseService.requestSessionAsync();
+    const session = await this._supabaseService.requestSessionAsync();
     const accountFollowersRequest = new AccountFollowersRequest({
       accountId: props.accountId,
       otherAccountIds: props.otherAccountIds,
     });
-    const response = await axios({
-      method: "post",
-      url: `${this.endpointUrl}/account-followers/followers`,
-      headers: {
-        ...this.headers,
-        "Session-Token": `${session?.access_token}`,
-      },
-      data: accountFollowersRequest.toBinary(),
-      responseType: "arraybuffer",
-    });
+    const response = await fetch(
+      `${this.endpointUrl}/account-followers/followers`,
+      {
+        method: 'post',
+        headers: {
+          ...this.headers,
+          'Session-Token': `${session?.access_token}`,
+        },
+        body: accountFollowersRequest.toBinary(),
+      }
+    );
 
-    const arrayBuffer = new Uint8Array(response.data);
+    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
     this.assertResponse(arrayBuffer);
 
-    const accountFollowersResponse = AccountFollowersResponse.fromBinary(
-      arrayBuffer,
-    );
+    const accountFollowersResponse =
+      AccountFollowersResponse.fromBinary(arrayBuffer);
 
     return accountFollowersResponse;
   }
@@ -71,29 +80,29 @@ class AccountFollowersService extends Service {
     offset: number;
     limit: number;
   }): Promise<AccountFollowersResponse | null> {
-    const session = await SupabaseService.requestSessionAsync();
+    const session = await this._supabaseService.requestSessionAsync();
     const accountFollowerRequestsRequest = new AccountFollowerRequestsRequest({
       accountId: props.accountId,
       offset: props.offset,
       limit: props.limit,
     });
-    const response = await axios({
-      method: "post",
-      url: `${this.endpointUrl}/account-followers/requests`,
-      headers: {
-        ...this.headers,
-        "Session-Token": `${session?.access_token}`,
-      },
-      data: accountFollowerRequestsRequest.toBinary(),
-      responseType: "arraybuffer",
-    });
+    const response = await fetch(
+      `${this.endpointUrl}/account-followers/requests`,
+      {
+        method: 'post',
+        headers: {
+          ...this.headers,
+          'Session-Token': `${session?.access_token}`,
+        },
+        body: accountFollowerRequestsRequest.toBinary(),
+      }
+    );
 
-    const arrayBuffer = new Uint8Array(response.data);
+    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
     this.assertResponse(arrayBuffer);
 
-    const accountFollowersResponse = AccountFollowersResponse.fromBinary(
-      arrayBuffer,
-    );
+    const accountFollowersResponse =
+      AccountFollowersResponse.fromBinary(arrayBuffer);
 
     return accountFollowersResponse;
   }
@@ -102,28 +111,25 @@ class AccountFollowersService extends Service {
     accountId: string;
     followerId: string;
   }): Promise<AccountFollowerResponse | null> {
-    const session = await SupabaseService.requestSessionAsync();
+    const session = await this._supabaseService.requestSessionAsync();
     const accountFollowerRequest = new AccountFollowerRequest({
       accountId: props.accountId,
       followerId: props.followerId,
     });
-    const response = await axios({
-      method: "post",
-      url: `${this.endpointUrl}/account-followers/add`,
+    const response = await fetch(`${this.endpointUrl}/account-followers/add`, {
+      method: 'post',
       headers: {
         ...this.headers,
-        "Session-Token": `${session?.access_token}`,
+        'Session-Token': `${session?.access_token}`,
       },
-      data: accountFollowerRequest.toBinary(),
-      responseType: "arraybuffer",
+      body: accountFollowerRequest.toBinary(),
     });
 
-    const arrayBuffer = new Uint8Array(response.data);
+    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
     this.assertResponse(arrayBuffer);
 
-    const accountFollowerResponse = AccountFollowerResponse.fromBinary(
-      arrayBuffer,
-    );
+    const accountFollowerResponse =
+      AccountFollowerResponse.fromBinary(arrayBuffer);
 
     return accountFollowerResponse;
   }
@@ -132,28 +138,28 @@ class AccountFollowersService extends Service {
     accountId: string;
     followerId: string;
   }): Promise<AccountFollowerResponse | null> {
-    const session = await SupabaseService.requestSessionAsync();
+    const session = await this._supabaseService.requestSessionAsync();
     const accountFollowerRequest = new AccountFollowerRequest({
       accountId: props.accountId,
       followerId: props.followerId,
     });
-    const response = await axios({
-      method: "post",
-      url: `${this.endpointUrl}/account-followers/remove`,
-      headers: {
-        ...this.headers,
-        "Session-Token": `${session?.access_token}`,
-      },
-      data: accountFollowerRequest.toBinary(),
-      responseType: "arraybuffer",
-    });
+    const response = await fetch(
+      `${this.endpointUrl}/account-followers/remove`,
+      {
+        method: 'post',
+        headers: {
+          ...this.headers,
+          'Session-Token': `${session?.access_token}`,
+        },
+        body: accountFollowerRequest.toBinary(),
+      }
+    );
 
-    const arrayBuffer = new Uint8Array(response.data);
+    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
     this.assertResponse(arrayBuffer);
 
-    const accountFollowerResponse = AccountFollowerResponse.fromBinary(
-      arrayBuffer,
-    );
+    const accountFollowerResponse =
+      AccountFollowerResponse.fromBinary(arrayBuffer);
 
     return accountFollowerResponse;
   }
@@ -162,31 +168,29 @@ class AccountFollowersService extends Service {
     accountId: string;
     followerId: string;
   }): Promise<AccountFollowerResponse | null> {
-    const session = await SupabaseService.requestSessionAsync();
+    const session = await this._supabaseService.requestSessionAsync();
     const accountFollowerRequest = new AccountFollowerRequest({
       accountId: props.accountId,
       followerId: props.followerId,
     });
-    const response = await axios({
-      method: "post",
-      url: `${this.endpointUrl}/account-followers/confirm`,
-      headers: {
-        ...this.headers,
-        "Session-Token": `${session?.access_token}`,
-      },
-      data: accountFollowerRequest.toBinary(),
-      responseType: "arraybuffer",
-    });
+    const response = await fetch(
+      `${this.endpointUrl}/account-followers/confirm`,
+      {
+        method: 'post',
+        headers: {
+          ...this.headers,
+          'Session-Token': `${session?.access_token}`,
+        },
+        body: accountFollowerRequest.toBinary(),
+      }
+    );
 
-    const arrayBuffer = new Uint8Array(response.data);
+    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
     this.assertResponse(arrayBuffer);
 
-    const accountFollowerResponse = AccountFollowerResponse.fromBinary(
-      arrayBuffer,
-    );
+    const accountFollowerResponse =
+      AccountFollowerResponse.fromBinary(arrayBuffer);
 
     return accountFollowerResponse;
   }
 }
-
-export default new AccountFollowersService();

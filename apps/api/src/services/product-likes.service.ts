@@ -1,36 +1,41 @@
-import SupabaseService from "./supabase.service.ts";
+import { Service } from 'https://deno.land/x/di@v0.1.1/mod.ts';
 import {
   AccountProductLikesMetadataRequest,
   ProductLikeCountMetadataResponse,
   ProductLikeRequest,
-  ProductLikeResponse,
   ProductLikesMetadataRequest,
   ProductLikesMetadataResponse,
   ProductLikesMetadatasResponse,
-  ProductLikesResponse,
-} from "../protobuf/product-like_pb.js";
+} from '../protobuf/product-like_pb.js';
+import serviceCollection, { serviceTypes } from '../service_collection.ts';
+import SupabaseService from './supabase.service.ts';
 
 export interface ProductLikesProps {
   product_id?: string;
   account_id?: string;
 }
 
-export class ProductLikesService {
+@Service()
+export default class ProductLikesService {
+  private readonly _supabaseService: SupabaseService;
+  constructor() {
+    this._supabaseService = serviceCollection.get(serviceTypes.SupabaseService);
+  }
   public async getCountMetadataAsync(
-    accountId: string,
+    accountId: string
   ): Promise<InstanceType<typeof ProductLikeCountMetadataResponse> | null> {
     const metadataResponse = await this.findCountMetadataAsync(accountId);
     return metadataResponse;
   }
 
   public async getMetadataAsync(
-    request: InstanceType<typeof ProductLikesMetadataRequest>,
+    request: InstanceType<typeof ProductLikesMetadataRequest>
   ): Promise<InstanceType<typeof ProductLikesMetadatasResponse> | null> {
     const accountId = request.getAccountId();
     const productIds = request.getProductIdsList();
     const metadatasResponse = await this.findMetadataAsync(
       accountId,
-      productIds,
+      productIds
     );
     return metadatasResponse;
   }
@@ -38,21 +43,21 @@ export class ProductLikesService {
   public async findAccountMetadataAsync(
     accountId: string,
     offset: number,
-    limit: number,
+    limit: number
   ): Promise<InstanceType<typeof ProductLikesMetadatasResponse> | null> {
     if (accountId.length <= 0) {
-      console.error("Account id cannot be empty");
+      console.error('Account id cannot be empty');
       return null;
     }
 
     let accountProductIds: string[] = [];
     try {
-      const accountProductLikesData = await SupabaseService.client
-        .from("product_likes")
-        .select("")
+      const accountProductLikesData = await this._supabaseService.client
+        .from('product_likes')
+        .select('')
         .range(offset, offset + limit)
         .limit(limit)
-        .eq("account_id", accountId);
+        .eq('account_id', accountId);
 
       if (accountProductLikesData.error) {
         console.error(accountProductLikesData.error);
@@ -68,14 +73,14 @@ export class ProductLikesService {
     const metadatasResponse = await this.findMetadataAsync(
       accountId,
       accountProductIds,
-      true,
+      true
     );
 
     return metadatasResponse;
   }
 
   public async getAccountMetadataAsync(
-    request: InstanceType<typeof AccountProductLikesMetadataRequest>,
+    request: InstanceType<typeof AccountProductLikesMetadataRequest>
   ): Promise<InstanceType<typeof ProductLikesMetadatasResponse> | null> {
     const accountId = request.getAccountId();
     const offset = request.getOffset();
@@ -83,24 +88,24 @@ export class ProductLikesService {
     const metadatasResponse = await this.findAccountMetadataAsync(
       accountId,
       offset,
-      limit,
+      limit
     );
     return metadatasResponse;
   }
 
   public async upsertAsync(
-    request: InstanceType<typeof ProductLikeRequest>,
+    request: InstanceType<typeof ProductLikeRequest>
   ): Promise<InstanceType<typeof ProductLikesMetadatasResponse> | null> {
     const productId = request.getProductId();
     const accountId = request.getAccountId();
 
     if (!productId || productId.length <= 0) {
-      console.error("Product id cannot be undefined");
+      console.error('Product id cannot be undefined');
       return null;
     }
 
     if (!accountId || accountId.length <= 0) {
-      console.error("Account id cannot be undefined");
+      console.error('Account id cannot be undefined');
       return null;
     }
 
@@ -108,8 +113,8 @@ export class ProductLikesService {
       product_id: productId,
       account_id: accountId,
     };
-    const { data, error } = await SupabaseService.client
-      .from("product_likes")
+    const { data, error } = await this._supabaseService.client
+      .from('product_likes')
       .upsert(props)
       .select();
 
@@ -130,18 +135,18 @@ export class ProductLikesService {
   }
 
   public async deleteAsync(
-    request: InstanceType<typeof ProductLikeRequest>,
+    request: InstanceType<typeof ProductLikeRequest>
   ): Promise<InstanceType<typeof ProductLikesMetadatasResponse> | null> {
     const productId = request.getProductId();
     const accountId = request.getAccountId();
 
     if (!productId || productId.length <= 0) {
-      console.error("Product id cannot be undefined");
+      console.error('Product id cannot be undefined');
       return null;
     }
 
     if (!accountId || accountId.length <= 0) {
-      console.error("Account id cannot be undefined");
+      console.error('Account id cannot be undefined');
       return null;
     }
     const props: ProductLikesProps = {
@@ -149,8 +154,8 @@ export class ProductLikesService {
       account_id: accountId,
     };
 
-    const { error } = await SupabaseService.client
-      .from("product_likes")
+    const { error } = await this._supabaseService.client
+      .from('product_likes')
       .delete()
       .match(props as Record<string, any>);
 
@@ -166,20 +171,20 @@ export class ProductLikesService {
   }
 
   private async findCountMetadataAsync(
-    accountId: string,
+    accountId: string
   ): Promise<InstanceType<typeof ProductLikeCountMetadataResponse> | null> {
     const metadataResponse = new ProductLikeCountMetadataResponse();
 
     if (accountId.length <= 0) {
-      console.error("Account id cannot be empty");
+      console.error('Account id cannot be empty');
       return null;
     }
 
     try {
-      const likesData = await SupabaseService.client
-        .from("product_likes")
-        .select("", { count: "exact" })
-        .eq("account_id", accountId);
+      const likesData = await this._supabaseService.client
+        .from('product_likes')
+        .select('', { count: 'exact' })
+        .eq('account_id', accountId);
 
       if (likesData.error) {
         console.error(likesData.error);
@@ -196,7 +201,7 @@ export class ProductLikesService {
   private async findMetadataAsync(
     accountId: string,
     productIds: string[],
-    didAccountLike?: boolean,
+    didAccountLike?: boolean
   ): Promise<InstanceType<typeof ProductLikesMetadatasResponse> | null> {
     const totalLikesRelation: Record<string, any[]> = {};
     const metadatasResponse = new ProductLikesMetadatasResponse();
@@ -206,10 +211,10 @@ export class ProductLikesService {
     }
 
     try {
-      const totalLikesData = await SupabaseService.client
-        .from("product_likes")
+      const totalLikesData = await this._supabaseService.client
+        .from('product_likes')
         .select()
-        .in("product_id", productIds);
+        .in('product_id', productIds);
 
       if (totalLikesData.error) {
         console.error(totalLikesData.error);
@@ -242,7 +247,7 @@ export class ProductLikesService {
         } else {
           metadataResponse.setDidAccountLike(
             productLikes.filter((value) => value.account_id === accountId)
-              .length > 0,
+              .length > 0
           );
         }
       }
@@ -253,5 +258,3 @@ export class ProductLikesService {
     return metadatasResponse;
   }
 }
-
-export default new ProductLikesService();

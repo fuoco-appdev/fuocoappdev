@@ -1,24 +1,33 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { select } from "@ngneat/elf";
-import { filter, firstValueFrom, Subscription, take } from "rxjs";
-import { Controller } from "../controller";
-import { NotificationsModel } from "../models/notifications.model";
-import { AccountNotificationResponse } from "../protobuf/account-notification_pb";
-import { AccountResponse } from "../protobuf/account_pb";
+import { IValueDidChange, Lambda, observe, when } from 'mobx';
+import { DIContainer } from 'rsdi';
+import { Controller } from '../controller';
+import { NotificationsModel } from '../models/notifications.model';
+import { AccountNotificationResponse } from '../protobuf/account-notification_pb';
+import { AccountResponse } from '../protobuf/account_pb';
 import AccountFollowersService from '../services/account-followers.service';
-import AccountNotificationService from "../services/account-notification.service";
-import AccountController from "./account.controller";
-import WindowController from "./window.controller";
+import AccountNotificationService from '../services/account-notification.service';
+import { StoreOptions } from '../store-options';
+import AccountController from './account.controller';
+import WindowController from './window.controller';
 
-class NotificationsController extends Controller {
+export default class NotificationsController extends Controller {
   private readonly _model: NotificationsModel;
-  private _loadedAccountSubscription: Subscription | undefined;
+  private _loadedAccountDisposer: Lambda | undefined;
   private _limit: number;
 
-  constructor() {
+  constructor(
+    private readonly _container: DIContainer<{
+      AccountController: AccountController;
+      AccountFollowersService: AccountFollowersService;
+      WindowController: WindowController;
+      AccountNotificationService: AccountNotificationService;
+    }>,
+    private readonly _storeOptions: StoreOptions
+  ) {
     super();
 
-    this._model = new NotificationsModel();
+    this._model = new NotificationsModel(this._storeOptions);
     this._limit = 20;
   }
 
@@ -26,16 +35,18 @@ class NotificationsController extends Controller {
     return this._model;
   }
 
-  public override initialize(_renderCount: number): void { }
+  public override initialize = (_renderCount: number): void => {};
 
   public override load(_renderCount: number): void {
     this.loadAccountNotifications();
   }
 
-  public override disposeInitialization(_renderCount: number): void { }
+  public override disposeInitialization(_renderCount: number): void {
+    this._model.dispose();
+  }
 
   public override disposeLoad(_renderCount: number): void {
-    this._loadedAccountSubscription?.unsubscribe();
+    this._loadedAccountDisposer?.();
   }
 
   public loadAccountNotifications(): void {
@@ -45,19 +56,21 @@ class NotificationsController extends Controller {
     this._model.isLoading = false;
     this._model.pagination = 1;
 
-    this._loadedAccountSubscription?.unsubscribe();
-    this._loadedAccountSubscription = AccountController.model.store
-      .pipe(select((model) => model.account))
-      .subscribe({
-        next: async (account: AccountResponse | null) => {
-          if (!account) {
-            return;
-          }
+    const accountController = this._container.get('AccountController');
+    this._loadedAccountDisposer?.();
+    this._loadedAccountDisposer = observe(
+      accountController.model,
+      'account',
+      async (value: IValueDidChange<AccountResponse | undefined>) => {
+        const account = value.newValue;
+        if (!account) {
+          return;
+        }
 
-          await this.requestAccountNotificationsAsync('loading', 0, this._limit);
-          await this.requestUpdateSeenAllAsync();
-        },
-      });
+        await this.requestAccountNotificationsAsync('loading', 0, this._limit);
+        await this.requestUpdateSeenAllAsync();
+      }
+    );
   }
 
   public updateScrollPosition(value: number | undefined): void {
@@ -65,16 +78,16 @@ class NotificationsController extends Controller {
   }
 
   public addAccountNotification(notification: Record<string, any>): void {
-    const payload = notification["payload"];
-    const id = payload["id"] as string;
-    const createdAt = payload["created_at"] as string;
-    const eventName = payload["event_name"] as string;
-    const resourceType = payload["resource_type"] as string;
-    const resourceId = payload["resource_id"] as string;
-    const accountId = payload["account_id"] as string;
-    const data = payload["data"] as string;
-    const updatedAt = payload["updated_at"] as string;
-    const seen = payload["seen"] as boolean;
+    const payload = notification['payload'];
+    const id = payload['id'] as string;
+    const createdAt = payload['created_at'] as string;
+    const eventName = payload['event_name'] as string;
+    const resourceType = payload['resource_type'] as string;
+    const resourceId = payload['resource_id'] as string;
+    const accountId = payload['account_id'] as string;
+    const data = payload['data'] as string;
+    const updatedAt = payload['updated_at'] as string;
+    const seen = payload['seen'] as boolean;
 
     const response = new AccountNotificationResponse({
       id: id,
@@ -89,7 +102,7 @@ class NotificationsController extends Controller {
     });
 
     this._model.accountNotifications = [response].concat(
-      this._model.accountNotifications,
+      this._model.accountNotifications
     );
   }
 
@@ -114,13 +127,18 @@ class NotificationsController extends Controller {
   }
 
   public async requestFollowAsync(id: string): Promise<void> {
-    const account = await firstValueFrom(AccountController.model.store.pipe(select((model) => model.account), filter((value) => value !== undefined), take(1)));
+    const accountController = this._container.get('AccountController');
+    const accountFollowersService = this._container.get(
+      'AccountFollowersService'
+    );
+    await when(() => accountController.model.account !== undefined);
+    const account = accountController.model.account;
     if (!account) {
       return;
     }
 
     try {
-      const follower = await AccountFollowersService.requestAddAsync({
+      const follower = await accountFollowersService.requestAddAsync({
         accountId: account.id,
         followerId: id,
       });
@@ -135,13 +153,18 @@ class NotificationsController extends Controller {
   }
 
   public async requestUnfollowAsync(id: string): Promise<void> {
-    const account = await firstValueFrom(AccountController.model.store.pipe(select((model) => model.account), filter((value) => value !== undefined), take(1)));
+    const accountController = this._container.get('AccountController');
+    const accountFollowersService = this._container.get(
+      'AccountFollowersService'
+    );
+    await when(() => accountController.model.account !== undefined);
+    const account = accountController.model.account;
     if (!account) {
       return;
     }
 
     try {
-      const follower = await AccountFollowersService.requestRemoveAsync({
+      const follower = await accountFollowersService.requestRemoveAsync({
         accountId: account.id,
         followerId: id,
       });
@@ -156,21 +179,25 @@ class NotificationsController extends Controller {
   }
 
   private async requestUpdateSeenAllAsync(): Promise<void> {
-    const account = await firstValueFrom(
-      AccountController.model.store.pipe(
-        select((model) => model.account),
-        filter((value) => value !== undefined),
-        take(1),
-      ),
+    const accountController = this._container.get('AccountController');
+    const windowController = this._container.get('WindowController');
+    const accountNotificationService = this._container.get(
+      'AccountNotificationService'
     );
-    await AccountNotificationService.requestUpdateSeenAsync(account.id);
-    WindowController.updateNotificationsCount(0);
+    await when(() => accountController.model.account !== undefined);
+    const account = accountController.model.account;
+    if (!account) {
+      return;
+    }
+
+    await accountNotificationService.requestUpdateSeenAsync(account.id);
+    windowController.updateNotificationsCount(0);
   }
 
   private async requestAccountNotificationsAsync(
     loadType: 'loading' | 'reloading',
     offset: number = 0,
-    limit: number = 10,
+    limit: number = 10
   ): Promise<void> {
     if (this._model.isLoading || this._model.isReloading) {
       return;
@@ -182,16 +209,19 @@ class NotificationsController extends Controller {
       this._model.isReloading = true;
     }
 
-    const account = await firstValueFrom(
-      AccountController.model.store.pipe(
-        select((model) => model.account),
-        filter((value) => value !== undefined),
-        take(1),
-      ),
+    const accountController = this._container.get('AccountController');
+    const accountNotificationService = this._container.get(
+      'AccountNotificationService'
     );
+    await when(() => accountController.model.account !== undefined);
+    const account = accountController.model.account;
+    if (!account) {
+      return;
+    }
+
     try {
-      const accountNotificationsResponse = await AccountNotificationService
-        .requestNotificationsAsync({
+      const accountNotificationsResponse =
+        await accountNotificationService.requestNotificationsAsync({
           accountId: account.id,
           offset: offset,
           limit: limit,
@@ -214,9 +244,9 @@ class NotificationsController extends Controller {
       }
 
       if (offset > 0) {
-        this._model.accountNotifications = this._model.accountNotifications
-          .concat(
-            accountNotificationsResponse.notifications,
+        this._model.accountNotifications =
+          this._model.accountNotifications.concat(
+            accountNotificationsResponse.notifications
           );
       } else {
         this._model.accountNotifications =
@@ -229,15 +259,25 @@ class NotificationsController extends Controller {
       this._model.hasMoreNotifications = false;
     }
 
-    const accountNotifications = this._model.accountNotifications.filter((value) => value.resourceType === 'account' && !Object.keys(this._model.accountFollowers).includes(value.resourceId));
-    let accountFollowerIds = accountNotifications.map((value) => value.resourceId);
-    accountFollowerIds = accountFollowerIds.filter((value,
-      index) => accountFollowerIds.indexOf(value) === index);
+    const accountNotifications = this._model.accountNotifications.filter(
+      (value) =>
+        value.resourceType === 'account' &&
+        !Object.keys(this._model.accountFollowers).includes(value.resourceId)
+    );
+    let accountFollowerIds = accountNotifications.map(
+      (value) => value.resourceId
+    );
+    accountFollowerIds = accountFollowerIds.filter(
+      (value, index) => accountFollowerIds.indexOf(value) === index
+    );
 
+    const accountFollowersService = this._container.get(
+      'AccountFollowersService'
+    );
     if (accountFollowerIds.length > 0) {
       try {
         const followerResponse =
-          await AccountFollowersService.requestFollowersAsync({
+          await accountFollowersService.requestFollowersAsync({
             accountId: account?.id ?? '',
             otherAccountIds: accountFollowerIds,
           });
@@ -262,5 +302,3 @@ class NotificationsController extends Controller {
     }
   }
 }
-
-export default new NotificationsController();

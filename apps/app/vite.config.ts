@@ -43,7 +43,11 @@ export default ({ mode }: any) => {
       host: 'localhost',
     },
     plugins: [
-      react(),
+      react({
+        babel: {
+          plugins: ['babel-plugin-transform-typescript-metadata'],
+        },
+      }),
       nxViteTsPaths(),
       replaceFiles([
         {

@@ -1,67 +1,47 @@
-import { createStore, withProps } from '@ngneat/elf';
 import { SupabaseClient } from '@supabase/supabase-js';
+import { makeObservable, observable, runInAction } from 'mobx';
 import { Location } from 'react-router-dom';
 import { Model } from '../model';
+import { StoreOptions } from '../store-options';
 
-export interface SigninState {
-  supabaseClient?: SupabaseClient | undefined;
-  location?: Location;
-  email: string;
-  password: string;
-}
+export interface SigninState {}
 
 export class SigninModel extends Model {
-  constructor() {
-    super(
-      createStore(
-        { name: 'signin' },
-        withProps<SigninState>({
-          supabaseClient: undefined,
-          location: undefined,
-          email: '',
-          password: '',
-        })
-      )
-    );
+  @observable
+  public supabaseClient?: SupabaseClient | undefined;
+  @observable
+  public location?: Location;
+  @observable
+  public email!: string;
+  @observable
+  public password!: string;
+  constructor(options?: StoreOptions) {
+    super(options);
+    makeObservable(this);
+
+    runInAction(() => {
+      this.supabaseClient = undefined;
+      this.location = undefined;
+      this.email = '';
+      this.password = '';
+    });
   }
 
-  public get supabaseClient(): SupabaseClient | undefined {
-    return this.store.getValue().supabaseClient;
-  }
-
-  public set supabaseClient(value: SupabaseClient | undefined) {
+  public updateSupabaseClient(value: SupabaseClient | undefined) {
     if (JSON.stringify(this.supabaseClient) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, supabaseClient: value }));
+      this.supabaseClient = value;
     }
   }
 
-  public get location(): Location {
-    return this.store.getValue().location;
-  }
-
-  public set location(location: Location) {
+  public updateLocation(location: Location) {
     if (JSON.stringify(this.location) !== JSON.stringify(location)) {
-      this.store.update((state) => ({ ...state, location: location }));
+      this.location = location;
     }
   }
 
-  public get email(): string {
-    return this.store.getValue().email;
-  }
-
-  public set email(value: string) {
-    if (this.email !== value) {
-      this.store.update((state) => ({ ...state, email: value }));
-    }
-  }
-
-  public get password(): string {
-    return this.store.getValue().password;
-  }
-
-  public set password(value: string) {
+  public updatePassword(value: string) {
     if (this.password !== value) {
-      this.store.update((state) => ({ ...state, password: value }));
+      this.password = value;
     }
   }
 }

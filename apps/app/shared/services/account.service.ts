@@ -1,6 +1,5 @@
 import { RealtimeChannel, Session } from '@supabase/supabase-js';
-import axios from 'axios';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { makeObservable, observable, runInAction } from 'mobx';
 import {
   AccountExistsRequest,
   AccountExistsResponse,
@@ -14,39 +13,39 @@ import {
   AccountsResponse,
 } from '../protobuf/account_pb';
 import { Service } from '../service';
+import { StoreOptions } from '../store-options';
+import ConfigService from './config.service';
 import SupabaseService from './supabase.service';
 
-class AccountService extends Service {
-  private readonly _activeAccountBehaviorSubject: BehaviorSubject<AccountResponse | null>;
-  private readonly _accountsBehaviorSubject: BehaviorSubject<AccountResponse[]>;
+export default class AccountService extends Service {
+  @observable
+  public activeAccount!: AccountResponse | null;
+  @observable
+  public accounts!: AccountResponse[];
+  constructor(
+    private readonly _supabaseService: SupabaseService,
+    private readonly _configService: ConfigService,
+    private readonly _supabaseAnonKey: string,
+    private readonly _storeOptions: StoreOptions
+  ) {
+    super(_configService, _supabaseAnonKey, _storeOptions);
+    makeObservable(this);
 
-  constructor() {
-    super();
-
-    this._activeAccountBehaviorSubject =
-      new BehaviorSubject<AccountResponse | null>(null);
-    this._accountsBehaviorSubject = new BehaviorSubject<AccountResponse[]>([]);
+    runInAction(() => {
+      this.activeAccount = null;
+      this.accounts = [];
+    });
   }
 
-  public get activeAccountObservable(): Observable<AccountResponse | null> {
-    return this._activeAccountBehaviorSubject.asObservable();
-  }
-
-  public get accountsObservable(): Observable<AccountResponse[]> {
-    return this._accountsBehaviorSubject.asObservable();
-  }
-
-  public get activeAccount(): AccountResponse | null {
-    return this._activeAccountBehaviorSubject.getValue();
-  }
+  public override dispose(): void {}
 
   public clearActiveAccount(): void {
-    this._activeAccountBehaviorSubject.next(null);
+    runInAction(() => (this.activeAccount = null));
   }
 
   public async requestActiveAsync(session: Session): Promise<AccountResponse> {
     const account = await this.requestAsync(session, session.user.id);
-    this._activeAccountBehaviorSubject.next(account);
+    runInAction(() => (this.activeAccount = account));
     return account;
   }
 
@@ -54,18 +53,16 @@ class AccountService extends Service {
     session: Session,
     supabaseId: string
   ): Promise<AccountResponse> {
-    const response = await axios({
+    const response = await fetch(`${this.endpointUrl}/account/${supabaseId}`, {
       method: 'post',
-      url: `${this.endpointUrl}/account/${supabaseId}`,
       headers: {
         ...this.headers,
         'Session-Token': `${session?.access_token}`,
       },
-      data: '',
-      responseType: 'arraybuffer',
+      body: '',
     });
 
-    const arrayBuffer = new Uint8Array(response.data);
+    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
     this.assertResponse(arrayBuffer);
 
     const accountResponse = AccountResponse.fromBinary(arrayBuffer);
@@ -75,22 +72,20 @@ class AccountService extends Service {
   public async requestAccountsAsync(
     accountIds: string[]
   ): Promise<AccountsResponse> {
-    const session = await SupabaseService.requestSessionAsync();
+    const session = await this._supabaseService.requestSessionAsync();
     const request = new AccountsRequest({
       accountIds: accountIds,
     });
-    const response = await axios({
+    const response = await fetch(`${this.endpointUrl}/account/accounts`, {
       method: 'post',
-      url: `${this.endpointUrl}/account/accounts`,
       headers: {
         ...this.headers,
         'Session-Token': `${session?.access_token}`,
       },
-      data: request.toBinary(),
-      responseType: 'arraybuffer',
+      body: request.toBinary(),
     });
 
-    const arrayBuffer = new Uint8Array(response.data);
+    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
     this.assertResponse(arrayBuffer);
 
     const accountsResponse = AccountsResponse.fromBinary(arrayBuffer);
@@ -101,23 +96,21 @@ class AccountService extends Service {
     const account = new AccountRequest({
       supabaseId: session.user.id,
     });
-    const response = await axios({
+    const response = await fetch(`${this.endpointUrl}/account/create`, {
       method: 'post',
-      url: `${this.endpointUrl}/account/create`,
       headers: {
         ...this.headers,
         'Session-Token': `${session?.access_token}`,
       },
-      data: account.toBinary(),
-      responseType: 'arraybuffer',
+      body: account.toBinary(),
     });
 
-    const arrayBuffer = new Uint8Array(response.data);
+    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
     this.assertResponse(arrayBuffer);
 
     const accountResponse = AccountResponse.fromBinary(arrayBuffer);
     if (this.activeAccount?.toJsonString() !== accountResponse.toJsonString()) {
-      this._activeAccountBehaviorSubject.next(accountResponse);
+      runInAction(() => (this.activeAccount = accountResponse));
     }
 
     return accountResponse;
@@ -126,22 +119,20 @@ class AccountService extends Service {
   public async requestExistsAsync(
     username: string
   ): Promise<AccountExistsResponse> {
-    const session = await SupabaseService.requestSessionAsync();
+    const session = await this._supabaseService.requestSessionAsync();
     const request = new AccountExistsRequest({
       username: username,
     });
-    const response = await axios({
+    const response = await fetch(`${this.endpointUrl}/account/exists`, {
       method: 'post',
-      url: `${this.endpointUrl}/account/exists`,
       headers: {
         ...this.headers,
         'Session-Token': `${session?.access_token}`,
       },
-      data: request.toBinary(),
-      responseType: 'arraybuffer',
+      body: request.toBinary(),
     });
 
-    const arrayBuffer = new Uint8Array(response.data);
+    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
     this.assertResponse(arrayBuffer);
 
     const accountExistsResponse = AccountExistsResponse.fromBinary(arrayBuffer);
@@ -151,22 +142,19 @@ class AccountService extends Service {
   public async requestUpdateActiveAsync(props: {
     customerId?: string;
     profileUrl?: string;
-    status?: 'Incomplete' | 'Complete';
-    languageCode?: string;
-    username?: string;
     birthday?: string;
-    sex?: 'male' | 'female';
-    interests?: string[];
+    status?: 'Incomplete' | 'Complete';
+    username?: string;
     metadata?: string;
   }): Promise<AccountResponse> {
-    const supabaseUser = await SupabaseService.requestUserAsync();
+    const supabaseUser = await this._supabaseService.requestUserAsync();
     if (!supabaseUser) {
       throw new Error('No user');
     }
 
     const account = await this.requestUpdateAsync(supabaseUser.id, props);
     if (this.activeAccount?.toJsonString() !== account.toJsonString()) {
-      this._activeAccountBehaviorSubject.next(account);
+      runInAction(() => (this.activeAccount = account));
     }
     return account;
   }
@@ -177,39 +165,34 @@ class AccountService extends Service {
       customerId?: string;
       profileUrl?: string;
       status?: 'Incomplete' | 'Complete';
-      languageCode?: string;
       username?: string;
       birthday?: string;
-      sex?: 'male' | 'female';
-      interests?: string[];
       metadata?: string;
     }
   ): Promise<AccountResponse> {
-    const session = await SupabaseService.requestSessionAsync();
+    const session = await this._supabaseService.requestSessionAsync();
     const user = new AccountRequest({
       customerId: props.customerId,
       profileUrl: props.profileUrl,
       status: props.status,
-      languageCode: props.languageCode,
       username: props.username,
       birthday: props.birthday,
-      sex: props.sex,
-      interests: props.interests,
       metadata: props.metadata,
     });
 
-    const response = await axios({
-      method: 'post',
-      url: `${this.endpointUrl}/account/update/${supabaseId}`,
-      headers: {
-        ...this.headers,
-        'Session-Token': `${session?.access_token}`,
-      },
-      data: user.toBinary(),
-      responseType: 'arraybuffer',
-    });
+    const response = await fetch(
+      `${this.endpointUrl}/account/update/${supabaseId}`,
+      {
+        method: 'post',
+        headers: {
+          ...this.headers,
+          'Session-Token': `${session?.access_token}`,
+        },
+        body: user.toBinary(),
+      }
+    );
 
-    const arrayBuffer = new Uint8Array(response.data);
+    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
     this.assertResponse(arrayBuffer);
 
     const accountResponse = AccountResponse.fromBinary(arrayBuffer);
@@ -217,7 +200,7 @@ class AccountService extends Service {
   }
 
   public async requestActiveDeleteAsync(): Promise<void> {
-    const supabaseUser = await SupabaseService.requestUserAsync();
+    const supabaseUser = await this._supabaseService.requestUserAsync();
     if (!supabaseUser) {
       throw new Error('No user');
     }
@@ -226,19 +209,21 @@ class AccountService extends Service {
   }
 
   public async requestDeleteAsync(supabaseId: string): Promise<void> {
-    const session = await SupabaseService.requestSessionAsync();
-    const response = await axios({
-      method: 'post',
-      url: `${this.endpointUrl}/account/delete/${supabaseId}`,
-      headers: {
-        ...this.headers,
-        'Session-Token': `${session?.access_token}`,
-      },
-      data: '',
-    });
+    const session = await this._supabaseService.requestSessionAsync();
+    const response = await fetch(
+      `${this.endpointUrl}/account/delete/${supabaseId}`,
+      {
+        method: 'post',
+        headers: {
+          ...this.headers,
+          'Session-Token': `${session?.access_token}`,
+        },
+        body: '',
+      }
+    );
 
     if (response.status > 400) {
-      throw new response.data();
+      throw await response.text();
     }
   }
 
@@ -248,29 +233,27 @@ class AccountService extends Service {
     offset?: number;
     limit?: number;
   }): Promise<AccountsResponse> {
-    const session = await SupabaseService.requestSessionAsync();
+    const session = await this._supabaseService.requestSessionAsync();
     const request = new AccountLikeRequest({
       queryUsername: props.queryUsername,
       accountId: props.accountId,
       offset: props.offset,
       limit: props.limit,
     });
-    const response = await axios({
+    const response = await fetch(`${this.endpointUrl}/account/search`, {
       method: 'post',
-      url: `${this.endpointUrl}/account/search`,
       headers: {
         ...this.headers,
         'Session-Token': `${session?.access_token}`,
       },
-      data: request.toBinary(),
-      responseType: 'arraybuffer',
+      body: request.toBinary(),
     });
 
-    const arrayBuffer = new Uint8Array(response.data);
+    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
     this.assertResponse(arrayBuffer);
 
     const accountsResponse = AccountsResponse.fromBinary(arrayBuffer);
-    this._accountsBehaviorSubject.next(accountsResponse.accounts);
+    runInAction(() => (this.accounts = accountsResponse.accounts));
     return accountsResponse;
   }
 
@@ -280,25 +263,26 @@ class AccountService extends Service {
     offset?: number;
     limit?: number;
   }): Promise<AccountsResponse> {
-    const session = await SupabaseService.requestSessionAsync();
+    const session = await this._supabaseService.requestSessionAsync();
     const request = new AccountLikeRequest({
       queryUsername: props.queryUsername,
       accountId: props.accountId,
       offset: props.offset,
       limit: props.limit,
     });
-    const response = await axios({
-      method: 'post',
-      url: `${this.endpointUrl}/account/followers/search`,
-      headers: {
-        ...this.headers,
-        'Session-Token': `${session?.access_token}`,
-      },
-      data: request.toBinary(),
-      responseType: 'arraybuffer',
-    });
+    const response = await fetch(
+      `${this.endpointUrl}/account/followers/search`,
+      {
+        method: 'post',
+        headers: {
+          ...this.headers,
+          'Session-Token': `${session?.access_token}`,
+        },
+        body: request.toBinary(),
+      }
+    );
 
-    const arrayBuffer = new Uint8Array(response.data);
+    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
     this.assertResponse(arrayBuffer);
 
     const accountsResponse = AccountsResponse.fromBinary(arrayBuffer);
@@ -311,25 +295,26 @@ class AccountService extends Service {
     offset?: number;
     limit?: number;
   }): Promise<AccountsResponse> {
-    const session = await SupabaseService.requestSessionAsync();
+    const session = await this._supabaseService.requestSessionAsync();
     const request = new AccountLikeRequest({
       queryUsername: props.queryUsername,
       accountId: props.accountId,
       offset: props.offset,
       limit: props.limit,
     });
-    const response = await axios({
-      method: 'post',
-      url: `${this.endpointUrl}/account/following/search`,
-      headers: {
-        ...this.headers,
-        'Session-Token': `${session?.access_token}`,
-      },
-      data: request.toBinary(),
-      responseType: 'arraybuffer',
-    });
+    const response = await fetch(
+      `${this.endpointUrl}/account/following/search`,
+      {
+        method: 'post',
+        headers: {
+          ...this.headers,
+          'Session-Token': `${session?.access_token}`,
+        },
+        body: request.toBinary(),
+      }
+    );
 
-    const arrayBuffer = new Uint8Array(response.data);
+    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
     this.assertResponse(arrayBuffer);
 
     const accountsResponse = AccountsResponse.fromBinary(arrayBuffer);
@@ -337,27 +322,26 @@ class AccountService extends Service {
   }
 
   public async requestPresenceAsync(props: {
-    accountIds: string[]
+    accountIds: string[];
   }): Promise<AccountPresenceResponse[]> {
-    const session = await SupabaseService.requestSessionAsync();
+    const session = await this._supabaseService.requestSessionAsync();
     const request = new AccountPresenceRequest({
-      accountIds: props.accountIds
+      accountIds: props.accountIds,
     });
-    const response = await axios({
+    const response = await fetch(`${this.endpointUrl}/account/presence`, {
       method: 'post',
-      url: `${this.endpointUrl}/account/presence`,
       headers: {
         ...this.headers,
         'Session-Token': `${session?.access_token}`,
       },
-      data: request.toBinary(),
-      responseType: 'arraybuffer',
+      body: request.toBinary(),
     });
 
-    const arrayBuffer = new Uint8Array(response.data);
+    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
     this.assertResponse(arrayBuffer);
 
-    const accountPresencesResponse = AccountPresencesResponse.fromBinary(arrayBuffer);
+    const accountPresencesResponse =
+      AccountPresencesResponse.fromBinary(arrayBuffer);
     return accountPresencesResponse.accountPresences;
   }
 
@@ -366,7 +350,7 @@ class AccountService extends Service {
     isOnline: boolean
   ): Promise<void> {
     const date = new Date(Date.now());
-    const response = await SupabaseService.supabaseClient
+    const response = await this._supabaseService.supabaseClient
       ?.from('account_presence')
       .upsert({
         account_id: accountId,
@@ -379,20 +363,22 @@ class AccountService extends Service {
     }
   }
 
-  public subscribeAccountPresence(accountIds: string[], onPayload: (payload: Record<string, any>) => void): RealtimeChannel | undefined {
-    return SupabaseService.supabaseClient?.channel('account-presence-changes')
+  public subscribeAccountPresence(
+    accountIds: string[],
+    onPayload: (payload: Record<string, any>) => void
+  ): RealtimeChannel | undefined {
+    return this._supabaseService.supabaseClient
+      ?.channel('account-presence-changes')
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
           table: 'account_presence',
-          filter: `account_id=in.(${accountIds.join(',')})`
+          filter: `account_id=in.(${accountIds.join(',')})`,
         },
-        onPayload,
+        onPayload
       )
       .subscribe();
   }
 }
-
-export default new AccountService();

@@ -1,62 +1,39 @@
-import { createStore, withProps } from "@ngneat/elf";
-import { Model } from "../model";
-
-export interface PermissionsState {
-  accessLocation: boolean;
-  arePermissionsActive: boolean | undefined;
-  currentPosition: GeolocationPosition | undefined;
-}
+import { makeObservable, observable } from 'mobx';
+import { Model } from '../model';
+import { StoreOptions } from '../store-options';
 
 export class PermissionsModel extends Model {
-  constructor() {
-    super(
-      createStore(
-        { name: "permissions" },
-        withProps<PermissionsState>({
-          accessLocation: false,
-          arePermissionsActive: undefined,
-          currentPosition: undefined,
-        }),
-      ),
-    );
+  @observable
+  public accessLocation: boolean;
+  @observable
+  public arePermissionsActive: boolean | undefined;
+  @observable
+  public currentPosition: GeolocationPosition | undefined;
+  constructor(options?: StoreOptions) {
+    super(options);
+
+    makeObservable(this);
+
+    this.accessLocation = false;
+    this.arePermissionsActive = undefined;
+    this.currentPosition = undefined;
   }
 
-  public get accessLocation(): boolean {
-    return this.store?.getValue().accessLocation;
-  }
-
-  public set accessLocation(value: boolean) {
+  public updateAccessLocation(value: boolean) {
     if (this.accessLocation !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        accessLocation: value,
-      }));
+      this.accessLocation = value;
     }
   }
 
-  public get arePermissionsActive(): boolean {
-    return this.store?.getValue().arePermissionsActive;
-  }
-
-  public set arePermissionsActive(value: boolean) {
+  public updateArePermissionsActive(value: boolean) {
     if (this.arePermissionsActive !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        arePermissionsActive: value,
-      }));
+      this.arePermissionsActive = value;
     }
   }
 
-  public get currentPosition(): GeolocationPosition | undefined {
-    return this.localStore?.getValue().currentPosition;
-  }
-
-  public set currentPosition(value: GeolocationPosition | undefined) {
+  public updateCurrentPosition(value: GeolocationPosition | undefined) {
     if (JSON.stringify(this.currentPosition) !== JSON.stringify(value)) {
-      this.store?.update((state) => ({
-        ...state,
-        currentPosition: value,
-      }));
+      this.currentPosition = value;
     }
   }
 }

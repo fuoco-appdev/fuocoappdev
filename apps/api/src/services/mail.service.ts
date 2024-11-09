@@ -1,6 +1,7 @@
-import 'https://deno.land/x/dotenv@v3.2.0/load.ts';
-import axiod from "https://deno.land/x/axiod@0.26.2/mod.ts";
 import { IAxiodResponse } from 'https://deno.land/x/axiod@0.26.2/interfaces.ts';
+import axiod from 'https://deno.land/x/axiod@0.26.2/mod.ts';
+import { Service } from 'https://deno.land/x/di@v0.1.1/mod.ts';
+import 'https://deno.land/x/dotenv@v3.2.0/load.ts';
 
 export interface MailConfig {
   fromEmail: string;
@@ -12,7 +13,8 @@ export interface MailConfig {
   contentType?: string;
 }
 
-class MailService {
+@Service()
+export default class MailService {
   private _apiKey: string | undefined;
   constructor() {
     this._apiKey = Deno.env.get('SENDGRID_API_KEY');
@@ -28,44 +30,42 @@ class MailService {
     toName,
     subject,
     content,
-    contentType = 'text/plain'
+    contentType = 'text/plain',
   }: MailConfig): Promise<IAxiodResponse> {
     return await axiod({
-      method: "post",
-      url: "https://api.sendgrid.com/v3/mail/send",
+      method: 'post',
+      url: 'https://api.sendgrid.com/v3/mail/send',
       headers: {
-        'Authorization': `Bearer ${this._apiKey}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${this._apiKey}`,
+        'Content-Type': 'application/json',
       },
       data: {
         personalizations: [
           {
             to: [
-              { 
+              {
                 email: toEmail,
-                name: fromName
-              }
-            ], 
-            subject: subject
-          }
+                name: fromName,
+              },
+            ],
+            subject: subject,
+          },
         ],
         content: [
           {
             type: contentType,
-            value: content
-          }
+            value: content,
+          },
         ],
         from: {
           email: fromEmail,
-          name: fromName
+          name: fromName,
         },
         reply_to: {
           email: toEmail,
-          name: toName
-        }
+          name: toName,
+        },
       },
     });
   }
 }
-
-export default new MailService();

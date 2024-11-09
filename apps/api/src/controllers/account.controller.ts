@@ -1,7 +1,6 @@
 import { readAll } from 'https://deno.land/std@0.105.0/io/util.ts';
 import * as HttpError from 'https://deno.land/x/http_errors@3.0.0/mod.ts';
 import * as Oak from 'https://deno.land/x/oak@v11.1.0/mod.ts';
-import { AdminGuard } from '../guards/admin.guard.ts';
 import { AuthGuard } from '../guards/index.ts';
 import { ContentType, Controller, Guard, Post } from '../index.ts';
 import {
@@ -9,49 +8,20 @@ import {
   AccountLikeRequest,
   AccountPresenceRequest,
   AccountRequest,
-  AccountsRequest
+  AccountsRequest,
 } from '../protobuf/account_pb.js';
+import serviceCollection, { serviceTypes } from '../service_collection.ts';
 import AccountService from '../services/account.service.ts';
 import SupabaseService from '../services/supabase.service.ts';
 
 @Controller('/account')
 export class AccountController {
-  @Post('/webhook/document')
-  @ContentType('application/json')
-  public async handleWebhookDocumentAsync(
-    context: Oak.RouterContext<
-      string,
-      Oak.RouteParams<string>,
-      Record<string, any>
-    >
-  ): Promise<void> {
-    const body = await context.request.body().value;
-    const type = body['type'];
-    const account = body['record'];
-    if (type === 'INSERT') {
-      await AccountService.addDocumentAsync(account);
-    } else if (type === 'UPDATE') {
-      await AccountService.updateDocumentAsync(account);
-    } else if (type === 'DELETE') {
-      await AccountService.deleteDocumentAsync(account);
-    }
+  private readonly _accountService: AccountService;
+  private readonly _supabaseService: SupabaseService;
 
-    context.response.status = 200;
-  }
-
-  @Post('/indexing')
-  @Guard(AdminGuard)
-  @ContentType('application/json')
-  public async handleIndexingAsync(
-    context: Oak.RouterContext<
-      string,
-      Oak.RouteParams<string>,
-      Record<string, any>
-    >
-  ): Promise<void> {
-    const data = await context.request.body().value;
-    await AccountService.indexDocumentsAsync(data);
-    context.response.status = 200;
+  constructor() {
+    this._accountService = serviceCollection.get(serviceTypes.AccountService);
+    this._supabaseService = serviceCollection.get(serviceTypes.SupabaseService);
   }
 
   @Post('/accounts')
@@ -67,7 +37,7 @@ export class AccountController {
     const body = await context.request.body({ type: 'reader' });
     const requestValue = await readAll(body.value);
     const request = AccountsRequest.deserializeBinary(requestValue);
-    const response = await AccountService.findAccountsAsync(request);
+    const response = await this._accountService.findAccountsAsync(request);
     if (!response) {
       console.error('Cannot find accounts');
       return;
@@ -87,7 +57,7 @@ export class AccountController {
     >
   ): Promise<void> {
     const token = context.request.headers.get('session-token') ?? '';
-    const supabaseUser = await SupabaseService.client.auth.getUser(token);
+    const supabaseUser = await this._supabaseService.client.auth.getUser(token);
     if (!supabaseUser.data.user) {
       throw HttpError.createError(404, `Supabase user not found`);
     }
@@ -95,12 +65,12 @@ export class AccountController {
     const body = await context.request.body({ type: 'reader' });
     const requestValue = await readAll(body.value);
     const request = AccountRequest.deserializeBinary(requestValue);
-    const data = await AccountService.createAsync(request);
+    const data = await this._accountService.createAsync(request);
     if (!data) {
       throw HttpError.createError(409, `Cannot create account`);
     }
 
-    const response = AccountService.assignAndGetAccountProtocol(data);
+    const response = this._accountService.assignAndGetAccountProtocol(data);
     context.response.type = 'application/x-protobuf';
     context.response.body = response.serializeBinary();
   }
@@ -118,7 +88,7 @@ export class AccountController {
     const body = await context.request.body({ type: 'reader' });
     const requestValue = await readAll(body.value);
     const accountExists = AccountExistsRequest.deserializeBinary(requestValue);
-    const response = await AccountService.checkExistsAsync(accountExists);
+    const response = await this._accountService.checkExistsAsync(accountExists);
     if (!response) {
       console.error('Cannot check if account exists.');
       return;
@@ -142,7 +112,9 @@ export class AccountController {
     const requestValue = await readAll(body.value);
     const accountLikeRequest =
       AccountLikeRequest.deserializeBinary(requestValue);
-    const response = await AccountService.findLikeAsync(accountLikeRequest);
+    const response = await this._accountService.findLikeAsync(
+      accountLikeRequest
+    );
     if (!response) {
       throw HttpError.createError(404, `No accounts were found`);
     }
@@ -165,7 +137,9 @@ export class AccountController {
     const requestValue = await readAll(body.value);
     const accountPresenceRequest =
       AccountPresenceRequest.deserializeBinary(requestValue);
-    const response = await AccountService.findPresenceAsync(accountPresenceRequest);
+    const response = await this._accountService.findPresenceAsync(
+      accountPresenceRequest
+    );
     if (!response) {
       throw HttpError.createError(404, `No account presence were found`);
     }
@@ -188,7 +162,7 @@ export class AccountController {
     const requestValue = await readAll(body.value);
     const accountLikeRequest =
       AccountLikeRequest.deserializeBinary(requestValue);
-    const response = await AccountService.findFollowersLikeAsync(
+    const response = await this._accountService.findFollowersLikeAsync(
       accountLikeRequest
     );
     if (!response) {
@@ -213,7 +187,7 @@ export class AccountController {
     const requestValue = await readAll(body.value);
     const accountLikeRequest =
       AccountLikeRequest.deserializeBinary(requestValue);
-    const response = await AccountService.findFollowingLikeAsync(
+    const response = await this._accountService.findFollowingLikeAsync(
       accountLikeRequest
     );
     if (!response) {
@@ -238,12 +212,13 @@ export class AccountController {
     const body = await context.request.body({ type: 'reader' });
     const requestValue = await readAll(body.value);
     const request = AccountRequest.deserializeBinary(requestValue);
-    const data = await AccountService.updateAsync(paramsId, request);
+    const data = await this._accountService.updateAsync(paramsId, request);
     if (!data) {
       throw HttpError.createError(404, `Account data not found`);
     }
 
-    const responseAccount = AccountService.assignAndGetAccountProtocol(data);
+    const responseAccount =
+      this._accountService.assignAndGetAccountProtocol(data);
     context.response.type = 'application/x-protobuf';
     context.response.body = responseAccount.serializeBinary();
   }
@@ -259,11 +234,10 @@ export class AccountController {
     >
   ): Promise<void> {
     const paramsId = context.params['id'];
-    await AccountService.deleteAsync(paramsId);
+    await this._accountService.deleteAsync(paramsId);
 
-    const supabaseUser = await SupabaseService.client.auth.admin.deleteUser(
-      paramsId
-    );
+    const supabaseUser =
+      await this._supabaseService.client.auth.admin.deleteUser(paramsId);
     if (supabaseUser.error) {
       throw HttpError.createError(
         supabaseUser.error.status ?? 0,
@@ -285,7 +259,7 @@ export class AccountController {
     >
   ): Promise<void> {
     const paramsId = context.params['id'];
-    const data = await AccountService.findAsync(paramsId);
+    const data = await this._accountService.findAsync(paramsId);
     if (!data) {
       throw HttpError.createError(
         404,
@@ -293,7 +267,7 @@ export class AccountController {
       );
     }
 
-    const account = AccountService.assignAndGetAccountProtocol(data);
+    const account = this._accountService.assignAndGetAccountProtocol(data);
     context.response.type = 'application/x-protobuf';
     context.response.body = account.serializeBinary();
   }

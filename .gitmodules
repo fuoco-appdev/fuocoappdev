@@ -2,3 +2,6 @@
 	path = cruthology/submodules/protobuf-javascript
 	url = https://github.com/protocolbuffers/protobuf-javascript.git
 	ignore = dirty
+[submodule "apps/app/native/submodules/@fuoco.appdev/native-components"]
+	path = apps/app/native/submodules/@fuoco.appdev/native-components
+	url = https://github.com/fuoco-appdev/native-components.git

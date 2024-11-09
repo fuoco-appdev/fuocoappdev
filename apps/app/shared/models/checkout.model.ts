@@ -1,10 +1,8 @@
-import { PricedShippingOption } from '@medusajs/medusa/dist/types/pricing';
-import { createStore, withProps } from '@ngneat/elf';
-import {
-  AddressFormErrors,
-  AddressFormValues,
-} from '../../web/components/address-form.component';
+import { HttpTypes } from '@medusajs/types';
+import { makeObservable, observable } from 'mobx';
 import { Model } from '../model';
+import { AddressFormErrors, AddressFormValues } from '../models/account.model';
+import { StoreOptions } from '../store-options';
 
 export enum ShippingType {
   Standard = 'Standard',
@@ -16,293 +14,209 @@ export enum ProviderType {
   Stripe = 'stripe',
 }
 
-export interface CheckoutState {
-  shippingForm: AddressFormValues;
-  shippingFormErrors: AddressFormErrors;
-  shippingFormComplete: boolean;
-  selectedShippingAddressOptionId: string;
-  billingForm: AddressFormValues;
-  billingFormErrors: AddressFormErrors;
-  billingFormComplete: boolean;
-  addShippingForm: AddressFormValues;
-  addShippingFormErrors: AddressFormErrors;
-  errorStrings: AddressFormErrors;
-  sameAsBillingAddress: boolean;
-  shippingOptions: PricedShippingOption[];
-  selectedShippingOptionId: string | undefined;
-  giftCardCode: string;
-  discountCode: string;
-  selectedProviderId: ProviderType | undefined;
-  isPaymentLoading: boolean;
-  isLegalAge: boolean;
-}
-
 export class CheckoutModel extends Model {
-  constructor() {
-    super(
-      createStore(
-        { name: 'checkout' },
-        withProps<CheckoutState>({
-          shippingForm: {
-            email: '',
-            firstName: '',
-            lastName: '',
-            company: '',
-            address: '',
-            apartments: '',
-            postalCode: '',
-            city: '',
-            countryCode: '',
-            region: '',
-            phoneNumber: '',
-          },
-          shippingFormErrors: {},
-          shippingFormComplete: false,
-          selectedShippingAddressOptionId: '',
-          billingForm: {
-            email: '',
-            firstName: '',
-            lastName: '',
-            company: '',
-            address: '',
-            apartments: '',
-            postalCode: '',
-            city: '',
-            countryCode: '',
-            region: '',
-            phoneNumber: '',
-          },
-          billingFormErrors: {},
-          billingFormComplete: false,
-          addShippingForm: {
-            email: '',
-            firstName: '',
-            lastName: '',
-            company: '',
-            address: '',
-            apartments: '',
-            postalCode: '',
-            city: '',
-            countryCode: '',
-            region: '',
-            phoneNumber: '',
-          },
-          addShippingFormErrors: {},
-          errorStrings: {},
-          sameAsBillingAddress: true,
-          shippingOptions: [],
-          selectedShippingOptionId: undefined,
-          giftCardCode: '',
-          discountCode: '',
-          selectedProviderId: undefined,
-          isPaymentLoading: false,
-          isLegalAge: false,
-        })
-      )
-    );
+  @observable
+  public shippingForm: AddressFormValues;
+  @observable
+  public shippingFormErrors: AddressFormErrors;
+  @observable
+  public shippingFormComplete: boolean;
+  @observable
+  public selectedShippingAddressOptionId: string | undefined;
+  @observable
+  public billingForm: AddressFormValues;
+  @observable
+  public billingFormErrors: AddressFormErrors;
+  @observable
+  public billingFormComplete: boolean;
+  @observable
+  public addShippingForm: AddressFormValues;
+  @observable
+  public addShippingFormErrors: AddressFormErrors;
+  @observable
+  public errorStrings: AddressFormErrors;
+  @observable
+  public sameAsBillingAddress: boolean;
+  @observable
+  public shippingOptions: HttpTypes.StoreShippingOption[];
+  @observable
+  public selectedShippingOptionId: string | undefined;
+  @observable
+  public giftCardCode: string;
+  @observable
+  public discountCode: string;
+  @observable
+  public selectedProviderId: ProviderType | undefined;
+  @observable
+  public isPaymentLoading: boolean;
+  @observable
+  public isLegalAge: boolean;
+
+  constructor(options?: StoreOptions) {
+    super(options);
+    makeObservable(this);
+
+    this.shippingForm = {
+      email: '',
+      firstName: '',
+      lastName: '',
+      company: '',
+      address: '',
+      apartments: '',
+      postalCode: '',
+      city: '',
+      countryCode: '',
+      region: '',
+      phoneNumber: '',
+    };
+    this.shippingFormErrors = {};
+    this.shippingFormComplete = false;
+    this.selectedShippingAddressOptionId = '';
+    this.billingForm = {
+      email: '',
+      firstName: '',
+      lastName: '',
+      company: '',
+      address: '',
+      apartments: '',
+      postalCode: '',
+      city: '',
+      countryCode: '',
+      region: '',
+      phoneNumber: '',
+    };
+    this.billingFormErrors = {};
+    this.billingFormComplete = false;
+    this.addShippingForm = {
+      email: '',
+      firstName: '',
+      lastName: '',
+      company: '',
+      address: '',
+      apartments: '',
+      postalCode: '',
+      city: '',
+      countryCode: '',
+      region: '',
+      phoneNumber: '',
+    };
+    this.addShippingFormErrors = {};
+    this.errorStrings = {};
+    this.sameAsBillingAddress = true;
+    this.shippingOptions = [];
+    this.selectedShippingOptionId = undefined;
+    this.giftCardCode = '';
+    this.discountCode = '';
+    this.selectedProviderId = undefined;
+    this.isPaymentLoading = false;
+    this.isLegalAge = false;
   }
 
-  public get shippingForm(): AddressFormValues {
-    return this.store.getValue().shippingForm;
-  }
-
-  public set shippingForm(value: AddressFormValues) {
+  public updateShippingForm(value: AddressFormValues) {
     if (JSON.stringify(this.shippingForm) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, shippingForm: value }));
+      this.shippingForm = value;
     }
   }
 
-  public get shippingFormErrors(): AddressFormErrors {
-    return this.store.getValue().shippingFormErrors;
-  }
-
-  public set shippingFormErrors(value: AddressFormErrors) {
+  public updateShippingFormErrors(value: AddressFormErrors) {
     if (JSON.stringify(this.shippingFormErrors) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, shippingFormErrors: value }));
+      this.shippingFormErrors = value;
     }
   }
 
-  public get shippingFormComplete(): boolean {
-    return this.store.getValue().shippingFormComplete;
-  }
-
-  public set shippingFormComplete(value: boolean) {
+  public updateShippingFormComplete(value: boolean) {
     if (this.shippingFormComplete !== value) {
-      this.store.update((state) => ({ ...state, shippingFormComplete: value }));
+      this.shippingFormComplete = value;
     }
   }
 
-  public get selectedShippingAddressOptionId(): string | undefined {
-    return this.store.getValue().selectedShippingAddressOptionId;
-  }
-
-  public set selectedShippingAddressOptionId(value: string | undefined) {
+  public updateSelectedShippingAddressOptionId(value: string | undefined) {
     if (this.selectedShippingAddressOptionId !== value) {
-      this.store.update((state) => ({
-        ...state,
-        selectedShippingAddressOptionId: value,
-      }));
+      this.selectedShippingAddressOptionId = value;
     }
   }
 
-  public get billingForm(): AddressFormValues {
-    return this.store.getValue().billingForm;
-  }
-
-  public set billingForm(value: AddressFormValues) {
+  public updateBillingForm(value: AddressFormValues) {
     if (JSON.stringify(this.billingForm) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, billingForm: value }));
+      this.billingForm = value;
     }
   }
 
-  public get billingFormErrors(): AddressFormErrors {
-    return this.store.getValue().billingFormErrors;
-  }
-
-  public set billingFormErrors(value: AddressFormErrors) {
+  public updateBillingFormErrors(value: AddressFormErrors) {
     if (JSON.stringify(this.billingFormErrors) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, billingFormErrors: value }));
+      this.billingFormErrors = value;
     }
   }
 
-  public get billingFormComplete(): boolean {
-    return this.store.getValue().billingFormComplete;
-  }
-
-  public set billingFormComplete(value: boolean) {
+  public updateBillingFormComplete(value: boolean) {
     if (this.billingFormComplete !== value) {
-      this.store.update((state) => ({ ...state, billingFormComplete: value }));
+      this.billingFormComplete = value;
     }
   }
 
-  public get addShippingForm(): AddressFormValues {
-    return this.store.getValue().addShippingForm;
-  }
-
-  public set addShippingForm(value: AddressFormValues) {
+  public updateAddShippingForm(value: AddressFormValues) {
     if (JSON.stringify(this.addShippingForm) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, addShippingForm: value }));
+      this.addShippingForm = value;
     }
   }
 
-  public get addShippingFormErrors(): AddressFormErrors {
-    return this.store.getValue().addShippingFormErrors;
-  }
-
-  public set addShippingFormErrors(value: AddressFormErrors) {
+  public updateAddShippingFormErrors(value: AddressFormErrors) {
     if (JSON.stringify(this.addShippingFormErrors) !== JSON.stringify(value)) {
-      this.store.update((state) => ({
-        ...state,
-        addShippingFormErrors: value,
-      }));
+      this.addShippingFormErrors = value;
     }
   }
 
-  public get errorStrings(): AddressFormErrors {
-    return this.store.getValue().errorStrings;
-  }
-
-  public set errorStrings(value: AddressFormErrors) {
+  public updateErrorStrings(value: AddressFormErrors) {
     if (JSON.stringify(this.errorStrings) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, errorStrings: value }));
+      this.errorStrings = value;
     }
   }
 
-  public get sameAsBillingAddress(): boolean {
-    return this.store.getValue().sameAsBillingAddress;
-  }
-
-  public set sameAsBillingAddress(value: boolean) {
+  public updateSameAsBillingAddress(value: boolean) {
     if (this.sameAsBillingAddress !== value) {
-      this.store.update((state) => ({ ...state, sameAsBillingAddress: value }));
+      this.sameAsBillingAddress = value;
     }
   }
 
-  public get shippingOptions(): PricedShippingOption[] {
-    return this.store.getValue().shippingOptions;
-  }
-
-  public set shippingOptions(value: PricedShippingOption[]) {
+  public updateShippingOptions(value: HttpTypes.StoreShippingOption[]) {
     if (JSON.stringify(this.shippingOptions) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, shippingOptions: value }));
+      this.shippingOptions = value;
     }
   }
 
-  public get selectedShippingOptionId(): string | undefined {
-    return this.store.getValue().selectedShippingOptionId;
-  }
-
-  public set selectedShippingOptionId(value: string | undefined) {
+  public updateSelectedShippingOptionId(value: string | undefined) {
     if (this.selectedShippingOptionId !== value) {
-      this.store.update((state) => ({
-        ...state,
-        selectedShippingOptionId: value,
-      }));
+      this.selectedShippingOptionId = value;
     }
   }
 
-  public get giftCardCode(): string {
-    return this.store.getValue().giftCardCode;
-  }
-
-  public set giftCardCode(value: string) {
+  public updateGiftCardCode(value: string) {
     if (this.giftCardCode !== value) {
-      this.store.update((state) => ({
-        ...state,
-        giftCardCode: value,
-      }));
+      this.giftCardCode = value;
     }
   }
 
-  public get discountCode(): string {
-    return this.store.getValue().discountCode;
-  }
-
-  public set discountCode(value: string) {
+  public updateDiscountCode(value: string) {
     if (this.discountCode !== value) {
-      this.store.update((state) => ({
-        ...state,
-        discountCode: value,
-      }));
+      this.discountCode = value;
     }
   }
 
-  public get selectedProviderId(): ProviderType | undefined {
-    return this.store.getValue().selectedProviderId;
-  }
-
-  public set selectedProviderId(value: ProviderType | undefined) {
+  public updateSelectedProviderId(value: ProviderType | undefined) {
     if (this.selectedProviderId !== value) {
-      this.store.update((state) => ({
-        ...state,
-        selectedProviderId: value,
-      }));
+      this.selectedProviderId = value;
     }
   }
 
-  public get isPaymentLoading(): boolean {
-    return this.store.getValue().isPaymentLoading;
-  }
-
-  public set isPaymentLoading(value: boolean) {
+  public updateIsPaymentLoading(value: boolean) {
     if (this.isPaymentLoading !== value) {
-      this.store.update((state) => ({
-        ...state,
-        isPaymentLoading: value,
-      }));
+      this.isPaymentLoading = value;
     }
   }
 
-  public get isLegalAge(): boolean {
-    return this.store.getValue().isLegalAge;
-  }
-
-  public set isLegalAge(value: boolean) {
+  public updateIsLegalAge(value: boolean) {
     if (this.isLegalAge !== value) {
-      this.store.update((state) => ({
-        ...state,
-        isLegalAge: value,
-      }));
+      this.isLegalAge = value;
     }
   }
 }

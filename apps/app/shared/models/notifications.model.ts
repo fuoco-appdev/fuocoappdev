@@ -1,103 +1,78 @@
-import { createStore, withProps } from "@ngneat/elf";
-import { Model } from "../model";
-import { AccountFollowerResponse } from "../protobuf/account-follower_pb";
-import { AccountNotificationResponse } from "../protobuf/account-notification_pb";
-
-export interface NotificationsState {
-  accountNotifications: AccountNotificationResponse[];
-  accountFollowers: Record<string, AccountFollowerResponse>;
-  pagination: number;
-  hasMoreNotifications: boolean;
-  scrollPosition: number | undefined;
-  isLoading: boolean;
-  isReloading: boolean;
-}
+import { observable } from 'mobx';
+import { Model } from '../model';
+import { AccountFollowerResponse } from '../protobuf/account-follower_pb';
+import { AccountNotificationResponse } from '../protobuf/account-notification_pb';
+import { StoreOptions } from '../store-options';
 
 export class NotificationsModel extends Model {
-  constructor() {
-    super(
-      createStore(
-        { name: "notifications" },
-        withProps<NotificationsState>({
-          accountNotifications: [],
-          accountFollowers: {},
-          pagination: 1,
-          hasMoreNotifications: true,
-          scrollPosition: 0,
-          isLoading: false,
-          isReloading: false,
-        }),
-      ),
-    );
+  @observable
+  public accountNotifications: AccountNotificationResponse[];
+  @observable
+  public accountFollowers: Record<string, AccountFollowerResponse>;
+  @observable
+  public pagination: number;
+  @observable
+  public hasMoreNotifications: boolean;
+  @observable
+  public scrollPosition: number | undefined;
+  @observable
+  public isLoading: boolean;
+  @observable
+  public isReloading: boolean;
+
+  constructor(options?: StoreOptions) {
+    super(options);
+
+    this.accountNotifications = [];
+    this.accountFollowers = {};
+    this.pagination = 1;
+    this.hasMoreNotifications = true;
+    this.scrollPosition = 0;
+    this.isLoading = false;
+    this.isReloading = false;
   }
 
-  public get accountNotifications(): AccountNotificationResponse[] {
-    return this.store.getValue().accountNotifications;
-  }
-
-  public set accountNotifications(value: AccountNotificationResponse[]) {
+  public updateAccountNotifications(value: AccountNotificationResponse[]) {
     if (JSON.stringify(this.accountNotifications) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, accountNotifications: value }));
+      this.accountNotifications = value;
     }
   }
 
-  public get accountFollowers(): Record<string, AccountFollowerResponse> {
-    return this.store.getValue().accountFollowers;
-  }
-
-  public set accountFollowers(value: Record<string, AccountFollowerResponse>) {
+  public updateAccountFollowers(
+    value: Record<string, AccountFollowerResponse>
+  ) {
     if (JSON.stringify(this.accountFollowers) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, accountFollowers: value }));
+      this.accountFollowers = value;
     }
   }
 
-  public get pagination(): number {
-    return this.store.getValue().pagination;
-  }
-
-  public set pagination(value: number) {
+  public updatePagination(value: number) {
     if (this.pagination !== value) {
-      this.store.update((state) => ({ ...state, pagination: value }));
+      this.pagination = value;
     }
   }
 
-  public get hasMoreNotifications(): boolean {
-    return this.store.getValue().hasMoreNotifications;
-  }
-
-  public set hasMoreNotifications(value: boolean) {
+  public updateHasMoreNotifications(value: boolean) {
     if (this.hasMoreNotifications !== value) {
-      this.store.update((state) => ({ ...state, hasMoreNotifications: value }));
+      this.hasMoreNotifications = value;
     }
   }
 
-  public get scrollPosition(): number | undefined {
-    return this.store.getValue().scrollPosition;
-  }
-
-  public set scrollPosition(value: number | undefined) {
+  public updateScrollPosition(value: number | undefined) {
     if (this.scrollPosition !== value) {
-      this.store.update((state) => ({ ...state, scrollPosition: value }));
+      this.scrollPosition = value;
     }
   }
 
-  public get isLoading(): boolean {
-    return this.store.getValue().isLoading;
-  }
-
-  public set isLoading(value: boolean) {
+  public updateIsLoading(value: boolean) {
     if (this.isLoading !== value) {
-      this.store.update((state) => ({ ...state, isLoading: value }));
+      this.isLoading = value;
     }
   }
 
-  public get isReloading(): boolean {
-    return this.store.getValue().isReloading;
-  }
-
-  public set isReloading(value: boolean) {
+  public updateIsReloading(value: boolean) {
     if (this.isReloading !== value) {
-      this.store.update((state) => ({ ...state, isReloading: value }));
+      this.isReloading = value;
     }
   }
 }

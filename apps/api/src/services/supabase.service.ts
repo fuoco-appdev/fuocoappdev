@@ -1,10 +1,12 @@
+import { Service } from 'https://deno.land/x/di@v0.1.1/mod.ts';
 import 'https://deno.land/x/dotenv@v3.2.0/load.ts';
 import {
   createClient,
   SupabaseClient,
-} from 'https://esm.sh/@supabase/supabase-js@2.7.0';
+} from 'https://esm.sh/@supabase/supabase-js@2.45.6';
 
-class SupabaseService {
+@Service()
+export default class SupabaseService {
   private readonly _client: SupabaseClient;
   private readonly _key: string | undefined;
 
@@ -29,5 +31,3 @@ class SupabaseService {
     return this._key;
   }
 }
-
-export default new SupabaseService();

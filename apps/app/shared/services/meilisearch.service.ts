@@ -1,10 +1,19 @@
 import { MeiliSearch } from 'meilisearch';
+import { Service } from '../service';
+import { StoreOptions } from '../store-options';
 import ConfigService from './config.service';
 
-class MeiliSearchService {
+export default class MeiliSearchService extends Service {
   private _client: MeiliSearch | undefined;
 
-  constructor() {}
+  constructor(
+    private readonly _publicKey: string,
+    private readonly _configService: ConfigService,
+    private readonly _supabaseAnonKey: string,
+    private readonly _storeOptions: StoreOptions
+  ) {
+    super(_configService, _supabaseAnonKey, _storeOptions);
+  }
 
   public get client(): MeiliSearch | undefined {
     return this._client;
@@ -12,10 +21,10 @@ class MeiliSearchService {
 
   public initializeMeiliSearch(): void {
     this._client = new MeiliSearch({
-      host: ConfigService.meilisearch.url,
-      apiKey: import.meta.env['MEILISEARCH_PUBLIC_KEY'] ?? '',
+      host: this._configService.meilisearch.url,
+      apiKey: this._publicKey,
     });
   }
-}
 
-export default new MeiliSearchService();
+  public override dispose(): void {}
+}

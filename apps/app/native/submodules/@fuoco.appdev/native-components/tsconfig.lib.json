@@ -1,0 +1,16 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "moduleResolution": "Bundler"
+    },
+    "include": [
+        "components/"
+    ],
+    "exclude": [
+        "App.tsx",
+        "storybook-static/",
+        "**/*.stories.tsx",
+        "node_modules/",
+        "stories/"
+    ]
+}  

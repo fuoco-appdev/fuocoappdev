@@ -4,19 +4,26 @@ import {
   Session,
   SupabaseClient,
 } from '@supabase/supabase-js';
-import { Subscription } from 'rxjs';
+import { IValueDidChange, Lambda, observe } from 'mobx';
+import { DIContainer } from 'rsdi';
 import { Controller } from '../controller';
 import { ForgotPasswordModel } from '../models/forgot-password.model';
 import SupabaseService from '../services/supabase.service';
+import { StoreOptions } from '../store-options';
 
-class ForgotPasswordController extends Controller {
+export default class ForgotPasswordController extends Controller {
   private readonly _model: ForgotPasswordModel;
-  private _supabaseClientSubscription: Subscription | undefined;
+  private _supabaseClientDisposer: Lambda | undefined;
 
-  constructor() {
+  constructor(
+    private readonly _container: DIContainer<{
+      SupabaseService: SupabaseService;
+    }>,
+    private readonly _storeOptions: StoreOptions
+  ) {
     super();
 
-    this._model = new ForgotPasswordModel();
+    this._model = new ForgotPasswordModel(this._storeOptions);
 
     this.onAuthStateChanged = this.onAuthStateChanged.bind(this);
   }
@@ -25,25 +32,29 @@ class ForgotPasswordController extends Controller {
     return this._model;
   }
 
-  public override initialize(_renderCount: number): void {}
+  public override initialize = (_renderCount: number): void => {};
 
   public override load(_renderCount: number): void {
-    SupabaseService.supabaseClient?.auth.onAuthStateChange(
+    const supabaseService = this._container.get('SupabaseService');
+    supabaseService.supabaseClient?.auth.onAuthStateChange(
       this.onAuthStateChanged
     );
 
-    this._supabaseClientSubscription =
-      SupabaseService.supabaseClientObservable.subscribe({
-        next: (value: SupabaseClient | undefined) => {
-          this._model.supabaseClient = value;
-        },
-      });
+    this._supabaseClientDisposer = observe(
+      supabaseService,
+      'client',
+      (value: IValueDidChange<SupabaseClient | undefined>) => {
+        this._model.supabaseClient = value.newValue;
+      }
+    );
   }
 
-  public override disposeInitialization(_renderCount: number): void {}
+  public override disposeInitialization(_renderCount: number): void {
+    this._model.dispose();
+  }
 
   public override disposeLoad(_renderCount: number): void {
-    this._supabaseClientSubscription?.unsubscribe();
+    this._supabaseClientDisposer?.();
   }
 
   public updateEmail(value: string) {
@@ -61,5 +72,3 @@ class ForgotPasswordController extends Controller {
     }
   }
 }
-
-export default new ForgotPasswordController();

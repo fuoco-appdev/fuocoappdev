@@ -1,139 +1,204 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createStore, withProps } from '@ngneat/elf';
+import { makeObservable } from 'mobx';
+import { DIContainer } from 'rsdi';
 import { Controller } from '../controller';
-import AccountPublicController from '../controllers/account-public.controller';
 import AccountController from '../controllers/account.controller';
-import CartController from '../controllers/cart.controller';
-import ChatController from '../controllers/chat.controller';
-import CheckoutController from '../controllers/checkout.controller';
-import EventsController from '../controllers/events.controller';
-import HelpController from '../controllers/help.controller';
-import NotificationsController from '../controllers/notifications.controller';
-import OrderConfirmedController from '../controllers/order-confirmed.controller';
 import PrivacyPolicyController from '../controllers/privacy-policy.controller';
-import ProductController from '../controllers/product.controller';
 import ResetPasswordController from '../controllers/reset-password.controller';
 import SigninController from '../controllers/signin.controller';
 import SignupController from '../controllers/signup.controller';
-import StoreController from '../controllers/store.controller';
 import TermsOfServiceController from '../controllers/terms-of-service.controller';
 import WindowController from '../controllers/window.controller';
 import { Model } from '../model';
 import BucketService from '../services/bucket.service';
 import MedusaService from '../services/medusa.service';
-import MeilisearchService from '../services/meilisearch.service';
+import MeiliSearchService from '../services/meilisearch.service';
 import SupabaseService from '../services/supabase.service';
+import { StoreOptions } from '../store-options';
 import EmailConfirmationController from './email-confirmation.controller';
-import ExploreController from './explore.controller';
 import ForgotPasswordController from './forgot-password.controller';
-import PermissionsController from './permissions.controller';
 
-class AppController extends Controller {
+export default class AppController extends Controller {
   private readonly _model: Model;
-  constructor() {
-    super();
 
-    this._model = new Model(
-      createStore({ name: 'application' }, withProps<{}>({}))
-    );
+  constructor(
+    private readonly _container: DIContainer<{
+      AccountController: AccountController;
+      MedusaService: MedusaService;
+      SupabaseService: SupabaseService;
+      WindowController: WindowController;
+      SigninController: SigninController;
+      SignupController: SignupController;
+      EmailConfirmationController: EmailConfirmationController;
+      ForgotPasswordController: ForgotPasswordController;
+      TermsOfServiceController: TermsOfServiceController;
+      PrivacyPolicyController: PrivacyPolicyController;
+      ResetPasswordController: ResetPasswordController;
+      MeiliSearchService: MeiliSearchService;
+      BucketService: BucketService;
+    }>,
+    private readonly _storeOptions: StoreOptions
+  ) {
+    super();
+    makeObservable(this);
+
+    this._model = new Model(this._storeOptions);
   }
 
   public get model(): Model {
     return this._model;
   }
 
-  public override initialize(renderCount: number): void {
-    this.initializeAsync(renderCount);
-  }
+  public override initialize = (renderCount: number): void => {
+    //this._accountPublicController.initialize(renderCount);
+    //this._exploreController.initialize(renderCount);
+    //this._storeController.initialize(renderCount);
+    //this._eventsController.initialize(renderCount);
+    //this._cartController.initialize(renderCount);
+    //this._chatController.initialize(renderCount);
+    //this._notificationsController.initialize(renderCount);
+    //this._productController.initialize(renderCount);
+    //this._checkoutController.initialize(renderCount);
+    //this._orderConfirmedController.initialize(renderCount);
+    //this._permissionsController.initialize(renderCount);
+    //this._helpController.initialize(renderCount);
+    const windowController = this._container.get('WindowController');
+    const accountController = this._container.get('AccountController');
+    const signinController = this._container.get('SigninController');
+    const signupController = this._container.get('SignupController');
+    const emailConfirmationController = this._container.get(
+      'EmailConfirmationController'
+    );
+    const forgotPasswordController = this._container.get(
+      'ForgotPasswordController'
+    );
+    const termsOfServiceController = this._container.get(
+      'TermsOfServiceController'
+    );
+    const privacyPolicyController = this._container.get(
+      'PrivacyPolicyController'
+    );
+    const resetPasswordController = this._container.get(
+      'ResetPasswordController'
+    );
+    windowController.initialize(renderCount);
+    accountController.initialize(renderCount);
+    signinController.initialize(renderCount);
+    signupController.initialize(renderCount);
+    emailConfirmationController.initialize(renderCount);
+    forgotPasswordController.initialize(renderCount);
+    termsOfServiceController.initialize(renderCount);
+    privacyPolicyController.initialize(renderCount);
+    resetPasswordController.initialize(renderCount);
+  };
 
   public override load(_renderCount: number): void {}
 
   public override disposeInitialization(renderCount: number): void {
-    AccountPublicController.disposeInitialization(renderCount);
-    AccountController.disposeInitialization(renderCount);
-    ExploreController.disposeInitialization(renderCount);
-    StoreController.disposeInitialization(renderCount);
-    EventsController.disposeInitialization(renderCount);
-    ChatController.disposeInitialization(renderCount);
-    CartController.disposeInitialization(renderCount);
-    NotificationsController.disposeInitialization(renderCount);
-    ProductController.disposeInitialization(renderCount);
-    EmailConfirmationController.disposeInitialization(renderCount);
-    SigninController.disposeInitialization(renderCount);
-    SignupController.disposeInitialization(renderCount);
-    ForgotPasswordController.disposeInitialization(renderCount);
-    CheckoutController.disposeInitialization(renderCount);
-    OrderConfirmedController.disposeInitialization(renderCount);
-    TermsOfServiceController.disposeInitialization(renderCount);
-    PrivacyPolicyController.disposeInitialization(renderCount);
-    PermissionsController.disposeInitialization(renderCount);
-    HelpController.disposeInitialization(renderCount);
-    ResetPasswordController.disposeInitialization(renderCount);
-    WindowController.disposeInitialization(renderCount);
+    const windowController = this._container.get('WindowController');
+    const accountController = this._container.get('AccountController');
+    const signinController = this._container.get('SigninController');
+    const signupController = this._container.get('SignupController');
+    const emailConfirmationController = this._container.get(
+      'EmailConfirmationController'
+    );
+    const forgotPasswordController = this._container.get(
+      'ForgotPasswordController'
+    );
+    const termsOfServiceController = this._container.get(
+      'TermsOfServiceController'
+    );
+    const privacyPolicyController = this._container.get(
+      'PrivacyPolicyController'
+    );
+    const resetPasswordController = this._container.get(
+      'ResetPasswordController'
+    );
+    //this._accountPublicController.disposeInitialization(renderCount);
+    accountController.disposeInitialization(renderCount);
+    //this._exploreController.disposeInitialization(renderCount);
+    //this._storeController.disposeInitialization(renderCount);
+    //this._eventsController.disposeInitialization(renderCount);
+    //this._chatController.disposeInitialization(renderCount);
+    //this._cartController.disposeInitialization(renderCount);
+    //this._notificationsController.disposeInitialization(renderCount);
+    //this._productController.disposeInitialization(renderCount);
+    emailConfirmationController.disposeInitialization(renderCount);
+    signinController.disposeInitialization(renderCount);
+    signupController.disposeInitialization(renderCount);
+    forgotPasswordController.disposeInitialization(renderCount);
+    //this._checkoutController.disposeInitialization(renderCount);
+    //this._orderConfirmedController.disposeInitialization(renderCount);
+    termsOfServiceController.disposeInitialization(renderCount);
+    privacyPolicyController.disposeInitialization(renderCount);
+    //this._permissionsController.disposeInitialization(renderCount);
+    //this._helpController.disposeInitialization(renderCount);
+    resetPasswordController.disposeInitialization(renderCount);
+    windowController.disposeInitialization(renderCount);
+    this._model.dispose();
   }
 
   public override disposeLoad(_renderCount: number): void {}
 
-  public async initializeAsync(renderCount: number): Promise<void> {
-    WindowController.initialize(renderCount);
-    AccountPublicController.initialize(renderCount);
-    AccountController.initialize(renderCount);
-    ExploreController.initialize(renderCount);
-    StoreController.initialize(renderCount);
-    EventsController.initialize(renderCount);
-    CartController.initialize(renderCount);
-    ChatController.initialize(renderCount);
-    NotificationsController.initialize(renderCount);
-    ProductController.initialize(renderCount);
-    SigninController.initialize(renderCount);
-    SignupController.initialize(renderCount);
-    EmailConfirmationController.initialize(renderCount);
-    ForgotPasswordController.initialize(renderCount);
-    CheckoutController.initialize(renderCount);
-    OrderConfirmedController.initialize(renderCount);
-    TermsOfServiceController.initialize(renderCount);
-    PrivacyPolicyController.initialize(renderCount);
-    PermissionsController.initialize(renderCount);
-    HelpController.initialize(renderCount);
-    ResetPasswordController.initialize(renderCount);
-  }
+  public async initializeAsync(renderCount: number): Promise<void> {}
 
   public async initializeServices(_renderCount: number): Promise<void> {
+    const supabaseService = this._container.get('SupabaseService');
+    const meiliSearchService = this._container.get('MeiliSearchService');
+    const medusaService = this._container.get('MedusaService');
+    const bucketService = this._container.get('BucketService');
     try {
-      SupabaseService.initializeSupabase();
-      MeilisearchService.initializeMeiliSearch();
-      MedusaService.intializeMedusa();
-      BucketService.initializeS3();
+      supabaseService.initializeSupabase();
+      meiliSearchService.initializeMeiliSearch();
+      bucketService.initializeS3();
     } catch (error: any) {
       console.error(error);
     }
   }
 
   public debugSuspense(value: boolean): void {
+    const windowController = this._container.get('WindowController');
+    const accountController = this._container.get('AccountController');
+    const signinController = this._container.get('SigninController');
+    const signupController = this._container.get('SignupController');
+    const emailConfirmationController = this._container.get(
+      'EmailConfirmationController'
+    );
+    const forgotPasswordController = this._container.get(
+      'ForgotPasswordController'
+    );
+    const termsOfServiceController = this._container.get(
+      'TermsOfServiceController'
+    );
+    const privacyPolicyController = this._container.get(
+      'PrivacyPolicyController'
+    );
+    const resetPasswordController = this._container.get(
+      'ResetPasswordController'
+    );
+
     this.updateSuspense(value);
-    WindowController.updateSuspense(value);
-    AccountPublicController.updateSuspense(value);
-    AccountController.updateSuspense(value);
-    ExploreController.updateSuspense(value);
-    StoreController.updateSuspense(value);
-    EventsController.updateSuspense(value);
-    CartController.updateSuspense(value);
-    ChatController.updateSuspense(value);
-    NotificationsController.updateSuspense(value);
-    ProductController.updateSuspense(value);
-    SigninController.updateSuspense(value);
-    SignupController.updateSuspense(value);
-    EmailConfirmationController.updateSuspense(value);
-    ForgotPasswordController.updateSuspense(value);
-    CheckoutController.updateSuspense(value);
-    OrderConfirmedController.updateSuspense(value);
-    TermsOfServiceController.updateSuspense(value);
-    PrivacyPolicyController.updateSuspense(value);
-    PermissionsController.updateSuspense(value);
-    HelpController.updateSuspense(value);
-    ResetPasswordController.updateSuspense(value);
+    windowController.updateSuspense(value);
+    // accountPublicController.updateSuspense(value);
+    accountController.updateSuspense(value);
+    // exploreController.updateSuspense(value);
+    // storeController.updateSuspense(value);
+    // eventsController.updateSuspense(value);
+    // cartController.updateSuspense(value);
+    // chatController.updateSuspense(value);
+    // notificationsController.updateSuspense(value);
+    // productController.updateSuspense(value);
+    signinController.updateSuspense(value);
+    signupController.updateSuspense(value);
+    emailConfirmationController.updateSuspense(value);
+    forgotPasswordController.updateSuspense(value);
+    // checkoutController.updateSuspense(value);
+    // orderConfirmedController.updateSuspense(value);
+    termsOfServiceController.updateSuspense(value);
+    privacyPolicyController.updateSuspense(value);
+    // permissionsController.updateSuspense(value);
+    // helpController.updateSuspense(value);
+    resetPasswordController.updateSuspense(value);
   }
 }
-
-export default new AppController();

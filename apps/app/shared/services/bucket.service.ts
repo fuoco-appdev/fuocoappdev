@@ -1,29 +1,35 @@
 import AWS from 'aws-sdk';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { observable } from 'mobx';
 import { StorageFolderType } from '../protobuf/common_pb';
+import { Service } from '../service';
+import { StoreOptions } from '../store-options';
 import ConfigService from './config.service';
+import SupabaseService from './supabase.service';
 
-class BucketService {
-  private _s3: AWS.S3 | undefined;
-  private _s3BehaviorSubject: BehaviorSubject<AWS.S3 | undefined>;
+export default class BucketService extends Service {
+  @observable
+  public s3: AWS.S3 | undefined;
 
-  constructor() {
-    this._s3BehaviorSubject = new BehaviorSubject<AWS.S3 | undefined>(
-      undefined
-    );
+  constructor(
+    private readonly _accessKeyId: string,
+    private readonly _secretAccessKey: string,
+    private readonly _supabaseService: SupabaseService,
+    private readonly _configService: ConfigService,
+    private readonly _supabaseAnonKey: string,
+    private readonly _storeOptions: StoreOptions
+  ) {
+    super(_configService, _supabaseAnonKey, _storeOptions);
+    this.s3 = undefined;
   }
 
-  public get s3Observable(): Observable<AWS.S3 | undefined> {
-    return this._s3BehaviorSubject.asObservable();
-  }
+  public override dispose(): void {}
 
   public initializeS3(): void {
     AWS.config.update({
-      accessKeyId: import.meta.env['S3_ACCESS_KEY_ID'],
-      secretAccessKey: import.meta.env['S3_SECRET_ACCESS_KEY'],
+      accessKeyId: this._accessKeyId,
+      secretAccessKey: this._secretAccessKey,
     });
-    this._s3 = new AWS.S3({ endpoint: ConfigService.s3.url });
-    this._s3BehaviorSubject.next(this._s3);
+    this.s3 = new AWS.S3({ endpoint: this._configService.s3.url });
   }
 
   public async getPublicUrlAsync(
@@ -33,9 +39,12 @@ class BucketService {
     const storageName = this.getStorageFolderName(type);
 
     return new Promise<string | undefined>((resolve, reject) => {
-      this._s3?.getSignedUrl(
+      this.s3?.getSignedUrl(
         'putObject',
-        { Bucket: ConfigService.s3.bucket_name, Key: `${storageName}/${file}` },
+        {
+          Bucket: this._configService.s3.bucket_name,
+          Key: `${storageName}/${file}`,
+        },
         (error, url) => {
           if (error) {
             reject(error);
@@ -55,15 +64,15 @@ class BucketService {
     const storageName = this.getStorageFolderName(type);
 
     return new Promise<string | null>((resolve, reject) => {
-      if (!this._s3) {
+      if (!this.s3) {
         reject(new Error('S3 instance not defined'));
         return;
       }
 
-      this._s3
+      this.s3
         .upload(
           {
-            Bucket: ConfigService.s3.bucket_name,
+            Bucket: this._configService.s3.bucket_name,
             ACL: 'public-read',
             Key: `${storageName}/${file}`,
             Body: blob,
@@ -91,14 +100,14 @@ class BucketService {
     const storageName = this.getStorageFolderName(type);
 
     return new Promise<boolean | undefined>((resolve, reject) => {
-      if (!this._s3) {
+      if (!this.s3) {
         reject(new Error('S3 instance not defined'));
         return;
       }
 
-      this._s3
+      this.s3
         .deleteObject({
-          Bucket: ConfigService.s3.bucket_name,
+          Bucket: this._configService.s3.bucket_name,
           Key: `${storageName}/${file}`,
         })
         .send((error, data) => {
@@ -117,5 +126,3 @@ class BucketService {
     return name.toLowerCase().replace('_', '-');
   }
 }
-
-export default new BucketService();

@@ -1,0 +1,12 @@
+{
+  "extends": "@react-native/typescript-config/tsconfig.json",
+  "compilerOptions": {
+    "experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+    "paths": {
+      "@fuoco.appdev/native-components": [
+        "./submodules/@fuoco.appdev/native-components/components/index.tsx"
+      ]
+    }
+  },
+}

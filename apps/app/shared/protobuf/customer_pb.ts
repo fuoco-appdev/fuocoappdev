@@ -68,45 +68,39 @@ export class UpdateCustomerRequest extends Message<UpdateCustomerRequest> {
 }
 
 /**
- * @generated from message customer.UpdateCustomerResponse
+ * @generated from message customer.AdminCustomerResponse
  */
-export class UpdateCustomerResponse extends Message<UpdateCustomerResponse> {
+export class AdminCustomerResponse extends Message<AdminCustomerResponse> {
   /**
    * @generated from field: string data = 1;
    */
   data = "";
 
-  /**
-   * @generated from field: string password = 2;
-   */
-  password = "";
-
-  constructor(data?: PartialMessage<UpdateCustomerResponse>) {
+  constructor(data?: PartialMessage<AdminCustomerResponse>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime = proto3;
-  static readonly typeName = "customer.UpdateCustomerResponse";
+  static readonly typeName = "customer.AdminCustomerResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "data", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "password", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateCustomerResponse {
-    return new UpdateCustomerResponse().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminCustomerResponse {
+    return new AdminCustomerResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateCustomerResponse {
-    return new UpdateCustomerResponse().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminCustomerResponse {
+    return new AdminCustomerResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateCustomerResponse {
-    return new UpdateCustomerResponse().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminCustomerResponse {
+    return new AdminCustomerResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: UpdateCustomerResponse | PlainMessage<UpdateCustomerResponse> | undefined, b: UpdateCustomerResponse | PlainMessage<UpdateCustomerResponse> | undefined): boolean {
-    return proto3.util.equals(UpdateCustomerResponse, a, b);
+  static equals(a: AdminCustomerResponse | PlainMessage<AdminCustomerResponse> | undefined, b: AdminCustomerResponse | PlainMessage<AdminCustomerResponse> | undefined): boolean {
+    return proto3.util.equals(AdminCustomerResponse, a, b);
   }
 }
 

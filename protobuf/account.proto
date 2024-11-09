@@ -8,12 +8,9 @@ message AccountRequest {
     string supabase_id = 3;
     string profile_url = 4;
     string status = 5;
-    string language_code = 7;
-    string username = 8;
-    string birthday = 9;
-    string sex = 10;
-    repeated string interests = 11;
-    string metadata = 12;
+    string username = 6;
+    string birthday = 7;
+    string metadata = 8;
 }
 
 message AccountResponse {
@@ -23,12 +20,9 @@ message AccountResponse {
     string profile_url = 4;
     string status = 5;
     string update_at = 6;
-    string language_code = 7;
-    string username = 8;
-    string birthday = 9;
-    string sex = 10;
-    repeated string interests = 11;
-    string metadata = 12;
+    string username = 7;
+    string birthday = 8;
+    string metadata = 9;
 }
 
 message AccountsRequest {

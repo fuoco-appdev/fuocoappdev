@@ -1,7 +1,9 @@
 import axiod from 'https://deno.land/x/axiod@0.26.2/mod.ts';
+import { Service } from 'https://deno.land/x/di@v0.1.1/mod.ts';
 import 'https://deno.land/x/dotenv@v3.2.0/load.ts';
 import {
   AddCustomerToGroupRequest,
+  AdminCustomerResponse,
   CustomerGroupResponse,
   CustomerMetadataResponse,
   CustomerResponse,
@@ -9,7 +11,6 @@ import {
   CustomersResponse,
   RemoveCustomerFromGroupRequest,
   UpdateCustomerRequest,
-  UpdateCustomerResponse,
 } from '../protobuf/customer_pb.js';
 import { OrdersRequest, OrdersResponse } from '../protobuf/order_pb.js';
 import {
@@ -28,6 +29,7 @@ import {
   StockLocationsRequest,
   StockLocationsResponse,
 } from '../protobuf/stock-location_pb.js';
+import serviceCollection, { serviceTypes } from '../service_collection.ts';
 import AccountService from './account.service.ts';
 import MapboxService, { GeocodingFeature } from './mapbox.service.ts';
 import SupabaseService from './supabase.service.ts';
@@ -47,18 +49,26 @@ export interface CustomerProps {
   metadata?: string;
 }
 
-class MedusaService {
+@Service()
+export default class MedusaService {
+  private readonly _supabaseService: SupabaseService;
+  private readonly _mapboxService: MapboxService;
+  private readonly _accountService: AccountService;
   private _url: string | undefined;
-  private _token: string | undefined;
+  private _secret: string | undefined;
   constructor() {
+    this._supabaseService = serviceCollection.get(serviceTypes.SupabaseService);
+    this._mapboxService = serviceCollection.get(serviceTypes.MapboxService);
+    this._accountService = serviceCollection.get(serviceTypes.AccountService);
+
     this._url = Deno.env.get('MEDUSA_BACKEND_URL');
-    this._token = Deno.env.get('MEDUSA_API_TOKEN');
+    this._secret = Deno.env.get('MEDUSA_SECRET');
     if (!this._url) {
       throw new Error("MEDUSA_BACKEND_URL doesn't exist");
     }
 
-    if (!this._token) {
-      throw new Error("MEDUSA_API_TOKEN doesn't exist");
+    if (!this._secret) {
+      throw new Error("MEDUSA_SECRET doesn't exist");
     }
   }
 
@@ -105,7 +115,7 @@ class MedusaService {
     metadata['region'] = context?.text ?? '';
     await axiod.post(`${this._url}/admin/stock-locations/${id}`, {
       headers: {
-        'x-medusa-access-token': this._token,
+        Authorization: `Basic ${this._secret}`,
       },
     });
   }
@@ -114,7 +124,7 @@ class MedusaService {
     customerId: string
   ): Promise<InstanceType<typeof CustomerMetadataResponse>> {
     const response = new CustomerMetadataResponse();
-    const customerResponse = await SupabaseService.client
+    const customerResponse = await this._supabaseService.client
       .from('customer')
       .select()
       .eq('id', customerId);
@@ -139,18 +149,16 @@ class MedusaService {
   }
 
   public async getCustomerBySupabaseIdAsync(
-    sessionToken: string,
     supabaseId: string
-  ): Promise<InstanceType<typeof UpdateCustomerResponse>> {
-    const account = await AccountService.findAsync(supabaseId);
-    let customerDataList: any[];
+  ): Promise<InstanceType<typeof AdminCustomerResponse>> {
+    const response = new AdminCustomerResponse();
+    const account = await this._accountService.findAsync(supabaseId);
     if (account && account?.customer_id) {
       const customer = await this.getCustomerAsync(account.customer_id);
-      customerDataList = [customer];
+      response.setData(JSON.stringify(customer));
     } else {
-      const supabaseUser = await SupabaseService.client.auth.admin.getUserById(
-        supabaseId
-      );
+      const supabaseUser =
+        await this._supabaseService.client.auth.admin.getUserById(supabaseId);
       const fetchParams = new URLSearchParams({
         q: supabaseUser.data.user?.email ?? '',
       }).toString();
@@ -158,42 +166,17 @@ class MedusaService {
         `${this._url}/admin/customers?${fetchParams}`,
         {
           headers: {
-            'x-medusa-access-token': this._token,
+            Authorization: `Basic ${this._secret}`,
           },
         }
       );
-      customerDataList = customerResponse?.data['customers'] ?? [];
-    }
-
-    const updateCustomer = new UpdateCustomerResponse();
-    if (customerDataList.length > 0) {
-      for (const customerData of customerDataList) {
-        const updateParams = new URLSearchParams({
-          expand: 'shipping_addresses',
-        }).toString();
-        try {
-          const updateCustomerResponse = await axiod.post(
-            `${this._url}/admin/customers/${customerData.id}?${updateParams}`,
-            {
-              password: sessionToken,
-            },
-            {
-              headers: {
-                'x-medusa-access-token': this._token,
-              },
-            }
-          );
-
-          const updatedCustomerData = updateCustomerResponse.data['customer'];
-          updateCustomer.setData(JSON.stringify(updatedCustomerData));
-          updateCustomer.setPassword(sessionToken);
-        } catch (error: any) {
-          console.error(error);
-        }
+      const customers = customerResponse?.data['customers'] ?? [];
+      if (customers.length > 0) {
+        response.setData(JSON.stringify(customers[0]));
       }
     }
 
-    return updateCustomer;
+    return response;
   }
 
   public async getCustomerAsync(
@@ -207,7 +190,7 @@ class MedusaService {
       `${this._url}/admin/customers/${customerId}?${params}`,
       {
         headers: {
-          'x-medusa-access-token': this._token,
+          Authorization: `Basic ${this._secret}`,
         },
       }
     );
@@ -215,9 +198,11 @@ class MedusaService {
     return customer;
   }
 
-  public async getCustomersByIdAsync(ids: string[]): Promise<CustomerProps[] | null> {
+  public async getCustomersByIdAsync(
+    ids: string[]
+  ): Promise<CustomerProps[] | null> {
     const formattedIds = ids.toString();
-    const customersResponse = await SupabaseService.client
+    const customersResponse = await this._supabaseService.client
       .from('customer')
       .select()
       .filter('id', 'in', `(${formattedIds})`);
@@ -266,18 +251,16 @@ class MedusaService {
   }
 
   public async updateCustomerAccountAsync(
-    sessionToken: string,
     request: InstanceType<typeof UpdateCustomerRequest>
-  ): Promise<InstanceType<typeof UpdateCustomerResponse>> {
+  ): Promise<InstanceType<typeof AdminCustomerResponse>> {
     const email = request.getEmail();
     const firstName = request.getFirstName();
     const lastName = request.getLastName();
     const phone = request.getPhone();
     const metadata = request.getMetadata();
 
-    const updateCustomer = new UpdateCustomerResponse();
+    const updateCustomer = new AdminCustomerResponse();
     const existingCustomers = await this.findCustomersAsync(email);
-    console.log(existingCustomers)
     if (existingCustomers.length > 0) {
       for (const existingCustomer of existingCustomers) {
         if (!existingCustomer.has_account) {
@@ -296,17 +279,15 @@ class MedusaService {
               ...(lastName && { last_name: lastName }),
               ...(phone && { phone: phone }),
               ...(metadata && { metadata: metadata }),
-              password: sessionToken,
             },
             {
               headers: {
-                'x-medusa-access-token': this._token,
+                Authorization: `Basic ${this._secret}`,
               },
             }
           );
           const updatedCustomerData = updateCustomerResponse.data['customer'];
           updateCustomer.setData(JSON.stringify(updatedCustomerData));
-          updateCustomer.setPassword(sessionToken);
         } catch (error: any) {
           console.error(error);
         }
@@ -319,7 +300,7 @@ class MedusaService {
       const customerResponse = await axiod.post(
         `${this._url}/admin/customers`,
         {
-          ...(email && { email: email, password: sessionToken }),
+          ...(email && { email: email }),
           ...(firstName && { first_name: firstName }),
           ...(lastName && { last_name: lastName }),
           ...(phone && { phone: phone }),
@@ -327,15 +308,13 @@ class MedusaService {
         },
         {
           headers: {
-            'x-medusa-access-token': this._token,
+            Authorization: `Basic ${this._secret}`,
           },
         }
       );
       const data = customerResponse.data['customer'];
 
       updateCustomer.setData(JSON.stringify(data));
-      updateCustomer.setPassword(sessionToken);
-      console.log(updateCustomer)
     } catch (error: any) {
       console.error(error);
     }
@@ -358,7 +337,7 @@ class MedusaService {
       return customerGroup;
     }
 
-    const customerGroupCustomers = await SupabaseService.client
+    const customerGroupCustomers = await this._supabaseService.client
       .from('customer_group_customers')
       .select()
       .match({ customer_id: customerId });
@@ -385,7 +364,7 @@ class MedusaService {
           },
           {
             headers: {
-              'x-medusa-access-token': this._token,
+              Authorization: `Basic ${this._secret}`,
             },
           }
         );
@@ -406,7 +385,7 @@ class MedusaService {
         },
         {
           headers: {
-            'x-medusa-access-token': this._token,
+            Authorization: `Basic ${this._secret}`,
           },
         }
       );
@@ -441,7 +420,7 @@ class MedusaService {
         },
         {
           headers: {
-            'x-medusa-access-token': this._token,
+            Authorization: `Basic ${this._secret}`,
           },
         }
       );
@@ -457,7 +436,7 @@ class MedusaService {
     salesLocationId: string
   ): Promise<InstanceType<typeof CustomerGroupResponse>> {
     const customerGroup = new CustomerGroupResponse();
-    const { data, error } = await SupabaseService.client
+    const { data, error } = await this._supabaseService.client
       .from('customer_group')
       .select()
       .contains('metadata', {
@@ -488,7 +467,7 @@ class MedusaService {
       return priceListsResponse;
     }
 
-    const priceListCustomerGroups = await SupabaseService.client
+    const priceListCustomerGroups = await this._supabaseService.client
       .from('price_list_customer_groups')
       .select()
       .in('customer_group_id', customerGroups);
@@ -499,9 +478,9 @@ class MedusaService {
     }
 
     const customerGroupPriceLists = priceListCustomerGroups.data.map(
-      (value) => value.price_list_id
+      (value: any) => value.price_list_id
     );
-    const priceLists = await SupabaseService.client
+    const priceLists = await this._supabaseService.client
       .from('price_list')
       .select()
       .limit(limit)
@@ -535,7 +514,7 @@ class MedusaService {
       `${this._url}/admin/stock-locations?${params.toString()}`,
       {
         headers: {
-          'x-medusa-access-token': this._token,
+          Authorization: `Basic ${this._secret}`,
         },
       }
     );
@@ -559,7 +538,7 @@ class MedusaService {
       `${this._url}/admin/stock-locations?${params}`,
       {
         headers: {
-          'x-medusa-access-token': this._token,
+          Authorization: `Basic ${this._secret}`,
         },
       }
     );
@@ -584,7 +563,7 @@ class MedusaService {
       `${this._url}/admin/stock-locations/${stockLocationId}?${params}`,
       {
         headers: {
-          'x-medusa-access-token': this._token,
+          Authorization: `Basic ${this._secret}`,
         },
       }
     );
@@ -599,7 +578,7 @@ class MedusaService {
   ): Promise<InstanceType<typeof ProductCountResponse>> {
     const type = request.getType();
     const response = new ProductCountResponse();
-    const productTypeResponse = await SupabaseService.client
+    const productTypeResponse = await this._supabaseService.client
       .from('product_type')
       .select()
       .match({ value: type });
@@ -616,7 +595,7 @@ class MedusaService {
     }
 
     const typeData = productTypeResponse.data[0];
-    const { error, count } = await SupabaseService.client
+    const { error, count } = await this._supabaseService.client
       .from('product')
       .select('*', { count: 'exact' })
       .match({ type_id: typeData['id'] });
@@ -641,7 +620,7 @@ class MedusaService {
       `${this._url}/admin/products?${params.toString()}`,
       {
         headers: {
-          'x-medusa-access-token': this._token,
+          Authorization: `Basic ${this._secret}`,
         },
       }
     );
@@ -665,7 +644,7 @@ class MedusaService {
       `${this._url}/admin/products/${productId}?${params}`,
       {
         headers: {
-          'x-medusa-access-token': this._token,
+          Authorization: `Basic ${this._secret}`,
         },
       }
     );
@@ -714,7 +693,7 @@ class MedusaService {
       `${this._url}/admin/orders?${params}`,
       {
         headers: {
-          'x-medusa-access-token': this._token,
+          Authorization: `Basic ${this._secret}`,
         },
       }
     );
@@ -730,7 +709,7 @@ class MedusaService {
       `${this._url}/admin/orders/${orderId}`,
       {
         headers: {
-          'x-medusa-access-token': this._token,
+          Authorization: `Basic ${this._secret}`,
         },
       }
     );
@@ -749,11 +728,10 @@ class MedusaService {
       `${this._url}/admin/customers?${params}`,
       {
         headers: {
-          'x-medusa-access-token': this._token,
+          Authorization: `Basic ${this._secret}`,
         },
       }
     );
-    console.log(customerListResponse)
     return customerListResponse.data['customers'];
   }
 
@@ -761,7 +739,7 @@ class MedusaService {
     searchText: string,
     country: string
   ): Promise<GeocodingFeature | null> {
-    const geocoding = await MapboxService.requestGeocodingPlacesAsync(
+    const geocoding = await this._mapboxService.requestGeocodingPlacesAsync(
       searchText,
       country
     );
@@ -772,5 +750,3 @@ class MedusaService {
     return null;
   }
 }
-
-export default new MedusaService();

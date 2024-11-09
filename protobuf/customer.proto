@@ -10,9 +10,8 @@ message UpdateCustomerRequest {
     string metadata = 5;
 }
 
-message UpdateCustomerResponse {
+message AdminCustomerResponse {
     string data = 1;
-    string password = 2;
 }
 
 message CustomersRequest {

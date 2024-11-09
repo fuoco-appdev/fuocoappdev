@@ -1,0 +1,30 @@
+pluginManagement { includeBuild("../../../../node_modules/@react-native/gradle-plugin") }
+plugins { id("com.facebook.react.settings") }
+extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
+rootProject.name = 'mindy'
+include ':app'
+includeBuild('../../../../node_modules/@react-native/gradle-plugin')
+include ':react-native-randombytes'
+project(':react-native-randombytes').projectDir = new File(rootProject.projectDir, '../../../../node_modules/react-native-randombytes/android')
+include ':react-native-quick-crypto'
+project(':react-native-quick-crypto').projectDir = new File(rootProject.projectDir, '../../../../node_modules/react-native-quick-crypto/android')
+include ':react-native-async-storage_async-storage'
+project(':react-native-async-storage_async-storage').projectDir = new File(rootProject.projectDir, '../../../../node_modules/@react-native-async-storage/async-storage/android')
+include ':react-native-clipboard_clipboard'
+project(':react-native-clipboard_clipboard').projectDir = new File(rootProject.projectDir, '../../../../node_modules/@react-native-clipboard/clipboard/android')
+include ':react-native-community_checkbox'
+project(':react-native-community_checkbox').projectDir = new File(rootProject.projectDir, '../../../../node_modules/@react-native-community/checkbox/android')
+include ':react-native-safe-area-context'
+project(':react-native-safe-area-context').projectDir = new File(rootProject.projectDir, '../../../../node_modules/react-native-safe-area-context/android')
+include ':react-native-svg'
+project(':react-native-svg').projectDir = new File(rootProject.projectDir, '../../../../node_modules/react-native-svg/android')
+include ':react-native-screens'
+project(':react-native-screens').projectDir = new File(rootProject.projectDir, '../../../../node_modules/react-native-screens/android')
+include ':react-native-inappbrowser-reborn'
+project(':react-native-inappbrowser-reborn').projectDir = new File(rootProject.projectDir, 	'../../../../node_modules/react-native-inappbrowser-reborn/android')
+include ':react-native-fs'
+project(':react-native-fs').projectDir = new File(settingsDir, '../../../../node_modules/react-native-fs/android')
+
+
+
+

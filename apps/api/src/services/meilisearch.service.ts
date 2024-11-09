@@ -1,7 +1,9 @@
 import axiod from 'https://deno.land/x/axiod@0.26.2/mod.ts';
+import { Service } from 'https://deno.land/x/di@v0.1.1/mod.ts';
 import 'https://deno.land/x/dotenv@v3.2.0/load.ts';
 
-class MeiliSearchService {
+@Service()
+export default class MeiliSearchService {
   private _url: string | undefined;
   private _apiKey: string | undefined;
   constructor() {
@@ -109,8 +111,7 @@ class MeiliSearchService {
       );
 
       return response.data.results;
-    }
-    catch (error: any) {
+    } catch (error: any) {
       console.error(error);
       return null;
     }
@@ -127,7 +128,7 @@ class MeiliSearchService {
         {
           headers: {
             Authorization: `Bearer ${this._apiKey}`,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
           },
         }
       );
@@ -182,5 +183,3 @@ class MeiliSearchService {
     }
   }
 }
-
-export default new MeiliSearchService();

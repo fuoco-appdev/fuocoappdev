@@ -1,69 +1,65 @@
-import { createStore, Store, withProps } from '@ngneat/elf';
-import {
-  localStorageStrategy,
-  persistState,
-  sessionStorageStrategy,
-} from '@ngneat/elf-persist-state';
-
-export interface DebugState {
-  suspense: boolean;
-}
+import { makeObservable, observable, runInAction } from 'mobx';
+import { makePersistable, stopPersisting } from 'mobx-persist-store';
+import { SerializableProperty } from 'mobx-persist-store/lib/esm2017/serializableProperty';
+import { StoreOptions } from './store-options';
 
 export class Model {
-  private readonly _store: Store;
-  private readonly _sessionStore: Store | undefined;
-  private readonly _localStore: Store | undefined;
-  private readonly _debugStore: Store;
+  @observable
+  private _suspense: boolean;
+  constructor(options: StoreOptions = {}) {
+    makeObservable(this);
 
-  constructor(store: Store, sessionStore?: Store, localStore?: Store) {
-    this._store = store;
-    this._sessionStore = sessionStore;
-    this._localStore = localStore;
-    this._debugStore = createStore(
-      { name: `${store.name}-debug` },
-      withProps<DebugState>({
-        suspense: false,
-      })
-    );
+    runInAction(() => (this._suspense = false));
 
-    if (sessionStore) {
-      persistState(sessionStore, {
-        key: sessionStore.name,
-        storage: sessionStorageStrategy,
+    if (options.strategy?.default) {
+      makePersistable(this, {
+        name: this.constructor.name.toLocaleLowerCase(),
+        properties: options.persistableProperties?.default as (
+          | keyof this
+          | SerializableProperty<this, keyof this>
+        )[],
+        storage: options.strategy.default,
       });
     }
 
-    if (localStore) {
-      persistState(localStore, {
-        key: localStore.name,
-        storage: localStorageStrategy,
+    if (options.persistableProperties?.session) {
+      makePersistable(this, {
+        name: `${this.constructor.name.toLocaleLowerCase()}-session`,
+        properties: options.persistableProperties?.session as (
+          | keyof this
+          | SerializableProperty<this, keyof this>
+        )[],
+        storage: options.strategy?.session
+          ? options.strategy.session
+          : window.sessionStorage,
       });
     }
-  }
 
-  public get store(): Store {
-    return this._store;
-  }
-
-  public get sessionStore(): Store | undefined {
-    return this._sessionStore;
-  }
-
-  public get localStore(): Store | undefined {
-    return this._localStore;
-  }
-
-  public get debugStore(): Store {
-    return this._debugStore;
+    if (options.persistableProperties?.local) {
+      makePersistable(this, {
+        name: `${this.constructor.name.toLocaleLowerCase()}-local`,
+        properties: options.persistableProperties?.local as (
+          | keyof this
+          | SerializableProperty<this, keyof this>
+        )[],
+        storage: options.strategy?.local
+          ? options.strategy.local
+          : window.localStorage,
+      });
+    }
   }
 
   public get suspense(): boolean {
-    return this.debugStore.getValue().suspense;
+    return this._suspense;
   }
 
   public set suspense(value: boolean) {
     if (this.suspense !== value) {
-      this.debugStore.update((state) => ({ ...state, suspense: value }));
+      runInAction(() => (this.suspense = value));
     }
+  }
+
+  public dispose(): void {
+    stopPersisting(this);
   }
 }

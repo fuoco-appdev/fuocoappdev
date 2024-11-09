@@ -1,4 +1,5 @@
 import axiod from 'https://deno.land/x/axiod@0.26.2/mod.ts';
+import { Service } from 'https://deno.land/x/di@v0.1.1/mod.ts';
 import 'https://deno.land/x/dotenv@v3.2.0/load.ts';
 
 export interface GeocodingGeometry {
@@ -39,7 +40,8 @@ export interface Geocoding {
   features: GeocodingFeature[];
 }
 
-class MapboxService {
+@Service()
+export default class MapboxService {
   private _geocodingUrl: string;
   private _accessToken: string | undefined;
   constructor() {
@@ -60,5 +62,3 @@ class MapboxService {
     return geocodingResponse.data;
   }
 }
-
-export default new MapboxService();

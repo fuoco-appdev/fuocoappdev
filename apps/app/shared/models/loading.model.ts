@@ -1,27 +1,19 @@
-import { createStore, withProps } from '@ngneat/elf';
+import { makeObservable, observable } from 'mobx';
 import { Model } from '../model';
-
-export interface LoadingState {
-    isLoading: boolean;
-}
+import { StoreOptions } from '../store-options';
 
 export class LoadingModel extends Model {
-    constructor() {
-        super(createStore(
-            {name: 'loading'},
-            withProps<LoadingState>({
-                isLoading: false,
-            }),
-        ));
-    }
+  @observable
+  public isLoading: boolean;
+  constructor(options?: StoreOptions) {
+    super(options);
+    makeObservable(this);
+    this.isLoading = false;
+  }
 
-    public get isLoading(): boolean {
-        return this.store.getValue().isLoading;
+  public updateIsLoading(isLoading: boolean) {
+    if (this.isLoading !== isLoading) {
+      this.isLoading = isLoading;
     }
-
-    public set isLoading(isLoading: boolean) {
-        if (this.isLoading !== isLoading) {
-            this.store.update((state) => ({...state, isLoading: isLoading}));
-        }
-    }
+  }
 }

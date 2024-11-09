@@ -1,5 +1,6 @@
-import axios from 'axios';
 import { Service } from '../service';
+import { StoreOptions } from '../store-options';
+import ConfigService from './config.service';
 
 export interface GeocodingGeometry {
   type: string;
@@ -39,28 +40,33 @@ export interface Geocoding {
   features: GeocodingFeature[];
 }
 
-class MapboxService extends Service {
+export default class MapboxService extends Service {
   private _geocodingUrl: string;
-  private _accessToken: string | undefined;
 
-  constructor() {
-    super();
+  constructor(
+    private readonly _accessToken: string,
+    private readonly _configService: ConfigService,
+    private readonly _supabaseAnonKey: string,
+    private readonly _storeOptions: StoreOptions
+  ) {
+    super(_configService, _supabaseAnonKey, _storeOptions);
 
     this._geocodingUrl = 'https://api.mapbox.com/geocoding/v5';
-    this._accessToken = import.meta.env['MAPBOX_ACCESS_TOKEN'] ?? '';
   }
+
+  public override dispose(): void {}
 
   public async requestGeocodingPlacesAsync(
     searchText: string,
     language: string,
     types: string[]
   ): Promise<Geocoding> {
-    const geocodingResponse = await axios.get(
+    const geocodingResponse = await fetch(
       `${this._geocodingUrl}/mapbox.places/${searchText}.json?&access_token=${
         this._accessToken
       }&language=${language}&types=${types.join(',')}`
     );
-    return geocodingResponse.data;
+    return JSON.parse(await geocodingResponse.text());
   }
 
   public async requestReverseGeocodingPlacesAsync(
@@ -71,15 +77,13 @@ class MapboxService extends Service {
     language: string,
     types: string[]
   ): Promise<Geocoding> {
-    const geocodingResponse = await axios.get(
+    const geocodingResponse = await fetch(
       `${this._geocodingUrl}/mapbox.places/${geo.lng},${
         geo.lat
       }.json?&access_token=${
         this._accessToken
       }&language=${language}&types=${types.join(',')}`
     );
-    return geocodingResponse.data;
+    return JSON.parse(await geocodingResponse.text());
   }
 }
-
-export default new MapboxService();

@@ -1,26 +1,35 @@
 import { AuthError } from '@supabase/supabase-js';
+import { DIContainer } from 'rsdi';
 import { Controller } from '../controller';
 import { EmailConfirmationModel } from '../models/email-confirmation.model';
 import SupabaseService from '../services/supabase.service';
+import { StoreOptions } from '../store-options';
 
-class EmailConfirmationController extends Controller {
+export default class EmailConfirmationController extends Controller {
   private readonly _model: EmailConfirmationModel;
 
-  constructor() {
+  constructor(
+    private readonly _container: DIContainer<{
+      SupabaseService: SupabaseService;
+    }>,
+    private readonly _storeOptions: StoreOptions
+  ) {
     super();
 
-    this._model = new EmailConfirmationModel();
+    this._model = new EmailConfirmationModel(this._storeOptions);
   }
 
   public get model(): EmailConfirmationModel {
     return this._model;
   }
 
-  public override initialize(_renderCount: number): void {}
+  public override initialize = (_renderCount: number): void => {};
 
   public override load(_renderCount: number): void {}
 
-  public override disposeInitialization(_renderCount: number): void {}
+  public override disposeInitialization(_renderCount: number): void {
+    this._model.dispose();
+  }
 
   public override disposeLoad(_renderCount: number): void {}
 
@@ -33,7 +42,8 @@ class EmailConfirmationController extends Controller {
     onEmailSent?: () => void,
     onError?: (error: AuthError | null | undefined) => void
   ): Promise<void> {
-    const response = await SupabaseService.supabaseClient?.auth.resend({
+    const supabaseService = this._container.get('SupabaseService');
+    const response = await supabaseService.supabaseClient?.auth.resend({
       type: 'signup',
       email: email,
     });
@@ -45,5 +55,3 @@ class EmailConfirmationController extends Controller {
     onEmailSent?.();
   }
 }
-
-export default new EmailConfirmationController();

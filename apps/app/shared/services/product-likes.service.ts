@@ -1,4 +1,3 @@
-import axios from "axios";
 import {
   AccountProductLikesMetadataRequest,
   ProductLikeCountMetadataResponse,
@@ -6,33 +5,43 @@ import {
   ProductLikesMetadataRequest,
   ProductLikesMetadataResponse,
   ProductLikesMetadatasResponse,
-} from "../protobuf/product-like_pb";
-import { Service } from "../service";
-import SupabaseService from "./supabase.service";
+} from '../protobuf/product-like_pb';
+import { Service } from '../service';
+import { StoreOptions } from '../store-options';
+import ConfigService from './config.service';
+import SupabaseService from './supabase.service';
 
-class ProductLikesService extends Service {
-  constructor() {
-    super();
+export default class ProductLikesService extends Service {
+  constructor(
+    private readonly _supabaseService: SupabaseService,
+    private readonly _configService: ConfigService,
+    private readonly _supabaseAnonKey: string,
+    private readonly _storeOptions: StoreOptions
+  ) {
+    super(_configService, _supabaseAnonKey, _storeOptions);
   }
 
-  public async requestCountMetadataAsync(
-    accountId: string,
-  ): Promise<ProductLikeCountMetadataResponse> {
-    const response = await axios({
-      method: "post",
-      url: `${this.endpointUrl}/product-likes/count-metadata/${accountId}`,
-      headers: {
-        ...this.headers,
-      },
-      data: "",
-      responseType: "arraybuffer",
-    });
+  public override dispose(): void {}
 
-    const arrayBuffer = new Uint8Array(response.data);
+  public async requestCountMetadataAsync(
+    accountId: string
+  ): Promise<ProductLikeCountMetadataResponse> {
+    const response = await fetch(
+      `${this.endpointUrl}/product-likes/count-metadata/${accountId}`,
+      {
+        method: 'post',
+        headers: {
+          ...this.headers,
+        },
+        body: '',
+      }
+    );
+
+    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
     this.assertResponse(arrayBuffer);
 
-    const productLikeCountMetadataResponse = ProductLikeCountMetadataResponse
-      .fromBinary(arrayBuffer);
+    const productLikeCountMetadataResponse =
+      ProductLikeCountMetadataResponse.fromBinary(arrayBuffer);
     return productLikeCountMetadataResponse;
   }
 
@@ -45,21 +54,19 @@ class ProductLikesService extends Service {
       productIds: props.productIds,
     });
 
-    const response = await axios({
-      method: "post",
-      url: `${this.endpointUrl}/product-likes/metadata`,
+    const response = await fetch(`${this.endpointUrl}/product-likes/metadata`, {
+      method: 'post',
       headers: {
         ...this.headers,
       },
-      data: productLikesMetadataRequest.toBinary(),
-      responseType: "arraybuffer",
+      body: productLikesMetadataRequest.toBinary(),
     });
 
-    const arrayBuffer = new Uint8Array(response.data);
+    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
     this.assertResponse(arrayBuffer);
 
-    const productLikesMetadatasResponse = ProductLikesMetadatasResponse
-      .fromBinary(arrayBuffer);
+    const productLikesMetadatasResponse =
+      ProductLikesMetadatasResponse.fromBinary(arrayBuffer);
     return productLikesMetadatasResponse;
   }
 
@@ -75,21 +82,22 @@ class ProductLikesService extends Service {
         limit: props.limit,
       });
 
-    const response = await axios({
-      method: "post",
-      url: `${this.endpointUrl}/product-likes/account-metadata`,
-      headers: {
-        ...this.headers,
-      },
-      data: accountProductLikesMetadataRequest.toBinary(),
-      responseType: "arraybuffer",
-    });
+    const response = await fetch(
+      `${this.endpointUrl}/product-likes/account-metadata`,
+      {
+        method: 'post',
+        headers: {
+          ...this.headers,
+        },
+        body: accountProductLikesMetadataRequest.toBinary(),
+      }
+    );
 
-    const arrayBuffer = new Uint8Array(response.data);
+    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
     this.assertResponse(arrayBuffer);
 
-    const productLikesMetadatasResponse = ProductLikesMetadatasResponse
-      .fromBinary(arrayBuffer);
+    const productLikesMetadatasResponse =
+      ProductLikesMetadatasResponse.fromBinary(arrayBuffer);
     return productLikesMetadatasResponse;
   }
 
@@ -97,27 +105,25 @@ class ProductLikesService extends Service {
     productId: string;
     accountId: string;
   }): Promise<ProductLikesMetadataResponse | null> {
-    const session = await SupabaseService.requestSessionAsync();
+    const session = await this._supabaseService.requestSessionAsync();
     const productLikeRequest = new ProductLikeRequest({
       productId: props.productId,
       accountId: props.accountId,
     });
-    const response = await axios({
-      method: "post",
-      url: `${this.endpointUrl}/product-likes/add`,
+    const response = await fetch(`${this.endpointUrl}/product-likes/add`, {
+      method: 'post',
       headers: {
         ...this.headers,
-        "Session-Token": `${session?.access_token}`,
+        'Session-Token': `${session?.access_token}`,
       },
-      data: productLikeRequest.toBinary(),
-      responseType: "arraybuffer",
+      body: productLikeRequest.toBinary(),
     });
 
-    const arrayBuffer = new Uint8Array(response.data);
+    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
     this.assertResponse(arrayBuffer);
 
-    const productLikesMetadatasResponse = ProductLikesMetadatasResponse
-      .fromBinary(arrayBuffer);
+    const productLikesMetadatasResponse =
+      ProductLikesMetadatasResponse.fromBinary(arrayBuffer);
     if (productLikesMetadatasResponse.metadata.length > 0) {
       return productLikesMetadatasResponse.metadata[0];
     }
@@ -129,27 +135,25 @@ class ProductLikesService extends Service {
     productId: string;
     accountId: string;
   }): Promise<ProductLikesMetadataResponse | null> {
-    const session = await SupabaseService.requestSessionAsync();
+    const session = await this._supabaseService.requestSessionAsync();
     const productLikeRequest = new ProductLikeRequest({
       productId: props.productId,
       accountId: props.accountId,
     });
-    const response = await axios({
-      method: "post",
-      url: `${this.endpointUrl}/product-likes/remove`,
+    const response = await fetch(`${this.endpointUrl}/product-likes/remove`, {
+      method: 'post',
       headers: {
         ...this.headers,
-        "Session-Token": `${session?.access_token}`,
+        'Session-Token': `${session?.access_token}`,
       },
-      data: productLikeRequest.toBinary(),
-      responseType: "arraybuffer",
+      body: productLikeRequest.toBinary(),
     });
 
-    const arrayBuffer = new Uint8Array(response.data);
+    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
     this.assertResponse(arrayBuffer);
 
-    const productLikesMetadatasResponse = ProductLikesMetadatasResponse
-      .fromBinary(arrayBuffer);
+    const productLikesMetadatasResponse =
+      ProductLikesMetadatasResponse.fromBinary(arrayBuffer);
     if (productLikesMetadatasResponse.metadata.length > 0) {
       return productLikesMetadatasResponse.metadata[0];
     }
@@ -157,5 +161,3 @@ class ProductLikesService extends Service {
     return null;
   }
 }
-
-export default new ProductLikesService();

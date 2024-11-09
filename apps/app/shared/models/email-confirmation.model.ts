@@ -1,29 +1,21 @@
-import { createStore, withProps } from '@ngneat/elf';
+import { makeObservable, observable, runInAction } from 'mobx';
 import { Model } from '../model';
-
-export interface EmailConfirmationState {
-  email: string | undefined;
-}
+import { StoreOptions } from '../store-options';
 
 export class EmailConfirmationModel extends Model {
-  constructor() {
-    super(
-      createStore(
-        { name: 'email-confirmation' },
-        withProps<EmailConfirmationState>({
-          email: undefined,
-        })
-      )
-    );
+  @observable
+  public email: string | undefined;
+
+  constructor(options?: StoreOptions) {
+    super(options);
+    makeObservable(this);
+
+    runInAction(() => (this.email = ''));
   }
 
-  public get email(): string | undefined {
-    return this.store.getValue().email;
-  }
-
-  public set email(value: string | undefined) {
+  public updateEmail(value: string | undefined) {
     if (JSON.stringify(this.email) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, email: value }));
+      this.email = value;
     }
   }
 }

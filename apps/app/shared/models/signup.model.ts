@@ -1,94 +1,70 @@
-import { createStore, withProps } from '@ngneat/elf';
 import { SupabaseClient } from '@supabase/supabase-js';
+import { makeObservable, observable, runInAction } from 'mobx';
 import { Location } from 'react-router-dom';
 import { Model } from '../model';
-
-export interface SignupState {
-  supabaseClient?: SupabaseClient | undefined;
-  emailConfirmationSent: boolean;
-  location?: Location;
-  email?: string;
-  password?: string;
-  confirmationPassword?: string;
-}
+import { StoreOptions } from '../store-options';
 
 export class SignupModel extends Model {
-  constructor() {
-    super(
-      createStore(
-        { name: 'signup' },
-        withProps<SignupState>({
-          supabaseClient: undefined,
-          emailConfirmationSent: false,
-          location: undefined,
-          email: '',
-          password: '',
-          confirmationPassword: '',
-        })
-      )
-    );
+  @observable
+  public supabaseClient?: SupabaseClient | undefined;
+  @observable
+  public emailConfirmationSent!: boolean;
+  @observable
+  public location?: Location;
+  @observable
+  public email?: string;
+  @observable
+  public password?: string;
+  @observable
+  public confirmationPassword?: string;
+
+  constructor(options?: StoreOptions) {
+    super(options);
+    makeObservable(this);
+
+    runInAction(() => {
+      this.supabaseClient = undefined;
+      this.emailConfirmationSent = false;
+      this.location = undefined;
+      this.email = '';
+      this.password = '';
+      this.confirmationPassword = '';
+    });
   }
 
-  public get supabaseClient(): SupabaseClient | undefined {
-    return this.store.getValue().supabaseClient;
-  }
-
-  public set supabaseClient(value: SupabaseClient | undefined) {
+  public updateSupabaseClient(value: SupabaseClient | undefined) {
     if (JSON.stringify(this.supabaseClient) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, supabaseClient: value }));
+      this.supabaseClient = value;
     }
   }
 
-  public get emailConfirmationSent(): boolean {
-    return this.store.getValue().emailConfirmationSent;
-  }
-
-  public set emailConfirmationSent(emailConfirmationSent: boolean) {
+  public updateEmailConfirmationSent(emailConfirmationSent: boolean) {
     if (this.emailConfirmationSent !== emailConfirmationSent) {
-      this.store.update((state) => ({
-        ...state,
-        emailConfirmationSent: emailConfirmationSent,
-      }));
+      this.emailConfirmationSent = emailConfirmationSent;
     }
   }
 
-  public get location(): Location {
-    return this.store.getValue().location;
-  }
-
-  public set location(location: Location) {
+  public updateLocation(location: Location) {
     if (this.location !== location) {
-      this.store.update((state) => ({ ...state, location: location }));
+      this.location = location;
     }
   }
 
-  public get email(): string {
-    return this.store.getValue().email;
-  }
-
-  public set email(value: string) {
+  public updatEmail(value: string) {
     if (this.email !== value) {
-      this.store.update((state) => ({ ...state, email: value }));
+      this.email = value;
     }
   }
 
-  public get password(): string {
-    return this.store.getValue().password;
-  }
-
-  public set password(value: string) {
+  public updatePassword(value: string) {
     if (this.password !== value) {
-      this.store.update((state) => ({ ...state, password: value }));
+      this.password = value;
     }
   }
 
-  public get confirmationPassword(): string {
-    return this.store.getValue().confirmationPassword;
-  }
-
-  public set confirmationPassword(value: string) {
+  public updateConfirmationPassword(value: string) {
     if (this.confirmationPassword !== value) {
-      this.store.update((state) => ({ ...state, confirmationPassword: value }));
+      this.confirmationPassword = value;
     }
   }
 }

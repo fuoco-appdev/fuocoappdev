@@ -1,479 +1,291 @@
-import {
-  BannerProps,
-  LanguageInfo,
-  ToastProps,
-} from '@fuoco.appdev/web-components';
-import { Order, PriceList } from '@medusajs/medusa';
-import { createStore, withProps } from '@ngneat/elf';
+import { HttpTypes } from '@medusajs/types';
 import { AuthChangeEvent } from '@supabase/supabase-js';
+import { makeObservable, observable, runInAction } from 'mobx';
 import { Model } from '../model';
 import { AccountResponse } from '../protobuf/account_pb';
 import { RoutePathsType } from '../route-paths-type';
 import { AccountData } from '../services/account-notification.service';
+import { StoreOptions } from '../store-options';
 import { InventoryLocation } from './explore.model';
 
-export interface WindowState {
-  account: AccountResponse | null;
-  isAuthenticated: boolean | undefined;
-  isAccountComplete: boolean;
-  activeRoute: RoutePathsType | undefined;
-  activeTabsId: RoutePathsType | undefined;
-  cartCount: number;
-  unseenNotificationsCount: number;
-  orderPlacedNotificationData: Order | undefined;
-  orderShippedNotificationData: Order | undefined;
-  orderReturnedNotificationData: Order | undefined;
-  orderCanceledNotificationData: Order | undefined;
-  accountFollowerAcceptedNotificationData: AccountData | undefined;
-  accountFollowerFollowingNotificationData: AccountData | undefined;
-  authState: AuthChangeEvent | undefined;
-  isLoading: boolean;
-  toast: ToastProps | undefined;
-  banner: BannerProps | undefined;
-  showNavigateBack: boolean;
-  loadedLocationPath: string | undefined;
-  prevTransitionKeyIndex: number;
-  transitionKeyIndex: number;
-  scaleKeyIndex: number;
-  queryInventoryLocation: InventoryLocation | undefined;
-  priceLists: PriceList[];
-}
-
-export interface WindowLocalState {
-  isSideBarOpen: boolean;
-  languageCode: string;
-  languageInfo: { isoCode: string; info: LanguageInfo } | undefined;
+export interface LanguageInfo {
+  name: string;
+  nativeName: string;
+  countryCode: string;
 }
 
 export class WindowModel extends Model {
-  constructor() {
-    super(
-      createStore(
-        { name: 'window' },
-        withProps<WindowState>({
-          account: null,
-          isAuthenticated: undefined,
-          isAccountComplete: false,
-          activeRoute: undefined,
-          activeTabsId: undefined,
-          cartCount: 0,
-          unseenNotificationsCount: 0,
-          orderPlacedNotificationData: undefined,
-          orderShippedNotificationData: undefined,
-          orderReturnedNotificationData: undefined,
-          orderCanceledNotificationData: undefined,
-          accountFollowerAcceptedNotificationData: undefined,
-          accountFollowerFollowingNotificationData: undefined,
-          authState: undefined,
-          isLoading: false,
-          toast: undefined,
-          banner: undefined,
-          showNavigateBack: false,
-          loadedLocationPath: undefined,
-          prevTransitionKeyIndex: 0,
-          transitionKeyIndex: 0,
-          scaleKeyIndex: 0,
-          queryInventoryLocation: undefined,
-          priceLists: [],
-        })
-      ),
-      undefined,
-      createStore(
-        { name: 'window-local' },
-        withProps<WindowLocalState>({
-          isSideBarOpen: true,
-          languageCode: 'en',
-          languageInfo: undefined,
-        })
-      )
-    );
+  @observable
+  public account!: AccountResponse | null;
+  @observable
+  public isAuthenticated: boolean | undefined;
+  @observable
+  public isAccountComplete!: boolean;
+  @observable
+  public activeRoute: RoutePathsType | undefined;
+  @observable
+  public activeTabsId: RoutePathsType | undefined;
+  @observable
+  public cartCount!: number;
+  @observable
+  public unseenNotificationsCount!: number;
+  @observable
+  public orderPlacedNotificationData: HttpTypes.StoreOrder | undefined;
+  @observable
+  public orderShippedNotificationData: HttpTypes.StoreOrder | undefined;
+  @observable
+  public orderReturnedNotificationData: HttpTypes.StoreOrder | undefined;
+  @observable
+  public orderCanceledNotificationData: HttpTypes.StoreOrder | undefined;
+  @observable
+  public accountFollowerAcceptedNotificationData: AccountData | undefined;
+  @observable
+  public accountFollowerFollowingNotificationData: AccountData | undefined;
+  @observable
+  public authState: AuthChangeEvent | undefined;
+  @observable
+  public isLoading!: boolean;
+  @observable
+  public showNavigateBack!: boolean;
+  @observable
+  public loadedLocationPath: string | undefined;
+  @observable
+  public prevTransitionKeyIndex!: number;
+  @observable
+  public transitionKeyIndex!: number;
+  @observable
+  public scaleKeyIndex!: number;
+  @observable
+  public queryInventoryLocation: InventoryLocation | undefined;
+  @observable
+  public priceLists!: HttpTypes.AdminPriceList[];
+  @observable
+  public isSideBarOpen!: boolean;
+  @observable
+  public languageCode!: string;
+  @observable
+  public languageInfo: { isoCode: string; info: LanguageInfo } | undefined;
+
+  constructor(options?: StoreOptions) {
+    super({
+      ...options,
+      ...{
+        persistableProperties: {
+          local: ['_isSideBarOpen', '_languageCode, _languageInfo'],
+        },
+      },
+    });
+    makeObservable(this);
+
+    runInAction(() => {
+      this.account = null;
+      this.isAuthenticated = undefined;
+      this.isAccountComplete = false;
+      this.activeRoute = undefined;
+      this.activeTabsId = undefined;
+      this.cartCount = 0;
+      this.unseenNotificationsCount = 0;
+      this.orderPlacedNotificationData = undefined;
+      this.orderShippedNotificationData = undefined;
+      this.orderReturnedNotificationData = undefined;
+      this.orderCanceledNotificationData = undefined;
+      this.accountFollowerAcceptedNotificationData = undefined;
+      this.accountFollowerFollowingNotificationData = undefined;
+      this.authState = undefined;
+      this.isLoading = false;
+      this.showNavigateBack = false;
+      this.loadedLocationPath = undefined;
+      this.prevTransitionKeyIndex = 0;
+      this.transitionKeyIndex = 0;
+      this.scaleKeyIndex = 0;
+      this.queryInventoryLocation = undefined;
+      this.priceLists = [];
+      this.isSideBarOpen = true;
+      this.languageCode = 'en';
+      this.languageInfo = undefined;
+    });
   }
 
-  public get account(): AccountResponse | null {
-    return this.store.getValue().account;
-  }
-
-  public set account(value: AccountResponse | null) {
+  public updateAccount(value: AccountResponse | null) {
     if (JSON.stringify(this.account) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, account: value }));
+      runInAction(() => (this.account = value));
     }
   }
 
-  public get user(): object | null {
-    return this.store.getValue().user;
-  }
-
-  public set user(value: object | null) {
-    if (JSON.stringify(this.user) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, user: value }));
-    }
-  }
-
-  public get customer(): object | null {
-    return this.store.getValue().customer;
-  }
-
-  public set customer(value: object | null) {
-    if (JSON.stringify(this.customer) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, customer: value }));
-    }
-  }
-
-  public get isAuthenticated(): boolean | undefined {
-    return this.store.getValue().isAuthenticated;
-  }
-
-  public set isAuthenticated(value: boolean | undefined) {
+  public updateIsAuthenticated(value: boolean | undefined) {
     if (this.isAuthenticated !== value) {
-      this.store.update((state) => ({
-        ...state,
-        isAuthenticated: value,
-      }));
+      runInAction(() => (this.isAuthenticated = value));
     }
   }
 
-  public get isAccountComplete(): boolean {
-    return this.store.getValue().isAccountComplete;
-  }
-
-  public set isAccountComplete(value: boolean) {
+  public updateIsAccountComplete(value: boolean) {
     if (this.isAccountComplete !== value) {
-      this.store.update((state) => ({
-        ...state,
-        isAccountComplete: value,
-      }));
+      runInAction(() => (this.isAccountComplete = value));
     }
   }
 
-  public get activeRoute(): RoutePathsType | undefined {
-    return this.store.getValue().activeRoute;
-  }
-
-  public set activeRoute(value: RoutePathsType | undefined) {
+  public updateActiveRoute(value: RoutePathsType | undefined) {
     if (this.activeRoute !== value) {
-      this.store.update((state) => ({ ...state, activeRoute: value }));
+      runInAction(() => (this.activeRoute = value));
     }
   }
 
-  public get activeTabsId(): RoutePathsType | undefined {
-    return this.store.getValue().activeTabsId;
-  }
-
-  public set activeTabsId(value: RoutePathsType | undefined) {
+  public updateActiveTabsId(value: RoutePathsType | undefined) {
     if (this.activeTabsId !== value) {
-      this.store.update((state) => ({ ...state, activeTabsId: value }));
+      runInAction(() => (this.activeTabsId = value));
     }
   }
 
-  public get unseenNotificationsCount(): number {
-    return this.store.getValue().unseenNotificationsCount;
-  }
-
-  public set unseenNotificationsCount(value: number) {
+  public updateUnseenNotificationsCount(value: number) {
     if (this.unseenNotificationsCount !== value) {
-      this.store.update((state) => ({
-        ...state,
-        unseenNotificationsCount: value,
-      }));
+      runInAction(() => (this.unseenNotificationsCount = value));
     }
   }
 
-  public get orderPlacedNotificationData(): Order | undefined {
-    return this.store.getValue().orderPlacedNotificationData;
-  }
-
-  public set orderPlacedNotificationData(value: Order | undefined) {
+  public updateOrderPlacedNotificationData(
+    value: HttpTypes.StoreOrder | undefined
+  ) {
     if (
       JSON.stringify(this.orderPlacedNotificationData) !== JSON.stringify(value)
     ) {
-      this.store.update((state) => ({
-        ...state,
-        orderPlacedNotificationData: value,
-      }));
+      runInAction(() => (this.orderPlacedNotificationData = value));
     }
   }
 
-  public get orderShippedNotificationData(): Order | undefined {
-    return this.store.getValue().orderShippedNotificationData;
-  }
-
-  public set orderShippedNotificationData(value: Order | undefined) {
+  public updateOrderShippedNotificationData(
+    value: HttpTypes.StoreOrder | undefined
+  ) {
     if (
       JSON.stringify(this.orderShippedNotificationData) !==
       JSON.stringify(value)
     ) {
-      this.store.update((state) => ({
-        ...state,
-        orderShippedNotificationData: value,
-      }));
+      runInAction(() => (this.orderShippedNotificationData = value));
     }
   }
 
-  public get orderReturnedNotificationData(): Order | undefined {
-    return this.store.getValue().orderReturnedNotificationData;
-  }
-
-  public set orderReturnedNotificationData(value: Order | undefined) {
+  public updateOrderReturnedNotificationData(
+    value: HttpTypes.StoreOrder | undefined
+  ) {
     if (
       JSON.stringify(this.orderReturnedNotificationData) !==
       JSON.stringify(value)
     ) {
-      this.store.update((state) => ({
-        ...state,
-        orderReturnedNotificationData: value,
-      }));
+      runInAction(() => (this.orderReturnedNotificationData = value));
     }
   }
 
-  public get orderCanceledNotificationData(): Order | undefined {
-    return this.store.getValue().orderCanceledNotificationData;
-  }
-
-  public set orderCanceledNotificationData(value: Order | undefined) {
+  public updateOrderCanceledNotificationData(
+    value: HttpTypes.StoreOrder | undefined
+  ) {
     if (
       JSON.stringify(this.orderCanceledNotificationData) !==
       JSON.stringify(value)
     ) {
-      this.store.update((state) => ({
-        ...state,
-        orderCanceledNotificationData: value,
-      }));
+      runInAction(() => (this.orderCanceledNotificationData = value));
     }
   }
 
-  public get accountFollowerAcceptedNotificationData():
-    | AccountData
-    | undefined {
-    return this.store.getValue().accountFollowerAcceptedNotificationData;
-  }
-
-  public set accountFollowerAcceptedNotificationData(
+  public updateAccountFollowerAcceptedNotificationData(
     value: AccountData | undefined
   ) {
     if (
       JSON.stringify(this.accountFollowerAcceptedNotificationData) !==
       JSON.stringify(value)
     ) {
-      this.store.update((state) => ({
-        ...state,
-        accountFollowerAcceptedNotificationData: value,
-      }));
+      runInAction(() => (this.accountFollowerAcceptedNotificationData = value));
     }
   }
 
-  public get accountFollowerFollowingNotificationData():
-    | AccountData
-    | undefined {
-    return this.store.getValue().accountFollowerFollowingNotificationData;
-  }
-
-  public set accountFollowerFollowingNotificationData(
+  public updateAccountFollowerFollowingNotificationData(
     value: AccountData | undefined
   ) {
     if (
       JSON.stringify(this.accountFollowerFollowingNotificationData) !==
       JSON.stringify(value)
     ) {
-      this.store.update((state) => ({
-        ...state,
-        accountFollowerFollowingNotificationData: value,
-      }));
+      runInAction(
+        () => (this.accountFollowerFollowingNotificationData = value)
+      );
     }
   }
 
-  public get cartCount(): number {
-    return this.store.getValue().cartCount;
-  }
-
-  public set cartCount(value: number) {
+  public updateCartCount(value: number) {
     if (this.cartCount !== value) {
-      this.store.update((state) => ({
-        ...state,
-        cartCount: value,
-      }));
+      runInAction(() => (this.cartCount = value));
     }
   }
 
-  public get authState(): AuthChangeEvent | undefined {
-    return this.store.getValue().authState;
-  }
-
-  public set authState(value: AuthChangeEvent | undefined) {
+  public updateAuthState(value: AuthChangeEvent | undefined) {
     if (this.authState !== value) {
-      this.store.update((state) => ({
-        ...state,
-        authState: value,
-      }));
+      runInAction(() => (this.authState = value));
     }
   }
 
-  public get isLoading(): boolean {
-    return this.store.getValue().isLoading;
-  }
-
-  public set isLoading(value: boolean) {
+  public updateIsLoading(value: boolean) {
     if (this.isLoading !== value) {
-      this.store.update((state) => ({
-        ...state,
-        isLoading: value,
-      }));
+      runInAction(() => (this.isLoading = value));
     }
   }
 
-  public get toast(): ToastProps | undefined {
-    return this.store.getValue().toast;
-  }
-
-  public set toast(value: ToastProps | undefined) {
-    if (JSON.stringify(this.toast) !== JSON.stringify(value)) {
-      this.store.update((state) => ({
-        ...state,
-        toast: value,
-      }));
-    }
-  }
-
-  public get banner(): BannerProps | undefined {
-    return this.store.getValue().banner;
-  }
-
-  public set banner(value: BannerProps | undefined) {
-    if (JSON.stringify(this.banner) !== JSON.stringify(value)) {
-      this.store.update((state) => ({
-        ...state,
-        banner: value,
-      }));
-    }
-  }
-
-  public get showNavigateBack(): boolean {
-    return this.store.getValue().showNavigateBack;
-  }
-
-  public set showNavigateBack(value: boolean) {
+  public updateShowNavigateBack(value: boolean) {
     if (this.showNavigateBack !== value) {
-      this.store.update((state) => ({
-        ...state,
-        showNavigateBack: value,
-      }));
+      runInAction(() => (this.showNavigateBack = value));
     }
   }
 
-  public get loadedLocationPath(): string | undefined {
-    return this.store?.getValue().loadedLocationPath;
-  }
-
-  public set loadedLocationPath(value: string | undefined) {
+  public updateLoadedLocationPath(value: string | undefined) {
     if (this.loadedLocationPath !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        loadedLocationPath: value,
-      }));
+      runInAction(() => (this.loadedLocationPath = value));
     }
   }
 
-  public get prevTransitionKeyIndex(): number {
-    return this.store?.getValue().prevTransitionKeyIndex;
-  }
-
-  public set prevTransitionKeyIndex(value: number) {
+  public updatePrevTransitionKeyIndex(value: number) {
     if (this.prevTransitionKeyIndex !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        prevTransitionKeyIndex: value,
-      }));
+      runInAction(() => (this.prevTransitionKeyIndex = value));
     }
   }
 
-  public get transitionKeyIndex(): number {
-    return this.store?.getValue().transitionKeyIndex;
-  }
-
-  public set transitionKeyIndex(value: number) {
+  public updateTransitionKeyIndex(value: number) {
     if (this.transitionKeyIndex !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        transitionKeyIndex: value,
-      }));
+      runInAction(() => (this.transitionKeyIndex = value));
     }
   }
 
-  public get scaleKeyIndex(): number {
-    return this.store?.getValue().scaleKeyIndex;
-  }
-
-  public set scaleKeyIndex(value: number) {
+  public updateScaleKeyIndex(value: number) {
     if (this.scaleKeyIndex !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        scaleKeyIndex: value,
-      }));
+      runInAction(() => (this.scaleKeyIndex = value));
     }
   }
 
-  public get queryInventoryLocation(): InventoryLocation | undefined {
-    return this.store?.getValue().queryInventoryLocation;
-  }
-
-  public set queryInventoryLocation(value: InventoryLocation | undefined) {
+  public updateQueryInventoryLocation(value: InventoryLocation | undefined) {
     if (this.queryInventoryLocation !== value) {
-      this.store?.update((state) => ({
-        ...state,
-        queryInventoryLocation: value,
-      }));
+      runInAction(() => (this.queryInventoryLocation = value));
     }
   }
 
-  public get priceLists(): PriceList[] {
-    return this.store?.getValue().priceLists;
-  }
-
-  public set priceLists(value: PriceList[]) {
+  public updatePriceLists(value: HttpTypes.AdminPriceList[]) {
     if (JSON.stringify(this.priceLists) !== JSON.stringify(value)) {
-      this.store?.update((state) => ({
-        ...state,
-        priceLists: value,
-      }));
+      runInAction(() => (this.priceLists = value));
     }
   }
 
-  public get isSideBarOpen(): boolean {
-    return this.localStore?.getValue().isSideBarOpen;
-  }
-
-  public set isSideBarOpen(value: boolean) {
+  public updateIsSideBarOpen(value: boolean) {
     if (this.isSideBarOpen !== value) {
-      this.localStore?.update((state) => ({ ...state, isSideBarOpen: value }));
+      runInAction(() => (this.isSideBarOpen = value));
     }
   }
 
-  public get languageCode(): string {
-    return this.localStore?.getValue().languageCode;
-  }
-
-  public set languageCode(value: string) {
+  public updateLanguageCode(value: string) {
     if (this.languageCode !== value) {
-      this.localStore?.update((state) => ({
-        ...state,
-        languageCode: value,
-      }));
+      runInAction(() => (this.languageCode = value));
     }
   }
 
-  public get languageInfo():
-    | { isoCode: string; info: LanguageInfo }
-    | undefined {
-    return this.localStore?.getValue().languageInfo;
-  }
-
-  public set languageInfo(
+  public updateLanguageInfo(
     value: { isoCode: string; info: LanguageInfo } | undefined
   ) {
     if (JSON.stringify(this.languageInfo) !== JSON.stringify(value)) {
-      this.localStore?.update((state) => ({
-        ...state,
-        languageInfo: value,
-      }));
+      runInAction(() => (this.languageInfo = value));
     }
   }
 }

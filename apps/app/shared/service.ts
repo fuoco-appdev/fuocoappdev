@@ -1,17 +1,40 @@
 import { AxiosError } from 'axios';
+import { makeObservable } from 'mobx';
+import { makePersistable } from 'mobx-persist-store';
+import { SerializableProperty } from 'mobx-persist-store/lib/esm2017/serializableProperty';
 import ConfigService from './services/config.service';
-import SupabaseService from './services/supabase.service';
+import { StoreOptions } from './store-options';
 
-export class Service {
+export abstract class Service {
   private readonly _endpointUrl: string;
+  protected readonly configService: ConfigService;
+  protected readonly supabaseAnonKey: string;
 
-  constructor() {
-    this._endpointUrl = ConfigService.supabase?.functions_url;
+  constructor(
+    configService: ConfigService,
+    supabaseAnonKey: string,
+    options: StoreOptions = {}
+  ) {
+    makeObservable(this);
+    this._endpointUrl = configService.supabase?.functions_url;
+    this.configService = configService;
+    this.supabaseAnonKey = supabaseAnonKey;
+
+    if (options.strategy?.default) {
+      makePersistable(this, {
+        name: this.constructor.name.toLocaleLowerCase(),
+        properties: options.persistableProperties?.default as (
+          | keyof this
+          | SerializableProperty<this, keyof this>
+        )[],
+        storage: options.strategy.default,
+      });
+    }
   }
 
   public get headers(): { [key: string]: string } {
     return {
-      Authorization: `Bearer ${SupabaseService.anonKey}`,
+      Authorization: `Bearer ${this.supabaseAnonKey}`,
       'Content-Type': 'application/x-protobuf',
     };
   }
@@ -33,4 +56,6 @@ export class Service {
       throw json as AxiosError;
     }
   }
+
+  public abstract dispose(): void;
 }

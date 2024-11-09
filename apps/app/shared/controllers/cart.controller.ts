@@ -1,75 +1,77 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import {
-  Cart,
-  LineItem,
-  Order,
-  ProductType,
-  Region,
-  StorePostCartsCartReq,
-  Swap
-} from "@medusajs/medusa";
-import { Store, select } from "@ngneat/elf";
-import { Subscription, filter, firstValueFrom, take } from "rxjs";
-import { Controller } from "../controller";
-import { CartModel } from "../models/cart.model";
-import { InventoryLocation } from "../models/explore.model";
-import MedusaService from "../services/medusa.service";
-import { MedusaProductTypeNames } from "../types/medusa.type";
-import ExploreController from "./explore.controller";
-import StoreController from "./store.controller";
+import { HttpTypes } from '@medusajs/types';
+import { IValueDidChange, Lambda, observe, when } from 'mobx';
+import { DIContainer } from 'rsdi';
+import { Controller } from '../controller';
+import { CartModel } from '../models/cart.model';
+import { InventoryLocation } from '../models/explore.model';
+import MedusaService, { CartPayload } from '../services/medusa.service';
+import { StoreOptions } from '../store-options';
+import { MedusaProductTypeNames } from '../types/medusa.type';
+import ExploreController from './explore.controller';
+import StoreController from './store.controller';
 
-class CartController extends Controller {
+export default class CartController extends Controller {
   private readonly _model: CartModel;
   private readonly _cartRelations: string;
   private _timerId: NodeJS.Timeout | number | undefined;
-  private _selectedInventoryLocationSubscription: Subscription | undefined;
-  private _medusaAccessTokenSubscription: Subscription | undefined;
+  private _selectedInventoryLocationDisposer: Lambda | undefined;
+  private _medusaAccessTokenDisposer: Lambda | undefined;
 
-  constructor() {
+  constructor(
+    private readonly _container: DIContainer<{
+      ExploreController: ExploreController;
+      StoreController: StoreController;
+      MedusaService: MedusaService;
+    }>,
+    private readonly _storeOptions: StoreOptions
+  ) {
     super();
 
-    this._model = new CartModel();
-    this.onSelectedInventoryLocationChangedAsync = this
-      .onSelectedInventoryLocationChangedAsync.bind(this);
+    this._model = new CartModel(this._storeOptions);
+    this.onSelectedInventoryLocationChangedAsync =
+      this.onSelectedInventoryLocationChangedAsync.bind(this);
     this._cartRelations =
-      "payment_session,billing_address,shipping_address,items,region,discounts,gift_cards,customer,payment_sessions,payment,shipping_methods,sales_channel,sales_channels";
+      'payment_session,billing_address,shipping_address,items,region,discounts,gift_cards,customer,payment_sessions,payment,shipping_methods,sales_channel,sales_channels';
   }
 
   public get model(): CartModel {
     return this._model;
   }
 
-  public override initialize(renderCount: number): void {
+  public override initialize = (renderCount: number): void => {
+    const exploreController = this._container.get('ExploreController');
     this.initializeAsync(renderCount);
-  }
+    this._selectedInventoryLocationDisposer = observe(
+      exploreController.model,
+      'selectedInventoryLocation',
+      this.onSelectedInventoryLocationChangedAsync
+    );
+  };
 
-  public override async load(_renderCount: number): Promise<void> {
+  public override load(_renderCount: number): void {
     this.requestStockLocationsAsync();
   }
 
   public override disposeInitialization(_renderCount: number): void {
-    this._medusaAccessTokenSubscription?.unsubscribe();
-    this._selectedInventoryLocationSubscription?.unsubscribe();
+    this._medusaAccessTokenDisposer?.();
+    this._selectedInventoryLocationDisposer?.();
+    this._model.dispose();
   }
 
-  public override disposeLoad(_renderCount: number): void { }
+  public override disposeLoad(_renderCount: number): void {}
 
   public updateDiscountCodeText(value: string): void {
     this._model.discountCode = value;
   }
 
-  public updateCarts(
-    id: string,
-    value: Omit<Cart, "refundable_amount" | "refunded_total"> | undefined,
-  ): void {
+  public updateCarts(id: string, value: HttpTypes.StoreCart | undefined): void {
     const carts = { ...this._model.carts };
     carts[id] = value;
     this._model.carts = carts;
   }
 
-  public updateSelectedCart(
-    value: Omit<Cart, "refundable_amount" | "refunded_total"> | undefined,
-  ) {
+  public updateSelectedCart(value: HttpTypes.StoreCart | undefined) {
     this._model.cart = value;
   }
 
@@ -78,84 +80,85 @@ class CartController extends Controller {
       return;
     }
 
-    await this.updateCartAsync({
-      discounts: [{ code: this._model.discountCode }],
+    const medusaService = this._container.get('MedusaService');
+    const exploreController = this._container.get('ExploreController');
+    const { selectedInventoryLocationId } = exploreController.model;
+    const cartId = selectedInventoryLocationId
+      ? this._model.cartIds?.[selectedInventoryLocationId]
+      : undefined;
+    if (!cartId) {
+      return;
+    }
+    await medusaService.requestStoreCartAddPromotions(cartId, {
+      promo_codes: [this._model.discountCode],
     });
 
-    this._model.discountCode = "";
+    this._model.discountCode = '';
   }
 
   public async removeDiscountCodeAsync(code: string): Promise<void> {
-    const { selectedInventoryLocationId } = ExploreController.model;
+    const exploreController = this._container.get('ExploreController');
+    const medusaService = this._container.get('MedusaService');
+    const { selectedInventoryLocationId } = exploreController.model;
     const cartId = selectedInventoryLocationId
-      ? this._model.cartIds[selectedInventoryLocationId]
+      ? this._model.cartIds?.[selectedInventoryLocationId]
       : undefined;
     if (!cartId) {
       return;
     }
 
     try {
-      const cartResponse = await MedusaService.medusa?.carts.deleteDiscount(
-        cartId,
-        code,
-      );
-      if (!cartResponse?.cart) {
-        return;
-      }
+      const cart = await medusaService.requestStoreCartRemovePromotion(cartId);
 
-      this.updateCarts(cartResponse.cart.id, cartResponse?.cart);
-      this.updateSelectedCart(cartResponse?.cart);
+      this.updateCarts(cart.id, cart);
+      this.updateSelectedCart(cart);
     } catch (error: any) {
       console.error(error);
     }
   }
 
-  public async updateCartAsync(payload: StorePostCartsCartReq): Promise<void> {
-    const { selectedInventoryLocationId } = ExploreController.model;
+  public async updateCartAsync(payload: CartPayload): Promise<void> {
+    const exploreController = this._container.get('ExploreController');
+    const medusaService = this._container.get('MedusaService');
+    const { selectedInventoryLocationId } = exploreController.model;
     const cartId = selectedInventoryLocationId
-      ? this._model.cartIds[selectedInventoryLocationId]
+      ? this._model.cartIds?.[selectedInventoryLocationId]
       : undefined;
     if (!cartId) {
       return;
     }
 
     try {
-      const cartResponse = await MedusaService.medusa?.carts.update(
-        cartId,
-        payload,
-        {
-          expand: this._cartRelations,
-        },
-      );
+      const cart = await medusaService.requestStoreUpdateCart(cartId, payload, {
+        expand: this._cartRelations,
+      });
 
-      if (!cartResponse?.cart) {
+      if (!cart) {
         return;
       }
 
-      this.updateCarts(cartResponse.cart.id, cartResponse?.cart);
-      this.updateSelectedCart(cartResponse?.cart);
+      this.updateCarts(cart.id, cart);
+      this.updateSelectedCart(cart);
     } catch (error: any) {
       console.error(error);
     }
   }
 
-  public async completeCartAsync(): Promise<
-    Cart | Order | Swap | null | undefined
-  > {
-    const { selectedInventoryLocationId } = ExploreController.model;
+  public async completeCartAsync(): Promise<HttpTypes.StoreCart | null> {
+    const exploreController = this._container.get('ExploreController');
+    const medusaService = this._container.get('MedusaService');
+    const { selectedInventoryLocationId } = exploreController.model;
     const cartId = selectedInventoryLocationId
-      ? this._model.cartIds[selectedInventoryLocationId]
+      ? this._model.cartIds?.[selectedInventoryLocationId]
       : undefined;
     if (!cartId) {
       return null;
     }
 
     try {
-      const completeCartResponse = await MedusaService.medusa?.carts.complete(
-        cartId,
-      );
+      const cart = await medusaService.requestStoreCartComplete(cartId);
 
-      return completeCartResponse?.data;
+      return cart;
     } catch (error: any) {
       console.error(error);
       return null;
@@ -163,33 +166,33 @@ class CartController extends Controller {
   }
 
   public async resetCartAsync(): Promise<void> {
-    if (!StoreController.model.selectedRegion) {
+    const exploreController = this._container.get('ExploreController');
+    const storeController = this._container.get('StoreController');
+    if (!storeController.model.selectedRegion) {
       return;
     }
 
-    const { selectedInventoryLocation } = ExploreController.model;
+    const { selectedInventoryLocation } = exploreController.model;
     await this.createCartAsync(
-      StoreController.model.selectedRegion.id,
-      selectedInventoryLocation,
+      storeController.model.selectedRegion.id,
+      selectedInventoryLocation
     );
   }
 
-  public async removeLineItemAsync(item: LineItem): Promise<void> {
+  public async removeLineItemAsync(
+    item: HttpTypes.StoreCartLineItem
+  ): Promise<void> {
+    const medusaService = this._container.get('MedusaService');
     try {
-      const cartResponse = await MedusaService.medusa?.carts.lineItems.delete(
-        item.cart_id,
-        item.id,
-        {
-          expand: this._cartRelations,
-        },
-      );
+      await medusaService.requestStoreCartRemoveLineItem(item.cart_id, item.id);
+      const cart = await medusaService.requestStoreCart(item.cart_id);
 
-      if (!cartResponse?.cart) {
+      if (!cart) {
         return;
       }
 
-      this.updateCarts(cartResponse.cart.id, cartResponse?.cart);
-      this.updateSelectedCart(cartResponse?.cart);
+      this.updateCarts(cart.id, cart);
+      this.updateSelectedCart(cart);
     } catch (error: any) {
       console.error(error);
     }
@@ -197,28 +200,26 @@ class CartController extends Controller {
 
   public async updateLineItemQuantityAsync(
     quantity: number,
-    item: LineItem,
+    item: HttpTypes.StoreCartLineItem
   ): Promise<void> {
     clearTimeout(this._timerId as number | undefined);
+    const medusaService = this._container.get('MedusaService');
     this._timerId = setTimeout(async () => {
       try {
-        const cartResponse = await MedusaService.medusa?.carts.lineItems.update(
+        const cart = await medusaService.requestStoreUpdateLineItem(
           item.cart_id,
           item.id,
           {
             quantity: quantity,
-          },
-          {
-            expand: this._cartRelations,
-          },
+          }
         );
 
-        if (!cartResponse?.cart) {
+        if (!cart) {
           return;
         }
 
-        this.updateCarts(cartResponse.cart.id, cartResponse?.cart);
-        this.updateSelectedCart(cartResponse?.cart);
+        this.updateCarts(cart.id, cart);
+        this.updateSelectedCart(cart);
       } catch (error: any) {
         console.error(error);
       }
@@ -226,6 +227,7 @@ class CartController extends Controller {
   }
 
   public isFoodRequirementInCart(): boolean {
+    const storeController = this._container.get('StoreController');
     const cart = this._model.cart;
     if (!cart) {
       return false;
@@ -239,55 +241,47 @@ class CartController extends Controller {
       return true;
     }
 
-    const requiredFoodType = StoreController.model.productTypes.find(
-      (value) => value.value === MedusaProductTypeNames.RequiredFood,
+    const requiredFoodType = storeController.model.productTypes.find(
+      (value) => value.value === MedusaProductTypeNames.RequiredFood
     );
-    const menuItemType = StoreController.model.productTypes.find(
-      (value) => value.value === MedusaProductTypeNames.MenuItem,
+    const menuItemType = storeController.model.productTypes.find(
+      (value) => value.value === MedusaProductTypeNames.MenuItem
     );
-    const hasFoodRequirement = cart.items.some((cartItem) => {
-      return (
-        cartItem.variant.product.type_id === requiredFoodType?.id
-      );
+    const hasFoodRequirement = cart.items?.some((cartItem) => {
+      const variant = cartItem.variant;
+      return variant?.product?.type_id === requiredFoodType?.id;
     });
 
-    const menuItems = cart.items.some((cartItem) => {
-      return (
-        cartItem.variant.product.type_id === menuItemType?.id
-      );
+    const menuItems = cart.items?.some((cartItem) => {
+      const variant = cartItem.variant;
+      return variant?.product?.type_id === menuItemType?.id;
     });
 
     return (menuItems || hasFoodRequirement) ?? false;
   }
 
-  private async initializeAsync(_renderCount: number): Promise<void> {
-    this._selectedInventoryLocationSubscription?.unsubscribe();
-    this._selectedInventoryLocationSubscription = ExploreController.model.store
-      .pipe(select((model) => model.selectedInventoryLocation))
-      .subscribe({
-        next: this.onSelectedInventoryLocationChangedAsync,
-      });
-  }
+  private async initializeAsync(_renderCount: number): Promise<void> {}
 
   private async requestStockLocationsAsync(): Promise<void> {
-    const cartIds = await firstValueFrom(
-      this._model.localStore?.pipe(select((model) => model.cartIds), take(1)) ??
-      Store.prototype,
-    );
-    const stockLocationIds = Object.keys(cartIds);
-    const stockLocations = await MedusaService.requestStockLocationsAsync(
-      stockLocationIds,
+    const medusaService = this._container.get('MedusaService');
+    const cartIds = this._model.cartIds;
+    const stockLocationIds = Object.keys(cartIds ?? {});
+    const stockLocations = await medusaService.requestStockLocationsAsync(
+      stockLocationIds
     );
     this._model.stockLocations = stockLocations;
 
-    await this.requestCartsAsync(Object.values(cartIds));
+    await this.requestCartsAsync(
+      Object.values(cartIds ?? {}).map((value) => value ?? '')
+    );
   }
 
   private async requestCartsAsync(cartIds: string[]): Promise<void> {
+    const medusaService = this._container.get('MedusaService');
     for (const id of cartIds) {
       try {
-        const cartResponse = await MedusaService.medusa?.carts.retrieve(id);
-        this.updateCarts(id, cartResponse?.cart);
+        const cart = await medusaService.requestStoreCart(id);
+        this.updateCarts(id, cart);
       } catch (error: any) {
         console.error(error);
       }
@@ -296,10 +290,9 @@ class CartController extends Controller {
 
   private async createCartAsync(
     regionId: string,
-    selectedInventoryLocation: InventoryLocation | undefined,
-  ): Promise<
-    Omit<Cart, "refundable_amount" | "refunded_total"> | null | undefined
-  > {
+    selectedInventoryLocation: InventoryLocation | undefined
+  ): Promise<HttpTypes.StoreCart | null | undefined> {
+    const medusaService = this._container.get('MedusaService');
     if (!selectedInventoryLocation || !selectedInventoryLocation.id) {
       return null;
     }
@@ -307,25 +300,23 @@ class CartController extends Controller {
     try {
       const selectedSalesChannelId =
         selectedInventoryLocation.salesChannels[0].id;
-      const cartResponse = await MedusaService.medusa?.carts.create({
+      const cart = await medusaService.requestStoreCreateCart({
         region_id: regionId,
         sales_channel_id: selectedSalesChannelId,
-      }, {
-        expand: this._cartRelations,
       });
 
       const cartIds = { ...this._model.cartIds };
-      cartIds[selectedInventoryLocation.id] = cartResponse?.cart.id;
+      cartIds[selectedInventoryLocation.id] = cart.id;
       this._model.cartIds = cartIds;
 
-      if (!cartResponse?.cart) {
+      if (!cart) {
         return;
       }
 
-      this.updateCarts(cartResponse.cart.id, cartResponse?.cart);
-      this.updateSelectedCart(cartResponse?.cart);
+      this.updateCarts(cart.id, cart);
+      this.updateSelectedCart(cart);
 
-      return cartResponse?.cart;
+      return cart;
     } catch (error: any) {
       console.error(error);
       return null;
@@ -333,72 +324,64 @@ class CartController extends Controller {
   }
 
   private async onSelectedInventoryLocationChangedAsync(
-    value: InventoryLocation | undefined,
+    value: IValueDidChange<InventoryLocation | undefined>
   ): Promise<void> {
-    if (!value) {
+    const storeController = this._container.get('StoreController');
+    const medusaService = this._container.get('MedusaService');
+    const inventoryLocation = value.newValue;
+    if (!inventoryLocation) {
       this.updateSelectedCart(undefined);
       return;
     }
 
-    const regions: Region[] = await firstValueFrom(
-      StoreController.model.store.pipe(
-        select((model) => model.regions),
-        filter((value) => value !== undefined && value.length > 0),
-        take(1),
-      ),
+    await when(() => storeController.model.regions !== undefined);
+    const regions: HttpTypes.StoreRegion[] = storeController.model.regions;
+    const region = regions.find(
+      (region) => region.name === inventoryLocation?.region
     );
-    const region = regions.find((region) => region.name === value?.region);
-    const cartId = value?.id ? this._model.cartIds[value.id] : undefined;
+    const cartId = inventoryLocation?.id
+      ? this._model.cartIds?.[inventoryLocation.id]
+      : undefined;
     const metadata = region?.metadata as Record<string, any> | undefined;
-    const isFoodInCartRequired = metadata?.["is_food_in_cart_required"] as
+    const isFoodInCartRequired = metadata?.['is_food_in_cart_required'] as
       | string
       | undefined;
-    this._model.isFoodInCartRequired = isFoodInCartRequired === "true" ?? false;
+    this._model.isFoodInCartRequired = isFoodInCartRequired === 'true';
 
     try {
-      const productTypes: ProductType[] = await firstValueFrom(
-        StoreController.model.store.pipe(
-          select((model) => model.productTypes),
-          filter((value) => value !== undefined),
-          take(1),
-        ),
-      );
+      await when(() => storeController.model.productTypes !== undefined);
+      const productTypes: HttpTypes.StoreProductType[] =
+        storeController.model.productTypes;
       const requiredFoodType = productTypes.find(
-        (value) => value.value === MedusaProductTypeNames.RequiredFood,
+        (value) => value.value === MedusaProductTypeNames.RequiredFood
       );
-      const requiredFoodProductsResponse = await MedusaService.medusa?.products
-        .list({
-          type_id: [requiredFoodType?.id ?? ""],
-          sales_channel_id: value?.salesChannels.map(
-            (value) => value.id,
+      const requiredFoodProducts =
+        await medusaService.requestStoreProductsAsync({
+          type_id: [requiredFoodType?.id ?? ''],
+          sales_channel_id: inventoryLocation?.salesChannels.map(
+            (value) => value.id
           ) as string[],
           region_id: region?.id,
         });
-      this._model.requiredFoodProducts =
-        requiredFoodProductsResponse?.products ?? [];
+      this._model.requiredFoodProducts = requiredFoodProducts ?? [];
     } catch (error: any) {
       console.error(error);
     }
 
-    if (value && !cartId && region?.id) {
-      await this.createCartAsync(region.id, value);
+    if (inventoryLocation && !cartId && region?.id) {
+      await this.createCartAsync(region.id, inventoryLocation);
     }
 
     if (cartId && !this._model.carts[cartId]) {
       try {
-        const cartResponse = await MedusaService.medusa?.carts.retrieve(
-          cartId,
-          {
-            expand: this._cartRelations,
-          },
-        );
+        const cart = await medusaService.requestStoreCart(cartId);
 
-        if (!cartResponse?.cart) {
+        if (!cart) {
           return;
         }
 
-        this.updateCarts(cartResponse.cart.id, cartResponse?.cart);
-        this.updateSelectedCart(cartResponse?.cart);
+        this.updateCarts(cart.id, cart);
+        this.updateSelectedCart(cart);
       } catch (error: any) {
         console.error(error);
       }
@@ -407,5 +390,3 @@ class CartController extends Controller {
     }
   }
 }
-
-export default new CartController();

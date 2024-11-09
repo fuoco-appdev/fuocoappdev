@@ -36,32 +36,17 @@ export class AccountRequest extends Message<AccountRequest> {
   status = "";
 
   /**
-   * @generated from field: string language_code = 7;
-   */
-  languageCode = "";
-
-  /**
-   * @generated from field: string username = 8;
+   * @generated from field: string username = 6;
    */
   username = "";
 
   /**
-   * @generated from field: string birthday = 9;
+   * @generated from field: string birthday = 7;
    */
   birthday = "";
 
   /**
-   * @generated from field: string sex = 10;
-   */
-  sex = "";
-
-  /**
-   * @generated from field: repeated string interests = 11;
-   */
-  interests: string[] = [];
-
-  /**
-   * @generated from field: string metadata = 12;
+   * @generated from field: string metadata = 8;
    */
   metadata = "";
 
@@ -78,12 +63,9 @@ export class AccountRequest extends Message<AccountRequest> {
     { no: 3, name: "supabase_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "profile_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "status", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 7, name: "language_code", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 8, name: "username", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 9, name: "birthday", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 10, name: "sex", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 11, name: "interests", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
-    { no: 12, name: "metadata", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "username", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 7, name: "birthday", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 8, name: "metadata", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountRequest {
@@ -138,32 +120,17 @@ export class AccountResponse extends Message<AccountResponse> {
   updateAt = "";
 
   /**
-   * @generated from field: string language_code = 7;
-   */
-  languageCode = "";
-
-  /**
-   * @generated from field: string username = 8;
+   * @generated from field: string username = 7;
    */
   username = "";
 
   /**
-   * @generated from field: string birthday = 9;
+   * @generated from field: string birthday = 8;
    */
   birthday = "";
 
   /**
-   * @generated from field: string sex = 10;
-   */
-  sex = "";
-
-  /**
-   * @generated from field: repeated string interests = 11;
-   */
-  interests: string[] = [];
-
-  /**
-   * @generated from field: string metadata = 12;
+   * @generated from field: string metadata = 9;
    */
   metadata = "";
 
@@ -181,12 +148,9 @@ export class AccountResponse extends Message<AccountResponse> {
     { no: 4, name: "profile_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "status", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 6, name: "update_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 7, name: "language_code", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 8, name: "username", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 9, name: "birthday", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 10, name: "sex", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 11, name: "interests", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
-    { no: 12, name: "metadata", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 7, name: "username", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 8, name: "birthday", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 9, name: "metadata", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountResponse {

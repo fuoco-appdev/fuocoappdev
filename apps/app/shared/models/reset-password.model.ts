@@ -1,30 +1,32 @@
-import { createStore, withProps } from '@ngneat/elf';
 import { SupabaseClient } from '@supabase/supabase-js';
+import { makeObservable, observable, runInAction } from 'mobx';
 import { Model } from '../model';
-
-export interface ResetPasswordState {
-  supabaseClient: SupabaseClient | undefined;
-}
+import { StoreOptions } from '../store-options';
 
 export class ResetPasswordModel extends Model {
-  constructor() {
-    super(
-      createStore(
-        { name: 'reset-password' },
-        withProps<ResetPasswordState>({
-          supabaseClient: undefined,
-        })
-      )
-    );
+  @observable
+  public supabaseClient: SupabaseClient | undefined;
+  @observable
+  public password!: string;
+  constructor(options?: StoreOptions) {
+    super(options);
+    makeObservable(this);
+
+    runInAction(() => {
+      this.supabaseClient = undefined;
+      this.password = '';
+    });
   }
 
-  public get supabaseClient(): SupabaseClient | undefined {
-    return this.store.getValue().supabaseClient;
-  }
-
-  public set supabaseClient(value: SupabaseClient | undefined) {
+  public updateSupabaseClient(value: SupabaseClient | undefined) {
     if (JSON.stringify(this.supabaseClient) !== JSON.stringify(value)) {
-      this.store.update((state) => ({ ...state, supabaseClient: value }));
+      this.supabaseClient = value;
+    }
+  }
+
+  public updatePassword(value: string) {
+    if (this.password !== value) {
+      this.password = value;
     }
   }
 }

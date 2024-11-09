@@ -1,51 +1,38 @@
 import { Subscription } from '@supabase/gotrue-js/dist/main';
 import {
   AuthChangeEvent,
+  createClient,
   Session,
   SupabaseClient,
   User,
-  createClient,
 } from '@supabase/supabase-js';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { makeObservable, observable, runInAction } from 'mobx';
+import { Service } from '../service';
+import { StoreOptions } from '../store-options';
 import ConfigService from './config.service';
 
-class SupabaseService {
-  private _supabaseClient: SupabaseClient | undefined;
-  private _supabaseClientBehaviorSubject: BehaviorSubject<
-    SupabaseClient | undefined
-  >;
-  private _userBehaviorSubject: BehaviorSubject<User | null>;
-  private _sessionBehaviorSubject: BehaviorSubject<Session | null>;
-  private _anonKey: string | undefined;
+export default class SupabaseService extends Service {
+  @observable
+  public client: SupabaseClient | undefined;
+  @observable
+  public user!: User | null;
+  @observable
+  public session!: Session | null;
 
-  constructor() {
-    this._supabaseClientBehaviorSubject = new BehaviorSubject<
-      SupabaseClient | undefined
-    >(undefined);
-    this._userBehaviorSubject = new BehaviorSubject<User | null>(null);
-    this._sessionBehaviorSubject = new BehaviorSubject<Session | null>(null);
-  }
+  constructor(
+    private readonly _anonKey: string,
+    private readonly _configService: ConfigService,
+    private readonly _storeOptions: StoreOptions,
+    private _supabaseClient: SupabaseClient
+  ) {
+    super(_configService, _anonKey, _storeOptions);
+    makeObservable(this);
 
-  public get user(): User | null {
-    return this._userBehaviorSubject.getValue();
-  }
-
-  public get session(): Session | null {
-    return this._sessionBehaviorSubject.getValue();
-  }
-
-  public get supabaseClientObservable(): Observable<
-    SupabaseClient | undefined
-  > {
-    return this._supabaseClientBehaviorSubject.asObservable();
-  }
-
-  public get userObservable(): Observable<User | null> {
-    return this._userBehaviorSubject.asObservable();
-  }
-
-  public get sessionObservable(): Observable<Session | null> {
-    return this._sessionBehaviorSubject.asObservable();
+    runInAction(() => {
+      this.client = undefined;
+      this.user = null;
+      this.session = null;
+    });
   }
 
   public get supabaseClient(): SupabaseClient | undefined {
@@ -57,22 +44,27 @@ class SupabaseService {
   }
 
   public async initializeSupabase(): Promise<void> {
-    this._anonKey = import.meta.env['SUPABASE_ANON_KEY'] ?? '';
-    this._supabaseClient = createClient(
-      ConfigService.supabase.url,
-      this._anonKey ?? ''
-    );
+    if (!this._supabaseClient) {
+      this._supabaseClient = createClient(
+        this._configService.supabase.url,
+        this._anonKey
+      );
+    }
 
-    this._supabaseClientBehaviorSubject.next(this._supabaseClient);
+    runInAction(() => {
+      this.client = this._supabaseClient;
+    });
   }
+
+  public override dispose(): void {}
 
   public subscribeToAuthStateChanged(
     callback?: (event: AuthChangeEvent, session: Session | null) => void
   ): Subscription | undefined {
     const object = this._supabaseClient?.auth.onAuthStateChange(
       (event: AuthChangeEvent, session: Session | null) => {
-        callback?.(event, session);
         this.onAuthStateChanged(event, session);
+        callback?.(event, session);
       }
     );
     return object?.data.subscription;
@@ -100,7 +92,9 @@ class SupabaseService {
         this.user?.id !== userResponse?.data.user.id &&
         this.user?.updated_at !== userResponse?.data.user.updated_at
       ) {
-        this._userBehaviorSubject.next(userResponse?.data.user ?? null);
+        runInAction(() => {
+          this.user = userResponse?.data.user ?? null;
+        });
       }
 
       return userResponse?.data.user ?? null;
@@ -114,10 +108,6 @@ class SupabaseService {
     const sessionResponse = await this.supabaseClient?.auth.getSession();
     if (sessionResponse?.error) {
       throw sessionResponse?.error;
-    }
-
-    if (this.session !== sessionResponse?.data?.session) {
-      this._sessionBehaviorSubject.next(sessionResponse?.data?.session ?? null);
     }
 
     return sessionResponse?.data?.session ?? null;
@@ -143,15 +133,10 @@ class SupabaseService {
         return;
       }
 
-      this._sessionBehaviorSubject.next(session);
-      if (
-        this.user?.id !== session.user.id &&
-        this.user?.updated_at !== session.user.updated_at
-      ) {
-        this._userBehaviorSubject.next(session.user);
-      }
+      runInAction(() => {
+        this.session = session;
+        this.user = session.user;
+      });
     }
   }
 }
-
-export default new SupabaseService();
