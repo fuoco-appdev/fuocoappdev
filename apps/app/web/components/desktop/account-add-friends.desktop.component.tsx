@@ -8,20 +8,20 @@ import {
   Slider,
 } from '@fuoco.appdev/web-components';
 import convert from 'convert';
-import { useRef } from 'react';
+import { observer } from 'mobx-react-lite';
+import React, { useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import AccountController from '../../../shared/controllers/account.controller';
 import { RoutePathsType } from '../../../shared/route-paths-type';
 import styles from '../../modules/account-add-friends.module.scss';
 import { useQuery } from '../../route-paths';
 import { AccountAddFriendsResponsiveProps } from '../account-add-friends.component';
 import AccountFollowItemComponent from '../account-follow-item.component';
+import { DIContext } from '../app.component';
 import { ResponsiveDesktop } from '../responsive.component';
 
-export default function AccountAddFriendsDesktopComponent({
-  accountProps,
+function AccountAddFriendsDesktopComponent({
   locationDropdownOpen,
   setLocationDropdownOpen,
 }: AccountAddFriendsResponsiveProps): JSX.Element {
@@ -29,7 +29,20 @@ export default function AccountAddFriendsDesktopComponent({
   const query = useQuery();
   const { t } = useTranslation();
   const locationInputRef = useRef<HTMLInputElement | null>(null);
-
+  const { AccountController } = React.useContext(DIContext);
+  const {
+    addFriendsSearchInput,
+    addFriendsLocationInput,
+    addFriendsRadiusMeters,
+    addFriendsSex,
+    followRequestAccounts,
+    followRequestAccountFollowers,
+    addFriendAccounts,
+    addFriendAccountFollowers,
+    hasMoreAddFriends,
+    areAddFriendsLoading,
+    addFriendsLocationGeocoding,
+  } = AccountController.model;
   return (
     <ResponsiveDesktop>
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>
@@ -60,7 +73,7 @@ export default function AccountAddFriendsDesktopComponent({
               ].join(' ')}
             >
               <Input
-                value={accountProps.addFriendsSearchInput}
+                value={addFriendsSearchInput}
                 classNames={{
                   container: [
                     styles['search-input-container'],
@@ -73,11 +86,11 @@ export default function AccountAddFriendsDesktopComponent({
                 }}
                 placeholder={t('search') ?? ''}
                 icon={<Line.Search size={24} color={'#2A2A5F'} />}
-                onChange={(event) =>
-                  AccountController.updateAddFriendsSearchInput(
-                    event.target.value
-                  )
-                }
+                onChange={(event) => {
+                  // AccountController.updateAddFriendsSearchInput(
+                  //   event.target.value
+                  // )
+                }}
               />
             </div>
           </div>
@@ -90,12 +103,12 @@ export default function AccountAddFriendsDesktopComponent({
               container: styles['input-container'],
             }}
             label={t('location') ?? ''}
-            value={accountProps.addFriendsLocationInput}
-            onChange={(event) =>
-              AccountController.updateAddFriendsLocationInput(
-                event.target.value
-              )
-            }
+            value={addFriendsLocationInput}
+            onChange={(event) => {
+              // AccountController.updateAddFriendsLocationInput(
+              //   event.target.value
+              // )
+            }}
             onFocus={() => {
               setLocationDropdownOpen(true);
               locationInputRef.current?.select();
@@ -107,22 +120,19 @@ export default function AccountAddFriendsDesktopComponent({
               labelAfter: styles['input-form-layout-label'],
             }}
             label={t('radius') ?? undefined}
-            afterLabel={`${convert(
-              accountProps.addFriendsRadiusMeters,
-              'meters'
-            )
+            afterLabel={`${convert(addFriendsRadiusMeters, 'meters')
               .to('km')
               .toFixed()} ${t('km')}`}
           >
             <Slider
               min={1000}
               max={1000000}
-              value={accountProps.addFriendsRadiusMeters}
-              onChange={(e) =>
-                AccountController.updateAddFriendsRadiusMeters(
-                  Number(e.currentTarget.value)
-                )
-              }
+              value={addFriendsRadiusMeters}
+              onChange={(e) => {
+                // AccountController.updateAddFriendsRadiusMeters(
+                //   Number(e.currentTarget.value)
+                // )
+              }}
             />
           </FormLayout>
           <FormLayout
@@ -140,8 +150,7 @@ export default function AccountAddFriendsDesktopComponent({
                 classNames={{
                   button: [
                     styles['button'],
-                    accountProps.addFriendsSex === 'any' &&
-                      styles['button-selected'],
+                    addFriendsSex === 'any' && styles['button-selected'],
                   ].join(' '),
                 }}
                 type={'primary'}
@@ -149,7 +158,9 @@ export default function AccountAddFriendsDesktopComponent({
                 rippleProps={{
                   color: 'rgba(133, 38, 122, 0.35)',
                 }}
-                onClick={() => AccountController.updateAddFriendsSex('any')}
+                onClick={() => {
+                  // AccountController.updateAddFriendsSex('any')
+                }}
               >
                 {t('any')}
               </Button>
@@ -158,8 +169,7 @@ export default function AccountAddFriendsDesktopComponent({
                 classNames={{
                   button: [
                     styles['button'],
-                    accountProps.addFriendsSex === 'male' &&
-                      styles['button-selected'],
+                    addFriendsSex === 'male' && styles['button-selected'],
                   ].join(' '),
                 }}
                 type={'primary'}
@@ -167,7 +177,9 @@ export default function AccountAddFriendsDesktopComponent({
                 rippleProps={{
                   color: 'rgba(133, 38, 122, 0.35)',
                 }}
-                onClick={() => AccountController.updateAddFriendsSex('male')}
+                onClick={() => {
+                  // AccountController.updateAddFriendsSex('male')
+                }}
               >
                 {t('male')}
               </Button>
@@ -176,8 +188,7 @@ export default function AccountAddFriendsDesktopComponent({
                 classNames={{
                   button: [
                     styles['button'],
-                    accountProps.addFriendsSex === 'female' &&
-                      styles['button-selected'],
+                    addFriendsSex === 'female' && styles['button-selected'],
                   ].join(' '),
                 }}
                 type={'primary'}
@@ -185,7 +196,9 @@ export default function AccountAddFriendsDesktopComponent({
                 rippleProps={{
                   color: 'rgba(133, 38, 122, 0.35)',
                 }}
-                onClick={() => AccountController.updateAddFriendsSex('female')}
+                onClick={() => {
+                  // AccountController.updateAddFriendsSex('female')
+                }}
               >
                 {t('female')}
               </Button>
@@ -198,8 +211,8 @@ export default function AccountAddFriendsDesktopComponent({
             styles['scroll-content-desktop'],
           ].join(' ')}
         >
-          {accountProps.followRequestAccounts.length > 0 &&
-            accountProps.addFriendsSearchInput.length <= 0 && (
+          {followRequestAccounts.length > 0 &&
+            addFriendsSearchInput.length <= 0 && (
               <div
                 className={[
                   styles['follower-request-items-container'],
@@ -213,16 +226,15 @@ export default function AccountAddFriendsDesktopComponent({
                 >
                   {t('followerRequests')}
                 </div>
-                {accountProps.followRequestAccounts.map((value) => {
+                {followRequestAccounts.map((value) => {
                   const accountFollowerRequest = Object.keys(
-                    accountProps.followRequestAccountFollowers
+                    followRequestAccountFollowers
                   ).includes(value.id ?? '')
-                    ? accountProps.followRequestAccountFollowers[value.id ?? '']
+                    ? followRequestAccountFollowers[value.id ?? '']
                     : null;
                   return (
                     <AccountFollowItemComponent
                       key={value.id}
-                      accountProps={accountProps}
                       account={value}
                       follower={accountFollowerRequest}
                       isRequest={true}
@@ -259,16 +271,15 @@ export default function AccountAddFriendsDesktopComponent({
               styles['result-items-container-desktop'],
             ].join(' ')}
           >
-            {accountProps.addFriendAccounts.map((value) => {
+            {addFriendAccounts.map((value) => {
               const accountFollower = Object.keys(
-                accountProps.addFriendAccountFollowers
+                addFriendAccountFollowers
               ).includes(value.id ?? '')
-                ? accountProps.addFriendAccountFollowers[value.id ?? '']
+                ? addFriendAccountFollowers[value.id ?? '']
                 : null;
               return (
                 <AccountFollowItemComponent
                   key={value.id}
-                  accountProps={accountProps}
                   account={value}
                   follower={accountFollower}
                   isRequest={false}
@@ -294,81 +305,74 @@ export default function AccountAddFriendsDesktopComponent({
               src={'../assets/svg/ring-resize-dark.svg'}
               className={styles['loading-ring']}
               style={{
-                maxHeight:
-                  accountProps.hasMoreAddFriends ||
-                  accountProps.areAddFriendsLoading
-                    ? 24
-                    : 0,
+                maxHeight: hasMoreAddFriends || areAddFriendsLoading ? 24 : 0,
               }}
             />
-            {!accountProps.hasMoreAddFriends &&
-              accountProps.addFriendAccounts.length <= 0 && (
+            {!hasMoreAddFriends && addFriendAccounts.length <= 0 && (
+              <div
+                className={[
+                  styles['no-items-container'],
+                  styles['no-items-container-desktop'],
+                ].join(' ')}
+              >
                 <div
                   className={[
-                    styles['no-items-container'],
-                    styles['no-items-container-desktop'],
+                    styles['no-items-text'],
+                    styles['no-items-text-desktop'],
                   ].join(' ')}
                 >
-                  <div
-                    className={[
-                      styles['no-items-text'],
-                      styles['no-items-text-desktop'],
-                    ].join(' ')}
-                  >
-                    {t('noFriendsFound', {
-                      username: accountProps.addFriendsSearchInput,
-                    })}
-                  </div>
+                  {t('noFriendsFound', {
+                    username: addFriendsSearchInput,
+                  })}
                 </div>
-              )}
+              </div>
+            )}
           </div>
         </div>
       </div>
       {ReactDOM.createPortal(
-        <>
-          <Dropdown
-            classNames={{
-              touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
-            }}
-            open={locationDropdownOpen}
-            anchorRef={locationInputRef}
-            align={DropdownAlignment.Left}
-            onClose={() => setLocationDropdownOpen(false)}
-            onOpen={() => {
-              locationInputRef.current?.focus();
-            }}
-          >
-            {accountProps.addFriendsLocationGeocoding?.features.map(
-              (feature) => (
-                <Dropdown.Item
-                  classNames={{
-                    container: styles['dropdown-item-container'],
-                    button: {
-                      button: styles['dropdown-item-button'],
-                    },
-                  }}
-                  onClick={() => {
-                    AccountController.updateAddFriendsLocationFeature(feature);
-                    locationInputRef.current?.blur();
-                    setLocationDropdownOpen(false);
-                  }}
-                  rippleProps={{ color: 'rgba(133, 38, 122, 0.35)' }}
-                >
-                  <div
-                    className={[
-                      styles['place-name'],
-                      styles['place-name-desktop'],
-                    ].join(' ')}
-                  >
-                    {feature.place_name}
-                  </div>
-                </Dropdown.Item>
-              )
-            )}
-          </Dropdown>
-        </>,
+        <Dropdown
+          classNames={{
+            touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
+          }}
+          open={locationDropdownOpen}
+          anchorRef={locationInputRef}
+          align={DropdownAlignment.Left}
+          onClose={() => setLocationDropdownOpen(false)}
+          onOpen={() => {
+            locationInputRef.current?.focus();
+          }}
+        >
+          {addFriendsLocationGeocoding?.features.map((feature) => (
+            <Dropdown.Item
+              classNames={{
+                container: styles['dropdown-item-container'],
+                button: {
+                  button: styles['dropdown-item-button'],
+                },
+              }}
+              onClick={() => {
+                //AccountController.updateAddFriendsLocationFeature(feature);
+                locationInputRef.current?.blur();
+                setLocationDropdownOpen(false);
+              }}
+              rippleProps={{ color: 'rgba(133, 38, 122, 0.35)' }}
+            >
+              <div
+                className={[
+                  styles['place-name'],
+                  styles['place-name-desktop'],
+                ].join(' ')}
+              >
+                {feature.place_name}
+              </div>
+            </Dropdown.Item>
+          ))}
+        </Dropdown>,
         document.body
       )}
     </ResponsiveDesktop>
   );
 }
+
+export default observer(AccountAddFriendsDesktopComponent);

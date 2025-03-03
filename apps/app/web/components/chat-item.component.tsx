@@ -1,10 +1,7 @@
-import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
-import ChatController from 'shared/controllers/chat.controller';
 import {
   AccountDocument,
   AccountPresence,
-  AccountState,
 } from '../../shared/models/account.model';
 import {
   ChatDocument,
@@ -12,7 +9,7 @@ import {
   DecryptedChatMessage,
 } from '../../shared/models/chat.model';
 import { StorageFolderType } from '../../shared/protobuf/common_pb';
-import BucketService from '../../shared/services/bucket.service';
+import { DIContext } from './app.component';
 import { ChatItemSuspenseDesktopComponent } from './desktop/suspense/chat-item.suspense.desktop.component';
 import { ChatItemSuspenseMobileComponent } from './mobile/suspense/chat-item.suspense.mobile.component';
 
@@ -24,7 +21,6 @@ const ChatItemDesktopComponent = React.lazy(
 // );
 
 export interface ChatItemProps {
-  accountProps: AccountState;
   chat: ChatDocument;
   accounts: AccountDocument[];
   seenBy: ChatSeenMessage[];
@@ -39,7 +35,6 @@ export interface ChatItemResponsiveProps extends ChatItemProps {
 }
 
 export default function ChatItemComponent({
-  accountProps,
   accounts,
   chat,
   seenBy,
@@ -47,7 +42,10 @@ export default function ChatItemComponent({
   accountPresence,
   onClick,
 }: ChatItemProps): JSX.Element {
-  const [chatDebugProps] = useObservable(ChatController.model.debugStore);
+  const { ChatController, BucketService, AccountController } =
+    React.useContext(DIContext);
+  const { suspense } = ChatController.model;
+  const { account } = AccountController.model;
   const [profileUrls, setProfileUrls] = React.useState<Record<string, string>>(
     {}
   );
@@ -81,13 +79,12 @@ export default function ChatItemComponent({
 
   React.useEffect(() => {
     const seenChatMessage = seenBy?.find(
-      (value) => value.accountId === accountProps.account?.id
+      (value) => value.accountId === account?.id
     );
     setSeen(
-      lastMessage?.accountId === accountProps.account?.id ||
-        seenChatMessage !== undefined
+      lastMessage?.accountId === account?.id || seenChatMessage !== undefined
     );
-  }, [lastMessage, seenBy, accountProps.account]);
+  }, [lastMessage, seenBy, account]);
 
   const onClickOverride = () => {
     setTimeout(() => {
@@ -102,14 +99,13 @@ export default function ChatItemComponent({
     </>
   );
 
-  if (chatDebugProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
 
   return (
     <React.Suspense fallback={suspenceComponent}>
       <ChatItemDesktopComponent
-        accountProps={accountProps}
         chat={chat}
         accounts={accounts}
         lastMessage={lastMessage}

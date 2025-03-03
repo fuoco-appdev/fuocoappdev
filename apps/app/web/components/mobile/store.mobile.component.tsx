@@ -8,31 +8,27 @@ import {
   Scroll,
   Tabs,
 } from '@fuoco.appdev/web-components';
-import { Product } from '@medusajs/medusa';
+import { HttpTypes } from '@medusajs/types';
+import { observer } from 'mobx-react-lite';
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import Skeleton from 'react-loading-skeleton';
 import { useNavigate } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
-import StoreController from '../../../shared/controllers/store.controller';
 import { ProductTabs } from '../../../shared/models/store.model';
 import { ProductLikesMetadataResponse } from '../../../shared/protobuf/product-like_pb';
 import { RoutePathsType } from '../../../shared/route-paths-type';
 import { MedusaProductTypeNames } from '../../../shared/types/medusa.type';
 import styles from '../../modules/store.module.scss';
 import { useQuery } from '../../route-paths';
+import { DIContext } from '../app.component';
 import CartVariantItemComponent from '../cart-variant-item.component';
 import ProductPreviewComponent from '../product-preview.component';
 import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 import { StoreResponsiveProps } from '../store.component';
 
-export default function StoreMobileComponent({
-  storeProps,
-  accountProps,
-  exploreProps,
-  windowProps,
-  exploreLocalProps,
+function StoreMobileComponent({
   openFilter,
   openCartVariants,
   countryOptions,
@@ -67,14 +63,30 @@ export default function StoreMobileComponent({
   const navigate = useNavigate();
   const query = useQuery();
   const { t } = useTranslation();
+  const { ExploreController, StoreController, WindowController } =
+    React.useContext(DIContext);
+  const {
+    input,
+    selectedTab,
+    hasMorePreviews,
+    isLoading,
+    products,
+    pricedProducts,
+    productLikesMetadata,
+    selectedSalesChannel,
+    selectedPricedProduct,
+    isReloading,
+  } = StoreController.model;
+  const { cartCount } = WindowController.model;
+  const { selectedInventoryLocation, selectedInventoryLocationId } =
+    ExploreController.model;
   let prevPreviewScrollTop = 0;
   let yPosition = 0;
 
   useMobileEffect(() => {
-    setShowBottomBar(
-      exploreLocalProps.selectedInventoryLocationId !== undefined
-    );
-  }, [exploreLocalProps.selectedInventoryLocationId]);
+    setShowBottomBar(selectedInventoryLocationId !== undefined);
+  }, [selectedInventoryLocationId]);
+
   return (
     <ResponsiveMobile>
       <div
@@ -101,7 +113,7 @@ export default function StoreMobileComponent({
               ].join(' ')}
             >
               <Input
-                value={storeProps.input}
+                value={input}
                 classNames={{
                   container: [
                     styles['search-input-container'],
@@ -165,7 +177,7 @@ export default function StoreMobileComponent({
                 size={'tiny'}
                 icon={<Line.ShoppingCart size={24} />}
               />
-              {windowProps.cartCount > 0 && (
+              {cartCount > 0 && (
                 <div
                   className={[
                     styles['cart-number-container'],
@@ -178,7 +190,7 @@ export default function StoreMobileComponent({
                       styles['cart-number-mobile'],
                     ].join(' ')}
                   >
-                    {windowProps.cartCount}
+                    {cartCount}
                   </span>
                 </div>
               )}
@@ -198,7 +210,7 @@ export default function StoreMobileComponent({
               }}
               removable={true}
               type={'pills'}
-              activeId={storeProps.selectedTab}
+              activeId={selectedTab}
               onChange={(id: string) =>
                 StoreController.updateSelectedTabAsync(
                   id.length > 0 ? (id as ProductTabs) : undefined
@@ -229,7 +241,7 @@ export default function StoreMobileComponent({
           }}
           touchScreen={true}
           loadingHeight={56}
-          isLoadable={storeProps.hasMorePreviews}
+          isLoadable={hasMorePreviews}
           showIndicatorThreshold={56}
           reloadThreshold={96}
           pullIndicatorComponent={
@@ -243,7 +255,7 @@ export default function StoreMobileComponent({
               className={styles['loading-ring']}
             />
           }
-          isReloading={storeProps.isReloading}
+          isReloading={isReloading}
           onReload={() => StoreController.reloadProductsAsync()}
           loadComponent={
             <img
@@ -251,7 +263,7 @@ export default function StoreMobileComponent({
               className={styles['loading-ring']}
             />
           }
-          isLoading={storeProps.isLoading}
+          isLoading={isLoading}
           onLoad={() => StoreController.onNextScrollAsync()}
           onScroll={(progress, scrollRef, contentRef) => {
             const elementHeight = topBarRef.current?.clientHeight ?? 0;
@@ -286,26 +298,22 @@ export default function StoreMobileComponent({
               onPreviewsLoad(e);
             }}
           >
-            {storeProps.products.map((product: Product, index: number) => {
-              const pricedProduct = Object.keys(
-                storeProps.pricedProducts
-              ).includes(product.id ?? '')
-                ? storeProps.pricedProducts[product.id ?? '']
+            {products.map((product: HttpTypes.StoreProduct, index: number) => {
+              const pricedProduct = Object.keys(pricedProducts).includes(
+                product.id ?? ''
+              )
+                ? pricedProducts[product.id ?? '']
                 : null;
-              const productLikesMetadata =
-                storeProps.productLikesMetadata?.find(
+              const metadata =
+                productLikesMetadata?.find(
                   (value) => value.productId === product.id
                 ) ?? null;
               return (
                 <ProductPreviewComponent
                   parentRef={rootRef}
                   key={index}
-                  storeProps={storeProps}
-                  accountProps={accountProps}
                   purchasable={true}
-                  showPricingDetails={
-                    storeProps.selectedSalesChannel !== undefined
-                  }
+                  showPricingDetails={selectedSalesChannel !== undefined}
                   thumbnail={product.thumbnail ?? undefined}
                   title={product.title ?? undefined}
                   subtitle={product.subtitle ?? undefined}
@@ -314,27 +322,23 @@ export default function StoreMobileComponent({
                   pricedProduct={pricedProduct}
                   isLoading={
                     isPreviewLoading &&
-                    storeProps.selectedPricedProduct?.id === pricedProduct?.id
+                    selectedPricedProduct?.id === pricedProduct?.id
                   }
                   likesMetadata={
-                    productLikesMetadata ??
-                    ProductLikesMetadataResponse.prototype
+                    metadata ?? ProductLikesMetadataResponse.prototype
                   }
                   onClick={() =>
                     pricedProduct &&
                     onProductPreviewClick(
                       previewsContainerRef.current?.scrollTop ?? 0,
                       pricedProduct,
-                      productLikesMetadata
+                      metadata
                     )
                   }
                   onRest={() => onProductPreviewRest(product)}
                   onAddToCart={() =>
                     pricedProduct &&
-                    onProductPreviewAddToCart(
-                      pricedProduct,
-                      productLikesMetadata
-                    )
+                    onProductPreviewAddToCart(pricedProduct, metadata)
                   }
                   onLikeChanged={(isLiked: boolean) =>
                     pricedProduct &&
@@ -372,11 +376,11 @@ export default function StoreMobileComponent({
                 styles['sales-location-container-mobile'],
               ].join(' ')}
             >
-              {exploreProps.selectedInventoryLocation && (
+              {selectedInventoryLocation && (
                 <>
                   <Avatar
                     classNames={{
-                      container: !exploreProps.selectedInventoryLocation?.avatar
+                      container: !selectedInventoryLocation?.avatar
                         ? [
                             styles['no-avatar-container'],
                             styles['no-avatar-container-mobile'],
@@ -387,8 +391,8 @@ export default function StoreMobileComponent({
                           ].join(' '),
                     }}
                     size={'custom'}
-                    text={exploreProps.selectedInventoryLocation?.company ?? ''}
-                    src={exploreProps.selectedInventoryLocation?.avatar}
+                    text={selectedInventoryLocation?.company ?? ''}
+                    src={selectedInventoryLocation?.avatar}
                   />
                   <div
                     className={[
@@ -396,11 +400,11 @@ export default function StoreMobileComponent({
                       styles['sales-location-title-mobile'],
                     ].join(' ')}
                   >
-                    {exploreProps.selectedInventoryLocation?.company ?? ''}
+                    {selectedInventoryLocation?.company ?? ''}
                   </div>
                 </>
               )}
-              {!exploreProps.selectedInventoryLocation && (
+              {!selectedInventoryLocation && (
                 <>
                   <Skeleton width={28} height={28} borderRadius={28} />
                   <Skeleton
@@ -535,10 +539,7 @@ export default function StoreMobileComponent({
               classNames={{
                 touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
               }}
-              open={
-                openCartVariants &&
-                storeProps.selectedPricedProduct !== undefined
-              }
+              open={openCartVariants && selectedPricedProduct !== undefined}
               touchScreen={true}
               onClose={() => {
                 setOpenCartVariants(false);
@@ -551,17 +552,16 @@ export default function StoreMobileComponent({
                   styles['add-variants-container-mobile'],
                 ].join(' ')}
               >
-                {storeProps.selectedPricedProduct?.variants.map((variant) => {
+                {selectedPricedProduct?.variants?.map((variant) => {
                   return (
                     <CartVariantItemComponent
                       productType={
-                        storeProps.selectedPricedProduct?.type
+                        selectedPricedProduct?.type
                           ?.value as MedusaProductTypeNames
                       }
                       key={variant.id}
-                      product={storeProps.selectedPricedProduct}
+                      product={selectedPricedProduct}
                       variant={variant}
-                      storeProps={storeProps}
                       variantQuantities={variantQuantities}
                       setVariantQuantities={setVariantQuantities}
                     />
@@ -602,3 +602,5 @@ export default function StoreMobileComponent({
     </ResponsiveMobile>
   );
 }
+
+export default observer(StoreMobileComponent);

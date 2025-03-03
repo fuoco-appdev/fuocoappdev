@@ -4,13 +4,14 @@ import {
   Input,
   InputPhoneNumber,
 } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import styles from '../../modules/account-profile-form.module.scss';
 import { AccountProfileFormResponsiveProps } from '../account-profile-form.component';
 import { ResponsiveMobile } from '../responsive.component';
 
-export default function AccountProfileFormMobileComponent({
+function AccountProfileFormMobileComponent({
   values,
   errors,
   onChangeCallbacks,
@@ -140,3 +141,5 @@ export default function AccountProfileFormMobileComponent({
     </ResponsiveMobile>
   );
 }
+
+export default observer(AccountProfileFormMobileComponent);

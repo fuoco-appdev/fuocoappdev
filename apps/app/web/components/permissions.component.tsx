@@ -1,14 +1,10 @@
-import { useObservable } from '@ngneat/use-observable';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
-import ExploreController from '../../shared/controllers/explore.controller';
-import PermissionsController from '../../shared/controllers/permissions.controller';
-import WindowController from '../../shared/controllers/window.controller';
-import { PermissionsState } from '../../shared/models/permissions.model';
-import { WindowState } from '../../shared/models/window.model';
 import { RoutePathsType } from '../../shared/route-paths-type';
 import { useQuery } from '../route-paths';
+import { DIContext } from './app.component';
 
 const PermissionsDesktopComponent = React.lazy(
   () => import('./desktop/permissions.desktop.component')
@@ -18,18 +14,15 @@ const PermissionsMobileComponent = React.lazy(
 );
 
 export interface PermissionsResponsiveProps {
-  permissionsProps: PermissionsState;
-  windowProps: WindowState;
   onAccessLocationChecked: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onContinueAsync: () => void;
 }
 
-export default function PermissionsComponent(): JSX.Element {
-  const [permissionsProps] = useObservable(PermissionsController.model.store);
-  const [permissionsDebugProps] = useObservable(
-    PermissionsController.model.debugStore
-  );
-  const [windowProps] = useObservable(WindowController.model.store);
+function PermissionsComponent(): JSX.Element {
+  const { PermissionsController, WindowController, ExploreController } =
+    React.useContext(DIContext);
+  const { suspense } = PermissionsController.model;
+  const { loadedLocationPath } = WindowController.model;
   const renderCountRef = React.useRef<number>(0);
   const navigate = useNavigate();
   const query = useQuery();
@@ -46,9 +39,9 @@ export default function PermissionsComponent(): JSX.Element {
   };
 
   const onContinueAsync = async () => {
-    if (windowProps.loadedLocationPath !== RoutePathsType.Permissions) {
+    if (loadedLocationPath !== RoutePathsType.Permissions) {
       navigate({
-        pathname: windowProps.loadedLocationPath ?? RoutePathsType.Explore,
+        pathname: loadedLocationPath ?? RoutePathsType.Explore,
         search: query.toString(),
       });
     } else {
@@ -91,7 +84,7 @@ export default function PermissionsComponent(): JSX.Element {
     </>
   );
 
-  if (permissionsDebugProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
 
@@ -125,14 +118,10 @@ export default function PermissionsComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <PermissionsDesktopComponent
-          permissionsProps={permissionsProps}
-          windowProps={windowProps}
           onAccessLocationChecked={onAccessLocationChecked}
           onContinueAsync={onContinueAsync}
         />
         <PermissionsMobileComponent
-          permissionsProps={permissionsProps}
-          windowProps={windowProps}
           onAccessLocationChecked={onAccessLocationChecked}
           onContinueAsync={onContinueAsync}
         />
@@ -140,3 +129,5 @@ export default function PermissionsComponent(): JSX.Element {
     </>
   );
 }
+
+export default observer(PermissionsComponent);

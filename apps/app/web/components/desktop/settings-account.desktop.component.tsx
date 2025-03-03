@@ -6,22 +6,18 @@ import {
   LanguageSwitch,
   Line,
 } from '@fuoco.appdev/web-components';
-import { AuthError, User } from '@supabase/supabase-js';
+import { AuthError } from '@supabase/supabase-js';
 import { LanguageCode } from 'iso-639-1';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import AccountController from '../../../shared/controllers/account.controller';
-import WindowController from '../../../shared/controllers/window.controller';
-import SupabaseService from '../../../shared/services/supabase.service';
+import styles from '../../modules/settings-account.module.scss';
 import AccountProfileFormComponent from '../account-profile-form.component';
+import { DIContext } from '../app.component';
 import { ResponsiveDesktop } from '../responsive.component';
 import { SettingsAccountResponsiveProps } from '../settings-account.component';
-//@ts-ignore
-import styles from '../../modules/settings-account.module.scss';
 
-export default function SettingsAccountDesktopComponent({
-  accountProps,
-  storeProps,
-  windowLocalProps,
+function SettingsAccountDesktopComponent({
   updatePasswordError,
   setUpdatePasswordError,
   confirmPasswordError,
@@ -31,6 +27,11 @@ export default function SettingsAccountDesktopComponent({
   onGeneralInformationSaveAsync,
 }: SettingsAccountResponsiveProps): JSX.Element {
   const { t } = useTranslation();
+  const { WindowController, AccountController, SupabaseService } =
+    React.useContext(DIContext);
+  const { user, profileForm, profileFormErrors, isUpdateGeneralInfoLoading } =
+    AccountController.model;
+  const { languageCode } = WindowController.model;
 
   const accordionItemClassNames: AccordionItemClasses = {
     topBar: styles['accordion-top-bar'],
@@ -41,7 +42,6 @@ export default function SettingsAccountDesktopComponent({
     },
   };
 
-  const user = accountProps.user as User | null;
   const provider = user?.app_metadata['provider'];
   return (
     <ResponsiveDesktop>
@@ -69,9 +69,8 @@ export default function SettingsAccountDesktopComponent({
                   ].join(' ')}
                 >
                   <AccountProfileFormComponent
-                    storeProps={storeProps}
-                    values={accountProps.profileForm}
-                    errors={accountProps.profileFormErrors}
+                    values={profileForm}
+                    errors={profileFormErrors}
                     onChangeCallbacks={{
                       firstName: (event) =>
                         AccountController.updateProfile({
@@ -108,7 +107,7 @@ export default function SettingsAccountDesktopComponent({
                     block={true}
                     size={'large'}
                     onClick={onGeneralInformationSaveAsync}
-                    loading={accountProps.isUpdateGeneralInfoLoading}
+                    loading={isUpdateGeneralInfoLoading}
                     loadingComponent={
                       <img
                         src={'../assets/svg/ring-resize-light.svg'}
@@ -167,13 +166,13 @@ export default function SettingsAccountDesktopComponent({
                       }
                     }}
                     onPasswordUpdated={() => {
-                      WindowController.addToast({
-                        key: `update-password-${Math.random()}`,
-                        message: t('successfullyUpdatedPassword') ?? '',
-                        description:
-                          t('successfullyUpdatedPasswordDescription') ?? '',
-                        type: 'success',
-                      });
+                      // WindowController.addToast({
+                      //   key: `update-password-${Math.random()}`,
+                      //   message: t('successfullyUpdatedPassword') ?? '',
+                      //   description:
+                      //     t('successfullyUpdatedPasswordDescription') ?? '',
+                      //   type: 'success',
+                      // });
                     }}
                   />
                 )}
@@ -222,14 +221,14 @@ export default function SettingsAccountDesktopComponent({
                     button: styles['button'],
                   },
                 }}
-                language={windowLocalProps.languageCode as LanguageCode}
+                language={languageCode as LanguageCode}
                 open={isLanguageOpen}
                 supportedLanguages={[
                   { isoCode: 'en', countryCode: 'GB' },
                   { isoCode: 'fr', countryCode: 'FR' },
                 ]}
                 onChange={(code, info) =>
-                  AccountController.updateAccountLanguageAsync(code, info)
+                  WindowController.updateLanguageInfo(code, info)
                 }
                 onOpen={() => setIsLanguageOpen(true)}
                 onClose={() => setIsLanguageOpen(false)}
@@ -241,3 +240,5 @@ export default function SettingsAccountDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(SettingsAccountDesktopComponent);

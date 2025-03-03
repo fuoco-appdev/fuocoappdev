@@ -1,16 +1,32 @@
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import AccountController from '../../../shared/controllers/account.controller';
 import styles from '../../modules/account-public-followers.module.scss';
 import AccountFollowItemComponent from '../account-follow-item.component';
 import { AccountPublicFollowersResponsiveProps } from '../account-public-followers.component';
+import { DIContext } from '../app.component';
 import { ResponsiveDesktop } from '../responsive.component';
 
-export default function AccountPublicFollowersDesktopComponent({
-  accountPublicProps,
-  accountProps,
+function AccountPublicFollowersDesktopComponent({
   onItemClick,
 }: AccountPublicFollowersResponsiveProps): JSX.Element {
   const { t } = useTranslation();
+  const { AccountPublicController, AccountController } =
+    React.useContext(DIContext);
+  const {
+    account,
+    customerMetadata,
+    profileUrl,
+    showFollowButton,
+    activeTabId,
+    activeTabIndex,
+    prevTabIndex,
+    followerAccounts,
+    followerAccountFollowers,
+    hasMoreFollowers,
+    areFollowersLoading,
+    followersFollowingInput,
+  } = AccountPublicController.model;
 
   return (
     <ResponsiveDesktop>
@@ -21,16 +37,15 @@ export default function AccountPublicFollowersDesktopComponent({
             styles['result-items-container-desktop'],
           ].join(' ')}
         >
-          {accountPublicProps.followerAccounts.map((value) => {
+          {followerAccounts.map((value) => {
             const accountFollower = Object.keys(
-              accountPublicProps.followerAccountFollowers
+              followerAccountFollowers
             ).includes(value.id ?? '')
-              ? accountPublicProps.followerAccountFollowers[value.id ?? '']
+              ? followerAccountFollowers[value.id ?? '']
               : null;
             return (
               <AccountFollowItemComponent
                 key={value.id}
-                accountProps={accountProps}
                 account={value}
                 follower={accountFollower}
                 isRequest={false}
@@ -51,35 +66,32 @@ export default function AccountPublicFollowersDesktopComponent({
             src={'../assets/svg/ring-resize-dark.svg'}
             className={styles['loading-ring']}
             style={{
-              maxHeight:
-                accountPublicProps.hasMoreFollowers ||
-                accountPublicProps.areFollowersLoading
-                  ? 24
-                  : 0,
+              maxHeight: hasMoreFollowers || areFollowersLoading ? 24 : 0,
             }}
           />
-          {!accountPublicProps.hasMoreFollowers &&
-            accountPublicProps.followerAccounts.length <= 0 && (
+          {!hasMoreFollowers && followerAccounts.length <= 0 && (
+            <div
+              className={[
+                styles['no-items-container'],
+                styles['no-items-container-desktop'],
+              ].join(' ')}
+            >
               <div
                 className={[
-                  styles['no-items-container'],
-                  styles['no-items-container-desktop'],
+                  styles['no-items-text'],
+                  styles['no-items-text-desktop'],
                 ].join(' ')}
               >
-                <div
-                  className={[
-                    styles['no-items-text'],
-                    styles['no-items-text-desktop'],
-                  ].join(' ')}
-                >
-                  {t('noFollowersFound', {
-                    username: accountPublicProps.followersFollowingInput,
-                  })}
-                </div>
+                {t('noFollowersFound', {
+                  username: followersFollowingInput,
+                })}
               </div>
-            )}
+            </div>
+          )}
         </div>
       </div>
     </ResponsiveDesktop>
   );
 }
+
+export default observer(AccountPublicFollowersDesktopComponent);

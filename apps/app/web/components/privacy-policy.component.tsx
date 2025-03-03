@@ -1,8 +1,7 @@
-import { useObservable } from '@ngneat/use-observable';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import PrivacyPolicyController from '../../shared/controllers/privacy-policy.controller';
-import { PrivacyPolicyState } from '../../shared/models';
+import { DIContext } from './app.component';
 import {
   ResponsiveDesktop,
   ResponsiveMobile,
@@ -17,17 +16,12 @@ const PrivacyPolicyMobileComponent = React.lazy(
 );
 
 export interface PrivacyPolicyResponsiveProps {
-  privacyPolicyProps: PrivacyPolicyState;
   remarkPlugins: any[];
 }
 
-export default function PrivacyPolicyComponent(): JSX.Element {
-  const [privacyPolicyProps] = useObservable(
-    PrivacyPolicyController.model.store
-  );
-  const [privacyDebugPolicyProps] = useObservable(
-    PrivacyPolicyController.model.debugStore
-  );
+function PrivacyPolicyComponent(): JSX.Element {
+  const { PrivacyPolicyController } = React.useContext(DIContext);
+  const { suspense } = PrivacyPolicyController.model;
   const [remarkPlugins, setRemarkPlugins] = React.useState<any[]>([]);
   const renderCountRef = React.useRef<number>(0);
 
@@ -58,7 +52,7 @@ export default function PrivacyPolicyComponent(): JSX.Element {
     </>
   );
 
-  if (privacyDebugPolicyProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
 
@@ -91,15 +85,11 @@ export default function PrivacyPolicyComponent(): JSX.Element {
         <meta property="og:url" content={window.location.href} />
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
-        <PrivacyPolicyDesktopComponent
-          privacyPolicyProps={privacyPolicyProps}
-          remarkPlugins={remarkPlugins}
-        />
-        <PrivacyPolicyMobileComponent
-          privacyPolicyProps={privacyPolicyProps}
-          remarkPlugins={remarkPlugins}
-        />
+        <PrivacyPolicyDesktopComponent remarkPlugins={remarkPlugins} />
+        <PrivacyPolicyMobileComponent remarkPlugins={remarkPlugins} />
       </React.Suspense>
     </>
   );
 }
+
+export default observer(PrivacyPolicyComponent);

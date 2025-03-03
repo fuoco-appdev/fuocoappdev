@@ -1,15 +1,18 @@
 import { Button, Checkbox, Line } from '@fuoco.appdev/web-components';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from '../../modules/permissions.module.scss';
+import { DIContext } from '../app.component';
 import { PermissionsResponsiveProps } from '../permissions.component';
 import { ResponsiveMobile } from '../responsive.component';
 
 export default function PermissionsMobileComponent({
-  permissionsProps,
   onAccessLocationChecked,
   onContinueAsync,
 }: PermissionsResponsiveProps): JSX.Element {
   const { t } = useTranslation();
+  const { PermissionsController } = React.useContext(DIContext);
+  const { accessLocation } = PermissionsController.model;
 
   return (
     <ResponsiveMobile>
@@ -63,7 +66,7 @@ export default function PermissionsMobileComponent({
                   </div>
                 </div>
                 <Checkbox
-                  checked={permissionsProps.accessLocation}
+                  checked={accessLocation}
                   onChange={onAccessLocationChecked}
                   classNames={{
                     checkbox: styles['checkbox'],

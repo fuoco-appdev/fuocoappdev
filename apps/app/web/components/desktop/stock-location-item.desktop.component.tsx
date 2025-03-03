@@ -1,9 +1,7 @@
 import { Line } from '@fuoco.appdev/web-components';
 import { useTranslation } from 'react-i18next';
-import styles from '../../modules/stock-location-item.module.scss';
-// @ts-ignore
 import Ripples from 'react-ripples';
-import { InventoryLocationType } from '../../../shared/models/explore.model';
+import styles from '../../modules/stock-location-item.module.scss';
 import { ResponsiveDesktop } from '../responsive.component';
 import { StockLocationItemResponsiveProps } from '../stock-location-item.component';
 
@@ -60,13 +58,13 @@ export default function StockLocationItemDesktopComponent({
                   ].join(' ')}
                 >
                   <Line.Place size={18} />
-                  {Object.keys(stockLocation?.metadata ?? {}).includes(
+                  {/* {Object.keys(stockLocation?.metadata ?? {}).includes(
                     'type'
                   ) && t(stockLocation?.metadata?.['type'] as string)}
-                  &nbsp;
+                  &nbsp; */}
                   {placeName}
                 </div>
-                {!hideDescription &&
+                {/* {!hideDescription &&
                   Object.keys(stockLocation?.metadata ?? {}).includes(
                     'description'
                   ) && (
@@ -79,7 +77,7 @@ export default function StockLocationItemDesktopComponent({
                       {description.slice(0, 60)}
                       ...
                     </div>
-                  )}
+                  )} */}
               </div>
               <div
                 className={[
@@ -108,7 +106,7 @@ export default function StockLocationItemDesktopComponent({
                         src={avatar}
                       />
                     )}
-                    {!avatar &&
+                    {/* {!avatar &&
                       Object.keys(stockLocation?.metadata ?? {}).includes(
                         'type'
                       ) &&
@@ -135,7 +133,7 @@ export default function StockLocationItemDesktopComponent({
                           ].join(' ')}
                           src={'../assets/images/selected-restaurant.png'}
                         />
-                      )}
+                      )} */}
                   </div>
                 </div>
               </div>

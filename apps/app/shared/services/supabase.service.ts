@@ -46,7 +46,7 @@ export default class SupabaseService extends Service {
   public async initializeSupabase(): Promise<void> {
     if (!this._supabaseClient) {
       this._supabaseClient = createClient(
-        this._configService.supabase.url,
+        this._configService.kong.url,
         this._anonKey
       );
     }
@@ -57,6 +57,25 @@ export default class SupabaseService extends Service {
   }
 
   public override dispose(): void {}
+
+  public override async requestHealthAsync(
+    retries = 1,
+    retryDelay = 1000
+  ): Promise<boolean> {
+    try {
+      const response = await fetch(`${this._configService.kong.url}`);
+      return response.status <= 401;
+    } catch (error: any) {
+      if (retries > 0) {
+        console.log(`Retry attempt with ${retries} retries left.`, error);
+        await new Promise((resolve) => setTimeout(resolve, retryDelay));
+        return this.requestHealthAsync(retries - 1, retryDelay);
+      } else {
+        console.error('Max retries reached. Error:', error);
+        return false;
+      }
+    }
+  }
 
   public subscribeToAuthStateChanged(
     callback?: (event: AuthChangeEvent, session: Session | null) => void
@@ -118,6 +137,11 @@ export default class SupabaseService extends Service {
     if (response?.error) {
       throw response?.error;
     }
+
+    runInAction(() => {
+      this.session = null;
+      this.user = null;
+    });
   }
 
   private async onAuthStateChanged(

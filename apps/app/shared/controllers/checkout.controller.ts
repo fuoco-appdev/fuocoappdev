@@ -49,7 +49,7 @@ export default class CheckoutController extends Controller {
     return this._model;
   }
 
-  public override initialize = (renderCount: number): void => {
+  public override initialize(renderCount: number): void {
     this.initializeAsync(renderCount);
 
     const supabaseService = this._container.get('SupabaseService');
@@ -61,7 +61,7 @@ export default class CheckoutController extends Controller {
       'shippingForm',
       this.onShippingFormChanged
     );
-  };
+  }
 
   public override disposeInitialization(_renderCount: number): void {
     this._medusaAccessTokenDisposer?.();

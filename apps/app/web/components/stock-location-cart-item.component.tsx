@@ -1,8 +1,7 @@
-import { Cart } from '@medusajs/medusa';
-import { StockLocation } from '@medusajs/stock-location/dist/models';
+import { HttpTypes } from '@medusajs/types';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import { StorageFolderType } from '../../shared/protobuf/common_pb';
-import BucketService from '../../shared/services/bucket.service';
+import { DIContext } from './app.component';
 import { StockLocationCartItemSuspenseDesktopComponent } from './desktop/suspense/stock-location-cart-item.suspense.desktop.component';
 import { StockLocationCartItemSuspenseMobileComponent } from './mobile/suspense/stock-location-cart-item.suspense.mobile.component';
 
@@ -14,8 +13,8 @@ const StockLocationCartItemMobileComponent = React.lazy(
 );
 
 export interface StockLocationCartItemProps {
-  stockLocation: StockLocation;
-  cart?: Omit<Cart, 'refundable_amount' | 'refunded_total'>;
+  stockLocation: HttpTypes.AdminStockLocation;
+  cart?: HttpTypes.StoreCart;
   selected?: boolean;
   onClick: () => void;
 }
@@ -26,36 +25,42 @@ export interface StockLocationCartItemResponsiveProps
   cartCount?: number;
 }
 
-export default function StockLocationCartItemComponent({
+function StockLocationCartItemComponent({
   stockLocation,
   cart,
   selected = false,
   onClick,
 }: StockLocationCartItemProps): JSX.Element {
+  const {
+    ExploreController,
+    WindowController,
+    StoreController,
+    ProductController,
+    BucketService,
+  } = React.useContext(DIContext);
   const [cartCount, setCartCount] = React.useState<number | undefined>(
     undefined
   );
   const [avatar, setAvatar] = React.useState<string | undefined>(undefined);
 
   React.useEffect(() => {
-    if (!Object.keys(stockLocation?.metadata ?? {}).includes('avatar')) {
-      return;
-    }
-
-    const avatar: string | undefined = stockLocation?.metadata?.['avatar'] as
-      | string
-      | undefined;
-    if (avatar) {
-      BucketService.getPublicUrlAsync(StorageFolderType.Avatars, avatar).then(
-        (value) => {
-          setAvatar(value);
-        }
-      );
-    }
+    // if (!Object.keys(stockLocation?.metadata ?? {}).includes('avatar')) {
+    //   return;
+    // }
+    // const avatar: string | undefined = stockLocation?.metadata?.['avatar'] as
+    //   | string
+    //   | undefined;
+    // if (avatar) {
+    //   BucketService.getPublicUrlAsync(StorageFolderType.Avatars, avatar).then(
+    //     (value) => {
+    //       setAvatar(value);
+    //     }
+    //   );
+    // }
   }, [stockLocation]);
 
   React.useEffect(() => {
-    setCartCount(cart?.items.length);
+    setCartCount(cart?.items?.length ?? 0);
   }, [cart]);
 
   const suspenceComponent = (
@@ -90,3 +95,5 @@ export default function StockLocationCartItemComponent({
     </React.Suspense>
   );
 }
+
+export default observer(StockLocationCartItemComponent);

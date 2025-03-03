@@ -1,6 +1,9 @@
 import { Auth, Typography } from '@fuoco.appdev/web-components';
 import loadable from '@loadable/component';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 import styles from '../../modules/terms-of-service.module.scss';
+import { DIContext } from '../app.component';
 import { ResponsiveMobile } from '../responsive.component';
 import { TermsOfServiceResponsiveProps } from '../terms-of-service.component';
 const ReactMarkdown = loadable(
@@ -11,10 +14,12 @@ const ReactMarkdown = loadable(
   { ssr: false }
 );
 
-export default function TermsOfServiceMobileComponent({
-  termsOfServiceProps,
+function TermsOfServiceMobileComponent({
   remarkPlugins,
 }: TermsOfServiceResponsiveProps): JSX.Element {
+  const { TermsOfServiceController } = React.useContext(DIContext);
+  const { markdown } = TermsOfServiceController.model;
+
   return (
     <ResponsiveMobile>
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
@@ -32,7 +37,7 @@ export default function TermsOfServiceMobileComponent({
               >
                 <ReactMarkdown
                   remarkPlugins={remarkPlugins}
-                  children={termsOfServiceProps.markdown}
+                  children={markdown}
                 />
               </Typography>
             }
@@ -42,3 +47,5 @@ export default function TermsOfServiceMobileComponent({
     </ResponsiveMobile>
   );
 }
+
+export default observer(TermsOfServiceMobileComponent);

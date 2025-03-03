@@ -1,10 +1,11 @@
 import { Button, Input, Line, Listbox } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
 import styles from '../../modules/refund-item.module.scss';
 import { RefundItemResponsiveProps } from '../refund-item.component';
 import { ResponsiveDesktop } from '../responsive.component';
 
-export default function RefundItemDesktopComponent({
+function RefundItemDesktopComponent({
   item,
   refundItem,
   returnReasonOptions,
@@ -176,3 +177,5 @@ export default function RefundItemDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(RefundItemDesktopComponent);

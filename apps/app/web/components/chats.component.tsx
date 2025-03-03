@@ -1,14 +1,10 @@
-import { useObservable } from '@ngneat/use-observable';
+import { observer } from 'mobx-react-lite';
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate, useParams } from 'react-router-dom';
-import AccountController from '../../shared/controllers/account.controller';
-import ChatController from '../../shared/controllers/chat.controller';
 import { AccountDocument } from '../../shared/models/account.model';
-import { ChatDocument, ChatState } from '../../shared/models/chat.model';
 import { RoutePathsType } from '../../shared/route-paths-type';
-import AccountService from '../../shared/services/account.service';
-import ChatService from '../../shared/services/chat.service';
+import { DIContext } from './app.component';
 import { AuthenticatedComponent } from './authenticated.component';
 import { ChatsSuspenseDesktopComponent } from './desktop/suspense/chats.suspense.desktop.component';
 import { ChatsSuspenseMobileComponent } from './mobile/suspense/chats.suspense.mobile.component';
@@ -21,7 +17,6 @@ const ChatsMobileComponent = React.lazy(
 );
 
 export interface ChatsResponsiveProps {
-  chatProps: ChatState;
   openEditDropdown: boolean;
   openNewPrivate: boolean;
   chatAccounts: Record<string, AccountDocument[]>;
@@ -32,12 +27,13 @@ export interface ChatsResponsiveProps {
   onPrivateMessageClick: (account: AccountDocument) => void;
 }
 
-export default function ChatsComponent(): JSX.Element {
+function ChatsComponent(): JSX.Element {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [chatProps] = useObservable(ChatController.model.store);
-  const [chatDebugProps] = useObservable(ChatController.model.debugStore);
-  const [accountProps] = useObservable(AccountController.model.store);
+  const { ChatController, AccountController, AccountService, ChatService } =
+    React.useContext(DIContext);
+  const { suspense, accounts, chats, chatSubscriptions } = ChatController.model;
+  const { account } = AccountController.model;
   const [openEditDropdown, setOpenEditDropdown] = useState<boolean>(false);
   const [openNewPrivate, setOpenNewPrivate] = useState<boolean>(false);
   const [chatAccounts, setChatAccounts] = useState<
@@ -60,34 +56,21 @@ export default function ChatsComponent(): JSX.Element {
     setOpenNewPrivate(false);
   };
 
-  const suspenceComponent = (
-    <>
-      <ChatsSuspenseDesktopComponent />
-      <ChatsSuspenseMobileComponent />
-    </>
-  );
-
-  if (chatDebugProps.suspense) {
-    return suspenceComponent;
-  }
-
   useEffect(() => {
     ChatController.loadChatsAsync();
   }, []);
 
   useEffect(() => {
-    const account = accountProps.account;
     if (!account) {
       return;
     }
 
     const chatAccountRecord: Record<string, AccountDocument[]> = {};
-    const accounts = Object.values(chatProps.accounts) as AccountDocument[];
-    const chats = chatProps.chats as ChatDocument[];
+    const accountValues = Object.values(accounts) as AccountDocument[];
     for (const chat of chats) {
       if (chat.type === 'private') {
         const privateChat = chat.private;
-        const privateAccounts = accounts.filter(
+        const privateAccounts = accountValues.filter(
           (value) =>
             privateChat?.account_ids?.includes(value?.id ?? '') &&
             value.id !== account.id
@@ -97,10 +80,9 @@ export default function ChatsComponent(): JSX.Element {
     }
 
     setChatAccounts(chatAccountRecord);
-  }, [chatProps.accounts, chatProps.chats, accountProps.account]);
+  }, [accounts, chats, account]);
 
   useEffect(() => {
-    const accounts = chatProps.accounts as Record<string, AccountDocument>;
     const accountIds =
       Object.values(accounts)?.map((value) => value.id ?? '') ?? [];
     const subscription = AccountService.subscribeAccountPresence(
@@ -113,10 +95,10 @@ export default function ChatsComponent(): JSX.Element {
     return () => {
       subscription?.unsubscribe();
     };
-  }, [chatProps.accounts]);
+  }, [accounts]);
 
   useEffect(() => {
-    const chatIds = Object.keys(chatProps.chatSubscriptions);
+    const chatIds = Object.keys(chatSubscriptions);
     const chatSubscription = ChatService.subscribeToChats(
       chatIds,
       (payload) => {
@@ -133,7 +115,18 @@ export default function ChatsComponent(): JSX.Element {
       chatSubscription?.unsubscribe();
       seenMessageSubscription?.unsubscribe();
     };
-  }, [chatProps.chatSubscriptions]);
+  }, [chatSubscriptions]);
+
+  const suspenceComponent = (
+    <>
+      <ChatsSuspenseDesktopComponent />
+      <ChatsSuspenseMobileComponent />
+    </>
+  );
+
+  if (suspense) {
+    return suspenceComponent;
+  }
 
   return (
     <>
@@ -166,7 +159,6 @@ export default function ChatsComponent(): JSX.Element {
       <React.Suspense fallback={suspenceComponent}>
         <AuthenticatedComponent>
           <ChatsDesktopComponent
-            chatProps={chatProps}
             openEditDropdown={openEditDropdown}
             openNewPrivate={openNewPrivate}
             chatAccounts={chatAccounts}
@@ -177,7 +169,6 @@ export default function ChatsComponent(): JSX.Element {
             onPrivateMessageClick={onPrivateMessageClick}
           />
           <ChatsMobileComponent
-            chatProps={chatProps}
             openEditDropdown={openEditDropdown}
             openNewPrivate={openNewPrivate}
             chatAccounts={chatAccounts}
@@ -192,3 +183,5 @@ export default function ChatsComponent(): JSX.Element {
     </>
   );
 }
+
+export default observer(ChatsComponent);

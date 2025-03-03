@@ -54,7 +54,7 @@ export default class ChatController extends Controller {
     return this._model;
   }
 
-  public override initialize = (renderCount: number): void => {
+  public override initialize(renderCount: number): void {
     const meiliSearchService = this._container.get('MeiliSearchService');
     const accountController = this._container.get('AccountController');
     const accountService = this._container.get('AccountService');
@@ -75,7 +75,7 @@ export default class ChatController extends Controller {
         }
       }
     );
-  };
+  }
 
   public override load(_renderCount: number): void {}
 

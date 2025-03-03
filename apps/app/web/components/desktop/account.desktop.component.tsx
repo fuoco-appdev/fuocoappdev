@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable jsx-a11y/alt-text */
 import {
   Avatar,
   Button,
@@ -9,26 +11,23 @@ import {
   Scroll,
   Tabs,
 } from '@fuoco.appdev/web-components';
-import { Customer } from '@medusajs/medusa';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import Skeleton from 'react-loading-skeleton';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import AccountController from '../../../shared/controllers/account.controller';
-import { AccountResponse } from '../../../shared/protobuf/account_pb';
 import { InterestResponse } from '../../../shared/protobuf/interest_pb';
 import { RoutePathsType } from '../../../shared/route-paths-type';
 import styles from '../../modules/account.module.scss';
 import { useQuery } from '../../route-paths';
 import AccountProfileFormComponent from '../account-profile-form.component';
 import { AccountResponsiveProps } from '../account.component';
+import { DIContext } from '../app.component';
 import { ResponsiveDesktop } from '../responsive.component';
 
-export default function AccountDesktopComponent({
-  accountProps,
-  storeProps,
+function AccountDesktopComponent({
   isCropImageModalVisible,
   likeCount,
   followerCount,
@@ -51,11 +50,29 @@ export default function AccountDesktopComponent({
   const navigate = useNavigate();
   const query = useQuery();
   const { t } = useTranslation();
+  const { AccountController } = React.useContext(DIContext);
+  const {
+    account,
+    customer,
+    activeTabId,
+    areLikedProductsLoading,
+    areOrdersLoading,
+    profileForm,
+    profileFormErrors,
+    isCreateCustomerLoading,
+    selectedInterests,
+    profileUrl,
+    isAvatarUploadLoading,
+    activeTabIndex,
+    prevTabIndex,
+    addInterestInput,
+    areAddInterestsLoading,
+    creatableInterest,
+    searchedInterests,
+  } = AccountController.model;
   let prevPreviewScrollTop = 0;
   let yPosition = 0;
 
-  const account = accountProps.account as AccountResponse;
-  const customer = accountProps.customer as Customer;
   return (
     <ResponsiveDesktop>
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>
@@ -69,7 +86,7 @@ export default function AccountDesktopComponent({
               styles['left-tab-container-desktop'],
             ].join(' ')}
           >
-            {accountProps.account?.status === 'Complete' && (
+            {account?.status === 'Complete' && (
               <div
                 className={[
                   styles['top-bar-text-container'],
@@ -83,7 +100,7 @@ export default function AccountDesktopComponent({
                     styles['top-bar-text-desktop'],
                   ].join(' ')}
                 >
-                  {accountProps.account?.username}
+                  {account?.username}
                 </div>
               </div>
             )}
@@ -94,7 +111,7 @@ export default function AccountDesktopComponent({
               styles['center-tab-container-desktop'],
             ].join(' ')}
           >
-            {accountProps.account?.status === 'Incomplete' && (
+            {account?.status === 'Incomplete' && (
               <div
                 className={[
                   styles['top-bar-text-container'],
@@ -167,13 +184,8 @@ export default function AccountDesktopComponent({
               <Line.ArrowDownward size={24} />
             </div>
           }
-          isLoadable={
-            accountProps.activeTabId !== RoutePathsType.AccountAddresses
-          }
-          isLoading={
-            accountProps.areLikedProductsLoading ||
-            accountProps.areOrdersLoading
-          }
+          isLoadable={activeTabId !== RoutePathsType.AccountAddresses}
+          isLoading={areLikedProductsLoading || areOrdersLoading}
           onLoad={onScrollLoad}
           onScroll={(progress, scrollRef, contentRef) => {
             const elementHeight = topBarRef.current?.clientHeight ?? 0;
@@ -232,9 +244,8 @@ export default function AccountDesktopComponent({
                     ].join(' ')}
                   >
                     <AccountProfileFormComponent
-                      storeProps={storeProps}
-                      values={accountProps.profileForm}
-                      errors={accountProps.profileFormErrors}
+                      values={profileForm}
+                      errors={profileFormErrors}
                       onChangeCallbacks={{
                         firstName: (event) =>
                           AccountController.updateProfile({
@@ -284,7 +295,7 @@ export default function AccountDesktopComponent({
                       size={'large'}
                       icon={<Line.Done size={24} />}
                       onClick={onCompleteProfile}
-                      loading={accountProps.isCreateCustomerLoading}
+                      loading={isCreateCustomerLoading}
                       loadingComponent={
                         <img
                           src={'../assets/svg/ring-resize-light.svg'}
@@ -347,7 +358,7 @@ export default function AccountDesktopComponent({
                         styles['selected-interests-container-desktop'],
                       ].join(' ')}
                     >
-                      {Object.values(accountProps.selectedInterests).map(
+                      {Object.values(selectedInterests).map(
                         (value: InterestResponse) => {
                           return (
                             <Button
@@ -424,11 +435,11 @@ export default function AccountDesktopComponent({
                               },
                             },
                           }}
-                          text={customer?.first_name}
-                          src={accountProps.profileUrl}
+                          text={customer?.first_name ?? ''}
+                          src={profileUrl}
                           editMode={true}
                           onChange={onAvatarChanged}
-                          loading={accountProps.isAvatarUploadLoading}
+                          loading={isAvatarUploadLoading}
                           loadingComponent={
                             <img
                               src={'../assets/svg/ring-resize-light.svg'}
@@ -640,7 +651,7 @@ export default function AccountDesktopComponent({
                     <Tabs
                       flex={true}
                       touchScreen={true}
-                      activeId={accountProps.activeTabId}
+                      activeId={activeTabId}
                       classNames={{
                         nav: [
                           styles['tab-nav'],
@@ -689,23 +700,19 @@ export default function AccountDesktopComponent({
                       React.cloneElement(child, {
                         classNames: {
                           enter:
-                            accountProps.activeTabIndex >
-                            accountProps.prevTabIndex
+                            activeTabIndex > prevTabIndex
                               ? styles['left-to-right-enter']
                               : styles['right-to-left-enter'],
                           enterActive:
-                            accountProps.activeTabIndex >
-                            accountProps.prevTabIndex
+                            activeTabIndex > prevTabIndex
                               ? styles['left-to-right-enter-active']
                               : styles['right-to-left-enter-active'],
                           exit:
-                            accountProps.activeTabIndex >
-                            accountProps.prevTabIndex
+                            activeTabIndex > prevTabIndex
                               ? styles['left-to-right-exit']
                               : styles['right-to-left-exit'],
                           exitActive:
-                            accountProps.activeTabIndex >
-                            accountProps.prevTabIndex
+                            activeTabIndex > prevTabIndex
                               ? styles['left-to-right-exit-active']
                               : styles['right-to-left-exit-active'],
                         },
@@ -714,26 +721,22 @@ export default function AccountDesktopComponent({
                     }
                   >
                     <CSSTransition
-                      key={accountProps.activeTabIndex}
+                      key={activeTabIndex}
                       classNames={{
                         enter:
-                          accountProps.activeTabIndex <
-                          accountProps.prevTabIndex
+                          activeTabIndex < prevTabIndex
                             ? styles['left-to-right-enter']
                             : styles['right-to-left-enter'],
                         enterActive:
-                          accountProps.activeTabIndex <
-                          accountProps.prevTabIndex
+                          activeTabIndex < prevTabIndex
                             ? styles['left-to-right-enter-active']
                             : styles['right-to-left-enter-active'],
                         exit:
-                          accountProps.activeTabIndex <
-                          accountProps.prevTabIndex
+                          activeTabIndex < prevTabIndex
                             ? styles['left-to-right-exit']
                             : styles['right-to-left-exit'],
                         exitActive:
-                          accountProps.activeTabIndex <
-                          accountProps.prevTabIndex
+                          activeTabIndex < prevTabIndex
                             ? styles['left-to-right-exit-active']
                             : styles['right-to-left-exit-active'],
                       }}
@@ -752,146 +755,142 @@ export default function AccountDesktopComponent({
         </Scroll>
       </div>
       {ReactDOM.createPortal(
-        <>
-          <Dropdown
+        <Dropdown
+          classNames={{
+            touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
+          }}
+          open={isAddInterestOpen}
+          anchorRef={interestButtonRef}
+          align={DropdownAlignment.Left}
+          style={{ width: interestButtonRef.current?.clientWidth }}
+          onClose={() => setIsAddInterestOpen(false)}
+          onOpen={() => {
+            interestInputRef.current?.focus();
+          }}
+        >
+          <Dropdown.Item
             classNames={{
-              touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
+              container: styles['dropdown-item-container-search'],
+              button: {
+                button: [
+                  styles['dropdown-item-button-search'],
+                  styles['dropdown-item-button-search-desktop'],
+                ].join(' '),
+              },
             }}
-            open={isAddInterestOpen}
-            anchorRef={interestButtonRef}
-            align={DropdownAlignment.Left}
-            style={{ width: interestButtonRef.current?.clientWidth }}
-            onClose={() => setIsAddInterestOpen(false)}
-            onOpen={() => {
-              interestInputRef.current?.focus();
-            }}
+            rippleProps={{ color: 'rgba(0,0,0,0)' }}
           >
-            <Dropdown.Item
-              classNames={{
-                container: styles['dropdown-item-container-search'],
-                button: {
-                  button: [
-                    styles['dropdown-item-button-search'],
-                    styles['dropdown-item-button-search-desktop'],
-                  ].join(' '),
-                },
-              }}
-              rippleProps={{ color: 'rgba(0,0,0,0)' }}
+            <div
+              className={[
+                styles['search-container'],
+                styles['search-container-desktop'],
+              ].join(' ')}
             >
               <div
                 className={[
-                  styles['search-container'],
-                  styles['search-container-desktop'],
+                  styles['search-input-root'],
+                  styles['search-input-root-desktop'],
                 ].join(' ')}
               >
-                <div
-                  className={[
-                    styles['search-input-root'],
-                    styles['search-input-root-desktop'],
-                  ].join(' ')}
-                >
-                  <Input
-                    inputRef={interestInputRef}
-                    value={accountProps.addInterestInput}
-                    classNames={{
-                      container: [
-                        styles['search-input-container'],
-                        styles['search-input-container-desktop'],
-                      ].join(' '),
-                      input: [
-                        styles['search-input'],
-                        styles['search-input-desktop'],
-                      ].join(' '),
-                    }}
-                    placeholder={t('search') ?? ''}
-                    icon={<Line.Search size={24} color={'#2A2A5F'} />}
-                    onChange={(event) =>
-                      AccountController.updateAddInterestInput(
-                        event.target.value
-                      )
-                    }
-                  />
-                </div>
+                <Input
+                  inputRef={interestInputRef}
+                  value={addInterestInput}
+                  classNames={{
+                    container: [
+                      styles['search-input-container'],
+                      styles['search-input-container-desktop'],
+                    ].join(' '),
+                    input: [
+                      styles['search-input'],
+                      styles['search-input-desktop'],
+                    ].join(' '),
+                  }}
+                  placeholder={t('search') ?? ''}
+                  icon={<Line.Search size={24} color={'#2A2A5F'} />}
+                  onChange={(event) =>
+                    AccountController.updateAddInterestInput(event.target.value)
+                  }
+                />
               </div>
-            </Dropdown.Item>
-            <Dropdown.Item
-              classNames={{
-                container: styles['dropdown-item-container-interests'],
-                button: {
-                  button: styles['dropdown-item-button-interests'],
-                  children: styles['dropdown-item-button-children-interests'],
-                },
-              }}
-              rippleProps={{ color: 'rgba(0,0,0,0)' }}
-            >
-              {!accountProps.areAddInterestsLoading &&
-                accountProps.creatableInterest && (
-                  <Button
-                    classNames={{
-                      button: styles['secondary-button'],
-                    }}
-                    size={'tiny'}
-                    rounded={true}
-                    icon={<Line.Add size={24} />}
-                    rippleProps={{
-                      color: 'rgba(133, 38, 122, 0.35)',
-                    }}
-                    onClick={() =>
-                      AccountController.addInterestsCreateAsync(
-                        accountProps.creatableInterest ?? ''
-                      )
-                    }
-                  >
-                    {accountProps.creatableInterest}
-                  </Button>
-                )}
-              {accountProps.searchedInterests.map((value: InterestResponse) => {
-                return (
-                  <Button
-                    size={'tiny'}
-                    rounded={true}
-                    classNames={{
-                      button: [
-                        styles['secondary-button'],
-                        Object.keys(accountProps.selectedInterests).includes(
-                          value.id
-                        ) && styles['interest-selected'],
-                      ].join(' '),
-                    }}
-                    rippleProps={{
-                      color: 'rgba(133, 38, 122, 0.35)',
-                    }}
-                    onClick={() =>
-                      AccountController.updateSelectedInterest(value)
-                    }
-                  >
-                    {value.name}
-                  </Button>
-                );
-              })}
-            </Dropdown.Item>
-            <Dropdown.Item
-              classNames={{
-                container: styles['dropdown-item-container-loading'],
-                button: {
-                  button: styles['dropdown-item-button-loading'],
-                },
-              }}
-              rippleProps={{ color: 'rgba(0,0,0,0)' }}
-            >
-              <img
-                src={'../assets/svg/ring-resize-dark.svg'}
-                className={styles['loading-ring']}
-                style={{
-                  maxHeight: accountProps.areAddInterestsLoading ? 24 : 0,
-                  width: '100%',
+            </div>
+          </Dropdown.Item>
+          <Dropdown.Item
+            classNames={{
+              container: styles['dropdown-item-container-interests'],
+              button: {
+                button: styles['dropdown-item-button-interests'],
+                children: styles['dropdown-item-button-children-interests'],
+              },
+            }}
+            rippleProps={{ color: 'rgba(0,0,0,0)' }}
+          >
+            {!areAddInterestsLoading && creatableInterest && (
+              <Button
+                classNames={{
+                  button: styles['secondary-button'],
                 }}
-              />
-            </Dropdown.Item>
-          </Dropdown>
-        </>,
+                size={'tiny'}
+                rounded={true}
+                icon={<Line.Add size={24} />}
+                rippleProps={{
+                  color: 'rgba(133, 38, 122, 0.35)',
+                }}
+                onClick={() =>
+                  AccountController.addInterestsCreateAsync(
+                    creatableInterest ?? ''
+                  )
+                }
+              >
+                {creatableInterest}
+              </Button>
+            )}
+            {searchedInterests.map((value: InterestResponse) => {
+              return (
+                <Button
+                  size={'tiny'}
+                  rounded={true}
+                  classNames={{
+                    button: [
+                      styles['secondary-button'],
+                      Object.keys(selectedInterests).includes(value.id) &&
+                        styles['interest-selected'],
+                    ].join(' '),
+                  }}
+                  rippleProps={{
+                    color: 'rgba(133, 38, 122, 0.35)',
+                  }}
+                  onClick={() =>
+                    AccountController.updateSelectedInterest(value)
+                  }
+                >
+                  {value.name}
+                </Button>
+              );
+            })}
+          </Dropdown.Item>
+          <Dropdown.Item
+            classNames={{
+              container: styles['dropdown-item-container-loading'],
+              button: {
+                button: styles['dropdown-item-button-loading'],
+              },
+            }}
+            rippleProps={{ color: 'rgba(0,0,0,0)' }}
+          >
+            <img
+              src={'../assets/svg/ring-resize-dark.svg'}
+              className={styles['loading-ring']}
+              style={{
+                maxHeight: areAddInterestsLoading ? 24 : 0,
+                width: '100%',
+              }}
+            />
+          </Dropdown.Item>
+        </Dropdown>,
         document.body
       )}
     </ResponsiveDesktop>
   );
 }
+
+export default observer(AccountDesktopComponent);

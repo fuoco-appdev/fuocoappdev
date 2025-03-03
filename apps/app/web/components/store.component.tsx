@@ -1,35 +1,22 @@
 import { OptionProps } from '@fuoco.appdev/web-components';
 import { TabProps } from '@fuoco.appdev/web-components/dist/cjs/src/components/tabs/tabs';
-import { Country, Product, Region } from '@medusajs/medusa';
-import {
-  PricedProduct,
-  PricedVariant,
-} from '@medusajs/medusa/dist/types/pricing';
-import { Store } from '@ngneat/elf';
-import { useObservable } from '@ngneat/use-observable';
+import { HttpTypes } from '@medusajs/types';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import ReactCountryFlag from 'react-country-flag';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import AccountController from '../../shared/controllers/account.controller';
-import ExploreController from '../../shared/controllers/explore.controller';
-import ProductController from '../../shared/controllers/product.controller';
-import StoreController from '../../shared/controllers/store.controller';
-import WindowController from '../../shared/controllers/window.controller';
-import { WindowState } from '../../shared/models';
-import { AccountState } from '../../shared/models/account.model';
 import {
-  ExploreLocalState,
-  ExploreState,
   InventoryLocation,
   InventoryLocationType,
 } from '../../shared/models/explore.model';
-import { ProductTabs, StoreState } from '../../shared/models/store.model';
+import { ProductTabs } from '../../shared/models/store.model';
 import { ProductLikesMetadataResponse } from '../../shared/protobuf/product-like_pb';
 import { RoutePathsType } from '../../shared/route-paths-type';
 import styles from '../modules/store.module.scss';
 import { useQuery } from '../route-paths';
+import { DIContext } from './app.component';
 import { StoreSuspenseDesktopComponent } from './desktop/suspense/store.suspense.desktop.component';
 import { StoreSuspenseMobileComponent } from './mobile/suspense/store.suspense.mobile.component';
 
@@ -41,11 +28,6 @@ const StoreMobileComponent = React.lazy(
 );
 
 export interface StoreResponsiveProps {
-  windowProps: WindowState;
-  storeProps: StoreState;
-  exploreProps: ExploreState;
-  accountProps: AccountState;
-  exploreLocalProps: ExploreLocalState;
   openFilter: boolean;
   openCartVariants: boolean;
   countryOptions: OptionProps[];
@@ -68,32 +50,36 @@ export interface StoreResponsiveProps {
   onAddToCart: () => void;
   onProductPreviewClick: (
     scrollTop: number,
-    product: PricedProduct | undefined,
+    product: HttpTypes.StoreProduct | undefined,
     productLikesMetadata: ProductLikesMetadataResponse | null
   ) => void;
-  onProductPreviewRest: (product: Product | undefined) => void;
+  onProductPreviewRest: (product: HttpTypes.StoreProduct | undefined) => void;
   onProductPreviewAddToCart: (
-    product: PricedProduct | undefined,
+    product: HttpTypes.StoreProduct | undefined,
     productLikesMetadata: ProductLikesMetadataResponse | null
   ) => void;
   onProductPreviewLikeChanged: (
     isLiked: boolean,
-    product: PricedProduct | undefined
+    product: HttpTypes.StoreProduct | undefined
   ) => void;
   onRemoveSalesChannel: () => void;
 }
 
-export default function StoreComponent(): JSX.Element {
+function StoreComponent(): JSX.Element {
   const navigate = useNavigate();
   const query = useQuery();
-  const [windowProps] = useObservable(WindowController.model.store);
-  const [storeProps] = useObservable(StoreController.model.store);
-  const [storeDebugProps] = useObservable(StoreController.model.debugStore);
-  const [exploreProps] = useObservable(ExploreController.model.store);
-  const [accountProps] = useObservable(AccountController.model.store);
-  const [exploreLocalProps] = useObservable(
-    ExploreController.model.localStore ?? Store.prototype
-  );
+  const {
+    ExploreController,
+    WindowController,
+    StoreController,
+    ProductController,
+  } = React.useContext(DIContext);
+  const { input, regions, selectedRegion, suspense } = StoreController.model;
+  const {
+    inventoryLocations,
+    selectedInventoryLocation,
+    selectedInventoryLocationId,
+  } = ExploreController.model;
   const [openFilter, setOpenFilter] = React.useState<boolean>(false);
   const [openCartVariants, setOpenCartVariants] =
     React.useState<boolean>(false);
@@ -125,7 +111,7 @@ export default function StoreComponent(): JSX.Element {
 
   const onProductPreviewClick = (
     scrollTop: number,
-    product: PricedProduct | undefined,
+    product: HttpTypes.StoreProduct | undefined,
     productLikesMetadata: ProductLikesMetadataResponse | null
   ) => {
     StoreController.updateScrollPosition(scrollTop);
@@ -140,7 +126,9 @@ export default function StoreComponent(): JSX.Element {
     StoreController.updateSelectedProductLikesMetadata(productLikesMetadata);
   };
 
-  const onProductPreviewRest = (product: Product | undefined) => {
+  const onProductPreviewRest = (
+    product: HttpTypes.StoreProduct | undefined
+  ) => {
     navigate({
       pathname: `${RoutePathsType.Store}/${product?.id}`,
       search: query.toString(),
@@ -148,7 +136,7 @@ export default function StoreComponent(): JSX.Element {
   };
 
   const onProductPreviewAddToCart = (
-    product: PricedProduct | undefined,
+    product: HttpTypes.StoreProduct | undefined,
     productLikesMetadata: ProductLikesMetadataResponse | null
   ) => {
     if (!product) {
@@ -162,20 +150,21 @@ export default function StoreComponent(): JSX.Element {
 
     setIsPreviewLoading(true);
 
-    const variants: PricedVariant[] = product?.variants;
+    const variants = product?.variants;
     const quantities: Record<string, number> = {};
-    for (const variant of variants) {
+    for (const variant of variants ?? []) {
       if (!variant?.id) {
         continue;
       }
       quantities[variant?.id] = 0;
     }
 
-    const purchasableVariants = variants.filter(
-      (value: PricedVariant) => value.purchasable === true
+    const purchasableVariants = variants?.filter(
+      (value: HttpTypes.StoreProductVariant) =>
+        value.inventory_quantity && value.inventory_quantity > 0
     );
 
-    if (purchasableVariants.length > 0) {
+    if (purchasableVariants && purchasableVariants.length > 0) {
       const cheapestVariant =
         ProductController.getCheapestPrice(purchasableVariants);
       if (cheapestVariant?.id && quantities[cheapestVariant.id] <= 0) {
@@ -189,7 +178,7 @@ export default function StoreComponent(): JSX.Element {
 
   const onProductPreviewLikeChanged = (
     isLiked: boolean,
-    product: PricedProduct | undefined
+    product: HttpTypes.StoreProduct | undefined
   ) => {
     if (!product) {
       return;
@@ -205,16 +194,16 @@ export default function StoreComponent(): JSX.Element {
         id,
         quantity,
         () => {
-          WindowController.addToast({
-            key: `add-to-cart-${Math.random()}`,
-            message: t('addedToCart') ?? '',
-            description:
-              t('addedToCartDescription', {
-                item: storeProps.selectedPricedProduct?.title,
-              }) ?? '',
-            type: 'success',
-          });
-          setIsPreviewLoading(false);
+          // WindowController.addToast({
+          //   key: `add-to-cart-${Math.random()}`,
+          //   message: t('addedToCart') ?? '',
+          //   description:
+          //     t('addedToCartDescription', {
+          //       item: storeProps.selectedPricedProduct?.title,
+          //     }) ?? '',
+          //   type: 'success',
+          // });
+          // setIsPreviewLoading(false);
         },
         (error) => console.error(error)
       );
@@ -240,7 +229,7 @@ export default function StoreComponent(): JSX.Element {
     renderCountRef.current += 1;
     StoreController.load(renderCountRef.current);
     const search = query.get('search');
-    if (search && search !== storeProps.input) {
+    if (search && search !== input) {
       StoreController.updateInput(search);
     }
 
@@ -251,8 +240,8 @@ export default function StoreComponent(): JSX.Element {
 
   React.useEffect(() => {
     const countries: OptionProps[] = [];
-    for (const region of storeProps.regions as Region[]) {
-      for (const country of region.countries as Country[]) {
+    for (const region of regions) {
+      for (const country of region.countries ?? []) {
         const duplicate = countries.filter(
           (value) => value.id === country.iso_2
         );
@@ -261,7 +250,7 @@ export default function StoreComponent(): JSX.Element {
         }
 
         countries.push({
-          id: country.iso_2,
+          id: country.iso_2 ?? '',
           value: country.name?.toLowerCase() ?? '',
           addOnBefore: () => (
             <ReactCountryFlag
@@ -281,20 +270,15 @@ export default function StoreComponent(): JSX.Element {
     }
 
     setCountryOptions(countries);
-  }, [storeProps.regions]);
+  }, [regions]);
 
   React.useEffect(() => {
-    if (
-      !exploreProps.inventoryLocations ||
-      !storeProps.selectedRegion ||
-      !exploreProps.selectedInventoryLocation
-    ) {
+    if (!inventoryLocations || !selectedRegion || !selectedInventoryLocation) {
       return;
     }
 
-    const inventoryLocationsInRegion = exploreProps.inventoryLocations?.filter(
-      (value: InventoryLocation) =>
-        value.region === storeProps.selectedRegion.name
+    const inventoryLocationsInRegion = inventoryLocations?.filter(
+      (value: InventoryLocation) => value.region === selectedRegion.name
     );
 
     const cellars: OptionProps[] = [];
@@ -311,51 +295,49 @@ export default function StoreComponent(): JSX.Element {
     }
 
     setSalesLocationOptions(cellars);
-  }, [exploreProps.inventoryLocations, storeProps.selectedRegion]);
+  }, [inventoryLocations, selectedRegion]);
 
   React.useEffect(() => {
-    if (salesLocationOptions.length <= 0) {
+    if (!selectedInventoryLocationId || salesLocationOptions.length <= 0) {
       return;
     }
 
-    setSelectedSalesLocationId(exploreLocalProps.selectedInventoryLocationId);
-  }, [exploreLocalProps.selectedInventoryLocationId, salesLocationOptions]);
+    setSelectedSalesLocationId(selectedInventoryLocationId);
+  }, [selectedInventoryLocationId, salesLocationOptions]);
 
   React.useEffect(() => {
-    if (!storeProps.selectedRegion || countryOptions.length <= 0) {
+    if (!selectedRegion || countryOptions.length <= 0) {
       return;
     }
 
-    const region = storeProps.selectedRegion as Region;
-    const country = region.countries[0];
+    const country = selectedRegion.countries?.[0];
     const selectedCountry = countryOptions.find(
       (value) => value.id === country?.iso_2
     );
 
     setSelectedCountryId(selectedCountry?.id ?? '');
     setSelectedRegionId('');
-  }, [countryOptions, storeProps.selectedRegion]);
+  }, [countryOptions, selectedRegion]);
 
   React.useEffect(() => {
     if (countryOptions.length <= 0 || selectedCountryId.length <= 0) {
       return;
     }
 
-    const regions: OptionProps[] = [];
+    const regionOptions: OptionProps[] = [];
     const selectedCountryOption = countryOptions.find(
       (value) => value.id === selectedCountryId
     );
-    for (const region of storeProps.regions as Region[]) {
-      const countries = region.countries as Country[];
-      const validCountries = countries.filter(
+    for (const region of regions) {
+      const validCountries = region.countries?.filter(
         (value) => value.iso_2 === selectedCountryOption?.id
       );
 
-      if (validCountries.length <= 0) {
+      if (!validCountries || validCountries?.length <= 0) {
         continue;
       }
 
-      regions.push({
+      regionOptions.push({
         id: region?.id ?? '',
         value: region?.name ?? '',
         children: () => (
@@ -364,22 +346,19 @@ export default function StoreComponent(): JSX.Element {
       });
     }
 
-    setRegionOptions(regions);
+    setRegionOptions(regionOptions);
   }, [selectedCountryId, countryOptions]);
 
   React.useEffect(() => {
-    if (!storeProps.selectedRegion || regionOptions.length <= 0) {
+    if (!selectedRegion || regionOptions.length <= 0) {
       return;
     }
 
-    setSelectedRegionId(storeProps.selectedRegion.id);
-  }, [regionOptions, storeProps.selectedRegion]);
+    setSelectedRegionId(selectedRegion.id);
+  }, [regionOptions, selectedRegion]);
 
   React.useEffect(() => {
-    if (
-      exploreProps.selectedInventoryLocation?.type ===
-      InventoryLocationType.Cellar
-    ) {
+    if (selectedInventoryLocation?.type === InventoryLocationType.Cellar) {
       setTabs([
         {
           id: ProductTabs.White,
@@ -399,8 +378,7 @@ export default function StoreComponent(): JSX.Element {
         },
       ]);
     } else if (
-      exploreProps.selectedInventoryLocation?.type ===
-      InventoryLocationType.Restaurant
+      selectedInventoryLocation?.type === InventoryLocationType.Restaurant
     ) {
       setTabs([
         {
@@ -444,7 +422,7 @@ export default function StoreComponent(): JSX.Element {
         },
       ]);
     }
-  }, [exploreProps.selectedInventoryLocation]);
+  }, [selectedInventoryLocation]);
 
   const suspenceComponent = (
     <>
@@ -453,7 +431,7 @@ export default function StoreComponent(): JSX.Element {
     </>
   );
 
-  if (storeDebugProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
 
@@ -483,11 +461,6 @@ export default function StoreComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <StoreDesktopComponent
-          windowProps={windowProps}
-          storeProps={storeProps}
-          exploreProps={exploreProps}
-          accountProps={accountProps}
-          exploreLocalProps={exploreLocalProps}
           openFilter={openFilter}
           openCartVariants={openCartVariants}
           countryOptions={countryOptions}
@@ -515,11 +488,6 @@ export default function StoreComponent(): JSX.Element {
           onRemoveSalesChannel={onRemoveSalesChannel}
         />
         <StoreMobileComponent
-          windowProps={windowProps}
-          storeProps={storeProps}
-          accountProps={accountProps}
-          exploreProps={exploreProps}
-          exploreLocalProps={exploreLocalProps}
           openFilter={openFilter}
           openCartVariants={openCartVariants}
           countryOptions={countryOptions}
@@ -550,3 +518,5 @@ export default function StoreComponent(): JSX.Element {
     </>
   );
 }
+
+export default observer(StoreComponent);

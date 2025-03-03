@@ -1,23 +1,18 @@
-import { useObservable } from '@ngneat/use-observable';
+import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { useParams } from 'react-router-dom';
-import AccountController from '../../shared/controllers/account.controller';
-import ChatController from '../../shared/controllers/chat.controller';
 import {
   AccountDocument,
   AccountPresence,
-  AccountState,
 } from '../../shared/models/account.model';
 import {
-  ChatDocument,
   ChatSeenMessage,
-  ChatState,
   DecryptedChatMessage,
   DecryptedChatMessages,
 } from '../../shared/models/chat.model';
 import { StorageFolderType } from '../../shared/protobuf/common_pb';
-import BucketService from '../../shared/services/bucket.service';
+import { DIContext } from './app.component';
 import { AuthenticatedComponent } from './authenticated.component';
 import { ChatConversation } from './conversation-item.component';
 import { ChatSuspenseDesktopComponent } from './desktop/suspense/chat.suspense.desktop.component';
@@ -31,8 +26,6 @@ const ChatMobileComponent = React.lazy(
 );
 
 export interface ChatResponsiveProps {
-  chatProps: ChatState;
-  accountProps: AccountState;
   accounts: AccountDocument[];
   profileUrls: Record<string, string>;
   accountPresence: AccountPresence[];
@@ -43,32 +36,31 @@ export interface ChatResponsiveProps {
   ) => ChatConversation[];
 }
 
-export default function ChatComponent(): JSX.Element {
+function ChatComponent(): JSX.Element {
   const { id } = useParams();
-  const [accountProps] = useObservable(AccountController.model.store);
-  const [chatProps] = useObservable(ChatController.model.store);
-  const [chatDebugProps] = useObservable(ChatController.model.debugStore);
+  const { AccountController, ChatController, BucketService } =
+    React.useContext(DIContext);
+  const {
+    suspense,
+    seenBy,
+    accounts,
+    messages,
+    selectedChat,
+    lastChatMessages,
+  } = ChatController.model;
+  const { account } = AccountController.model;
   const [profileUrls, setProfileUrls] = React.useState<Record<string, string>>(
     {}
   );
-  const [accounts, setAccounts] = React.useState<AccountDocument[]>([]);
+  const [currentAccountDocuments, setCurrentAccountDocuments] = React.useState<
+    AccountDocument[]
+  >([]);
   const [accountPresence, setAccountPresence] = React.useState<
     AccountPresence[]
   >([]);
-  const [seenBy, setSeenBy] = React.useState<Record<string, ChatSeenMessage[]>>(
-    {}
-  );
-
-  const suspenceComponent = (
-    <>
-      <ChatSuspenseDesktopComponent />
-      <ChatSuspenseMobileComponent />
-    </>
-  );
-
-  if (chatDebugProps.suspense) {
-    return suspenceComponent;
-  }
+  const [currentSeenBy, setCurrentSeenBy] = React.useState<
+    Record<string, ChatSeenMessage[]>
+  >({});
 
   const onMessageSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     ChatController.submitMessageAsync();
@@ -84,10 +76,8 @@ export default function ChatComponent(): JSX.Element {
       const messageTimestamp = new Date(message.createdAt ?? '');
       const timeDifference =
         messageTimestamp.getTime() - lastTimestampThreshold.getTime();
-      const seenBy = Object.keys(ChatController.model.seenBy).includes(
-        message.id ?? ''
-      )
-        ? ChatController.model.seenBy[message.id ?? '']
+      const seenByKeys = Object.keys(seenBy).includes(message.id ?? '')
+        ? seenBy[message.id ?? '']
         : undefined;
       if (
         !currentGroup ||
@@ -98,10 +88,8 @@ export default function ChatComponent(): JSX.Element {
           result.push(currentGroup);
         }
 
-        const account = Object.keys(ChatController.model.accounts).includes(
-          message.accountId ?? ''
-        )
-          ? ChatController.model.accounts[message.accountId ?? '']
+        const account = Object.keys(accounts).includes(message.accountId ?? '')
+          ? accounts[message.accountId ?? '']
           : undefined;
         const timestampThreshold =
           timeDifference > timeThreshold ? messageTimestamp : undefined;
@@ -129,20 +117,20 @@ export default function ChatComponent(): JSX.Element {
   const getLastSeenMessages = (
     messages: DecryptedChatMessage[]
   ): Record<string, ChatSeenMessage[]> => {
-    let lastSeenMessages: ChatSeenMessage[] = [];
+    const lastSeenMessages: ChatSeenMessage[] = [];
     messages.forEach((message) => {
-      (
-        chatProps.seenBy[message.id ?? ''] as ChatSeenMessage[] | undefined
-      )?.forEach((seenMessage) => {
-        if (
-          seenMessage.accountId !== message.accountId &&
-          !lastSeenMessages.find(
-            (value) => value.accountId === seenMessage.accountId
-          )
-        ) {
-          lastSeenMessages.push(seenMessage);
+      (seenBy[message.id ?? ''] as ChatSeenMessage[] | undefined)?.forEach(
+        (seenMessage) => {
+          if (
+            seenMessage.accountId !== message.accountId &&
+            !lastSeenMessages.find(
+              (value) => value.accountId === seenMessage.accountId
+            )
+          ) {
+            lastSeenMessages.push(seenMessage);
+          }
         }
-      });
+      );
     });
 
     const seenMessages: Record<string, ChatSeenMessage[]> = {};
@@ -172,9 +160,9 @@ export default function ChatComponent(): JSX.Element {
     }
 
     const chatMessages: DecryptedChatMessages | undefined = Object.keys(
-      chatProps.messages
+      messages
     ).includes(id)
-      ? chatProps.messages[id]
+      ? messages[id]
       : undefined;
     if (!chatMessages || chatMessages.messages.length <= 0) {
       return;
@@ -189,38 +177,36 @@ export default function ChatComponent(): JSX.Element {
       await ChatController.updateSeenMessageOfActiveAccountAsync(firstMessage);
     };
     updateSeenMessage();
-  }, [chatProps.lastChatMessages, chatProps.messages, id]);
+  }, [lastChatMessages, messages, id]);
 
   React.useEffect(() => {
     const chatId = id ?? '';
     const decryptedMessages: DecryptedChatMessage[] = Object.keys(
-      chatProps.messages
+      messages
     ).includes(chatId)
-      ? chatProps.messages[chatId].messages
+      ? messages[chatId].messages
       : [];
 
     const reversedMessages = [...decryptedMessages].reverse();
     const lastSeenMessages = getLastSeenMessages(reversedMessages);
-    setSeenBy(lastSeenMessages);
-  }, [chatProps.seenBy]);
+    setCurrentSeenBy(lastSeenMessages);
+  }, [seenBy]);
 
   React.useEffect(() => {
-    const selectedChat = chatProps.selectedChat as ChatDocument | undefined;
     if (!selectedChat) {
       return;
     }
 
-    const account = accountProps.account as AccountDocument | undefined;
     if (selectedChat.type === 'private') {
       const accountIds = selectedChat?.private?.account_ids ?? [];
-      const documents = Object.values(chatProps.accounts) as AccountDocument[];
-      const accounts = documents.filter(
+      const documents = Object.values(accounts);
+      const accountDocuments = documents.filter(
         (value) =>
           accountIds.includes(value?.id ?? '') && value.id !== account?.id
       );
-      setAccounts(accounts);
+      setCurrentAccountDocuments(accountDocuments);
     }
-  }, [chatProps.accounts, chatProps.selectedChat, accountProps.account]);
+  }, [accounts, selectedChat, account]);
 
   React.useEffect(() => {
     if (!accounts) {
@@ -228,7 +214,7 @@ export default function ChatComponent(): JSX.Element {
     }
 
     const urls: Record<string, string> = {};
-    for (const account of accounts) {
+    for (const account of currentAccountDocuments) {
       if (!account.profile_url) {
         continue;
       }
@@ -246,19 +232,30 @@ export default function ChatComponent(): JSX.Element {
     }
 
     setProfileUrls(urls);
-  }, [accounts]);
+  }, [currentAccountDocuments]);
 
   React.useEffect(() => {
-    if (!accounts) {
+    if (!currentAccountDocuments) {
       return;
     }
 
-    const accountIds = accounts.map((value) => value.id);
-    const presence = Object.values(
-      chatProps.accountPresence as Record<string, AccountPresence>
-    ).filter((value) => accountIds.includes(value.account_id));
+    const accountIds = currentAccountDocuments.map((value) => value.id);
+    const presence = Object.values(accountPresence).filter((value) =>
+      accountIds.includes(value.account_id)
+    );
     setAccountPresence(presence);
-  }, [chatProps.accountPresence, accounts]);
+  }, [accountPresence, currentAccountDocuments]);
+
+  const suspenceComponent = (
+    <>
+      <ChatSuspenseDesktopComponent />
+      <ChatSuspenseMobileComponent />
+    </>
+  );
+
+  if (suspense) {
+    return suspenceComponent;
+  }
 
   return (
     <>
@@ -291,22 +288,18 @@ export default function ChatComponent(): JSX.Element {
       <React.Suspense fallback={suspenceComponent}>
         <AuthenticatedComponent>
           <ChatDesktopComponent
-            chatProps={chatProps}
-            accountProps={accountProps}
-            accounts={accounts}
+            accounts={currentAccountDocuments}
             profileUrls={profileUrls}
             accountPresence={accountPresence}
-            seenBy={seenBy}
+            seenBy={currentSeenBy}
             onMessageSubmit={onMessageSubmit}
             splitMessagesByUserAndTime={splitMessagesByUserAndTime}
           />
           <ChatMobileComponent
-            chatProps={chatProps}
-            accountProps={accountProps}
-            accounts={accounts}
+            accounts={currentAccountDocuments}
             profileUrls={profileUrls}
             accountPresence={accountPresence}
-            seenBy={seenBy}
+            seenBy={currentSeenBy}
             onMessageSubmit={onMessageSubmit}
             splitMessagesByUserAndTime={splitMessagesByUserAndTime}
           />
@@ -315,3 +308,5 @@ export default function ChatComponent(): JSX.Element {
     </>
   );
 }
+
+export default observer(ChatComponent);

@@ -1,11 +1,11 @@
 import { OptionProps } from '@fuoco.appdev/web-components';
 import { CountryDataProps } from '@fuoco.appdev/web-components/dist/cjs/src/components/input-phone-number/country-data';
-import { Country, Region } from '@medusajs/medusa';
-import { useObservable } from '@ngneat/use-observable';
+import { Country } from '@medusajs/medusa';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import ReactCountryFlag from 'react-country-flag';
-import StoreController from '../../shared/controllers/store.controller';
 import styles from './address-form.module.scss';
+import { DIContext } from './app.component';
 import { AddressFormSuspenseDesktopComponent } from './desktop/suspense/address-form.suspense.desktop.component';
 import { AddressFormSuspenseMobileComponent } from './mobile/suspense/address-form.suspense.mobile.component';
 
@@ -88,7 +88,7 @@ export interface AddressFormResponsiveProps extends AddressFormProps {
   email: string;
 }
 
-export default function AddressFormComponent({
+function AddressFormComponent({
   isAuthenticated = false,
   values,
   errors,
@@ -96,8 +96,8 @@ export default function AddressFormComponent({
   isComplete = false,
   onEdit,
 }: AddressFormProps): JSX.Element {
-  const [storeProps] = useObservable(StoreController.model.store);
-  const [storeDebugProps] = useObservable(StoreController.model.debugStore);
+  const { StoreController } = React.useContext(DIContext);
+  const { suspense, regions, selectedRegion } = StoreController.model;
   const [countryOptions, setCountryOptions] = React.useState<OptionProps[]>([]);
   const [regionOptions, setRegionOptions] = React.useState<OptionProps[]>([]);
   const [selectedCountryId, setSelectedCountryId] = React.useState<string>('');
@@ -131,8 +131,8 @@ export default function AddressFormComponent({
 
   React.useEffect(() => {
     const countries: OptionProps[] = [];
-    for (const region of storeProps.regions as Region[]) {
-      for (const country of region.countries as Country[]) {
+    for (const region of regions) {
+      for (const country of region.countries ?? []) {
         const duplicate = countries.filter(
           (value) => value.id === country.iso_2
         );
@@ -141,7 +141,7 @@ export default function AddressFormComponent({
         }
 
         countries.push({
-          id: country.iso_2,
+          id: country.iso_2 ?? '',
           value: country.name?.toLowerCase() ?? '',
           addOnBefore: () => (
             <ReactCountryFlag
@@ -161,29 +161,31 @@ export default function AddressFormComponent({
     }
 
     setCountryOptions(countries);
-  }, [storeProps.regions]);
+  }, [regions]);
 
   React.useEffect(() => {
-    if (!storeProps.selectedRegion || !countryOptions) {
+    if (!selectedRegion || !countryOptions) {
       return;
     }
 
-    const selectedCountry = storeProps.selectedRegion.countries[0];
-    setSelectedCountryId(selectedCountry.id);
-    setSelectedCountry(selectedCountry?.iso_2);
-    setSelectedRegionId('');
-  }, [countryOptions, storeProps.selectedRegion]);
+    const selectedCountry = selectedRegion.countries?.[0];
+    if (selectedCountry) {
+      setSelectedCountryId(selectedCountry.id);
+      setSelectedCountry(selectedCountry.iso_2 ?? '');
+      setSelectedRegionId('');
+    }
+  }, [countryOptions, selectedRegion]);
 
   React.useEffect(() => {
     if (countryOptions.length <= 0) {
       return;
     }
 
-    const regions: OptionProps[] = [];
+    const regionOptions: OptionProps[] = [];
     const selectedCountryOption = countryOptions.find(
       (value) => value.id === selectedCountryId
     );
-    for (const region of storeProps.regions as Region[]) {
+    for (const region of regions) {
       const countries = region.countries as Country[];
       const validCountries = countries.filter(
         (value) => value.iso_2 === selectedCountryOption?.id
@@ -193,7 +195,7 @@ export default function AddressFormComponent({
         continue;
       }
 
-      regions.push({
+      regionOptions.push({
         id: region?.id ?? '',
         value: region?.name ?? '',
         children: () => (
@@ -202,7 +204,7 @@ export default function AddressFormComponent({
       });
     }
 
-    setRegionOptions(regions);
+    setRegionOptions(regionOptions);
   }, [selectedCountryId, countryOptions]);
 
   React.useEffect(() => {
@@ -262,7 +264,7 @@ export default function AddressFormComponent({
     </>
   );
 
-  if (storeDebugProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
 
@@ -309,3 +311,5 @@ export default function AddressFormComponent({
     </React.Suspense>
   );
 }
+
+export default observer(AddressFormComponent);

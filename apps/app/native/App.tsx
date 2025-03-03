@@ -9,27 +9,27 @@
 import './Styles';
 // prettier-ignore
 import { Colors, Globals, MarginsPaddings, PortalProvider, Typography } from '@fuoco.appdev/native-components';
-import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { HeaderBackButtonProps } from '@react-navigation/native-stack/lib/typescript/src/types';
-import { observer, useLocalObservable } from 'mobx-react-lite';
+import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {HeaderBackButtonProps} from '@react-navigation/native-stack/lib/typescript/src/types';
+import {observer, useLocalObservable} from 'mobx-react-lite';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { AppState, useColorScheme, View } from 'react-native';
+import {useTranslation} from 'react-i18next';
+import {AppState, useColorScheme, View} from 'react-native';
 import {
   configureReanimatedLogger,
   ReanimatedLogLevel,
 } from 'react-native-reanimated';
-import { enableScreens } from 'react-native-screens';
+import {enableScreens} from 'react-native-screens';
 import '../shared/i18n';
-import { RoutePathsType } from '../shared/route-paths-type';
+import {RoutePathsType} from '../shared/route-paths-type';
 import CompleteProfileComponent from './components/CompleteProfile.component';
 import CustomerWindowComponent from './components/CustomerWindow.component';
 import ForgotPasswordComponent from './components/ForgotPassword.component';
 import LandingComponent from './components/Landing.component';
 import SigninComponent from './components/Signin.component';
 import SignupComponent from './components/Signup.component';
-import register, { AppDIContainer } from './Register';
+import register, {AppDIContainer} from './register';
 
 // configure({
 //   enforceActions: 'always',
@@ -49,7 +49,7 @@ enableScreens(true);
 const Stack = createNativeStackNavigator();
 const diContainer = register();
 
-AppState.addEventListener('change', (state) => {
+AppState.addEventListener('change', state => {
   const supabaseService = diContainer.get('SupabaseService');
   if (state === 'active') {
     supabaseService.supabaseClient?.auth.startAutoRefresh();
@@ -65,19 +65,19 @@ function App(): React.JSX.Element | null {
   const supabaseService = diContainer.get('SupabaseService');
   const appController = diContainer.get('AppController');
   const accountController = diContainer.get('AccountController');
-  const { authState } = windowController.model;
-  const { account } = accountController.model;
-  const { session } = useLocalObservable(() => supabaseService);
+  const {authState} = windowController.model;
+  const {account} = accountController.model;
+  const {session} = useLocalObservable(() => supabaseService);
   const theme = useColorScheme();
   const isDarkTheme = theme === 'dark';
-  const { t } = useTranslation();
+  const {t} = useTranslation();
 
   React.useEffect(() => {
     appController.initializeServices(1).then();
     const authSubscription = supabaseService.subscribeToAuthStateChanged(
       (event, session) => {
         windowController.handleAuthStateChanged(event, session);
-      }
+      },
     );
     appController.initialize(1);
     appController.load(1);
@@ -96,8 +96,7 @@ function App(): React.JSX.Element | null {
         {
           paddingLeft: MarginsPaddings.mp_5,
         },
-      ]}
-    >
+      ]}>
       <Typography.Title
         customStyles={{
           root: {
@@ -105,8 +104,7 @@ function App(): React.JSX.Element | null {
             fontWeight: Globals.font_weight_bold,
           },
         }}
-        level={4}
-      >
+        level={4}>
         Mindy
       </Typography.Title>
     </View>
@@ -122,8 +120,7 @@ function App(): React.JSX.Element | null {
               ...DefaultTheme.colors,
               background: isDarkTheme ? '#121212' : '#fff',
             },
-          }}
-        >
+          }}>
           {!session && (
             <Stack.Navigator>
               <Stack.Group>

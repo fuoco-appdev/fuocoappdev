@@ -1,7 +1,6 @@
-import { useObservable } from '@ngneat/use-observable';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import AccountController from '../../shared/controllers/account.controller';
-import { AccountState } from '../../shared/models/account.model';
+import { DIContext } from './app.component';
 import { AuthenticatedComponent } from './authenticated.component';
 import { AccountOrderHistorySuspenseDesktopComponent } from './desktop/suspense/account-order-history.suspense.desktop.component';
 import { AccountOrderHistorySuspenseMobileComponent } from './mobile/suspense/account-order-history.suspense.mobile.component';
@@ -13,13 +12,11 @@ const AccountOrderHistoryMobileComponent = React.lazy(
   () => import('./mobile/account-order-history.mobile.component')
 );
 
-export interface AccountOrderHistoryResponsiveProps {
-  accountProps: AccountState;
-}
+export interface AccountOrderHistoryResponsiveProps {}
 
-export default function AccountOrderHistoryComponent(): JSX.Element {
-  const [accountProps] = useObservable(AccountController.model.store);
-  const [accountDebugProps] = useObservable(AccountController.model.debugStore);
+function AccountOrderHistoryComponent(): JSX.Element {
+  const { AccountController } = React.useContext(DIContext);
+  const { suspense } = AccountController.model;
 
   React.useEffect(() => {
     AccountController.loadOrders();
@@ -32,16 +29,18 @@ export default function AccountOrderHistoryComponent(): JSX.Element {
     </>
   );
 
-  if (accountDebugProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
 
   return (
     <React.Suspense fallback={suspenceComponent}>
       <AuthenticatedComponent>
-        <AccountOrderHistoryDesktopComponent accountProps={accountProps} />
-        <AccountOrderHistoryMobileComponent accountProps={accountProps} />
+        <AccountOrderHistoryDesktopComponent />
+        <AccountOrderHistoryMobileComponent />
       </AuthenticatedComponent>
     </React.Suspense>
   );
 }
+
+export default observer(AccountOrderHistoryComponent);

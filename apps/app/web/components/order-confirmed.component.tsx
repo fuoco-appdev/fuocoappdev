@@ -1,14 +1,11 @@
 import { OptionProps } from '@fuoco.appdev/web-components';
-import { LineItem, ReturnReason } from '@medusajs/medusa';
-import { useObservable } from '@ngneat/use-observable';
+import { HttpTypes } from '@medusajs/types';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useParams } from 'react-router-dom';
-import OrderConfirmedController from '../../shared/controllers/order-confirmed.controller';
-import StoreController from '../../shared/controllers/store.controller';
-import { OrderConfirmedState } from '../../shared/models/order-confirmed.model';
-import { StoreState } from '../../shared/models/store.model';
 import styles from '../modules/order-confirmed.module.scss';
+import { DIContext } from './app.component';
 import { OrderConfirmedSuspenseDesktopComponent } from './desktop/suspense/order-confirmed.suspense.desktop.component';
 import { OrderConfirmedSuspenseMobileComponent } from './mobile/suspense/order-confirmed.suspense.mobile.component';
 
@@ -22,29 +19,27 @@ const OrderConfirmedMobileComponent = React.lazy(
 export interface OrderConfirmedProps {}
 
 export interface OrderConfirmedResponsiveProps {
-  orderConfirmedProps: OrderConfirmedState;
-  storeProps: StoreState;
   quantity: number;
   openRefund: boolean;
   returnReasonOptions: OptionProps[];
+  shippingOption: HttpTypes.StoreShippingOption | undefined;
   setOpenRefund: (value: boolean) => void;
   formatStatus: (value: string) => string;
 }
 
-export default function OrderConfirmedComponent(): JSX.Element {
+function OrderConfirmedComponent(): JSX.Element {
   const { id } = useParams();
-  const [orderConfirmedProps] = useObservable(
-    OrderConfirmedController.model.store
-  );
-  const [orderConfirmedDebugProps] = useObservable(
-    OrderConfirmedController.model.debugStore
-  );
-  const [storeProps] = useObservable(StoreController.model.store);
+  const { OrderConfirmedController } = React.useContext(DIContext);
+  const { returnReasons, order, suspense, shippingOptions } =
+    OrderConfirmedController.model;
   const [quantity, setQuantity] = React.useState<number>(0);
   const [openRefund, setOpenRefund] = React.useState<boolean>(false);
   const [returnReasonOptions, setReturnReasonOptions] = React.useState<
     OptionProps[]
   >([]);
+  const [shippingOption, setShippingOption] = React.useState<
+    HttpTypes.StoreShippingOption | undefined
+  >(undefined);
   const isRenderedRef = React.useRef<boolean>(false);
   const renderCountRef = React.useRef<number>(0);
 
@@ -68,7 +63,7 @@ export default function OrderConfirmedComponent(): JSX.Element {
       value: string;
       children: () => JSX.Element;
     }[] = [];
-    for (const returnReason of orderConfirmedProps.returnReasons as ReturnReason[]) {
+    for (const returnReason of returnReasons) {
       options.push({
         id: returnReason.id,
         value: returnReason.label,
@@ -79,29 +74,37 @@ export default function OrderConfirmedComponent(): JSX.Element {
     }
 
     setReturnReasonOptions(options);
-  }, [orderConfirmedProps.returnReasons]);
+  }, [returnReasons]);
 
   React.useEffect(() => {
-    if (!orderConfirmedProps.order || !orderConfirmedProps.returnReasons) {
+    if (!order || !returnReasons) {
       return;
     }
 
-    setQuantity(
-      orderConfirmedProps.order.items.reduce(
-        (current: number, next: LineItem) => current + next.quantity,
+    const total =
+      order.items?.reduce(
+        (current: number, next: HttpTypes.StoreOrderLineItem) =>
+          current + next.quantity,
         0
-      )
-    );
+      ) ?? 0;
+    setQuantity(total);
 
-    for (const item of orderConfirmedProps.order.items as LineItem[]) {
+    for (const item of order.items ?? []) {
       OrderConfirmedController.updateRefundItem(item.id, {
         item_id: item.id,
         quantity: item.quantity,
-        reason_id: orderConfirmedProps.returnReasons[0]?.id ?? '',
+        reason_id: returnReasons[0]?.id ?? '',
         note: '',
       });
     }
-  }, [orderConfirmedProps.order, orderConfirmedProps.returnReasons]);
+  }, [order, returnReasons]);
+
+  React.useEffect(() => {
+    const option = shippingOptions.find(
+      (value) => value.id === order?.shipping_methods?.[0].shipping_option_id
+    );
+    setShippingOption(option);
+  }, [order, shippingOptions]);
 
   const formatStatus = (str: string | undefined) => {
     const formatted = str?.split('_').join(' ');
@@ -115,7 +118,7 @@ export default function OrderConfirmedComponent(): JSX.Element {
     </>
   );
 
-  if (orderConfirmedDebugProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
 
@@ -149,20 +152,18 @@ export default function OrderConfirmedComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <OrderConfirmedDesktopComponent
-          orderConfirmedProps={orderConfirmedProps}
-          storeProps={storeProps}
           quantity={quantity}
           openRefund={openRefund}
           returnReasonOptions={returnReasonOptions}
+          shippingOption={shippingOption}
           setOpenRefund={setOpenRefund}
           formatStatus={formatStatus}
         />
         <OrderConfirmedMobileComponent
-          orderConfirmedProps={orderConfirmedProps}
-          storeProps={storeProps}
           quantity={quantity}
           openRefund={openRefund}
           returnReasonOptions={returnReasonOptions}
+          shippingOption={shippingOption}
           setOpenRefund={setOpenRefund}
           formatStatus={formatStatus}
         />
@@ -170,3 +171,5 @@ export default function OrderConfirmedComponent(): JSX.Element {
     </>
   );
 }
+
+export default observer(OrderConfirmedComponent);

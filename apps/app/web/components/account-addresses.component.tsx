@@ -1,9 +1,7 @@
-import { Address } from '@medusajs/medusa';
-import { useObservable } from '@ngneat/use-observable';
+import { HttpTypes } from '@medusajs/types';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import AccountController from '../../shared/controllers/account.controller';
-import { AccountState } from '../../shared/models/account.model';
+import { DIContext } from './app.component';
 import { AuthenticatedComponent } from './authenticated.component';
 import { AccountAddressesSuspenseDesktopComponent } from './desktop/suspense/account-addresses.suspense.desktop.component';
 import { AccountAddressesSuspenseMobileComponent } from './mobile/suspense/account-addresses.suspense.mobile.component';
@@ -16,13 +14,12 @@ const AccountAddressesMobileComponent = React.lazy(
 );
 
 export interface AccountAddressResponsiveProps {
-  accountProps: AccountState;
   onAddAddressAsync: () => void;
   onEditAddressAsync: () => void;
   onDeleteAddressConfirmedAsync: () => void;
   onDeleteAddressCanceledAsync: () => void;
-  onEditAddressButtonClicked: (value: Address) => void;
-  onDeleteAddressButtonClicked: (value: Address) => void;
+  onEditAddressButtonClicked: (value: HttpTypes.AdminCustomerAddress) => void;
+  onDeleteAddressButtonClicked: (value: HttpTypes.AdminCustomerAddress) => void;
   openAddDropdown: boolean;
   setOpenAddDropdown: (value: boolean) => void;
   openEditDropdown: boolean;
@@ -32,8 +29,8 @@ export interface AccountAddressResponsiveProps {
 
 export default function AccountAddressesComponent(): JSX.Element {
   const { t, i18n } = useTranslation();
-  const [accountProps] = useObservable(AccountController.model.store);
-  const [accountDebugProps] = useObservable(AccountController.model.debugStore);
+  const { AccountController, BucketService } = React.useContext(DIContext);
+  const { shippingForm, selectedAddress, suspense } = AccountController.model;
   const [openAddDropdown, setOpenAddDropdown] = React.useState<boolean>(false);
   const [openEditDropdown, setOpenEditDropdown] =
     React.useState<boolean>(false);
@@ -54,15 +51,13 @@ export default function AccountAddressesComponent(): JSX.Element {
       phoneNumber: undefined,
     });
 
-    const errors = AccountController.getAddressFormErrors(
-      accountProps.shippingForm
-    );
+    const errors = AccountController.getAddressFormErrors(shippingForm);
     if (errors) {
       AccountController.updateShippingAddressErrors(errors);
       return;
     }
 
-    await AccountController.addAddressAsync(accountProps.shippingForm);
+    await AccountController.addAddressAsync(shippingForm);
     setOpenAddDropdown(false);
   };
 
@@ -96,7 +91,6 @@ export default function AccountAddressesComponent(): JSX.Element {
   };
 
   const onDeleteAddressConfirmedAsync = async () => {
-    const selectedAddress = accountProps.selectedAddress as Address | undefined;
     AccountController.deleteAddressAsync(selectedAddress?.id);
     setDeleteModalVisible(false);
   };
@@ -106,7 +100,9 @@ export default function AccountAddressesComponent(): JSX.Element {
     setDeleteModalVisible(false);
   };
 
-  const onEditAddressButtonClicked = (value: Address) => {
+  const onEditAddressButtonClicked = (
+    value: HttpTypes.AdminCustomerAddress
+  ) => {
     AccountController.updateSelectedAddress(value);
     AccountController.updateEditShippingAddress({
       firstName: value.first_name ?? '',
@@ -123,7 +119,9 @@ export default function AccountAddressesComponent(): JSX.Element {
     setOpenEditDropdown(true);
   };
 
-  const onDeleteAddressButtonClicked = (value: Address) => {
+  const onDeleteAddressButtonClicked = (
+    value: HttpTypes.AdminCustomerAddress
+  ) => {
     AccountController.updateSelectedAddress(value);
     setDeleteModalVisible(true);
   };
@@ -147,7 +145,7 @@ export default function AccountAddressesComponent(): JSX.Element {
     </>
   );
 
-  if (accountDebugProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
 
@@ -155,7 +153,6 @@ export default function AccountAddressesComponent(): JSX.Element {
     <React.Suspense fallback={suspenceComponent}>
       <AuthenticatedComponent>
         <AccountAddressesDesktopComponent
-          accountProps={accountProps}
           onAddAddressAsync={onAddAddressAsync}
           onEditAddressAsync={onEditAddressAsync}
           onDeleteAddressConfirmedAsync={onDeleteAddressConfirmedAsync}
@@ -169,7 +166,6 @@ export default function AccountAddressesComponent(): JSX.Element {
           setOpenEditDropdown={setOpenEditDropdown}
         />
         <AccountAddressesMobileComponent
-          accountProps={accountProps}
           onAddAddressAsync={onAddAddressAsync}
           onEditAddressAsync={onEditAddressAsync}
           onDeleteAddressConfirmedAsync={onDeleteAddressConfirmedAsync}

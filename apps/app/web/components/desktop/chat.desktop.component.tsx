@@ -1,5 +1,3 @@
-import { useTranslation } from 'react-i18next';
-// @ts-ignore
 import {
   Avatar,
   Button,
@@ -7,17 +5,17 @@ import {
   Line,
   Scroll,
 } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
 import moment from 'moment';
-import { useRef } from 'react';
-import ChatController from '../../../shared/controllers/chat.controller';
+import React, { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import styles from '../../modules/chat.module.scss';
+import { DIContext } from '../app.component';
 import { ChatResponsiveProps } from '../chat.component';
 import ConversationItemComponent from '../conversation-item.component';
 import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
 
-export default function ChatDesktopComponent({
-  chatProps,
-  accountProps,
+function ChatDesktopComponent({
   accounts,
   profileUrls,
   accountPresence,
@@ -30,14 +28,24 @@ export default function ChatDesktopComponent({
   const topBarRef = useRef<HTMLDivElement | null>(null);
   const bottomBarRef = useRef<HTMLDivElement | null>(null);
   const messageInputRef = useRef<HTMLInputElement | null>(null);
+  const { ChatController, AccountController } = React.useContext(DIContext);
+  const {
+    selectedChat,
+    messages,
+    hasMoreMessages,
+    areMessagesLoading,
+    isSelectedChatLoading,
+    messageInput,
+  } = ChatController.model;
+  const { account } = AccountController.model;
 
   useDesktopEffect(() => {
     messageInputRef.current?.focus();
   }, [messageInputRef?.current]);
 
-  const chatId = chatProps.selectedChat?.id ?? '';
-  const decryptedMessages = Object.keys(chatProps.messages).includes(chatId)
-    ? chatProps.messages[chatId].messages
+  const chatId = selectedChat?.id ?? '';
+  const decryptedMessages = Object.keys(messages).includes(chatId)
+    ? messages[chatId].messages
     : [];
   const conversations = splitMessagesByUserAndTime(decryptedMessages);
   return (
@@ -75,7 +83,7 @@ export default function ChatDesktopComponent({
                       ].join(' '),
                     }}
                     size={'custom'}
-                    text={account.customer?.first_name}
+                    text={account.customer?.first_name ?? ''}
                     src={profileUrl}
                   />
                   {presence && presence.is_online && (
@@ -103,7 +111,7 @@ export default function ChatDesktopComponent({
               ].join(' ')}
             >
               {accounts?.length > 0 &&
-                chatProps.selectedChat?.type === 'private' &&
+                selectedChat?.type === 'private' &&
                 accounts[0]?.username}
             </div>
             <div
@@ -164,8 +172,8 @@ export default function ChatDesktopComponent({
             onLoad={() => ChatController.onMessagesNextScrollAsync()}
             loadingHeight={56}
             showIndicatorThreshold={56}
-            isLoadable={chatProps.hasMoreMessages}
-            isLoading={chatProps.areMessagesLoading}
+            isLoadable={hasMoreMessages}
+            isLoading={areMessagesLoading}
           >
             <div
               className={[
@@ -173,77 +181,75 @@ export default function ChatDesktopComponent({
                 styles['message-items-container-desktop'],
               ].join(' ')}
             >
-              {!chatProps.isSelectedChatLoading &&
-                decryptedMessages.length <= 0 && (
+              {!isSelectedChatLoading && decryptedMessages.length <= 0 && (
+                <div
+                  className={[
+                    styles['no-message-container'],
+                    styles['no-message-container-desktop'],
+                  ].join(' ')}
+                >
                   <div
                     className={[
-                      styles['no-message-container'],
-                      styles['no-message-container-desktop'],
+                      styles['no-message-avatars'],
+                      styles['no-message-avatars-desktop'],
                     ].join(' ')}
                   >
-                    <div
-                      className={[
-                        styles['no-message-avatars'],
-                        styles['no-message-avatars-desktop'],
-                      ].join(' ')}
-                    >
-                      {accounts?.map((account, index) => {
-                        const profileUrl = profileUrls[account.id ?? ''];
-                        return (
-                          <Avatar
-                            classNames={{
-                              container: [
-                                styles['no-message-avatar-container'],
-                                styles['no-message-avatar-container-desktop'],
-                                index > 0 && styles['no-message-avatar-margin'],
-                              ].join(' '),
-                            }}
-                            size={'custom'}
-                            text={account.username}
-                            src={profileUrl}
-                          />
-                        );
-                      })}
-                    </div>
-                    <div
-                      className={[
-                        styles['no-message-text-container'],
-                        styles['no-message-text-container-desktop'],
-                      ].join(' ')}
-                    >
-                      {accounts.length === 1 && (
-                        <div
-                          className={[
-                            styles['no-message-full-name'],
-                            styles['no-message-full-name-desktop'],
-                          ].join(' ')}
-                        >
-                          {`${accounts[0].customer?.first_name} ${accounts[0].customer?.last_name}`}
-                        </div>
-                      )}
-                      {accounts.length === 1 && (
-                        <div
-                          className={[
-                            styles['no-message-description'],
-                            styles['no-message-description-desktop'],
-                          ].join(' ')}
-                        >
-                          {t('sayHiTo', {
-                            name: accounts[0].customer?.first_name,
-                          })}
-                        </div>
-                      )}
-                    </div>
+                    {accounts?.map((account, index) => {
+                      const profileUrl = profileUrls[account.id ?? ''];
+                      return (
+                        <Avatar
+                          classNames={{
+                            container: [
+                              styles['no-message-avatar-container'],
+                              styles['no-message-avatar-container-desktop'],
+                              index > 0 && styles['no-message-avatar-margin'],
+                            ].join(' '),
+                          }}
+                          size={'custom'}
+                          text={account.username}
+                          src={profileUrl}
+                        />
+                      );
+                    })}
                   </div>
-                )}
+                  <div
+                    className={[
+                      styles['no-message-text-container'],
+                      styles['no-message-text-container-desktop'],
+                    ].join(' ')}
+                  >
+                    {accounts.length === 1 && (
+                      <div
+                        className={[
+                          styles['no-message-full-name'],
+                          styles['no-message-full-name-desktop'],
+                        ].join(' ')}
+                      >
+                        {`${accounts[0].customer?.first_name} ${accounts[0].customer?.last_name}`}
+                      </div>
+                    )}
+                    {accounts.length === 1 && (
+                      <div
+                        className={[
+                          styles['no-message-description'],
+                          styles['no-message-description-desktop'],
+                        ].join(' ')}
+                      >
+                        {t('sayHiTo', {
+                          name: accounts[0].customer?.first_name,
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
               {conversations.map((conversation) => {
                 return (
                   <ConversationItemComponent
-                    chatProps={chatProps}
                     conversation={conversation}
                     profileUrls={profileUrls}
                     seenBy={seenBy}
-                    activeAccountId={accountProps.account?.id}
+                    activeAccountId={account?.id}
                   />
                 );
               })}
@@ -290,7 +296,7 @@ export default function ChatDesktopComponent({
             >
               <Input
                 inputRef={messageInputRef}
-                value={chatProps.messageInput}
+                value={messageInput}
                 classNames={{
                   formLayout: {
                     root: [
@@ -329,7 +335,7 @@ export default function ChatDesktopComponent({
                 icon={<Line.Send size={24} />}
                 htmlType={'submit'}
                 rounded={true}
-                disabled={chatProps.messageInput.length <= 0}
+                disabled={messageInput.length <= 0}
               />
             </div>
           </form>
@@ -338,3 +344,5 @@ export default function ChatDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(ChatDesktopComponent);

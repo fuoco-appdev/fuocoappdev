@@ -1,10 +1,12 @@
+/* eslint-disable jsx-a11y/alt-text */
 import { Button, Input, Line, Listbox } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
 import styles from '../../modules/refund-item.module.scss';
 import { RefundItemResponsiveProps } from '../refund-item.component';
 import { ResponsiveMobile } from '../responsive.component';
 
-export default function RefundItemMobileComponent({
+function RefundItemMobileComponent({
   item,
   refundItem,
   returnReasonOptions,
@@ -177,3 +179,5 @@ export default function RefundItemMobileComponent({
     </ResponsiveMobile>
   );
 }
+
+export default observer(RefundItemMobileComponent);

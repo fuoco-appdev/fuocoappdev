@@ -1,12 +1,14 @@
 import { Avatar } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
 import moment from 'moment';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AccountDocument } from '../../shared/models/account.model';
 import {
   ChatSeenMessage,
-  ChatState,
   DecryptedChatMessage,
 } from '../../shared/models/chat.model';
+import { DIContext } from './app.component';
 import styles from './conversation-item.module.scss';
 
 export interface ChatConversation {
@@ -16,21 +18,21 @@ export interface ChatConversation {
 }
 
 export interface ConversationItemProps {
-  chatProps: ChatState;
   conversation: ChatConversation;
   profileUrls: Record<string, string>;
   seenBy: Record<string, ChatSeenMessage[]>;
   activeAccountId?: string;
 }
 
-export default function ConversationItemComponent({
-  chatProps,
+function ConversationItemComponent({
   conversation,
   profileUrls,
   seenBy,
   activeAccountId,
 }: ConversationItemProps): JSX.Element {
   const { i18n } = useTranslation();
+  const { ChatController } = React.useContext(DIContext);
+  const { accounts, suspense } = ChatController.model;
   return (
     <div className={styles['root']}>
       {conversation.timestampThreshold && (
@@ -75,8 +77,7 @@ export default function ConversationItemComponent({
                   messageSeenBy.length > 0 && (
                     <div className={styles['seen-by-container']}>
                       {messageSeenBy.map((seenMessage) => {
-                        const account =
-                          chatProps.accounts[seenMessage.accountId ?? ''];
+                        const account = accounts[seenMessage.accountId ?? ''];
                         return (
                           <Avatar
                             classNames={{
@@ -100,3 +101,5 @@ export default function ConversationItemComponent({
     </div>
   );
 }
+
+export default observer(ConversationItemComponent);

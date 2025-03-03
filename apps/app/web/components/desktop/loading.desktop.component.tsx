@@ -1,6 +1,7 @@
+import { observer } from 'mobx-react-lite';
 import styles from '../../modules/loading.module.scss';
 
-export default function LoadingDesktopComponent(): JSX.Element {
+function LoadingDesktopComponent(): JSX.Element {
   return (
     <div className={[styles['root'], styles['root-desktop']].join(' ')}>
       <img
@@ -10,3 +11,5 @@ export default function LoadingDesktopComponent(): JSX.Element {
     </div>
   );
 }
+
+export default observer(LoadingDesktopComponent);

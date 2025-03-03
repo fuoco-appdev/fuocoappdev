@@ -1,15 +1,12 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import { useObservable } from '@ngneat/use-observable';
 import { AuthError } from '@supabase/supabase-js';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import EmailConfirmationController from '../../shared/controllers/email-confirmation.controller';
-import SigninController from '../../shared/controllers/signin.controller';
-import WindowController from '../../shared/controllers/window.controller';
-import { SigninState } from '../../shared/models/signin.model';
 import { RoutePathsType } from '../../shared/route-paths-type';
+import { DIContext } from './app.component';
 import { GuestComponent } from './guest.component';
 import {
   ResponsiveDesktop,
@@ -25,7 +22,6 @@ const SigninMobileComponent = React.lazy(
 );
 
 export interface SigninResponsiveProps {
-  signInProps: SigninState;
   setAuthError: (error: AuthError | null) => void;
   emailError: string;
   passwordError: string;
@@ -33,13 +29,14 @@ export interface SigninResponsiveProps {
 
 export interface SigninProps {}
 
-export default function SigninComponent(): JSX.Element {
+function SigninComponent(): JSX.Element {
   const location = useLocation();
   const navigate = useNavigate();
+  const { SigninController, EmailConfirmationController } =
+    React.useContext(DIContext);
+  const { email, suspense } = SigninController.model;
   SigninController.model.location = location;
   const { t } = useTranslation();
-  const [signInProps] = useObservable(SigninController.model.store);
-  const [signInDebugProps] = useObservable(SigninController.model.debugStore);
   const [authError, setAuthError] = React.useState<AuthError | null>(null);
   const [emailError, setEmailError] = React.useState<string>('');
   const [passwordError, setPasswordError] = React.useState<string>('');
@@ -60,33 +57,30 @@ export default function SigninComponent(): JSX.Element {
     } else if (authError?.message === 'Email not confirmed') {
       setEmailError(t('emailNotConfirmed') ?? '');
       setPasswordError('');
-      SigninController.resendEmailConfirmationAsync(
-        signInProps.email ?? '',
-        () => {
-          WindowController.addToast({
-            key: `signin-email-confirmation-sent-${Math.random()}`,
-            message: t('emailConfirmation') ?? '',
-            description: t('emailConfirmationDescription') ?? '',
-            type: 'success',
-          });
-        }
-      );
-      EmailConfirmationController.updateEmail(signInProps.email);
+      SigninController.resendEmailConfirmationAsync(email ?? '', () => {
+        // WindowController.addToast({
+        //   key: `signin-email-confirmation-sent-${Math.random()}`,
+        //   message: t('emailConfirmation') ?? '',
+        //   description: t('emailConfirmationDescription') ?? '',
+        //   type: 'success',
+        // });
+      });
+      EmailConfirmationController.updateEmail(email);
       navigate(RoutePathsType.EmailConfirmation);
     } else {
       if (authError) {
-        WindowController.addToast({
-          key: `signin-${Math.random()}`,
-          message: authError?.name,
-          description: authError?.message,
-          type: 'error',
-        });
+        // WindowController.addToast({
+        //   key: `signin-${Math.random()}`,
+        //   message: authError?.name,
+        //   description: authError?.message,
+        //   type: 'error',
+        // });
       }
 
       setEmailError('');
       setPasswordError('');
     }
-  }, [authError, signInProps.email]);
+  }, [authError, email]);
 
   const suspenceComponent = (
     <>
@@ -102,7 +96,7 @@ export default function SigninComponent(): JSX.Element {
     </>
   );
 
-  if (signInDebugProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
 
@@ -137,13 +131,11 @@ export default function SigninComponent(): JSX.Element {
       <React.Suspense fallback={suspenceComponent}>
         <GuestComponent>
           <SigninDesktopComponent
-            signInProps={signInProps}
             setAuthError={setAuthError}
             emailError={emailError}
             passwordError={passwordError}
           />
           <SigninMobileComponent
-            signInProps={signInProps}
             setAuthError={setAuthError}
             emailError={emailError}
             passwordError={passwordError}
@@ -153,3 +145,5 @@ export default function SigninComponent(): JSX.Element {
     </>
   );
 }
+
+export default observer(SigninComponent);

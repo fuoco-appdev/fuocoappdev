@@ -20,7 +20,7 @@ export default class EventsController extends Controller {
     return this._model;
   }
 
-  public override initialize = (_renderCount: number): void => {};
+  public override initialize(_renderCount: number): void {}
 
   public override load(_renderCount: number): void {}
 

@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import { Auth } from '@fuoco.appdev/web-components';
 import { AuthError } from '@supabase/supabase-js';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { animated, config, useTransition } from 'react-spring';
-import SignupController from '../../../shared/controllers/signup.controller';
 import { RoutePathsType } from '../../../shared/route-paths-type';
 import styles from '../../modules/signup.module.scss';
 import { useQuery } from '../../route-paths';
+import { DIContext } from '../app.component';
 import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
 import { SignupResponsiveProps } from '../signup.component';
 
-export default function SignupDesktopComponent({
-  signupProps,
+function SignupDesktopComponent({
   emailError,
   passwordError,
   confirmPasswordError,
@@ -27,6 +27,9 @@ export default function SignupDesktopComponent({
   const query = useQuery();
   const [show, setShow] = React.useState(false);
   const { t } = useTranslation();
+  const { SignupController } = React.useContext(DIContext);
+  const { supabaseClient, email, password, confirmationPassword } =
+    SignupController.model;
 
   useDesktopEffect(() => {
     setShow(true);
@@ -53,7 +56,7 @@ export default function SignupDesktopComponent({
             (style, item) =>
               item && (
                 <animated.div style={style}>
-                  {signupProps.supabaseClient && (
+                  {supabaseClient && (
                     <Auth
                       classNames={{
                         socialAuth: {
@@ -93,11 +96,9 @@ export default function SignupDesktopComponent({
                           color: 'rgba(233, 33, 66, .35)',
                         },
                       }}
-                      emailValue={signupProps?.email ?? ''}
-                      passwordValue={signupProps?.password ?? ''}
-                      confirmPasswordValue={
-                        signupProps?.confirmationPassword ?? ''
-                      }
+                      emailValue={email ?? ''}
+                      passwordValue={password ?? ''}
+                      confirmPasswordValue={confirmationPassword ?? ''}
                       providers={['google']}
                       view={'sign_up'}
                       socialColors={false}
@@ -136,7 +137,7 @@ export default function SignupDesktopComponent({
                       emailErrorMessage={emailError}
                       passwordErrorMessage={passwordError}
                       confirmPasswordErrorMessage={confirmPasswordError}
-                      supabaseClient={signupProps.supabaseClient}
+                      supabaseClient={supabaseClient}
                       onEmailChanged={(e) =>
                         SignupController.updateEmail(e.target.value)
                       }
@@ -194,3 +195,5 @@ export default function SignupDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(SignupDesktopComponent);

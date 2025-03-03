@@ -11,9 +11,13 @@ import SignupController from '../controllers/signup.controller';
 import TermsOfServiceController from '../controllers/terms-of-service.controller';
 import WindowController from '../controllers/window.controller';
 import { Model } from '../model';
+import AccountService from '../services/account.service';
 import BucketService from '../services/bucket.service';
+import ConfigService from '../services/config.service';
+import LogflareService from '../services/logflare.service';
 import MedusaService from '../services/medusa.service';
 import MeiliSearchService from '../services/meilisearch.service';
+import OpenWebuiService from '../services/open-webui.service';
 import SupabaseService from '../services/supabase.service';
 import { StoreOptions } from '../store-options';
 import EmailConfirmationController from './email-confirmation.controller';
@@ -25,8 +29,12 @@ export default class AppController extends Controller {
   constructor(
     private readonly _container: DIContainer<{
       AccountController: AccountController;
+      LogflareService: LogflareService;
       MedusaService: MedusaService;
+      AccountService: AccountService;
       SupabaseService: SupabaseService;
+      ConfigService: ConfigService;
+      OpenWebuiService: OpenWebuiService;
       WindowController: WindowController;
       SigninController: SigninController;
       SignupController: SignupController;
@@ -50,7 +58,7 @@ export default class AppController extends Controller {
     return this._model;
   }
 
-  public override initialize = (renderCount: number): void => {
+  public override initialize(renderCount: number): void {
     //this._accountPublicController.initialize(renderCount);
     //this._exploreController.initialize(renderCount);
     //this._storeController.initialize(renderCount);
@@ -91,7 +99,7 @@ export default class AppController extends Controller {
     termsOfServiceController.initialize(renderCount);
     privacyPolicyController.initialize(renderCount);
     resetPasswordController.initialize(renderCount);
-  };
+  }
 
   public override load(_renderCount: number): void {}
 
@@ -200,5 +208,30 @@ export default class AppController extends Controller {
     // permissionsController.updateSuspense(value);
     // helpController.updateSuspense(value);
     resetPasswordController.updateSuspense(value);
+  }
+
+  public async requestHealthCheckAsync(): Promise<boolean> {
+    const logflareService = this._container.get('LogflareService');
+    const supabaseService = this._container.get('SupabaseService');
+    const accountService = this._container.get('AccountService');
+    const medusaService = this._container.get('MedusaService');
+    const openWebuiService = this._container.get('OpenWebuiService');
+
+    try {
+      if (
+        !(await logflareService.requestHealthAsync()) ||
+        !(await supabaseService.requestHealthAsync()) ||
+        !(await accountService.requestHealthAsync()) ||
+        !(await medusaService.requestHealthAsync()) ||
+        !(await openWebuiService.requestHealthAsync())
+      ) {
+        return false;
+      }
+    } catch (error: any) {
+      console.error(error);
+      return false;
+    }
+
+    return true;
   }
 }

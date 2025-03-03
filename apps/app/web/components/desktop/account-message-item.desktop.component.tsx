@@ -1,19 +1,18 @@
 import { Avatar, Button } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
 import Skeleton from 'react-loading-skeleton';
 import styles from '../../modules/account-message-item.module.scss';
 import { AccountMessageItemResponsiveProps } from '../account-message-item.component';
 import { ResponsiveDesktop } from '../responsive.component';
 
-export default function AccountMessageItemDesktopComponent({
-  chatProps,
+function AccountMessageItemDesktopComponent({
   account,
   profileUrl,
   onClick,
   onMessage,
 }: AccountMessageItemResponsiveProps): JSX.Element {
   const { t } = useTranslation();
-
   return (
     <ResponsiveDesktop>
       <div
@@ -34,7 +33,7 @@ export default function AccountMessageItemDesktopComponent({
               ].join(' '),
             }}
             size={'custom'}
-            text={account.customer?.first_name}
+            text={account.customer?.first_name ?? ''}
             src={profileUrl}
           />
           <div
@@ -106,3 +105,5 @@ export default function AccountMessageItemDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(AccountMessageItemDesktopComponent);

@@ -1,8 +1,6 @@
-import { useObservable } from '@ngneat/use-observable';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import AccountController from '../../shared/controllers/account.controller';
-import { AccountState } from '../../shared/models/account.model';
+import { DIContext } from './app.component';
 import { AuthenticatedComponent } from './authenticated.component';
 import { AccountAddFriendsSuspenseDesktopComponent } from './desktop/suspense/account-add-friends.suspense.desktop.component';
 import { AccountAddFriendsSuspenseMobileComponent } from './mobile/suspense/account-add-friends.suspense.mobile.component';
@@ -15,19 +13,18 @@ const AccountAddFriendsMobileComponent = React.lazy(
 );
 
 export interface AccountAddFriendsResponsiveProps {
-  accountProps: AccountState;
   locationDropdownOpen: boolean;
   setLocationDropdownOpen: (value: boolean) => void;
 }
 
 export default function AccountAddFriendsComponent(): JSX.Element {
-  const [accountProps] = useObservable(AccountController.model.store);
-  const [accountDebugProps] = useObservable(AccountController.model.debugStore);
+  const { AccountController } = React.useContext(DIContext);
+  const { suspense } = AccountController.model;
   const [locationDropdownOpen, setLocationDropdownOpen] =
     React.useState<boolean>(false);
 
   React.useEffect(() => {
-    AccountController.loadFollowRequestsAndFriendsAccountsAsync();
+    // AccountController.loadFollowRequestsAndFriendsAccountsAsync();
   }, []);
 
   const suspenceComponent = (
@@ -37,7 +34,7 @@ export default function AccountAddFriendsComponent(): JSX.Element {
     </>
   );
 
-  if (accountDebugProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
 
@@ -72,12 +69,10 @@ export default function AccountAddFriendsComponent(): JSX.Element {
       <React.Suspense fallback={suspenceComponent}>
         <AuthenticatedComponent>
           <AccountAddFriendsDesktopComponent
-            accountProps={accountProps}
             locationDropdownOpen={locationDropdownOpen}
             setLocationDropdownOpen={setLocationDropdownOpen}
           />
           <AccountAddFriendsMobileComponent
-            accountProps={accountProps}
             locationDropdownOpen={locationDropdownOpen}
             setLocationDropdownOpen={setLocationDropdownOpen}
           />

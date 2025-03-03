@@ -1,11 +1,10 @@
-import { useObservable } from '@ngneat/use-observable';
+import { observer } from 'mobx-react-lite';
 import moment from 'moment';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import NotificationsController from '../../shared/controllers/notifications.controller';
-import { NotificationsState } from '../../shared/models/notifications.model';
 import { AccountNotificationResponse } from '../../shared/protobuf/account-notification_pb';
+import { DIContext } from './app.component';
 import { AuthenticatedComponent } from './authenticated.component';
 import { NotificationsSuspenseDesktopComponent } from './desktop/suspense/notifications.suspense.desktop.component';
 import { NotificationsSuspenseMobileComponent } from './mobile/suspense/notifications.suspense.mobile.component';
@@ -18,21 +17,16 @@ const NotificationsMobileComponent = React.lazy(
 );
 
 export interface NotificationsResponsiveProps {
-  notificationsProps: NotificationsState;
   notifications: Record<string, AccountNotificationResponse[]>;
   onScroll: (e: React.UIEvent<HTMLDivElement, UIEvent>) => void;
   onLoad: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
 }
 
-export default function NotificationsComponent(): JSX.Element {
+function NotificationsComponent(): JSX.Element {
   const renderCountRef = React.useRef<number>(0);
   const { t, i18n } = useTranslation();
-  const [notificationsProps] = useObservable(
-    NotificationsController.model.store
-  );
-  const [notificationsDebugProps] = useObservable(
-    NotificationsController.model.debugStore
-  );
+  const { NotificationsController } = React.useContext(DIContext);
+  const { suspense, accountNotifications } = NotificationsController.model;
   const [notifications, setNotifications] = React.useState<
     Record<string, AccountNotificationResponse[]>
   >({});
@@ -61,17 +55,6 @@ export default function NotificationsComponent(): JSX.Element {
     }
   };
 
-  const suspenceComponent = (
-    <>
-      <NotificationsSuspenseDesktopComponent />
-      <NotificationsSuspenseMobileComponent />
-    </>
-  );
-
-  if (notificationsDebugProps.suspense) {
-    return suspenceComponent;
-  }
-
   React.useEffect(() => {
     renderCountRef.current += 1;
     NotificationsController.load(renderCountRef.current);
@@ -84,7 +67,7 @@ export default function NotificationsComponent(): JSX.Element {
   React.useEffect(() => {
     let lastFromNow = '';
     const newNotifications: Record<string, AccountNotificationResponse[]> = {};
-    for (const notification of notificationsProps.accountNotifications as AccountNotificationResponse[]) {
+    for (const notification of accountNotifications) {
       const fromNowCurrent = moment(notification?.createdAt)
         .locale(i18n.language)
         .startOf('day')
@@ -100,7 +83,18 @@ export default function NotificationsComponent(): JSX.Element {
       newNotifications[fromNowCurrent].push(notification);
     }
     setNotifications(newNotifications);
-  }, [notificationsProps.accountNotifications]);
+  }, [accountNotifications]);
+
+  const suspenceComponent = (
+    <>
+      <NotificationsSuspenseDesktopComponent />
+      <NotificationsSuspenseMobileComponent />
+    </>
+  );
+
+  if (suspense) {
+    return suspenceComponent;
+  }
 
   return (
     <>
@@ -133,13 +127,11 @@ export default function NotificationsComponent(): JSX.Element {
       <React.Suspense fallback={suspenceComponent}>
         <AuthenticatedComponent>
           <NotificationsDesktopComponent
-            notificationsProps={notificationsProps}
             notifications={notifications}
             onScroll={onScroll}
             onLoad={onLoad}
           />
           <NotificationsMobileComponent
-            notificationsProps={notificationsProps}
             notifications={notifications}
             onScroll={onScroll}
             onLoad={onLoad}
@@ -149,3 +141,5 @@ export default function NotificationsComponent(): JSX.Element {
     </>
   );
 }
+
+export default observer(NotificationsComponent);

@@ -7,24 +7,22 @@ import {
   Modal,
   Scroll,
 } from '@fuoco.appdev/web-components';
-import { useObservable } from '@ngneat/use-observable';
+import { observer } from 'mobx-react-lite';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
-import AccountController from '../../../shared/controllers/account.controller';
-import ChatController from '../../../shared/controllers/chat.controller';
 import { ChatDocument } from '../../../shared/models/chat.model';
 import { RoutePathsType } from '../../../shared/route-paths-type';
 import styles from '../../modules/chats.module.scss';
 import { useQuery } from '../../route-paths';
 import AccountMessageItemComponent from '../account-message-item.component';
+import { DIContext } from '../app.component';
 import ChatMessageItemComponent from '../chat-item.component';
 import { ChatsResponsiveProps } from '../chats.component';
 import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
 
-export default function ChatsDesktopComponent({
-  chatProps,
+function ChatsDesktopComponent({
   openEditDropdown,
   openNewPrivate,
   chatAccounts,
@@ -38,7 +36,20 @@ export default function ChatsDesktopComponent({
   const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
-  const [accountProps] = useObservable(AccountController.model.store);
+  const { ChatController } = React.useContext(DIContext);
+  const {
+    suspense,
+    chats,
+    searchInput,
+    hasMoreChats,
+    areChatsLoading,
+    lastChatMessages,
+    seenBy,
+    accountPresence,
+    searchAccountsInput,
+    searchedAccounts,
+    areAccountsLoading,
+  } = ChatController.model;
   const topBarRef = React.useRef<HTMLDivElement | null>(null);
   const editButtonRef = React.useRef<HTMLDivElement | null>(null);
   const searchAccountsInputRef = React.useRef<HTMLInputElement | null>(null);
@@ -46,13 +57,13 @@ export default function ChatsDesktopComponent({
   let yPosition = 0;
 
   useDesktopEffect(() => {
-    if (id || chatProps.chats.length <= 0) {
+    if (id || chats.length <= 0) {
       return;
     }
 
-    const firstChat = chatProps.chats.at(0);
+    const firstChat = chats.at(0);
     navigate(`${RoutePathsType.Chats}/${firstChat?.id}`);
-  }, [chatProps.chats]);
+  }, [chats]);
 
   return (
     <ResponsiveDesktop>
@@ -89,7 +100,7 @@ export default function ChatsDesktopComponent({
                   ].join(' ')}
                 >
                   <Input
-                    value={chatProps.searchInput}
+                    value={searchInput}
                     classNames={{
                       formLayout: {
                         root: [styles['search-input-form-layout-root']].join(
@@ -149,8 +160,8 @@ export default function ChatsDesktopComponent({
                 <Line.ArrowDownward size={24} />
               </div>
             }
-            isLoadable={chatProps.hasMoreChats}
-            isLoading={chatProps.areChatsLoading}
+            isLoadable={hasMoreChats}
+            isLoading={areChatsLoading}
             onLoad={() => ChatController.onChatsNextScrollAsync()}
             onScroll={(progress, scrollRef, contentRef) => {
               const elementHeight = topBarRef.current?.clientHeight ?? 0;
@@ -182,30 +193,29 @@ export default function ChatsDesktopComponent({
               ].join(' ')}
             >
               {chatAccounts &&
-                chatProps.chats.map((chat: ChatDocument, _index: number) => {
-                  const lastMessage = chatProps.lastChatMessages[chat.id ?? ''];
-                  const seenBy = chatProps.seenBy[lastMessage?.id ?? ''];
+                chats.map((chat: ChatDocument, _index: number) => {
+                  const lastMessage = lastChatMessages[chat.id ?? ''];
+                  const lastSeenBy = seenBy[lastMessage?.id ?? ''];
                   const accounts = chatAccounts[chat.id ?? ''];
                   const accountIds = accounts?.map((value) => value.id);
-                  const accountPresence = Object.values(
-                    chatProps.accountPresence
+                  const accountPresenceList = Object.values(
+                    accountPresence
                   ).filter((value) => accountIds?.includes(value.account_id));
                   return (
                     <ChatMessageItemComponent
                       key={chat.id}
-                      accountProps={accountProps}
                       accounts={accounts}
-                      seenBy={seenBy}
+                      seenBy={lastSeenBy}
                       chat={chat}
                       lastMessage={lastMessage}
-                      accountPresence={accountPresence}
+                      accountPresence={accountPresenceList}
                       onClick={() =>
                         navigate(`${RoutePathsType.Chats}/${chat.id}`)
                       }
                     />
                   );
                 })}
-              {chatProps.chats.length <= 0 && (
+              {chats.length <= 0 && (
                 <div
                   className={[
                     styles['no-chats-container'],
@@ -333,7 +343,7 @@ export default function ChatsDesktopComponent({
               >
                 <Input
                   inputRef={searchAccountsInputRef}
-                  value={chatProps.searchAccountsInput}
+                  value={searchAccountsInput}
                   classNames={{
                     container: [
                       styles['search-input-container'],
@@ -351,18 +361,17 @@ export default function ChatsDesktopComponent({
                   }
                 />
               </div>
-              {chatProps.searchedAccounts.map((value) => {
+              {searchedAccounts.map((value) => {
                 return (
                   <AccountMessageItemComponent
                     key={value.id}
-                    chatProps={chatProps}
                     account={value}
                     onClick={() => onAccountMessageItemClick?.(value)}
                     onMessage={() => onPrivateMessageClick?.(value)}
                   />
                 );
               })}
-              {chatProps.areAccountsLoading && (
+              {areAccountsLoading && (
                 <div
                   className={[
                     styles['loading-container'],
@@ -373,7 +382,7 @@ export default function ChatsDesktopComponent({
                     src={'../assets/svg/ring-resize-dark.svg'}
                     className={styles['loading-ring']}
                     style={{
-                      minHeight: chatProps.areAccountsLoading ? 24 : 0,
+                      minHeight: areAccountsLoading ? 24 : 0,
                       width: '100%',
                     }}
                   />
@@ -387,3 +396,5 @@ export default function ChatsDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(ChatsDesktopComponent);

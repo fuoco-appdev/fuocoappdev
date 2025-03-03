@@ -1,13 +1,8 @@
-// @ts-ignore
-import {
-  PricedProduct,
-  PricedVariant,
-} from '@medusajs/medusa/dist/types/pricing';
-import { useObservable } from '@ngneat/use-observable';
+import { HttpTypes } from '@medusajs/types';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import CartController from '../../shared/controllers/cart.controller';
-import { StoreState } from '../../shared/models/store.model';
 import { MedusaProductTypeNames } from '../../shared/types/medusa.type';
+import { DIContext } from './app.component';
 import { CartVariantItemSuspenseDesktopComponent } from './desktop/suspense/cart-variant-item.suspense.desktop.component';
 import { CartVariantItemSuspenseMobileComponent } from './mobile/suspense/cart-variant-item.suspense.mobile.component';
 
@@ -20,9 +15,8 @@ const CartVariantItemMobileComponent = React.lazy(
 
 export interface CartVariantItemProps {
   productType: MedusaProductTypeNames;
-  product: PricedProduct | undefined;
-  variant: PricedVariant;
-  storeProps: StoreState;
+  product: HttpTypes.StoreProduct | undefined;
+  variant: HttpTypes.StoreProductVariant;
   variantQuantities: Record<string, number>;
   setVariantQuantities: (value: Record<string, number>) => void;
 }
@@ -31,15 +25,15 @@ export interface CartVariantItemResponsiveProps extends CartVariantItemProps {
   onQuantitiesChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export default function CartVariantItemComponent({
+function CartVariantItemComponent({
   productType,
   product,
   variant,
-  storeProps,
   variantQuantities,
   setVariantQuantities,
 }: CartVariantItemProps): JSX.Element {
-  const [cartDebugProps] = useObservable(CartController.model.debugStore);
+  const { CartController } = React.useContext(DIContext);
+  const { suspense } = CartController.model;
   const onQuantitiesChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     const quantities = { ...variantQuantities };
     if (variant?.id) {
@@ -55,7 +49,7 @@ export default function CartVariantItemComponent({
     </>
   );
 
-  if (cartDebugProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
 
@@ -65,7 +59,6 @@ export default function CartVariantItemComponent({
         productType={productType}
         product={product}
         variant={variant}
-        storeProps={storeProps}
         variantQuantities={variantQuantities}
         setVariantQuantities={setVariantQuantities}
         onQuantitiesChanged={onQuantitiesChanged}
@@ -74,7 +67,6 @@ export default function CartVariantItemComponent({
         productType={productType}
         product={product}
         variant={variant}
-        storeProps={storeProps}
         variantQuantities={variantQuantities}
         setVariantQuantities={setVariantQuantities}
         onQuantitiesChanged={onQuantitiesChanged}
@@ -82,3 +74,5 @@ export default function CartVariantItemComponent({
     </React.Suspense>
   );
 }
+
+export default observer(CartVariantItemComponent);

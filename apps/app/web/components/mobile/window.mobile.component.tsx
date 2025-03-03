@@ -1,15 +1,13 @@
+/* eslint-disable no-restricted-globals */
 import {
   Avatar,
-  BannerOverlay,
   Button,
   Dropdown,
   LanguageSwitch,
   Line,
   Modal,
   Solid,
-  ToastOverlay,
 } from '@fuoco.appdev/web-components';
-import { Customer } from '@medusajs/medusa';
 import { LanguageCode } from 'iso-639-1';
 import * as React from 'react';
 import ReactCountryFlag from 'react-country-flag';
@@ -17,21 +15,14 @@ import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import WindowController from '../../../shared/controllers/window.controller';
-import { AccountResponse } from '../../../shared/protobuf/account_pb';
 import { RoutePathsType } from '../../../shared/route-paths-type';
 import styles from '../../modules/window.module.scss';
 import { useQuery } from '../../route-paths';
+import { DIContext } from '../app.component';
 import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 import { WindowResponsiveProps } from '../window.component';
 
 export default function WindowMobileComponent({
-  windowProps,
-  windowLocalProps,
-  accountProps,
-  accountPublicProps,
-  productProps,
-  exploreProps,
   openMore,
   isLanguageOpen,
   setOpenMore,
@@ -45,20 +36,39 @@ export default function WindowMobileComponent({
   const { t } = useTranslation();
   const bottomBarRef = React.useRef<HTMLDivElement | null>(null);
   const [switchBottomBar, setSwitchBottomBar] = React.useState<boolean>(false);
-  const [activeRoute, setActiveRoute] = React.useState<
+  const {
+    AccountController,
+    AccountPublicController,
+    WindowController,
+    ExploreController,
+    ProductController,
+  } = React.useContext(DIContext);
+  const { customer, profileUrl } = AccountController.model;
+  const {
+    languageCode,
+    activeRoute,
+    unseenNotificationsCount,
+    isAccountComplete,
+    showNavigateBack,
+    queryInventoryLocation,
+    transitionKeyIndex,
+    scaleKeyIndex,
+    prevTransitionKeyIndex,
+    languageInfo,
+  } = WindowController.model;
+  const { selectedInventoryLocation } = ExploreController.model;
+  const { metadata } = ProductController.model;
+  const [currentActiveRoute, setCurrentActiveRoute] = React.useState<
     RoutePathsType | undefined
-  >(windowProps.activeRoute);
+  >(activeRoute);
 
   useMobileEffect(() => {
     setSwitchBottomBar(true);
-  }, [windowProps.transitionKeyIndex, windowProps.scaleKeyIndex]);
+  }, [transitionKeyIndex, scaleKeyIndex]);
 
   useMobileEffect(() => {
-    setTimeout(() => setActiveRoute(windowProps.activeRoute), 75);
-  }, [windowProps.activeRoute]);
-
-  const account = windowProps.account as AccountResponse;
-  const customer = accountProps.customer as Customer;
+    setTimeout(() => setCurrentActiveRoute(activeRoute), 75);
+  }, [activeRoute]);
 
   return (
     <ResponsiveMobile>
@@ -72,23 +82,19 @@ export default function WindowMobileComponent({
               React.cloneElement(child, {
                 classNames: {
                   enter:
-                    windowProps.transitionKeyIndex <
-                    windowProps.prevTransitionKeyIndex
+                    transitionKeyIndex < prevTransitionKeyIndex
                       ? styles['left-to-right-enter']
                       : styles['right-to-left-enter'],
                   enterActive:
-                    windowProps.transitionKeyIndex <
-                    windowProps.prevTransitionKeyIndex
+                    transitionKeyIndex < prevTransitionKeyIndex
                       ? styles['left-to-right-enter-active']
                       : styles['right-to-left-enter-active'],
                   exit:
-                    windowProps.transitionKeyIndex <
-                    windowProps.prevTransitionKeyIndex
+                    transitionKeyIndex < prevTransitionKeyIndex
                       ? styles['left-to-right-exit']
                       : styles['right-to-left-exit'],
                   exitActive:
-                    windowProps.transitionKeyIndex <
-                    windowProps.prevTransitionKeyIndex
+                    transitionKeyIndex < prevTransitionKeyIndex
                       ? styles['left-to-right-exit-active']
                       : styles['right-to-left-exit-active'],
                 },
@@ -97,26 +103,22 @@ export default function WindowMobileComponent({
             }
           >
             <CSSTransition
-              key={windowProps.transitionKeyIndex}
+              key={transitionKeyIndex}
               classNames={{
                 enter:
-                  windowProps.transitionKeyIndex >
-                  windowProps.prevTransitionKeyIndex
+                  transitionKeyIndex > prevTransitionKeyIndex
                     ? styles['left-to-right-enter']
                     : styles['right-to-left-enter'],
                 enterActive:
-                  windowProps.transitionKeyIndex >
-                  windowProps.prevTransitionKeyIndex
+                  transitionKeyIndex > prevTransitionKeyIndex
                     ? styles['left-to-right-enter-active']
                     : styles['right-to-left-enter-active'],
                 exit:
-                  windowProps.transitionKeyIndex >
-                  windowProps.prevTransitionKeyIndex
+                  transitionKeyIndex > prevTransitionKeyIndex
                     ? styles['left-to-right-exit']
                     : styles['right-to-left-exit'],
                 exitActive:
-                  windowProps.transitionKeyIndex >
-                  windowProps.prevTransitionKeyIndex
+                  transitionKeyIndex > prevTransitionKeyIndex
                     ? styles['left-to-right-exit-active']
                     : styles['right-to-left-exit-active'],
               }}
@@ -148,7 +150,7 @@ export default function WindowMobileComponent({
             className={[styles['bottom-bar-container-mobile']].join(' ')}
           >
             <div className={[styles['bottom-bar-mobile']].join(' ')}>
-              {windowProps.showNavigateBack && (
+              {showNavigateBack && (
                 <div
                   className={[
                     styles['navigation-back-container'],
@@ -180,20 +182,21 @@ export default function WindowMobileComponent({
                       }
                     />
                   </div>
-                  {windowProps.showNavigateBack && (
+                  {showNavigateBack && (
                     <div
                       className={[
                         styles['navigation-back-text-container'],
                         styles['navigation-back-text-container-mobile'],
                       ].join(' ')}
                     >
-                      {activeRoute?.startsWith(`${RoutePathsType.Store}/`) && (
+                      {currentActiveRoute?.startsWith(
+                        `${RoutePathsType.Store}/`
+                      ) && (
                         <>
-                          {exploreProps.selectedInventoryLocation && (
+                          {selectedInventoryLocation && (
                             <Avatar
                               classNames={{
-                                container: !exploreProps
-                                  .selectedInventoryLocation?.avatar
+                                container: !selectedInventoryLocation?.avatar
                                   ? [
                                       styles['no-avatar-container'],
                                       styles['no-avatar-container-mobile'],
@@ -204,13 +207,8 @@ export default function WindowMobileComponent({
                                     ].join(' '),
                               }}
                               size={'custom'}
-                              text={
-                                exploreProps.selectedInventoryLocation
-                                  ?.company ?? ''
-                              }
-                              src={
-                                exploreProps.selectedInventoryLocation?.avatar
-                              }
+                              text={selectedInventoryLocation?.company ?? ''}
+                              src={selectedInventoryLocation?.avatar}
                               touchScreen={true}
                             />
                           )}
@@ -219,12 +217,9 @@ export default function WindowMobileComponent({
                               ' '
                             )}
                           >
-                            {exploreProps.selectedInventoryLocation &&
-                              `${
-                                exploreProps.selectedInventoryLocation
-                                  ?.company ?? ''
-                              } - `}
-                            {productProps.metadata?.subtitle}
+                            {selectedInventoryLocation &&
+                              `${selectedInventoryLocation?.company ?? ''} - `}
+                            {metadata?.subtitle}
                           </div>
                         </>
                       )}
@@ -240,7 +235,7 @@ export default function WindowMobileComponent({
                           </div>
                         </>
                       )}
-                      {activeRoute === RoutePathsType.TermsOfService && (
+                      {currentActiveRoute === RoutePathsType.TermsOfService && (
                         <>
                           <Line.Gavel size={22} />
                           <div
@@ -252,7 +247,7 @@ export default function WindowMobileComponent({
                           </div>
                         </>
                       )}
-                      {activeRoute === RoutePathsType.PrivacyPolicy && (
+                      {currentActiveRoute === RoutePathsType.PrivacyPolicy && (
                         <>
                           <Line.Gavel size={22} />
                           <div
@@ -264,7 +259,7 @@ export default function WindowMobileComponent({
                           </div>
                         </>
                       )}
-                      {activeRoute === RoutePathsType.Cart && (
+                      {currentActiveRoute === RoutePathsType.Cart && (
                         <>
                           <Line.ShoppingCart size={22} />
                           <div
@@ -276,7 +271,7 @@ export default function WindowMobileComponent({
                           </div>
                         </>
                       )}
-                      {activeRoute === RoutePathsType.Checkout && (
+                      {currentActiveRoute === RoutePathsType.Checkout && (
                         <>
                           <Line.ShoppingCart size={22} />
                           <div
@@ -288,7 +283,8 @@ export default function WindowMobileComponent({
                           </div>
                         </>
                       )}
-                      {activeRoute === RoutePathsType.OrderConfirmedWithId && (
+                      {currentActiveRoute ===
+                        RoutePathsType.OrderConfirmedWithId && (
                         <>
                           <Line.ShoppingCart size={22} />
                           <div
@@ -300,7 +296,7 @@ export default function WindowMobileComponent({
                           </div>
                         </>
                       )}
-                      {windowProps.activeRoute ===
+                      {currentActiveRoute ===
                         RoutePathsType.EmailConfirmation && (
                         <>
                           <Line.Email size={24} />
@@ -313,7 +309,8 @@ export default function WindowMobileComponent({
                           </div>
                         </>
                       )}
-                      {activeRoute === RoutePathsType.AccountAddFriends && (
+                      {currentActiveRoute ===
+                        RoutePathsType.AccountAddFriends && (
                         <>
                           <Line.PersonAddAlt1 size={22} />
                           <div
@@ -334,7 +331,8 @@ export default function WindowMobileComponent({
                           )}
                           style={{ textTransform: 'lowercase' }}
                         >
-                          {accountPublicProps.account?.username ?? ''}
+                          {AccountPublicController.model.account?.username ??
+                            ''}
                         </div>
                       )}
                       {WindowController.isLocationAccountStatusWithId(
@@ -346,10 +344,11 @@ export default function WindowMobileComponent({
                           )}
                           style={{ textTransform: 'lowercase' }}
                         >
-                          {accountPublicProps.account?.username ?? ''}
+                          {AccountPublicController.model.account?.username ??
+                            ''}
                         </div>
                       )}
-                      {activeRoute === RoutePathsType.Settings && (
+                      {currentActiveRoute === RoutePathsType.Settings && (
                         <>
                           <Line.Settings size={22} />
                           <div
@@ -361,7 +360,8 @@ export default function WindowMobileComponent({
                           </div>
                         </>
                       )}
-                      {activeRoute === RoutePathsType.SettingsAccount && (
+                      {currentActiveRoute ===
+                        RoutePathsType.SettingsAccount && (
                         <>
                           <Line.Person size={22} />
                           <div
@@ -377,7 +377,7 @@ export default function WindowMobileComponent({
                   )}
                 </div>
               )}
-              {!windowProps.showNavigateBack && (
+              {!showNavigateBack && (
                 <div
                   className={[
                     styles['tab-container'],
@@ -405,8 +405,8 @@ export default function WindowMobileComponent({
                       size={'full'}
                       touchScreen={true}
                       icon={
-                        windowProps.activeRoute === RoutePathsType.Explore ||
-                        windowProps.activeRoute === RoutePathsType.Default ? (
+                        currentActiveRoute === RoutePathsType.Explore ||
+                        currentActiveRoute === RoutePathsType.Default ? (
                           <Solid.Explore
                             size={24}
                             color={'rgba(252, 245, 227, 1)'}
@@ -441,7 +441,7 @@ export default function WindowMobileComponent({
                       size={'full'}
                       touchScreen={true}
                       icon={
-                        windowProps.activeRoute === RoutePathsType.Store ? (
+                        currentActiveRoute === RoutePathsType.Store ? (
                           <Solid.Store
                             size={24}
                             color={'rgba(252, 245, 227, 1)'}
@@ -461,7 +461,7 @@ export default function WindowMobileComponent({
                         color: 'rgba(252, 245, 227, .35)',
                       }}
                       onClick={() => navigate(RoutePathsType.Events)}
-                      disabled={windowProps.activeRoute === RoutePathsType.Cart}
+                      disabled={windowProps.currentActiveRoute === RoutePathsType.Cart}
                       type={'text'}
                       rounded={true}
                       size={'tiny'}
@@ -470,7 +470,7 @@ export default function WindowMobileComponent({
                         <Line.Event
                           size={24}
                           color={
-                            windowProps.activeRoute === RoutePathsType.Events
+                            windowProps.currentActiveRoute === RoutePathsType.Events
                               ? 'rgba(252, 245, 227, 1)'
                               : 'rgba(252, 245, 227, .6)'
                           }
@@ -478,7 +478,7 @@ export default function WindowMobileComponent({
                       }
                     />
                   </div> */}
-                  {!windowProps.account && (
+                  {!AccountController.model.account && (
                     <>
                       <div
                         className={[
@@ -499,7 +499,7 @@ export default function WindowMobileComponent({
                             <Line.MoreVert
                               size={24}
                               color={
-                                windowProps.activeRoute === RoutePathsType.Cart
+                                currentActiveRoute === RoutePathsType.Cart
                                   ? 'rgba(252, 245, 227, .6)'
                                   : 'rgba(252, 245, 227, 1)'
                               }
@@ -509,7 +509,7 @@ export default function WindowMobileComponent({
                       </div>
                     </>
                   )}
-                  {windowProps.account && (
+                  {AccountController.model.account && (
                     <>
                       <div
                         className={[
@@ -542,7 +542,7 @@ export default function WindowMobileComponent({
                           size={'tiny'}
                           floatingLabel={t('notifications') ?? ''}
                           icon={
-                            windowProps.activeRoute !==
+                            currentActiveRoute !==
                             RoutePathsType.Notifications ? (
                               <Line.Notifications
                                 size={24}
@@ -556,7 +556,7 @@ export default function WindowMobileComponent({
                             )
                           }
                         />
-                        {windowProps.unseenNotificationsCount > 0 && (
+                        {unseenNotificationsCount > 0 && (
                           <div
                             className={[
                               styles['notification-status-container'],
@@ -586,11 +586,11 @@ export default function WindowMobileComponent({
                           size={'full'}
                           touchScreen={true}
                           icon={
-                            !windowProps.isAccountComplete ? (
+                            !isAccountComplete ? (
                               <Line.AccountCircle
                                 size={24}
                                 color={
-                                  windowProps.activeRoute?.startsWith(
+                                  currentActiveRoute?.startsWith(
                                     `${RoutePathsType.Account}/`
                                   ) &&
                                   !WindowController.isLocationAccountWithId(
@@ -603,7 +603,7 @@ export default function WindowMobileComponent({
                             ) : (
                               <div
                                 className={
-                                  windowProps.activeRoute?.startsWith(
+                                  currentActiveRoute?.startsWith(
                                     `${RoutePathsType.Account}/`
                                   ) &&
                                   !WindowController.isLocationAccountWithId(
@@ -620,7 +620,7 @@ export default function WindowMobileComponent({
                               >
                                 <Avatar
                                   classNames={{
-                                    container: accountProps?.profileUrl
+                                    container: profileUrl
                                       ? [
                                           styles['avatar-container'],
                                           styles['avatar-container-mobile'],
@@ -631,8 +631,8 @@ export default function WindowMobileComponent({
                                         ].join(' '),
                                   }}
                                   size={'custom'}
-                                  text={customer?.first_name}
-                                  src={accountProps?.profileUrl}
+                                  text={customer?.first_name ?? undefined}
+                                  src={profileUrl}
                                   touchScreen={true}
                                 />
                               </div>
@@ -647,7 +647,7 @@ export default function WindowMobileComponent({
             </div>
           </div>
         </CSSTransition>
-        <ToastOverlay
+        {/* <ToastOverlay
           classNames={{
             root: [
               styles['toast-overlay-root'],
@@ -676,7 +676,7 @@ export default function WindowMobileComponent({
           transition={'down'}
           align={'center'}
           touchScreen={true}
-        />
+        /> */}
         {ReactDOM.createPortal(
           <>
             <Modal
@@ -718,12 +718,12 @@ export default function WindowMobileComponent({
               title={t('selectLocation') ?? ''}
               description={
                 t('selectLocationDescription', {
-                  address: `${windowProps.queryInventoryLocation?.company}, ${windowProps.queryInventoryLocation?.placeName}`,
+                  address: `${queryInventoryLocation?.company}, ${queryInventoryLocation?.placeName}`,
                 }) ?? ''
               }
               confirmText={t('select') ?? ''}
               cancelText={t('cancel') ?? ''}
-              visible={windowProps.queryInventoryLocation !== undefined}
+              visible={queryInventoryLocation !== undefined}
               onConfirm={onSelectLocation}
               onCancel={onCancelLocation}
             />
@@ -742,9 +742,7 @@ export default function WindowMobileComponent({
               >
                 <Dropdown.Icon>
                   <ReactCountryFlag
-                    countryCode={
-                      windowLocalProps.languageInfo?.info.countryCode ?? ''
-                    }
+                    countryCode={languageInfo?.info.countryCode ?? ''}
                     style={{ width: 24, height: 24 }}
                     svg
                   />
@@ -755,7 +753,7 @@ export default function WindowMobileComponent({
                     styles['dropdown-text-mobile'],
                   ].join(' ')}
                 >
-                  {windowLocalProps.languageInfo?.info.name}
+                  {languageInfo?.info.name}
                 </span>
               </Dropdown.Item>
               <Dropdown.Item
@@ -841,7 +839,7 @@ export default function WindowMobileComponent({
                 color: 'rgba(252, 245, 227, .35)',
               }}
               hideText={true}
-              language={windowLocalProps.languageCode as LanguageCode}
+              language={languageCode as LanguageCode}
               onChange={(isoCode, info) =>
                 WindowController.updateLanguageInfo(isoCode, info)
               }
@@ -849,7 +847,7 @@ export default function WindowMobileComponent({
           </>,
           document.body
         )}
-        <BannerOverlay
+        {/* <BannerOverlay
           classNames={{
             root: [
               styles['banner-overlay-root'],
@@ -860,7 +858,7 @@ export default function WindowMobileComponent({
           transition={'up'}
           align={'center'}
           banners={windowProps.banner ? [windowProps.banner] : []}
-        />
+        /> */}
       </div>
     </ResponsiveMobile>
   );

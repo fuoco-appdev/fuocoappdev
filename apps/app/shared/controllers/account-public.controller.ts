@@ -52,7 +52,7 @@ export default class AccountPublicController extends Controller {
     return this._model;
   }
 
-  public override initialize = (renderCount: number): void => {
+  public override initialize(renderCount: number): void {
     const medusaService = this._container.get('MedusaService');
     this._medusaAccessTokenDisposer = observe(
       medusaService,
@@ -64,7 +64,7 @@ export default class AccountPublicController extends Controller {
         }
       }
     );
-  };
+  }
 
   public override load(_renderCount: number): void {}
 

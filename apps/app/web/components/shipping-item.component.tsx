@@ -1,9 +1,8 @@
-import { LineItem, ProductOptionValue } from '@medusajs/medusa';
-import { useObservable } from '@ngneat/use-observable';
+import { HttpTypes } from '@medusajs/types';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import StoreController from '../../shared/controllers/store.controller';
 import { ProductOptions } from '../../shared/models/product.model';
-import { StoreState } from '../../shared/models/store.model';
+import { DIContext } from './app.component';
 import { ShippingItemSuspenseDesktopComponent } from './desktop/suspense/shipping-item.suspense.desktop.component';
 import { ShippingItemSuspenseMobileComponent } from './mobile/suspense/shipping-item.suspense.mobile.component';
 
@@ -15,8 +14,7 @@ const ShippingItemMobileComponent = React.lazy(
 );
 
 export interface ShippingItemProps {
-  storeProps: StoreState;
-  item: LineItem;
+  item: HttpTypes.StoreOrderLineItem;
 }
 
 export interface ShippingItemResponsiveProps extends ShippingItemProps {
@@ -25,11 +23,9 @@ export interface ShippingItemResponsiveProps extends ShippingItemProps {
   discountPercentage: string;
 }
 
-export default function ShippingItemComponent({
-  storeProps,
-  item,
-}: ShippingItemProps): JSX.Element {
-  const [storeDebugProps] = useObservable(StoreController.model.debugStore);
+function ShippingItemComponent({ item }: ShippingItemProps): JSX.Element {
+  const { StoreController } = React.useContext(DIContext);
+  const { suspense } = StoreController.model;
   const [vintage, setVintage] = React.useState<string>('');
   const [hasReducedPrice, setHasReducedPrice] = React.useState<boolean>(
     (item.discount_total ?? 0) > 0
@@ -44,16 +40,13 @@ export default function ShippingItemComponent({
     </>
   );
 
-  if (storeDebugProps.suspense) {
-    return suspenceComponent;
-  }
-
   React.useEffect(() => {
-    const vintageOption = item.variant.product.options?.find(
+    const vintageOption = item.variant?.product?.options?.find(
       (value) => value.title === ProductOptions.Vintage
     );
-    const vintageValue = item.variant.options?.find(
-      (value: ProductOptionValue) => value.option_id === vintageOption?.id
+    const vintageValue = item.variant?.options?.find(
+      (value: HttpTypes.StoreProductOptionValue) =>
+        value.option_id === vintageOption?.id
     );
     setVintage(vintageValue?.value ?? '');
 
@@ -65,17 +58,19 @@ export default function ShippingItemComponent({
     setHasReducedPrice((item.discount_total ?? 0) > 0);
   }, [item]);
 
+  if (suspense) {
+    return suspenceComponent;
+  }
+
   return (
     <React.Suspense fallback={suspenceComponent}>
       <ShippingItemDesktopComponent
-        storeProps={storeProps}
         item={item}
         vintage={vintage}
         hasReducedPrice={hasReducedPrice}
         discountPercentage={discountPercentage}
       />
       <ShippingItemMobileComponent
-        storeProps={storeProps}
         item={item}
         vintage={vintage}
         hasReducedPrice={hasReducedPrice}
@@ -84,3 +79,5 @@ export default function ShippingItemComponent({
     </React.Suspense>
   );
 }
+
+export default observer(ShippingItemComponent);

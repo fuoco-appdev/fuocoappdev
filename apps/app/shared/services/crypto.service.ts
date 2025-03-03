@@ -1,7 +1,8 @@
+import CryptoJS from 'crypto-js';
 import { Service } from '../service';
 import { StoreOptions } from '../store-options';
 import ConfigService from './config.service';
-const { subtle } = globalThis.crypto;
+import LogflareService from './logflare.service';
 
 export default class CryptoService extends Service {
   private readonly _textEncoder: TextEncoder;
@@ -11,6 +12,7 @@ export default class CryptoService extends Service {
     private readonly _encryptionKey: string,
     private readonly _iv: string,
     private readonly _configService: ConfigService,
+    private readonly _logflareService: LogflareService,
     private readonly _supabaseAnonKey: string,
     private readonly _storeOptions: StoreOptions
   ) {
@@ -23,61 +25,48 @@ export default class CryptoService extends Service {
   public override dispose(): void {}
 
   public async encryptAsync(text: string): Promise<string> {
-    const encryptionKey = await subtle.digest(
-      'SHA-256',
-      this._textEncoder.encode(this._encryptionKey)
+    // Hash the encryption key using SHA-256
+    const hashedKey = CryptoJS.SHA256(this._encryptionKey).toString(
+      CryptoJS.enc.Hex
     );
-    const iv = new Uint8Array(
-      this._iv.match(/.{2}/g)?.map((byte) => parseInt(byte, 16)) ?? []
-    );
-    const key: CryptoKey = await subtle.importKey(
-      'raw',
-      encryptionKey,
-      { name: 'AES-CBC' },
-      true,
-      ['encrypt', 'decrypt']
-    );
-    const encrypted = await subtle.encrypt(
-      {
-        name: 'AES-CBC',
-        iv: iv,
-      },
-      key,
-      this._textEncoder.encode(text)
-    );
-    return this._textDecoder.decode(encrypted);
+
+    // Convert IV from hex string to a WordArray
+    const iv = CryptoJS.enc.Hex.parse(this._iv);
+
+    // Convert hashed key to WordArray
+    const key = CryptoJS.enc.Hex.parse(hashedKey);
+
+    // Encrypt the text
+    const encrypted = CryptoJS.AES.encrypt(text, key, {
+      iv: iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    });
+
+    // Return the ciphertext as a Base64 string
+    return encrypted.toString();
   }
 
   public async decryptAsync(text: string): Promise<string> {
-    const encryptedKeyHash = await subtle.digest(
-      'SHA-256',
-      this._textEncoder.encode(this._encryptionKey)
-    );
-    const iv = new Uint8Array(
-      this._iv.match(/.{2}/g)?.map((byte) => parseInt(byte, 16)) ?? []
-    );
-    const binaryString = atob(text);
-    const bytes = new Uint8Array(binaryString.length);
-    for (let i = 0; i < binaryString.length; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
-    }
-
-    const key = await subtle.importKey(
-      'raw',
-      encryptedKeyHash,
-      { name: 'AES-CBC' },
-      true,
-      ['decrypt', 'encrypt']
-    );
-    const decrypted = await subtle.decrypt(
-      {
-        name: 'AES-CBC',
-        iv: iv,
-      },
-      key,
-      bytes.buffer
+    // Hash the encryption key using SHA-256
+    const hashedKey = CryptoJS.SHA256(this._encryptionKey).toString(
+      CryptoJS.enc.Hex
     );
 
-    return this._textDecoder.decode(decrypted);
+    // Convert IV from hex string to a WordArray
+    const iv = CryptoJS.enc.Hex.parse(this._iv);
+
+    // Convert hashed key to WordArray
+    const key = CryptoJS.enc.Hex.parse(hashedKey);
+
+    // Decrypt the text
+    const decrypted = CryptoJS.AES.decrypt(text, key, {
+      iv: iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    });
+
+    // Convert the decrypted WordArray to a UTF-8 string
+    return CryptoJS.enc.Utf8.stringify(decrypted);
   }
 }

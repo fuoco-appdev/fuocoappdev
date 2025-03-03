@@ -4,9 +4,11 @@ import { makeObservable, observable, runInAction } from 'mobx';
 import { Model } from '../model';
 import { AccountFollowerResponse } from '../protobuf/account-follower_pb';
 import { AccountResponse } from '../protobuf/account_pb';
+import { CollectionResponse } from '../protobuf/collection_pb';
 import { InterestResponse } from '../protobuf/interest_pb';
 import { ProductLikesMetadataResponse } from '../protobuf/product-like_pb';
 import { Geocoding, GeocodingFeature } from '../services/mapbox.service';
+import { OpenWebuiUser } from '../services/open-webui.service';
 import { StoreOptions } from '../store-options';
 
 export interface AddressFormErrors {
@@ -55,6 +57,25 @@ export interface ProfileFormValues {
   phoneNumber?: string;
 }
 
+export interface CollectionFormValues {
+  name?: string;
+}
+
+export interface CollectionFormErrorStrings {
+  empty?: string;
+  exists?: string;
+  spaces?: string;
+}
+
+export interface CollectionFormErrors {
+  name?: string;
+}
+
+export interface CollectionFormErrorStrings {
+  empty?: string;
+  exists?: string;
+}
+
 export interface AccountDocument {
   id?: string;
   customer_id?: string;
@@ -92,6 +113,10 @@ export class AccountModel extends Model {
   @observable
   public customer: HttpTypes.AdminCustomer | undefined;
   @observable
+  public openWebuiUser: OpenWebuiUser | undefined;
+  @observable
+  public location!: { latitude: number; longitude: number };
+  @observable
   public customerGroup: HttpTypes.AdminCustomerGroup | undefined;
   @observable
   public isCustomerGroupLoading!: boolean;
@@ -100,7 +125,11 @@ export class AccountModel extends Model {
   @observable
   public profileFormErrors!: ProfileFormErrors;
   @observable
-  public errorStrings!: ProfileFormErrorStrings;
+  public profileFormErrorStrings!: ProfileFormErrorStrings;
+  @observable
+  public collectionFormErrors!: CollectionFormErrors;
+  @observable
+  public collectionFormErrorStrings!: CollectionFormErrorStrings;
   @observable
   public profileUrl: string | undefined;
   @observable
@@ -139,6 +168,8 @@ export class AccountModel extends Model {
   public isCreateCustomerLoading!: boolean;
   @observable
   public isUpdateGeneralInfoLoading!: boolean;
+  @observable
+  public isUpdatePersonalInfoLoading!: boolean;
   @observable
   public hasMoreLikes!: boolean;
   @observable
@@ -215,6 +246,18 @@ export class AccountModel extends Model {
   public creatableInterest: string | undefined;
   @observable
   public selectedInterests!: Record<string, InterestResponse>;
+  @observable
+  public collections!: Record<string, CollectionResponse>;
+  @observable
+  public hasMoreCollections!: boolean;
+  @observable
+  public areCollectionsLoading!: boolean;
+  @observable
+  public areCollectionsReloading!: boolean;
+  @observable
+  public collectionPagination!: number;
+  @observable
+  public isCreateCollectionLoading!: boolean;
 
   constructor(options?: StoreOptions) {
     super(options);
@@ -224,7 +267,9 @@ export class AccountModel extends Model {
       this.user = null;
       this.account = undefined;
       this.customer = undefined;
+      this.openWebuiUser = undefined;
       this.customerGroup = undefined;
+      this.location = { longitude: 0, latitude: 0 };
       this.isCustomerGroupLoading = false;
       this.profileForm = {
         firstName: '',
@@ -232,7 +277,12 @@ export class AccountModel extends Model {
         username: '',
       };
       this.profileFormErrors = {};
-      this.errorStrings = {};
+      this.profileFormErrorStrings = {};
+      this.collectionFormErrors = {};
+      this.collectionFormErrorStrings = {
+        empty: '',
+        exists: '',
+      };
       this.profileUrl = undefined;
       this.username = '';
       this.orders = [];
@@ -276,6 +326,7 @@ export class AccountModel extends Model {
       this.ordersScrollPosition = undefined;
       this.isCreateCustomerLoading = false;
       this.isUpdateGeneralInfoLoading = false;
+      this.isUpdatePersonalInfoLoading = false;
       this.hasMoreLikes = true;
       this.likesScrollPosition = undefined;
       this.likedProducts = [];
@@ -314,12 +365,24 @@ export class AccountModel extends Model {
       this.searchedInterests = [];
       this.creatableInterest = undefined;
       this.selectedInterests = {};
+      this.collections = {};
+      this.hasMoreCollections = true;
+      this.areCollectionsLoading = false;
+      this.areCollectionsReloading = false;
+      this.collectionPagination = 1;
+      this.isCreateCollectionLoading = false;
     });
   }
 
   public updateUser(value: User | null) {
     if (JSON.stringify(this.user) !== JSON.stringify(value)) {
       runInAction(() => (this.user = value));
+    }
+  }
+
+  public updateLocation(value: { longitude: number; latitude: number }) {
+    if (JSON.stringify(this.location) !== JSON.stringify(value)) {
+      runInAction(() => (this.location = value));
     }
   }
 
@@ -335,9 +398,25 @@ export class AccountModel extends Model {
     }
   }
 
-  public updateErrorStrings(value: ProfileFormErrorStrings) {
-    if (JSON.stringify(this.errorStrings) !== JSON.stringify(value)) {
-      runInAction(() => (this.errorStrings = value));
+  public updateProfileFormErrorStrings(value: ProfileFormErrorStrings) {
+    if (
+      JSON.stringify(this.profileFormErrorStrings) !== JSON.stringify(value)
+    ) {
+      runInAction(() => (this.profileFormErrorStrings = value));
+    }
+  }
+
+  public updateCollectionFormErrors(value: CollectionFormErrors) {
+    if (JSON.stringify(this.collectionFormErrors) !== JSON.stringify(value)) {
+      runInAction(() => (this.collectionFormErrors = value));
+    }
+  }
+
+  public updateCollectionFormErrorStrings(value: CollectionFormErrorStrings) {
+    if (
+      JSON.stringify(this.collectionFormErrorStrings) !== JSON.stringify(value)
+    ) {
+      runInAction(() => (this.collectionFormErrorStrings = value));
     }
   }
 
@@ -350,6 +429,12 @@ export class AccountModel extends Model {
   public updateCustomer(value: HttpTypes.AdminCustomer | undefined) {
     if (JSON.stringify(this.customer) !== JSON.stringify(value)) {
       runInAction(() => (this.customer = value));
+    }
+  }
+
+  public updateOpenWebuiUser(value: OpenWebuiUser | undefined) {
+    if (JSON.stringify(this.openWebuiUser) !== JSON.stringify(value)) {
+      runInAction(() => (this.openWebuiUser = value));
     }
   }
 
@@ -368,6 +453,12 @@ export class AccountModel extends Model {
   public updateIsUpdateGeneralInfoLoading(value: boolean) {
     if (this.isUpdateGeneralInfoLoading !== value) {
       runInAction(() => (this.isUpdateGeneralInfoLoading = value));
+    }
+  }
+
+  public updateIsUpdatePersonalInfoLoading(value: boolean) {
+    if (this.isUpdatePersonalInfoLoading !== value) {
+      runInAction(() => (this.isUpdatePersonalInfoLoading = value));
     }
   }
 
@@ -662,55 +753,91 @@ export class AccountModel extends Model {
       JSON.stringify(this.followRequestAccountFollowers) !==
       JSON.stringify(value)
     ) {
-      this.followRequestAccountFollowers = value;
+      runInAction(() => (this.followRequestAccountFollowers = value));
     }
   }
 
   public updateLikeCount(value: number | undefined) {
     if (this.likeCount !== value) {
-      this.likeCount = value;
+      runInAction(() => (this.likeCount = value));
     }
   }
 
   public updateFollowerCount(value: number | undefined) {
     if (this.followerCount !== value) {
-      this.followerCount = value;
+      runInAction(() => (this.followerCount = value));
     }
   }
 
   public updateFollowingCount(value: number | undefined) {
     if (this.followingCount !== value) {
-      this.followingCount = value;
+      runInAction(() => (this.followingCount = value));
     }
   }
 
   public updateAddInterestInput(value: string) {
     if (this.addInterestInput !== value) {
-      this.addInterestInput = value;
+      runInAction(() => (this.addInterestInput = value));
     }
   }
 
   public updateAreAddInterestsLoading(value: boolean) {
     if (this.areAddInterestsLoading !== value) {
-      this.areAddInterestsLoading = value;
+      runInAction(() => (this.areAddInterestsLoading = value));
     }
   }
 
   public updateSearchedInterests(value: InterestResponse[]) {
     if (JSON.stringify(this.searchedInterests) !== JSON.stringify(value)) {
-      this.searchedInterests = value;
+      runInAction(() => (this.searchedInterests = value));
     }
   }
 
   public updateCreatableInterest(value: string | undefined) {
     if (this.creatableInterest !== value) {
-      this.creatableInterest = value;
+      runInAction(() => (this.creatableInterest = value));
     }
   }
 
   public updateSelectedInterests(value: Record<string, InterestResponse>) {
     if (JSON.stringify(this.selectedInterests) !== JSON.stringify(value)) {
-      this.selectedInterests = value;
+      runInAction(() => (this.selectedInterests = value));
+    }
+  }
+
+  public updateCollections(value: Record<string, CollectionResponse>) {
+    if (JSON.stringify(this.collections) !== JSON.stringify(value)) {
+      runInAction(() => (this.collections = value));
+    }
+  }
+
+  public updateHasMoreCollections(value: boolean) {
+    if (this.hasMoreCollections !== value) {
+      runInAction(() => (this.hasMoreCollections = value));
+    }
+  }
+
+  public updateAreCollectionsLoading(value: boolean) {
+    if (this.areCollectionsLoading !== value) {
+      runInAction(() => (this.areCollectionsLoading = value));
+    }
+  }
+
+  public updateAreCollectionsReloading(value: boolean) {
+    if (this.areCollectionsReloading !== value) {
+      runInAction(() => (this.areCollectionsReloading = value));
+    }
+  }
+
+  public updateCollectionPagination(value: number) {
+    if (this.collectionPagination !== value) {
+      runInAction(() => (this.collectionPagination = value));
+    }
+  }
+
+  public updateIsCreateCollectionLoading(value: boolean) {
+    if (this.isCreateCollectionLoading !== value) {
+      runInAction(() => (this.isCreateCollectionLoading = value));
     }
   }
 }

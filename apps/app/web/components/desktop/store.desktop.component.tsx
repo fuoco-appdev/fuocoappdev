@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable jsx-a11y/alt-text */
 import {
   Avatar,
   Button,
@@ -8,28 +10,23 @@ import {
   Scroll,
   Tabs,
 } from '@fuoco.appdev/web-components';
-import { Product } from '@medusajs/medusa';
+import { HttpTypes } from '@medusajs/types';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
-import StoreController from '../../../shared/controllers/store.controller';
 import { ProductTabs } from '../../../shared/models/store.model';
 import { ProductLikesMetadataResponse } from '../../../shared/protobuf/product-like_pb';
 import { MedusaProductTypeNames } from '../../../shared/types/medusa.type';
 import styles from '../../modules/store.module.scss';
-import { useQuery } from '../../route-paths';
+import { DIContext } from '../app.component';
 import CartVariantItemComponent from '../cart-variant-item.component';
 import ProductPreviewComponent from '../product-preview.component';
 import { ResponsiveDesktop } from '../responsive.component';
 import { StoreResponsiveProps } from '../store.component';
 
-export default function StoreDesktopComponent({
-  storeProps,
-  accountProps,
-  exploreProps,
-  exploreLocalProps,
+function StoreDesktopComponent({
   openFilter,
   openCartVariants,
   countryOptions,
@@ -56,12 +53,23 @@ export default function StoreDesktopComponent({
   onProductPreviewRest,
   onRemoveSalesChannel,
 }: StoreResponsiveProps): JSX.Element {
+  const { ExploreController, StoreController } = React.useContext(DIContext);
+  const {
+    input,
+    selectedTab,
+    hasMorePreviews,
+    isLoading,
+    products,
+    pricedProducts,
+    productLikesMetadata,
+    selectedSalesChannel,
+    selectedPricedProduct,
+  } = StoreController.model;
+  const { selectedInventoryLocation } = ExploreController.model;
   const previewsContainerRef = React.createRef<HTMLDivElement>();
   const rootRef = React.createRef<HTMLDivElement>();
   const topBarRef = React.useRef<HTMLDivElement | null>(null);
   const sideBarRef = React.useRef<HTMLDivElement | null>(null);
-  const navigate = useNavigate();
-  const query = useQuery();
   const { t } = useTranslation();
   let prevPreviewScrollTop = 0;
   let yPosition = 0;
@@ -91,7 +99,7 @@ export default function StoreDesktopComponent({
                 styles['top-bar-left-content-desktop'],
               ].join(' ')}
             >
-              {exploreProps.selectedInventoryLocation && (
+              {selectedInventoryLocation && (
                 <>
                   <div>
                     <Button
@@ -117,8 +125,7 @@ export default function StoreDesktopComponent({
                   >
                     <Avatar
                       classNames={{
-                        container: !exploreProps.selectedInventoryLocation
-                          ?.avatar
+                        container: !selectedInventoryLocation?.avatar
                           ? [
                               styles['no-avatar-container'],
                               styles['no-avatar-container-desktop'],
@@ -129,10 +136,8 @@ export default function StoreDesktopComponent({
                             ].join(' '),
                       }}
                       size={'custom'}
-                      text={
-                        exploreProps.selectedInventoryLocation?.company ?? ''
-                      }
-                      src={exploreProps.selectedInventoryLocation?.avatar}
+                      text={selectedInventoryLocation?.company ?? ''}
+                      src={selectedInventoryLocation?.avatar}
                     />
                     <div
                       className={[
@@ -140,7 +145,7 @@ export default function StoreDesktopComponent({
                         styles['sales-location-title-desktop'],
                       ].join(' ')}
                     >
-                      {exploreProps.selectedInventoryLocation?.company ?? ''}
+                      {selectedInventoryLocation?.company ?? ''}
                     </div>
                   </div>
                 </>
@@ -165,7 +170,7 @@ export default function StoreDesktopComponent({
                   ].join(' ')}
                 >
                   <Input
-                    value={storeProps.input}
+                    value={input}
                     classNames={{
                       container: [
                         styles['search-input-container'],
@@ -198,7 +203,7 @@ export default function StoreDesktopComponent({
                   }}
                   removable={true}
                   type={'pills'}
-                  activeId={storeProps.selectedTab}
+                  activeId={selectedTab}
                   onChange={(id: string) =>
                     StoreController.updateSelectedTabAsync(
                       id.length > 0 ? (id as ProductTabs) : undefined
@@ -251,8 +256,8 @@ export default function StoreDesktopComponent({
                 <Line.ArrowDownward size={24} />
               </div>
             }
-            isLoadable={storeProps.hasMorePreviews}
-            isLoading={storeProps.isLoading}
+            isLoadable={hasMorePreviews}
+            isLoading={isLoading}
             onLoad={() => StoreController.onNextScrollAsync()}
             onScroll={(progress, scrollRef, contentRef) => {
               const elementHeight = topBarRef.current?.clientHeight ?? 0;
@@ -285,63 +290,61 @@ export default function StoreDesktopComponent({
               ref={previewsContainerRef}
               onLoad={onPreviewsLoad}
             >
-              {storeProps.products.map((product: Product, index: number) => {
-                const pricedProduct = Object.keys(
-                  storeProps.pricedProducts
-                ).includes(product.id ?? '')
-                  ? storeProps.pricedProducts[product.id ?? '']
-                  : null;
-                const productLikesMetadata =
-                  storeProps.productLikesMetadata?.find(
-                    (value) => value.productId === product.id
-                  ) ?? null;
-                return (
-                  <ProductPreviewComponent
-                    parentRef={rootRef}
-                    key={index}
-                    storeProps={storeProps}
-                    accountProps={accountProps}
-                    purchasable={true}
-                    showPricingDetails={
-                      storeProps.selectedSalesChannel !== undefined
-                    }
-                    thumbnail={product.thumbnail ?? undefined}
-                    title={product.title ?? undefined}
-                    subtitle={product.subtitle ?? undefined}
-                    description={product.description ?? undefined}
-                    type={product.type ?? undefined}
-                    pricedProduct={pricedProduct}
-                    isLoading={
-                      isPreviewLoading &&
-                      storeProps.selectedPricedProduct?.id === pricedProduct?.id
-                    }
-                    likesMetadata={
-                      productLikesMetadata ??
-                      ProductLikesMetadataResponse.prototype
-                    }
-                    onClick={() =>
-                      pricedProduct &&
-                      onProductPreviewClick(
-                        previewsContainerRef.current?.scrollTop ?? 0,
-                        pricedProduct,
-                        productLikesMetadata
-                      )
-                    }
-                    onRest={() => onProductPreviewRest(product)}
-                    onAddToCart={() =>
-                      pricedProduct &&
-                      onProductPreviewAddToCart(
-                        pricedProduct,
-                        productLikesMetadata
-                      )
-                    }
-                    onLikeChanged={(isLiked: boolean) =>
-                      pricedProduct &&
-                      onProductPreviewLikeChanged(isLiked, pricedProduct)
-                    }
-                  />
-                );
-              })}
+              {products.map(
+                (product: HttpTypes.StoreProduct, index: number) => {
+                  const pricedProduct = Object.keys(pricedProducts).includes(
+                    product.id ?? ''
+                  )
+                    ? pricedProducts[product.id ?? '']
+                    : null;
+                  const currentProductLikesMetadata =
+                    productLikesMetadata?.find(
+                      (value) => value.productId === product.id
+                    ) ?? null;
+                  return (
+                    <ProductPreviewComponent
+                      parentRef={rootRef}
+                      key={index}
+                      purchasable={true}
+                      showPricingDetails={selectedSalesChannel !== undefined}
+                      thumbnail={product.thumbnail ?? undefined}
+                      title={product.title ?? undefined}
+                      subtitle={product.subtitle ?? undefined}
+                      description={product.description ?? undefined}
+                      type={product.type ?? undefined}
+                      pricedProduct={pricedProduct}
+                      isLoading={
+                        isPreviewLoading &&
+                        selectedPricedProduct?.id === pricedProduct?.id
+                      }
+                      likesMetadata={
+                        currentProductLikesMetadata ??
+                        ProductLikesMetadataResponse.prototype
+                      }
+                      onClick={() =>
+                        pricedProduct &&
+                        onProductPreviewClick(
+                          previewsContainerRef.current?.scrollTop ?? 0,
+                          pricedProduct,
+                          currentProductLikesMetadata
+                        )
+                      }
+                      onRest={() => onProductPreviewRest(product)}
+                      onAddToCart={() =>
+                        pricedProduct &&
+                        onProductPreviewAddToCart(
+                          pricedProduct,
+                          currentProductLikesMetadata
+                        )
+                      }
+                      onLikeChanged={(isLiked: boolean) =>
+                        pricedProduct &&
+                        onProductPreviewLikeChanged(isLiked, pricedProduct)
+                      }
+                    />
+                  );
+                }
+              )}
             </div>
           </Scroll>
         </div>
@@ -466,104 +469,101 @@ export default function StoreDesktopComponent({
         </CSSTransition>
       </div>
       {ReactDOM.createPortal(
-        <>
-          <Modal
-            classNames={{
-              overlay: [
-                styles['modal-overlay'],
-                styles['modal-overlay-desktop'],
+        <Modal
+          classNames={{
+            overlay: [
+              styles['modal-overlay'],
+              styles['modal-overlay-desktop'],
+            ].join(' '),
+            modal: [styles['modal'], styles['modal-desktop']].join(' '),
+            text: [styles['modal-text'], styles['modal-text-desktop']].join(
+              ' '
+            ),
+            title: [styles['modal-title'], styles['modal-title-desktop']].join(
+              ' '
+            ),
+            description: [
+              styles['modal-description'],
+              styles['modal-description-desktop'],
+            ].join(' '),
+            footerButtonContainer: [
+              styles['modal-footer-button-container'],
+              styles['modal-footer-button-container-desktop'],
+              styles['modal-address-footer-button-container-desktop'],
+            ].join(' '),
+            cancelButton: {
+              button: [
+                styles['modal-cancel-button'],
+                styles['modal-cancel-button-desktop'],
               ].join(' '),
-              modal: [styles['modal'], styles['modal-desktop']].join(' '),
-              text: [styles['modal-text'], styles['modal-text-desktop']].join(
-                ' '
-              ),
-              title: [
-                styles['modal-title'],
-                styles['modal-title-desktop'],
+            },
+            confirmButton: {
+              button: [
+                styles['modal-confirm-button'],
+                styles['modal-confirm-button-desktop'],
               ].join(' '),
-              description: [
-                styles['modal-description'],
-                styles['modal-description-desktop'],
-              ].join(' '),
-              footerButtonContainer: [
-                styles['modal-footer-button-container'],
-                styles['modal-footer-button-container-desktop'],
-                styles['modal-address-footer-button-container-desktop'],
-              ].join(' '),
-              cancelButton: {
-                button: [
-                  styles['modal-cancel-button'],
-                  styles['modal-cancel-button-desktop'],
-                ].join(' '),
-              },
-              confirmButton: {
-                button: [
-                  styles['modal-confirm-button'],
-                  styles['modal-confirm-button-desktop'],
-                ].join(' '),
-              },
-            }}
-            title={t('addVariant') ?? ''}
-            visible={openCartVariants}
-            onCancel={() => {
-              setOpenCartVariants(false);
-              setIsPreviewLoading(false);
-            }}
-            hideFooter={true}
+            },
+          }}
+          title={t('addVariant') ?? ''}
+          visible={openCartVariants}
+          onCancel={() => {
+            setOpenCartVariants(false);
+            setIsPreviewLoading(false);
+          }}
+          hideFooter={true}
+        >
+          <div
+            className={[
+              styles['add-variants-container'],
+              styles['add-variants-container-desktop'],
+            ].join(' ')}
           >
-            <div
-              className={[
-                styles['add-variants-container'],
-                styles['add-variants-container-desktop'],
-              ].join(' ')}
+            {selectedPricedProduct?.variants?.map((variant) => {
+              return (
+                <CartVariantItemComponent
+                  productType={
+                    selectedPricedProduct?.type?.value as MedusaProductTypeNames
+                  }
+                  key={variant.id}
+                  product={selectedPricedProduct}
+                  variant={variant}
+                  variantQuantities={variantQuantities}
+                  setVariantQuantities={setVariantQuantities}
+                />
+              );
+            })}
+            <Button
+              classNames={{
+                container: [
+                  styles['add-to-cart-button-container'],
+                  styles['add-to-cart-button-container-desktop'],
+                ].join(' '),
+                button: [
+                  styles['add-to-cart-button'],
+                  styles['add-to-cart-button-desktop'],
+                ].join(' '),
+              }}
+              block={true}
+              size={'full'}
+              rippleProps={{
+                color: 'rgba(233, 33, 66, .35)',
+              }}
+              icon={<Line.AddShoppingCart size={24} />}
+              disabled={
+                Object.values(variantQuantities).reduce((current, next) => {
+                  return current + next;
+                }, 0) <= 0
+              }
+              onClick={onAddToCart}
             >
-              {storeProps.selectedPricedProduct?.variants.map((variant) => {
-                return (
-                  <CartVariantItemComponent
-                    productType={
-                      storeProps.selectedPricedProduct?.type
-                        ?.value as MedusaProductTypeNames
-                    }
-                    key={variant.id}
-                    product={storeProps.selectedPricedProduct}
-                    variant={variant}
-                    storeProps={storeProps}
-                    variantQuantities={variantQuantities}
-                    setVariantQuantities={setVariantQuantities}
-                  />
-                );
-              })}
-              <Button
-                classNames={{
-                  container: [
-                    styles['add-to-cart-button-container'],
-                    styles['add-to-cart-button-container-desktop'],
-                  ].join(' '),
-                  button: [
-                    styles['add-to-cart-button'],
-                    styles['add-to-cart-button-desktop'],
-                  ].join(' '),
-                }}
-                block={true}
-                size={'full'}
-                rippleProps={{
-                  color: 'rgba(233, 33, 66, .35)',
-                }}
-                icon={<Line.AddShoppingCart size={24} />}
-                disabled={
-                  Object.values(variantQuantities).reduce((current, next) => {
-                    return current + next;
-                  }, 0) <= 0
-                }
-                onClick={onAddToCart}
-              >
-                {t('addToCart')}
-              </Button>
-            </div>
-          </Modal>
-        </>,
+              {t('addToCart')}
+            </Button>
+          </div>
+        </Modal>,
         document.body
       )}
     </ResponsiveDesktop>
   );
 }
+
+export default observer(StoreDesktopComponent);

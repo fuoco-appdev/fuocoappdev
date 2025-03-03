@@ -1,10 +1,11 @@
 import { Button, Line } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
 import styles from '../../modules/checkout.module.scss';
 import { ResponsiveMobile } from '../responsive.component';
 import { StripePayButtonResponsiveProps } from '../stripe-pay-button.component';
 
-export default function StripePayButtonMobileComponent({
+function StripePayButtonMobileComponent({
   onPayAsync,
 }: StripePayButtonResponsiveProps): JSX.Element {
   const { t } = useTranslation();
@@ -36,3 +37,5 @@ export default function StripePayButtonMobileComponent({
     </ResponsiveMobile>
   );
 }
+
+export default observer(StripePayButtonMobileComponent);

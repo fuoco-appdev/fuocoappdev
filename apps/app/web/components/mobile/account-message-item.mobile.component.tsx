@@ -1,4 +1,5 @@
 import { Avatar, Button } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
 import Skeleton from 'react-loading-skeleton';
 import Ripples from 'react-ripples';
@@ -6,8 +7,7 @@ import styles from '../../modules/account-follow-item.module.scss';
 import { AccountMessageItemResponsiveProps } from '../account-message-item.component';
 import { ResponsiveMobile } from '../responsive.component';
 
-export default function AccountMessageItemMobileComponent({
-  chatProps,
+function AccountMessageItemMobileComponent({
   account,
   profileUrl,
   onClick,
@@ -36,7 +36,7 @@ export default function AccountMessageItemMobileComponent({
                 ].join(' '),
               }}
               size={'custom'}
-              text={account.customer?.first_name}
+              text={account.customer?.first_name ?? ''}
               src={profileUrl}
             />
             <div
@@ -109,3 +109,5 @@ export default function AccountMessageItemMobileComponent({
     </ResponsiveMobile>
   );
 }
+
+export default observer(AccountMessageItemMobileComponent);

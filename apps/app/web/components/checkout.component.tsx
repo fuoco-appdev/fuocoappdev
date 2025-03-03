@@ -1,36 +1,20 @@
 import { RadioProps } from '@fuoco.appdev/web-components/dist/cjs/src/components/radio/radio';
-import { Cart, Customer, PaymentSession } from '@medusajs/medusa';
-import { PricedShippingOption } from '@medusajs/medusa/dist/types/pricing';
-import { useObservable } from '@ngneat/use-observable';
-import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import CartController from '../../shared/controllers/cart.controller';
-import CheckoutController from '../../shared/controllers/checkout.controller';
-import StoreController from '../../shared/controllers/store.controller';
-import {
-  CheckoutState,
-  ProviderType,
-  ShippingType,
-} from '../../shared/models/checkout.model';
-import styles from '../modules/checkout.module.scss';
-// @ts-ignore
 import {
   StripeCardCvcElementOptions,
   StripeCardExpiryElementOptions,
   StripeCardNumberElementOptions,
   StripeElementsOptions,
 } from '@stripe/stripe-js';
-import { formatAmount } from 'medusa-react';
+import { observer } from 'mobx-react-lite';
+import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import AccountController from '../../shared/controllers/account.controller';
-import WindowController from '../../shared/controllers/window.controller';
-import { AccountState } from '../../shared/models/account.model';
-import { CartState } from '../../shared/models/cart.model';
-import { StoreState } from '../../shared/models/store.model';
-import { WindowState } from '../../shared/models/window.model';
+import { ShippingType } from '../../shared/models/checkout.model';
 import { RoutePathsType } from '../../shared/route-paths-type';
+import styles from '../modules/checkout.module.scss';
 import { useQuery } from '../route-paths';
+import { DIContext } from './app.component';
 import { CheckoutSuspenseDesktopComponent } from './desktop/suspense/checkout.suspense.desktop.component';
 import { CheckoutSuspenseMobileComponent } from './mobile/suspense/checkout.suspense.mobile.component';
 
@@ -42,11 +26,6 @@ const CheckoutMobileComponent = React.lazy(
 );
 
 export interface CheckoutResponsiveProps {
-  checkoutProps: CheckoutState;
-  accountProps: AccountState;
-  storeProps: StoreState;
-  cartProps: CartState;
-  windowProps: WindowState;
   shippingOptions: RadioProps[];
   providerOptions: RadioProps[];
   shippingAddressOptions: RadioProps[];
@@ -65,19 +44,23 @@ export interface CheckoutResponsiveProps {
   onAddAddressAsync: () => void;
 }
 
-export default function CheckoutComponent(): JSX.Element {
+function CheckoutComponent(): JSX.Element {
   const query = useQuery();
-  const [checkoutProps] = useObservable(CheckoutController.model.store);
-  const [checkoutDebugProps] = useObservable(
-    CheckoutController.model.debugStore
-  );
-  const [accountProps] = useObservable(AccountController.model.store);
-  const [cartProps] = useObservable(CartController.model.store);
-  const [storeProps] = useObservable(StoreController.model.store);
-  const [windowProps] = useObservable(WindowController.model.store);
-  const [shippingOptions, setShippingOptions] = React.useState<RadioProps[]>(
-    []
-  );
+  const {
+    CheckoutController,
+    AccountController,
+    CartController,
+    StoreController,
+    MedusaService,
+  } = React.useContext(DIContext);
+  const { suspense, shippingOptions, shippingForm, addShippingForm } =
+    CheckoutController.model;
+  const { isFoodInCartRequired, cart } = CartController.model;
+  const { customer } = AccountController.model;
+  const { selectedRegion } = StoreController.model;
+  const [currentShippingOptions, setCurrentShippingOptions] = React.useState<
+    RadioProps[]
+  >([]);
   const [providerOptions, setProviderOptions] = React.useState<RadioProps[]>(
     []
   );
@@ -92,7 +75,6 @@ export default function CheckoutComponent(): JSX.Element {
   const renderCountRef = React.useRef<number>(0);
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const customer = accountProps.customer as Customer;
 
   React.useEffect(() => {
     renderCountRef.current += 1;
@@ -105,34 +87,33 @@ export default function CheckoutComponent(): JSX.Element {
 
   React.useEffect(() => {
     if (
-      (cartProps.cart && cartProps.cart.items.length <= 0) ||
-      (cartProps.isFoodInCartRequired &&
-        !CartController.isFoodRequirementInCart())
+      (cart && cart.items && cart.items.length <= 0) ||
+      (isFoodInCartRequired && !CartController.isFoodRequirementInCart())
     ) {
       navigate({ pathname: RoutePathsType.Cart, search: query.toString() });
     }
-  }, [cartProps.cart]);
+  }, [cart]);
 
   React.useEffect(() => {
-    if (!cartProps.cart) {
+    if (!cart) {
       return;
     }
 
     const radioOptions: RadioProps[] = [];
-    for (const option of checkoutProps.shippingOptions as PricedShippingOption[]) {
-      const minRequirement = option.requirements?.find(
-        (value) => value.type === 'min_subtotal'
-      );
-      const maxRequirement = option.requirements?.find(
-        (value) => value.type === 'max_subtotal'
-      );
-      if (minRequirement && cartProps.cart.subtotal < minRequirement?.amount) {
-        continue;
-      }
+    for (const option of shippingOptions) {
+      // const minRequirement = option.requirements?.find(
+      //   (value) => value.type === 'min_subtotal'
+      // );
+      // const maxRequirement = option.requirements?.find(
+      //   (value) => value.type === 'max_subtotal'
+      // );
+      // if (minRequirement && cart.subtotal < minRequirement?.amount) {
+      //   continue;
+      // }
 
-      if (maxRequirement && cartProps.cart.subtotal > maxRequirement?.amount) {
-        continue;
-      }
+      // if (maxRequirement && cart.subtotal > maxRequirement?.amount) {
+      //   continue;
+      // }
 
       let description = '';
       if (option.name === ShippingType.Standard) {
@@ -148,67 +129,66 @@ export default function CheckoutComponent(): JSX.Element {
         description: description,
         rightContent: () => (
           <div className={styles['radio-price-text']}>
-            {storeProps.selectedRegion &&
-              formatAmount({
-                amount: option?.amount ?? 0,
-                region: storeProps.selectedRegion,
-                includeTaxes: false,
-              })}
+            {selectedRegion &&
+              MedusaService.formatAmount(
+                option?.amount ?? 0,
+                selectedRegion.currency_code,
+                i18n.language
+              )}
           </div>
         ),
       });
     }
-    setShippingOptions(radioOptions);
-  }, [checkoutProps.shippingOptions, cartProps.cart]);
+    setCurrentShippingOptions(radioOptions);
+  }, [shippingOptions, cart]);
 
   React.useEffect(() => {
-    if (!cartProps.cart) {
+    if (!cart) {
       return;
     }
 
-    const cart = cartProps.cart as Cart;
-    let radioOptions: RadioProps[] = [];
-    for (const session of cart.payment_sessions as PaymentSession[]) {
-      let description = '';
-      let name = '';
-      if (session.provider_id === ProviderType.Manual) {
-        if (import.meta.env['MODE'] === 'production') {
-          continue;
-        }
-        name = t('manualProviderName');
-        description = t('manualProviderDescription');
-      } else if (session.provider_id === ProviderType.Stripe) {
-        name = t('creditCardProviderName');
-        description = t('creditCardProviderDescription');
-      }
+    // let radioOptions: RadioProps[] = [];
+    // for (const session of cart.payment_sessions as PaymentSession[]) {
+    //   let description = '';
+    //   let name = '';
+    //   if (session.provider_id === ProviderType.Manual) {
+    //     if (import.meta.env['MODE'] === 'production') {
+    //       continue;
+    //     }
+    //     name = t('manualProviderName');
+    //     description = t('manualProviderDescription');
+    //   } else if (session.provider_id === ProviderType.Stripe) {
+    //     name = t('creditCardProviderName');
+    //     description = t('creditCardProviderDescription');
+    //   }
 
-      radioOptions.push({
-        id: session.provider_id,
-        label: name,
-        value: name,
-        description: description,
-      });
-    }
+    //   radioOptions.push({
+    //     id: session.provider_id,
+    //     label: name,
+    //     value: name,
+    //     description: description,
+    //   });
+    // }
 
-    radioOptions = radioOptions.sort((a, b) => (a.label < b.label ? -1 : 1));
-    setProviderOptions(radioOptions);
+    // radioOptions = radioOptions.sort((a, b) => (a.label < b.label ? -1 : 1));
+    // setProviderOptions(radioOptions);
 
-    if (cart.payment_session) {
-      setStripeOptions({
-        clientSecret: cart.payment_session.data['client_secret'] as
-          | string
-          | undefined,
-      });
-    }
-  }, [cartProps.cart]);
+    // if (cart.payment_session) {
+    //   setStripeOptions({
+    //     clientSecret: cart.payment_session.data['client_secret'] as
+    //       | string
+    //       | undefined,
+    //   });
+    // }
+  }, [cart]);
 
   React.useEffect(() => {
-    let radioOptions: RadioProps[] = [];
+    const radioOptions: RadioProps[] = [];
     if (!customer) {
       return;
     }
 
-    for (const address of customer?.shipping_addresses) {
+    for (const address of customer?.addresses ?? []) {
       let value = `${address.address_1}`;
       let description = `${address.first_name} ${address.last_name}, ${address.phone}`;
       if (address?.address_2) {
@@ -236,7 +216,7 @@ export default function CheckoutComponent(): JSX.Element {
     }
 
     setShippingAddressOptions(radioOptions);
-  }, [accountProps.customer]);
+  }, [customer]);
 
   React.useEffect(() => {
     CheckoutController.updateErrorStrings({
@@ -265,7 +245,7 @@ export default function CheckoutComponent(): JSX.Element {
     });
 
     const errors = await CheckoutController.getAddressFormErrorsAsync(
-      checkoutProps.shippingForm
+      shippingForm
     );
 
     if (errors) {
@@ -293,7 +273,7 @@ export default function CheckoutComponent(): JSX.Element {
     });
 
     const errors = await CheckoutController.getAddressFormErrorsAsync(
-      checkoutProps.shippingForm
+      shippingForm
     );
 
     if (errors) {
@@ -347,7 +327,7 @@ export default function CheckoutComponent(): JSX.Element {
     });
 
     const errors = await CheckoutController.getAddressFormErrorsAsync(
-      checkoutProps.addShippingForm
+      addShippingForm
     );
     if (errors) {
       CheckoutController.updateAddShippingAddressErrors(errors);
@@ -357,17 +337,6 @@ export default function CheckoutComponent(): JSX.Element {
     await CheckoutController.addShippingAddressAsync();
     setIsAddAddressOpen(false);
   };
-
-  const suspenceComponent = (
-    <>
-      <CheckoutSuspenseDesktopComponent />
-      <CheckoutSuspenseMobileComponent />
-    </>
-  );
-
-  if (checkoutDebugProps.suspense) {
-    return suspenceComponent;
-  }
 
   const stripeElementOptions:
     | StripeCardNumberElementOptions
@@ -380,6 +349,18 @@ export default function CheckoutComponent(): JSX.Element {
       showIcon: true,
     };
   }, []);
+
+  const suspenceComponent = (
+    <>
+      <CheckoutSuspenseDesktopComponent />
+      <CheckoutSuspenseMobileComponent />
+    </>
+  );
+
+  if (suspense) {
+    return suspenceComponent;
+  }
+
   return (
     <>
       <Helmet>
@@ -410,12 +391,7 @@ export default function CheckoutComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <CheckoutDesktopComponent
-          checkoutProps={checkoutProps}
-          accountProps={accountProps}
-          storeProps={storeProps}
-          cartProps={cartProps}
-          windowProps={windowProps}
-          shippingOptions={shippingOptions}
+          shippingOptions={currentShippingOptions}
           providerOptions={providerOptions}
           shippingAddressOptions={shippingAddressOptions}
           isAddAddressOpen={isAddAddressOpen}
@@ -436,12 +412,7 @@ export default function CheckoutComponent(): JSX.Element {
           onAddAddressAsync={onAddAddressAsync}
         />
         <CheckoutMobileComponent
-          checkoutProps={checkoutProps}
-          accountProps={accountProps}
-          storeProps={storeProps}
-          cartProps={cartProps}
-          windowProps={windowProps}
-          shippingOptions={shippingOptions}
+          shippingOptions={currentShippingOptions}
           providerOptions={providerOptions}
           shippingAddressOptions={shippingAddressOptions}
           isAddAddressOpen={isAddAddressOpen}
@@ -465,3 +436,5 @@ export default function CheckoutComponent(): JSX.Element {
     </>
   );
 }
+
+export default observer(CheckoutComponent);

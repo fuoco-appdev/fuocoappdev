@@ -1,20 +1,12 @@
-import { Product } from '@medusajs/medusa';
-import { PricedVariant } from '@medusajs/medusa/dist/types/pricing';
-import { useObservable } from '@ngneat/use-observable';
+import { HttpTypes } from '@medusajs/types';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import AccountPublicController from '../../shared/controllers/account-public.controller';
-import AccountController from '../../shared/controllers/account.controller';
-import ProductController from '../../shared/controllers/product.controller';
-import StoreController from '../../shared/controllers/store.controller';
-import WindowController from '../../shared/controllers/window.controller';
-import { AccountPublicState } from '../../shared/models/account-public.model';
-import { AccountState } from '../../shared/models/account.model';
-import { StoreState } from '../../shared/models/store.model';
 import { ProductLikesMetadataResponse } from '../../shared/protobuf/product-like_pb';
 import { RoutePathsType } from '../../shared/route-paths-type';
 import { useQuery } from '../route-paths';
+import { DIContext } from './app.component';
 import { AccountPublicLikesSuspenseDesktopComponent } from './desktop/suspense/account-public-likes.suspense.desktop.component';
 import { AccountPublicLikesSuspenseMobileComponent } from './mobile/suspense/account-public-likes.suspense.mobile.component';
 
@@ -26,9 +18,6 @@ const AccountPublicLikesMobileComponent = React.lazy(
 );
 
 export interface AccountPublicLikesResponsiveProps {
-  storeProps: StoreState;
-  accountProps: AccountState;
-  accountPublicProps: AccountPublicState;
   openCartVariants: boolean;
   variantQuantities: Record<string, number>;
   isPreviewLoading: boolean;
@@ -38,27 +27,25 @@ export interface AccountPublicLikesResponsiveProps {
   onAddToCart: () => void;
   onProductPreviewClick: (
     scrollTop: number,
-    product: Product,
+    product: HttpTypes.StoreProduct,
     productLikesMetadata: ProductLikesMetadataResponse | null
   ) => void;
-  onProductPreviewRest: (product: Product) => void;
-  onProductPreviewAddToCart: (product: Product) => void;
-  onProductPreviewLikeChanged: (isLiked: boolean, product: Product) => void;
+  onProductPreviewRest: (product: HttpTypes.StoreProduct) => void;
+  onProductPreviewAddToCart: (product: HttpTypes.StoreProduct) => void;
+  onProductPreviewLikeChanged: (
+    isLiked: boolean,
+    product: HttpTypes.StoreProduct
+  ) => void;
 }
 
-export default function AccountPublicLikesComponent(): JSX.Element {
+function AccountPublicLikesComponent(): JSX.Element {
   const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const query = useQuery();
-  const [storeProps] = useObservable(StoreController.model.store);
-  const [accountProps] = useObservable(AccountController.model.store);
-  const [accountPublicProps] = useObservable(
-    AccountPublicController.model.store
-  );
-  const [accountPublicDebugProps] = useObservable(
-    AccountPublicController.model.debugStore
-  );
+  const { AccountPublicController, ProductController } =
+    React.useContext(DIContext);
+  const { suspense, selectedLikedProduct } = AccountPublicController.model;
   const [openCartVariants, setOpenCartVariants] =
     React.useState<boolean>(false);
   const [variantQuantities, setVariantQuantities] = React.useState<
@@ -69,25 +56,28 @@ export default function AccountPublicLikesComponent(): JSX.Element {
 
   const onProductPreviewClick = (
     scrollTop: number,
-    _product: Product,
+    _product: HttpTypes.StoreProduct,
     _productLikesMetadata: ProductLikesMetadataResponse | null
   ) => {
     AccountPublicController.updateLikesScrollPosition(scrollTop);
   };
 
-  const onProductPreviewRest = (product: Product) => {
+  const onProductPreviewRest = (product: HttpTypes.StoreProduct) => {
     navigate({
       pathname: `${RoutePathsType.Store}/${product.id}`,
       search: query.toString(),
     });
   };
 
-  const onProductPreviewAddToCart = (_product: Product) => {
+  const onProductPreviewAddToCart = (_product: HttpTypes.StoreProduct) => {
     setOpenCartVariants(true);
     setIsPreviewLoading(true);
   };
 
-  const onProductPreviewLikeChanged = (isLiked: boolean, product: Product) => {
+  const onProductPreviewLikeChanged = (
+    isLiked: boolean,
+    product: HttpTypes.StoreProduct
+  ) => {
     ProductController.requestProductLike(isLiked, product.id ?? '');
   };
 
@@ -98,15 +88,15 @@ export default function AccountPublicLikesComponent(): JSX.Element {
         id,
         quantity,
         () => {
-          WindowController.addToast({
-            key: `add-to-cart-${Math.random()}`,
-            message: t('addedToCart') ?? '',
-            description:
-              t('addedToCartDescription', {
-                item: accountPublicProps.selectedLikedProduct?.title,
-              }) ?? '',
-            type: 'success',
-          });
+          // WindowController.addToast({
+          //   key: `add-to-cart-${Math.random()}`,
+          //   message: t('addedToCart') ?? '',
+          //   description:
+          //     t('addedToCartDescription', {
+          //       item: accountPublicProps.selectedLikedProduct?.title,
+          //     }) ?? '',
+          //   type: 'success',
+          // });
           setIsPreviewLoading(false);
         },
         (error) => console.error(error)
@@ -126,12 +116,12 @@ export default function AccountPublicLikesComponent(): JSX.Element {
   }, [id]);
 
   React.useEffect(() => {
-    if (!accountPublicProps.selectedLikedProduct) {
+    if (!selectedLikedProduct) {
       return;
     }
 
-    const variants: PricedVariant[] =
-      accountPublicProps.selectedLikedProduct?.variants;
+    const variants: HttpTypes.StoreProductVariant[] =
+      selectedLikedProduct?.variants ?? [];
     const quantities: Record<string, number> = {};
     for (const variant of variants) {
       if (!variant?.id) {
@@ -141,7 +131,8 @@ export default function AccountPublicLikesComponent(): JSX.Element {
     }
 
     const purchasableVariants = variants.filter(
-      (value: PricedVariant) => value.purchasable === true
+      (value: HttpTypes.StoreProductVariant) =>
+        value.inventory_quantity && value.inventory_quantity > 0
     );
 
     if (purchasableVariants.length > 0) {
@@ -153,7 +144,7 @@ export default function AccountPublicLikesComponent(): JSX.Element {
     }
 
     setVariantQuantities(quantities);
-  }, [accountPublicProps.selectedLikedProduct]);
+  }, [selectedLikedProduct]);
 
   const suspenceComponent = (
     <>
@@ -162,16 +153,13 @@ export default function AccountPublicLikesComponent(): JSX.Element {
     </>
   );
 
-  if (accountPublicDebugProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
 
   return (
     <React.Suspense fallback={suspenceComponent}>
       <AccountPublicLikesDesktopComponent
-        storeProps={storeProps}
-        accountProps={accountProps}
-        accountPublicProps={accountPublicProps}
         openCartVariants={openCartVariants}
         variantQuantities={variantQuantities}
         isPreviewLoading={isPreviewLoading}
@@ -185,9 +173,6 @@ export default function AccountPublicLikesComponent(): JSX.Element {
         onProductPreviewLikeChanged={onProductPreviewLikeChanged}
       />
       <AccountPublicLikesMobileComponent
-        storeProps={storeProps}
-        accountProps={accountProps}
-        accountPublicProps={accountPublicProps}
         openCartVariants={openCartVariants}
         variantQuantities={variantQuantities}
         isPreviewLoading={isPreviewLoading}
@@ -203,3 +188,5 @@ export default function AccountPublicLikesComponent(): JSX.Element {
     </React.Suspense>
   );
 }
+
+export default observer(AccountPublicLikesComponent);

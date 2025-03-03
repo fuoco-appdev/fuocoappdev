@@ -1,18 +1,21 @@
 import { Line, Scroll, Tabs } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { RoutePathsType } from '../../../shared/route-paths-type';
 import styles from '../../modules/settings.module.scss';
 import { useQuery } from '../../route-paths';
+import { DIContext } from '../app.component';
 import { ResponsiveDesktop } from '../responsive.component';
 import { SettingsResponsiveProps } from '../settings.component';
 
-export default function SettingsDesktopComponent({
-  windowProps,
-}: SettingsResponsiveProps): JSX.Element {
+function SettingsDesktopComponent({}: SettingsResponsiveProps): JSX.Element {
   const navigate = useNavigate();
   const query = useQuery();
   const { t } = useTranslation();
+  const { WindowController } = React.useContext(DIContext);
+  const { activeRoute } = WindowController.model;
 
   return (
     <ResponsiveDesktop>
@@ -21,7 +24,7 @@ export default function SettingsDesktopComponent({
           className={[styles['side-bar'], styles['side-bar-desktop']].join(' ')}
         >
           <Tabs
-            activeId={windowProps.activeRoute}
+            activeId={activeRoute}
             direction={'vertical'}
             type={'nav'}
             onChange={(id) =>
@@ -58,3 +61,5 @@ export default function SettingsDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(SettingsDesktopComponent);

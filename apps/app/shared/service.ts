@@ -16,7 +16,7 @@ export abstract class Service {
     options: StoreOptions = {}
   ) {
     makeObservable(this);
-    this._endpointUrl = configService.supabase?.functions_url;
+    this._endpointUrl = configService.api?.url;
     this.configService = configService;
     this.supabaseAnonKey = supabaseAnonKey;
 
@@ -54,6 +54,28 @@ export abstract class Service {
 
     if (json?.status >= 400) {
       throw json as AxiosError;
+    }
+  }
+
+  public async requestHealthAsync(
+    retries = 1,
+    retryDelay = 1000
+  ): Promise<boolean> {
+    try {
+      const response = await fetch(`${this.endpointUrl}/health`, {
+        method: 'GET',
+      });
+
+      return response.status === 200;
+    } catch (error: any) {
+      if (retries > 0) {
+        console.log(`Retry attempt with ${retries} retries left.`, error);
+        await new Promise((resolve) => setTimeout(resolve, retryDelay));
+        return this.requestHealthAsync(retries - 1, retryDelay);
+      } else {
+        console.error('Max retries reached. Error:', error);
+        throw error;
+      }
     }
   }
 

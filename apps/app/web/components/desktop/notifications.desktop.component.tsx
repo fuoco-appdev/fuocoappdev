@@ -1,20 +1,23 @@
 import { Line, Scroll } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import NotificationsController from '../../../shared/controllers/notifications.controller';
 import styles from '../../modules/notifications.module.scss';
+import { DIContext } from '../app.component';
 import NotificationItemComponent from '../notification-item.component';
 import { NotificationsResponsiveProps } from '../notifications.component';
 import { ResponsiveDesktop } from '../responsive.component';
 
-export default function NotificationsDesktopComponent({
-  notificationsProps,
+function NotificationsDesktopComponent({
   notifications,
   onScroll,
   onLoad,
 }: NotificationsResponsiveProps): JSX.Element {
   const scrollContainerRef = React.createRef<HTMLDivElement>();
   const topBarRef = React.useRef<HTMLDivElement | null>(null);
+  const { NotificationsController } = React.useContext(DIContext);
+  const { hasMoreNotifications, isLoading, accountNotifications } =
+    NotificationsController.model;
   const { t, i18n } = useTranslation();
   let prevPreviewScrollTop = 0;
   let yPosition = 0;
@@ -55,8 +58,8 @@ export default function NotificationsDesktopComponent({
               <Line.ArrowDownward size={24} />
             </div>
           }
-          isLoadable={notificationsProps.hasMoreNotifications}
-          isLoading={notificationsProps.isLoading}
+          isLoadable={hasMoreNotifications}
+          isLoading={isLoading}
           onLoad={() => NotificationsController.onNextScrollAsync()}
           onScroll={(progress, scrollRef, contentRef) => {
             const elementHeight = topBarRef.current?.clientHeight ?? 0;
@@ -110,34 +113,34 @@ export default function NotificationsDesktopComponent({
                     <NotificationItemComponent
                       key={notification.id}
                       notification={notification}
-                      notificationsProps={notificationsProps}
                       fromNow={key}
                     />
                   ))}
                 </div>
               );
             })}
-            {!notificationsProps.isLoading &&
-              notificationsProps.accountNotifications.length <= 0 && (
+            {!isLoading && accountNotifications.length <= 0 && (
+              <div
+                className={[
+                  styles['no-notifications-container'],
+                  styles['no-notifications-container-desktop'],
+                ].join(' ')}
+              >
                 <div
                   className={[
-                    styles['no-notifications-container'],
-                    styles['no-notifications-container-desktop'],
+                    styles['no-items-text'],
+                    styles['no-items-text-desktop'],
                   ].join(' ')}
                 >
-                  <div
-                    className={[
-                      styles['no-items-text'],
-                      styles['no-items-text-desktop'],
-                    ].join(' ')}
-                  >
-                    {t('noNotifications')}
-                  </div>
+                  {t('noNotifications')}
                 </div>
-              )}
+              </div>
+            )}
           </div>
         </Scroll>
       </div>
     </ResponsiveDesktop>
   );
 }
+
+export default observer(NotificationsDesktopComponent);

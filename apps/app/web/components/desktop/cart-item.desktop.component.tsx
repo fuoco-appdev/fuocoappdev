@@ -1,17 +1,17 @@
 import { Button, Line, Modal } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import styles from '../../modules/cart-item.module.scss';
-// @ts-ignore
-import { formatAmount } from 'medusa-react';
 import { useNavigate } from 'react-router-dom';
 import { RoutePathsType } from '../../../shared/route-paths-type';
 import { MedusaProductTypeNames } from '../../../shared/types/medusa.type';
+import styles from '../../modules/cart-item.module.scss';
 import { useQuery } from '../../route-paths';
+import { DIContext } from '../app.component';
 import { CartItemResponsiveProps } from '../cart-item.component';
 import { ResponsiveDesktop } from '../responsive.component';
 
-export default function CartItemDesktopComponent({
-  storeProps,
+function CartItemDesktopComponent({
   item,
   productType,
   quantity,
@@ -26,6 +26,8 @@ export default function CartItemDesktopComponent({
   const navigate = useNavigate();
   const query = useQuery();
   const { t } = useTranslation();
+  const { StoreController } = React.useContext(DIContext);
+  const { selectedRegion } = StoreController.model;
 
   return (
     <ResponsiveDesktop>
@@ -107,7 +109,7 @@ export default function CartItemDesktopComponent({
             ].join(' ')}
             onClick={() =>
               navigate({
-                pathname: `${RoutePathsType.Store}/${item.variant.product_id}`,
+                pathname: `${RoutePathsType.Store}/${item.variant?.product_id}`,
                 search: query.toString(),
               })
             }
@@ -122,7 +124,7 @@ export default function CartItemDesktopComponent({
                 ' '
               )}
             >
-              {item.variant.title}
+              {item.variant?.title}
             </div>
           </div>
           <div
@@ -225,10 +227,10 @@ export default function CartItemDesktopComponent({
             ].join(' ')}
           >
             {hasReducedPrice && `${t('original')}:`} &nbsp;
-            {storeProps.selectedRegion &&
+            {selectedRegion &&
               formatAmount({
                 amount: item.subtotal ?? 0,
-                region: storeProps.selectedRegion,
+                region: selectedRegion,
                 includeTaxes: false,
               })}
           </div>
@@ -240,10 +242,10 @@ export default function CartItemDesktopComponent({
                   styles['discount-pricing-desktop'],
                 ].join(' ')}
               >
-                {storeProps.selectedRegion &&
+                {selectedRegion &&
                   formatAmount({
                     amount: (item.subtotal ?? 0) - (item.discount_total ?? 0),
-                    region: storeProps.selectedRegion,
+                    region: selectedRegion,
                     includeTaxes: false,
                   })}
               </div>
@@ -283,3 +285,5 @@ export default function CartItemDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(CartItemDesktopComponent);

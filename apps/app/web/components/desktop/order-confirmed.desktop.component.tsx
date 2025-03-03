@@ -1,31 +1,32 @@
-import { LineItem } from '@medusajs/medusa';
-import { useTranslation } from 'react-i18next';
-import OrderConfirmedController from '../../../shared/controllers/order-confirmed.controller';
-import styles from '../../modules/order-confirmed.module.scss';
-import ShippingItemComponent from '../shipping-item.component';
-// @ts-ignore
 import { Button, Modal, Scroll } from '@fuoco.appdev/web-components';
-import { formatAmount } from 'medusa-react';
+import { HttpTypes } from '@medusajs/types';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 import { createPortal } from 'react-dom';
-import WindowController from '../../../shared/controllers/window.controller';
+import { useTranslation } from 'react-i18next';
 import { RefundItem } from '../../../shared/models/order-confirmed.model';
+import styles from '../../modules/order-confirmed.module.scss';
+import { DIContext } from '../app.component';
 import { OrderConfirmedResponsiveProps } from '../order-confirmed.component';
 import RefundItemComponent from '../refund-item.component';
 import { ResponsiveDesktop } from '../responsive.component';
+import ShippingItemComponent from '../shipping-item.component';
 import { OrderConfirmedSuspenseDesktopComponent } from './suspense/order-confirmed.suspense.desktop.component';
 
-export default function OrderConfirmedDesktopComponent({
-  orderConfirmedProps,
-  storeProps,
+function OrderConfirmedDesktopComponent({
   quantity,
   openRefund,
   returnReasonOptions,
   setOpenRefund,
   formatStatus,
+  shippingOption,
 }: OrderConfirmedResponsiveProps): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { OrderConfirmedController, StoreController, MedusaService } =
+    React.useContext(DIContext);
+  const { order, refundItems } = OrderConfirmedController.model;
+  const { selectedRegion } = StoreController.model;
 
-  const order = orderConfirmedProps.order;
   if (!order) {
     return <OrderConfirmedSuspenseDesktopComponent />;
   }
@@ -129,18 +130,19 @@ export default function OrderConfirmedDesktopComponent({
                   ].join(' ')}
                 >
                   {order?.items
-                    ?.sort((current: LineItem, next: LineItem) => {
-                      return (
-                        new Date(current.created_at).valueOf() -
-                        new Date(next.created_at).valueOf()
-                      );
-                    })
-                    .map((item: LineItem) => (
-                      <ShippingItemComponent
-                        key={item.id}
-                        item={item}
-                        storeProps={storeProps}
-                      />
+                    ?.sort(
+                      (
+                        current: HttpTypes.StoreOrderLineItem,
+                        next: HttpTypes.StoreOrderLineItem
+                      ) => {
+                        return (
+                          new Date(current.created_at).valueOf() -
+                          new Date(next.created_at).valueOf()
+                        );
+                      }
+                    )
+                    .map((item: HttpTypes.StoreOrderLineItem) => (
+                      <ShippingItemComponent key={item.id} item={item} />
                     ))}
                 </div>
               </div>
@@ -295,7 +297,7 @@ export default function OrderConfirmedDesktopComponent({
                         ].join(' ')}
                         key={order?.shipping_methods[0].id}
                       >
-                        {order?.shipping_methods[0].shipping_option.name}
+                        {shippingOption?.name}
                       </div>
                     )}
                 </div>
@@ -353,12 +355,12 @@ export default function OrderConfirmedDesktopComponent({
                           styles['subtotal-text-desktop'],
                         ].join(' ')}
                       >
-                        {storeProps.selectedRegion &&
-                          formatAmount({
-                            amount: order?.subtotal ?? 0,
-                            region: storeProps.selectedRegion,
-                            includeTaxes: false,
-                          })}
+                        {selectedRegion &&
+                          MedusaService.formatAmount(
+                            order?.subtotal ?? 0,
+                            selectedRegion.currency_code,
+                            i18n.language
+                          )}
                       </div>
                     </div>
                     <div
@@ -381,12 +383,12 @@ export default function OrderConfirmedDesktopComponent({
                           styles['total-detail-text-desktop'],
                         ].join(' ')}
                       >
-                        {storeProps.selectedRegion &&
-                          formatAmount({
-                            amount: -(order?.discount_total ?? 0),
-                            region: storeProps.selectedRegion,
-                            includeTaxes: false,
-                          })}
+                        {selectedRegion &&
+                          MedusaService.formatAmount(
+                            -(order?.discount_total ?? 0),
+                            selectedRegion.currency_code,
+                            i18n.language
+                          )}
                       </div>
                     </div>
                     <div
@@ -409,12 +411,12 @@ export default function OrderConfirmedDesktopComponent({
                           styles['total-detail-text-desktop'],
                         ].join(' ')}
                       >
-                        {storeProps.selectedRegion &&
-                          formatAmount({
-                            amount: order?.shipping_total ?? 0,
-                            region: storeProps.selectedRegion,
-                            includeTaxes: false,
-                          })}
+                        {selectedRegion &&
+                          MedusaService.formatAmount(
+                            order?.shipping_total ?? 0,
+                            selectedRegion.currency_code,
+                            i18n.language
+                          )}
                       </div>
                     </div>
                     <div
@@ -437,12 +439,12 @@ export default function OrderConfirmedDesktopComponent({
                           styles['total-detail-text-desktop'],
                         ].join(' ')}
                       >
-                        {storeProps.selectedRegion &&
-                          formatAmount({
-                            amount: order?.tax_total ?? 0,
-                            region: storeProps.selectedRegion,
-                            includeTaxes: false,
-                          })}
+                        {selectedRegion &&
+                          MedusaService.formatAmount(
+                            order?.tax_total ?? 0,
+                            selectedRegion.currency_code,
+                            i18n.language
+                          )}
                       </div>
                     </div>
                     <div
@@ -465,12 +467,12 @@ export default function OrderConfirmedDesktopComponent({
                           styles['total-text-desktop'],
                         ].join(' ')}
                       >
-                        {storeProps.selectedRegion &&
-                          formatAmount({
-                            amount: order?.total ?? 0,
-                            region: storeProps.selectedRegion,
-                            includeTaxes: true,
-                          })}
+                        {selectedRegion &&
+                          MedusaService.formatAmount(
+                            order?.total ?? 0,
+                            selectedRegion.currency_code,
+                            i18n.language
+                          )}
                       </div>
                     </div>
                   </div>
@@ -480,73 +482,72 @@ export default function OrderConfirmedDesktopComponent({
           </div>
         </Scroll>
         {createPortal(
-          <>
-            <Modal
-              classNames={{
-                overlay: styles['modal-overlay'],
-                modal: [styles['modal'], styles['modal-desktop']].join(' '),
-              }}
-              visible={openRefund}
-              hideFooter={true}
-              onCancel={() => setOpenRefund(false)}
+          <Modal
+            classNames={{
+              overlay: styles['modal-overlay'],
+              modal: [styles['modal'], styles['modal-desktop']].join(' '),
+            }}
+            visible={openRefund}
+            hideFooter={true}
+            onCancel={() => setOpenRefund(false)}
+          >
+            <div
+              className={[
+                styles['refund-items-container'],
+                styles['refund-items-container-desktop'],
+              ].join(' ')}
             >
-              <div
-                className={[
-                  styles['refund-items-container'],
-                  styles['refund-items-container-desktop'],
-                ].join(' ')}
-              >
-                {order?.items?.map((item: LineItem) => (
-                  <RefundItemComponent
-                    item={item}
-                    refundItem={orderConfirmedProps.refundItems[item.id]}
-                    returnReasonOptions={returnReasonOptions}
-                    onChanged={(value) =>
-                      OrderConfirmedController.updateRefundItem(item.id, value)
-                    }
-                  />
-                ))}
-              </div>
-              <div
-                className={[
-                  styles['request-refund-button-container'],
-                  styles['request-refund-button-container-desktop'],
-                ].join(' ')}
-              >
-                <Button
-                  block={true}
-                  size={'large'}
-                  classNames={{
-                    button: styles['refund-button'],
-                  }}
-                  rippleProps={{
-                    color: 'rgba(233, 33, 66, .35)',
-                  }}
-                  disabled={
-                    Object.values(
-                      orderConfirmedProps.refundItems ?? ([] as RefundItem[])
-                    ).find((value: RefundItem) => value.quantity > 0) ===
-                    undefined
+              {order?.items?.map((item: HttpTypes.StoreOrderLineItem) => (
+                <RefundItemComponent
+                  item={item}
+                  refundItem={refundItems[item.id]}
+                  returnReasonOptions={returnReasonOptions}
+                  onChanged={(value) =>
+                    OrderConfirmedController.updateRefundItem(item.id, value)
                   }
-                  onClick={async () => {
-                    await OrderConfirmedController.createReturnAsync();
-                    setOpenRefund(false);
-                    WindowController.addToast({
-                      key: `refund-request-success-${Math.random()}`,
-                      message: t('requestRefund') ?? '',
-                      description: t('requestRefundSuccessMessage') ?? '',
-                      type: 'success',
-                    });
-                  }}
-                >
-                  {t('requestRefund')}
-                </Button>
-              </div>
-            </Modal>
-          </>,
+                />
+              ))}
+            </div>
+            <div
+              className={[
+                styles['request-refund-button-container'],
+                styles['request-refund-button-container-desktop'],
+              ].join(' ')}
+            >
+              <Button
+                block={true}
+                size={'large'}
+                classNames={{
+                  button: styles['refund-button'],
+                }}
+                rippleProps={{
+                  color: 'rgba(233, 33, 66, .35)',
+                }}
+                disabled={
+                  Object.values(refundItems ?? ([] as RefundItem[])).find(
+                    (value: RefundItem) => value.quantity > 0
+                  ) === undefined
+                }
+                onClick={async () => {
+                  await OrderConfirmedController.createReturnAsync();
+                  setOpenRefund(false);
+                  // WindowController.addToast({
+                  //   key: `refund-request-success-${Math.random()}`,
+                  //   message: t('requestRefund') ?? '',
+                  //   description: t('requestRefundSuccessMessage') ?? '',
+                  //   type: 'success',
+                  // });
+                }}
+              >
+                {t('requestRefund')}
+              </Button>
+            </div>
+          </Modal>,
           document.body
         )}
       </div>
     </ResponsiveDesktop>
   );
 }
+
+export default observer(OrderConfirmedDesktopComponent);

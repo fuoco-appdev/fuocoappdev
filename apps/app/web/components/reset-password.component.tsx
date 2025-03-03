@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import { useObservable } from '@ngneat/use-observable';
 import { AuthError } from '@supabase/supabase-js';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import ResetPasswordController from '../../shared/controllers/reset-password.controller';
-import WindowController from '../../shared/controllers/window.controller';
-import { ResetPasswordState } from '../../shared/models';
+import { DIContext } from './app.component';
 import {
   ResponsiveSuspenseDesktop,
   ResponsiveSuspenseMobile,
@@ -22,23 +20,18 @@ const ResetPasswordMobileComponent = React.lazy(
 export interface ResetPasswordProps {}
 
 export interface ResetPasswordResponsiveProps {
-  resetPasswordProps: ResetPasswordState;
   passwordError: string;
   confirmPasswordError: string;
   setAuthError: (error: AuthError | null) => void;
 }
 
-export default function ResetPasswordComponent(): JSX.Element {
+function ResetPasswordComponent(): JSX.Element {
+  const { ResetPasswordController } = React.useContext(DIContext);
+  const { password, suspense } = ResetPasswordController.model;
   const [authError, setAuthError] = React.useState<AuthError | null>(null);
   const [passwordError, setPasswordError] = React.useState<string>('');
   const [confirmPasswordError, setConfirmPasswordError] =
     React.useState<string>('');
-  const [resetPasswordProps] = useObservable(
-    ResetPasswordController.model.store
-  );
-  const [resetDebugPasswordProps] = useObservable(
-    ResetPasswordController.model.debugStore
-  );
   const renderCountRef = React.useRef<number>(0);
 
   React.useEffect(() => {
@@ -51,17 +44,17 @@ export default function ResetPasswordComponent(): JSX.Element {
 
   React.useEffect(() => {
     if (authError) {
-      WindowController.addToast({
-        key: `reset-password-${Math.random()}`,
-        message: authError?.name,
-        description: authError?.message,
-        type: 'error',
-      });
+      // WindowController.addToast({
+      //   key: `reset-password-${Math.random()}`,
+      //   message: authError?.name,
+      //   description: authError?.message,
+      //   type: 'error',
+      // });
     } else {
       setPasswordError('');
       setConfirmPasswordError('');
     }
-  }, [authError, resetPasswordProps.password]);
+  }, [authError, password]);
 
   const suspenceComponent = (
     <>
@@ -77,7 +70,7 @@ export default function ResetPasswordComponent(): JSX.Element {
     </>
   );
 
-  if (resetDebugPasswordProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
 
@@ -111,13 +104,11 @@ export default function ResetPasswordComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <ResetPasswordDesktopComponent
-          resetPasswordProps={resetPasswordProps}
           passwordError={passwordError}
           confirmPasswordError={confirmPasswordError}
           setAuthError={setAuthError}
         />
         <ResetPasswordMobileComponent
-          resetPasswordProps={resetPasswordProps}
           passwordError={passwordError}
           confirmPasswordError={confirmPasswordError}
           setAuthError={setAuthError}
@@ -126,3 +117,5 @@ export default function ResetPasswordComponent(): JSX.Element {
     </>
   );
 }
+
+export default observer(ResetPasswordComponent);

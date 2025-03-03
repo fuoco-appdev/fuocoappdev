@@ -1,13 +1,14 @@
 import { Button, Card, Line } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import styles from '../../modules/product-preview.module.scss';
-// @ts-ignore
 import Skeleton from 'react-loading-skeleton';
 import { MedusaProductTypeNames } from '../../../shared/types/medusa.type';
+import styles from '../../modules/product-preview.module.scss';
+import { DIContext } from '../app.component';
 import { ProductPreviewResponsiveProps } from '../product-preview.component';
 import { ResponsiveDesktop } from '../responsive.component';
 
-export default function ProductPreviewDesktopComponent({
+function ProductPreviewDesktopComponent({
   thumbnail,
   title,
   subtitle,
@@ -16,7 +17,6 @@ export default function ProductPreviewDesktopComponent({
   isLoading,
   likesMetadata,
   pricedProduct,
-  accountProps,
   purchasable,
   onClick,
   originalPrice,
@@ -32,6 +32,8 @@ export default function ProductPreviewDesktopComponent({
   formatDescription,
 }: ProductPreviewResponsiveProps): JSX.Element {
   const ref = React.useRef<HTMLDivElement | null>(null);
+  const { AccountController } = React.useContext(DIContext);
+  const { account } = AccountController.model;
 
   return (
     <ResponsiveDesktop>
@@ -231,10 +233,7 @@ export default function ProductPreviewDesktopComponent({
                             ? 'rgba(233, 33, 66, .35)'
                             : 'rgba(42, 42, 95, .35)',
                         }}
-                        disabled={
-                          !accountProps.account ||
-                          accountProps.account.status === 'Incomplete'
-                        }
+                        disabled={!account || account.status === 'Incomplete'}
                         rounded={true}
                         onClick={() => onLikeChanged?.(!isLiked)}
                         type={'text'}
@@ -310,3 +309,5 @@ export default function ProductPreviewDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(ProductPreviewDesktopComponent);

@@ -1,15 +1,19 @@
 import { Button, Checkbox, Line } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from '../../modules/permissions.module.scss';
+import { DIContext } from '../app.component';
 import { PermissionsResponsiveProps } from '../permissions.component';
 import { ResponsiveDesktop } from '../responsive.component';
 
-export default function PermissionsDesktopComponent({
-  permissionsProps,
+function PermissionsDesktopComponent({
   onAccessLocationChecked,
   onContinueAsync,
 }: PermissionsResponsiveProps): JSX.Element {
   const { t } = useTranslation();
+  const { PermissionsController } = React.useContext(DIContext);
+  const { accessLocation } = PermissionsController.model;
 
   return (
     <ResponsiveDesktop>
@@ -63,7 +67,7 @@ export default function PermissionsDesktopComponent({
                   </div>
                 </div>
                 <Checkbox
-                  checked={permissionsProps.accessLocation}
+                  checked={accessLocation}
                   onChange={onAccessLocationChecked}
                   classNames={{
                     checkbox: styles['checkbox'],
@@ -102,3 +106,5 @@ export default function PermissionsDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(PermissionsDesktopComponent);

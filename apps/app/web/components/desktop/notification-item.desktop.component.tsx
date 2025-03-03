@@ -1,12 +1,12 @@
+import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
-// @ts-ignore
 import { useNavigate } from 'react-router-dom';
 import { NotificationItemResponsiveProps } from '../notification-item.component';
 import { ResponsiveDesktop } from '../responsive.component';
 
-export default function NotificationItemDesktopComponent({
+function NotificationItemDesktopComponent({
   notification,
-  fromNow
+  fromNow,
 }: NotificationItemResponsiveProps): JSX.Element {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -17,3 +17,5 @@ export default function NotificationItemDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(NotificationItemDesktopComponent);

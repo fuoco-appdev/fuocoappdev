@@ -5,25 +5,24 @@ import {
   Scroll,
   Tabs,
 } from '@fuoco.appdev/web-components';
-import { StockLocation } from '@medusajs/stock-location/dist/models';
+import { HttpTypes } from '@medusajs/types';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import Map, { Marker, Popup } from 'react-map-gl';
 import Slider from 'react-slick';
-import ExploreController from '../../../shared/controllers/explore.controller';
 import {
   ExploreTabs,
   InventoryLocation,
   InventoryLocationType,
 } from '../../../shared/models/explore.model';
-import ConfigService from '../../../shared/services/config.service';
 import styles from '../../modules/explore.module.scss';
+import { DIContext } from '../app.component';
 import { ExploreResponsiveProps } from '../explore.component';
 import { ResponsiveDesktop } from '../responsive.component';
 import StockLocationItemComponent from '../stock-location-item.component';
 
-export default function ExploreDesktopComponent({
-  exploreProps,
+function ExploreDesktopComponent({
   mapRef,
   selectedPoint,
   setMapStyleLoaded,
@@ -33,6 +32,21 @@ export default function ExploreDesktopComponent({
   onGoToStore,
 }: ExploreResponsiveProps): JSX.Element {
   const { t } = useTranslation();
+  const { ExploreController, ConfigService } = React.useContext(DIContext);
+  const {
+    input,
+    selectedTab,
+    hasMoreSearchedStockLocations,
+    areSearchedStockLocationsLoading,
+    searchedStockLocations,
+    areSearchedStockLocationsReloading,
+    isSelectedInventoryLocationLoaded,
+    longitude,
+    latitude,
+    zoom,
+    inventoryLocations,
+    selectedInventoryLocation,
+  } = ExploreController.model;
   const topBarRef = React.useRef<HTMLDivElement | null>(null);
   const scrollContainerRef = React.createRef<HTMLDivElement>();
   let prevScrollTop = 0;
@@ -73,7 +87,7 @@ export default function ExploreDesktopComponent({
                   ].join(' ')}
                 >
                   <Input
-                    value={exploreProps.input}
+                    value={input}
                     classNames={{
                       container: [
                         styles['search-input-container'],
@@ -107,7 +121,7 @@ export default function ExploreDesktopComponent({
                   }}
                   removable={true}
                   type={'pills'}
-                  activeId={exploreProps.selectedTab}
+                  activeId={selectedTab}
                   onChange={(id: string) =>
                     ExploreController.updateSelectedTabAsync(
                       id.length > 0 ? (id as ExploreTabs) : undefined
@@ -142,8 +156,8 @@ export default function ExploreDesktopComponent({
                 <Line.ArrowDownward size={24} />
               </div>
             }
-            isLoadable={exploreProps.hasMoreSearchedStockLocations}
-            isLoading={exploreProps.areSearchedStockLocationsLoading}
+            isLoadable={hasMoreSearchedStockLocations}
+            isLoading={areSearchedStockLocationsLoading}
             onLoad={() => ExploreController.onNextScrollAsync()}
             onScroll={(progress, scrollRef, contentRef) => {
               const elementHeight = topBarRef.current?.clientHeight ?? 0;
@@ -176,8 +190,11 @@ export default function ExploreDesktopComponent({
               ref={scrollContainerRef}
               onLoad={onScrollLoad}
             >
-              {exploreProps.searchedStockLocations.map(
-                (stockLocation: StockLocation, _index: number) => {
+              {searchedStockLocations.map(
+                (
+                  stockLocation: HttpTypes.AdminStockLocation,
+                  _index: number
+                ) => {
                   return (
                     <StockLocationItemComponent
                       key={stockLocation.id}
@@ -193,9 +210,9 @@ export default function ExploreDesktopComponent({
                   );
                 }
               )}
-              {!exploreProps.areSearchedStockLocationsLoading &&
-                !exploreProps.areSearchedStockLocationsReloading &&
-                exploreProps.searchedStockLocations.length <= 0 && (
+              {!areSearchedStockLocationsLoading &&
+                !areSearchedStockLocationsReloading &&
+                searchedStockLocations.length <= 0 && (
                   <div
                     className={[
                       styles['no-searched-stock-locations-container'],
@@ -221,7 +238,7 @@ export default function ExploreDesktopComponent({
             styles['map-container-desktop'],
           ].join(' ')}
         >
-          {exploreProps.isSelectedInventoryLocationLoaded && (
+          {isSelectedInventoryLocationLoaded && (
             <Map
               style={{
                 minWidth: '100%',
@@ -234,13 +251,13 @@ export default function ExploreDesktopComponent({
               ref={mapRef}
               interactive={true}
               initialViewState={{
-                longitude: exploreProps.longitude ?? 0,
-                latitude: exploreProps.latitude ?? 0,
+                longitude: longitude ?? 0,
+                latitude: latitude ?? 0,
                 zoom: 15,
               }}
-              longitude={exploreProps.longitude ?? 0}
-              latitude={exploreProps.latitude ?? 0}
-              zoom={exploreProps.zoom ?? 15}
+              longitude={longitude ?? 0}
+              latitude={latitude ?? 0}
+              zoom={zoom ?? 15}
               mapStyle={ConfigService.mapbox.style_url}
               onMove={(e) => ExploreController.onMapMove(e.viewState)}
               onLoad={(e) => {
@@ -248,7 +265,7 @@ export default function ExploreDesktopComponent({
                 e.target.resize();
               }}
             >
-              {exploreProps.inventoryLocations?.map(
+              {inventoryLocations?.map(
                 (point: InventoryLocation, index: number) => (
                   <Marker
                     key={`marker-${index}`}
@@ -261,10 +278,10 @@ export default function ExploreDesktopComponent({
                     }}
                   >
                     {point.type === InventoryLocationType.Cellar && (
+                      // eslint-disable-next-line jsx-a11y/alt-text
                       <img
                         src={
-                          exploreProps.selectedInventoryLocation?.id !==
-                          point.id
+                          selectedInventoryLocation?.id !== point.id
                             ? '../assets/images/unselected-cellar.png'
                             : '../assets/images/selected-cellar.png'
                         }
@@ -275,10 +292,10 @@ export default function ExploreDesktopComponent({
                       />
                     )}
                     {point.type === InventoryLocationType.Restaurant && (
+                      // eslint-disable-next-line jsx-a11y/alt-text
                       <img
                         src={
-                          exploreProps.selectedInventoryLocation?.id !==
-                          point.id
+                          selectedInventoryLocation?.id !== point.id
                             ? '../assets/images/unselected-restaurant.png'
                             : '../assets/images/selected-restaurant.png'
                         }
@@ -393,3 +410,5 @@ export default function ExploreDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(ExploreDesktopComponent);

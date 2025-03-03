@@ -1,4 +1,5 @@
 import { Avatar, Button } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
 import Skeleton from 'react-loading-skeleton';
 import Ripples from 'react-ripples';
@@ -6,8 +7,7 @@ import styles from '../../modules/account-follow-item.module.scss';
 import { AccountFollowItemResponsiveProps } from '../account-follow-item.component';
 import { ResponsiveMobile } from '../responsive.component';
 
-export default function AccountFollowItemMobileComponent({
-  accountProps,
+function AccountFollowItemMobileComponent({
   account,
   isRequest,
   isFollowing,
@@ -43,7 +43,7 @@ export default function AccountFollowItemMobileComponent({
                 ].join(' '),
               }}
               size={'custom'}
-              text={account.customer?.first_name}
+              text={account.customer?.first_name ?? ''}
               src={profileUrl}
             />
             <div
@@ -95,7 +95,7 @@ export default function AccountFollowItemMobileComponent({
               )}
             </div>
           </div>
-          {accountProps.account?.id !== account.id && !isRequest && (
+          {account?.id !== account.id && !isRequest && (
             <>
               {!isFollowing && (
                 <Button
@@ -153,7 +153,7 @@ export default function AccountFollowItemMobileComponent({
               )}
             </>
           )}
-          {accountProps.account?.id !== account.id && isRequest && (
+          {account?.id !== account.id && isRequest && (
             <div
               className={[
                 styles['request-button-container'],
@@ -199,3 +199,5 @@ export default function AccountFollowItemMobileComponent({
     </ResponsiveMobile>
   );
 }
+
+export default observer(AccountFollowItemMobileComponent);

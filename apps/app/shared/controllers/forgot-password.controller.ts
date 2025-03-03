@@ -32,7 +32,7 @@ export default class ForgotPasswordController extends Controller {
     return this._model;
   }
 
-  public override initialize = (_renderCount: number): void => {};
+  public override initialize(_renderCount: number): void {}
 
   public override load(_renderCount: number): void {
     const supabaseService = this._container.get('SupabaseService');

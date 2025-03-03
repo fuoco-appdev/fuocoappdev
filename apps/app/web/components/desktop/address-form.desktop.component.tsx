@@ -5,12 +5,13 @@ import {
   Line,
   Listbox,
 } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
 import styles from '../../modules/address-form.module.scss';
 import { AddressFormResponsiveProps } from '../address-form.component';
 import { ResponsiveDesktop } from '../responsive.component';
 
-export default function AddressFormDesktopComponent({
+function AddressFormDesktopComponent({
   isAuthenticated,
   values,
   errors,
@@ -289,3 +290,5 @@ export default function AddressFormDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(AddressFormDesktopComponent);

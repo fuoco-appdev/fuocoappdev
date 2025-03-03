@@ -3,11 +3,12 @@ import {
   StripeCardNumberElement,
   StripeElementsOptions,
 } from '@stripe/stripe-js';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
-import CheckoutController from '../../shared/controllers/checkout.controller';
 import { RoutePathsType } from '../../shared/route-paths-type';
 import { useQuery } from '../route-paths';
+import { DIContext } from './app.component';
 import {
   ResponsiveSuspenseDesktop,
   ResponsiveSuspenseMobile,
@@ -31,7 +32,7 @@ export interface StripePayButtonResponsiveProps {
   onPayAsync: () => void;
 }
 
-export default function StripePayButtonComponent({
+function StripePayButtonComponent({
   stripeOptions,
   onPaymentClick,
   onPaymentComplete,
@@ -43,6 +44,7 @@ export default function StripePayButtonComponent({
   const cardRef = React.useRef<StripeCardNumberElement | null | undefined>(
     null
   );
+  const { CheckoutController } = React.useContext(DIContext);
 
   React.useEffect(() => {
     cardRef.current = elements?.getElement('cardNumber');
@@ -91,3 +93,5 @@ export default function StripePayButtonComponent({
     </React.Suspense>
   );
 }
+
+export default observer(StripePayButtonComponent);

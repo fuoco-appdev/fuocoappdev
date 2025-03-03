@@ -1,10 +1,11 @@
 import { Button, Line } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
 import styles from '../../modules/checkout.module.scss';
 import { ResponsiveDesktop } from '../responsive.component';
 import { StripePayButtonResponsiveProps } from '../stripe-pay-button.component';
 
-export default function StripePayButtonDesktopComponent({
+function StripePayButtonDesktopComponent({
   onPayAsync,
 }: StripePayButtonResponsiveProps): JSX.Element {
   const { t } = useTranslation();
@@ -35,3 +36,5 @@ export default function StripePayButtonDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(StripePayButtonDesktopComponent);

@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import { Auth } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { animated, config, useTransition } from 'react-spring';
-import WindowController from '../../../shared/controllers/window.controller';
 import { RoutePathsType } from '../../../shared/route-paths-type';
 import styles from '../../modules/reset-password.module.scss';
 import { useQuery } from '../../route-paths';
+import { DIContext } from '../app.component';
 import { ResetPasswordResponsiveProps } from '../reset-password.component';
 import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
 
-export default function ResetPasswordDesktopComponent({
-  resetPasswordProps,
+function ResetPasswordDesktopComponent({
   passwordError,
   confirmPasswordError,
   setAuthError,
@@ -21,6 +21,8 @@ export default function ResetPasswordDesktopComponent({
   const navigate = useNavigate();
   const query = useQuery();
   const { t } = useTranslation();
+  const { ResetPasswordController } = React.useContext(DIContext);
+  const { supabaseClient } = ResetPasswordController.model;
 
   useDesktopEffect(() => {
     setShow(true);
@@ -47,7 +49,7 @@ export default function ResetPasswordDesktopComponent({
             (style, item) =>
               item && (
                 <animated.div style={style}>
-                  {resetPasswordProps.supabaseClient && (
+                  {supabaseClient && (
                     <Auth.ResetPassword
                       passwordErrorMessage={passwordError}
                       confirmPasswordErrorMessage={confirmPasswordError}
@@ -71,13 +73,13 @@ export default function ResetPasswordDesktopComponent({
                         goBackToSignIn: t('goBackToSignIn') ?? '',
                       }}
                       onPasswordUpdated={() => {
-                        WindowController.addToast({
-                          key: `password-updated`,
-                          message: t('passwordUpdated') ?? '',
-                          description: t('passwordUpdatedDescription') ?? '',
-                          type: 'success',
-                          closable: true,
-                        });
+                        // WindowController.addToast({
+                        //   key: `password-updated`,
+                        //   message: t('passwordUpdated') ?? '',
+                        //   description: t('passwordUpdatedDescription') ?? '',
+                        //   type: 'success',
+                        //   closable: true,
+                        // });
                         setAuthError(null);
                         navigate({
                           pathname: RoutePathsType.Account,
@@ -85,7 +87,7 @@ export default function ResetPasswordDesktopComponent({
                         });
                       }}
                       onResetPasswordError={setAuthError}
-                      supabaseClient={resetPasswordProps.supabaseClient}
+                      supabaseClient={supabaseClient}
                     />
                   )}
                 </animated.div>
@@ -96,3 +98,5 @@ export default function ResetPasswordDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(ResetPasswordDesktopComponent);

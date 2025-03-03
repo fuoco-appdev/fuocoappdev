@@ -55,7 +55,7 @@ export default class StoreController extends Controller {
     return this._model;
   }
 
-  public override initialize = (renderCount: number): void => {
+  public override initialize(renderCount: number): void {
     const meiliSearchService = this._container.get('MeiliSearchService');
     const accountController = this._container.get('AccountController');
     this._productsIndex = meiliSearchService.client?.index('products_custom');
@@ -85,7 +85,7 @@ export default class StoreController extends Controller {
         this.loadProductsAsync();
       }
     );
-  };
+  }
 
   public override load(_renderCount: number): void {
     this.loadProductsAsync();

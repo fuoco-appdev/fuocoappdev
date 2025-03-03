@@ -1,15 +1,17 @@
+/* eslint-disable jsx-a11y/alt-text */
 import { Button, Card, Line } from '@fuoco.appdev/web-components';
-import * as React from 'react';
-import { animated, useSpring } from 'react-spring';
-import styles from '../../modules/product-preview.module.scss';
-// @ts-ignore
 import { easings } from '@react-spring/web';
+import { observer } from 'mobx-react-lite';
+import * as React from 'react';
 import Skeleton from 'react-loading-skeleton';
+import { animated, useSpring } from 'react-spring';
 import { MedusaProductTypeNames } from '../../../shared/types/medusa.type';
+import styles from '../../modules/product-preview.module.scss';
+import { DIContext } from '../app.component';
 import { ProductPreviewResponsiveProps } from '../product-preview.component';
 import { ResponsiveMobile } from '../responsive.component';
 
-export default function ProductPreviewMobileComponent({
+function ProductPreviewMobileComponent({
   thumbnail,
   title,
   subtitle,
@@ -18,7 +20,6 @@ export default function ProductPreviewMobileComponent({
   isLoading,
   likesMetadata,
   pricedProduct,
-  accountProps,
   purchasable,
   parentRef,
   onClick,
@@ -36,6 +37,8 @@ export default function ProductPreviewMobileComponent({
 }: ProductPreviewResponsiveProps): JSX.Element {
   const [expanded, setExpanded] = React.useState<boolean>(false);
   const ref = React.useRef<HTMLDivElement | null>(null);
+  const { AccountController } = React.useContext(DIContext);
+  const { account } = AccountController.model;
   const [style, api] = useSpring(() => ({
     from: {
       top: ref?.current?.getBoundingClientRect().top,
@@ -343,10 +346,7 @@ export default function ProductPreviewMobileComponent({
                             ? 'rgba(233, 33, 66, .35)'
                             : 'rgba(42, 42, 95, .35)',
                         }}
-                        disabled={
-                          !accountProps.account ||
-                          accountProps.account.status === 'Incomplete'
-                        }
+                        disabled={!account || account.status === 'Incomplete'}
                         touchScreen={true}
                         rounded={true}
                         onClick={() => onLikeChanged?.(!isLiked)}
@@ -423,3 +423,5 @@ export default function ProductPreviewMobileComponent({
     </ResponsiveMobile>
   );
 }
+
+export default observer(ProductPreviewMobileComponent);

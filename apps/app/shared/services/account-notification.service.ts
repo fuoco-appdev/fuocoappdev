@@ -8,6 +8,7 @@ import {
 import { Service } from '../service';
 import { StoreOptions } from '../store-options';
 import ConfigService from './config.service';
+import LogflareService from './logflare.service';
 import SupabaseService from './supabase.service';
 
 export interface AccountData {
@@ -24,6 +25,7 @@ export default class AccountNotificationService extends Service {
 
   constructor(
     private readonly _supabaseService: SupabaseService,
+    private readonly _logflareService: LogflareService,
     private readonly _configService: ConfigService,
     private readonly _supabaseAnonKey: string,
     private readonly _storeOptions: StoreOptions
@@ -66,86 +68,153 @@ export default class AccountNotificationService extends Service {
     }
   }
 
-  public async requestNotificationsAsync({
-    accountId,
-    limit,
-    offset,
-  }: {
-    accountId: string;
-    limit: number;
-    offset: number;
-  }): Promise<AccountNotificationsResponse> {
-    const request = new AccountNotificationsRequest({
-      accountId: accountId,
-      limit: limit,
-      offset: offset,
-    });
+  public async requestNotificationsAsync(
+    props: {
+      accountId: string;
+      limit: number;
+      offset: number;
+    },
+    retries = 3,
+    retryDelay = 1000
+  ): Promise<AccountNotificationsResponse> {
     const session = await this._supabaseService.requestSessionAsync();
-    const response = await fetch(
-      `${this.endpointUrl}/account-notification/notifications`,
-      {
-        method: 'post',
-        headers: {
-          ...this.headers,
-          'Session-Token': `${session?.access_token}`,
-        },
-        body: request.toBinary(),
+    try {
+      const request = new AccountNotificationsRequest({
+        accountId: props.accountId,
+        limit: props.limit,
+        offset: props.offset,
+      });
+      const response = await fetch(
+        `${this.endpointUrl}/account-notification/notifications`,
+        {
+          method: 'post',
+          headers: {
+            ...this.headers,
+            'Session-Token': `${session?.access_token}`,
+          },
+          body: request.toBinary(),
+        }
+      );
+
+      const arrayBuffer = new Uint8Array(await response.arrayBuffer());
+      this.assertResponse(arrayBuffer);
+
+      const accountNotificationsResponse =
+        AccountNotificationsResponse.fromBinary(arrayBuffer);
+      return accountNotificationsResponse;
+    } catch (error: any) {
+      if (retries > 0) {
+        console.log(`Retry attempt with ${retries} retries left.`, error);
+        await new Promise((resolve) => setTimeout(resolve, retryDelay));
+        return this.requestNotificationsAsync(props, retries - 1, retryDelay);
+      } else {
+        console.error('Max retries reached. Error:', error);
+        await this._logflareService.requestCreateLog({
+          message: error.message,
+          metadata: {
+            level: 'error',
+            stack: error.stack,
+            message: error.message,
+            status: error.status,
+            supabaseId: session?.user.id,
+          },
+        });
+        throw error;
       }
-    );
-
-    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
-    this.assertResponse(arrayBuffer);
-
-    const accountNotificationsResponse =
-      AccountNotificationsResponse.fromBinary(arrayBuffer);
-    return accountNotificationsResponse;
+    }
   }
 
   public async requestUnseenCountAsync(
-    accountId: string
+    accountId: string,
+    retries = 3,
+    retryDelay = 1000
   ): Promise<AccountNotificationCountResponse> {
     const session = await this._supabaseService.requestSessionAsync();
-    const response = await fetch(
-      `${this.endpointUrl}/account-notification/unseen-count/${accountId}`,
-      {
-        method: 'post',
-        headers: {
-          ...this.headers,
-          'Session-Token': `${session?.access_token}`,
-        },
-        body: '',
+    try {
+      const response = await fetch(
+        `${this.endpointUrl}/account-notification/unseen-count/${accountId}`,
+        {
+          method: 'post',
+          headers: {
+            ...this.headers,
+            'Session-Token': `${session?.access_token}`,
+          },
+          body: '',
+        }
+      );
+
+      const arrayBuffer = new Uint8Array(await response.arrayBuffer());
+      this.assertResponse(arrayBuffer);
+
+      const accountNotificationCountResponse =
+        AccountNotificationCountResponse.fromBinary(arrayBuffer);
+      return accountNotificationCountResponse;
+    } catch (error: any) {
+      if (retries > 0) {
+        console.log(`Retry attempt with ${retries} retries left.`, error);
+        await new Promise((resolve) => setTimeout(resolve, retryDelay));
+        return this.requestUnseenCountAsync(accountId, retries - 1, retryDelay);
+      } else {
+        console.error('Max retries reached. Error:', error);
+        await this._logflareService.requestCreateLog({
+          message: error.message,
+          metadata: {
+            level: 'error',
+            stack: error.stack,
+            message: error.message,
+            status: error.status,
+            supabaseId: session?.user.id,
+          },
+        });
+        throw error;
       }
-    );
-
-    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
-    this.assertResponse(arrayBuffer);
-
-    const accountNotificationCountResponse =
-      AccountNotificationCountResponse.fromBinary(arrayBuffer);
-    return accountNotificationCountResponse;
+    }
   }
 
   public async requestUpdateSeenAsync(
-    accountId: string
+    accountId: string,
+    retries = 3,
+    retryDelay = 1000
   ): Promise<AccountNotificationCountResponse> {
     const session = await this._supabaseService.requestSessionAsync();
-    const response = await fetch(
-      `${this.endpointUrl}/account-notification/seen-all/${accountId}`,
-      {
-        method: 'post',
-        headers: {
-          ...this.headers,
-          'Session-Token': `${session?.access_token}`,
-        },
-        body: '',
+    try {
+      const response = await fetch(
+        `${this.endpointUrl}/account-notification/seen-all/${accountId}`,
+        {
+          method: 'post',
+          headers: {
+            ...this.headers,
+            'Session-Token': `${session?.access_token}`,
+          },
+          body: '',
+        }
+      );
+
+      const arrayBuffer = new Uint8Array(await response.arrayBuffer());
+      this.assertResponse(arrayBuffer);
+
+      const accountNotificationCountResponse =
+        AccountNotificationCountResponse.fromBinary(arrayBuffer);
+      return accountNotificationCountResponse;
+    } catch (error: any) {
+      if (retries > 0) {
+        console.log(`Retry attempt with ${retries} retries left.`, error);
+        await new Promise((resolve) => setTimeout(resolve, retryDelay));
+        return this.requestUpdateSeenAsync(accountId, retries - 1, retryDelay);
+      } else {
+        console.error('Max retries reached. Error:', error);
+        await this._logflareService.requestCreateLog({
+          message: error.message,
+          metadata: {
+            level: 'error',
+            stack: error.stack,
+            message: error.message,
+            status: error.status,
+            supabaseId: session?.user.id,
+          },
+        });
+        throw error;
       }
-    );
-
-    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
-    this.assertResponse(arrayBuffer);
-
-    const accountNotificationCountResponse =
-      AccountNotificationCountResponse.fromBinary(arrayBuffer);
-    return accountNotificationCountResponse;
+    }
   }
 }

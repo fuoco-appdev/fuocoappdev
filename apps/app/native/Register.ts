@@ -2,19 +2,20 @@ import {
   CRYPTO_ENCRYPTION_KEY,
   CRYPTO_IV,
   HOST,
+  LOGFLARE_ACCESS_TOKEN,
   MAPBOX_ACCESS_TOKEN,
   MEDUSA_PUBLIC_KEY,
   MEILISEARCH_PUBLIC_KEY,
   MODE,
+  OPEN_WEBUI_API_TOKEN,
   S3_ACCESS_KEY_ID,
   S3_SECRET_ACCESS_KEY,
   SUPABASE_ANON_KEY,
 } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createClient } from '@supabase/supabase-js';
+import {createClient} from '@supabase/supabase-js';
 import 'react-native-url-polyfill/auto';
-import 'reflect-metadata';
-import { DIContainer } from 'rsdi';
+import {DIContainer} from 'rsdi';
 import AccountPublicController from '../shared/controllers/account-public.controller';
 import AccountController from '../shared/controllers/account.controller';
 import AppController from '../shared/controllers/app.controller';
@@ -42,13 +43,16 @@ import AccountNotificationService from '../shared/services/account-notification.
 import AccountService from '../shared/services/account.service';
 import BucketService from '../shared/services/bucket.service';
 import ChatService from '../shared/services/chat.service';
+import CollectionService from '../shared/services/collection.service';
 import ConfigService from '../shared/services/config.service';
 import CryptoService from '../shared/services/crypto.service';
 import DeepLService from '../shared/services/deepl.service';
 import InterestService from '../shared/services/interest.service';
+import LogflareService from '../shared/services/logflare.service';
 import MapboxService from '../shared/services/mapbox.service';
 import MedusaService from '../shared/services/medusa.service';
 import MeiliSearchService from '../shared/services/meilisearch.service';
+import OpenWebuiService from '../shared/services/open-webui.service';
 import ProductLikesService from '../shared/services/product-likes.service';
 import SupabaseService from '../shared/services/supabase.service';
 
@@ -67,6 +71,8 @@ export default function register() {
     .add('MEDUSA_PUBLIC_KEY', () => MEDUSA_PUBLIC_KEY ?? '')
     .add('MEILISEARCH_PUBLIC_KEY', () => MEILISEARCH_PUBLIC_KEY ?? '')
     .add('SUPABASE_ANON_KEY', () => SUPABASE_ANON_KEY ?? '')
+    .add('OPEN_WEBUI_API_TOKEN', () => OPEN_WEBUI_API_TOKEN ?? '')
+    .add('LOGFLARE_ACCESS_TOKEN', () => LOGFLARE_ACCESS_TOKEN ?? '')
     .add('StoreOptions', () => ({
       strategy: {
         local: AsyncStorage,
@@ -75,58 +81,94 @@ export default function register() {
     }))
     .add(
       'ConfigService',
-      ({ MODE, HOST, SUPABASE_ANON_KEY, StoreOptions }) =>
-        new ConfigService(MODE, HOST, SUPABASE_ANON_KEY, StoreOptions)
+      ({MODE, HOST, SUPABASE_ANON_KEY, StoreOptions}) =>
+        new ConfigService(MODE, HOST, SUPABASE_ANON_KEY, StoreOptions),
     )
-    .add('SUPABASE_CLIENT', ({ ConfigService, SUPABASE_ANON_KEY }) =>
-      createClient(ConfigService.supabase.url, SUPABASE_ANON_KEY, {
+    .add('SUPABASE_CLIENT', ({ConfigService, SUPABASE_ANON_KEY}) =>
+      createClient(ConfigService.kong.url, SUPABASE_ANON_KEY, {
         auth: {
           storage: AsyncStorage,
           autoRefreshToken: true,
           persistSession: true,
           detectSessionInUrl: false,
         },
-      })
+      }),
     )
     .add(
       'SupabaseService',
-      ({ SUPABASE_ANON_KEY, ConfigService, StoreOptions, SUPABASE_CLIENT }) =>
+      ({SUPABASE_ANON_KEY, ConfigService, StoreOptions, SUPABASE_CLIENT}) =>
         new SupabaseService(
           SUPABASE_ANON_KEY,
           ConfigService,
           StoreOptions,
-          SUPABASE_CLIENT
-        )
+          SUPABASE_CLIENT,
+        ),
+    )
+    .add(
+      'LogflareService',
+      ({
+        LOGFLARE_ACCESS_TOKEN,
+        ConfigService,
+        SUPABASE_ANON_KEY,
+        StoreOptions,
+      }) =>
+        new LogflareService(
+          LOGFLARE_ACCESS_TOKEN,
+          ConfigService,
+          SUPABASE_ANON_KEY,
+          StoreOptions,
+        ),
     )
     .add(
       'AccountFollowersService',
-      ({ SupabaseService, ConfigService, SUPABASE_ANON_KEY, StoreOptions }) =>
+      ({
+        SupabaseService,
+        LogflareService,
+        ConfigService,
+        SUPABASE_ANON_KEY,
+        StoreOptions,
+      }) =>
         new AccountFollowersService(
           SupabaseService,
+          LogflareService,
           ConfigService,
           SUPABASE_ANON_KEY,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
     )
     .add(
       'AccountNotificationService',
-      ({ SupabaseService, ConfigService, SUPABASE_ANON_KEY, StoreOptions }) =>
+      ({
+        SupabaseService,
+        LogflareService,
+        ConfigService,
+        SUPABASE_ANON_KEY,
+        StoreOptions,
+      }) =>
         new AccountNotificationService(
           SupabaseService,
+          LogflareService,
           ConfigService,
           SUPABASE_ANON_KEY,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
     )
     .add(
       'AccountService',
-      ({ SupabaseService, ConfigService, SUPABASE_ANON_KEY, StoreOptions }) =>
+      ({
+        SupabaseService,
+        LogflareService,
+        ConfigService,
+        SUPABASE_ANON_KEY,
+        StoreOptions,
+      }) =>
         new AccountService(
           SupabaseService,
+          LogflareService,
           ConfigService,
           SUPABASE_ANON_KEY,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
     )
     .add(
       'BucketService',
@@ -134,6 +176,7 @@ export default function register() {
         S3_ACCESS_KEY_ID,
         S3_SECRET_ACCESS_KEY,
         SupabaseService,
+        LogflareService,
         ConfigService,
         SUPABASE_ANON_KEY,
         StoreOptions,
@@ -142,26 +185,35 @@ export default function register() {
           S3_ACCESS_KEY_ID,
           S3_SECRET_ACCESS_KEY,
           SupabaseService,
+          LogflareService,
           ConfigService,
           SUPABASE_ANON_KEY,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
     )
     .add(
       'ChatService',
-      ({ SupabaseService, ConfigService, SUPABASE_ANON_KEY, StoreOptions }) =>
+      ({
+        SupabaseService,
+        LogflareService,
+        ConfigService,
+        SUPABASE_ANON_KEY,
+        StoreOptions,
+      }) =>
         new ChatService(
           SupabaseService,
+          LogflareService,
           ConfigService,
           SUPABASE_ANON_KEY,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
     )
     .add(
       'CryptoService',
       ({
         CRYPTO_ENCRYPTION_KEY,
         CRYPTO_IV,
+        LogflareService,
         ConfigService,
         SUPABASE_ANON_KEY,
         StoreOptions,
@@ -170,45 +222,61 @@ export default function register() {
           CRYPTO_ENCRYPTION_KEY,
           CRYPTO_IV,
           ConfigService,
+          LogflareService,
           SUPABASE_ANON_KEY,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
     )
     .add(
       'DeepLService',
-      ({ ConfigService, SUPABASE_ANON_KEY, StoreOptions }) =>
-        new DeepLService(ConfigService, SUPABASE_ANON_KEY, StoreOptions)
+      ({ConfigService, LogflareService, SUPABASE_ANON_KEY, StoreOptions}) =>
+        new DeepLService(
+          ConfigService,
+          LogflareService,
+          SUPABASE_ANON_KEY,
+          StoreOptions,
+        ),
     )
     .add(
       'InterestService',
-      ({ SupabaseService, ConfigService, SUPABASE_ANON_KEY, StoreOptions }) =>
+      ({
+        SupabaseService,
+        ConfigService,
+        LogflareService,
+        SUPABASE_ANON_KEY,
+        StoreOptions,
+      }) =>
         new InterestService(
           SupabaseService,
           ConfigService,
+          LogflareService,
           SUPABASE_ANON_KEY,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
     )
     .add(
       'MapboxService',
       ({
         MAPBOX_ACCESS_TOKEN,
         ConfigService,
+        LogflareService,
         SUPABASE_ANON_KEY,
         StoreOptions,
       }) =>
         new MapboxService(
           MAPBOX_ACCESS_TOKEN,
           ConfigService,
+          LogflareService,
           SUPABASE_ANON_KEY,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
     )
     .add(
       'MedusaService',
       ({
         MEDUSA_PUBLIC_KEY,
         SupabaseService,
+        LogflareService,
         ConfigService,
         SUPABASE_ANON_KEY,
         StoreOptions,
@@ -217,39 +285,76 @@ export default function register() {
           MEDUSA_PUBLIC_KEY,
           ConfigService,
           SupabaseService,
+          LogflareService,
           SUPABASE_ANON_KEY,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
     )
     .add(
       'MeiliSearchService',
       ({
         MEILISEARCH_PUBLIC_KEY,
-        SupabaseService,
         ConfigService,
+        LogflareService,
         SUPABASE_ANON_KEY,
         StoreOptions,
       }) =>
         new MeiliSearchService(
           MEILISEARCH_PUBLIC_KEY,
           ConfigService,
+          LogflareService,
           SUPABASE_ANON_KEY,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
+    )
+    .add(
+      'OpenWebuiService',
+      ({OPEN_WEBUI_API_TOKEN, ConfigService, LogflareService, StoreOptions}) =>
+        new OpenWebuiService(
+          OPEN_WEBUI_API_TOKEN,
+          ConfigService,
+          LogflareService,
+          SUPABASE_ANON_KEY,
+          StoreOptions,
+        ),
     )
     .add(
       'ProductLikesService',
-      ({ SupabaseService, ConfigService, SUPABASE_ANON_KEY, StoreOptions }) =>
+      ({
+        SupabaseService,
+        ConfigService,
+        LogflareService,
+        SUPABASE_ANON_KEY,
+        StoreOptions,
+      }) =>
         new ProductLikesService(
           SupabaseService,
           ConfigService,
+          LogflareService,
           SUPABASE_ANON_KEY,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
+    )
+    .add(
+      'CollectionService',
+      ({
+        SupabaseService,
+        LogflareService,
+        ConfigService,
+        SUPABASE_ANON_KEY,
+        StoreOptions,
+      }) =>
+        new CollectionService(
+          SupabaseService,
+          LogflareService,
+          ConfigService,
+          SUPABASE_ANON_KEY,
+          StoreOptions,
+        ),
     )
     .add(
       'AccountPublicController',
-      ({ StoreOptions }) =>
+      ({StoreOptions}) =>
         new AccountPublicController(
           container as DIContainer<{
             MedusaService: MedusaService;
@@ -259,12 +364,12 @@ export default function register() {
             ProductLikesService: ProductLikesService;
             BucketService: BucketService;
           }>,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
     )
     .add(
       'AccountController',
-      ({ StoreOptions }) =>
+      ({StoreOptions}) =>
         new AccountController(
           container as DIContainer<{
             MedusaService: MedusaService;
@@ -274,25 +379,28 @@ export default function register() {
             InterestService: InterestService;
             ProductLikesService: ProductLikesService;
             BucketService: BucketService;
+            OpenWebuiService: OpenWebuiService;
+            CryptoService: CryptoService;
+            CollectionService: CollectionService;
           }>,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
     )
     .add(
       'CartController',
-      ({ StoreOptions }) =>
+      ({StoreOptions}) =>
         new CartController(
           container as DIContainer<{
             ExploreController: ExploreController;
             StoreController: StoreController;
             MedusaService: MedusaService;
           }>,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
     )
     .add(
       'ChatController',
-      ({ StoreOptions }) =>
+      ({StoreOptions}) =>
         new ChatController(
           container as DIContainer<{
             AccountService: AccountService;
@@ -301,12 +409,12 @@ export default function register() {
             ChatService: ChatService;
             CryptoService: CryptoService;
           }>,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
     )
     .add(
       'CheckoutController',
-      ({ StoreOptions }) =>
+      ({StoreOptions}) =>
         new CheckoutController(
           container as DIContainer<{
             MedusaService: MedusaService;
@@ -316,26 +424,26 @@ export default function register() {
             AccountController: AccountController;
             StoreController: StoreController;
           }>,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
     )
     .add(
       'EmailConfirmationController',
-      ({ StoreOptions }) =>
+      ({StoreOptions}) =>
         new EmailConfirmationController(
           container as DIContainer<{
             SupabaseService: SupabaseService;
           }>,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
     )
     .add(
       'EventsController',
-      ({ StoreOptions }) => new EventsController(container, StoreOptions)
+      ({StoreOptions}) => new EventsController(container, StoreOptions),
     )
     .add(
       'ExploreController',
-      ({ StoreOptions }) =>
+      ({StoreOptions}) =>
         new ExploreController(
           container as DIContainer<{
             MedusaService: MedusaService;
@@ -343,26 +451,26 @@ export default function register() {
             MeiliSearchService: MeiliSearchService;
             BucketService: BucketService;
           }>,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
     )
     .add(
       'ForgotPasswordController',
-      ({ StoreOptions }) =>
+      ({StoreOptions}) =>
         new ForgotPasswordController(
           container as DIContainer<{
             SupabaseService: SupabaseService;
           }>,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
     )
     .add(
       'HelpController',
-      ({ StoreOptions }) => new HelpController(container, StoreOptions)
+      ({StoreOptions}) => new HelpController(container, StoreOptions),
     )
     .add(
       'NotificationsController',
-      ({ StoreOptions }) =>
+      ({StoreOptions}) =>
         new NotificationsController(
           container as DIContainer<{
             AccountController: AccountController;
@@ -370,32 +478,32 @@ export default function register() {
             WindowController: WindowController;
             AccountNotificationService: AccountNotificationService;
           }>,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
     )
     .add(
       'OrderConfirmedController',
-      ({ StoreOptions }) =>
+      ({StoreOptions}) =>
         new OrderConfirmedController(
           container as DIContainer<{
             MedusaService: MedusaService;
           }>,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
     )
     .add(
       'PermissionsController',
-      ({ StoreOptions }) =>
-        new PermissionsController(container as DIContainer<{}>, StoreOptions)
+      ({StoreOptions}) =>
+        new PermissionsController(container as DIContainer<{}>, StoreOptions),
     )
     .add(
       'PrivacyPolicyController',
-      ({ StoreOptions }) =>
-        new PrivacyPolicyController(container as DIContainer<{}>, StoreOptions)
+      ({StoreOptions}) =>
+        new PrivacyPolicyController(container as DIContainer<{}>, StoreOptions),
     )
     .add(
       'ProductController',
-      ({ StoreOptions }) =>
+      ({StoreOptions}) =>
         new ProductController(
           container as DIContainer<{
             AccountController: AccountController;
@@ -407,43 +515,43 @@ export default function register() {
             CartController: CartController;
             ExploreController: ExploreController;
           }>,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
     )
     .add(
       'ResetPasswordController',
-      ({ StoreOptions }) =>
+      ({StoreOptions}) =>
         new ResetPasswordController(
           container as DIContainer<{
             SupabaseService: SupabaseService;
           }>,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
     )
     .add(
       'SigninController',
-      ({ StoreOptions }) =>
+      ({StoreOptions}) =>
         new SigninController(
           container as DIContainer<{
             SupabaseService: SupabaseService;
             WindowController: WindowController;
           }>,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
     )
     .add(
       'SignupController',
-      ({ StoreOptions }) =>
+      ({StoreOptions}) =>
         new SignupController(
           container as DIContainer<{
             SupabaseService: SupabaseService;
           }>,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
     )
     .add(
       'StoreController',
-      ({ StoreOptions }) =>
+      ({StoreOptions}) =>
         new StoreController(
           container as DIContainer<{
             AccountController: AccountController;
@@ -454,22 +562,22 @@ export default function register() {
             CartController: CartController;
             ExploreController: ExploreController;
           }>,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
     )
     .add(
       'TermsOfServiceController',
-      ({ StoreOptions }) =>
+      ({StoreOptions}) =>
         new TermsOfServiceController(
           container as DIContainer<{
             SupabaseService: SupabaseService;
           }>,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
     )
     .add(
       'WindowController',
-      ({ StoreOptions }) =>
+      ({StoreOptions}) =>
         new WindowController(
           container as DIContainer<{
             AccountController: AccountController;
@@ -481,17 +589,21 @@ export default function register() {
             AccountNotificationService: AccountNotificationService;
             NotificationsController: NotificationsController;
           }>,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
     )
     .add(
       'AppController',
-      ({ StoreOptions }) =>
+      ({StoreOptions}) =>
         new AppController(
           container as DIContainer<{
             AccountController: AccountController;
+            LogflareService: LogflareService;
             MedusaService: MedusaService;
             SupabaseService: SupabaseService;
+            AccountService: AccountService;
+            ConfigService: ConfigService;
+            OpenWebuiService: OpenWebuiService;
             WindowController: WindowController;
             SigninController: SigninController;
             SignupController: SignupController;
@@ -503,7 +615,7 @@ export default function register() {
             MeiliSearchService: MeiliSearchService;
             BucketService: BucketService;
           }>,
-          StoreOptions
-        )
+          StoreOptions,
+        ),
     );
 }

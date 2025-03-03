@@ -1,0 +1,26 @@
+{
+    "api": {
+      "url": "http://{localhost}:8003"
+    },
+    "kong": {
+      "url": "http://{localhost}:8000"
+    },
+    "logflare": {
+      "url": "http://{localhost}:4000",
+      "source": "a1e51b6e-63c8-4f46-8969-ba93bada947d"
+    },
+    "medusa": {
+      "url": "http://{localhost}:9010"
+    },
+    "meilisearch": {
+      "url": "http://{localhost}:7700"
+    },
+    "s3": {
+      "url": "https://nyc3.digitaloceanspaces.com",
+      "bucket_name": "medusa"
+    },
+    "open_webui": {
+      "url": "http://{localhost}:3002",
+      "text_model": "nemotron-mini:latest"
+    }
+  }

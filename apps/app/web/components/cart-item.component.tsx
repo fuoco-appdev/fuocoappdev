@@ -1,11 +1,9 @@
-import { LineItem, ProductOptionValue } from '@medusajs/medusa';
-import { ProductOptions } from '../../shared/models/product.model';
-// @ts-ignore
-import { useObservable } from '@ngneat/use-observable';
+import { HttpTypes } from '@medusajs/types';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import StoreController from '../../shared/controllers/store.controller';
-import { StoreState } from '../../shared/models/store.model';
+import { ProductOptions } from '../../shared/models/product.model';
 import { MedusaProductTypeNames } from '../../shared/types/medusa.type';
+import { DIContext } from './app.component';
 import { CartItemSuspenseDesktopComponent } from './desktop/suspense/cart-item.suspense.desktop.component';
 import { CartItemSuspenseMobileComponent } from './mobile/suspense/cart-item.suspense.mobile.component';
 
@@ -17,8 +15,7 @@ const CartItemMobileComponent = React.lazy(
 );
 
 export interface CartItemProps {
-  storeProps: StoreState;
-  item: LineItem;
+  item: HttpTypes.StoreCartLineItem;
   onQuantityChanged?: (quantity: number) => void;
   onRemove?: () => void;
 }
@@ -36,13 +33,13 @@ export interface CartItemResponsiveProps extends CartItemProps {
   decrementItemQuantity: (value: number) => void;
 }
 
-export default function CartItemComponent({
-  storeProps,
+function CartItemComponent({
   item,
   onQuantityChanged,
   onRemove,
 }: CartItemProps): JSX.Element {
-  const [storeDebugProps] = useObservable(StoreController.model.debugStore);
+  const { StoreController } = React.useContext(DIContext);
+  const { suspense, productTypes } = StoreController.model;
   const [productType, setProductType] = React.useState<
     MedusaProductTypeNames | undefined
   >();
@@ -58,19 +55,21 @@ export default function CartItemComponent({
     React.useState<string>('');
 
   React.useEffect(() => {
-    const vintageOption = item.variant.product.options?.find(
+    const vintageOption = item.variant?.product?.options?.find(
       (value) => value.title === ProductOptions.Vintage
     );
-    const vintageValue = item.variant.options?.find(
-      (value: ProductOptionValue) => value.option_id === vintageOption?.id
+    const vintageValue = item.variant?.options?.find(
+      (value: HttpTypes.StoreProductOptionValue) =>
+        value.option_id === vintageOption?.id
     );
     setVintage(vintageValue?.value ?? '');
 
-    const typeOption = item.variant.product.options?.find(
+    const typeOption = item.variant?.product?.options?.find(
       (value) => value.title === ProductOptions.Type
     );
-    const typeValue = item.variant.options?.find(
-      (value: ProductOptionValue) => value.option_id === typeOption?.id
+    const typeValue = item.variant?.options?.find(
+      (value: HttpTypes.StoreProductOptionValue) =>
+        value.option_id === typeOption?.id
     );
     setType(typeValue?.value ?? '');
 
@@ -83,17 +82,17 @@ export default function CartItemComponent({
   }, [item]);
 
   React.useEffect(() => {
-    const type = storeProps.productTypes.find(
-      (value) => value.id === item.variant.product.type_id
+    const type = productTypes.find(
+      (value) => value.id === item.variant?.product?.type_id
     );
     setProductType(type?.value as MedusaProductTypeNames);
-  }, [storeProps.productTypes, item]);
+  }, [productTypes, item]);
 
   const incrementItemQuantity = (value: number): void => {
     const count = quantity + value;
     if (
-      !item.variant.allow_backorder &&
-      quantity < item.variant.inventory_quantity
+      !item.variant?.allow_backorder &&
+      quantity < (item.variant?.inventory_quantity ?? 0)
     ) {
       setQuantity(count);
       onQuantityChanged?.(count);
@@ -118,14 +117,13 @@ export default function CartItemComponent({
     </>
   );
 
-  if (storeDebugProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
 
   return (
     <React.Suspense fallback={suspenceComponent}>
       <CartItemDesktopComponent
-        storeProps={storeProps}
         item={item}
         productType={productType}
         quantity={quantity}
@@ -140,7 +138,6 @@ export default function CartItemComponent({
         decrementItemQuantity={decrementItemQuantity}
       />
       <CartItemMobileComponent
-        storeProps={storeProps}
         item={item}
         productType={productType}
         quantity={quantity}
@@ -157,3 +154,5 @@ export default function CartItemComponent({
     </React.Suspense>
   );
 }
+
+export default observer(CartItemComponent);

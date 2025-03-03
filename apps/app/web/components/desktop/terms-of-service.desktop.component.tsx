@@ -1,8 +1,11 @@
 import { Auth, Typography } from '@fuoco.appdev/web-components';
 import loadable from '@loadable/component';
+import React from 'react';
 import styles from '../../modules/terms-of-service.module.scss';
+import { DIContext } from '../app.component';
 import { ResponsiveDesktop } from '../responsive.component';
 import { TermsOfServiceResponsiveProps } from '../terms-of-service.component';
+
 const ReactMarkdown = loadable(
   async () => {
     const reactMarkdown = await import('react-markdown');
@@ -10,10 +13,13 @@ const ReactMarkdown = loadable(
   },
   { ssr: false }
 );
+
 export default function TermsOfServiceDesktopComponent({
-  termsOfServiceProps,
   remarkPlugins,
 }: TermsOfServiceResponsiveProps): JSX.Element {
+  const { TermsOfServiceController } = React.useContext(DIContext);
+  const { markdown } = TermsOfServiceController.model;
+
   return (
     <ResponsiveDesktop>
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>
@@ -31,7 +37,7 @@ export default function TermsOfServiceDesktopComponent({
               >
                 <ReactMarkdown
                   remarkPlugins={remarkPlugins}
-                  children={termsOfServiceProps.markdown}
+                  children={markdown}
                 />
               </Typography>
             }

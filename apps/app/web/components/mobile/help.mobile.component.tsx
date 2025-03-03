@@ -1,9 +1,11 @@
-import { Auth, Button, Typography } from '@fuoco.appdev/web-components';
+import { Auth, Typography } from '@fuoco.appdev/web-components';
 import loadable from '@loadable/component';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import ConfigService from '../../../shared/services/config.service';
 import styles from '../../modules/help.module.scss';
-import { DiscordIcon, HelpResponsiveProps } from '../help.component';
+import { DIContext } from '../app.component';
+import { HelpResponsiveProps } from '../help.component';
 import { ResponsiveMobile } from '../responsive.component';
 
 const ReactMarkdown = loadable(
@@ -14,11 +16,12 @@ const ReactMarkdown = loadable(
   { ssr: false }
 );
 
-export default function HelpMobileComponent({
-  helpProps,
+function HelpMobileComponent({
   remarkPlugins,
 }: HelpResponsiveProps): JSX.Element {
   const { t } = useTranslation();
+  const { HelpController } = React.useContext(DIContext);
+  const { markdown } = HelpController.model;
 
   return (
     <ResponsiveMobile>
@@ -37,40 +40,15 @@ export default function HelpMobileComponent({
               >
                 <ReactMarkdown
                   remarkPlugins={remarkPlugins}
-                  children={helpProps.markdown}
+                  children={markdown}
                 />
               </Typography>
             }
           />
-          <div
-            className={[
-              styles['button-container'],
-              styles['button-container-mobile'],
-            ].join(' ')}
-          >
-            <Button
-              block={true}
-              classNames={{
-                button: styles['outline-button'],
-              }}
-              rippleProps={{
-                color: 'rgba(133, 38, 122, .35)',
-              }}
-              size={'large'}
-              touchScreen={true}
-              icon={<DiscordIcon />}
-              onClick={() =>
-                setTimeout(
-                  () => window.location.replace(ConfigService.discord.url),
-                  250
-                )
-              }
-            >
-              {t('joinUsOnDiscord')}
-            </Button>
-          </div>
         </div>
       </div>
     </ResponsiveMobile>
   );
 }
+
+export default observer(HelpMobileComponent);

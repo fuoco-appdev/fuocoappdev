@@ -1,18 +1,18 @@
 import { Auth } from '@fuoco.appdev/web-components';
 import { AuthError } from '@supabase/supabase-js';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { animated, config, useTransition } from 'react-spring';
-import SigninController from '../../../shared/controllers/signin.controller';
 import { RoutePathsType } from '../../../shared/route-paths-type';
 import styles from '../../modules/signin.module.scss';
 import { useQuery } from '../../route-paths';
+import { DIContext } from '../app.component';
 import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
 import { SigninResponsiveProps } from '../signin.component';
 
-export default function SigninDesktopComponent({
-  signInProps,
+function SigninDesktopComponent({
   emailError,
   passwordError,
   setAuthError,
@@ -21,6 +21,8 @@ export default function SigninDesktopComponent({
   const query = useQuery();
   const [show, setShow] = React.useState(false);
   const { t } = useTranslation();
+  const { SigninController } = React.useContext(DIContext);
+  const { supabaseClient, email, password } = SigninController.model;
 
   useDesktopEffect(() => {
     setShow(true);
@@ -47,7 +49,7 @@ export default function SigninDesktopComponent({
             (style, item) =>
               item && (
                 <animated.div style={style}>
-                  {signInProps.supabaseClient && (
+                  {supabaseClient && (
                     <Auth
                       touchScreen={false}
                       classNames={{
@@ -88,8 +90,8 @@ export default function SigninDesktopComponent({
                           color: 'rgba(233, 33, 66, .35)',
                         },
                       }}
-                      emailValue={signInProps.email ?? ''}
-                      passwordValue={signInProps.password ?? ''}
+                      emailValue={email ?? ''}
+                      passwordValue={password ?? ''}
                       providers={['google']}
                       view={'sign_in'}
                       socialColors={false}
@@ -105,7 +107,7 @@ export default function SigninDesktopComponent({
                       }}
                       emailErrorMessage={emailError}
                       passwordErrorMessage={passwordError}
-                      supabaseClient={signInProps.supabaseClient}
+                      supabaseClient={supabaseClient}
                       onEmailChanged={(e) =>
                         SigninController.updateEmail(e.target.value)
                       }
@@ -174,3 +176,5 @@ export default function SigninDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(SigninDesktopComponent);

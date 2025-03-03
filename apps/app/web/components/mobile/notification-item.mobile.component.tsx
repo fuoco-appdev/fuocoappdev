@@ -1,10 +1,10 @@
+import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
-// @ts-ignore
 import { useNavigate } from 'react-router-dom';
 import { NotificationItemResponsiveProps } from '../notification-item.component';
 import { ResponsiveMobile } from '../responsive.component';
 
-export default function NotificationItemMobileComponent({
+function NotificationItemMobileComponent({
   notification,
 }: NotificationItemResponsiveProps): JSX.Element {
   const { t, i18n } = useTranslation();
@@ -16,3 +16,5 @@ export default function NotificationItemMobileComponent({
     </ResponsiveMobile>
   );
 }
+
+export default observer(NotificationItemMobileComponent);

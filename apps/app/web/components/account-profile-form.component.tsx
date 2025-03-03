@@ -1,8 +1,7 @@
 import { CountryDataProps } from '@fuoco.appdev/web-components/dist/cjs/src/components/input-phone-number/country-data';
-import { useObservable } from '@ngneat/use-observable';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import StoreController from '../../shared/controllers/store.controller';
-import { StoreState } from '../../shared/models/store.model';
+import { DIContext } from './app.component';
 import { AccountProfileFormSuspenseDesktopComponent } from './desktop/suspense/account-profile-form.suspense.desktop.component';
 import { AccountProfileFormSuspenseMobileComponent } from './mobile/suspense/account-profile-form.suspense.mobile.component';
 
@@ -48,7 +47,6 @@ export interface ProfileFormValues {
 }
 
 export interface AccountProfileFormProps {
-  storeProps: StoreState;
   values?: ProfileFormValues;
   errors?: ProfileFormErrors;
   onChangeCallbacks?: ProfileFormOnChangeCallbacks;
@@ -59,23 +57,23 @@ export interface AccountProfileFormResponsiveProps
   selectedCountry: string;
 }
 
-export default function AccountProfileFormComponent({
-  storeProps,
+function AccountProfileFormComponent({
   values,
   errors,
   onChangeCallbacks,
 }: AccountProfileFormProps): JSX.Element {
-  const [storeDebugProps] = useObservable(StoreController.model.debugStore);
+  const { StoreController } = React.useContext(DIContext);
+  const { suspense, selectedRegion } = StoreController.model;
   const [selectedCountry, setSelectedCountry] = React.useState<string>('');
   React.useEffect(() => {
-    if (!storeProps.selectedRegion) {
+    if (!selectedRegion) {
       return;
     }
 
-    for (const country of storeProps.selectedRegion.countries) {
-      setSelectedCountry(country?.iso_2);
+    for (const country of selectedRegion.countries ?? []) {
+      setSelectedCountry(country?.iso_2 ?? '');
     }
-  }, [storeProps.selectedRegion]);
+  }, [selectedRegion]);
 
   const suspenceComponent = (
     <>
@@ -84,21 +82,19 @@ export default function AccountProfileFormComponent({
     </>
   );
 
-  if (storeDebugProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
 
   return (
     <React.Suspense fallback={suspenceComponent}>
       <AccountProfileFormDesktopComponent
-        storeProps={storeProps}
         values={values}
         errors={errors}
         onChangeCallbacks={onChangeCallbacks}
         selectedCountry={selectedCountry}
       />
       <AccountProfileFormMobileComponent
-        storeProps={storeProps}
         values={values}
         errors={errors}
         onChangeCallbacks={onChangeCallbacks}
@@ -107,3 +103,5 @@ export default function AccountProfileFormComponent({
     </React.Suspense>
   );
 }
+
+export default observer(AccountProfileFormComponent);

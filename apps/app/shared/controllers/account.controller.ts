@@ -1,14 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { HttpTypes } from '@medusajs/types';
-import { Session } from '@supabase/supabase-js';
+import { Session, UserResponse } from '@supabase/supabase-js';
 import mime from 'mime';
 import { IValueDidChange, Lambda, observe, when } from 'mobx';
 import { DIContainer } from 'rsdi';
+import OpenWebuiService from 'shared/services/open-webui.service';
 import { v4 as uuidv4 } from 'uuid';
 import {
   AddressFormErrors,
   AddressFormValues,
+  CollectionFormErrors,
+  CollectionFormErrorStrings,
+  CollectionFormValues,
   ProfileFormErrors,
   ProfileFormValues,
 } from '../../shared/models/account.model';
@@ -19,6 +23,7 @@ import {
   ProfileFormErrorStrings,
 } from '../models/account.model';
 import { AccountResponse } from '../protobuf/account_pb';
+import { CollectionResponse } from '../protobuf/collection_pb';
 import { StorageFolderType } from '../protobuf/common_pb';
 import { InterestResponse } from '../protobuf/interest_pb';
 import { ProductLikesMetadataResponse } from '../protobuf/product-like_pb';
@@ -26,6 +31,7 @@ import { RoutePathsType } from '../route-paths-type';
 import AccountFollowersService from '../services/account-followers.service';
 import AccountService from '../services/account.service';
 import BucketService from '../services/bucket.service';
+import CryptoService from '../services/crypto.service';
 import InterestService from '../services/interest.service';
 import MedusaService from '../services/medusa.service';
 import ProductLikesService from '../services/product-likes.service';
@@ -40,6 +46,7 @@ export default class AccountController extends Controller {
   private _addFriendsGeocodingTimerId: NodeJS.Timeout | number | undefined;
   private _addInterestTimerId: NodeJS.Timeout | number | undefined;
   private _activeAccountDisposer: Lambda | undefined;
+  private _collectionsDisposer: Lambda | undefined;
   private _sessionDisposer: Lambda | undefined;
   private _selectedInventoryLocationIdDisposer: Lambda | undefined;
   private _medusaAccessTokenDisposer: Lambda | undefined;
@@ -55,6 +62,8 @@ export default class AccountController extends Controller {
       InterestService: InterestService;
       ProductLikesService: ProductLikesService;
       BucketService: BucketService;
+      OpenWebuiService: OpenWebuiService;
+      CryptoService: CryptoService;
     }>,
     private readonly _storeOptions: StoreOptions
   ) {
@@ -69,23 +78,29 @@ export default class AccountController extends Controller {
       this.onSelectedInventoryLocationIdChangedAsync.bind(this);
     this.onActiveAccountChangedAsync =
       this.onActiveAccountChangedAsync.bind(this);
+    this.onCollectionsChangedAsync = this.onCollectionsChangedAsync.bind(this);
   }
 
   public get model(): AccountModel {
     return this._model;
   }
 
-  public override initialize = (renderCount: number): void => {
-    const supabaseService = this._container.get('SupabaseService');
+  public override initialize(renderCount: number): void {
     const accountService = this._container.get('AccountService');
     this._accountDisposer = observe(
       accountService,
       'activeAccount',
       this.onActiveAccountChangedAsync
     );
-  };
 
-  public override load(_renderCount: number): void {}
+    this._collectionsDisposer = observe(
+      this._model,
+      'collections',
+      this.onCollectionsChangedAsync
+    );
+  }
+
+  public override async load(_renderCount: number): Promise<void> {}
 
   public override disposeInitialization(_renderCount: number): void {
     clearTimeout(this._addInterestTimerId as number | undefined);
@@ -96,6 +111,7 @@ export default class AccountController extends Controller {
     this._accountDisposer?.();
     this._medusaAccessTokenDisposer?.();
     this._selectedInventoryLocationIdDisposer?.();
+    this._collectionsDisposer?.();
     this._activeAccountDisposer?.();
     this._sessionDisposer?.();
     this._model.dispose();
@@ -144,12 +160,22 @@ export default class AccountController extends Controller {
     this._model.updateProfileForm({ ...this._model.profileForm, ...value });
   }
 
-  public updateProfileErrors(value: ProfileFormErrors): void {
+  public updateProfileFormErrors(value: ProfileFormErrors): void {
     this._model.updateProfileFormErrors(value);
   }
 
-  public updateErrorStrings(value: ProfileFormErrorStrings): void {
-    this._model.updateErrorStrings(value);
+  public updateCollectionFormErrors(value: CollectionFormErrors): void {
+    this._model.updateCollectionFormErrors(value);
+  }
+
+  public updateProfileFormErrorStrings(value: ProfileFormErrorStrings): void {
+    this._model.updateProfileFormErrorStrings(value);
+  }
+
+  public updateCollectionFormErrorStrings(
+    value: CollectionFormErrorStrings
+  ): void {
+    this._model.updateCollectionFormErrorStrings(value);
   }
 
   public updateShippingAddress(value: AddressFormValues): void {
@@ -458,9 +484,9 @@ export default class AccountController extends Controller {
 
   public async addInterestsSearchAsync(
     query: string,
-    offset: number = 0,
-    limit: number = 50,
-    force: boolean = false
+    offset = 0,
+    limit = 50,
+    force = false
   ): Promise<void> {
     if (!force && this._model.areAddInterestsLoading) {
       return;
@@ -494,21 +520,16 @@ export default class AccountController extends Controller {
 
   public checkIfUsernameExists(value: string): void {
     clearTimeout(this._usernameTimerId as number | undefined);
-    this._usernameTimerId = setTimeout(() => {
-      const promise = new Promise<void>(async (resolve, reject) => {
-        try {
-          this._model.profileFormErrors = await this.getUsernameErrorsAsync(
-            value,
-            this._model.profileFormErrors,
-            true
-          );
-          resolve();
-        } catch (error: any) {
-          console.error(error);
-          reject(error);
-        }
-      });
-      promise.then();
+    this._usernameTimerId = setTimeout(async () => {
+      try {
+        this._model.profileFormErrors = await this.getUsernameErrorsAsync(
+          value,
+          this._model.profileFormErrors,
+          true
+        );
+      } catch (error: any) {
+        console.error(error);
+      }
     }, 750);
   }
 
@@ -549,7 +570,7 @@ export default class AccountController extends Controller {
 
   public async getProfileFormErrorsAsync(
     form: ProfileFormValues,
-    strict: boolean = false,
+    strict = false,
     include: string[] = [
       'firstName',
       'lastName',
@@ -573,25 +594,25 @@ export default class AccountController extends Controller {
       include.includes('firstName') &&
       (!form.firstName || form.firstName?.length <= 0)
     ) {
-      errors.firstName = this._model.errorStrings.empty;
+      errors.firstName = this._model.profileFormErrorStrings.empty;
     }
 
     if (
       include.includes('lastName') &&
       (!form.lastName || form.lastName?.length <= 0)
     ) {
-      errors.lastName = this._model.errorStrings.empty;
+      errors.lastName = this._model.profileFormErrorStrings.empty;
     }
 
     if (include.includes('birthday') && !form.birthday) {
-      errors.birthday = this._model.errorStrings.empty;
+      errors.birthday = this._model.profileFormErrorStrings.empty;
     }
 
     if (
       include.includes('phoneNumber') &&
       (!form.phoneNumber || form.phoneNumber?.length <= 0)
     ) {
-      errors.phoneNumber = this._model.errorStrings.empty;
+      errors.phoneNumber = this._model.profileFormErrorStrings.empty;
     }
 
     if (Object.keys(errors).length > 0) {
@@ -600,7 +621,24 @@ export default class AccountController extends Controller {
     return undefined;
   }
 
-  public async completeProfileAsync(): Promise<void> {
+  public async getCollectionFormErrorsAsync(
+    form: CollectionFormValues
+  ): Promise<CollectionFormErrors | undefined> {
+    const errors: CollectionFormErrors = {};
+
+    if (!form.name || form.name?.length <= 0) {
+      errors.name = this._model.collectionFormErrorStrings.empty;
+    }
+
+    if (Object.keys(errors).length > 0) {
+      return errors;
+    }
+    return undefined;
+  }
+
+  public async completeProfileAsync(
+    onError?: (error: any) => void
+  ): Promise<void> {
     const errors = await this.getProfileFormErrorsAsync(
       this._model.profileForm,
       true
@@ -627,6 +665,10 @@ export default class AccountController extends Controller {
         last_name: this._model.profileForm.lastName ?? '',
         phone: this._model.profileForm.phoneNumber,
       });
+      if (!customer) {
+        return;
+      }
+
       this._model.updateCustomer(customer);
 
       if (!this._model.customer) {
@@ -638,15 +680,33 @@ export default class AccountController extends Controller {
     } catch (error: any) {
       this._model.updateIsCreateCustomerLoading(false);
       console.error(error);
+      onError?.(error);
+      return;
+    }
+
+    let account = this._model.account;
+    const metadata = account?.metadata ? JSON.parse(account.metadata) : {};
+    if (!metadata['open_webui']) {
+      const openWebuiUserData = await this.createOpenWebuiUser(
+        userResponse,
+        onError
+      );
+      if (!openWebuiUserData) {
+        console.warn("Couldn't create open web ui user");
+        return;
+      }
+
+      metadata['open_webui'] = openWebuiUserData;
     }
 
     try {
       const accountService = this._container.get('AccountService');
-      const account = await accountService.requestUpdateActiveAsync({
+      account = await accountService.requestUpdateActiveAsync({
         customerId: this._model.customer?.id,
         status: 'Complete',
         username: this._model.profileForm.username ?? '',
         birthday: this._model.profileForm.birthday,
+        metadata: JSON.stringify(metadata),
       });
       this._model.updateAccount(account);
     } catch (error: any) {
@@ -661,11 +721,11 @@ export default class AccountController extends Controller {
       return false;
     }
 
-    this._model.isUpdateGeneralInfoLoading = true;
+    this._model.updateIsUpdateGeneralInfoLoading(true);
     const errors = await this.getProfileFormErrorsAsync(form, true);
     if (errors) {
-      this.updateProfileErrors(errors);
-      this._model.isUpdateGeneralInfoLoading = false;
+      this.updateProfileFormErrors(errors);
+      this._model.updateIsUpdateGeneralInfoLoading(false);
       return false;
     }
 
@@ -687,7 +747,45 @@ export default class AccountController extends Controller {
       console.error(error);
     }
 
-    this._model.isUpdateGeneralInfoLoading = false;
+    this._model.updateIsUpdateGeneralInfoLoading(false);
+
+    return true;
+  }
+
+  public async updatePersonalInfoAsync(
+    form: ProfileFormValues
+  ): Promise<boolean> {
+    if (!this._model.customer || !this._model.account) {
+      return false;
+    }
+
+    this._model.isUpdatePersonalInfoLoading = true;
+    const errors = await this.getProfileFormErrorsAsync(form, true, [
+      'birthday',
+      'phoneNumber',
+    ]);
+    if (errors) {
+      this.updateProfileFormErrors(errors);
+      this._model.isUpdatePersonalInfoLoading = false;
+      return false;
+    }
+
+    const medusaService = this._container.get('MedusaService');
+    try {
+      const customer = await medusaService.requestUpdateAdminCustomerAsync({
+        phone: form.phoneNumber,
+      });
+      this._model.customer = customer;
+
+      const accountService = this._container.get('AccountService');
+      this._model.account = await accountService.requestUpdateActiveAsync({
+        birthday: this._model.profileForm.birthday,
+      });
+    } catch (error: any) {
+      console.error(error);
+    }
+
+    this._model.isUpdatePersonalInfoLoading = false;
 
     return true;
   }
@@ -882,7 +980,75 @@ export default class AccountController extends Controller {
     value: IValueDidChange<Session | null>
   ): Promise<void> {}
 
-  public async onActiveAccountChangedAsync(
+  public async handleSessionChangedAsync(
+    session: Session | null
+  ): Promise<void> {
+    if (
+      !session ||
+      JSON.stringify(this._model.user) === JSON.stringify(session)
+    ) {
+      return;
+    }
+
+    this._model.updateUser(session.user);
+  }
+
+  private async createOpenWebuiUser(
+    supabaseUser: UserResponse,
+    onError?: (error: any) => void
+  ): Promise<{ id: string; encrypted_password: string } | undefined> {
+    const openWebuiService = this._container.get('OpenWebuiService');
+    const cryptoService = this._container.get('CryptoService');
+    try {
+      const generatedPassword = uuidv4();
+      const encryptedPassword = await cryptoService.encryptAsync(
+        generatedPassword
+      );
+      const openWebuiUser = await openWebuiService.requestAddUserAsync(
+        `${this._model.profileForm.firstName} ${this._model.profileForm.lastName}`,
+        supabaseUser.data.user?.email ?? '',
+        generatedPassword
+      );
+      this._model.updateOpenWebuiUser(openWebuiUser);
+      return {
+        id: openWebuiUser.id ?? '',
+        encrypted_password: encryptedPassword,
+      };
+    } catch (error: any) {
+      console.error(error);
+      onError?.(error);
+      return undefined;
+    }
+  }
+
+  private async getUsernameErrorsAsync(
+    username: string,
+    errors: ProfileFormErrors,
+    strict = false
+  ): Promise<ProfileFormErrors> {
+    const errorsCopy = { ...errors };
+    if (!username || username?.length <= 0) {
+      errorsCopy.username = this._model.profileFormErrorStrings?.empty;
+      return errorsCopy;
+    }
+
+    if (username.indexOf(' ') !== -1) {
+      errorsCopy.username = this._model.profileFormErrorStrings?.spaces;
+      return errorsCopy;
+    }
+
+    if (strict && this._model.account?.username !== username) {
+      const exists = await this.requestDoesUsernameExistAsync(username);
+      if (exists) {
+        errorsCopy.username = this._model.profileFormErrorStrings?.exists;
+        return errorsCopy;
+      }
+    }
+
+    return errorsCopy;
+  }
+
+  private async onActiveAccountChangedAsync(
     value: IValueDidChange<AccountResponse | null>
   ): Promise<void> {
     const account = value.newValue;
@@ -894,13 +1060,32 @@ export default class AccountController extends Controller {
 
     const medusaService = this._container.get('MedusaService');
     const bucketService = this._container.get('BucketService');
+    const openWebuiService = this._container.get('OpenWebuiService');
+    const cryptoService = this._container.get('CryptoService');
+    const supabaseService = this._container.get('SupabaseService');
     try {
       const customer = await medusaService.requestAdminCustomerAsync(
         account.supabaseId ?? ''
       );
       this._model.updateCustomer(customer);
     } catch (error: any) {
-      console.error(error);
+      console.warn(error);
+    }
+
+    const metadata = account?.metadata ? JSON.parse(account.metadata) : {};
+    const openWebuiData = metadata['open_webui'];
+    if (!this._model.openWebuiUser && openWebuiData) {
+      const ecryptedPassword = openWebuiData['encrypted_password'];
+      const password = await cryptoService.decryptAsync(ecryptedPassword);
+      try {
+        const openWebuiUser = await openWebuiService.requestSigninAsync(
+          supabaseService.user?.email ?? '',
+          password
+        );
+        this._model.updateOpenWebuiUser(openWebuiUser);
+      } catch (error: any) {
+        console.error(error);
+      }
     }
 
     const s3 = bucketService.s3;
@@ -923,7 +1108,10 @@ export default class AccountController extends Controller {
       lastName: this._model.customer?.last_name ?? undefined,
       phoneNumber: this._model.customer?.phone ?? undefined,
       username: account?.username,
-      birthday: account?.birthday,
+      birthday:
+        account?.birthday && account.birthday.length > 0
+          ? account?.birthday
+          : undefined,
     });
 
     const errors = await this.getProfileFormErrorsAsync(
@@ -945,50 +1133,16 @@ export default class AccountController extends Controller {
     }
   }
 
-  public async handleSessionChangedAsync(
-    session: Session | null
+  private async onCollectionsChangedAsync(
+    value: IValueDidChange<Record<string, CollectionResponse>>
   ): Promise<void> {
-    if (
-      !session ||
-      JSON.stringify(this._model.user) === JSON.stringify(session)
-    ) {
-      return;
-    }
-
-    this._model.updateUser(session.user);
-  }
-
-  private async getUsernameErrorsAsync(
-    username: string,
-    errors: ProfileFormErrors,
-    strict: boolean = false
-  ): Promise<ProfileFormErrors> {
-    let errorsCopy = { ...errors };
-    if (!username || username?.length <= 0) {
-      errorsCopy.username = this._model.errorStrings?.empty;
-      return errorsCopy;
-    }
-
-    if (username.indexOf(' ') !== -1) {
-      errorsCopy.username = this._model.errorStrings?.spaces;
-      return errorsCopy;
-    }
-
-    if (strict && this._model.account?.username !== username) {
-      const exists = await this.requestDoesUsernameExistAsync(username);
-      if (exists) {
-        errorsCopy.username = this._model.errorStrings?.exists;
-        return errorsCopy;
-      }
-    }
-
-    return errorsCopy;
+    console.log(value);
   }
 
   private async requestOrdersAsync(
     loadType: 'loading' | 'reloading',
-    offset: number = 0,
-    limit: number = 10
+    offset = 0,
+    limit = 10
   ): Promise<void> {
     if (this._model.areOrdersLoading || this._model.areOrdersReloading) {
       return;
@@ -1058,8 +1212,8 @@ export default class AccountController extends Controller {
 
   private async requestLikedProductsAsync(
     loadType: 'loading' | 'reloading',
-    offset: number = 0,
-    limit: number = 10
+    offset = 0,
+    limit = 10
   ): Promise<void> {
     if (
       this._model.areLikedProductsLoading ||
@@ -1153,78 +1307,6 @@ export default class AccountController extends Controller {
     } else if (loadType === 'reloading') {
       this._model.areLikedProductsReloading = false;
     }
-  }
-
-  private resetMedusaModel(): void {
-    this._model.user = null;
-    this._model.account = undefined;
-    this._model.customer = undefined;
-    this._model.customerGroup = undefined;
-    this._model.isCustomerGroupLoading = false;
-    this._model.profileForm = {
-      firstName: '',
-      lastName: '',
-      username: '',
-    };
-    this._model.profileFormErrors = {};
-    this._model.errorStrings = {};
-    this._model.profileUrl = undefined;
-    this._model.username = '';
-    this._model.orders = [];
-    this._model.orderPagination = 1;
-    this._model.hasMoreOrders = false;
-    this._model.shippingForm = {
-      email: '',
-      firstName: '',
-      lastName: '',
-      company: '',
-      address: '',
-      apartments: '',
-      postalCode: '',
-      city: '',
-      countryCode: '',
-      region: '',
-      phoneNumber: '',
-    };
-    this._model.shippingFormErrors = {};
-    this._model.addressErrorStrings = {};
-    this._model.selectedAddress = undefined;
-    this._model.editShippingForm = {
-      email: '',
-      firstName: '',
-      lastName: '',
-      company: '',
-      address: '',
-      apartments: '',
-      postalCode: '',
-      city: '',
-      countryCode: '',
-      region: '',
-      phoneNumber: '',
-    };
-    this._model.areOrdersLoading = false;
-    this._model.editShippingFormErrors = {};
-    this._model.activeTabId = RoutePathsType.AccountLikes;
-    this._model.prevTabIndex = 0;
-    this._model.activeTabIndex = 0;
-    this._model.ordersScrollPosition = undefined;
-    this._model.isCreateCustomerLoading = false;
-    this._model.isUpdateGeneralInfoLoading = false;
-    this._model.addFriendAccounts = [];
-    this._model.addFriendsSearchInput = '';
-    this._model.addFriendsPagination = 1;
-    this._model.addFriendsScrollPosition = undefined;
-    this._model.addFriendAccountFollowers = {};
-    this._model.followRequestAccounts = [];
-    this._model.followRequestAccountFollowers = {};
-    this._model.likeCount = undefined;
-    this._model.followerCount = undefined;
-    this._model.followingCount = undefined;
-    this._model.addInterestInput = '';
-    this._model.areAddInterestsLoading = false;
-    this._model.searchedInterests = [];
-    this._model.creatableInterest = undefined;
-    this._model.selectedInterests = {};
   }
 
   private async initializeAsync(_renderCount: number): Promise<void> {}

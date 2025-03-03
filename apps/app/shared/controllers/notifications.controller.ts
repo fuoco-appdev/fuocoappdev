@@ -35,7 +35,7 @@ export default class NotificationsController extends Controller {
     return this._model;
   }
 
-  public override initialize = (_renderCount: number): void => {};
+  public override initialize(_renderCount: number): void {}
 
   public override load(_renderCount: number): void {
     this.loadAccountNotifications();
@@ -196,8 +196,8 @@ export default class NotificationsController extends Controller {
 
   private async requestAccountNotificationsAsync(
     loadType: 'loading' | 'reloading',
-    offset: number = 0,
-    limit: number = 10
+    offset = 0,
+    limit = 10
   ): Promise<void> {
     if (this._model.isLoading || this._model.isReloading) {
       return;

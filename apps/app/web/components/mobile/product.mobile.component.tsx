@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 import {
   Button,
   Input,
@@ -7,21 +8,18 @@ import {
   Tabs,
   Typography,
 } from '@fuoco.appdev/web-components';
-import { ProductTag } from '@medusajs/medusa';
-import { useTranslation } from 'react-i18next';
-import ExploreController from '../../../shared/controllers/explore.controller';
-import ProductController from '../../../shared/controllers/product.controller';
-import styles from '../../modules/product.module.scss';
-// @ts-ignore
 import loadable from '@loadable/component';
-import { StockLocation } from '@medusajs/stock-location/dist/models';
-import { formatAmount } from 'medusa-react';
+import { HttpTypes } from '@medusajs/types';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import ReactDOM from 'react-dom';
+import { useTranslation } from 'react-i18next';
 import Skeleton from 'react-loading-skeleton';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { ProductTabType } from '../../../shared/models/product.model';
 import { MedusaProductTypeNames } from '../../../shared/types/medusa.type';
+import styles from '../../modules/product.module.scss';
+import { DIContext } from '../app.component';
 import { ProductResponsiveProps } from '../product.component';
 import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 import StockLocationItemComponent from '../stock-location-item.component';
@@ -34,10 +32,7 @@ const ReactMarkdown = loadable(
   { ssr: false }
 );
 
-export default function ProductMobileComponent({
-  productProps,
-  storeProps,
-  accountProps,
+function ProductMobileComponent({
   remarkPlugins,
   translatedDescription,
   description,
@@ -75,6 +70,28 @@ export default function ProductMobileComponent({
   const { t } = useTranslation();
   const [showMore, setShowMore] = React.useState<boolean>(false);
   const [disableShowMore, setDisableShowMore] = React.useState<boolean>(false);
+  const {
+    ExploreController,
+    ProductController,
+    AccountController,
+    StoreController,
+  } = React.useContext(DIContext);
+  const {
+    selectedVariant,
+    isLoading,
+    metadata,
+    activeTabId,
+    transitionKeyIndex,
+    prevTransitionKeyIndex,
+    stockLocationInput,
+  } = ProductController.model;
+  const { account } = AccountController.model;
+  const { selectedRegion } = StoreController.model;
+  const {
+    searchedStockLocations,
+    hasMoreSearchedStockLocations,
+    areSearchedStockLocationsLoading,
+  } = ExploreController.model;
 
   useMobileEffect(() => {
     if (!translatedDescription) {
@@ -101,7 +118,6 @@ export default function ProductMobileComponent({
     }
   }, [translatedDescription, showMore]);
 
-  const selectedVariant = productProps.selectedVariant;
   return (
     <ResponsiveMobile>
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
@@ -111,29 +127,29 @@ export default function ProductMobileComponent({
             styles['thumbnail-container-mobile'],
           ].join(' ')}
         >
-          {!productProps.isLoading ? (
+          {!isLoading ? (
             <>
-              {productProps.metadata?.thumbnail &&
+              {metadata?.thumbnail &&
                 type?.value === MedusaProductTypeNames.Wine && (
                   <img
                     className={[
                       styles['wine-thumbnail-image'],
                       styles['wine-thumbnail-image-mobile'],
                     ].join(' ')}
-                    src={productProps.metadata?.thumbnail}
+                    src={metadata?.thumbnail}
                   />
                 )}
-              {productProps.metadata?.thumbnail &&
+              {metadata?.thumbnail &&
                 type?.value === MedusaProductTypeNames.MenuItem && (
                   <img
                     className={[
                       styles['menu-item-thumbnail-image'],
                       styles['menu-item-thumbnail-image-mobile'],
                     ].join(' ')}
-                    src={productProps.metadata?.thumbnail}
+                    src={metadata?.thumbnail}
                   />
                 )}
-              {!productProps.metadata?.thumbnail &&
+              {!metadata?.thumbnail &&
                 type?.value === MedusaProductTypeNames.Wine && (
                   <img
                     className={[
@@ -143,7 +159,7 @@ export default function ProductMobileComponent({
                     src={'../assets/images/wine-bottle.png'}
                   />
                 )}
-              {!productProps.metadata?.thumbnail &&
+              {!metadata?.thumbnail &&
                 type?.value === MedusaProductTypeNames.MenuItem && (
                   <img
                     className={[
@@ -178,14 +194,14 @@ export default function ProductMobileComponent({
                 styles['title-container-mobile'],
               ].join(' ')}
             >
-              {!productProps.isLoading ? (
+              {!isLoading ? (
                 <>
                   <div
                     className={[styles['title'], styles['title-mobile']].join(
                       ' '
                     )}
                   >
-                    {productProps.metadata?.title ?? ''}
+                    {metadata?.title ?? ''}
                   </div>
                   <div
                     className={[
@@ -193,7 +209,7 @@ export default function ProductMobileComponent({
                       styles['subtitle-mobile'],
                     ].join(' ')}
                   >
-                    {productProps.metadata?.subtitle ?? ''}
+                    {metadata?.subtitle ?? ''}
                   </div>
                 </>
               ) : (
@@ -213,7 +229,7 @@ export default function ProductMobileComponent({
                 styles['like-container-mobile'],
               ].join(' ')}
             >
-              {!productProps.isLoading ? (
+              {!isLoading ? (
                 <>
                   <Button
                     rippleProps={{
@@ -223,10 +239,7 @@ export default function ProductMobileComponent({
                     }}
                     rounded={true}
                     touchScreen={true}
-                    disabled={
-                      !accountProps.account ||
-                      accountProps.account.status === 'Incomplete'
-                    }
+                    disabled={!account || account.status === 'Incomplete'}
                     onClick={() => onLikeChanged(!isLiked)}
                     type={'text'}
                     icon={
@@ -271,7 +284,7 @@ export default function ProductMobileComponent({
               styles['tags-container-mobile'],
             ].join(' ')}
           >
-            {!productProps.isLoading ? (
+            {!isLoading ? (
               <>
                 {tags?.map((value: ProductTag) => (
                   <div
@@ -303,7 +316,7 @@ export default function ProductMobileComponent({
               styles['description-container-mobile'],
             ].join(' ')}
           >
-            {!productProps.isLoading ? (
+            {!isLoading ? (
               <ReactMarkdown
                 remarkPlugins={remarkPlugins}
                 children={description}
@@ -318,26 +331,24 @@ export default function ProductMobileComponent({
                 ].join(' ')}
               />
             )}
-            {!productProps.isLoading &&
-              translatedDescription &&
-              !disableShowMore && (
-                <div
+            {!isLoading && translatedDescription && !disableShowMore && (
+              <div
+                className={[
+                  styles['show-more-container'],
+                  styles['show-more-container-mobile'],
+                ].join(' ')}
+              >
+                <Typography.Link
                   className={[
-                    styles['show-more-container'],
-                    styles['show-more-container-mobile'],
+                    styles['show-more-link'],
+                    styles['show-more-link-mobile'],
                   ].join(' ')}
+                  onClick={() => setShowMore(!showMore)}
                 >
-                  <Typography.Link
-                    className={[
-                      styles['show-more-link'],
-                      styles['show-more-link-mobile'],
-                    ].join(' ')}
-                    onClick={() => setShowMore(!showMore)}
-                  >
-                    {!showMore ? t('showMore') : t('showLess')}
-                  </Typography.Link>
-                </div>
-              )}
+                  {!showMore ? t('showMore') : t('showLess')}
+                </Typography.Link>
+              </div>
+            )}
           </div>
         </div>
         <div
@@ -349,7 +360,7 @@ export default function ProductMobileComponent({
           <Tabs
             flex={true}
             touchScreen={true}
-            activeId={productProps.activeTabId}
+            activeId={activeTabId}
             classNames={{
               nav: [styles['tab-nav'], styles['tab-nav-mobile']].join(' '),
               tabButton: [
@@ -374,23 +385,19 @@ export default function ProductMobileComponent({
             React.cloneElement(child, {
               classNames: {
                 enter:
-                  productProps.transitionKeyIndex <
-                  productProps.prevTransitionKeyIndex
+                  transitionKeyIndex < prevTransitionKeyIndex
                     ? styles['left-to-right-enter']
                     : styles['right-to-left-enter'],
                 enterActive:
-                  productProps.transitionKeyIndex <
-                  productProps.prevTransitionKeyIndex
+                  transitionKeyIndex < prevTransitionKeyIndex
                     ? styles['left-to-right-enter-active']
                     : styles['right-to-left-enter-active'],
                 exit:
-                  productProps.transitionKeyIndex <
-                  productProps.prevTransitionKeyIndex
+                  transitionKeyIndex < prevTransitionKeyIndex
                     ? styles['left-to-right-exit']
                     : styles['right-to-left-exit'],
                 exitActive:
-                  productProps.transitionKeyIndex <
-                  productProps.prevTransitionKeyIndex
+                  transitionKeyIndex < prevTransitionKeyIndex
                     ? styles['left-to-right-exit-active']
                     : styles['right-to-left-exit-active'],
               },
@@ -399,26 +406,22 @@ export default function ProductMobileComponent({
           }
         >
           <CSSTransition
-            key={productProps.transitionKeyIndex}
+            key={transitionKeyIndex}
             classNames={{
               enter:
-                productProps.transitionKeyIndex >
-                productProps.prevTransitionKeyIndex
+                transitionKeyIndex > prevTransitionKeyIndex
                   ? styles['left-to-right-enter']
                   : styles['right-to-left-enter'],
               enterActive:
-                productProps.transitionKeyIndex >
-                productProps.prevTransitionKeyIndex
+                transitionKeyIndex > prevTransitionKeyIndex
                   ? styles['left-to-right-enter-active']
                   : styles['right-to-left-enter-active'],
               exit:
-                productProps.transitionKeyIndex >
-                productProps.prevTransitionKeyIndex
+                transitionKeyIndex > prevTransitionKeyIndex
                   ? styles['left-to-right-exit']
                   : styles['right-to-left-exit'],
               exitActive:
-                productProps.transitionKeyIndex >
-                productProps.prevTransitionKeyIndex
+                transitionKeyIndex > prevTransitionKeyIndex
                   ? styles['left-to-right-exit-active']
                   : styles['right-to-left-exit-active'],
             }}
@@ -432,7 +435,7 @@ export default function ProductMobileComponent({
               onScroll={onSideBarScroll}
               onLoad={onSideBarLoad}
             >
-              {productProps.activeTabId === ProductTabType.Price && (
+              {activeTabId === ProductTabType.Price && (
                 <div
                   className={[
                     styles['price-container'],
@@ -444,9 +447,9 @@ export default function ProductMobileComponent({
                       ' '
                     )}
                   >
-                    {!productProps.isLoading ? (
+                    {!isLoading ? (
                       <>
-                        {selectedVariant?.original_price !==
+                        {/* {selectedVariant?.original_price !==
                           selectedVariant?.calculated_price && (
                           <div
                             className={[
@@ -454,16 +457,16 @@ export default function ProductMobileComponent({
                               styles['calculated-price-mobile'],
                             ].join(' ')}
                           >
-                            {storeProps.selectedRegion &&
+                            {selectedRegion &&
                               formatAmount({
                                 amount: selectedVariant?.calculated_price ?? 0,
-                                region: storeProps.selectedRegion,
+                                region: selectedRegion,
                                 includeTaxes: false,
                               })}
                           </div>
-                        )}
+                        )} */}
                         &nbsp;
-                        <div
+                        {/* <div
                           className={[
                             styles['original-price'],
                             styles['original-price-mobile'],
@@ -472,13 +475,13 @@ export default function ProductMobileComponent({
                               styles['original-price-crossed'],
                           ].join(' ')}
                         >
-                          {storeProps.selectedRegion &&
+                          {selectedRegion &&
                             formatAmount({
                               amount: selectedVariant?.original_price ?? 0,
-                              region: storeProps.selectedRegion,
+                              region: selectedRegion,
                               includeTaxes: false,
                             })}
-                        </div>
+                        </div> */}
                         {type?.value === MedusaProductTypeNames.Wine && (
                           <>
                             &nbsp;
@@ -488,8 +491,7 @@ export default function ProductMobileComponent({
                                 styles['inventory-quantity-mobile'],
                               ].join(' ')}
                             >
-                              (
-                              {productProps.selectedVariant?.inventory_quantity}
+                              ({selectedVariant?.inventory_quantity}
                               &nbsp;
                               {t('inStock')})
                             </span>
@@ -513,7 +515,7 @@ export default function ProductMobileComponent({
                       styles['tab-container-mobile'],
                     ].join(' ')}
                   >
-                    {!productProps.isLoading ? (
+                    {!isLoading ? (
                       <Tabs
                         flex={true}
                         classNames={{
@@ -543,7 +545,7 @@ export default function ProductMobileComponent({
                           styles['options-container-mobile'],
                         ].join(' ')}
                       >
-                        {!productProps.isLoading ? (
+                        {!isLoading ? (
                           <>
                             <div
                               className={[
@@ -810,7 +812,7 @@ export default function ProductMobileComponent({
                       </div>
                     )}
                   </div>
-                  {!productProps.isLoading ? (
+                  {!isLoading ? (
                     <InputNumber
                       label={t('quantity') ?? ''}
                       classNames={{
@@ -831,9 +833,8 @@ export default function ProductMobileComponent({
                       value={quantity.toString()}
                       min={1}
                       max={
-                        !productProps.selectedVariant?.allow_backorder
-                          ? productProps.selectedVariant?.inventory_quantity ??
-                            0
+                        !selectedVariant?.allow_backorder
+                          ? selectedVariant?.inventory_quantity ?? 0
                           : undefined
                       }
                       onChange={(e) => {
@@ -851,7 +852,7 @@ export default function ProductMobileComponent({
                       <Skeleton style={{ height: 44 }} borderRadius={6} />
                     </div>
                   )}
-                  {!productProps.isLoading ? (
+                  {!isLoading ? (
                     <Button
                       classNames={{
                         container: styles['add-to-cart-button-container'],
@@ -863,18 +864,20 @@ export default function ProductMobileComponent({
                         color: 'rgba(233, 33, 66, .35)',
                       }}
                       icon={
-                        !productProps.selectedVariant?.purchasable ? (
+                        (selectedVariant?.inventory_quantity ?? 0) <= 0 ? (
                           <Line.ProductionQuantityLimits size={24} />
                         ) : (
                           <Line.AddShoppingCart size={24} />
                         )
                       }
-                      disabled={!productProps.selectedVariant?.purchasable}
+                      disabled={(selectedVariant?.inventory_quantity ?? 0) <= 0}
                       onClick={onAddToCart}
                     >
-                      {!productProps.selectedVariant?.purchasable &&
+                      {selectedVariant?.inventory_quantity &&
+                        selectedVariant.inventory_quantity <= 0 &&
                         t('outOfStock')}
-                      {productProps.selectedVariant?.purchasable &&
+                      {selectedVariant?.inventory_quantity &&
+                        selectedVariant.inventory_quantity > 0 &&
                         t('addToCart')}
                     </Button>
                   ) : (
@@ -891,7 +894,7 @@ export default function ProductMobileComponent({
                       styles['tab-container-mobile'],
                     ].join(' ')}
                   >
-                    {!productProps.isLoading ? (
+                    {!isLoading ? (
                       <Tabs
                         flex={true}
                         classNames={{
@@ -921,7 +924,7 @@ export default function ProductMobileComponent({
                         ].join(' ')}
                       />
                     )}
-                    {!productProps.isLoading ? (
+                    {!isLoading ? (
                       <>
                         {activeDetails === 'information' && (
                           <div
@@ -950,7 +953,7 @@ export default function ProductMobileComponent({
                                   styles['details-item-value-mobile'],
                                 ].join(' ')}
                               >
-                                {productProps.metadata?.material ?? '-'}
+                                {metadata?.material ?? '-'}
                               </div>
                             </div>
                             <div
@@ -973,9 +976,8 @@ export default function ProductMobileComponent({
                                   styles['details-item-value-mobile'],
                                 ].join(' ')}
                               >
-                                {productProps.metadata?.weight &&
-                                productProps.metadata.weight > 0
-                                  ? `${productProps.metadata.weight} g`
+                                {metadata?.weight && metadata.weight > 0
+                                  ? `${metadata.weight} g`
                                   : '-'}
                               </div>
                             </div>
@@ -999,7 +1001,7 @@ export default function ProductMobileComponent({
                                   styles['details-item-value-mobile'],
                                 ].join(' ')}
                               >
-                                {productProps.metadata?.originCountry ?? '-'}
+                                {metadata?.originCountry ?? '-'}
                               </div>
                             </div>
                             <div
@@ -1022,10 +1024,10 @@ export default function ProductMobileComponent({
                                   styles['details-item-value-mobile'],
                                 ].join(' ')}
                               >
-                                {productProps.metadata?.length &&
-                                productProps.metadata.width &&
-                                productProps.metadata.height
-                                  ? `${productProps.metadata.length}L x ${productProps.metadata.width}W x ${productProps.metadata.height}H`
+                                {metadata?.length &&
+                                metadata.width &&
+                                metadata.height
+                                  ? `${metadata.length}L x ${metadata.width}W x ${metadata.height}H`
                                   : '-'}
                               </div>
                             </div>
@@ -1169,7 +1171,7 @@ export default function ProductMobileComponent({
                   </div>
                 </div>
               )}
-              {productProps.activeTabId === ProductTabType.Locations && (
+              {activeTabId === ProductTabType.Locations && (
                 <div
                   className={[
                     styles['locations-container'],
@@ -1201,7 +1203,7 @@ export default function ProductMobileComponent({
                           ].join(' ')}
                         >
                           <Input
-                            value={productProps.stockLocationInput}
+                            value={stockLocationInput}
                             classNames={{
                               container: [
                                 styles['search-input-container'],
@@ -1233,8 +1235,11 @@ export default function ProductMobileComponent({
                       styles['location-items-container-mobile'],
                     ].join(' ')}
                   >
-                    {productProps.searchedStockLocations.map(
-                      (stockLocation: StockLocation, _index: number) => {
+                    {searchedStockLocations.map(
+                      (
+                        stockLocation: HttpTypes.AdminStockLocation,
+                        _index: number
+                      ) => {
                         return (
                           <StockLocationItemComponent
                             key={stockLocation.id}
@@ -1256,15 +1261,15 @@ export default function ProductMobileComponent({
                       className={styles['loading-ring']}
                       style={{
                         maxHeight:
-                          productProps.hasMoreSearchedStockLocations ||
-                          productProps.areSearchedStockLocationsLoading
+                          hasMoreSearchedStockLocations ||
+                          areSearchedStockLocationsLoading
                             ? 24
                             : 0,
                       }}
                     />
-                    {!productProps.hasMoreSearchedStockLocations &&
-                      !productProps.areSearchedStockLocationsLoading &&
-                      productProps.searchedStockLocations.length <= 0 && (
+                    {!hasMoreSearchedStockLocations &&
+                      !areSearchedStockLocationsLoading &&
+                      searchedStockLocations.length <= 0 && (
                         <div
                           className={[
                             styles['no-searched-stock-locations-container'],
@@ -1291,58 +1296,57 @@ export default function ProductMobileComponent({
         </TransitionGroup>
       </div>
       {ReactDOM.createPortal(
-        <>
-          <Modal
-            classNames={{
-              overlay: [
-                styles['modal-overlay'],
-                styles['modal-overlay-desktop'],
+        <Modal
+          classNames={{
+            overlay: [
+              styles['modal-overlay'],
+              styles['modal-overlay-desktop'],
+            ].join(' '),
+            modal: [styles['modal'], styles['modal-desktop']].join(' '),
+            text: [styles['modal-text'], styles['modal-text-desktop']].join(
+              ' '
+            ),
+            title: [styles['modal-title'], styles['modal-title-desktop']].join(
+              ' '
+            ),
+            description: [
+              styles['modal-description'],
+              styles['modal-description-desktop'],
+            ].join(' '),
+            footerButtonContainer: [
+              styles['modal-footer-button-container'],
+              styles['modal-footer-button-container-desktop'],
+              styles['modal-address-footer-button-container-desktop'],
+            ].join(' '),
+            cancelButton: {
+              button: [
+                styles['modal-cancel-button'],
+                styles['modal-cancel-button-desktop'],
               ].join(' '),
-              modal: [styles['modal'], styles['modal-desktop']].join(' '),
-              text: [styles['modal-text'], styles['modal-text-desktop']].join(
-                ' '
-              ),
-              title: [
-                styles['modal-title'],
-                styles['modal-title-desktop'],
+            },
+            confirmButton: {
+              button: [
+                styles['modal-confirm-button'],
+                styles['modal-confirm-button-desktop'],
               ].join(' '),
-              description: [
-                styles['modal-description'],
-                styles['modal-description-desktop'],
-              ].join(' '),
-              footerButtonContainer: [
-                styles['modal-footer-button-container'],
-                styles['modal-footer-button-container-desktop'],
-                styles['modal-address-footer-button-container-desktop'],
-              ].join(' '),
-              cancelButton: {
-                button: [
-                  styles['modal-cancel-button'],
-                  styles['modal-cancel-button-desktop'],
-                ].join(' '),
-              },
-              confirmButton: {
-                button: [
-                  styles['modal-confirm-button'],
-                  styles['modal-confirm-button-desktop'],
-                ].join(' '),
-              },
-            }}
-            title={t('selectLocation') ?? ''}
-            description={
-              t('selectLocationDescription', {
-                address: `${selectedStockLocation?.company}, ${selectedStockLocation?.placeName}`,
-              }) ?? ''
-            }
-            confirmText={t('select') ?? ''}
-            cancelText={t('cancel') ?? ''}
-            visible={selectedStockLocation !== null}
-            onConfirm={onSelectLocation}
-            onCancel={onCancelLocation}
-          />
-        </>,
+            },
+          }}
+          title={t('selectLocation') ?? ''}
+          description={
+            t('selectLocationDescription', {
+              address: `${selectedStockLocation?.company}, ${selectedStockLocation?.placeName}`,
+            }) ?? ''
+          }
+          confirmText={t('select') ?? ''}
+          cancelText={t('cancel') ?? ''}
+          visible={selectedStockLocation !== null}
+          onConfirm={onSelectLocation}
+          onCancel={onCancelLocation}
+        />,
         document.body
       )}
     </ResponsiveMobile>
   );
 }
+
+export default observer(ProductMobileComponent);

@@ -1,17 +1,18 @@
+/* eslint-disable jsx-a11y/alt-text */
 import { Button, Line, Modal } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import styles from '../../modules/cart-item.module.scss';
-// @ts-ignore
-import { formatAmount } from 'medusa-react';
 import { useNavigate } from 'react-router-dom';
 import { RoutePathsType } from '../../../shared/route-paths-type';
 import { MedusaProductTypeNames } from '../../../shared/types/medusa.type';
+import styles from '../../modules/cart-item.module.scss';
 import { useQuery } from '../../route-paths';
+import { DIContext } from '../app.component';
 import { CartItemResponsiveProps } from '../cart-item.component';
 import { ResponsiveMobile } from '../responsive.component';
 
-export default function CartItemMobileComponent({
-  storeProps,
+function CartItemMobileComponent({
   item,
   productType,
   quantity,
@@ -25,7 +26,9 @@ export default function CartItemMobileComponent({
 }: CartItemResponsiveProps): JSX.Element {
   const navigate = useNavigate();
   const query = useQuery();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { StoreController, MedusaService } = React.useContext(DIContext);
+  const { selectedRegion } = StoreController.model;
 
   return (
     <ResponsiveMobile>
@@ -107,7 +110,7 @@ export default function CartItemMobileComponent({
             ].join(' ')}
             onClick={() =>
               navigate({
-                pathname: `${RoutePathsType.Store}/${item.variant.product_id}`,
+                pathname: `${RoutePathsType.Store}/${item.variant?.product_id}`,
                 search: query.toString(),
               })
             }
@@ -122,7 +125,7 @@ export default function CartItemMobileComponent({
                 ' '
               )}
             >
-              {item.variant.title}
+              {item.variant?.title}
             </div>
           </div>
           <div
@@ -225,12 +228,12 @@ export default function CartItemMobileComponent({
             ].join(' ')}
           >
             {hasReducedPrice && `${t('original')}:`} &nbsp;
-            {storeProps.selectedRegion &&
-              formatAmount({
-                amount: item.subtotal ?? 0,
-                region: storeProps.selectedRegion,
-                includeTaxes: false,
-              })}
+            {selectedRegion &&
+              MedusaService.formatAmount(
+                item.subtotal ?? 0,
+                selectedRegion.currency_code,
+                i18n.language
+              )}
           </div>
           {hasReducedPrice && (
             <>
@@ -240,12 +243,12 @@ export default function CartItemMobileComponent({
                   styles['discount-pricing-mobile'],
                 ].join(' ')}
               >
-                {storeProps.selectedRegion &&
-                  formatAmount({
-                    amount: (item.subtotal ?? 0) - (item.discount_total ?? 0),
-                    region: storeProps.selectedRegion,
-                    includeTaxes: false,
-                  })}
+                {selectedRegion &&
+                  MedusaService.formatAmount(
+                    (item.subtotal ?? 0) - (item.discount_total ?? 0),
+                    selectedRegion.currency_code,
+                    i18n.language
+                  )}
               </div>
               <div
                 className={[
@@ -280,3 +283,5 @@ export default function CartItemMobileComponent({
     </ResponsiveMobile>
   );
 }
+
+export default observer(CartItemMobileComponent);

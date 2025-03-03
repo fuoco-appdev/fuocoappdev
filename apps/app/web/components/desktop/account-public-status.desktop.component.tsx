@@ -1,18 +1,18 @@
 import { Input, Line, Scroll, Tabs } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import Skeleton from 'react-loading-skeleton';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import AccountPublicController from '../../../shared/controllers/account-public.controller';
 import { RoutePathsType } from '../../../shared/route-paths-type';
 import styles from '../../modules/account-public-status.module.scss';
 import { useQuery } from '../../route-paths';
 import { AccountFollowersFollowingResponsiveProps } from '../account-public-status.component';
+import { DIContext } from '../app.component';
 import { ResponsiveDesktop } from '../responsive.component';
 
-export default function AccountPublicStatusDesktopComponent({
-  accountPublicProps,
+function AccountPublicStatusDesktopComponent({
   followerCount,
   followingCount,
   onScrollLoad,
@@ -23,6 +23,20 @@ export default function AccountPublicStatusDesktopComponent({
   const navigate = useNavigate();
   const query = useQuery();
   const { t } = useTranslation();
+  const { AccountPublicController } = React.useContext(DIContext);
+  const {
+    account,
+    activeTabIndex,
+    prevTabIndex,
+    followersFollowingInput,
+    activeStatusTabId,
+    hasMoreFollowers,
+    hasMoreFollowing,
+    areFollowersReloading,
+    areFollowingReloading,
+    areFollowersLoading,
+    areFollowingLoading,
+  } = AccountPublicController.model;
   let prevPreviewScrollTop = 0;
   let yPosition = 0;
 
@@ -38,7 +52,7 @@ export default function AccountPublicStatusDesktopComponent({
             ref={topBarRef}
           >
             <Tabs
-              activeId={accountPublicProps.activeStatusTabId}
+              activeId={activeStatusTabId}
               classNames={{
                 nav: [styles['tab-nav'], styles['tab-nav-desktop']].join(' '),
                 tabButton: [
@@ -54,12 +68,12 @@ export default function AccountPublicStatusDesktopComponent({
                 AccountPublicController.updateActiveStatusTabId(id);
                 if (id === RoutePathsType.AccountStatusWithIdFollowers) {
                   navigate({
-                    pathname: `${RoutePathsType.AccountStatus}/${accountPublicProps.account?.id}/followers`,
+                    pathname: `${RoutePathsType.AccountStatus}/${account?.id}/followers`,
                     search: query.toString(),
                   });
                 } else if (id === RoutePathsType.AccountStatusWithIdFollowing) {
                   navigate({
-                    pathname: `${RoutePathsType.AccountStatus}/${accountPublicProps.account?.id}/following`,
+                    pathname: `${RoutePathsType.AccountStatus}/${account?.id}/following`,
                     search: query.toString(),
                   });
                 }
@@ -89,7 +103,7 @@ export default function AccountPublicStatusDesktopComponent({
                 ].join(' ')}
               >
                 <Input
-                  value={accountPublicProps.followersFollowingInput}
+                  value={followersFollowingInput}
                   classNames={{
                     container: [
                       styles['search-input-container'],
@@ -104,14 +118,14 @@ export default function AccountPublicStatusDesktopComponent({
                   icon={<Line.Search size={24} color={'#2A2A5F'} />}
                   onChange={(event) => {
                     if (
-                      accountPublicProps.activeStatusTabId ===
+                      activeStatusTabId ===
                       RoutePathsType.AccountStatusWithIdFollowing
                     ) {
                       AccountPublicController.updateFollowingInput(
                         event.target.value
                       );
                     } else if (
-                      accountPublicProps.activeStatusTabId ===
+                      activeStatusTabId ===
                       RoutePathsType.AccountStatusWithIdFollowers
                     ) {
                       AccountPublicController.updateFollowersInput(
@@ -181,18 +195,9 @@ export default function AccountPublicStatusDesktopComponent({
               <Line.ArrowDownward size={24} />
             </div>
           }
-          isLoadable={
-            accountPublicProps.hasMoreFollowers ||
-            accountPublicProps.hasMoreFollowing
-          }
-          isReloading={
-            accountPublicProps.areFollowersReloading ||
-            accountPublicProps.areFollowingReloading
-          }
-          isLoading={
-            accountPublicProps.areFollowersLoading ||
-            accountPublicProps.areFollowingLoading
-          }
+          isLoadable={hasMoreFollowers || hasMoreFollowing}
+          isReloading={areFollowersReloading || areFollowingReloading}
+          isLoading={areFollowersLoading || areFollowingLoading}
           onReload={onScrollReload}
           onLoad={onScrollLoad}
           onScroll={(progress, scrollRef, contentRef) => {
@@ -230,23 +235,19 @@ export default function AccountPublicStatusDesktopComponent({
                 React.cloneElement(child, {
                   classNames: {
                     enter:
-                      accountPublicProps.activeTabIndex >
-                      accountPublicProps.prevTabIndex
+                      activeTabIndex > prevTabIndex
                         ? styles['left-to-right-enter']
                         : styles['right-to-left-enter'],
                     enterActive:
-                      accountPublicProps.activeTabIndex >
-                      accountPublicProps.prevTabIndex
+                      activeTabIndex > prevTabIndex
                         ? styles['left-to-right-enter-active']
                         : styles['right-to-left-enter-active'],
                     exit:
-                      accountPublicProps.activeTabIndex >
-                      accountPublicProps.prevTabIndex
+                      activeTabIndex > prevTabIndex
                         ? styles['left-to-right-exit']
                         : styles['right-to-left-exit'],
                     exitActive:
-                      accountPublicProps.activeTabIndex >
-                      accountPublicProps.prevTabIndex
+                      activeTabIndex > prevTabIndex
                         ? styles['left-to-right-exit-active']
                         : styles['right-to-left-exit-active'],
                   },
@@ -255,26 +256,22 @@ export default function AccountPublicStatusDesktopComponent({
               }
             >
               <CSSTransition
-                key={accountPublicProps.activeTabIndex}
+                key={activeTabIndex}
                 classNames={{
                   enter:
-                    accountPublicProps.activeTabIndex <
-                    accountPublicProps.prevTabIndex
+                    activeTabIndex < prevTabIndex
                       ? styles['left-to-right-enter']
                       : styles['right-to-left-enter'],
                   enterActive:
-                    accountPublicProps.activeTabIndex <
-                    accountPublicProps.prevTabIndex
+                    activeTabIndex < prevTabIndex
                       ? styles['left-to-right-enter-active']
                       : styles['right-to-left-enter-active'],
                   exit:
-                    accountPublicProps.activeTabIndex <
-                    accountPublicProps.prevTabIndex
+                    activeTabIndex < prevTabIndex
                       ? styles['left-to-right-exit']
                       : styles['right-to-left-exit'],
                   exitActive:
-                    accountPublicProps.activeTabIndex <
-                    accountPublicProps.prevTabIndex
+                    activeTabIndex < prevTabIndex
                       ? styles['left-to-right-exit-active']
                       : styles['right-to-left-exit-active'],
                 }}
@@ -292,3 +289,5 @@ export default function AccountPublicStatusDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(AccountPublicStatusDesktopComponent);

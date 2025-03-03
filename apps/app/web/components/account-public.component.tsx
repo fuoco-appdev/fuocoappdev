@@ -1,17 +1,12 @@
-import { useObservable } from '@ngneat/use-observable';
+/* eslint-disable no-restricted-globals */
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
-import AccountPublicController from '../../shared/controllers/account-public.controller';
-import AccountController from '../../shared/controllers/account.controller';
-import StoreController from '../../shared/controllers/store.controller';
-import WindowController from '../../shared/controllers/window.controller';
-import { AccountPublicState } from '../../shared/models/account-public.model';
-import { StoreState } from '../../shared/models/store.model';
-import { WindowState } from '../../shared/models/window.model';
 import { RoutePathsType } from '../../shared/route-paths-type';
 import { useQuery } from '../route-paths';
+import { DIContext } from './app.component';
 import { AccountPublicSuspenseDesktopComponent } from './desktop/suspense/account-public.suspense.desktop.component';
 import { AccountPublicSuspenseMobileComponent } from './mobile/suspense/account-public.suspense.mobile.component';
 
@@ -31,9 +26,6 @@ export function useAccountPublicOutletContext() {
 }
 
 export interface AccountPublicResponsiveProps {
-  windowProps: WindowState;
-  accountPublicProps: AccountPublicState;
-  storeProps: StoreState;
   isFollowing: boolean;
   isAccepted: boolean;
   likeCount: string | undefined;
@@ -50,84 +42,99 @@ export interface AccountPublicResponsiveProps {
   onMessage: () => void;
 }
 
-export default function AccountPublicComponent(): JSX.Element {
+function AccountPublicComponent(): JSX.Element {
   const { i18n } = useTranslation();
   const navigate = useNavigate();
   const query = useQuery();
   const { id } = useParams();
-  const [accountPublicProps] = useObservable(
-    AccountPublicController.model.store
-  );
-  const [accountPublicDebugProps] = useObservable(
-    AccountPublicController.model.debugStore
-  );
-  const [windowProps] = useObservable(WindowController.model.store);
-  const [storeProps] = useObservable(StoreController.model.store);
+  const { AccountPublicController, WindowController, AccountController } =
+    React.useContext(DIContext);
+  const {
+    suspense,
+    account,
+    likesScrollPosition,
+    accountFollower,
+    followerCount,
+    followingCount,
+    likeCount,
+  } = AccountPublicController.model;
   const [isFollowing, setIsFollowing] = React.useState<boolean>(false);
   const [isAccepted, setIsAccepted] = React.useState<boolean>(false);
-  const [likeCount, setLikeCount] = React.useState<string | undefined>(
-    undefined
-  );
-  const [followerCount, setFollowerCount] = React.useState<string | undefined>(
-    undefined
-  );
-  const [followingCount, setFollowingCount] = React.useState<
+  const [currentLikeCount, setCurrentLikeCount] = React.useState<
+    string | undefined
+  >(undefined);
+  const [currentFollowerCount, setCurrentFollowerCount] = React.useState<
+    string | undefined
+  >(undefined);
+  const [currentFollowingCount, setCurrentFollowingCount] = React.useState<
     string | undefined
   >(undefined);
   const renderCountRef = React.useRef<number>(0);
   const scrollOffsetTriggerGap = 16;
 
   const onFollow = () => {
+    if (!account) {
+      return;
+    }
+
     setTimeout(() => {
-      AccountController.requestFollowAsync(accountPublicProps.account.id);
+      AccountController.requestFollowAsync(account.id);
       setIsFollowing(true);
     }, 150);
   };
 
   const onUnfollow = () => {
+    if (!account) {
+      return;
+    }
+
     setTimeout(() => {
-      AccountController.requestUnfollowAsync(accountPublicProps.account.id);
+      AccountController.requestUnfollowAsync(account.id);
       setIsFollowing(false);
     }, 150);
   };
 
   const onRequested = () => {
+    if (!account) {
+      return;
+    }
+
     setTimeout(() => {
-      AccountController.requestUnfollowAsync(accountPublicProps.account.id);
+      AccountController.requestUnfollowAsync(account.id);
       setIsFollowing(false);
       setIsAccepted(false);
     }, 150);
   };
 
   const onLikesClick = () => {
-    if (!accountPublicProps.account) {
+    if (!account) {
       return;
     }
 
     navigate({
-      pathname: `${RoutePathsType.Account}/${accountPublicProps.account?.id}/likes`,
+      pathname: `${RoutePathsType.Account}/${account?.id}/likes`,
       search: query.toString(),
     });
   };
 
   const onFollowersClick = () => {
-    if (!accountPublicProps.account) {
+    if (!account) {
       return;
     }
 
     navigate({
-      pathname: `${RoutePathsType.AccountStatus}/${accountPublicProps.account?.id}/followers`,
+      pathname: `${RoutePathsType.AccountStatus}/${account?.id}/followers`,
       search: query.toString(),
     });
   };
 
   const onFollowingClick = () => {
-    if (!accountPublicProps.account) {
+    if (!account) {
       return;
     }
 
     navigate({
-      pathname: `${RoutePathsType.AccountStatus}/${accountPublicProps.account?.id}/following`,
+      pathname: `${RoutePathsType.AccountStatus}/${account?.id}/following`,
       search: query.toString(),
     });
   };
@@ -156,9 +163,8 @@ export default function AccountPublicComponent(): JSX.Element {
     if (
       AccountPublicController.model.activeTabId === RoutePathsType.AccountLikes
     ) {
-      if (accountPublicProps.likesScrollPosition) {
-        e.currentTarget.scrollTop =
-          accountPublicProps.likesScrollPosition as number;
+      if (likesScrollPosition) {
+        e.currentTarget.scrollTop = likesScrollPosition as number;
         AccountPublicController.updateLikesScrollPosition(undefined);
       }
     }
@@ -184,39 +190,29 @@ export default function AccountPublicComponent(): JSX.Element {
   }, [id]);
 
   React.useEffect(() => {
-    setIsFollowing(accountPublicProps.accountFollower?.isFollowing ?? false);
-    setIsAccepted(accountPublicProps.accountFollower?.accepted ?? false);
-  }, [accountPublicProps.accountFollower]);
+    setIsFollowing(accountFollower?.isFollowing ?? false);
+    setIsAccepted(accountFollower?.accepted ?? false);
+  }, [accountFollower]);
 
   React.useEffect(() => {
-    if (accountPublicProps.likeCount !== undefined) {
-      setLikeCount(
-        new Intl.NumberFormat(i18n.language).format(
-          accountPublicProps.likeCount
-        )
+    if (likeCount !== undefined) {
+      setCurrentLikeCount(
+        new Intl.NumberFormat(i18n.language).format(likeCount)
       );
     }
 
-    if (accountPublicProps.followerCount !== undefined) {
-      setFollowerCount(
-        new Intl.NumberFormat(i18n.language).format(
-          accountPublicProps.followerCount
-        )
+    if (followerCount !== undefined) {
+      setCurrentFollowerCount(
+        new Intl.NumberFormat(i18n.language).format(followerCount)
       );
     }
 
-    if (accountPublicProps.followingCount !== undefined) {
-      setFollowingCount(
-        new Intl.NumberFormat(i18n.language).format(
-          accountPublicProps.followingCount
-        )
+    if (followingCount !== undefined) {
+      setCurrentFollowingCount(
+        new Intl.NumberFormat(i18n.language).format(followingCount)
       );
     }
-  }, [
-    accountPublicProps.likeCount,
-    accountPublicProps.followerCount,
-    accountPublicProps.followingCount,
-  ]);
+  }, [likeCount, followerCount, followingCount]);
 
   React.useEffect(() => {
     if (
@@ -238,7 +234,7 @@ export default function AccountPublicComponent(): JSX.Element {
     </>
   );
 
-  if (accountPublicDebugProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
 
@@ -272,14 +268,11 @@ export default function AccountPublicComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <AccountPublicDesktopComponent
-          accountPublicProps={accountPublicProps}
-          windowProps={windowProps}
-          storeProps={storeProps}
           isFollowing={isFollowing}
           isAccepted={isAccepted}
-          likeCount={likeCount}
-          followerCount={followerCount}
-          followingCount={followingCount}
+          likeCount={currentLikeCount}
+          followerCount={currentFollowerCount}
+          followingCount={currentFollowingCount}
           onScroll={onScroll}
           onScrollLoad={onScrollLoad}
           onFollow={onFollow}
@@ -291,14 +284,11 @@ export default function AccountPublicComponent(): JSX.Element {
           onMessage={onMessage}
         />
         <AccountPublicMobileComponent
-          accountPublicProps={accountPublicProps}
-          windowProps={windowProps}
-          storeProps={storeProps}
           isFollowing={isFollowing}
           isAccepted={isAccepted}
-          likeCount={likeCount}
-          followerCount={followerCount}
-          followingCount={followingCount}
+          likeCount={currentLikeCount}
+          followerCount={currentFollowerCount}
+          followingCount={currentFollowingCount}
           onScroll={onScroll}
           onScrollLoad={onScrollLoad}
           onFollow={onFollow}
@@ -313,3 +303,5 @@ export default function AccountPublicComponent(): JSX.Element {
     </>
   );
 }
+
+export default observer(AccountPublicComponent);

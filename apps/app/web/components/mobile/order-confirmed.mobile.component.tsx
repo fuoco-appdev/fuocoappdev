@@ -1,31 +1,31 @@
-import { LineItem } from '@medusajs/medusa';
-import { useTranslation } from 'react-i18next';
-import OrderConfirmedController from '../../../shared/controllers/order-confirmed.controller';
-import styles from '../../modules/order-confirmed.module.scss';
-import ShippingItemComponent from '../shipping-item.component';
-// @ts-ignore
 import { Button, Dropdown, Scroll } from '@fuoco.appdev/web-components';
-import { formatAmount } from 'medusa-react';
+import { HttpTypes } from '@medusajs/types';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 import { createPortal } from 'react-dom';
-import WindowController from '../../../shared/controllers/window.controller';
+import { useTranslation } from 'react-i18next';
 import { RefundItem } from '../../../shared/models/order-confirmed.model';
+import styles from '../../modules/order-confirmed.module.scss';
+import { DIContext } from '../app.component';
 import { OrderConfirmedResponsiveProps } from '../order-confirmed.component';
 import RefundItemComponent from '../refund-item.component';
 import { ResponsiveMobile } from '../responsive.component';
+import ShippingItemComponent from '../shipping-item.component';
 import { OrderConfirmedSuspenseMobileComponent } from './suspense/order-confirmed.suspense.mobile.component';
 
-export default function OrderConfirmedMobileComponent({
-  orderConfirmedProps,
-  storeProps,
+function OrderConfirmedMobileComponent({
   quantity,
   openRefund,
   returnReasonOptions,
   setOpenRefund,
   formatStatus,
 }: OrderConfirmedResponsiveProps): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { OrderConfirmedController, StoreController, MedusaService } =
+    React.useContext(DIContext);
+  const { order, refundItems } = OrderConfirmedController.model;
+  const { selectedRegion } = StoreController.model;
 
-  const order = orderConfirmedProps.order;
   if (!order) {
     return <OrderConfirmedSuspenseMobileComponent />;
   }
@@ -65,7 +65,7 @@ export default function OrderConfirmedMobileComponent({
                   styles['order-number-text-mobile'],
                 ].join(' ')}
               >
-                {`#${orderConfirmedProps.order?.display_id}`}
+                {`#${order?.display_id}`}
               </div>
               <div
                 className={[
@@ -73,7 +73,7 @@ export default function OrderConfirmedMobileComponent({
                   styles['order-id-text-mobile'],
                 ].join(' ')}
               >
-                {orderConfirmedProps.order?.id}
+                {order?.id}
               </div>
               <div
                 className={[
@@ -124,18 +124,19 @@ export default function OrderConfirmedMobileComponent({
                 ].join(' ')}
               >
                 {order.items
-                  ?.sort((current: LineItem, next: LineItem) => {
-                    return (
-                      new Date(current.created_at).valueOf() -
-                      new Date(next.created_at).valueOf()
-                    );
-                  })
-                  .map((item: LineItem) => (
-                    <ShippingItemComponent
-                      key={item.id}
-                      item={item}
-                      storeProps={storeProps}
-                    />
+                  ?.sort(
+                    (
+                      current: HttpTypes.StoreOrderLineItem,
+                      next: HttpTypes.StoreOrderLineItem
+                    ) => {
+                      return (
+                        new Date(current.created_at).valueOf() -
+                        new Date(next.created_at).valueOf()
+                      );
+                    }
+                  )
+                  .map((item: HttpTypes.StoreOrderLineItem) => (
+                    <ShippingItemComponent key={item.id} item={item} />
                   ))}
               </div>
             </div>
@@ -283,7 +284,7 @@ export default function OrderConfirmedMobileComponent({
                       ].join(' ')}
                       key={order?.shipping_methods[0].id}
                     >
-                      {order?.shipping_methods[0].shipping_option.name}
+                      {order?.shipping_methods[0].id}
                     </div>
                   )}
               </div>
@@ -341,12 +342,12 @@ export default function OrderConfirmedMobileComponent({
                         styles['subtotal-text-mobile'],
                       ].join(' ')}
                     >
-                      {storeProps.selectedRegion &&
-                        formatAmount({
-                          amount: orderConfirmedProps.order?.subtotal ?? 0,
-                          region: storeProps.selectedRegion,
-                          includeTaxes: false,
-                        })}
+                      {selectedRegion &&
+                        MedusaService.formatAmount(
+                          order?.subtotal ?? 0,
+                          selectedRegion.currency_code,
+                          i18n.language
+                        )}
                     </div>
                   </div>
                   <div
@@ -369,12 +370,12 @@ export default function OrderConfirmedMobileComponent({
                         styles['total-detail-text-mobile'],
                       ].join(' ')}
                     >
-                      {storeProps.selectedRegion &&
-                        formatAmount({
-                          amount: -(order?.discount_total ?? 0),
-                          region: storeProps.selectedRegion,
-                          includeTaxes: false,
-                        })}
+                      {selectedRegion &&
+                        MedusaService.formatAmount(
+                          -(order?.discount_total ?? 0),
+                          selectedRegion.currency_code,
+                          i18n.language
+                        )}
                     </div>
                   </div>
                   <div
@@ -397,13 +398,12 @@ export default function OrderConfirmedMobileComponent({
                         styles['total-detail-text-mobile'],
                       ].join(' ')}
                     >
-                      {storeProps.selectedRegion &&
-                        formatAmount({
-                          amount:
-                            orderConfirmedProps.order?.shipping_total ?? 0,
-                          region: storeProps.selectedRegion,
-                          includeTaxes: false,
-                        })}
+                      {selectedRegion &&
+                        MedusaService.formatAmount(
+                          order?.shipping_total ?? 0,
+                          selectedRegion.currency_code,
+                          i18n.language
+                        )}
                     </div>
                   </div>
                   <div
@@ -426,12 +426,12 @@ export default function OrderConfirmedMobileComponent({
                         styles['total-detail-text-mobile'],
                       ].join(' ')}
                     >
-                      {storeProps.selectedRegion &&
-                        formatAmount({
-                          amount: orderConfirmedProps.order?.tax_total ?? 0,
-                          region: storeProps.selectedRegion,
-                          includeTaxes: false,
-                        })}
+                      {selectedRegion &&
+                        MedusaService.formatAmount(
+                          order?.tax_total ?? 0,
+                          selectedRegion.currency_code,
+                          i18n.language
+                        )}
                     </div>
                   </div>
                   <div
@@ -454,12 +454,12 @@ export default function OrderConfirmedMobileComponent({
                         styles['total-text-mobile'],
                       ].join(' ')}
                     >
-                      {storeProps.selectedRegion &&
-                        formatAmount({
-                          amount: orderConfirmedProps.order?.total ?? 0,
-                          region: storeProps.selectedRegion,
-                          includeTaxes: true,
-                        })}
+                      {selectedRegion &&
+                        MedusaService.formatAmount(
+                          order?.total ?? 0,
+                          selectedRegion.currency_code,
+                          i18n.language
+                        )}
                     </div>
                   </div>
                 </div>
@@ -469,71 +469,70 @@ export default function OrderConfirmedMobileComponent({
         </Scroll>
       </div>
       {createPortal(
-        <>
-          <Dropdown
-            classNames={{
-              touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
-            }}
-            open={openRefund}
-            touchScreen={true}
-            onClose={() => setOpenRefund(false)}
+        <Dropdown
+          classNames={{
+            touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
+          }}
+          open={openRefund}
+          touchScreen={true}
+          onClose={() => setOpenRefund(false)}
+        >
+          <div
+            className={[
+              styles['refund-items-container'],
+              styles['refund-items-container-mobile'],
+            ].join(' ')}
           >
-            <div
-              className={[
-                styles['refund-items-container'],
-                styles['refund-items-container-mobile'],
-              ].join(' ')}
-            >
-              {order?.items?.map((item: LineItem) => (
-                <RefundItemComponent
-                  item={item}
-                  refundItem={orderConfirmedProps.refundItems[item.id]}
-                  returnReasonOptions={returnReasonOptions}
-                  onChanged={(value) =>
-                    OrderConfirmedController.updateRefundItem(item.id, value)
-                  }
-                />
-              ))}
-            </div>
-            <div
-              className={[
-                styles['request-refund-button-container'],
-                styles['request-refund-button-container-mobile'],
-              ].join(' ')}
-            >
-              <Button
-                block={true}
-                size={'large'}
-                classNames={{
-                  button: styles['refund-button'],
-                }}
-                rippleProps={{
-                  color: 'rgba(233, 33, 66, .35)',
-                }}
-                disabled={
-                  Object.values(
-                    orderConfirmedProps.refundItems ?? ([] as RefundItem[])
-                  ).find((value: RefundItem) => value.quantity > 0) ===
-                  undefined
+            {order?.items?.map((item: HttpTypes.StoreOrderLineItem) => (
+              <RefundItemComponent
+                item={item}
+                refundItem={refundItems[item.id]}
+                returnReasonOptions={returnReasonOptions}
+                onChanged={(value) =>
+                  OrderConfirmedController.updateRefundItem(item.id, value)
                 }
-                onClick={async () => {
-                  await OrderConfirmedController.createReturnAsync();
-                  setOpenRefund(false);
-                  WindowController.addToast({
-                    key: `refund-request-success-${Math.random()}`,
-                    message: t('requestRefund') ?? '',
-                    description: t('requestRefundSuccessMessage') ?? '',
-                    type: 'success',
-                  });
-                }}
-              >
-                {t('requestRefund')}
-              </Button>
-            </div>
-          </Dropdown>
-        </>,
+              />
+            ))}
+          </div>
+          <div
+            className={[
+              styles['request-refund-button-container'],
+              styles['request-refund-button-container-mobile'],
+            ].join(' ')}
+          >
+            <Button
+              block={true}
+              size={'large'}
+              classNames={{
+                button: styles['refund-button'],
+              }}
+              rippleProps={{
+                color: 'rgba(233, 33, 66, .35)',
+              }}
+              disabled={
+                Object.values(refundItems ?? ([] as RefundItem[])).find(
+                  (value: RefundItem) => value.quantity > 0
+                ) === undefined
+              }
+              onClick={async () => {
+                await OrderConfirmedController.createReturnAsync();
+                setOpenRefund(false);
+                // WindowController.addToast({
+                //   key: `refund-request-success-${Math.random()}`,
+                //   message: t('requestRefund') ?? '',
+                //   description: t('requestRefundSuccessMessage') ?? '',
+                //   type: 'success',
+                // });
+              }}
+            >
+              {t('requestRefund')}
+            </Button>
+          </div>
+        </Dropdown>,
         document.body
       )}
     </ResponsiveMobile>
   );
 }
+
+export default observer(OrderConfirmedMobileComponent);

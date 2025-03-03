@@ -1,13 +1,19 @@
 {
-  "supabase": {
-    "url": "http://{localhost}:8000",
-    "functions_url": "http://0.0.0.0:8001"
+  "api": {
+    "url": "https://dev-api.mindiapp.com"
+  },
+  "kong": {
+    "url": "https://dev-kong.mindiapp.com"
+  },
+  "logflare": {
+    "url": "https://dev-logflare.mindiapp.com",
+    "source": "a1e51b6e-63c8-4f46-8969-ba93bada947d"
   },
   "medusa": {
-    "url": "http://{localhost}:9000"
+    "url": "https://dev-medusa.mindiapp.com"
   },
   "meilisearch": {
-    "url": "http://{localhost}:7700"
+    "url": "https://dev-meilisearch.mindiapp.com"
   },
   "mapbox": {
     "style_url": "mapbox://styles/lucasfuoco/cli44l6r902mw01qyaoqoa46t"
@@ -16,7 +22,8 @@
     "url": "https://nyc3.digitaloceanspaces.com",
     "bucket_name": "medusa"
   },
-  "discord": {
-    "url": "https://discord.gg/ZcR7Zn6b"
+  "open_webui": {
+      "url": "https://dev-open-webui.mindiapp.com",
+      "text_model": "nemotron-mini:latest"
   }
 }

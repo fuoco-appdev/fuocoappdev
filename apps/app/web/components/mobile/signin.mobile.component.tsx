@@ -1,17 +1,19 @@
+/* eslint-disable jsx-a11y/alt-text */
 import { Auth } from '@fuoco.appdev/web-components';
 import { AuthError } from '@supabase/supabase-js';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { animated, config, useTransition } from 'react-spring';
-import SigninController from '../../../shared/controllers/signin.controller';
 import { RoutePathsType } from '../../../shared/route-paths-type';
 import styles from '../../modules/signin.module.scss';
 import { useQuery } from '../../route-paths';
+import { DIContext } from '../app.component';
 import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 import { SigninResponsiveProps } from '../signin.component';
-export default function SigninMobileComponent({
-  signInProps,
+
+function SigninMobileComponent({
   emailError,
   passwordError,
   setAuthError,
@@ -20,6 +22,8 @@ export default function SigninMobileComponent({
   const navigate = useNavigate();
   const query = useQuery();
   const { t } = useTranslation();
+  const { SigninController } = React.useContext(DIContext);
+  const { supabaseClient, email, password } = SigninController.model;
 
   useMobileEffect(() => {
     setShow(true);
@@ -47,7 +51,7 @@ export default function SigninMobileComponent({
               item && (
                 <animated.div style={style}>
                   <div className={styles['signin-container']}>
-                    {signInProps.supabaseClient && (
+                    {supabaseClient && (
                       <Auth
                         touchScreen={true}
                         classNames={{
@@ -88,8 +92,8 @@ export default function SigninMobileComponent({
                             color: 'rgba(233, 33, 66, .35)',
                           },
                         }}
-                        emailValue={signInProps.email ?? ''}
-                        passwordValue={signInProps.password ?? ''}
+                        emailValue={email ?? ''}
+                        passwordValue={password ?? ''}
                         providers={['google']}
                         view={'sign_in'}
                         socialColors={false}
@@ -105,7 +109,7 @@ export default function SigninMobileComponent({
                         }}
                         emailErrorMessage={emailError}
                         passwordErrorMessage={passwordError}
-                        supabaseClient={signInProps.supabaseClient}
+                        supabaseClient={supabaseClient}
                         onEmailChanged={(e) =>
                           SigninController.updateEmail(e.target.value)
                         }
@@ -177,3 +181,5 @@ export default function SigninMobileComponent({
     </ResponsiveMobile>
   );
 }
+
+export default observer(SigninMobileComponent);

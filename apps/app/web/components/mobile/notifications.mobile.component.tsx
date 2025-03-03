@@ -1,14 +1,14 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Line, Scroll } from '@fuoco.appdev/web-components';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import NotificationsController from '../../../shared/controllers/notifications.controller';
 import styles from '../../modules/notifications.module.scss';
+import { DIContext } from '../app.component';
 import NotificationItemComponent from '../notification-item.component';
 import { NotificationsResponsiveProps } from '../notifications.component';
 import { ResponsiveMobile } from '../responsive.component';
 
 export default function NotificationsMobileComponent({
-  notificationsProps,
   notifications,
   onScroll,
   onLoad,
@@ -16,6 +16,9 @@ export default function NotificationsMobileComponent({
   const scrollContainerRef = React.createRef<HTMLDivElement>();
   const topBarRef = React.useRef<HTMLDivElement | null>(null);
   const { t, i18n } = useTranslation();
+  const { NotificationsController } = React.useContext(DIContext);
+  const { hasMoreNotifications, isLoading, accountNotifications, isReloading } =
+    NotificationsController.model;
   let prevPreviewScrollTop = 0;
   let yPosition = 0;
 
@@ -67,7 +70,7 @@ export default function NotificationsMobileComponent({
               className={styles['loading-ring']}
             />
           }
-          isLoadable={notificationsProps.hasMoreNotifications}
+          isLoadable={hasMoreNotifications}
           showIndicatorThreshold={56}
           reloadThreshold={96}
           pullIndicatorComponent={
@@ -75,7 +78,7 @@ export default function NotificationsMobileComponent({
               <Line.ArrowDownward size={24} />
             </div>
           }
-          isReloading={notificationsProps.isReloading}
+          isReloading={isReloading}
           onReload={() => NotificationsController.reloadNotificationsAsync()}
           loadComponent={
             <img
@@ -83,7 +86,7 @@ export default function NotificationsMobileComponent({
               className={styles['loading-ring']}
             />
           }
-          isLoading={notificationsProps.isLoading}
+          isLoading={isLoading}
           onLoad={() => NotificationsController.onNextScrollAsync()}
           onScroll={(progress, scrollRef, contentRef) => {
             const elementHeight = topBarRef.current?.clientHeight ?? 0;
@@ -137,31 +140,29 @@ export default function NotificationsMobileComponent({
                     <NotificationItemComponent
                       key={notification.id}
                       notification={notification}
-                      notificationsProps={notificationsProps}
                       fromNow={key}
                     />
                   ))}
                 </div>
               );
             })}
-            {!notificationsProps.isLoading &&
-              notificationsProps.accountNotifications.length <= 0 && (
+            {!isLoading && accountNotifications.length <= 0 && (
+              <div
+                className={[
+                  styles['no-notifications-container'],
+                  styles['no-notifications-container-mobile'],
+                ].join(' ')}
+              >
                 <div
                   className={[
-                    styles['no-notifications-container'],
-                    styles['no-notifications-container-mobile'],
+                    styles['no-items-text'],
+                    styles['no-items-text-mobile'],
                   ].join(' ')}
                 >
-                  <div
-                    className={[
-                      styles['no-items-text'],
-                      styles['no-items-text-mobile'],
-                    ].join(' ')}
-                  >
-                    {t('noNotifications')}
-                  </div>
+                  {t('noNotifications')}
                 </div>
-              )}
+              </div>
+            )}
           </div>
         </Scroll>
       </div>

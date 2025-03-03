@@ -1,21 +1,22 @@
 import { Auth } from '@fuoco.appdev/web-components';
 import { AuthError } from '@supabase/supabase-js';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { animated, config, useTransition } from 'react-spring';
-import WindowController from '../../../shared/controllers/window.controller';
 import { RoutePathsType } from '../../../shared/route-paths-type';
 import styles from '../../modules/forgot-password.module.scss';
 import { useQuery } from '../../route-paths';
+import { DIContext } from '../app.component';
 import { ForgotPasswordResponsiveProps } from '../forgot-password.component';
 import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
 
-export default function ForgotPasswordDesktopComponent({
-  forgotPasswordProps,
-}: ForgotPasswordResponsiveProps): JSX.Element {
+function ForgotPasswordDesktopComponent({}: ForgotPasswordResponsiveProps): JSX.Element {
   const navigate = useNavigate();
   const query = useQuery();
+  const { ForgotPasswordController } = React.useContext(DIContext);
+  const { supabaseClient } = ForgotPasswordController.model;
   const [show, setShow] = React.useState(false);
   const [error, setError] = React.useState<AuthError | null>(null);
   const { t } = useTranslation();
@@ -45,7 +46,7 @@ export default function ForgotPasswordDesktopComponent({
             (style, item) =>
               item && (
                 <animated.div style={style}>
-                  {forgotPasswordProps.supabaseClient && (
+                  {supabaseClient && (
                     <Auth.ForgottenPassword
                       classNames={{
                         input: {
@@ -70,12 +71,12 @@ export default function ForgotPasswordDesktopComponent({
                         goBackToSignIn: t('goBackToSignIn') ?? '',
                       }}
                       onResetPasswordSent={() => {
-                        WindowController.addToast({
-                          key: 'reset-password-sent',
-                          message: t('passwordReset') ?? '',
-                          description: t('passwordResetDescription') ?? '',
-                          type: 'loading',
-                        });
+                        // WindowController.addToast({
+                        //   key: 'reset-password-sent',
+                        //   message: t('passwordReset') ?? '',
+                        //   description: t('passwordResetDescription') ?? '',
+                        //   type: 'loading',
+                        // });
                         setError(null);
                       }}
                       onSigninRedirect={() =>
@@ -90,7 +91,7 @@ export default function ForgotPasswordDesktopComponent({
                       onResetPasswordError={(error: AuthError) =>
                         setError(error)
                       }
-                      supabaseClient={forgotPasswordProps.supabaseClient}
+                      supabaseClient={supabaseClient}
                       redirectTo={`${window.location.origin}${RoutePathsType.ResetPassword}`}
                     />
                   )}
@@ -102,3 +103,5 @@ export default function ForgotPasswordDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(ForgotPasswordDesktopComponent);

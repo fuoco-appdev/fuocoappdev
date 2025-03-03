@@ -1,13 +1,9 @@
-import { useObservable } from '@ngneat/use-observable';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import AccountController from '../../shared/controllers/account.controller';
-import {
-  AccountDocument,
-  AccountState,
-} from '../../shared/models/account.model';
+import { AccountDocument } from '../../shared/models/account.model';
 import { AccountFollowerResponse } from '../../shared/protobuf/account-follower_pb';
 import { StorageFolderType } from '../../shared/protobuf/common_pb';
-import BucketService from '../../shared/services/bucket.service';
+import { DIContext } from './app.component';
 import { AccountFollowItemSuspenseDesktopComponent } from './desktop/suspense/account-follow-item.suspense.desktop.component';
 import { AccountFollowItemSuspenseMobileComponent } from './mobile/suspense/account-follow-item.suspense.mobile.component';
 
@@ -19,7 +15,6 @@ const AccountFollowItemMobileComponent = React.lazy(
 );
 
 export interface AccountFollowItemProps {
-  accountProps: AccountState;
   account: AccountDocument;
   follower: AccountFollowerResponse | null;
   isRequest: boolean;
@@ -38,8 +33,7 @@ export interface AccountFollowItemResponsiveProps
   isAccepted: boolean;
 }
 
-export default function AccountFollowItemComponent({
-  accountProps,
+function AccountFollowItemComponent({
   account,
   follower,
   isRequest,
@@ -50,7 +44,8 @@ export default function AccountFollowItemComponent({
   onConfirm,
   onRemove,
 }: AccountFollowItemProps): JSX.Element {
-  const [accountDebugProps] = useObservable(AccountController.model.debugStore);
+  const { AccountController, BucketService } = React.useContext(DIContext);
+  const { suspense } = AccountController.model;
   const [profileUrl, setProfileUrl] = React.useState<string | undefined>(
     undefined
   );
@@ -125,14 +120,13 @@ export default function AccountFollowItemComponent({
     </>
   );
 
-  if (accountDebugProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
 
   return (
     <React.Suspense fallback={suspenceComponent}>
       <AccountFollowItemDesktopComponent
-        accountProps={accountProps}
         account={account}
         follower={follower}
         isRequest={isRequest}
@@ -147,7 +141,6 @@ export default function AccountFollowItemComponent({
         onRemove={onRemoveOverride}
       />
       <AccountFollowItemMobileComponent
-        accountProps={accountProps}
         account={account}
         follower={follower}
         isRequest={isRequest}
@@ -164,3 +157,5 @@ export default function AccountFollowItemComponent({
     </React.Suspense>
   );
 }
+
+export default observer(AccountFollowItemComponent);

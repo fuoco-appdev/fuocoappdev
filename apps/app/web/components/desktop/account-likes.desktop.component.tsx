@@ -1,5 +1,6 @@
 import { Button, Line, Modal } from '@fuoco.appdev/web-components';
-import { Product } from '@medusajs/medusa';
+import { HttpTypes } from '@medusajs/types';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
@@ -11,13 +12,12 @@ import styles from '../../modules/account-likes.module.scss';
 import { useQuery } from '../../route-paths';
 import { AccountLikesResponsiveProps } from '../account-likes.component';
 import { useAccountOutletContext } from '../account.component';
+import { DIContext } from '../app.component';
 import CartVariantItemComponent from '../cart-variant-item.component';
 import ProductPreviewComponent from '../product-preview.component';
 import { ResponsiveDesktop } from '../responsive.component';
 
-export default function AccountLikesDesktopComponent({
-  storeProps,
-  accountProps,
+function AccountLikesDesktopComponent({
   openCartVariants,
   variantQuantities,
   isPreviewLoading,
@@ -35,6 +35,13 @@ export default function AccountLikesDesktopComponent({
   const navigate = useNavigate();
   const query = useQuery();
   const context = useAccountOutletContext();
+  const { AccountController } = React.useContext(DIContext);
+  const {
+    likedProducts,
+    productLikesMetadata,
+    selectedLikedProduct,
+    areLikedProductsLoading,
+  } = AccountController.model;
 
   return (
     <ResponsiveDesktop>
@@ -48,93 +55,92 @@ export default function AccountLikesDesktopComponent({
             styles['items-container-desktop'],
           ].join(' ')}
         >
-          {accountProps.likedProducts.map((product: Product, index: number) => {
-            const productLikesMetadata = Object.keys(
-              accountProps.productLikesMetadata
-            ).includes(product.id ?? '')
-              ? accountProps.productLikesMetadata[product.id ?? '']
-              : null;
-            return (
-              <ProductPreviewComponent
-                parentRef={rootRef}
-                key={index}
-                storeProps={storeProps}
-                accountProps={accountProps}
-                purchasable={false}
-                thumbnail={product.thumbnail ?? undefined}
-                title={product.title ?? undefined}
-                subtitle={product.subtitle ?? undefined}
-                description={product.description ?? undefined}
-                type={product.type ?? undefined}
-                pricedProduct={null}
-                isLoading={
-                  isPreviewLoading &&
-                  accountProps.selectedLikedProduct?.id === product?.id
-                }
-                likesMetadata={
-                  productLikesMetadata ?? ProductLikesMetadataResponse.prototype
-                }
-                onClick={() =>
-                  onProductPreviewClick(
-                    context?.scrollContainerRef?.current?.scrollTop ?? 0,
-                    product,
-                    productLikesMetadata
-                  )
-                }
-                onRest={() => onProductPreviewRest(product)}
-                onAddToCart={() => onProductPreviewAddToCart(product)}
-                onLikeChanged={(isLiked: boolean) =>
-                  onProductPreviewLikeChanged(isLiked, product)
-                }
-              />
-            );
-          })}
-          {!accountProps.areLikedProductsLoading &&
-            accountProps.likedProducts.length <= 0 && (
+          {likedProducts.map(
+            (product: HttpTypes.StoreProduct, index: number) => {
+              const productLikesMetadataKeys = Object.keys(
+                productLikesMetadata
+              ).includes(product.id ?? '')
+                ? productLikesMetadata[product.id ?? '']
+                : null;
+              return (
+                <ProductPreviewComponent
+                  parentRef={rootRef}
+                  key={index}
+                  purchasable={false}
+                  thumbnail={product.thumbnail ?? undefined}
+                  title={product.title ?? undefined}
+                  subtitle={product.subtitle ?? undefined}
+                  description={product.description ?? undefined}
+                  type={product.type ?? undefined}
+                  pricedProduct={null}
+                  isLoading={
+                    isPreviewLoading && selectedLikedProduct?.id === product?.id
+                  }
+                  likesMetadata={
+                    productLikesMetadataKeys ??
+                    ProductLikesMetadataResponse.prototype
+                  }
+                  onClick={() =>
+                    onProductPreviewClick(
+                      context?.scrollContainerRef?.current?.scrollTop ?? 0,
+                      product,
+                      productLikesMetadataKeys
+                    )
+                  }
+                  onRest={() => onProductPreviewRest(product)}
+                  onAddToCart={() => onProductPreviewAddToCart(product)}
+                  onLikeChanged={(isLiked: boolean) =>
+                    onProductPreviewLikeChanged(isLiked, product)
+                  }
+                />
+              );
+            }
+          )}
+          {!areLikedProductsLoading && likedProducts.length <= 0 && (
+            <div
+              className={[
+                styles['no-liked-products-container'],
+                styles['no-liked-products-container-desktop'],
+              ].join(' ')}
+            >
               <div
                 className={[
-                  styles['no-liked-products-container'],
-                  styles['no-liked-products-container-desktop'],
+                  styles['no-items-text'],
+                  styles['no-items-text-desktop'],
                 ].join(' ')}
               >
-                <div
-                  className={[
-                    styles['no-items-text'],
-                    styles['no-items-text-desktop'],
-                  ].join(' ')}
-                >
-                  {t('noLikedProducts')}
-                </div>
-                <div
-                  className={[
-                    styles['no-items-container'],
-                    styles['no-items-container-desktop'],
-                  ].join(' ')}
-                >
-                  <Button
-                    classNames={{
-                      button: styles['outline-button'],
-                    }}
-                    rippleProps={{
-                      color: 'rgba(133, 38, 122, .35)',
-                    }}
-                    size={'large'}
-                    onClick={() =>
-                      setTimeout(
-                        () =>
-                          navigate({
-                            pathname: RoutePathsType.Store,
-                            search: query.toString(),
-                          }),
-                        75
-                      )
-                    }
-                  >
-                    {t('store')}
-                  </Button>
-                </div>
+                {t('noLikedProducts')}
               </div>
-            )}
+              <div
+                className={[
+                  styles['no-items-container'],
+                  styles['no-items-container-desktop'],
+                ].join(' ')}
+              >
+                <Button
+                  classNames={{
+                    button: styles['outline-button'],
+                  }}
+                  rippleProps={{
+                    color: 'rgba(133, 38, 122, .35)',
+                  }}
+                  size={'large'}
+                  onClick={() =>
+                    setTimeout(
+                      () =>
+                        navigate({
+                          pathname: RoutePathsType.Store,
+                          search: query.toString(),
+                        }),
+                      75
+                    )
+                  }
+                >
+                  {t('store')}
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
       {ReactDOM.createPortal(
@@ -187,17 +193,15 @@ export default function AccountLikesDesktopComponent({
               styles['add-variants-container-desktop'],
             ].join(' ')}
           >
-            {accountProps.selectedLikedProduct?.variants.map((variant) => {
+            {selectedLikedProduct?.variants?.map((variant) => {
               return (
                 <CartVariantItemComponent
                   productType={
-                    accountProps.selectedLikedProduct?.type
-                      ?.value as MedusaProductTypeNames
+                    selectedLikedProduct?.type?.value as MedusaProductTypeNames
                   }
                   key={variant.id}
-                  product={accountProps.selectedLikedProduct}
+                  product={selectedLikedProduct}
                   variant={variant}
-                  storeProps={storeProps}
                   variantQuantities={variantQuantities}
                   setVariantQuantities={setVariantQuantities}
                 />
@@ -236,3 +240,5 @@ export default function AccountLikesDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(AccountLikesDesktopComponent);

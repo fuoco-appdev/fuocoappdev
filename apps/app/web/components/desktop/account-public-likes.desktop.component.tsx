@@ -1,5 +1,6 @@
 import { Button, Line, Modal } from '@fuoco.appdev/web-components';
-import { Product } from '@medusajs/medusa';
+import { HttpTypes } from '@medusajs/types';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
@@ -8,14 +9,12 @@ import { MedusaProductTypeNames } from '../../../shared/types/medusa.type';
 import styles from '../../modules/account-likes.module.scss';
 import { AccountPublicLikesResponsiveProps } from '../account-public-likes.component';
 import { useAccountPublicOutletContext } from '../account-public.component';
+import { DIContext } from '../app.component';
 import CartVariantItemComponent from '../cart-variant-item.component';
 import ProductPreviewComponent from '../product-preview.component';
 import { ResponsiveDesktop } from '../responsive.component';
 
-export default function AccountPublicLikesDesktopComponent({
-  storeProps,
-  accountProps,
-  accountPublicProps,
+function AccountPublicLikesDesktopComponent({
   openCartVariants,
   variantQuantities,
   isPreviewLoading,
@@ -31,6 +30,14 @@ export default function AccountPublicLikesDesktopComponent({
   const { t } = useTranslation();
   const rootRef = React.createRef<HTMLDivElement>();
   const context = useAccountPublicOutletContext();
+  const { AccountPublicController } = React.useContext(DIContext);
+  const {
+    account,
+    likedProducts,
+    productLikesMetadata,
+    selectedLikedProduct,
+    areLikedProductsLoading,
+  } = AccountPublicController.model;
 
   return (
     <ResponsiveDesktop>
@@ -44,19 +51,17 @@ export default function AccountPublicLikesDesktopComponent({
             styles['items-container-desktop'],
           ].join(' ')}
         >
-          {accountPublicProps.likedProducts.map(
-            (product: Product, index: number) => {
-              const productLikesMetadata = Object.keys(
-                accountPublicProps.productLikesMetadata
+          {likedProducts.map(
+            (product: HttpTypes.StoreProduct, index: number) => {
+              const productLikesMetadataKeys = Object.keys(
+                productLikesMetadata
               ).includes(product.id ?? '')
-                ? accountPublicProps.productLikesMetadata[product.id ?? '']
+                ? productLikesMetadata[product.id ?? '']
                 : null;
               return (
                 <ProductPreviewComponent
                   parentRef={rootRef}
                   key={index}
-                  storeProps={storeProps}
-                  accountProps={accountProps}
                   purchasable={false}
                   thumbnail={product.thumbnail ?? undefined}
                   title={product.title ?? undefined}
@@ -65,18 +70,17 @@ export default function AccountPublicLikesDesktopComponent({
                   type={product.type ?? undefined}
                   pricedProduct={null}
                   isLoading={
-                    isPreviewLoading &&
-                    accountPublicProps.selectedLikedProduct?.id === product?.id
+                    isPreviewLoading && selectedLikedProduct?.id === product?.id
                   }
                   likesMetadata={
-                    productLikesMetadata ??
+                    productLikesMetadataKeys ??
                     ProductLikesMetadataResponse.prototype
                   }
                   onClick={() =>
                     onProductPreviewClick(
                       context?.scrollContainerRef?.current?.scrollTop ?? 0,
                       product,
-                      productLikesMetadata
+                      productLikesMetadataKeys
                     )
                   }
                   onRest={() => onProductPreviewRest(product)}
@@ -92,29 +96,28 @@ export default function AccountPublicLikesDesktopComponent({
             src={'../assets/svg/ring-resize-dark.svg'}
             className={styles['loading-ring']}
             style={{
-              maxHeight: accountPublicProps.areLikedProductsLoading ? 24 : 0,
+              maxHeight: areLikedProductsLoading ? 24 : 0,
             }}
           />
-          {!accountPublicProps.areLikedProductsLoading &&
-            accountPublicProps.likedProducts.length <= 0 && (
+          {!areLikedProductsLoading && likedProducts.length <= 0 && (
+            <div
+              className={[
+                styles['no-liked-products-container'],
+                styles['no-liked-products-container-desktop'],
+              ].join(' ')}
+            >
               <div
                 className={[
-                  styles['no-liked-products-container'],
-                  styles['no-liked-products-container-desktop'],
+                  styles['no-items-text'],
+                  styles['no-items-text-desktop'],
                 ].join(' ')}
               >
-                <div
-                  className={[
-                    styles['no-items-text'],
-                    styles['no-items-text-desktop'],
-                  ].join(' ')}
-                >
-                  {t('userNoLikedProducts', {
-                    username: accountPublicProps.account?.username ?? '',
-                  })}
-                </div>
+                {t('userNoLikedProducts', {
+                  username: account?.username ?? '',
+                })}
               </div>
-            )}
+            </div>
+          )}
         </div>
       </div>
       {ReactDOM.createPortal(
@@ -167,24 +170,20 @@ export default function AccountPublicLikesDesktopComponent({
               styles['add-variants-container-desktop'],
             ].join(' ')}
           >
-            {accountPublicProps.selectedLikedProduct?.variants.map(
-              (variant) => {
-                return (
-                  <CartVariantItemComponent
-                    productType={
-                      accountPublicProps.selectedLikedProduct?.type
-                        ?.value as MedusaProductTypeNames
-                    }
-                    key={variant.id}
-                    product={accountPublicProps.selectedLikedProduct}
-                    variant={variant}
-                    storeProps={storeProps}
-                    variantQuantities={variantQuantities}
-                    setVariantQuantities={setVariantQuantities}
-                  />
-                );
-              }
-            )}
+            {selectedLikedProduct?.variants?.map((variant) => {
+              return (
+                <CartVariantItemComponent
+                  productType={
+                    selectedLikedProduct?.type?.value as MedusaProductTypeNames
+                  }
+                  key={variant.id}
+                  product={selectedLikedProduct}
+                  variant={variant}
+                  variantQuantities={variantQuantities}
+                  setVariantQuantities={setVariantQuantities}
+                />
+              );
+            })}
             <Button
               classNames={{
                 container: [
@@ -218,3 +217,5 @@ export default function AccountPublicLikesDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(AccountPublicLikesDesktopComponent);

@@ -3,22 +3,26 @@
 import '@fuoco.appdev/web-components/dist/esm/index.css';
 import { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import 'mapbox-gl/src/css/mapbox-gl.css';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useCookies } from 'react-cookie';
 import 'react-loading-skeleton/dist/skeleton.css';
-import { useLocation, useNavigate } from 'react-router-dom';
-import AppController from '../../shared/controllers/app.controller';
-import WindowController from '../../shared/controllers/window.controller';
-import MedusaService from '../../shared/services/medusa.service';
-import SupabaseService from '../../shared/services/supabase.service';
+import { useLocation } from 'react-router-dom';
+import register, { AppDIContainer } from '../register';
 import '../styles.scss';
 import WindowComponent from './window.component';
 
+export const DIContainer = register();
+export const DIContext = React.createContext<AppDIContainer>(DIContainer);
+
 export interface AppProps {}
 
-function AppComponent({}: AppProps): JSX.Element {
+function AppComponent(): JSX.Element {
+  const windowController = DIContainer.get('WindowController');
+  const supabaseService = DIContainer.get('SupabaseService');
+  const medusaService = DIContainer.get('MedusaService');
+  const appController = DIContainer.get('AppController');
   const location = useLocation();
-  const navigate = useNavigate();
   const [cookies, setCookie, removeCookie] = useCookies();
   const renderCountRef = React.useRef<number>(0);
   const memoCountRef = React.useRef<number>(0);
@@ -27,7 +31,7 @@ function AppComponent({}: AppProps): JSX.Element {
       return;
     }
 
-    AppController.debugSuspense(!AppController.model.suspense);
+    appController.debugSuspense(!appController.model.suspense);
   }, []);
 
   React.useEffect(() => {
@@ -43,8 +47,8 @@ function AppComponent({}: AppProps): JSX.Element {
   React.useEffect(() => {
     renderCountRef.current += 1;
 
-    AppController.initializeServices(renderCountRef.current);
-    const subscription = SupabaseService.subscribeToAuthStateChanged(
+    appController.initializeServices(renderCountRef.current);
+    const subscription = supabaseService.subscribeToAuthStateChanged(
       async (event: AuthChangeEvent, session: Session | null) => {
         if (event === 'TOKEN_REFRESHED' && session) {
           setCookie('sb-refresh-token', session.refresh_token);
@@ -58,16 +62,16 @@ function AppComponent({}: AppProps): JSX.Element {
         } else if (event === 'SIGNED_OUT') {
           removeCookie('sb-refresh-token');
           removeCookie('sb-access-token');
-          await MedusaService.deleteSessionAsync();
+          await medusaService.deleteSessionAsync();
         }
       }
     );
-    AppController.initialize(renderCountRef.current);
-    AppController.load(renderCountRef.current);
+    appController.initialize(renderCountRef.current);
+    appController.load(renderCountRef.current);
     return () => {
       subscription?.unsubscribe();
-      AppController.disposeLoad(renderCountRef.current);
-      AppController.disposeInitialization(renderCountRef.current);
+      appController.disposeLoad(renderCountRef.current);
+      appController.disposeInitialization(renderCountRef.current);
     };
   }, []);
 
@@ -100,10 +104,10 @@ function AppComponent({}: AppProps): JSX.Element {
       Object.keys(cookies).includes('sb-refresh-token') &&
       cookies['sb-refresh-token'];
     if (
-      accessToken !== SupabaseService.session?.access_token ||
-      refreshToken !== SupabaseService.session?.refresh_token
+      accessToken !== supabaseService.session?.access_token ||
+      refreshToken !== supabaseService.session?.refresh_token
     ) {
-      SupabaseService.setSessionAsync(accessToken, refreshToken);
+      supabaseService.setSessionAsync(accessToken, refreshToken);
     }
   }, [cookies]);
 
@@ -113,10 +117,10 @@ function AppComponent({}: AppProps): JSX.Element {
       return;
     }
 
-    WindowController.updateLoadedLocationPath(window.location.pathname);
+    windowController.updateLoadedLocationPath(window.location.pathname);
   }, []);
 
   return <WindowComponent />;
 }
 
-export default AppComponent;
+export default observer(AppComponent);

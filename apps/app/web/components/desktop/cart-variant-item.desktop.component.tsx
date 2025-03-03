@@ -1,22 +1,25 @@
+/* eslint-disable jsx-a11y/alt-text */
 import { InputNumber, Line } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import styles from '../../modules/cart-variant-item.module.scss';
-// @ts-ignore
-import { formatAmount } from 'medusa-react';
+import i18n from 'shared/i18n';
 import { MedusaProductTypeNames } from '../../../shared/types/medusa.type';
+import styles from '../../modules/cart-variant-item.module.scss';
+import { DIContext } from '../app.component';
 import { CartVariantItemResponsiveProps } from '../cart-variant-item.component';
 import { ResponsiveDesktop } from '../responsive.component';
 
-export default function CartVariantItemDesktopComponent({
+function CartVariantItemDesktopComponent({
   productType,
   product,
   variant,
-  storeProps,
   variantQuantities,
   onQuantitiesChanged,
 }: CartVariantItemResponsiveProps): JSX.Element {
   const { t } = useTranslation();
-
+  const { StoreController, MedusaService } = React.useContext(DIContext);
+  const { selectedRegion } = StoreController.model;
   return (
     <ResponsiveDesktop>
       <div
@@ -125,12 +128,12 @@ export default function CartVariantItemDesktopComponent({
                 styles['variant-price-desktop'],
               ].join(' ')}
             >
-              {storeProps.selectedRegion &&
-                formatAmount({
-                  amount: variant.calculated_price ?? 0,
-                  region: storeProps.selectedRegion,
-                  includeTaxes: false,
-                })}
+              {selectedRegion &&
+                MedusaService.formatAmount(
+                  variant.calculated_price?.calculated_amount ?? 0,
+                  selectedRegion.currency_code,
+                  i18n.language
+                )}
             </div>
           </div>
 
@@ -180,3 +183,5 @@ export default function CartVariantItemDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(CartVariantItemDesktopComponent);

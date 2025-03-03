@@ -1,12 +1,10 @@
-import { Order } from '@medusajs/medusa';
-import { useObservable } from '@ngneat/use-observable';
+import { HttpTypes } from '@medusajs/types';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import NotificationsController from '../../shared/controllers/notifications.controller';
-import { NotificationsState } from '../../shared/models/notifications.model';
 import { AccountNotificationResponse } from '../../shared/protobuf/account-notification_pb';
 import { StorageFolderType } from '../../shared/protobuf/common_pb';
 import { AccountData } from '../../shared/services/account-notification.service';
-import BucketService from '../../shared/services/bucket.service';
+import { DIContext } from './app.component';
 import { NotificationItemSuspenseDesktopComponent } from './desktop/suspense/notification-item.suspense.desktop.component';
 import { NotificationItemSuspenseMobileComponent } from './mobile/suspense/notification-item.suspense.mobile.component';
 
@@ -45,7 +43,6 @@ const AccountNotificationItemMobileComponent = React.lazy(
 
 export interface NotificationItemProps {
   notification: AccountNotificationResponse;
-  notificationsProps: NotificationsState;
   fromNow: string | null;
 }
 
@@ -54,7 +51,7 @@ export interface NotificationItemResponsiveProps
 
 export interface OrderNotificationItemProps
   extends NotificationItemResponsiveProps {
-  order: Order | undefined;
+  order: HttpTypes.StoreOrder | undefined;
 }
 
 export interface AccountNotificationItemProps
@@ -68,14 +65,27 @@ export interface AccountNotificationItemProps
   onRequested: () => void;
 }
 
-export default function NotificationItemComponent({
+function NotificationItemComponent({
   notification,
-  notificationsProps,
   fromNow,
 }: NotificationItemProps): JSX.Element {
-  const [notificationsDebugProps] = useObservable(
-    NotificationsController.model.debugStore
-  );
+  const { NotificationsController, BucketService, AccountController } =
+    React.useContext(DIContext);
+  const { suspense, accountFollowers } = NotificationsController.model;
+  const { account } = AccountController.model;
+  const [publicProfileUrl, setPublicProfileUrl] = React.useState<
+    string | undefined
+  >(undefined);
+
+  React.useEffect(() => {
+    BucketService.getPublicUrlAsync(
+      StorageFolderType.Avatars,
+      account?.profileUrl ?? ''
+    ).then((value) => {
+      setPublicProfileUrl(value);
+    });
+  }, [notification]);
+
   const suspenceComponent = (
     <>
       <NotificationItemSuspenseDesktopComponent />
@@ -83,23 +93,23 @@ export default function NotificationItemComponent({
     </>
   );
 
-  if (notificationsDebugProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
 
   if (notification.resourceType === 'order') {
-    const order = JSON.parse(notification.data) as Order | undefined;
+    const order = JSON.parse(notification.data) as
+      | HttpTypes.StoreOrder
+      | undefined;
     return (
       <React.Suspense fallback={suspenceComponent}>
         <OrderNotificationItemDesktopComponent
           notification={notification}
-          notificationsProps={notificationsProps}
           fromNow={fromNow}
           order={order}
         />
         <OrderNotificationItemMobileComponent
           notification={notification}
-          notificationsProps={notificationsProps}
           fromNow={fromNow}
           order={order}
         />
@@ -107,28 +117,16 @@ export default function NotificationItemComponent({
     );
   } else if (notification.resourceType === 'account') {
     const account = JSON.parse(notification.data) as AccountData | undefined;
-    const [publicProfileUrl, setPublicProfileUrl] = React.useState<
-      string | undefined
-    >(undefined);
-    const accountFollower = Object.keys(
-      notificationsProps.accountFollowers
-    ).includes(account?.id ?? '')
-      ? notificationsProps.accountFollowers[account?.id ?? '']
+    const accountFollower = Object.keys(accountFollowers).includes(
+      account?.id ?? ''
+    )
+      ? accountFollowers[account?.id ?? '']
       : undefined;
-    React.useEffect(() => {
-      BucketService.getPublicUrlAsync(
-        StorageFolderType.Avatars,
-        account?.profile_url ?? ''
-      ).then((value) => {
-        setPublicProfileUrl(value);
-      });
-    }, [notification]);
 
     return (
       <React.Suspense fallback={suspenceComponent}>
         <AccountNotificationItemDesktopComponent
           notification={notification}
-          notificationsProps={notificationsProps}
           fromNow={fromNow}
           account={account}
           publicProfileUrl={publicProfileUrl}
@@ -146,7 +144,6 @@ export default function NotificationItemComponent({
         />
         <AccountNotificationItemMobileComponent
           notification={notification}
-          notificationsProps={notificationsProps}
           fromNow={fromNow}
           account={account}
           publicProfileUrl={publicProfileUrl}
@@ -170,14 +167,14 @@ export default function NotificationItemComponent({
     <React.Suspense fallback={suspenceComponent}>
       <NotificationItemDesktopComponent
         notification={notification}
-        notificationsProps={notificationsProps}
         fromNow={fromNow}
       />
       <NotificationItemMobileComponent
         notification={notification}
-        notificationsProps={notificationsProps}
         fromNow={fromNow}
       />
     </React.Suspense>
   );
 }
+
+export default observer(NotificationItemComponent);

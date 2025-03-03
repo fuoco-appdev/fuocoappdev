@@ -1,10 +1,12 @@
+/* eslint-disable jsx-a11y/alt-text */
 import { Button, Line } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
 import styles from '../../modules/email-confirmation.module.scss';
 import { EmailConfirmationResponsiveProps } from '../email-confirmation.component';
 import { ResponsiveMobile } from '../responsive.component';
 
-export default function EmailConfirmationMobileComponent({
+function EmailConfirmationMobileComponent({
   onResendConfirmationClick,
 }: EmailConfirmationResponsiveProps): JSX.Element {
   const { t } = useTranslation();
@@ -54,3 +56,5 @@ export default function EmailConfirmationMobileComponent({
     </ResponsiveMobile>
   );
 }
+
+export default observer(EmailConfirmationMobileComponent);

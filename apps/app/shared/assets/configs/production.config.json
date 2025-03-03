@@ -1,13 +1,19 @@
 {
-  "supabase": {
-    "url": "https://supabase.cruthology.com",
-    "functions_url": "https://api.cruthology.com"
+  "api": {
+    "url": "https://api.mindiapp.com"
+  },
+  "kong": {
+    "url": "https://kong.mindiapp.com"
+  },
+  "logflare": {
+    "url": "https://logflare.mindiapp.com",
+    "source": "a1e51b6e-63c8-4f46-8969-ba93bada947d"
   },
   "medusa": {
-    "url": "https://medusa.cruthology.com"
+    "url": "https://medusa.mindiapp.com"
   },
   "meilisearch": {
-    "url": "https://meilisearch.cruthology.com"
+    "url": "https://meilisearch.mindiapp.com"
   },
   "mapbox": {
     "style_url": "mapbox://styles/lucasfuoco/cli44l6r902mw01qyaoqoa46t"
@@ -16,7 +22,8 @@
     "url": "https://nyc3.digitaloceanspaces.com",
     "bucket_name": "medusa"
   },
-  "discord": {
-    "url": "https://discord.gg/ZcR7Zn6b"
+  "open_webui": {
+      "url": "https://open-webui.mindiapp.com",
+      "text_model": "nemotron-mini:latest"
   }
 }

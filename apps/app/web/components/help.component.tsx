@@ -1,8 +1,7 @@
-import { useObservable } from '@ngneat/use-observable';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import HelpController from '../../shared/controllers/help.controller';
-import { HelpState } from '../../shared/models';
+import { DIContext } from './app.component';
 import {
   ResponsiveDesktop,
   ResponsiveMobile,
@@ -34,15 +33,28 @@ export const DiscordIcon = () => (
 );
 
 export interface HelpResponsiveProps {
-  helpProps: HelpState;
   remarkPlugins: any[];
 }
 
-export default function HelpComponent(): JSX.Element {
-  const [helpProps] = useObservable(HelpController.model.store);
-  const [helpDebugProps] = useObservable(HelpController.model.debugStore);
+function HelpComponent(): JSX.Element {
+  const { HelpController } = React.useContext(DIContext);
+  const { suspense } = HelpController.model;
   const [remarkPlugins, setRemarkPlugins] = React.useState<any[]>([]);
   const renderCountRef = React.useRef<number>(0);
+
+  React.useEffect(() => {
+    renderCountRef.current += 1;
+
+    import('remark-gfm').then((plugin) => {
+      setRemarkPlugins([plugin.default]);
+    });
+
+    HelpController.load(renderCountRef.current);
+
+    return () => {
+      HelpController.disposeLoad(renderCountRef.current);
+    };
+  }, []);
 
   const suspenceComponent = (
     <>
@@ -58,23 +70,9 @@ export default function HelpComponent(): JSX.Element {
     </>
   );
 
-  if (helpDebugProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
-
-  React.useEffect(() => {
-    renderCountRef.current += 1;
-
-    import('remark-gfm').then((plugin) => {
-      setRemarkPlugins([plugin.default]);
-    });
-
-    HelpController.load(renderCountRef.current);
-
-    return () => {
-      HelpController.disposeLoad(renderCountRef.current);
-    };
-  }, []);
 
   return (
     <>
@@ -105,15 +103,11 @@ export default function HelpComponent(): JSX.Element {
         <meta property="og:url" content={window.location.href} />
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
-        <HelpDesktopComponent
-          helpProps={helpProps}
-          remarkPlugins={remarkPlugins}
-        />
-        <HelpMobileComponent
-          helpProps={helpProps}
-          remarkPlugins={remarkPlugins}
-        />
+        <HelpDesktopComponent remarkPlugins={remarkPlugins} />
+        <HelpMobileComponent remarkPlugins={remarkPlugins} />
       </React.Suspense>
     </>
   );
 }
+
+export default observer(HelpComponent);

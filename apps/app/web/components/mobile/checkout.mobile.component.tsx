@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 import {
   Button,
   Checkbox,
@@ -6,17 +7,7 @@ import {
   Input,
   Line,
   Radio,
-  Solid,
 } from '@fuoco.appdev/web-components';
-import { Customer, Discount, GiftCard } from '@medusajs/medusa';
-import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import CartController from '../../../shared/controllers/cart.controller';
-import CheckoutController from '../../../shared/controllers/checkout.controller';
-import { ProviderType } from '../../../shared/models/checkout.model';
-import styles from '../../modules/checkout.module.scss';
-import AddressFormComponent from '../address-form.component';
-// @ts-ignore
 import {
   CardCvcElement,
   CardExpiryElement,
@@ -24,21 +15,22 @@ import {
   Elements,
 } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import { formatAmount } from 'medusa-react';
+import { observer } from 'mobx-react-lite';
+import * as React from 'react';
 import ReactDOM from 'react-dom';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { ProviderType } from '../../../shared/models/checkout.model';
 import { RoutePathsType } from '../../../shared/route-paths-type';
+import styles from '../../modules/checkout.module.scss';
 import { useQuery } from '../../route-paths';
+import AddressFormComponent from '../address-form.component';
+import { DIContext } from '../app.component';
 import { CheckoutResponsiveProps } from '../checkout.component';
 import { ResponsiveMobile } from '../responsive.component';
 import StripePayButtonComponent from '../stripe-pay-button.component';
 
-export default function CheckoutMobileComponent({
-  checkoutProps,
-  accountProps,
-  storeProps,
-  cartProps,
-  windowProps,
+function CheckoutMobileComponent({
   shippingOptions,
   providerOptions,
   shippingAddressOptions,
@@ -59,9 +51,38 @@ export default function CheckoutMobileComponent({
   const rootRef = React.useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const query = useQuery();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const {
+    AccountController,
+    WindowController,
+    CheckoutController,
+    CartController,
+    StoreController,
+    MedusaService,
+  } = React.useContext(DIContext);
+  const { isAuthenticated } = WindowController.model;
+  const { selectedRegion } = StoreController.model;
+  const {
+    shippingForm,
+    shippingFormErrors,
+    shippingFormComplete,
+    selectedShippingAddressOptionId,
+    sameAsBillingAddress,
+    billingForm,
+    billingFormErrors,
+    billingFormComplete,
+    selectedShippingOptionId,
+    giftCardCode,
+    discountCode,
+    selectedProviderId,
+    isLegalAge,
+    addShippingForm,
+    addShippingFormErrors,
+    isPaymentLoading,
+  } = CheckoutController.model;
+  const { cart } = CartController.model;
+  const { account, customer } = AccountController.model;
 
-  const customer = accountProps.customer as Customer;
   return (
     <ResponsiveMobile>
       <div
@@ -108,7 +129,7 @@ export default function CheckoutMobileComponent({
                   styles['header-right-content-mobile'],
                 ].join(' ')}
               >
-                {windowProps.isAuthenticated && (
+                {isAuthenticated && (
                   <div>
                     <Button
                       rounded={true}
@@ -124,11 +145,11 @@ export default function CheckoutMobileComponent({
                 )}
               </div>
             </div>
-            {!windowProps.isAuthenticated && (
+            {!isAuthenticated && (
               <AddressFormComponent
-                values={checkoutProps.shippingForm}
-                errors={checkoutProps.shippingFormErrors}
-                isComplete={checkoutProps.shippingFormComplete}
+                values={shippingForm}
+                errors={shippingFormErrors}
+                isComplete={shippingFormComplete}
                 onEdit={() =>
                   CheckoutController.updateShippingFormComplete(false)
                 }
@@ -180,43 +201,40 @@ export default function CheckoutMobileComponent({
                 }}
               />
             )}
-            {windowProps.isAuthenticated &&
-              customer?.shipping_addresses?.length > 0 && (
-                <Radio.Group
-                  id={''}
-                  activeId={checkoutProps.selectedShippingAddressOptionId ?? ''}
-                  rippleProps={{
-                    color: 'rgba(42, 42, 95, .35)',
-                  }}
-                  classNames={{
-                    radio: {
-                      containerCard: styles['radio-container-card'],
-                      labelText: styles['radio-label-text'],
-                      labelDescription: styles['radio-label-description-text'],
-                      containerCardActive:
-                        styles['radio-container-card-active'],
-                    },
-                  }}
-                  options={shippingAddressOptions}
-                  type={'cards'}
-                  onChange={(event) =>
-                    CheckoutController.updateSelectedShippingAddressOptionIdAsync(
-                      event.target.id
-                    )
-                  }
-                />
-              )}
-            {windowProps.isAuthenticated &&
-              customer?.shipping_addresses?.length <= 0 && (
-                <div
-                  className={[
-                    styles['card-description'],
-                    styles['card-description-mobile'],
-                  ].join(' ')}
-                >
-                  {t('noAddressAddedDescription')}
-                </div>
-              )}
+            {isAuthenticated && customer?.default_shipping_address_id && (
+              <Radio.Group
+                id={''}
+                activeId={selectedShippingAddressOptionId ?? ''}
+                rippleProps={{
+                  color: 'rgba(42, 42, 95, .35)',
+                }}
+                classNames={{
+                  radio: {
+                    containerCard: styles['radio-container-card'],
+                    labelText: styles['radio-label-text'],
+                    labelDescription: styles['radio-label-description-text'],
+                    containerCardActive: styles['radio-container-card-active'],
+                  },
+                }}
+                options={shippingAddressOptions}
+                type={'cards'}
+                onChange={(event) =>
+                  CheckoutController.updateSelectedShippingAddressOptionIdAsync(
+                    event.target.id
+                  )
+                }
+              />
+            )}
+            {isAuthenticated && customer?.default_shipping_address_id && (
+              <div
+                className={[
+                  styles['card-description'],
+                  styles['card-description-mobile'],
+                ].join(' ')}
+              >
+                {t('noAddressAddedDescription')}
+              </div>
+            )}
             <Checkbox
               classNames={{
                 container: styles['checkbox-container'],
@@ -224,48 +242,45 @@ export default function CheckoutMobileComponent({
                 labelContainerLabelSpan: styles['checkbox-label'],
               }}
               label={t('sameAsBillingAddress') ?? ''}
-              checked={checkoutProps.sameAsBillingAddress}
+              checked={sameAsBillingAddress}
               onChange={() =>
                 CheckoutController.updateSameAsBillingAddress(
-                  !checkoutProps.sameAsBillingAddress
+                  !sameAsBillingAddress
                 )
               }
             />
-            {!accountProps.customer &&
-              !checkoutProps.shippingFormComplete &&
-              checkoutProps.sameAsBillingAddress && (
-                <Button
-                  classNames={{
-                    container: styles['submit-button-container'],
-                    button: styles['submit-button'],
-                  }}
-                  block={true}
-                  size={'large'}
-                  touchScreen={true}
-                  icon={<Line.DeliveryDining size={24} />}
-                  onClick={onContinueToDeliveryFromShippingAddress}
-                >
-                  {t('continueToDelivery')}
-                </Button>
-              )}
-            {!checkoutProps.shippingFormComplete &&
-              !checkoutProps.sameAsBillingAddress && (
-                <Button
-                  classNames={{
-                    container: styles['submit-button-container'],
-                    button: styles['submit-button'],
-                  }}
-                  block={true}
-                  size={'large'}
-                  icon={<Line.Receipt size={24} />}
-                  onClick={onContinueToBillingFromShippingAddress}
-                >
-                  {t('continueToBilling')}
-                </Button>
-              )}
+            {!customer && !shippingFormComplete && sameAsBillingAddress && (
+              <Button
+                classNames={{
+                  container: styles['submit-button-container'],
+                  button: styles['submit-button'],
+                }}
+                block={true}
+                size={'large'}
+                touchScreen={true}
+                icon={<Line.DeliveryDining size={24} />}
+                onClick={onContinueToDeliveryFromShippingAddress}
+              >
+                {t('continueToDelivery')}
+              </Button>
+            )}
+            {!shippingFormComplete && !sameAsBillingAddress && (
+              <Button
+                classNames={{
+                  container: styles['submit-button-container'],
+                  button: styles['submit-button'],
+                }}
+                block={true}
+                size={'large'}
+                icon={<Line.Receipt size={24} />}
+                onClick={onContinueToBillingFromShippingAddress}
+              >
+                {t('continueToBilling')}
+              </Button>
+            )}
           </div>
         </div>
-        {!checkoutProps.sameAsBillingAddress && (
+        {!sameAsBillingAddress && (
           <div
             className={[
               styles['card-container'],
@@ -301,12 +316,12 @@ export default function CheckoutMobileComponent({
                   {t('billing')}
                 </div>
               </div>
-              {checkoutProps.shippingFormComplete ? (
+              {shippingFormComplete ? (
                 <>
                   <AddressFormComponent
-                    values={checkoutProps.billingForm}
-                    errors={checkoutProps.billingFormErrors}
-                    isComplete={checkoutProps.billingFormComplete}
+                    values={billingForm}
+                    errors={billingFormErrors}
+                    isComplete={billingFormComplete}
                     onEdit={() =>
                       CheckoutController.updateBillingFormComplete(false)
                     }
@@ -357,7 +372,7 @@ export default function CheckoutMobileComponent({
                         }),
                     }}
                   />
-                  {!checkoutProps.billingFormComplete && (
+                  {!billingFormComplete && (
                     <Button
                       classNames={{
                         container: styles['submit-button-container'],
@@ -410,7 +425,7 @@ export default function CheckoutMobileComponent({
                   styles['step-count-mobile'],
                 ].join(' ')}
               >
-                {checkoutProps.sameAsBillingAddress ? 2 : 3}
+                {sameAsBillingAddress ? 2 : 3}
               </div>
               <div
                 className={[
@@ -421,7 +436,7 @@ export default function CheckoutMobileComponent({
                 {t('delivery')}
               </div>
             </div>
-            {!checkoutProps.shippingFormComplete && (
+            {!shippingFormComplete && (
               <div
                 className={[
                   styles['card-description'],
@@ -431,23 +446,22 @@ export default function CheckoutMobileComponent({
                 {t('enterShippingAddressForDelivery')}
               </div>
             )}
-            {checkoutProps.shippingFormComplete &&
-              !checkoutProps.billingFormComplete && (
-                <div
-                  className={[
-                    styles['card-description'],
-                    styles['card-description-mobile'],
-                  ].join(' ')}
-                >
-                  {t('enterBillingAddressForDelivery')}
-                </div>
-              )}
+            {shippingFormComplete && !billingFormComplete && (
+              <div
+                className={[
+                  styles['card-description'],
+                  styles['card-description-mobile'],
+                ].join(' ')}
+              >
+                {t('enterBillingAddressForDelivery')}
+              </div>
+            )}
             {shippingOptions.length > 0 &&
-              checkoutProps.shippingFormComplete &&
-              checkoutProps.billingFormComplete && (
+              shippingFormComplete &&
+              billingFormComplete && (
                 <Radio.Group
                   id={''}
-                  activeId={checkoutProps.selectedShippingOptionId ?? ''}
+                  activeId={selectedShippingOptionId ?? ''}
                   rippleProps={{
                     color: 'rgba(42, 42, 95, .35)',
                   }}
@@ -519,7 +533,7 @@ export default function CheckoutMobileComponent({
                     container: styles['input-container'],
                   }}
                   label={t('code') ?? ''}
-                  value={checkoutProps.giftCardCode}
+                  value={giftCardCode}
                   onChange={(event) =>
                     CheckoutController.updateGiftCardCodeText(
                       event.target.value
@@ -548,15 +562,15 @@ export default function CheckoutMobileComponent({
                 </Button>
               </div>
             </div>
-            {cartProps.cart?.gift_cards &&
-              cartProps.cart?.gift_cards.length > 0 && (
+            {/* {cart?.gift_cards &&
+              cart?.gift_cards.length > 0 && (
                 <div
                   className={[
                     styles['tag-list-container'],
                     styles['tag-list-container-mobile'],
                   ].join(' ')}
                 >
-                  {cartProps.cart?.gift_cards?.map((value: GiftCard) => {
+                  {cart?.gift_cards?.map((value: GiftCard) => {
                     return (
                       <div
                         key={value.id}
@@ -576,7 +590,7 @@ export default function CheckoutMobileComponent({
                     );
                   })}
                 </div>
-              )}
+              )} */}
           </div>
         </div>
         <div
@@ -627,7 +641,7 @@ export default function CheckoutMobileComponent({
                     container: styles['input-container'],
                   }}
                   label={t('code') ?? ''}
-                  value={checkoutProps.discountCode}
+                  value={discountCode}
                   onChange={(event) =>
                     CheckoutController.updateDiscountCodeText(
                       event.target.value
@@ -656,15 +670,15 @@ export default function CheckoutMobileComponent({
                 </Button>
               </div>
             </div>
-            {cartProps.cart?.discounts &&
-              cartProps.cart?.discounts.length > 0 && (
+            {/* {cart?.discounts &&
+              cart?.discounts.length > 0 && (
                 <div
                   className={[
                     styles['tag-list-container'],
                     styles['tag-list-container-mobile'],
                   ].join(' ')}
                 >
-                  {cartProps.cart?.discounts?.map((value: Discount) => {
+                  {cart?.discounts?.map((value: Discount) => {
                     return (
                       <div
                         key={value.id}
@@ -706,7 +720,7 @@ export default function CheckoutMobileComponent({
                     );
                   })}
                 </div>
-              )}
+              )} */}
           </div>
         </div>
         <div
@@ -736,10 +750,10 @@ export default function CheckoutMobileComponent({
                 {t('payment')}
               </div>
             </div>
-            {checkoutProps.billingFormComplete && (
+            {billingFormComplete && (
               <Radio.Group
                 id={''}
-                activeId={checkoutProps.selectedProviderId ?? ''}
+                activeId={selectedProviderId ?? ''}
                 rippleProps={{
                   color: 'rgba(42, 42, 95, .35)',
                 }}
@@ -760,7 +774,7 @@ export default function CheckoutMobileComponent({
                 }
               />
             )}
-            {!checkoutProps.billingFormComplete && (
+            {!billingFormComplete && (
               <div
                 className={[
                   styles['card-description'],
@@ -797,12 +811,12 @@ export default function CheckoutMobileComponent({
                   styles['subtotal-text-mobile'],
                 ].join(' ')}
               >
-                {storeProps.selectedRegion &&
-                  formatAmount({
-                    amount: cartProps.cart?.subtotal ?? 0,
-                    region: storeProps.selectedRegion,
-                    includeTaxes: false,
-                  })}
+                {selectedRegion &&
+                  MedusaService.formatAmount(
+                    cart?.subtotal ?? 0,
+                    selectedRegion.currency_code,
+                    i18n.language
+                  )}
               </div>
             </div>
             <div
@@ -825,12 +839,12 @@ export default function CheckoutMobileComponent({
                   styles['total-detail-text-mobile'],
                 ].join(' ')}
               >
-                {storeProps.selectedRegion &&
-                  formatAmount({
-                    amount: -(cartProps.cart?.discount_total ?? 0),
-                    region: storeProps.selectedRegion,
-                    includeTaxes: false,
-                  })}
+                {selectedRegion &&
+                  MedusaService.formatAmount(
+                    -(cart?.discount_total ?? 0),
+                    selectedRegion.currency_code,
+                    i18n.language
+                  )}
               </div>
             </div>
             <div
@@ -853,12 +867,12 @@ export default function CheckoutMobileComponent({
                   styles['total-detail-text-mobile'],
                 ].join(' ')}
               >
-                {storeProps.selectedRegion &&
-                  formatAmount({
-                    amount: cartProps.cart?.shipping_total ?? 0,
-                    region: storeProps.selectedRegion,
-                    includeTaxes: false,
-                  })}
+                {selectedRegion &&
+                  MedusaService.formatAmount(
+                    cart?.shipping_total ?? 0,
+                    selectedRegion.currency_code,
+                    i18n.language
+                  )}
               </div>
             </div>
             <div
@@ -881,12 +895,12 @@ export default function CheckoutMobileComponent({
                   styles['total-detail-text-mobile'],
                 ].join(' ')}
               >
-                {storeProps.selectedRegion &&
-                  formatAmount({
-                    amount: cartProps.cart?.tax_total ?? 0,
-                    region: storeProps.selectedRegion,
-                    includeTaxes: false,
-                  })}
+                {selectedRegion &&
+                  MedusaService.formatAmount(
+                    cart?.tax_total ?? 0,
+                    selectedRegion.currency_code,
+                    i18n.language
+                  )}
               </div>
             </div>
             <div
@@ -909,12 +923,12 @@ export default function CheckoutMobileComponent({
                   styles['total-text-mobile'],
                 ].join(' ')}
               >
-                {storeProps.selectedRegion &&
-                  formatAmount({
-                    amount: cartProps.cart?.total ?? 0,
-                    region: storeProps.selectedRegion,
-                    includeTaxes: true,
-                  })}
+                {selectedRegion &&
+                  MedusaService.formatAmount(
+                    cart?.total ?? 0,
+                    selectedRegion.currency_code,
+                    i18n.language
+                  )}
               </div>
             </div>
           </div>
@@ -930,10 +944,8 @@ export default function CheckoutMobileComponent({
                 labelContainerLabel: styles['checkbox-label'],
               }}
               label={t('isLegalAgeDescription') ?? ''}
-              checked={checkoutProps.isLegalAge}
-              onChange={() =>
-                CheckoutController.updateIsLegalAge(!checkoutProps.isLegalAge)
-              }
+              checked={isLegalAge}
+              onChange={() => CheckoutController.updateIsLegalAge(!isLegalAge)}
             />
           </div>
           <div
@@ -950,10 +962,10 @@ export default function CheckoutMobileComponent({
               block={true}
               touchScreen={true}
               disabled={
-                !checkoutProps.shippingFormComplete ||
-                !checkoutProps.billingFormComplete ||
-                !checkoutProps.selectedShippingOptionId ||
-                !checkoutProps.isLegalAge
+                !shippingFormComplete ||
+                !billingFormComplete ||
+                !selectedShippingOptionId ||
+                !isLegalAge
               }
               size={'large'}
               icon={<Line.Payment size={24} />}
@@ -981,8 +993,8 @@ export default function CheckoutMobileComponent({
               >
                 <AddressFormComponent
                   isAuthenticated={true}
-                  values={checkoutProps.addShippingForm}
-                  errors={checkoutProps.addShippingFormErrors}
+                  values={addShippingForm}
+                  errors={addShippingFormErrors}
                   onChangeCallbacks={{
                     firstName: (event) =>
                       CheckoutController.updateAddShippingAddress({
@@ -1063,7 +1075,7 @@ export default function CheckoutMobileComponent({
                   styles['pay-container-mobile'],
                 ].join(' ')}
               >
-                {checkoutProps.selectedProviderId === ProviderType.Manual && (
+                {selectedProviderId === ProviderType.Manual && (
                   <>
                     <div
                       className={[
@@ -1097,7 +1109,7 @@ export default function CheckoutMobileComponent({
                     </Button>
                   </>
                 )}
-                {checkoutProps.selectedProviderId === ProviderType.Stripe && (
+                {selectedProviderId === ProviderType.Stripe && (
                   <Elements stripe={stripePromise} options={stripeOptions}>
                     <FormLayout
                       label={t('creditCardNumber') ?? ''}
@@ -1138,7 +1150,7 @@ export default function CheckoutMobileComponent({
                 )}
               </div>
             </Dropdown>
-            {checkoutProps.isPaymentLoading && (
+            {isPaymentLoading && (
               <div
                 className={[
                   styles['loading-container'],
@@ -1161,3 +1173,5 @@ export default function CheckoutMobileComponent({
     </ResponsiveMobile>
   );
 }
+
+export default observer(CheckoutMobileComponent);

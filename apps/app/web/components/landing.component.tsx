@@ -1,5 +1,7 @@
+import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { Helmet } from 'react-helmet';
+import { DIContext } from './app.component';
 
 const LandingDesktopComponent = React.lazy(
   () => import('./desktop/landing.desktop.component')
@@ -11,10 +13,13 @@ export interface LandingResponsiveProps {}
 
 function LandingComponent({}: LandingProps): JSX.Element {
   const suspenceComponent = <></>;
+  const { LandingController } = React.useContext(DIContext);
+  const { suspense } = LandingController.model;
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (suspense) {
     return suspenceComponent;
   }
+
   return (
     <>
       <Helmet>
@@ -40,4 +45,4 @@ function LandingComponent({}: LandingProps): JSX.Element {
   );
 }
 
-export default LandingComponent;
+export default observer(LandingComponent);

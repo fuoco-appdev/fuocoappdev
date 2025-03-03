@@ -1,10 +1,11 @@
 import { Button, Line, Typography } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
 import styles from '../../modules/landing.module.scss';
 import { LandingResponsiveProps } from '../landing.component';
 import { WindowDesktopTopBarRef } from './window.desktop.component';
 
-export default function LandingDesktopComponent({}: LandingResponsiveProps): JSX.Element {
+function LandingDesktopComponent({}: LandingResponsiveProps): JSX.Element {
   const { t } = useTranslation();
 
   return (
@@ -377,3 +378,5 @@ export default function LandingDesktopComponent({}: LandingResponsiveProps): JSX
     </div>
   );
 }
+
+export default observer(LandingDesktopComponent);

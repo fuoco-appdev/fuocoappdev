@@ -1,13 +1,12 @@
 import { Line } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
-import styles from '../../modules/stock-location-item.module.scss';
-// @ts-ignore
 import Ripples from 'react-ripples';
-import { InventoryLocationType } from '../../../shared/models/explore.model';
+import styles from '../../modules/stock-location-item.module.scss';
 import { ResponsiveMobile } from '../responsive.component';
 import { StockLocationItemResponsiveProps } from '../stock-location-item.component';
 
-export default function StockLocationItemMobileComponent({
+function StockLocationItemMobileComponent({
   stockLocation,
   selected,
   hideDescription,
@@ -60,15 +59,15 @@ export default function StockLocationItemMobileComponent({
                   ].join(' ')}
                 >
                   <Line.Place size={18} />
-                  {Object.keys(stockLocation?.metadata ?? {}).includes(
+                  {/* {Object.keys(stockLocation?.metadata ?? {}).includes(
                     'type'
                   ) && t(stockLocation?.metadata?.['type'] as string)}
                   &nbsp;
                   {Object.keys(stockLocation?.metadata ?? {}).includes(
                     'place_name'
-                  ) && placeName}
+                  ) && placeName} */}
                 </div>
-                {!hideDescription &&
+                {/* {!hideDescription &&
                   Object.keys(stockLocation?.metadata ?? {}).includes(
                     'description'
                   ) && (
@@ -81,7 +80,7 @@ export default function StockLocationItemMobileComponent({
                       {description.slice(0, 60)}
                       ...
                     </div>
-                  )}
+                  )} */}
               </div>
               <div
                 className={[
@@ -110,7 +109,7 @@ export default function StockLocationItemMobileComponent({
                         src={avatar}
                       />
                     )}
-                    {!avatar &&
+                    {/* {!avatar &&
                       Object.keys(stockLocation?.metadata ?? {}).includes(
                         'type'
                       ) &&
@@ -137,7 +136,7 @@ export default function StockLocationItemMobileComponent({
                           ].join(' ')}
                           src={'../assets/images/selected-restaurant.png'}
                         />
-                      )}
+                      )} */}
                   </div>
                 </div>
               </div>
@@ -148,3 +147,5 @@ export default function StockLocationItemMobileComponent({
     </ResponsiveMobile>
   );
 }
+
+export default observer(StockLocationItemMobileComponent);

@@ -1,6 +1,7 @@
 import { Service } from '../service';
 import { StoreOptions } from '../store-options';
 import ConfigService from './config.service';
+import LogflareService from './logflare.service';
 
 export interface GeocodingGeometry {
   type: string;
@@ -46,6 +47,7 @@ export default class MapboxService extends Service {
   constructor(
     private readonly _accessToken: string,
     private readonly _configService: ConfigService,
+    private readonly _logflareService: LogflareService,
     private readonly _supabaseAnonKey: string,
     private readonly _storeOptions: StoreOptions
   ) {

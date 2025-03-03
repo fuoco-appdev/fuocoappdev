@@ -6,24 +6,21 @@ import {
   LanguageSwitch,
   Line,
 } from '@fuoco.appdev/web-components';
-import { AuthError, User } from '@supabase/supabase-js';
+import { AuthError } from '@supabase/supabase-js';
 import { LanguageCode } from 'iso-639-1';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 import ReactCountryFlag from 'react-country-flag';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import Ripples from 'react-ripples';
-import AccountController from '../../../shared/controllers/account.controller';
-import WindowController from '../../../shared/controllers/window.controller';
-import SupabaseService from '../../../shared/services/supabase.service';
 import styles from '../../modules/settings-account.module.scss';
 import AccountProfileFormComponent from '../account-profile-form.component';
+import { DIContext } from '../app.component';
 import { ResponsiveMobile } from '../responsive.component';
 import { SettingsAccountResponsiveProps } from '../settings-account.component';
 
-export default function SettingsAccountMobileComponent({
-  storeProps,
-  accountProps,
-  windowLocalProps,
+function SettingsAccountMobileComponent({
   updatePasswordError,
   setUpdatePasswordError,
   confirmPasswordError,
@@ -33,6 +30,11 @@ export default function SettingsAccountMobileComponent({
   onGeneralInformationSaveAsync,
 }: SettingsAccountResponsiveProps): JSX.Element {
   const { t } = useTranslation();
+  const { WindowController, AccountController, SupabaseService } =
+    React.useContext(DIContext);
+  const { user, profileForm, profileFormErrors, isUpdateGeneralInfoLoading } =
+    AccountController.model;
+  const { languageCode, languageInfo } = WindowController.model;
 
   const accordionItemClassNames: AccordionItemClasses = {
     topBar: [
@@ -46,7 +48,6 @@ export default function SettingsAccountMobileComponent({
     },
   };
 
-  const user = accountProps.user as User | null;
   const provider = user?.app_metadata['provider'];
   return (
     <ResponsiveMobile>
@@ -94,9 +95,7 @@ export default function SettingsAccountMobileComponent({
                 ].join(' ')}
               >
                 <ReactCountryFlag
-                  countryCode={
-                    windowLocalProps.languageInfo?.info?.countryCode ?? ''
-                  }
+                  countryCode={languageInfo?.info?.countryCode ?? ''}
                   style={{ width: 24 }}
                   svg
                 />
@@ -128,9 +127,8 @@ export default function SettingsAccountMobileComponent({
                   ].join(' ')}
                 >
                   <AccountProfileFormComponent
-                    storeProps={storeProps}
-                    values={accountProps.profileForm}
-                    errors={accountProps.profileFormErrors}
+                    values={profileForm}
+                    errors={profileFormErrors}
                     onChangeCallbacks={{
                       firstName: (event) =>
                         AccountController.updateProfile({
@@ -167,7 +165,7 @@ export default function SettingsAccountMobileComponent({
                     block={true}
                     size={'large'}
                     onClick={onGeneralInformationSaveAsync}
-                    loading={accountProps.isUpdateGeneralInfoLoading}
+                    loading={isUpdateGeneralInfoLoading}
                     loadingComponent={
                       <img
                         src={'../assets/svg/ring-resize-light.svg'}
@@ -224,13 +222,13 @@ export default function SettingsAccountMobileComponent({
                       }
                     }}
                     onPasswordUpdated={() => {
-                      WindowController.addToast({
-                        key: `update-password-${Math.random()}`,
-                        message: t('successfullyUpdatedPassword') ?? '',
-                        description:
-                          t('successfullyUpdatedPasswordDescription') ?? '',
-                        type: 'success',
-                      });
+                      // WindowController.addToast({
+                      //   key: `update-password-${Math.random()}`,
+                      //   message: t('successfullyUpdatedPassword') ?? '',
+                      //   description:
+                      //     t('successfullyUpdatedPasswordDescription') ?? '',
+                      //   type: 'success',
+                      // });
                     }}
                   />
                 )}
@@ -239,31 +237,31 @@ export default function SettingsAccountMobileComponent({
           </Accordion>
         </div>
         {ReactDOM.createPortal(
-          <>
-            <LanguageSwitch
-              dropdownProps={{
-                classNames: {
-                  touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
-                },
-              }}
-              type={'none'}
-              touchScreen={true}
-              language={windowLocalProps.languageCode as LanguageCode}
-              open={isLanguageOpen}
-              supportedLanguages={[
-                { isoCode: 'en', countryCode: 'GB' },
-                { isoCode: 'fr', countryCode: 'FR' },
-              ]}
-              onChange={(code, info) =>
-                AccountController.updateAccountLanguageAsync(code, info)
-              }
-              onOpen={() => setIsLanguageOpen(true)}
-              onClose={() => setIsLanguageOpen(false)}
-            />
-          </>,
+          <LanguageSwitch
+            dropdownProps={{
+              classNames: {
+                touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
+              },
+            }}
+            type={'none'}
+            touchScreen={true}
+            language={languageCode as LanguageCode}
+            open={isLanguageOpen}
+            supportedLanguages={[
+              { isoCode: 'en', countryCode: 'GB' },
+              { isoCode: 'fr', countryCode: 'FR' },
+            ]}
+            onChange={(code, info) =>
+              WindowController.updateLanguageInfo(code, info)
+            }
+            onOpen={() => setIsLanguageOpen(true)}
+            onClose={() => setIsLanguageOpen(false)}
+          />,
           document.body
         )}
       </div>
     </ResponsiveMobile>
   );
 }
+
+export default observer(SettingsAccountMobileComponent);

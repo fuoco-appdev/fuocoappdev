@@ -39,7 +39,7 @@ export default class CartController extends Controller {
     return this._model;
   }
 
-  public override initialize = (renderCount: number): void => {
+  public override initialize(renderCount: number): void {
     const exploreController = this._container.get('ExploreController');
     this.initializeAsync(renderCount);
     this._selectedInventoryLocationDisposer = observe(
@@ -47,7 +47,7 @@ export default class CartController extends Controller {
       'selectedInventoryLocation',
       this.onSelectedInventoryLocationChangedAsync
     );
-  };
+  }
 
   public override load(_renderCount: number): void {
     this.requestStockLocationsAsync();

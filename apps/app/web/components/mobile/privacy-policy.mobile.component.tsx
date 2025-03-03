@@ -1,6 +1,9 @@
 import { Auth, Typography } from '@fuoco.appdev/web-components';
 import loadable from '@loadable/component';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 import styles from '../../modules/privacy-policy.module.scss';
+import { DIContext } from '../app.component';
 import { PrivacyPolicyResponsiveProps } from '../privacy-policy.component';
 import { ResponsiveMobile } from '../responsive.component';
 const ReactMarkdown = loadable(
@@ -11,10 +14,11 @@ const ReactMarkdown = loadable(
   { ssr: false }
 );
 
-export default function PrivacyPolicyMobileComponent({
-  privacyPolicyProps,
+function PrivacyPolicyMobileComponent({
   remarkPlugins,
 }: PrivacyPolicyResponsiveProps): JSX.Element {
+  const { PrivacyPolicyController } = React.useContext(DIContext);
+  const { markdown } = PrivacyPolicyController.model;
   return (
     <ResponsiveMobile>
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
@@ -32,7 +36,7 @@ export default function PrivacyPolicyMobileComponent({
               >
                 <ReactMarkdown
                   remarkPlugins={remarkPlugins}
-                  children={privacyPolicyProps.markdown}
+                  children={markdown}
                 />
               </Typography>
             }
@@ -42,3 +46,5 @@ export default function PrivacyPolicyMobileComponent({
     </ResponsiveMobile>
   );
 }
+
+export default observer(PrivacyPolicyMobileComponent);

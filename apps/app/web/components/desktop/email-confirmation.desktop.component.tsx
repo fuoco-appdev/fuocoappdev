@@ -1,10 +1,11 @@
 import { Button, Line } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
 import styles from '../../modules/email-confirmation.module.scss';
 import { EmailConfirmationResponsiveProps } from '../email-confirmation.component';
 import { ResponsiveDesktop } from '../responsive.component';
 
-export default function EmailConfirmationDesktopComponent({
+function EmailConfirmationDesktopComponent({
   onResendConfirmationClick,
 }: EmailConfirmationResponsiveProps): JSX.Element {
   const { t } = useTranslation();
@@ -52,3 +53,5 @@ export default function EmailConfirmationDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(EmailConfirmationDesktopComponent);

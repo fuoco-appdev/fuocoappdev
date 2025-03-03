@@ -1,3 +1,4 @@
+import { observer } from 'mobx-react-lite';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 
 function AccountEventsDesktopComponent(): JSX.Element {
@@ -8,7 +9,7 @@ function AccountEventsMobileComponent(): JSX.Element {
   return <></>;
 }
 
-export default function AccountEventsComponent(): JSX.Element {
+function AccountEventsComponent(): JSX.Element {
   return (
     <>
       <ResponsiveDesktop>
@@ -20,3 +21,5 @@ export default function AccountEventsComponent(): JSX.Element {
     </>
   );
 }
+
+export default observer(AccountEventsComponent);

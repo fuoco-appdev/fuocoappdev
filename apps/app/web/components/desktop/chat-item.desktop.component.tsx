@@ -1,4 +1,5 @@
 import { Avatar } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import Ripples from 'react-ripples';
@@ -6,8 +7,7 @@ import styles from '../../modules/chat-item.module.scss';
 import { ChatItemResponsiveProps } from '../chat-item.component';
 import { ResponsiveDesktop } from '../responsive.component';
 
-export default function ChatItemDesktopComponent({
-  accountProps,
+function ChatItemDesktopComponent({
   chat,
   accounts,
   lastMessage,
@@ -151,3 +151,5 @@ export default function ChatItemDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(ChatItemDesktopComponent);

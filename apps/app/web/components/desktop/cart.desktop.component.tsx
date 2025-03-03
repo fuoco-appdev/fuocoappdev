@@ -1,36 +1,22 @@
-import {
-  Button,
-  Input,
-  Line,
-  Modal,
-  Solid,
-} from '@fuoco.appdev/web-components';
-import { Discount, LineItem } from '@medusajs/medusa';
+import { Button, Input, Line, Modal } from '@fuoco.appdev/web-components';
+import { HttpTypes } from '@medusajs/types';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import CartController from '../../../shared/controllers/cart.controller';
-import ExploreController from '../../../shared/controllers/explore.controller';
 import { RoutePathsType } from '../../../shared/route-paths-type';
+import { MedusaProductTypeNames } from '../../../shared/types/medusa.type';
 import styles from '../../modules/cart.module.scss';
 import { useQuery } from '../../route-paths';
+import { DIContext } from '../app.component';
 import CartItemComponent from '../cart-item.component';
-// @ts-ignore
-import { StockLocation } from '@medusajs/stock-location/dist/models';
-import { formatAmount } from 'medusa-react';
-import ReactDOM from 'react-dom';
-import { MedusaProductTypeNames } from '../../../shared/types/medusa.type';
 import CartVariantItemComponent from '../cart-variant-item.component';
 import { CartResponsiveProps } from '../cart.component';
 import { ResponsiveDesktop } from '../responsive.component';
 import StockLocationCartItemComponent from '../stock-location-cart-item.component';
 
-export default function CartDesktopComponent({
-  cartProps,
-  cartLocalProps,
-  exploreProps,
-  exploreLocalProps,
-  storeProps,
-  windowProps,
+function CartDesktopComponent({
   salesChannelTabs,
   foodVariantQuantities,
   isFoodRequirementOpen,
@@ -42,6 +28,24 @@ export default function CartDesktopComponent({
   const navigate = useNavigate();
   const query = useQuery();
   const { t } = useTranslation();
+  const {
+    CartController,
+    ExploreController,
+    WindowController,
+    StoreController,
+  } = React.useContext(DIContext);
+  const {
+    stockLocations,
+    cartIds,
+    carts,
+    cart,
+    discountCode,
+    requiredFoodProducts,
+  } = CartController.model;
+  const { selectedInventoryLocationId, selectedInventoryLocation } =
+    ExploreController.model;
+  const { isAuthenticated } = WindowController.model;
+  const { selectedRegion } = StoreController.model;
 
   return (
     <ResponsiveDesktop>
@@ -58,17 +62,14 @@ export default function CartDesktopComponent({
               styles['shopping-cart-items-container-desktop'],
             ].join(' ')}
           >
-            {cartProps.stockLocations.map(
-              (stockLocation: StockLocation, _index: number) => {
-                const cartId = cartLocalProps.cartIds[stockLocation.id] ?? '';
-                const cart = cartProps.carts[cartId];
+            {stockLocations.map(
+              (stockLocation: HttpTypes.AdminStockLocation, _index: number) => {
+                const cartId = cartIds[stockLocation.id] ?? '';
+                const cart = carts[cartId];
                 return (
                   <StockLocationCartItemComponent
                     key={stockLocation.id}
-                    selected={
-                      exploreLocalProps.selectedInventoryLocationId ===
-                      stockLocation.id
-                    }
+                    selected={selectedInventoryLocationId === stockLocation.id}
                     stockLocation={stockLocation}
                     cart={cart}
                     onClick={() =>
@@ -88,7 +89,7 @@ export default function CartDesktopComponent({
             styles['cart-container-desktop'],
           ].join(' ')}
         >
-          {!windowProps.isAuthenticated && (
+          {!isAuthenticated && (
             <div
               className={[
                 styles['account-container'],
@@ -167,18 +168,22 @@ export default function CartDesktopComponent({
                     styles['shopping-cart-items-desktop'],
                   ].join(' ')}
                 >
-                  {cartProps.cart?.items
-                    .sort((current: LineItem, next: LineItem) => {
-                      return (
-                        new Date(current.created_at).valueOf() -
-                        new Date(next.created_at).valueOf()
-                      );
-                    })
-                    .map((item: LineItem) => (
+                  {cart?.items
+                    ?.sort(
+                      (
+                        current: HttpTypes.StoreCartLineItem,
+                        next: HttpTypes.StoreCartLineItem
+                      ) => {
+                        return (
+                          new Date(current.created_at ?? 0).valueOf() -
+                          new Date(next.created_at ?? 0).valueOf()
+                        );
+                      }
+                    )
+                    .map((item: HttpTypes.StoreCartLineItem) => (
                       <CartItemComponent
                         key={item.id}
                         item={item}
-                        storeProps={storeProps}
                         onQuantityChanged={(quantity) => {
                           CartController.updateLineItemQuantityAsync(
                             quantity,
@@ -231,7 +236,7 @@ export default function CartDesktopComponent({
                     </>
                   )}
                   {salesChannelTabs.length > 0 &&
-                    (!cartProps.cart || cartProps.cart?.items.length <= 0) && (
+                    (!cart?.items || cart?.items.length <= 0) && (
                       <>
                         <div
                           className={[
@@ -306,10 +311,10 @@ export default function CartDesktopComponent({
                       styles['subtotal-text-desktop'],
                     ].join(' ')}
                   >
-                    {storeProps.selectedRegion &&
+                    {selectedRegion &&
                       formatAmount({
-                        amount: cartProps.cart?.subtotal ?? 0,
-                        region: storeProps.selectedRegion,
+                        amount: cart?.subtotal ?? 0,
+                        region: selectedRegion,
                         includeTaxes: false,
                       })}
                   </div>
@@ -334,10 +339,10 @@ export default function CartDesktopComponent({
                       styles['total-detail-text-desktop'],
                     ].join(' ')}
                   >
-                    {storeProps.selectedRegion &&
+                    {selectedRegion &&
                       formatAmount({
-                        amount: -(cartProps.cart?.discount_total ?? 0),
-                        region: storeProps.selectedRegion,
+                        amount: -(cart?.discount_total ?? 0),
+                        region: selectedRegion,
                         includeTaxes: false,
                       })}
                   </div>
@@ -362,10 +367,10 @@ export default function CartDesktopComponent({
                       styles['total-detail-text-desktop'],
                     ].join(' ')}
                   >
-                    {storeProps.selectedRegion &&
+                    {selectedRegion &&
                       formatAmount({
-                        amount: cartProps.cart?.shipping_total ?? 0,
-                        region: storeProps.selectedRegion,
+                        amount: cart?.shipping_total ?? 0,
+                        region: selectedRegion,
                         includeTaxes: false,
                       })}
                   </div>
@@ -390,10 +395,10 @@ export default function CartDesktopComponent({
                       styles['total-detail-text-desktop'],
                     ].join(' ')}
                   >
-                    {storeProps.selectedRegion &&
+                    {selectedRegion &&
                       formatAmount({
-                        amount: cartProps.cart?.tax_total ?? 0,
-                        region: storeProps.selectedRegion,
+                        amount: cart?.tax_total ?? 0,
+                        region: selectedRegion,
                         includeTaxes: false,
                       })}
                   </div>
@@ -418,10 +423,10 @@ export default function CartDesktopComponent({
                       styles['total-text-desktop'],
                     ].join(' ')}
                   >
-                    {storeProps.selectedRegion &&
+                    {selectedRegion &&
                       formatAmount({
-                        amount: cartProps.cart?.total ?? 0,
-                        region: storeProps.selectedRegion,
+                        amount: cart?.total ?? 0,
+                        region: selectedRegion,
                         includeTaxes: true,
                       })}
                   </div>
@@ -448,7 +453,7 @@ export default function CartDesktopComponent({
                       container: styles['input-container'],
                     }}
                     label={t('discount') ?? ''}
-                    value={cartProps.discountCode}
+                    value={discountCode}
                     onChange={(event) =>
                       CartController.updateDiscountCodeText(event.target.value)
                     }
@@ -480,7 +485,7 @@ export default function CartDesktopComponent({
                   styles['discount-list-container-desktop'],
                 ].join(' ')}
               >
-                {cartProps.cart?.discounts?.map((value: Discount) => {
+                {/* {cart?.discounts?.map((value: Discount) => {
                   return (
                     <div
                       key={value.id}
@@ -520,7 +525,7 @@ export default function CartDesktopComponent({
                       </div>
                     </div>
                   );
-                })}
+                })} */}
               </div>
               <div
                 className={[
@@ -536,9 +541,7 @@ export default function CartDesktopComponent({
                     color: 'rgba(252, 245, 227, .35)',
                   }}
                   block={true}
-                  disabled={
-                    !cartProps.cart || cartProps.cart?.items?.length <= 0
-                  }
+                  disabled={!cart?.items || cart?.items.length <= 0}
                   size={'large'}
                   icon={<Line.ShoppingCart size={24} />}
                   onClick={onCheckout}
@@ -587,7 +590,7 @@ export default function CartDesktopComponent({
           title={t('foodRequirement') ?? ''}
           description={
             t('foodRequirementDescription', {
-              region: exploreProps?.selectedInventoryLocation?.region,
+              region: selectedInventoryLocation?.region,
             }) ?? ''
           }
           visible={isFoodRequirementOpen}
@@ -599,15 +602,14 @@ export default function CartDesktopComponent({
               styles['add-variants-container-desktop'],
             ].join(' ')}
           >
-            {cartProps.requiredFoodProducts.map((product) => {
-              return product?.variants.map((variant) => {
+            {requiredFoodProducts.map((product) => {
+              return product?.variants?.map((variant) => {
                 return (
                   <CartVariantItemComponent
                     productType={MedusaProductTypeNames.RequiredFood}
                     key={variant.id}
                     product={product}
                     variant={variant}
-                    storeProps={storeProps}
                     variantQuantities={foodVariantQuantities}
                     setVariantQuantities={setFoodVariantQuantities}
                   />
@@ -647,3 +649,5 @@ export default function CartDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(CartDesktopComponent);

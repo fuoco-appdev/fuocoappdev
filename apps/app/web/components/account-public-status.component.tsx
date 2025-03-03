@@ -1,12 +1,10 @@
-import { useObservable } from '@ngneat/use-observable';
+/* eslint-disable no-restricted-globals */
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import AccountPublicController from '../../shared/controllers/account-public.controller';
-import WindowController from '../../shared/controllers/window.controller';
-import { AccountPublicState } from '../../shared/models/account-public.model';
 import { RoutePathsType } from '../../shared/route-paths-type';
+import { DIContext } from './app.component';
 import { AuthenticatedComponent } from './authenticated.component';
 import { AccountPublicStatusSuspenseDesktopComponent } from './desktop/suspense/account-public-status.suspense.desktop.component';
 import { AccountPublicStatusSuspenseMobileComponent } from './mobile/suspense/account-public-status.suspense.mobile.component';
@@ -19,7 +17,6 @@ const AccountPublicStatusMobileComponent = React.lazy(
 );
 
 export interface AccountFollowersFollowingResponsiveProps {
-  accountPublicProps: AccountPublicState;
   followerCount: string | undefined;
   followingCount: string | undefined;
   onScrollLoad: () => void;
@@ -29,16 +26,14 @@ export interface AccountFollowersFollowingResponsiveProps {
 export default function AccountFollowersFollowingComponent(): JSX.Element {
   const { i18n } = useTranslation();
   const { id } = useParams();
-  const [accountPublicProps] = useObservable(
-    AccountPublicController.model.store
-  );
-  const [accountPublicDebugProps] = useObservable(
-    AccountPublicController.model.debugStore
-  );
-  const [followerCount, setFollowerCount] = React.useState<string | undefined>(
-    undefined
-  );
-  const [followingCount, setFollowingCount] = React.useState<
+  const { AccountPublicController, WindowController } =
+    React.useContext(DIContext);
+  const { suspense, followerCount, followingCount, likeCount } =
+    AccountPublicController.model;
+  const [currentFollowerCount, setCurrentFollowerCount] = React.useState<
+    string | undefined
+  >(undefined);
+  const [currentFollowingCount, setCurrentFollowingCount] = React.useState<
     string | undefined
   >(undefined);
   const scrollOffsetTriggerGap = 16;
@@ -100,26 +95,18 @@ export default function AccountFollowersFollowingComponent(): JSX.Element {
   }, [location.pathname]);
 
   React.useEffect(() => {
-    if (accountPublicProps.followerCount !== undefined) {
-      setFollowerCount(
-        new Intl.NumberFormat(i18n.language).format(
-          accountPublicProps.followerCount
-        )
+    if (followerCount !== undefined) {
+      setCurrentFollowerCount(
+        new Intl.NumberFormat(i18n.language).format(followerCount)
       );
     }
 
-    if (accountPublicProps.followingCount !== undefined) {
-      setFollowingCount(
-        new Intl.NumberFormat(i18n.language).format(
-          accountPublicProps.followingCount
-        )
+    if (followingCount !== undefined) {
+      setCurrentFollowingCount(
+        new Intl.NumberFormat(i18n.language).format(followingCount)
       );
     }
-  }, [
-    accountPublicProps.likeCount,
-    accountPublicProps.followerCount,
-    accountPublicProps.followingCount,
-  ]);
+  }, [likeCount, followerCount, followingCount]);
 
   const suspenceComponent = (
     <>
@@ -128,7 +115,7 @@ export default function AccountFollowersFollowingComponent(): JSX.Element {
     </>
   );
 
-  if (accountPublicDebugProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
 
@@ -163,16 +150,14 @@ export default function AccountFollowersFollowingComponent(): JSX.Element {
       <React.Suspense fallback={suspenceComponent}>
         <AuthenticatedComponent>
           <AccountPublicStatusDesktopComponent
-            accountPublicProps={accountPublicProps}
-            followerCount={followerCount}
-            followingCount={followingCount}
+            followerCount={currentFollowerCount}
+            followingCount={currentFollowingCount}
             onScrollLoad={onScrollLoad}
             onScrollReload={onScrollReload}
           />
           <AccountPublicStatusMobileComponent
-            accountPublicProps={accountPublicProps}
-            followerCount={followerCount}
-            followingCount={followingCount}
+            followerCount={currentFollowerCount}
+            followingCount={currentFollowingCount}
             onScrollLoad={onScrollLoad}
             onScrollReload={onScrollReload}
           />

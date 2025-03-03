@@ -1,10 +1,8 @@
-import { useObservable } from '@ngneat/use-observable';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import EmailConfirmationController from '../../shared/controllers/email-confirmation.controller';
-import WindowController from '../../shared/controllers/window.controller';
-import { EmailConfirmationState } from '../../shared/models/email-confirmation.model';
+import { DIContext } from './app.component';
 
 const EmailConfirmationDesktopComponent = React.lazy(
   () => import('./desktop/email-confirmation.desktop.component')
@@ -16,38 +14,33 @@ const EmailConfirmationMobileComponent = React.lazy(
 export interface EmailConfirmationProps {}
 
 export interface EmailConfirmationResponsiveProps {
-  emailConfirmationProps: EmailConfirmationState;
   onResendConfirmationClick: () => void;
 }
 
-export default function EmailConfirmationComponent(): JSX.Element {
+function EmailConfirmationComponent(): JSX.Element {
   const { t } = useTranslation();
-  const [emailConfirmationProps] = useObservable(
-    EmailConfirmationController.model.store
-  );
-  const [emailConfirmationDebugProps] = useObservable(
-    EmailConfirmationController.model.debugStore
-  );
+  const { EmailConfirmationController } = React.useContext(DIContext);
+  const { email, suspense } = EmailConfirmationController.model;
   const renderCountRef = React.useRef<number>(0);
 
   const onResendConfirmationClick = () => {
     EmailConfirmationController.resendEmailConfirmationAsync(
-      emailConfirmationProps.email ?? '',
+      email ?? '',
       () => {
-        WindowController.addToast({
-          key: `email-confirmation-sent-${Math.random()}`,
-          message: t('emailConfirmation') ?? '',
-          description: t('emailConfirmationDescription') ?? '',
-          type: 'success',
-        });
+        // WindowController.addToast({
+        //   key: `email-confirmation-sent-${Math.random()}`,
+        //   message: t('emailConfirmation') ?? '',
+        //   description: t('emailConfirmationDescription') ?? '',
+        //   type: 'success',
+        // });
       },
       (error) => {
-        WindowController.addToast({
-          key: `resend-email-${Math.random()}`,
-          message: error?.name,
-          description: error?.message,
-          type: 'error',
-        });
+        // WindowController.addToast({
+        //   key: `resend-email-${Math.random()}`,
+        //   message: error?.name,
+        //   description: error?.message,
+        //   type: 'error',
+        // });
       }
     );
   };
@@ -67,7 +60,7 @@ export default function EmailConfirmationComponent(): JSX.Element {
     </>
   );
 
-  if (emailConfirmationDebugProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
 
@@ -104,14 +97,14 @@ export default function EmailConfirmationComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <EmailConfirmationDesktopComponent
-          emailConfirmationProps={emailConfirmationProps}
           onResendConfirmationClick={onResendConfirmationClick}
         />
         <EmailConfirmationMobileComponent
-          emailConfirmationProps={emailConfirmationProps}
           onResendConfirmationClick={onResendConfirmationClick}
         />
       </React.Suspense>
     </>
   );
 }
+
+export default observer(EmailConfirmationComponent);

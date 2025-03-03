@@ -1,15 +1,12 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import { useObservable } from '@ngneat/use-observable';
 import { AuthError } from '@supabase/supabase-js';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import EmailConfirmationController from '../../shared/controllers/email-confirmation.controller';
-import SignupController from '../../shared/controllers/signup.controller';
-import WindowController from '../../shared/controllers/window.controller';
-import { SignupState } from '../../shared/models';
 import { RoutePathsType } from '../../shared/route-paths-type';
+import { DIContext } from './app.component';
 import { GuestComponent } from './guest.component';
 import {
   ResponsiveDesktop,
@@ -27,7 +24,6 @@ const SignupMobileComponent = React.lazy(
 export interface SignupProps {}
 
 export interface SignupResponsiveProps {
-  signupProps: SignupState;
   emailError: string;
   passwordError: string;
   confirmPasswordError: string;
@@ -38,12 +34,13 @@ export interface SignupResponsiveProps {
   onEmailConfirmationSent: () => void;
 }
 
-export default function SignupComponent(): JSX.Element {
+function SignupComponent(): JSX.Element {
   const location = useLocation();
   const navigate = useNavigate();
+  const { EmailConfirmationController, SignupController } =
+    React.useContext(DIContext);
+  const { email, suspense } = SignupController.model;
   SignupController.model.location = location;
-  const [signupProps] = useObservable(SignupController.model.store);
-  const [signupDebugProps] = useObservable(SignupController.model.debugStore);
   const [authError, setAuthError] = React.useState<AuthError | null>(null);
   const [emailError, setEmailError] = React.useState<string>('');
   const [passwordError, setPasswordError] = React.useState<string>('');
@@ -53,13 +50,13 @@ export default function SignupComponent(): JSX.Element {
   const { t } = useTranslation();
 
   const onEmailConfirmationSent = () => {
-    WindowController.addToast({
-      key: 'signup-email-confirmation-sent',
-      message: t('emailConfirmation') ?? '',
-      description: t('emailConfirmationDescription') ?? '',
-      type: 'success',
-    });
-    EmailConfirmationController.updateEmail(signupProps.email);
+    // WindowController.addToast({
+    //   key: 'signup-email-confirmation-sent',
+    //   message: t('emailConfirmation') ?? '',
+    //   description: t('emailConfirmationDescription') ?? '',
+    //   type: 'success',
+    // });
+    EmailConfirmationController.updateEmail(email ?? '');
     navigate(RoutePathsType.EmailConfirmation);
   };
 
@@ -76,12 +73,12 @@ export default function SignupComponent(): JSX.Element {
       setEmailError(t('userAlreadyRegistered') ?? '');
       setPasswordError(t('userAlreadyRegistered') ?? '');
     } else if (authError?.status === 429) {
-      WindowController.addToast({
-        key: `signup-too-many-requests-${Math.random()}`,
-        message: t('authTooManyRequests') ?? '',
-        description: t('authTooManyRequestsDescription') ?? '',
-        type: 'error',
-      });
+      // WindowController.addToast({
+      //   key: `signup-too-many-requests-${Math.random()}`,
+      //   message: t('authTooManyRequests') ?? '',
+      //   description: t('authTooManyRequestsDescription') ?? '',
+      //   type: 'error',
+      // });
     } else if (authError?.status && authError?.status > 400) {
       console.error(authError);
     } else {
@@ -105,7 +102,7 @@ export default function SignupComponent(): JSX.Element {
     </>
   );
 
-  if (signupDebugProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
 
@@ -136,7 +133,6 @@ export default function SignupComponent(): JSX.Element {
       <React.Suspense fallback={suspenceComponent}>
         <GuestComponent>
           <SignupDesktopComponent
-            signupProps={signupProps}
             emailError={emailError}
             passwordError={passwordError}
             confirmPasswordError={confirmPasswordError}
@@ -147,7 +143,6 @@ export default function SignupComponent(): JSX.Element {
             onEmailConfirmationSent={onEmailConfirmationSent}
           />
           <SignupMobileComponent
-            signupProps={signupProps}
             emailError={emailError}
             passwordError={passwordError}
             confirmPasswordError={confirmPasswordError}
@@ -162,3 +157,5 @@ export default function SignupComponent(): JSX.Element {
     </>
   );
 }
+
+export default observer(SignupComponent);

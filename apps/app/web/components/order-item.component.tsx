@@ -1,4 +1,5 @@
-import { LineItem, Order } from '@medusajs/medusa';
+import { HttpTypes } from '@medusajs/types';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { OrderItemSuspenseDesktopComponent } from './desktop/suspense/order-item.suspense.desktop.component';
@@ -12,23 +13,20 @@ const OrderItemMobileComponent = React.lazy(
 );
 
 export interface OrderItemProps {
-  order: Order;
+  order: HttpTypes.StoreOrder;
   onClick: () => void;
 }
 
 export interface OrderItemResponsiveProps extends OrderItemProps {
   fulfillmentStatus: string;
-  getNumberOfItems: (items: LineItem[]) => number;
+  getNumberOfItems: (items: HttpTypes.StoreOrderLineItem[]) => number;
 }
 
-export default function OrderItemComponent({
-  order,
-  onClick,
-}: OrderItemProps): JSX.Element {
+function OrderItemComponent({ order, onClick }: OrderItemProps): JSX.Element {
   const [fulfillmentStatus, setFulfillmentStatus] = React.useState<string>('');
   const { t, i18n } = useTranslation();
 
-  const getNumberOfItems = (items: LineItem[]) => {
+  const getNumberOfItems = (items: HttpTypes.StoreOrderLineItem[]) => {
     return items.reduce((acc, item) => {
       return acc + item.quantity;
     }, 0);
@@ -43,14 +41,8 @@ export default function OrderItemComponent({
       setFulfillmentStatus(t('notFulfilled') ?? '');
     else if (order.fulfillment_status === 'partially_fulfilled')
       setFulfillmentStatus(t('partiallyFulfilled') ?? '');
-    else if (order.fulfillment_status === 'partially_returned')
-      setFulfillmentStatus(t('partiallyReturned') ?? '');
     else if (order.fulfillment_status === 'partially_shipped')
       setFulfillmentStatus(t('partiallyShipped') ?? '');
-    else if (order.fulfillment_status === 'requires_action')
-      setFulfillmentStatus(t('requiresAction') ?? '');
-    else if (order.fulfillment_status === 'returned')
-      setFulfillmentStatus(t('returned') ?? '');
     else if (order.fulfillment_status === 'shipped')
       setFulfillmentStatus(t('shipped') ?? '');
   }, [order, i18n.language]);
@@ -83,3 +75,5 @@ export default function OrderItemComponent({
     </React.Suspense>
   );
 }
+
+export default observer(OrderItemComponent);

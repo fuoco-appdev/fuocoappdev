@@ -1,6 +1,7 @@
+import { observer } from 'mobx-react-lite';
 import styles from '../../modules/loading.module.scss';
 
-export default function LoadingMobileComponent(): JSX.Element {
+function LoadingMobileComponent(): JSX.Element {
   return (
     <div className={[styles['root'], styles['root-mobile']].join(' ')}>
       <img
@@ -10,3 +11,5 @@ export default function LoadingMobileComponent(): JSX.Element {
     </div>
   );
 }
+
+export default observer(LoadingMobileComponent);

@@ -1,20 +1,14 @@
-import { Store } from '@ngneat/elf';
-import { useObservable } from '@ngneat/use-observable';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { MapRef } from 'react-map-gl';
 import { useLocation, useNavigate } from 'react-router-dom';
-import ExploreController from '../../shared/controllers/explore.controller';
-import {
-  ExploreLocalState,
-  ExploreState,
-  InventoryLocation,
-} from '../../shared/models/explore.model';
+import { InventoryLocation } from '../../shared/models/explore.model';
 import { DeepLTranslationsResponse } from '../../shared/protobuf/deepl_pb';
 import { RoutePathsType } from '../../shared/route-paths-type';
-import DeeplService from '../../shared/services/deepl.service';
 import { useQuery } from '../route-paths';
+import { DIContext } from './app.component';
 import { ExploreSuspenseDesktopComponent } from './desktop/suspense/explore.suspense.desktop.component';
 import { ExploreSuspenseMobileComponent } from './mobile/suspense/explore.suspense.mobile.component';
 
@@ -26,8 +20,6 @@ const ExploreMobileComponent = React.lazy(
 );
 
 export interface ExploreResponsiveProps {
-  exploreProps: ExploreState;
-  exploreLocalProps: ExploreLocalState;
   mapRef: React.Ref<MapRef> | undefined;
   selectedPoint: InventoryLocation | null;
   setMapStyleLoaded: (value: boolean) => void;
@@ -37,14 +29,12 @@ export interface ExploreResponsiveProps {
   onGoToStore: (stockLocation: InventoryLocation) => void;
 }
 
-export default function ExploreComponent(): JSX.Element {
+function ExploreComponent(): JSX.Element {
   const navigate = useNavigate();
   const query = useQuery();
-  const [exploreProps] = useObservable(ExploreController.model.store);
-  const [exploreDebugProps] = useObservable(ExploreController.model.debugStore);
-  const [exploreLocalProps] = useObservable(
-    ExploreController.model.localStore ?? Store.prototype
-  );
+  const { ExploreController, DeepLService } = React.useContext(DIContext);
+  const { suspense, searchedStockLocationScrollPosition } =
+    ExploreController.model;
   const [mapStyleLoaded, setMapStyleLoaded] = React.useState<boolean>(false);
   const [selectedPoint, setSelectedPoint] =
     React.useState<InventoryLocation | null>(null);
@@ -54,9 +44,8 @@ export default function ExploreComponent(): JSX.Element {
   const { i18n } = useTranslation();
 
   const onScrollLoad = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
-    if (exploreProps.searchedStockLocationScrollPosition) {
-      e.currentTarget.scrollTop =
-        exploreProps.searchedStockLocationScrollPosition as number;
+    if (searchedStockLocationScrollPosition) {
+      e.currentTarget.scrollTop = searchedStockLocationScrollPosition as number;
       ExploreController.updateSearchedStockLocationScrollPosition(undefined);
     }
   };
@@ -77,7 +66,7 @@ export default function ExploreComponent(): JSX.Element {
     if (i18n.language !== 'en') {
       const selectedPointCopy = { ...value };
       const response: DeepLTranslationsResponse =
-        await DeeplService.translateAsync(value.description, i18n.language);
+        await DeepLService.translateAsync(value.description, i18n.language);
       if (response.translations.length <= 0) {
         return;
       }
@@ -146,7 +135,7 @@ export default function ExploreComponent(): JSX.Element {
     </>
   );
 
-  if (exploreDebugProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
 
@@ -180,8 +169,6 @@ export default function ExploreComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <ExploreDesktopComponent
-          exploreProps={exploreProps}
-          exploreLocalProps={exploreLocalProps}
           mapRef={mapRef}
           selectedPoint={selectedPoint}
           setMapStyleLoaded={setMapStyleLoaded}
@@ -191,8 +178,6 @@ export default function ExploreComponent(): JSX.Element {
           onGoToStore={onGoToStore}
         />
         <ExploreMobileComponent
-          exploreProps={exploreProps}
-          exploreLocalProps={exploreLocalProps}
           mapRef={mapRef}
           selectedPoint={selectedPoint}
           setMapStyleLoaded={setMapStyleLoaded}
@@ -205,3 +190,5 @@ export default function ExploreComponent(): JSX.Element {
     </>
   );
 }
+
+export default observer(ExploreComponent);

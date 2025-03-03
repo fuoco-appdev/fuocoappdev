@@ -1,7 +1,9 @@
 import { OptionProps } from '@fuoco.appdev/web-components';
-import { LineItem, ProductOptionValue } from '@medusajs/medusa';
+import { HttpTypes } from '@medusajs/types';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { ProductOptions } from '../../shared/models/product.model';
+import { DIContext } from './app.component';
 import {
   ResponsiveDesktop,
   ResponsiveMobile,
@@ -16,7 +18,7 @@ const RefundItemMobileComponent = React.lazy(
 );
 
 export interface RefundItemProps {
-  item: LineItem;
+  item: HttpTypes.StoreOrderLineItem;
   refundItem: {
     item_id: string;
     quantity: number;
@@ -38,20 +40,23 @@ export interface RefundItemResponsiveProps extends RefundItemProps {
   decrementItemQuantity: () => void;
 }
 
-export default function RefundItemComponent({
+function RefundItemComponent({
   item,
   refundItem,
   returnReasonOptions,
   onChanged,
 }: RefundItemProps): JSX.Element {
+  const { WindowController } = React.useContext(DIContext);
+  const { suspense } = WindowController.model;
   const [vintage, setVintage] = React.useState<string>('');
 
   React.useEffect(() => {
-    const vintageOption = item.variant.product.options.find(
+    const vintageOption = item.variant?.product?.options?.find(
       (value) => value.title === ProductOptions.Vintage
     );
-    const vintageValue = item.variant.options?.find(
-      (value: ProductOptionValue) => value.option_id === vintageOption?.id
+    const vintageValue = item.variant?.options?.find(
+      (value: HttpTypes.StoreProductOptionValue) =>
+        value.option_id === vintageOption?.id
     );
     setVintage(vintageValue?.value ?? '');
   }, [item]);
@@ -96,7 +101,7 @@ export default function RefundItemComponent({
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (suspense) {
     return suspenceComponent;
   }
 
@@ -123,3 +128,5 @@ export default function RefundItemComponent({
     </React.Suspense>
   );
 }
+
+export default observer(RefundItemComponent);

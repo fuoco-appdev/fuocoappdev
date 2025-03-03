@@ -21,11 +21,11 @@ export default class PermissionsController extends Controller {
     return this._model;
   }
 
-  public override initialize = (renderCount: number): void => {
+  public override initialize(renderCount: number): void {
     if (renderCount <= 1) {
       this.checkPermissionsAsync();
     }
-  };
+  }
 
   public override load(_renderCount: number): void {}
 

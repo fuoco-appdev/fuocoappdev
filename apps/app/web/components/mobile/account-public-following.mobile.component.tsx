@@ -1,16 +1,25 @@
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import AccountController from '../../../shared/controllers/account.controller';
 import styles from '../../modules/account-public-following.module.scss';
 import AccountFollowItemComponent from '../account-follow-item.component';
 import { AccountPublicFollowingResponsiveProps } from '../account-public-following.component';
+import { DIContext } from '../app.component';
 import { ResponsiveMobile } from '../responsive.component';
 
-export default function AccountPublicFollowingMobileComponent({
-  accountPublicProps,
-  accountProps,
+function AccountPublicFollowingMobileComponent({
   onItemClick,
 }: AccountPublicFollowingResponsiveProps): JSX.Element {
   const { t } = useTranslation();
+  const { AccountPublicController, AccountController } =
+    React.useContext(DIContext);
+  const {
+    followingAccounts,
+    followingAccountFollowers,
+    hasMoreFollowing,
+    areFollowingLoading,
+    followersFollowingInput,
+  } = AccountPublicController.model;
 
   return (
     <ResponsiveMobile>
@@ -21,17 +30,16 @@ export default function AccountPublicFollowingMobileComponent({
             styles['result-items-container-mobile'],
           ].join(' ')}
         >
-          {accountPublicProps.followingAccounts.map((value) => {
+          {followingAccounts.map((value) => {
             const accountFollower = Object.keys(
-              accountPublicProps.followingAccountFollowers
+              followingAccountFollowers
             ).includes(value.id ?? '')
-              ? accountPublicProps.followingAccountFollowers[value.id ?? '']
+              ? followingAccountFollowers[value.id ?? '']
               : null;
             return (
               <AccountFollowItemComponent
                 key={value.id}
                 account={value}
-                accountProps={accountProps}
                 follower={accountFollower}
                 isRequest={false}
                 onClick={() => onItemClick(value.id ?? '')}
@@ -47,28 +55,29 @@ export default function AccountPublicFollowingMobileComponent({
               />
             );
           })}
-          {!accountPublicProps.hasMoreFollowing &&
-            accountPublicProps.followingAccounts.length <= 0 && (
+          {!hasMoreFollowing && followingAccounts.length <= 0 && (
+            <div
+              className={[
+                styles['no-items-container'],
+                styles['no-items-container-mobile'],
+              ].join(' ')}
+            >
               <div
                 className={[
-                  styles['no-items-container'],
-                  styles['no-items-container-mobile'],
+                  styles['no-items-text'],
+                  styles['no-items-text-mobile'],
                 ].join(' ')}
               >
-                <div
-                  className={[
-                    styles['no-items-text'],
-                    styles['no-items-text-mobile'],
-                  ].join(' ')}
-                >
-                  {t('noFollowingFound', {
-                    username: accountPublicProps.followersFollowingInput,
-                  })}
-                </div>
+                {t('noFollowingFound', {
+                  username: followersFollowingInput,
+                })}
               </div>
-            )}
+            </div>
+          )}
         </div>
       </div>
     </ResponsiveMobile>
   );
 }
+
+export default observer(AccountPublicFollowingMobileComponent);

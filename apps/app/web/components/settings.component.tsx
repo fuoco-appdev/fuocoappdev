@@ -1,8 +1,7 @@
-import { useObservable } from '@ngneat/use-observable';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import WindowController from '../../shared/controllers/window.controller';
-import { WindowState } from '../../shared/models/window.model';
+import { DIContext } from './app.component';
 import { AuthenticatedComponent } from './authenticated.component';
 import SettingsSuspenseDesktopComponent from './desktop/suspense/settings.suspense.desktop';
 import SettingsSuspenseMobileComponent from './mobile/suspense/settings.suspense.mobile';
@@ -14,13 +13,11 @@ const SettingsMobileComponent = React.lazy(
   () => import('./mobile/settings.mobile.component')
 );
 
-export interface SettingsResponsiveProps {
-  windowProps: WindowState;
-}
+export interface SettingsResponsiveProps {}
 
-export default function SettingsComponent(): JSX.Element {
-  const [windowProps] = useObservable(WindowController.model.store);
-  const [windowDebugProps] = useObservable(WindowController.model.debugStore);
+function SettingsComponent(): JSX.Element {
+  const { WindowController } = React.useContext(DIContext);
+  const { suspense } = WindowController.model;
 
   const suspenceComponent = (
     <>
@@ -29,7 +26,7 @@ export default function SettingsComponent(): JSX.Element {
     </>
   );
 
-  if (windowDebugProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
 
@@ -63,10 +60,12 @@ export default function SettingsComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <AuthenticatedComponent>
-          <SettingsDesktopComponent windowProps={windowProps} />
-          <SettingsMobileComponent windowProps={windowProps} />
+          <SettingsDesktopComponent />
+          <SettingsMobileComponent />
         </AuthenticatedComponent>
       </React.Suspense>
     </>
   );
 }
+
+export default observer(SettingsComponent);

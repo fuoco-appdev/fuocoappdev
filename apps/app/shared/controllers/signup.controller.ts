@@ -32,7 +32,7 @@ export default class SignupController extends Controller {
     return this._model;
   }
 
-  public override initialize = (_renderCount: number): void => {
+  public override initialize(_renderCount: number): void {
     const supabaseService = this._container.get('SupabaseService');
     this._supabaseClientDisposer = observe(
       supabaseService,
@@ -41,7 +41,7 @@ export default class SignupController extends Controller {
         this._model.supabaseClient = value.newValue;
       }
     );
-  };
+  }
 
   public override load(_renderCount: number): void {
     const supabaseService = this._container.get('SupabaseService');

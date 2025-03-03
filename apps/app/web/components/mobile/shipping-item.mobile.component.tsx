@@ -1,17 +1,20 @@
+import { formatAmount } from '@medusajs/utils';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from '../../modules/shipping-item.module.scss';
-// @ts-ignore
-import { formatAmount } from 'medusa-react';
+import { DIContext } from '../app.component';
 import { ResponsiveMobile } from '../responsive.component';
 import { ShippingItemResponsiveProps } from '../shipping-item.component';
 
-export default function ShippingItemMobileComponent({
-  storeProps,
+function ShippingItemMobileComponent({
   item,
   hasReducedPrice,
   discountPercentage,
 }: ShippingItemResponsiveProps): JSX.Element {
   const { t } = useTranslation();
+  const { StoreController } = React.useContext(DIContext);
+  const { selectedRegion } = StoreController.model;
 
   return (
     <ResponsiveMobile>
@@ -62,7 +65,7 @@ export default function ShippingItemMobileComponent({
                 ' '
               )}
             >
-              {item.variant.title}
+              {item.variant?.title}
             </div>
           </div>
           <div
@@ -122,10 +125,10 @@ export default function ShippingItemMobileComponent({
             ].join(' ')}
           >
             {hasReducedPrice && `${t('original')}:`} &nbsp;
-            {storeProps.selectedRegion &&
+            {selectedRegion &&
               formatAmount({
                 amount: item.subtotal ?? 0,
-                region: storeProps.selectedRegion,
+                region: selectedRegion,
                 includeTaxes: false,
               })}
           </div>
@@ -137,10 +140,10 @@ export default function ShippingItemMobileComponent({
                   styles['discount-pricing-mobile'],
                 ].join(' ')}
               >
-                {storeProps.selectedRegion &&
+                {selectedRegion &&
                   formatAmount({
                     amount: (item.subtotal ?? 0) - (item.discount_total ?? 0),
-                    region: storeProps.selectedRegion,
+                    region: selectedRegion,
                     includeTaxes: false,
                   })}
               </div>
@@ -159,3 +162,5 @@ export default function ShippingItemMobileComponent({
     </ResponsiveMobile>
   );
 }
+
+export default observer(ShippingItemMobileComponent);

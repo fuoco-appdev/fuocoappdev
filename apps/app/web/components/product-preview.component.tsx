@@ -1,15 +1,10 @@
-import { MoneyAmount, ProductType } from '@medusajs/medusa';
-import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+import { HttpTypes } from '@medusajs/types';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import ProductController from '../../shared/controllers/product.controller';
-// @ts-ignore
-import { formatAmount } from 'medusa-react';
-import { AccountState } from '../../shared/models/account.model';
-import { StoreState } from '../../shared/models/store.model';
 import { DeepLTranslationsResponse } from '../../shared/protobuf/deepl_pb';
 import { ProductLikesMetadataResponse } from '../../shared/protobuf/product-like_pb';
-import DeeplService from '../../shared/services/deepl.service';
+import { DIContext } from './app.component';
 import { ProductPreviewSuspenseDesktopComponent } from './desktop/suspense/product-preview.suspense.desktop.component';
 import { ProductPreviewSuspenseMobileComponent } from './mobile/suspense/product-preview.suspense.mobile.component';
 
@@ -21,9 +16,8 @@ const ProductPreviewMobileComponent = React.lazy(
 );
 
 export interface ProductPreviewProps {
-  accountProps: AccountState;
   parentRef: React.MutableRefObject<HTMLDivElement | null>;
-  pricedProduct: PricedProduct | null;
+  pricedProduct: HttpTypes.StoreProduct | null;
   likesMetadata: ProductLikesMetadataResponse;
   isLoading: boolean;
   purchasable: boolean;
@@ -31,8 +25,7 @@ export interface ProductPreviewProps {
   title?: string;
   subtitle?: string;
   description?: string;
-  type?: ProductType;
-  storeProps?: StoreState;
+  type?: HttpTypes.StoreProductType;
   showPricingDetails?: boolean;
   onClick?: () => void;
   onRest?: () => void;
@@ -50,14 +43,11 @@ export interface ProductPreviewResponsiveProps extends ProductPreviewProps {
   setCalculatedPrice: (value: string) => void;
   setSelectedVariantId: (value: string | undefined) => void;
   setLikeCount: (value: number) => void;
-  formatPrice: (price: MoneyAmount) => string;
   formatNumberCompact: (value: number) => string;
   formatDescription: (markdown: string) => string;
 }
 
-export default function ProductPreviewComponent({
-  storeProps,
-  accountProps,
+function ProductPreviewComponent({
   parentRef,
   purchasable,
   thumbnail,
@@ -74,6 +64,16 @@ export default function ProductPreviewComponent({
   onAddToCart,
   onLikeChanged,
 }: ProductPreviewProps): JSX.Element {
+  const {
+    DeepLService,
+    ProductController,
+    AccountController,
+    StoreController,
+    MedusaService,
+  } = React.useContext(DIContext);
+  const { account } = AccountController.model;
+  const { selectedRegion } = StoreController.model;
+  const { suspense } = ProductController.model;
   const [originalPrice, setOriginalPrice] = React.useState<string>('');
   const [calculatedPrice, setCalculatedPrice] = React.useState<string>('');
   const [addedToCartCount] = React.useState<number>(0);
@@ -86,22 +86,6 @@ export default function ProductPreviewComponent({
     string | undefined
   >(description);
   const { i18n } = useTranslation();
-
-  const formatPrice = (price: MoneyAmount): string => {
-    if (!price.amount) {
-      return 'null';
-    }
-
-    let value = price.amount.toString();
-    let charList = value.split('');
-    charList.splice(-2, 0, '.');
-    value = charList.join('');
-
-    return new Intl.NumberFormat(i18n.language, {
-      style: 'currency',
-      currency: price.currency_code,
-    }).format(Number(value));
-  };
 
   const formatNumberCompact = (value: number): string => {
     const formatter = Intl.NumberFormat(i18n.language, { notation: 'compact' });
@@ -133,7 +117,7 @@ export default function ProductPreviewComponent({
   const updateTranslatedDescriptionAsync = async (description: string) => {
     if (i18n.language !== 'en') {
       const response: DeepLTranslationsResponse =
-        await DeeplService.translateAsync(description, i18n.language);
+        await DeepLService.translateAsync(description, i18n.language);
       if (response.translations.length <= 0) {
         return;
       }
@@ -159,31 +143,31 @@ export default function ProductPreviewComponent({
     }
 
     setIsLiked(likesMetadata.didAccountLike);
-  }, [likesMetadata, accountProps.account]);
+  }, [likesMetadata, account]);
 
   React.useEffect(() => {
-    const purchasableVariants = pricedProduct?.variants.filter(
-      (value) => value.purchasable === true
+    const purchasableVariants = pricedProduct?.variants?.filter(
+      (value) => value.inventory_quantity && value.inventory_quantity > 0
     );
 
     if (purchasableVariants && purchasableVariants.length > 0) {
       const cheapestVariant =
         ProductController.getCheapestPrice(purchasableVariants);
-      if (cheapestVariant && storeProps?.selectedRegion) {
+      if (cheapestVariant && selectedRegion) {
         setSelectedVariantId(cheapestVariant.id);
         setOriginalPrice(
-          formatAmount({
-            amount: cheapestVariant.original_price ?? 0,
-            region: storeProps.selectedRegion,
-            includeTaxes: false,
-          })
+          MedusaService.formatAmount(
+            cheapestVariant.calculated_price?.original_amount ?? 0,
+            selectedRegion.currency_code,
+            i18n.language
+          )
         );
         setCalculatedPrice(
-          formatAmount({
-            amount: cheapestVariant.calculated_price ?? 0,
-            region: storeProps.selectedRegion,
-            includeTaxes: false,
-          })
+          MedusaService.formatAmount(
+            cheapestVariant.calculated_price?.calculated_amount ?? 0,
+            selectedRegion.currency_code,
+            i18n.language
+          )
         );
       }
     } else {
@@ -191,7 +175,7 @@ export default function ProductPreviewComponent({
       setOriginalPrice('');
       setCalculatedPrice('');
     }
-  }, [pricedProduct, addedToCartCount, storeProps?.selectedRegion]);
+  }, [pricedProduct, addedToCartCount, selectedRegion]);
 
   const suspenceComponent = (
     <>
@@ -200,14 +184,13 @@ export default function ProductPreviewComponent({
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (suspense) {
     return suspenceComponent;
   }
 
   return (
     <React.Suspense fallback={suspenceComponent}>
       <ProductPreviewDesktopComponent
-        accountProps={accountProps}
         likesMetadata={likesMetadata}
         parentRef={parentRef}
         thumbnail={thumbnail}
@@ -230,14 +213,12 @@ export default function ProductPreviewComponent({
         setCalculatedPrice={setCalculatedPrice}
         setSelectedVariantId={setSelectedVariantId}
         setLikeCount={setLikeCount}
-        formatPrice={formatPrice}
         onAddToCart={onAddToCart}
         onLikeChanged={onLikeChangedOverride}
         formatNumberCompact={formatNumberCompact}
         formatDescription={formatDescription}
       />
       <ProductPreviewMobileComponent
-        accountProps={accountProps}
         likesMetadata={likesMetadata}
         parentRef={parentRef}
         thumbnail={thumbnail}
@@ -260,7 +241,6 @@ export default function ProductPreviewComponent({
         setCalculatedPrice={setCalculatedPrice}
         setSelectedVariantId={setSelectedVariantId}
         setLikeCount={setLikeCount}
-        formatPrice={formatPrice}
         onAddToCart={onAddToCart}
         onLikeChanged={onLikeChangedOverride}
         formatNumberCompact={formatNumberCompact}
@@ -269,3 +249,5 @@ export default function ProductPreviewComponent({
     </React.Suspense>
   );
 }
+
+export default observer(ProductPreviewComponent);

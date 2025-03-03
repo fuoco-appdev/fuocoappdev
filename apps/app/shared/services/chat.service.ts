@@ -20,6 +20,7 @@ import {
 import { Service } from '../service';
 import { StoreOptions } from '../store-options';
 import ConfigService from './config.service';
+import LogflareService from './logflare.service';
 import SupabaseService from './supabase.service';
 
 export interface ChatSubscription {
@@ -34,6 +35,7 @@ export interface ChatSubscription {
 export default class ChatService extends Service {
   constructor(
     private readonly _supabaseService: SupabaseService,
+    private readonly _logflareService: LogflareService,
     private readonly _configService: ConfigService,
     private readonly _supabaseAnonKey: string,
     private readonly _storeOptions: StoreOptions
@@ -43,186 +45,374 @@ export default class ChatService extends Service {
 
   public override dispose(): void {}
 
-  public async requestCreatePrivateChatAsync(props: {
-    accountIds: string[];
-  }): Promise<ChatResponse | null> {
+  public async requestCreatePrivateChatAsync(
+    props: {
+      accountIds: string[];
+    },
+    retries = 3,
+    retryDelay = 1000
+  ): Promise<ChatResponse | null> {
     const session = await this._supabaseService.requestSessionAsync();
-    const privateChatRequest = new CreatePrivateChatRequest({
-      accountIds: props.accountIds,
-    });
-    const response = await fetch(`${this.endpointUrl}/chat/create-private`, {
-      method: 'post',
-      headers: {
-        ...this.headers,
-        'Session-Token': `${session?.access_token}`,
-      },
-      body: privateChatRequest.toBinary(),
-    });
-
-    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
-    this.assertResponse(arrayBuffer);
-
-    const chatResponse = ChatResponse.fromBinary(arrayBuffer);
-
-    return chatResponse;
-  }
-
-  public async requestLastMessagesAsync(props: {
-    chatIds: string[];
-  }): Promise<ChatMessageResponse[] | null> {
-    const session = await this._supabaseService.requestSessionAsync();
-    const lastChatMessagesRequest = new LastChatMessagesRequest({
-      chatIds: props.chatIds,
-    });
-    const response = await fetch(`${this.endpointUrl}/chat/last-messages`, {
-      method: 'post',
-      headers: {
-        ...this.headers,
-        'Session-Token': `${session?.access_token}`,
-      },
-      body: lastChatMessagesRequest.toBinary(),
-    });
-
-    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
-    this.assertResponse(arrayBuffer);
-
-    const chatMessagesResponse = ChatMessagesResponse.fromBinary(arrayBuffer);
-
-    return chatMessagesResponse.messages;
-  }
-
-  public async requestMessagesAsync(props: {
-    chatId: string;
-    limit: number;
-    offset: number;
-    ignoredSubscriptionIds: string[];
-  }): Promise<ChatMessagesResponse | null> {
-    const session = await this._supabaseService.requestSessionAsync();
-    const chatMessagesRequest = new ChatMessagesRequest({
-      chatId: props.chatId,
-      limit: props.limit,
-      offset: props.offset,
-      ignoredSubscriptionIds: props.ignoredSubscriptionIds,
-    });
-    const response = await fetch(`${this.endpointUrl}/chat/messages`, {
-      method: 'post',
-      headers: {
-        ...this.headers,
-        'Session-Token': `${session?.access_token}`,
-      },
-      body: chatMessagesRequest.toBinary(),
-    });
-
-    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
-    this.assertResponse(arrayBuffer);
-
-    const chatMessagesResponse = ChatMessagesResponse.fromBinary(arrayBuffer);
-    return chatMessagesResponse;
-  }
-
-  public async requestPrivateSubscriptionAsync(props: {
-    chatId: string;
-    activeAccountId: string;
-    otherAccountId: string;
-  }): Promise<ChatSubscriptionResponse> {
-    const session = await this._supabaseService.requestSessionAsync();
-    const chatPrivateSubscriptionsRequest = new ChatPrivateSubscriptionRequest({
-      chatId: props.chatId,
-      activeAccountId: props.activeAccountId,
-      otherAccountId: props.otherAccountId,
-    });
-    const response = await fetch(
-      `${this.endpointUrl}/chat/request-private-subscription`,
-      {
+    try {
+      const privateChatRequest = new CreatePrivateChatRequest({
+        accountIds: props.accountIds,
+      });
+      const response = await fetch(`${this.endpointUrl}/chat/create-private`, {
         method: 'post',
         headers: {
           ...this.headers,
           'Session-Token': `${session?.access_token}`,
         },
-        body: chatPrivateSubscriptionsRequest.toBinary(),
+        body: privateChatRequest.toBinary(),
+      });
+
+      const arrayBuffer = new Uint8Array(await response.arrayBuffer());
+      this.assertResponse(arrayBuffer);
+
+      const chatResponse = ChatResponse.fromBinary(arrayBuffer);
+
+      return chatResponse;
+    } catch (error: any) {
+      if (retries > 0) {
+        console.log(`Retry attempt with ${retries} retries left.`, error);
+        await new Promise((resolve) => setTimeout(resolve, retryDelay));
+        return this.requestCreatePrivateChatAsync(
+          props,
+          retries - 1,
+          retryDelay
+        );
+      } else {
+        console.error('Max retries reached. Error:', error);
+        await this._logflareService.requestCreateLog({
+          message: error.message,
+          metadata: {
+            level: 'error',
+            stack: error.stack,
+            message: error.message,
+            status: error.status,
+            supabaseId: session?.user.id,
+          },
+        });
+        throw error;
       }
-    );
-
-    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
-    this.assertResponse(arrayBuffer);
-
-    const chatSubscriptionResponse =
-      ChatSubscriptionResponse.fromBinary(arrayBuffer);
-    return chatSubscriptionResponse;
+    }
   }
 
-  public async requestSubscriptionsAsync(props: {
-    chatIds: string[];
-    accountIds: string[];
-  }): Promise<ChatSubscriptionResponse[]> {
+  public async requestLastMessagesAsync(
+    props: {
+      chatIds: string[];
+    },
+    retries = 3,
+    retryDelay = 1000
+  ): Promise<ChatMessageResponse[] | null> {
     const session = await this._supabaseService.requestSessionAsync();
-    const chatSubscriptionsRequest = new ChatSubscriptionsRequest({
-      chatIds: props.chatIds,
-      accountIds: props.accountIds,
-    });
-    const response = await fetch(`${this.endpointUrl}/chat/subscriptions`, {
-      method: 'post',
-      headers: {
-        ...this.headers,
-        'Session-Token': `${session?.access_token}`,
-      },
-      body: chatSubscriptionsRequest.toBinary(),
-    });
+    try {
+      const lastChatMessagesRequest = new LastChatMessagesRequest({
+        chatIds: props.chatIds,
+      });
+      const response = await fetch(`${this.endpointUrl}/chat/last-messages`, {
+        method: 'post',
+        headers: {
+          ...this.headers,
+          'Session-Token': `${session?.access_token}`,
+        },
+        body: lastChatMessagesRequest.toBinary(),
+      });
 
-    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
-    this.assertResponse(arrayBuffer);
+      const arrayBuffer = new Uint8Array(await response.arrayBuffer());
+      this.assertResponse(arrayBuffer);
 
-    const chatSubscriptionsResponse =
-      ChatSubscriptionsResponse.fromBinary(arrayBuffer);
-    return chatSubscriptionsResponse.subscriptions;
+      const chatMessagesResponse = ChatMessagesResponse.fromBinary(arrayBuffer);
+
+      return chatMessagesResponse.messages;
+    } catch (error: any) {
+      if (retries > 0) {
+        console.log(`Retry attempt with ${retries} retries left.`, error);
+        await new Promise((resolve) => setTimeout(resolve, retryDelay));
+        return this.requestLastMessagesAsync(props, retries - 1, retryDelay);
+      } else {
+        console.error('Max retries reached. Error:', error);
+        await this._logflareService.requestCreateLog({
+          message: error.message,
+          metadata: {
+            level: 'error',
+            stack: error.stack,
+            message: error.message,
+            status: error.status,
+            supabaseId: session?.user.id,
+          },
+        });
+        throw error;
+      }
+    }
+  }
+
+  public async requestMessagesAsync(
+    props: {
+      chatId: string;
+      limit: number;
+      offset: number;
+      ignoredSubscriptionIds: string[];
+    },
+    retries = 3,
+    retryDelay = 1000
+  ): Promise<ChatMessagesResponse | null> {
+    const session = await this._supabaseService.requestSessionAsync();
+    try {
+      const chatMessagesRequest = new ChatMessagesRequest({
+        chatId: props.chatId,
+        limit: props.limit,
+        offset: props.offset,
+        ignoredSubscriptionIds: props.ignoredSubscriptionIds,
+      });
+      const response = await fetch(`${this.endpointUrl}/chat/messages`, {
+        method: 'post',
+        headers: {
+          ...this.headers,
+          'Session-Token': `${session?.access_token}`,
+        },
+        body: chatMessagesRequest.toBinary(),
+      });
+
+      const arrayBuffer = new Uint8Array(await response.arrayBuffer());
+      this.assertResponse(arrayBuffer);
+
+      const chatMessagesResponse = ChatMessagesResponse.fromBinary(arrayBuffer);
+      return chatMessagesResponse;
+    } catch (error: any) {
+      if (retries > 0) {
+        console.log(`Retry attempt with ${retries} retries left.`, error);
+        await new Promise((resolve) => setTimeout(resolve, retryDelay));
+        return this.requestMessagesAsync(props, retries - 1, retryDelay);
+      } else {
+        console.error('Max retries reached. Error:', error);
+        await this._logflareService.requestCreateLog({
+          message: error.message,
+          metadata: {
+            level: 'error',
+            stack: error.stack,
+            message: error.message,
+            status: error.status,
+            supabaseId: session?.user.id,
+          },
+        });
+        throw error;
+      }
+    }
+  }
+
+  public async requestPrivateSubscriptionAsync(
+    props: {
+      chatId: string;
+      activeAccountId: string;
+      otherAccountId: string;
+    },
+    retries = 3,
+    retryDelay = 1000
+  ): Promise<ChatSubscriptionResponse> {
+    const session = await this._supabaseService.requestSessionAsync();
+    try {
+      const chatPrivateSubscriptionsRequest =
+        new ChatPrivateSubscriptionRequest({
+          chatId: props.chatId,
+          activeAccountId: props.activeAccountId,
+          otherAccountId: props.otherAccountId,
+        });
+      const response = await fetch(
+        `${this.endpointUrl}/chat/request-private-subscription`,
+        {
+          method: 'post',
+          headers: {
+            ...this.headers,
+            'Session-Token': `${session?.access_token}`,
+          },
+          body: chatPrivateSubscriptionsRequest.toBinary(),
+        }
+      );
+
+      const arrayBuffer = new Uint8Array(await response.arrayBuffer());
+      this.assertResponse(arrayBuffer);
+
+      const chatSubscriptionResponse =
+        ChatSubscriptionResponse.fromBinary(arrayBuffer);
+      return chatSubscriptionResponse;
+    } catch (error: any) {
+      if (retries > 0) {
+        console.log(`Retry attempt with ${retries} retries left.`, error);
+        await new Promise((resolve) => setTimeout(resolve, retryDelay));
+        return this.requestPrivateSubscriptionAsync(
+          props,
+          retries - 1,
+          retryDelay
+        );
+      } else {
+        console.error('Max retries reached. Error:', error);
+        await this._logflareService.requestCreateLog({
+          message: error.message,
+          metadata: {
+            level: 'error',
+            stack: error.stack,
+            message: error.message,
+            status: error.status,
+            supabaseId: session?.user.id,
+          },
+        });
+        throw error;
+      }
+    }
+  }
+
+  public async requestSubscriptionsAsync(
+    props: {
+      chatIds: string[];
+      accountIds: string[];
+    },
+    retries = 3,
+    retryDelay = 1000
+  ): Promise<ChatSubscriptionResponse[]> {
+    const session = await this._supabaseService.requestSessionAsync();
+    try {
+      const chatSubscriptionsRequest = new ChatSubscriptionsRequest({
+        chatIds: props.chatIds,
+        accountIds: props.accountIds,
+      });
+      const response = await fetch(`${this.endpointUrl}/chat/subscriptions`, {
+        method: 'post',
+        headers: {
+          ...this.headers,
+          'Session-Token': `${session?.access_token}`,
+        },
+        body: chatSubscriptionsRequest.toBinary(),
+      });
+
+      const arrayBuffer = new Uint8Array(await response.arrayBuffer());
+      this.assertResponse(arrayBuffer);
+
+      const chatSubscriptionsResponse =
+        ChatSubscriptionsResponse.fromBinary(arrayBuffer);
+      return chatSubscriptionsResponse.subscriptions;
+    } catch (error: any) {
+      if (retries > 0) {
+        console.log(`Retry attempt with ${retries} retries left.`, error);
+        await new Promise((resolve) => setTimeout(resolve, retryDelay));
+        return this.requestSubscriptionsAsync(props, retries - 1, retryDelay);
+      } else {
+        console.error('Max retries reached. Error:', error);
+        await this._logflareService.requestCreateLog({
+          message: error.message,
+          metadata: {
+            level: 'error',
+            stack: error.stack,
+            message: error.message,
+            status: error.status,
+            supabaseId: session?.user.id,
+          },
+        });
+        throw error;
+      }
+    }
   }
 
   public async requestAccountSubscriptionIdsAsync(
-    accountId: string
+    accountId: string,
+    retries = 3,
+    retryDelay = 1000
   ): Promise<string[]> {
     const session = await this._supabaseService.requestSessionAsync();
-    const response = await fetch(
-      `${this.endpointUrl}/chat/subscriptions/ids/${accountId}`,
-      {
+    try {
+      const response = await fetch(
+        `${this.endpointUrl}/chat/subscriptions/ids/${accountId}`,
+        {
+          method: 'post',
+          headers: {
+            ...this.headers,
+            'Session-Token': `${session?.access_token}`,
+          },
+          body: '',
+        }
+      );
+
+      const arrayBuffer = new Uint8Array(await response.arrayBuffer());
+      this.assertResponse(arrayBuffer);
+
+      const chatAccountSubscriptionIdsResponse =
+        ChatAccountSubscriptionIdsResponse.fromBinary(arrayBuffer);
+      return chatAccountSubscriptionIdsResponse.chatIds;
+    } catch (error: any) {
+      if (retries > 0) {
+        console.log(`Retry attempt with ${retries} retries left.`, error);
+        await new Promise((resolve) => setTimeout(resolve, retryDelay));
+        return this.requestAccountSubscriptionIdsAsync(
+          accountId,
+          retries - 1,
+          retryDelay
+        );
+      } else {
+        console.error('Max retries reached. Error:', error);
+        await this._logflareService.requestCreateLog({
+          message: error.message,
+          metadata: {
+            level: 'error',
+            stack: error.stack,
+            message: error.message,
+            status: error.status,
+            supabaseId: session?.user.id,
+          },
+        });
+        throw error;
+      }
+    }
+  }
+
+  public async requestSeenByMessagesAsync(
+    messageIds: string[],
+    retries = 3,
+    retryDelay = 1000
+  ): Promise<ChatSeenMessageResponse[]> {
+    const session = await this._supabaseService.requestSessionAsync();
+    try {
+      const request = new ChatSeenMessagesRequest({
+        messageIds: messageIds,
+      });
+      const response = await fetch(`${this.endpointUrl}/chat/seen-by`, {
         method: 'post',
         headers: {
           ...this.headers,
           'Session-Token': `${session?.access_token}`,
         },
-        body: '',
+        body: request.toBinary(),
+      });
+
+      const arrayBuffer = new Uint8Array(await response.arrayBuffer());
+      this.assertResponse(arrayBuffer);
+
+      const chatSeenMessageResponse =
+        ChatSeenMessagesResponse.fromBinary(arrayBuffer);
+      return chatSeenMessageResponse.seenMessages;
+    } catch (error: any) {
+      if (retries > 0) {
+        console.log(`Retry attempt with ${retries} retries left.`, error);
+        await new Promise((resolve) => setTimeout(resolve, retryDelay));
+        return this.requestSeenByMessagesAsync(
+          messageIds,
+          retries - 1,
+          retryDelay
+        );
+      } else {
+        console.error('Max retries reached. Error:', error);
+        await this._logflareService.requestCreateLog({
+          message: error.message,
+          metadata: {
+            level: 'error',
+            stack: error.stack,
+            message: error.message,
+            status: error.status,
+            supabaseId: session?.user.id,
+          },
+        });
+        throw error;
       }
-    );
-
-    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
-    this.assertResponse(arrayBuffer);
-
-    const chatAccountSubscriptionIdsResponse =
-      ChatAccountSubscriptionIdsResponse.fromBinary(arrayBuffer);
-    return chatAccountSubscriptionIdsResponse.chatIds;
-  }
-
-  public async requestSeenByMessagesAsync(
-    messageIds: string[]
-  ): Promise<ChatSeenMessageResponse[]> {
-    const session = await this._supabaseService.requestSessionAsync();
-    const request = new ChatSeenMessagesRequest({
-      messageIds: messageIds,
-    });
-    const response = await fetch(`${this.endpointUrl}/chat/seen-by`, {
-      method: 'post',
-      headers: {
-        ...this.headers,
-        'Session-Token': `${session?.access_token}`,
-      },
-      body: request.toBinary(),
-    });
-
-    const arrayBuffer = new Uint8Array(await response.arrayBuffer());
-    this.assertResponse(arrayBuffer);
-
-    const chatSeenMessageResponse =
-      ChatSeenMessagesResponse.fromBinary(arrayBuffer);
-    return chatSeenMessageResponse.seenMessages;
+    }
   }
 
   public async requestUpsertMessageAsync(

@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import { useObservable } from '@ngneat/use-observable';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import ForgotPasswordController from '../../shared/controllers/forgot-password.controller';
-import { ForgotPasswordState } from '../../shared/models/forgot-password.model';
+import { DIContext } from './app.component';
 import { GuestComponent } from './guest.component';
 import {
   ResponsiveDesktop,
@@ -18,18 +17,20 @@ const ForgotPasswordMobileComponent = React.lazy(
   () => import('./mobile/forgot-password.mobile.component')
 );
 
-export interface ForgotPasswordResponsiveProps {
-  forgotPasswordProps: ForgotPasswordState;
-}
+export interface ForgotPasswordResponsiveProps {}
 
-export default function ForgotPasswordComponent(): JSX.Element {
-  const [forgotPasswordProps] = useObservable(
-    ForgotPasswordController.model.store
-  );
-  const [forgotPasswordDebugProps] = useObservable(
-    ForgotPasswordController.model.debugStore
-  );
+function ForgotPasswordComponent(): JSX.Element {
+  const { ForgotPasswordController } = React.useContext(DIContext);
+  const { suspense } = ForgotPasswordController.model;
   const renderCountRef = React.useRef<number>(0);
+  React.useEffect(() => {
+    renderCountRef.current += 1;
+    ForgotPasswordController.load(renderCountRef.current);
+
+    return () => {
+      ForgotPasswordController.disposeLoad(renderCountRef.current);
+    };
+  }, []);
 
   const suspenceComponent = (
     <>
@@ -45,18 +46,9 @@ export default function ForgotPasswordComponent(): JSX.Element {
     </>
   );
 
-  if (forgotPasswordDebugProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
-
-  React.useEffect(() => {
-    renderCountRef.current += 1;
-    ForgotPasswordController.load(renderCountRef.current);
-
-    return () => {
-      ForgotPasswordController.disposeLoad(renderCountRef.current);
-    };
-  }, []);
 
   return (
     <>
@@ -84,14 +76,12 @@ export default function ForgotPasswordComponent(): JSX.Element {
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <GuestComponent>
-          <ForgotPasswordDesktopComponent
-            forgotPasswordProps={forgotPasswordProps}
-          />
-          <ForgotPasswordMobileComponent
-            forgotPasswordProps={forgotPasswordProps}
-          />
+          <ForgotPasswordDesktopComponent />
+          <ForgotPasswordMobileComponent />
         </GuestComponent>
       </React.Suspense>
     </>
   );
 }
+
+export default observer(ForgotPasswordComponent);

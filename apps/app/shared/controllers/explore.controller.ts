@@ -46,13 +46,13 @@ export default class ExploreController extends Controller {
     return this._model;
   }
 
-  public override initialize = (renderCount: number): void => {
+  public override initialize(renderCount: number): void {
     const meiliSearchService = this._container.get('MeiliSearchService');
     this._stockLocationsIndex =
       meiliSearchService.client?.index('stock_locations');
 
     this.initializeAsync(renderCount);
-  };
+  }
 
   public override load(_renderCount: number): void {}
 

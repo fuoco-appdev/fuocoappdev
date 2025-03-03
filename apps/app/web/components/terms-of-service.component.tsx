@@ -1,8 +1,7 @@
-import { useObservable } from '@ngneat/use-observable';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import TermsOfServiceController from '../../shared/controllers/terms-of-service.controller';
-import { TermsOfServiceState } from '../../shared/models/terms-of-service.model';
+import { DIContext } from './app.component';
 import {
   ResponsiveSuspenseDesktop,
   ResponsiveSuspenseMobile,
@@ -17,14 +16,12 @@ const TermsOfServiceMobileComponent = React.lazy(
 );
 
 export interface TermsOfServiceResponsiveProps {
-  termsOfServiceProps: TermsOfServiceState;
   remarkPlugins: any[];
 }
 
-export default function TermsOfServiceComponent(): JSX.Element {
-  const [termsOfServiceProps] = useObservable(
-    TermsOfServiceController.model.store
-  );
+function TermsOfServiceComponent(): JSX.Element {
+  const { TermsOfServiceController } = React.useContext(DIContext);
+  const { suspense } = TermsOfServiceController.model;
   const [remarkPlugins, setRemarkPlugins] = React.useState<any[]>([]);
   const renderCountRef = React.useRef<number>(0);
 
@@ -54,7 +51,7 @@ export default function TermsOfServiceComponent(): JSX.Element {
     </>
   );
 
-  if (import.meta.env['DEBUG_SUSPENSE'] === 'true') {
+  if (suspense) {
     return suspenceComponent;
   }
 
@@ -87,15 +84,11 @@ export default function TermsOfServiceComponent(): JSX.Element {
         <meta property="og:url" content={window.location.href} />
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
-        <TermsOfServiceDesktopComponent
-          termsOfServiceProps={termsOfServiceProps}
-          remarkPlugins={remarkPlugins}
-        />
-        <TermsOfServiceMobileComponent
-          termsOfServiceProps={termsOfServiceProps}
-          remarkPlugins={remarkPlugins}
-        />
+        <TermsOfServiceDesktopComponent remarkPlugins={remarkPlugins} />
+        <TermsOfServiceMobileComponent remarkPlugins={remarkPlugins} />
       </React.Suspense>
     </>
   );
 }
+
+export default observer(TermsOfServiceComponent);

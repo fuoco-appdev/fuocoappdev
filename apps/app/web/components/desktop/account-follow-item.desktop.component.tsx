@@ -1,12 +1,14 @@
 import { Avatar, Button } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Skeleton from 'react-loading-skeleton';
 import styles from '../../modules/account-follow-item.module.scss';
 import { AccountFollowItemResponsiveProps } from '../account-follow-item.component';
+import { DIContext } from '../app.component';
 import { ResponsiveDesktop } from '../responsive.component';
 
-export default function AccountFollowItemDesktopComponent({
-  accountProps,
+function AccountFollowItemDesktopComponent({
   account,
   isRequest,
   isFollowing,
@@ -20,7 +22,7 @@ export default function AccountFollowItemDesktopComponent({
   onRemove,
 }: AccountFollowItemResponsiveProps): JSX.Element {
   const { t } = useTranslation();
-
+  const { AccountController } = React.useContext(DIContext);
   return (
     <ResponsiveDesktop>
       <div
@@ -41,7 +43,7 @@ export default function AccountFollowItemDesktopComponent({
               ].join(' '),
             }}
             size={'custom'}
-            text={account.customer?.first_name}
+            text={account.customer?.first_name ?? ''}
             src={profileUrl}
           />
           <div
@@ -93,7 +95,7 @@ export default function AccountFollowItemDesktopComponent({
             )}
           </div>
         </div>
-        {accountProps.account?.id !== account.id && !isRequest && (
+        {AccountController.model.account?.id !== account.id && !isRequest && (
           <>
             {!isFollowing && (
               <Button
@@ -151,7 +153,7 @@ export default function AccountFollowItemDesktopComponent({
             )}
           </>
         )}
-        {accountProps.account?.id !== account.id && isRequest && (
+        {AccountController.model.account?.id !== account.id && isRequest && (
           <div
             className={[
               styles['request-button-container'],
@@ -196,3 +198,5 @@ export default function AccountFollowItemDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(AccountFollowItemDesktopComponent);

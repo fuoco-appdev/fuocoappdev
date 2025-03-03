@@ -1,10 +1,10 @@
 import { Button, Line } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
 import styles from '../../modules/address-item.module.scss';
-// @ts-ignore
 import { AddressItemProps } from '../address-item.component';
 import { ResponsiveMobile } from '../responsive.component';
 
-export default function AddressItemMobileComponent({
+function AddressItemMobileComponent({
   address,
   onEdit,
   onDelete,
@@ -96,3 +96,5 @@ export default function AddressItemMobileComponent({
     </ResponsiveMobile>
   );
 }
+
+export default observer(AddressItemMobileComponent);

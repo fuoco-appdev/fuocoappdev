@@ -2,6 +2,7 @@ import { MeiliSearch } from 'meilisearch';
 import { Service } from '../service';
 import { StoreOptions } from '../store-options';
 import ConfigService from './config.service';
+import LogflareService from './logflare.service';
 
 export default class MeiliSearchService extends Service {
   private _client: MeiliSearch | undefined;
@@ -9,6 +10,7 @@ export default class MeiliSearchService extends Service {
   constructor(
     private readonly _publicKey: string,
     private readonly _configService: ConfigService,
+    private readonly _logflareService: LogflareService,
     private readonly _supabaseAnonKey: string,
     private readonly _storeOptions: StoreOptions
   ) {

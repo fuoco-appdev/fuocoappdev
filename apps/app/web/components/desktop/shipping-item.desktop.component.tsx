@@ -1,17 +1,20 @@
+/* eslint-disable jsx-a11y/alt-text */
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from '../../modules/shipping-item.module.scss';
-// @ts-ignore
-import { formatAmount } from 'medusa-react';
+import { DIContext } from '../app.component';
 import { ResponsiveDesktop } from '../responsive.component';
 import { ShippingItemResponsiveProps } from '../shipping-item.component';
 
-export default function ShippingItemDesktopComponent({
-  storeProps,
+function ShippingItemDesktopComponent({
   item,
   hasReducedPrice,
   discountPercentage,
 }: ShippingItemResponsiveProps): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { StoreController, MedusaService } = React.useContext(DIContext);
+  const { selectedRegion } = StoreController.model;
 
   return (
     <ResponsiveDesktop>
@@ -61,7 +64,7 @@ export default function ShippingItemDesktopComponent({
                 ' '
               )}
             >
-              {item.variant.title}
+              {item.variant?.title}
             </div>
           </div>
           <div
@@ -121,12 +124,12 @@ export default function ShippingItemDesktopComponent({
             ].join(' ')}
           >
             {hasReducedPrice && `${t('original')}:`} &nbsp;
-            {storeProps.selectedRegion &&
-              formatAmount({
-                amount: item.subtotal ?? 0,
-                region: storeProps.selectedRegion,
-                includeTaxes: false,
-              })}
+            {selectedRegion &&
+              MedusaService.formatAmount(
+                item.subtotal ?? 0,
+                selectedRegion.currency_code,
+                i18n.language
+              )}
           </div>
           {hasReducedPrice && (
             <>
@@ -136,12 +139,12 @@ export default function ShippingItemDesktopComponent({
                   styles['discount-pricing-desktop'],
                 ].join(' ')}
               >
-                {storeProps.selectedRegion &&
-                  formatAmount({
-                    amount: (item.subtotal ?? 0) - (item.discount_total ?? 0),
-                    region: storeProps.selectedRegion,
-                    includeTaxes: false,
-                  })}
+                {selectedRegion &&
+                  MedusaService.formatAmount(
+                    (item.subtotal ?? 0) - (item.discount_total ?? 0),
+                    selectedRegion.currency_code,
+                    i18n.language
+                  )}
               </div>
               <div
                 className={[
@@ -158,3 +161,5 @@ export default function ShippingItemDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(ShippingItemDesktopComponent);

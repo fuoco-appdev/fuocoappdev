@@ -1,13 +1,7 @@
-import { Store } from '@ngneat/elf';
-import { useObservable } from '@ngneat/use-observable';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import AccountController from '../../shared/controllers/account.controller';
-import StoreController from '../../shared/controllers/store.controller';
-import WindowController from '../../shared/controllers/window.controller';
-import { AccountState } from '../../shared/models/account.model';
-import { StoreState } from '../../shared/models/store.model';
-import { WindowLocalState } from '../../shared/models/window.model';
+import { DIContext } from './app.component';
 import { AuthenticatedComponent } from './authenticated.component';
 import {
   ResponsiveDesktop,
@@ -23,9 +17,6 @@ const SettingsAccountMobileComponent = React.lazy(
 );
 
 export interface SettingsAccountResponsiveProps {
-  accountProps: AccountState;
-  storeProps: StoreState;
-  windowLocalProps: WindowLocalState;
   updatePasswordError: string | undefined;
   setUpdatePasswordError: (value: string | undefined) => void;
   confirmPasswordError: string | undefined;
@@ -35,13 +26,9 @@ export interface SettingsAccountResponsiveProps {
   onGeneralInformationSaveAsync: () => void;
 }
 
-export default function SettingsAccountComponent(): JSX.Element {
-  const [windowLocalProps] = useObservable(
-    WindowController.model.localStore ?? Store.prototype
-  );
-  const [accountProps] = useObservable(AccountController.model.store);
-  const [accountDebugProps] = useObservable(AccountController.model.debugStore);
-  const [storeProps] = useObservable(StoreController.model.store);
+function SettingsAccountComponent(): JSX.Element {
+  const { AccountController } = React.useContext(DIContext);
+  const { suspense } = AccountController.model;
   const [updatePasswordError, setUpdatePasswordError] = React.useState<
     string | undefined
   >(undefined);
@@ -59,12 +46,12 @@ export default function SettingsAccountComponent(): JSX.Element {
       return;
     }
 
-    WindowController.addToast({
-      key: `update-customer-${Math.random()}`,
-      message: t('successfullyUpdatedUser') ?? '',
-      description: t('successfullyUpdatedUserDescription') ?? '',
-      type: 'success',
-    });
+    // WindowController.addToast({
+    //   key: `update-customer-${Math.random()}`,
+    //   message: t('successfullyUpdatedUser') ?? '',
+    //   description: t('successfullyUpdatedUserDescription') ?? '',
+    //   type: 'success',
+    // });
   };
 
   const suspenceComponent = (
@@ -81,7 +68,7 @@ export default function SettingsAccountComponent(): JSX.Element {
     </>
   );
 
-  if (accountDebugProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
 
@@ -89,9 +76,6 @@ export default function SettingsAccountComponent(): JSX.Element {
     <React.Suspense fallback={suspenceComponent}>
       <AuthenticatedComponent>
         <SettingsAccountDesktopComponent
-          accountProps={accountProps}
-          storeProps={storeProps}
-          windowLocalProps={windowLocalProps}
           updatePasswordError={updatePasswordError}
           setUpdatePasswordError={setUpdatePasswordError}
           confirmPasswordError={confirmPasswordError}
@@ -101,9 +85,6 @@ export default function SettingsAccountComponent(): JSX.Element {
           onGeneralInformationSaveAsync={onGeneralInformationSaveAsync}
         />
         <SettingsAccountMobileComponent
-          accountProps={accountProps}
-          storeProps={storeProps}
-          windowLocalProps={windowLocalProps}
           updatePasswordError={updatePasswordError}
           setUpdatePasswordError={setUpdatePasswordError}
           confirmPasswordError={confirmPasswordError}
@@ -116,3 +97,5 @@ export default function SettingsAccountComponent(): JSX.Element {
     </React.Suspense>
   );
 }
+
+export default observer(SettingsAccountComponent);

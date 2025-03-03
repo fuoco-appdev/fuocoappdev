@@ -4,6 +4,7 @@ import { StorageFolderType } from '../protobuf/common_pb';
 import { Service } from '../service';
 import { StoreOptions } from '../store-options';
 import ConfigService from './config.service';
+import LogflareService from './logflare.service';
 import SupabaseService from './supabase.service';
 
 export default class BucketService extends Service {
@@ -14,6 +15,7 @@ export default class BucketService extends Service {
     private readonly _accessKeyId: string,
     private readonly _secretAccessKey: string,
     private readonly _supabaseService: SupabaseService,
+    private readonly _logflareService: LogflareService,
     private readonly _configService: ConfigService,
     private readonly _supabaseAnonKey: string,
     private readonly _storeOptions: StoreOptions

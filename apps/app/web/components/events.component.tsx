@@ -1,3 +1,4 @@
+import { observer } from 'mobx-react-lite';
 import { Helmet } from 'react-helmet';
 import { ResponsiveDesktop, ResponsiveMobile } from './responsive.component';
 
@@ -9,7 +10,7 @@ function EventsMobileComponent(): JSX.Element {
   return <></>;
 }
 
-export default function EventsComponent(): JSX.Element {
+function EventsComponent(): JSX.Element {
   return (
     <>
       <Helmet>
@@ -47,3 +48,5 @@ export default function EventsComponent(): JSX.Element {
     </>
   );
 }
+
+export default observer(EventsComponent);

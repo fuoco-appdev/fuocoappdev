@@ -1,27 +1,27 @@
 import { Button } from '@fuoco.appdev/web-components';
-import { Order } from '@medusajs/medusa';
+import { HttpTypes } from '@medusajs/types';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import AccountController from '../../../shared/controllers/account.controller';
 import { RoutePathsType } from '../../../shared/route-paths-type';
 import styles from '../../modules/account-order-history.module.scss';
 import { useQuery } from '../../route-paths';
 import { AccountOrderHistoryResponsiveProps } from '../account-order-history.component';
 import { useAccountOutletContext } from '../account.component';
+import { DIContext } from '../app.component';
 import OrderItemComponent from '../order-item.component';
 import { ResponsiveMobile } from '../responsive.component';
 
-export default function AccountOrderHistoryMobileComponent({
-  accountProps,
-}: AccountOrderHistoryResponsiveProps): JSX.Element {
+function AccountOrderHistoryMobileComponent({}: AccountOrderHistoryResponsiveProps): JSX.Element {
   const rootRef = React.useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const query = useQuery();
   const { t } = useTranslation();
   const context = useAccountOutletContext();
+  const { AccountController } = React.useContext(DIContext);
+  const { orders, areOrdersLoading } = AccountController.model;
 
-  const orders = accountProps.orders as Order[];
   return (
     <ResponsiveMobile>
       <div
@@ -36,13 +36,15 @@ export default function AccountOrderHistoryMobileComponent({
         >
           {orders.length > 0 &&
             orders
-              .sort((current: Order, next: Order) => {
-                return (
-                  new Date(next.created_at).valueOf() -
-                  new Date(current.created_at).valueOf()
-                );
-              })
-              .map((order: Order) => (
+              .sort(
+                (current: HttpTypes.StoreOrder, next: HttpTypes.StoreOrder) => {
+                  return (
+                    new Date(next.created_at).valueOf() -
+                    new Date(current.created_at).valueOf()
+                  );
+                }
+              )
+              .map((order: HttpTypes.StoreOrder) => (
                 <OrderItemComponent
                   key={order.id}
                   order={order}
@@ -61,7 +63,7 @@ export default function AccountOrderHistoryMobileComponent({
                   }}
                 />
               ))}
-          {!accountProps.areOrdersLoading && orders.length <= 0 && (
+          {!areOrdersLoading && orders.length <= 0 && (
             <>
               <div
                 className={[
@@ -110,3 +112,5 @@ export default function AccountOrderHistoryMobileComponent({
     </ResponsiveMobile>
   );
 }
+
+export default observer(AccountOrderHistoryMobileComponent);

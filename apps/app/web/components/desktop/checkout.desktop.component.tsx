@@ -6,17 +6,7 @@ import {
   Line,
   Modal,
   Radio,
-  Solid,
 } from '@fuoco.appdev/web-components';
-import { Customer, Discount, GiftCard } from '@medusajs/medusa';
-import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import CartController from '../../../shared/controllers/cart.controller';
-import CheckoutController from '../../../shared/controllers/checkout.controller';
-import { ProviderType } from '../../../shared/models/checkout.model';
-import styles from '../../modules/checkout.module.scss';
-import AddressFormComponent from '../address-form.component';
-// @ts-ignore
 import {
   CardCvcElement,
   CardExpiryElement,
@@ -24,21 +14,22 @@ import {
   Elements,
 } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import { formatAmount } from 'medusa-react';
+import { observer } from 'mobx-react-lite';
+import * as React from 'react';
 import ReactDOM from 'react-dom';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { ProviderType } from '../../../shared/models/checkout.model';
 import { RoutePathsType } from '../../../shared/route-paths-type';
+import styles from '../../modules/checkout.module.scss';
 import { useQuery } from '../../route-paths';
+import AddressFormComponent from '../address-form.component';
+import { DIContext } from '../app.component';
 import { CheckoutResponsiveProps } from '../checkout.component';
 import { ResponsiveDesktop } from '../responsive.component';
 import StripePayButtonComponent from '../stripe-pay-button.component';
 
-export default function CheckoutDesktopComponent({
-  checkoutProps,
-  accountProps,
-  storeProps,
-  cartProps,
-  windowProps,
+function CheckoutDesktopComponent({
   shippingOptions,
   providerOptions,
   shippingAddressOptions,
@@ -60,8 +51,36 @@ export default function CheckoutDesktopComponent({
   const { t } = useTranslation();
   const navigate = useNavigate();
   const query = useQuery();
+  const {
+    AccountController,
+    WindowController,
+    CheckoutController,
+    CartController,
+    StoreController,
+  } = React.useContext(DIContext);
+  const { isAuthenticated } = WindowController.model;
+  const { selectedRegion } = StoreController.model;
+  const {
+    shippingForm,
+    shippingFormErrors,
+    shippingFormComplete,
+    selectedShippingAddressOptionId,
+    sameAsBillingAddress,
+    billingForm,
+    billingFormErrors,
+    billingFormComplete,
+    selectedShippingOptionId,
+    giftCardCode,
+    discountCode,
+    selectedProviderId,
+    isLegalAge,
+    addShippingForm,
+    addShippingFormErrors,
+    isPaymentLoading,
+  } = CheckoutController.model;
+  const { cart } = CartController.model;
+  const { account, customer } = AccountController.model;
 
-  const customer = accountProps.customer as Customer;
   return (
     <ResponsiveDesktop>
       <div
@@ -114,7 +133,7 @@ export default function CheckoutDesktopComponent({
                     styles['header-right-content-desktop'],
                   ].join(' ')}
                 >
-                  {windowProps.isAuthenticated && (
+                  {isAuthenticated && (
                     <div>
                       <Button
                         classNames={{
@@ -133,11 +152,11 @@ export default function CheckoutDesktopComponent({
                   )}
                 </div>
               </div>
-              {!windowProps.isAuthenticated && (
+              {!isAuthenticated && (
                 <AddressFormComponent
-                  values={checkoutProps.shippingForm}
-                  errors={checkoutProps.shippingFormErrors}
-                  isComplete={checkoutProps.shippingFormComplete}
+                  values={shippingForm}
+                  errors={shippingFormErrors}
+                  isComplete={shippingFormComplete}
                   onEdit={() =>
                     CheckoutController.updateShippingFormComplete(false)
                   }
@@ -189,46 +208,41 @@ export default function CheckoutDesktopComponent({
                   }}
                 />
               )}
-              {windowProps.isAuthenticated &&
-                customer?.shipping_addresses?.length > 0 && (
-                  <Radio.Group
-                    id={''}
-                    activeId={
-                      checkoutProps.selectedShippingAddressOptionId ?? ''
-                    }
-                    rippleProps={{
-                      color: 'rgba(42, 42, 95, .35)',
-                    }}
-                    classNames={{
-                      radio: {
-                        containerCard: styles['radio-container-card'],
-                        labelText: styles['radio-label-text'],
-                        labelDescription:
-                          styles['radio-label-description-text'],
-                        containerCardActive:
-                          styles['radio-container-card-active'],
-                      },
-                    }}
-                    options={shippingAddressOptions}
-                    type={'cards'}
-                    onChange={(event) =>
-                      CheckoutController.updateSelectedShippingAddressOptionIdAsync(
-                        event.target.id
-                      )
-                    }
-                  />
-                )}
-              {windowProps.isAuthenticated &&
-                customer?.shipping_addresses?.length <= 0 && (
-                  <div
-                    className={[
-                      styles['card-description'],
-                      styles['card-description-desktop'],
-                    ].join(' ')}
-                  >
-                    {t('noAddressAddedDescription')}
-                  </div>
-                )}
+              {isAuthenticated && customer?.default_shipping_address_id && (
+                <Radio.Group
+                  id={''}
+                  activeId={selectedShippingAddressOptionId ?? ''}
+                  rippleProps={{
+                    color: 'rgba(42, 42, 95, .35)',
+                  }}
+                  classNames={{
+                    radio: {
+                      containerCard: styles['radio-container-card'],
+                      labelText: styles['radio-label-text'],
+                      labelDescription: styles['radio-label-description-text'],
+                      containerCardActive:
+                        styles['radio-container-card-active'],
+                    },
+                  }}
+                  options={shippingAddressOptions}
+                  type={'cards'}
+                  onChange={(event) =>
+                    CheckoutController.updateSelectedShippingAddressOptionIdAsync(
+                      event.target.id
+                    )
+                  }
+                />
+              )}
+              {isAuthenticated && !customer?.default_shipping_address_id && (
+                <div
+                  className={[
+                    styles['card-description'],
+                    styles['card-description-desktop'],
+                  ].join(' ')}
+                >
+                  {t('noAddressAddedDescription')}
+                </div>
+              )}
               <Checkbox
                 classNames={{
                   container: styles['checkbox-container'],
@@ -236,47 +250,44 @@ export default function CheckoutDesktopComponent({
                   labelContainerLabelSpan: styles['checkbox-label'],
                 }}
                 label={t('sameAsBillingAddress') ?? ''}
-                checked={checkoutProps.sameAsBillingAddress}
+                checked={sameAsBillingAddress}
                 onChange={() =>
                   CheckoutController.updateSameAsBillingAddress(
-                    !checkoutProps.sameAsBillingAddress
+                    !sameAsBillingAddress
                   )
                 }
               />
-              {!accountProps.customer &&
-                !checkoutProps.shippingFormComplete &&
-                checkoutProps.sameAsBillingAddress && (
-                  <Button
-                    classNames={{
-                      container: styles['submit-button-container'],
-                      button: styles['submit-button'],
-                    }}
-                    block={true}
-                    size={'large'}
-                    icon={<Line.DeliveryDining size={24} />}
-                    onClick={onContinueToDeliveryFromShippingAddress}
-                  >
-                    {t('continueToDelivery')}
-                  </Button>
-                )}
-              {!checkoutProps.shippingFormComplete &&
-                !checkoutProps.sameAsBillingAddress && (
-                  <Button
-                    classNames={{
-                      container: styles['submit-button-container'],
-                      button: styles['submit-button'],
-                    }}
-                    block={true}
-                    size={'large'}
-                    icon={<Line.Receipt size={24} />}
-                    onClick={onContinueToBillingFromShippingAddress}
-                  >
-                    {t('continueToBilling')}
-                  </Button>
-                )}
+              {!customer && !shippingFormComplete && sameAsBillingAddress && (
+                <Button
+                  classNames={{
+                    container: styles['submit-button-container'],
+                    button: styles['submit-button'],
+                  }}
+                  block={true}
+                  size={'large'}
+                  icon={<Line.DeliveryDining size={24} />}
+                  onClick={onContinueToDeliveryFromShippingAddress}
+                >
+                  {t('continueToDelivery')}
+                </Button>
+              )}
+              {!shippingFormComplete && !sameAsBillingAddress && (
+                <Button
+                  classNames={{
+                    container: styles['submit-button-container'],
+                    button: styles['submit-button'],
+                  }}
+                  block={true}
+                  size={'large'}
+                  icon={<Line.Receipt size={24} />}
+                  onClick={onContinueToBillingFromShippingAddress}
+                >
+                  {t('continueToBilling')}
+                </Button>
+              )}
             </div>
           </div>
-          {!checkoutProps.sameAsBillingAddress && (
+          {!sameAsBillingAddress && (
             <div
               className={[
                 styles['card-container'],
@@ -312,12 +323,12 @@ export default function CheckoutDesktopComponent({
                     {t('billing')}
                   </div>
                 </div>
-                {checkoutProps.shippingFormComplete ? (
+                {shippingFormComplete ? (
                   <>
                     <AddressFormComponent
-                      values={checkoutProps.billingForm}
-                      errors={checkoutProps.billingFormErrors}
-                      isComplete={checkoutProps.billingFormComplete}
+                      values={billingForm}
+                      errors={billingFormErrors}
+                      isComplete={billingFormComplete}
                       onEdit={() =>
                         CheckoutController.updateBillingFormComplete(false)
                       }
@@ -368,7 +379,7 @@ export default function CheckoutDesktopComponent({
                           }),
                       }}
                     />
-                    {!checkoutProps.billingFormComplete && (
+                    {!billingFormComplete && (
                       <Button
                         classNames={{
                           container: styles['submit-button-container'],
@@ -420,7 +431,7 @@ export default function CheckoutDesktopComponent({
                     styles['step-count-desktop'],
                   ].join(' ')}
                 >
-                  {checkoutProps.sameAsBillingAddress ? 2 : 3}
+                  {sameAsBillingAddress ? 2 : 3}
                 </div>
                 <div
                   className={[
@@ -431,7 +442,7 @@ export default function CheckoutDesktopComponent({
                   {t('delivery')}
                 </div>
               </div>
-              {!checkoutProps.shippingFormComplete && (
+              {!shippingFormComplete && (
                 <div
                   className={[
                     styles['card-description'],
@@ -441,23 +452,22 @@ export default function CheckoutDesktopComponent({
                   {t('enterShippingAddressForDelivery')}
                 </div>
               )}
-              {checkoutProps.shippingFormComplete &&
-                !checkoutProps.billingFormComplete && (
-                  <div
-                    className={[
-                      styles['card-description'],
-                      styles['card-description-desktop'],
-                    ].join(' ')}
-                  >
-                    {t('enterBillingAddressForDelivery')}
-                  </div>
-                )}
+              {shippingFormComplete && !billingFormComplete && (
+                <div
+                  className={[
+                    styles['card-description'],
+                    styles['card-description-desktop'],
+                  ].join(' ')}
+                >
+                  {t('enterBillingAddressForDelivery')}
+                </div>
+              )}
               {shippingOptions.length > 0 &&
-                checkoutProps.shippingFormComplete &&
-                checkoutProps.billingFormComplete && (
+                shippingFormComplete &&
+                billingFormComplete && (
                   <Radio.Group
                     id={''}
-                    activeId={checkoutProps.selectedShippingOptionId ?? ''}
+                    activeId={selectedShippingOptionId ?? ''}
                     rippleProps={{
                       color: 'rgba(42, 42, 95, .35)',
                     }}
@@ -537,7 +547,7 @@ export default function CheckoutDesktopComponent({
                       container: styles['input-container'],
                     }}
                     label={t('code') ?? ''}
-                    value={checkoutProps.giftCardCode}
+                    value={giftCardCode}
                     onChange={(event) =>
                       CheckoutController.updateGiftCardCodeText(
                         event.target.value
@@ -565,36 +575,34 @@ export default function CheckoutDesktopComponent({
                   </Button>
                 </div>
               </div>
-              {cartProps.cart?.gift_cards &&
-                cartProps.cart?.gift_cards.length > 0 && (
-                  <div
-                    className={[
-                      styles['tag-list-container'],
-                      styles['tag-list-container-desktop'],
-                    ].join(' ')}
-                  >
-                    {cartProps.cart?.gift_cards?.map((value: GiftCard) => {
-                      return (
+              {/* {cart?.gift_cards && cart?.gift_cards.length > 0 && (
+                <div
+                  className={[
+                    styles['tag-list-container'],
+                    styles['tag-list-container-desktop'],
+                  ].join(' ')}
+                >
+                  {cart?.gift_cards?.map((value: HttpTypes.GiftCard) => {
+                    return (
+                      <div
+                        key={value.id}
+                        className={[styles['tag'], styles['tag-desktop']].join(
+                          ' '
+                        )}
+                      >
                         <div
-                          key={value.id}
                           className={[
-                            styles['tag'],
-                            styles['tag-desktop'],
+                            styles['tag-text'],
+                            styles['tag-text-desktop'],
                           ].join(' ')}
                         >
-                          <div
-                            className={[
-                              styles['tag-text'],
-                              styles['tag-text-desktop'],
-                            ].join(' ')}
-                          >
-                            {value.code}
-                          </div>
+                          {value.code}
                         </div>
-                      );
-                    })}
-                  </div>
-                )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )} */}
             </div>
           </div>
           <div
@@ -645,7 +653,7 @@ export default function CheckoutDesktopComponent({
                       container: styles['input-container'],
                     }}
                     label={t('code') ?? ''}
-                    value={checkoutProps.discountCode}
+                    value={discountCode}
                     onChange={(event) =>
                       CheckoutController.updateDiscountCodeText(
                         event.target.value
@@ -673,59 +681,55 @@ export default function CheckoutDesktopComponent({
                   </Button>
                 </div>
               </div>
-              {cartProps.cart?.discounts &&
-                cartProps.cart?.discounts.length > 0 && (
-                  <div
-                    className={[
-                      styles['tag-list-container'],
-                      styles['tag-list-container-desktop'],
-                    ].join(' ')}
-                  >
-                    {cartProps.cart?.discounts?.map((value: Discount) => {
-                      return (
+              {/* {cart?.discounts && cart?.discounts.length > 0 && (
+                <div
+                  className={[
+                    styles['tag-list-container'],
+                    styles['tag-list-container-desktop'],
+                  ].join(' ')}
+                >
+                  {cart?.discounts?.map((value: HttpTypes.Discount) => {
+                    return (
+                      <div
+                        key={value.id}
+                        className={[styles['tag'], styles['tag-desktop']].join(
+                          ' '
+                        )}
+                      >
                         <div
-                          key={value.id}
                           className={[
-                            styles['tag'],
-                            styles['tag-desktop'],
+                            styles['tag-text'],
+                            styles['tag-text-desktop'],
                           ].join(' ')}
                         >
-                          <div
-                            className={[
-                              styles['tag-text'],
-                              styles['tag-text-desktop'],
-                            ].join(' ')}
-                          >
-                            {value.code}
-                          </div>
-                          <div
-                            className={[
-                              styles['tag-button-container'],
-                              styles['tag-button-container-desktop'],
-                            ].join(' ')}
-                          >
-                            <Button
-                              classNames={{
-                                button: styles['tag-button'],
-                              }}
-                              onClick={() =>
-                                CartController.removeDiscountCodeAsync(
-                                  value.code
-                                )
-                              }
-                              rippleProps={{}}
-                              block={true}
-                              rounded={true}
-                              type={'primary'}
-                              size={'tiny'}
-                              icon={<Solid.Cancel size={14} />}
-                            />
-                          </div>
+                          {value.code}
                         </div>
-                      );
-                    })}
-                  </div>
-                )}
+                        <div
+                          className={[
+                            styles['tag-button-container'],
+                            styles['tag-button-container-desktop'],
+                          ].join(' ')}
+                        >
+                          <Button
+                            classNames={{
+                              button: styles['tag-button'],
+                            }}
+                            onClick={() =>
+                              CartController.removeDiscountCodeAsync(value.code)
+                            }
+                            rippleProps={{}}
+                            block={true}
+                            rounded={true}
+                            type={'primary'}
+                            size={'tiny'}
+                            icon={<Solid.Cancel size={14} />}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )} */}
             </div>
           </div>
           <div
@@ -755,10 +759,10 @@ export default function CheckoutDesktopComponent({
                   {t('payment')}
                 </div>
               </div>
-              {checkoutProps.billingFormComplete && (
+              {billingFormComplete && (
                 <Radio.Group
                   id={''}
-                  activeId={checkoutProps.selectedProviderId ?? ''}
+                  activeId={selectedProviderId ?? ''}
                   rippleProps={{
                     color: 'rgba(42, 42, 95, .35)',
                   }}
@@ -780,7 +784,7 @@ export default function CheckoutDesktopComponent({
                   }
                 />
               )}
-              {!checkoutProps.billingFormComplete && (
+              {!billingFormComplete && (
                 <div
                   className={[
                     styles['card-description'],
@@ -817,10 +821,10 @@ export default function CheckoutDesktopComponent({
                     styles['subtotal-text-desktop'],
                   ].join(' ')}
                 >
-                  {storeProps.selectedRegion &&
+                  {selectedRegion &&
                     formatAmount({
-                      amount: cartProps.cart?.subtotal ?? 0,
-                      region: storeProps.selectedRegion,
+                      amount: cart?.subtotal ?? 0,
+                      region: selectedRegion,
                       includeTaxes: false,
                     })}
                 </div>
@@ -845,10 +849,10 @@ export default function CheckoutDesktopComponent({
                     styles['total-detail-text-desktop'],
                   ].join(' ')}
                 >
-                  {storeProps.selectedRegion &&
+                  {selectedRegion &&
                     formatAmount({
-                      amount: -(cartProps.cart?.discount_total ?? 0),
-                      region: storeProps.selectedRegion,
+                      amount: -(cart?.discount_total ?? 0),
+                      region: selectedRegion,
                       includeTaxes: false,
                     })}
                 </div>
@@ -873,10 +877,10 @@ export default function CheckoutDesktopComponent({
                     styles['total-detail-text-desktop'],
                   ].join(' ')}
                 >
-                  {storeProps.selectedRegion &&
+                  {selectedRegion &&
                     formatAmount({
-                      amount: cartProps.cart?.shipping_total ?? 0,
-                      region: storeProps.selectedRegion,
+                      amount: cart?.shipping_total ?? 0,
+                      region: selectedRegion,
                       includeTaxes: false,
                     })}
                 </div>
@@ -901,10 +905,10 @@ export default function CheckoutDesktopComponent({
                     styles['total-detail-text-desktop'],
                   ].join(' ')}
                 >
-                  {storeProps.selectedRegion &&
+                  {selectedRegion &&
                     formatAmount({
-                      amount: cartProps.cart?.tax_total ?? 0,
-                      region: storeProps.selectedRegion,
+                      amount: cart?.tax_total ?? 0,
+                      region: selectedRegion,
                       includeTaxes: false,
                     })}
                 </div>
@@ -929,10 +933,10 @@ export default function CheckoutDesktopComponent({
                     styles['total-text-desktop'],
                   ].join(' ')}
                 >
-                  {storeProps.selectedRegion &&
+                  {selectedRegion &&
                     formatAmount({
-                      amount: cartProps.cart?.total ?? 0,
-                      region: storeProps.selectedRegion,
+                      amount: cart?.total ?? 0,
+                      region: selectedRegion,
                       includeTaxes: true,
                     })}
                 </div>
@@ -950,9 +954,9 @@ export default function CheckoutDesktopComponent({
                   labelContainerLabel: styles['checkbox-label'],
                 }}
                 label={t('isLegalAgeDescription') ?? ''}
-                checked={checkoutProps.isLegalAge}
+                checked={isLegalAge}
                 onChange={() =>
-                  CheckoutController.updateIsLegalAge(!checkoutProps.isLegalAge)
+                  CheckoutController.updateIsLegalAge(!isLegalAge)
                 }
               />
             </div>
@@ -969,10 +973,10 @@ export default function CheckoutDesktopComponent({
                 }}
                 block={true}
                 disabled={
-                  !checkoutProps.shippingFormComplete ||
-                  !checkoutProps.billingFormComplete ||
-                  !checkoutProps.selectedShippingOptionId ||
-                  !checkoutProps.isLegalAge
+                  !shippingFormComplete ||
+                  !billingFormComplete ||
+                  !selectedShippingOptionId ||
+                  !isLegalAge
                 }
                 size={'large'}
                 icon={<Line.Payment size={24} />}
@@ -1030,8 +1034,8 @@ export default function CheckoutDesktopComponent({
               >
                 <AddressFormComponent
                   isAuthenticated={true}
-                  values={checkoutProps.addShippingForm}
-                  errors={checkoutProps.addShippingFormErrors}
+                  values={addShippingForm}
+                  errors={addShippingFormErrors}
                   onChangeCallbacks={{
                     firstName: (event) =>
                       CheckoutController.updateAddShippingAddress({
@@ -1140,7 +1144,7 @@ export default function CheckoutDesktopComponent({
                   styles['pay-container-desktop'],
                 ].join(' ')}
               >
-                {checkoutProps.selectedProviderId === ProviderType.Manual && (
+                {selectedProviderId === ProviderType.Manual && (
                   <>
                     <div
                       className={[
@@ -1174,7 +1178,7 @@ export default function CheckoutDesktopComponent({
                     </Button>
                   </>
                 )}
-                {checkoutProps.selectedProviderId === ProviderType.Stripe && (
+                {selectedProviderId === ProviderType.Stripe && (
                   <Elements stripe={stripePromise} options={stripeOptions}>
                     <FormLayout
                       label={t('creditCardNumber') ?? ''}
@@ -1215,7 +1219,7 @@ export default function CheckoutDesktopComponent({
                 )}
               </div>
             </Modal>
-            {checkoutProps.isPaymentLoading && (
+            {isPaymentLoading && (
               <div
                 className={[
                   styles['loading-container'],
@@ -1238,3 +1242,5 @@ export default function CheckoutDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(CheckoutDesktopComponent);

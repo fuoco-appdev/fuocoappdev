@@ -76,7 +76,7 @@ export default class WindowController extends Controller {
     }
   }
 
-  public override initialize = (renderCount: number): void => {
+  public override initialize(renderCount: number): void {
     const supabaseService = this._container.get('SupabaseService');
     const cartController = this._container.get('CartController');
     const accountService = this._container.get('AccountService');
@@ -108,7 +108,7 @@ export default class WindowController extends Controller {
     //   'notificationCreated',
     //   this.onNotificationCreated
     // );
-  };
+  }
 
   public override load(_renderCount: number): void {}
 
@@ -127,72 +127,72 @@ export default class WindowController extends Controller {
   public override disposeLoad(_renderCount: number): void {}
 
   public updateIsLoading(value: boolean): void {
-    this._model.isLoading = value;
+    this._model.updateIsLoading(value);
   }
 
   public updateAuthState(value: AuthChangeEvent): void {
-    this._model.authState = value;
+    this._model.updateAuthState(value);
   }
 
   public updateLanguageCode(code: string): void {
-    this._model.languageCode = code;
+    this._model.updateLanguageCode(code);
   }
 
   public updateLanguageInfo(code: string, info: LanguageInfo): void {
-    this._model.languageInfo = { isoCode: code, info: info };
-    this._model.languageCode = code;
+    this._model.updateLanguageInfo({ isoCode: code, info: info });
+    this._model.updateLanguageCode(code);
   }
 
   public updateLoadedLocationPath(value: string | undefined): void {
-    this._model.loadedLocationPath = value;
+    this._model.updateLoadedLocationPath(value);
   }
 
   public updateShowNavigateBack(value: boolean): void {
-    this._model.showNavigateBack = value;
+    this._model.updateShowNavigateBack(value);
   }
 
   public updateOrderPlacedNotificationData(
     value: HttpTypes.StoreOrder | undefined
   ): void {
-    this._model.orderPlacedNotificationData = value;
+    this._model.updateOrderPlacedNotificationData(value);
   }
 
   public updateOrderShippedNotificationData(
     value: HttpTypes.StoreOrder | undefined
   ): void {
-    this._model.orderShippedNotificationData = value;
+    this._model.updateOrderShippedNotificationData(value);
   }
 
   public updateOrderReturnedNotificationData(
     value: HttpTypes.StoreOrder | undefined
   ): void {
-    this._model.orderReturnedNotificationData = value;
+    this._model.updateOrderReturnedNotificationData(value);
   }
 
   public updateOrderCanceledNotificationData(
     value: HttpTypes.StoreOrder | undefined
   ): void {
-    this._model.orderCanceledNotificationData = value;
+    this._model.updateOrderCanceledNotificationData(value);
   }
 
   public updateAccountFollowerAcceptedNotificationData(
     value: AccountData | undefined
   ): void {
-    this._model.accountFollowerAcceptedNotificationData = value;
+    this._model.updateAccountFollowerAcceptedNotificationData(value);
   }
 
   public updateAccountFollowerFollowingNotificationData(
     value: AccountData | undefined
   ): void {
-    this._model.accountFollowerFollowingNotificationData = value;
+    this._model.updateAccountFollowerFollowingNotificationData(value);
   }
 
   public updateNotificationsCount(value: number): void {
-    this._model.unseenNotificationsCount = value;
+    this._model.updateUnseenNotificationsCount(value);
   }
 
   public updateIsSideBarOpen(value: boolean): void {
-    this._model.isSideBarOpen = value;
+    this._model.updateIsSideBarOpen(value);
   }
 
   public async updateQueryInventoryLocationAsync(
@@ -201,7 +201,7 @@ export default class WindowController extends Controller {
   ) {
     if (!id) {
       query.delete('sales_location');
-      this._model.queryInventoryLocation = undefined;
+      this._model.updateQueryInventoryLocation(undefined);
       return;
     }
 
@@ -213,7 +213,7 @@ export default class WindowController extends Controller {
       (location) => location.id == id
     );
     if (inventoryLocation) {
-      this._model.queryInventoryLocation = inventoryLocation;
+      this._model.updateQueryInventoryLocation(inventoryLocation);
     }
   }
 
@@ -221,205 +221,209 @@ export default class WindowController extends Controller {
     location: RouterLocation,
     query: URLSearchParams
   ): void {
-    this._model.prevTransitionKeyIndex = this._model.transitionKeyIndex;
+    this._model.updatePrevTransitionKeyIndex(this._model.transitionKeyIndex);
 
     if (location.pathname === RoutePathsType.Home) {
-      this._model.transitionKeyIndex = 0;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.Home;
-      this._model.activeTabsId = RoutePathsType.Home;
-      this._model.showNavigateBack = false;
+      this._model.updateTransitionKeyIndex(0);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(RoutePathsType.Home);
+      this._model.updateActiveTabsId(RoutePathsType.Home);
+      this._model.updateShowNavigateBack(false);
     } else if (location.pathname === RoutePathsType.Store) {
-      this._model.transitionKeyIndex = 0;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.Store;
-      this._model.activeTabsId = RoutePathsType.Store;
-      this._model.showNavigateBack = false;
+      this._model.updateTransitionKeyIndex(0);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(RoutePathsType.Store);
+      this._model.updateActiveTabsId(RoutePathsType.Store);
+      this._model.updateShowNavigateBack(false);
     } else if (location.pathname.startsWith(`${RoutePathsType.Store}/`)) {
-      this._model.transitionKeyIndex = 0;
-      this._model.scaleKeyIndex = 1;
-      this._model.activeRoute = RoutePathsType.StoreWithId;
-      this._model.activeTabsId = RoutePathsType.Store;
-      this._model.showNavigateBack = true;
+      this._model.updateTransitionKeyIndex(0);
+      this._model.updateScaleKeyIndex(1);
+      this._model.updateActiveRoute(RoutePathsType.StoreWithId);
+      this._model.updateActiveTabsId(RoutePathsType.Store);
+      this._model.updateShowNavigateBack(true);
     } else if (location.pathname === RoutePathsType.Events) {
-      this._model.transitionKeyIndex = 0;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.Events;
-      this._model.activeTabsId = RoutePathsType.Events;
-      this._model.showNavigateBack = false;
+      this._model.updateTransitionKeyIndex(0);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(RoutePathsType.Events);
+      this._model.updateActiveTabsId(RoutePathsType.Events);
+      this._model.updateShowNavigateBack(false);
     } else if (location.pathname === RoutePathsType.Cart) {
-      this._model.transitionKeyIndex = 1;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.Cart;
-      this._model.activeTabsId = undefined;
-      this._model.showNavigateBack = true;
+      this._model.updateTransitionKeyIndex(1);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(RoutePathsType.Cart);
+      this._model.updateActiveTabsId(undefined);
+      this._model.updateShowNavigateBack(true);
     } else if (location.pathname === RoutePathsType.Chats) {
-      this._model.transitionKeyIndex = 1;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.Chats;
-      this._model.activeTabsId = undefined;
-      this._model.showNavigateBack = true;
+      this._model.updateTransitionKeyIndex(1);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(RoutePathsType.Chats);
+      this._model.updateActiveTabsId(undefined);
+      this._model.updateShowNavigateBack(true);
     } else if (location.pathname.startsWith(`${RoutePathsType.Chats}/`)) {
-      this._model.transitionKeyIndex = 1;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.ChatsWithId;
-      this._model.activeTabsId = undefined;
-      this._model.showNavigateBack = true;
+      this._model.updateTransitionKeyIndex(1);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(RoutePathsType.ChatsWithId);
+      this._model.updateActiveTabsId(undefined);
+      this._model.updateShowNavigateBack(true);
     } else if (location.pathname === RoutePathsType.Checkout) {
-      this._model.transitionKeyIndex = 1;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.Checkout;
-      this._model.activeTabsId = undefined;
-      this._model.showNavigateBack = true;
+      this._model.updateTransitionKeyIndex(1);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(RoutePathsType.Checkout);
+      this._model.updateActiveTabsId(undefined);
+      this._model.updateShowNavigateBack(true);
     } else if (location.pathname === RoutePathsType.Signin) {
-      this._model.transitionKeyIndex = 0;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.Signin;
-      this._model.activeTabsId = RoutePathsType.Signin;
-      this._model.showNavigateBack = false;
+      this._model.updateTransitionKeyIndex(0);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(RoutePathsType.Signin);
+      this._model.updateActiveTabsId(RoutePathsType.Signin);
+      this._model.updateShowNavigateBack(false);
     } else if (location.pathname === RoutePathsType.Signup) {
-      this._model.transitionKeyIndex = 0;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.Signup;
-      this._model.activeTabsId = RoutePathsType.Signup;
-      this._model.showNavigateBack = false;
+      this._model.updateTransitionKeyIndex(0);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(RoutePathsType.Signup);
+      this._model.updateActiveTabsId(RoutePathsType.Signup);
+      this._model.updateShowNavigateBack(false);
     } else if (location.pathname === RoutePathsType.EmailConfirmation) {
-      this._model.transitionKeyIndex = 1;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.EmailConfirmation;
-      this._model.activeTabsId = undefined;
-      this._model.showNavigateBack = true;
+      this._model.updateTransitionKeyIndex(1);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(RoutePathsType.EmailConfirmation);
+      this._model.updateActiveTabsId(undefined);
+      this._model.updateShowNavigateBack(true);
     } else if (location.pathname === RoutePathsType.ForgotPassword) {
-      this._model.transitionKeyIndex = 0;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.ForgotPassword;
-      this._model.activeTabsId = undefined;
-      this._model.showNavigateBack = false;
+      this._model.updateTransitionKeyIndex(0);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(RoutePathsType.ForgotPassword);
+      this._model.updateActiveTabsId(undefined);
+      this._model.updateShowNavigateBack(false);
     } else if (location.pathname === RoutePathsType.ResetPassword) {
-      this._model.transitionKeyIndex = 0;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.ResetPassword;
-      this._model.activeTabsId = undefined;
-      this._model.showNavigateBack = false;
+      this._model.updateTransitionKeyIndex(0);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(RoutePathsType.ResetPassword);
+      this._model.updateActiveTabsId(undefined);
+      this._model.updateShowNavigateBack(false);
     } else if (location.pathname === RoutePathsType.TermsOfService) {
-      this._model.transitionKeyIndex = 1;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.TermsOfService;
-      this._model.activeTabsId = undefined;
-      this._model.showNavigateBack = true;
+      this._model.updateTransitionKeyIndex(1);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(RoutePathsType.TermsOfService);
+      this._model.updateActiveTabsId(undefined);
+      this._model.updateShowNavigateBack(true);
     } else if (location.pathname === RoutePathsType.PrivacyPolicy) {
-      this._model.transitionKeyIndex = 1;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.PrivacyPolicy;
-      this._model.activeTabsId = undefined;
-      this._model.showNavigateBack = true;
+      this._model.updateTransitionKeyIndex(1);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(RoutePathsType.PrivacyPolicy);
+      this._model.updateActiveTabsId(undefined);
+      this._model.updateShowNavigateBack(true);
     } else if (location.pathname === RoutePathsType.Help) {
-      this._model.transitionKeyIndex = 0;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.Help;
-      this._model.activeTabsId = undefined;
-      this._model.showNavigateBack = false;
+      this._model.updateTransitionKeyIndex(0);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(RoutePathsType.Help);
+      this._model.updateActiveTabsId(undefined);
+      this._model.updateShowNavigateBack(false);
     } else if (location.pathname === RoutePathsType.AccountHelp) {
-      this._model.transitionKeyIndex = 1;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.AccountHelp;
-      this._model.activeTabsId = undefined;
-      this._model.showNavigateBack = true;
+      this._model.updateTransitionKeyIndex(1);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(RoutePathsType.AccountHelp);
+      this._model.updateActiveTabsId(undefined);
+      this._model.updateShowNavigateBack(true);
     } else if (location.pathname === RoutePathsType.Notifications) {
-      this._model.transitionKeyIndex = 0;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.Notifications;
-      this._model.activeTabsId = RoutePathsType.Notifications;
-      this._model.showNavigateBack = false;
+      this._model.updateTransitionKeyIndex(0);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(RoutePathsType.Notifications);
+      this._model.updateActiveTabsId(RoutePathsType.Notifications);
+      this._model.updateShowNavigateBack(false);
     } else if (location.pathname === RoutePathsType.Account) {
-      this._model.transitionKeyIndex = 0;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.Account;
-      this._model.activeTabsId = RoutePathsType.Account;
-      this._model.showNavigateBack = false;
+      this._model.updateTransitionKeyIndex(0);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(RoutePathsType.Account);
+      this._model.updateActiveTabsId(RoutePathsType.Account);
+      this._model.updateShowNavigateBack(false);
     } else if (location.pathname === RoutePathsType.AccountOrderHistory) {
-      this._model.transitionKeyIndex = 0;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.AccountOrderHistory;
-      this._model.activeTabsId = RoutePathsType.Account;
-      this._model.showNavigateBack = false;
+      this._model.updateTransitionKeyIndex(0);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(RoutePathsType.AccountOrderHistory);
+      this._model.updateActiveTabsId(RoutePathsType.Account);
+      this._model.updateShowNavigateBack(false);
     } else if (location.pathname === RoutePathsType.AccountAddresses) {
-      this._model.transitionKeyIndex = 0;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.AccountAddresses;
-      this._model.activeTabsId = RoutePathsType.Account;
-      this._model.showNavigateBack = false;
+      this._model.updateTransitionKeyIndex(0);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(RoutePathsType.AccountAddresses);
+      this._model.updateActiveTabsId(RoutePathsType.Account);
+      this._model.updateShowNavigateBack(false);
     } else if (location.pathname === RoutePathsType.AccountLikes) {
-      this._model.transitionKeyIndex = 0;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.AccountLikes;
-      this._model.activeTabsId = RoutePathsType.Account;
-      this._model.showNavigateBack = false;
+      this._model.updateTransitionKeyIndex(0);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(RoutePathsType.AccountLikes);
+      this._model.updateActiveTabsId(RoutePathsType.Account);
+      this._model.updateShowNavigateBack(false);
     } else if (location.pathname === RoutePathsType.AccountAddFriends) {
-      this._model.transitionKeyIndex = 1;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.AccountAddFriends;
-      this._model.activeTabsId = RoutePathsType.Account;
-      this._model.showNavigateBack = true;
+      this._model.updateTransitionKeyIndex(1);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(RoutePathsType.AccountAddFriends);
+      this._model.updateActiveTabsId(RoutePathsType.Account);
+      this._model.updateShowNavigateBack(true);
     } else if (this.isLocationAccountWithId(location.pathname)) {
-      this._model.transitionKeyIndex = 2;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.AccountWithId;
-      this._model.activeTabsId = undefined;
-      this._model.showNavigateBack = true;
+      this._model.updateTransitionKeyIndex(2);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(RoutePathsType.AccountWithId);
+      this._model.updateActiveTabsId(undefined);
+      this._model.updateShowNavigateBack(true);
     } else if (
       this.isLocationAccountWithId(
         location.pathname,
         RoutePathsType.AccountWithIdLikes
       )
     ) {
-      this._model.transitionKeyIndex = 2;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.AccountWithIdLikes;
-      this._model.showNavigateBack = true;
+      this._model.updateTransitionKeyIndex(2);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(RoutePathsType.AccountWithIdLikes);
+      this._model.updateShowNavigateBack(true);
     } else if (this.isLocationAccountStatusWithId(location.pathname)) {
-      this._model.transitionKeyIndex = 1;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.AccountStatusWithId;
-      this._model.showNavigateBack = true;
+      this._model.updateTransitionKeyIndex(1);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(RoutePathsType.AccountStatusWithId);
+      this._model.updateShowNavigateBack(true);
     } else if (
       this.isLocationAccountStatusWithId(
         location.pathname,
         RoutePathsType.AccountStatusWithIdFollowers
       )
     ) {
-      this._model.transitionKeyIndex = 1;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.AccountStatusWithIdFollowers;
-      this._model.showNavigateBack = true;
+      this._model.updateTransitionKeyIndex(1);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(
+        RoutePathsType.AccountStatusWithIdFollowers
+      );
+      this._model.updateShowNavigateBack(true);
     } else if (
       this.isLocationAccountStatusWithId(
         location.pathname,
         RoutePathsType.AccountStatusWithIdFollowing
       )
     ) {
-      this._model.transitionKeyIndex = 1;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.AccountStatusWithIdFollowing;
-      this._model.showNavigateBack = true;
+      this._model.updateTransitionKeyIndex(1);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(
+        RoutePathsType.AccountStatusWithIdFollowing
+      );
+      this._model.updateShowNavigateBack(true);
     } else if (location.pathname === RoutePathsType.Settings) {
-      this._model.transitionKeyIndex = 1;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.Settings;
-      this._model.showNavigateBack = true;
+      this._model.updateTransitionKeyIndex(1);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(RoutePathsType.Settings);
+      this._model.updateShowNavigateBack(true);
     } else if (location.pathname === RoutePathsType.SettingsAccount) {
-      this._model.transitionKeyIndex = 2;
-      this._model.scaleKeyIndex = 0;
-      this._model.activeRoute = RoutePathsType.SettingsAccount;
-      this._model.showNavigateBack = true;
+      this._model.updateTransitionKeyIndex(2);
+      this._model.updateScaleKeyIndex(0);
+      this._model.updateActiveRoute(RoutePathsType.SettingsAccount);
+      this._model.updateShowNavigateBack(true);
     } else if (
       location.pathname.startsWith(`${RoutePathsType.OrderConfirmed}/`)
     ) {
-      this._model.transitionKeyIndex = 1;
-      this._model.activeRoute = RoutePathsType.OrderConfirmedWithId;
-      this._model.showNavigateBack = true;
+      this._model.updateTransitionKeyIndex(1);
+      this._model.updateActiveRoute(RoutePathsType.OrderConfirmedWithId);
+      this._model.updateShowNavigateBack(true);
     } else {
-      this._model.showNavigateBack = false;
+      this._model.updateShowNavigateBack(false);
     }
   }
 
@@ -556,45 +560,46 @@ export default class WindowController extends Controller {
     const notificationsController = this._container.get(
       'NotificationsController'
     );
-    this._model.unseenNotificationsCount =
-      this._model.unseenNotificationsCount + 1;
+    this._model.updateUnseenNotificationsCount(
+      this._model.unseenNotificationsCount + 1
+    );
     notificationsController.addAccountNotification(value);
   }
 
   private onOrderPlaced(data: Record<string, any>): void {
     const order = data as HttpTypes.StoreOrder;
-    this._model.orderPlacedNotificationData = order;
+    this._model.updateOrderPlacedNotificationData(order);
   }
 
   private onOrderShipped(data: Record<string, any>): void {
     const order = data as HttpTypes.StoreOrder;
-    this._model.orderShippedNotificationData = order;
+    this._model.updateOrderShippedNotificationData(order);
   }
 
   private onOrderReturned(data: Record<string, any>): void {
     const order = data as HttpTypes.StoreOrder;
-    this._model.orderReturnedNotificationData = order;
+    this._model.updateOrderReturnedNotificationData(order);
   }
 
   private onOrderCanceled(data: Record<string, any>): void {
     const order = data as HttpTypes.StoreOrder;
-    this._model.orderCanceledNotificationData = order;
+    this._model.updateOrderCanceledNotificationData(order);
   }
 
   private onAccountFollowerAccepted(data: Record<string, any>): void {
     const account = data as AccountData;
-    this._model.accountFollowerAcceptedNotificationData = account;
+    this._model.updateAccountFollowerAcceptedNotificationData(account);
   }
 
   private onAccountFollowerFollowing(data: Record<string, any>): void {
     const account = data as AccountData;
-    this._model.accountFollowerFollowingNotificationData = account;
+    this._model.updateAccountFollowerFollowingNotificationData(account);
   }
 
   private onCartChanged(
     value: IValueDidChange<HttpTypes.StoreCart | undefined>
   ): void {
-    this._model.cartCount = value.newValue?.items?.length ?? 0;
+    this._model.updateCartCount(value.newValue?.items?.length ?? 0);
   }
 
   private async requestActiveAccountAsync(
@@ -628,7 +633,7 @@ export default class WindowController extends Controller {
       const response = await accountNotificationService.requestUnseenCountAsync(
         accountId
       );
-      this._model.unseenNotificationsCount = response.count ?? 0;
+      this._model.updateUnseenNotificationsCount(response.count ?? 0);
     } catch (error: any) {
       console.error(error);
     }
@@ -657,14 +662,16 @@ export default class WindowController extends Controller {
   ): Promise<void> {
     const customerGroup = value.newValue;
     if (!customerGroup) {
-      this._model.priceLists = [];
+      this._model.updatePriceLists([]);
       return;
     }
 
     const medusaService = this._container.get('MedusaService');
-    this._model.priceLists = await medusaService.requestGetPriceListsAsync({
-      status: ['active'],
-      customerGroups: [customerGroup?.id ?? ''],
-    });
+    this._model.updatePriceLists(
+      await medusaService.requestGetPriceListsAsync({
+        status: ['active'],
+        customerGroups: [customerGroup?.id ?? ''],
+      })
+    );
   }
 }

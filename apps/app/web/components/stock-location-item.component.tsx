@@ -1,10 +1,9 @@
-import { StockLocation } from '@medusajs/stock-location/dist/models';
+import { HttpTypes } from '@medusajs/types';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { StorageFolderType } from '../../shared/protobuf/common_pb';
 import { DeepLTranslationsResponse } from '../../shared/protobuf/deepl_pb';
-import BucketService from '../../shared/services/bucket.service';
-import DeeplService from '../../shared/services/deepl.service';
+import { DIContext } from './app.component';
 import { StockLocationItemSuspenseDesktopComponent } from './desktop/suspense/stock-location-item.suspense.desktop.component';
 import { StockLocationItemSuspenseMobileComponent } from './mobile/suspense/stock-location-item.suspense.mobile.component';
 
@@ -16,7 +15,7 @@ const StockLocationItemMobileComponent = React.lazy(
 );
 
 export interface StockLocationItemProps {
-  stockLocation: StockLocation;
+  stockLocation: HttpTypes.AdminStockLocation;
   selected?: boolean;
   hideDescription?: boolean;
   onClick: () => void;
@@ -29,25 +28,24 @@ export interface StockLocationItemResponsiveProps
   avatar?: string;
 }
 
-export default function StockLocationItemComponent({
+function StockLocationItemComponent({
   stockLocation,
   selected = false,
   hideDescription = false,
   onClick,
 }: StockLocationItemProps): JSX.Element {
   const { i18n } = useTranslation();
+  const { DeepLService, BucketService } = React.useContext(DIContext);
   const [avatar, setAvatar] = React.useState<string | undefined>(undefined);
-  const [placeName, setPlaceName] = React.useState<string>(
-    stockLocation?.metadata?.['place_name'] as string
-  );
+  const [placeName, setPlaceName] = React.useState<string>(stockLocation.name);
   const [description, setDescription] = React.useState<string>(
-    stockLocation?.metadata?.['description'] as string
+    stockLocation.address?.address_1 ?? ''
   );
 
   const updateTranslatedPlaceNameAsync = async (value: string) => {
     if (i18n.language !== 'en') {
       const response: DeepLTranslationsResponse =
-        await DeeplService.translateAsync(value, i18n.language);
+        await DeepLService.translateAsync(value, i18n.language);
       if (response.translations.length <= 0) {
         return;
       }
@@ -62,7 +60,7 @@ export default function StockLocationItemComponent({
   const updateTranslatedDescriptionAsync = async (value: string) => {
     if (i18n.language !== 'en') {
       const response: DeepLTranslationsResponse =
-        await DeeplService.translateAsync(value, i18n.language);
+        await DeepLService.translateAsync(value, i18n.language);
       if (response.translations.length <= 0) {
         return;
       }
@@ -75,29 +73,24 @@ export default function StockLocationItemComponent({
   };
 
   React.useEffect(() => {
-    updateTranslatedPlaceNameAsync(
-      stockLocation?.metadata?.['place_name'] as string
-    );
-    updateTranslatedDescriptionAsync(
-      stockLocation?.metadata?.['description'] as string
-    );
-  }, [stockLocation?.metadata]);
+    updateTranslatedPlaceNameAsync(stockLocation?.name);
+    updateTranslatedDescriptionAsync(stockLocation.address?.address_1 ?? '');
+  }, [stockLocation]);
 
   React.useEffect(() => {
-    if (!Object.keys(stockLocation?.metadata ?? {}).includes('avatar')) {
-      return;
-    }
-
-    const avatar: string | undefined = stockLocation?.metadata?.['avatar'] as
-      | string
-      | undefined;
-    if (avatar) {
-      BucketService.getPublicUrlAsync(StorageFolderType.Avatars, avatar).then(
-        (value) => {
-          setAvatar(value);
-        }
-      );
-    }
+    // if (!Object.keys(stockLocation?.metadata ?? {}).includes('avatar')) {
+    //   return;
+    // }
+    // const avatar: string | undefined = stockLocation?.metadata?.['avatar'] as
+    //   | string
+    //   | undefined;
+    // if (avatar) {
+    //   BucketService.getPublicUrlAsync(StorageFolderType.Avatars, avatar).then(
+    //     (value) => {
+    //       setAvatar(value);
+    //     }
+    //   );
+    // }
   }, [stockLocation]);
 
   const suspenceComponent = (
@@ -134,3 +127,5 @@ export default function StockLocationItemComponent({
     </React.Suspense>
   );
 }
+
+export default observer(StockLocationItemComponent);

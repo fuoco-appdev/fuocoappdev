@@ -1,19 +1,24 @@
+/* eslint-disable jsx-a11y/alt-text */
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import styles from '../../modules/order-item.module.scss';
-// @ts-ignore
-import { formatAmount } from 'medusa-react';
 import Ripples from 'react-ripples';
+import styles from '../../modules/order-item.module.scss';
+import { DIContext } from '../app.component';
 import { OrderItemResponsiveProps } from '../order-item.component';
 import { ResponsiveDesktop } from '../responsive.component';
 
-export default function OrderItemDesktopComponent({
+function OrderItemDesktopComponent({
   order,
   fulfillmentStatus,
   getNumberOfItems,
   onClick,
 }: OrderItemResponsiveProps): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { MedusaService, StoreController } = React.useContext(DIContext);
+  const { regions } = StoreController.model;
 
+  const region = regions.find((value) => value.id === order.region_id);
   return (
     <ResponsiveDesktop>
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>
@@ -78,7 +83,7 @@ export default function OrderItemDesktopComponent({
                   className={[styles['status'], styles['status-desktop']].join(
                     ' '
                   )}
-                >{`${t('items')}: ${getNumberOfItems(order.items)}`}</div>
+                >{`${t('items')}: ${getNumberOfItems(order.items ?? [])}`}</div>
               </div>
               <div
                 className={[
@@ -98,12 +103,12 @@ export default function OrderItemDesktopComponent({
                       styles['pricing-desktop'],
                     ].join(' ')}
                   >
-                    {order.region &&
-                      formatAmount({
-                        amount: order.payments[0].amount ?? 0,
-                        region: order.region,
-                        includeTaxes: true,
-                      })}
+                    {region &&
+                      MedusaService.formatAmount(
+                        order.payment_collections?.[0].amount ?? 0,
+                        region.currency_code,
+                        i18n.language
+                      )}
                   </div>
                 </div>
               </div>
@@ -114,3 +119,5 @@ export default function OrderItemDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(OrderItemDesktopComponent);

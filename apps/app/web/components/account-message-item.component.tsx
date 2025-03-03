@@ -1,10 +1,8 @@
-import { useObservable } from '@ngneat/use-observable';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import ChatController from '../../shared/controllers/chat.controller';
 import { AccountDocument } from '../../shared/models/account.model';
-import { ChatState } from '../../shared/models/chat.model';
 import { StorageFolderType } from '../../shared/protobuf/common_pb';
-import BucketService from '../../shared/services/bucket.service';
+import { DIContext } from './app.component';
 import { AccountMessageItemSuspenseDesktopComponent } from './desktop/suspense/account-message-item.suspense.desktop.component';
 import { AccountMessageItemSuspenseMobileComponent } from './mobile/suspense/account-message-item.suspense.mobile.component';
 
@@ -16,7 +14,6 @@ const AccountMessageItemMobileComponent = React.lazy(
 );
 
 export interface AccountMessageItemProps {
-  chatProps: ChatState;
   account: AccountDocument;
   onClick: () => void;
   onMessage: () => void;
@@ -27,13 +24,13 @@ export interface AccountMessageItemResponsiveProps
   profileUrl: string | undefined;
 }
 
-export default function AccountMessageItemComponent({
-  chatProps,
+function AccountMessageItemComponent({
   account,
   onClick,
   onMessage,
 }: AccountMessageItemProps): JSX.Element {
-  const [chatDebugProps] = useObservable(ChatController.model.store);
+  const { ChatController, BucketService } = React.useContext(DIContext);
+  const { suspense } = ChatController.model;
   const [profileUrl, setProfileUrl] = React.useState<string | undefined>(
     undefined
   );
@@ -70,21 +67,19 @@ export default function AccountMessageItemComponent({
     </>
   );
 
-  if (chatDebugProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
 
   return (
     <React.Suspense fallback={suspenceComponent}>
       <AccountMessageItemDesktopComponent
-        chatProps={chatProps}
         account={account}
         profileUrl={profileUrl}
         onClick={onClickOverride}
         onMessage={onMessageOverride}
       />
       <AccountMessageItemMobileComponent
-        chatProps={chatProps}
         account={account}
         profileUrl={profileUrl}
         onClick={onClickOverride}
@@ -93,3 +88,5 @@ export default function AccountMessageItemComponent({
     </React.Suspense>
   );
 }
+
+export default observer(AccountMessageItemComponent);

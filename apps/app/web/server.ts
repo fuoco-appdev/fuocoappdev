@@ -11,7 +11,7 @@ global['window'] = mock.getWindow();
 global['document'] = mock.getDocument();
 global['location'] = mock.getLocation();
 global['history'] = mock.getHistory();
-global['navigator'] = mock.getNavigator();
+Object.defineProperty(globalThis, 'navigator', mock.getNavigator());
 global['localStorage'] = mock.getLocalStorage();
 global['sessionStorage'] = mock.getSessionStorage();
 

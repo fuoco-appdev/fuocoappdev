@@ -1,16 +1,15 @@
 import { Button, Dropdown, Line, Modal } from '@fuoco.appdev/web-components';
-import { Address, Customer } from '@medusajs/medusa';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import AccountController from '../../../shared/controllers/account.controller';
 import styles from '../../modules/account-addresses.module.scss';
 import { AccountAddressResponsiveProps } from '../account-addresses.component';
 import AddressFormComponent from '../address-form.component';
-import AddressItemComponent from '../address-item.component';
+import { DIContext } from '../app.component';
 import { ResponsiveMobile } from '../responsive.component';
 
-export default function AccountAddressesMobileComponent({
-  accountProps,
+function AccountAddressesMobileComponent({
   onAddAddressAsync,
   onEditAddressAsync,
   onDeleteAddressConfirmedAsync,
@@ -24,9 +23,15 @@ export default function AccountAddressesMobileComponent({
   setOpenEditDropdown,
 }: AccountAddressResponsiveProps): JSX.Element {
   const { t } = useTranslation();
+  const { AccountController } = React.useContext(DIContext);
+  const {
+    shippingForm,
+    shippingFormErrors,
+    selectedAddress,
+    editShippingForm,
+    editShippingFormErrors,
+  } = AccountController.model;
 
-  const customer = accountProps.customer as Customer | undefined;
-  const selectedAddress = accountProps.selectedAddress as Address | undefined;
   return (
     <ResponsiveMobile>
       <div className={[styles['root'], styles['root-mobile']].join(' ')}>
@@ -36,7 +41,7 @@ export default function AccountAddressesMobileComponent({
             styles['address-list-container-mobile'],
           ].join(' ')}
         >
-          {customer && customer?.shipping_addresses?.length > 0 ? (
+          {/* {customer && customer?.shipping_addresses?.length > 0 ? (
             customer?.shipping_addresses?.map((value: Address) => (
               <AddressItemComponent
                 key={value.id}
@@ -54,7 +59,7 @@ export default function AccountAddressesMobileComponent({
             >
               {t('noAddresses')}
             </div>
-          )}
+          )} */}
         </div>
         {ReactDOM.createPortal(
           <>
@@ -106,8 +111,8 @@ export default function AccountAddressesMobileComponent({
               >
                 <AddressFormComponent
                   isAuthenticated={true}
-                  values={accountProps.shippingForm}
-                  errors={accountProps.shippingFormErrors}
+                  values={shippingForm}
+                  errors={shippingFormErrors}
                   onChangeCallbacks={{
                     firstName: (event) =>
                       AccountController.updateShippingAddress({
@@ -193,8 +198,8 @@ export default function AccountAddressesMobileComponent({
               >
                 <AddressFormComponent
                   isAuthenticated={true}
-                  values={accountProps.editShippingForm}
-                  errors={accountProps.editShippingFormErrors}
+                  values={editShippingForm}
+                  errors={editShippingFormErrors}
                   onChangeCallbacks={{
                     firstName: (event) =>
                       AccountController.updateEditShippingAddress({
@@ -314,3 +319,5 @@ export default function AccountAddressesMobileComponent({
     </ResponsiveMobile>
   );
 }
+
+export default observer(AccountAddressesMobileComponent);

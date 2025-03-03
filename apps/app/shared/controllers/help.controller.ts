@@ -20,7 +20,7 @@ export default class HelpController extends Controller {
     return this._model;
   }
 
-  public override initialize = (_renderCount: number): void => {};
+  public override initialize(_renderCount: number): void {}
 
   public override load(renderCount: number): void {
     fetch('../assets/markdown/help.md')

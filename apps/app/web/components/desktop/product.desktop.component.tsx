@@ -6,21 +6,19 @@ import {
   Modal,
   Tabs,
 } from '@fuoco.appdev/web-components';
-import { ProductTag } from '@medusajs/medusa';
-import { useTranslation } from 'react-i18next';
-import ProductController from '../../../shared/controllers/product.controller';
-import styles from '../../modules/product.module.scss';
-// @ts-ignore
 import loadable from '@loadable/component';
-import { StockLocation } from '@medusajs/stock-location/dist/models';
-import { formatAmount } from 'medusa-react';
+import { HttpTypes } from '@medusajs/types';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import ReactDOM from 'react-dom';
+import { useTranslation } from 'react-i18next';
 import Skeleton from 'react-loading-skeleton';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import ExploreController from '../../../shared/controllers/explore.controller';
+import i18n from 'shared/i18n';
 import { ProductTabType } from '../../../shared/models/product.model';
 import { MedusaProductTypeNames } from '../../../shared/types/medusa.type';
+import styles from '../../modules/product.module.scss';
+import { DIContext } from '../app.component';
 import { ProductResponsiveProps } from '../product.component';
 import { ResponsiveDesktop, useDesktopEffect } from '../responsive.component';
 import StockLocationItemComponent from '../stock-location-item.component';
@@ -33,10 +31,7 @@ const ReactMarkdown = loadable(
   { ssr: false }
 );
 
-export default function ProductDesktopComponent({
-  productProps,
-  accountProps,
-  storeProps,
+function ProductDesktopComponent({
   remarkPlugins,
   translatedDescription,
   description,
@@ -72,12 +67,34 @@ export default function ProductDesktopComponent({
   onCancelLocation,
 }: ProductResponsiveProps): JSX.Element {
   const { t } = useTranslation();
+  const {
+    ExploreController,
+    ProductController,
+    AccountController,
+    StoreController,
+    MedusaService,
+  } = React.useContext(DIContext);
+  const {
+    selectedVariant,
+    isLoading,
+    metadata,
+    activeTabId,
+    transitionKeyIndex,
+    prevTransitionKeyIndex,
+    stockLocationInput,
+  } = ProductController.model;
+  const { account } = AccountController.model;
+  const { selectedRegion } = StoreController.model;
+  const {
+    searchedStockLocations,
+    hasMoreSearchedStockLocations,
+    areSearchedStockLocationsLoading,
+  } = ExploreController.model;
 
   useDesktopEffect(() => {
     setDescription(translatedDescription);
   }, [translatedDescription]);
 
-  const selectedVariant = productProps.selectedVariant;
   return (
     <ResponsiveDesktop>
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>
@@ -100,29 +117,29 @@ export default function ProductDesktopComponent({
                 styles['thumbnail-container-desktop'],
               ].join(' ')}
             >
-              {!productProps.isLoading ? (
+              {!isLoading ? (
                 <>
-                  {productProps.metadata?.thumbnail &&
+                  {metadata?.thumbnail &&
                     type?.value === MedusaProductTypeNames.Wine && (
                       <img
                         className={[
                           styles['wine-thumbnail-image'],
                           styles['wine-thumbnail-image-desktop'],
                         ].join(' ')}
-                        src={productProps.metadata?.thumbnail}
+                        src={metadata?.thumbnail}
                       />
                     )}
-                  {productProps.metadata?.thumbnail &&
+                  {metadata?.thumbnail &&
                     type?.value === MedusaProductTypeNames.MenuItem && (
                       <img
                         className={[
                           styles['menu-item-thumbnail-image'],
                           styles['menu-item-thumbnail-image-desktop'],
                         ].join(' ')}
-                        src={productProps.metadata?.thumbnail}
+                        src={metadata?.thumbnail}
                       />
                     )}
-                  {!productProps.metadata?.thumbnail &&
+                  {!metadata?.thumbnail &&
                     type?.value === MedusaProductTypeNames.Wine && (
                       <img
                         className={[
@@ -132,7 +149,7 @@ export default function ProductDesktopComponent({
                         src={'../assets/images/wine-bottle.png'}
                       />
                     )}
-                  {!productProps.metadata?.thumbnail &&
+                  {!metadata?.thumbnail &&
                     type?.value === MedusaProductTypeNames.MenuItem && (
                       <img
                         className={[
@@ -173,7 +190,7 @@ export default function ProductDesktopComponent({
                   styles['title-container-desktop'],
                 ].join(' ')}
               >
-                {!productProps.isLoading ? (
+                {!isLoading ? (
                   <>
                     <div
                       className={[
@@ -181,7 +198,7 @@ export default function ProductDesktopComponent({
                         styles['title-desktop'],
                       ].join(' ')}
                     >
-                      {productProps.metadata?.title}
+                      {metadata?.title}
                     </div>
                     <div
                       className={[
@@ -189,7 +206,7 @@ export default function ProductDesktopComponent({
                         styles['subtitle-desktop'],
                       ].join(' ')}
                     >
-                      {productProps.metadata?.subtitle}
+                      {metadata?.subtitle}
                     </div>
                   </>
                 ) : (
@@ -209,7 +226,7 @@ export default function ProductDesktopComponent({
                   styles['like-container-desktop'],
                 ].join(' ')}
               >
-                {!productProps.isLoading ? (
+                {!isLoading ? (
                   <>
                     <Button
                       rippleProps={{
@@ -218,10 +235,7 @@ export default function ProductDesktopComponent({
                           : 'rgba(42, 42, 95, .35)',
                       }}
                       rounded={true}
-                      disabled={
-                        !accountProps.account ||
-                        accountProps.account.status === 'Incomplete'
-                      }
+                      disabled={!account || account.status === 'Incomplete'}
                       onClick={() => onLikeChanged(!isLiked)}
                       type={'text'}
                       icon={
@@ -266,9 +280,9 @@ export default function ProductDesktopComponent({
                 styles['tags-container-desktop'],
               ].join(' ')}
             >
-              {!productProps.isLoading ? (
+              {!isLoading ? (
                 <>
-                  {tags?.map((value: ProductTag) => (
+                  {tags?.map((value: HttpTypes.StoreProductTag) => (
                     <div
                       key={value.id}
                       className={[styles['tag'], styles['tag-desktop']].join(
@@ -300,7 +314,7 @@ export default function ProductDesktopComponent({
                 styles['description-container-desktop'],
               ].join(' ')}
             >
-              {!productProps.isLoading ? (
+              {!isLoading ? (
                 <ReactMarkdown
                   remarkPlugins={remarkPlugins}
                   children={description}
@@ -333,7 +347,7 @@ export default function ProductDesktopComponent({
             <Tabs
               flex={true}
               touchScreen={true}
-              activeId={productProps.activeTabId}
+              activeId={activeTabId}
               classNames={{
                 nav: [styles['tab-nav'], styles['tab-nav-desktop']].join(' '),
                 tabButton: [
@@ -366,23 +380,19 @@ export default function ProductDesktopComponent({
                 React.cloneElement(child, {
                   classNames: {
                     enter:
-                      productProps.transitionKeyIndex <
-                      productProps.prevTransitionKeyIndex
+                      transitionKeyIndex < prevTransitionKeyIndex
                         ? styles['left-to-right-enter']
                         : styles['right-to-left-enter'],
                     enterActive:
-                      productProps.transitionKeyIndex <
-                      productProps.prevTransitionKeyIndex
+                      transitionKeyIndex < prevTransitionKeyIndex
                         ? styles['left-to-right-enter-active']
                         : styles['right-to-left-enter-active'],
                     exit:
-                      productProps.transitionKeyIndex <
-                      productProps.prevTransitionKeyIndex
+                      transitionKeyIndex < prevTransitionKeyIndex
                         ? styles['left-to-right-exit']
                         : styles['right-to-left-exit'],
                     exitActive:
-                      productProps.transitionKeyIndex <
-                      productProps.prevTransitionKeyIndex
+                      transitionKeyIndex < prevTransitionKeyIndex
                         ? styles['left-to-right-exit-active']
                         : styles['right-to-left-exit-active'],
                   },
@@ -391,26 +401,22 @@ export default function ProductDesktopComponent({
               }
             >
               <CSSTransition
-                key={productProps.transitionKeyIndex}
+                key={transitionKeyIndex}
                 classNames={{
                   enter:
-                    productProps.transitionKeyIndex >
-                    productProps.prevTransitionKeyIndex
+                    transitionKeyIndex > prevTransitionKeyIndex
                       ? styles['left-to-right-enter']
                       : styles['right-to-left-enter'],
                   enterActive:
-                    productProps.transitionKeyIndex >
-                    productProps.prevTransitionKeyIndex
+                    transitionKeyIndex > prevTransitionKeyIndex
                       ? styles['left-to-right-enter-active']
                       : styles['right-to-left-enter-active'],
                   exit:
-                    productProps.transitionKeyIndex >
-                    productProps.prevTransitionKeyIndex
+                    transitionKeyIndex > prevTransitionKeyIndex
                       ? styles['left-to-right-exit']
                       : styles['right-to-left-exit'],
                   exitActive:
-                    productProps.transitionKeyIndex >
-                    productProps.prevTransitionKeyIndex
+                    transitionKeyIndex > prevTransitionKeyIndex
                       ? styles['left-to-right-exit-active']
                       : styles['right-to-left-exit-active'],
                 }}
@@ -423,7 +429,7 @@ export default function ProductDesktopComponent({
                     minWidth: '100%',
                   }}
                 >
-                  {productProps.activeTabId === ProductTabType.Price && (
+                  {activeTabId === ProductTabType.Price && (
                     <div
                       className={[
                         styles['price-container'],
@@ -436,23 +442,25 @@ export default function ProductDesktopComponent({
                           styles['price-desktop'],
                         ].join(' ')}
                       >
-                        {!productProps.isLoading ? (
+                        {!isLoading ? (
                           <>
-                            {selectedVariant?.original_price !==
-                              selectedVariant?.calculated_price && (
+                            {selectedVariant?.calculated_price
+                              ?.original_amount !==
+                              selectedVariant?.calculated_price
+                                ?.calculated_amount && (
                               <div
                                 className={[
                                   styles['calculated-price'],
                                   styles['calculated-price-desktop'],
                                 ].join(' ')}
                               >
-                                {storeProps.selectedRegion &&
-                                  formatAmount({
-                                    amount:
-                                      selectedVariant?.calculated_price ?? 0,
-                                    region: storeProps.selectedRegion,
-                                    includeTaxes: false,
-                                  })}
+                                {selectedRegion &&
+                                  MedusaService.formatAmount(
+                                    selectedVariant?.calculated_price
+                                      ?.calculated_amount ?? 0,
+                                    selectedRegion.currency_code,
+                                    i18n.language
+                                  )}
                               </div>
                             )}
                             &nbsp;
@@ -460,17 +468,20 @@ export default function ProductDesktopComponent({
                               className={[
                                 styles['original-price'],
                                 styles['original-price-desktop'],
-                                selectedVariant?.original_price !==
-                                  selectedVariant?.calculated_price &&
+                                selectedVariant?.calculated_price
+                                  ?.original_amount !==
+                                  selectedVariant?.calculated_price
+                                    ?.calculated_amount &&
                                   styles['original-price-crossed'],
                               ].join(' ')}
                             >
-                              {storeProps.selectedRegion &&
-                                formatAmount({
-                                  amount: selectedVariant?.original_price ?? 0,
-                                  region: storeProps.selectedRegion,
-                                  includeTaxes: false,
-                                })}
+                              {selectedRegion &&
+                                MedusaService.formatAmount(
+                                  selectedVariant?.calculated_price
+                                    ?.original_amount ?? 0,
+                                  selectedRegion.currency_code,
+                                  i18n.language
+                                )}
                             </div>
                             {type?.value === MedusaProductTypeNames.Wine && (
                               <>
@@ -481,11 +492,7 @@ export default function ProductDesktopComponent({
                                     styles['inventory-quantity-desktop'],
                                   ].join(' ')}
                                 >
-                                  (
-                                  {
-                                    productProps.selectedVariant
-                                      ?.inventory_quantity
-                                  }
+                                  ({selectedVariant?.inventory_quantity}
                                   &nbsp;
                                   {t('inStock')})
                                 </span>
@@ -509,7 +516,7 @@ export default function ProductDesktopComponent({
                           styles['tab-container-desktop'],
                         ].join(' ')}
                       >
-                        {!productProps.isLoading ? (
+                        {!isLoading ? (
                           <Tabs
                             flex={true}
                             classNames={{
@@ -539,7 +546,7 @@ export default function ProductDesktopComponent({
                               styles['options-container-desktop'],
                             ].join(' ')}
                           >
-                            {!productProps.isLoading ? (
+                            {!isLoading ? (
                               <>
                                 <div
                                   className={[
@@ -806,7 +813,7 @@ export default function ProductDesktopComponent({
                           </div>
                         )}
                       </div>
-                      {!productProps.isLoading ? (
+                      {!isLoading ? (
                         <InputNumber
                           label={t('quantity') ?? ''}
                           classNames={{
@@ -826,9 +833,8 @@ export default function ProductDesktopComponent({
                           value={quantity.toString()}
                           min={1}
                           max={
-                            !productProps.selectedVariant?.allow_backorder
-                              ? productProps.selectedVariant
-                                  ?.inventory_quantity ?? 0
+                            !selectedVariant?.allow_backorder
+                              ? selectedVariant?.inventory_quantity ?? 0
                               : undefined
                           }
                           onChange={(e) => {
@@ -848,7 +854,7 @@ export default function ProductDesktopComponent({
                           <Skeleton style={{ height: 44 }} borderRadius={6} />
                         </div>
                       )}
-                      {!productProps.isLoading ? (
+                      {!isLoading ? (
                         <Button
                           classNames={{
                             container: styles['add-to-cart-button-container'],
@@ -860,18 +866,21 @@ export default function ProductDesktopComponent({
                             color: 'rgba(233, 33, 66, .35)',
                           }}
                           icon={
-                            !productProps.selectedVariant?.purchasable ? (
+                            selectedVariant?.inventory_quantity &&
+                            selectedVariant?.inventory_quantity <= 0 ? (
                               <Line.ProductionQuantityLimits size={24} />
                             ) : (
                               <Line.AddShoppingCart size={24} />
                             )
                           }
-                          disabled={!productProps.selectedVariant?.purchasable}
+                          disabled={
+                            (selectedVariant?.inventory_quantity ?? 0) <= 0
+                          }
                           onClick={onAddToCart}
                         >
-                          {!productProps.selectedVariant?.purchasable &&
+                          {(selectedVariant?.inventory_quantity ?? 0) <= 0 &&
                             t('outOfStock')}
-                          {productProps.selectedVariant?.purchasable &&
+                          {(selectedVariant?.inventory_quantity ?? 0) > 0 &&
                             t('addToCart')}
                         </Button>
                       ) : (
@@ -888,7 +897,7 @@ export default function ProductDesktopComponent({
                           styles['tab-container-desktop'],
                         ].join(' ')}
                       >
-                        {!productProps.isLoading ? (
+                        {!isLoading ? (
                           <Tabs
                             classNames={{
                               tabButton: styles['tab-button'],
@@ -916,7 +925,7 @@ export default function ProductDesktopComponent({
                             ].join(' ')}
                           />
                         )}
-                        {!productProps.isLoading ? (
+                        {!isLoading ? (
                           <>
                             {activeDetails === 'information' && (
                               <div
@@ -945,7 +954,7 @@ export default function ProductDesktopComponent({
                                       styles['details-item-value-desktop'],
                                     ].join(' ')}
                                   >
-                                    {productProps.metadata?.material ?? '-'}
+                                    {metadata?.material ?? '-'}
                                   </div>
                                 </div>
                                 <div
@@ -968,9 +977,8 @@ export default function ProductDesktopComponent({
                                       styles['details-item-value-desktop'],
                                     ].join(' ')}
                                   >
-                                    {productProps.metadata?.weight &&
-                                    productProps.metadata.weight > 0
-                                      ? `${productProps.metadata.weight} g`
+                                    {metadata?.weight && metadata.weight > 0
+                                      ? `${metadata.weight} g`
                                       : '-'}
                                   </div>
                                 </div>
@@ -994,8 +1002,7 @@ export default function ProductDesktopComponent({
                                       styles['details-item-value-desktop'],
                                     ].join(' ')}
                                   >
-                                    {productProps.metadata?.originCountry ??
-                                      '-'}
+                                    {metadata?.originCountry ?? '-'}
                                   </div>
                                 </div>
                                 <div
@@ -1018,10 +1025,10 @@ export default function ProductDesktopComponent({
                                       styles['details-item-value-desktop'],
                                     ].join(' ')}
                                   >
-                                    {productProps.metadata?.length &&
-                                    productProps.metadata.width &&
-                                    productProps.metadata.height
-                                      ? `${productProps.metadata.length}L x ${productProps.metadata.width}W x ${productProps.metadata.height}H`
+                                    {metadata?.length &&
+                                    metadata.width &&
+                                    metadata.height
+                                      ? `${metadata.length}L x ${metadata.width}W x ${metadata.height}H`
                                       : '-'}
                                   </div>
                                 </div>
@@ -1177,7 +1184,7 @@ export default function ProductDesktopComponent({
                       </div>
                     </div>
                   )}
-                  {productProps.activeTabId === ProductTabType.Locations && (
+                  {activeTabId === ProductTabType.Locations && (
                     <div
                       className={[
                         styles['locations-container'],
@@ -1209,7 +1216,7 @@ export default function ProductDesktopComponent({
                               ].join(' ')}
                             >
                               <Input
-                                value={productProps.stockLocationInput}
+                                value={stockLocationInput}
                                 classNames={{
                                   container: [
                                     styles['search-input-container'],
@@ -1240,8 +1247,11 @@ export default function ProductDesktopComponent({
                           styles['location-items-container-desktop'],
                         ].join(' ')}
                       >
-                        {productProps.searchedStockLocations.map(
-                          (stockLocation: StockLocation, _index: number) => {
+                        {searchedStockLocations.map(
+                          (
+                            stockLocation: HttpTypes.AdminStockLocation,
+                            _index: number
+                          ) => {
                             return (
                               <StockLocationItemComponent
                                 key={stockLocation.id}
@@ -1263,14 +1273,14 @@ export default function ProductDesktopComponent({
                           className={styles['loading-ring']}
                           style={{
                             maxHeight:
-                              productProps.hasMoreSearchedStockLocations ||
-                              productProps.areSearchedStockLocationsLoading
+                              hasMoreSearchedStockLocations ||
+                              areSearchedStockLocationsLoading
                                 ? 24
                                 : 0,
                           }}
                         />
-                        {!productProps.areSearchedStockLocationsLoading &&
-                          productProps.searchedStockLocations.length <= 0 && (
+                        {!areSearchedStockLocationsLoading &&
+                          searchedStockLocations.length <= 0 && (
                             <div
                               className={[
                                 styles['no-searched-stock-locations-container'],
@@ -1354,3 +1364,5 @@ export default function ProductDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(ProductDesktopComponent);

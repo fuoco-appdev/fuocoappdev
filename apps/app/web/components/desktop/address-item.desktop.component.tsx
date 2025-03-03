@@ -1,10 +1,11 @@
 import { Button, Line } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
 import styles from '../../modules/address-item.module.scss';
 import { AddressItemProps } from '../address-item.component';
 import { ResponsiveDesktop } from '../responsive.component';
 
-export default function AddressItemDesktopComponent({
+function AddressItemDesktopComponent({
   address,
   onEdit,
   onDelete,
@@ -98,3 +99,5 @@ export default function AddressItemDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(AddressItemDesktopComponent);

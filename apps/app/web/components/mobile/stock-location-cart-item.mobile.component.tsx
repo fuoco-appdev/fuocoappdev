@@ -1,11 +1,11 @@
 import { Avatar } from '@fuoco.appdev/web-components';
-import styles from '../../modules/stock-location-cart-item.module.scss';
-// @ts-ignore
+import { observer } from 'mobx-react-lite';
 import Ripples from 'react-ripples';
+import styles from '../../modules/stock-location-cart-item.module.scss';
 import { ResponsiveMobile } from '../responsive.component';
 import { StockLocationCartItemResponsiveProps } from '../stock-location-cart-item.component';
 
-export default function StockLocationCartItemMobileComponent({
+function StockLocationCartItemMobileComponent({
   stockLocation,
   cartCount,
   selected,
@@ -106,3 +106,5 @@ export default function StockLocationCartItemMobileComponent({
     </ResponsiveMobile>
   );
 }
+
+export default observer(StockLocationCartItemMobileComponent);

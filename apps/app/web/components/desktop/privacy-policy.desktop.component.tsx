@@ -1,6 +1,9 @@
 import { Auth, Typography } from '@fuoco.appdev/web-components';
 import loadable from '@loadable/component';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 import styles from '../../modules/privacy-policy.module.scss';
+import { DIContext } from '../app.component';
 import { PrivacyPolicyResponsiveProps } from '../privacy-policy.component';
 import { ResponsiveDesktop } from '../responsive.component';
 const ReactMarkdown = loadable(
@@ -11,10 +14,11 @@ const ReactMarkdown = loadable(
   { ssr: false }
 );
 
-export default function PrivacyPolicyDesktopComponent({
-  privacyPolicyProps,
+function PrivacyPolicyDesktopComponent({
   remarkPlugins,
 }: PrivacyPolicyResponsiveProps): JSX.Element {
+  const { PrivacyPolicyController } = React.useContext(DIContext);
+  const { markdown } = PrivacyPolicyController.model;
   return (
     <ResponsiveDesktop>
       <div className={[styles['root'], styles['root-desktop']].join(' ')}>
@@ -32,7 +36,7 @@ export default function PrivacyPolicyDesktopComponent({
               >
                 <ReactMarkdown
                   remarkPlugins={remarkPlugins}
-                  children={privacyPolicyProps.markdown}
+                  children={markdown}
                 />
               </Typography>
             }
@@ -42,3 +46,5 @@ export default function PrivacyPolicyDesktopComponent({
     </ResponsiveDesktop>
   );
 }
+
+export default observer(PrivacyPolicyDesktopComponent);

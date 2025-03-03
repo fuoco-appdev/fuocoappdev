@@ -1,16 +1,12 @@
-import { useObservable } from '@ngneat/use-observable';
+/* eslint-disable no-restricted-globals */
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useOutletContext } from 'react-router-dom';
-import AccountController from '../../shared/controllers/account.controller';
-import StoreController from '../../shared/controllers/store.controller';
-import WindowController from '../../shared/controllers/window.controller';
-import { AccountState } from '../../shared/models/account.model';
-import { StoreState } from '../../shared/models/store.model';
-import { WindowState } from '../../shared/models/window.model';
 import { RoutePathsType } from '../../shared/route-paths-type';
 import { useQuery } from '../route-paths';
+import { DIContext } from './app.component';
 import { AuthenticatedComponent } from './authenticated.component';
 import { AccountSuspenseDesktopComponent } from './desktop/suspense/account.suspense.desktop.component';
 import { AccountSuspenseMobileComponent } from './mobile/suspense/account.suspense.mobile.component';
@@ -31,9 +27,6 @@ export function useAccountOutletContext() {
 }
 
 export interface AccountResponsiveProps {
-  windowProps: WindowState;
-  accountProps: AccountState;
-  storeProps: StoreState;
   isCropImageModalVisible: boolean;
   likeCount: string | undefined;
   followerCount: string | undefined;
@@ -51,23 +44,29 @@ export interface AccountResponsiveProps {
   onFollowingClick: () => void;
 }
 
-export default function AccountComponent(): JSX.Element {
+function AccountComponent(): JSX.Element {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const query = useQuery();
-  const [accountProps] = useObservable(AccountController.model.store);
-  const [accountDebugProps] = useObservable(AccountController.model.debugStore);
-  const [windowProps] = useObservable(WindowController.model.store);
-  const [storeProps] = useObservable(StoreController.model.store);
+  const { AccountController, WindowController } = React.useContext(DIContext);
+  const {
+    suspense,
+    account,
+    likeCount,
+    followerCount,
+    followingCount,
+    activeTabId,
+  } = AccountController.model;
+  const { activeRoute, loadedLocationPath } = WindowController.model;
   const [isCropImageModalVisible, setIsCropImageModalVisible] =
     React.useState<boolean>(false);
-  const [likeCount, setLikeCount] = React.useState<string | undefined>(
-    undefined
-  );
-  const [followerCount, setFollowerCount] = React.useState<string | undefined>(
-    undefined
-  );
-  const [followingCount, setFollowingCount] = React.useState<
+  const [currentLikeCount, setCurrentLikeCount] = React.useState<
+    string | undefined
+  >(undefined);
+  const [currentFollowerCount, setCurrentFollowerCount] = React.useState<
+    string | undefined
+  >(undefined);
+  const [currentFollowingCount, setCurrentFollowingCount] = React.useState<
     string | undefined
   >(undefined);
   const [isAddInterestOpen, setIsAddInterestOpen] =
@@ -105,7 +104,7 @@ export default function AccountComponent(): JSX.Element {
   };
 
   const onCompleteProfile = async () => {
-    AccountController.updateProfileErrors({
+    AccountController.updateProfileFormErrors({
       firstName: undefined,
       lastName: undefined,
       username: undefined,
@@ -115,7 +114,7 @@ export default function AccountComponent(): JSX.Element {
       AccountController.model.profileForm
     );
     if (errors) {
-      AccountController.updateProfileErrors(errors);
+      AccountController.updateProfileFormErrors(errors);
       return;
     }
     AccountController.completeProfileAsync();
@@ -135,20 +134,20 @@ export default function AccountComponent(): JSX.Element {
 
   const onFollowersClick = () => {
     navigate({
-      pathname: `${RoutePathsType.AccountStatus}/${accountProps.account?.id}/followers`,
+      pathname: `${RoutePathsType.AccountStatus}/${account?.id}/followers`,
       search: query.toString(),
     });
   };
 
   const onFollowingClick = () => {
     navigate({
-      pathname: `${RoutePathsType.AccountStatus}/${accountProps.account?.id}/following`,
+      pathname: `${RoutePathsType.AccountStatus}/${account?.id}/following`,
       search: query.toString(),
     });
   };
 
   React.useEffect(() => {
-    AccountController.updateErrorStrings({
+    AccountController.updateProfileFormErrorStrings({
       empty: t('fieldEmptyError') ?? '',
       exists: t('fieldExistsError') ?? '',
       spaces: t('fieldSpacesError') ?? '',
@@ -158,7 +157,7 @@ export default function AccountComponent(): JSX.Element {
   React.useEffect(() => {
     renderCountRef.current += 1;
     AccountController.load(renderCountRef.current);
-    if (windowProps.activeRoute === RoutePathsType.Account) {
+    if (activeRoute === RoutePathsType.Account) {
       navigate({
         pathname: RoutePathsType.AccountLikes,
         search: query.toString(),
@@ -171,31 +170,27 @@ export default function AccountComponent(): JSX.Element {
   }, []);
 
   React.useEffect(() => {
-    if (accountProps.likeCount !== undefined) {
-      setLikeCount(
-        new Intl.NumberFormat(i18n.language).format(accountProps.likeCount)
+    if (likeCount !== undefined) {
+      setCurrentLikeCount(
+        new Intl.NumberFormat(i18n.language).format(likeCount)
       );
     }
 
-    if (accountProps.followerCount !== undefined) {
-      setFollowerCount(
-        new Intl.NumberFormat(i18n.language).format(accountProps.followerCount)
+    if (followerCount !== undefined) {
+      setCurrentFollowerCount(
+        new Intl.NumberFormat(i18n.language).format(followerCount)
       );
     }
 
-    if (accountProps.followingCount !== undefined) {
-      setFollowingCount(
-        new Intl.NumberFormat(i18n.language).format(accountProps.followingCount)
+    if (followingCount !== undefined) {
+      setCurrentFollowingCount(
+        new Intl.NumberFormat(i18n.language).format(followingCount)
       );
     }
-  }, [
-    accountProps.likeCount,
-    accountProps.followerCount,
-    accountProps.followingCount,
-  ]);
+  }, [likeCount, followerCount, followingCount]);
 
   React.useEffect(() => {
-    const loadedLocation = windowProps.loadedLocationPath as string | undefined;
+    const loadedLocation = loadedLocationPath as string | undefined;
     if (loadedLocation && loadedLocation !== RoutePathsType.Account) {
       if (
         loadedLocation.startsWith(RoutePathsType.Account) &&
@@ -208,12 +203,12 @@ export default function AccountComponent(): JSX.Element {
     } else {
       if (!loadedLocation?.startsWith(RoutePathsType.Settings)) {
         navigate({
-          pathname: accountProps.activeTabId,
+          pathname: activeTabId,
           search: query.toString(),
         });
       }
     }
-  }, [windowProps.loadedLocationPath]);
+  }, [loadedLocationPath]);
 
   React.useEffect(() => {
     if (AccountController.model.activeTabId === location.pathname) {
@@ -236,7 +231,7 @@ export default function AccountComponent(): JSX.Element {
     </>
   );
 
-  if (accountDebugProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
 
@@ -271,13 +266,10 @@ export default function AccountComponent(): JSX.Element {
       <React.Suspense fallback={suspenceComponent}>
         <AuthenticatedComponent>
           <AccountDesktopComponent
-            accountProps={accountProps}
-            windowProps={windowProps}
-            storeProps={storeProps}
             isCropImageModalVisible={isCropImageModalVisible}
-            likeCount={likeCount}
-            followerCount={followerCount}
-            followingCount={followingCount}
+            likeCount={currentLikeCount}
+            followerCount={currentFollowerCount}
+            followingCount={currentFollowingCount}
             isAddInterestOpen={isAddInterestOpen}
             setIsAddInterestOpen={setIsAddInterestOpen}
             setIsCropImageModalVisible={setIsCropImageModalVisible}
@@ -291,13 +283,10 @@ export default function AccountComponent(): JSX.Element {
             onFollowingClick={onFollowingClick}
           />
           <AccountMobileComponent
-            accountProps={accountProps}
-            windowProps={windowProps}
-            storeProps={storeProps}
             isCropImageModalVisible={isCropImageModalVisible}
-            likeCount={likeCount}
-            followerCount={followerCount}
-            followingCount={followingCount}
+            likeCount={currentLikeCount}
+            followerCount={currentFollowerCount}
+            followingCount={currentFollowingCount}
             isAddInterestOpen={isAddInterestOpen}
             setIsAddInterestOpen={setIsAddInterestOpen}
             setIsCropImageModalVisible={setIsCropImageModalVisible}
@@ -315,3 +304,5 @@ export default function AccountComponent(): JSX.Element {
     </>
   );
 }
+
+export default observer(AccountComponent);

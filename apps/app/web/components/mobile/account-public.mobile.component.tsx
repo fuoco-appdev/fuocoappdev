@@ -1,18 +1,18 @@
 import { Avatar, Button, Line, Tabs } from '@fuoco.appdev/web-components';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import Skeleton from 'react-loading-skeleton';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import AccountPublicController from '../../../shared/controllers/account-public.controller';
 import { RoutePathsType } from '../../../shared/route-paths-type';
 import styles from '../../modules/account-public.module.scss';
 import { useQuery } from '../../route-paths';
 import { AccountPublicResponsiveProps } from '../account-public.component';
+import { DIContext } from '../app.component';
 import { ResponsiveMobile } from '../responsive.component';
 
-export default function AccountPublicMobileComponent({
-  accountPublicProps,
+function AccountPublicMobileComponent({
   isFollowing,
   isAccepted,
   likeCount,
@@ -31,6 +31,16 @@ export default function AccountPublicMobileComponent({
   const { t } = useTranslation();
   const navigate = useNavigate();
   const query = useQuery();
+  const { AccountPublicController } = React.useContext(DIContext);
+  const {
+    account,
+    customerMetadata,
+    profileUrl,
+    showFollowButton,
+    activeTabId,
+    activeTabIndex,
+    prevTabIndex,
+  } = AccountPublicController.model;
 
   return (
     <ResponsiveMobile>
@@ -45,7 +55,7 @@ export default function AccountPublicMobileComponent({
           onLoad={onScrollLoad}
           ref={scrollContainerRef}
         >
-          {accountPublicProps.account?.status === 'Complete' && (
+          {account?.status === 'Complete' && (
             <>
               <div
                 className={[
@@ -91,8 +101,8 @@ export default function AccountPublicMobileComponent({
                             },
                           },
                         }}
-                        text={accountPublicProps.customerMetadata?.firstName}
-                        src={accountPublicProps.profileUrl}
+                        text={customerMetadata?.firstName}
+                        src={profileUrl}
                         size={'large'}
                       />
                     </div>
@@ -104,8 +114,8 @@ export default function AccountPublicMobileComponent({
                     styles['username-mobile'],
                   ].join(' ')}
                 >
-                  {accountPublicProps.customerMetadata ? (
-                    `${accountPublicProps.customerMetadata?.firstName} ${accountPublicProps.customerMetadata?.lastName}`
+                  {customerMetadata ? (
+                    `${customerMetadata?.firstName} ${customerMetadata?.lastName}`
                   ) : (
                     <Skeleton
                       count={1}
@@ -284,7 +294,7 @@ export default function AccountPublicMobileComponent({
                     styles['follow-button-container-mobile'],
                   ].join(' ')}
                 >
-                  {accountPublicProps.showFollowButton && !isFollowing && (
+                  {showFollowButton && !isFollowing && (
                     <Button
                       classNames={{
                         button: [
@@ -302,47 +312,43 @@ export default function AccountPublicMobileComponent({
                       {t('follow')}
                     </Button>
                   )}
-                  {accountPublicProps.showFollowButton &&
-                    isFollowing &&
-                    !isAccepted && (
-                      <Button
-                        classNames={{
-                          button: [
-                            styles['secondary-button'],
-                            styles['secondary-button-mobile'],
-                          ].join(' '),
-                        }}
-                        rippleProps={{
-                          color: 'rgba(42, 42, 95, .35)',
-                        }}
-                        size={'small'}
-                        type={'secondary'}
-                        onClick={onRequested}
-                      >
-                        {t('requested')}
-                      </Button>
-                    )}
-                  {accountPublicProps.showFollowButton &&
-                    isFollowing &&
-                    isAccepted && (
-                      <Button
-                        classNames={{
-                          button: [
-                            styles['secondary-button'],
-                            styles['secondary-button-mobile'],
-                          ].join(' '),
-                        }}
-                        rippleProps={{
-                          color: 'rgba(42, 42, 95, .35)',
-                        }}
-                        size={'small'}
-                        type={'secondary'}
-                        onClick={onUnfollow}
-                      >
-                        {t('following')}
-                      </Button>
-                    )}
-                  {accountPublicProps.showFollowButton === undefined && (
+                  {showFollowButton && isFollowing && !isAccepted && (
+                    <Button
+                      classNames={{
+                        button: [
+                          styles['secondary-button'],
+                          styles['secondary-button-mobile'],
+                        ].join(' '),
+                      }}
+                      rippleProps={{
+                        color: 'rgba(42, 42, 95, .35)',
+                      }}
+                      size={'small'}
+                      type={'secondary'}
+                      onClick={onRequested}
+                    >
+                      {t('requested')}
+                    </Button>
+                  )}
+                  {showFollowButton && isFollowing && isAccepted && (
+                    <Button
+                      classNames={{
+                        button: [
+                          styles['secondary-button'],
+                          styles['secondary-button-mobile'],
+                        ].join(' '),
+                      }}
+                      rippleProps={{
+                        color: 'rgba(42, 42, 95, .35)',
+                      }}
+                      size={'small'}
+                      type={'secondary'}
+                      onClick={onUnfollow}
+                    >
+                      {t('following')}
+                    </Button>
+                  )}
+                  {showFollowButton === undefined && (
                     <Skeleton
                       count={1}
                       borderRadius={6}
@@ -361,7 +367,7 @@ export default function AccountPublicMobileComponent({
                 <Tabs
                   flex={true}
                   touchScreen={true}
-                  activeId={accountPublicProps.activeTabId}
+                  activeId={activeTabId}
                   classNames={{
                     nav: [styles['tab-nav'], styles['tab-nav-mobile']].join(
                       ' '
@@ -403,23 +409,19 @@ export default function AccountPublicMobileComponent({
                     React.cloneElement(child, {
                       classNames: {
                         enter:
-                          accountPublicProps.activeTabIndex >
-                          accountPublicProps.prevTabIndex
+                          activeTabIndex > prevTabIndex
                             ? styles['left-to-right-enter']
                             : styles['right-to-left-enter'],
                         enterActive:
-                          accountPublicProps.activeTabIndex >
-                          accountPublicProps.prevTabIndex
+                          activeTabIndex > prevTabIndex
                             ? styles['left-to-right-enter-active']
                             : styles['right-to-left-enter-active'],
                         exit:
-                          accountPublicProps.activeTabIndex >
-                          accountPublicProps.prevTabIndex
+                          activeTabIndex > prevTabIndex
                             ? styles['left-to-right-exit']
                             : styles['right-to-left-exit'],
                         exitActive:
-                          accountPublicProps.activeTabIndex >
-                          accountPublicProps.prevTabIndex
+                          activeTabIndex > prevTabIndex
                             ? styles['left-to-right-exit-active']
                             : styles['right-to-left-exit-active'],
                       },
@@ -428,26 +430,22 @@ export default function AccountPublicMobileComponent({
                   }
                 >
                   <CSSTransition
-                    key={accountPublicProps.activeTabIndex}
+                    key={activeTabIndex}
                     classNames={{
                       enter:
-                        accountPublicProps.activeTabIndex <
-                        accountPublicProps.prevTabIndex
+                        activeTabIndex < prevTabIndex
                           ? styles['left-to-right-enter']
                           : styles['right-to-left-enter'],
                       enterActive:
-                        accountPublicProps.activeTabIndex <
-                        accountPublicProps.prevTabIndex
+                        activeTabIndex < prevTabIndex
                           ? styles['left-to-right-enter-active']
                           : styles['right-to-left-enter-active'],
                       exit:
-                        accountPublicProps.activeTabIndex <
-                        accountPublicProps.prevTabIndex
+                        activeTabIndex < prevTabIndex
                           ? styles['left-to-right-exit']
                           : styles['right-to-left-exit'],
                       exitActive:
-                        accountPublicProps.activeTabIndex <
-                        accountPublicProps.prevTabIndex
+                        activeTabIndex < prevTabIndex
                           ? styles['left-to-right-exit-active']
                           : styles['right-to-left-exit-active'],
                     }}
@@ -467,3 +465,5 @@ export default function AccountPublicMobileComponent({
     </ResponsiveMobile>
   );
 }
+
+export default observer(AccountPublicMobileComponent);

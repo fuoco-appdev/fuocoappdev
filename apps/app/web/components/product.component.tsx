@@ -1,35 +1,19 @@
 import { Line } from '@fuoco.appdev/web-components';
 import { TabProps } from '@fuoco.appdev/web-components/dist/cjs/src/components/tabs/tabs';
-import {
-  ProductOption,
-  ProductOptionValue,
-  ProductTag,
-  ProductType,
-} from '@medusajs/medusa';
-import { PricedVariant } from '@medusajs/medusa/dist/types/pricing';
-import { useObservable } from '@ngneat/use-observable';
+import { HttpTypes } from '@medusajs/types';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { RouteObject, useParams } from 'react-router-dom';
-import AccountController from '../../shared/controllers/account.controller';
-import ExploreController from '../../shared/controllers/explore.controller';
-import ProductController from '../../shared/controllers/product.controller';
-import StoreController from '../../shared/controllers/store.controller';
-import WindowController from '../../shared/controllers/window.controller';
-import { AccountState } from '../../shared/models/account.model';
 import { InventoryLocation } from '../../shared/models/explore.model';
 import {
   ProductOptions,
-  ProductState,
   ProductTabType,
 } from '../../shared/models/product.model';
-import { StoreState } from '../../shared/models/store.model';
 import { DeepLTranslationsResponse } from '../../shared/protobuf/deepl_pb';
 import { ProductMetadataResponse } from '../../shared/protobuf/product_pb';
-import DeeplService from '../../shared/services/deepl.service';
-import MedusaService from '../../shared/services/medusa.service';
-import SupabaseService from '../../shared/services/supabase.service';
+import { DIContainer, DIContext } from './app.component';
 import { ProductSuspenseDesktopComponent } from './desktop/suspense/product.suspense.desktop.component';
 import { ProductSuspenseMobileComponent } from './mobile/suspense/product.suspense.mobile.component';
 
@@ -45,9 +29,6 @@ export interface ProductProps {
 }
 
 export interface ProductResponsiveProps {
-  productProps: ProductState;
-  storeProps: StoreState;
-  accountProps: AccountState;
   remarkPlugins: any[];
   translatedDescription: string;
   description: string;
@@ -62,8 +43,8 @@ export interface ProductResponsiveProps {
   format: string | undefined;
   region: string | undefined;
   residualSugar: string | undefined;
-  type: ProductType | undefined;
-  tags: ProductTag[];
+  type: HttpTypes.StoreProductType | undefined;
+  tags: HttpTypes.StoreProductTag[];
   uvc: string | undefined;
   vintage: string | undefined;
   quantity: number;
@@ -85,10 +66,23 @@ export interface ProductResponsiveProps {
 }
 
 function ProductComponent({}: ProductProps): JSX.Element {
-  const [productProps] = useObservable(ProductController.model.store);
-  const [productDebugProps] = useObservable(ProductController.model.debugStore);
-  const [storeProps] = useObservable(StoreController.model.store);
-  const [accountProps] = useObservable(AccountController.model.store);
+  const {
+    ProductController,
+    StoreController,
+    AccountController,
+    ExploreController,
+    DeepLService,
+  } = React.useContext(DIContext);
+  const {
+    suspense,
+    searchedStockLocationScrollPosition,
+    selectedVariant,
+    metadata,
+    variants,
+    likesMetadata,
+  } = ProductController.model;
+  const { account } = AccountController.model;
+  const { selectedSalesChannel } = StoreController.model;
   const { id } = useParams();
   const [translatedDescription, setTranslatedDescription] =
     React.useState<string>('');
@@ -111,8 +105,10 @@ function ProductComponent({}: ProductProps): JSX.Element {
   const [residualSugar, setResidualSugar] = React.useState<string | undefined>(
     ''
   );
-  const [type, setType] = React.useState<ProductType | undefined>(undefined);
-  const [tags, setTags] = React.useState<ProductTag[]>([]);
+  const [type, setType] = React.useState<
+    HttpTypes.StoreProductType | undefined
+  >(undefined);
+  const [tags, setTags] = React.useState<HttpTypes.StoreProductTag[]>([]);
   const [uvc, setUVC] = React.useState<string | undefined>('');
   const [vintage, setVintage] = React.useState<string | undefined>('');
   const [remarkPlugins, setRemarkPlugins] = React.useState<any[]>([]);
@@ -182,9 +178,9 @@ function ProductComponent({}: ProductProps): JSX.Element {
 
   const onSideBarLoad = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
     if (ProductController.model.activeTabId === ProductTabType.Locations) {
-      if (productProps.searchedStockLocationScrollPosition) {
+      if (searchedStockLocationScrollPosition) {
         e.currentTarget.scrollTop =
-          productProps.searchedStockLocationScrollPosition as number;
+          searchedStockLocationScrollPosition as number;
         ProductController.updateSearchedStockLocationScrollPosition(undefined);
       }
     }
@@ -192,18 +188,19 @@ function ProductComponent({}: ProductProps): JSX.Element {
 
   const onAddToCart = () => {
     ProductController.addToCartAsync(
-      productProps.selectedVariant?.id ?? '',
+      selectedVariant?.id ?? '',
       quantity,
-      () =>
-        WindowController.addToast({
-          key: `add-to-cart-${Math.random()}`,
-          message: t('addedToCart') ?? '',
-          description:
-            t('addedToCartDescription', {
-              item: productProps.metadata?.title,
-            }) ?? '',
-          type: 'success',
-        }),
+      () => {
+        // WindowController.addToast({
+        //   key: `add-to-cart-${Math.random()}`,
+        //   message: t('addedToCart') ?? '',
+        //   description:
+        //     t('addedToCartDescription', {
+        //       item: productProps.metadata?.title,
+        //     }) ?? '',
+        //   type: 'success',
+        // });
+      },
       (error) => console.error(error)
     );
   };
@@ -228,7 +225,7 @@ function ProductComponent({}: ProductProps): JSX.Element {
   const updateTranslatedDescriptionAsync = async (description: string) => {
     if (i18n.language !== 'en') {
       const response: DeepLTranslationsResponse =
-        await DeeplService.translateAsync(description, i18n.language);
+        await DeepLService.translateAsync(description, i18n.language);
       if (response.translations.length <= 0) {
         return;
       }
@@ -241,28 +238,26 @@ function ProductComponent({}: ProductProps): JSX.Element {
   };
 
   React.useEffect(() => {
-    if (!productProps.metadata) {
+    if (!metadata) {
       return;
     }
 
-    const type = JSON.parse(productProps.metadata?.type) as ProductType;
+    const type = JSON.parse(metadata?.type) as HttpTypes.StoreProductType;
     setType(type);
     setTags(
-      productProps.metadata?.tags.map(
-        (value: string) => JSON.parse(value) as ProductTag
+      metadata?.tags.map(
+        (value: string) => JSON.parse(value) as HttpTypes.StoreProductTag
       )
     );
 
-    updateTranslatedDescriptionAsync(productProps.metadata.description);
-  }, [productProps.metadata]);
+    updateTranslatedDescriptionAsync(metadata.description);
+  }, [metadata]);
 
   React.useEffect(() => {
-    let tabs: TabProps[] = [];
+    const tabs: TabProps[] = [];
     if (
-      storeProps.selectedSalesChannel &&
-      productProps.metadata?.salesChannelIds.includes(
-        storeProps.selectedSalesChannel?.id ?? ''
-      )
+      selectedSalesChannel &&
+      metadata?.salesChannelIds.includes(selectedSalesChannel?.id ?? '')
     ) {
       tabs.push({
         id: ProductTabType.Price,
@@ -279,7 +274,7 @@ function ProductComponent({}: ProductProps): JSX.Element {
     });
 
     setSideBarTabs(tabs);
-  }, [productProps.metadata, storeProps.selectedSalesChannel]);
+  }, [metadata, selectedSalesChannel]);
 
   React.useEffect(() => {
     renderCountRef.current += 1;
@@ -296,12 +291,12 @@ function ProductComponent({}: ProductProps): JSX.Element {
   }, []);
 
   React.useEffect(() => {
-    if (!productProps.variants) {
+    if (!variants) {
       return;
     }
 
     let tabProps: TabProps[] = [];
-    for (const variant of productProps.variants) {
+    for (const variant of variants) {
       tabProps.push({ id: variant.id, label: variant.title });
     }
     tabProps = tabProps.sort((n1, n2) => {
@@ -312,16 +307,16 @@ function ProductComponent({}: ProductProps): JSX.Element {
       return 1;
     });
     setTabs(tabProps);
-  }, [productProps.variants]);
+  }, [variants]);
 
   React.useEffect(() => {
-    setActiveVariantId(productProps.selectedVariant?.id);
-  }, [productProps.selectedVariant]);
+    setActiveVariantId(selectedVariant?.id);
+  }, [selectedVariant]);
 
   React.useEffect(() => {
-    setIsLiked(Boolean(productProps.likesMetadata?.didAccountLike));
-    setLikeCount(productProps.likesMetadata?.totalLikeCount ?? 0);
-  }, [productProps.likesMetadata, accountProps.account]);
+    setIsLiked(Boolean(likesMetadata?.didAccountLike));
+    setLikeCount(likesMetadata?.totalLikeCount ?? 0);
+  }, [likesMetadata, account]);
 
   React.useEffect(() => {
     if (!ProductController.model.metadata) {
@@ -329,7 +324,7 @@ function ProductComponent({}: ProductProps): JSX.Element {
     }
 
     const options = ProductController.model.metadata.options.map(
-      (value) => JSON.parse(value) as ProductOption
+      (value) => JSON.parse(value) as HttpTypes.StoreProductOption
     );
     const alcoholOption = options.find(
       (value) => value.title === ProductOptions.Alcohol
@@ -347,40 +342,44 @@ function ProductComponent({}: ProductProps): JSX.Element {
       (value) => value.title === ProductOptions.Vintage
     );
 
-    const variant = productProps.selectedVariant as PricedVariant;
+    const variant = selectedVariant;
     if (variant && variant?.options) {
       const alcoholValue = variant.options.find(
-        (value: ProductOptionValue) => value.option_id === alcoholOption?.id
+        (value: HttpTypes.AdminProductOptionValue) =>
+          value.option_id === alcoholOption?.id
       );
       const formatValue = variant.options.find(
-        (value: ProductOptionValue) => value.option_id === formatOption?.id
+        (value: HttpTypes.AdminProductOptionValue) =>
+          value.option_id === formatOption?.id
       );
       const residualSugarValue = variant.options.find(
-        (value: ProductOptionValue) =>
+        (value: HttpTypes.AdminProductOptionValue) =>
           value.option_id === residualSugarOption?.id
       );
       const uvcValue = variant.options.find(
-        (value: ProductOptionValue) => value.option_id === uvcOption?.id
+        (value: HttpTypes.AdminProductOptionValue) =>
+          value.option_id === uvcOption?.id
       );
       const vintageValue = variant.options.find(
-        (value: ProductOptionValue) => value.option_id === vintageOption?.id
+        (value: HttpTypes.AdminProductOptionValue) =>
+          value.option_id === vintageOption?.id
       );
 
-      const metadata = JSON.parse(productProps.metadata?.metadata) as Record<
+      const childMetadata = JSON.parse(metadata?.metadata ?? '{}') as Record<
         string,
         any
       >;
-      setBrand(metadata?.['brand'] as string);
-      setRegion(metadata?.['region'] as string);
-      setVarietals(metadata?.['varietals'] as string);
-      setProducerBottler(metadata?.['producer_bottler'] as string);
+      setBrand(childMetadata?.['brand'] as string);
+      setRegion(childMetadata?.['region'] as string);
+      setVarietals(childMetadata?.['varietals'] as string);
+      setProducerBottler(childMetadata?.['producer_bottler'] as string);
       setAlcohol(alcoholValue?.value);
       setFormat(formatValue?.value);
       setResidualSugar(residualSugarValue?.value);
       setUVC(uvcValue?.value);
       setVintage(vintageValue?.value);
     }
-  }, [productProps.selectedVariant, productProps.metadata]);
+  }, [selectedVariant, metadata]);
 
   const suspenceComponent = (
     <>
@@ -389,19 +388,16 @@ function ProductComponent({}: ProductProps): JSX.Element {
     </>
   );
 
-  if (productDebugProps.suspense) {
+  if (suspense) {
     return suspenceComponent;
   }
 
   const fullNameMetadata = `${formatName(
-    productProps.metadata?.title ?? '',
-    productProps.metadata?.subtitle ?? ''
+    metadata?.title ?? '',
+    metadata?.subtitle ?? ''
   )} | fuoco.appdev`;
   const descriptionMetadata =
-    formatDescription(productProps.metadata?.description ?? '').substring(
-      0,
-      255
-    ) ?? '';
+    formatDescription(metadata?.description ?? '').substring(0, 255) ?? '';
   return (
     <>
       <Helmet>
@@ -409,11 +405,8 @@ function ProductComponent({}: ProductProps): JSX.Element {
         <link rel="canonical" href={window.location.href} />
         <meta name="title" content={fullNameMetadata} />
         <meta name="description" content={descriptionMetadata} />
-        <meta property="og:image" content={productProps.metadata?.thumbnail} />
-        <meta
-          property="og:image:secure_url"
-          content={productProps.metadata?.thumbnail}
-        />
+        <meta property="og:image" content={metadata?.thumbnail} />
+        <meta property="og:image:secure_url" content={metadata?.thumbnail} />
         <meta property="og:title" content={fullNameMetadata} />
         <meta property="og:description" content={descriptionMetadata} />
         <meta property="og:image:width" content="1200" />
@@ -422,17 +415,11 @@ function ProductComponent({}: ProductProps): JSX.Element {
         <meta property="og:type" content="website" />
         <meta property="og:url" content={window.location.href} />
         <meta property="twitter:title" content={fullNameMetadata} />
-        <meta
-          property="twitter:image"
-          content={productProps.metadata?.thumbnail}
-        />
+        <meta property="twitter:image" content={metadata?.thumbnail} />
         <meta property="twitter:description" content={descriptionMetadata} />
       </Helmet>
       <React.Suspense fallback={suspenceComponent}>
         <ProductDesktopComponent
-          productProps={productProps}
-          storeProps={storeProps}
-          accountProps={accountProps}
           remarkPlugins={remarkPlugins}
           translatedDescription={translatedDescription}
           description={description}
@@ -469,9 +456,6 @@ function ProductComponent({}: ProductProps): JSX.Element {
           onCancelLocation={onCancelLocation}
         />
         <ProductMobileComponent
-          productProps={productProps}
-          storeProps={storeProps}
-          accountProps={accountProps}
           remarkPlugins={remarkPlugins}
           translatedDescription={translatedDescription}
           description={description}
@@ -517,7 +501,10 @@ ProductComponent.getServerSidePropsAsync = async (
   request: Request,
   _result: Response
 ): Promise<ProductProps> => {
-  SupabaseService.initializeSupabase();
+  const supabaseService = DIContainer.get('SupabaseService');
+  const medusaService = DIContainer.get('MedusaService');
+  const productController = DIContainer.get('ProductController');
+  supabaseService.initializeSupabase();
 
   const url = new URL(
     `${(request as any).protocol}://${(request as any).hostname}${request.url}`
@@ -527,8 +514,8 @@ ProductComponent.getServerSidePropsAsync = async (
     return Promise.resolve({});
   }
   try {
-    const productMetadata = await MedusaService.requestProductMetadataAsync(id);
-    ProductController.updateMetadata(productMetadata);
+    const productMetadata = await medusaService.requestProductMetadataAsync(id);
+    productController.updateMetadata(productMetadata);
     return Promise.resolve({ metadata: productMetadata });
   } catch (error: any) {
     console.error(error as Error);
@@ -536,4 +523,4 @@ ProductComponent.getServerSidePropsAsync = async (
   }
 };
 
-export default ProductComponent;
+export default observer(ProductComponent);

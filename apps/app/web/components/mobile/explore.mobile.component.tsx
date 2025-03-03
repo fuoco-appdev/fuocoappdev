@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable jsx-a11y/alt-text */
 import {
   Button,
   Dropdown,
@@ -6,26 +8,26 @@ import {
   Scroll,
   Tabs,
 } from '@fuoco.appdev/web-components';
-import { StockLocation } from '@medusajs/stock-location/dist/models';
+import { HttpTypes } from '@medusajs/types';
+import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import Skeleton from 'react-loading-skeleton';
 import Map, { Marker } from 'react-map-gl';
 import Slider from 'react-slick';
-import ExploreController from '../../../shared/controllers/explore.controller';
 import {
   ExploreTabs,
   InventoryLocation,
   InventoryLocationType,
 } from '../../../shared/models/explore.model';
-import ConfigService from '../../../shared/services/config.service';
 import styles from '../../modules/explore.module.scss';
+import { DIContext } from '../app.component';
 import { ExploreResponsiveProps } from '../explore.component';
 import { ResponsiveMobile, useMobileEffect } from '../responsive.component';
 import StockLocationItemComponent from '../stock-location-item.component';
-export default function ExploreMobileComponent({
-  exploreProps,
+
+function ExploreMobileComponent({
   mapRef,
   selectedPoint,
   setMapStyleLoaded,
@@ -35,6 +37,21 @@ export default function ExploreMobileComponent({
   onGoToStore,
 }: ExploreResponsiveProps): JSX.Element {
   const { t } = useTranslation();
+  const { ExploreController, ConfigService } = React.useContext(DIContext);
+  const {
+    input,
+    selectedTab,
+    hasMoreSearchedStockLocations,
+    areSearchedStockLocationsLoading,
+    searchedStockLocations,
+    areSearchedStockLocationsReloading,
+    isSelectedInventoryLocationLoaded,
+    longitude,
+    latitude,
+    zoom,
+    inventoryLocations,
+    selectedInventoryLocation,
+  } = ExploreController.model;
   const topBarRef = React.useRef<HTMLDivElement | null>(null);
   const scrollContainerRef = React.createRef<HTMLDivElement>();
   const [isSearchFocused, setIsSearchFocused] = React.useState<boolean>(true);
@@ -45,12 +62,12 @@ export default function ExploreMobileComponent({
   let yPosition = 0;
 
   useMobileEffect(() => {
-    if (!exploreProps.selectedTab) {
+    if (!selectedTab) {
       return;
     }
 
     setIsSearchFocused(true);
-  }, [exploreProps.selectedTab]);
+  }, [selectedTab]);
 
   useMobileEffect(() => {
     if (!isSearchFocused) {
@@ -132,7 +149,7 @@ export default function ExploreMobileComponent({
                   ].join(' ')}
                 >
                   <Input
-                    value={exploreProps.input}
+                    value={input}
                     classNames={{
                       container: [
                         styles['search-input-container'],
@@ -167,7 +184,7 @@ export default function ExploreMobileComponent({
                   }}
                   removable={true}
                   type={'pills'}
-                  activeId={exploreProps.selectedTab}
+                  activeId={selectedTab}
                   onChange={(id: string) =>
                     ExploreController.updateSelectedTabAsync(
                       id.length > 0 ? (id as ExploreTabs) : undefined
@@ -215,8 +232,8 @@ export default function ExploreMobileComponent({
                   className={styles['loading-ring']}
                 />
               }
-              isReloading={exploreProps.areSearchedStockLocationsReloading}
-              isLoadable={exploreProps.hasMoreSearchedStockLocations}
+              isReloading={areSearchedStockLocationsReloading}
+              isLoadable={hasMoreSearchedStockLocations}
               showIndicatorThreshold={56}
               pullIndicatorComponent={
                 <div className={[styles['pull-indicator-container']].join(' ')}>
@@ -230,7 +247,7 @@ export default function ExploreMobileComponent({
                   className={styles['loading-ring']}
                 />
               }
-              isLoading={exploreProps.areSearchedStockLocationsLoading}
+              isLoading={areSearchedStockLocationsLoading}
               onLoad={() => ExploreController.onNextScrollAsync()}
               onScroll={(progress, scrollRef, contentRef) => {
                 const elementHeight = topBarRef.current?.clientHeight ?? 0;
@@ -263,8 +280,11 @@ export default function ExploreMobileComponent({
                 ref={scrollContainerRef}
                 onLoad={onScrollLoad}
               >
-                {exploreProps.searchedStockLocations.map(
-                  (stockLocation: StockLocation, _index: number) => {
+                {searchedStockLocations.map(
+                  (
+                    stockLocation: HttpTypes.AdminStockLocation,
+                    _index: number
+                  ) => {
                     return (
                       <StockLocationItemComponent
                         key={stockLocation.id}
@@ -280,9 +300,9 @@ export default function ExploreMobileComponent({
                     );
                   }
                 )}
-                {!exploreProps.areSearchedStockLocationsLoading &&
-                  !exploreProps.areSearchedStockLocationsReloading &&
-                  exploreProps.searchedStockLocations.length <= 0 && (
+                {!areSearchedStockLocationsLoading &&
+                  !areSearchedStockLocationsReloading &&
+                  searchedStockLocations.length <= 0 && (
                     <div
                       className={[
                         styles['no-searched-stock-locations-container'],
@@ -319,13 +339,13 @@ export default function ExploreMobileComponent({
               ref={mapRef}
               interactive={true}
               initialViewState={{
-                longitude: exploreProps.longitude ?? 0,
-                latitude: exploreProps.latitude ?? 0,
+                longitude: longitude ?? 0,
+                latitude: latitude ?? 0,
                 zoom: 15,
               }}
-              longitude={exploreProps.longitude ?? 0}
-              latitude={exploreProps.latitude ?? 0}
-              zoom={exploreProps.zoom ?? 15}
+              longitude={longitude ?? 0}
+              latitude={latitude ?? 0}
+              zoom={zoom ?? 15}
               mapStyle={ConfigService.mapbox.style_url}
               onMove={(e) => ExploreController.onMapMove(e.viewState)}
               onLoad={(e) => {
@@ -333,7 +353,7 @@ export default function ExploreMobileComponent({
                 e.target.resize();
               }}
             >
-              {exploreProps.inventoryLocations?.map(
+              {inventoryLocations?.map(
                 (point: InventoryLocation, index: number) => (
                   <Marker
                     key={`marker-${index}`}
@@ -348,8 +368,7 @@ export default function ExploreMobileComponent({
                     {point.type === InventoryLocationType.Cellar && (
                       <img
                         src={
-                          exploreProps.selectedInventoryLocation?.id !==
-                          point.id
+                          selectedInventoryLocation?.id !== point.id
                             ? '../assets/images/unselected-cellar.png'
                             : '../assets/images/selected-cellar.png'
                         }
@@ -362,8 +381,7 @@ export default function ExploreMobileComponent({
                     {point.type === InventoryLocationType.Restaurant && (
                       <img
                         src={
-                          exploreProps.selectedInventoryLocation?.id !==
-                          point.id
+                          selectedInventoryLocation?.id !== point.id
                             ? '../assets/images/unselected-restaurant.png'
                             : '../assets/images/selected-restaurant.png'
                         }
@@ -416,105 +434,103 @@ export default function ExploreMobileComponent({
         </div>
       </div>
       {ReactDOM.createPortal(
-        <>
-          <Dropdown
-            classNames={{
-              touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
-            }}
-            open={Boolean(selectedPoint)}
-            touchScreen={true}
-            onClose={() => setSelectedPoint(null)}
-          >
-            {selectedPoint && (
+        <Dropdown
+          classNames={{
+            touchscreenOverlay: styles['dropdown-touchscreen-overlay'],
+          }}
+          open={Boolean(selectedPoint)}
+          touchScreen={true}
+          onClose={() => setSelectedPoint(null)}
+        >
+          {selectedPoint && (
+            <div
+              className={[
+                styles['dropdown-content'],
+                styles['dropdown-content-mobile'],
+              ].join(' ')}
+            >
+              {selectedPoint.thumbnails &&
+                selectedPoint.thumbnails.length > 0 && (
+                  <div style={{ width: '100%', height: 282 }}>
+                    <Slider
+                      dots={true}
+                      speed={250}
+                      slidesToShow={1}
+                      slidesToScroll={1}
+                      className={[
+                        styles['slider'],
+                        styles['slider-mobile'],
+                      ].join(' ')}
+                    >
+                      {selectedPoint.thumbnails.map((value) => (
+                        <img src={value} height={282} />
+                      ))}
+                    </Slider>
+                  </div>
+                )}
               <div
                 className={[
-                  styles['dropdown-content'],
-                  styles['dropdown-content-mobile'],
+                  styles['info-container'],
+                  styles['info-container-mobile'],
                 ].join(' ')}
               >
-                {selectedPoint.thumbnails &&
-                  selectedPoint.thumbnails.length > 0 && (
-                    <div style={{ width: '100%', height: 282 }}>
-                      <Slider
-                        dots={true}
-                        speed={250}
-                        slidesToShow={1}
-                        slidesToScroll={1}
-                        className={[
-                          styles['slider'],
-                          styles['slider-mobile'],
-                        ].join(' ')}
-                      >
-                        {selectedPoint.thumbnails.map((value) => (
-                          <img src={value} height={282} />
-                        ))}
-                      </Slider>
-                    </div>
+                <div
+                  className={[styles['company'], styles['company-mobile']].join(
+                    ' '
                   )}
+                >
+                  {selectedPoint.company}
+                </div>
+                <div
+                  className={[styles['address'], styles['address-mobile']].join(
+                    ' '
+                  )}
+                >
+                  <Line.Place size={18} />
+                  {t(selectedPoint.type as string)}
+                  &nbsp;
+                  {selectedPoint.placeName}
+                </div>
                 <div
                   className={[
-                    styles['info-container'],
-                    styles['info-container-mobile'],
+                    styles['description'],
+                    styles['description-mobile'],
                   ].join(' ')}
                 >
-                  <div
-                    className={[
-                      styles['company'],
-                      styles['company-mobile'],
-                    ].join(' ')}
-                  >
-                    {selectedPoint.company}
-                  </div>
-                  <div
-                    className={[
-                      styles['address'],
-                      styles['address-mobile'],
-                    ].join(' ')}
-                  >
-                    <Line.Place size={18} />
-                    {t(selectedPoint.type as string)}
-                    &nbsp;
-                    {selectedPoint.placeName}
-                  </div>
-                  <div
-                    className={[
-                      styles['description'],
-                      styles['description-mobile'],
-                    ].join(' ')}
-                  >
-                    {selectedPoint.description}
-                  </div>
-                  <div
-                    className={[
-                      styles['go-to-store-button-container'],
-                      styles['go-to-store-button-container-mobile'],
-                    ].join(' ')}
-                  >
-                    <div>
-                      <Button
-                        classNames={{
-                          button: styles['go-to-store-button'],
-                        }}
-                        rippleProps={{
-                          color: 'rgba(133, 38, 122, .35)',
-                        }}
-                        icon={<Line.Store size={24} />}
-                        block={true}
-                        size={'large'}
-                        type={'primary'}
-                        onClick={() => onGoToStore(selectedPoint)}
-                      >
-                        {t('goToStore')}
-                      </Button>
-                    </div>
+                  {selectedPoint.description}
+                </div>
+                <div
+                  className={[
+                    styles['go-to-store-button-container'],
+                    styles['go-to-store-button-container-mobile'],
+                  ].join(' ')}
+                >
+                  <div>
+                    <Button
+                      classNames={{
+                        button: styles['go-to-store-button'],
+                      }}
+                      rippleProps={{
+                        color: 'rgba(133, 38, 122, .35)',
+                      }}
+                      icon={<Line.Store size={24} />}
+                      block={true}
+                      size={'large'}
+                      type={'primary'}
+                      onClick={() => onGoToStore(selectedPoint)}
+                    >
+                      {t('goToStore')}
+                    </Button>
                   </div>
                 </div>
               </div>
-            )}
-          </Dropdown>
-        </>,
+            </div>
+          )}
+        </Dropdown>,
         document.body
       )}
     </ResponsiveMobile>
   );
 }
+
+export default observer(ExploreMobileComponent);
