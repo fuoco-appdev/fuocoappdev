@@ -1,6 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { makeObservable, observable, runInAction } from 'mobx';
-import { Location } from 'react-router-dom';
+import { type Location } from 'react-router-dom';
 import { Model } from '../model';
 import { StoreOptions } from '../store-options';
 

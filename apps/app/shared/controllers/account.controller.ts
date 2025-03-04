@@ -23,7 +23,6 @@ import {
   ProfileFormErrorStrings,
 } from '../models/account.model';
 import { AccountResponse } from '../protobuf/account_pb';
-import { CollectionResponse } from '../protobuf/collection_pb';
 import { StorageFolderType } from '../protobuf/common_pb';
 import { InterestResponse } from '../protobuf/interest_pb';
 import { ProductLikesMetadataResponse } from '../protobuf/product-like_pb';
@@ -91,12 +90,6 @@ export default class AccountController extends Controller {
       accountService,
       'activeAccount',
       this.onActiveAccountChangedAsync
-    );
-
-    this._collectionsDisposer = observe(
-      this._model,
-      'collections',
-      this.onCollectionsChangedAsync
     );
   }
 

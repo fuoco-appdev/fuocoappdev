@@ -1,7 +1,10 @@
 import { HttpTypes } from '@medusajs/types';
 import { makeObservable, observable } from 'mobx';
 import { Model } from '../model';
-import { AddressFormErrors, AddressFormValues } from '../models/account.model';
+import {
+  type AddressFormErrors,
+  type AddressFormValues,
+} from '../models/account.model';
 import { StoreOptions } from '../store-options';
 
 export enum ShippingType {

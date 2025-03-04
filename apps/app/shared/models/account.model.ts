@@ -1,14 +1,16 @@
 import { HttpTypes } from '@medusajs/types';
-import { User } from '@supabase/supabase-js';
+import { type User } from '@supabase/supabase-js';
 import { makeObservable, observable, runInAction } from 'mobx';
 import { Model } from '../model';
 import { AccountFollowerResponse } from '../protobuf/account-follower_pb';
 import { AccountResponse } from '../protobuf/account_pb';
-import { CollectionResponse } from '../protobuf/collection_pb';
 import { InterestResponse } from '../protobuf/interest_pb';
 import { ProductLikesMetadataResponse } from '../protobuf/product-like_pb';
-import { Geocoding, GeocodingFeature } from '../services/mapbox.service';
-import { OpenWebuiUser } from '../services/open-webui.service';
+import {
+  type Geocoding,
+  type GeocodingFeature,
+} from '../services/mapbox.service';
+import { type OpenWebuiUser } from '../services/open-webui.service';
 import { StoreOptions } from '../store-options';
 
 export interface AddressFormErrors {
@@ -247,14 +249,6 @@ export class AccountModel extends Model {
   @observable
   public selectedInterests!: Record<string, InterestResponse>;
   @observable
-  public collections!: Record<string, CollectionResponse>;
-  @observable
-  public hasMoreCollections!: boolean;
-  @observable
-  public areCollectionsLoading!: boolean;
-  @observable
-  public areCollectionsReloading!: boolean;
-  @observable
   public collectionPagination!: number;
   @observable
   public isCreateCollectionLoading!: boolean;
@@ -365,10 +359,6 @@ export class AccountModel extends Model {
       this.searchedInterests = [];
       this.creatableInterest = undefined;
       this.selectedInterests = {};
-      this.collections = {};
-      this.hasMoreCollections = true;
-      this.areCollectionsLoading = false;
-      this.areCollectionsReloading = false;
       this.collectionPagination = 1;
       this.isCreateCollectionLoading = false;
     });
@@ -802,30 +792,6 @@ export class AccountModel extends Model {
   public updateSelectedInterests(value: Record<string, InterestResponse>) {
     if (JSON.stringify(this.selectedInterests) !== JSON.stringify(value)) {
       runInAction(() => (this.selectedInterests = value));
-    }
-  }
-
-  public updateCollections(value: Record<string, CollectionResponse>) {
-    if (JSON.stringify(this.collections) !== JSON.stringify(value)) {
-      runInAction(() => (this.collections = value));
-    }
-  }
-
-  public updateHasMoreCollections(value: boolean) {
-    if (this.hasMoreCollections !== value) {
-      runInAction(() => (this.hasMoreCollections = value));
-    }
-  }
-
-  public updateAreCollectionsLoading(value: boolean) {
-    if (this.areCollectionsLoading !== value) {
-      runInAction(() => (this.areCollectionsLoading = value));
-    }
-  }
-
-  public updateAreCollectionsReloading(value: boolean) {
-    if (this.areCollectionsReloading !== value) {
-      runInAction(() => (this.areCollectionsReloading = value));
     }
   }
 

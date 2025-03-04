@@ -73,11 +73,9 @@ const initialize = async () => {
       let render;
       if (!isProduction) {
         // Always read fresh template in development
-        template = fs.readFileSync('./apps/app/web/index.html', 'utf-8');
+        template = fs.readFileSync('./web/index.html', 'utf-8');
         template = await vite.transformIndexHtml(url, template);
-        render = (await vite.ssrLoadModule('./apps/app/web/entry-server.tsx'))[
-          'render'
-        ];
+        render = (await vite.ssrLoadModule('./web/entry-server.tsx'))['render'];
       } else {
         template = templateHtml;
         render = (await import('./entry-server.tsx')).render;

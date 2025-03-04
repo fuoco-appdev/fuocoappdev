@@ -1,4 +1,4 @@
-import '../shared/i18n';
+import '@shared/i18n';
 
 import { loadableReady } from '@loadable/component';
 import { CookiesProvider } from 'react-cookie';

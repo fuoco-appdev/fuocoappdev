@@ -9,7 +9,7 @@
     "build-web-server": "npx nx run app:build-server:production",
     "start-api": "cd ./apps/api && deno run --watch --allow-net --allow-env --allow-read --allow-import src/serve.ts",
     "start-electron": "npx nx run app:serve-electron",
-    "start-dev-ssr": "npx tsx ./apps/app/web/server.ts",
+    "start-dev-ssr": "cd ./apps/app && npx tsx web/server.ts",
     "start-ssr": "nodemon ./dist/apps/app/server/server.mjs",
     "start-android": "npx react-native run-android",
     "start-ios": "npx react-native run-ios",

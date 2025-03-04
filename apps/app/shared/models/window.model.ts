@@ -1,12 +1,12 @@
 import { HttpTypes } from '@medusajs/types';
-import { AuthChangeEvent } from '@supabase/supabase-js';
+import { type AuthChangeEvent } from '@supabase/supabase-js';
 import { makeObservable, observable, runInAction } from 'mobx';
 import { Model } from '../model';
 import { AccountResponse } from '../protobuf/account_pb';
 import { RoutePathsType } from '../route-paths-type';
-import { AccountData } from '../services/account-notification.service';
+import { type AccountData } from '../services/account-notification.service';
 import { StoreOptions } from '../store-options';
-import { InventoryLocation } from './explore.model';
+import { type InventoryLocation } from './explore.model';
 
 export interface LanguageInfo {
   name: string;

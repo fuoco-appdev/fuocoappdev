@@ -2,29 +2,24 @@
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import { replaceFiles } from '@nx/vite/plugins/rollup-replace-files.plugin';
 import react from '@vitejs/plugin-react';
+import path from 'path';
 import { defineConfig, loadEnv } from 'vite';
 
 export default ({ mode }: any) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
 
   return defineConfig({
-    root: 'apps/app/web',
-    css: {
-      preprocessorOptions: {
-        scss: {
-          additionalData: `
-            @import "apps/app/web/styles.scss";
-          `,
-        },
+    root: './web',
+    envDir: '.',
+    ssr: {
+      noExternal: ['@supabase/supabase-js', 'react-router-dom'],
+    },
+    resolve: {
+      alias: {
+        '@shared': path.resolve('./shared'),
       },
     },
-    build: {
-      emptyOutDir: false,
-      reportCompressedSize: true,
-      commonjsOptions: {
-        transformMixedEsModules: true,
-      },
-    },
+    build: {},
     optimizeDeps: {
       include: ['**/*.scss'],
       esbuildOptions: {
@@ -33,7 +28,7 @@ export default ({ mode }: any) => {
         },
       },
     },
-    cacheDir: '../../node_modules/.vite/apps/app',
+    cacheDir: '../../node_modules/.vite',
     server: {
       port: 4200,
       host: 'localhost',
@@ -45,14 +40,19 @@ export default ({ mode }: any) => {
     plugins: [
       react({
         babel: {
-          plugins: ['babel-plugin-transform-typescript-metadata'],
+          plugins: [
+            'babel-plugin-transform-typescript-metadata',
+            ['@babel/plugin-proposal-decorators', { legacy: true }],
+            ['@babel/plugin-proposal-class-properties', { loose: true }],
+            '@loadable/babel-plugin',
+          ],
         },
       }),
       nxViteTsPaths(),
       replaceFiles([
         {
-          replace: 'apps/app/environments/environment.ts',
-          with: 'apps/app/environments/environment.prod.ts',
+          replace: 'environments/environment.ts',
+          with: 'environments/environment.prod.ts',
         },
       ]),
     ],
@@ -65,7 +65,7 @@ export default ({ mode }: any) => {
       },
       setupFiles: ['shared/setupTests.ts'],
       cache: {
-        dir: '../../node_modules/.vitest/apps/app',
+        dir: '../../node_modules/.vitest',
       },
       environment: 'jsdom',
       include: [

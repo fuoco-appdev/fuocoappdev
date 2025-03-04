@@ -1,10 +1,12 @@
+// prettier-ignore
+import { useQuery } from '../route-paths';
+// prettier-ignore
+import { StorageFolderType } from '@shared/protobuf/common_pb';
+import { RoutePathsType } from '@shared/route-paths-type';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { StorageFolderType } from '../../shared/protobuf/common_pb';
-import { RoutePathsType } from '../../shared/route-paths-type';
-import { useQuery } from '../route-paths';
 import { DIContext } from './app.component';
 import { WindowSuspenseDesktopComponent } from './desktop/suspense/window.suspense.desktop.component';
 import { WindowSuspenseMobileComponent } from './mobile/suspense/window.suspense.mobile.component';
@@ -255,7 +257,7 @@ function WindowComponent(): JSX.Element {
     if (authState === 'SIGNED_OUT') {
       navigate({ pathname: RoutePathsType.Signin, search: query.toString() });
     } else if (!authState) {
-      navigate({ pathname: RoutePathsType.Signup, search: query.toString() });
+      navigate({ pathname: RoutePathsType.Landing, search: query.toString() });
     } else if (authState === 'PASSWORD_RECOVERY') {
       navigate({
         pathname: RoutePathsType.ResetPassword,

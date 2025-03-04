@@ -1,76 +1,78 @@
+// prettier-ignore
+import 'reflect-metadata';
+// prettier-ignore
+import AccountPublicController from '@shared/controllers/account-public.controller';
+import AccountController from '@shared/controllers/account.controller';
+import AppController from '@shared/controllers/app.controller';
+import CartController from '@shared/controllers/cart.controller';
+import ChatController from '@shared/controllers/chat.controller';
+import CheckoutController from '@shared/controllers/checkout.controller';
+import EmailConfirmationController from '@shared/controllers/email-confirmation.controller';
+import EventsController from '@shared/controllers/events.controller';
+import ExploreController from '@shared/controllers/explore.controller';
+import ForgotPasswordController from '@shared/controllers/forgot-password.controller';
+import HelpController from '@shared/controllers/help.controller';
+import LandingController from '@shared/controllers/landing.controller';
+import NotificationsController from '@shared/controllers/notifications.controller';
+import OrderConfirmedController from '@shared/controllers/order-confirmed.controller';
+import PermissionsController from '@shared/controllers/permissions.controller';
+import PrivacyPolicyController from '@shared/controllers/privacy-policy.controller';
+import ProductController from '@shared/controllers/product.controller';
+import ResetPasswordController from '@shared/controllers/reset-password.controller';
+import SigninController from '@shared/controllers/signin.controller';
+import SignupController from '@shared/controllers/signup.controller';
+import StoreController from '@shared/controllers/store.controller';
+import TermsOfServiceController from '@shared/controllers/terms-of-service.controller';
+import WindowController from '@shared/controllers/window.controller';
+import AccountFollowersService from '@shared/services/account-followers.service';
+import AccountNotificationService from '@shared/services/account-notification.service';
+import AccountService from '@shared/services/account.service';
+import BucketService from '@shared/services/bucket.service';
+import ChatService from '@shared/services/chat.service';
+import ConfigService from '@shared/services/config.service';
+import CryptoService from '@shared/services/crypto.service';
+import DeepLService from '@shared/services/deepl.service';
+import InterestService from '@shared/services/interest.service';
+import LogflareService from '@shared/services/logflare.service';
+import MapboxService from '@shared/services/mapbox.service';
+import MedusaService from '@shared/services/medusa.service';
+import MeiliSearchService from '@shared/services/meilisearch.service';
+import OpenWebuiService from '@shared/services/open-webui.service';
+import ProductLikesService from '@shared/services/product-likes.service';
+import SupabaseService from '@shared/services/supabase.service';
 import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
 import { DIContainer } from 'rsdi';
-import AccountPublicController from '../shared/controllers/account-public.controller';
-import AccountController from '../shared/controllers/account.controller';
-import AppController from '../shared/controllers/app.controller';
-import CartController from '../shared/controllers/cart.controller';
-import ChatController from '../shared/controllers/chat.controller';
-import CheckoutController from '../shared/controllers/checkout.controller';
-import EmailConfirmationController from '../shared/controllers/email-confirmation.controller';
-import EventsController from '../shared/controllers/events.controller';
-import ExploreController from '../shared/controllers/explore.controller';
-import ForgotPasswordController from '../shared/controllers/forgot-password.controller';
-import HelpController from '../shared/controllers/help.controller';
-import LandingController from '../shared/controllers/landing.controller';
-import NotificationsController from '../shared/controllers/notifications.controller';
-import OrderConfirmedController from '../shared/controllers/order-confirmed.controller';
-import PermissionsController from '../shared/controllers/permissions.controller';
-import PrivacyPolicyController from '../shared/controllers/privacy-policy.controller';
-import ProductController from '../shared/controllers/product.controller';
-import ResetPasswordController from '../shared/controllers/reset-password.controller';
-import SigninController from '../shared/controllers/signin.controller';
-import SignupController from '../shared/controllers/signup.controller';
-import StoreController from '../shared/controllers/store.controller';
-import TermsOfServiceController from '../shared/controllers/terms-of-service.controller';
-import WindowController from '../shared/controllers/window.controller';
-import AccountFollowersService from '../shared/services/account-followers.service';
-import AccountNotificationService from '../shared/services/account-notification.service';
-import AccountService from '../shared/services/account.service';
-import BucketService from '../shared/services/bucket.service';
-import ChatService from '../shared/services/chat.service';
-import ConfigService from '../shared/services/config.service';
-import CryptoService from '../shared/services/crypto.service';
-import DeepLService from '../shared/services/deepl.service';
-import InterestService from '../shared/services/interest.service';
-import LogflareService from '../shared/services/logflare.service';
-import MapboxService from '../shared/services/mapbox.service';
-import MedusaService from '../shared/services/medusa.service';
-import MeiliSearchService from '../shared/services/meilisearch.service';
-import OpenWebuiService from '../shared/services/open-webui.service';
-import ProductLikesService from '../shared/services/product-likes.service';
-import SupabaseService from '../shared/services/supabase.service';
-const {
-  CRYPTO_ENCRYPTION_KEY,
-  CRYPTO_IV,
-  HOST,
-  LOGFLARE_ACCESS_TOKEN,
-  MAPBOX_ACCESS_TOKEN,
-  MEDUSA_PUBLIC_KEY,
-  MEILISEARCH_PUBLIC_KEY,
-  MODE,
-  OPEN_WEBUI_API_TOKEN,
-  S3_ACCESS_KEY_ID,
-  S3_SECRET_ACCESS_KEY,
-  SUPABASE_ANON_KEY,
-} = import.meta.env;
+
+let env: any = {};
+if (import.meta.env['SSR']) {
+  dotenv.config({ path: '.env' });
+  env = process.env;
+} else {
+  env = import.meta.env;
+  console.log(import.meta.env);
+}
 
 export type AppDIContainer = ReturnType<typeof register>;
 
 export default function register() {
   const container = new DIContainer();
   return container
-    .add('MODE', () => MODE ?? 'development')
-    .add('HOST', () => HOST ?? 'localhost')
-    .add('S3_ACCESS_KEY_ID', () => S3_ACCESS_KEY_ID ?? '')
-    .add('S3_SECRET_ACCESS_KEY', () => S3_SECRET_ACCESS_KEY ?? '')
-    .add('CRYPTO_ENCRYPTION_KEY', () => CRYPTO_ENCRYPTION_KEY ?? '')
-    .add('CRYPTO_IV', () => CRYPTO_IV ?? '')
-    .add('MAPBOX_ACCESS_TOKEN', () => MAPBOX_ACCESS_TOKEN ?? '')
-    .add('MEDUSA_PUBLIC_KEY', () => MEDUSA_PUBLIC_KEY ?? '')
-    .add('MEILISEARCH_PUBLIC_KEY', () => MEILISEARCH_PUBLIC_KEY ?? '')
-    .add('SUPABASE_ANON_KEY', () => SUPABASE_ANON_KEY ?? '')
-    .add('OPEN_WEBUI_API_TOKEN', () => OPEN_WEBUI_API_TOKEN ?? '')
-    .add('LOGFLARE_ACCESS_TOKEN', () => LOGFLARE_ACCESS_TOKEN ?? '')
+    .add('MODE', () => env['VITE_MODE'] ?? 'development')
+    .add('HOST', () => env['VITE_HOST'] ?? 'localhost')
+    .add('S3_ACCESS_KEY_ID', () => env['VITE_S3_ACCESS_KEY_ID'] ?? '')
+    .add('S3_SECRET_ACCESS_KEY', () => env['VITE_S3_SECRET_ACCESS_KEY'] ?? '')
+    .add('CRYPTO_ENCRYPTION_KEY', () => env['VITE_CRYPTO_ENCRYPTION_KEY'] ?? '')
+    .add('CRYPTO_IV', () => env['VITE_CRYPTO_IV'] ?? '')
+    .add('MAPBOX_ACCESS_TOKEN', () => env['VITE_MAPBOX_ACCESS_TOKEN'] ?? '')
+    .add('MEDUSA_PUBLIC_KEY', () => env['VITE_MEDUSA_PUBLIC_KEY'] ?? '')
+    .add(
+      'MEILISEARCH_PUBLIC_KEY',
+      () => env['VITE_MEILISEARCH_PUBLIC_KEY'] ?? ''
+    )
+    .add('SUPABASE_ANON_KEY', () => env['VITE_SUPABASE_ANON_KEY'] ?? '')
+    .add('OPEN_WEBUI_API_TOKEN', () => env['VITE_OPEN_WEBUI_API_TOKEN'] ?? '')
+    .add('LOGFLARE_ACCESS_TOKEN', () => env['VITE_LOGFLARE_ACCESS_TOKEN'] ?? '')
     .add('StoreOptions', () => ({
       strategy: {},
     }))
@@ -307,6 +309,7 @@ export default function register() {
         OPEN_WEBUI_API_TOKEN,
         ConfigService,
         LogflareService,
+        SUPABASE_ANON_KEY,
         StoreOptions,
       }) =>
         new OpenWebuiService(

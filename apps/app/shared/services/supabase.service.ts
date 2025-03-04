@@ -2,9 +2,9 @@ import { Subscription } from '@supabase/gotrue-js/dist/main';
 import {
   AuthChangeEvent,
   createClient,
-  Session,
+  type Session,
   SupabaseClient,
-  User,
+  type User,
 } from '@supabase/supabase-js';
 import { makeObservable, observable, runInAction } from 'mobx';
 import { Service } from '../service';

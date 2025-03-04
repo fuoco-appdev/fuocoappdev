@@ -43,7 +43,6 @@ import AccountNotificationService from '../shared/services/account-notification.
 import AccountService from '../shared/services/account.service';
 import BucketService from '../shared/services/bucket.service';
 import ChatService from '../shared/services/chat.service';
-import CollectionService from '../shared/services/collection.service';
 import ConfigService from '../shared/services/config.service';
 import CryptoService from '../shared/services/crypto.service';
 import DeepLService from '../shared/services/deepl.service';
@@ -336,23 +335,6 @@ export default function register() {
         ),
     )
     .add(
-      'CollectionService',
-      ({
-        SupabaseService,
-        LogflareService,
-        ConfigService,
-        SUPABASE_ANON_KEY,
-        StoreOptions,
-      }) =>
-        new CollectionService(
-          SupabaseService,
-          LogflareService,
-          ConfigService,
-          SUPABASE_ANON_KEY,
-          StoreOptions,
-        ),
-    )
-    .add(
       'AccountPublicController',
       ({StoreOptions}) =>
         new AccountPublicController(
@@ -381,7 +363,6 @@ export default function register() {
             BucketService: BucketService;
             OpenWebuiService: OpenWebuiService;
             CryptoService: CryptoService;
-            CollectionService: CollectionService;
           }>,
           StoreOptions,
         ),
